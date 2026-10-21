@@ -28,3 +28,10 @@ The deliverable for T0001 is the graph guard, its automated tests, and this acce
 ## Task T0003 scope — completion requires code/output, tests, and acceptance criteria
 
 For every node marked `done`, the graph guard now also requires a non-empty `acceptance` criterion and reviewable evidence that names a test source file under `tests/` or `test/`. The existing output/evidence existence checks, recorded passing-test check, and successful-attempt check remain in force. This is a metadata/evidence gate: it does not prove feature correctness by itself; implementation-specific tests and a successful CI run are still required.
+
+
+## Task T0004 scope — reject known placeholder implementations
+
+When repository-backed validation is enabled with `--repo-root`, each source-code file listed in a task's `actual_output_paths` is inspected for known placeholder markers before a `done` claim can pass. The current denylist covers TODO markers, `NotImplementedException`, `NotImplementedError`, and explicit mock/placeholder/simulated-response implementation labels. Regression tests verify that a placeholder implementation is rejected and ordinary executable source without those markers is accepted.
+
+This is a conservative static check, not proof that arbitrary code is correct or free of every possible stub. Human review and feature-specific runtime tests remain required; passing this gate alone does not prove the Windows/Android/P2P product is complete.

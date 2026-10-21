@@ -681,20 +681,34 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0003 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال انجام",
+      "actual_output_paths": [
+        "tools/graph_guard.py",
+        "tests/test_graph_guard.py",
+        "docs/acceptance.md",
+        "step three/T0004/execution-report.md"
+      ],
       "expected_output_paths": [
         "docs/acceptance.md + tests/ (معیار و آزمون متناظر)"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "tests/test_graph_guard.py",
+        "docs/acceptance.md"
+      ],
+      "notes": "Attempt T0004-A001 adds repository-backed static checks for known placeholder markers in source files listed as actual outputs, with positive and negative regression tests. Status remains in_progress until CI executes successfully. Edge T0003 → T0004 is validated as a shared-tool/interface dependency: T0004 extends the guard and test suite created by T0003; source files and regression tests provide evidence. The graph edge type remains blocks.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0004-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "tools/graph_guard.py",
+          "tests/test_graph_guard.py",
+          "docs/acceptance.md",
+          "step three/project-graph.md",
+          "step three/T0004/execution-report.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
@@ -707,7 +721,29 @@
           "review_evidence": []
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0004-A001",
+          "started_at": "2026-10-21T19:00:00+03:30",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Implemented a repository-backed static guard that rejects known placeholder markers in source files listed as actual outputs for done tasks. Added regression tests for rejecting NotImplementedError and accepting ordinary executable source, and documented the scope and limitations. CI has not yet run on this change; completion is not claimed.",
+          "changed_files": [
+            "tools/graph_guard.py",
+            "tests/test_graph_guard.py",
+            "docs/acceptance.md",
+            "step three/project-graph.md",
+            "step three/T0004/execution-report.md"
+          ],
+          "commit_sha": null,
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Commit to main, inspect the actual GitHub Actions run, fix any failing test, and only then mark T0004 done."
+        }
+      ]
     },
     {
       "id": "T0005",
@@ -10834,10 +10870,14 @@
       "from": "T0003",
       "to": "T0004",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0004 extends the graph-guard implementation and its test contract created by T0003; it modifies the same guard API and regression-test suite, so the shared implementation/test interface is a concrete dependency. This classification does not imply the edge type itself proves dependency.",
+      "validation_status": "validated",
+      "evidence": [
+        "tools/graph_guard.py",
+        "tests/test_graph_guard.py",
+        "step three/T0003/execution-report.md"
+      ]
     },
     {
       "from": "T0004",
@@ -14943,4 +14983,5 @@
       "failed"
     ]
   }
-}```
+}
+```

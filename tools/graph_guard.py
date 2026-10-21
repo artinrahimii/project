@@ -84,10 +84,26 @@ def validate_graph(graph: dict, repo_root: Path | None = None) -> list[Finding]:
             if not test_evidence:
                 out.append(Finding("ERROR", "DONE_WITHOUT_TEST_FILE_EVIDENCE", f"{tid} is done but evidence does not reference a test source file."))
             if repo_root is not None:
+                code_suffixes = {".py", ".cs", ".kt", ".kts", ".java", ".js", ".jsx", ".ts", ".tsx", ".go", ".rs", ".cpp", ".h", ".hpp", ".swift"}
+                placeholder_patterns = (
+                    (re.compile(r"\bTODO\b", re.IGNORECASE), "TODO marker"),
+                    (re.compile(r"\bNotImplementedException\b"), "NotImplementedException"),
+                    (re.compile(r"\bNotImplementedError\b"), "NotImplementedError"),
+                    (re.compile(r"\bmock implementation\b", re.IGNORECASE), "mock implementation"),
+                    (re.compile(r"\bplaceholder implementation\b", re.IGNORECASE), "placeholder implementation"),
+                    (re.compile(r"\bsimulated response\b", re.IGNORECASE), "simulated response"),
+                )
                 for item in paths:
                     p = _repo_path(repo_root, item)
                     if p is None: out.append(Finding("ERROR", "UNSAFE_OUTPUT_PATH", f"{tid}: invalid output path {item!r}."))
                     elif not p.is_file(): out.append(Finding("ERROR", "MISSING_OUTPUT_FILE", f"{tid}: output file not found: {item!r}."))
+                    elif p.suffix.lower() in code_suffixes:
+                        try: source_text = p.read_text(encoding="utf-8")
+                        except (OSError, UnicodeError) as exc:
+                            out.append(Finding("ERROR", "UNREADABLE_IMPLEMENTATION_FILE", f"{tid}: cannot inspect {item!r}: {exc}.")); continue
+                        for pattern, label in placeholder_patterns:
+                            if pattern.search(source_text):
+                                out.append(Finding("ERROR", "DONE_WITH_PLACEHOLDER_IMPLEMENTATION", f"{tid}: {item!r} contains {label}; inspect and replace it before claiming completion."))
                 for item in evidence:
                     if not isinstance(item, str) or not item.strip():
                         out.append(Finding("ERROR", "INVALID_EVIDENCE", f"{tid}: evidence must be non-empty text.")); continue

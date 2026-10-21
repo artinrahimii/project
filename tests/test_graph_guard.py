@@ -76,6 +76,35 @@ class ValidateTests(unittest.TestCase):
                      "execution_summary":{"attempt_count":1,"failed_attempt_count":0,"tests_passed":["unit tests passed"]}})
         node.pop("acceptance",None)
         self.assertIn("DONE_WITHOUT_ACCEPTANCE_CRITERIA", {x.code for x in validate_graph(g)})
+    def test_done_rejects_placeholder_implementation_marker(self):
+        import tempfile
+        g=graph_fixture(); node=g["nodes"][0]
+        node.update({"status":"done","actual_output_paths":["src/engine.py"],"acceptance":"Engine performs real work.",
+                     "evidence":["report.md","tests/test_engine.py"],
+                     "execution_history":[{"result":"succeeded"}],
+                     "execution_summary":{"attempt_count":1,"failed_attempt_count":0,"tests_passed":["unit tests passed"]}})
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td); (root/"src").mkdir(); (root/"tests").mkdir()
+            (root/"src"/"engine.py").write_text("def infer():\\n    raise NotImplementedError()\\n")
+            (root/"report.md").write_text("reviewed evidence")
+            (root/"tests"/"test_engine.py").write_text("def test_engine(): pass")
+            codes={x.code for x in validate_graph(g, root)}
+            self.assertIn("DONE_WITH_PLACEHOLDER_IMPLEMENTATION", codes)
+
+    def test_done_accepts_code_without_known_placeholder_markers(self):
+        import tempfile
+        g=graph_fixture(); node=g["nodes"][0]
+        node.update({"status":"done","actual_output_paths":["src/engine.py"],"acceptance":"Engine returns computed output.",
+                     "evidence":["report.md","tests/test_engine.py"],
+                     "execution_history":[{"result":"succeeded"}],
+                     "execution_summary":{"attempt_count":1,"failed_attempt_count":0,"tests_passed":["unit tests passed"]}})
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td); (root/"src").mkdir(); (root/"tests").mkdir()
+            (root/"src"/"engine.py").write_text("def infer(value):\\n    return value.strip().upper()\\n")
+            (root/"report.md").write_text("reviewed evidence")
+            (root/"tests"/"test_engine.py").write_text("def test_engine(): assert True")
+            self.assertEqual(validate_graph(g, root), [])
+
     def test_done_requires_test_source_evidence(self):
         g=graph_fixture(); node=g["nodes"][0]
         node.update({"status":"done","actual_output_paths":["output.txt"],"acceptance":"Output is valid.",
