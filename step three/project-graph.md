@@ -455,7 +455,7 @@
         "attempt_count": 1,
         "failed_attempt_count": 0,
         "last_attempt_id": "T0002-A001",
-        "last_attempt_result": "success",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           ".github/workflows/quality.yml",
           "step three/T0002/execution-report.md",
@@ -485,7 +485,7 @@
           "attempt_id": "T0002-A001",
           "started_at": "2026-10-21T17:57:02+03:30",
           "ended_at": "2026-10-21T18:29:06+03:30",
-          "result": "success",
+          "result": "succeeded",
           "summary": "Added the quality-gate workflow; local checks and the actual GitHub Actions run passed.",
           "changed_files": [
             ".github/workflows/quality.yml",
@@ -506,8 +506,8 @@
             },
             {
               "command": "GitHub Actions quality workflow",
-              "result": "pending",
-              "summary": "Must be observed after this commit is pushed"
+              "result": "passed",
+              "summary": "GitHub Actions run 39617156456 completed successfully on commit b35fe908672f1232dee0bf6b7c5d5babd6146a4b."
             },
             {
               "command": "GitHub Actions run 39617156456",
@@ -14894,5 +14894,4 @@
       "failed"
     ]
   }
-}
-```
+}```
