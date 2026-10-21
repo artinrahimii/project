@@ -540,8 +540,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0002 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال انجام",
+      "status": "done",
+      "status_fa": "تکمیل‌شده",
       "actual_output_paths": [
         "tools/graph_guard.py",
         "tests/test_graph_guard.py",
@@ -556,12 +556,12 @@
         "docs/acceptance.md",
         "step three/T0003/execution-report.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود. تلاش T0003-A001 کنترل تکمیل را برای معیار پذیرش و شواهد فایل آزمون سخت‌گیرانه‌تر می‌کند. آزمون‌های محلی/CI این تغییر هنوز تأیید نشده‌اند؛ بنابراین وضعیت تا تأیید اجرای CI در حال انجام باقی می‌ماند.",
+      "notes": "Completion verified by GitHub Actions run 39620382487 on commit b7f96e5cb1dc6d0cec3d7f209d4757397d3aeee1. This validates the graph guard's acceptance/evidence checks; it does not claim the complete Windows/Android/P2P product is implemented. Edge T0002 → T0003 remains type=blocks and validation_status=unreviewed; no edge classification was changed.",
       "execution_summary": {
-        "attempt_count": 1,
+        "attempt_count": 2,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0003-A001",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "T0003-A002",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "tools/graph_guard.py",
           "tests/test_graph_guard.py",
@@ -569,8 +569,15 @@
           "step three/project-graph.md",
           "step three/T0003/execution-report.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
+        "related_commits": [
+          "b7f96e5cb1dc6d0cec3d7f209d4757397d3aeee1"
+        ],
+        "tests_passed": [
+          "GitHub Actions run 39620382487: automated tests",
+          "GitHub Actions run 39620382487: Python syntax check",
+          "GitHub Actions run 39620382487: graph structure validation",
+          "GitHub Actions run 39620382487: recorded outputs and evidence validation"
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -613,6 +620,48 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Check the quality workflow for this commit; if green, update T0003 to done in a subsequent verified commit. If red, inspect logs and correct the implementation."
+        },
+        {
+          "attempt_id": "T0003-A002",
+          "started_at": "2026-10-21T18:50:00+03:30",
+          "ended_at": "2026-10-21T18:50:00+03:30",
+          "result": "succeeded",
+          "summary": "CI quality gate passed on commit b7f96e5cb1dc6d0cec3d7f209d4757397d3aeee1 (run 39620382487). Automated tests, Python syntax, graph structure, and recorded-output/evidence validation all succeeded. The task output paths and regression tests are present; this confirms the graph-guard behavior, not the complete Windows/Android/P2P product.",
+          "changed_files": [
+            "tools/graph_guard.py",
+            "tests/test_graph_guard.py",
+            "docs/acceptance.md",
+            "step three/project-graph.md",
+            "step three/T0003/execution-report.md"
+          ],
+          "commit_sha": "b7f96e5cb1dc6d0cec3d7f209d4757397d3aeee1",
+          "tests": [
+            {
+              "command": "GitHub Actions run 39620382487 — Run automated tests",
+              "result": "passed",
+              "summary": "Job step completed successfully."
+            },
+            {
+              "command": "GitHub Actions run 39620382487 — Check Python syntax",
+              "result": "passed",
+              "summary": "Job step completed successfully."
+            },
+            {
+              "command": "GitHub Actions run 39620382487 — Validate graph structure",
+              "result": "passed",
+              "summary": "Job step completed successfully."
+            },
+            {
+              "command": "GitHub Actions run 39620382487 — Validate recorded outputs and evidence",
+              "result": "passed",
+              "summary": "Job step completed successfully."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Begin T0004 only after reviewing its specific acceptance criteria and validating its dependency edge. Keep all unreviewed edge classifications unchanged."
         }
       ]
     },
