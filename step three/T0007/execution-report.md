@@ -62,3 +62,14 @@
 - Status: partial; T0007 remains `in_progress`, not `done`.
 - Follow-up: satisfy the broader T0007 acceptance criterion; keep the T0007 → T0008 edge unreviewed until it is explicitly validated.
 
+
+
+## Attempt T0007-A007 — deterministic unavailable reason
+
+- Base: `41e313c1c61d7e99d89c2b00f020c88f8f4e1143` (`V 3.0.41`).
+- Production change: `HostStartup.Start` now trims a non-empty unavailable reason and substitutes the explicit message `Local inference backend is unavailable. Host is not ready.` when the reason is null, empty, or whitespace.
+- Regression coverage: the executable lifecycle harness now asserts the exact fallback message rather than only checking for a generic failure phrase.
+- Local execution: not run in this tool session; no local checkout/runtime is available.
+- CI: pending for the new commit; no pass is claimed before inspecting its actual workflow runs.
+- Status: partial; T0007 remains `in_progress`. The configured backend is still deliberately unavailable, so production inference and the broad traceability acceptance criterion remain unmet.
+- Follow-up: verify both GitHub Actions workflows for the exact commit. Do not begin T0008 while its T0007 prerequisite remains incomplete.

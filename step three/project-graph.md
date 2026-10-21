@@ -1083,13 +1083,16 @@
         "docs/acceptance.md",
         "step three/T0007/execution-report.md"
       ],
-      "notes": "T0007 remains a broad traceability task. A005 adds regression coverage for a whitespace-only UnavailableReason; CI for the new commit is pending. Prior CI success does not establish this new case or prove production inference.",
+      "notes": "T0007 remains a broad traceability task. A007 makes the unavailable-backend reason deterministic and adds an exact-message regression assertion; CI for A007 is pending. The configured UnconfiguredInferenceBackend still prevents production inference, and the T0007 → T0008 edge remains unreviewed.",
       "execution_summary": {
-        "attempt_count": 6,
+        "attempt_count": 7,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0007-A006",
+        "last_attempt_id": "T0007-A007",
         "last_attempt_result": "partial",
         "changed_files": [
+          "src/Host.Windows/HostLifecycle.cs",
+          "tests/HostLifecycle.Tests/Program.cs",
+          "docs/acceptance.md",
           "step three/T0007/execution-report.md",
           "step three/project-graph.md"
         ],
@@ -1097,8 +1100,8 @@
           "632c36d257ca079dd9bdee07f5415aa3c7c97cc3"
         ],
         "tests_passed": [
-          "GitHub Actions Step Three quality gate — run 39656666780: passed (https://github.com/artinrahimii/project/actions/runs/39656666780)",
-          "GitHub Actions White-P product build — run 39656666786: passed (https://github.com/artinrahimii/project/actions/runs/39656666786)"
+          "GitHub Actions Step Three quality gate run 39667152012 passed for base commit 41e313c1c61d7e99d89c2b00f020c88f8f4e1143; does not validate A007.",
+          "GitHub Actions White-P product build run 39667151789 passed for base commit 41e313c1c61d7e99d89c2b00f020c88f8f4e1143; does not validate A007."
         ],
         "tests_failed": [],
         "blocked_reason": null,
@@ -1251,6 +1254,27 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Keep T0007 in_progress; before starting T0008, complete T0007 acceptance and review the T0007 -> T0008 edge, which remains unreviewed."
+        },
+        {
+          "attempt_id": "T0007-A007",
+          "started_at": "2026-10-21T23:00:00-04:00",
+          "ended_at": "2026-10-21T23:00:00-04:00",
+          "result": "partial",
+          "summary": "Changed the unavailable-backend path to trim a usable reason or return an explicit deterministic fallback when the reason is null/empty/whitespace; added an exact-message regression assertion. CI for this exact revision is pending.",
+          "changed_files": [
+            "src/Host.Windows/HostLifecycle.cs",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "docs/acceptance.md",
+            "step three/T0007/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Verify both product-build and Step Three quality-gate workflows for this exact commit. Keep T0007 in_progress until the broad traceability acceptance criterion is genuinely satisfied; do not advance to T0008 while its prerequisite remains incomplete."
         }
       ]
     },
@@ -16187,5 +16211,4 @@
       "failed"
     ]
   }
-}
-```
+}```

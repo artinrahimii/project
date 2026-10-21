@@ -140,3 +140,12 @@ Result for this revision: pending the GitHub Actions run. The case uses a test d
 ## T0007-A005 — empty unavailable-reason fallback
 
 The lifecycle harness verifies that an unavailable backend returning a blank or whitespace-only `UnavailableReason` cannot leave startup without a usable status message. The expected result is `Error` with a stable generic startup-check failure message. This exercises the existing `ArgumentException.ThrowIfNullOrWhiteSpace` guard and fallback path; it is not evidence of a production inference backend.
+
+
+### T0007-A007 — deterministic unavailable-backend fallback
+
+When a backend reports unavailable, HostStartup now trims a non-empty reason and uses the explicit message `Local inference backend is unavailable. Host is not ready.` when the reason is null, empty, or whitespace. This avoids treating malformed-but-nonthrowing backend metadata as an exception and makes the UI state deterministic. The executable regression harness asserts the exact fallback string.
+
+- Verification target: `dotnet run --project tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj --configuration Release`
+- CI status for this change: pending until the workflow runs against the resulting commit.
+- Scope limit: the configured production backend remains `UnconfiguredInferenceBackend`; this change does not implement real inference, hardware discovery, or P2P.

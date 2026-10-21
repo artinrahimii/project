@@ -22,7 +22,7 @@ Assert(!throwingReasonStatus.Message.Contains("private-reason",StringComparison.
 var emptyReasonStatus=new HostStartup(new HostLifecycle(),new EmptyUnavailableReasonBackend()).Start();
 Assert(emptyReasonStatus.State==HostState.Error,"Unavailable backend with an empty reason must report Error");
 Assert(!string.IsNullOrWhiteSpace(emptyReasonStatus.Message),"Empty backend reason must be replaced with a stable message");
-Assert(emptyReasonStatus.Message.Contains("check failed",StringComparison.OrdinalIgnoreCase),"Empty backend reason must produce a stable user-facing reason");
+Assert(emptyReasonStatus.Message=="Local inference backend is unavailable. Host is not ready.","Empty backend reason must use the explicit unavailable fallback");
 
 Console.WriteLine("PASS: lifecycle transitions, invalid-transition rejection, unavailable/available backend handling, and exception-safe startup, including a throwing unavailable-reason getter.");
 
