@@ -111,8 +111,7 @@
 ## دادهٔ کامل گراف v2.1
 ساختار زیر JSON معتبر و قابل‌پردازش ماشینی است. فهرست `nodes` همهٔ وظایف را دارد و `edges` یال‌های جهت‌دار وابستگی را ارائه می‌کند.
 
-```json
-{
+```json{
   "schema_version": "1.0",
   "document": "v2.1",
   "title": "گراف وابستگی اجرای پروژهٔ شبکهٔ همتابه‌همتای هوش مصنوعی محلی",
@@ -2725,8 +2724,8 @@
       ],
       "start_condition": "T0016 is the verified integration target for the generated Android Java-lite bindings. The T0010 → T0017 edge is retained as sequencing_only: T0017 does not consume a T0010-produced output. Keep the task in_progress until the exact-commit quality gate and both Windows/Android generated-code builds pass.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "protocol/whitep/v1/messages.proto",
         "src/Host.Windows/WhiteP.Host.Windows.csproj",
@@ -2760,12 +2759,12 @@
         "step three/T0017/execution-report.md",
         ".github/workflows/product-build.yml"
       ],
-      "notes": "T0017-A001 (V 3.0.50) created the shared schema; quality, Windows build, and host lifecycle jobs passed, but the Android Gradle job failed before proto generation due to unresolved Kotlin DSL proto/srcDir references. T0017-A002 adds the explicit Protobuf Gradle extension import. Keep in_progress until exact-commit quality and both generated-binding builds pass.",
+      "notes": "T0017-A001 (V 3.0.50) created the shared schema; quality, Windows build, and host lifecycle jobs passed, but the Android Gradle job failed before proto generation due to unresolved Kotlin DSL proto/srcDir references. T0017-A002 adds the explicit Protobuf Gradle extension import. Keep in_progress until exact-commit quality and both generated-binding builds pass. Acceptance confirmed on V 3.0.51: quality gate run 39679219939 passed; Windows host build, host lifecycle tests, Android assembleDebug and APK artifact upload all passed in product build run 39679219914. This verifies shared schema code generation/build integration only, not runtime transport or inference.",
       "execution_summary": {
         "attempt_count": 2,
         "failed_attempt_count": 1,
         "last_attempt_id": "T0017-A002",
-        "last_attempt_result": "partial",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "protocol/whitep/v1/messages.proto",
           "src/Host.Windows/WhiteP.Host.Windows.csproj",
@@ -2780,7 +2779,10 @@
         "related_commits": [
           "f3783ee3af38c2d2086777950e97778273190573"
         ],
-        "tests_passed": [],
+        "tests_passed": [
+          "https://github.com/artinrahimii/project/actions/runs/39679219939 — automated tests, Python syntax, graph structure and recorded-output/evidence validation passed.",
+          "https://github.com/artinrahimii/project/actions/runs/39679219914 — Windows WPF build and artifact upload passed; host lifecycle tests passed; Android assembleDebug and APK artifact upload passed."
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -2858,9 +2860,9 @@
         {
           "attempt_id": "T0017-A002",
           "started_at": "2026-10-21T21:29:13.304Z",
-          "ended_at": "2026-10-21T21:29:13.304Z",
-          "result": "partial",
-          "summary": "Added import com.google.protobuf.gradle.* to make the Protobuf plugin's Android sourceSet extension functions available to Kotlin DSL; extended the contract test to prevent removal of this import. CI for this correction is pending.",
+          "ended_at": "2026-10-21T21:34:09.221Z",
+          "result": "succeeded",
+          "summary": "The Kotlin DSL extension import correction was validated by the exact main commit's CI. Quality gate passed, and both platform builds generated their artifacts successfully.",
           "changed_files": [
             "src/Client.Android/app/build.gradle.kts",
             "tests/test_proto_contract.py",
@@ -2868,19 +2870,25 @@
             "step three/T0017/execution-report.md",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "ba4e6931d49556483315bd86136148c36b7c654d",
           "tests": [
             {
-              "name": "tests/test_proto_contract.py",
-              "result": "pending",
-              "evidence": ".github/workflows/quality.yml",
-              "summary": "Regression assertion added; exact-commit quality workflow must execute it."
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39679219939",
+              "summary": "Unit tests, Python syntax, graph structure, and recorded output/evidence checks all passed."
             },
             {
-              "name": "Windows WPF generation build and Android debug APK build",
-              "result": "pending",
-              "evidence": ".github/workflows/product-build.yml",
-              "summary": "Need exact-commit build results to confirm generated C# and Java-lite code compile."
+              "name": "Windows host build and host lifecycle tests",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39679219914",
+              "summary": "WPF build and artifact upload passed; host lifecycle tests passed."
+            },
+            {
+              "name": "Android debug APK build",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39679219914",
+              "summary": "Gradle assembleDebug and APK artifact upload passed after importing Protobuf Gradle extensions."
             }
           ],
           "failure_details": null,
@@ -2889,7 +2897,7 @@
           "contract_changes": [
             "Added explicit Kotlin DSL import for Protobuf Gradle plugin source-set extension functions."
           ],
-          "follow_up": "Check exact-commit Step Three quality and product-build run; only mark done after Android APK build and Windows C# generated-source build both pass."
+          "follow_up": "T0017 acceptance is satisfied for shared schema and generated-binding build integration. Runtime transport, P2P, inference, encryption and no-persistence remain separate tasks."
         }
       ]
     },
