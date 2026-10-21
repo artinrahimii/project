@@ -166,3 +166,12 @@ When a backend reports unavailable, HostStartup now trims a non-empty reason and
 - No encrypted transport or product-level storage/network audit has been implemented. This source/document review therefore **does not prove** that a future runtime will keep prompt/response data local, encrypted, or unpersisted.
 
 A repeatable documentation/source contract check is in `tests/test_claims_audit.py`. Run it with `python -m unittest discover -s tests -p "test_claims_audit.py" -v`; the full Python quality workflow also executes it. The source-level checks verify honest capability labels and explicit limitations only. AC-LOCAL-01, AC-P2P-01, AC-PRIV-01, and the encryption/storage portions of release acceptance remain **NOT RUN** until real runtime/traffic/storage evidence exists.
+
+
+## T0009 — guard against central inference/history endpoint declarations
+
+Requirement REQ-011 in `docs/requirements.md` prohibits a central API from receiving inference text, generating model responses, or retaining conversation history. The tracked `src/` inventory at V 3.0.44 includes only the Windows host shell and Android client; no central server/API project or central endpoint handler is present. The Android request UI explicitly states that requests are not sent because host transport is not implemented.
+
+The new guard in `tests/test_central_inference_boundary.py` scans first-party source files outside `src/Host.Windows/` for common POST/PUT/PATCH route-handler declarations with paths indicating inference, prompts, chat, completion, responses, conversations, or history. The intended local Windows host is excluded because local inference/request endpoints may legitimately live there; this check also does not prohibit future direct peer-to-peer transport routes.
+
+This is a preventive source-level check, not proof of runtime routing. REQ-011 remains unaccepted until endpoint review, actual transport/network traces, and storage inspection show that any optional rendezvous component handles discovery/connection metadata only and never receives prompt/response content. The current source snapshot has no central prompt service, but Android-to-host transport is not implemented yet.

@@ -1305,8 +1305,8 @@
       ],
       "start_condition": "The current host/UI/docs sources and T0007 evidence have been inspected. The T0007 -> T0008 edge is validated as sequencing_only: preserve the conservative order, but T0008 consumes no specific T0007 output and may proceed while the broader T0007 traceability task remains in_progress.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "tests/test_claims_audit.py",
         "docs/acceptance.md",
@@ -1326,21 +1326,25 @@
         "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
         "src/Host.Windows/MainWindow.xaml"
       ],
-      "notes": "T0008-A001 produced the source audit and UI disclosure changes but failed the exact-commit quality gate because the acceptance wording removed a literal phrase required by tests/test_acceptance_contract.py. T0008-A002 restores that contract, corrects the stale T0005 snapshot description, and refreshes this execution record. The product runtime privacy/P2P/encryption/no-storage gates remain NOT RUN. Current T0008 status stays in_progress until the corrected commit's CI is verified.",
+      "notes": "Bounded claim-audit task complete: current UI/documentation discloses preview and missing functionality; repeatable source/documentation checks pass on V 3.0.44. This is not proof of local inference, P2P, encryption, or no persistent storage. Those runtime acceptance gates remain NOT RUN.",
       "execution_summary": {
         "attempt_count": 2,
         "failed_attempt_count": 1,
         "last_attempt_id": "T0008-A002",
-        "last_attempt_result": "partial",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "docs/acceptance.md",
           "step three/T0008/execution-report.md",
           "step three/project-graph.md"
         ],
         "related_commits": [
-          "457b6af3688c1be2a3dc4b5063b0ea5cf396910f"
+          "457b6af3688c1be2a3dc4b5063b0ea5cf396910f",
+          "340608c9f0c286f3c30fd6263a33d62030c7eb8d"
         ],
-        "tests_passed": [],
+        "tests_passed": [
+          "GitHub Actions Step Three quality gate run 39676627006 — passed for V 3.0.44 / commit 340608c9f0c286f3c30fd6263a33d62030c7eb8d: tests, syntax, graph structure, recorded-output/evidence validation passed.",
+          "GitHub Actions White-P product build run 39676626999 — Windows WPF build job passed, host lifecycle test job passed, Android Build debug APK step passed; Android job cleanup and overall workflow were still in progress when checked."
+        ],
         "tests_failed": [
           "GitHub Actions Step Three quality gate run 39676332828 failed on V 3.0.43: 38 Python tests, one failure; existing acceptance text contract required `not yet passed by the product`."
         ],
@@ -1386,21 +1390,46 @@
         {
           "attempt_id": "T0008-A002",
           "started_at": "2026-10-22T04:45:00Z",
-          "ended_at": "2026-10-22T04:45:00Z",
-          "result": "partial",
-          "summary": "Fixed the quality-gate regression by restoring the literal release-acceptance phrase required by the existing contract test. Corrected the stale T0005 paragraph to acknowledge the actual Windows and Android build projects and the successful V 3.0.42 baseline runs. Updated the T0007-A007 acceptance note to cite the real successful workflows. The new commit's CI remains pending.",
+          "ended_at": "2026-10-21T21:12:00Z",
+          "result": "succeeded",
+          "summary": "Corrected the acceptance-contract wording and stale T0005 snapshot. The exact-commit quality gate passed its tests, syntax, graph, and evidence checks. The Windows WPF build job and host lifecycle test job completed successfully; Android Build debug APK step passed, while its job was still in post-job Gradle cleanup at last check.",
           "changed_files": [
             "docs/acceptance.md",
             "step three/T0008/execution-report.md",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
-          "tests": [],
+          "commit_sha": "340608c9f0c286f3c30fd6263a33d62030c7eb8d",
+          "tests": [
+            {
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39676627006",
+              "summary": "Completed successfully for V 3.0.44; automated tests, Python syntax, graph structure, and recorded-output/evidence validation all passed."
+            },
+            {
+              "name": "Windows WPF build",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39676626999",
+              "summary": "Build host step and job completed successfully for V 3.0.44."
+            },
+            {
+              "name": "Host lifecycle tests",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39676626999",
+              "summary": "Lifecycle test step and job completed successfully for V 3.0.44."
+            },
+            {
+              "name": "Android debug APK",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39676626999",
+              "summary": "Build debug APK step completed successfully. The overall job was still running post-job Gradle cleanup at last inspection, so no overall product-workflow success is claimed."
+            }
+          ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect the quality and product-build workflow results for the new V 3.0.44 commit. Record exact outcomes and do not mark T0008 complete if either required quality validation fails."
+          "follow_up": "T0008 is done for the bounded source/documentation claim-audit scope. This does not prove actual local inference, P2P, encryption, or no-storage; the respective release gates remain NOT RUN. Review T0008 -> T0009 and start the independent central-endpoint boundary check."
         }
       ]
     },
@@ -1408,9 +1437,7 @@
       "id": "T0009",
       "title": "هیچ API مرکزی برای دریافت متن درخواست، تولید پاسخ هوش مصنوعی یا ذخیرهٔ تاریخچهٔ مکالمه اضافه نکن.",
       "section": "قانون تکمیل وظیفه",
-      "depends_on": [
-        "T0008"
-      ],
+      "depends_on": [],
       "inputs": [
         "خروجی تأییدشدهٔ پیش‌نیازها",
         "نیازمندی مرتبط: هیچ API مرکزی برای دریافت متن درخواست، تولید پاسخ هوش مصنوعی یا ذخیرهٔ تاریخچهٔ مکالمه اضافه نکن."
@@ -1418,22 +1445,40 @@
       "outputs": [
         "خروجی قابل بررسی مربوط به «هیچ API مرکزی برای دریافت متن درخواست، تولید پاسخ هوش مصنوعی یا ذخیرهٔ تاریخچهٔ مکالمه اضافه نکن.» در مسیر docs/acceptance.md + tests/ (معیار و آزمون متناظر)؛ همراه با آزمون/شاهد پذیرش متناسب."
       ],
-      "start_condition": "همهٔ پیش‌نیازهای T0008 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
+      "start_condition": "Reviewed REQ-011 and the checked-in source inventory. The T0008 -> T0009 edge is validated as sequencing_only and retained for conservative ordering. No central server/API project or handler appears in the current source tree; add a repeatable narrow guard for central inference/prompt/chat/response/conversation/history route declarations outside the local Windows host, without claiming runtime traffic privacy.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
-      "expected_output_paths": [
-        "docs/acceptance.md + tests/ (معیار و آزمون متناظر)"
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "tests/test_central_inference_boundary.py",
+        "docs/acceptance.md",
+        "step three/T0009/execution-report.md"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "expected_output_paths": [
+        "tests/test_central_inference_boundary.py",
+        "docs/acceptance.md",
+        "step three/T0009/execution-report.md"
+      ],
+      "evidence": [
+        "tests/test_central_inference_boundary.py",
+        "docs/acceptance.md",
+        "docs/requirements.md",
+        "README.md",
+        "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
+        "src/Host.Windows/HostLifecycle.cs"
+      ],
+      "notes": "The current source snapshot contains no central service or central prompt/response/history endpoint; client transport is not implemented. The source guard is preventive only and cannot prove that future request bytes avoid relays or persistent storage. REQ-011 network/endpoint/storage acceptance remains NOT RUN.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0009-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "tests/test_central_inference_boundary.py",
+          "docs/acceptance.md",
+          "step three/T0009/execution-report.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
@@ -1446,7 +1491,28 @@
           "review_evidence": []
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0009-A001",
+          "started_at": "2026-10-21T21:12:00Z",
+          "ended_at": "2026-10-21T21:12:00Z",
+          "result": "partial",
+          "summary": "Reviewed the checked-in source tree and REQ-011. No central server/API project or handler appears in this snapshot. Added a narrow automated source guard for common central inference/prompt/chat/response/conversation/history route declarations outside the local Windows host. This does not prove runtime network or storage behavior; CI for this revision is pending.",
+          "changed_files": [
+            "tests/test_central_inference_boundary.py",
+            "docs/acceptance.md",
+            "step three/T0009/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect the Step Three quality gate for the exact new commit. Fix any failure and keep T0009 in_progress until CI passes. Do not claim end-to-end no-central handling until network/storage evidence is available."
+        }
+      ]
     },
     {
       "id": "T0010",
@@ -12193,10 +12259,15 @@
       "from": "T0008",
       "to": "T0009",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0009 enforces the separate REQ-011 prohibition on central prompt/response/history endpoints. It uses the current source inventory and requirements directly, and consumes no specific artifact produced by T0008's claim audit. The edge and conservative sequence remain, but the relationship is not a proven technical prerequisite.",
+      "validation_status": "validated",
+      "evidence": [
+        "step one/V1.0.md: T0008 audits capability/privacy claims; T0009 prohibits a central prompt/response/history API.",
+        "docs/requirements.md: REQ-011 says endpoint review and network-level evidence are required and source-code search alone is insufficient.",
+        "Repository source tree on V 3.0.44 contains Windows host and Android client projects only; no central server/API project or handler is present.",
+        "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt states that requests are not sent and no host transport exists."
+      ]
     },
     {
       "from": "T0009",
@@ -16311,6 +16382,21 @@
         "src/Host.Windows/HostLifecycle.cs: UnconfiguredInferenceBackend.IsAvailable returns false.",
         "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt: request action only updates local UI status and states transport is not implemented.",
         "README.md and docs/requirements.md: current capability boundaries and requirements-not-claims disclosures."
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-21T21:12:00Z",
+      "edge_from": "T0008",
+      "edge_to": "T0009",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "reason": "T0009 audits the separate no-central-prompt/history API boundary. It reads REQ-011 and the source inventory directly and consumes no T0008-specific output; preserve the edge and order without creating an unsupported technical dependency.",
+      "evidence": [
+        "step one/V1.0.md: T0008 audits capability/privacy claims; T0009 prohibits a central prompt/response/history API.",
+        "docs/requirements.md: REQ-011 says endpoint review and network-level evidence are required and source-code search alone is insufficient.",
+        "Repository source tree on V 3.0.44 contains Windows host and Android client projects only; no central server/API project or handler is present.",
+        "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt states that requests are not sent and no host transport exists."
       ],
       "reviewed_by": "Step Three execution review"
     }
