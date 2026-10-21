@@ -825,7 +825,8 @@
         "src/Host.Windows/WhiteP.Host.Windows.csproj",
         "src/Client.Android/app/build.gradle.kts",
         ".github/workflows/product-build.yml",
-        "step three/T0005/execution-report.md"
+        "step three/T0005/execution-report.md",
+        "tests/test_product_build_contract.py"
       ],
       "expected_output_paths": [
         "docs/acceptance.md + tests/ (معیار و آزمون متناظر)"
@@ -836,7 +837,8 @@
         "src/Host.Windows/WhiteP.Host.Windows.csproj",
         "src/Client.Android/app/build.gradle.kts",
         "https://github.com/artinrahimii/project/actions/runs/39641644577",
-        "https://github.com/artinrahimii/project/actions/runs/39641644748"
+        "https://github.com/artinrahimii/project/actions/runs/39641644748",
+        "tests/test_product_build_contract.py"
       ],
       "notes": "Windows WPF و Android debug APK در run 39641644577 ساخته شدند. شواهد build را تأیید می‌کنند، نه inference یا P2P. یال T0004 → T0005 همچنان unreviewed است.",
       "execution_summary": {
@@ -849,7 +851,8 @@
           "step three/T0005/execution-report.md",
           "step three/T0006/execution-report.md",
           "step three/T0014/execution-report.md",
-          "step three/T0016/execution-report.md"
+          "step three/T0016/execution-report.md",
+          "tests/test_product_build_contract.py"
         ],
         "related_commits": [
           "90d48be3129cc1d721e0bc5311ec611ba5ccf7b7"
@@ -1591,7 +1594,7 @@
       ],
       "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
       "execution_summary": {
-        "attempt_count": 4,
+        "attempt_count": 5,
         "failed_attempt_count": 0,
         "last_attempt_id": "T0014-A005",
         "last_attempt_result": "partial",
@@ -1910,7 +1913,7 @@
       ],
       "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
       "execution_summary": {
-        "attempt_count": 4,
+        "attempt_count": 5,
         "failed_attempt_count": 3,
         "last_attempt_id": "T0016-A005",
         "last_attempt_result": "partial",
