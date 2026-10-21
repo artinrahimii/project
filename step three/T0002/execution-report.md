@@ -1,31 +1,32 @@
 # T0002 — گزارش اجرای واقعی
 
 - Attempt: T0002-A001
-- شروع تلاش: 2026-10-21T17:57:02+03:30
-- پایان ثبت این تلاش: 2026-10-21T17:58:04+03:30
-- نتیجهٔ فعلی: partial؛ تا مشاهدهٔ نتیجهٔ واقعی GitHub Actions، تکمیل تأیید نمی‌شود.
+- نتیجه: success؛ خروجی و معیارهای پذیرش پایه تأیید شدند.
+- Commit حاوی workflow: \`b35fe908672f1232dee0bf6b7c5d5babd6146a4b\`
+- اجرای CI: [GitHub Actions run 39617156456](https://github.com/artinrahimii/project/actions/runs/39617156456)
 
-## تغییر واقعی
+## پیاده‌سازی
 
-فایل .github/workflows/quality.yml اضافه شد. این workflow روی push به main، pull request و اجرای دستی فعال است. دسترسی job به contents فقط خواندنی است؛ دو Action بیرونی با SHA کامل pin شده‌اند. مراحل workflow شامل آزمون‌های خودکار، بررسی syntax پایتون و اجرای graph guard با و بدون بررسی وجود فایل‌های خروجی است.
+فایل \`.github/workflows/quality.yml\` یک quality gate واقعی برای push به \`main\`، pull request و اجرای دستی اضافه می‌کند. مجوز \`contents: read\` است و Actionهای checkout و setup-python با SHA کامل pin شده‌اند.
 
-## آزمون‌های محلی اجراشده
+## شواهد آزمون
 
-- python -m unittest discover -s tests -v — موفق؛ ۱۱ از ۱۱ آزمون پاس شد.
-- python -m compileall -q tools tests — موفق.
-- بررسی‌های ایستای workflow — موفق؛ triggerها، فرمان‌های تست و بررسی گراف، و SHAهای Actionها بررسی شدند.
-- فایل workflow با PyYAML خوانده شد؛ parser مورد استفاده YAML 1.1 است و کلید on را به boolean تعبیر می‌کند، بنابراین این نتیجه به‌تنهایی آزمون parser اختصاصی GitHub Actions محسوب نمی‌شود.
+- \`python -m unittest discover -s tests -v\` — موفق؛ ۱۱ آزمون محلی.
+- \`python -m compileall -q tools tests\` — موفق.
+- GitHub Actions run 39617156456 — موفق؛ هر هفت مرحلهٔ workflow با conclusion برابر success پایان یافتند: checkout، تنظیم Python، آزمون‌های خودکار، بررسی syntax، اعتبارسنجی ساختار گراف و بررسی فایل‌های خروجی/شواهد.
+- گراف با \`tools/graph_guard.py\` در CI بررسی شد، با و بدون \`--repo-root .\`.
 
-## چرا هنوز done نیست؟
+## محدوده و محدودیت
 
-وظیفهٔ T0002 به ثبت اجرای موفق در CI نیاز دارد. فایل workflow و آزمون‌های محلی وجود دارند، اما این گزارش قبل از مشاهدهٔ نتیجهٔ اجرای آنلاین ثبت می‌شود. پس وضعیت درست در این commit، in_progress است؛ پس از مشاهدهٔ CI باید نتیجه ثبت و وضعیت دوباره ارزیابی شود. این repository هنوز قابلیت‌های اصلی Windows/Android/P2P ندارد؛ این workflow برای کد و آزمون‌های موجود در حال حاضر یک gate پایه ایجاد می‌کند و ادعای پوشش قابلیت‌های آینده را ندارد.
+این وظیفه، quality gate کد و آزمون‌های فعلی را فراهم می‌کند. این نتیجه به معنای ساخته‌شدن یا آزموده‌شدن محصول Windows/Android/P2P نیست و ادعایی دربارهٔ قابلیت‌هایی که هنوز در مخزن پیاده‌سازی نشده‌اند ندارد.
 
-## فایل‌های تغییر‌یافته
+## فایل‌های مرتبط
 
-- .github/workflows/quality.yml
-- step three/T0002/execution-report.md
-- step three/project-graph.md
+- \`.github/workflows/quality.yml\`
+- \`tests/test_graph_guard.py\`
+- \`tools/graph_guard.py\`
+- \`step three/project-graph.md\`
 
-## گام بعدی
+## ادامه
 
-نتیجهٔ workflow اجراشده از commit V 3.0.4 را از GitHub Actions بخوان. فقط در صورت موفقیت واقعی، T0002 را done کن؛ در صورت شکست، لاگ را بررسی، خطا را اصلاح و workflow را مجدداً اجرا کن.
+طبق ترتیب گراف، پیش‌نیاز بعدی را فقط پس از خواندن شرح و معیار پذیرش از Step One و بررسی خروجی‌ها/یال‌های مرتبط انتخاب کن. ۴۲۵ یال دیگر هنوز بررسی‌نشده‌اند و نباید برای موازی‌سازی حذف شوند.

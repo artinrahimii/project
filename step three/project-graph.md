@@ -437,8 +437,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0001 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال انجام",
+      "status": "done",
+      "status_fa": "تکمیل‌شده",
       "actual_output_paths": [
         ".github/workflows/quality.yml",
         "step three/T0002/execution-report.md"
@@ -450,22 +450,25 @@
         "step three/T0002/execution-report.md",
         "tests/test_graph_guard.py"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود. تلاش T0002-A001 یک workflow واقعی CI و gate آزمون‌های محلی ایجاد کرد. وضعیت تا مشاهدهٔ اجرای موفق GitHub Actions عمداً در حال انجام باقی مانده است.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود. تلاش T0002-A001 یک workflow واقعی CI و gate آزمون‌های محلی ایجاد کرد. وضعیت تا مشاهدهٔ اجرای موفق GitHub Actions عمداً در حال انجام باقی مانده است. CI آنلاین در commit b35fe908672f1232dee0bf6b7c5d5babd6146a4b با موفقیت اجرا شد؛ تمام هفت مرحلهٔ job موفق بودند.",
       "execution_summary": {
         "attempt_count": 1,
         "failed_attempt_count": 0,
         "last_attempt_id": "T0002-A001",
-        "last_attempt_result": "partial",
+        "last_attempt_result": "success",
         "changed_files": [
           ".github/workflows/quality.yml",
           "step three/T0002/execution-report.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
+        "related_commits": [
+          "b35fe908672f1232dee0bf6b7c5d5babd6146a4b"
+        ],
         "tests_passed": [
           "python -m unittest discover -s tests -v — 11 passed locally",
           "python -m compileall -q tools tests — passed",
-          "workflow static checks — passed"
+          "workflow static checks — passed",
+          "GitHub Actions run 39617156456 — success; all seven workflow steps passed."
         ],
         "tests_failed": [],
         "blocked_reason": null,
@@ -481,15 +484,15 @@
         {
           "attempt_id": "T0002-A001",
           "started_at": "2026-10-21T17:57:02+03:30",
-          "ended_at": "2026-10-21T17:58:04+03:30",
-          "result": "partial",
-          "summary": "Added a GitHub Actions quality gate. Local unit tests and syntax checks passed; online CI must pass before accepting the task.",
+          "ended_at": "2026-10-21T18:29:06+03:30",
+          "result": "success",
+          "summary": "Added the quality-gate workflow; local checks and the actual GitHub Actions run passed.",
           "changed_files": [
             ".github/workflows/quality.yml",
             "step three/T0002/execution-report.md",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "b35fe908672f1232dee0bf6b7c5d5babd6146a4b",
           "tests": [
             {
               "command": "python -m unittest discover -s tests -v",
@@ -505,6 +508,12 @@
               "command": "GitHub Actions quality workflow",
               "result": "pending",
               "summary": "Must be observed after this commit is pushed"
+            },
+            {
+              "command": "GitHub Actions run 39617156456",
+              "result": "passed",
+              "summary": "All workflow steps succeeded on commit b35fe908672f1232dee0bf6b7c5d5babd6146a4b.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/39617156456"
             }
           ],
           "failure_details": null,
