@@ -1111,8 +1111,8 @@
       ],
       "start_condition": "این وظیفه می‌تواند مستقل از تکمیل T0010 آغاز شود؛ README باید وضعیت واقعی اجزای محصول و محدودیت build را صادقانه بیان کند. مسیرهای ساخت قابل‌تکرار در T0010 همچنان جداگانه الزامی‌اند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال انجام",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "README.md",
         "tests/test_readme_contract.py",
@@ -1125,20 +1125,27 @@
         "tests/test_readme_contract.py",
         "step three/T0011/execution-report.md"
       ],
-      "notes": "T0010 → T0011 بازبینی شد: T0010 یک کنترل سراسری تکرارپذیری ساخت است و خروجی فنی لازم برای نوشتن معرفی محصول را تولید نمی‌کند. یال برای حفظ ترتیب تاریخی در edges باقی می‌ماند، اما به‌عنوان sequencing_only طبقه‌بندی شده و دیگر پیش‌نیاز فنی T0011 نیست. README محدودیت‌های فعلی build را صریح می‌گوید.",
+      "notes": "README محصول و آزمون قراردادی افزوده شدند. GitHub Actions run 39625575272 روی commit ec9aa13ff4bd78ea82b6ea75413967975a399e13 موفق شد؛ آزمون‌های خودکار، بررسی syntax، ساختار گراف و خروجی/شواهد همگی موفق بودند. این وظیفه فقط مستندات صادقانهٔ هدف/محدوده را تکمیل می‌کند و به معنای ساخت محصول Windows/Android/P2P نیست.",
       "execution_summary": {
         "attempt_count": 1,
         "failed_attempt_count": 0,
         "last_attempt_id": "T0011-A001",
-        "last_attempt_result": "in_progress",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "README.md",
           "tests/test_readme_contract.py",
           "step three/T0011/execution-report.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
+        "related_commits": [
+          "ec9aa13ff4bd78ea82b6ea75413967975a399e13"
+        ],
+        "tests_passed": [
+          "python -m unittest discover -s tests -v — passed in GitHub Actions run 39625575272",
+          "python -m compileall -q tools tests — passed in GitHub Actions run 39625575272",
+          "python tools/graph_guard.py step three/project-graph.md — passed in GitHub Actions run 39625575272",
+          "python tools/graph_guard.py step three/project-graph.md --repo-root . — passed in GitHub Actions run 39625575272"
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -1153,22 +1160,43 @@
         {
           "attempt_id": "T0011-A001",
           "started_at": "2026-10-21T18:55:00+03:30",
-          "ended_at": null,
-          "result": "in_progress",
-          "summary": "Created a truthful product README and an automated contract test. CI must run before acceptance can be marked complete.",
+          "ended_at": "2026-10-21T18:57:00+03:30",
+          "result": "succeeded",
+          "summary": "Created product README and five automated README contract tests. GitHub Actions run 39625575272 passed all quality-gate steps.",
           "changed_files": [
             "README.md",
             "tests/test_readme_contract.py",
             "step three/T0011/execution-report.md",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
-          "tests": [],
+          "commit_sha": "ec9aa13ff4bd78ea82b6ea75413967975a399e13",
+          "tests": [
+            {
+              "command": "python -m unittest discover -s tests -v",
+              "result": "passed",
+              "summary": "The automated test step passed in GitHub Actions run 39625575272."
+            },
+            {
+              "command": "python -m compileall -q tools tests",
+              "result": "passed",
+              "summary": "The syntax-check step passed in GitHub Actions run 39625575272."
+            },
+            {
+              "command": "python tools/graph_guard.py step three/project-graph.md",
+              "result": "passed",
+              "summary": "Graph structure validation passed in GitHub Actions run 39625575272."
+            },
+            {
+              "command": "python tools/graph_guard.py step three/project-graph.md --repo-root .",
+              "result": "passed",
+              "summary": "Output/evidence validation passed in GitHub Actions run 39625575272."
+            }
+          ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Verify GitHub Actions. Only mark done after the new test and full quality gate pass."
+          "follow_up": "Continue with T0012 after reviewing its dependencies; do not infer application build completion from this documentation task."
         }
       ]
     },
