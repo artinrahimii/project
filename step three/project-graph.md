@@ -1329,35 +1329,78 @@
       "outputs": [
         "خروجی قابل بررسی مربوط به «فایل `docs/acceptance.md` را با آزمون‌های قبولی نهایی میزبان ویندوز، اندروید و تبادل P2P ایجاد کن.» در مسیر README.md + docs/decisions/ + فایل‌های تنظیمات build؛ همراه با آزمون/شاهد پذیرش متناسب."
       ],
-      "start_condition": "همهٔ پیش‌نیازهای T0012 و T0010 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
+      "start_condition": "T0012 must be complete so each acceptance gate traces to the approved requirements baseline. T0010 is a sequencing-only prerequisite for authoring this acceptance matrix, but its reproducible-build requirement remains mandatory before final release acceptance. Do not mark runtime, platform-build, privacy, or P2P gates passed until their real tests run.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
-      "expected_output_paths": [
-        "README.md + docs/decisions/ + فایل‌های تنظیمات build"
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "docs/acceptance.md",
+        "tests/test_acceptance_contract.py",
+        "step three/T0013/execution-report.md"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "expected_output_paths": [
+        "docs/acceptance.md",
+        "tests/test_acceptance_contract.py",
+        "step three/T0013/execution-report.md"
+      ],
+      "evidence": [
+        "tests/test_acceptance_contract.py",
+        "step three/T0013/execution-report.md"
+      ],
+      "notes": "Acceptance matrix and automated document-contract tests have been added, but T0013 remains in_progress until the new checks and graph/output validation pass in GitHub Actions. The matrix defines required future runtime/build/network evidence; it does not claim those product capabilities currently work. T0010 remains outstanding and T0005 remains blocked because application build projects are absent.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0013-A001",
+        "last_attempt_result": "in_progress",
+        "changed_files": [
+          "docs/acceptance.md",
+          "tests/test_acceptance_contract.py",
+          "step three/T0013/execution-report.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
+          "state": "completed",
+          "triggering_contracts": [
+            "REQ-001 through REQ-020"
+          ],
           "affected_by_contract_changes": [],
-          "review_evidence": []
+          "review_evidence": [
+            "docs/requirements.md",
+            "step three/T0012/execution-report.md"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0013-A001",
+          "started_at": "2026-10-21T20:12:00+03:30",
+          "ended_at": null,
+          "result": "in_progress",
+          "summary": "Created the release acceptance matrix and automated document-contract test source. Awaiting the repository CI run before claiming completion.",
+          "changed_files": [
+            "docs/acceptance.md",
+            "tests/test_acceptance_contract.py",
+            "step three/T0013/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "Validated T0012 → T0013 as contract_or_interface_dependency.",
+            "Validated T0010 → T0013 as sequencing_only for authoring the acceptance matrix; final build gates remain mandatory."
+          ],
+          "follow_up": "Run GitHub Actions. Only mark T0013 done after all checks pass and the recorded evidence is verified."
+        }
+      ]
     },
     {
       "id": "T0014",
@@ -11190,19 +11233,26 @@
       "from": "T0012",
       "to": "T0013",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0013's acceptance matrix must be traceable to the measurable functional, security, privacy, and release requirements defined by T0012. Those requirements are a real input to the acceptance criteria; this does not assert that the corresponding features are implemented.",
+      "validation_status": "validated",
+      "evidence": [
+        "docs/requirements.md: REQ-001 through REQ-020 provide the acceptance source requirements and verification methods.",
+        "step three/T0012/execution-report.md: records T0012 as done with a successful CI run."
+      ]
     },
     {
       "from": "T0010",
       "to": "T0013",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "Writing a testable final-acceptance matrix does not consume build artifacts and can be completed before platform build entrypoints exist. However, the matrix explicitly requires clean Windows/Android builds and runtime/P2P evidence before release acceptance; this classification does not waive T0010 or claim product builds pass.",
+      "validation_status": "validated",
+      "evidence": [
+        "docs/acceptance.md: final release gates require clean platform builds and runtime/network evidence before release approval.",
+        "docs/requirements.md: REQ-018 explicitly states that Python graph checks alone do not satisfy reproducible product builds.",
+        "step three/T0005/execution-report.md: confirms the current repository snapshot lacks Windows/.NET and Android/Gradle application build entrypoints."
+      ]
     },
     {
       "from": "T0013",

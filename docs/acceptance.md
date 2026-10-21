@@ -40,3 +40,68 @@ This is a conservative static check, not proof that arbitrary code is correct or
 ## Task T0005 — reproducible build paths (blocked pending application projects)
 
 The current `quality.yml` runs Python unit tests, Python syntax validation, graph validation, and recorded-output/evidence validation. It does **not** build the intended Windows host, Android client, or shared contracts. In the inspected `main` snapshot, `src/Host.Windows/`, `src/Client.Android/`, `src/Shared.Contracts/`, a .NET solution, and Android Gradle build files are absent. Consequently, passing the Python quality workflow is not a successful product build and cannot satisfy T0005. Keep T0005 blocked until real project/build entrypoints exist and the corresponding builds run successfully in CI; do not replace this requirement with a demo or documentation-only claim.
+
+## T0013 — Final Windows, Android, and P2P acceptance matrix
+
+**Gate status:** defined; not yet passed by the product. This matrix specifies evidence required for release approval. The repository currently has no Windows host project, Android Gradle project, shared Protobuf contract source, or product runtime test harness, so none of the runtime gates below may be reported as passed merely because this document or its contract tests exist.
+
+### Release decision rule
+
+A release candidate is accepted only when every applicable gate below has a linked test result or inspection record from the actual implementation. A missing project, skipped test, mocked-only end-to-end path, unavailable device, or unrecorded result is **not passed**. Mark each gate `PASS`, `FAIL`, or `NOT RUN`; `NOT RUN` blocks release acceptance. Preserve logs and toolchain versions without recording prompts, model responses, credentials, or other sensitive payloads.
+
+### Gate matrix
+
+| Gate | Required real acceptance evidence | Required verification | Failure condition |
+|---|---|---|---|
+| AC-WIN-01 — Windows build and launch | Clean-checkout build log, produced executable, OS/.NET versions, and launch smoke-test result | Build the actual Windows host project on a supported Windows runner; launch it and verify the initial UI opens without an unhandled exception | Missing project/artifact, failed build, failed launch, or absent log |
+| AC-WIN-02 — Host lifecycle | Test results for Stopped, Starting, Ready, Busy, and Error states | Exercise real lifecycle transitions and verify displayed states derive from runtime state | State is hard-coded, unreachable, or does not match runtime |
+| AC-AND-01 — Android build and UI | Clean Gradle build log, APK artifact, SDK/JDK versions, and automated UI/instrumentation result | Build the actual Android project and open the app in an emulator or device; verify request entry and visible state/error UI | Missing APK, failed build, or UI test not run |
+| AC-HOST-01 — Hardware and capacity | Test logs for adequate/insufficient RAM and storage, unsupported backend, and unknown capability | Derive readiness from actual OS/backend observations; unknown or insufficient capacity must not report Ready | Fabricated capability or unsupported host reports Ready |
+| AC-LOCAL-01 — Local inference | Integration log from a real local backend and supported test model; backend health and generated result | Send a request to the backend on the same host and verify a backend-generated response; separately audit outbound inference traffic | Mock-only response, cloud inference request, or no runtime evidence |
+| AC-LOCAL-02 — Single active inference | Concurrency test report for overlapping requests | Start two requests concurrently and prove inference execution never overlaps; verify the defined busy/wait policy | Two concurrent executions or undefined outcome |
+| AC-MODEL-01 — Model metadata and install integrity | Catalog validation and controlled local-fixture install report | Validate license/source/checksum/backend metadata; test streaming writes, checksum rejection, cancellation, and atomic activation | Invalid metadata silently accepted or corrupt/incomplete file activated |
+| AC-P2P-01 — Direct request/response | Multi-process or multi-device transport integration result with endpoint/packet inspection | Transfer a request and response directly between Android client and host; verify the payload path does not traverse a rendezvous relay | UI-only test, same-process simulation, or relay carrying inference content |
+| AC-PRIV-01 — No central prompt/response handling | Endpoint review plus transport/network trace and storage inspection | Verify no central inference/history endpoint receives prompt or response content and rendezvous messages contain discovery/connection metadata only | Prompt/response appears at a central endpoint, relay, or persistent conversation store |
+| AC-ID-01 — Temporary request identity | Protocol tests and rendezvous storage/payload inspection | Verify request identifiers are temporary, not a stable account identity, and not retained by rendezvous infrastructure | Persistent user identifier required for inference routing or request ID persisted centrally |
+| AC-PROTO-01 — Shared protocol | Source Protobuf contract, reproducible generation log, C#/Kotlin round-trip fixture results | Generate both platform bindings from the checked-in source; test compatible and incompatible protocol versions | Generated sources drift, round-trip mismatch, or incompatible version accepted |
+| AC-INPUT-01 — Bounds and validation | Boundary-test report | Test below-limit, at-limit, over-limit, missing-field, invalid-value, and incompatible-version cases before inference starts | Invalid input reaches inference or boundaries are untested |
+| AC-FAIL-01 — Deadline and failure states | Test results for deadline, cancellation, disconnect, malformed response, and backend failure | Confirm each condition yields a distinct typed failure and never a success-shaped model response | Failure appears as successful output or cancellation is ignored |
+| AC-STATUS-01 — Busy and unsupported model | Shared protocol fixture tests and Android integration/UI results | Serialize/deserialize busy and unsupported-model outcomes; verify the client displays each as a non-success state | Outcome is ambiguous, lost, or rendered as success |
+| AC-TOOLS-01 — Agent-tool safety | Tool-policy and process-boundary test report | Reject unknown tools/arguments; require confirmation for side effects; prove arbitrary system commands are disabled by default | Unapproved or arbitrary command execution is possible |
+| AC-CI-01 — Reproducible release build | Successful clean-checkout CI logs for Windows, Android, and shared contracts, with pinned toolchain versions | Restore dependencies, build actual projects, run their tests/lint, and verify failures fail the workflow | Only Python/graph checks run, or a product build/test is skipped or failing |
+| AC-CLAIMS-01 — Claims and scope | Documentation contract-test output and claim-to-evidence audit | Ensure privacy/security/capability claims link to repeatable evidence and out-of-scope items are not represented as delivered | Unsupported local-only/P2P/encryption/no-storage claim or scope misrepresentation |
+
+### Requirement-to-gate traceability
+
+| Requirement | Acceptance gate(s) |
+|---|---|
+| REQ-001 | AC-WIN-01, AC-WIN-02 |
+| REQ-002 | AC-AND-01 |
+| REQ-003 | AC-LOCAL-01 |
+| REQ-004 | AC-LOCAL-01 |
+| REQ-005 | AC-LOCAL-02 |
+| REQ-006 | AC-HOST-01 |
+| REQ-007 | AC-MODEL-01 |
+| REQ-008 | AC-MODEL-01 |
+| REQ-009 | AC-P2P-01, AC-STATUS-01 |
+| REQ-010 | AC-P2P-01 |
+| REQ-011 | AC-PRIV-01 |
+| REQ-012 | AC-ID-01 |
+| REQ-013 | AC-PROTO-01 |
+| REQ-014 | AC-INPUT-01 |
+| REQ-015 | AC-FAIL-01 |
+| REQ-016 | AC-STATUS-01 |
+| REQ-017 | AC-TOOLS-01 |
+| REQ-018 | AC-CI-01 |
+| REQ-019 | AC-CLAIMS-01 |
+| REQ-020 | AC-CLAIMS-01 |
+
+The matrix groups related requirements for operational use but does not replace the detailed acceptance text in `docs/requirements.md`. Before release, each listed requirement must pass its own acceptance condition as well as the corresponding gate.
+
+### Evidence record template
+
+For each gate, record: gate ID, `PASS/FAIL/NOT RUN`, commit SHA under test, command or test identifier, runner/device and OS/toolchain versions, artifact/log URL, observed result, and reviewer/date. Store evidence references in the task report and graph; do not copy prompt text, generated responses, access tokens, or private model data into logs.
+
+### Current result
+
+All AC-* gates are **NOT RUN for the product** until the corresponding real application projects and test harnesses exist. The current Python quality workflow can validate this matrix's document contract, but it cannot establish that the Windows host, Android client, local inference, or direct P2P transport works.
