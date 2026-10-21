@@ -121,3 +121,10 @@ The host must not display `Ready` while the backend is unavailable. The current 
 The host lifecycle decision “Ready is allowed only when the configured inference backend reports available” is reflected in `src/Host.Windows/HostLifecycle.cs` and covered by the executable harness `tests/HostLifecycle.Tests/Program.cs`. The harness checks both sides of the decision: an unconfigured backend must yield Error, while an available test backend may yield Ready. The available backend is a test double used only to exercise the branch; it is not a production inference backend.
 
 The test result for this revision is pending the GitHub Actions run. This single traced decision does not complete the broader T0007 requirement or establish real inference readiness.
+
+
+## T0007-A002 — backend startup failure containment
+
+HostStartup.Start now converts an exception thrown while checking the inference backend into a stable Error status rather than allowing the exception to escape the startup path. The user-facing message deliberately excludes raw exception details. The executable lifecycle harness adds a throwing-backend regression case and checks both the Error state and absence of leaked exception text.
+
+Run in CI with .NET 10: dotnet run --project tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj --configuration Release. This covers error containment around backend availability checking only; it does not implement or verify a real inference backend. Result for the new revision: pending GitHub Actions.

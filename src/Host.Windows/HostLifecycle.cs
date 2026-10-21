@@ -16,8 +16,16 @@ public sealed class HostLifecycle
 public interface IInferenceBackend { bool IsAvailable {get;} string UnavailableReason {get;} }
 public sealed class HostStartup(HostLifecycle lifecycle,IInferenceBackend backend) {
  public HostStatus Start() {
- lifecycle.Transition(HostState.Starting,"Checking local inference backend.");
- return backend.IsAvailable ? lifecycle.Transition(HostState.Ready,"Local inference backend is ready.") : lifecycle.Transition(HostState.Error,backend.UnavailableReason);
+  lifecycle.Transition(HostState.Starting,"Checking local inference backend.");
+  try {
+   return backend.IsAvailable
+    ? lifecycle.Transition(HostState.Ready,"Local inference backend is ready.")
+    : lifecycle.Transition(HostState.Error,backend.UnavailableReason);
+  }
+  catch (Exception) {
+   // Keep raw backend exception details out of the user-visible status.
+   return lifecycle.Transition(HostState.Error,"Local inference backend check failed. Host is not ready.");
+  }
  }}
 public sealed class UnconfiguredInferenceBackend : IInferenceBackend {
  public bool IsAvailable=>false;

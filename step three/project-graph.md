@@ -112,7 +112,6 @@
 ساختار زیر JSON معتبر و قابل‌پردازش ماشینی است. فهرست `nodes` همهٔ وظایف را دارد و `edges` یال‌های جهت‌دار وابستگی را ارائه می‌کند.
 
 ```json
-
 {
   "schema_version": "1.0",
   "document": "v2.1",
@@ -1081,15 +1080,17 @@
       "evidence": [
         "tests/HostLifecycle.Tests/Program.cs",
         "src/Host.Windows/HostLifecycle.cs",
-        "docs/acceptance.md"
+        "docs/acceptance.md",
+        "step three/T0007/execution-report.md"
       ],
-      "notes": "A concrete lifecycle decision is now traced through implementation, executable test and acceptance evidence. This does not satisfy the whole umbrella task; CI validation is pending and real inference remains unimplemented.",
+      "notes": "T0007 remains a broad traceability task. A second concrete decision now ensures backend availability-check exceptions produce a stable Error state without leaking raw exception text. The new regression test awaits CI; real inference remains unimplemented.",
       "execution_summary": {
-        "attempt_count": 1,
+        "attempt_count": 2,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0007-A001",
+        "last_attempt_id": "T0007-A002",
         "last_attempt_result": "partial",
         "changed_files": [
+          "src/Host.Windows/HostLifecycle.cs",
           "tests/HostLifecycle.Tests/Program.cs",
           "docs/acceptance.md",
           "step three/T0007/execution-report.md",
@@ -1127,6 +1128,27 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Verify the .NET lifecycle test job on this commit. Keep T0007 in progress until its broad traceability criterion is covered; implement a real inference backend in the appropriate task before claiming backend readiness."
+        },
+        {
+          "attempt_id": "T0007-A002",
+          "started_at": "2026-10-21T21:00:00-04:00",
+          "ended_at": "2026-10-21T21:00:00-04:00",
+          "result": "partial",
+          "summary": "Contained exceptions from the backend availability check and added a regression test requiring a stable Error status without exposing raw exception details. CI result is pending.",
+          "changed_files": [
+            "src/Host.Windows/HostLifecycle.cs",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "docs/acceptance.md",
+            "step three/T0007/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Verify GitHub Actions for this exact commit; record actual test results and continue the broad T0007 traceability task only with passing evidence."
         }
       ]
     },
@@ -11774,10 +11796,15 @@
       "from": "T0006",
       "to": "T0007",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0007 extends and verifies the HostLifecycle/HostStartup implementation and executable harness delivered by T0006; its regression tests compile and exercise the same production source. The existing blocks relationship is preserved as the graph's ordering relation.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/HostLifecycle.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0006/execution-report.md",
+        "step three/T0007/execution-report.md"
+      ]
     },
     {
       "from": "T0007",
