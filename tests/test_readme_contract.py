@@ -14,16 +14,21 @@ class ReadmeContractTests(unittest.TestCase):
             with self.subTest(term=term):
                 self.assertIn(term, README)
 
-    def test_current_missing_build_projects_are_disclosed(self):
-        self.assertIn("هنوز در مخزن ایجاد نشده‌اند", README)
-        self.assertIn("build محصول", README)
+    def test_current_application_projects_and_unimplemented_scope_are_disclosed(self):
+        self.assertIn("src/Host.Windows/", README)
+        self.assertIn("src/Client.Android/", README)
+        self.assertIn("هنوز تحویل نشده‌اند", README)
+        self.assertIn("build موفق", README)
+
+    def test_platform_baseline_decision_is_linked(self):
+        self.assertIn("docs/decisions/ADR-0001-platform-build-baselines.md", README)
 
     def test_privacy_goals_are_not_claimed_as_proven(self):
         self.assertIn("الزامات طراحی‌اند، نه ادعاهای اثبات‌شده", README)
 
     def test_current_python_checks_are_distinguished_from_product_build(self):
         self.assertIn("python -m unittest discover -s tests -v", README)
-        self.assertIn("جایگزین build میزبان ویندوز", README)
+        self.assertIn("جایگزین build یا آزمون runtime محصول نیست", README)
 
 if __name__ == "__main__":
     unittest.main()

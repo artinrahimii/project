@@ -26,3 +26,14 @@
 - Verification boundary: this resolves the contradiction between node-level mandatory prerequisites and edge classification; it does not by itself satisfy every declared output or acceptance criterion.
 - Status: `in_progress`; no completion claim is made.
 - Follow-up: verify all declared output paths and task-specific acceptance; then decide whether T0014 can be marked done.
+
+
+## Attempt T0014-A008 — platform baseline decision and truthful project status
+- Date: 2026-10-21.
+- Base commit reviewed: `bcb600e7e55b82c16c49cc3236068c106a5ccaf7` (`V 3.0.37`).
+- Rechecked the current `global.json`, WPF project file, Android Gradle configuration, and `.github/workflows/product-build.yml`. The latest runs for the base commit passed the quality gate and product build workflow, including Windows host build, Android debug APK build, and lifecycle tests.
+- Created `docs/decisions/ADR-0001-platform-build-baselines.md` documenting the actual .NET/Windows and Android/JDK/Gradle/SDK baselines, rationale, limits, and verification evidence.
+- Updated `README.md`: the previous version incorrectly stated that Windows/Android projects and product build entrypoints were absent. The new text distinguishes existing application skeletons and CI builds from still-missing shared Protobuf contracts, real inference, P2P transport, and end-to-end acceptance.
+- Updated `tests/test_readme_contract.py` so it tests the actual current repository state rather than the obsolete absence claim.
+- Tests for this new revision have not run yet; the commit-triggered GitHub Actions workflows are the verification gate.
+- Status: `in_progress` pending CI on the new commit. No runtime or P2P acceptance claim is made.

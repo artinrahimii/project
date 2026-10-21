@@ -1771,38 +1771,46 @@
       "start_condition": "همهٔ پیش‌نیازهای فنی T0013 تکمیل و معیارهای پذیرش آن پاس شده باشند. T0010 صرفاً ترتیب اجرایی است و شرط فنی آغاز این وظیفه نیست.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
       "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status_fa": "در حال انجام",
       "actual_output_paths": [
+        "README.md",
+        "docs/decisions/ADR-0001-platform-build-baselines.md",
         "global.json",
+        "src/Host.Windows/WhiteP.Host.Windows.csproj",
         "src/Client.Android/app/build.gradle.kts",
-        ".github/workflows/product-build.yml"
+        ".github/workflows/product-build.yml",
+        "tests/test_product_build_contract.py",
+        "tests/test_readme_contract.py",
+        "step three/T0014/execution-report.md"
       ],
       "expected_output_paths": [
         "README.md + docs/decisions/ + فایل‌های تنظیمات build"
       ],
       "evidence": [
-        "step three/T0014/execution-report.md",
-        "global.json",
-        "src/Client.Android/app/build.gradle.kts",
+        "docs/decisions/ADR-0001-platform-build-baselines.md",
+        "tests/test_product_build_contract.py",
+        "tests/test_readme_contract.py",
         ".github/workflows/product-build.yml"
       ],
       "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nVerification note 2026-10-21: current main build succeeded on Windows WPF and Android APK. The node still lists T0010 and T0013 as prerequisites; T0010 is not complete. The T0010 -> T0014 edge is classified sequencing_only while depends_on/start_condition require T0010, so this inconsistency is unresolved. No task status or edge classification was changed to hide it.\nOutput-path check 2026-10-21: no docs/decisions/ directory is present in the current main tree; review whether this is a required T0014 output before completion.\nDependency review 2026-10-21: T0010 → T0014 remains validated as sequencing_only, supported by the recorded evidence. Therefore T0010 is not a mandatory technical prerequisite and has been removed from depends_on/start_condition. T0013 remains the required predecessor. T0014 is still in_progress because its declared expected output set and acceptance have not all been verified.",
       "execution_summary": {
-        "attempt_count": 6,
+        "attempt_count": 7,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0014-A006",
+        "last_attempt_id": "T0014-A008",
         "last_attempt_result": "partial",
         "changed_files": [
+          "README.md",
+          "docs/decisions/ADR-0001-platform-build-baselines.md",
+          "tests/test_readme_contract.py",
           "step three/T0014/execution-report.md",
           "step three/project-graph.md"
         ],
         "related_commits": [
           "90d48be3129cc1d721e0bc5311ec611ba5ccf7b7",
-          "632c36d257ca079dd9bdee07f5415aa3c7c97cc3"
+          "632c36d257ca079dd9bdee07f5415aa3c7c97cc3",
+          "PENDING"
         ],
-        "tests_passed": [
-          "GitHub Actions White-P product build — run 39656666786: passed (https://github.com/artinrahimii/project/actions/runs/39656666786)"
-        ],
+        "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -1981,6 +1989,27 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Resolve the T0010 prerequisite/edge-classification inconsistency without silently changing the dependency; then verify remaining T0014 output requirements before considering completion."
+        },
+        {
+          "attempt_id": "T0014-A008",
+          "started_at": "2026-10-21T23:05:00+03:30",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Inspected current build configuration and latest successful CI runs. Added an explicit platform build-baseline ADR and corrected README claims that incorrectly said the Windows/Android projects and product build entrypoints were absent. Updated README contract tests to enforce accurate scope disclosure. Awaiting CI for this commit before acceptance can be finalized.",
+          "changed_files": [
+            "README.md",
+            "docs/decisions/ADR-0001-platform-build-baselines.md",
+            "tests/test_readme_contract.py",
+            "step three/T0014/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect the new commit's quality and product-build workflows; if all relevant checks pass, update this attempt with results and evaluate T0014 acceptance. Do not claim runtime/P2P features are implemented."
         }
       ]
     },
