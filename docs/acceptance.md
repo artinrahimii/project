@@ -23,3 +23,8 @@ Warnings such as a free-text prerequisite that does not resolve to a task ID rem
 ## Task T0001 scope
 
 The deliverable for T0001 is the graph guard, its automated tests, and this acceptance policy. The guard uses only the Python standard library. It checks graph structure and rejects completion claims missing outputs, evidence, passing tests, or a successful recorded attempt.
+
+
+## Task T0003 scope — completion requires code/output, tests, and acceptance criteria
+
+For every node marked `done`, the graph guard now also requires a non-empty `acceptance` criterion and reviewable evidence that names a test source file under `tests/` or `test/`. The existing output/evidence existence checks, recorded passing-test check, and successful-attempt check remain in force. This is a metadata/evidence gate: it does not prove feature correctness by itself; implementation-specific tests and a successful CI run are still required.

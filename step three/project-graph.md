@@ -540,20 +540,35 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0002 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال انجام",
+      "actual_output_paths": [
+        "tools/graph_guard.py",
+        "tests/test_graph_guard.py",
+        "docs/acceptance.md",
+        "step three/T0003/execution-report.md"
+      ],
       "expected_output_paths": [
         "docs/acceptance.md + tests/ (معیار و آزمون متناظر)"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "tests/test_graph_guard.py",
+        "docs/acceptance.md",
+        "step three/T0003/execution-report.md"
+      ],
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود. تلاش T0003-A001 کنترل تکمیل را برای معیار پذیرش و شواهد فایل آزمون سخت‌گیرانه‌تر می‌کند. آزمون‌های محلی/CI این تغییر هنوز تأیید نشده‌اند؛ بنابراین وضعیت تا تأیید اجرای CI در حال انجام باقی می‌ماند.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0003-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "tools/graph_guard.py",
+          "tests/test_graph_guard.py",
+          "docs/acceptance.md",
+          "step three/project-graph.md",
+          "step three/T0003/execution-report.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
@@ -566,7 +581,40 @@
           "review_evidence": []
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0003-A001",
+          "started_at": "2026-10-21T18:35:00+03:30",
+          "ended_at": "2026-10-21T18:35:00+03:30",
+          "result": "partial",
+          "summary": "Added acceptance-criteria and test-source evidence requirements to the graph guard and added regression tests. Local interpreter execution was unavailable in this tool context; CI confirmation is pending.",
+          "changed_files": [
+            "tools/graph_guard.py",
+            "tests/test_graph_guard.py",
+            "docs/acceptance.md",
+            "step three/project-graph.md",
+            "step three/T0003/execution-report.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "command": "python -m unittest discover -s tests -v",
+              "result": "not_run",
+              "summary": "No local Python execution tool available in this run; await GitHub Actions."
+            },
+            {
+              "command": "GitHub Actions quality workflow",
+              "result": "pending",
+              "summary": "Must be checked after this commit is pushed."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Check the quality workflow for this commit; if green, update T0003 to done in a subsequent verified commit. If red, inspect logs and correct the implementation."
+        }
+      ]
     },
     {
       "id": "T0004",

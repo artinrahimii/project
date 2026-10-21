@@ -65,4 +65,19 @@ class ValidateTests(unittest.TestCase):
             (Path(td)/"report.md").write_text("evidence")
             self.assertIn("MISSING_OUTPUT_FILE", {x.code for x in validate_graph(g, Path(td))})
 
+
+    def test_done_requires_acceptance_criteria(self):
+        g=graph_fixture(); node=g["nodes"][0]
+        node.update({"status":"done","actual_output_paths":["output.txt"],"evidence":["report.md","tests/test_output.py"],
+                     "execution_history":[{"result":"succeeded"}],
+                     "execution_summary":{"attempt_count":1,"failed_attempt_count":0,"tests_passed":["unit tests passed"]}})
+        node.pop("acceptance",None)
+        self.assertIn("DONE_WITHOUT_ACCEPTANCE_CRITERIA", {x.code for x in validate_graph(g)})
+    def test_done_requires_test_source_evidence(self):
+        g=graph_fixture(); node=g["nodes"][0]
+        node.update({"status":"done","actual_output_paths":["output.txt"],"acceptance":"Output is valid.",
+                     "evidence":["report.md"],"execution_history":[{"result":"succeeded"}],
+                     "execution_summary":{"attempt_count":1,"failed_attempt_count":0,"tests_passed":["unit tests passed"]}})
+        self.assertIn("DONE_WITHOUT_TEST_FILE_EVIDENCE", {x.code for x in validate_graph(g)})
+
 if __name__ == "__main__": unittest.main()
