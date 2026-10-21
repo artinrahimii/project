@@ -54,6 +54,8 @@ class ValidateTests(unittest.TestCase):
                      "execution_summary":{"attempt_count":1,"failed_attempt_count":0,"tests_passed":["unit tests passed"]}})
         with tempfile.TemporaryDirectory() as td:
             root=Path(td); (root/"output.txt").write_text("real output"); (root/"report.md").write_text("evidence")
+            (root/"tests").mkdir(); (root/"tests"/"test_graph_guard.py").write_text("test source")
+            node["evidence"].append("tests/test_graph_guard.py")
             self.assertEqual(validate_graph(g, root), [])
     def test_done_reports_missing_actual_file(self):
         import tempfile
