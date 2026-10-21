@@ -135,3 +135,8 @@ Run in CI with .NET 10: dotnet run --project tests/HostLifecycle.Tests/HostLifec
 The lifecycle harness also exercises a backend that reports `IsAvailable == false` but throws while reading `UnavailableReason`. The expected behavior is a stable `Error` status with a generic startup-check failure message; raw exception details must not reach the user-facing status. This closes a separate exception path in the existing startup decision logic without pretending to provide a real inference engine.
 
 Result for this revision: pending the GitHub Actions run. The case uses a test double and does not establish production backend availability.
+
+
+## T0007-A005 — empty unavailable-reason fallback
+
+The lifecycle harness verifies that an unavailable backend returning a blank or whitespace-only `UnavailableReason` cannot leave startup without a usable status message. The expected result is `Error` with a stable generic startup-check failure message. This exercises the existing `ArgumentException.ThrowIfNullOrWhiteSpace` guard and fallback path; it is not evidence of a production inference backend.

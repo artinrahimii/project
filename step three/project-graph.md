@@ -1083,11 +1083,11 @@
         "docs/acceptance.md",
         "step three/T0007/execution-report.md"
       ],
-      "notes": "T0007 remains a broad traceability task. A004 adds regression coverage for an exception thrown by the UnavailableReason getter; CI for the new commit is pending. Existing CI success on prior commits does not establish this new case or prove production inference.",
+      "notes": "T0007 remains a broad traceability task. A005 adds regression coverage for a whitespace-only UnavailableReason; CI for the new commit is pending. Prior CI success does not establish this new case or prove production inference.",
       "execution_summary": {
-        "attempt_count": 4,
+        "attempt_count": 5,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0007-A004",
+        "last_attempt_id": "T0007-A005",
         "last_attempt_result": "partial",
         "changed_files": [
           "tests/HostLifecycle.Tests/Program.cs",
@@ -1197,6 +1197,26 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Verify GitHub Actions for the exact new commit and record the actual result; keep T0007 in progress until the broad traceability acceptance criterion is satisfied."
+        },
+        {
+          "attempt_id": "T0007-A005",
+          "started_at": "2026-10-21T22:00:00-04:00",
+          "ended_at": "2026-10-21T22:00:00-04:00",
+          "result": "partial",
+          "summary": "Added a regression case for an unavailable backend returning a whitespace-only UnavailableReason; the harness requires Error and a stable non-empty user-facing message. CI is pending.",
+          "changed_files": [
+            "tests/HostLifecycle.Tests/Program.cs",
+            "docs/acceptance.md",
+            "step three/T0007/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Verify GitHub Actions for the exact new commit and record the actual result; keep T0007 in progress and review the next task's graph dependencies before broader runtime work."
         }
       ]
     },
@@ -15972,5 +15992,4 @@
       "failed"
     ]
   }
-}
-```
+}```

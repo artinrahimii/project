@@ -39,3 +39,15 @@
 - Scope limit: this is another bounded lifecycle regression, not a production inference backend and not completion of broad T0007.
 - Status: partial; T0007 remains in progress.
 - Follow-up: verify the exact commit's GitHub Actions results and record them; continue to real runtime requirements only after reviewing the graph dependencies.
+
+
+## Attempt T0007-A005
+- Started: 2026-10-21.
+- Base: `7b72d9cf64af00355e4255c50437f57557e9685e` (`V 3.0.34`).
+- Implementation: added a regression case for an unavailable backend whose `UnavailableReason` contains only whitespace. The test requires `Error` plus a non-empty stable message, preventing an empty user-facing status.
+- Acceptance evidence: `tests/HostLifecycle.Tests/Program.cs` and `docs/acceptance.md`, section `T0007-A005 — empty unavailable-reason fallback`.
+- Local execution: not run; this session has no local checkout or .NET runtime.
+- CI: pending for this commit; no pass is claimed before checking the actual workflow run.
+- Scope limit: this remains a bounded lifecycle regression. It does not implement a production inference backend and does not complete broad T0007.
+- Status: partial; T0007 remains in progress.
+- Follow-up: verify CI for this exact commit and record the actual result; continue with graph dependencies before implementing broader runtime requirements.

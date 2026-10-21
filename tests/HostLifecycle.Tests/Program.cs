@@ -19,6 +19,11 @@ var throwingReasonStatus=new HostStartup(new HostLifecycle(),new ThrowingUnavail
 Assert(throwingReasonStatus.State==HostState.Error,"UnavailableReason exception must report Error");
 Assert(throwingReasonStatus.Message.Contains("check failed",StringComparison.OrdinalIgnoreCase),"UnavailableReason exception must produce a stable user-facing reason");
 Assert(!throwingReasonStatus.Message.Contains("private-reason",StringComparison.OrdinalIgnoreCase),"UnavailableReason exception details must not leak into status");
+var emptyReasonStatus=new HostStartup(new HostLifecycle(),new EmptyUnavailableReasonBackend()).Start();
+Assert(emptyReasonStatus.State==HostState.Error,"Unavailable backend with an empty reason must report Error");
+Assert(!string.IsNullOrWhiteSpace(emptyReasonStatus.Message),"Empty backend reason must be replaced with a stable message");
+Assert(emptyReasonStatus.Message.Contains("check failed",StringComparison.OrdinalIgnoreCase),"Empty backend reason must produce a stable user-facing reason");
+
 Console.WriteLine("PASS: lifecycle transitions, invalid-transition rejection, unavailable/available backend handling, and exception-safe startup, including a throwing unavailable-reason getter.");
 
 sealed class AvailableTestBackend : IInferenceBackend
@@ -36,4 +41,10 @@ sealed class ThrowingUnavailableReasonBackend : IInferenceBackend
 {
  public bool IsAvailable => false;
  public string UnavailableReason => throw new InvalidOperationException("private-reason details");
+}
+
+sealed class EmptyUnavailableReasonBackend : IInferenceBackend
+{
+ public bool IsAvailable => false;
+ public string UnavailableReason => "   ";
 }
