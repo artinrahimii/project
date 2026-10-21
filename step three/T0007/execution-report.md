@@ -51,3 +51,14 @@
 - Scope limit: this remains a bounded lifecycle regression. It does not implement a production inference backend and does not complete broad T0007.
 - Status: partial; T0007 remains in progress.
 - Follow-up: verify CI for this exact commit and record the actual result; continue with graph dependencies before implementing broader runtime requirements.
+
+## Attempt T0007-A006 — CI verification of V 3.0.35
+- Verification date: 2026-10-21.
+- Verified main commit: `632c36d257ca079dd9bdee07f5415aa3c7c97cc3` (`V 3.0.35`).
+- [Step Three quality gate run 39656666780](https://github.com/artinrahimii/project/actions/runs/39656666780) completed successfully. Automated tests, Python syntax, graph structure, and recorded-output/evidence validation all passed.
+- [White-P product build run 39656666786](https://github.com/artinrahimii/project/actions/runs/39656666786) completed successfully. Windows WPF host build, Android debug APK build, and host lifecycle unit/integration test jobs all passed.
+- Local execution: not run in this tool context; evidence is from the actual GitHub Actions runs above.
+- Scope boundary: `UnconfiguredInferenceBackend` remains deliberately unavailable. These results do not establish production local inference, hardware discovery, or functional peer-to-peer transport.
+- Status: partial; T0007 remains `in_progress`, not `done`.
+- Follow-up: satisfy the broader T0007 acceptance criterion; keep the T0007 → T0008 edge unreviewed until it is explicitly validated.
+

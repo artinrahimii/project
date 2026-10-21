@@ -1085,18 +1085,21 @@
       ],
       "notes": "T0007 remains a broad traceability task. A005 adds regression coverage for a whitespace-only UnavailableReason; CI for the new commit is pending. Prior CI success does not establish this new case or prove production inference.",
       "execution_summary": {
-        "attempt_count": 5,
+        "attempt_count": 6,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0007-A005",
+        "last_attempt_id": "T0007-A006",
         "last_attempt_result": "partial",
         "changed_files": [
-          "tests/HostLifecycle.Tests/Program.cs",
-          "docs/acceptance.md",
           "step three/T0007/execution-report.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
+        "related_commits": [
+          "632c36d257ca079dd9bdee07f5415aa3c7c97cc3"
+        ],
+        "tests_passed": [
+          "GitHub Actions Step Three quality gate — run 39656666780: passed (https://github.com/artinrahimii/project/actions/runs/39656666780)",
+          "GitHub Actions White-P product build — run 39656666786: passed (https://github.com/artinrahimii/project/actions/runs/39656666786)"
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -1217,6 +1220,37 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Verify GitHub Actions for the exact new commit and record the actual result; keep T0007 in progress and review the next task's graph dependencies before broader runtime work."
+        },
+        {
+          "attempt_id": "T0007-A006",
+          "started_at": "2026-10-21T22:33:00+03:30",
+          "ended_at": "2026-10-21T22:33:00+03:30",
+          "result": "partial",
+          "summary": "Verified the current main revision against real GitHub Actions: quality gate and product build both succeeded. T0007 remains partial because CI exercises the lifecycle/test harness and platform shells, not a production local inference backend, hardware discovery, or functional P2P.",
+          "changed_files": [
+            "step three/T0007/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "command": "GitHub Actions Step Three quality gate — run 39656666780",
+              "result": "passed",
+              "summary": "All steps passed: automated tests, Python syntax, graph structure, and recorded outputs/evidence validation.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/39656666780"
+            },
+            {
+              "command": "GitHub Actions White-P product build — run 39656666786",
+              "result": "passed",
+              "summary": "All jobs passed: Android debug APK, Windows WPF host build, and host lifecycle unit/integration tests.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/39656666786"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Keep T0007 in_progress; before starting T0008, complete T0007 acceptance and review the T0007 -> T0008 edge, which remains unreviewed."
         }
       ]
     },
@@ -1753,24 +1787,22 @@
         "src/Client.Android/app/build.gradle.kts",
         ".github/workflows/product-build.yml"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nVerification note 2026-10-21: current main build succeeded on Windows WPF and Android APK. The node still lists T0010 and T0013 as prerequisites; T0010 is not complete. The T0010 -> T0014 edge is classified sequencing_only while depends_on/start_condition require T0010, so this inconsistency is unresolved. No task status or edge classification was changed to hide it.\nOutput-path check 2026-10-21: no docs/decisions/ directory is present in the current main tree; review whether this is a required T0014 output before completion.",
       "execution_summary": {
-        "attempt_count": 5,
+        "attempt_count": 6,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0014-A005",
+        "last_attempt_id": "T0014-A006",
         "last_attempt_result": "partial",
         "changed_files": [
-          "step three/project-graph.md",
-          "step three/T0005/execution-report.md",
-          "step three/T0006/execution-report.md",
           "step three/T0014/execution-report.md",
-          "step three/T0016/execution-report.md"
+          "step three/project-graph.md"
         ],
         "related_commits": [
-          "90d48be3129cc1d721e0bc5311ec611ba5ccf7b7"
+          "90d48be3129cc1d721e0bc5311ec611ba5ccf7b7",
+          "632c36d257ca079dd9bdee07f5415aa3c7c97cc3"
         ],
         "tests_passed": [
-          "GitHub Actions run 39641644577: platform build job(s) passed"
+          "GitHub Actions White-P product build — run 39656666786: passed (https://github.com/artinrahimii/project/actions/runs/39656666786)"
         ],
         "tests_failed": [],
         "blocked_reason": null,
@@ -1925,6 +1957,31 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Verify T0013 and T0010 before deciding task completion."
+        },
+        {
+          "attempt_id": "T0014-A006",
+          "started_at": "2026-10-21T22:33:00+03:30",
+          "ended_at": "2026-10-21T22:33:00+03:30",
+          "result": "partial",
+          "summary": "Reverified the real .NET and Android platform build configurations on the current main revision; Windows WPF and Android APK builds succeeded. Task remains partial because the graph still lists T0010 as a mandatory prerequisite, and the edge classification contradicts the node start condition.",
+          "changed_files": [
+            "step three/T0014/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "command": "GitHub Actions White-P product build — run 39656666786",
+              "result": "passed",
+              "summary": "All jobs passed: Android debug APK, Windows WPF host build, and host lifecycle unit/integration tests.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/39656666786"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Resolve the T0010 prerequisite/edge-classification inconsistency without silently changing the dependency; then verify remaining T0014 output requirements before considering completion."
         }
       ]
     },
@@ -1967,25 +2024,21 @@
         "src/Host.Windows/MainWindow.xaml.cs",
         ".github/workflows/product-build.yml"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nVerification note 2026-10-21: Windows WPF build succeeded on the current main revision. T0015 remains in_progress because both T0014 and T0010 are still listed as required prerequisites; no graph relationship was altered.",
       "execution_summary": {
-        "attempt_count": 1,
+        "attempt_count": 2,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0015-A001",
+        "last_attempt_id": "T0015-A002",
         "last_attempt_result": "partial",
         "changed_files": [
-          "src/Host.Windows/WhiteP.Host.Windows.csproj",
-          "src/Host.Windows/App.xaml",
-          "src/Host.Windows/App.xaml.cs",
-          "src/Host.Windows/MainWindow.xaml",
-          "src/Host.Windows/MainWindow.xaml.cs",
-          ".github/workflows/product-build.yml",
           "step three/T0015/execution-report.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
+        "related_commits": [
+          "632c36d257ca079dd9bdee07f5415aa3c7c97cc3"
+        ],
         "tests_passed": [
-          "GitHub Actions run 39640743619: Windows WPF build succeeded."
+          "GitHub Actions White-P product build — run 39656666786: passed (https://github.com/artinrahimii/project/actions/runs/39656666786)"
         ],
         "tests_failed": [],
         "blocked_reason": null,
@@ -2028,6 +2081,31 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Complete T0014 after Android build succeeds; then re-evaluate T0015 completion and record CI evidence."
+        },
+        {
+          "attempt_id": "T0015-A002",
+          "started_at": "2026-10-21T22:33:00+03:30",
+          "ended_at": "2026-10-21T22:33:00+03:30",
+          "result": "partial",
+          "summary": "Verified that the real .NET 10 WPF host project builds successfully in the current main workflow. This confirms the project/build path only; task completion remains gated by the unresolved T0014 and T0010 prerequisites.",
+          "changed_files": [
+            "step three/T0015/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "command": "GitHub Actions White-P product build — run 39656666786",
+              "result": "passed",
+              "summary": "All jobs passed: Android debug APK, Windows WPF host build, and host lifecycle unit/integration tests.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/39656666786"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Resolve T0014 and the T0010 prerequisite/edge inconsistency; then review the host project outputs and any remaining task-specific acceptance checks."
         }
       ]
     },
@@ -2072,24 +2150,22 @@
         "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
         ".github/workflows/product-build.yml"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nVerification note 2026-10-21: Android debug APK build succeeded on the current main revision. T0016 remains in_progress because its required predecessors T0015 and T0010 are not done; previous failed attempts remain in execution_history.",
       "execution_summary": {
-        "attempt_count": 5,
+        "attempt_count": 6,
         "failed_attempt_count": 3,
-        "last_attempt_id": "T0016-A005",
+        "last_attempt_id": "T0016-A006",
         "last_attempt_result": "partial",
         "changed_files": [
-          "step three/project-graph.md",
-          "step three/T0005/execution-report.md",
-          "step three/T0006/execution-report.md",
-          "step three/T0014/execution-report.md",
-          "step three/T0016/execution-report.md"
+          "step three/T0016/execution-report.md",
+          "step three/project-graph.md"
         ],
         "related_commits": [
-          "90d48be3129cc1d721e0bc5311ec611ba5ccf7b7"
+          "90d48be3129cc1d721e0bc5311ec611ba5ccf7b7",
+          "632c36d257ca079dd9bdee07f5415aa3c7c97cc3"
         ],
         "tests_passed": [
-          "GitHub Actions run 39641644577: platform build job(s) passed"
+          "GitHub Actions White-P product build — run 39656666786: passed (https://github.com/artinrahimii/project/actions/runs/39656666786)"
         ],
         "tests_failed": [],
         "blocked_reason": null,
@@ -2238,6 +2314,31 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Verify T0015 and T0010 before deciding task completion."
+        },
+        {
+          "attempt_id": "T0016-A006",
+          "started_at": "2026-10-21T22:33:00+03:30",
+          "ended_at": "2026-10-21T22:33:00+03:30",
+          "result": "partial",
+          "summary": "Verified the Kotlin/Compose Android project builds an actual debug APK on the current main revision. Task remains partial because T0015 and T0010 are listed as mandatory prerequisites, and earlier SDK/workflow failures remain in the append-only history.",
+          "changed_files": [
+            "step three/T0016/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "command": "GitHub Actions White-P product build — run 39656666786",
+              "result": "passed",
+              "summary": "All jobs passed: Android debug APK, Windows WPF host build, and host lifecycle unit/integration tests.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/39656666786"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Complete/reconcile T0015 and T0010 prerequisites; preserve the earlier failed attempts; then verify task-specific Android SDK/project requirements before marking done."
         }
       ]
     },
