@@ -186,3 +186,10 @@ The product workflow now uploads the Windows host build output and Android debug
 For commit `1f3fded138a12802a7dd5a631c38fdc149835a91` (`V 3.0.47`), the [Step Three quality gate](${qualityUrl}) passed 45 Python tests and all syntax/graph/evidence checks. In [product-build run 39677788376](${productUrl}), the Windows build/upload steps passed, the Android debug APK build/upload steps passed, and the host lifecycle test job completed successfully. The run contains `whitep-windows-host` (88,918 bytes) and `whitep-android-debug-apk` (10,577,636 bytes); both expire on 2026-10-28. A subsequent check confirmed that the same product workflow completed with conclusion `success` at 2026-10-21T21:20:46Z; all jobs completed without failure.
 
 A successful build/artifact upload demonstrates repeatable build outputs; it does not prove runtime local inference, Android-to-host connectivity, P2P transport, encryption or absence of persistent history.
+
+
+## T0017 — shared Protobuf wire contract
+
+The versioned source of truth is `protocol/whitep/v1/messages.proto`. The Windows project generates C# messages during .NET build; the Android module generates Java-lite messages from the same repository-level source during Gradle build. The contract includes capabilities/status, inference request and response, cancellation, and typed protocol errors.
+
+Acceptance requires the quality workflow and actual Windows/Android build jobs to pass for the commit. Message definitions and generated classes do not establish that transport, P2P routing, local inference, encryption, or no-persistence behavior exists; those remain separate acceptance gates.

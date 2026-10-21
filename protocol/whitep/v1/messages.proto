@@ -1,0 +1,98 @@
+syntax = "proto3";
+
+package whitep.protocol.v1;
+
+option csharp_namespace = "WhiteP.Protocol.V1";
+option java_package = "com.whitep.protocol.v1";
+option java_multiple_files = true;
+option java_outer_classname = "WhitePProtocol";
+
+// Versioned, language-neutral wire messages shared by the Windows host and Android client.
+// IDs are scoped to a request/attempt/session; do not use them as permanent user identities.
+// Implementations must not persist prompt/response contents in ordinary logs.
+enum HostRuntimeState {
+  HOST_RUNTIME_STATE_UNSPECIFIED = 0;
+  HOST_RUNTIME_STATE_STOPPED = 1;
+  HOST_RUNTIME_STATE_STARTING = 2;
+  HOST_RUNTIME_STATE_READY = 3;
+  HOST_RUNTIME_STATE_BUSY = 4;
+  HOST_RUNTIME_STATE_ERROR = 5;
+}
+
+enum InferenceOutcome {
+  INFERENCE_OUTCOME_UNSPECIFIED = 0;
+  INFERENCE_OUTCOME_SUCCEEDED = 1;
+  INFERENCE_OUTCOME_FAILED = 2;
+  INFERENCE_OUTCOME_CANCELLED = 3;
+  INFERENCE_OUTCOME_DEADLINE_EXCEEDED = 4;
+}
+
+enum ProtocolErrorCode {
+  PROTOCOL_ERROR_CODE_UNSPECIFIED = 0;
+  PROTOCOL_ERROR_CODE_INVALID_REQUEST = 1;
+  PROTOCOL_ERROR_CODE_UNSUPPORTED_VERSION = 2;
+  PROTOCOL_ERROR_CODE_MODEL_UNAVAILABLE = 3;
+  PROTOCOL_ERROR_CODE_HOST_BUSY = 4;
+  PROTOCOL_ERROR_CODE_DEADLINE_EXCEEDED = 5;
+  PROTOCOL_ERROR_CODE_CANCELLED = 6;
+  PROTOCOL_ERROR_CODE_INTERNAL = 7;
+}
+
+message ModelCapability {
+  string model_id = 1;
+  string display_name = 2;
+  repeated string supported_task_ids = 3;
+  bool is_loaded = 4;
+}
+
+message HostCapabilities {
+  string ephemeral_host_id = 1;
+  string protocol_version = 2;
+  HostRuntimeState state = 3;
+  repeated ModelCapability models = 4;
+  uint32 max_concurrent_inferences = 5;
+  uint64 observed_at_unix_ms = 6;
+}
+
+message InferenceRequest {
+  string request_id = 1;
+  string attempt_id = 2;
+  string model_id = 3;
+  string prompt = 4;
+  uint64 deadline_unix_ms = 5;
+  uint32 max_output_tokens = 6;
+}
+
+message InferenceResponse {
+  string request_id = 1;
+  string attempt_id = 2;
+  string ephemeral_host_id = 3;
+  InferenceOutcome outcome = 4;
+  string output_text = 5;
+  uint64 completed_at_unix_ms = 6;
+  string model_id = 7;
+}
+
+message CancelRequest {
+  string request_id = 1;
+  string attempt_id = 2;
+}
+
+message HostStatusRequest {
+  string protocol_version = 1;
+}
+
+message HostStatus {
+  string ephemeral_host_id = 1;
+  HostRuntimeState state = 2;
+  string status_message = 3;
+  uint64 observed_at_unix_ms = 4;
+}
+
+message ProtocolError {
+  ProtocolErrorCode code = 1;
+  string message = 2;
+  bool retryable = 3;
+  string request_id = 4;
+  string attempt_id = 5;
+}

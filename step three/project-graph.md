@@ -2714,8 +2714,7 @@
       "title": "قراردادهای تبادل را با Protobuf تعریف کن و فایل‌های تولیدشده را از فایل منبع قرارداد تولید کن.",
       "section": "1. تعریف نسخهٔ قابل‌ساخت و تصمیم‌های فنی",
       "depends_on": [
-        "T0016",
-        "T0010"
+        "T0016"
       ],
       "inputs": [
         "خروجی تأییدشدهٔ پیش‌نیازها",
@@ -2724,35 +2723,125 @@
       "outputs": [
         "خروجی قابل بررسی مربوط به «قراردادهای تبادل را با Protobuf تعریف کن و فایل‌های تولیدشده را از فایل منبع قرارداد تولید کن.» در مسیر README.md + docs/decisions/ + فایل‌های تنظیمات build؛ همراه با آزمون/شاهد پذیرش متناسب."
       ],
-      "start_condition": "همهٔ پیش‌نیازهای T0016 و T0010 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
+      "start_condition": "T0016 is the verified integration target for the generated Android Java-lite bindings. The T0010 → T0017 edge is retained as sequencing_only: T0017 does not consume a T0010-produced output. Keep the task in_progress until the exact-commit quality gate and both Windows/Android generated-code builds pass.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
-      "expected_output_paths": [
-        "README.md + docs/decisions/ + فایل‌های تنظیمات build"
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "protocol/whitep/v1/messages.proto",
+        "src/Host.Windows/WhiteP.Host.Windows.csproj",
+        "src/Client.Android/build.gradle.kts",
+        "src/Client.Android/app/build.gradle.kts",
+        "tests/test_proto_contract.py",
+        "README.md",
+        "docs/acceptance.md",
+        "step three/T0017/execution-report.md",
+        "step three/project-graph.md"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "expected_output_paths": [
+        "protocol/whitep/v1/messages.proto",
+        "src/Host.Windows/WhiteP.Host.Windows.csproj",
+        "src/Client.Android/build.gradle.kts",
+        "src/Client.Android/app/build.gradle.kts",
+        "tests/test_proto_contract.py",
+        "README.md",
+        "docs/acceptance.md",
+        "step three/T0017/execution-report.md",
+        "step three/project-graph.md"
+      ],
+      "evidence": [
+        "protocol/whitep/v1/messages.proto",
+        "src/Host.Windows/WhiteP.Host.Windows.csproj",
+        "src/Client.Android/build.gradle.kts",
+        "src/Client.Android/app/build.gradle.kts",
+        "tests/test_proto_contract.py",
+        "README.md",
+        "docs/acceptance.md",
+        "step three/T0017/execution-report.md",
+        ".github/workflows/product-build.yml"
+      ],
+      "notes": "T0017-A001 adds one versioned .proto source and configures build-time C#/Java-lite generation from it. T0016 → T0017 was validated as hard_dependency; T0010 → T0017 was validated as sequencing_only. T0017 remains in_progress pending exact-commit quality and Windows/Android build results. Generated bindings do not prove transport, P2P, inference, encryption, or no-persistence acceptance.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0017-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "protocol/whitep/v1/messages.proto",
+          "src/Host.Windows/WhiteP.Host.Windows.csproj",
+          "src/Client.Android/build.gradle.kts",
+          "src/Client.Android/app/build.gradle.kts",
+          "tests/test_proto_contract.py",
+          "README.md",
+          "docs/acceptance.md",
+          "step three/T0017/execution-report.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
-          "affected_by_contract_changes": [],
-          "review_evidence": []
+          "state": "required",
+          "triggering_contracts": [
+            "Versioned shared Protobuf wire contract at protocol/whitep/v1/messages.proto"
+          ],
+          "affected_by_contract_changes": [
+            "T0018: review local inference backend fields against InferenceRequest/InferenceResponse before implementation.",
+            "Future transport and retry tasks consuming these messages."
+          ],
+          "review_evidence": [
+            "protocol/whitep/v1/messages.proto",
+            "src/Host.Windows/WhiteP.Host.Windows.csproj",
+            "src/Client.Android/app/build.gradle.kts",
+            "tests/test_proto_contract.py"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0017-A001",
+          "started_at": "2026-10-21T21:26:48.431Z",
+          "ended_at": "2026-10-21T21:26:48.431Z",
+          "result": "partial",
+          "summary": "Added the versioned shared proto3 schema and configured build-time C#/Java-lite code generation. Added source/configuration contract tests; exact-commit CI is pending.",
+          "changed_files": [
+            "protocol/whitep/v1/messages.proto",
+            "src/Host.Windows/WhiteP.Host.Windows.csproj",
+            "src/Client.Android/build.gradle.kts",
+            "src/Client.Android/app/build.gradle.kts",
+            "tests/test_proto_contract.py",
+            "README.md",
+            "docs/acceptance.md",
+            "step three/T0017/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "tests/test_proto_contract.py via Step Three quality workflow",
+              "result": "not_run",
+              "evidence": ".github/workflows/quality.yml",
+              "summary": "No local test execution is available in this tool session; the exact commit must run the test."
+            },
+            {
+              "name": "Windows WPF and Android generated-binding builds",
+              "result": "pending",
+              "evidence": ".github/workflows/product-build.yml",
+              "summary": "Inspect exact-commit build results; do not infer successful code generation from source configuration alone."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "Introduced the shared versioned Protobuf source of truth.",
+            "Configured C# generation through Grpc.Tools and Java-lite generation through the Android Protobuf Gradle plugin."
+          ],
+          "follow_up": "Inspect the exact commit's quality and product-build results; fix any generation/compiler errors and rerun. Record the resulting commit SHA and set done only after tests and builds pass."
+        }
+      ]
     },
     {
       "id": "T0018",
@@ -12524,19 +12613,27 @@
       "from": "T0016",
       "to": "T0017",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "hard_dependency",
+      "rationale": "T0017 acceptance includes compiling generated Java-lite bindings in the existing Android application. The Android module delivered by T0016 is the actual build integration target and prerequisite; this does not imply that transport exists.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Client.Android/settings.gradle.kts: current Android application and :app module.",
+        "src/Client.Android/app/build.gradle.kts: module build configuration integrates generated Java-lite classes from the shared proto directory.",
+        "step one/V1.0.md: T0017 requires shared Protobuf source and generated bindings."
+      ]
     },
     {
       "from": "T0010",
       "to": "T0017",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0017 consumes the shared schema and existing project/toolchain configuration directly; it does not consume a build artifact or implementation output unique to T0010. The product workflow verifies the generator integration, but that is not an input dependency.",
+      "validation_status": "validated",
+      "evidence": [
+        "step one/V1.0.md: T0010 defines clean-checkout build/test reproducibility; T0017 defines shared Protobuf source and generated bindings.",
+        "src/Host.Windows/WhiteP.Host.Windows.csproj and src/Client.Android/app/build.gradle.kts: code generation is configured directly in platform projects.",
+        ".github/workflows/product-build.yml: builds both projects as the verification gate; T0017 does not consume uploaded artifacts."
+      ]
     },
     {
       "from": "T0017",
@@ -16593,6 +16690,34 @@
       "evidence": [
         "src/Client.Android/app/build.gradle.kts and settings.gradle.kts: actual Gradle project files.",
         ".github/workflows/product-build.yml: JDK/Gradle/Android SDK setup and actual assembleDebug command."
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-21T21:26:48.431Z",
+      "edge_from": "T0016",
+      "edge_to": "T0017",
+      "old_classification": "unreviewed",
+      "new_classification": "hard_dependency",
+      "reason": "T0017 acceptance includes compiling generated Java-lite bindings in the existing Android application. The Android module delivered by T0016 is the actual build integration target and prerequisite; this does not imply that transport exists.",
+      "evidence": [
+        "src/Client.Android/settings.gradle.kts: current Android application and :app module.",
+        "src/Client.Android/app/build.gradle.kts: module build configuration integrates generated Java-lite classes from the shared proto directory.",
+        "step one/V1.0.md: T0017 requires shared Protobuf source and generated bindings."
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-21T21:26:48.431Z",
+      "edge_from": "T0010",
+      "edge_to": "T0017",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "reason": "T0017 consumes the shared schema and existing project/toolchain configuration directly; it does not consume a build artifact or implementation output unique to T0010. The product workflow verifies the generator integration, but that is not an input dependency.",
+      "evidence": [
+        "step one/V1.0.md: T0010 defines clean-checkout build/test reproducibility; T0017 defines shared Protobuf source and generated bindings.",
+        "src/Host.Windows/WhiteP.Host.Windows.csproj and src/Client.Android/app/build.gradle.kts: code generation is configured directly in platform projects.",
+        ".github/workflows/product-build.yml: builds both projects as the verification gate; T0017 does not consume uploaded artifacts."
       ],
       "reviewed_by": "Step Three execution review"
     }
