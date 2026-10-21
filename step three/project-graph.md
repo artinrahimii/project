@@ -1790,9 +1790,7 @@
         "docs/decisions/ADR-0001-platform-build-baselines.md",
         "tests/test_product_build_contract.py",
         "tests/test_readme_contract.py",
-        ".github/workflows/product-build.yml",
-        "https://github.com/artinrahimii/project/actions/runs/39665189849",
-        "https://github.com/artinrahimii/project/actions/runs/39665189760"
+        ".github/workflows/product-build.yml"
       ],
       "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nVerification note 2026-10-21: current main build succeeded on Windows WPF and Android APK. The node still lists T0010 and T0013 as prerequisites; T0010 is not complete. The T0010 -> T0014 edge is classified sequencing_only while depends_on/start_condition require T0010, so this inconsistency is unresolved. No task status or edge classification was changed to hide it.\nOutput-path check 2026-10-21: no docs/decisions/ directory is present in the current main tree; review whether this is a required T0014 output before completion.\nDependency review 2026-10-21: T0010 → T0014 remains validated as sequencing_only, supported by the recorded evidence. Therefore T0010 is not a mandatory technical prerequisite and has been removed from depends_on/start_condition. T0013 remains the required predecessor. T0014 is still in_progress because its declared expected output set and acceptance have not all been verified.",
       "execution_summary": {
@@ -2072,8 +2070,6 @@
         "src/Host.Windows/MainWindow.xaml",
         "src/Host.Windows/MainWindow.xaml.cs",
         ".github/workflows/product-build.yml",
-        "https://github.com/artinrahimii/project/actions/runs/39665189849",
-        "https://github.com/artinrahimii/project/actions/runs/39665189760",
         "tests/HostLifecycle.Tests/Program.cs"
       ],
       "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nVerification note 2026-10-21: Windows WPF build succeeded on the current main revision. T0015 remains in_progress because both T0014 and T0010 are still listed as required prerequisites; no graph relationship was altered.\nDependency review 2026-10-21: T0010 → T0015 remains validated as sequencing_only; it is not a mandatory technical prerequisite and has been removed from depends_on/start_condition. T0014 remains the required predecessor. T0015 remains in_progress pending T0014 completion and task-specific acceptance.",
@@ -2222,8 +2218,6 @@
         "src/Client.Android/app/src/main/AndroidManifest.xml",
         "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
         ".github/workflows/product-build.yml",
-        "https://github.com/artinrahimii/project/actions/runs/39665189849",
-        "https://github.com/artinrahimii/project/actions/runs/39665189760",
         "tests/HostLifecycle.Tests/Program.cs"
       ],
       "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nVerification note 2026-10-21: Android debug APK build succeeded on the current main revision. T0016 remains in_progress because its required predecessors T0015 and T0010 are not done; previous failed attempts remain in execution_history.\nDependency review 2026-10-21: T0010 → T0016 remains validated as sequencing_only; it is not a mandatory technical prerequisite and has been removed from depends_on/start_condition. T0015 remains the required predecessor. T0016 remains in_progress pending T0015 completion and task-specific acceptance.",
