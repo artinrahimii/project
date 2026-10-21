@@ -12,6 +12,6 @@
   - Host lifecycle unit/integration test job completed successfully.
   - Android `assembleDebug` step passed; Android APK upload passed.
   - Both uploaded artifacts are visible in the run: [Windows host artifact](${winArtifactUrl}) (88,918 bytes) and [Android debug APK](${apkArtifactUrl}) (10,577,636 bytes), each retained until 2026-10-28.
-  - **Qualification:** at the last status check, the Android job was still in its post-job Gradle-cache cleanup step and the workflow-level status was `in_progress`. The successful build/test/upload steps are verified; a final overall workflow conclusion is not claimed.
+  - **Qualification:** a subsequent check confirmed that this same workflow completed successfully at 2026-10-21T21:20:46Z, with all three jobs succeeding. The successful Windows and Android build outputs were uploaded as artifacts.
 - Scope limit: repeatable builds and artifacts do not prove runtime launch on target hardware, local model inference, direct P2P request/response, encryption, or absence of persistent conversation history.
 - Next: T0011 is already recorded as done. Review the dependency edge and current source evidence before starting the next uncompleted task; keep all runtime gates NOT RUN until their real tests exist.
