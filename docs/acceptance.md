@@ -37,13 +37,18 @@ When repository-backed validation is enabled with `--repo-root`, each non-test s
 This is a conservative static check, not proof that arbitrary code is correct or free of every possible stub. Human review and feature-specific runtime tests remain required; passing this gate alone does not prove the Windows/Android/P2P product is complete.
 
 
-## Task T0005 — reproducible build paths (blocked pending application projects)
+## Task T0005 — reproducible build paths (verified for the recorded baseline)
 
-The current `quality.yml` runs Python unit tests, Python syntax validation, graph validation, and recorded-output/evidence validation. It does **not** build the intended Windows host, Android client, or shared contracts. In the inspected `main` snapshot, `src/Host.Windows/`, `src/Client.Android/`, `src/Shared.Contracts/`, a .NET solution, and Android Gradle build files are absent. Consequently, passing the Python quality workflow is not a successful product build and cannot satisfy T0005. Keep T0005 blocked until real project/build entrypoints exist and the corresponding builds run successfully in CI; do not replace this requirement with a demo or documentation-only claim.
+An earlier version of this section described a superseded repository snapshot in which the application projects were absent. That statement is stale. The current repository has a WPF project at `src/Host.Windows/`, an Android Gradle app at `src/Client.Android/`, and the workflow `.github/workflows/product-build.yml` builds those platform projects and runs the host lifecycle harness.
+
+For baseline commit `aa1bc7e77bc5bbce80e9d7f987de75c1bdc71c36` (`V 3.0.42`), [White-P product build run 39671083885](https://github.com/artinrahimii/project/actions/runs/39671083885) and [Step Three quality gate run 39671083734](https://github.com/artinrahimii/project/actions/runs/39671083734) both completed successfully. These results apply to that exact baseline revision; changes in later commits must be validated by their own workflow runs.
+
+These CI results demonstrate that the configured Windows and Android build entrypoints and lifecycle test run on the recorded baseline. They do not prove product-level local inference, a real-device launch, hardware discovery, P2P transport, encrypted transmission, or no persistent conversation storage. Keep those separate acceptance gates unpassed until the corresponding runtime evidence exists.
+
 
 ## T0013 — Final Windows, Android, and P2P acceptance matrix
 
-**Gate status:** defined; not accepted for release. The repository now contains a Windows WPF host shell, an Android Gradle app, and an executable host lifecycle harness, and CI builds those components. Shared Protobuf contracts, a real local inference engine, hardware discovery, P2P transport, cryptographic transport, and product-level request/network/storage test harnesses remain unimplemented. Compilation and lifecycle checks supply only part of the evidence; they do not pass the end-to-end release gates.
+**Gate status:** defined; not yet passed by the product and not accepted for release. The repository now contains a Windows WPF host shell, an Android Gradle app, and an executable host lifecycle harness, and CI builds those components. Shared Protobuf contracts, a real local inference engine, hardware discovery, P2P transport, cryptographic transport, and product-level request/network/storage test harnesses remain unimplemented. Compilation and lifecycle checks supply only part of the evidence; they do not pass the end-to-end release gates.
 
 ### Release decision rule
 
@@ -104,7 +109,7 @@ For each gate, record: gate ID, `PASS/FAIL/NOT RUN`, commit SHA under test, comm
 
 ### Current result
 
-All AC-* gates are **NOT RUN for the product** in the strict release-acceptance sense unless their complete evidence requirement is linked. Current CI proves platform compilation and the host lifecycle harness only for the recorded commit; it does not establish real local inference, Android-to-host transport, direct P2P, encrypted transmission, absence of central prompt handling, or no persistent conversation storage.
+All AC-* gates are **NOT RUN for the product** in the strict release-acceptance sense unless their complete evidence requirement is linked. The current Python quality workflow can validate this matrix's document contract, but it cannot establish that the Windows host, Android client, local inference, or direct P2P transport works. Current CI proves platform compilation and the host lifecycle harness only for the recorded commit; it does not establish real local inference, Android-to-host transport, direct P2P, encrypted transmission, absence of central prompt handling, or no persistent conversation storage.
 
 
 ## T0006 — executable host lifecycle coverage
@@ -147,7 +152,7 @@ The lifecycle harness verifies that an unavailable backend returning a blank or 
 When a backend reports unavailable, HostStartup now trims a non-empty reason and uses the explicit message `Local inference backend is unavailable. Host is not ready.` when the reason is null, empty, or whitespace. This avoids treating malformed-but-nonthrowing backend metadata as an exception and makes the UI state deterministic. The executable regression harness asserts the exact fallback string.
 
 - Verification target: `dotnet run --project tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj --configuration Release`
-- CI status for this change: pending until the workflow runs against the resulting commit.
+- CI evidence for commit `aa1bc7e77bc5bbce80e9d7f987de75c1bdc71c36` (`V 3.0.42`): [Step Three quality gate run 39671083734](https://github.com/artinrahimii/project/actions/runs/39671083734) and [White-P product build run 39671083885](https://github.com/artinrahimii/project/actions/runs/39671083885) both passed.
 - Scope limit: the configured production backend remains `UnconfiguredInferenceBackend`; this change does not implement real inference, hardware discovery, or P2P.
 
 

@@ -1326,23 +1326,24 @@
         "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
         "src/Host.Windows/MainWindow.xaml"
       ],
-      "notes": "A repeatable source/documentation audit has been added. The Windows and Android UI labels disclose preview/unimplemented scope, and current docs explicitly separate requirements from proven runtime behavior. This does not prove network privacy, encryption, or absence of persistence; product runtime gates remain NOT RUN. CI for the new audit is pending.",
+      "notes": "T0008-A001 produced the source audit and UI disclosure changes but failed the exact-commit quality gate because the acceptance wording removed a literal phrase required by tests/test_acceptance_contract.py. T0008-A002 restores that contract, corrects the stale T0005 snapshot description, and refreshes this execution record. The product runtime privacy/P2P/encryption/no-storage gates remain NOT RUN. Current T0008 status stays in_progress until the corrected commit's CI is verified.",
       "execution_summary": {
-        "attempt_count": 1,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "T0008-A001",
+        "attempt_count": 2,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "T0008-A002",
         "last_attempt_result": "partial",
         "changed_files": [
-          "tests/test_claims_audit.py",
           "docs/acceptance.md",
-          "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
-          "src/Host.Windows/MainWindow.xaml",
           "step three/T0008/execution-report.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
+        "related_commits": [
+          "457b6af3688c1be2a3dc4b5063b0ea5cf396910f"
+        ],
         "tests_passed": [],
-        "tests_failed": [],
+        "tests_failed": [
+          "GitHub Actions Step Three quality gate run 39676332828 failed on V 3.0.43: 38 Python tests, one failure; existing acceptance text contract required `not yet passed by the product`."
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -1357,13 +1358,39 @@
           "attempt_id": "T0008-A001",
           "started_at": "2026-10-22T04:34:00Z",
           "ended_at": "2026-10-22T04:34:00Z",
-          "result": "partial",
-          "summary": "Reviewed the current host and Android source, UI disclosures, README, requirements, and release-gate matrix. Corrected stale acceptance-matrix statements, labelled both apps as previews, and added a repeatable source/documentation claim audit. This audit does not prove runtime network privacy, encryption, or no-storage; validation of the new commit is pending.",
+          "result": "failed",
+          "summary": "Implemented the initial source/documentation claim audit, but the commit-level CI quality gate failed because an existing acceptance contract test required the exact phrase 'not yet passed by the product' which the wording edit had removed. The new claims-audit test itself was not the reported failure.",
           "changed_files": [
             "tests/test_claims_audit.py",
             "docs/acceptance.md",
             "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
             "src/Host.Windows/MainWindow.xaml",
+            "step three/T0008/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": "457b6af3688c1be2a3dc4b5063b0ea5cf396910f",
+          "tests": [
+            {
+              "name": "Step Three quality gate",
+              "result": "failed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39676332828",
+              "summary": "Run 39676332828 executed 38 Python tests and failed one existing test: test_document_does_not_claim_platform_or_p2p_implementation. The test required the literal acceptance phrase 'not yet passed by the product'. The graph/syntax steps were skipped after the test step failed."
+            }
+          ],
+          "failure_details": "The T0013 gate wording no longer contained the literal compatibility phrase `not yet passed by the product`; tests/test_acceptance_contract.py asserted that phrase. Corrected acceptance wording must retain the contract phrase while clearly stating that release acceptance has not passed.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Restore the required acceptance phrase, correct the stale T0005 paragraph, and rerun both workflows on a new commit. Do not mark T0008 done until the actual quality gate and product-build run for the corrected commit are inspected."
+        },
+        {
+          "attempt_id": "T0008-A002",
+          "started_at": "2026-10-22T04:45:00Z",
+          "ended_at": "2026-10-22T04:45:00Z",
+          "result": "partial",
+          "summary": "Fixed the quality-gate regression by restoring the literal release-acceptance phrase required by the existing contract test. Corrected the stale T0005 paragraph to acknowledge the actual Windows and Android build projects and the successful V 3.0.42 baseline runs. Updated the T0007-A007 acceptance note to cite the real successful workflows. The new commit's CI remains pending.",
+          "changed_files": [
+            "docs/acceptance.md",
             "step three/T0008/execution-report.md",
             "step three/project-graph.md"
           ],
@@ -1373,7 +1400,7 @@
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect both GitHub Actions workflows for the exact new commit. If they pass, record the exact run URLs and test results in a subsequent ledger update; keep runtime privacy/encryption/P2P gates NOT RUN because this source-level audit is not end-to-end evidence."
+          "follow_up": "Inspect the quality and product-build workflow results for the new V 3.0.44 commit. Record exact outcomes and do not mark T0008 complete if either required quality validation fails."
         }
       ]
     },

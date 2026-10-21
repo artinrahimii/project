@@ -3,16 +3,24 @@
 ## Attempt T0008-A001 — repeatable capability/privacy-claim audit
 
 - Started: 2026-10-22T04:34:00Z.
-- Base commit: `aa1bc7e77bc5bbce80e9d7f987de75c1bdc71c36` (`V 3.0.42`).
-- Result: partial; the source/documentation audit, UI wording changes, and regression test have been prepared in this commit. CI for this new revision is not yet verified.
-- Dependency review: inspected `T0007 → T0008`. The broad T0007 rule does not produce a specific artifact consumed by T0008, while T0008 directly inspects the current UI, backend configuration, README, requirements, and acceptance matrix. The edge is retained and reclassified from `unreviewed` to `sequencing_only`, with rationale and evidence recorded in `step three/project-graph.md`. T0007 remains `in_progress`.
-- Findings:
-  - `UnconfiguredInferenceBackend.IsAvailable` returns false. The WPF host shell does not demonstrate real local inference.
-  - The Android request action only changes local UI status; no request transport is implemented.
-  - The prior Android and Windows labels could be read as delivered capabilities; they now identify both applications as previews and disclose missing transport/inference.
-  - The acceptance matrix had stale statements claiming the platform build projects were absent. Those statements were corrected against the actual files and the passing CI results for V 3.0.42.
-  - Current source/document review does not establish encrypted transport, no persistent storage, or that prompts/responses cannot leave the device. Those release gates remain NOT RUN.
-- Files changed: `tests/test_claims_audit.py`, `docs/acceptance.md`, `src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt`, `src/Host.Windows/MainWindow.xaml`, this report, and `step three/project-graph.md`.
-- Tests: not executed locally in this tool session; local checkout/runtime execution is unavailable. The new test is scheduled by the existing `.github/workflows/quality.yml` discovery command. New-commit CI result: pending; no passing result is claimed yet.
-- Scope limit: source-level contract tests can ensure that current UI/docs disclose limitations. They do not substitute for product runtime, network, cryptographic, or storage tests.
-- Follow-up: inspect both GitHub Actions workflows for the exact resulting commit. Record their real outcomes before deciding whether T0008 can be marked done; keep product runtime privacy, P2P, encryption, and no-storage gates unpassed until suitable evidence exists.
+- Commit: `457b6af3688c1be2a3dc4b5063b0ea5cf396910f` (`V 3.0.43`).
+- Result: failed at the full CI quality gate, while producing useful partial source-audit changes.
+- Source/document findings:
+  - `UnconfiguredInferenceBackend.IsAvailable` returns false; the WPF shell does not demonstrate real local inference.
+  - The Android request action changes local UI status only; request transport is not implemented.
+  - The source/docs distinguish intended local inference, P2P, privacy, and no-central-history goals from proven features. Preview labels were added to the Windows and Android UIs.
+  - A source/document review cannot establish encrypted transport, absence of persistent storage, or that prompts/responses never leave the device. Those release gates remain NOT RUN.
+- CI failure: [Step Three quality gate run 39676332828](https://github.com/artinrahimii/project/actions/runs/39676332828) ran 38 tests and failed one existing contract test, `test_document_does_not_claim_platform_or_p2p_implementation`. That test requires the literal phrase `not yet passed by the product`, which was removed by the T0013 gate wording change. The quality workflow skipped subsequent graph checks after the unit-test step failed.
+- Product workflow: run [39676332128](https://github.com/artinrahimii/project/actions/runs/39676332128) started for the same commit. The host lifecycle test job passed; the Windows and Android build jobs were still in progress at last inspection. No overall product-workflow success is claimed for this run.
+- Files affected in V 3.0.43: `tests/test_claims_audit.py`, `docs/acceptance.md`, `src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt`, `src/Host.Windows/MainWindow.xaml`, this report, and `step three/project-graph.md`.
+- Dependency review: the graph retains `T0007 → T0008` but records it as `sequencing_only` after reviewing the current task scopes and source evidence; T0007 is still `in_progress`.
+
+## Attempt T0008-A002 — correct acceptance contract and stale state
+
+- Started: 2026-10-22T04:45:00Z.
+- Base commit: `457b6af3688c1be2a3dc4b5063b0ea5cf396910f`.
+- Changes: restored the acceptance wording required by the established contract test; replaced the obsolete T0005 paragraph that incorrectly said the Windows/Android project files were absent; updated the T0007-A007 section with the real successful CI evidence from V 3.0.42.
+- Tests: not run locally in this tool session. CI for the corrected commit is pending; no success is claimed yet.
+- Scope limit: source-level checks validate current labels and documentation. They do not substitute for runtime local-inference, network, cryptographic, or storage tests.
+- Result: partial, pending CI for V 3.0.44.
+- Follow-up: inspect the exact V 3.0.44 runs for both GitHub Actions workflows. Keep AC-LOCAL-01, AC-P2P-01, AC-PRIV-01, and the encryption/storage release requirements NOT RUN until runtime evidence exists.
