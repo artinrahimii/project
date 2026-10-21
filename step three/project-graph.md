@@ -1500,9 +1500,9 @@
       ],
       "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
       "execution_summary": {
-        "attempt_count": 1,
+        "attempt_count": 2,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0014-A001",
+        "last_attempt_id": "T0014-A002",
         "last_attempt_result": "partial",
         "changed_files": [
           "global.json",
@@ -1550,6 +1550,37 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Inspect actual CI results; fix build failures and mark done only after successful build evidence."
+        },
+        {
+          "attempt_id": "T0014-A002",
+          "started_at": "2026-10-21T17:08:10.888Z",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "The first product CI run built the Windows host successfully, but Android setup failed while requesting obsolete SDK package 'tools'; Gradle never ran. Workflow setup is being corrected before Android build acceptance can be verified.",
+          "changed_files": [
+            ".github/workflows/product-build.yml",
+            "step three/T0014/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "command": "GitHub Actions run 39640743619 — Build Windows WPF host",
+              "result": "passed",
+              "summary": "Windows WPF build step succeeded."
+            },
+            {
+              "command": "GitHub Actions run 39640743619 — Android SDK setup",
+              "result": "failed",
+              "summary": "setup-android tried to install obsolete package 'tools'; APK build was skipped.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/39640743619"
+            }
+          ],
+          "failure_details": "Android SDK setup failed before Gradle ran; source compilation was not attempted.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Install explicit Android platform/build-tools packages using the runner's existing sdkmanager, then rerun CI."
         }
       ]
     },
@@ -1609,7 +1640,9 @@
           "step three/project-graph.md"
         ],
         "related_commits": [],
-        "tests_passed": [],
+        "tests_passed": [
+          "GitHub Actions run 39640743619: Windows WPF build succeeded."
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -1626,7 +1659,7 @@
           "started_at": "2026-10-21T17:05:48.698Z",
           "ended_at": null,
           "result": "partial",
-          "summary": "Created real platform build configuration/project files and added a dedicated CI workflow. Acceptance remains pending until the actual Windows and Android build jobs finish successfully.",
+          "summary": "The WPF project was created and its Windows build job succeeded in run 39640743619. Task remains in progress pending the validated prerequisite T0014 and graph-consistent completion review.",
           "changed_files": [
             "src/Host.Windows/WhiteP.Host.Windows.csproj",
             "src/Host.Windows/App.xaml",
@@ -1640,16 +1673,17 @@
           "commit_sha": null,
           "tests": [
             {
-              "command": "GitHub Actions product-build workflow",
-              "result": "not_run",
-              "summary": "Will run after the commit is pushed; no build success is claimed."
+              "command": "dotnet build src/Host.Windows/WhiteP.Host.Windows.csproj --configuration Release",
+              "result": "passed",
+              "summary": "Windows WPF build step succeeded in GitHub Actions run 39640743619.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/39640743619"
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect actual CI results; fix build failures and mark done only after successful build evidence."
+          "follow_up": "Complete T0014 after Android build succeeds; then re-evaluate T0015 completion and record CI evidence."
         }
       ]
     },
@@ -1696,9 +1730,9 @@
       ],
       "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
       "execution_summary": {
-        "attempt_count": 1,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "T0016-A001",
+        "attempt_count": 2,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "T0016-A002",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Client.Android/settings.gradle.kts",
@@ -1727,9 +1761,9 @@
         {
           "attempt_id": "T0016-A001",
           "started_at": "2026-10-21T17:05:48.698Z",
-          "ended_at": null,
-          "result": "partial",
-          "summary": "Created real platform build configuration/project files and added a dedicated CI workflow. Acceptance remains pending until the actual Windows and Android build jobs finish successfully.",
+          "ended_at": "2026-10-21T17:08:10.888Z",
+          "result": "failed",
+          "summary": "Android job failed during SDK setup before Gradle started: android-actions/setup-android attempted to install obsolete SDK package 'tools'. The Windows job succeeded, but Android source compilation was not attempted.",
           "changed_files": [
             "src/Client.Android/settings.gradle.kts",
             "src/Client.Android/build.gradle.kts",
@@ -1744,16 +1778,42 @@
           "commit_sha": null,
           "tests": [
             {
+              "command": "GitHub Actions run 39640743619 — Android SDK setup",
+              "result": "failed",
+              "summary": "SDK setup failed on obsolete package 'tools'; Gradle build step was skipped.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/39640743619"
+            }
+          ],
+          "failure_details": "Android SDK setup failed before Gradle ran. APK compilation was not attempted.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Replace the Android SDK setup action with explicit installation of required platform/build-tools packages and rerun CI."
+        },
+        {
+          "attempt_id": "T0016-A002",
+          "started_at": "2026-10-21T17:08:10.888Z",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Corrected CI setup to use the runner's installed sdkmanager and explicitly install Android API 36/build-tools 36.0.0. Build result is pending the new workflow run.",
+          "changed_files": [
+            ".github/workflows/product-build.yml",
+            "step three/T0016/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
               "command": "GitHub Actions product-build workflow",
               "result": "not_run",
-              "summary": "Will run after the commit is pushed; no build success is claimed."
+              "summary": "Corrected workflow will run after this commit is pushed."
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect actual CI results; fix build failures and mark done only after successful build evidence."
+          "follow_up": "Inspect the new Android job and fix any SDK, Gradle, dependency, or Kotlin compilation failures before marking T0016 done."
         }
       ]
     },

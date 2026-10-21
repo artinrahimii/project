@@ -1,11 +1,9 @@
 # T0014 — گزارش اجرای واقعی
 
-- وضعیت: در حال اجرا؛ معیار پذیرش هنوز کامل تأیید نشده است.
-- تلاش: T0014-A001
-- زمان شروع: 2026-10-21T17:05:48.698Z
-- مبنا: `a78472ea93ed0325f6b5defab6a2943f48bc48a9` (`V 3.0.22`) در شاخه `main`.
-- خروجی واقعی: `global.json` و `src/Client.Android/app/build.gradle.kts`.
-- تنظیمات ثبت‌شده: .NET SDK `10.0.100` با `latestFeature`؛ Android compile/target SDK برابر 36 و minSdk برابر 26.
-- آزمون: build در انتظار اجرای CI است؛ در این گزارش موفقیت build ادعا نمی‌شود.
-- شواهد: فایل‌های تنظیمات و `.github/workflows/product-build.yml`.
-- پیگیری: اجرای workflow، اصلاح خطاهای احتمالی و ثبت نتیجهٔ واقعی.
+- وضعیت: در حال اجرا؛ Android SDK/build هنوز تأیید نشده است.
+- تلاش‌ها: T0014-A001 و T0014-A002.
+- مبنا: `bc8f9fd537a28bd64042f2e1b48b435902b90dbf` (`V 3.0.23`).
+- خروجی: `global.json` با .NET SDK `10.0.100` و `src/Client.Android/app/build.gradle.kts` با compile/target SDK برابر 36 و minSdk برابر 26.
+- شاهد آزمون: در run [39640743619](https://github.com/artinrahimii/project/actions/runs/39640743619)، ساخت WPF ویندوز موفق شد. آماده‌سازی Android پیش از اجرای Gradle شکست خورد، چون اکشن setup-android بستهٔ منسوخ `tools` را درخواست کرد.
+- اصلاح: workflow به‌جای اکشن مشکل‌دار، بسته‌های `platforms;android-36`, `build-tools;36.0.0` و `platform-tools` را صریح نصب می‌کند.
+- نتیجه: build موفق Android یا تکمیل T0014 هنوز ادعا نمی‌شود؛ اجرای جدید CI باید بررسی شود.
