@@ -25,3 +25,9 @@
 - Verification boundary: this resolves the contradiction between node-level mandatory prerequisites and edge classification; it does not by itself satisfy every declared output or acceptance criterion.
 - Status: `in_progress`; no completion claim is made.
 - Follow-up: finish T0015 first, then verify Android project acceptance and record current CI evidence.
+
+
+## T0016-A008 — successful current-main verification
+- Date: 2026-10-21; base commit `8b34e4fef0e304a382b97d3b07382e82fb4245dd` (`V 3.0.38`).
+- [White-P product build run 39665189760](https://github.com/artinrahimii/project/actions/runs/39665189760) passed; job `Build Android client APK` completed successfully, including Gradle `assembleDebug`.
+- Status: `done` for creating and building the Android project. Physical-device launch, inference, and P2P transfer are not proven by this CI run.

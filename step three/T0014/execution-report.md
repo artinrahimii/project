@@ -37,3 +37,12 @@
 - Updated `tests/test_readme_contract.py` so it tests the actual current repository state rather than the obsolete absence claim.
 - Tests for this new revision have not run yet; the commit-triggered GitHub Actions workflows are the verification gate.
 - Status: `in_progress` pending CI on the new commit. No runtime or P2P acceptance claim is made.
+
+
+## T0014-A009 — successful current-main verification
+- Date: 2026-10-21.
+- Current base commit: `8b34e4fef0e304a382b97d3b07382e82fb4245dd` (`V 3.0.38`).
+- Step Three quality gate [run 39665189849](https://github.com/artinrahimii/project/actions/runs/39665189849) succeeded, including automated tests, syntax, graph structure, and recorded output/evidence validation.
+- Product build [run 39665189760](https://github.com/artinrahimii/project/actions/runs/39665189760) succeeded: Windows WPF host, Android debug APK, and host lifecycle tests.
+- `docs/decisions/ADR-0001-platform-build-baselines.md` exists in the current tree and documents the actual baseline. The `T0010 → T0014` edge remains `sequencing_only`; no edge was removed or reclassified.
+- Status: `done` for the declared baseline/configuration task. Runtime launch, signed release, inference and P2P are not claimed.

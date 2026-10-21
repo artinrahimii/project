@@ -1770,7 +1770,7 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای فنی T0013 تکمیل و معیارهای پذیرش آن پاس شده باشند. T0010 صرفاً ترتیب اجرایی است و شرط فنی آغاز این وظیفه نیست.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
+      "status": "done",
       "status_fa": "در حال انجام",
       "actual_output_paths": [
         "README.md",
@@ -1790,27 +1790,33 @@
         "docs/decisions/ADR-0001-platform-build-baselines.md",
         "tests/test_product_build_contract.py",
         "tests/test_readme_contract.py",
-        ".github/workflows/product-build.yml"
+        ".github/workflows/product-build.yml",
+        "https://github.com/artinrahimii/project/actions/runs/39665189849",
+        "https://github.com/artinrahimii/project/actions/runs/39665189760"
       ],
       "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nVerification note 2026-10-21: current main build succeeded on Windows WPF and Android APK. The node still lists T0010 and T0013 as prerequisites; T0010 is not complete. The T0010 -> T0014 edge is classified sequencing_only while depends_on/start_condition require T0010, so this inconsistency is unresolved. No task status or edge classification was changed to hide it.\nOutput-path check 2026-10-21: no docs/decisions/ directory is present in the current main tree; review whether this is a required T0014 output before completion.\nDependency review 2026-10-21: T0010 → T0014 remains validated as sequencing_only, supported by the recorded evidence. Therefore T0010 is not a mandatory technical prerequisite and has been removed from depends_on/start_condition. T0013 remains the required predecessor. T0014 is still in_progress because its declared expected output set and acceptance have not all been verified.",
       "execution_summary": {
-        "attempt_count": 7,
+        "attempt_count": 8,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0014-A008",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "T0014-A009",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "README.md",
           "docs/decisions/ADR-0001-platform-build-baselines.md",
           "tests/test_readme_contract.py",
           "step three/T0014/execution-report.md",
-          "step three/project-graph.md"
+          "step three/project-graph.md",
+          "tests/test_product_build_contract.py"
         ],
         "related_commits": [
           "90d48be3129cc1d721e0bc5311ec611ba5ccf7b7",
           "632c36d257ca079dd9bdee07f5415aa3c7c97cc3",
-          "PENDING"
+          "8b34e4fef0e304a382b97d3b07382e82fb4245dd"
         ],
-        "tests_passed": [],
+        "tests_passed": [
+          "Step Three quality gate run 39665189849 passed (https://github.com/artinrahimii/project/actions/runs/39665189849); tests, syntax, graph structure and output/evidence checks passed.",
+          "Windows WPF, Android debug APK and host lifecycle tests passed in run 39665189760 (https://github.com/artinrahimii/project/actions/runs/39665189760)."
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -2010,6 +2016,22 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Inspect the new commit's quality and product-build workflows; if all relevant checks pass, update this attempt with results and evaluate T0014 acceptance. Do not claim runtime/P2P features are implemented."
+        },
+        {
+          "attempt_id": "T0014-A009",
+          "date": "2026-10-21",
+          "result": "succeeded",
+          "summary": "Pinned Windows and Android baselines, ADR, output paths and current CI verified. T0013 is complete; the T0010 sequencing-only edge remains unchanged.",
+          "evidence": [
+            "https://github.com/artinrahimii/project/actions/runs/39665189849",
+            "https://github.com/artinrahimii/project/actions/runs/39665189760"
+          ],
+          "tests_passed": [
+            "Step Three quality gate run 39665189849 passed (https://github.com/artinrahimii/project/actions/runs/39665189849); tests, syntax, graph structure and output/evidence checks passed.",
+            "Windows WPF, Android debug APK and host lifecycle tests passed in run 39665189760 (https://github.com/artinrahimii/project/actions/runs/39665189760)."
+          ],
+          "tests_failed": [],
+          "related_commit": "8b34e4fef0e304a382b97d3b07382e82fb4245dd"
         }
       ]
     },
@@ -2029,7 +2051,7 @@
       ],
       "start_condition": "پیش‌نیاز فنی T0014 تکمیل و معیارهای پذیرش آن پاس شده باشد. T0010 صرفاً ترتیب اجرایی است و شرط فنی آغاز این وظیفه نیست.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
+      "status": "done",
       "status_fa": "در حال اجرا",
       "actual_output_paths": [
         "src/Host.Windows/WhiteP.Host.Windows.csproj",
@@ -2049,23 +2071,32 @@
         "src/Host.Windows/App.xaml.cs",
         "src/Host.Windows/MainWindow.xaml",
         "src/Host.Windows/MainWindow.xaml.cs",
-        ".github/workflows/product-build.yml"
+        ".github/workflows/product-build.yml",
+        "https://github.com/artinrahimii/project/actions/runs/39665189849",
+        "https://github.com/artinrahimii/project/actions/runs/39665189760"
       ],
       "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nVerification note 2026-10-21: Windows WPF build succeeded on the current main revision. T0015 remains in_progress because both T0014 and T0010 are still listed as required prerequisites; no graph relationship was altered.\nDependency review 2026-10-21: T0010 → T0015 remains validated as sequencing_only; it is not a mandatory technical prerequisite and has been removed from depends_on/start_condition. T0014 remains the required predecessor. T0015 remains in_progress pending T0014 completion and task-specific acceptance.",
       "execution_summary": {
-        "attempt_count": 2,
+        "attempt_count": 3,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0015-A002",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "T0015-A004",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "step three/T0015/execution-report.md",
-          "step three/project-graph.md"
+          "step three/project-graph.md",
+          "src/Host.Windows/WhiteP.Host.Windows.csproj",
+          "src/Host.Windows/App.xaml",
+          "src/Host.Windows/App.xaml.cs",
+          "src/Host.Windows/MainWindow.xaml",
+          "src/Host.Windows/MainWindow.xaml.cs"
         ],
         "related_commits": [
-          "632c36d257ca079dd9bdee07f5415aa3c7c97cc3"
+          "632c36d257ca079dd9bdee07f5415aa3c7c97cc3",
+          "8b34e4fef0e304a382b97d3b07382e82fb4245dd"
         ],
         "tests_passed": [
-          "GitHub Actions White-P product build — run 39656666786: passed (https://github.com/artinrahimii/project/actions/runs/39656666786)"
+          "GitHub Actions White-P product build — run 39656666786: passed (https://github.com/artinrahimii/project/actions/runs/39656666786)",
+          "Build Windows WPF host passed in run 39665189760 (https://github.com/artinrahimii/project/actions/runs/39665189760)."
         ],
         "tests_failed": [],
         "blocked_reason": null,
@@ -2133,6 +2164,21 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Resolve T0014 and the T0010 prerequisite/edge inconsistency; then review the host project outputs and any remaining task-specific acceptance checks."
+        },
+        {
+          "attempt_id": "T0015-A004",
+          "date": "2026-10-21",
+          "result": "succeeded",
+          "summary": "Windows WPF host build verified on the current main commit after T0014. This proves buildability of the host shell, not local inference or P2P.",
+          "evidence": [
+            "https://github.com/artinrahimii/project/actions/runs/39665189849",
+            "https://github.com/artinrahimii/project/actions/runs/39665189760"
+          ],
+          "tests_passed": [
+            "Build Windows WPF host passed in run 39665189760 (https://github.com/artinrahimii/project/actions/runs/39665189760)."
+          ],
+          "tests_failed": [],
+          "related_commit": "8b34e4fef0e304a382b97d3b07382e82fb4245dd"
         }
       ]
     },
@@ -2152,7 +2198,7 @@
       ],
       "start_condition": "پیش‌نیاز فنی T0015 تکمیل و معیارهای پذیرش آن پاس شده باشد. T0010 صرفاً ترتیب اجرایی است و شرط فنی آغاز این وظیفه نیست.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
+      "status": "done",
       "status_fa": "در حال اجرا",
       "actual_output_paths": [
         "src/Client.Android/settings.gradle.kts",
@@ -2174,24 +2220,34 @@
         "src/Client.Android/app/build.gradle.kts",
         "src/Client.Android/app/src/main/AndroidManifest.xml",
         "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
-        ".github/workflows/product-build.yml"
+        ".github/workflows/product-build.yml",
+        "https://github.com/artinrahimii/project/actions/runs/39665189849",
+        "https://github.com/artinrahimii/project/actions/runs/39665189760"
       ],
       "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nVerification note 2026-10-21: Android debug APK build succeeded on the current main revision. T0016 remains in_progress because its required predecessors T0015 and T0010 are not done; previous failed attempts remain in execution_history.\nDependency review 2026-10-21: T0010 → T0016 remains validated as sequencing_only; it is not a mandatory technical prerequisite and has been removed from depends_on/start_condition. T0015 remains the required predecessor. T0016 remains in_progress pending T0015 completion and task-specific acceptance.",
       "execution_summary": {
-        "attempt_count": 6,
+        "attempt_count": 7,
         "failed_attempt_count": 3,
-        "last_attempt_id": "T0016-A006",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "T0016-A008",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "step three/T0016/execution-report.md",
-          "step three/project-graph.md"
+          "step three/project-graph.md",
+          "src/Client.Android/settings.gradle.kts",
+          "src/Client.Android/build.gradle.kts",
+          "src/Client.Android/app/build.gradle.kts",
+          "src/Client.Android/app/src/main/AndroidManifest.xml",
+          "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt"
         ],
         "related_commits": [
           "90d48be3129cc1d721e0bc5311ec611ba5ccf7b7",
-          "632c36d257ca079dd9bdee07f5415aa3c7c97cc3"
+          "632c36d257ca079dd9bdee07f5415aa3c7c97cc3",
+          "8b34e4fef0e304a382b97d3b07382e82fb4245dd"
         ],
         "tests_passed": [
-          "GitHub Actions White-P product build — run 39656666786: passed (https://github.com/artinrahimii/project/actions/runs/39656666786)"
+          "GitHub Actions White-P product build — run 39656666786: passed (https://github.com/artinrahimii/project/actions/runs/39656666786)",
+          "Build Android client APK passed in run 39665189760 (https://github.com/artinrahimii/project/actions/runs/39665189760).",
+          "Host lifecycle tests passed in run 39665189760 (https://github.com/artinrahimii/project/actions/runs/39665189760)."
         ],
         "tests_failed": [],
         "blocked_reason": null,
@@ -2365,6 +2421,22 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Complete/reconcile T0015 and T0010 prerequisites; preserve the earlier failed attempts; then verify task-specific Android SDK/project requirements before marking done."
+        },
+        {
+          "attempt_id": "T0016-A008",
+          "date": "2026-10-21",
+          "result": "succeeded",
+          "summary": "Android Gradle project successfully produced a debug APK in CI after T0015. Device runtime, local inference and P2P remain unproven.",
+          "evidence": [
+            "https://github.com/artinrahimii/project/actions/runs/39665189849",
+            "https://github.com/artinrahimii/project/actions/runs/39665189760"
+          ],
+          "tests_passed": [
+            "Build Android client APK passed in run 39665189760 (https://github.com/artinrahimii/project/actions/runs/39665189760).",
+            "Host lifecycle tests passed in run 39665189760 (https://github.com/artinrahimii/project/actions/runs/39665189760)."
+          ],
+          "tests_failed": [],
+          "related_commit": "8b34e4fef0e304a382b97d3b07382e82fb4245dd"
         }
       ]
     },
@@ -16119,4 +16191,5 @@
       "failed"
     ]
   }
-}```
+}
+```
