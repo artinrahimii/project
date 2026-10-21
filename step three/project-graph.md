@@ -819,24 +819,34 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0004 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "blocked",
+      "status_fa": "مسدودشده",
+      "actual_output_paths": [
+        "step three/T0005/execution-report.md"
+      ],
       "expected_output_paths": [
         "docs/acceptance.md + tests/ (معیار و آزمون متناظر)"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "step three/T0005/execution-report.md",
+        "docs/acceptance.md",
+        ".github/workflows/quality.yml"
+      ],
+      "notes": "Blocked: repository snapshot has no actual Windows/.NET, Android/Gradle, or shared-contract project/build files. Existing CI validates only Python graph tooling, so T0005 cannot claim a successful product build. Edge T0004 -> T0005 remains unreviewed.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0005-A001",
+        "last_attempt_result": "blocked",
+        "changed_files": [
+          "step three/project-graph.md",
+          "step three/T0005/execution-report.md",
+          "docs/acceptance.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
-        "blocked_reason": null,
+        "blocked_reason": "No application project or reproducible Windows/Android build entrypoint exists in the inspected main snapshot.",
         "reopened_reason": null,
         "contract_revalidation": {
           "state": "not_required",
@@ -845,7 +855,27 @@
           "review_evidence": []
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0005-A001",
+          "started_at": "2026-10-21T18:15:00+03:00",
+          "ended_at": "2026-10-21T18:20:00+03:00",
+          "result": "blocked",
+          "summary": "Inspected the main tree, existing quality workflow, T0004 evidence, and current Actions status. Only Python graph tooling/tests are buildable in the current snapshot; product build paths for Windows, Android, and shared contracts are absent. Did not claim a product build or create a dummy implementation.",
+          "changed_files": [
+            "step three/project-graph.md",
+            "step three/T0005/execution-report.md",
+            "docs/acceptance.md"
+          ],
+          "commit_sha": null,
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": "No application project/build entrypoints exist in the inspected snapshot.",
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Implement the real project scaffolds/build configuration in their dependency order, add actual Windows and Android build jobs, then retry T0005."
+        }
+      ]
     },
     {
       "id": "T0006",
