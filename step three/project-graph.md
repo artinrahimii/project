@@ -437,22 +437,36 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0001 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال انجام",
+      "actual_output_paths": [
+        ".github/workflows/quality.yml",
+        "step three/T0002/execution-report.md"
+      ],
       "expected_output_paths": [
         "docs/acceptance.md + tests/ (معیار و آزمون متناظر)"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "step three/T0002/execution-report.md",
+        "tests/test_graph_guard.py"
+      ],
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود. تلاش T0002-A001 یک workflow واقعی CI و gate آزمون‌های محلی ایجاد کرد. وضعیت تا مشاهدهٔ اجرای موفق GitHub Actions عمداً در حال انجام باقی مانده است.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0002-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          ".github/workflows/quality.yml",
+          "step three/T0002/execution-report.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
-        "tests_passed": [],
+        "tests_passed": [
+          "python -m unittest discover -s tests -v — 11 passed locally",
+          "python -m compileall -q tools tests — passed",
+          "workflow static checks — passed"
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -463,7 +477,43 @@
           "review_evidence": []
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0002-A001",
+          "started_at": "2026-10-21T17:57:02+03:30",
+          "ended_at": "2026-10-21T17:58:04+03:30",
+          "result": "partial",
+          "summary": "Added a GitHub Actions quality gate. Local unit tests and syntax checks passed; online CI must pass before accepting the task.",
+          "changed_files": [
+            ".github/workflows/quality.yml",
+            "step three/T0002/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "command": "python -m unittest discover -s tests -v",
+              "result": "passed",
+              "summary": "11 tests passed locally"
+            },
+            {
+              "command": "python -m compileall -q tools tests",
+              "result": "passed",
+              "summary": "Python files compiled"
+            },
+            {
+              "command": "GitHub Actions quality workflow",
+              "result": "pending",
+              "summary": "Must be observed after this commit is pushed"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect the workflow run for commit V 3.0.4. If green, record CI URL/result and mark T0002 done in a subsequent verified version commit; otherwise inspect logs and fix."
+        }
+      ]
     },
     {
       "id": "T0003",
