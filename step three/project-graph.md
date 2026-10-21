@@ -1482,20 +1482,35 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0013 و T0010 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "global.json",
+        "src/Client.Android/app/build.gradle.kts",
+        ".github/workflows/product-build.yml"
+      ],
       "expected_output_paths": [
         "README.md + docs/decisions/ + فایل‌های تنظیمات build"
       ],
-      "evidence": [],
+      "evidence": [
+        "step three/T0014/execution-report.md",
+        "global.json",
+        "src/Client.Android/app/build.gradle.kts",
+        ".github/workflows/product-build.yml"
+      ],
       "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0014-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "global.json",
+          "src/Client.Android/app/build.gradle.kts",
+          ".github/workflows/product-build.yml",
+          "step three/T0014/execution-report.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
@@ -1508,7 +1523,35 @@
           "review_evidence": []
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0014-A001",
+          "started_at": "2026-10-21T17:05:48.698Z",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Created real platform build configuration/project files and added a dedicated CI workflow. Acceptance remains pending until the actual Windows and Android build jobs finish successfully.",
+          "changed_files": [
+            "global.json",
+            "src/Client.Android/app/build.gradle.kts",
+            ".github/workflows/product-build.yml",
+            "step three/T0014/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "command": "GitHub Actions product-build workflow",
+              "result": "not_run",
+              "summary": "Will run after the commit is pushed; no build success is claimed."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect actual CI results; fix build failures and mark done only after successful build evidence."
+        }
+      ]
     },
     {
       "id": "T0015",
@@ -1527,20 +1570,44 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0014 و T0010 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "src/Host.Windows/WhiteP.Host.Windows.csproj",
+        "src/Host.Windows/App.xaml",
+        "src/Host.Windows/App.xaml.cs",
+        "src/Host.Windows/MainWindow.xaml",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        ".github/workflows/product-build.yml"
+      ],
       "expected_output_paths": [
         "README.md + docs/decisions/ + فایل‌های تنظیمات build"
       ],
-      "evidence": [],
+      "evidence": [
+        "step three/T0015/execution-report.md",
+        "src/Host.Windows/WhiteP.Host.Windows.csproj",
+        "src/Host.Windows/App.xaml",
+        "src/Host.Windows/App.xaml.cs",
+        "src/Host.Windows/MainWindow.xaml",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        ".github/workflows/product-build.yml"
+      ],
       "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0015-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Host.Windows/WhiteP.Host.Windows.csproj",
+          "src/Host.Windows/App.xaml",
+          "src/Host.Windows/App.xaml.cs",
+          "src/Host.Windows/MainWindow.xaml",
+          "src/Host.Windows/MainWindow.xaml.cs",
+          ".github/workflows/product-build.yml",
+          "step three/T0015/execution-report.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
@@ -1553,7 +1620,38 @@
           "review_evidence": []
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0015-A001",
+          "started_at": "2026-10-21T17:05:48.698Z",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Created real platform build configuration/project files and added a dedicated CI workflow. Acceptance remains pending until the actual Windows and Android build jobs finish successfully.",
+          "changed_files": [
+            "src/Host.Windows/WhiteP.Host.Windows.csproj",
+            "src/Host.Windows/App.xaml",
+            "src/Host.Windows/App.xaml.cs",
+            "src/Host.Windows/MainWindow.xaml",
+            "src/Host.Windows/MainWindow.xaml.cs",
+            ".github/workflows/product-build.yml",
+            "step three/T0015/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "command": "GitHub Actions product-build workflow",
+              "result": "not_run",
+              "summary": "Will run after the commit is pushed; no build success is claimed."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect actual CI results; fix build failures and mark done only after successful build evidence."
+        }
+      ]
     },
     {
       "id": "T0016",
@@ -1572,20 +1670,47 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0015 و T0010 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "src/Client.Android/settings.gradle.kts",
+        "src/Client.Android/build.gradle.kts",
+        "src/Client.Android/gradle.properties",
+        "src/Client.Android/app/build.gradle.kts",
+        "src/Client.Android/app/src/main/AndroidManifest.xml",
+        "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
+        ".github/workflows/product-build.yml"
+      ],
       "expected_output_paths": [
         "README.md + docs/decisions/ + فایل‌های تنظیمات build"
       ],
-      "evidence": [],
+      "evidence": [
+        "step three/T0016/execution-report.md",
+        "src/Client.Android/settings.gradle.kts",
+        "src/Client.Android/build.gradle.kts",
+        "src/Client.Android/gradle.properties",
+        "src/Client.Android/app/build.gradle.kts",
+        "src/Client.Android/app/src/main/AndroidManifest.xml",
+        "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
+        ".github/workflows/product-build.yml"
+      ],
       "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0016-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Client.Android/settings.gradle.kts",
+          "src/Client.Android/build.gradle.kts",
+          "src/Client.Android/gradle.properties",
+          "src/Client.Android/app/build.gradle.kts",
+          "src/Client.Android/app/src/main/AndroidManifest.xml",
+          "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
+          ".github/workflows/product-build.yml",
+          "step three/T0016/execution-report.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
@@ -1598,7 +1723,39 @@
           "review_evidence": []
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0016-A001",
+          "started_at": "2026-10-21T17:05:48.698Z",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Created real platform build configuration/project files and added a dedicated CI workflow. Acceptance remains pending until the actual Windows and Android build jobs finish successfully.",
+          "changed_files": [
+            "src/Client.Android/settings.gradle.kts",
+            "src/Client.Android/build.gradle.kts",
+            "src/Client.Android/gradle.properties",
+            "src/Client.Android/app/build.gradle.kts",
+            "src/Client.Android/app/src/main/AndroidManifest.xml",
+            "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
+            ".github/workflows/product-build.yml",
+            "step three/T0016/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "command": "GitHub Actions product-build workflow",
+              "result": "not_run",
+              "summary": "Will run after the commit is pushed; no build success is claimed."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect actual CI results; fix build failures and mark done only after successful build evidence."
+        }
+      ]
     },
     {
       "id": "T0017",
@@ -11321,55 +11478,79 @@
       "from": "T0013",
       "to": "T0014",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "The acceptance matrix requires clean Windows and Android builds; target SDK/runtime baselines must be represented in actual project build configuration.",
+      "validation_status": "validated",
+      "evidence": [
+        "docs/acceptance.md",
+        "docs/requirements.md",
+        "step one/V1.0.md"
+      ]
     },
     {
       "from": "T0010",
       "to": "T0014",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "SDK baseline files can be authored before the complete clean/reproducible build process is complete. T0010 remains outstanding until the full command set is reproducible.",
+      "validation_status": "validated",
+      "evidence": [
+        "step one/V1.0.md",
+        "README.md",
+        "step three/T0005/execution-report.md"
+      ]
     },
     {
       "from": "T0014",
       "to": "T0015",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "hard_dependency",
+      "rationale": "The selected .NET SDK and Windows target framework baseline are inputs to the runnable WPF project configuration.",
+      "validation_status": "validated",
+      "evidence": [
+        "global.json",
+        "src/Host.Windows/WhiteP.Host.Windows.csproj",
+        "step one/V1.0.md"
+      ]
     },
     {
       "from": "T0010",
       "to": "T0015",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "The reproducible-build policy is not an artifact consumed by authoring the WPF project; this project is itself a prerequisite for completing the policy. Build success remains pending CI.",
+      "validation_status": "validated",
+      "evidence": [
+        "step one/V1.0.md",
+        "src/Host.Windows/WhiteP.Host.Windows.csproj",
+        ".github/workflows/product-build.yml"
+      ]
     },
     {
       "from": "T0015",
       "to": "T0016",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "Windows WPF and Android client have no shared compile-time project dependency in this snapshot. Preserve the edge as conservative ordering only.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/WhiteP.Host.Windows.csproj",
+        "src/Client.Android/settings.gradle.kts",
+        "step one/V1.0.md"
+      ]
     },
     {
       "from": "T0010",
       "to": "T0016",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "The complete reproducible build workflow is not a source input consumed by the Android project files; the project is part of establishing that build path. Build success remains pending CI.",
+      "validation_status": "validated",
+      "evidence": [
+        "step one/V1.0.md",
+        "src/Client.Android/app/build.gradle.kts",
+        ".github/workflows/product-build.yml"
+      ]
     },
     {
       "from": "T0016",
