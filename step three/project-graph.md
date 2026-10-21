@@ -681,8 +681,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0003 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال انجام",
+      "status": "done",
+      "status_fa": "تکمیل‌شده",
       "actual_output_paths": [
         "tools/graph_guard.py",
         "tests/test_graph_guard.py",
@@ -694,14 +694,15 @@
       ],
       "evidence": [
         "tests/test_graph_guard.py",
-        "docs/acceptance.md"
+        "docs/acceptance.md",
+        "step three/T0004/execution-report.md"
       ],
-      "notes": "Attempt T0004-A001 adds repository-backed static checks for known placeholder markers in source files listed as actual outputs, with positive and negative regression tests. Status remains in_progress until CI executes successfully. Edge T0003 → T0004 is validated as a shared-tool/interface dependency: T0004 extends the guard and test suite created by T0003; source files and regression tests provide evidence. The graph edge type remains blocks. Code review correction: exclude tools/graph_guard.py itself and tests/test directories from placeholder scanning to avoid self-matching and intentional test-fixture false positives. Attempt T0004-A001 failed CI due to self-matching placeholder patterns and intentional negative test fixtures; recorded as failed. T0004-A002 contains the correction and remains partial pending CI run 39622120539.",
+      "notes": "T0004-A001 failed CI due to false positives and is preserved in history. T0004-A002 corrected the detector; GitHub Actions run 39622120539 on code commit 357b9b280b73084d582283a654222cf8ce3b1dfc passed automated tests, syntax, graph structure, and recorded-output/evidence validation. This verifies the known-placeholder detector's defined scope only, not overall product correctness.",
       "execution_summary": {
         "attempt_count": 2,
         "failed_attempt_count": 1,
         "last_attempt_id": "T0004-A002",
-        "last_attempt_result": "partial",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "tools/graph_guard.py",
           "tests/test_graph_guard.py",
@@ -713,7 +714,12 @@
           "1cdf8ebd12fa258c49e211d0f33ff430d29029a0",
           "357b9b280b73084d582283a654222cf8ce3b1dfc"
         ],
-        "tests_passed": [],
+        "tests_passed": [
+          "GitHub Actions run 39622120539: Run automated tests",
+          "GitHub Actions run 39622120539: Check Python syntax",
+          "GitHub Actions run 39622120539: Validate graph structure",
+          "GitHub Actions run 39622120539: Validate recorded outputs and evidence"
+        ],
         "tests_failed": [
           "GitHub Actions run 39621942397: Validate recorded outputs and evidence"
         ],
@@ -757,8 +763,8 @@
         {
           "attempt_id": "T0004-A002",
           "started_at": "2026-10-21T19:02:00+03:30",
-          "ended_at": null,
-          "result": "partial",
+          "ended_at": "2026-10-21T19:05:00+03:30",
+          "result": "succeeded",
           "summary": "Corrected false positives by excluding the guard itself and test-source directories from the source placeholder scan. Awaiting CI on commit 357b9b280b73084d582283a654222cf8ce3b1dfc.",
           "changed_files": [
             "tools/graph_guard.py",
@@ -767,12 +773,33 @@
             "step three/T0004/execution-report.md"
           ],
           "commit_sha": "357b9b280b73084d582283a654222cf8ce3b1dfc",
-          "tests": [],
+          "tests": [
+            {
+              "command": "GitHub Actions run 39622120539 — Run automated tests",
+              "result": "passed",
+              "summary": "All automated unit tests passed."
+            },
+            {
+              "command": "GitHub Actions run 39622120539 — Check Python syntax",
+              "result": "passed",
+              "summary": "Python syntax check passed."
+            },
+            {
+              "command": "GitHub Actions run 39622120539 — Validate graph structure",
+              "result": "passed",
+              "summary": "Graph structure validation passed."
+            },
+            {
+              "command": "GitHub Actions run 39622120539 — Validate recorded outputs and evidence",
+              "result": "passed",
+              "summary": "Repository-backed output and evidence validation passed."
+            }
+          ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Verify GitHub Actions run 39622120539; fix any remaining failures and only then mark T0004 done."
+          "follow_up": "T0004 acceptance criteria verified on commit 357b9b280b73084d582283a654222cf8ce3b1dfc. Continue with T0005 after verifying its prerequisite and preserving unreviewed edge classifications."
         }
       ]
     },
