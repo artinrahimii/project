@@ -17,6 +17,13 @@ jobs:
           dotnet-version: 10.0.x
       - name: Build host
         run: dotnet build src/Host.Windows/WhiteP.Host.Windows.csproj --configuration Release
+      - name: Upload Windows host build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: whitep-windows-host
+          path: src/Host.Windows/bin/Release/net10.0-windows/
+          if-no-files-found: error
+          retention-days: 7
   android-client:
     name: Build Android client APK
     runs-on: ubuntu-latest
@@ -52,6 +59,13 @@ jobs:
       - name: Build debug APK
         working-directory: src/Client.Android
         run: gradle --no-daemon assembleDebug
+      - name: Upload Android debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: whitep-android-debug-apk
+          path: src/Client.Android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+          retention-days: 7
 
   host-lifecycle-tests:
     name: Host lifecycle unit and integration tests

@@ -175,3 +175,12 @@ Requirement REQ-011 in `docs/requirements.md` prohibits a central API from recei
 The new guard in `tests/test_central_inference_boundary.py` scans first-party source files outside `src/Host.Windows/` for common POST/PUT/PATCH route-handler declarations with paths indicating inference, prompts, chat, completion, responses, conversations, or history. The intended local Windows host is excluded because local inference/request endpoints may legitimately live there; this check also does not prohibit future direct peer-to-peer transport routes.
 
 This is a preventive source-level check, not proof of runtime routing. REQ-011 remains unaccepted until endpoint review, actual transport/network traces, and storage inspection show that any optional rendezvous component handles discovery/connection metadata only and never receives prompt/response content. The current source snapshot has no central prompt service, but Android-to-host transport is not implemented yet.
+
+
+## T0010 — clean-checkout build/test reproducibility and artifacts
+
+The build workflow and README now share explicit commands for the Windows WPF host, Android debug APK, host lifecycle tests, and Python graph/quality checks. Toolchain policy is checked against `global.json`, JDK 17, Gradle 8.13, Android platform 36 and build-tools 36.0.0.
+
+The product workflow now uploads the Windows host build output and Android debug APK as separate GitHub Actions artifacts with seven-day retention. `if-no-files-found: error` makes a missing output fail the workflow instead of appearing successful. The new `tests/test_reproducible_build_contract.py` keeps the README, toolchain declarations, workflow commands, output paths and quality gate aligned.
+
+Acceptance evidence for this change is pending the current commit's actual GitHub Actions results. A successful build/artifact upload only demonstrates repeatable build outputs; it does not prove runtime local inference, Android-to-host connectivity, P2P transport, encryption or absence of persistent history.

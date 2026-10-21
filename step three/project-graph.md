@@ -1535,9 +1535,7 @@
       "id": "T0010",
       "title": "تمام مراحل ساخت و آزمون را از محیط تمیز و طبق دستورهای ثبت‌شده قابل‌تکرار نگه دار.",
       "section": "قانون تکمیل وظیفه",
-      "depends_on": [
-        "T0009"
-      ],
+      "depends_on": [],
       "inputs": [
         "خروجی تأییدشدهٔ پیش‌نیازها",
         "نیازمندی مرتبط: تمام مراحل ساخت و آزمون را از محیط تمیز و طبق دستورهای ثبت‌شده قابل‌تکرار نگه دار."
@@ -1545,22 +1543,47 @@
       "outputs": [
         "خروجی قابل بررسی مربوط به «تمام مراحل ساخت و آزمون را از محیط تمیز و طبق دستورهای ثبت‌شده قابل‌تکرار نگه دار.» در مسیر docs/acceptance.md + tests/ (معیار و آزمون متناظر)؛ همراه با آزمون/شاهد پذیرش متناسب."
       ],
-      "start_condition": "همهٔ پیش‌نیازهای T0009 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
+      "start_condition": "T0009 is done for the source-level central-endpoint guard. The incoming T0009 -> T0010 edge has been reviewed as sequencing_only and retained to preserve execution order. Implement and validate clean-checkout build/test commands, ensure README and CI commands agree, and publish actual build outputs so missing artifacts fail the workflow.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
-      "expected_output_paths": [
-        "docs/acceptance.md + tests/ (معیار و آزمون متناظر)"
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "README.md",
+        ".github/workflows/product-build.yml",
+        "tests/test_reproducible_build_contract.py",
+        "docs/acceptance.md",
+        "step three/T0010/execution-report.md"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "expected_output_paths": [
+        "README.md",
+        ".github/workflows/product-build.yml",
+        "tests/test_reproducible_build_contract.py",
+        "docs/acceptance.md",
+        "step three/T0010/execution-report.md"
+      ],
+      "evidence": [
+        "tests/test_reproducible_build_contract.py",
+        "README.md",
+        ".github/workflows/product-build.yml",
+        ".github/workflows/quality.yml",
+        "global.json",
+        "src/Host.Windows/WhiteP.Host.Windows.csproj",
+        "src/Client.Android/app/build.gradle.kts"
+      ],
+      "notes": "T0010 is in progress. Current CI has real Windows, Android and lifecycle build/test entrypoints; this attempt adds explicit clean-checkout commands and artifact publication with missing-artifact failure. Actual V 3.0.47 CI is required before acceptance.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0010-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "README.md",
+          ".github/workflows/product-build.yml",
+          "tests/test_reproducible_build_contract.py",
+          "docs/acceptance.md",
+          "step three/T0010/execution-report.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
@@ -1573,7 +1596,30 @@
           "review_evidence": []
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0010-A001",
+          "started_at": "2026-10-21T21:18:00Z",
+          "ended_at": "2026-10-21T21:18:00Z",
+          "result": "partial",
+          "summary": "Reviewed actual toolchain baselines and both CI workflows. Added clean-checkout build/test commands to README, upload-artifact steps for Windows output and Android debug APK with if-no-files-found:error, and a test contract matching commands/toolchain/artifact paths. Exact-commit CI is pending.",
+          "changed_files": [
+            "README.md",
+            ".github/workflows/product-build.yml",
+            "tests/test_reproducible_build_contract.py",
+            "docs/acceptance.md",
+            "step three/T0010/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Run the exact commit through quality and product-build workflows. Verify both artifact upload steps succeed; if they fail due to path/toolchain mismatch, correct and rerun. Do not call T0010 done before real CI evidence."
+        }
+      ]
     },
     {
       "id": "T0011",
@@ -12290,21 +12336,25 @@
       "from": "T0009",
       "to": "T0010",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0010 establishes reproducible clean-checkout build/test commands and artifact publication. It consumes the actual project files and CI setup directly, not any artifact specific to T0009's negative check for central endpoints. Preserve the conservative sequential edge while recording that this is execution order rather than a technical prerequisite.",
+      "validation_status": "validated",
+      "evidence": [
+        "step one/V1.0.md: T0009 prohibits central prompt/response/history APIs; T0010 concerns clean and reproducible build/test workflows.",
+        "README.md: platform baselines and CI build responsibilities are defined independently of T0009's route-handler guard.",
+        ".github/workflows/product-build.yml: actual host build, Android APK build, and lifecycle-test entrypoints are already present and are the direct inputs to T0010."
+      ]
     },
     {
       "from": "T0010",
       "to": "T0011",
       "type": "blocks",
       "dependency_classification": "sequencing_only",
-      "rationale": "T0010 requires reproducible build/test commands across the eventual application projects; it does not produce an input consumed by writing README.md. The README can be authored accurately before build entrypoints exist, provided it explicitly states that the application projects and product builds are not yet present. This is an execution-order relation, not a technical dependency.",
+      "rationale": "T0010 establishes reproducible build/test commands; T0011 documents product goals/scope/current limitations. README content can be authored without consuming build artifacts, so this remains sequencing_only.",
       "validation_status": "validated",
       "evidence": [
-        "step one/V1.0.md: T0010 concerns reproducible build/test workflow; T0011 concerns product purpose, components, first-release scope, and current limitations.",
-        "step three/T0005/execution-report.md: confirms application build projects are absent and product build is not yet available."
+        "step one/V1.0.md: T0010 defines clean-build workflow; T0011 defines README purpose/scope/limitations.",
+        "README.md: current checked-in product scope and limitations can be verified directly alongside .github/workflows/product-build.yml; neither is a generated input to the other."
       ]
     },
     {
@@ -12324,12 +12374,11 @@
       "to": "T0012",
       "type": "blocks",
       "dependency_classification": "sequencing_only",
-      "rationale": "T0010 concerns reproducible build/test entrypoints for the application projects, while T0012 defines measurable requirements and verification methods. A requirements specification can be authored before build scripts exist and does not consume build artifacts. Build reproducibility remains an outstanding task and is not claimed by T0012.",
+      "rationale": "T0010 concerns build/test entrypoints; T0012 defines measurable requirements. Requirements can be specified and reviewed without consuming build artifacts, so this remains sequencing_only.",
       "validation_status": "validated",
       "evidence": [
-        "step one/V1.0.md: T0010 defines reproducible build/test workflow; T0012 defines requirements",
-        "step three/T0005/execution-report.md: Windows, Android, and shared-contract build entrypoints are absent in the inspected main snapshot",
-        "README.md: product build and platform projects are explicitly disclosed as not yet present"
+        "step one/V1.0.md: T0010 defines reproducible build/test workflow; T0012 defines testable requirements.",
+        "docs/requirements.md: requirement acceptance/verification clauses are independent of build command execution; .github/workflows/quality.yml and product-build.yml provide their validation entrypoints."
       ]
     },
     {
@@ -12349,12 +12398,12 @@
       "to": "T0013",
       "type": "blocks",
       "dependency_classification": "sequencing_only",
-      "rationale": "Writing a testable final-acceptance matrix does not consume build artifacts and can be completed before platform build entrypoints exist. However, the matrix explicitly requires clean Windows/Android builds and runtime/P2P evidence before release acceptance; this classification does not waive T0010 or claim product builds pass.",
+      "rationale": "T0010 concerns clean, repeatable build/test paths; T0013 defines the release-acceptance matrix. The matrix can be authored independently and correctly labels missing runtime evidence as NOT RUN, so this remains sequencing_only.",
       "validation_status": "validated",
       "evidence": [
-        "docs/acceptance.md: final release gates require clean platform builds and runtime/network evidence before release approval.",
-        "docs/requirements.md: REQ-018 explicitly states that Python graph checks alone do not satisfy reproducible product builds.",
-        "step three/T0005/execution-report.md: confirms the current repository snapshot lacks Windows/.NET and Android/Gradle application build entrypoints."
+        "docs/acceptance.md: AC-CI-01 and the Windows/Android/P2P release matrix explicitly distinguish build evidence from runtime acceptance.",
+        "docs/requirements.md: REQ-018 requires actual platform builds and tests, not Python graph checks alone.",
+        ".github/workflows/product-build.yml: current Windows, Android, and lifecycle commands."
       ]
     },
     {
@@ -12375,12 +12424,12 @@
       "to": "T0014",
       "type": "blocks",
       "dependency_classification": "sequencing_only",
-      "rationale": "SDK baseline files can be authored before the complete clean/reproducible build process is complete. T0010 remains outstanding until the full command set is reproducible.",
+      "rationale": "T0010 validates repeatability using the selected toolchain; T0014 fixes platform/SDK baselines. The baseline files are direct build inputs but T0010 does not produce a technical artifact consumed by T0014. Preserve sequencing_only.",
       "validation_status": "validated",
       "evidence": [
-        "step one/V1.0.md",
-        "README.md",
-        "step three/T0005/execution-report.md"
+        "global.json: .NET SDK baseline 10.0.100 with latestFeature roll-forward.",
+        "src/Client.Android/app/build.gradle.kts and docs/decisions/ADR-0001-platform-build-baselines.md: Android SDK levels and baseline rationale.",
+        ".github/workflows/product-build.yml: the CI toolchain matching those baselines."
       ]
     },
     {
@@ -12401,12 +12450,11 @@
       "to": "T0015",
       "type": "blocks",
       "dependency_classification": "sequencing_only",
-      "rationale": "The reproducible-build policy is not an artifact consumed by authoring the WPF project; this project is itself a prerequisite for completing the policy. Build success remains pending CI.",
+      "rationale": "T0010's build workflow validates the WPF project; it is not a source artifact consumed by authoring the WPF project itself. Keep sequencing_only.",
       "validation_status": "validated",
       "evidence": [
-        "step one/V1.0.md",
-        "src/Host.Windows/WhiteP.Host.Windows.csproj",
-        ".github/workflows/product-build.yml"
+        "src/Host.Windows/WhiteP.Host.Windows.csproj: actual WPF project file.",
+        ".github/workflows/product-build.yml: clean CI command that builds the host project."
       ]
     },
     {
@@ -12427,12 +12475,11 @@
       "to": "T0016",
       "type": "blocks",
       "dependency_classification": "sequencing_only",
-      "rationale": "The complete reproducible build workflow is not a source input consumed by the Android project files; the project is part of establishing that build path. Build success remains pending CI.",
+      "rationale": "T0010's build workflow validates the Android Gradle project; it is not a source artifact consumed by authoring that project. Keep sequencing_only.",
       "validation_status": "validated",
       "evidence": [
-        "step one/V1.0.md",
-        "src/Client.Android/app/build.gradle.kts",
-        ".github/workflows/product-build.yml"
+        "src/Client.Android/app/build.gradle.kts and settings.gradle.kts: actual Gradle project files.",
+        ".github/workflows/product-build.yml: JDK/Gradle/Android SDK setup and actual assembleDebug command."
       ]
     },
     {
@@ -16414,6 +16461,100 @@
         "docs/requirements.md: REQ-011 says endpoint review and network-level evidence are required and source-code search alone is insufficient.",
         "Repository source tree on V 3.0.44 contains Windows host and Android client projects only; no central server/API project or handler is present.",
         "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt states that requests are not sent and no host transport exists."
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-21T21:18:00Z",
+      "edge_from": "T0009",
+      "edge_to": "T0010",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "reason": "T0010 can improve/validate clean build paths independently of T0009; the existing order is retained without treating the central-API guard output as a technical input.",
+      "evidence": [
+        "step one/V1.0.md: T0009 prohibits central prompt/response/history APIs; T0010 concerns clean and reproducible build/test workflows.",
+        "README.md: platform baselines and CI build responsibilities are defined independently of T0009's route-handler guard.",
+        ".github/workflows/product-build.yml: actual host build, Android APK build, and lifecycle-test entrypoints are already present and are the direct inputs to T0010."
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-21T21:18:00Z",
+      "edge_from": "T0010",
+      "edge_to": "T0011",
+      "old_classification": "sequencing_only",
+      "new_classification": "sequencing_only",
+      "reason": "Refreshed the edge evidence because its previous reference to the absent-project snapshot in T0005 is superseded by the real project and workflow files now checked in. Classification unchanged; evidence now reflects current main.",
+      "evidence": [
+        "step one/V1.0.md: T0010 defines clean-build workflow; T0011 defines README purpose/scope/limitations.",
+        "README.md: current checked-in product scope and limitations can be verified directly alongside .github/workflows/product-build.yml; neither is a generated input to the other."
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-21T21:18:00Z",
+      "edge_from": "T0010",
+      "edge_to": "T0012",
+      "old_classification": "sequencing_only",
+      "new_classification": "sequencing_only",
+      "reason": "Refreshed the edge evidence because its previous reference to the absent-project snapshot in T0005 is superseded by the real project and workflow files now checked in. Classification unchanged; evidence now reflects current main.",
+      "evidence": [
+        "step one/V1.0.md: T0010 defines reproducible build/test workflow; T0012 defines testable requirements.",
+        "docs/requirements.md: requirement acceptance/verification clauses are independent of build command execution; .github/workflows/quality.yml and product-build.yml provide their validation entrypoints."
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-21T21:18:00Z",
+      "edge_from": "T0010",
+      "edge_to": "T0013",
+      "old_classification": "sequencing_only",
+      "new_classification": "sequencing_only",
+      "reason": "Refreshed the edge evidence because its previous reference to the absent-project snapshot in T0005 is superseded by the real project and workflow files now checked in. Classification unchanged; evidence now reflects current main.",
+      "evidence": [
+        "docs/acceptance.md: AC-CI-01 and the Windows/Android/P2P release matrix explicitly distinguish build evidence from runtime acceptance.",
+        "docs/requirements.md: REQ-018 requires actual platform builds and tests, not Python graph checks alone.",
+        ".github/workflows/product-build.yml: current Windows, Android, and lifecycle commands."
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-21T21:18:00Z",
+      "edge_from": "T0010",
+      "edge_to": "T0014",
+      "old_classification": "sequencing_only",
+      "new_classification": "sequencing_only",
+      "reason": "Refreshed the edge evidence because its previous reference to the absent-project snapshot in T0005 is superseded by the real project and workflow files now checked in. Classification unchanged; evidence now reflects current main.",
+      "evidence": [
+        "global.json: .NET SDK baseline 10.0.100 with latestFeature roll-forward.",
+        "src/Client.Android/app/build.gradle.kts and docs/decisions/ADR-0001-platform-build-baselines.md: Android SDK levels and baseline rationale.",
+        ".github/workflows/product-build.yml: the CI toolchain matching those baselines."
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-21T21:18:00Z",
+      "edge_from": "T0010",
+      "edge_to": "T0015",
+      "old_classification": "sequencing_only",
+      "new_classification": "sequencing_only",
+      "reason": "Refreshed the edge evidence because its previous reference to the absent-project snapshot in T0005 is superseded by the real project and workflow files now checked in. Classification unchanged; evidence now reflects current main.",
+      "evidence": [
+        "src/Host.Windows/WhiteP.Host.Windows.csproj: actual WPF project file.",
+        ".github/workflows/product-build.yml: clean CI command that builds the host project."
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-21T21:18:00Z",
+      "edge_from": "T0010",
+      "edge_to": "T0016",
+      "old_classification": "sequencing_only",
+      "new_classification": "sequencing_only",
+      "reason": "Refreshed the edge evidence because its previous reference to the absent-project snapshot in T0005 is superseded by the real project and workflow files now checked in. Classification unchanged; evidence now reflects current main.",
+      "evidence": [
+        "src/Client.Android/app/build.gradle.kts and settings.gradle.kts: actual Gradle project files.",
+        ".github/workflows/product-build.yml: JDK/Gradle/Android SDK setup and actual assembleDebug command."
       ],
       "reviewed_by": "Step Three execution review"
     }

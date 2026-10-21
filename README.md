@@ -55,6 +55,36 @@ python tools/graph_guard.py "step three/project-graph.md" --repo-root .
 
 ساخت میزبان ویندوز در runner ویندوز با .NET SDK 10 انجام می‌شود؛ ساخت APK اندروید در runner لینوکس با JDK 17، Gradle 8.13 و Android SDK platform/build-tools 36 انجام می‌شود. workflow متناظر: [product-build.yml](.github/workflows/product-build.yml). برای نتیجهٔ واقعی به اجرای موفق GitHub Actions و artifactهای همان اجرا مراجعه کن؛ اجرای آزمون‌های Python جایگزین build یا آزمون runtime محصول نیست.
 
+
+
+### ساخت و آزمون از checkout تمیز
+
+دستورهای زیر با workflowهای فعلی هماهنگ‌اند. برای میزبان ویندوز، .NET SDK باید با `global.json` سازگار باشد: نسخهٔ پایه `10.0.100` و سیاست `latestFeature`. برای اندروید، JDK 17، Gradle 8.13 و Android SDK platform `android-36`، build-tools `36.0.0` و platform-tools لازم است. محیط CI همین ورودی‌ها را از یک checkout تازه تنظیم می‌کند.
+
+از ریشهٔ مخزن، ساخت میزبان ویندوز و اجرای آزمون چرخهٔ عمر:
+
+```bash
+dotnet build src/Host.Windows/WhiteP.Host.Windows.csproj --configuration Release
+dotnet run --project tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj --configuration Release
+```
+
+برای ساخت APK اندروید، ابتدا JDK 17، Gradle 8.13 و بسته‌های Android SDK یادشده را نصب و `ANDROID_HOME` را به SDK root تنظیم کن؛ سپس:
+
+```bash
+cd src/Client.Android
+gradle --no-daemon assembleDebug
+```
+
+آزمون‌ها و کنترل‌های مخزن از ریشه:
+
+```bash
+python -m unittest discover -s tests -v
+python -m compileall -q tools tests
+python tools/graph_guard.py "step three/project-graph.md" --repo-root .
+```
+
+workflow محصول پس از build، خروجی میزبان ویندوز و فایل `app-debug.apk` را به‌عنوان artifact برای ۷ روز منتشر می‌کند و در صورت نبودن فایل خروجی شکست می‌خورد. موفقیت ساخت و وجود artifact، اجرای درست برنامه، inference محلی یا تبادل P2P را اثبات نمی‌کند.
+
 ## وضعیت توسعه
 
 مرحلهٔ سوم به‌صورت وظیفه‌محور پیش می‌رود. هر قابلیت فقط با فایل واقعی، آزمون متناسب و شواهد قابل‌بررسی تکمیل اعلام می‌شود. برای وضعیت و وابستگی‌های جاری به `step three/project-graph.md` مراجعه کنید.
