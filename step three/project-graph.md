@@ -2073,7 +2073,8 @@
         "src/Host.Windows/MainWindow.xaml.cs",
         ".github/workflows/product-build.yml",
         "https://github.com/artinrahimii/project/actions/runs/39665189849",
-        "https://github.com/artinrahimii/project/actions/runs/39665189760"
+        "https://github.com/artinrahimii/project/actions/runs/39665189760",
+        "tests/HostLifecycle.Tests/Program.cs"
       ],
       "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nVerification note 2026-10-21: Windows WPF build succeeded on the current main revision. T0015 remains in_progress because both T0014 and T0010 are still listed as required prerequisites; no graph relationship was altered.\nDependency review 2026-10-21: T0010 → T0015 remains validated as sequencing_only; it is not a mandatory technical prerequisite and has been removed from depends_on/start_condition. T0014 remains the required predecessor. T0015 remains in_progress pending T0014 completion and task-specific acceptance.",
       "execution_summary": {
@@ -2222,7 +2223,8 @@
         "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
         ".github/workflows/product-build.yml",
         "https://github.com/artinrahimii/project/actions/runs/39665189849",
-        "https://github.com/artinrahimii/project/actions/runs/39665189760"
+        "https://github.com/artinrahimii/project/actions/runs/39665189760",
+        "tests/HostLifecycle.Tests/Program.cs"
       ],
       "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nVerification note 2026-10-21: Android debug APK build succeeded on the current main revision. T0016 remains in_progress because its required predecessors T0015 and T0010 are not done; previous failed attempts remain in execution_history.\nDependency review 2026-10-21: T0010 → T0016 remains validated as sequencing_only; it is not a mandatory technical prerequisite and has been removed from depends_on/start_condition. T0015 remains the required predecessor. T0016 remains in_progress pending T0015 completion and task-specific acceptance.",
       "execution_summary": {
