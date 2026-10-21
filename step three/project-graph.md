@@ -1545,8 +1545,8 @@
       ],
       "start_condition": "T0009 is done for the source-level central-endpoint guard. The incoming T0009 -> T0010 edge has been reviewed as sequencing_only and retained to preserve execution order. Implement and validate clean-checkout build/test commands, ensure README and CI commands agree, and publish actual build outputs so missing artifacts fail the workflow.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "README.md",
         ".github/workflows/product-build.yml",
@@ -1570,12 +1570,12 @@
         "src/Host.Windows/WhiteP.Host.Windows.csproj",
         "src/Client.Android/app/build.gradle.kts"
       ],
-      "notes": "T0010 is in progress. Current CI has real Windows, Android and lifecycle build/test entrypoints; this attempt adds explicit clean-checkout commands and artifact publication with missing-artifact failure. Actual V 3.0.47 CI is required before acceptance.",
+      "notes": "T0010 completed for the defined build/test reproducibility scope: documented commands match CI, the quality gate passed 45 Python tests and validation steps, the Windows host and Android APK were built and uploaded as artifacts, and the lifecycle test job passed. The product workflow wrapper remained in post-job Gradle cleanup at the final observation; this is not represented as an overall success conclusion. These build outputs do not prove runtime local inference, P2P, encryption or absence of persistence.",
       "execution_summary": {
         "attempt_count": 1,
         "failed_attempt_count": 0,
         "last_attempt_id": "T0010-A001",
-        "last_attempt_result": "partial",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "README.md",
           ".github/workflows/product-build.yml",
@@ -1584,8 +1584,15 @@
           "step three/T0010/execution-report.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
+        "related_commits": [
+          "1f3fded138a12802a7dd5a631c38fdc149835a91"
+        ],
+        "tests_passed": [
+          "Step Three quality gate run 39677788361 — passed for V 3.0.47 / commit 1f3fded138a12802a7dd5a631c38fdc149835a91: 45 Python tests passed; syntax, graph and output/evidence checks passed.",
+          "Product build run 39677788376: Windows build and artifact-upload steps passed; artifact whitep-windows-host is present (88,918 bytes, expires 2026-10-28).",
+          "Product build run 39677788376: Android assembleDebug and artifact-upload steps passed; artifact whitep-android-debug-apk is present (10,577,636 bytes, expires 2026-10-28). The overall run was still post-job Gradle cleanup at last check.",
+          "Product build run 39677788376: host lifecycle unit and integration test job completed successfully."
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -1600,9 +1607,9 @@
         {
           "attempt_id": "T0010-A001",
           "started_at": "2026-10-21T21:18:00Z",
-          "ended_at": "2026-10-21T21:18:00Z",
-          "result": "partial",
-          "summary": "Reviewed actual toolchain baselines and both CI workflows. Added clean-checkout build/test commands to README, upload-artifact steps for Windows output and Android debug APK with if-no-files-found:error, and a test contract matching commands/toolchain/artifact paths. Exact-commit CI is pending.",
+          "ended_at": "2026-10-21T21:20:30Z",
+          "result": "succeeded",
+          "summary": "The quality gate passed 45 Python tests and all syntax/graph/evidence checks. On the clean-checkout product workflow, the Windows WPF build and upload passed, the Android debug APK build and upload passed, and the host lifecycle test job passed. Both artifacts are present in the actual run. At the last check, the Android job was still in its post-job Gradle-cache cleanup step, so the overall workflow conclusion remains in_progress and is not claimed as successful.",
           "changed_files": [
             "README.md",
             ".github/workflows/product-build.yml",
@@ -1611,13 +1618,38 @@
             "step three/T0010/execution-report.md",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
-          "tests": [],
+          "commit_sha": "1f3fded138a12802a7dd5a631c38fdc149835a91",
+          "tests": [
+            {
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39677788361",
+              "summary": "45 Python tests completed with OK; Python syntax, graph structure and actual-output/evidence validation passed on V 3.0.47."
+            },
+            {
+              "name": "Windows host build and artifact upload",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39677788376",
+              "summary": "Build host and Upload Windows host build artifacts steps passed. Artifact whitep-windows-host (88,918 bytes) was uploaded, expires 2026-10-28."
+            },
+            {
+              "name": "Android debug APK build and artifact upload",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39677788376",
+              "summary": "Build debug APK and Upload Android debug APK steps passed. Artifact whitep-android-debug-apk (10,577,636 bytes) was uploaded, expires 2026-10-28. Android post-job Gradle cleanup remained in progress at last check."
+            },
+            {
+              "name": "Host lifecycle unit and integration tests",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39677788376",
+              "summary": "The lifecycle-test job completed successfully from clean checkout."
+            }
+          ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Run the exact commit through quality and product-build workflows. Verify both artifact upload steps succeed; if they fail due to path/toolchain mismatch, correct and rerun. Do not call T0010 done before real CI evidence."
+          "follow_up": "T0010 is complete for its reproducible clean-checkout build/test-and-artifact scope. The overall product-workflow run remained in post-job Gradle cleanup at the last check; retain that distinction and do not claim the run itself had completed successfully. Build/artifact success does not prove runtime inference, P2P, encryption or no-storage."
         }
       ]
     },
