@@ -1500,9 +1500,9 @@
       ],
       "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
       "execution_summary": {
-        "attempt_count": 2,
+        "attempt_count": 3,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0014-A002",
+        "last_attempt_id": "T0014-A003",
         "last_attempt_result": "partial",
         "changed_files": [
           "global.json",
@@ -1581,6 +1581,37 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Install explicit Android platform/build-tools packages using the runner's existing sdkmanager, then rerun CI."
+        },
+        {
+          "attempt_id": "T0014-A003",
+          "started_at": "2026-10-21T17:10:12.130Z",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Second product-build attempt successfully built WPF but Android license step failed because sdkmanager was not on PATH. Workflow now locates sdkmanager under the runner's Android SDK installation and exports its path; retry result is pending.",
+          "changed_files": [
+            ".github/workflows/product-build.yml",
+            "step three/T0014/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "command": "GitHub Actions run 39641116809 — Build Windows WPF host",
+              "result": "passed",
+              "summary": "Windows WPF build succeeded."
+            },
+            {
+              "command": "GitHub Actions run 39641116809 — Android SDK licenses",
+              "result": "failed",
+              "summary": "sdkmanager was not on PATH; the license step exited 127, so SDK install/Gradle build were skipped.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/39641116809"
+            }
+          ],
+          "failure_details": "The Android SDK manager existed under the runner SDK directory but was not available by bare command name. This was an environment path issue, not a source compile failure.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Use the discovered absolute sdkmanager path, install API 36 packages, then inspect the Gradle build result."
         }
       ]
     },
@@ -1730,9 +1761,9 @@
       ],
       "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
       "execution_summary": {
-        "attempt_count": 2,
-        "failed_attempt_count": 1,
-        "last_attempt_id": "T0016-A002",
+        "attempt_count": 3,
+        "failed_attempt_count": 2,
+        "last_attempt_id": "T0016-A003",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Client.Android/settings.gradle.kts",
@@ -1793,9 +1824,35 @@
         {
           "attempt_id": "T0016-A002",
           "started_at": "2026-10-21T17:08:10.888Z",
+          "ended_at": "2026-10-21T17:10:12.130Z",
+          "result": "failed",
+          "summary": "The retry still failed before Gradle started because sdkmanager was not on PATH; the license step exited 127.",
+          "changed_files": [
+            ".github/workflows/product-build.yml",
+            "step three/T0016/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "command": "GitHub Actions run 39641116809 — Android SDK licenses",
+              "result": "failed",
+              "summary": "sdkmanager was not found by command name; APK build step was skipped.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/39641116809"
+            }
+          ],
+          "failure_details": "The workflow invoked bare sdkmanager although the runner's Android SDK manager was not on PATH.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Locate sdkmanager under the Android SDK root and invoke it using its absolute path."
+        },
+        {
+          "attempt_id": "T0016-A003",
+          "started_at": "2026-10-21T17:10:12.130Z",
           "ended_at": null,
           "result": "partial",
-          "summary": "Corrected CI setup to use the runner's installed sdkmanager and explicitly install Android API 36/build-tools 36.0.0. Build result is pending the new workflow run.",
+          "summary": "Corrected workflow to locate the SDK manager under ANDROID_HOME/ANDROID_SDK_ROOT, export its absolute path, accept licenses, and install explicit API 36 packages. Build result awaits CI.",
           "changed_files": [
             ".github/workflows/product-build.yml",
             "step three/T0016/execution-report.md",
@@ -1806,14 +1863,14 @@
             {
               "command": "GitHub Actions product-build workflow",
               "result": "not_run",
-              "summary": "Corrected workflow will run after this commit is pushed."
+              "summary": "Corrected workflow will run after commit."
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect the new Android job and fix any SDK, Gradle, dependency, or Kotlin compilation failures before marking T0016 done."
+          "follow_up": "Inspect the new Android job and fix any remaining environment or source compilation failures."
         }
       ]
     },
