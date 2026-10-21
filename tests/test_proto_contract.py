@@ -46,6 +46,7 @@ class ProtoContractTests(unittest.TestCase):
     def test_android_generates_java_lite_from_the_same_repository_schema(self):
         self.assertIn('id("com.google.protobuf") version "0.10.0" apply false', ANDROID_ROOT)
         self.assertIn('id("com.google.protobuf")', ANDROID_APP)
+        self.assertIn("import com.google.protobuf.gradle.*", ANDROID_APP)
         self.assertIn('srcDir("../../../protocol")', ANDROID_APP)
         self.assertIn('com.google.protobuf:protoc:4.36.2', ANDROID_APP)
         self.assertIn('com.google.protobuf:protobuf-javalite:4.36.2', ANDROID_APP)

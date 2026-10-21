@@ -193,3 +193,5 @@ A successful build/artifact upload demonstrates repeatable build outputs; it doe
 The versioned source of truth is `protocol/whitep/v1/messages.proto`. The Windows project generates C# messages during .NET build; the Android module generates Java-lite messages from the same repository-level source during Gradle build. The contract includes capabilities/status, inference request and response, cancellation, and typed protocol errors.
 
 Acceptance requires the quality workflow and actual Windows/Android build jobs to pass for the commit. Message definitions and generated classes do not establish that transport, P2P routing, local inference, encryption, or no-persistence behavior exists; those remain separate acceptance gates.
+
+Verification history for T0017: on commit `f3783ee3af38c2d2086777950e97778273190573` (`V 3.0.50`), the quality gate passed and the Windows/lifecycle jobs passed, but the Android build failed during Kotlin DSL configuration because the `proto`/`srcDir` extension references were unresolved. The follow-up adds the explicit Protobuf Gradle extension import; final acceptance is pending the exact follow-up commit's CI results.

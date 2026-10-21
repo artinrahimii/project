@@ -2760,11 +2760,11 @@
         "step three/T0017/execution-report.md",
         ".github/workflows/product-build.yml"
       ],
-      "notes": "T0017-A001 adds one versioned .proto source and configures build-time C#/Java-lite generation from it. T0016 → T0017 was validated as hard_dependency; T0010 → T0017 was validated as sequencing_only. T0017 remains in_progress pending exact-commit quality and Windows/Android build results. Generated bindings do not prove transport, P2P, inference, encryption, or no-persistence acceptance.",
+      "notes": "T0017-A001 (V 3.0.50) created the shared schema; quality, Windows build, and host lifecycle jobs passed, but the Android Gradle job failed before proto generation due to unresolved Kotlin DSL proto/srcDir references. T0017-A002 adds the explicit Protobuf Gradle extension import. Keep in_progress until exact-commit quality and both generated-binding builds pass.",
       "execution_summary": {
-        "attempt_count": 1,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "T0017-A001",
+        "attempt_count": 2,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "T0017-A002",
         "last_attempt_result": "partial",
         "changed_files": [
           "protocol/whitep/v1/messages.proto",
@@ -2777,7 +2777,9 @@
           "step three/T0017/execution-report.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
+        "related_commits": [
+          "f3783ee3af38c2d2086777950e97778273190573"
+        ],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
@@ -2803,9 +2805,9 @@
         {
           "attempt_id": "T0017-A001",
           "started_at": "2026-10-21T21:26:48.431Z",
-          "ended_at": "2026-10-21T21:26:48.431Z",
-          "result": "partial",
-          "summary": "Added the versioned shared proto3 schema and configured build-time C#/Java-lite code generation. Added source/configuration contract tests; exact-commit CI is pending.",
+          "ended_at": "2026-10-21T21:28:13Z",
+          "result": "failed",
+          "summary": "The shared schema and Windows build were successful and the quality gate passed, but Android build-script configuration failed before proto generation because the Kotlin DSL did not resolve proto/srcDir.",
           "changed_files": [
             "protocol/whitep/v1/messages.proto",
             "src/Host.Windows/WhiteP.Host.Windows.csproj",
@@ -2817,29 +2819,77 @@
             "step three/T0017/execution-report.md",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "f3783ee3af38c2d2086777950e97778273190573",
           "tests": [
             {
-              "name": "tests/test_proto_contract.py via Step Three quality workflow",
-              "result": "not_run",
-              "evidence": ".github/workflows/quality.yml",
-              "summary": "No local test execution is available in this tool session; the exact commit must run the test."
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39678906350",
+              "summary": "The exact V 3.0.50 quality workflow passed: Python tests, syntax, graph structure, and recorded-output/evidence checks."
             },
             {
-              "name": "Windows WPF and Android generated-binding builds",
-              "result": "pending",
-              "evidence": ".github/workflows/product-build.yml",
-              "summary": "Inspect exact-commit build results; do not infer successful code generation from source configuration alone."
+              "name": "Windows WPF build with C# protobuf generation",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39678906409",
+              "summary": "The Windows host build job completed successfully for the exact commit."
+            },
+            {
+              "name": "Host lifecycle tests",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39678906409",
+              "summary": "The host lifecycle unit/integration test job completed successfully."
+            },
+            {
+              "name": "Android debug APK/code generation",
+              "result": "failed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39678906409",
+              "summary": "Gradle script compilation reported unresolved references for proto and srcDir in app/build.gradle.kts; APK build and upload did not complete."
             }
           ],
-          "failure_details": null,
+          "failure_details": "Android Gradle Kotlin DSL compilation failed at the android.sourceSets main proto block: unresolved reference proto, then unresolved reference srcDir. This occurred before Protobuf generation and APK compilation.",
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [
             "Introduced the shared versioned Protobuf source of truth.",
             "Configured C# generation through Grpc.Tools and Java-lite generation through the Android Protobuf Gradle plugin."
           ],
-          "follow_up": "Inspect the exact commit's quality and product-build results; fix any generation/compiler errors and rerun. Record the resulting commit SHA and set done only after tests and builds pass."
+          "follow_up": "Added the explicit Protobuf Gradle extension import in T0017-A002 and will rerun the exact CI before deciding task completion."
+        },
+        {
+          "attempt_id": "T0017-A002",
+          "started_at": "2026-10-21T21:29:13.304Z",
+          "ended_at": "2026-10-21T21:29:13.304Z",
+          "result": "partial",
+          "summary": "Added import com.google.protobuf.gradle.* to make the Protobuf plugin's Android sourceSet extension functions available to Kotlin DSL; extended the contract test to prevent removal of this import. CI for this correction is pending.",
+          "changed_files": [
+            "src/Client.Android/app/build.gradle.kts",
+            "tests/test_proto_contract.py",
+            "docs/acceptance.md",
+            "step three/T0017/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "tests/test_proto_contract.py",
+              "result": "pending",
+              "evidence": ".github/workflows/quality.yml",
+              "summary": "Regression assertion added; exact-commit quality workflow must execute it."
+            },
+            {
+              "name": "Windows WPF generation build and Android debug APK build",
+              "result": "pending",
+              "evidence": ".github/workflows/product-build.yml",
+              "summary": "Need exact-commit build results to confirm generated C# and Java-lite code compile."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "Added explicit Kotlin DSL import for Protobuf Gradle plugin source-set extension functions."
+          ],
+          "follow_up": "Check exact-commit Step Three quality and product-build run; only mark done after Android APK build and Windows C# generated-source build both pass."
         }
       ]
     },
