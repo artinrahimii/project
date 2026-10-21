@@ -1083,24 +1083,20 @@
         "docs/acceptance.md",
         "step three/T0007/execution-report.md"
       ],
-      "notes": "T0007 remains a broad traceability task. A002 startup exception containment is present and both product-build and Step Three quality-gate workflows passed for commit 82e3a6ab7a342a6f7462a9a63bb802c0eeeb8b8b. This confirms the regression on that commit only; real production inference remains unimplemented.",
+      "notes": "T0007 remains a broad traceability task. A004 adds regression coverage for an exception thrown by the UnavailableReason getter; CI for the new commit is pending. Existing CI success on prior commits does not establish this new case or prove production inference.",
       "execution_summary": {
-        "attempt_count": 3,
+        "attempt_count": 4,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0007-A003",
+        "last_attempt_id": "T0007-A004",
         "last_attempt_result": "partial",
         "changed_files": [
-          "src/Host.Windows/HostLifecycle.cs",
           "tests/HostLifecycle.Tests/Program.cs",
           "docs/acceptance.md",
           "step three/T0007/execution-report.md",
           "step three/project-graph.md"
         ],
         "related_commits": [],
-        "tests_passed": [
-          "GitHub Actions White-P product build: run 39652512854 succeeded for 82e3a6ab7a342a6f7462a9a63bb802c0eeeb8b8b",
-          "GitHub Actions Step Three quality gate: run 39652512893 succeeded for 82e3a6ab7a342a6f7462a9a63bb802c0eeeb8b8b"
-        ],
+        "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -1181,6 +1177,26 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Inspect and implement the next concrete runtime requirement only after reviewing its graph dependencies; keep T0007 in progress until its full traceability acceptance criterion is met."
+        },
+        {
+          "attempt_id": "T0007-A004",
+          "started_at": "2026-10-21T21:00:00+00:00",
+          "ended_at": "2026-10-21T21:00:00+00:00",
+          "result": "partial",
+          "summary": "Added a regression case for a backend whose availability is false but whose UnavailableReason getter throws; the harness requires a stable Error status without exposing raw exception details. CI is pending.",
+          "changed_files": [
+            "tests/HostLifecycle.Tests/Program.cs",
+            "docs/acceptance.md",
+            "step three/T0007/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Verify GitHub Actions for the exact new commit and record the actual result; keep T0007 in progress until the broad traceability acceptance criterion is satisfied."
         }
       ]
     },

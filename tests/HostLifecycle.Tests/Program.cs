@@ -15,7 +15,11 @@ var throwingStatus=new HostStartup(new HostLifecycle(),new ThrowingBackend()).St
 Assert(throwingStatus.State==HostState.Error,"Backend exception must report Error");
 Assert(throwingStatus.Message.Contains("check failed",StringComparison.OrdinalIgnoreCase),"Backend exception must produce a stable user-facing reason");
 Assert(!throwingStatus.Message.Contains("secret",StringComparison.OrdinalIgnoreCase),"Backend exception details must not leak into status");
-Console.WriteLine("PASS: lifecycle transitions, invalid-transition rejection, unavailable/available backend handling, and exception-safe startup.");
+var throwingReasonStatus=new HostStartup(new HostLifecycle(),new ThrowingUnavailableReasonBackend()).Start();
+Assert(throwingReasonStatus.State==HostState.Error,"UnavailableReason exception must report Error");
+Assert(throwingReasonStatus.Message.Contains("check failed",StringComparison.OrdinalIgnoreCase),"UnavailableReason exception must produce a stable user-facing reason");
+Assert(!throwingReasonStatus.Message.Contains("private-reason",StringComparison.OrdinalIgnoreCase),"UnavailableReason exception details must not leak into status");
+Console.WriteLine("PASS: lifecycle transitions, invalid-transition rejection, unavailable/available backend handling, and exception-safe startup, including a throwing unavailable-reason getter.");
 
 sealed class AvailableTestBackend : IInferenceBackend
 {
@@ -26,4 +30,10 @@ sealed class ThrowingBackend : IInferenceBackend
 {
  public bool IsAvailable => throw new InvalidOperationException("secret backend details");
  public string UnavailableReason => throw new InvalidOperationException("secret backend details");
+}
+
+sealed class ThrowingUnavailableReasonBackend : IInferenceBackend
+{
+ public bool IsAvailable => false;
+ public string UnavailableReason => throw new InvalidOperationException("private-reason details");
 }

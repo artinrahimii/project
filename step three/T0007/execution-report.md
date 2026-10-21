@@ -27,3 +27,15 @@
 - Interpretation: the workflows validate the submitted code and regression harness on this commit. They do not prove that a production inference backend exists and do not satisfy the broad T0007 acceptance criterion.
 - Status: partial; T0007 remains in progress.
 - Follow-up: continue from graph dependencies and implement the next actual runtime requirement; do not mark the broad task done based on CI alone.
+
+
+## Attempt T0007-A004
+- Started: 2026-10-21.
+- Base: `a59132d7ad194f013f7f301d718eb9dfed000194` (`V 3.0.33`).
+- Implementation: added an executable regression case for a backend whose `IsAvailable` is false but whose `UnavailableReason` getter throws. The harness requires a stable Error status and verifies that the exception sentinel `private-reason` is not exposed.
+- Acceptance evidence: `tests/HostLifecycle.Tests/Program.cs` and `docs/acceptance.md`, section `T0007-A004 — unavailable-reason getter failure`.
+- Local execution: not run; no local checkout/runtime is available in this tool session.
+- CI: pending for the new commit; no pass is claimed before checking the actual run.
+- Scope limit: this is another bounded lifecycle regression, not a production inference backend and not completion of broad T0007.
+- Status: partial; T0007 remains in progress.
+- Follow-up: verify the exact commit's GitHub Actions results and record them; continue to real runtime requirements only after reviewing the graph dependencies.

@@ -128,3 +128,10 @@ The test result for this revision is pending the GitHub Actions run. This single
 HostStartup.Start now converts an exception thrown while checking the inference backend into a stable Error status rather than allowing the exception to escape the startup path. The user-facing message deliberately excludes raw exception details. The executable lifecycle harness adds a throwing-backend regression case and checks both the Error state and absence of leaked exception text.
 
 Run in CI with .NET 10: dotnet run --project tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj --configuration Release. This covers error containment around backend availability checking only; it does not implement or verify a real inference backend. Result for the new revision: pending GitHub Actions.
+
+
+## T0007-A004 — unavailable-reason getter failure
+
+The lifecycle harness also exercises a backend that reports `IsAvailable == false` but throws while reading `UnavailableReason`. The expected behavior is a stable `Error` status with a generic startup-check failure message; raw exception details must not reach the user-facing status. This closes a separate exception path in the existing startup decision logic without pretending to provide a real inference engine.
+
+Result for this revision: pending the GitHub Actions run. The case uses a test double and does not establish production backend availability.
