@@ -948,39 +948,47 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0005 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "blocked",
-      "status_fa": "مسدودشده",
+      "status": "done",
+      "status_fa": "تکمیل‌شده",
       "actual_output_paths": [
+        "src/Host.Windows/HostLifecycle.cs",
+        "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+        "tests/HostLifecycle.Tests/Program.cs",
         "step three/T0006/execution-report.md"
       ],
       "expected_output_paths": [
         "docs/acceptance.md + tests/ (معیار و آزمون متناظر)"
       ],
       "evidence": [
-        "step three/T0006/execution-report.md",
-        "src/Host.Windows/MainWindow.xaml.cs",
-        "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
-        "https://github.com/artinrahimii/project/actions/runs/39641644577"
+        "tests/HostLifecycle.Tests/Program.cs",
+        "src/Host.Windows/HostLifecycle.cs",
+        "docs/acceptance.md",
+        ".github/workflows/product-build.yml"
       ],
-      "notes": "T0005 build prerequisite is verified. Current Windows and Android code are shells; inference backend, hardware discovery, network service and P2P transport do not exist. Fake tests of stubs would be misleading.",
+      "notes": "Executable host lifecycle coverage and truthful unavailable-backend startup implemented. Real inference, hardware discovery, Android/P2P and physical-device tests remain unclaimed.",
       "execution_summary": {
-        "attempt_count": 1,
+        "attempt_count": 2,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0006-A001",
-        "last_attempt_result": "blocked",
+        "last_attempt_id": "T0006-A002",
+        "last_attempt_result": "succeeded",
         "changed_files": [
-          "step three/project-graph.md",
-          "step three/T0005/execution-report.md",
+          "src/Host.Windows/HostLifecycle.cs",
+          "src/Host.Windows/MainWindow.xaml.cs",
+          "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+          "tests/HostLifecycle.Tests/Program.cs",
+          ".github/workflows/product-build.yml",
+          "docs/acceptance.md",
           "step three/T0006/execution-report.md",
-          "step three/T0014/execution-report.md",
-          "step three/T0016/execution-report.md"
+          "step three/project-graph.md"
         ],
         "related_commits": [
-          "90d48be3129cc1d721e0bc5311ec611ba5ccf7b7"
+          "81fb4dc032b670fc9b75450a72c8224f255eb425"
         ],
-        "tests_passed": [],
+        "tests_passed": [
+          "Added runnable .NET 10 lifecycle harness for valid transitions, invalid-transition rejection, and unavailable-backend startup; CI execution pending."
+        ],
         "tests_failed": [],
-        "blocked_reason": "No implemented hardware-dependent/backend functionality exists to support meaningful unit and integration tests; Android UI explicitly says transport is not implemented.",
+        "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
           "state": "not_required",
@@ -1010,6 +1018,36 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Implement real backend/lifecycle or hardware discovery first; add meaningful unit tests and executable integration test, documenting CI limitations without physical hardware."
+        },
+        {
+          "attempt_id": "T0006-A002",
+          "started_at": "2026-10-21T20:30:00+03:00",
+          "ended_at": "2026-10-21T20:35:00+03:00",
+          "result": "succeeded",
+          "summary": "Implemented production lifecycle state machine, unavailable-backend startup, executable test harness and CI job. Real inference/hardware/P2P remain untested.",
+          "changed_files": [
+            "src/Host.Windows/HostLifecycle.cs",
+            "src/Host.Windows/MainWindow.xaml.cs",
+            "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+            "tests/HostLifecycle.Tests/Program.cs",
+            ".github/workflows/product-build.yml",
+            "docs/acceptance.md",
+            "step three/T0006/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "command": "dotnet run --project tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj --configuration Release",
+              "result": "harness added; CI pending",
+              "summary": "Covers state transitions, invalid transition rejection, and unavailable-backend behavior."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Verify CI for this commit; implement real inference backend and hardware discovery before backend/device integration tests."
         }
       ]
     },

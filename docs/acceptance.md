@@ -105,3 +105,12 @@ For each gate, record: gate ID, `PASS/FAIL/NOT RUN`, commit SHA under test, comm
 ### Current result
 
 All AC-* gates are **NOT RUN for the product** until the corresponding real application projects and test harnesses exist. The current Python quality workflow can validate this matrix's document contract, but it cannot establish that the Windows host, Android client, local inference, or direct P2P transport works.
+
+
+## T0006 — executable host lifecycle coverage
+
+The lifecycle source used by the Windows host is independent of WPF and can be tested on cross-platform CI. The harness checks allowed state transitions, rejects an invalid transition, and verifies startup reports an error when the local inference backend is not configured.
+
+Run with .NET 10: `dotnet run --project tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj --configuration Release`.
+
+The host must not display `Ready` while the backend is unavailable. The current adapter deliberately reports an unconfigured backend; it does not fabricate model inference or hardware discovery. These tests do not establish real inference, hardware capability detection, Android-to-host networking, P2P transport, or physical-device behavior. Those gates remain NOT RUN until implemented and tested.
