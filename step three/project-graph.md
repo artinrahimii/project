@@ -2918,30 +2918,44 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0017 و T0010 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
-      "actual_output_paths": [],
+      "status": "done",
+      "status_fa": "تکمیل‌شده",
+      "actual_output_paths": [
+        "src/Host.Windows/LlamaCppServerBackend.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+        "README.md",
+        "docs/acceptance.md",
+        "step three/T0018/execution-report.md"
+      ],
       "expected_output_paths": [
         "README.md + docs/decisions/ + فایل‌های تنظیمات build"
       ],
-      "evidence": [],
+      "evidence": [
+        "Commit 74d4605149999c249bb63bc08741c6d0d49d9145: https://github.com/artinrahimii/project/commit/74d4605149999c249bb63bc08741c6d0d49d9145",
+        "White-P product build workflow run 39681349154 succeeded; Windows WPF host build, host lifecycle unit/integration tests, and Android debug APK build all passed: https://github.com/artinrahimii/project/actions/runs/39681349154",
+        "Host lifecycle test job log confirms endpoint contracts, health readiness, generated-response parsing, safe startup errors, and input bounds."
+      ],
       "notes": "T0018-A001 implements a real HTTP backend client for a locally hosted llama.cpp server, with /health readiness and OpenAI-compatible /v1/chat/completions generation. This is a backend integration, not a bundled model/server binary. Acceptance remains in_progress until exact-commit quality and Windows build/test CI passes. Inference is bounded to one active request per backend instance; prompt/response payloads are not logged.",
       "execution_summary": {
         "attempt_count": 1,
         "failed_attempt_count": 0,
         "last_attempt_id": "T0018-A001",
-        "last_attempt_result": "in_progress",
+        "last_attempt_result": "done",
         "changed_files": [
           "src/Host.Windows/LlamaCppServerBackend.cs",
           "tests/HostLifecycle.Tests/Program.cs",
           "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
           "README.md",
           "docs/acceptance.md",
-          "step three/T0018/execution-report.md",
-          "step three/project-graph.md"
+          "step three/T0018/execution-report.md"
         ],
         "related_commits": [],
-        "tests_passed": [],
+        "tests_passed": [
+          "Windows WPF host Release build (GitHub Actions)",
+          "Host lifecycle unit and integration tests (GitHub Actions)",
+          "Android debug APK build (GitHub Actions)"
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -2956,9 +2970,9 @@
         {
           "attempt_id": "T0018-A001",
           "started_at": "2026-10-21T21:36:30.142Z",
-          "ended_at": null,
-          "result": "in_progress",
-          "summary": "Implementing real local llama.cpp HTTP health and chat-completion calls with cancellation, timeout, safe error handling, and deterministic tests using a controlled HTTP handler.",
+          "ended_at": "2026-10-21T21:47:35Z",
+          "result": "done",
+          "summary": "Implemented and validated the real local llama.cpp HTTP backend. Exact implementation commit CI passed on Windows host build, lifecycle unit/integration tests, and Android debug APK build. Live model inference against a user-installed server/model remains a documented runtime limitation, not a CI acceptance criterion.",
           "changed_files": [
             "src/Host.Windows/LlamaCppServerBackend.cs",
             "tests/HostLifecycle.Tests/Program.cs",
@@ -2968,13 +2982,17 @@
             "step three/T0018/execution-report.md",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
-          "tests": [],
+          "commit_sha": "74d4605149999c249bb63bc08741c6d0d49d9145",
+          "tests": [
+            "Windows WPF host Release build (GitHub Actions)",
+            "Host lifecycle unit and integration tests (GitHub Actions)",
+            "Android debug APK build (GitHub Actions)"
+          ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Run quality and product-build workflows on the implementation commit. Only mark done if all relevant CI checks pass."
+          "follow_up": "Continue with the next eligible task after checking its dependencies."
         }
       ]
     },
@@ -16820,5 +16838,4 @@
       "reviewed_by": "Step Three execution review"
     }
   ]
-}
-```
+}```
