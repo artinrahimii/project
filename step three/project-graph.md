@@ -819,9 +819,12 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0004 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "blocked",
-      "status_fa": "مسدودشده",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
+        "src/Host.Windows/WhiteP.Host.Windows.csproj",
+        "src/Client.Android/app/build.gradle.kts",
+        ".github/workflows/product-build.yml",
         "step three/T0005/execution-report.md"
       ],
       "expected_output_paths": [
@@ -829,24 +832,35 @@
       ],
       "evidence": [
         "step three/T0005/execution-report.md",
-        "docs/acceptance.md",
-        ".github/workflows/quality.yml"
+        ".github/workflows/product-build.yml",
+        "src/Host.Windows/WhiteP.Host.Windows.csproj",
+        "src/Client.Android/app/build.gradle.kts",
+        "https://github.com/artinrahimii/project/actions/runs/39641644577",
+        "https://github.com/artinrahimii/project/actions/runs/39641644748"
       ],
-      "notes": "Blocked: repository snapshot has no actual Windows/.NET, Android/Gradle, or shared-contract project/build files. Existing CI validates only Python graph tooling, so T0005 cannot claim a successful product build. Edge T0004 -> T0005 remains unreviewed.",
+      "notes": "Windows WPF و Android debug APK در run 39641644577 ساخته شدند. شواهد build را تأیید می‌کنند، نه inference یا P2P. یال T0004 → T0005 همچنان unreviewed است.",
       "execution_summary": {
-        "attempt_count": 1,
+        "attempt_count": 2,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0005-A001",
-        "last_attempt_result": "blocked",
+        "last_attempt_id": "T0005-A002",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "step three/project-graph.md",
           "step three/T0005/execution-report.md",
-          "docs/acceptance.md"
+          "step three/T0006/execution-report.md",
+          "step three/T0014/execution-report.md",
+          "step three/T0016/execution-report.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
+        "related_commits": [
+          "90d48be3129cc1d721e0bc5311ec611ba5ccf7b7"
+        ],
+        "tests_passed": [
+          "Run 39641644577: Windows WPF build passed (job 119366422112)",
+          "Run 39641644577: Android debug APK build passed (job 119366421861)",
+          "Run 39641644748: graph/Python quality gate passed"
+        ],
         "tests_failed": [],
-        "blocked_reason": "No application project or reproducible Windows/Android build entrypoint exists in the inspected main snapshot.",
+        "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
           "state": "not_required",
@@ -874,6 +888,46 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Implement the real project scaffolds/build configuration in their dependency order, add actual Windows and Android build jobs, then retry T0005."
+        },
+        {
+          "attempt_id": "T0005-A002",
+          "started_at": "2026-10-21T20:45:00+03:00",
+          "ended_at": "2026-10-21T20:45:00+03:00",
+          "result": "succeeded",
+          "summary": "Rechecked the current main snapshot and completed GitHub Actions jobs. Windows WPF and Android debug APK builds both succeeded. This satisfies T0005 build-path acceptance only; runtime inference, hardware discovery and P2P are not claimed.",
+          "changed_files": [
+            "step three/project-graph.md",
+            "step three/T0005/execution-report.md",
+            "step three/T0006/execution-report.md",
+            "step three/T0014/execution-report.md",
+            "step three/T0016/execution-report.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "command": "GitHub Actions run 39641644577 — Build Windows WPF host",
+              "result": "passed",
+              "summary": "Job 119366422112 completed successfully.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/39641644577"
+            },
+            {
+              "command": "GitHub Actions run 39641644577 — Build Android client APK",
+              "result": "passed",
+              "summary": "Job 119366421861 completed successfully, including assembleDebug.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/39641644577"
+            },
+            {
+              "command": "GitHub Actions run 39641644748 — Step Three quality gate",
+              "result": "passed",
+              "summary": "Graph/Python checks passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/39641644748"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Start T0006 only against implemented backend/hardware functionality; do not claim hardware or inference tests before runnable tests exist."
         }
       ]
     },
@@ -893,24 +947,39 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0005 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "blocked",
+      "status_fa": "مسدودشده",
+      "actual_output_paths": [
+        "step three/T0006/execution-report.md"
+      ],
       "expected_output_paths": [
         "docs/acceptance.md + tests/ (معیار و آزمون متناظر)"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "step three/T0006/execution-report.md",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
+        "https://github.com/artinrahimii/project/actions/runs/39641644577"
+      ],
+      "notes": "T0005 build prerequisite is verified. Current Windows and Android code are shells; inference backend, hardware discovery, network service and P2P transport do not exist. Fake tests of stubs would be misleading.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
-        "related_commits": [],
+        "last_attempt_id": "T0006-A001",
+        "last_attempt_result": "blocked",
+        "changed_files": [
+          "step three/project-graph.md",
+          "step three/T0005/execution-report.md",
+          "step three/T0006/execution-report.md",
+          "step three/T0014/execution-report.md",
+          "step three/T0016/execution-report.md"
+        ],
+        "related_commits": [
+          "90d48be3129cc1d721e0bc5311ec611ba5ccf7b7"
+        ],
         "tests_passed": [],
         "tests_failed": [],
-        "blocked_reason": null,
+        "blocked_reason": "No implemented hardware-dependent/backend functionality exists to support meaningful unit and integration tests; Android UI explicitly says transport is not implemented.",
         "reopened_reason": null,
         "contract_revalidation": {
           "state": "not_required",
@@ -919,7 +988,29 @@
           "review_evidence": []
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0006-A001",
+          "started_at": "2026-10-21T20:45:00+03:00",
+          "ended_at": "2026-10-21T20:45:00+03:00",
+          "result": "blocked",
+          "summary": "Verified T0005's build prerequisite and inspected Windows host/Android activity source. They are application shells; inference backend, hardware discovery and transport are not implemented. No fake tests or hardware/P2P validation claim was made.",
+          "changed_files": [
+            "step three/project-graph.md",
+            "step three/T0005/execution-report.md",
+            "step three/T0006/execution-report.md",
+            "step three/T0014/execution-report.md",
+            "step three/T0016/execution-report.md"
+          ],
+          "commit_sha": null,
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": "No implemented hardware-dependent/backend functionality exists to support meaningful unit and integration tests; Android UI explicitly says transport is not implemented.",
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Implement real backend/lifecycle or hardware discovery first; add meaningful unit tests and executable integration test, documenting CI limitations without physical hardware."
+        }
+      ]
     },
     {
       "id": "T0007",
@@ -1502,17 +1593,21 @@
       "execution_summary": {
         "attempt_count": 4,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0014-A004",
+        "last_attempt_id": "T0014-A005",
         "last_attempt_result": "partial",
         "changed_files": [
-          "global.json",
-          "src/Client.Android/app/build.gradle.kts",
-          ".github/workflows/product-build.yml",
+          "step three/project-graph.md",
+          "step three/T0005/execution-report.md",
+          "step three/T0006/execution-report.md",
           "step three/T0014/execution-report.md",
-          "step three/project-graph.md"
+          "step three/T0016/execution-report.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
+        "related_commits": [
+          "90d48be3129cc1d721e0bc5311ec611ba5ccf7b7"
+        ],
+        "tests_passed": [
+          "GitHub Actions run 39641644577: platform build job(s) passed"
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -1638,6 +1733,34 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Verify the corrected workflow creates both jobs, then inspect actual build results."
+        },
+        {
+          "attempt_id": "T0014-A005",
+          "started_at": "2026-10-21T20:45:00+03:00",
+          "ended_at": "2026-10-21T20:45:00+03:00",
+          "result": "partial",
+          "summary": "Windows WPF and Android APK builds passed; task remains partial until T0013 and T0010 prerequisites are verified.",
+          "changed_files": [
+            "step three/project-graph.md",
+            "step three/T0005/execution-report.md",
+            "step three/T0006/execution-report.md",
+            "step three/T0014/execution-report.md",
+            "step three/T0016/execution-report.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "command": "GitHub Actions run 39641644577",
+              "result": "passed",
+              "summary": "Actual platform build evidence succeeded; task remains partial pending prerequisite review.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/39641644577"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Verify T0013 and T0010 before deciding task completion."
         }
       ]
     },
@@ -1789,21 +1912,21 @@
       "execution_summary": {
         "attempt_count": 4,
         "failed_attempt_count": 3,
-        "last_attempt_id": "T0016-A004",
+        "last_attempt_id": "T0016-A005",
         "last_attempt_result": "partial",
         "changed_files": [
-          "src/Client.Android/settings.gradle.kts",
-          "src/Client.Android/build.gradle.kts",
-          "src/Client.Android/gradle.properties",
-          "src/Client.Android/app/build.gradle.kts",
-          "src/Client.Android/app/src/main/AndroidManifest.xml",
-          "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
-          ".github/workflows/product-build.yml",
-          "step three/T0016/execution-report.md",
-          "step three/project-graph.md"
+          "step three/project-graph.md",
+          "step three/T0005/execution-report.md",
+          "step three/T0006/execution-report.md",
+          "step three/T0014/execution-report.md",
+          "step three/T0016/execution-report.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
+        "related_commits": [
+          "90d48be3129cc1d721e0bc5311ec611ba5ccf7b7"
+        ],
+        "tests_passed": [
+          "GitHub Actions run 39641644577: platform build job(s) passed"
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -1923,6 +2046,34 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Check both jobs exist and run; resolve any remaining Android SDK/Gradle/Kotlin errors before completion."
+        },
+        {
+          "attempt_id": "T0016-A005",
+          "started_at": "2026-10-21T20:45:00+03:00",
+          "ended_at": "2026-10-21T20:45:00+03:00",
+          "result": "partial",
+          "summary": "Android APK build passed; task remains partial until T0015 and T0010 prerequisites are verified.",
+          "changed_files": [
+            "step three/project-graph.md",
+            "step three/T0005/execution-report.md",
+            "step three/T0006/execution-report.md",
+            "step three/T0014/execution-report.md",
+            "step three/T0016/execution-report.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "command": "GitHub Actions run 39641644577",
+              "result": "passed",
+              "summary": "Actual platform build evidence succeeded; task remains partial pending prerequisite review.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/39641644577"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Verify T0015 and T0010 before deciding task completion."
         }
       ]
     },
