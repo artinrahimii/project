@@ -836,8 +836,6 @@
         ".github/workflows/product-build.yml",
         "src/Host.Windows/WhiteP.Host.Windows.csproj",
         "src/Client.Android/app/build.gradle.kts",
-        "https://github.com/artinrahimii/project/actions/runs/39641644577",
-        "https://github.com/artinrahimii/project/actions/runs/39641644748",
         "tests/test_product_build_contract.py"
       ],
       "notes": "Windows WPF و Android debug APK در run 39641644577 ساخته شدند. شواهد build را تأیید می‌کنند، نه inference یا P2P. یال T0004 → T0005 همچنان unreviewed است.",
