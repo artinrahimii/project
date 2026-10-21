@@ -17,3 +17,11 @@
 - Status: partial; T0016 remains `in_progress` because T0015 and T0010 are still listed as mandatory prerequisites. Prior failed SDK/workflow attempts are preserved above.
 - Follow-up: reconcile the graph prerequisite/edge inconsistency and verify the remaining T0016 acceptance requirements before completion.
 
+## T0016-A007 — dependency contract reconciliation
+- Date: 2026-10-21.
+- Base commit reviewed: `a5c88bbe341d4d4a57a81bc481e730378ef5af09` (`V 3.0.36`).
+- Evidence: the corresponding graph edge `T0010 → T0016` was already `validated` with classification `sequencing_only` and recorded evidence; current workflow `product-build.yml` successfully builds the platform project(s) on GitHub Actions.
+- Graph correction: removed T0010 from `depends_on` and from the mandatory `start_condition`; the sequencing-only edge itself is retained with its existing evidence. No edge was deleted or reclassified.
+- Verification boundary: this resolves the contradiction between node-level mandatory prerequisites and edge classification; it does not by itself satisfy every declared output or acceptance criterion.
+- Status: `in_progress`; no completion claim is made.
+- Follow-up: finish T0015 first, then verify Android project acceptance and record current CI evidence.

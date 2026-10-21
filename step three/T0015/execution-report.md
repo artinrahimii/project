@@ -16,3 +16,11 @@
 - Status: partial; T0015 remains `in_progress` because T0014 and T0010 are still listed as prerequisites.
 - Follow-up: reconcile the prerequisite/edge inconsistency and inspect any remaining T0015 acceptance requirements before completion.
 
+## T0015-A003 — dependency contract reconciliation
+- Date: 2026-10-21.
+- Base commit reviewed: `a5c88bbe341d4d4a57a81bc481e730378ef5af09` (`V 3.0.36`).
+- Evidence: the corresponding graph edge `T0010 → T0015` was already `validated` with classification `sequencing_only` and recorded evidence; current workflow `product-build.yml` successfully builds the platform project(s) on GitHub Actions.
+- Graph correction: removed T0010 from `depends_on` and from the mandatory `start_condition`; the sequencing-only edge itself is retained with its existing evidence. No edge was deleted or reclassified.
+- Verification boundary: this resolves the contradiction between node-level mandatory prerequisites and edge classification; it does not by itself satisfy every declared output or acceptance criterion.
+- Status: `in_progress`; no completion claim is made.
+- Follow-up: finish T0014 first, then verify host project acceptance and record current CI evidence.

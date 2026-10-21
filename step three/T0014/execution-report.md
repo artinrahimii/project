@@ -18,3 +18,11 @@
 - Status: partial; T0014 remains `in_progress`.
 - Follow-up: reconcile the graph contract explicitly and review all T0014 acceptance outputs before marking it done.
 
+## T0014-A007 — dependency contract reconciliation
+- Date: 2026-10-21.
+- Base commit reviewed: `a5c88bbe341d4d4a57a81bc481e730378ef5af09` (`V 3.0.36`).
+- Evidence: the corresponding graph edge `T0010 → T0014` was already `validated` with classification `sequencing_only` and recorded evidence; current workflow `product-build.yml` successfully builds the platform project(s) on GitHub Actions.
+- Graph correction: removed T0010 from `depends_on` and from the mandatory `start_condition`; the sequencing-only edge itself is retained with its existing evidence. No edge was deleted or reclassified.
+- Verification boundary: this resolves the contradiction between node-level mandatory prerequisites and edge classification; it does not by itself satisfy every declared output or acceptance criterion.
+- Status: `in_progress`; no completion claim is made.
+- Follow-up: verify all declared output paths and task-specific acceptance; then decide whether T0014 can be marked done.

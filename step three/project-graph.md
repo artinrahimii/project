@@ -1759,8 +1759,7 @@
       "title": "نسخهٔ نخست ویندوز و Android SDK حداقل را در تنظیمات واقعی build تثبیت کن.",
       "section": "1. تعریف نسخهٔ قابل‌ساخت و تصمیم‌های فنی",
       "depends_on": [
-        "T0013",
-        "T0010"
+        "T0013"
       ],
       "inputs": [
         "خروجی تأییدشدهٔ پیش‌نیازها",
@@ -1769,7 +1768,7 @@
       "outputs": [
         "خروجی قابل بررسی مربوط به «نسخهٔ نخست ویندوز و Android SDK حداقل را در تنظیمات واقعی build تثبیت کن.» در مسیر README.md + docs/decisions/ + فایل‌های تنظیمات build؛ همراه با آزمون/شاهد پذیرش متناسب."
       ],
-      "start_condition": "همهٔ پیش‌نیازهای T0013 و T0010 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
+      "start_condition": "همهٔ پیش‌نیازهای فنی T0013 تکمیل و معیارهای پذیرش آن پاس شده باشند. T0010 صرفاً ترتیب اجرایی است و شرط فنی آغاز این وظیفه نیست.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
       "status": "in_progress",
       "status_fa": "در حال اجرا",
@@ -1787,7 +1786,7 @@
         "src/Client.Android/app/build.gradle.kts",
         ".github/workflows/product-build.yml"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nVerification note 2026-10-21: current main build succeeded on Windows WPF and Android APK. The node still lists T0010 and T0013 as prerequisites; T0010 is not complete. The T0010 -> T0014 edge is classified sequencing_only while depends_on/start_condition require T0010, so this inconsistency is unresolved. No task status or edge classification was changed to hide it.\nOutput-path check 2026-10-21: no docs/decisions/ directory is present in the current main tree; review whether this is a required T0014 output before completion.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nVerification note 2026-10-21: current main build succeeded on Windows WPF and Android APK. The node still lists T0010 and T0013 as prerequisites; T0010 is not complete. The T0010 -> T0014 edge is classified sequencing_only while depends_on/start_condition require T0010, so this inconsistency is unresolved. No task status or edge classification was changed to hide it.\nOutput-path check 2026-10-21: no docs/decisions/ directory is present in the current main tree; review whether this is a required T0014 output before completion.\nDependency review 2026-10-21: T0010 → T0014 remains validated as sequencing_only, supported by the recorded evidence. Therefore T0010 is not a mandatory technical prerequisite and has been removed from depends_on/start_condition. T0013 remains the required predecessor. T0014 is still in_progress because its declared expected output set and acceptance have not all been verified.",
       "execution_summary": {
         "attempt_count": 6,
         "failed_attempt_count": 0,
@@ -1990,8 +1989,7 @@
       "title": "پشتهٔ میزبان را به C# و .NET LTS با رابط کاربری WPF انتخاب و پروژهٔ اجرایی آن را بساز.",
       "section": "1. تعریف نسخهٔ قابل‌ساخت و تصمیم‌های فنی",
       "depends_on": [
-        "T0014",
-        "T0010"
+        "T0014"
       ],
       "inputs": [
         "خروجی تأییدشدهٔ پیش‌نیازها",
@@ -2000,7 +1998,7 @@
       "outputs": [
         "خروجی قابل بررسی مربوط به «پشتهٔ میزبان را به C# و .NET LTS با رابط کاربری WPF انتخاب و پروژهٔ اجرایی آن را بساز.» در مسیر README.md + docs/decisions/ + فایل‌های تنظیمات build؛ همراه با آزمون/شاهد پذیرش متناسب."
       ],
-      "start_condition": "همهٔ پیش‌نیازهای T0014 و T0010 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
+      "start_condition": "پیش‌نیاز فنی T0014 تکمیل و معیارهای پذیرش آن پاس شده باشد. T0010 صرفاً ترتیب اجرایی است و شرط فنی آغاز این وظیفه نیست.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
       "status": "in_progress",
       "status_fa": "در حال اجرا",
@@ -2024,7 +2022,7 @@
         "src/Host.Windows/MainWindow.xaml.cs",
         ".github/workflows/product-build.yml"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nVerification note 2026-10-21: Windows WPF build succeeded on the current main revision. T0015 remains in_progress because both T0014 and T0010 are still listed as required prerequisites; no graph relationship was altered.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nVerification note 2026-10-21: Windows WPF build succeeded on the current main revision. T0015 remains in_progress because both T0014 and T0010 are still listed as required prerequisites; no graph relationship was altered.\nDependency review 2026-10-21: T0010 → T0015 remains validated as sequencing_only; it is not a mandatory technical prerequisite and has been removed from depends_on/start_condition. T0014 remains the required predecessor. T0015 remains in_progress pending T0014 completion and task-specific acceptance.",
       "execution_summary": {
         "attempt_count": 2,
         "failed_attempt_count": 0,
@@ -2114,8 +2112,7 @@
       "title": "پشتهٔ اندروید را به Kotlin، Jetpack Compose و Gradle انتخاب و پروژهٔ اجرایی آن را بساز.",
       "section": "1. تعریف نسخهٔ قابل‌ساخت و تصمیم‌های فنی",
       "depends_on": [
-        "T0015",
-        "T0010"
+        "T0015"
       ],
       "inputs": [
         "خروجی تأییدشدهٔ پیش‌نیازها",
@@ -2124,7 +2121,7 @@
       "outputs": [
         "خروجی قابل بررسی مربوط به «پشتهٔ اندروید را به Kotlin، Jetpack Compose و Gradle انتخاب و پروژهٔ اجرایی آن را بساز.» در مسیر README.md + docs/decisions/ + فایل‌های تنظیمات build؛ همراه با آزمون/شاهد پذیرش متناسب."
       ],
-      "start_condition": "همهٔ پیش‌نیازهای T0015 و T0010 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
+      "start_condition": "پیش‌نیاز فنی T0015 تکمیل و معیارهای پذیرش آن پاس شده باشد. T0010 صرفاً ترتیب اجرایی است و شرط فنی آغاز این وظیفه نیست.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
       "status": "in_progress",
       "status_fa": "در حال اجرا",
@@ -2150,7 +2147,7 @@
         "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
         ".github/workflows/product-build.yml"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nVerification note 2026-10-21: Android debug APK build succeeded on the current main revision. T0016 remains in_progress because its required predecessors T0015 and T0010 are not done; previous failed attempts remain in execution_history.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nVerification note 2026-10-21: Android debug APK build succeeded on the current main revision. T0016 remains in_progress because its required predecessors T0015 and T0010 are not done; previous failed attempts remain in execution_history.\nDependency review 2026-10-21: T0010 → T0016 remains validated as sequencing_only; it is not a mandatory technical prerequisite and has been removed from depends_on/start_condition. T0015 remains the required predecessor. T0016 remains in_progress pending T0015 completion and task-specific acceptance.",
       "execution_summary": {
         "attempt_count": 6,
         "failed_attempt_count": 3,
