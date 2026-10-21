@@ -32,6 +32,6 @@ For every node marked `done`, the graph guard now also requires a non-empty `acc
 
 ## Task T0004 scope — reject known placeholder implementations
 
-When repository-backed validation is enabled with `--repo-root`, each source-code file listed in a task's `actual_output_paths` is inspected for known placeholder markers before a `done` claim can pass. The current denylist covers TODO markers, `NotImplementedException`, `NotImplementedError`, and explicit mock/placeholder/simulated-response implementation labels. Regression tests verify that a placeholder implementation is rejected and ordinary executable source without those markers is accepted.
+When repository-backed validation is enabled with `--repo-root`, each non-test source-code file listed in a task's `actual_output_paths` is inspected (the guard's own implementation and test-source files are excluded to avoid self-matching the detector patterns) for known placeholder markers before a `done` claim can pass. The current denylist covers TODO markers, `NotImplementedException`, `NotImplementedError`, and explicit mock/placeholder/simulated-response implementation labels. Regression tests verify that a placeholder implementation is rejected and ordinary executable source without those markers is accepted.
 
 This is a conservative static check, not proof that arbitrary code is correct or free of every possible stub. Human review and feature-specific runtime tests remain required; passing this gate alone does not prove the Windows/Android/P2P product is complete.

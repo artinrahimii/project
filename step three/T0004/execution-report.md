@@ -4,9 +4,10 @@
 - وضعیت: در حال انجام؛ تکمیل نهایی منوط به CI سبز است.
 - پیش‌نیاز: T0003 در commit `f9cbaf4edcf76bbad56855892e9e30f71efb40c5` دارای وضعیت `done` است و سابقهٔ CI موفق ثبت‌شده دارد.
 - بررسی یال: `T0003 → T0004` از نوع `blocks` حفظ شد. با بررسی کد، رابطه به‌عنوان `contract_or_interface_dependency` اعتبارسنجی شد؛ T0004 همان graph guard و مجموعهٔ آزمون آن را گسترش می‌دهد. شواهد: `tools/graph_guard.py`, `tests/test_graph_guard.py`, `step three/T0003/execution-report.md`.
-- پیاده‌سازی واقعی: `tools/graph_guard.py` هنگام اجرای اعتبارسنجی با `--repo-root`، فایل‌های کد مندرج در `actual_output_paths` برای وظایف `done` را از نظر نشانگرهای شناخته‌شدهٔ پیاده‌سازی جایگزین بررسی می‌کند: TODO، NotImplementedException، NotImplementedError و برچسب‌های صریح mock/placeholder/simulated response.
+- پیاده‌سازی واقعی: `tools/graph_guard.py` هنگام اجرای اعتبارسنجی با `--repo-root`، فایل‌های کد غیرآزمونی مندرج در `actual_output_paths` (به‌جز خود فایل guard برای جلوگیری از تشخیص متن الگوهای detector به‌عنوان placeholder) برای وظایف `done` را از نظر نشانگرهای شناخته‌شدهٔ پیاده‌سازی جایگزین بررسی می‌کند: TODO، NotImplementedException، NotImplementedError و برچسب‌های صریح mock/placeholder/simulated response.
 - آزمون‌های افزوده: آزمون منفی برای رد `NotImplementedError` و آزمون مثبت برای کد اجرایی معمولی.
 - مستندات: محدوده و محدودیت بررسی ایستا در `docs/acceptance.md` ثبت شد.
+- اصلاح بازبینی کد: فایل خودِ guard و مسیرهای `tests/` و `test/` از اسکن placeholder کنار گذاشته شدند؛ در غیر این صورت رشته‌های الگو و تست‌های منفی می‌توانستند مثبت کاذب بسازند.
 - آزمون اجراشده در این محیط: هنوز اجرا نشده؛ CI پس از commit مرجع تأیید خواهد بود.
 - محدودیت شناخته‌شده: این denylist محافظه‌کارانه است و اثبات صحت عمومی کد یا کامل‌بودن محصول نیست. بازبینی انسانی و آزمون‌های اختصاصی قابلیت همچنان لازم‌اند.
 - گام بعدی: commit روی main و بررسی واقعی CI؛ فقط پس از سبزشدن CI وضعیت به `done` تغییر کند.

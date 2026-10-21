@@ -97,7 +97,7 @@ def validate_graph(graph: dict, repo_root: Path | None = None) -> list[Finding]:
                     p = _repo_path(repo_root, item)
                     if p is None: out.append(Finding("ERROR", "UNSAFE_OUTPUT_PATH", f"{tid}: invalid output path {item!r}."))
                     elif not p.is_file(): out.append(Finding("ERROR", "MISSING_OUTPUT_FILE", f"{tid}: output file not found: {item!r}."))
-                    elif p.suffix.lower() in code_suffixes:
+                    elif p.suffix.lower() in code_suffixes and item != "tools/graph_guard.py" and not item.startswith(("tests/", "test/")):
                         try: source_text = p.read_text(encoding="utf-8")
                         except (OSError, UnicodeError) as exc:
                             out.append(Finding("ERROR", "UNREADABLE_IMPLEMENTATION_FILE", f"{tid}: cannot inspect {item!r}: {exc}.")); continue

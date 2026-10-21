@@ -696,7 +696,7 @@
         "tests/test_graph_guard.py",
         "docs/acceptance.md"
       ],
-      "notes": "Attempt T0004-A001 adds repository-backed static checks for known placeholder markers in source files listed as actual outputs, with positive and negative regression tests. Status remains in_progress until CI executes successfully. Edge T0003 → T0004 is validated as a shared-tool/interface dependency: T0004 extends the guard and test suite created by T0003; source files and regression tests provide evidence. The graph edge type remains blocks.",
+      "notes": "Attempt T0004-A001 adds repository-backed static checks for known placeholder markers in source files listed as actual outputs, with positive and negative regression tests. Status remains in_progress until CI executes successfully. Edge T0003 → T0004 is validated as a shared-tool/interface dependency: T0004 extends the guard and test suite created by T0003; source files and regression tests provide evidence. The graph edge type remains blocks. Code review correction: exclude tools/graph_guard.py itself and tests/test directories from placeholder scanning to avoid self-matching and intentional test-fixture false positives.",
       "execution_summary": {
         "attempt_count": 1,
         "failed_attempt_count": 0,
@@ -727,7 +727,7 @@
           "started_at": "2026-10-21T19:00:00+03:30",
           "ended_at": null,
           "result": "partial",
-          "summary": "Implemented a repository-backed static guard that rejects known placeholder markers in source files listed as actual outputs for done tasks. Added regression tests for rejecting NotImplementedError and accepting ordinary executable source, and documented the scope and limitations. CI has not yet run on this change; completion is not claimed.",
+          "summary": "Implemented a repository-backed static guard that rejects known placeholder markers in source files listed as actual outputs for done tasks. Added regression tests for rejecting NotImplementedError and accepting ordinary executable source, and documented the scope and limitations. CI has not yet run on this change; completion is not claimed. A code review correction excludes the guard itself and test-source directories from scanning to prevent false positives from detector patterns and intentional negative tests.",
           "changed_files": [
             "tools/graph_guard.py",
             "tests/test_graph_guard.py",
@@ -741,7 +741,7 @@
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Commit to main, inspect the actual GitHub Actions run, fix any failing test, and only then mark T0004 done."
+          "follow_up": "Verify the queued and correction commit CI runs; inspect any failures before marking T0004 done."
         }
       ]
     },
