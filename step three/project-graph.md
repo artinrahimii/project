@@ -1216,8 +1216,8 @@
       ],
       "start_condition": "T0011 must be complete so the requirements can refine the documented product scope. The T0010 edge has been validated as sequencing_only: reproducible product builds remain required elsewhere but are not a technical prerequisite to specifying testable requirements. Do not infer product build readiness from this task.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "docs/requirements.md",
         "tests/test_requirements_contract.py",
@@ -1232,20 +1232,27 @@
         "tests/test_requirements_contract.py",
         "step three/T0012/execution-report.md"
       ],
-      "notes": "Requirements document and contract tests added in V 3.0.18. CI must pass before the task can be marked done. This task specifies acceptance criteria; it does not claim that the Windows, Android, local inference, or P2P features are implemented.",
+      "notes": "The requirements baseline and its automated contract tests are present. GitHub Actions run 39634235372 on commit df28b70a13b215d4050dff048b3bf935d6711b23 succeeded: automated tests, Python syntax, graph structure, and repository-backed output/evidence validation all passed. This confirms the requirements-document contract, not implementation of the Windows/Android/P2P product. T0010 remains outstanding and T0013 is still gated by T0010.",
       "execution_summary": {
         "attempt_count": 1,
         "failed_attempt_count": 0,
         "last_attempt_id": "T0012-A001",
-        "last_attempt_result": "partial",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "docs/requirements.md",
           "tests/test_requirements_contract.py",
           "step three/T0012/execution-report.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
+        "related_commits": [
+          "df28b70a13b215d4050dff048b3bf935d6711b23"
+        ],
+        "tests_passed": [
+          "python -m unittest discover -s tests -v — passed in GitHub Actions run 39634235372",
+          "python -m compileall -q tools tests — passed in GitHub Actions run 39634235372",
+          "python tools/graph_guard.py \"step three/project-graph.md\" — passed in GitHub Actions run 39634235372",
+          "python tools/graph_guard.py \"step three/project-graph.md\" --repo-root . — passed in GitHub Actions run 39634235372"
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -1260,36 +1267,50 @@
         {
           "attempt_id": "T0012-A001",
           "started_at": "2026-10-21T19:10:00+03:30",
-          "ended_at": null,
-          "result": "partial",
-          "summary": "Validated T0011 → T0012 as a scope/contract dependency and T0010 → T0012 as sequencing-only. Added a uniquely identified, measurable requirements specification and automated contract tests. CI verification is pending; task completion is not claimed.",
+          "ended_at": "2026-10-21T19:17:00+03:30",
+          "result": "succeeded",
+          "summary": "Created a 20-requirement testable specification and automated contract tests. CI quality gate passed on implementation commit df28b70a13b215d4050dff048b3bf935d6711b23 (run 39634235372).",
           "changed_files": [
             "docs/requirements.md",
             "tests/test_requirements_contract.py",
             "step three/T0012/execution-report.md",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "df28b70a13b215d4050dff048b3bf935d6711b23",
           "tests": [
             {
               "command": "python -m unittest discover -s tests -v",
-              "result": "pending",
-              "summary": "Will be evaluated by GitHub Actions on the implementation commit."
+              "result": "passed",
+              "summary": "Automated test step succeeded in GitHub Actions run 39634235372.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/39634235372"
+            },
+            {
+              "command": "python -m compileall -q tools tests",
+              "result": "passed",
+              "summary": "Python syntax check succeeded in GitHub Actions run 39634235372.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/39634235372"
+            },
+            {
+              "command": "python tools/graph_guard.py \"step three/project-graph.md\"",
+              "result": "passed",
+              "summary": "Graph structure validation succeeded in GitHub Actions run 39634235372.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/39634235372"
             },
             {
               "command": "python tools/graph_guard.py \"step three/project-graph.md\" --repo-root .",
-              "result": "pending",
-              "summary": "Will be evaluated by GitHub Actions on the implementation commit."
+              "result": "passed",
+              "summary": "Recorded outputs and evidence validation succeeded in GitHub Actions run 39634235372.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/39634235372"
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [
-            "Validated edge T0011 → T0012 as contract_or_interface_dependency with rationale and evidence.",
-            "Validated edge T0010 → T0012 as sequencing_only with rationale and evidence; T0010 remains an outstanding task."
+            "Validated T0011 → T0012 as contract_or_interface_dependency with rationale and evidence.",
+            "Validated T0010 → T0012 as sequencing_only with rationale and evidence; T0010 remains outstanding."
           ],
-          "follow_up": "Inspect the GitHub Actions result for V 3.0.18. Only after all checks pass should T0012 be marked done in a verification commit."
+          "follow_up": "Proceed to T0013 only after T0010 is genuinely completed; otherwise resolve the T0005 build-path blocker and continue the prerequisite chain without claiming product-build success."
         }
       ]
     },
