@@ -339,22 +339,42 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای مفروضات/ابزارهای توسعه و نیازمندی‌های همین بخش تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "done",
+      "status_fa": "انجام‌شده",
+      "actual_output_paths": [
+        "tools/graph_guard.py",
+        "tools/__init__.py",
+        "tests/test_graph_guard.py",
+        "docs/acceptance.md",
+        "step three/T0001/execution-report.md"
+      ],
       "expected_output_paths": [
         "docs/acceptance.md + tests/ (معیار و آزمون متناظر)"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "step three/T0001/execution-report.md",
+        "tests/test_graph_guard.py",
+        "docs/acceptance.md"
+      ],
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود. اجرای T0001 در تلاش T0001-A001 به کمک ابزار اعتبارسنجی گراف، ۱۱ آزمون موفق و بررسی compileall ثبت شد. عبارت متنی depends_on که شناسهٔ گره نیست، حفظ و به‌عنوان هشدار گزارش شد.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0001-A001",
+        "last_attempt_result": "succeeded",
+        "changed_files": [
+          "tools/graph_guard.py",
+          "tools/__init__.py",
+          "tests/test_graph_guard.py",
+          "docs/acceptance.md",
+          "step three/T0001/execution-report.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
-        "tests_passed": [],
+        "tests_passed": [
+          "python -m unittest discover -s tests -v — 11 passed",
+          "python -m compileall -q tools tests — passed"
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -365,7 +385,41 @@
           "review_evidence": []
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0001-A001",
+          "started_at": "2026-10-21T17:44:00+03:30",
+          "ended_at": "2026-10-21T17:50:00+03:30",
+          "result": "succeeded",
+          "summary": "Added a standard-library graph guard, eleven automated tests, and an initial executable acceptance policy. Unit tests and bytecode compilation passed.",
+          "changed_files": [
+            "tools/graph_guard.py",
+            "tools/__init__.py",
+            "tests/test_graph_guard.py",
+            "docs/acceptance.md",
+            "step three/T0001/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "command": "python -m unittest discover -s tests -v",
+              "result": "passed",
+              "summary": "11 tests passed"
+            },
+            {
+              "command": "python -m compileall -q tools tests",
+              "result": "passed",
+              "summary": "No syntax compilation errors"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Next task is T0002. This record is included in V 3.0.3; resolve its commit SHA from the online main history because self-referential commit IDs cannot be embedded in the commit itself."
+        }
+      ]
     },
     {
       "id": "T0002",
@@ -10603,10 +10657,13 @@
       "from": "T0001",
       "to": "T0002",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "The wording and outputs of T0001 establish an output/evidence policy; T0002 asks for automatic tests and CI. T0002 does not consume a specific artifact produced by T0001, so a technical dependency is not evidenced. Preserve the existing edge and order as a conservative sequencing constraint.",
+      "validation_status": "validated",
+      "evidence": [
+        "step one/V1.0.md",
+        "step three/T0001/execution-report.md"
+      ]
     },
     {
       "from": "T0002",
