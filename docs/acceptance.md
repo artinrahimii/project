@@ -43,7 +43,7 @@ The current `quality.yml` runs Python unit tests, Python syntax validation, grap
 
 ## T0013 — Final Windows, Android, and P2P acceptance matrix
 
-**Gate status:** defined; not yet passed by the product. This matrix specifies evidence required for release approval. The repository currently has no Windows host project, Android Gradle project, shared Protobuf contract source, or product runtime test harness, so none of the runtime gates below may be reported as passed merely because this document or its contract tests exist.
+**Gate status:** defined; not accepted for release. The repository now contains a Windows WPF host shell, an Android Gradle app, and an executable host lifecycle harness, and CI builds those components. Shared Protobuf contracts, a real local inference engine, hardware discovery, P2P transport, cryptographic transport, and product-level request/network/storage test harnesses remain unimplemented. Compilation and lifecycle checks supply only part of the evidence; they do not pass the end-to-end release gates.
 
 ### Release decision rule
 
@@ -104,7 +104,7 @@ For each gate, record: gate ID, `PASS/FAIL/NOT RUN`, commit SHA under test, comm
 
 ### Current result
 
-All AC-* gates are **NOT RUN for the product** until the corresponding real application projects and test harnesses exist. The current Python quality workflow can validate this matrix's document contract, but it cannot establish that the Windows host, Android client, local inference, or direct P2P transport works.
+All AC-* gates are **NOT RUN for the product** in the strict release-acceptance sense unless their complete evidence requirement is linked. Current CI proves platform compilation and the host lifecycle harness only for the recorded commit; it does not establish real local inference, Android-to-host transport, direct P2P, encrypted transmission, absence of central prompt handling, or no persistent conversation storage.
 
 
 ## T0006 — executable host lifecycle coverage
@@ -149,3 +149,15 @@ When a backend reports unavailable, HostStartup now trims a non-empty reason and
 - Verification target: `dotnet run --project tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj --configuration Release`
 - CI status for this change: pending until the workflow runs against the resulting commit.
 - Scope limit: the configured production backend remains `UnconfiguredInferenceBackend`; this change does not implement real inference, hardware discovery, or P2P.
+
+
+## T0008 — repeatable audit of capability and privacy claims
+
+**Audit scope and result:** Reviewed the checked-in Windows and Android UI source, host lifecycle/backend source, `README.md`, `docs/requirements.md`, and the release acceptance matrix on `main` at `aa1bc7e77bc5bbce80e9d7f987de75c1bdc71c36`. The source review found the following actual limitations:
+
+- The Windows UI is an initial host preview. `UnconfiguredInferenceBackend.IsAvailable` returns `false`, so the host reports an unavailable/error state; there is no production inference integration in this snapshot.
+- The Android request button only updates local UI status. It does not transmit the request, and the UI explicitly says that transport is not implemented.
+- The code and documents describe local inference, P2P, privacy, and no-central-history as goals/requirements, not as proven delivered capabilities. The UI labels were changed to identify the Windows host and Android client as previews and to disclose the missing transport.
+- No encrypted transport or product-level storage/network audit has been implemented. This source/document review therefore **does not prove** that a future runtime will keep prompt/response data local, encrypted, or unpersisted.
+
+A repeatable documentation/source contract check is in `tests/test_claims_audit.py`. Run it with `python -m unittest discover -s tests -p "test_claims_audit.py" -v`; the full Python quality workflow also executes it. The source-level checks verify honest capability labels and explicit limitations only. AC-LOCAL-01, AC-P2P-01, AC-PRIV-01, and the encryption/storage portions of release acceptance remain **NOT RUN** until real runtime/traffic/storage evidence exists.

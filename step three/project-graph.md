@@ -4,7 +4,7 @@
 این فایل نسخهٔ v2.1 گراف وابستگی و دفتر ثبت اجرای قابل‌ردیابی برای تمام 229 وظیفهٔ موجود در `step one/V1.0.md` است. منبع اصلی شرح وظایف همان فایل Step One است؛ این فایل شناسه‌ها، ترتیب اجرا، ورودی، خروجی، شرط شروع، معیار پذیرش، وضعیت و محل فایل‌های خروجی را ثبت می‌کند.
 
 ## معنی یال‌ها و وضعیت‌ها
-- یال `A → B` یعنی وظیفهٔ `A` پیش‌نیاز `B` است و باید پیش از آن تکمیل و تأیید شود.
+- یال `A → B` یک رابطهٔ جهت‌دار در ترتیب اجرای محافظه‌کارانه است. اگر `dependency_classification` برابر `hard_dependency` یا `contract_or_interface_dependency` باشد، خروجی تأییدشدهٔ A پیش‌نیاز فنی B است؛ اگر `sequencing_only` باشد، یال فقط ترتیب امن اجرا را حفظ می‌کند و به‌تنهایی تکمیل A را شرط فنی B نمی‌کند. هیچ یالی را بدون دلیل و شواهد حذف یا بازطبقه‌بندی نکن.
 - `not_started` / «انجام‌نشده»: خروجی واقعی و شواهد پذیرش هنوز تأیید نشده‌اند.
 - `in_progress` / «در حال انجام»: کار شروع شده اما معیار پذیرش کامل نشده است.
 - `done` / «انجام‌شده»: خروجی واقعی در مخزن وجود دارد و آزمون/شاهد پذیرش موفق است.
@@ -1083,7 +1083,7 @@
         "docs/acceptance.md",
         "step three/T0007/execution-report.md"
       ],
-      "notes": "T0007 remains a broad traceability task. A007 makes the unavailable-backend reason deterministic and adds an exact-message regression assertion; CI for A007 is pending. The configured UnconfiguredInferenceBackend still prevents production inference, and the T0007 → T0008 edge remains unreviewed.",
+      "notes": "T0007 remains a broad traceability task. A007's deterministic unavailable-backend fallback and exact-message regression assertion were both built/tested successfully by GitHub Actions on V 3.0.42. The configured UnconfiguredInferenceBackend still prevents production inference, so do not mark T0007 done. The T0007 -> T0008 edge has been reviewed and retained as sequencing_only; T0008 is an independent claim-audit task.",
       "execution_summary": {
         "attempt_count": 7,
         "failed_attempt_count": 0,
@@ -1100,8 +1100,8 @@
           "632c36d257ca079dd9bdee07f5415aa3c7c97cc3"
         ],
         "tests_passed": [
-          "GitHub Actions Step Three quality gate run 39667152012 passed for base commit 41e313c1c61d7e99d89c2b00f020c88f8f4e1143; does not validate A007.",
-          "GitHub Actions White-P product build run 39667151789 passed for base commit 41e313c1c61d7e99d89c2b00f020c88f8f4e1143; does not validate A007."
+          "GitHub Actions Step Three quality gate run 39671083734 — passed for exact commit aa1bc7e77bc5bbce80e9d7f987de75c1bdc71c36 (V 3.0.42).",
+          "GitHub Actions White-P product build run 39671083885 — passed for exact commit aa1bc7e77bc5bbce80e9d7f987de75c1bdc71c36 (V 3.0.42)."
         ],
         "tests_failed": [],
         "blocked_reason": null,
@@ -1268,13 +1268,26 @@
             "step three/T0007/execution-report.md",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
-          "tests": [],
+          "commit_sha": "aa1bc7e77bc5bbce80e9d7f987de75c1bdc71c36",
+          "tests": [
+            {
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39671083734",
+              "summary": "Python tests, syntax, graph structure, and recorded-output/evidence checks passed for the exact V 3.0.42 commit."
+            },
+            {
+              "name": "White-P product build",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39671083885",
+              "summary": "Windows WPF build, Android debug APK build, and host lifecycle test jobs passed for the exact V 3.0.42 commit."
+            }
+          ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Verify both product-build and Step Three quality-gate workflows for this exact commit. Keep T0007 in_progress until the broad traceability acceptance criterion is genuinely satisfied; do not advance to T0008 while its prerequisite remains incomplete."
+          "follow_up": "Keep T0007 in_progress: the deterministic fallback regression is verified, but the task-wide requirement to reflect every technical decision in executable code/config/tests is not yet satisfied. The T0007 -> T0008 relation has been reviewed and retained as sequencing_only; T0008 may proceed as an independent claim audit."
         }
       ]
     },
@@ -1282,9 +1295,7 @@
       "id": "T0008",
       "title": "هر ادعای «محلی»، «P2P»، «رمزگذاری‌شده» یا «بدون ذخیره‌سازی» را با آزمون یا بررسی قابل‌تکرار اثبات کن.",
       "section": "قانون تکمیل وظیفه",
-      "depends_on": [
-        "T0007"
-      ],
+      "depends_on": [],
       "inputs": [
         "خروجی تأییدشدهٔ پیش‌نیازها",
         "نیازمندی مرتبط: هر ادعای «محلی»، «P2P»، «رمزگذاری‌شده» یا «بدون ذخیره‌سازی» را با آزمون یا بررسی قابل‌تکرار اثبات کن."
@@ -1292,22 +1303,43 @@
       "outputs": [
         "خروجی قابل بررسی مربوط به «هر ادعای «محلی»، «P2P»، «رمزگذاری‌شده» یا «بدون ذخیره‌سازی» را با آزمون یا بررسی قابل‌تکرار اثبات کن.» در مسیر docs/acceptance.md + tests/ (معیار و آزمون متناظر)؛ همراه با آزمون/شاهد پذیرش متناسب."
       ],
-      "start_condition": "همهٔ پیش‌نیازهای T0007 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
+      "start_condition": "The current host/UI/docs sources and T0007 evidence have been inspected. The T0007 -> T0008 edge is validated as sequencing_only: preserve the conservative order, but T0008 consumes no specific T0007 output and may proceed while the broader T0007 traceability task remains in_progress.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "tests/test_claims_audit.py",
+        "docs/acceptance.md",
+        "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
+        "src/Host.Windows/MainWindow.xaml",
+        "step three/T0008/execution-report.md"
+      ],
       "expected_output_paths": [
         "docs/acceptance.md + tests/ (معیار و آزمون متناظر)"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "tests/test_claims_audit.py",
+        "docs/acceptance.md",
+        "README.md",
+        "docs/requirements.md",
+        "src/Host.Windows/HostLifecycle.cs",
+        "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
+        "src/Host.Windows/MainWindow.xaml"
+      ],
+      "notes": "A repeatable source/documentation audit has been added. The Windows and Android UI labels disclose preview/unimplemented scope, and current docs explicitly separate requirements from proven runtime behavior. This does not prove network privacy, encryption, or absence of persistence; product runtime gates remain NOT RUN. CI for the new audit is pending.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0008-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "tests/test_claims_audit.py",
+          "docs/acceptance.md",
+          "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
+          "src/Host.Windows/MainWindow.xaml",
+          "step three/T0008/execution-report.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
@@ -1320,7 +1352,30 @@
           "review_evidence": []
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0008-A001",
+          "started_at": "2026-10-22T04:34:00Z",
+          "ended_at": "2026-10-22T04:34:00Z",
+          "result": "partial",
+          "summary": "Reviewed the current host and Android source, UI disclosures, README, requirements, and release-gate matrix. Corrected stale acceptance-matrix statements, labelled both apps as previews, and added a repeatable source/documentation claim audit. This audit does not prove runtime network privacy, encryption, or no-storage; validation of the new commit is pending.",
+          "changed_files": [
+            "tests/test_claims_audit.py",
+            "docs/acceptance.md",
+            "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
+            "src/Host.Windows/MainWindow.xaml",
+            "step three/T0008/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect both GitHub Actions workflows for the exact new commit. If they pass, record the exact run URLs and test results in a subsequent ledger update; keep runtime privacy/encryption/P2P gates NOT RUN because this source-level audit is not end-to-end evidence."
+        }
+      ]
     },
     {
       "id": "T0009",
@@ -12097,10 +12152,15 @@
       "from": "T0007",
       "to": "T0008",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0008 audits whether source/UI/docs overstate local, P2P, encryption, or no-storage capabilities. It consumes the shared project sources and acceptance matrix, not a specific output produced by the broad T0007 traceability task. T0007 is still in_progress, and the edge is retained to preserve conservative execution order; classifying it as sequencing_only permits the independent audit without falsely marking T0007 complete.",
+      "validation_status": "validated",
+      "evidence": [
+        "step one/V1.0.md: T0007 is a broad code/config/test traceability rule; T0008 is an audit of local/P2P/encryption/no-storage claims.",
+        "src/Host.Windows/HostLifecycle.cs: UnconfiguredInferenceBackend.IsAvailable returns false.",
+        "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt: request action only updates local UI status and states transport is not implemented.",
+        "README.md and docs/requirements.md: current capability boundaries and requirements-not-claims disclosures."
+      ]
     },
     {
       "from": "T0008",
@@ -16210,5 +16270,23 @@
       "passed",
       "failed"
     ]
-  }
-}```
+  },
+  "edge_change_log": [
+    {
+      "changed_at": "2026-10-22T04:34:00Z",
+      "edge_from": "T0007",
+      "edge_to": "T0008",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "reason": "The broad T0007 task does not produce a task-specific artifact consumed by the T0008 claims audit. The current T0008 input is the checked-in UI, host backend state, product requirements, README, and acceptance matrix; preserve the existing order without making completion of T0007 a false technical prerequisite.",
+      "evidence": [
+        "step one/V1.0.md: T0007 is a broad code/config/test traceability rule; T0008 is an audit of local/P2P/encryption/no-storage claims.",
+        "src/Host.Windows/HostLifecycle.cs: UnconfiguredInferenceBackend.IsAvailable returns false.",
+        "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt: request action only updates local UI status and states transport is not implemented.",
+        "README.md and docs/requirements.md: current capability boundaries and requirements-not-claims disclosures."
+      ],
+      "reviewed_by": "Step Three execution review"
+    }
+  ]
+}
+```

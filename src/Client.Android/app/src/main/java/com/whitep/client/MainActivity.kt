@@ -39,7 +39,7 @@ private fun WhitePClientScreen() {
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 Text("White-P", style = MaterialTheme.typography.headlineMedium)
-                Text("Peer-to-peer local AI client")
+                Text("White-P — P2P client preview (transport not implemented)")
                 OutlinedTextField(
                     value = requestText,
                     onValueChange = { requestText = it },
