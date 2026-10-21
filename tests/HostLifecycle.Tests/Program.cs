@@ -8,4 +8,13 @@ var status=new HostStartup(new HostLifecycle(),new UnconfiguredInferenceBackend(
 Assert(status.State==HostState.Error,"Unavailable backend must report Error");
 Assert(status.Message.Contains("not configured",StringComparison.OrdinalIgnoreCase),"Reason must be visible");
 Assert(status.State!=HostState.Ready,"Unavailable backend must not report Ready");
-Console.WriteLine("PASS: lifecycle transitions, invalid-transition rejection, unavailable-backend startup.");
+var availableStatus=new HostStartup(new HostLifecycle(),new AvailableTestBackend()).Start();
+Assert(availableStatus.State==HostState.Ready,"Available backend must permit Ready state");
+Assert(availableStatus.Message.Contains("ready",StringComparison.OrdinalIgnoreCase),"Ready state must explain backend readiness");
+Console.WriteLine("PASS: lifecycle transitions, invalid-transition rejection, unavailable-backend refusal, available-backend readiness.");
+
+sealed class AvailableTestBackend : IInferenceBackend
+{
+    public bool IsAvailable => true;
+    public string UnavailableReason => "Test backend is available.";
+}

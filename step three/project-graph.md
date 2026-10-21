@@ -112,6 +112,7 @@
 ساختار زیر JSON معتبر و قابل‌پردازش ماشینی است. فهرست `nodes` همهٔ وظایف را دارد و `edges` یال‌های جهت‌دار وابستگی را ارائه می‌کند.
 
 ```json
+
 {
   "schema_version": "1.0",
   "document": "v2.1",
@@ -1067,20 +1068,33 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0006 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال انجام",
+      "actual_output_paths": [
+        "tests/HostLifecycle.Tests/Program.cs",
+        "docs/acceptance.md",
+        "step three/T0007/execution-report.md"
+      ],
       "expected_output_paths": [
         "docs/acceptance.md + tests/ (معیار و آزمون متناظر)"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "tests/HostLifecycle.Tests/Program.cs",
+        "src/Host.Windows/HostLifecycle.cs",
+        "docs/acceptance.md"
+      ],
+      "notes": "A concrete lifecycle decision is now traced through implementation, executable test and acceptance evidence. This does not satisfy the whole umbrella task; CI validation is pending and real inference remains unimplemented.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0007-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "tests/HostLifecycle.Tests/Program.cs",
+          "docs/acceptance.md",
+          "step three/T0007/execution-report.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
@@ -1093,7 +1107,28 @@
           "review_evidence": []
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0007-A001",
+          "started_at": "2026-10-21T20:00:00+03:00",
+          "ended_at": "2026-10-21T20:00:00+03:00",
+          "result": "partial",
+          "summary": "Added executable coverage for both available and unavailable inference-backend lifecycle branches and documented the decision-to-code/test trace. The broad task remains incomplete.",
+          "changed_files": [
+            "tests/HostLifecycle.Tests/Program.cs",
+            "docs/acceptance.md",
+            "step three/T0007/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Verify the .NET lifecycle test job on this commit. Keep T0007 in progress until its broad traceability criterion is covered; implement a real inference backend in the appropriate task before claiming backend readiness."
+        }
+      ]
     },
     {
       "id": "T0008",
