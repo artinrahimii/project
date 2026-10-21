@@ -1500,9 +1500,9 @@
       ],
       "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
       "execution_summary": {
-        "attempt_count": 3,
+        "attempt_count": 4,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0014-A003",
+        "last_attempt_id": "T0014-A004",
         "last_attempt_result": "partial",
         "changed_files": [
           "global.json",
@@ -1612,6 +1612,32 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Use the discovered absolute sdkmanager path, install API 36 packages, then inspect the Gradle build result."
+        },
+        {
+          "attempt_id": "T0014-A004",
+          "started_at": "2026-10-21T17:11:44.575Z",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "The prior workflow revision was rejected before job creation because a quoted shell command was written as a plain YAML scalar. The command is now a block scalar; new CI result is pending.",
+          "changed_files": [
+            ".github/workflows/product-build.yml",
+            "step three/T0014/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "command": "GitHub Actions run 39641425456",
+              "result": "failed",
+              "summary": "Workflow run had zero jobs; YAML syntax was invalid in the quoted Android SDK install command.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/39641425456"
+            }
+          ],
+          "failure_details": "The workflow was not parsed into jobs; no Android or Windows build ran on this commit.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Verify the corrected workflow creates both jobs, then inspect actual build results."
         }
       ]
     },
@@ -1761,9 +1787,9 @@
       ],
       "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
       "execution_summary": {
-        "attempt_count": 3,
-        "failed_attempt_count": 2,
-        "last_attempt_id": "T0016-A003",
+        "attempt_count": 4,
+        "failed_attempt_count": 3,
+        "last_attempt_id": "T0016-A004",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Client.Android/settings.gradle.kts",
@@ -1850,9 +1876,35 @@
         {
           "attempt_id": "T0016-A003",
           "started_at": "2026-10-21T17:10:12.130Z",
+          "ended_at": "2026-10-21T17:11:44.575Z",
+          "result": "failed",
+          "summary": "The workflow revision did not parse into jobs; the Android SDK install command was an invalid quoted plain YAML scalar. No build ran on this commit.",
+          "changed_files": [
+            ".github/workflows/product-build.yml",
+            "step three/T0016/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "command": "GitHub Actions run 39641425456",
+              "result": "failed",
+              "summary": "Workflow was rejected before job creation; zero jobs were reported.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/39641425456"
+            }
+          ],
+          "failure_details": "YAML syntax error in the run value for Android SDK installation.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Use a YAML block scalar for the shell command, rerun the workflow, and inspect Gradle output."
+        },
+        {
+          "attempt_id": "T0016-A004",
+          "started_at": "2026-10-21T17:11:44.575Z",
           "ended_at": null,
           "result": "partial",
-          "summary": "Corrected workflow to locate the SDK manager under ANDROID_HOME/ANDROID_SDK_ROOT, export its absolute path, accept licenses, and install explicit API 36 packages. Build result awaits CI.",
+          "summary": "Corrected the workflow YAML by using a block scalar for the SDK install command. Android SDK manager is located and invoked by its absolute path; CI result is pending.",
           "changed_files": [
             ".github/workflows/product-build.yml",
             "step three/T0016/execution-report.md",
@@ -1863,14 +1915,14 @@
             {
               "command": "GitHub Actions product-build workflow",
               "result": "not_run",
-              "summary": "Corrected workflow will run after commit."
+              "summary": "Corrected workflow will run after this commit is pushed."
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect the new Android job and fix any remaining environment or source compilation failures."
+          "follow_up": "Check both jobs exist and run; resolve any remaining Android SDK/Gradle/Kotlin errors before completion."
         }
       ]
     },
