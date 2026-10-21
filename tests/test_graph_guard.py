@@ -49,7 +49,8 @@ class ValidateTests(unittest.TestCase):
     def test_done_passes_when_actual_outputs_and_evidence_exist(self):
         import tempfile
         g=graph_fixture(); node=g["nodes"][0]
-        node.update({"status":"done", "actual_output_paths":["output.txt"], "evidence":["report.md"],
+        node.update({"status":"done", "actual_output_paths":["output.txt"], "acceptance":"Output and evidence are present.",
+                     "evidence":["report.md", "tests/test_graph_guard.py"],
                      "execution_history":[{"result":"succeeded","tests":["unit tests passed"]}],
                      "execution_summary":{"attempt_count":1,"failed_attempt_count":0,"tests_passed":["unit tests passed"]}})
         with tempfile.TemporaryDirectory() as td:
