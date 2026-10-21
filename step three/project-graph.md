@@ -24,6 +24,19 @@
 
 یال‌ها را صرفاً برای موازی‌سازی حذف نکن. هر تغییر در یال باید همراه با دلیل، شواهد و ثبت نوع قبلی و جدید باشد. تا زمان تأیید، ترتیب فعلی فقط مبنای امن اولیه است، نه مدل نهایی وابستگی فنی.
 
+## قرارداد داده‌های وابستگی
+
+فیلد `type` موجود در هر یال حفظ می‌شود و به‌تنهایی طبقه‌بندی فنی وابستگی را مشخص نمی‌کند. هر یال همچنین فیلدهای مستقل زیر را دارد:
+
+- `dependency_classification`: یکی از `hard_dependency`، `contract_or_interface_dependency)، `sequencing_only) یا `unreviewed).
+- `rationale`: دلیل مستند و مبتنی بر شواهد برای طبقه‌بندی؛ تا زمان بررسی خالی می‌ماند.
+- `validation_status`: یکی از `unreviewed`، `validated` یا `disputed`.
+- `evidence`: ارجاع به شواهد واقعی که طبقه‌بندی را پشتیبانی می‌کنند.
+
+در این نسخه، طبقه‌بندی تمام یال‌ها عمداً `unreviewed` و وضعیت اعتبارسنجی آن‌ها `unreviewed` است؛ هیچ نوعی را صرفاً از روی `type: blocks` حدس نزن. پیش از تغییر به طبقه‌بندی تأییدشده، ورودی‌ها و خروجی‌های وظایف، قراردادها و شواهد مخزن را بررسی و دلیل و شواهد را ثبت کن. نوع رابطهٔ موجود را بی‌دلیل تغییر نده.
+
+وضعیت گره با نتیجهٔ تلاش تفاوت دارد: وضعیت‌های گره `not_started`، `in_progress`، `done` و `blocked` هستند. شکست یک تلاش در `execution_history.result: failed` ثبت می‌شود و به‌تنهایی وضعیت مستقل گره نیست. پیشرفت ناقص معمولاً `in_progress` باقی می‌ماند؛ `blocked` فقط وقتی استفاده شود که مانع واقعی ادامهٔ امن کار را متوقف کند.
+
 ## سیاست ثبت اجرای وظایف
 
 وضعیت فعلی هر وظیفه به‌تنهایی سابقهٔ اجرای آن را نشان نمی‌دهد. بنابراین هر گره دو بخش دارد:
@@ -117,11 +130,23 @@
   },
   "graph_policy": {
     "direction": "A -> B یعنی A پیش‌نیاز B است",
-    "dependency_rule": "The current chain is a conservative ordering baseline, not proof that every edge is a true technical dependency. Before execution, validate each edge and classify it as hard dependency, contract/interface dependency, or sequencing-only. Change edges only with a recorded reason and preserve a safe execution order.",
+    "dependency_rule": "The current chain is a conservative ordering baseline, not proof that every edge is a true technical dependency. Preserve the existing type field as the relationship/blocking meaning. Every edge separately records dependency_classification (hard_dependency, contract_or_interface_dependency, sequencing_only, or unreviewed), rationale, validation_status, and evidence. Initially all edges are unreviewed; do not infer a dependency class from type=blocks alone. Validate each edge against real task inputs/outputs, contracts, code, and evidence. Record a grounded rationale and evidence before changing an edge to a validated classification. Change or remove edges only with a recorded reason and preserve a safe execution order.",
     "completion_rule": "تولید سند یا فایل به‌تنهایی کافی نیست؛ باید کد واقعی، آزمون موفق و شاهد پذیرش وجود داشته باشد.",
     "status_truth": "وضعیت‌ها هنگام ایجاد گراف از روی وجود کدهای اجرایی و شواهد در مخزن ارزیابی شده‌اند؛ چون مخزن در این مرحله عمدتاً فایل برنامه‌ریزی دارد، همهٔ وظایف پیاده‌سازی در وضعیت انجام‌نشده قرار می‌گیرند.",
     "actual_paths_rule": "actual_output_paths تا زمان تأیید خروجی واقعی خالی می‌ماند. expected_output_paths مسیر هدف است، نه ادعای وجود فایل.",
-    "execution_tracking": "Every task maintains an append-only execution_history and a current summary of attempts, failed attempts, changed files, related commits, test results, blocking/reopening reasons, and contract-triggered revalidation. A task is done only with real output and verifiable acceptance evidence."
+    "execution_tracking": "Every task maintains an append-only execution_history and a current summary of attempts, failed attempts, changed files, related commits, test results, blocking/reopening reasons, and contract-triggered revalidation. A task is done only with real output and verifiable acceptance evidence.",
+    "edge_classification_values": [
+      "hard_dependency",
+      "contract_or_interface_dependency",
+      "sequencing_only",
+      "unreviewed"
+    ],
+    "edge_validation_status_values": [
+      "unreviewed",
+      "validated",
+      "disputed"
+    ],
+    "node_status_rule": "Node status values are not_started, in_progress, done, and blocked. A failed attempt is recorded in execution_history.result=failed and execution_summary; it is not a separate node status. Use partial progress as in_progress, and blocked only when an actual blocker prevents safe progress."
   },
   "task_workspace_policy": {
     "applies_to": "all 229 task nodes unless a documented, justified exception applies",
@@ -10577,2132 +10602,3836 @@
     {
       "from": "T0001",
       "to": "T0002",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0002",
       "to": "T0003",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0003",
       "to": "T0004",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0004",
       "to": "T0005",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0005",
       "to": "T0006",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0006",
       "to": "T0007",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0007",
       "to": "T0008",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0008",
       "to": "T0009",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0009",
       "to": "T0010",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0010",
       "to": "T0011",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0011",
       "to": "T0012",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0010",
       "to": "T0012",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0012",
       "to": "T0013",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0010",
       "to": "T0013",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0013",
       "to": "T0014",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0010",
       "to": "T0014",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0014",
       "to": "T0015",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0010",
       "to": "T0015",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0015",
       "to": "T0016",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0010",
       "to": "T0016",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0016",
       "to": "T0017",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0010",
       "to": "T0017",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0017",
       "to": "T0018",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0010",
       "to": "T0018",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0018",
       "to": "T0019",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0010",
       "to": "T0019",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0019",
       "to": "T0020",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0010",
       "to": "T0020",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0020",
       "to": "T0021",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0021",
       "to": "T0022",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0020",
       "to": "T0022",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0022",
       "to": "T0023",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0020",
       "to": "T0023",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0023",
       "to": "T0024",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0020",
       "to": "T0024",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0024",
       "to": "T0025",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0020",
       "to": "T0025",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0025",
       "to": "T0026",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0020",
       "to": "T0026",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0026",
       "to": "T0027",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0020",
       "to": "T0027",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0027",
       "to": "T0028",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0020",
       "to": "T0028",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0028",
       "to": "T0029",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0020",
       "to": "T0029",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0029",
       "to": "T0030",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0020",
       "to": "T0030",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0030",
       "to": "T0031",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0031",
       "to": "T0032",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0030",
       "to": "T0032",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0032",
       "to": "T0033",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0030",
       "to": "T0033",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0033",
       "to": "T0034",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0030",
       "to": "T0034",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0034",
       "to": "T0035",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0030",
       "to": "T0035",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0035",
       "to": "T0036",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0030",
       "to": "T0036",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0036",
       "to": "T0037",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0030",
       "to": "T0037",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0037",
       "to": "T0038",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0030",
       "to": "T0038",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0038",
       "to": "T0039",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0030",
       "to": "T0039",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0039",
       "to": "T0040",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0030",
       "to": "T0040",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0040",
       "to": "T0041",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0041",
       "to": "T0042",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0040",
       "to": "T0042",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0042",
       "to": "T0043",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0040",
       "to": "T0043",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0043",
       "to": "T0044",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0040",
       "to": "T0044",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0044",
       "to": "T0045",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0040",
       "to": "T0045",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0045",
       "to": "T0046",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0040",
       "to": "T0046",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0046",
       "to": "T0047",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0040",
       "to": "T0047",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0047",
       "to": "T0048",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0040",
       "to": "T0048",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0048",
       "to": "T0049",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0049",
       "to": "T0050",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0048",
       "to": "T0050",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0050",
       "to": "T0051",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0048",
       "to": "T0051",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0051",
       "to": "T0052",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0048",
       "to": "T0052",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0052",
       "to": "T0053",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0048",
       "to": "T0053",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0053",
       "to": "T0054",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0048",
       "to": "T0054",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0054",
       "to": "T0055",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0048",
       "to": "T0055",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0055",
       "to": "T0056",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0048",
       "to": "T0056",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0056",
       "to": "T0057",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0057",
       "to": "T0058",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0056",
       "to": "T0058",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0058",
       "to": "T0059",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0056",
       "to": "T0059",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0059",
       "to": "T0060",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0056",
       "to": "T0060",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0060",
       "to": "T0061",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0056",
       "to": "T0061",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0061",
       "to": "T0062",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0056",
       "to": "T0062",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0062",
       "to": "T0063",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0056",
       "to": "T0063",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0063",
       "to": "T0064",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0056",
       "to": "T0064",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0064",
       "to": "T0065",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0056",
       "to": "T0065",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0065",
       "to": "T0066",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0056",
       "to": "T0066",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0066",
       "to": "T0067",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0056",
       "to": "T0067",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0067",
       "to": "T0068",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0068",
       "to": "T0069",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0067",
       "to": "T0069",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0069",
       "to": "T0070",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0067",
       "to": "T0070",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0070",
       "to": "T0071",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0067",
       "to": "T0071",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0071",
       "to": "T0072",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0067",
       "to": "T0072",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0072",
       "to": "T0073",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0067",
       "to": "T0073",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0073",
       "to": "T0074",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0067",
       "to": "T0074",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0074",
       "to": "T0075",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0067",
       "to": "T0075",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0075",
       "to": "T0076",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0076",
       "to": "T0077",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0075",
       "to": "T0077",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0077",
       "to": "T0078",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0075",
       "to": "T0078",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0078",
       "to": "T0079",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0075",
       "to": "T0079",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0079",
       "to": "T0080",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0075",
       "to": "T0080",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0080",
       "to": "T0081",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0075",
       "to": "T0081",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0081",
       "to": "T0082",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0075",
       "to": "T0082",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0082",
       "to": "T0083",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0075",
       "to": "T0083",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0083",
       "to": "T0084",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0075",
       "to": "T0084",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0084",
       "to": "T0085",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0075",
       "to": "T0085",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0085",
       "to": "T0086",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0075",
       "to": "T0086",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0086",
       "to": "T0087",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0075",
       "to": "T0087",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0087",
       "to": "T0088",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0088",
       "to": "T0089",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0087",
       "to": "T0089",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0089",
       "to": "T0090",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0087",
       "to": "T0090",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0090",
       "to": "T0091",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0087",
       "to": "T0091",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0091",
       "to": "T0092",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0087",
       "to": "T0092",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0092",
       "to": "T0093",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0087",
       "to": "T0093",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0093",
       "to": "T0094",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0087",
       "to": "T0094",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0094",
       "to": "T0095",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0087",
       "to": "T0095",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0095",
       "to": "T0096",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0087",
       "to": "T0096",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0096",
       "to": "T0097",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0087",
       "to": "T0097",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0097",
       "to": "T0098",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0098",
       "to": "T0099",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0097",
       "to": "T0099",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0099",
       "to": "T0100",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0097",
       "to": "T0100",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0100",
       "to": "T0101",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0097",
       "to": "T0101",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0101",
       "to": "T0102",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0097",
       "to": "T0102",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0102",
       "to": "T0103",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0097",
       "to": "T0103",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0103",
       "to": "T0104",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0097",
       "to": "T0104",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0104",
       "to": "T0105",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0097",
       "to": "T0105",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0105",
       "to": "T0106",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0097",
       "to": "T0106",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0106",
       "to": "T0107",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0097",
       "to": "T0107",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0107",
       "to": "T0108",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0108",
       "to": "T0109",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0107",
       "to": "T0109",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0109",
       "to": "T0110",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0107",
       "to": "T0110",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0110",
       "to": "T0111",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0107",
       "to": "T0111",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0111",
       "to": "T0112",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0107",
       "to": "T0112",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0112",
       "to": "T0113",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0107",
       "to": "T0113",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0113",
       "to": "T0114",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0107",
       "to": "T0114",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0114",
       "to": "T0115",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0107",
       "to": "T0115",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0115",
       "to": "T0116",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0116",
       "to": "T0117",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0115",
       "to": "T0117",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0117",
       "to": "T0118",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0115",
       "to": "T0118",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0118",
       "to": "T0119",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0115",
       "to": "T0119",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0119",
       "to": "T0120",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0115",
       "to": "T0120",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0120",
       "to": "T0121",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0115",
       "to": "T0121",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0121",
       "to": "T0122",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0115",
       "to": "T0122",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0122",
       "to": "T0123",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0115",
       "to": "T0123",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0123",
       "to": "T0124",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0115",
       "to": "T0124",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0124",
       "to": "T0125",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0115",
       "to": "T0125",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0125",
       "to": "T0126",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0115",
       "to": "T0126",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0126",
       "to": "T0127",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0115",
       "to": "T0127",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0127",
       "to": "T0128",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0115",
       "to": "T0128",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0128",
       "to": "T0129",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0129",
       "to": "T0130",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0128",
       "to": "T0130",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0130",
       "to": "T0131",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0128",
       "to": "T0131",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0131",
       "to": "T0132",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0128",
       "to": "T0132",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0132",
       "to": "T0133",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0128",
       "to": "T0133",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0133",
       "to": "T0134",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0128",
       "to": "T0134",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0134",
       "to": "T0135",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0128",
       "to": "T0135",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0135",
       "to": "T0136",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0128",
       "to": "T0136",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0136",
       "to": "T0137",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0128",
       "to": "T0137",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0137",
       "to": "T0138",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0128",
       "to": "T0138",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0138",
       "to": "T0139",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0139",
       "to": "T0140",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0138",
       "to": "T0140",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0140",
       "to": "T0141",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0138",
       "to": "T0141",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0141",
       "to": "T0142",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0138",
       "to": "T0142",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0142",
       "to": "T0143",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0138",
       "to": "T0143",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0143",
       "to": "T0144",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0138",
       "to": "T0144",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0144",
       "to": "T0145",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0138",
       "to": "T0145",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0145",
       "to": "T0146",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0138",
       "to": "T0146",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0146",
       "to": "T0147",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0138",
       "to": "T0147",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0147",
       "to": "T0148",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0138",
       "to": "T0148",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0148",
       "to": "T0149",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0138",
       "to": "T0149",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0149",
       "to": "T0150",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0138",
       "to": "T0150",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0150",
       "to": "T0151",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0151",
       "to": "T0152",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0150",
       "to": "T0152",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0152",
       "to": "T0153",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0150",
       "to": "T0153",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0153",
       "to": "T0154",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0150",
       "to": "T0154",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0154",
       "to": "T0155",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0150",
       "to": "T0155",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0155",
       "to": "T0156",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0150",
       "to": "T0156",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0156",
       "to": "T0157",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0150",
       "to": "T0157",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0157",
       "to": "T0158",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0150",
       "to": "T0158",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0158",
       "to": "T0159",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0150",
       "to": "T0159",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0159",
       "to": "T0160",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0150",
       "to": "T0160",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0160",
       "to": "T0161",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0161",
       "to": "T0162",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0160",
       "to": "T0162",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0162",
       "to": "T0163",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0160",
       "to": "T0163",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0163",
       "to": "T0164",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0160",
       "to": "T0164",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0164",
       "to": "T0165",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0160",
       "to": "T0165",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0165",
       "to": "T0166",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0160",
       "to": "T0166",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0166",
       "to": "T0167",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0160",
       "to": "T0167",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0167",
       "to": "T0168",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0160",
       "to": "T0168",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0168",
       "to": "T0169",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0160",
       "to": "T0169",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0169",
       "to": "T0170",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0160",
       "to": "T0170",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0170",
       "to": "T0171",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0160",
       "to": "T0171",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0171",
       "to": "T0172",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0160",
       "to": "T0172",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0172",
       "to": "T0173",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0160",
       "to": "T0173",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0173",
       "to": "T0174",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0160",
       "to": "T0174",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0174",
       "to": "T0175",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0160",
       "to": "T0175",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0175",
       "to": "T0176",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0160",
       "to": "T0176",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0176",
       "to": "T0177",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0160",
       "to": "T0177",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0177",
       "to": "T0178",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0178",
       "to": "T0179",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0177",
       "to": "T0179",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0179",
       "to": "T0180",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0177",
       "to": "T0180",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0180",
       "to": "T0181",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0177",
       "to": "T0181",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0181",
       "to": "T0182",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0177",
       "to": "T0182",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0182",
       "to": "T0183",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0177",
       "to": "T0183",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0183",
       "to": "T0184",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0177",
       "to": "T0184",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0184",
       "to": "T0185",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0177",
       "to": "T0185",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0185",
       "to": "T0186",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0177",
       "to": "T0186",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0186",
       "to": "T0187",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0177",
       "to": "T0187",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0187",
       "to": "T0188",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0177",
       "to": "T0188",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0188",
       "to": "T0189",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0189",
       "to": "T0190",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0188",
       "to": "T0190",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0190",
       "to": "T0191",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0188",
       "to": "T0191",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0191",
       "to": "T0192",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0188",
       "to": "T0192",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0192",
       "to": "T0193",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0188",
       "to": "T0193",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0193",
       "to": "T0194",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0188",
       "to": "T0194",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0194",
       "to": "T0195",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0188",
       "to": "T0195",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0195",
       "to": "T0196",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0196",
       "to": "T0197",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0195",
       "to": "T0197",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0197",
       "to": "T0198",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0195",
       "to": "T0198",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0198",
       "to": "T0199",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0195",
       "to": "T0199",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0199",
       "to": "T0200",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0195",
       "to": "T0200",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0200",
       "to": "T0201",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0195",
       "to": "T0201",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0201",
       "to": "T0202",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0195",
       "to": "T0202",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0202",
       "to": "T0203",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0195",
       "to": "T0203",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0203",
       "to": "T0204",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0195",
       "to": "T0204",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0204",
       "to": "T0205",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0195",
       "to": "T0205",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0205",
       "to": "T0206",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0195",
       "to": "T0206",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0206",
       "to": "T0207",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0195",
       "to": "T0207",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0207",
       "to": "T0208",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0195",
       "to": "T0208",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0208",
       "to": "T0209",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0209",
       "to": "T0210",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0208",
       "to": "T0210",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0210",
       "to": "T0211",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0208",
       "to": "T0211",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0211",
       "to": "T0212",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0208",
       "to": "T0212",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0212",
       "to": "T0213",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0208",
       "to": "T0213",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0213",
       "to": "T0214",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0208",
       "to": "T0214",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0214",
       "to": "T0215",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0208",
       "to": "T0215",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0215",
       "to": "T0216",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0208",
       "to": "T0216",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0216",
       "to": "T0217",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0208",
       "to": "T0217",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0217",
       "to": "T0218",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0208",
       "to": "T0218",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0218",
       "to": "T0219",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0219",
       "to": "T0220",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0218",
       "to": "T0220",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0220",
       "to": "T0221",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0218",
       "to": "T0221",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0221",
       "to": "T0222",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0218",
       "to": "T0222",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0222",
       "to": "T0223",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0218",
       "to": "T0223",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0223",
       "to": "T0224",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0218",
       "to": "T0224",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0224",
       "to": "T0225",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0218",
       "to": "T0225",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0225",
       "to": "T0226",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0218",
       "to": "T0226",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0226",
       "to": "T0227",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0218",
       "to": "T0227",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0227",
       "to": "T0228",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0218",
       "to": "T0228",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0228",
       "to": "T0229",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     },
     {
       "from": "T0218",
       "to": "T0229",
-      "type": "blocks"
+      "type": "blocks",
+      "dependency_classification": "unreviewed",
+      "rationale": "",
+      "validation_status": "unreviewed",
+      "evidence": []
     }
   ],
   "execution_order": [
