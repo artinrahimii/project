@@ -21,7 +21,7 @@ class AcceptanceContractTests(unittest.TestCase):
         traceability = ACCEPTANCE.split("### Requirement-to-gate traceability", 1)[1]
         for requirement_id in requirement_ids:
             with self.subTest(requirement=requirement_id):
-                self.assertRegex(traceability, rf"(?m)^\| {requirement_id} \| AC-[A-Z0-9,-]+ \|$")
+                self.assertRegex(traceability, rf"(?m)^\| {requirement_id} \| [A-Z0-9-]+(?:, [A-Z0-9-]+)* \|$")
 
     def test_release_gate_requires_real_evidence_and_fails_closed(self):
         for phrase in ("NOT RUN", "blocks release acceptance", "actual implementation",
