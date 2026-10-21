@@ -1101,9 +1101,7 @@
       "id": "T0011",
       "title": "فایل `README.md` را با هدف محصول، اجزای اجرایی، محدودهٔ نسخهٔ نخست و محدودیت‌های واقعی ایجاد کن.",
       "section": "1. تعریف نسخهٔ قابل‌ساخت و تصمیم‌های فنی",
-      "depends_on": [
-        "T0010"
-      ],
+      "depends_on": [],
       "inputs": [
         "خروجی تأییدشدهٔ پیش‌نیازها",
         "نیازمندی مرتبط: فایل `README.md` را با هدف محصول، اجزای اجرایی، محدودهٔ نسخهٔ نخست و محدودیت‌های واقعی ایجاد کن."
@@ -1111,22 +1109,34 @@
       "outputs": [
         "خروجی قابل بررسی مربوط به «فایل `README.md` را با هدف محصول، اجزای اجرایی، محدودهٔ نسخهٔ نخست و محدودیت‌های واقعی ایجاد کن.» در مسیر README.md + docs/decisions/ + فایل‌های تنظیمات build؛ همراه با آزمون/شاهد پذیرش متناسب."
       ],
-      "start_condition": "همهٔ پیش‌نیازهای T0010 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
+      "start_condition": "این وظیفه می‌تواند مستقل از تکمیل T0010 آغاز شود؛ README باید وضعیت واقعی اجزای محصول و محدودیت build را صادقانه بیان کند. مسیرهای ساخت قابل‌تکرار در T0010 همچنان جداگانه الزامی‌اند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال انجام",
+      "actual_output_paths": [
+        "README.md",
+        "tests/test_readme_contract.py",
+        "step three/T0011/execution-report.md"
+      ],
       "expected_output_paths": [
         "README.md + docs/decisions/ + فایل‌های تنظیمات build"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "tests/test_readme_contract.py",
+        "step three/T0011/execution-report.md"
+      ],
+      "notes": "T0010 → T0011 بازبینی شد: T0010 یک کنترل سراسری تکرارپذیری ساخت است و خروجی فنی لازم برای نوشتن معرفی محصول را تولید نمی‌کند. یال برای حفظ ترتیب تاریخی در edges باقی می‌ماند، اما به‌عنوان sequencing_only طبقه‌بندی شده و دیگر پیش‌نیاز فنی T0011 نیست. README محدودیت‌های فعلی build را صریح می‌گوید.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0011-A001",
+        "last_attempt_result": "in_progress",
+        "changed_files": [
+          "README.md",
+          "tests/test_readme_contract.py",
+          "step three/T0011/execution-report.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
@@ -1139,7 +1149,28 @@
           "review_evidence": []
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0011-A001",
+          "started_at": "2026-10-21T18:55:00+03:30",
+          "ended_at": null,
+          "result": "in_progress",
+          "summary": "Created a truthful product README and an automated contract test. CI must run before acceptance can be marked complete.",
+          "changed_files": [
+            "README.md",
+            "tests/test_readme_contract.py",
+            "step three/T0011/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Verify GitHub Actions. Only mark done after the new test and full quality gate pass."
+        }
+      ]
     },
     {
       "id": "T0012",
@@ -11025,10 +11056,13 @@
       "from": "T0010",
       "to": "T0011",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0010 requires reproducible build/test commands across the eventual application projects; it does not produce an input consumed by writing README.md. The README can be authored accurately before build entrypoints exist, provided it explicitly states that the application projects and product builds are not yet present. This is an execution-order relation, not a technical dependency.",
+      "validation_status": "validated",
+      "evidence": [
+        "step one/V1.0.md: T0010 concerns reproducible build/test workflow; T0011 concerns product purpose, components, first-release scope, and current limitations.",
+        "step three/T0005/execution-report.md: confirms application build projects are absent and product build is not yet available."
+      ]
     },
     {
       "from": "T0011",
@@ -15071,5 +15105,4 @@
       "failed"
     ]
   }
-}
-```
+}```
