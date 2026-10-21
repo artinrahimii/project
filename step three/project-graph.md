@@ -1331,8 +1331,8 @@
       ],
       "start_condition": "T0012 must be complete so each acceptance gate traces to the approved requirements baseline. T0010 is a sequencing-only prerequisite for authoring this acceptance matrix, but its reproducible-build requirement remains mandatory before final release acceptance. Do not mark runtime, platform-build, privacy, or P2P gates passed until their real tests run.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "docs/acceptance.md",
         "tests/test_acceptance_contract.py",
@@ -1347,22 +1347,30 @@
         "tests/test_acceptance_contract.py",
         "step three/T0013/execution-report.md"
       ],
-      "notes": "Acceptance matrix and contract tests exist. First CI attempt failed only in the new traceability regex for multi-gate rows (run 39637948316); the test was corrected in T0013-A002. Await a successful CI run before marking T0013 done. Runtime/product gates remain NOT RUN; T0010 remains outstanding and T0005 remains blocked.",
+      "notes": "The acceptance matrix, requirement-to-gate traceability table, and automated document-contract tests are present. GitHub Actions run 39638208711 on commit d5e0f9d8837594e5de88de39b5722604fd03d8b0 succeeded: 29 unit tests, Python syntax, graph structure, and recorded-output/evidence validation all passed. This confirms the acceptance-document contract only; every runtime/build/network gate remains NOT RUN until real Windows, Android, local-inference, and P2P projects and test harnesses exist. T0010 remains outstanding; T0005 remains blocked.",
       "execution_summary": {
         "attempt_count": 2,
         "failed_attempt_count": 1,
         "last_attempt_id": "T0013-A002",
-        "last_attempt_result": "in_progress",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "docs/acceptance.md",
           "tests/test_acceptance_contract.py",
           "step three/T0013/execution-report.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
+        "related_commits": [
+          "22bf4cd30722ddeed647884cc15fa977015d9745",
+          "d5e0f9d8837594e5de88de39b5722604fd03d8b0"
+        ],
+        "tests_passed": [
+          "python -m unittest discover -s tests -v — passed (29 tests) in GitHub Actions run 39638208711",
+          "python -m compileall -q tools tests — passed in GitHub Actions run 39638208711",
+          "python tools/graph_guard.py \"step three/project-graph.md\" — passed in GitHub Actions run 39638208711",
+          "python tools/graph_guard.py \"step three/project-graph.md\" --repo-root . — passed in GitHub Actions run 39638208711"
+        ],
         "tests_failed": [
-          "python -m unittest discover -s tests -v — failed in GitHub Actions run 39637948316 because the traceability regex did not permit spaces in multi-gate mappings; corrected in T0013-A002."
+          "python -m unittest discover -s tests -v — failed in run 39637948316; traceability regex did not allow spaces in multi-gate rows. Corrected in T0013-A002 and rerun successfully."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -1374,7 +1382,9 @@
           "affected_by_contract_changes": [],
           "review_evidence": [
             "docs/requirements.md",
-            "step three/T0012/execution-report.md"
+            "docs/acceptance.md",
+            "tests/test_acceptance_contract.py",
+            "GitHub Actions run 39638208711"
           ]
         }
       },
@@ -1412,21 +1422,46 @@
         {
           "attempt_id": "T0013-A002",
           "started_at": "2026-10-21T20:19:00+03:30",
-          "ended_at": null,
-          "result": "in_progress",
-          "summary": "Corrected the acceptance traceability test regex to accept multiple comma-separated gate IDs; waiting for CI to verify the correction.",
+          "ended_at": "2026-10-21T20:19:34+03:30",
+          "result": "succeeded",
+          "summary": "Corrected the traceability regex to accept comma-separated gate IDs with spaces. GitHub Actions run 39638208711 passed all 29 unit tests, Python syntax validation, graph validation, and recorded-output/evidence validation.",
           "changed_files": [
             "tests/test_acceptance_contract.py",
             "step three/T0013/execution-report.md",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
-          "tests": [],
+          "commit_sha": "d5e0f9d8837594e5de88de39b5722604fd03d8b0",
+          "tests": [
+            {
+              "command": "python -m unittest discover -s tests -v",
+              "result": "passed",
+              "summary": "29 tests passed in GitHub Actions.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/39638208711"
+            },
+            {
+              "command": "python -m compileall -q tools tests",
+              "result": "passed",
+              "summary": "Python syntax validation passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/39638208711"
+            },
+            {
+              "command": "python tools/graph_guard.py \"step three/project-graph.md\"",
+              "result": "passed",
+              "summary": "Graph structure validation passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/39638208711"
+            },
+            {
+              "command": "python tools/graph_guard.py \"step three/project-graph.md\" --repo-root .",
+              "result": "passed",
+              "summary": "Recorded-output and evidence validation passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/39638208711"
+            }
+          ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect the new GitHub Actions run. If all checks pass, record evidence and mark T0013 done; do not claim product runtime gates passed."
+          "follow_up": "T0013 is complete for the acceptance-matrix/document contract. Do not treat the matrix as product runtime evidence; proceed to the next graph task only after checking its dependencies and resolving the T0010/T0005 build prerequisites where required."
         }
       ]
     },
