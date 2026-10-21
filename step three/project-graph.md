@@ -1083,11 +1083,11 @@
         "docs/acceptance.md",
         "step three/T0007/execution-report.md"
       ],
-      "notes": "T0007 remains a broad traceability task. A second concrete decision now ensures backend availability-check exceptions produce a stable Error state without leaking raw exception text. The new regression test awaits CI; real inference remains unimplemented.",
+      "notes": "T0007 remains a broad traceability task. A002 startup exception containment is present and both product-build and Step Three quality-gate workflows passed for commit 82e3a6ab7a342a6f7462a9a63bb802c0eeeb8b8b. This confirms the regression on that commit only; real production inference remains unimplemented.",
       "execution_summary": {
-        "attempt_count": 2,
+        "attempt_count": 3,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0007-A002",
+        "last_attempt_id": "T0007-A003",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Host.Windows/HostLifecycle.cs",
@@ -1097,7 +1097,10 @@
           "step three/project-graph.md"
         ],
         "related_commits": [],
-        "tests_passed": [],
+        "tests_passed": [
+          "GitHub Actions White-P product build: run 39652512854 succeeded for 82e3a6ab7a342a6f7462a9a63bb802c0eeeb8b8b",
+          "GitHub Actions Step Three quality gate: run 39652512893 succeeded for 82e3a6ab7a342a6f7462a9a63bb802c0eeeb8b8b"
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -1149,6 +1152,35 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Verify GitHub Actions for this exact commit; record actual test results and continue the broad T0007 traceability task only with passing evidence."
+        },
+        {
+          "attempt_id": "T0007-A003",
+          "started_at": "2026-10-21T21:30:00-04:00",
+          "ended_at": "2026-10-21T21:35:00-04:00",
+          "result": "partial",
+          "summary": "Verified both GitHub Actions workflows for commit 82e3a6ab7a342a6f7462a9a63bb802c0eeeb8b8b completed successfully: White-P product build run 39652512854 and Step Three quality gate run 39652512893. This validates the submitted regression coverage on that commit but does not complete the broad T0007 criterion or prove production inference readiness.",
+          "changed_files": [
+            "step three/T0007/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "White-P product build",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39652512854"
+            },
+            {
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39652512893"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect and implement the next concrete runtime requirement only after reviewing its graph dependencies; keep T0007 in progress until its full traceability acceptance criterion is met."
         }
       ]
     },
