@@ -696,11 +696,11 @@
         "tests/test_graph_guard.py",
         "docs/acceptance.md"
       ],
-      "notes": "Attempt T0004-A001 adds repository-backed static checks for known placeholder markers in source files listed as actual outputs, with positive and negative regression tests. Status remains in_progress until CI executes successfully. Edge T0003 → T0004 is validated as a shared-tool/interface dependency: T0004 extends the guard and test suite created by T0003; source files and regression tests provide evidence. The graph edge type remains blocks. Code review correction: exclude tools/graph_guard.py itself and tests/test directories from placeholder scanning to avoid self-matching and intentional test-fixture false positives.",
+      "notes": "Attempt T0004-A001 adds repository-backed static checks for known placeholder markers in source files listed as actual outputs, with positive and negative regression tests. Status remains in_progress until CI executes successfully. Edge T0003 → T0004 is validated as a shared-tool/interface dependency: T0004 extends the guard and test suite created by T0003; source files and regression tests provide evidence. The graph edge type remains blocks. Code review correction: exclude tools/graph_guard.py itself and tests/test directories from placeholder scanning to avoid self-matching and intentional test-fixture false positives. Attempt T0004-A001 failed CI due to self-matching placeholder patterns and intentional negative test fixtures; recorded as failed. T0004-A002 contains the correction and remains partial pending CI run 39622120539.",
       "execution_summary": {
-        "attempt_count": 1,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "T0004-A001",
+        "attempt_count": 2,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "T0004-A002",
         "last_attempt_result": "partial",
         "changed_files": [
           "tools/graph_guard.py",
@@ -709,9 +709,14 @@
           "step three/project-graph.md",
           "step three/T0004/execution-report.md"
         ],
-        "related_commits": [],
+        "related_commits": [
+          "1cdf8ebd12fa258c49e211d0f33ff430d29029a0",
+          "357b9b280b73084d582283a654222cf8ce3b1dfc"
+        ],
         "tests_passed": [],
-        "tests_failed": [],
+        "tests_failed": [
+          "GitHub Actions run 39621942397: Validate recorded outputs and evidence"
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -725,8 +730,8 @@
         {
           "attempt_id": "T0004-A001",
           "started_at": "2026-10-21T19:00:00+03:30",
-          "ended_at": null,
-          "result": "partial",
+          "ended_at": "2026-10-21T19:01:00+03:30",
+          "result": "failed",
           "summary": "Implemented a repository-backed static guard that rejects known placeholder markers in source files listed as actual outputs for done tasks. Added regression tests for rejecting NotImplementedError and accepting ordinary executable source, and documented the scope and limitations. CI has not yet run on this change; completion is not claimed. A code review correction excludes the guard itself and test-source directories from scanning to prevent false positives from detector patterns and intentional negative tests.",
           "changed_files": [
             "tools/graph_guard.py",
@@ -735,13 +740,39 @@
             "step three/project-graph.md",
             "step three/T0004/execution-report.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "1cdf8ebd12fa258c49e211d0f33ff430d29029a0",
+          "tests": [
+            {
+              "command": "GitHub Actions run 39621942397 — Validate recorded outputs and evidence",
+              "result": "failed",
+              "summary": "Repository-backed validation failed because the detector matched its own marker strings and intentional negative test fixtures; the failure was diagnosed from the workflow step result."
+            }
+          ],
+          "failure_details": "CI run 39621942397 failed at 'Validate recorded outputs and evidence'. Root cause: placeholder detector scanned its own source and test fixtures, causing false positives.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Corrected in T0004-A002 by excluding the guard implementation and test-source directories from the detector scan; verify the correction commit CI."
+        },
+        {
+          "attempt_id": "T0004-A002",
+          "started_at": "2026-10-21T19:02:00+03:30",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Corrected false positives by excluding the guard itself and test-source directories from the source placeholder scan. Awaiting CI on commit 357b9b280b73084d582283a654222cf8ce3b1dfc.",
+          "changed_files": [
+            "tools/graph_guard.py",
+            "docs/acceptance.md",
+            "step three/project-graph.md",
+            "step three/T0004/execution-report.md"
+          ],
+          "commit_sha": "357b9b280b73084d582283a654222cf8ce3b1dfc",
           "tests": [],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Verify the queued and correction commit CI runs; inspect any failures before marking T0004 done."
+          "follow_up": "Verify GitHub Actions run 39622120539; fix any remaining failures and only then mark T0004 done."
         }
       ]
     },
