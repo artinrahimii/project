@@ -45,6 +45,18 @@
 هر رکورد تلاش از فیلدهای زیر استفاده می‌کند: `attempt_id`, `started_at`, `ended_at`, `result`, `summary`, `changed_files`, `commit_sha`, `tests`, `failure_details`, `blocked_reason`, `reopened_reason`, `contract_changes`, `follow_up`. نتیجه می‌تواند `succeeded`, `failed`, `partial`, `blocked` یا `reopened` باشد.
 
 این فیلدها در نسخهٔ فعلی برای هر 229 گره مقدار اولیه دارند؛ مقدار صفر و آرایه‌های خالی یعنی هنوز سابقه‌ای در این نسخه ثبت نشده است، نه اینکه آزمونی اجرا شده یا فایل خروجی وجود دارد.
+## قرارداد استاندارد فضای کاری هر وظیفه
+
+برای هر یک از 229 وظیفه، پوشه‌ای مستقل با شناسهٔ دقیق گره در این مسیر ایجاد کن:
+
+- پوشهٔ وظیفه: `step three/{TASK_ID}/`؛ برای نمونه `step three/T0001/`.
+- گزارش اجرای وظیفه: `step three/{TASK_ID}/execution-report.md`.
+- پوشهٔ شواهد و نتایج آزمون: `step three/{TASK_ID}/evidence/`.
+
+در هر تلاش، گزارش باید دست‌کم شناسهٔ وظیفه و تلاش، زمان، نتیجه، خلاصهٔ کار، فایل‌های تغییرکرده، آزمون‌هایی که واقعاً اجرا شده‌اند و نتیجهٔ آن‌ها، شواهد، شکست‌ها یا محدودیت‌ها، موانع و پیگیری بعدی را ثبت کند. شواهد باید به فایل‌ها، گزارش‌ها یا خروجی‌های واقعی و قابل‌بررسی اشاره کنند؛ صرفاً ساختن پوشه یا گزارش، معیار پذیرش نیست. تاریخچهٔ تلاش‌ها را پاک نکن و گزارش را با تاریخچهٔ مرکزی همان گره در این فایل هماهنگ نگه دار.
+
+کد، پیکربندی و آزمون‌های واقعی برنامه را در مسیر مناسب ساختار اصلی مخزن قرار بده، نه اینکه همهٔ کد را در پوشه‌های وظایف پراکنده کنی. مسیر فایل‌های واقعی تغییرکرده باید در گزارش وظیفه و فیلدهای مربوط گراف ثبت شود. از ایجاد نسخه‌های تکراریِ غیرضروری از کد یا شواهد خودداری کن. این قرارداد برای همهٔ وظایف یکسان است، مگر اینکه استثنایی مستدل ثبت شود.
+
 ## نمای کلی بخش‌ها
 - **قانون تکمیل وظیفه** — T0001 تا T0010؛ 10 وظیفه؛ نقطهٔ شروع گراف
 - **1. تعریف نسخهٔ قابل‌ساخت و تصمیم‌های فنی** — T0011 تا T0020؛ 10 وظیفه; وابسته به T0010
@@ -110,6 +122,24 @@
     "status_truth": "وضعیت‌ها هنگام ایجاد گراف از روی وجود کدهای اجرایی و شواهد در مخزن ارزیابی شده‌اند؛ چون مخزن در این مرحله عمدتاً فایل برنامه‌ریزی دارد، همهٔ وظایف پیاده‌سازی در وضعیت انجام‌نشده قرار می‌گیرند.",
     "actual_paths_rule": "actual_output_paths تا زمان تأیید خروجی واقعی خالی می‌ماند. expected_output_paths مسیر هدف است، نه ادعای وجود فایل.",
     "execution_tracking": "Every task maintains an append-only execution_history and a current summary of attempts, failed attempts, changed files, related commits, test results, blocking/reopening reasons, and contract-triggered revalidation. A task is done only with real output and verifiable acceptance evidence."
+  },
+  "task_workspace_policy": {
+    "applies_to": "all 229 task nodes unless a documented, justified exception applies",
+    "task_folder_template": "step three/{TASK_ID}/",
+    "execution_report_template": "step three/{TASK_ID}/execution-report.md",
+    "evidence_directory_template": "step three/{TASK_ID}/evidence/",
+    "report_requirements": [
+      "task_id and attempt_id",
+      "start/end time and result",
+      "summary of work performed",
+      "actual changed files and related commits when applicable",
+      "tests actually run and their observed results",
+      "evidence references",
+      "failures, limitations, blockers, reopening reasons, and follow-up"
+    ],
+    "source_code_rule": "Keep real application source, configuration, and tests in the coherent project structure appropriate to the architecture; do not scatter all source code into per-task folders. Link actual changed paths from the task report and graph.",
+    "evidence_rule": "Folders, reports, expected paths, stubs, mocks, or claims alone do not prove acceptance. Evidence must refer to real, inspectable outputs or test results. Keep attempt history append-only and synchronize task reports with each node's execution_history and execution_summary.",
+    "duplication_rule": "Avoid unnecessary duplicate copies of source code or evidence."
   },
   "sections": [
     {
