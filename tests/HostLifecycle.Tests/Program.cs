@@ -1,3 +1,5 @@
+using System.Net;
+using System.Text;
 using WhiteP.Host.Windows;
 static void Assert(bool ok,string message){if(!ok)throw new Exception(message);}
 static void ExpectInvalid(Action action){try{action();}catch(InvalidOperationException){return;}throw new Exception("Invalid transition accepted.");}
@@ -24,27 +26,37 @@ Assert(emptyReasonStatus.State==HostState.Error,"Unavailable backend with an emp
 Assert(!string.IsNullOrWhiteSpace(emptyReasonStatus.Message),"Empty backend reason must be replaced with a stable message");
 Assert(emptyReasonStatus.Message=="Local inference backend is unavailable. Host is not ready.","Empty backend reason must use the explicit unavailable fallback");
 
-Console.WriteLine("PASS: lifecycle transitions, invalid-transition rejection, unavailable/available backend handling, and exception-safe startup, including a throwing unavailable-reason getter.");
+var handler = new RecordingHandler();
+using var client = new HttpClient(handler);
+using var backend = new LlamaCppServerBackend(new Uri("http://127.0.0.1:8080/"), "fixture-model", client, TimeSpan.FromSeconds(2));
+Assert(await backend.CheckHealthAsync(),"Successful /health must mark backend available");
+Assert(handler.LastPath=="health","Health check must call the local backend /health endpoint");
+var output=await backend.GenerateAsync("test prompt",64);
+Assert(output=="generated fixture output","Generated text must be read from the backend response");
+Assert(handler.LastPath=="v1/chat/completions","Inference must call the OpenAI-compatible local chat-completions endpoint");
+Assert(handler.LastBody!.Contains("test prompt",StringComparison.Ordinal),"Prompt must be sent to local backend");
+Assert(handler.LastBody.Contains("fixture-model",StringComparison.Ordinal),"Configured model must be selected");
+handler.HealthStatus=HttpStatusCode.ServiceUnavailable;
+Assert(!await backend.CheckHealthAsync(),"Unhealthy backend must not be marked available");
+Assert(!backend.IsAvailable,"Failed health check must clear readiness");
+var badInput=false; try { await backend.GenerateAsync(" ",32); } catch(ArgumentException) { badInput=true; }
+Assert(badInput,"Empty prompts must be rejected before network access");
+Console.WriteLine("PASS: lifecycle validation, safe startup errors, real HTTP backend endpoint contracts, health readiness, generated response parsing, and input bounds.");
 
-sealed class AvailableTestBackend : IInferenceBackend
+sealed class RecordingHandler : HttpMessageHandler
 {
- public bool IsAvailable => true;
- public string UnavailableReason => "Test backend is available.";
+ public string? LastPath {get;private set;}
+ public string? LastBody {get;private set;}
+ public HttpStatusCode HealthStatus {get;set;}=HttpStatusCode.OK;
+ protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request,CancellationToken cancellationToken)
+ {
+  LastPath=request.RequestUri!.AbsolutePath.TrimStart('/');
+  if(request.Method==HttpMethod.Get && LastPath=="health") return new HttpResponseMessage(HealthStatus);
+  LastBody=await request.Content!.ReadAsStringAsync(cancellationToken);
+  return new HttpResponseMessage(HttpStatusCode.OK){Content=new StringContent("{\"choices\":[{\"message\":{\"role\":\"assistant\",\"content\":\"generated fixture output\"}}]}",Encoding.UTF8,"application/json")};
+ }
 }
-sealed class ThrowingBackend : IInferenceBackend
-{
- public bool IsAvailable => throw new InvalidOperationException("secret backend details");
- public string UnavailableReason => throw new InvalidOperationException("secret backend details");
-}
-
-sealed class ThrowingUnavailableReasonBackend : IInferenceBackend
-{
- public bool IsAvailable => false;
- public string UnavailableReason => throw new InvalidOperationException("private-reason details");
-}
-
-sealed class EmptyUnavailableReasonBackend : IInferenceBackend
-{
- public bool IsAvailable => false;
- public string UnavailableReason => "   ";
-}
+sealed class AvailableTestBackend : IInferenceBackend { public bool IsAvailable=>true; public string UnavailableReason=>"Test backend is available."; }
+sealed class ThrowingBackend : IInferenceBackend { public bool IsAvailable=>throw new InvalidOperationException("secret backend details"); public string UnavailableReason=>throw new InvalidOperationException("secret backend details"); }
+sealed class ThrowingUnavailableReasonBackend : IInferenceBackend { public bool IsAvailable=>false; public string UnavailableReason=>throw new InvalidOperationException("private-reason details"); }
+sealed class EmptyUnavailableReasonBackend : IInferenceBackend { public bool IsAvailable=>false; public string UnavailableReason=>"   "; }

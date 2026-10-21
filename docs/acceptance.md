@@ -195,3 +195,8 @@ The versioned source of truth is `protocol/whitep/v1/messages.proto`. The Window
 Acceptance requires the quality workflow and actual Windows/Android build jobs to pass for the commit. Message definitions and generated classes do not establish that transport, P2P routing, local inference, encryption, or no-persistence behavior exists; those remain separate acceptance gates.
 
 Verification history for T0017: on commit `f3783ee3af38c2d2086777950e97778273190573` (`V 3.0.50`), the quality gate passed and the Windows/lifecycle jobs passed, but the Android build failed during Kotlin DSL configuration because the `proto`/`srcDir` extension references were unresolved. The follow-up adds the explicit Protobuf Gradle extension import; final acceptance is pending the exact follow-up commit's CI results.
+
+
+## T0018 — local inference backend client
+
+The Windows host contains a concrete `LlamaCppServerBackend` HTTP client for a locally running llama.cpp server: `GET /health` for readiness and `POST /v1/chat/completions` for generation. The test harness verifies request/response mapping, health-state changes, prompt validation and the endpoint paths using a controlled HTTP handler. This verifies the client contract, not actual model inference. Release acceptance still requires a separate real-server/model integration run, confirmation that the backend listens only on the intended local interface, and UI lifecycle integration. No prompt or generated response should be logged.

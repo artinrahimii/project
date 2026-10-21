@@ -88,3 +88,8 @@ workflow محصول پس از build، خروجی میزبان ویندوز و ف
 ## وضعیت توسعه
 
 مرحلهٔ سوم به‌صورت وظیفه‌محور پیش می‌رود. هر قابلیت فقط با فایل واقعی، آزمون متناسب و شواهد قابل‌بررسی تکمیل اعلام می‌شود. برای وضعیت و وابستگی‌های جاری به `step three/project-graph.md` مراجعه کنید.
+
+
+## Local inference backend (T0018)
+
+The Windows host now includes an HTTP client for a separately installed llama.cpp server. Start llama.cpp with its OpenAI-compatible server endpoint and confirm `GET /health` succeeds; configure the backend with the server base URL (for example, `http://127.0.0.1:8080/`) and the model identifier expected by that server. The client calls `POST /v1/chat/completions`, supports cancellation/deadlines, rejects empty prompts and invalid output-token limits, and serializes requests per backend instance. It never writes prompt/response contents to application logs. This code does not bundle llama.cpp or a model and does not yet connect the UI to live inference; a live local-model run remains a separate acceptance check.

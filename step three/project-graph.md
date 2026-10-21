@@ -2918,20 +2918,28 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0017 و T0010 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
       "actual_output_paths": [],
       "expected_output_paths": [
         "README.md + docs/decisions/ + فایل‌های تنظیمات build"
       ],
       "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "notes": "T0018-A001 implements a real HTTP backend client for a locally hosted llama.cpp server, with /health readiness and OpenAI-compatible /v1/chat/completions generation. This is a backend integration, not a bundled model/server binary. Acceptance remains in_progress until exact-commit quality and Windows build/test CI passes. Inference is bounded to one active request per backend instance; prompt/response payloads are not logged.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0018-A001",
+        "last_attempt_result": "in_progress",
+        "changed_files": [
+          "src/Host.Windows/LlamaCppServerBackend.cs",
+          "tests/HostLifecycle.Tests/Program.cs",
+          "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+          "README.md",
+          "docs/acceptance.md",
+          "step three/T0018/execution-report.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
@@ -2944,7 +2952,31 @@
           "review_evidence": []
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0018-A001",
+          "started_at": "2026-10-21T21:36:30.142Z",
+          "ended_at": null,
+          "result": "in_progress",
+          "summary": "Implementing real local llama.cpp HTTP health and chat-completion calls with cancellation, timeout, safe error handling, and deterministic tests using a controlled HTTP handler.",
+          "changed_files": [
+            "src/Host.Windows/LlamaCppServerBackend.cs",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+            "README.md",
+            "docs/acceptance.md",
+            "step three/T0018/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Run quality and product-build workflows on the implementation commit. Only mark done if all relevant CI checks pass."
+        }
+      ]
     },
     {
       "id": "T0019",
@@ -12697,19 +12729,27 @@
       "from": "T0017",
       "to": "T0018",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0018 must consume the versioned InferenceRequest/InferenceResponse contract fields while exposing a local backend interface; this interface-level compatibility is real, though it does not require transport implementation.",
+      "validation_status": "validated",
+      "evidence": [
+        "protocol/whitep/v1/messages.proto",
+        "tests/test_proto_contract.py",
+        "step three/T0017/execution-report.md"
+      ]
     },
     {
       "from": "T0010",
       "to": "T0018",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0010 establishes reproducible clean-checkout build/test and artifact publication; T0018 consumes no unique runtime artifact from T0010, but retaining the gate ensures changes can be verified in CI.",
+      "validation_status": "validated",
+      "evidence": [
+        "README.md",
+        ".github/workflows/product-build.yml",
+        "step three/T0010/execution-report.md"
+      ]
     },
     {
       "from": "T0018",
