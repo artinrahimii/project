@@ -1447,8 +1447,8 @@
       ],
       "start_condition": "Reviewed REQ-011 and the checked-in source inventory. The T0008 -> T0009 edge is validated as sequencing_only and retained for conservative ordering. No central server/API project or handler appears in the current source tree; add a repeatable narrow guard for central inference/prompt/chat/response/conversation/history route declarations outside the local Windows host, without claiming runtime traffic privacy.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "tests/test_central_inference_boundary.py",
         "docs/acceptance.md",
@@ -1467,20 +1467,24 @@
         "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
         "src/Host.Windows/HostLifecycle.cs"
       ],
-      "notes": "The current source snapshot contains no central service or central prompt/response/history endpoint; client transport is not implemented. The source guard is preventive only and cannot prove that future request bytes avoid relays or persistent storage. REQ-011 network/endpoint/storage acceptance remains NOT RUN.",
+      "notes": "Done for the bounded repository/source boundary: current src inventory has no central inference/history API handler, and a CI-tested regression guard rejects common prompt/inference/chat/completion/response/conversation/history POST/PUT/PATCH handlers outside the local Windows host. This does not prove runtime traffic routing or absence of persistence; REQ-011 network/endpoint/storage acceptance remains NOT RUN until transport exists.",
       "execution_summary": {
         "attempt_count": 1,
         "failed_attempt_count": 0,
         "last_attempt_id": "T0009-A001",
-        "last_attempt_result": "partial",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "tests/test_central_inference_boundary.py",
           "docs/acceptance.md",
           "step three/T0009/execution-report.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
+        "related_commits": [
+          "58310f08b0caa0faab10130fcaf24ab559a6ae82"
+        ],
+        "tests_passed": [
+          "GitHub Actions Step Three quality gate run 39677297407 — passed for exact commit 58310f08b0caa0faab10130fcaf24ab559a6ae82 (V 3.0.45): all 41 Python tests passed, including all three CentralInferenceBoundaryTests; syntax, graph structure, and output/evidence validation passed."
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -1495,22 +1499,35 @@
         {
           "attempt_id": "T0009-A001",
           "started_at": "2026-10-21T21:12:00Z",
-          "ended_at": "2026-10-21T21:12:00Z",
-          "result": "partial",
-          "summary": "Reviewed the checked-in source tree and REQ-011. No central server/API project or handler appears in this snapshot. Added a narrow automated source guard for common central inference/prompt/chat/response/conversation/history route declarations outside the local Windows host. This does not prove runtime network or storage behavior; CI for this revision is pending.",
+          "ended_at": "2026-10-21T21:16:00Z",
+          "result": "succeeded",
+          "summary": "Exact-commit source-boundary tests passed in GitHub Actions. All three T0009 tests were reported ok; the full suite ran 41 tests with OK, then Python syntax, graph structure, and recorded-output/evidence validation passed.",
           "changed_files": [
             "tests/test_central_inference_boundary.py",
             "docs/acceptance.md",
             "step three/T0009/execution-report.md",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
-          "tests": [],
+          "commit_sha": "58310f08b0caa0faab10130fcaf24ab559a6ae82",
+          "tests": [
+            {
+              "name": "CentralInferenceBoundaryTests",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39677297407",
+              "summary": "test_no_central_inference_or_conversation_route_handlers_in_non_host_source, test_current_android_client_does_not_claim_prompt_delivery, and test_requirement_requires_network_evidence_beyond_source_search all passed."
+            },
+            {
+              "name": "Complete Step Three quality gate",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39677297407",
+              "summary": "41 Python tests passed; Python syntax, graph structure validation, and recorded-output/evidence validation also passed."
+            }
+          ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect the Step Three quality gate for the exact new commit. Fix any failure and keep T0009 in_progress until CI passes. Do not claim end-to-end no-central handling until network/storage evidence is available."
+          "follow_up": "T0009 is complete for the current source-boundary guard. REQ-011 runtime acceptance still requires a real transport, endpoint review, network trace, and storage inspection before claiming that request content never reaches a central component."
         }
       ]
     },
