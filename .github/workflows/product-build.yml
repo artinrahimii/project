@@ -29,6 +29,24 @@ jobs:
             throw "No generated Protobuf C# source was found under $generatedRoot."
           }
           Write-Host "Verified generated C# source: $($generated[0].FullName)"
+      - name: Smoke test WPF application startup
+        shell: pwsh
+        run: |
+          $hostExecutable = Join-Path $PWD "src/Host.Windows/bin/Release/net10.0-windows/WhiteP.Host.Windows.exe"
+          if (-not (Test-Path -LiteralPath $hostExecutable)) {
+            throw "WPF host executable was not produced: $hostExecutable"
+          }
+          $hostDirectory = Split-Path -Parent $hostExecutable
+          $process = Start-Process -FilePath $hostExecutable -ArgumentList "--smoke-test" -WorkingDirectory $hostDirectory -PassThru
+          if (-not $process.WaitForExit(15000)) {
+            $process.Kill()
+            $process.WaitForExit()
+            throw "WPF startup smoke test exceeded the 15-second limit."
+          }
+          if ($process.ExitCode -ne 0) {
+            throw "WPF startup smoke test failed with exit code $($process.ExitCode)."
+          }
+          Write-Host "PASS: WPF entry point displayed MainWindow, validated required controls, and shut down cleanly."
       - name: Upload Windows host build artifacts
         uses: actions/upload-artifact@v4
         with:

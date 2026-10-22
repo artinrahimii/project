@@ -6784,21 +6784,48 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0040 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
-      "expected_output_paths": [
-        "src/Host.Windows/"
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "src/Host.Windows/App.xaml.cs",
+        ".github/workflows/product-build.yml",
+        "tests/test_wpf_entrypoint.py",
+        "step three/T0041/execution-report.md",
+        "step three/T0041/evidence/verification.md"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "expected_output_paths": [
+        "src/Host.Windows/App.xaml",
+        "src/Host.Windows/App.xaml.cs",
+        "src/Host.Windows/MainWindow.xaml",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        ".github/workflows/product-build.yml",
+        "tests/test_wpf_entrypoint.py"
+      ],
+      "evidence": [
+        "src/Host.Windows/App.xaml",
+        "src/Host.Windows/App.xaml.cs",
+        "src/Host.Windows/MainWindow.xaml",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        ".github/workflows/product-build.yml",
+        "tests/test_wpf_entrypoint.py"
+      ],
+      "notes": "A001 adds a real process smoke mode to the WPF entry point and runs the compiled WinExe on the Windows CI runner. Acceptance requires the actual StartupUri to display MainWindow, all required XAML controls to exist, status to be initialized, and the process to exit cleanly within 15 seconds. Static Python guards alone do not count as runtime acceptance.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
-        "related_commits": [],
+        "last_attempt_id": "T0041-A001",
+        "last_attempt_result": "in_progress",
+        "changed_files": [
+          "src/Host.Windows/App.xaml.cs",
+          ".github/workflows/product-build.yml",
+          "tests/test_wpf_entrypoint.py",
+          "step three/T0041/execution-report.md",
+          "step three/T0041/evidence/verification.md",
+          "step three/project-graph.md"
+        ],
+        "related_commits": [
+          "4f0bc321b0f98840138da73a2122b404acddad0f"
+        ],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
@@ -6807,10 +6834,59 @@
           "state": "not_required",
           "triggering_contracts": [],
           "affected_by_contract_changes": [],
-          "review_evidence": []
+          "review_evidence": [
+            "src/Host.Windows/App.xaml",
+            "src/Host.Windows/MainWindow.xaml",
+            "src/Host.Windows/MainWindow.xaml.cs",
+            ".github/workflows/product-build.yml"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0041-A001",
+          "started_at": "2026-10-22T22:04:50.223Z",
+          "ended_at": null,
+          "result": "in_progress",
+          "summary": "Reviewed T0040→T0041 as sequencing-only. Added a bounded --smoke-test path that waits for the real StartupUri window to be loaded/visible, checks the main controls/status and exits nonzero on failure; wired it into the Windows product build and added regression guards.",
+          "changed_files": [
+            "src/Host.Windows/App.xaml.cs",
+            ".github/workflows/product-build.yml",
+            "tests/test_wpf_entrypoint.py",
+            "step three/T0041/execution-report.md",
+            "step three/T0041/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "command": "python -m unittest discover -s tests -v",
+              "result": "pending"
+            },
+            {
+              "command": "dotnet format whitespace WhiteP.sln --verify-no-changes",
+              "result": "pending"
+            },
+            {
+              "command": "dotnet build WhiteP.sln --configuration Release",
+              "result": "pending"
+            },
+            {
+              "command": "Windows WPF startup smoke test --smoke-test",
+              "result": "pending"
+            },
+            {
+              "command": "White-P product workflow Android and host lifecycle jobs",
+              "result": "pending"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Require the actual Windows executable smoke test and existing Android/C# product jobs to pass before closing T0041."
+        }
+      ]
     },
     {
       "id": "T0042",
@@ -16133,10 +16209,17 @@
       "from": "T0040",
       "to": "T0041",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0041 validates the existing WPF Application StartupUri/MainWindow launch path; it does not call the ProtocolMessageParser interface created by T0040. Retain this edge as conservative execution order and full-host build gating, not as a direct message-validation API dependency.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/App.xaml",
+        "src/Host.Windows/App.xaml.cs",
+        "src/Host.Windows/MainWindow.xaml",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        ".github/workflows/product-build.yml",
+        "step three/T0040/execution-report.md"
+      ]
     },
     {
       "from": "T0041",
