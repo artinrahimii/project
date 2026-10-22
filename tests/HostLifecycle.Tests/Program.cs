@@ -1,5 +1,6 @@
 using System.Net;
 using System.Text;
+using System.Text.Json;
 using Google.Protobuf;
 using WhiteP.Shared.Contracts.V1;
 using ProtoHostStatus = WhiteP.Shared.Contracts.V1.HostStatus;
@@ -39,6 +40,48 @@ foreach (var unsupportedVersion in new[] { "1.0.1", "1.1.0", "2.0.0" })
     Assert(result.ErrorCodeName == ProtocolVersionPolicy.UnsupportedVersionErrorCode, "Incompatible versions must map to UnsupportedVersion.");
 }
 
+
+var atLimitRequest = ProtocolMessageLimits.ValidateInferenceRequest(
+    new string('p', ProtocolMessageLimits.MaximumPromptUtf8Bytes),
+    ProtocolMessageLimits.MaximumContextCapsuleBytes,
+    ProtocolMessageLimits.MaximumRequestMessageBytes,
+    ProtocolMessageLimits.MaximumOutputTokens);
+Assert(atLimitRequest.IsValid, "A request at the documented size ceilings must be accepted.");
+
+var tooLargePromptValidation = ProtocolMessageLimits.ValidatePromptText(
+    new string('p', ProtocolMessageLimits.MaximumPromptUtf8Bytes + 1));
+Assert(tooLargePromptValidation.Violation == ProtocolLimitViolation.PromptTooLarge, "An over-limit UTF-8 prompt must be rejected.");
+Assert(tooLargePromptValidation.ErrorCodeName == ProtocolMessageLimits.ResourceLimitErrorCode, "Prompt size overflow must map to ResourceLimit.");
+
+var tooLargeCapsuleValidation = ProtocolMessageLimits.ValidateContextCapsuleBytes(
+    ProtocolMessageLimits.MaximumContextCapsuleBytes + 1);
+Assert(tooLargeCapsuleValidation.Violation == ProtocolLimitViolation.ContextCapsuleTooLarge, "An over-limit context capsule must be rejected.");
+
+var tooLargeRequestValidation = ProtocolMessageLimits.ValidateRequestMessageBytes(
+    ProtocolMessageLimits.MaximumRequestMessageBytes + 1L);
+Assert(tooLargeRequestValidation.Violation == ProtocolLimitViolation.RequestMessageTooLarge, "An over-limit serialized request must be rejected.");
+
+var tooManyOutputTokensValidation = ProtocolMessageLimits.ValidateInferenceRequest(
+    "valid prompt",
+    0,
+    64,
+    ProtocolMessageLimits.MaximumOutputTokens + 1);
+Assert(tooManyOutputTokensValidation.Violation == ProtocolLimitViolation.OutputTokenLimitExceeded, "An output-token request above the existing backend ceiling must be rejected.");
+
+var maximumResponseText = new string('r', ProtocolMessageLimits.MaximumResponseTextUtf8Bytes);
+var maximumResponseValidation = ProtocolMessageLimits.ValidateInferenceResponse(
+    maximumResponseText,
+    ProtocolMessageLimits.MaximumResponseMessageBytes);
+Assert(maximumResponseValidation.IsValid, "A response at the documented size ceilings must be accepted.");
+
+var tooLargeResponseValidation = ProtocolMessageLimits.ValidateResponseText(
+    new string('r', ProtocolMessageLimits.MaximumResponseTextUtf8Bytes + 1));
+Assert(tooLargeResponseValidation.Violation == ProtocolLimitViolation.ResponseTextTooLarge, "An over-limit UTF-8 response must be rejected.");
+
+Assert(ProtocolMessageLimits.ValidateLocalRequestBodyBytes(ProtocolMessageLimits.MaximumLocalRequestBodyBytes).IsValid, "A local inference request body at the ceiling must be accepted.");
+Assert(!ProtocolMessageLimits.ValidateLocalRequestBodyBytes(ProtocolMessageLimits.MaximumLocalRequestBodyBytes + 1L).IsValid, "An oversized local inference request body must be rejected.");
+Assert(ProtocolMessageLimits.ValidateLocalResponseBodyBytes(ProtocolMessageLimits.MaximumLocalResponseBodyBytes).IsValid, "A local inference response body at the ceiling must be accepted.");
+Assert(!ProtocolMessageLimits.ValidateLocalResponseBodyBytes(ProtocolMessageLimits.MaximumLocalResponseBodyBytes + 1L).IsValid, "An oversized local inference response body must be rejected.");
 
 var protoModelCapability = new ModelCapability
 {
@@ -217,6 +260,45 @@ Assert(output=="generated fixture output","Generated text must be read from the 
 Assert(handler.LastPath=="v1/chat/completions","Inference must call the OpenAI-compatible local chat-completions endpoint");
 Assert(handler.LastBody!.Contains("test prompt",StringComparison.Ordinal),"Prompt must be sent to local backend");
 Assert(handler.LastBody.Contains("fixture-model",StringComparison.Ordinal),"Configured model must be selected");
+
+var requestsBeforeLongPrompt = handler.InferenceRequestCount;
+var longPromptRejected = false;
+try
+{
+    await backend.GenerateAsync(new string('p', ProtocolMessageLimits.MaximumPromptUtf8Bytes + 1), 64);
+}
+catch (ArgumentOutOfRangeException)
+{
+    longPromptRejected = true;
+}
+Assert(longPromptRejected, "The live local backend adapter must reject an oversized prompt.");
+Assert(handler.InferenceRequestCount == requestsBeforeLongPrompt, "Oversized prompt must be rejected before an HTTP request is sent.");
+
+handler.GeneratedText = new string('r', ProtocolMessageLimits.MaximumResponseTextUtf8Bytes + 1);
+var longResponseRejected = false;
+try
+{
+    await backend.GenerateAsync("test prompt", 64);
+}
+catch (InvalidDataException)
+{
+    longResponseRejected = true;
+}
+Assert(longResponseRejected, "The local backend adapter must reject generated text beyond the UTF-8 response limit.");
+
+handler.GeneratedText = new string('r', ProtocolMessageLimits.MaximumLocalResponseBodyBytes + 128);
+var hugeResponseBodyRejected = false;
+try
+{
+    await backend.GenerateAsync("test prompt", 64);
+}
+catch (InvalidDataException)
+{
+    hugeResponseBodyRejected = true;
+}
+Assert(hugeResponseBodyRejected, "The local backend adapter must reject an oversized HTTP response body before JSON deserialization.");
+handler.GeneratedText = "generated fixture output";
+
 handler.HealthStatus=HttpStatusCode.ServiceUnavailable;
 Assert(!await backend.CheckHealthAsync(),"Unhealthy backend must not be marked available");
 Assert(!backend.IsAvailable,"Failed health check must clear readiness");
@@ -230,6 +312,81 @@ using (var session = new HostInferenceSession(backend: new SessionTestBackend())
     Assert(generated == "session response", "Session should return generated text.");
     Assert(session.Status.State == HostState.Ready, "Session should return to Ready after generation.");
 }
+var limitedSessionBackend = new SessionTestBackend();
+using (var limitedSession = new HostInferenceSession(backend: limitedSessionBackend))
+{
+    var ready = await limitedSession.CheckBackendAsync();
+    Assert(ready.State == HostState.Ready, "The bounded session should be ready before validation tests.");
+
+    var oversizedCapsuleRequest = new InferenceRequest
+    {
+        RequestId = "bounded-request",
+        AttemptId = "bounded-attempt",
+        ModelId = "fixture-model",
+        Prompt = "short prompt",
+        MaxOutputTokens = 32,
+        ContextCapsule = ByteString.CopyFrom(new byte[ProtocolMessageLimits.MaximumContextCapsuleBytes + 1])
+    };
+    var capsuleRejected = false;
+    try
+    {
+        await limitedSession.GenerateAsync(oversizedCapsuleRequest);
+    }
+    catch (InvalidDataException)
+    {
+        capsuleRejected = true;
+    }
+    Assert(capsuleRejected, "An oversized capsule must be rejected before model execution.");
+
+    var oversizedMessageRequest = new InferenceRequest
+    {
+        RequestId = new string('i', ProtocolMessageLimits.MaximumRequestMessageBytes + 1),
+        AttemptId = "bounded-attempt",
+        ModelId = "fixture-model",
+        Prompt = "short prompt",
+        MaxOutputTokens = 32
+    };
+    var messageRejected = false;
+    try
+    {
+        await limitedSession.GenerateAsync(oversizedMessageRequest);
+    }
+    catch (InvalidDataException)
+    {
+        messageRejected = true;
+    }
+    Assert(messageRejected, "An oversized serialized request must be rejected before model execution.");
+    Assert(limitedSessionBackend.GenerationCalls == 0, "Invalid request sizes must not reach the inference backend.");
+    Assert(limitedSession.Status.State == HostState.Ready, "Size-invalid requests must be rejected before marking the host busy.");
+
+    var validRequest = new InferenceRequest
+    {
+        RequestId = "valid-request",
+        AttemptId = "valid-attempt",
+        ModelId = "fixture-model",
+        Prompt = "short prompt",
+        MaxOutputTokens = 32,
+        ContextCapsule = ByteString.CopyFrom(new byte[] { 1, 2, 3 })
+    };
+    var validOutput = await limitedSession.GenerateAsync(validRequest);
+    Assert(validOutput == "session response", "A valid bounded protobuf request must reach inference and return output.");
+    Assert(limitedSessionBackend.GenerationCalls == 1, "Exactly the valid request should reach inference.");
+
+    limitedSessionBackend.GeneratedText = maximumResponseText + "r";
+    var oversizedSessionResponseRejected = false;
+    try
+    {
+        await limitedSession.GenerateAsync(validRequest);
+    }
+    catch (InvalidDataException)
+    {
+        oversizedSessionResponseRejected = true;
+    }
+    Assert(oversizedSessionResponseRejected, "The host session must reject oversized output from any inference backend.");
+    Assert(limitedSession.Status.State == HostState.Error, "An oversized response must not be reported as a successful inference.");
+}
+Console.WriteLine("PASS: protocol request, capsule, prompt, response, HTTP-body ceilings and pre-inference rejection.");
+
 Console.WriteLine("PASS: lifecycle validation, backend endpoint contracts, health readiness, generated response parsing, input bounds, and host-session lifecycle.");
 
 sealed class RecordingHandler : HttpMessageHandler
@@ -237,12 +394,20 @@ sealed class RecordingHandler : HttpMessageHandler
  public string? LastPath {get;private set;}
  public string? LastBody {get;private set;}
  public HttpStatusCode HealthStatus {get;set;}=HttpStatusCode.OK;
+ public string GeneratedText {get;set;}="generated fixture output";
+ public int InferenceRequestCount {get;private set;}
+
  protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request,CancellationToken cancellationToken)
  {
   LastPath=request.RequestUri!.AbsolutePath.TrimStart('/');
   if(request.Method==HttpMethod.Get && LastPath=="health") return new HttpResponseMessage(HealthStatus);
+  InferenceRequestCount++;
   LastBody=await request.Content!.ReadAsStringAsync(cancellationToken);
-  return new HttpResponseMessage(HttpStatusCode.OK){Content=new StringContent("{\"choices\":[{\"message\":{\"role\":\"assistant\",\"content\":\"generated fixture output\"}}]}",Encoding.UTF8,"application/json")};
+  var payload = JsonSerializer.Serialize(new
+  {
+   choices = new[] { new { message = new { role = "assistant", content = GeneratedText } } }
+  });
+  return new HttpResponseMessage(HttpStatusCode.OK){Content=new StringContent(payload,Encoding.UTF8,"application/json")};
  }
 }
 sealed class AvailableTestBackend : IInferenceBackend { public bool IsAvailable=>true; public string UnavailableReason=>"Test backend is available."; }
@@ -254,6 +419,12 @@ sealed class SessionTestBackend : IInferenceBackend
 {
  public bool IsAvailable=>true;
  public string UnavailableReason=>string.Empty;
+ public string GeneratedText {get;set;}="session response";
+ public int GenerationCalls {get;private set;}
  public Task<bool> CheckHealthAsync(CancellationToken cancellationToken=default)=>Task.FromResult(true);
- public Task<string> GenerateAsync(string prompt,uint maxOutputTokens,CancellationToken cancellationToken=default)=>Task.FromResult("session response");
+ public Task<string> GenerateAsync(string prompt,uint maxOutputTokens,CancellationToken cancellationToken=default)
+ {
+  GenerationCalls++;
+  return Task.FromResult(GeneratedText);
+ }
 }

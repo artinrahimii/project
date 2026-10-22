@@ -6091,11 +6091,7 @@
         "src/Client.Android/app/src/test/java/com/whitep/client/protocol/ProtoRoundTripTest.kt",
         "tests/test_proto_contract.py",
         "step three/T0038/execution-report.md",
-        "step three/T0038/evidence/verification.md",
-        "https://github.com/artinrahimii/project/actions/runs/39851178922",
-        "https://github.com/artinrahimii/project/actions/runs/39851178925",
-        "https://github.com/artinrahimii/project/actions/runs/39858575967",
-        "https://github.com/artinrahimii/project/actions/runs/39858575986"
+        "step three/T0038/evidence/verification.md"
       ],
       "notes": "Completed after exact-commit quality and product CI passed on V 3.0.114; all 11 shared Protobuf fixture payloads passed C# and Kotlin parser/re-serialization checks. Failed attempts A002 and A003 remain in history.",
       "execution_summary": {
@@ -6116,7 +6112,9 @@
           "d210a646d705fe5d99273ecc03ec6c695a88762d",
           "4dc65b081e782ea2bd62f2db52cdd3b9e4f72118",
           "20832c67a78a04841f8e6f2ef81969e099603791",
-          "17cd09a637aedf989bd6337b91cdf4552265c022"
+          "17cd09a637aedf989bd6337b91cdf4552265c022",
+          "6d326feaf3ec593695db64e379fae9302738f717",
+          "0a39f8ad4c3fb1d5cee95b122521ab5a5193a1a4"
         ],
         "tests_passed": [
           "Step Three quality gate run 39858575967 succeeded.",
@@ -6125,7 +6123,8 @@
           "Windows WPF host built; generated C# source checks and artifact upload passed."
         ],
         "tests_failed": [
-          "Product run 39858286367 Android ktlint failed because ProtoRoundTripTest.kt lacked its required terminal newline; APK and Kotlin tests were skipped."
+          "Product run 39851178925 on V 3.0.112: C# rejected malformed HostCapabilities fixture; Android lint failed before tests ran.",
+          "Product run 39858286367 on V 3.0.113: Android ktlint failed because ProtoRoundTripTest.kt had no terminal newline; APK and Kotlin tests were skipped."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -6221,7 +6220,7 @@
             "step three/project-graph.md",
             "step three/T0038/evidence/verification.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "17cd09a637aedf989bd6337b91cdf4552265c022",
           "tests": [
             {
               "command": "Step Three quality gate run 39858286362",
@@ -6325,33 +6324,125 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0038 و T0030 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "src/Shared.Contracts/ProtocolMessageLimits.cs",
+        "src/Host.Windows/HostLifecycle.cs",
+        "src/Host.Windows/LlamaCppServerBackend.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "protocol/whitep/v1/messages.proto",
+        "tests/test_protocol_limits.py",
+        "docs/requirements.md",
+        "src/Shared.Contracts/README.md",
+        "step three/T0039/execution-report.md",
+        "step three/T0039/evidence/verification.md"
+      ],
       "expected_output_paths": [
         "src/Shared.Contracts/ + tests/contracts/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "src/Shared.Contracts/ProtocolMessageLimits.cs",
+        "src/Host.Windows/HostLifecycle.cs",
+        "src/Host.Windows/LlamaCppServerBackend.cs",
+        "protocol/whitep/v1/messages.proto",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "tests/test_protocol_limits.py",
+        "docs/requirements.md",
+        "step three/T0039/execution-report.md",
+        "step three/T0039/evidence/verification.md"
+      ],
+      "notes": "A001 is implementing and documenting fixed byte ceilings and runtime validation. This bounds parsed typed messages and the current local llama.cpp HTTP adapter; raw peer-frame rejection before Protobuf parsing remains a later transport task.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
-        "related_commits": [],
+        "last_attempt_id": "T0039-A001",
+        "last_attempt_result": "in_progress",
+        "changed_files": [
+          "src/Shared.Contracts/ProtocolMessageLimits.cs",
+          "src/Host.Windows/HostLifecycle.cs",
+          "src/Host.Windows/LlamaCppServerBackend.cs",
+          "tests/HostLifecycle.Tests/Program.cs",
+          "protocol/whitep/v1/messages.proto",
+          "tests/test_protocol_limits.py",
+          "docs/requirements.md",
+          "src/Shared.Contracts/README.md",
+          "step three/T0039/execution-report.md",
+          "step three/T0039/evidence/verification.md",
+          "step three/project-graph.md"
+        ],
+        "related_commits": [
+          "0a39f8ad4c3fb1d5cee95b122521ab5a5193a1a4"
+        ],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
-          "affected_by_contract_changes": [],
-          "review_evidence": []
+          "state": "in_progress",
+          "triggering_contracts": [
+            "protocol/whitep/v1/messages.proto"
+          ],
+          "affected_by_contract_changes": [
+            "T0037",
+            "T0038",
+            "T0040"
+          ],
+          "review_evidence": [
+            "step three/T0038/execution-report.md",
+            "tests/test_proto_contract.py"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0039-A001",
+          "started_at": "2026-10-22T21:44:27.076Z",
+          "ended_at": null,
+          "result": "in_progress",
+          "summary": "Reviewed both prerequisite edges and selected explicit payload ceilings; implementing shared policy, host enforcement, bounded local HTTP response reading, schema annotations and tests.",
+          "changed_files": [
+            "src/Shared.Contracts/ProtocolMessageLimits.cs",
+            "src/Host.Windows/HostLifecycle.cs",
+            "src/Host.Windows/LlamaCppServerBackend.cs",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "protocol/whitep/v1/messages.proto",
+            "tests/test_protocol_limits.py",
+            "docs/requirements.md",
+            "src/Shared.Contracts/README.md",
+            "step three/T0039/execution-report.md",
+            "step three/T0039/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "command": "python -m unittest discover -s tests -v",
+              "result": "pending"
+            },
+            {
+              "command": "dotnet run --project tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj --configuration Release",
+              "result": "pending"
+            },
+            {
+              "command": "dotnet format WhiteP.sln --verify-no-changes",
+              "result": "pending"
+            },
+            {
+              "command": "gradle --no-daemon ktlintCheck && gradle --no-daemon testDebugUnitTest",
+              "result": "pending"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "Document byte ceilings on existing Protobuf fields without changing field numbers or wire types.",
+            "Add shared ProtocolMessageLimits with typed error mapping."
+          ],
+          "follow_up": "Run exact-commit quality/product CI, repair any failures, and update this attempt from actual results."
+        }
+      ]
     },
     {
       "id": "T0040",
@@ -15710,19 +15801,27 @@
       "from": "T0038",
       "to": "T0039",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0039 consumes the existing Protobuf schema and generated C# message types, not the fixture corpus or parser tests produced by T0038. T0038’s cross-language checks are retained as conservative prerequisite ordering; the edge does not claim a technical prerequisite.",
+      "validation_status": "validated",
+      "evidence": [
+        "step three/T0038/execution-report.md",
+        "protocol/whitep/v1/messages.proto",
+        "src/Host.Windows/HostLifecycle.cs"
+      ]
     },
     {
       "from": "T0030",
       "to": "T0039",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0030 validates workflow failure propagation and artifact checks but creates no code/schema interface consumed by T0039. Keep the existing blocks edge as conservative verification order only.",
+      "validation_status": "validated",
+      "evidence": [
+        ".github/workflows/quality.yml",
+        ".github/workflows/product-build.yml",
+        "step three/T0030/execution-report.md"
+      ]
     },
     {
       "from": "T0039",

@@ -15,6 +15,19 @@ The existing schema and source contract checks remain under `protocol/whitep/v1/
 
 Exact-match checking is intentionally conservative: this project has not yet defined minor-version negotiation or backward-compatibility guarantees. The policy is tested against the shared .NET library from the runnable contract/lifecycle harness. It is not evidence that a network handshake already calls the policy; live peer discovery and transport are later implementation tasks.
 
+## Initial protocol size limits
+
+`ProtocolMessageLimits` is the platform-neutral source of the first protocol ceilings:
+
+- Serialized `InferenceRequest`: 16 KiB maximum.
+- Prompt text: 8 KiB maximum measured after UTF-8 encoding.
+- Context capsule: 4 KiB maximum.
+- Generated response text: 1 MiB maximum measured after UTF-8 encoding.
+- Serialized `InferenceResponse`: 2 MiB maximum.
+- Local llama.cpp JSON request body: 64 KiB maximum; local JSON response body: 2 MiB maximum.
+
+The host checks prompt and response text before returning a result, checks typed inference requests before calling the backend, and bounds the local HTTP response stream before deserialization. Size failures map to `PROTOCOL_ERROR_CODE_RESOURCE_LIMIT`; negative byte lengths map to `PROTOCOL_ERROR_CODE_INVALID_MESSAGE`. These checks do not mean a P2P frame parser exists yet: when that transport is implemented, it must check raw frame lengths before Protobuf parsing and apply the lower of the local and negotiated capsule limits.
+
 ## Generated Kotlin bindings
 
 Android builds generate both Java Lite message classes and Kotlin DSL APIs from `protocol/whitep/v1/messages.proto`. The Kotlin generated source roots are registered for the Android debug and release variants, and the Android workflow verifies the generated `.java` and `.kt` files after compilation. `ProtocolMessages.kt` imports the generated `HostAnnouncement` type and builder DSL so an APK build fails if Kotlin generation or source registration is broken.

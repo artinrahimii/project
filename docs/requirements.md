@@ -91,7 +91,9 @@ The first release is intended to comprise a Windows host, an Android client, sha
 ### REQ-014 — Bounds and input validation
 - **Requirement:** The transport and message parser enforce documented request, capsule, and response size limits and reject malformed or unsupported messages.
 - **Acceptance:** Boundary tests cover just-below-limit, at-limit, over-limit, missing fields, invalid values, and incompatible versions; invalid data is rejected before inference starts.
-- **Verification:** Contract parser and transport validation tests.
+- **Initial protocol ceilings:** serialized inference request ≤ 16,384 bytes; prompt ≤ 8,192 UTF-8 bytes; context capsule ≤ 4,096 bytes; serialized inference response ≤ 2,097,152 bytes; generated response text ≤ 1,048,576 UTF-8 bytes. The separately invoked local llama.cpp HTTP adapter also bounds its JSON request body to 65,536 bytes and response body to 2,097,152 bytes.
+- **Enforcement:** Typed request/response sizes are validated with the shared policy; the local adapter checks prompt bytes and serialized request body before sending and streams the HTTP response through a bounded reader before JSON parsing. A future peer transport must check raw frame length before Protobuf parsing and enforce the smaller of local and negotiated capsule ceilings.
+- **Verification:** Contract parser, shared C# host harness, Android shared-wire tests, and local-adapter tests for oversize payload rejection.
 - **Trace:** T0039, T0040, T0130–T0139.
 
 ### REQ-015 — Deadline, cancellation, and failure states

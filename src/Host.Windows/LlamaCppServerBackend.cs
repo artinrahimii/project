@@ -1,9 +1,11 @@
 using System.IO;
 using System.Net;
 using System.Net.Http;
-using System.Net.Http.Json;
+using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+
+using WhiteP.Shared.Contracts;
 
 namespace WhiteP.Host.Windows;
 
@@ -62,18 +64,55 @@ public sealed class LlamaCppServerBackend : IInferenceBackend, IDisposable
 
     public async Task<string> GenerateAsync(string prompt, uint maxOutputTokens, CancellationToken cancellationToken = default)
     {
-        if (string.IsNullOrWhiteSpace(prompt)) throw new ArgumentException("Prompt must not be empty.", nameof(prompt));
-        if (maxOutputTokens == 0 || maxOutputTokens > 131072) throw new ArgumentOutOfRangeException(nameof(maxOutputTokens), "Token limit must be between 1 and 131072.");
+        if (string.IsNullOrWhiteSpace(prompt))
+        {
+            throw new ArgumentException("Prompt must not be empty.", nameof(prompt));
+        }
+
+        var promptValidation = ProtocolMessageLimits.ValidatePromptText(prompt);
+        if (!promptValidation.IsValid)
+        {
+            throw new ArgumentOutOfRangeException(nameof(prompt), promptValidation.Message);
+        }
+
+        if (maxOutputTokens == 0 || maxOutputTokens > ProtocolMessageLimits.MaximumOutputTokens)
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(maxOutputTokens),
+                $"Token limit must be between 1 and {ProtocolMessageLimits.MaximumOutputTokens}.");
+        }
+
         if (!IsAvailable && !await CheckHealthAsync(cancellationToken).ConfigureAwait(false))
+        {
             throw new InvalidOperationException(UnavailableReason);
+        }
 
         await _inferenceGate.WaitAsync(cancellationToken).ConfigureAwait(false);
         try
         {
             using var timeout = CreateTimeout(cancellationToken);
-            using var response = await _http.PostAsJsonAsync("v1/chat/completions",
-                new ChatCompletionRequest(_model, [new ChatMessage("user", prompt)], checked((int)maxOutputTokens)),
-                JsonOptions, timeout.Token).ConfigureAwait(false);
+            var requestPayload = new ChatCompletionRequest(
+                _model,
+                [new ChatMessage("user", prompt)],
+                checked((int)maxOutputTokens));
+            var requestBytes = JsonSerializer.SerializeToUtf8Bytes(requestPayload, JsonOptions);
+            var requestBodyValidation = ProtocolMessageLimits.ValidateLocalRequestBodyBytes(requestBytes.Length);
+            if (!requestBodyValidation.IsValid)
+            {
+                throw new InvalidDataException(requestBodyValidation.Message);
+            }
+
+            using var request = new HttpRequestMessage(HttpMethod.Post, "v1/chat/completions")
+            {
+                Content = new ByteArrayContent(requestBytes)
+            };
+            request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+            using var response = await _http.SendAsync(
+                request,
+                HttpCompletionOption.ResponseHeadersRead,
+                timeout.Token).ConfigureAwait(false);
+
             if (!response.IsSuccessStatusCode)
             {
                 IsAvailable = response.StatusCode != HttpStatusCode.ServiceUnavailable &&
@@ -83,10 +122,23 @@ public sealed class LlamaCppServerBackend : IInferenceBackend, IDisposable
                 throw new HttpRequestException(_unavailableReason, null, response.StatusCode);
             }
 
-            var payload = await response.Content.ReadFromJsonAsync<ChatCompletionResponse>(JsonOptions, timeout.Token).ConfigureAwait(false);
+            var responseBytes = await ReadLimitedBodyAsync(
+                response.Content,
+                ProtocolMessageLimits.MaximumLocalResponseBodyBytes,
+                timeout.Token).ConfigureAwait(false);
+            var payload = JsonSerializer.Deserialize<ChatCompletionResponse>(responseBytes, JsonOptions);
             var text = payload?.Choices?.FirstOrDefault()?.Message?.Content;
             if (string.IsNullOrWhiteSpace(text))
+            {
                 throw new InvalidDataException("Local inference backend returned no generated text.");
+            }
+
+            var responseValidation = ProtocolMessageLimits.ValidateResponseText(text);
+            if (!responseValidation.IsValid)
+            {
+                throw new InvalidDataException(responseValidation.Message);
+            }
+
             IsAvailable = true;
             _unavailableReason = string.Empty;
             return text;
@@ -99,13 +151,54 @@ public sealed class LlamaCppServerBackend : IInferenceBackend, IDisposable
         {
             IsAvailable = false;
             if (string.IsNullOrWhiteSpace(_unavailableReason))
+            {
                 _unavailableReason = "Local inference backend request failed.";
+            }
+
             throw;
         }
         finally
         {
             _inferenceGate.Release();
         }
+    }
+
+    private static async Task<byte[]> ReadLimitedBodyAsync(
+        HttpContent content,
+        int maximumBytes,
+        CancellationToken cancellationToken)
+    {
+        if (content.Headers.ContentLength is long declaredLength)
+        {
+            var declaredLengthValidation = ProtocolMessageLimits.ValidateLocalResponseBodyBytes(declaredLength);
+            if (!declaredLengthValidation.IsValid)
+            {
+                throw new InvalidDataException(declaredLengthValidation.Message);
+            }
+        }
+
+        await using var input = await content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
+        using var output = new MemoryStream(Math.Min(maximumBytes, 8192));
+        var buffer = new byte[8192];
+
+        while (true)
+        {
+            var read = await input.ReadAsync(buffer.AsMemory(0, buffer.Length), cancellationToken).ConfigureAwait(false);
+            if (read == 0)
+            {
+                break;
+            }
+
+            if (output.Length + read > maximumBytes)
+            {
+                throw new InvalidDataException(
+                    $"Local inference response body exceeds the configured limit of {maximumBytes} bytes.");
+            }
+
+            await output.WriteAsync(buffer.AsMemory(0, read), cancellationToken).ConfigureAwait(false);
+        }
+
+        return output.ToArray();
     }
 
     private CancellationTokenSource CreateTimeout(CancellationToken external)

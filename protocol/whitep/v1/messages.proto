@@ -48,7 +48,9 @@ message HostCapabilities {
   string protocol_version = 2;
   repeated ModelCapability models = 3;
   uint32 max_concurrent_requests = 4;
+  // Advertised value must not exceed the local protocol ceiling of 4,096 bytes.
   uint64 max_context_capsule_bytes = 5;
+  // Advertised value must not exceed the local protocol ceiling of 8,192 UTF-8 bytes.
   uint64 max_prompt_bytes = 6;
 }
 
@@ -63,10 +65,11 @@ message InferenceRequest {
   string request_id = 1;
   string attempt_id = 2;
   string model_id = 3;
+  // Maximum 8,192 UTF-8 bytes; serialized request maximum is 16 KiB.
   string prompt = 4;
   uint64 deadline_unix_ms = 5;
   uint32 max_output_tokens = 6;
-  // Optional bounded context capsule; transport implementations must enforce the negotiated byte limit.
+  // Maximum 4,096 bytes; a transport must enforce the smaller of this ceiling and negotiated limit.
   bytes context_capsule = 7;
 }
 
@@ -75,6 +78,7 @@ message InferenceResponse {
   string attempt_id = 2;
   string ephemeral_host_id = 3;
   InferenceOutcome outcome = 4;
+  // Maximum 1 MiB UTF-8; serialized response maximum is 2 MiB.
   string output_text = 5;
   uint64 completed_at_unix_ms = 6;
   string model_id = 7;

@@ -1,3 +1,6 @@
+using WhiteP.Shared.Contracts;
+using WhiteP.Shared.Contracts.V1;
+
 namespace WhiteP.Host.Windows;
 
 public enum HostState
@@ -160,6 +163,24 @@ public sealed class HostInferenceSession : IDisposable
         }
     }
 
+    public async Task<string> GenerateAsync(InferenceRequest request, CancellationToken cancellationToken = default)
+    {
+        ObjectDisposedException.ThrowIf(_disposed, this);
+        ArgumentNullException.ThrowIfNull(request);
+
+        var validation = ProtocolMessageLimits.ValidateInferenceRequest(
+            request.Prompt,
+            request.ContextCapsule.Length,
+            request.CalculateSize(),
+            request.MaxOutputTokens);
+        if (!validation.IsValid)
+        {
+            throw new InvalidDataException(validation.Message);
+        }
+
+        return await GenerateAsync(request.Prompt, request.MaxOutputTokens, cancellationToken).ConfigureAwait(false);
+    }
+
     public async Task<string> GenerateAsync(string prompt, uint maxOutputTokens, CancellationToken cancellationToken = default)
     {
         ObjectDisposedException.ThrowIf(_disposed, this);
@@ -168,10 +189,22 @@ public sealed class HostInferenceSession : IDisposable
             throw new InvalidOperationException("Connect to a healthy local inference backend first.");
         }
 
+        var promptValidation = ProtocolMessageLimits.ValidatePromptText(prompt);
+        if (!promptValidation.IsValid)
+        {
+            throw new ArgumentOutOfRangeException(nameof(prompt), promptValidation.Message);
+        }
+
         _lifecycle.Transition(HostState.Busy, "Generating locally; one request at a time.");
         try
         {
             var output = await _backend.GenerateAsync(prompt, maxOutputTokens, cancellationToken).ConfigureAwait(false);
+            var responseValidation = ProtocolMessageLimits.ValidateResponseText(output);
+            if (!responseValidation.IsValid)
+            {
+                throw new InvalidDataException(responseValidation.Message);
+            }
+
             _lifecycle.Transition(HostState.Ready, "Local inference completed.");
             return output;
         }
