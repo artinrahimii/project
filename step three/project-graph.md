@@ -112,6 +112,7 @@
 ساختار زیر JSON معتبر و قابل‌پردازش ماشینی است. فهرست `nodes` همهٔ وظایف را دارد و `edges` یال‌های جهت‌دار وابستگی را ارائه می‌کند.
 
 ```json
+
 {
   "schema_version": "1.0",
   "document": "v2.1",
@@ -4964,9 +4965,11 @@
           "step three/project-graph.md"
         ],
         "related_commits": [],
-        "tests_passed": [],
+        "tests_passed": [
+          "python -m unittest discover -s tests -v: 73 tests passed on 75e68b719f26165f552bfc06e2e4d6bbe7b3e478"
+        ],
         "tests_failed": [
-          "Initial test implementation used over-escaped regular expressions; inspection caught the mismatch before accepting the task. Exact-commit quality run 39754693824 was still in progress at correction time."
+          "Graph guard on 75e68b719f26165f552bfc06e2e4d6bbe7b3e478: FAILED_ATTEMPT_COUNT_MISMATCH for T0031; the history did not mark the recorded correction attempt as failed."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -4981,8 +4984,8 @@
         {
           "attempt_id": "T0031-A001",
           "started_at": "2026-10-22T12:49:00+03:30",
-          "ended_at": null,
-          "result": "partial",
+          "ended_at": "2026-10-22T12:50:00+03:30",
+          "result": "failed",
           "summary": "Reviewed T0031's incoming edge from T0030: the predecessor is marked done and its exact-commit quality/product CI runs are recorded as passed. Inspected the shared proto3 schema and Android/C# generation configuration. Added the optional bytes context_capsule field to InferenceRequest without renumbering existing fields, plus a regression test for request id, attempt id, prompt, deadline, output limit and capsule. Exact-commit CI is pending, so task is not done.",
           "changed_files": [
             "protocol/whitep/v1/messages.proto",
@@ -4993,12 +4996,12 @@
           "commit_sha": null,
           "tests": [
             {
-              "command": "GitHub Actions quality.yml and product-build.yml on this commit",
-              "result": "pending",
-              "summary": "Must inspect exact-commit CI before claiming acceptance."
+              "command": "GitHub Actions quality gate on commit ceb839afb8c95f116ce274653300c1d237e4c527",
+              "result": "failed",
+              "summary": "73 Python tests passed; overall quality gate failed at graph validation because failed_attempt_count=1 did not match the zero history entries marked failed."
             }
           ],
-          "failure_details": null,
+          "failure_details": "The acceptance regression test in this attempt used over-escaped regular expressions and was corrected in T0031-A002. The exact-commit workflow later ran 73 Python tests successfully, but the quality gate failed because this failure was not reflected as a failed history entry.",
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [
@@ -5020,9 +5023,9 @@
           "commit_sha": null,
           "tests": [
             {
-              "command": "GitHub Actions quality gate on corrected commit",
-              "result": "pending",
-              "summary": "Must verify exact commit after this correction."
+              "command": "GitHub Actions quality gate on commit 75e68b719f26165f552bfc06e2e4d6bbe7b3e478",
+              "result": "partial",
+              "summary": "73 Python tests passed; Python syntax check passed; graph validation failed on the same history-count mismatch. Product build workflow passed. The graph metadata correction is intended to resolve the gate failure; verify the new commit's CI before claiming the gate passes."
             }
           ],
           "failure_details": "Initial test used literal backslash sequences instead of regex whitespace/brace escapes; the defect was found by inspecting the committed test source.",
@@ -18612,4 +18615,5 @@
     }
   ]
 }
+
 ```
