@@ -3463,20 +3463,41 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0020 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال انجام",
+      "actual_output_paths": [
+        "src/Shared.Contracts/README.md",
+        "tests/contracts/__init__.py",
+        "tests/contracts/test_contract_layout.py",
+        "README.md",
+        "step three/T0021/execution-report.md"
+      ],
       "expected_output_paths": [
         "src/Shared.Contracts/ + tests/contracts/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "src/Shared.Contracts/README.md",
+        "tests/contracts/__init__.py",
+        "tests/contracts/test_contract_layout.py",
+        "protocol/whitep/v1/messages.proto",
+        "src/Host.Windows/WhiteP.Host.Windows.csproj",
+        "src/Client.Android/app/build.gradle.kts",
+        "tests/test_proto_contract.py"
+      ],
+      "notes": "Verified current tree: src/Host.Windows, src/Client.Android, tests/, and docs/ already contain real files; src/Shared.Contracts and tests/contracts were missing. The canonical protobuf schema already lives at protocol/whitep/v1/messages.proto and is preserved as the single source. T0021 adds the two missing structural boundaries, a package-based contract-layout test, and the README's repository layout. Project/solution files and generation wiring remain for their separate graph tasks.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0021-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "README.md",
+          "src/Shared.Contracts/README.md",
+          "tests/contracts/__init__.py",
+          "tests/contracts/test_contract_layout.py",
+          "step three/T0021/execution-report.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
@@ -3489,7 +3510,32 @@
           "review_evidence": []
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0021-A001",
+          "started_at": "2026-10-22T06:54:07.076Z",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Compared the planned structure against the current tracked tree. Windows host, Android client, tests and docs already exist; src/Shared.Contracts and tests/contracts do not. Preserved the existing canonical Protobuf file under protocol/whitep/v1/messages.proto, added a documented shared-contract boundary and a discoverable contract-layout test package, and recorded T0020->T0021 as a validated contract/interface dependency. Exact-commit CI remains pending.",
+          "changed_files": [
+            "README.md",
+            "src/Shared.Contracts/README.md",
+            "tests/contracts/__init__.py",
+            "tests/contracts/test_contract_layout.py",
+            "step three/T0021/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            "Pending exact-commit Python test suite, syntax compilation, graph structure validation, and repo-root evidence validation."
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect exact-commit CI. Do not create .csproj/solution files early; T0022 owns project/solution creation and T0036 owns generated-contract wiring."
+        }
+      ]
     },
     {
       "id": "T0022",
@@ -13189,10 +13235,17 @@
       "from": "T0020",
       "to": "T0021",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0021 uses the technology traceability register and accepted platform/backend decisions to establish the corresponding host, Android, shared-contract, test, and documentation boundaries. ADR-0001 sets the platform layout and ADR-0003 identifies the local backend boundary; this is a real input to the planned structure.",
+      "validation_status": "validated",
+      "evidence": [
+        "docs/decisions/README.md",
+        "docs/decisions/ADR-0001-platform-build-baselines.md",
+        "docs/decisions/ADR-0003-local-inference-backend.md",
+        "src/Host.Windows/WhiteP.Host.Windows.csproj",
+        "src/Client.Android/app/build.gradle.kts",
+        "step one/V1.0.md"
+      ]
     },
     {
       "from": "T0021",
@@ -17273,6 +17326,23 @@
         ".github/workflows/product-build.yml",
         ".github/workflows/quality.yml",
         "tests/test_reproducible_build_contract.py"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-22T06:54:07.076Z",
+      "edge_from": "T0020",
+      "edge_to": "T0021",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "reason": "T0021 uses the technology traceability register and accepted platform/backend decisions to establish the corresponding host, Android, shared-contract, test, and documentation boundaries. ADR-0001 sets the platform layout and ADR-0003 identifies the local backend boundary; this is a real input to the planned structure.",
+      "evidence": [
+        "docs/decisions/README.md",
+        "docs/decisions/ADR-0001-platform-build-baselines.md",
+        "docs/decisions/ADR-0003-local-inference-backend.md",
+        "src/Host.Windows/WhiteP.Host.Windows.csproj",
+        "src/Client.Android/app/build.gradle.kts",
+        "step one/V1.0.md"
       ],
       "reviewed_by": "Step Three execution review"
     }
