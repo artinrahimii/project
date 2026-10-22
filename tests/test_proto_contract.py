@@ -28,6 +28,21 @@ class ProtoContractTests(unittest.TestCase):
             with self.subTest(enum=enum_name):
                 self.assertRegex(SCHEMA, rf"enum\s+{enum_name}\s*\{{")
 
+    def test_inference_request_includes_ephemeral_id_prompt_capsule_limits_and_deadline(self):
+        match = re.search(r"message\\s+InferenceRequest\\s*\\{([^{}]*)\\}", SCHEMA, re.S)
+        self.assertIsNotNone(match)
+        body = match.group(1)
+        for declaration in (
+            r"string\\s+request_id\\s*=\\s*1\\s*;",
+            r"string\\s+attempt_id\\s*=\\s*2\\s*;",
+            r"string\\s+prompt\\s*=\\s*4\\s*;",
+            r"uint64\\s+deadline_unix_ms\\s*=\\s*5\\s*;",
+            r"uint32\\s+max_output_tokens\\s*=\\s*6\\s*;",
+            r"bytes\\s+context_capsule\\s*=\\s*7\\s*;",
+        ):
+            with self.subTest(field=declaration):
+                self.assertRegex(body, declaration)
+
     def test_field_numbers_are_unique_inside_each_message_and_enum(self):
         blocks = re.findall(r"\b(?:message|enum)\s+\w+\s*\{([^{}]*)\}", SCHEMA, re.S)
         self.assertGreaterEqual(len(blocks), 11)

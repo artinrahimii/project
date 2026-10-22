@@ -4938,20 +4938,32 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0030 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "protocol/whitep/v1/messages.proto",
+        "tests/test_proto_contract.py",
+        "step three/T0031/execution-report.md"
+      ],
       "expected_output_paths": [
         "src/Shared.Contracts/ + tests/contracts/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "tests/test_proto_contract.py",
+        "protocol/whitep/v1/messages.proto"
+      ],
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود. T0031 implementation started on verified main HEAD eb529f48a65c595a201e14070d2dd689b3dc51ae. Added an explicit optional bytes context_capsule field (field number 7) to InferenceRequest and an acceptance regression test. Completion remains pending exact-commit CI; no runtime/size enforcement is claimed by this schema change.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0031-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "protocol/whitep/v1/messages.proto",
+          "tests/test_proto_contract.py",
+          "step three/T0031/execution-report.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
@@ -4964,7 +4976,36 @@
           "review_evidence": []
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0031-A001",
+          "started_at": "2026-10-22T12:49:00+03:30",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Reviewed T0031's incoming edge from T0030: the predecessor is marked done and its exact-commit quality/product CI runs are recorded as passed. Inspected the shared proto3 schema and Android/C# generation configuration. Added the optional bytes context_capsule field to InferenceRequest without renumbering existing fields, plus a regression test for request id, attempt id, prompt, deadline, output limit and capsule. Exact-commit CI is pending, so task is not done.",
+          "changed_files": [
+            "protocol/whitep/v1/messages.proto",
+            "tests/test_proto_contract.py",
+            "step three/T0031/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "command": "GitHub Actions quality.yml and product-build.yml on this commit",
+              "result": "pending",
+              "summary": "Must inspect exact-commit CI before claiming acceptance."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "Added InferenceRequest.context_capsule as bytes field 7; existing field numbers unchanged."
+          ],
+          "follow_up": "Inspect exact-commit CI. If tests and both language builds pass, record evidence and complete T0031 in a subsequent commit; otherwise fix the failing implementation and rerun."
+        }
+      ]
     },
     {
       "id": "T0032",

@@ -61,6 +61,8 @@ message InferenceRequest {
   string prompt = 4;
   uint64 deadline_unix_ms = 5;
   uint32 max_output_tokens = 6;
+  // Optional bounded context capsule; transport implementations must enforce the negotiated byte limit.
+  bytes context_capsule = 7;
 }
 
 message InferenceResponse {
