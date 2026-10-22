@@ -1,6 +1,5 @@
 package com.whitep.client.protocol
 
-import java.io.File
 import com.google.protobuf.ByteString
 import com.google.protobuf.MessageLite
 import com.google.protobuf.Parser
@@ -32,6 +31,8 @@ import org.whitep.shared.contracts.v1.inferenceResponse
 import org.whitep.shared.contracts.v1.modelCapability
 import org.whitep.shared.contracts.v1.protocolError
 import org.whitep.shared.contracts.v1.unsupportedModel
+import java.io.File
+import java.util.Base64
 
 class ProtoRoundTripTest {
     private fun <T : MessageLite> assertRoundTrip(
@@ -152,6 +153,7 @@ class ProtoRoundTripTest {
             }
         assertRoundTrip("ProtocolError", error, ProtocolError.parser())
     }
+
     @Test
     fun parsesSharedCrossLanguageWireFixtures() {
         val fixtureFile = findRepositoryFile("tests/contracts/protobuf-wire-fixtures.txt")
@@ -160,21 +162,22 @@ class ProtoRoundTripTest {
         fixtures.forEach { line ->
             val columns = line.split('\t')
             assertEquals("Fixture must contain message name and Base64 bytes", 2, columns.size)
-            val bytes = java.util.Base64.getDecoder().decode(columns[1])
-            val parsed: MessageLite = when (columns[0]) {
-                "ModelCapability" -> ModelCapability.parseFrom(bytes)
-                "HostCapabilities" -> HostCapabilities.parseFrom(bytes)
-                "HostAnnouncement" -> HostAnnouncement.parseFrom(bytes)
-                "InferenceRequest" -> InferenceRequest.parseFrom(bytes)
-                "InferenceResponse" -> InferenceResponse.parseFrom(bytes)
-                "CancelRequest" -> CancelRequest.parseFrom(bytes)
-                "HostBusy" -> HostBusy.parseFrom(bytes)
-                "UnsupportedModel" -> UnsupportedModel.parseFrom(bytes)
-                "HostStatusRequest" -> HostStatusRequest.parseFrom(bytes)
-                "HostStatus" -> HostStatus.parseFrom(bytes)
-                "ProtocolError" -> ProtocolError.parseFrom(bytes)
-                else -> throw AssertionError("Unknown shared fixture: ${columns[0]}")
-            }
+            val bytes = Base64.getDecoder().decode(columns[1])
+            val parsed: MessageLite =
+                when (columns[0]) {
+                    "ModelCapability" -> ModelCapability.parseFrom(bytes)
+                    "HostCapabilities" -> HostCapabilities.parseFrom(bytes)
+                    "HostAnnouncement" -> HostAnnouncement.parseFrom(bytes)
+                    "InferenceRequest" -> InferenceRequest.parseFrom(bytes)
+                    "InferenceResponse" -> InferenceResponse.parseFrom(bytes)
+                    "CancelRequest" -> CancelRequest.parseFrom(bytes)
+                    "HostBusy" -> HostBusy.parseFrom(bytes)
+                    "UnsupportedModel" -> UnsupportedModel.parseFrom(bytes)
+                    "HostStatusRequest" -> HostStatusRequest.parseFrom(bytes)
+                    "HostStatus" -> HostStatus.parseFrom(bytes)
+                    "ProtocolError" -> ProtocolError.parseFrom(bytes)
+                    else -> throw AssertionError("Unknown shared fixture: ${columns[0]}")
+                }
             assertArrayEquals("${columns[0]} changed shared wire bytes in Kotlin", bytes, parsed.toByteArray())
             count++
         }
@@ -190,5 +193,4 @@ class ProtoRoundTripTest {
         }
         throw AssertionError("Could not find repository file '$relativePath'")
     }
-
 }

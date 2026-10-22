@@ -6077,7 +6077,9 @@
         "tests/contracts/protobuf-wire-fixtures.txt",
         "tests/HostLifecycle.Tests/Program.cs",
         "src/Client.Android/app/src/test/java/com/whitep/client/protocol/ProtoRoundTripTest.kt",
-        "tests/test_proto_contract.py"
+        "tests/test_proto_contract.py",
+        "step three/T0038/execution-report.md",
+        "step three/T0038/evidence/verification.md"
       ],
       "expected_output_paths": [
         "src/Shared.Contracts/ + tests/contracts/"
@@ -6087,13 +6089,17 @@
         "tests/contracts/protobuf-wire-fixtures.txt",
         "tests/HostLifecycle.Tests/Program.cs",
         "src/Client.Android/app/src/test/java/com/whitep/client/protocol/ProtoRoundTripTest.kt",
-        "tests/test_proto_contract.py"
+        "tests/test_proto_contract.py",
+        "step three/T0038/execution-report.md",
+        "step three/T0038/evidence/verification.md",
+        "https://github.com/artinrahimii/project/actions/runs/39851178922",
+        "https://github.com/artinrahimii/project/actions/runs/39851178925"
       ],
-      "notes": "Shared wire fixture corpus added; do not mark complete until both language suites and CI pass.",
+      "notes": "T0038-A001 history retained. CI at V 3.0.112 exposed malformed nested HostCapabilities fixture bytes and Kotlin ktlint failures. A003 regenerates ordered wire bytes and corrects test formatting; do not complete until both C# and Kotlin fixture suites pass in exact-commit CI.",
       "execution_summary": {
-        "attempt_count": 1,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "T0038-A001",
+        "attempt_count": 3,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "T0038-A003",
         "last_attempt_result": "in_progress",
         "changed_files": [
           "tests/contracts/protobuf-wire-fixtures.txt",
@@ -6101,13 +6107,21 @@
           "src/Client.Android/app/src/test/java/com/whitep/client/protocol/ProtoRoundTripTest.kt",
           "tests/test_proto_contract.py",
           "step three/T0038/execution-report.md",
-          "step three/project-graph.md"
+          "step three/project-graph.md",
+          "step three/T0038/evidence/verification.md"
         ],
         "related_commits": [
-          "d210a646d705fe5d99273ecc03ec6c695a88762d"
+          "d210a646d705fe5d99273ecc03ec6c695a88762d",
+          "4dc65b081e782ea2bd62f2db52cdd3b9e4f72118",
+          "20832c67a78a04841f8e6f2ef81969e099603791"
         ],
-        "tests_passed": [],
-        "tests_failed": [],
+        "tests_passed": [
+          "Step Three quality gate run 39851178922 passed on V 3.0.112; this verifies Python guards only, not T0038 acceptance."
+        ],
+        "tests_failed": [
+          "Product run 39851178925: C# shared HostCapabilities fixture parsing failed with invalid tag (zero).",
+          "Product run 39851178925: Android ktlint failed; APK build and Kotlin fixture tests were skipped."
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -6152,6 +6166,80 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Run CI and fix all failures before completion."
+        },
+        {
+          "attempt_id": "T0038-A002",
+          "started_at": "2026-10-22T20:42:35Z",
+          "ended_at": "2026-10-22T20:44:06Z",
+          "result": "failed",
+          "summary": "Exact-commit CI after V 3.0.112 exposed invalid HostCapabilities fixture bytes in C# and ktlint violations in the Kotlin fixture test; quality gate itself passed.",
+          "changed_files": [
+            "tests/contracts/protobuf-wire-fixtures.txt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/protocol/ProtoRoundTripTest.kt",
+            "step three/T0038/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": "20832c67a78a04841f8e6f2ef81969e099603791",
+          "tests": [
+            {
+              "command": "Step Three quality gate — run 39851178922",
+              "result": "succeeded",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39851178922"
+            },
+            {
+              "command": "C# host lifecycle and shared fixtures — run 39851178925 job 120077455638",
+              "result": "failed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39851178925/job/120077455638"
+            },
+            {
+              "command": "Android ktlint — run 39851178925 job 120077456458",
+              "result": "failed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39851178925/job/120077456458"
+            }
+          ],
+          "failure_details": "Google.Protobuf.InvalidProtocolBufferException: invalid tag (zero) while parsing HostCapabilities shared fixture. ktlint reported import order, missing blank line before @Test, multiline expression wrapping and blank line before class close.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Regenerate canonical wire fixtures and fix ktlint before rerunning exact-commit CI."
+        },
+        {
+          "attempt_id": "T0038-A003",
+          "started_at": "2026-10-22T21:33:39.295Z",
+          "ended_at": null,
+          "result": "in_progress",
+          "summary": "Regenerated all 11 shared fixtures from schema-consistent Protobuf wire encodings and fixed observed Kotlin test formatting failures. Waiting for exact-commit CI.",
+          "changed_files": [
+            "tests/contracts/protobuf-wire-fixtures.txt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/protocol/ProtoRoundTripTest.kt",
+            "step three/T0038/execution-report.md",
+            "step three/project-graph.md",
+            "step three/T0038/evidence/verification.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "command": "python -m unittest discover -s tests -v (exact-commit Step Three quality gate)",
+              "result": "pending"
+            },
+            {
+              "command": "dotnet run --project tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj --configuration Release",
+              "result": "pending"
+            },
+            {
+              "command": "gradle --no-daemon ktlintCheck",
+              "result": "pending"
+            },
+            {
+              "command": "gradle --no-daemon assembleDebug && gradle --no-daemon testDebugUnitTest",
+              "result": "pending"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect exact-commit product build and mark complete only after both .NET and Kotlin shared fixture suites pass."
         }
       ]
     },
@@ -15531,19 +15619,27 @@
       "from": "T0037",
       "to": "T0038",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0038's shared-wire fixture parsing uses generated message types and per-language parser/round-trip harness established by T0037; without those generated parsers the same fixture bytes cannot be checked in both languages.",
+      "validation_status": "validated",
+      "evidence": [
+        "tests/HostLifecycle.Tests/Program.cs",
+        "src/Client.Android/app/src/test/java/com/whitep/client/protocol/ProtoRoundTripTest.kt",
+        "step three/T0037/execution-report.md"
+      ]
     },
     {
       "from": "T0030",
       "to": "T0038",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0030 establishes CI failure propagation and artifact checks used to verify this task, but does not produce a code interface or schema consumed by T0038; retain the edge as conservative execution order only.",
+      "validation_status": "validated",
+      "evidence": [
+        ".github/workflows/quality.yml",
+        ".github/workflows/product-build.yml",
+        "step three/T0030/execution-report.md"
+      ]
     },
     {
       "from": "T0038",
