@@ -11,7 +11,13 @@
 - Preserved the single canonical wire schema at `protocol/whitep/v1/messages.proto`; no duplicate schema or generated class was added. The existing host continues to compile the schema with the current build arrangement; task T0036 owns later shared-code generation/wiring.
 - Changed the Windows CI job to build `WhiteP.sln`; the Windows host artifact path remains unchanged. Updated README and shared-project notes to document the solution command and project boundary.
 - Updated product-build/reproducibility tests to verify the solution includes both projects, the shared project targets `net10.0`, and the host references the shared library.
-- **Pending:** exact-commit Python quality gate and real Windows solution build. No successful build is claimed until GitHub Actions completes.
+## Attempt T0022-A002 — exact-commit build verification
+- **Result: succeeded at buildable-solution scope.** Quality gate [39737717773](https://github.com/artinrahimii/project/actions/runs/39737717773) and product build [39737717682](https://github.com/artinrahimii/project/actions/runs/39737717682) both passed for exact commit [ab6ca857d8a24fd888689ff9265874ddbc6656b4](https://github.com/artinrahimii/project/commit/ab6ca857d8a24fd888689ff9265874ddbc6656b4).
+- Quality gate passed automated tests, Python syntax compilation, graph structure validation, and repository-root recorded-output/evidence validation.
+- Product build passed the Windows WPF solution build and artifact upload, Android debug APK build and artifact upload, and host lifecycle unit/integration tests.
+- The solution contains `WhiteP.Host.Windows` and `WhiteP.Shared.Contracts`; the Windows host references the shared project. The Android module was also confirmed buildable on the same commit.
+- This proves buildability and test harness success only. It does **not** prove live local inference, P2P transport, physical-device behavior, or release acceptance.
+- **Status: done** for the .NET solution/shared-project buildability task.
 
 ## Next
-Inspect exact-commit quality and product workflows. Mark T0022 done only after the Windows solution build and output/evidence graph validation pass. Runtime model and P2P gates remain separate.
+Proceed to T0024 after reviewing its incoming edges. Keep runtime inference and P2P acceptance gates open.

@@ -3584,8 +3584,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0021 و T0020 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال انجام",
+      "status": "done",
+      "status_fa": "تکمیل‌شده",
       "actual_output_paths": [
         "WhiteP.sln",
         "src/Shared.Contracts/WhiteP.Shared.Contracts.csproj",
@@ -3611,12 +3611,12 @@
         "src/Shared.Contracts/README.md",
         "step one/V1.0.md"
       ],
-      "notes": "Both incoming edges were reviewed before execution and remain type=blocks; now validated as contract_or_interface_dependency with rationale/evidence and edge-log entries. Creating the root .NET solution with the existing WPF host and a buildable net10.0 shared-contract library; the host references the shared project and CI builds the solution. Generated Protobuf classes/wiring remain owned by T0036.",
+      "notes": "Both incoming edges were reviewed before execution and remain type=blocks; now validated as contract_or_interface_dependency with rationale/evidence and edge-log entries. Creating the root .NET solution with the existing WPF host and a buildable net10.0 shared-contract library; the host references the shared project and CI builds the solution. Generated Protobuf classes/wiring remain owned by T0036. Exact V 3.0.68 verification completed: quality gate run 39737717773 and product build run 39737717682 both succeeded for commit ab6ca857d8a24fd888689ff9265874ddbc6656b4. The Windows WPF solution build, Android debug APK build, lifecycle tests, graph validation, and recorded-output/evidence checks all passed. This verifies buildability only, not local-model or P2P runtime acceptance.",
       "execution_summary": {
-        "attempt_count": 1,
+        "attempt_count": 2,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0022-A001",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "T0022-A002",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "WhiteP.sln",
           "src/Shared.Contracts/WhiteP.Shared.Contracts.csproj",
@@ -3627,10 +3627,16 @@
           "README.md",
           "src/Shared.Contracts/README.md",
           "step three/T0022/execution-report.md",
-          "step three/project-graph.md"
+          "step three/project-graph.md",
+          "step three/T0023/execution-report.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
+        "related_commits": [
+          "ab6ca857d8a24fd888689ff9265874ddbc6656b4"
+        ],
+        "tests_passed": [
+          "GitHub Actions quality gate run 39737717773 — passed on exact commit ab6ca857d8a24fd888689ff9265874ddbc6656b4; automated tests, compileall, graph structure, and evidence checks passed.",
+          "GitHub Actions product build run 39737717682 — passed on exact commit ab6ca857d8a24fd888689ff9265874ddbc6656b4; Windows WPF solution build, Android debug APK build/upload, and host lifecycle tests passed."
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -3669,6 +3675,38 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Inspect exact V 3.0.68 quality and product workflow. Only mark done if the Windows solution build and graph checks pass."
+        },
+        {
+          "attempt_id": "T0022-A002",
+          "started_at": "2026-10-22T07:01:57Z",
+          "ended_at": "2026-10-22T07:03:41Z",
+          "result": "succeeded",
+          "summary": "Verified the exact V 3.0.68 commit through both online GitHub Actions workflows. The .NET solution and Windows host build succeeded; Android debug APK built and uploaded; host lifecycle tests and graph/evidence checks passed. This closes T0022 at buildable-solution scope only.",
+          "changed_files": [
+            "step three/T0022/execution-report.md",
+            "step three/T0023/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39737717773",
+              "summary": "Automated tests, Python syntax, graph structure, and recorded-output/evidence validation passed."
+            },
+            {
+              "name": "White-P product build",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39737717682",
+              "summary": "Windows WPF solution build and artifact upload, Android debug APK build and upload, and host lifecycle unit/integration tests passed."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Resolve this attempt's own commit SHA from main history after recording. Runtime inference and P2P remain unproven."
         }
       ]
     },
@@ -3689,22 +3727,50 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0022 و T0020 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
-      "expected_output_paths": [
-        "src/Shared.Contracts/ + tests/contracts/"
+      "status": "done",
+      "status_fa": "تکمیل‌شده",
+      "actual_output_paths": [
+        "src/Client.Android/settings.gradle.kts",
+        "src/Client.Android/build.gradle.kts",
+        "src/Client.Android/app/build.gradle.kts",
+        "src/Client.Android/app/src/main/AndroidManifest.xml",
+        "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "expected_output_paths": [
+        "src/Client.Android/settings.gradle.kts",
+        "src/Client.Android/build.gradle.kts",
+        "src/Client.Android/app/build.gradle.kts",
+        "src/Client.Android/app/src/main/AndroidManifest.xml",
+        "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt"
+      ],
+      "evidence": [
+        "src/Client.Android/settings.gradle.kts",
+        "src/Client.Android/build.gradle.kts",
+        "src/Client.Android/app/build.gradle.kts",
+        "src/Client.Android/app/src/main/AndroidManifest.xml",
+        "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
+        "docs/decisions/ADR-0001-platform-build-baselines.md",
+        ".github/workflows/product-build.yml",
+        "GitHub Actions product build run 39737717682 (ab6ca857d8a24fd888689ff9265874ddbc6656b4)",
+        "step three/T0023/execution-report.md"
+      ],
+      "notes": "The original expected_output_paths incorrectly pointed to Shared.Contracts/tests/contracts despite this node's title specifying the Android Gradle app. Corrected the paths to the actual Android module files. Existing Android project configuration was audited; exact V 3.0.68 CI built and uploaded the debug APK successfully. This task is complete at buildable-app-module scope only. MainActivity explicitly states transport is not implemented; no P2P or local inference capability is claimed.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
-        "related_commits": [],
-        "tests_passed": [],
+        "last_attempt_id": "T0023-A001",
+        "last_attempt_result": "succeeded",
+        "changed_files": [
+          "step three/T0023/execution-report.md",
+          "step three/project-graph.md"
+        ],
+        "related_commits": [
+          "ab6ca857d8a24fd888689ff9265874ddbc6656b4"
+        ],
+        "tests_passed": [
+          "GitHub Actions product build run 39737717682 — Android debug APK assembled and uploaded for exact commit ab6ca857d8a24fd888689ff9265874ddbc6656b4.",
+          "GitHub Actions quality gate run 39737717773 — graph and repository evidence checks passed for the same commit."
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -3715,7 +3781,41 @@
           "review_evidence": []
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0023-A001",
+          "started_at": "2026-10-22T07:01:57Z",
+          "ended_at": "2026-10-22T07:03:41Z",
+          "result": "succeeded",
+          "summary": "Audited the existing Android Gradle root, app module, manifest, Kotlin launcher activity, and toolchain baseline. The exact current main commit built and uploaded a debug APK in GitHub Actions. No app source was changed during this verification attempt; the graph's stale expected-output paths were corrected to the real Android module paths.",
+          "changed_files": [
+            "step three/T0023/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Android debug APK",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39737717682",
+              "summary": "Gradle assembleDebug and artifact upload succeeded."
+            },
+            {
+              "name": "Graph/evidence quality gate",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39737717773",
+              "summary": "Graph structure and recorded-output/evidence validation passed."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "Corrected T0023 expected_output_paths from unrelated Shared.Contracts paths to the Android module files; task title and current repository tree support the correction."
+          ],
+          "follow_up": "Proceed to T0024 after reviewing its incoming edges. Android transport, local inference, and device runtime acceptance remain unimplemented or unverified."
+        }
+      ]
     },
     {
       "id": "T0024",
@@ -13371,19 +13471,31 @@
       "from": "T0022",
       "to": "T0023",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "The Windows/.NET solution and Android Gradle module are independently built in separate CI jobs; the Android project has no project reference to WhiteP.sln. The existing blocks edge is retained as conservative graph ordering, not treated as a technical prerequisite.",
+      "validation_status": "validated",
+      "evidence": [
+        ".github/workflows/product-build.yml (separate Windows and Android jobs)",
+        "src/Client.Android/settings.gradle.kts",
+        "src/Client.Android/app/build.gradle.kts",
+        "WhiteP.sln",
+        "GitHub Actions product build run 39737717682"
+      ]
     },
     {
       "from": "T0020",
       "to": "T0023",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "The accepted platform baseline directly defines Android JDK 17, Gradle 8.13, compile/target SDK 36, min SDK 26, and the CI install/build steps consumed by the Android module.",
+      "validation_status": "validated",
+      "evidence": [
+        "docs/decisions/ADR-0001-platform-build-baselines.md",
+        "src/Client.Android/build.gradle.kts",
+        "src/Client.Android/app/build.gradle.kts",
+        ".github/workflows/product-build.yml",
+        "GitHub Actions product build run 39737717682"
+      ]
     },
     {
       "from": "T0023",
@@ -17477,6 +17589,38 @@
         "global.json",
         "src/Host.Windows/WhiteP.Host.Windows.csproj",
         "step one/V1.0.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-22T07:03:41Z",
+      "edge_from": "T0022",
+      "edge_to": "T0023",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "reason": "The Android Gradle module and .NET solution build as independent jobs and no project reference connects them. The blocks edge is preserved as a conservative ordering relation rather than asserted as a technical dependency.",
+      "evidence": [
+        ".github/workflows/product-build.yml (separate Windows and Android jobs)",
+        "src/Client.Android/settings.gradle.kts",
+        "src/Client.Android/app/build.gradle.kts",
+        "WhiteP.sln",
+        "GitHub Actions product build run 39737717682"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-22T07:03:41Z",
+      "edge_from": "T0020",
+      "edge_to": "T0023",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "reason": "ADR-0001's Android toolchain and SDK baseline is consumed by the checked-in Gradle project and product-build workflow.",
+      "evidence": [
+        "docs/decisions/ADR-0001-platform-build-baselines.md",
+        "src/Client.Android/build.gradle.kts",
+        "src/Client.Android/app/build.gradle.kts",
+        ".github/workflows/product-build.yml",
+        "GitHub Actions product build run 39737717682"
       ],
       "reviewed_by": "Step Three execution review"
     }
