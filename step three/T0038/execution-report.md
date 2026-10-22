@@ -32,3 +32,14 @@
 ## Attempt T0038-A004 — final-newline correction pending CI
 - Applied the exact reported correction: the Kotlin test source now ends with one newline.
 - Re-running exact-commit CI is required to verify Android lint, APK compilation, Kotlin parsing of all 11 fixtures and source-generation assertions. T0038 remains `in_progress` until that evidence is available.
+
+
+## Attempt T0038-A004 — exact-commit verification succeeded
+- Tested implementation commit: `6d326feaf3ec593695db64e379fae9302738f717` (`V 3.0.114`).
+- [Step Three quality gate run 39858575967](https://github.com/artinrahimii/project/actions/runs/39858575967): **success**.
+- [White-P product build run 39858575986](https://github.com/artinrahimii/project/actions/runs/39858575986): **success**, all three jobs:
+  - C# lifecycle/contract harness: passed; log printed `PASS: C# parsed all 11 shared cross-language wire fixtures.`
+  - Android: ktlint passed, debug APK built, `testDebugUnitTest` passed, generated Protobuf Java/Kotlin checks passed, and the APK artifact was uploaded.
+  - Windows WPF host formatting/build, generated C# checks and artifact upload passed.
+- T0038 is now **done**. The prior A002 fixture parsing failure and A003 missing-newline lint failure remain recorded; neither history entry was overwritten.
+- Scope boundary: this task verifies cross-language parsing/re-serialization of shared Protobuf wire bytes. It does not claim that live P2P transport or end-to-end host-to-phone inference exists.
