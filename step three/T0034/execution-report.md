@@ -38,3 +38,13 @@
 - The correction itself changes execution tracking only; it is not counted as completing the software feature.
 - Exact-commit quality gate and product build results are pending.
 - T0034 remains in progress until the quality gate, its repo-root evidence check, and the product build pass on the same commit.
+
+
+## Attempt T0034-A004 — exact-commit verification and completion
+- Tested commit: `3389b3e31ae008ab10129905013fff8fe56b0c8d` (`V 3.0.101`).
+- Step Three quality gate [run 39841103096](https://github.com/artinrahimii/project/actions/runs/39841103096): **success**. All 76 Python tests, Python syntax, graph structure, and recorded-output/evidence validation passed.
+- White-P product build [run 39841103227](https://github.com/artinrahimii/project/actions/runs/39841103227): **success**. Windows WPF formatting/build/artifact, Android lint/debug APK/artifact, and host lifecycle tests all passed.
+- The attempt-count consistency correction is verified; no prior execution-history entries were deleted.
+- Result: T0034 acceptance is verified for the protocol-message contract and regression tests. This does not prove live network transport, model inference, encryption, or end-to-end P2P.
+- Expected-output-path discrepancy corrected: the generic earlier path `src/Shared.Contracts/ + tests/contracts/` did not match the actual repository layout. The canonical schema is `protocol/whitep/v1/messages.proto`; Windows/Android generation settings are in `src/Host.Windows/WhiteP.Host.Windows.csproj` and `src/Client.Android/app/build.gradle.kts`; contract tests are in `tests/test_proto_contract.py`.
+- Before T0035: `T0034 → T0035` validated as `contract_or_interface_dependency` because protocol-version rejection consumes the version-bearing schema and `ProtocolErrorCode.UNSUPPORTED_VERSION` contract. `T0030 → T0035` validated as `sequencing_only`, retaining the conservative edge but not calling CI behavior a code dependency.

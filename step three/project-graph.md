@@ -5315,31 +5315,35 @@
         "نیازمندی مرتبط: پیام‌های `CancelRequest`، `HostBusy`، `UnsupportedModel` و `ProtocolError` را تعریف کن."
       ],
       "outputs": [
-        "خروجی قابل بررسی مربوط به «پیام‌های `CancelRequest`، `HostBusy`، `UnsupportedModel` و `ProtocolError` را تعریف کن.» در مسیر src/Shared.Contracts/ + tests/contracts/؛ همراه با آزمون/شاهد پذیرش متناسب."
+        "پیام‌های پروتکل در منبع یگانهٔ `protocol/whitep/v1/messages.proto`، شامل CancelRequest، HostBusy، UnsupportedModel و ProtocolError.",
+        "آزمون‌های قرارداد در `tests/test_proto_contract.py` برای وجود پیام‌ها، فیلدهای ضروری و شماره‌گذاری آن‌ها؛ تولید کدهای وابسته از پیکربندی build میزبان ویندوز و اندروید."
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0033 و T0030 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "تکمیل‌شده",
       "actual_output_paths": [
         "protocol/whitep/v1/messages.proto",
         "tests/test_proto_contract.py",
         "step three/T0034/execution-report.md"
       ],
       "expected_output_paths": [
-        "src/Shared.Contracts/ + tests/contracts/"
+        "protocol/whitep/v1/messages.proto",
+        "tests/test_proto_contract.py"
       ],
       "evidence": [
         "protocol/whitep/v1/messages.proto",
         "tests/test_proto_contract.py",
+        "src/Host.Windows/WhiteP.Host.Windows.csproj",
+        "src/Client.Android/app/build.gradle.kts",
         "step three/T0034/execution-report.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "notes": "T0034 acceptance is verified on exact commit 3389b3e31ae008ab10129905013fff8fe56b0c8d (V 3.0.101): 76 Python tests, graph structure and repository output/evidence validation, Windows WPF build/artifact, Android lint/debug APK/artifact, and host lifecycle tests passed. The generic expected path previously named src/Shared.Contracts + tests/contracts did not match the actual implementation layout; the canonical Protobuf source is protocol/whitep/v1/messages.proto, build generation is configured in the Windows host csproj and Android app Gradle file, and the regression test lives in tests/test_proto_contract.py. This verifies wire-message contracts, not live transport or end-to-end P2P.",
       "execution_summary": {
         "attempt_count": 5,
         "failed_attempt_count": 2,
         "last_attempt_id": "T0034-A004",
-        "last_attempt_result": "in_progress",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "protocol/whitep/v1/messages.proto",
           "tests/test_proto_contract.py",
@@ -5347,12 +5351,15 @@
           "step three/project-graph.md"
         ],
         "related_commits": [
-          "2c1959a159bf4c354eda9b6dcaa75ee26d2546fb"
+          "2c1959a159bf4c354eda9b6dcaa75ee26d2546fb",
+          "3389b3e31ae008ab10129905013fff8fe56b0c8d"
         ],
         "tests_passed": [
           "python -m unittest discover -s tests -v — 76 passed on commit 2c1959a159bf4c354eda9b6dcaa75ee26d2546fb",
           "python -m compileall -q tools tests — passed on commit 2c1959a159bf4c354eda9b6dcaa75ee26d2546fb",
-          "White-P product build run 39814813985 — success on commit 2c1959a159bf4c354eda9b6dcaa75ee26d2546fb"
+          "White-P product build run 39814813985 — success on commit 2c1959a159bf4c354eda9b6dcaa75ee26d2546fb",
+          "Step Three quality gate run 39841103096 — passed on exact commit 3389b3e31ae008ab10129905013fff8fe56b0c8d: 76 tests, syntax, graph structure, output/evidence validation.",
+          "White-P product build run 39841103227 — passed on exact commit 3389b3e31ae008ab10129905013fff8fe56b0c8d: Windows WPF build, Android lint/debug APK, and host lifecycle tests."
         ],
         "tests_failed": [
           "Quality gate run 39766263695 on 5b56ce47b1667fbb284f1aca7772d689d5fd3a88 failed: 4 assertions could not match message blocks because T0034 regexes were over-escaped.",
@@ -5495,26 +5502,33 @@
         {
           "attempt_id": "T0034-A004",
           "started_at": "2026-10-22T19:30:00Z",
-          "ended_at": null,
-          "result": "in_progress",
-          "summary": "Corrected the execution-summary count to include all four prior history records and appended a new traceable attempt; no earlier execution-history record was deleted. Awaiting exact-commit CI.",
+          "ended_at": "2026-10-22T19:34:48Z",
+          "result": "succeeded",
+          "summary": "Corrected graph execution-history consistency; exact-commit quality gate and product build both passed. The graph structure and repository output/evidence validation succeeded, and all product build jobs completed successfully.",
           "changed_files": [
             "step three/T0034/execution-report.md",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "3389b3e31ae008ab10129905013fff8fe56b0c8d",
           "tests": [
             {
-              "command": "Step Three quality gate and White-P product build on the new exact commit",
-              "result": "pending",
-              "summary": "Verify both workflows after this metadata consistency correction."
+              "command": "Step Three quality gate run 39841103096",
+              "result": "passed",
+              "summary": "76 Python tests, Python syntax compilation, graph structure validation, and repository output/evidence validation passed on exact commit 3389b3e31ae008ab10129905013fff8fe56b0c8d.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/39841103096"
+            },
+            {
+              "command": "White-P product build run 39841103227",
+              "result": "passed",
+              "summary": "Windows WPF formatting/build/artifact, Android Kotlin lint/debug APK/artifact, and host lifecycle test jobs all passed on the exact commit.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/39841103227"
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect the quality-gate result on the new exact commit. If graph guard passes, inspect repo-root validation and verify the product build before marking T0034 done."
+          "follow_up": "T0034 acceptance verified on the exact commit. Continue to T0035 after documenting the verified T0034/T0035 wire-contract dependency; do not infer that transport or end-to-end P2P is implemented."
         }
       ]
     },
@@ -14991,19 +15005,28 @@
       "from": "T0034",
       "to": "T0035",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0035 implements protocol-version compatibility and rejection policy using the canonical schema's protocol_version fields and ProtocolError/ProtocolErrorCode.UNSUPPORTED_VERSION contract. The existing blocks edge is retained; this classification is supported by the actual schema and its contract regression tests.",
+      "validation_status": "validated",
+      "evidence": [
+        "protocol/whitep/v1/messages.proto",
+        "tests/test_proto_contract.py",
+        "step three/T0034/execution-report.md",
+        "step one/V1.0.md"
+      ]
     },
     {
       "from": "T0030",
       "to": "T0035",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0030 verifies CI failure propagation and required build artifacts. T0035 uses those workflows to validate its work, but consumes no code or wire-interface artifact created by T0030. Keep the existing conservative ordering edge without claiming a technical prerequisite.",
+      "validation_status": "validated",
+      "evidence": [
+        ".github/workflows/quality.yml",
+        ".github/workflows/product-build.yml",
+        "step three/T0030/execution-report.md"
+      ]
     },
     {
       "from": "T0035",
