@@ -11,6 +11,8 @@ ANDROID_ROOT = (ROOT / "src/Client.Android/build.gradle.kts").read_text(encoding
 ANDROID_APP_PATH = ROOT / "src/Client.Android/app/build.gradle.kts"
 ANDROID_APP = ANDROID_APP_PATH.read_text(encoding="utf-8")
 README = (ROOT / "README.md").read_text(encoding="utf-8")
+VERSION_POLICY_PATH = ROOT / "src/Shared.Contracts/ProtocolVersionPolicy.cs"
+VERSION_POLICY = VERSION_POLICY_PATH.read_text(encoding="utf-8")
 
 
 class ProtoContractTests(unittest.TestCase):
@@ -141,6 +143,14 @@ class ProtoContractTests(unittest.TestCase):
         self.assertIn('com.google.protobuf:protobuf-javalite:4.36.2', ANDROID_APP)
         self.assertIn('create("java") { option("lite") }', ANDROID_APP)
         self.assertEqual((ANDROID_APP_PATH.parent / "../../../protocol").resolve(), SCHEMA_PATH.parent.parent.parent.resolve())
+
+    def test_protocol_version_policy_maps_rejections_to_wire_error_codes(self):
+        self.assertIn('public const string CurrentVersion = "1.0.0";', VERSION_POLICY)
+        self.assertIn('public const string InvalidMessageErrorCode = "PROTOCOL_ERROR_CODE_INVALID_MESSAGE";', VERSION_POLICY)
+        self.assertIn('public const string UnsupportedVersionErrorCode = "PROTOCOL_ERROR_CODE_UNSUPPORTED_VERSION";', VERSION_POLICY)
+        self.assertIn("PROTOCOL_ERROR_CODE_INVALID_MESSAGE", SCHEMA)
+        self.assertIn("PROTOCOL_ERROR_CODE_UNSUPPORTED_VERSION", SCHEMA)
+        self.assertIn("ProtocolVersionPolicy.Evaluate", (ROOT / "tests/HostLifecycle.Tests/Program.cs").read_text(encoding="utf-8"))
 
     def test_readme_distinguishes_shared_schema_from_unimplemented_transport(self):
         self.assertIn("protocol/whitep/v1/messages.proto", README)

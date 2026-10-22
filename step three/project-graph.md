@@ -5545,24 +5545,50 @@
         "نیازمندی مرتبط: شمارهٔ نسخهٔ پروتکل و سیاست رد نسخه‌های ناسازگار را در قراردادها پیاده‌سازی کن."
       ],
       "outputs": [
-        "خروجی قابل بررسی مربوط به «شمارهٔ نسخهٔ پروتکل و سیاست رد نسخه‌های ناسازگار را در قراردادها پیاده‌سازی کن.» در مسیر src/Shared.Contracts/ + tests/contracts/؛ همراه با آزمون/شاهد پذیرش متناسب."
+        "سیاست اجرایی نسخهٔ پروتکل در `src/Shared.Contracts/ProtocolVersionPolicy.cs`؛ نسخهٔ اولیهٔ `1.0.0` با تطبیق دقیق و طبقه‌بندی نسخهٔ مفقود، بدساخت و ناسازگار.",
+        "آزمون رفتار C# در `tests/HostLifecycle.Tests/Program.cs` و آزمون تطبیق نام خطاها با قرارداد Protobuf در `tests/test_proto_contract.py`."
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0034 و T0030 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
-      "expected_output_paths": [
-        "src/Shared.Contracts/ + tests/contracts/"
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "src/Shared.Contracts/ProtocolVersionPolicy.cs",
+        "src/Shared.Contracts/README.md",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+        "tests/test_proto_contract.py",
+        "step three/T0035/execution-report.md"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "expected_output_paths": [
+        "src/Shared.Contracts/ProtocolVersionPolicy.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+        "tests/test_proto_contract.py"
+      ],
+      "evidence": [
+        "src/Shared.Contracts/ProtocolVersionPolicy.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "tests/test_proto_contract.py",
+        "protocol/whitep/v1/messages.proto",
+        "src/Shared.Contracts/README.md",
+        "step three/T0035/execution-report.md"
+      ],
+      "notes": "Attempt T0035-A001 implements a strict exact-match policy for protocol 1.0.0 and runtime/source-level tests. CI is pending. The policy is now executable in the Shared.Contracts library and tested by the .NET harness; transport integration remains unimplemented and is not claimed.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0035-A001",
+        "last_attempt_result": "in_progress",
+        "changed_files": [
+          "src/Shared.Contracts/ProtocolVersionPolicy.cs",
+          "src/Shared.Contracts/README.md",
+          "tests/HostLifecycle.Tests/Program.cs",
+          "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+          "tests/test_proto_contract.py",
+          "step three/T0035/execution-report.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
@@ -5575,7 +5601,39 @@
           "review_evidence": []
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0035-A001",
+          "started_at": "2026-10-22T19:39:00Z",
+          "ended_at": null,
+          "result": "in_progress",
+          "summary": "Implemented an exact-match version policy in the shared .NET contract library; added runtime assertions and a source contract check. Exact-commit CI is pending.",
+          "changed_files": [
+            "src/Shared.Contracts/ProtocolVersionPolicy.cs",
+            "src/Shared.Contracts/README.md",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+            "tests/test_proto_contract.py",
+            "step three/T0035/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "command": "Exact-commit Step Three quality gate and White-P product build",
+              "result": "pending",
+              "summary": "Require Python tests, syntax, graph and evidence checks, Windows/Android builds, and the .NET harness with live ProtocolVersionPolicy assertions."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "Introduce explicit protocol-version policy and map rejection categories to existing Protobuf error enum names."
+          ],
+          "follow_up": "Review exact-commit CI; if tests fail, fix the actual cause. Only mark T0035 done after both quality gate and product build pass."
+        }
+      ]
     },
     {
       "id": "T0036",

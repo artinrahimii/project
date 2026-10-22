@@ -8,3 +8,9 @@ This directory contains the buildable `WhiteP.Shared.Contracts.csproj` library t
 - This file documents the project boundary; it is not a substitute for generated classes or cross-language compatibility tests.
 
 The existing schema and source contract checks remain under `protocol/whitep/v1/messages.proto` and `tests/test_proto_contract.py` until the graph's later generation/build tasks integrate the shared project.
+
+## Protocol-version policy
+
+`ProtocolVersionPolicy.CurrentVersion` defines the initial protocol release as `1.0.0`. It accepts only an exact canonical numeric `MAJOR.MINOR.PATCH` match. Missing or malformed values are rejected with the wire error name `PROTOCOL_ERROR_CODE_INVALID_MESSAGE`; a valid but different version is rejected with `PROTOCOL_ERROR_CODE_UNSUPPORTED_VERSION`.
+
+Exact-match checking is intentionally conservative: this project has not yet defined minor-version negotiation or backward-compatibility guarantees. The policy is tested against the shared .NET library from the runnable contract/lifecycle harness. It is not evidence that a network handshake already calls the policy; live peer discovery and transport are later implementation tasks.

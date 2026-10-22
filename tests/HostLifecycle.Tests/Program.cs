@@ -1,8 +1,34 @@
 using System.Net;
 using System.Text;
 using WhiteP.Host.Windows;
+using WhiteP.Shared.Contracts;
 static void Assert(bool ok,string message){if(!ok)throw new Exception(message);}
 static void ExpectInvalid(Action action){try{action();}catch(InvalidOperationException){return;}throw new Exception("Invalid transition accepted.");}
+
+var supportedProtocol = ProtocolVersionPolicy.Evaluate(ProtocolVersionPolicy.CurrentVersion);
+Assert(supportedProtocol.IsCompatible, "The exact current protocol version must be accepted.");
+Assert(supportedProtocol.Status == ProtocolVersionStatus.Compatible, "Current version must return Compatible.");
+Assert(supportedProtocol.ErrorCodeName is null, "Accepted versions must not return a rejection code.");
+
+foreach (var malformedVersion in new string?[] { null, "", " ", "1.0", "v1.0.0", "01.0.0", "1.0.0-beta", new string('1', 33) })
+{
+    var result = ProtocolVersionPolicy.Evaluate(malformedVersion);
+    var expectedStatus = string.IsNullOrWhiteSpace(malformedVersion)
+        ? ProtocolVersionStatus.Missing
+        : ProtocolVersionStatus.Malformed;
+    Assert(result.Status == expectedStatus, $"Malformed/missing version classification failed for '{malformedVersion ?? "<null>"}'.");
+    Assert(!result.IsCompatible, "Missing or malformed versions must never be accepted.");
+    Assert(result.ErrorCodeName == ProtocolVersionPolicy.InvalidMessageErrorCode, "Missing/malformed versions must map to InvalidMessage.");
+}
+
+foreach (var unsupportedVersion in new[] { "1.0.1", "1.1.0", "2.0.0" })
+{
+    var result = ProtocolVersionPolicy.Evaluate(unsupportedVersion);
+    Assert(result.Status == ProtocolVersionStatus.Unsupported, $"Incompatible version '{unsupportedVersion}' must be rejected.");
+    Assert(!result.IsCompatible, "Incompatible versions must never be accepted.");
+    Assert(result.ErrorCodeName == ProtocolVersionPolicy.UnsupportedVersionErrorCode, "Incompatible versions must map to UnsupportedVersion.");
+}
+
 var m=new HostLifecycle(); Assert(m.Status.State==HostState.Stopped,"Initial state");
 m.Transition(HostState.Starting,"Starting");m.Transition(HostState.Ready,"Ready");m.Transition(HostState.Busy,"Busy");m.Transition(HostState.Ready,"Complete");m.Transition(HostState.Stopped,"Stop");
 ExpectInvalid(()=>m.Transition(HostState.Busy,"Invalid"));
