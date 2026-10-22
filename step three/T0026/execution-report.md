@@ -25,3 +25,10 @@ Inspect the exact-commit quality gate and product build. Mark T0026 done only af
 - The exact-commit quality gate [39742637801](https://github.com/artinrahimii/project/actions/runs/39742637801) rejected the T0025 evidence list because two workflow URLs and descriptive artifact metadata were placed in a field validated strictly as repository file paths.
 - Moved non-path build/artifact metadata to the execution test evidence text and removed fragment suffixes from edge evidence paths. Only real repository paths remain in the graph's evidence arrays.
 - T0026 remains `in_progress` until the next exact-commit quality gate passes.
+
+
+## Attempt T0026-A004 — exact-commit verification (succeeded)
+- Verified Step Three quality gate run [39742769098](https://github.com/artinrahimii/project/actions/runs/39742769098) passed on commit `9c6fcb6583a17b9fa76dce059f9c284566521a4b`; graph/evidence validation and all 65 Python tests passed.
+- Verified product build run [39742768823](https://github.com/artinrahimii/project/actions/runs/39742768823) passed on the same commit. Windows WPF host build/formatting and host lifecycle tests passed; Android ktlint and `assembleDebug` passed; CI uploaded the Windows host and Android APK artifacts.
+- The three local configuration safety acceptance checks are included in the exact-commit Python quality suite. `.gitignore` excludes local env/secrets/signing files while allowlisting `.env.example`; the example contains only loopback URL, example model ID, and timeout, and explicitly says the app does not auto-load it.
+- T0026 is now marked `done`. Earlier partial attempts and the corrected evidence-path failure remain in the execution history.

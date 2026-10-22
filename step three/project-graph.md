@@ -4290,8 +4290,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0025 و T0020 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال انجام",
+      "status": "done",
+      "status_fa": "تکمیل‌شده",
       "actual_output_paths": [
         ".gitignore",
         ".env.example",
@@ -4315,10 +4315,10 @@
       ],
       "notes": "Reviewed both incoming edges. T0025 is sequencing-only for this task; T0020 supplies the local backend URL/model contract. Root .gitignore and non-secret example settings are being added. The current Windows host reads URL/model from its UI, so the example file is explicitly a template and is not represented as runtime-loaded configuration.",
       "execution_summary": {
-        "attempt_count": 3,
+        "attempt_count": 4,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0026-A003",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "T0026-A004",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           ".gitignore",
           ".env.example",
@@ -4326,9 +4326,17 @@
           "step three/T0026/execution-report.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
-        "tests_failed": [],
+        "related_commits": [
+          "9c6fcb6583a17b9fa76dce059f9c284566521a4b"
+        ],
+        "tests_passed": [
+          "Step Three quality gate run 39742769098 passed on exact main commit 9c6fcb6583a17b9fa76dce059f9c284566521a4b; graph/evidence checks and 65 Python tests passed.",
+          "White-P product build run 39742768823 passed on exact main commit 9c6fcb6583a17b9fa76dce059f9c284566521a4b: Windows WPF host build/formatting and host lifecycle tests passed; Android ktlintCheck and assembleDebug passed; build artifacts uploaded.",
+          "tests/test_local_config_safety.py acceptance checks were included in the exact-commit Python quality suite and passed."
+        ],
+        "tests_failed": [
+          "Earlier quality gate run 39742637801 failed because T0025.evidence contained workflow URLs/artifact metadata instead of repository paths; this was corrected before successful run 39742769098."
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -4388,7 +4396,7 @@
         {
           "attempt_id": "T0026-A003",
           "started_at": "2026-10-22T07:45:00Z",
-          "ended_at": null,
+          "ended_at": "2026-10-22T07:45:40Z",
           "result": "partial",
           "summary": "Quality gate rejected external workflow URLs and artifact metadata in the evidence-file list because that field must contain repository paths. Moved the metadata into test evidence and retained only real repository paths in evidence fields.",
           "changed_files": [
@@ -4408,6 +4416,43 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Remove non-path evidence entries and rerun exact-commit graph validation."
+        },
+        {
+          "attempt_id": "T0026-A004",
+          "started_at": "2026-10-22T07:45:58Z",
+          "ended_at": "2026-10-22T07:47:55Z",
+          "result": "succeeded",
+          "summary": "Exact-commit verification passed for the local secret-ignore rules, non-secret example settings, graph evidence, and repository quality gate.",
+          "changed_files": [
+            ".gitignore",
+            ".env.example",
+            "tests/test_local_config_safety.py",
+            "step three/T0026/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": "9c6fcb6583a17b9fa76dce059f9c284566521a4b",
+          "tests": [
+            {
+              "command": "Step Three quality gate run 39742769098",
+              "result": "passed",
+              "summary": "Graph structure/evidence validation and 65 Python tests passed on the exact main commit."
+            },
+            {
+              "command": "White-P product build run 39742768823",
+              "result": "passed",
+              "summary": "Windows WPF host build/formatting and host lifecycle tests passed; Android ktlint and assembleDebug passed; build artifacts uploaded."
+            },
+            {
+              "command": "tests/test_local_config_safety.py",
+              "result": "passed",
+              "summary": "Included in the exact-commit Python quality suite; local secret-ignore, example allowlisting, expected settings, and non-secret template contract validated."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Continue to T0027 after reviewing its incoming dependency edge and acceptance criteria."
         }
       ]
     },
