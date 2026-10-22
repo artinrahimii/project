@@ -16,9 +16,10 @@
 ## Attempt T0023-A002 — graph evidence validation failed
 - Quality gate run [39738674844](https://github.com/artinrahimii/project/actions/runs/39738674844) for V 3.0.69 failed with `DONE_WITHOUT_TEST_FILE_EVIDENCE`: the node's evidence list did not reference a test source file. This was a graph-record validation failure; the Android APK build on V 3.0.68 had succeeded.
 
-## Attempt T0023-A003 — correction submitted
+## Attempt T0023-A003 — evidence correction verified
 - Added `tests/test_product_build_contract.py` and `tests/test_reproducible_build_contract.py` as file-based evidence and removed workflow-run descriptions from the node's path-only evidence list.
-- The task remains `in_progress` until the corrected commit's quality gate passes.
+- Quality gate [39738884394](https://github.com/artinrahimii/project/actions/runs/39738884394) passed for exact V 3.0.70 commit [47b2ec3e9320e0231949e9df7d4cc6b86dff0729](https://github.com/artinrahimii/project/commit/47b2ec3e9320e0231949e9df7d4cc6b86dff0729). The graph guard now accepts the test-source evidence and repository-root output/evidence checks pass.
+- **Status: done** for the buildable Android Gradle module task. The earlier graph-record validation failure remains in history; it is not concealed.
 
 ## Next
-Verify V 3.0.70 quality gate. If it passes, record the exact evidence and mark T0023 done in a subsequent commit. Keep Android transport and product runtime acceptance unclaimed.
+Review T0024's incoming edges before changing toolchain locks. Keep Android transport and product runtime acceptance unclaimed.
