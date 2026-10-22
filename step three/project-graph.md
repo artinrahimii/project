@@ -3297,8 +3297,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0019 و T0010 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال انجام",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "docs/decisions/README.md",
         "docs/decisions/ADR-0003-local-inference-backend.md",
@@ -3320,21 +3320,28 @@
         "src/Host.Windows/LlamaCppServerBackend.cs",
         "tests/HostLifecycle.Tests/Program.cs"
       ],
-      "notes": "Decision register and ADR-0003 have been added with links to actual sources/configuration/tests, but the first exact-commit quality run found an overly strict textual assertion on relative ADR links. The fix is recorded as T0020-A003 and awaits CI. Incoming edges remain validated; no task completion is claimed yet.",
+      "notes": "T0020 complete at decision-traceability scope. The register maps ADR-0001 through ADR-0003 to real source/config/test paths, and ADR-0003 documents the integrated llama.cpp HTTP adapter and its controlled tests. Exact V 3.0.64 quality gate passed 59 Python tests, syntax compilation, graph structure validation, and repository-root evidence checks (0 errors, 1 pre-existing unmapped-dependency warning preserved). Product-build run 39736539846 was in_progress at the time status was checked and is not counted as a passed run here. This task does not prove live-model or P2P runtime acceptance.",
       "execution_summary": {
-        "attempt_count": 3,
+        "attempt_count": 4,
         "failed_attempt_count": 1,
-        "last_attempt_id": "T0020-A003",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "T0020-A004",
+        "last_attempt_result": "succeeded",
         "changed_files": [
+          "README.md",
+          "docs/decisions/README.md",
+          "docs/decisions/ADR-0003-local-inference-backend.md",
           "tests/test_decision_traceability.py",
           "step three/T0020/execution-report.md",
           "step three/project-graph.md"
         ],
         "related_commits": [
-          "3241d1abd8c3498d54686c9670de6f6658b5f750"
+          "3241d1abd8c3498d54686c9670de6f6658b5f750",
+          "b99d13a928607e3dc410fde0dedb869bf774d176"
         ],
-        "tests_passed": [],
+        "tests_passed": [
+          "Exact V 3.0.64 quality run 39736539849 passed all 59 Python tests; compileall passed; graph structure validation passed for 229 tasks/426 edges; repo-root recorded-output/evidence check returned 0 errors and 1 preserved pre-existing UNMAPPED_DEPENDENCY warning for T0001.",
+          "Product-build run 39736539846 was in_progress at this check; no product-build success claim is used for T0020 completion because the task's acceptance is traceability plus quality/graph checks."
+        ],
         "tests_failed": [
           "Quality run 39736436189 on V 3.0.63 failed in three subtests because the decision register uses filenames relative to docs/decisions/, while the test required a root-relative path string in the register itself; file existence checks were separate and passed."
         ],
@@ -3412,6 +3419,31 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Inspect V 3.0.64 quality results; mark T0020 done only after the new traceability tests and graph validation pass."
+        },
+        {
+          "attempt_id": "T0020-A004",
+          "started_at": "2026-10-22T06:51:50.181Z",
+          "ended_at": "2026-10-22T06:51:50.181Z",
+          "result": "succeeded",
+          "summary": "Completed T0020 at decision-traceability scope. All 59 Python tests passed on the exact V 3.0.64 commit, including the new link/source traceability tests. Python syntax, graph structure, and repo-root evidence validation passed. One pre-existing UNMAPPED_DEPENDENCY warning in T0001 was preserved as metadata rather than silently converted. No product runtime gate is claimed.",
+          "changed_files": [
+            "README.md",
+            "docs/decisions/README.md",
+            "docs/decisions/ADR-0003-local-inference-backend.md",
+            "tests/test_decision_traceability.py",
+            "step three/T0020/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": "b99d13a928607e3dc410fde0dedb869bf774d176",
+          "tests": [
+            "GitHub Actions quality run 39736539849: 59 tests passed, Python compileall passed, graph structure validation passed, repository-root evidence validation passed with 0 errors and 1 warning.",
+            "Product-build workflow run 39736539846 on V 3.0.64 was in_progress when completion was recorded; it is not claimed as passed."
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Proceed to T0021 only after reviewing its incoming graph edges. Maintain AC-LOCAL-01, AC-LOCAL-02 and AC-P2P-01 as NOT RUN until their runtime evidence exists."
         }
       ]
     },

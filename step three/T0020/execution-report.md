@@ -25,3 +25,13 @@ Run the exact-commit quality gate. Mark T0020 done only if the new tests and rep
 ## Attempt T0020-A003 — corrected relative-link validation
 - Applied the assertion fix and retained all source/configuration/test existence checks.
 - Status remains **in progress** until the next exact-commit quality workflow passes.
+
+
+## Attempt T0020-A004 — traceability acceptance passed
+- **Result: succeeded at decision-traceability scope.** Exact quality run [39736539849](https://github.com/artinrahimii/project/actions/runs/39736539849) for commit [b99d13a928607e3dc410fde0dedb869bf774d176](https://github.com/artinrahimii/project/commit/b99d13a928607e3dc410fde0dedb869bf774d176) passed all 59 Python tests, Python syntax compilation, graph structure validation, and repository-root output/evidence validation.
+- The graph guard reported 229 tasks, 426 edges, **0 errors**, and one pre-existing `UNMAPPED_DEPENDENCY` warning for `T0001`; that free-text metadata is preserved as required by graph policy.
+- Product-build run [39736539846](https://github.com/artinrahimii/project/actions/runs/39736539846) was `in_progress` at this check and is not claimed as passed. It is not part of this task's decision-traceability acceptance criterion.
+- **Status: done** for ADR/source/config/test traceability. The register does not close `AC-LOCAL-01`, `AC-LOCAL-02`, or `AC-P2P-01`; live-model and direct network evidence are still required.
+
+## Next
+Proceed to T0021 after reviewing both incoming dependency edges. Keep runtime inference/P2P gates separate from documentation-contract completion.
