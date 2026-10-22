@@ -14,3 +14,12 @@
 - Corrected the message-block and field-declaration patterns in `tests/test_proto_contract.py` to use normal Python regex escapes.
 - Incoming edges were rechecked: `T0033 -> T0034` is retained as conservative execution ordering; these messages do not consume discovery-message fields directly. `T0030 -> T0034` remains sequencing-only for CI evidence. No edge is removed or retyped in this attempt.
 - Current status: in progress until the quality gate and product build pass on the exact new commit.
+
+
+## Attempt T0034-A002 — failed during static review
+- The first replacement was incomplete: some raw-regex patterns still contained doubled escapes. This was caught by reviewing the exact committed source before treating CI as passing.
+- No acceptance claim is made for commit `ae1daae388aa85064dcf2744abacd348a463faa3`.
+
+## Attempt T0034-A003 — full test-block correction
+- Replaced the entire acceptance-test block with standard Python raw-regex patterns for message boundaries and required field declarations.
+- Status remains in progress pending exact-commit quality gate and product-build results.

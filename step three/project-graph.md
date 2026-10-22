@@ -5336,9 +5336,9 @@
       ],
       "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
       "execution_summary": {
-        "attempt_count": 2,
-        "failed_attempt_count": 1,
-        "last_attempt_id": "T0034-A002",
+        "attempt_count": 3,
+        "failed_attempt_count": 2,
+        "last_attempt_id": "T0034-A003",
         "last_attempt_result": "in_progress",
         "changed_files": [
           "tests/test_proto_contract.py",
@@ -5348,7 +5348,8 @@
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [
-          "Quality gate run 39766263695 on 5b56ce47b1667fbb284f1aca7772d689d5fd3a88 failed: 4 assertions could not match message blocks because T0034 regexes were over-escaped."
+          "Quality gate run 39766263695 on 5b56ce47b1667fbb284f1aca7772d689d5fd3a88 failed: 4 assertions could not match message blocks because T0034 regexes were over-escaped.",
+          "Manual review of commit ae1daae388aa85064dcf2744abacd348a463faa3 found remaining over-escaped field patterns and message-block regex; correction was incomplete before CI validation."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -5414,6 +5415,56 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Verify exact-commit CI. Mark T0034 done only if both workflows pass."
+        },
+        {
+          "attempt_id": "T0034-A002",
+          "started_at": "2026-10-22T16:27:00Z",
+          "ended_at": "2026-10-22T16:28:00Z",
+          "result": "failed",
+          "summary": "First regex edit was incomplete: only some escapes in each raw pattern were normalized. Static source review caught this before claiming acceptance.",
+          "changed_files": [
+            "tests/test_proto_contract.py",
+            "step three/T0034/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": "ae1daae388aa85064dcf2744abacd348a463faa3",
+          "tests": [
+            {
+              "command": "Static review of exact committed test source",
+              "result": "failed",
+              "summary": "Several regexes still contained doubled escapes; do not treat T0034 as complete."
+            }
+          ],
+          "failure_details": "The initial replacement normalized only the first escape sequence in several regexes. Further exact-block replacement is required.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Replace the entire acceptance-test block and run exact-commit CI."
+        },
+        {
+          "attempt_id": "T0034-A003",
+          "started_at": "2026-10-22T16:28:00Z",
+          "ended_at": null,
+          "result": "in_progress",
+          "summary": "Replaced the full T0034 acceptance-test block with standard Python raw regex patterns; pending exact-commit CI.",
+          "changed_files": [
+            "tests/test_proto_contract.py",
+            "step three/T0034/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "command": "Step Three quality gate and White-P product build",
+              "result": "pending",
+              "summary": "Both must pass on the exact correction commit."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Verify exact-commit quality gate and product build before marking T0034 done."
         }
       ]
     },
