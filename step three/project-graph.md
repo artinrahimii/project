@@ -5705,7 +5705,7 @@
         ".github/workflows/product-build.yml",
         "step three/T0036/execution-report.md"
       ],
-      "notes": "T0036 acceptance verified on exact implementation commit 0052b09a36b26a16286dece3b004eb6675f03807 (V 3.0.105). CI confirms compiler-generated C# exists after Windows build, generated Java and Kotlin source files exist after Android build, and Android APK assembly compiles ProtocolMessages.kt importing generated HostAnnouncement and hostAnnouncement DSL. 78 Python tests, graph/evidence validation, C# formatting/build/artifact, Android lint/build/generated-source check/artifact, and .NET lifecycle/contract tests succeeded. Generated files remain build outputs, not manually committed. This proves cross-language code generation/build integration, not P2P networking or a runtime handshake.",
+      "notes": "T0036 acceptance verified on exact implementation commit 0052b09a36b26a16286dece3b004eb6675f03807 (V 3.0.105). CI confirms compiler-generated C# exists after Windows build, generated Java and Kotlin source files exist after Android build, and Android APK assembly compiles ProtocolMessages.kt importing generated HostAnnouncement and hostAnnouncement DSL. 78 Python tests, graph/evidence validation, C# formatting/build/artifact, Android lint/build/generated-source check/artifact, and .NET lifecycle/contract tests succeeded. Generated files remain build outputs, not manually committed. This proves cross-language code generation/build integration, not P2P networking or a runtime handshake. Graph metadata follow-up on V 3.0.106 serialized execution_history as an object instead of an array, causing graph_guard to reject the metadata even though implementation CI on V 3.0.105 was green. The existing T0036-A001 successful record is preserved and its container normalized to an array in V 3.0.108.",
       "execution_summary": {
         "attempt_count": 1,
         "failed_attempt_count": 0,
@@ -5727,7 +5727,9 @@
           "Step Three quality gate run 39843477170 — success: 78 Python tests, syntax, graph structure, and output/evidence validation.",
           "White-P product build run 39843477175 — success: Windows WPF build plus generated-C# source assertion; Android Kotlin lint, debug APK, generated Java/Kotlin source assertions and artifact upload; .NET lifecycle/contract tests."
         ],
-        "tests_failed": [],
+        "tests_failed": [
+          "Graph metadata validation on V 3.0.106 failed (ATTEMPT_COUNT_MISMATCH and DONE_WITHOUT_SUCCESSFUL_ATTEMPT) because execution_history was serialized as an object; corrected by wrapping the preserved successful record in an array. This was a graph-record shape defect, not a product build regression."
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -5737,56 +5739,58 @@
           "review_evidence": []
         }
       },
-      "execution_history": {
-        "attempt_id": "T0036-A001",
-        "started_at": "2026-10-22T19:43:00Z",
-        "ended_at": "2026-10-22T19:52:21Z",
-        "result": "succeeded",
-        "summary": "Exact-commit quality gate and full product build completed successfully. 78 Python tests and graph/evidence validation passed; Windows C# generated-source check passed; Android generated Java/Kotlin source checks, Kotlin DSL consumption in ProtocolMessages.kt, lint, APK build and artifact upload all passed; .NET lifecycle/contract tests passed.",
-        "changed_files": [
-          "src/Client.Android/app/build.gradle.kts",
-          "src/Client.Android/app/src/main/java/com/whitep/client/protocol/ProtocolMessages.kt",
-          "src/Shared.Contracts/README.md",
-          "tests/test_proto_contract.py",
-          ".github/workflows/product-build.yml",
-          "step three/T0036/execution-report.md",
-          "step three/project-graph.md"
-        ],
-        "commit_sha": "0052b09a36b26a16286dece3b004eb6675f03807",
-        "tests": [
-          {
-            "command": "Step Three quality gate run 39843477170",
-            "result": "passed",
-            "summary": "78 Python tests, Python syntax compilation, graph structure, and repository output/evidence validation passed on exact commit 0052b09a36b26a16286dece3b004eb6675f03807.",
-            "url": "https://github.com/artinrahimii/project/actions/runs/39843477170"
-          },
-          {
-            "command": "White-P product build run 39843477175 — Build Windows WPF host",
-            "result": "passed",
-            "summary": "C# formatting passed; `dotnet build WhiteP.sln --configuration Release` passed; explicit PowerShell verification found a compiler-generated Protobuf C# source under the Windows host obj output; artifact upload passed.",
-            "url": "https://github.com/artinrahimii/project/actions/runs/39843477175"
-          },
-          {
-            "command": "White-P product build run 39843477175 — Build Android client APK",
-            "result": "passed",
-            "summary": "Kotlin lint passed; debug APK assembly compiled ProtocolMessages.kt against the generated HostAnnouncement Kotlin DSL; the explicit Java/Kotlin generated-source presence check passed; APK artifact upload passed.",
-            "url": "https://github.com/artinrahimii/project/actions/runs/39843477175"
-          },
-          {
-            "command": "White-P product build run 39843477175 — Host lifecycle unit and integration tests",
-            "result": "passed",
-            "summary": "The .NET lifecycle and contract test harness passed on the exact implementation commit.",
-            "url": "https://github.com/artinrahimii/project/actions/runs/39843477175"
-          }
-        ],
-        "failure_details": null,
-        "blocked_reason": null,
-        "reopened_reason": null,
-        "contract_changes": [
-          "Android Protobuf build now requests Kotlin DSL output in addition to Java Lite from the existing canonical schema."
-        ],
-        "follow_up": "T0036 is complete for build-time generation and compilation of C# plus Android Java/Kotlin Protobuf bindings from the canonical .proto schema. Cross-language serialization tests and live P2P transport remain separate tasks."
-      }
+      "execution_history": [
+        {
+          "attempt_id": "T0036-A001",
+          "started_at": "2026-10-22T19:43:00Z",
+          "ended_at": "2026-10-22T19:52:21Z",
+          "result": "succeeded",
+          "summary": "Exact-commit quality gate and full product build completed successfully. 78 Python tests and graph/evidence validation passed; Windows C# generated-source check passed; Android generated Java/Kotlin source checks, Kotlin DSL consumption in ProtocolMessages.kt, lint, APK build and artifact upload all passed; .NET lifecycle/contract tests passed.",
+          "changed_files": [
+            "src/Client.Android/app/build.gradle.kts",
+            "src/Client.Android/app/src/main/java/com/whitep/client/protocol/ProtocolMessages.kt",
+            "src/Shared.Contracts/README.md",
+            "tests/test_proto_contract.py",
+            ".github/workflows/product-build.yml",
+            "step three/T0036/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": "0052b09a36b26a16286dece3b004eb6675f03807",
+          "tests": [
+            {
+              "command": "Step Three quality gate run 39843477170",
+              "result": "passed",
+              "summary": "78 Python tests, Python syntax compilation, graph structure, and repository output/evidence validation passed on exact commit 0052b09a36b26a16286dece3b004eb6675f03807.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/39843477170"
+            },
+            {
+              "command": "White-P product build run 39843477175 — Build Windows WPF host",
+              "result": "passed",
+              "summary": "C# formatting passed; `dotnet build WhiteP.sln --configuration Release` passed; explicit PowerShell verification found a compiler-generated Protobuf C# source under the Windows host obj output; artifact upload passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/39843477175"
+            },
+            {
+              "command": "White-P product build run 39843477175 — Build Android client APK",
+              "result": "passed",
+              "summary": "Kotlin lint passed; debug APK assembly compiled ProtocolMessages.kt against the generated HostAnnouncement Kotlin DSL; the explicit Java/Kotlin generated-source presence check passed; APK artifact upload passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/39843477175"
+            },
+            {
+              "command": "White-P product build run 39843477175 — Host lifecycle unit and integration tests",
+              "result": "passed",
+              "summary": "The .NET lifecycle and contract test harness passed on the exact implementation commit.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/39843477175"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "Android Protobuf build now requests Kotlin DSL output in addition to Java Lite from the existing canonical schema."
+          ],
+          "follow_up": "T0036 is complete for build-time generation and compilation of C# plus Android Java/Kotlin Protobuf bindings from the canonical .proto schema. Cross-language serialization tests and live P2P transport remain separate tasks."
+        }
+      ]
     },
     {
       "id": "T0037",
@@ -5837,11 +5841,11 @@
         ".github/workflows/product-build.yml",
         "step three/T0037/execution-report.md"
       ],
-      "notes": "T0037-A001 introduces executable C# and Android Kotlin round-trip suites for every message currently declared in the canonical schema. Exact-commit CI is pending. These tests verify encode/decode integrity within each language, not end-to-end cross-language transport or P2P.",
+      "notes": "T0037-A001 introduces executable C# and Android Kotlin round-trip suites for every message currently declared in the canonical schema. Exact-commit CI is pending. These tests verify encode/decode integrity within each language, not end-to-end cross-language transport or P2P. A001 exact-commit verification failed and is preserved in execution_history; no round-trip acceptance is claimed until a later attempt passes both languages on the same commit.",
       "execution_summary": {
-        "attempt_count": 1,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "T0037-A001",
+        "attempt_count": 2,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "T0037-A002",
         "last_attempt_result": "in_progress",
         "changed_files": [
           "tests/HostLifecycle.Tests/Program.cs",
@@ -5854,9 +5858,14 @@
           "step three/T0037/execution-report.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
+        "related_commits": [
+          "04b1fcb9d0656c0995f92ec5b6cb613b81979047"
+        ],
         "tests_passed": [],
-        "tests_failed": [],
+        "tests_failed": [
+          "A001 quality gate run 39844383014: 79 Python tests with one regex-based coverage test failure.",
+          "A001 product build run 39844383044: C# CS0104 ambiguity for HostStatus; Android ktlint failed and skipped JUnit."
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -5870,9 +5879,9 @@
         {
           "attempt_id": "T0037-A001",
           "started_at": "2026-10-22T19:55:00Z",
-          "ended_at": null,
-          "result": "in_progress",
-          "summary": "Implemented C# and Kotlin round-trip suites for all 11 currently declared message types and wired them into the existing CI workflow. Exact-commit execution pending.",
+          "ended_at": "2026-10-22T19:57:03Z",
+          "result": "failed",
+          "summary": "Initial exact-commit validation failed: source-coverage regex double-escaped the schema matcher; C# harness compilation found ambiguous HostStatus between the host DTO and the generated Protobuf message; Android ktlint rejected multiline DSL builder initializers before APK or unit tests ran.",
           "changed_files": [
             "tests/HostLifecycle.Tests/Program.cs",
             "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
@@ -5884,19 +5893,66 @@
             "step three/T0037/execution-report.md",
             "step three/project-graph.md"
           ],
+          "commit_sha": "04b1fcb9d0656c0995f92ec5b6cb613b81979047",
+          "tests": [
+            {
+              "command": "python -m unittest discover -s tests -v",
+              "result": "failed",
+              "summary": "79 tests ran; 78 passed and the new round-trip coverage test failed because the regex was over-escaped and found zero message names.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/39844383014"
+            },
+            {
+              "command": "dotnet run --project tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj --configuration Release",
+              "result": "failed",
+              "summary": "CS0104: HostStatus is ambiguous between WhiteP.Shared.Contracts.V1.HostStatus and WhiteP.Host.Windows.HostStatus.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/39844383044"
+            },
+            {
+              "command": "gradle --no-daemon ktlintCheck",
+              "result": "failed",
+              "summary": "KtLint rejected multiline builder-lambda initializers in ProtoRoundTripTest.kt; APK and JUnit steps were skipped.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/39844383044"
+            },
+            {
+              "command": "gradle --no-daemon testDebugUnitTest",
+              "result": "skipped",
+              "summary": "The preceding ktlint check failed, so Android round-trip JUnit tests did not execute in A001.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/39844383044"
+            }
+          ],
+          "failure_details": "Quality gate 39844383014: 79 Python tests with one failure in test_round_trip_suites_cover_every_primary_message_in_both_languages; the regex r\"message\\\\s+(\\\\w+)\\\\s*\\\\{\" matched zero declarations. Product run 39844383044: .NET compile error CS0104 at Program.cs lines 125 and 133 for ambiguous HostStatus; Android ktlintTestSourceSetCheck failed multiline expression wrapping, so APK assembly and JUnit tests were skipped.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Fix the regex, disambiguate generated HostStatus, and reformat Kotlin multiline builder initializers; rerun complete CI."
+        },
+        {
+          "attempt_id": "T0037-A002",
+          "started_at": "2026-10-22T19:58:00Z",
+          "ended_at": null,
+          "result": "in_progress",
+          "summary": "Repairing A001's regex, C# name ambiguity, and Kotlin formatting failures; correcting the T0036 execution-history JSON container found by graph_guard. The failed attempt remains recorded.",
+          "changed_files": [
+            "tests/test_proto_contract.py",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "src/Client.Android/app/src/test/java/com/whitep/client/protocol/ProtoRoundTripTest.kt",
+            "step three/T0037/execution-report.md",
+            "step three/T0036/execution-report.md",
+            "step three/project-graph.md"
+          ],
           "commit_sha": null,
           "tests": [
             {
-              "command": "python -m unittest discover -s tests -v; dotnet run --project tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj --configuration Release; gradle --no-daemon testDebugUnitTest",
+              "command": "Exact-commit quality gate and product build including both round-trip suites",
               "result": "pending",
-              "summary": "Exact-commit checks must prove schema coverage and execute both C# and Kotlin binary round-trip suites."
+              "summary": "Require schema coverage, graph validation, C# round-trips for 11 messages, Kotlin JUnit round-trips for the same 11 messages, Windows build, Android lint/APK and generated-source checks."
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Review the quality gate, .NET test harness and Android unit test workflow. Fix actual compilation/runtime failures before marking done."
+          "follow_up": "Check the exact-commit Python, .NET, Kotlin JUnit, and product build results; do not mark T0037 done until all required checks pass."
         }
       ]
     },

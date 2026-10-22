@@ -158,7 +158,7 @@ class ProtoContractTests(unittest.TestCase):
         self.assertEqual((ANDROID_APP_PATH.parent / "../../../protocol").resolve(), SCHEMA_PATH.parent.parent.parent.resolve())
 
     def test_round_trip_suites_cover_every_primary_message_in_both_languages(self):
-        message_names = re.findall(r"message\\s+(\\w+)\\s*\\{", SCHEMA)
+        message_names = re.findall(r"message\s+(\w+)\s*\{", SCHEMA)
         self.assertEqual(
             11,
             len(message_names),

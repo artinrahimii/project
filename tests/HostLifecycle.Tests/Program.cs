@@ -2,6 +2,7 @@ using System.Net;
 using System.Text;
 using Google.Protobuf;
 using WhiteP.Shared.Contracts.V1;
+using ProtoHostStatus = WhiteP.Shared.Contracts.V1.HostStatus;
 using WhiteP.Host.Windows;
 using WhiteP.Shared.Contracts;
 static void Assert(bool ok,string message){if(!ok)throw new Exception(message);}
@@ -122,7 +123,7 @@ AssertProtoRoundTrip("UnsupportedModel", protoUnsupportedModel, bytes => Unsuppo
 var protoHostStatusRequest = new HostStatusRequest { EphemeralHostId = "host-ephemeral-01" };
 AssertProtoRoundTrip("HostStatusRequest", protoHostStatusRequest, bytes => HostStatusRequest.Parser.ParseFrom(bytes));
 
-var protoHostStatus = new HostStatus
+var protoHostStatus = new ProtoHostStatus
 {
     EphemeralHostId = "host-ephemeral-01",
     State = (HostRuntimeState)2,
@@ -130,7 +131,7 @@ var protoHostStatus = new HostStatus
     ObservedAtUnixMs = 1770000000222
 };
 protoHostStatus.Models.Add(protoModelCapability);
-AssertProtoRoundTrip("HostStatus", protoHostStatus, bytes => HostStatus.Parser.ParseFrom(bytes));
+AssertProtoRoundTrip("HostStatus", protoHostStatus, bytes => ProtoHostStatus.Parser.ParseFrom(bytes));
 
 var protoProtocolError = new ProtocolError
 {

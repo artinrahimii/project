@@ -16,3 +16,17 @@
 - `dotnet run --project tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj --configuration Release`: pending exact-commit CI.
 - `gradle --no-daemon testDebugUnitTest`: pending exact-commit CI.
 - `python -m unittest discover -s tests -v`: pending exact-commit CI.
+
+
+## Attempt T0037-A001 — failed verification retained
+- Tested commit: `04b1fcb9d0656c0995f92ec5b6cb613b81979047` (`V 3.0.107`).
+- [Quality gate run 39844383014](https://github.com/artinrahimii/project/actions/runs/39844383014): **failure**. 79 Python tests ran with one failure because the schema-name regex was double-escaped and matched zero declarations.
+- [Product build run 39844383044](https://github.com/artinrahimii/project/actions/runs/39844383044): C# failed with CS0104 because generated Protobuf `HostStatus` conflicted with `WhiteP.Host.Windows.HostStatus`; Android ktlint rejected multiline builder-lambda initializers, so APK and JUnit steps were skipped.
+- No round-trip acceptance is claimed for A001.
+
+## Attempt T0037-A002 — corrective implementation in progress
+- Fixed schema enumeration to use the correct single regex escapes.
+- Added a `ProtoHostStatus` alias to disambiguate the generated message type from the host state DTO.
+- Reformatted all 11 Kotlin DSL builder initializers so multiline expressions begin on the required next line.
+- Normalized the preserved successful T0036-A001 history record to a one-element array, recalculated count fields and retained the V 3.0.106 graph-guard failure in the T0036 report. No past attempt was removed.
+- Exact-commit Python, graph guard, .NET round-trip, Android lint/APK and JUnit results remain pending.

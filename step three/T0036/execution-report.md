@@ -29,3 +29,8 @@
   - .NET host lifecycle/contract harness passed.
 - The Kotlin code generator and `protobuf-kotlin-lite:4.36.2` runtime are configured alongside Java Lite, all from the existing canonical `protocol/whitep/v1/messages.proto`. Generated code remains in build outputs, not hand-edited or checked in.
 - Result: T0036 is complete for build-time C# and Kotlin binding generation and compilation. This does not claim live P2P transport, discovery, or end-to-end cross-language network tests; those remain separate work.
+
+
+## Graph metadata correction (follow-up V 3.0.108)
+- V 3.0.106 quality run [39844000042](https://github.com/artinrahimii/project/actions/runs/39844000042) failed graph guard because T0036 `execution_history` was serialized as a single object, so the validator saw zero successful entries.
+- The original successful T0036-A001 record from `0052b09a36b26a16286dece3b004eb6675f03807` is preserved and wrapped as an array. No prior execution evidence was discarded.

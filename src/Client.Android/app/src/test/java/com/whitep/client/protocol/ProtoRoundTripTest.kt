@@ -46,7 +46,8 @@ class ProtoRoundTripTest {
 
     @Test
     fun roundTripsEveryPrimaryProtocolMessage() {
-        val model = modelCapability {
+        val model =
+            modelCapability {
             modelId = "local/model-1"
             displayName = "Fixture model"
             maxContextTokens = 8192L
@@ -55,7 +56,8 @@ class ProtoRoundTripTest {
         }
         assertRoundTrip("ModelCapability", model, ModelCapability.parser())
 
-        val capabilities = hostCapabilities {
+        val capabilities =
+            hostCapabilities {
             ephemeralHostId = "host-ephemeral-01"
             protocolVersion = "1.0.0"
             models += model
@@ -65,7 +67,8 @@ class ProtoRoundTripTest {
         }
         assertRoundTrip("HostCapabilities", capabilities, HostCapabilities.parser())
 
-        val announcement = hostAnnouncement {
+        val announcement =
+            hostAnnouncement {
             ephemeralHostId = "host-ephemeral-01"
             protocolVersion = "1.0.0"
             this.capabilities = capabilities
@@ -73,7 +76,8 @@ class ProtoRoundTripTest {
         }
         assertRoundTrip("HostAnnouncement", announcement, HostAnnouncement.parser())
 
-        val request = inferenceRequest {
+        val request =
+            inferenceRequest {
             requestId = "request-001"
             attemptId = "attempt-001"
             modelId = "local/model-1"
@@ -84,7 +88,8 @@ class ProtoRoundTripTest {
         }
         assertRoundTrip("InferenceRequest", request, InferenceRequest.parser())
 
-        val response = inferenceResponse {
+        val response =
+            inferenceResponse {
             requestId = "request-001"
             attemptId = "attempt-001"
             ephemeralHostId = "host-ephemeral-01"
@@ -96,14 +101,16 @@ class ProtoRoundTripTest {
         }
         assertRoundTrip("InferenceResponse", response, InferenceResponse.parser())
 
-        val cancel = cancelRequest {
+        val cancel =
+            cancelRequest {
             requestId = "request-001"
             attemptId = "attempt-001"
             reason = "caller cancelled"
         }
         assertRoundTrip("CancelRequest", cancel, CancelRequest.parser())
 
-        val busy = hostBusy {
+        val busy =
+            hostBusy {
             requestId = "request-001"
             ephemeralHostId = "host-ephemeral-01"
             retryAfterUnixMs = 1770000001500L
@@ -111,19 +118,22 @@ class ProtoRoundTripTest {
         }
         assertRoundTrip("HostBusy", busy, HostBusy.parser())
 
-        val unsupported = unsupportedModel {
+        val unsupported =
+            unsupportedModel {
             requestId = "request-001"
             modelId = "missing/model"
             message = "Model is not installed"
         }
         assertRoundTrip("UnsupportedModel", unsupported, UnsupportedModel.parser())
 
-        val statusRequest = hostStatusRequest {
+        val statusRequest =
+            hostStatusRequest {
             ephemeralHostId = "host-ephemeral-01"
         }
         assertRoundTrip("HostStatusRequest", statusRequest, HostStatusRequest.parser())
 
-        val status = hostStatus {
+        val status =
+            hostStatus {
             ephemeralHostId = "host-ephemeral-01"
             state = HostRuntimeState.HOST_RUNTIME_STATE_READY
             activeRequests = 1
@@ -132,7 +142,8 @@ class ProtoRoundTripTest {
         }
         assertRoundTrip("HostStatus", status, HostStatus.parser())
 
-        val error = protocolError {
+        val error =
+            protocolError {
             code = ProtocolErrorCode.PROTOCOL_ERROR_CODE_UNSUPPORTED_VERSION
             message = "Unsupported protocol version"
             requestId = "request-001"
