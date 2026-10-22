@@ -19,3 +19,11 @@ Inspect the exact-commit quality gate and product build; only then mark T0027 do
 - Exact-commit quality gate run [39743623233](https://github.com/artinrahimii/project/actions/runs/39743623233) ran 72 tests and failed one pre-existing README contract assertion: `test_readme_contract.py` requires the exact limitation phrase `جایگزین build یا آزمون runtime محصول نیست`.
 - The README already communicated the limitation in different words. Restored the explicit existing phrase rather than weakening or deleting the regression test; the new command documentation remains in place.
 - T0027 remains `in_progress` until a new exact-commit quality gate and product build pass.
+
+
+## Attempt T0027-A003 — exact-commit CI verification (succeeded)
+- Verified commit: `7169cb200f3b28d12184247e2272388825690c8b` (`V 3.0.84`).
+- Step Three quality gate [run 39743813514](https://github.com/artinrahimii/project/actions/runs/39743813514) completed successfully. The graph/Python quality job passed.
+- White-P product build [run 39743813489](https://github.com/artinrahimii/project/actions/runs/39743813489) completed successfully. All three jobs passed: Windows WPF Release build, Android Kotlin lint + debug APK build, and host lifecycle unit/integration tests.
+- This confirms T0027's README-command contract and the CI/build entrypoints on the exact revision; it does **not** prove runtime inference with a real model, P2P transfer, hardware detection, or release signing.
+- Status: `done`, with both prior attempts retained in the graph history. This attempt only records the successful revalidation; it does not claim the README or workflow was originally written in this attempt.
