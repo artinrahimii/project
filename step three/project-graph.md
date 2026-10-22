@@ -5336,20 +5336,20 @@
       ],
       "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
       "execution_summary": {
-        "attempt_count": 1,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "T0034-A001",
+        "attempt_count": 2,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "T0034-A002",
         "last_attempt_result": "in_progress",
         "changed_files": [
-          "protocol/whitep/v1/messages.proto",
           "tests/test_proto_contract.py",
-          "step three/T0033/execution-report.md",
           "step three/T0034/execution-report.md",
           "step three/project-graph.md"
         ],
         "related_commits": [],
         "tests_passed": [],
-        "tests_failed": [],
+        "tests_failed": [
+          "Quality gate run 39766263695 on 5b56ce47b1667fbb284f1aca7772d689d5fd3a88 failed: 4 assertions could not match message blocks because T0034 regexes were over-escaped."
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -5363,8 +5363,8 @@
         {
           "attempt_id": "T0034-A001",
           "started_at": "2026-10-22T10:50:00Z",
-          "ended_at": null,
-          "result": "in_progress",
+          "ended_at": "2026-10-22T10:51:57Z",
+          "result": "failed",
           "summary": "Reviewed incoming dependencies; added HostBusy and UnsupportedModel to the canonical schema and tests covering CancelRequest, HostBusy, UnsupportedModel, and ProtocolError. Waiting for exact-commit CI.",
           "changed_files": [
             "protocol/whitep/v1/messages.proto",
@@ -5376,18 +5376,44 @@
           "commit_sha": null,
           "tests": [
             {
-              "command": "GitHub Actions Step Three quality gate and White-P product build",
-              "result": "pending",
-              "summary": "Must pass on the exact implementation commit."
+              "command": "Step Three quality gate run 39766263695",
+              "result": "failed",
+              "summary": "Four T0034 subtests failed because regex patterns were over-escaped.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/39766263695"
             }
           ],
-          "failure_details": null,
+          "failure_details": "Quality gate run 39766263695 failed on commit 5b56ce47b1667fbb284f1aca7772d689d5fd3a88. All four subtests failed to locate message blocks due to over-escaped raw regex patterns.",
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [
             "Added HostBusy and UnsupportedModel wire messages; preserved existing CancelRequest and ProtocolError field numbering."
           ],
           "follow_up": "Check exact-commit quality gate and product build. Mark done only if both pass."
+        },
+        {
+          "attempt_id": "T0034-A002",
+          "started_at": "2026-10-22T16:27:00Z",
+          "ended_at": null,
+          "result": "in_progress",
+          "summary": "Corrected over-escaped regex patterns in the T0034 acceptance test. Awaiting exact-commit quality gate and product build.",
+          "changed_files": [
+            "tests/test_proto_contract.py",
+            "step three/T0034/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "command": "Step Three quality gate and White-P product build",
+              "result": "pending",
+              "summary": "Both must pass on the exact correction commit."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Verify exact-commit CI. Mark T0034 done only if both workflows pass."
         }
       ]
     },

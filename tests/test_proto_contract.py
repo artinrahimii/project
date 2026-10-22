@@ -87,30 +87,30 @@ class ProtoContractTests(unittest.TestCase):
     def test_cancellation_busy_unsupported_model_and_protocol_error_messages_have_required_fields(self):
         expected_fields = {
             "CancelRequest": (
-                r"string\\s+request_id\\s*=\\s*1\\s*;",
-                r"string\\s+attempt_id\\s*=\\s*2\\s*;",
-                r"string\\s+reason\\s*=\\s*3\\s*;",
+                r"string\s+request_id\\s*=\\s*1\\s*;",
+                r"string\s+attempt_id\\s*=\\s*2\\s*;",
+                r"string\s+reason\\s*=\\s*3\\s*;",
             ),
             "HostBusy": (
-                r"string\\s+request_id\\s*=\\s*1\\s*;",
-                r"string\\s+ephemeral_host_id\\s*=\\s*2\\s*;",
-                r"uint64\\s+retry_after_unix_ms\\s*=\\s*3\\s*;",
-                r"string\\s+message\\s*=\\s*4\\s*;",
+                r"string\s+request_id\\s*=\\s*1\\s*;",
+                r"string\s+ephemeral_host_id\\s*=\\s*2\\s*;",
+                r"uint64\s+retry_after_unix_ms\\s*=\\s*3\\s*;",
+                r"string\s+message\\s*=\\s*4\\s*;",
             ),
             "UnsupportedModel": (
-                r"string\\s+request_id\\s*=\\s*1\\s*;",
-                r"string\\s+model_id\\s*=\\s*2\\s*;",
-                r"string\\s+message\\s*=\\s*3\\s*;",
+                r"string\s+request_id\\s*=\\s*1\\s*;",
+                r"string\s+model_id\\s*=\\s*2\\s*;",
+                r"string\s+message\\s*=\\s*3\\s*;",
             ),
             "ProtocolError": (
-                r"ProtocolErrorCode\\s+code\\s*=\\s*1\\s*;",
-                r"string\\s+message\\s*=\\s*2\\s*;",
-                r"string\\s+request_id\\s*=\\s*3\\s*;",
-                r"bool\\s+retryable\\s*=\\s*4\\s*;",
+                r"ProtocolErrorCode\s+code\\s*=\\s*1\\s*;",
+                r"string\s+message\\s*=\\s*2\\s*;",
+                r"string\s+request_id\\s*=\\s*3\\s*;",
+                r"bool\s+retryable\\s*=\\s*4\\s*;",
             ),
         }
         for message_name, declarations in expected_fields.items():
-            match = re.search(rf"message\\s+{message_name}\\s*\\{{([^{{}}]*)\\}}", SCHEMA, re.S)
+            match = re.search(rf"message\\s+{message_name}\s*\{{([^{{}}]*)\\}}", SCHEMA, re.S)
             with self.subTest(message=message_name):
                 self.assertIsNotNone(match)
                 for declaration in declarations:
