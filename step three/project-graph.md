@@ -5550,8 +5550,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0034 و T0030 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "تکمیل‌شده",
       "actual_output_paths": [
         "src/Shared.Contracts/ProtocolVersionPolicy.cs",
         "src/Shared.Contracts/README.md",
@@ -5574,12 +5574,12 @@
         "src/Shared.Contracts/README.md",
         "step three/T0035/execution-report.md"
       ],
-      "notes": "Attempt T0035-A001 implements a strict exact-match policy for protocol 1.0.0 and runtime/source-level tests. CI is pending. The policy is now executable in the Shared.Contracts library and tested by the .NET harness; transport integration remains unimplemented and is not claimed.",
+      "notes": "T0035 acceptance verified on exact commit 823334d28739e3967b71788aae39f54b89a76b01 (V 3.0.103). The executable shared-library policy accepts only canonical exact 1.0.0; missing/malformed versions map to PROTOCOL_ERROR_CODE_INVALID_MESSAGE and valid but different versions map to PROTOCOL_ERROR_CODE_UNSUPPORTED_VERSION. The .NET harness tested the decision branches; Python contract checks, graph validation, Windows build and Android debug APK build all passed. The policy has not yet been wired into a live peer handshake, so no runtime P2P rejection claim is made.",
       "execution_summary": {
         "attempt_count": 1,
         "failed_attempt_count": 0,
         "last_attempt_id": "T0035-A001",
-        "last_attempt_result": "in_progress",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Shared.Contracts/ProtocolVersionPolicy.cs",
           "src/Shared.Contracts/README.md",
@@ -5589,8 +5589,13 @@
           "step three/T0035/execution-report.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
+        "related_commits": [
+          "823334d28739e3967b71788aae39f54b89a76b01"
+        ],
+        "tests_passed": [
+          "Step Three quality gate run 39842067937 — success on exact commit 823334d28739e3967b71788aae39f54b89a76b01; 77 Python tests, syntax, graph structure, output/evidence validation.",
+          "White-P product build run 39842067962 — success on exact commit 823334d28739e3967b71788aae39f54b89a76b01; Windows WPF build/artifact, Android lint/debug APK/artifact, and .NET lifecycle/policy assertions."
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -5605,9 +5610,9 @@
         {
           "attempt_id": "T0035-A001",
           "started_at": "2026-10-22T19:39:00Z",
-          "ended_at": null,
-          "result": "in_progress",
-          "summary": "Implemented an exact-match version policy in the shared .NET contract library; added runtime assertions and a source contract check. Exact-commit CI is pending.",
+          "ended_at": "2026-10-22T19:41:58Z",
+          "result": "succeeded",
+          "summary": "The exact-commit quality gate and product build both passed. The .NET harness executed acceptance/rejection assertions for current, missing, malformed, and incompatible protocol versions; Windows and Android builds also succeeded.",
           "changed_files": [
             "src/Shared.Contracts/ProtocolVersionPolicy.cs",
             "src/Shared.Contracts/README.md",
@@ -5617,12 +5622,31 @@
             "step three/T0035/execution-report.md",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "823334d28739e3967b71788aae39f54b89a76b01",
           "tests": [
             {
-              "command": "Exact-commit Step Three quality gate and White-P product build",
-              "result": "pending",
-              "summary": "Require Python tests, syntax, graph and evidence checks, Windows/Android builds, and the .NET harness with live ProtocolVersionPolicy assertions."
+              "command": "Step Three quality gate run 39842067937",
+              "result": "passed",
+              "summary": "77 Python tests, Python syntax compilation, graph structure, and repository output/evidence validation passed on exact commit 823334d28739e3967b71788aae39f54b89a76b01.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/39842067937"
+            },
+            {
+              "command": "dotnet run --project tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj --configuration Release",
+              "result": "passed",
+              "summary": "The .NET harness passed, including ProtocolVersionPolicy acceptance/rejection assertions and existing host lifecycle/backend contract checks.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/39842067962"
+            },
+            {
+              "command": "White-P product build run 39842067962 — Windows WPF",
+              "result": "passed",
+              "summary": "C# formatting, Windows host build, and required artifact upload passed on the exact commit.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/39842067962"
+            },
+            {
+              "command": "White-P product build run 39842067962 — Android",
+              "result": "passed",
+              "summary": "Kotlin lint, Android debug APK build, and required artifact upload passed on the exact commit.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/39842067962"
             }
           ],
           "failure_details": null,
@@ -5631,7 +5655,7 @@
           "contract_changes": [
             "Introduce explicit protocol-version policy and map rejection categories to existing Protobuf error enum names."
           ],
-          "follow_up": "Review exact-commit CI; if tests fail, fix the actual cause. Only mark T0035 done after both quality gate and product build pass."
+          "follow_up": "T0035 is complete for the executable contract-level version policy. The future P2P handshake must call this helper before processing peer requests; live peer rejection is not yet implemented or claimed."
         }
       ]
     },

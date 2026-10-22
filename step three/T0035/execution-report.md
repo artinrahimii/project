@@ -10,3 +10,11 @@
 
 ## Verification
 - Not yet complete at commit creation. The task remains `in_progress` until the exact-commit quality gate and product-build/lifecycle test workflow finish successfully.
+
+
+## Attempt T0035-A001 — exact-commit verification and completion
+- Tested commit: `823334d28739e3967b71788aae39f54b89a76b01` (`V 3.0.103`).
+- Step Three quality gate [run 39842067937](https://github.com/artinrahimii/project/actions/runs/39842067937): **success**. All 77 Python tests, Python syntax compilation, graph structure, and recorded-output/evidence validation passed.
+- White-P product build [run 39842067962](https://github.com/artinrahimii/project/actions/runs/39842067962): **success**. The .NET lifecycle/contract harness (including the new version-policy assertions), Windows WPF format/build/artifact, and Android lint/debug APK/artifact all passed.
+- Version decision behavior is tested: only exact canonical `1.0.0` is accepted; missing/malformed strings are rejected as invalid messages; valid numeric but different versions such as `1.0.1`, `1.1.0`, and `2.0.0` are rejected as unsupported.
+- Result: T0035 is complete for the executable contract policy. It is not a claim that a running P2P transport already invokes the policy; live peer handshake integration remains outstanding.
