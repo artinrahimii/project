@@ -15,3 +15,13 @@
 
 ## Next
 Run the exact-commit quality gate. Mark T0020 done only if the new tests and repository-root graph guard pass. The decision register remains honest about runtime gates: `AC-LOCAL-01`, `AC-LOCAL-02`, and `AC-P2P-01` are not satisfied by documentation/source-contract tests.
+
+
+## Attempt T0020-A002 — relative-link assertion mismatch
+- Quality run [39736436189](https://github.com/artinrahimii/project/actions/runs/39736436189) on commit [3241d1abd8c3498d54686c9670de6f6658b5f750](https://github.com/artinrahimii/project/commit/3241d1abd8c3498d54686c9670de6f6658b5f750) ran 59 tests; 56 passed and three subtests failed because ADR links in `docs/decisions/README.md` are relative filenames (correct for their directory), while the test required the full root-relative path string to appear in that Markdown file.
+- The test already checked that every full root-relative file path actually exists; that check passed. Only the assertion that the full path text must be in the register was incorrect.
+- Corrected the test to verify the filename appears in the register while retaining the independent full-path existence check. This is a traceability-test fix, not a source-code regression.
+
+## Attempt T0020-A003 — corrected relative-link validation
+- Applied the assertion fix and retained all source/configuration/test existence checks.
+- Status remains **in progress** until the next exact-commit quality workflow passes.

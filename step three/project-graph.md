@@ -3320,24 +3320,24 @@
         "src/Host.Windows/LlamaCppServerBackend.cs",
         "tests/HostLifecycle.Tests/Program.cs"
       ],
-      "notes": "Reviewed incoming edges before execution. T0019 -> T0020 is a validated contract_or_interface_dependency because the direct-P2P decision ADR-0002 is an explicit input to the decision register; T0010 -> T0020 is validated sequencing_only because no unique build artifact is consumed. Technology decision traceability files and a source-contract test are being added; the task remains in_progress pending exact-commit CI.",
+      "notes": "Decision register and ADR-0003 have been added with links to actual sources/configuration/tests, but the first exact-commit quality run found an overly strict textual assertion on relative ADR links. The fix is recorded as T0020-A003 and awaits CI. Incoming edges remain validated; no task completion is claimed yet.",
       "execution_summary": {
-        "attempt_count": 1,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "T0020-A001",
+        "attempt_count": 3,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "T0020-A003",
         "last_attempt_result": "partial",
         "changed_files": [
-          "README.md",
-          "docs/decisions/README.md",
-          "docs/decisions/ADR-0003-local-inference-backend.md",
           "tests/test_decision_traceability.py",
           "step three/T0020/execution-report.md",
-          "step three/T0019/execution-report.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
+        "related_commits": [
+          "3241d1abd8c3498d54686c9670de6f6658b5f750"
+        ],
         "tests_passed": [],
-        "tests_failed": [],
+        "tests_failed": [
+          "Quality run 39736436189 on V 3.0.63 failed in three subtests because the decision register uses filenames relative to docs/decisions/, while the test required a root-relative path string in the register itself; file existence checks were separate and passed."
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -3372,6 +3372,46 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Inspect exact-commit quality CI. Only mark T0020 done after its traceability tests and graph guard pass. Keep runtime model and P2P gates separate."
+        },
+        {
+          "attempt_id": "T0020-A002",
+          "started_at": "2026-10-22T06:50:09Z",
+          "ended_at": "2026-10-22T06:50:11Z",
+          "result": "failed",
+          "summary": "The first traceability test run failed 3 subtests because it expected root-relative strings for ADR files in a register stored within docs/decisions/. The links correctly use filenames relative to that directory. The test's separate Path.is_file() checks succeeded; only the textual link assertion was over-specific.",
+          "changed_files": [
+            "tests/test_decision_traceability.py"
+          ],
+          "commit_sha": "3241d1abd8c3498d54686c9670de6f6658b5f750",
+          "tests": [
+            "Quality run 39736436189: 56 tests passed; 3 subtests failed at `self.assertIn(relative_path, REGISTER)` for ADR-0001, ADR-0002, and ADR-0003 because the register links only their filenames."
+          ],
+          "failure_details": "The test should still verify the root-relative path exists, but compare only the filename against a relative markdown link stored in docs/decisions/README.md.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Change the register membership assertion to Path(relative_path).name while retaining full root-relative file existence validation, then rerun CI."
+        },
+        {
+          "attempt_id": "T0020-A003",
+          "started_at": "2026-10-22T06:50:44.302Z",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Changed the traceability assertion to compare each registered link's filename while continuing to check the full root-relative path exists in the repository. Exact-commit quality CI is pending.",
+          "changed_files": [
+            "tests/test_decision_traceability.py",
+            "step three/T0020/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            "Pending exact-commit Python test suite, syntax compilation, graph validation, and repository-root evidence check."
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect V 3.0.64 quality results; mark T0020 done only after the new traceability tests and graph validation pass."
         }
       ]
     },

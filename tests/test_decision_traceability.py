@@ -32,7 +32,7 @@ class DecisionTraceabilityTests(unittest.TestCase):
         for relative_path in paths:
             with self.subTest(path=relative_path):
                 self.assertTrue((ROOT / relative_path).is_file(), relative_path)
-                self.assertIn(relative_path, REGISTER)
+                self.assertIn(Path(relative_path).name, REGISTER)
         self.assertIn("docs/decisions/README.md", README)
 
     def test_platform_build_decision_links_to_real_platform_configuration(self):
