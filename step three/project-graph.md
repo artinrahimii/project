@@ -5336,20 +5336,28 @@
       ],
       "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
       "execution_summary": {
-        "attempt_count": 3,
+        "attempt_count": 5,
         "failed_attempt_count": 2,
-        "last_attempt_id": "T0034-A003",
+        "last_attempt_id": "T0034-A004",
         "last_attempt_result": "in_progress",
         "changed_files": [
+          "protocol/whitep/v1/messages.proto",
           "tests/test_proto_contract.py",
           "step three/T0034/execution-report.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
+        "related_commits": [
+          "2c1959a159bf4c354eda9b6dcaa75ee26d2546fb"
+        ],
+        "tests_passed": [
+          "python -m unittest discover -s tests -v — 76 passed on commit 2c1959a159bf4c354eda9b6dcaa75ee26d2546fb",
+          "python -m compileall -q tools tests — passed on commit 2c1959a159bf4c354eda9b6dcaa75ee26d2546fb",
+          "White-P product build run 39814813985 — success on commit 2c1959a159bf4c354eda9b6dcaa75ee26d2546fb"
+        ],
         "tests_failed": [
           "Quality gate run 39766263695 on 5b56ce47b1667fbb284f1aca7772d689d5fd3a88 failed: 4 assertions could not match message blocks because T0034 regexes were over-escaped.",
-          "Manual review of commit ae1daae388aa85064dcf2744abacd348a463faa3 found remaining over-escaped field patterns and message-block regex; correction was incomplete before CI validation."
+          "Manual review of commit ae1daae388aa85064dcf2744abacd348a463faa3 found remaining over-escaped field patterns and message-block regex; correction was incomplete before CI validation.",
+          "Quality gate run 39814813984 failed after the 76 Python tests passed: graph guard reported ATTEMPT_COUNT_MISMATCH for T0034 (summary=3, history=4); repo-root validation was skipped."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -5444,27 +5452,69 @@
         {
           "attempt_id": "T0034-A003",
           "started_at": "2026-10-22T16:28:00Z",
-          "ended_at": null,
-          "result": "in_progress",
-          "summary": "Replaced the full T0034 acceptance-test block with standard Python raw regex patterns; pending exact-commit CI.",
+          "ended_at": "2026-10-22T16:41:38Z",
+          "result": "partial",
+          "summary": "The corrected T0034 Protobuf acceptance tests passed within the 76-test suite, and the product build succeeded. The quality gate still failed because the graph execution summary counted three attempts while execution_history contains four records.",
           "changed_files": [
             "tests/test_proto_contract.py",
+            "step three/T0034/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": "2c1959a159bf4c354eda9b6dcaa75ee26d2546fb",
+          "tests": [
+            {
+              "command": "python -m unittest discover -s tests -v",
+              "result": "passed",
+              "summary": "All 76 tests passed on exact commit 2c1959a159bf4c354eda9b6dcaa75ee26d2546fb.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/39814813984"
+            },
+            {
+              "command": "python -m compileall -q tools tests",
+              "result": "passed",
+              "summary": "Python syntax compilation passed on the exact commit."
+            },
+            {
+              "command": "Step Three quality gate run 39814813984 — graph structure validation",
+              "result": "failed",
+              "summary": "Graph guard found ATTEMPT_COUNT_MISMATCH: T0034 summary=3, history=4; the repo-root validation step was skipped.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/39814813984"
+            },
+            {
+              "command": "White-P product build run 39814813985",
+              "result": "passed",
+              "summary": "Windows host build, Android debug APK build, and host lifecycle test job succeeded on the exact commit.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/39814813985"
+            }
+          ],
+          "failure_details": "The product code checks and product-build workflow passed, but the quality-gate workflow failed at graph-structure validation because execution_summary.attempt_count did not match execution_history length.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Fix the current history-summary count and verify quality gate plus product build on the new exact commit. Keep T0034 in progress until both workflows pass."
+        },
+        {
+          "attempt_id": "T0034-A004",
+          "started_at": "2026-10-22T19:30:00Z",
+          "ended_at": null,
+          "result": "in_progress",
+          "summary": "Corrected the execution-summary count to include all four prior history records and appended a new traceable attempt; no earlier execution-history record was deleted. Awaiting exact-commit CI.",
+          "changed_files": [
             "step three/T0034/execution-report.md",
             "step three/project-graph.md"
           ],
           "commit_sha": null,
           "tests": [
             {
-              "command": "Step Three quality gate and White-P product build",
+              "command": "Step Three quality gate and White-P product build on the new exact commit",
               "result": "pending",
-              "summary": "Both must pass on the exact correction commit."
+              "summary": "Verify both workflows after this metadata consistency correction."
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Verify exact-commit quality gate and product build before marking T0034 done."
+          "follow_up": "Inspect the quality-gate result on the new exact commit. If graph guard passes, inspect repo-root validation and verify the product build before marking T0034 done."
         }
       ]
     },

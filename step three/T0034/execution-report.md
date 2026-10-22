@@ -23,3 +23,18 @@
 ## Attempt T0034-A003 — full test-block correction
 - Replaced the entire acceptance-test block with standard Python raw-regex patterns for message boundaries and required field declarations.
 - Status remains in progress pending exact-commit quality gate and product-build results.
+
+
+## Attempt T0034-A003 — exact-commit verification result
+- Exact commit: `2c1959a159bf4c354eda9b6dcaa75ee26d2546fb` (`V 3.0.100`).
+- `python -m unittest discover -s tests -v`: **76 tests passed**, including the corrected T0034 field/message tests.
+- `python -m compileall -q tools tests`: passed.
+- White-P product build run [39814813985](https://github.com/artinrahimii/project/actions/runs/39814813985): **success**; Windows host, Android debug APK, and host lifecycle jobs passed.
+- Quality gate run [39814813984](https://github.com/artinrahimii/project/actions/runs/39814813984): **failed at graph structure validation**, not in the T0034 contract tests. The guard found `ATTEMPT_COUNT_MISMATCH`: summary count 3 but four history entries. The following repo-root validation step was skipped.
+- Therefore this attempt did not satisfy the complete acceptance gate; T0034 remains in progress.
+
+## Attempt T0034-A004 — execution-history consistency repair
+- Corrected the summary to count all four existing history records and appended this new attempt without deleting the prior history.
+- The correction itself changes execution tracking only; it is not counted as completing the software feature.
+- Exact-commit quality gate and product build results are pending.
+- T0034 remains in progress until the quality gate, its repo-root evidence check, and the product build pass on the same commit.
