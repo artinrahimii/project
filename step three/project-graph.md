@@ -5207,9 +5207,9 @@
       ],
       "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
       "execution_summary": {
-        "attempt_count": 1,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "T0033-A001",
+        "attempt_count": 2,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "T0033-A002",
         "last_attempt_result": "in_progress",
         "changed_files": [
           "protocol/whitep/v1/messages.proto",
@@ -5218,9 +5218,13 @@
           "step three/T0033/execution-report.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
+        "related_commits": [
+          "e99a07318b8856a958024b5a8f111f55ef234bcf"
+        ],
         "tests_passed": [],
-        "tests_failed": [],
+        "tests_failed": [
+          "Quality gate run 39765354245 failed on e99a07318b8856a958024b5a8f111f55ef234bcf: newly added contract test used over-escaped regex patterns, causing automated tests to fail."
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -5234,8 +5238,8 @@
         {
           "attempt_id": "T0033-A001",
           "started_at": "2026-10-22T10:41:00Z",
-          "ended_at": null,
-          "result": "in_progress",
+          "ended_at": "2026-10-22T10:44:35Z",
+          "result": "failed",
           "summary": "Reviewed incoming edges and confirmed the existing HostCapabilities contract. Added HostAnnouncement with ephemeral host ID, protocol version, capabilities, and timestamp; added regression assertions excluding prompt/request text and persistent identifiers. Exact-commit CI is pending.",
           "changed_files": [
             "protocol/whitep/v1/messages.proto",
@@ -5247,18 +5251,44 @@
           "commit_sha": null,
           "tests": [
             {
-              "command": "GitHub Actions quality gate and product build",
-              "result": "pending",
-              "summary": "Await exact-commit workflow results before claiming acceptance."
+              "command": "Step Three quality gate run 39765354245",
+              "result": "failed",
+              "summary": "Automated tests failed due to over-escaped regular expressions in the new T0033 acceptance test.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/39765354245"
             }
           ],
-          "failure_details": null,
+          "failure_details": "Exact-commit quality gate run 39765354245 failed during automated tests. Review of the committed test source showed regex patterns contained doubled backslashes, matching literal backslashes instead of whitespace/boundary syntax.",
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [
             "Added HostAnnouncement message in the canonical Protobuf schema; HostCapabilities existing field numbers unchanged."
           ],
-          "follow_up": "Check exact-commit quality and product-build runs; mark done only if both pass."
+          "follow_up": "Correct the regex escaping and rerun quality and product build on a new exact commit."
+        },
+        {
+          "attempt_id": "T0033-A002",
+          "started_at": "2026-10-22T10:46:00Z",
+          "ended_at": null,
+          "result": "in_progress",
+          "summary": "Corrected the acceptance test's regular expressions to use standard whitespace and word-boundary escapes. Awaiting exact-commit CI.",
+          "changed_files": [
+            "tests/test_proto_contract.py",
+            "step three/T0033/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "command": "GitHub Actions quality gate and product build",
+              "result": "pending",
+              "summary": "Await exact-commit results."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Verify both workflows pass before marking T0033 done."
         }
       ]
     },
