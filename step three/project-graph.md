@@ -3727,8 +3727,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0022 و T0020 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "done",
-      "status_fa": "تکمیل‌شده",
+      "status": "in_progress",
+      "status_fa": "در حال انجام",
       "actual_output_paths": [
         "src/Client.Android/settings.gradle.kts",
         "src/Client.Android/build.gradle.kts",
@@ -3751,15 +3751,16 @@
         "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
         "docs/decisions/ADR-0001-platform-build-baselines.md",
         ".github/workflows/product-build.yml",
-        "GitHub Actions product build run 39737717682 (ab6ca857d8a24fd888689ff9265874ddbc6656b4)",
+        "tests/test_product_build_contract.py",
+        "tests/test_reproducible_build_contract.py",
         "step three/T0023/execution-report.md"
       ],
-      "notes": "The original expected_output_paths incorrectly pointed to Shared.Contracts/tests/contracts despite this node's title specifying the Android Gradle app. Corrected the paths to the actual Android module files. Existing Android project configuration was audited; exact V 3.0.68 CI built and uploaded the debug APK successfully. This task is complete at buildable-app-module scope only. MainActivity explicitly states transport is not implemented; no P2P or local inference capability is claimed.",
+      "notes": "The original expected_output_paths incorrectly pointed to Shared.Contracts/tests/contracts despite this node's title specifying the Android Gradle app. Corrected the paths to the actual Android module files. Existing Android project configuration was audited; exact V 3.0.68 CI built and uploaded the debug APK successfully. This task is complete at buildable-app-module scope only. MainActivity explicitly states transport is not implemented; no P2P or local inference capability is claimed. V 3.0.69 graph validation failed because the done-node evidence list omitted a test source file. The underlying Android build passed on V 3.0.68; this correction adds the relevant contract-test paths and keeps the node in_progress until the corrected graph passes CI.",
       "execution_summary": {
-        "attempt_count": 1,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "T0023-A001",
-        "last_attempt_result": "succeeded",
+        "attempt_count": 3,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "T0023-A003",
+        "last_attempt_result": "partial",
         "changed_files": [
           "step three/T0023/execution-report.md",
           "step three/project-graph.md"
@@ -3771,7 +3772,9 @@
           "GitHub Actions product build run 39737717682 — Android debug APK assembled and uploaded for exact commit ab6ca857d8a24fd888689ff9265874ddbc6656b4.",
           "GitHub Actions quality gate run 39737717773 — graph and repository evidence checks passed for the same commit."
         ],
-        "tests_failed": [],
+        "tests_failed": [
+          "GitHub Actions quality gate run 39738674844 on V 3.0.69 failed graph validation: DONE_WITHOUT_TEST_FILE_EVIDENCE for T0023; this was a missing test-source reference, not an Android build failure."
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -3814,6 +3817,55 @@
             "Corrected T0023 expected_output_paths from unrelated Shared.Contracts paths to the Android module files; task title and current repository tree support the correction."
           ],
           "follow_up": "Proceed to T0024 after reviewing its incoming edges. Android transport, local inference, and device runtime acceptance remain unimplemented or unverified."
+        },
+        {
+          "attempt_id": "T0023-A002",
+          "started_at": "2026-10-22T07:10:30Z",
+          "ended_at": "2026-10-22T07:10:35Z",
+          "result": "failed",
+          "summary": "The V 3.0.69 quality gate rejected T0023 as done because its evidence list did not reference a test source file. Android build evidence itself remained successful on parent V 3.0.68.",
+          "changed_files": [
+            "step three/project-graph.md"
+          ],
+          "commit_sha": "9073639f01ad307287d393a5737b858e457f6713",
+          "tests": [
+            {
+              "name": "Step Three quality gate",
+              "result": "failed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39738674844",
+              "summary": "Graph guard emitted DONE_WITHOUT_TEST_FILE_EVIDENCE for T0023."
+            }
+          ],
+          "failure_details": "The done-node graph policy requires evidence to reference at least one test source path beginning with tests/ or test/.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Add existing Android build contract test paths to evidence, keep status in_progress until the corrected commit's quality gate passes."
+        },
+        {
+          "attempt_id": "T0023-A003",
+          "started_at": "2026-10-22T07:10:35Z",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Added tests/test_product_build_contract.py and tests/test_reproducible_build_contract.py as source evidence and removed non-path workflow descriptions from the node evidence list. Awaiting exact-commit graph validation.",
+          "changed_files": [
+            "step three/project-graph.md",
+            "step three/T0023/execution-report.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Step Three quality gate",
+              "result": "pending",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39738674844",
+              "summary": "Previous commit failed for missing test-source evidence; corrected evidence is pending CI verification."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "If V 3.0.70 graph validation passes, record its exact CI evidence and mark T0023 done in a subsequent commit."
         }
       ]
     },
