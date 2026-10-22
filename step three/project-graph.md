@@ -4045,11 +4045,7 @@
         "src/Client.Android/app/build.gradle.kts",
         ".github/workflows/product-build.yml",
         "tests/test_product_build_contract.py",
-        "step three/T0025/execution-report.md",
-        "https://github.com/artinrahimii/project/actions/runs/39741735136",
-        "https://github.com/artinrahimii/project/actions/runs/39741735152",
-        "GitHub Actions artifact whitep-android-debug-apk (artifact ID 12409921258; SHA-256 e9c179bbbc18420149c21bf273e871783c91d02265ac9983ff88e39211e3e08c)",
-        "GitHub Actions artifact whitep-windows-host (artifact ID 12409606925; SHA-256 11f029a3909446c00ea18e9abfc2346320f0562f3b83ec37a59f478d96630e36)"
+        "step three/T0025/execution-report.md"
       ],
       "notes": "The exact-commit product build and Step Three quality gate both passed on V 3.0.77. Windows WPF host build, C# formatting, host lifecycle tests, Kotlin ktlint, Android debug APK packaging, and artifact uploads all succeeded. The task-specific expected output paths were corrected from a generic Shared.Contracts template to the actual formatter/linter integration artifacts.",
       "execution_summary": {
@@ -4077,7 +4073,8 @@
           "GitHub Actions run 39740699886 — Step Three quality gate passed.",
           "GitHub Actions run 39740700118 — Windows WPF build and C# formatting passed; host lifecycle tests passed.",
           "Product build run 39741735136 passed on 2896815974f82e906c0231cc1b88261543e8c56d: Windows WPF build and C# formatting passed; host lifecycle tests passed; Android ktlintCheck and assembleDebug passed; Windows host and Android debug APK artifacts uploaded.",
-          "Step Three quality gate run 39741735152 passed on 2896815974f82e906c0231cc1b88261543e8c56d; graph/evidence checks and 65 Python tests passed."
+          "Step Three quality gate run 39741735152 passed on 2896815974f82e906c0231cc1b88261543e8c56d; graph/evidence checks and 65 Python tests passed.",
+          "Artifact metadata from product build 39741735136: Android APK artifact 12409921258 SHA-256 e9c179bbbc18420149c21bf273e871783c91d02265ac9983ff88e39211e3e08c; Windows host artifact 12409606925 SHA-256 11f029a3909446c00ea18e9abfc2346320f0562f3b83ec37a59f478d96630e36."
         ],
         "tests_failed": [
           "Product build run 39740433414: C# formatter still failed because Windows checkout converted LF files to CRLF; add .gitattributes eol=lf to make checkout deterministic.",
@@ -4318,9 +4315,9 @@
       ],
       "notes": "Reviewed both incoming edges. T0025 is sequencing-only for this task; T0020 supplies the local backend URL/model contract. Root .gitignore and non-secret example settings are being added. The current Windows host reads URL/model from its UI, so the example file is explicitly a template and is not represented as runtime-loaded configuration.",
       "execution_summary": {
-        "attempt_count": 2,
+        "attempt_count": 3,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0026-A002",
+        "last_attempt_id": "T0026-A003",
         "last_attempt_result": "partial",
         "changed_files": [
           ".gitignore",
@@ -4387,6 +4384,30 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Verify exact-commit quality gate and product build; only then mark T0026 done."
+        },
+        {
+          "attempt_id": "T0026-A003",
+          "started_at": "2026-10-22T07:45:00Z",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Quality gate rejected external workflow URLs and artifact metadata in the evidence-file list because that field must contain repository paths. Moved the metadata into test evidence and retained only real repository paths in evidence fields.",
+          "changed_files": [
+            "step three/project-graph.md",
+            "step three/T0026/execution-report.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "command": "Step Three quality gate run 39742637801",
+              "result": "failed",
+              "summary": "Graph guard reported MISSING_EVIDENCE_FILE for two workflow URLs incorrectly placed in T0025.evidence."
+            }
+          ],
+          "failure_details": "Evidence arrays are validated as repository file paths, not URLs or descriptive artifact strings.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Remove non-path evidence entries and rerun exact-commit graph validation."
         }
       ]
     },
@@ -14004,7 +14025,7 @@
         ".editorconfig",
         ".gitattributes",
         ".github/workflows/product-build.yml",
-        "step one/V1.0.md#T0026"
+        "step one/V1.0.md"
       ]
     },
     {
@@ -14018,7 +14039,7 @@
         "docs/decisions/ADR-0003-local-inference-backend.md",
         "src/Host.Windows/MainWindow.xaml.cs",
         "src/Host.Windows/LlamaCppServerBackend.cs",
-        "step one/V1.0.md#T0026"
+        "step one/V1.0.md"
       ]
     },
     {

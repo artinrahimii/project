@@ -19,3 +19,9 @@ Inspect the exact-commit quality gate and product build. Mark T0026 done only af
 - Reviewed the new secret-pattern test before accepting CI results and found its raw-string regex had over-escaped whitespace tokens, weakening the intended credential scan.
 - Corrected the expression to match actual whitespace and non-whitespace characters. This is a test-quality correction, not a product runtime change.
 - The task remains `in_progress` until exact-commit CI passes.
+
+
+## Attempt T0026-A003 — graph evidence path correction (partial; CI pending)
+- The exact-commit quality gate [39742637801](https://github.com/artinrahimii/project/actions/runs/39742637801) rejected the T0025 evidence list because two workflow URLs and descriptive artifact metadata were placed in a field validated strictly as repository file paths.
+- Moved non-path build/artifact metadata to the execution test evidence text and removed fragment suffixes from edge evidence paths. Only real repository paths remain in the graph's evidence arrays.
+- T0026 remains `in_progress` until the next exact-commit quality gate passes.
