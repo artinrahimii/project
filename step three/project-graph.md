@@ -5091,20 +5091,33 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0031 و T0030 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "protocol/whitep/v1/messages.proto",
+        "tests/test_proto_contract.py",
+        "step three/T0032/execution-report.md"
+      ],
       "expected_output_paths": [
         "src/Shared.Contracts/ + tests/contracts/"
       ],
-      "evidence": [],
+      "evidence": [
+        "protocol/whitep/v1/messages.proto",
+        "tests/test_proto_contract.py",
+        "step three/T0032/execution-report.md"
+      ],
       "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0032-A001",
+        "last_attempt_result": "in_progress",
+        "changed_files": [
+          "protocol/whitep/v1/messages.proto",
+          "tests/test_proto_contract.py",
+          "step three/T0032/execution-report.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
@@ -5117,7 +5130,36 @@
           "review_evidence": []
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0032-A001",
+          "started_at": "2026-10-22T10:10:00Z",
+          "ended_at": null,
+          "result": "in_progress",
+          "summary": "Added error_message field 8 to the canonical InferenceResponse and added source-level acceptance assertions for request ID, outcome, output text, completion timestamp and error detail. Exact-commit CI evidence is still pending; task is intentionally not marked done.",
+          "changed_files": [
+            "protocol/whitep/v1/messages.proto",
+            "tests/test_proto_contract.py",
+            "step three/T0032/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "command": "GitHub Actions quality gate and product build on updated main",
+              "result": "pending",
+              "summary": "No exact-commit result observed at report time; do not claim test success."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "Added InferenceResponse.error_message = 8; existing field numbers 1–7 preserved."
+          ],
+          "follow_up": "Observe quality and product-build workflows for the latest main commit. If either fails, fix the issue and retry before marking done."
+        }
+      ]
     },
     {
       "id": "T0033",
