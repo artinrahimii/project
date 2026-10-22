@@ -44,15 +44,15 @@ class ProtoContractTests(unittest.TestCase):
                 self.assertRegex(body, declaration)
 
     def test_inference_response_includes_status_output_displayable_error_and_completion_time(self):
-        match = re.search(r"message\\s+InferenceResponse\\s*\\{([^{}]*)\\}", SCHEMA, re.S)
+        match = re.search(r"message\s+InferenceResponse\s*\{([^{}]*)\}", SCHEMA, re.S)
         self.assertIsNotNone(match)
         body = match.group(1)
         for declaration in (
-            r"string\\s+request_id\\s*=\\s*1\\s*;",
-            r"InferenceOutcome\\s+outcome\\s*=\\s*4\\s*;",
-            r"string\\s+output_text\\s*=\\s*5\\s*;",
-            r"uint64\\s+completed_at_unix_ms\\s*=\\s*6\\s*;",
-            r"string\\s+error_message\\s*=\\s*8\\s*;",
+            r"string\s+request_id\s*=\s*1\s*;",
+            r"InferenceOutcome\s+outcome\s*=\s*4\s*;",
+            r"string\s+output_text\s*=\s*5\s*;",
+            r"uint64\s+completed_at_unix_ms\s*=\s*6\s*;",
+            r"string\s+error_message\s*=\s*8\s*;",
         ):
             with self.subTest(field=declaration):
                 self.assertRegex(body, declaration)
