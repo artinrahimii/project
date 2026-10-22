@@ -5678,8 +5678,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0035 و T0030 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "تکمیل‌شده",
       "actual_output_paths": [
         "src/Host.Windows/WhiteP.Host.Windows.csproj",
         "src/Client.Android/app/build.gradle.kts",
@@ -5705,12 +5705,12 @@
         ".github/workflows/product-build.yml",
         "step three/T0036/execution-report.md"
       ],
-      "notes": "T0036-A001 requests real Kotlin DSL generation, registers generated Kotlin output with Android variant sources, consumes the generated builder API in ProtocolMessages.kt, and adds CI checks for generated C#/Java/Kotlin source files. Acceptance is pending exact-commit CI; generated files remain build outputs and are not hand-checked-in. This task is not network transport.",
+      "notes": "T0036 acceptance verified on exact implementation commit 0052b09a36b26a16286dece3b004eb6675f03807 (V 3.0.105). CI confirms compiler-generated C# exists after Windows build, generated Java and Kotlin source files exist after Android build, and Android APK assembly compiles ProtocolMessages.kt importing generated HostAnnouncement and hostAnnouncement DSL. 78 Python tests, graph/evidence validation, C# formatting/build/artifact, Android lint/build/generated-source check/artifact, and .NET lifecycle/contract tests succeeded. Generated files remain build outputs, not manually committed. This proves cross-language code generation/build integration, not P2P networking or a runtime handshake.",
       "execution_summary": {
         "attempt_count": 1,
         "failed_attempt_count": 0,
         "last_attempt_id": "T0036-A001",
-        "last_attempt_result": "in_progress",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Client.Android/app/build.gradle.kts",
           "src/Client.Android/app/src/main/java/com/whitep/client/protocol/ProtocolMessages.kt",
@@ -5720,8 +5720,13 @@
           "step three/T0036/execution-report.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
+        "related_commits": [
+          "0052b09a36b26a16286dece3b004eb6675f03807"
+        ],
+        "tests_passed": [
+          "Step Three quality gate run 39843477170 — success: 78 Python tests, syntax, graph structure, and output/evidence validation.",
+          "White-P product build run 39843477175 — success: Windows WPF build plus generated-C# source assertion; Android Kotlin lint, debug APK, generated Java/Kotlin source assertions and artifact upload; .NET lifecycle/contract tests."
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -5732,39 +5737,56 @@
           "review_evidence": []
         }
       },
-      "execution_history": [
-        {
-          "attempt_id": "T0036-A001",
-          "started_at": "2026-10-22T19:43:00Z",
-          "ended_at": null,
-          "result": "in_progress",
-          "summary": "Reviewed incoming sequencing edges and expanded Android generation to emit Kotlin DSL, registered its variant-scoped source roots, added actual Kotlin contract helper, and added generated-source CI checks for C#, Java, and Kotlin. Exact-commit CI pending.",
-          "changed_files": [
-            "src/Client.Android/app/build.gradle.kts",
-            "src/Client.Android/app/src/main/java/com/whitep/client/protocol/ProtocolMessages.kt",
-            "src/Shared.Contracts/README.md",
-            "tests/test_proto_contract.py",
-            ".github/workflows/product-build.yml",
-            "step three/T0036/execution-report.md",
-            "step three/project-graph.md"
-          ],
-          "commit_sha": null,
-          "tests": [
-            {
-              "command": "Exact-commit quality gate and White-P product build",
-              "result": "pending",
-              "summary": "Require Python contract tests, Windows generated C# assertion, Android generated Java/Kotlin assertions, and compilation of ProtocolMessages.kt using generated HostAnnouncement Kotlin DSL."
-            }
-          ],
-          "failure_details": null,
-          "blocked_reason": null,
-          "reopened_reason": null,
-          "contract_changes": [
-            "Android Protobuf build now requests Kotlin DSL output in addition to Java Lite from the existing canonical schema."
-          ],
-          "follow_up": "Verify exact-commit CI output locations and compile. If generation/source wiring fails, use the actual build log to correct it; do not mark T0036 done without generated Kotlin compile proof."
-        }
-      ]
+      "execution_history": {
+        "attempt_id": "T0036-A001",
+        "started_at": "2026-10-22T19:43:00Z",
+        "ended_at": "2026-10-22T19:52:21Z",
+        "result": "succeeded",
+        "summary": "Exact-commit quality gate and full product build completed successfully. 78 Python tests and graph/evidence validation passed; Windows C# generated-source check passed; Android generated Java/Kotlin source checks, Kotlin DSL consumption in ProtocolMessages.kt, lint, APK build and artifact upload all passed; .NET lifecycle/contract tests passed.",
+        "changed_files": [
+          "src/Client.Android/app/build.gradle.kts",
+          "src/Client.Android/app/src/main/java/com/whitep/client/protocol/ProtocolMessages.kt",
+          "src/Shared.Contracts/README.md",
+          "tests/test_proto_contract.py",
+          ".github/workflows/product-build.yml",
+          "step three/T0036/execution-report.md",
+          "step three/project-graph.md"
+        ],
+        "commit_sha": "0052b09a36b26a16286dece3b004eb6675f03807",
+        "tests": [
+          {
+            "command": "Step Three quality gate run 39843477170",
+            "result": "passed",
+            "summary": "78 Python tests, Python syntax compilation, graph structure, and repository output/evidence validation passed on exact commit 0052b09a36b26a16286dece3b004eb6675f03807.",
+            "url": "https://github.com/artinrahimii/project/actions/runs/39843477170"
+          },
+          {
+            "command": "White-P product build run 39843477175 — Build Windows WPF host",
+            "result": "passed",
+            "summary": "C# formatting passed; `dotnet build WhiteP.sln --configuration Release` passed; explicit PowerShell verification found a compiler-generated Protobuf C# source under the Windows host obj output; artifact upload passed.",
+            "url": "https://github.com/artinrahimii/project/actions/runs/39843477175"
+          },
+          {
+            "command": "White-P product build run 39843477175 — Build Android client APK",
+            "result": "passed",
+            "summary": "Kotlin lint passed; debug APK assembly compiled ProtocolMessages.kt against the generated HostAnnouncement Kotlin DSL; the explicit Java/Kotlin generated-source presence check passed; APK artifact upload passed.",
+            "url": "https://github.com/artinrahimii/project/actions/runs/39843477175"
+          },
+          {
+            "command": "White-P product build run 39843477175 — Host lifecycle unit and integration tests",
+            "result": "passed",
+            "summary": "The .NET lifecycle and contract test harness passed on the exact implementation commit.",
+            "url": "https://github.com/artinrahimii/project/actions/runs/39843477175"
+          }
+        ],
+        "failure_details": null,
+        "blocked_reason": null,
+        "reopened_reason": null,
+        "contract_changes": [
+          "Android Protobuf build now requests Kotlin DSL output in addition to Java Lite from the existing canonical schema."
+        ],
+        "follow_up": "T0036 is complete for build-time generation and compilation of C# plus Android Java/Kotlin Protobuf bindings from the canonical .proto schema. Cross-language serialization tests and live P2P transport remain separate tasks."
+      }
     },
     {
       "id": "T0037",

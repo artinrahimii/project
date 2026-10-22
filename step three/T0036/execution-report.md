@@ -18,3 +18,14 @@
 - `python -m unittest discover -s tests -v`: pending exact-commit CI.
 - `dotnet build WhiteP.sln --configuration Release` plus generated C# file check: pending exact-commit CI.
 - `gradle --no-daemon assembleDebug`, generated Java/Kotlin source checks, lint, and artifact upload: pending exact-commit CI.
+
+
+## Attempt T0036-A001 — exact-commit verification and completion
+- Tested implementation commit: `0052b09a36b26a16286dece3b004eb6675f03807` (`V 3.0.105`).
+- Step Three quality gate [run 39843477170](https://github.com/artinrahimii/project/actions/runs/39843477170): **success**. All 78 Python tests, Python syntax compilation, graph structure, and repository output/evidence validation passed.
+- Product build [run 39843477175](https://github.com/artinrahimii/project/actions/runs/39843477175): **success**, with all three jobs completed:
+  - Windows WPF formatting and build passed; the added check found a compiler-generated Protobuf C# source under the host `obj/Release` output; required artifact uploaded.
+  - Android Kotlin lint passed; debug APK compiled the new `ProtocolMessages.kt` against generated Protobuf Kotlin DSL; the job verified that both generated Java and Kotlin source files existed; APK artifact uploaded.
+  - .NET host lifecycle/contract harness passed.
+- The Kotlin code generator and `protobuf-kotlin-lite:4.36.2` runtime are configured alongside Java Lite, all from the existing canonical `protocol/whitep/v1/messages.proto`. Generated code remains in build outputs, not hand-edited or checked in.
+- Result: T0036 is complete for build-time C# and Kotlin binding generation and compilation. This does not claim live P2P transport, discovery, or end-to-end cross-language network tests; those remain separate work.
