@@ -112,7 +112,6 @@
 ساختار زیر JSON معتبر و قابل‌پردازش ماشینی است. فهرست `nodes` همهٔ وظایف را دارد و `edges` یال‌های جهت‌دار وابستگی را ارائه می‌کند.
 
 ```json
-
 {
   "schema_version": "1.0",
   "document": "v2.1",
@@ -4935,41 +4934,51 @@
         "نیازمندی مرتبط: پیام Protobuf نسخه‌دار `InferenceRequest` را با شناسهٔ موقت، متن پیام، capsule، محدودیت خروجی و زمان انقضا تعریف کن."
       ],
       "outputs": [
-        "خروجی قابل بررسی مربوط به «پیام Protobuf نسخه‌دار `InferenceRequest` را با شناسهٔ موقت، متن پیام، capsule، محدودیت خروجی و زمان انقضا تعریف کن.» در مسیر src/Shared.Contracts/ + tests/contracts/؛ همراه با آزمون/شاهد پذیرش متناسب."
+        "خروجی قابل بررسی مربوط به پیام Protobuf نسخه‌دار `InferenceRequest` در مسیر protocol/whitep/v1/messages.proto؛ همراه با آزمون پذیرش در tests/test_proto_contract.py."
       ],
-      "start_condition": "همهٔ پیش‌نیازهای T0030 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
+      "start_condition": "خروجی T0030 و شواهد CI آن بررسی شده باشند؛ این پیش‌نیاز ترتیب اجرایی است و به‌تنهایی وابستگی فنی به تعریف پیام نیست.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "protocol/whitep/v1/messages.proto",
         "tests/test_proto_contract.py",
         "step three/T0031/execution-report.md"
       ],
       "expected_output_paths": [
-        "src/Shared.Contracts/ + tests/contracts/"
+        "protocol/whitep/v1/messages.proto",
+        "tests/test_proto_contract.py"
       ],
       "evidence": [
+        "protocol/whitep/v1/messages.proto",
         "tests/test_proto_contract.py",
-        "protocol/whitep/v1/messages.proto"
+        ".github/workflows/quality.yml",
+        ".github/workflows/product-build.yml"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود. T0031 implementation started on verified main HEAD eb529f48a65c595a201e14070d2dd689b3dc51ae. Added an explicit optional bytes context_capsule field (field number 7) to InferenceRequest and an acceptance regression test. Completion remains pending exact-commit CI; no runtime/size enforcement is claimed by this schema change. Follow-up correction: first test draft over-escaped regex patterns; corrected in T0031-A002 before task completion. Prior exact-commit CI was still running at correction time.",
+      "notes": "خروجی واقعی T0031 در schema کانونی Protobuf و آزمون قرارداد قرار دارد؛ Shared.Contracts صرفاً پروژهٔ .NET است و تولید کلاس‌های زبان‌محور به T0036 تعلق دارد. CI دقیقاً روی commit e7de632200004fb9ab2719366932bbe6b1877af1 موفق شد. این وظیفه فقط تعریف wire contract را تأیید می‌کند و اجرای runtime، محدودیت اندازهٔ capsule یا انتقال P2P را ادعا نمی‌کند.",
       "execution_summary": {
-        "attempt_count": 2,
+        "attempt_count": 3,
         "failed_attempt_count": 1,
-        "last_attempt_id": "T0031-A002",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "T0031-A003",
+        "last_attempt_result": "succeeded",
         "changed_files": [
+          "protocol/whitep/v1/messages.proto",
           "tests/test_proto_contract.py",
           "step three/T0031/execution-report.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
+        "related_commits": [
+          "ceb839afb8c95f116ce274653300c1d237e4c527",
+          "75e68b719f26165f552bfc06e2e4d6bbe7b3e478",
+          "e7de632200004fb9ab2719366932bbe6b1877af1"
+        ],
         "tests_passed": [
-          "python -m unittest discover -s tests -v: 73 tests passed on 75e68b719f26165f552bfc06e2e4d6bbe7b3e478"
+          "GitHub Actions quality gate run 39756134811 on e7de632200004fb9ab2719366932bbe6b1877af1: all steps passed, including 73 Python tests, syntax validation, graph validation and recorded-output/evidence validation.",
+          "GitHub Actions product build run 39756134643 on e7de632200004fb9ab2719366932bbe6b1877af1: Windows WPF host build, host lifecycle tests and Android debug APK build all passed."
         ],
         "tests_failed": [
-          "Graph guard on 75e68b719f26165f552bfc06e2e4d6bbe7b3e478: FAILED_ATTEMPT_COUNT_MISMATCH for T0031; the history did not mark the recorded correction attempt as failed."
+          "Historical attempt A001: over-escaped acceptance-test regex; the related quality gate also failed graph attempt-count validation.",
+          "Historical attempt A002 commit 75e68b719f26165f552bfc06e2e4d6bbe7b3e478: 73 Python tests passed, but graph validation failed because the failed-attempt count did not match history."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -5012,9 +5021,9 @@
         {
           "attempt_id": "T0031-A002",
           "started_at": "2026-10-22T12:51:00+03:30",
-          "ended_at": null,
+          "ended_at": "2026-10-22T09:21:25Z",
           "result": "partial",
-          "summary": "Corrected the newly added acceptance test's over-escaped regex patterns before marking the task complete. CI for the prior commit was still in progress; exact corrected-commit validation is pending.",
+          "summary": "Corrected the acceptance-test regex. The Python suite passed, but the quality gate failed because failed_attempt_count and history result were inconsistent. This is retained as a partial attempt; the bookkeeping defect was then corrected.",
           "changed_files": [
             "tests/test_proto_contract.py",
             "step three/T0031/execution-report.md",
@@ -5032,7 +5041,36 @@
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect quality and product-build runs for the corrected commit. Keep T0031 in progress until both appropriate build paths and the quality gate pass."
+          "follow_up": "Correct the recorded failed-attempt history, rerun both CI workflows on the corrected graph, then decide completion."
+        },
+        {
+          "attempt_id": "T0031-A003",
+          "started_at": "2026-10-22T09:31:45Z",
+          "ended_at": "2026-10-22T09:33:58Z",
+          "result": "succeeded",
+          "summary": "Re-read the actual schema, acceptance test, shared-contract project boundary and current main history. Corrected T0031's planned output path to the canonical Protobuf schema and its contract test (language-specific generated classes are owned by T0036). Exact-commit quality and product-build workflows both passed on e7de632200004fb9ab2719366932bbe6b1877af1.",
+          "changed_files": [
+            "step three/project-graph.md",
+            "step three/T0031/execution-report.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "command": "GitHub Actions quality gate run 39756134811 on e7de632200004fb9ab2719366932bbe6b1877af1",
+              "result": "passed",
+              "summary": "All steps passed: automated Python tests, Python syntax, graph structure and recorded outputs/evidence."
+            },
+            {
+              "command": "GitHub Actions product build run 39756134643 on e7de632200004fb9ab2719366932bbe6b1877af1",
+              "result": "passed",
+              "summary": "Windows WPF build, host lifecycle tests, and Android debug APK build all passed."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Proceed to T0032 only after reviewing its incoming edges and confirm the concrete InferenceResponse contract output expected by that task."
         }
       ]
     },
@@ -14554,28 +14592,39 @@
       "from": "T0030",
       "to": "T0031",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0030 verifies CI failure propagation; it does not provide a schema or generated interface consumed by InferenceRequest. Keep it as conservative execution order, not a technical prerequisite.",
+      "validation_status": "validated",
+      "evidence": [
+        ".github/workflows/quality.yml",
+        ".github/workflows/product-build.yml",
+        "step three/T0030/execution-report.md"
+      ]
     },
     {
       "from": "T0031",
       "to": "T0032",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "InferenceRequest and InferenceResponse are messages in the same canonical versioned Protobuf schema; adding the response message must preserve the existing request definition and field numbering.",
+      "validation_status": "validated",
+      "evidence": [
+        "protocol/whitep/v1/messages.proto",
+        "tests/test_proto_contract.py"
+      ]
     },
     {
       "from": "T0030",
       "to": "T0032",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "CI failure-propagation verification does not define the response wire contract; retain this edge as execution order only.",
+      "validation_status": "validated",
+      "evidence": [
+        ".github/workflows/quality.yml",
+        ".github/workflows/product-build.yml",
+        "step three/T0030/execution-report.md"
+      ]
     },
     {
       "from": "T0032",
@@ -18612,8 +18661,48 @@
         ".github/workflows/product-build.yml"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-22T09:40:00Z",
+      "edge_from": "T0030",
+      "edge_to": "T0031",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "reason": "Workflow behavior from T0030 does not supply a schema or interface consumed by InferenceRequest; it is only a safe execution-order predecessor.",
+      "evidence": [
+        ".github/workflows/quality.yml",
+        ".github/workflows/product-build.yml",
+        "step three/T0030/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-22T09:40:00Z",
+      "edge_from": "T0031",
+      "edge_to": "T0032",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "reason": "Both request and response are messages in the same canonical versioned Protobuf schema; the response must preserve the request definition and existing field numbering.",
+      "evidence": [
+        "protocol/whitep/v1/messages.proto",
+        "tests/test_proto_contract.py"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-22T09:40:00Z",
+      "edge_from": "T0030",
+      "edge_to": "T0032",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "reason": "CI failure-propagation verification does not define the response wire contract; keep the relation only as conservative execution order.",
+      "evidence": [
+        ".github/workflows/quality.yml",
+        ".github/workflows/product-build.yml",
+        "step three/T0030/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ]
 }
-
 ```
