@@ -4952,21 +4952,22 @@
         "tests/test_proto_contract.py",
         "protocol/whitep/v1/messages.proto"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود. T0031 implementation started on verified main HEAD eb529f48a65c595a201e14070d2dd689b3dc51ae. Added an explicit optional bytes context_capsule field (field number 7) to InferenceRequest and an acceptance regression test. Completion remains pending exact-commit CI; no runtime/size enforcement is claimed by this schema change.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود. T0031 implementation started on verified main HEAD eb529f48a65c595a201e14070d2dd689b3dc51ae. Added an explicit optional bytes context_capsule field (field number 7) to InferenceRequest and an acceptance regression test. Completion remains pending exact-commit CI; no runtime/size enforcement is claimed by this schema change. Follow-up correction: first test draft over-escaped regex patterns; corrected in T0031-A002 before task completion. Prior exact-commit CI was still running at correction time.",
       "execution_summary": {
-        "attempt_count": 1,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "T0031-A001",
+        "attempt_count": 2,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "T0031-A002",
         "last_attempt_result": "partial",
         "changed_files": [
-          "protocol/whitep/v1/messages.proto",
           "tests/test_proto_contract.py",
           "step three/T0031/execution-report.md",
           "step three/project-graph.md"
         ],
         "related_commits": [],
         "tests_passed": [],
-        "tests_failed": [],
+        "tests_failed": [
+          "Initial test implementation used over-escaped regular expressions; inspection caught the mismatch before accepting the task. Exact-commit quality run 39754693824 was still in progress at correction time."
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -5004,6 +5005,31 @@
             "Added InferenceRequest.context_capsule as bytes field 7; existing field numbers unchanged."
           ],
           "follow_up": "Inspect exact-commit CI. If tests and both language builds pass, record evidence and complete T0031 in a subsequent commit; otherwise fix the failing implementation and rerun."
+        },
+        {
+          "attempt_id": "T0031-A002",
+          "started_at": "2026-10-22T12:51:00+03:30",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Corrected the newly added acceptance test's over-escaped regex patterns before marking the task complete. CI for the prior commit was still in progress; exact corrected-commit validation is pending.",
+          "changed_files": [
+            "tests/test_proto_contract.py",
+            "step three/T0031/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "command": "GitHub Actions quality gate on corrected commit",
+              "result": "pending",
+              "summary": "Must verify exact commit after this correction."
+            }
+          ],
+          "failure_details": "Initial test used literal backslash sequences instead of regex whitespace/brace escapes; the defect was found by inspecting the committed test source.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect quality and product-build runs for the corrected commit. Keep T0031 in progress until both appropriate build paths and the quality gate pass."
         }
       ]
     },
