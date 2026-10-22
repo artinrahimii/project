@@ -32,7 +32,7 @@ class LocalConfigSafetyTests(unittest.TestCase):
         self.assertEqual(values["WHITEP_LLAMA_SERVER_URL"], "http://127.0.0.1:8080/")
         self.assertEqual(values["WHITEP_LLAMA_MODEL"], "local-model")
         self.assertEqual(values["WHITEP_REQUEST_TIMEOUT_SECONDS"], "300")
-        self.assertFalse(re.search(r"(?i)(api[_-]?key|secret|password|token)\\s*=\\s*[^\\s#]{8,}", contents))
+        self.assertFalse(re.search(r"(?i)(api[_-]?key|secret|password|token)\s*=\s*[^\s#]{8,}", contents))
 
     def test_example_is_not_claimed_as_runtime_loaded(self):
         contents = (ROOT / ".env.example").read_text(encoding="utf-8")

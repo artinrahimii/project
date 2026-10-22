@@ -4318,9 +4318,9 @@
       ],
       "notes": "Reviewed both incoming edges. T0025 is sequencing-only for this task; T0020 supplies the local backend URL/model contract. Root .gitignore and non-secret example settings are being added. The current Windows host reads URL/model from its UI, so the example file is explicitly a template and is not represented as runtime-loaded configuration.",
       "execution_summary": {
-        "attempt_count": 1,
+        "attempt_count": 2,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0026-A001",
+        "last_attempt_id": "T0026-A002",
         "last_attempt_result": "partial",
         "changed_files": [
           ".gitignore",
@@ -4366,6 +4366,27 @@
             "Validated T0025→T0026 as sequencing_only; validated T0020→T0026 as contract_or_interface_dependency. Existing edge direction and type=blocks are retained."
           ],
           "follow_up": "Inspect exact-commit CI; mark T0026 done only after the secret-ignore/template tests and graph evidence checks pass."
+        },
+        {
+          "attempt_id": "T0026-A002",
+          "started_at": "2026-10-22T07:43:00Z",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Code review found the credential-pattern test used an over-escaped whitespace expression; corrected it before relying on CI results.",
+          "changed_files": [
+            "tests/test_local_config_safety.py",
+            "step three/T0026/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            "Source review found and corrected the regex escape issue before CI completed; exact-commit tests are pending."
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Verify exact-commit quality gate and product build; only then mark T0026 done."
         }
       ]
     },

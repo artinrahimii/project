@@ -13,3 +13,9 @@
 
 ## Next
 Inspect the exact-commit quality gate and product build. Mark T0026 done only after its tests and evidence validation pass.
+
+
+## Attempt T0026-A002 — test review correction (partial; CI pending)
+- Reviewed the new secret-pattern test before accepting CI results and found its raw-string regex had over-escaped whitespace tokens, weakening the intended credential scan.
+- Corrected the expression to match actual whitespace and non-whitespace characters. This is a test-quality correction, not a product runtime change.
+- The task remains `in_progress` until exact-commit CI passes.
