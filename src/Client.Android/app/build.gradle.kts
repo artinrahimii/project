@@ -5,6 +5,7 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("org.jetbrains.kotlin.plugin.compose")
     id("com.google.protobuf")
+    id("org.jlleitschuh.gradle.ktlint")
 }
 android {
     sourceSets {

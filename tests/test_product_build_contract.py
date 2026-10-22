@@ -42,6 +42,18 @@ class ProductBuildContractTests(unittest.TestCase):
         self.assertIn("gradle-version: '8.13'", workflow)
         self.assertIn("java-version: '17'", workflow)
         self.assertEqual(json.loads((ROOT / "global.json").read_text(encoding="utf-8"))["sdk"]["version"], "10.0.100")
+    def test_csharp_and_kotlin_formatters_are_wired_into_product_ci(self):
+        editorconfig = (ROOT / ".editorconfig").read_text(encoding="utf-8")
+        workflow = (ROOT / ".github/workflows/product-build.yml").read_text(encoding="utf-8")
+        android_root = (ROOT / "src/Client.Android/build.gradle.kts").read_text(encoding="utf-8")
+        android_app = (ROOT / "src/Client.Android/app/build.gradle.kts").read_text(encoding="utf-8")
+        self.assertIn("[*.cs]", editorconfig)
+        self.assertIn("[*.{kt,kts}]", editorconfig)
+        self.assertIn("dotnet format whitespace WhiteP.sln --verify-no-changes", workflow)
+        self.assertIn("gradle --no-daemon ktlintCheck", workflow)
+        self.assertIn('id("org.jlleitschuh.gradle.ktlint") version "13.1.0" apply false', android_root)
+        self.assertIn('id("org.jlleitschuh.gradle.ktlint")', android_app)
+
     def test_solution_builds_host_and_shared_contract_library(self):
         solution = (ROOT / "WhiteP.sln").read_text(encoding="utf-8")
         shared = (ROOT / "src/Shared.Contracts/WhiteP.Shared.Contracts.csproj").read_text(encoding="utf-8")

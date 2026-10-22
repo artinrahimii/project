@@ -3887,8 +3887,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0023 و T0020 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال انجام",
+      "status": "done",
+      "status_fa": "تکمیل‌شده",
       "actual_output_paths": [
         "global.json",
         "src/Client.Android/build.gradle.kts",
@@ -3912,19 +3912,25 @@
         "tests/test_reproducible_build_contract.py",
         "step three/T0024/execution-report.md"
       ],
-      "notes": "Reviewed both incoming edges and preserved type=blocks. T0023→T0024 is validated as contract_or_interface_dependency because toolchain pins configure the Android Gradle project; T0020→T0024 is validated as contract_or_interface_dependency because ADR-0001 establishes the SDK/JDK/Gradle/Android SDK baseline. The versions were already specified in global.json, Gradle plugin declarations, and CI; added an automated contract test to prevent drift. Exact-commit CI is pending.",
+      "notes": "Both incoming edges were reviewed and retained as contract_or_interface_dependency. The exact current commit 780ef7f1829f673ca083778bbcb7816ca433d3bf passed the Step Three quality gate and product build workflows, including the new test that checks pinned .NET/JDK/Gradle/Android Gradle Plugin versions. This confirms configuration drift checks and CI build only; it does not prove runtime inference or P2P readiness.",
       "execution_summary": {
-        "attempt_count": 1,
+        "attempt_count": 2,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0024-A001",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "T0024-A002",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "tests/test_product_build_contract.py",
           "step three/T0024/execution-report.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
+        "related_commits": [
+          "780ef7f1829f673ca083778bbcb7816ca433d3bf"
+        ],
+        "tests_passed": [
+          "GitHub Actions Step Three quality gate run 39739174385 — success on commit 780ef7f1829f673ca083778bbcb7816ca433d3bf.",
+          "GitHub Actions White-P product build run 39739174311 — success on commit 780ef7f1829f673ca083778bbcb7816ca433d3bf.",
+          "tests/test_product_build_contract.py: test_android_gradle_plugin_versions_are_pinned — included in the successful quality workflow."
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -3956,6 +3962,36 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Verify the new version-pin contract test in GitHub Actions; only mark T0024 done after the exact commit passes."
+        },
+        {
+          "attempt_id": "T0024-A002",
+          "started_at": "2026-10-22T10:12:00+03:30",
+          "ended_at": "2026-10-22T10:20:00+03:30",
+          "result": "succeeded",
+          "summary": "Verified exact-commit CI after the toolchain pin contract test was added. Both quality gate and product build succeeded on main head 780ef7f1829f673ca083778bbcb7816ca433d3bf.",
+          "changed_files": [
+            "tests/test_product_build_contract.py",
+            "step three/T0024/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": "780ef7f1829f673ca083778bbcb7816ca433d3bf",
+          "tests": [
+            {
+              "command": "GitHub Actions Step Three quality gate run 39739174385",
+              "result": "passed",
+              "summary": "Workflow completed successfully on the exact main commit."
+            },
+            {
+              "command": "GitHub Actions White-P product build run 39739174311",
+              "result": "passed",
+              "summary": "Workflow completed successfully on the exact main commit."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "T0025 may start: implement executable C# formatting verification and Kotlin lint, then use exact-commit CI to verify the toolchain."
         }
       ]
     },
@@ -3976,20 +4012,42 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0024 و T0020 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال انجام",
+      "actual_output_paths": [
+        ".editorconfig",
+        "src/Client.Android/build.gradle.kts",
+        "src/Client.Android/app/build.gradle.kts",
+        ".github/workflows/product-build.yml",
+        "tests/test_product_build_contract.py",
+        "step three/T0025/execution-report.md"
+      ],
       "expected_output_paths": [
         "src/Shared.Contracts/ + tests/contracts/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        ".editorconfig",
+        "src/Client.Android/build.gradle.kts",
+        "src/Client.Android/app/build.gradle.kts",
+        ".github/workflows/product-build.yml",
+        "tests/test_product_build_contract.py",
+        "step three/T0025/execution-report.md"
+      ],
+      "notes": "Attempt T0025-A001 wires .NET formatting verification and ktlint into the real platform CI workflows, adds shared editor configuration, and adds a contract test for the tool wiring. Status remains in_progress until exact-commit CI confirms formatting/lint passes across the configured source sets.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0025-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          ".editorconfig",
+          "src/Client.Android/build.gradle.kts",
+          "src/Client.Android/app/build.gradle.kts",
+          ".github/workflows/product-build.yml",
+          "tests/test_product_build_contract.py",
+          "step three/T0025/execution-report.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
@@ -4002,7 +4060,33 @@
           "review_evidence": []
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0025-A001",
+          "started_at": "2026-10-22T10:12:00+03:30",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Added .editorconfig rules, Gradle ktlint plugin and CI lint steps for Kotlin and C#; added static contract assertions. Exact-commit CI is pending.",
+          "changed_files": [
+            ".editorconfig",
+            "src/Client.Android/build.gradle.kts",
+            "src/Client.Android/app/build.gradle.kts",
+            ".github/workflows/product-build.yml",
+            "tests/test_product_build_contract.py",
+            "step three/T0025/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            "Pending exact-commit product build and quality gate."
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect exact-commit CI. Fix any C# format or Kotlin ktlint violations and only then mark T0025 done."
+        }
+      ]
     },
     {
       "id": "T0026",
@@ -13626,19 +13710,31 @@
       "from": "T0024",
       "to": "T0025",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "The lint task consumes the pinned .NET SDK and Gradle/Kotlin plugin toolchain established by T0024; the formatter/linter commands are executed in the existing platform build jobs.",
+      "validation_status": "validated",
+      "evidence": [
+        "global.json",
+        "src/Client.Android/build.gradle.kts",
+        "src/Client.Android/app/build.gradle.kts",
+        ".github/workflows/product-build.yml",
+        "tests/test_product_build_contract.py"
+      ]
     },
     {
       "from": "T0020",
       "to": "T0025",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "The selected C#/.NET WPF and Kotlin/Gradle technology decisions determine the language-specific formatter and linter integrations.",
+      "validation_status": "validated",
+      "evidence": [
+        "docs/decisions/ADR-0001-platform-build-baselines.md",
+        "docs/decisions/README.md",
+        "src/Host.Windows/WhiteP.Host.Windows.csproj",
+        "src/Client.Android/build.gradle.kts",
+        ".github/workflows/product-build.yml"
+      ]
     },
     {
       "from": "T0025",
@@ -17756,6 +17852,38 @@
       "evidence": [
         "docs/decisions/ADR-0001-platform-build-baselines.md",
         "global.json",
+        "src/Client.Android/build.gradle.kts",
+        ".github/workflows/product-build.yml"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-22T10:20:00Z",
+      "edge_from": "T0024",
+      "edge_to": "T0025",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "reason": "The lint task consumes the pinned .NET SDK and Gradle/Kotlin plugin toolchain established by T0024; the formatter/linter commands are executed in the existing platform build jobs.",
+      "evidence": [
+        "global.json",
+        "src/Client.Android/build.gradle.kts",
+        "src/Client.Android/app/build.gradle.kts",
+        ".github/workflows/product-build.yml",
+        "tests/test_product_build_contract.py"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-22T10:20:00Z",
+      "edge_from": "T0020",
+      "edge_to": "T0025",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "reason": "The selected C#/.NET WPF and Kotlin/Gradle technology decisions determine the language-specific formatter and linter integrations.",
+      "evidence": [
+        "docs/decisions/ADR-0001-platform-build-baselines.md",
+        "docs/decisions/README.md",
+        "src/Host.Windows/WhiteP.Host.Windows.csproj",
         "src/Client.Android/build.gradle.kts",
         ".github/workflows/product-build.yml"
       ],
