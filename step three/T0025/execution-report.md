@@ -24,3 +24,10 @@
 
 ## Next
 Inspect the next exact-commit workflow, fix any remaining violations, and mark T0025 done only after the formatter, ktlint, and product build pass.
+
+## Attempt T0025-A004 — fix exact-commit Kotlin lint failure (partial; CI pending)
+- Inspected product build run [39740700118](https://github.com/artinrahimii/project/actions/runs/39740700118) for commit `0faef0e1ab16a7a2be40b503e1fd527831ff1f34`.
+- Confirmed the Windows WPF build, C# formatting check, and host lifecycle tests passed; Android build was skipped because ktlint failed first.
+- Exact failure: `MainActivity.kt:55:34 A multiline expression should start on a new line`.
+- Changed only the formatting of the multiline `if` expression assigned to `status`; no runtime behavior was intentionally changed.
+- This is a source correction, not yet a verified pass. The next exact-commit product workflow must pass ktlint and proceed to `assembleDebug` before T0025 can be marked done.

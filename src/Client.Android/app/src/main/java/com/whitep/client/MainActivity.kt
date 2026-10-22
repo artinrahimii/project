@@ -52,11 +52,12 @@ private fun whitePClientScreen() {
                 )
                 Button(
                     onClick = {
-                        status = if (requestText.isBlank()) {
-                            "Enter a request first"
-                        } else {
-                            "Request not sent: no host transport yet"
-                        }
+                        status =
+                            if (requestText.isBlank()) {
+                                "Enter a request first"
+                            } else {
+                                "Request not sent: no host transport yet"
+                            }
                     },
                     modifier = Modifier.fillMaxWidth(),
                 ) {

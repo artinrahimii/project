@@ -4035,10 +4035,10 @@
       ],
       "notes": "Two exact-commit attempts exposed real formatting issues. A001 found pre-existing C# formatting violations; A002 reformatted C# but CI revealed Windows line-ending conversion and Kotlin ktlint violations. A003 adds .gitattributes and corrects the reported Kotlin issues; keep in_progress until the next exact-commit product build succeeds.",
       "execution_summary": {
-        "attempt_count": 3,
-        "failed_attempt_count": 2,
-        "last_attempt_id": "T0025-A003",
-        "last_attempt_result": "in_progress",
+        "attempt_count": 4,
+        "failed_attempt_count": 3,
+        "last_attempt_id": "T0025-A004",
+        "last_attempt_result": "partial",
         "changed_files": [
           ".gitattributes",
           ".editorconfig",
@@ -4053,11 +4053,14 @@
         ],
         "related_commits": [],
         "tests_passed": [
-          "GitHub Actions quality gate run 39740433229 — success; graph structure, evidence validation and Python tests passed."
+          "GitHub Actions quality gate run 39740433229 — success; graph structure, evidence validation and Python tests passed.",
+          "GitHub Actions run 39740699886 — Step Three quality gate passed.",
+          "GitHub Actions run 39740700118 — Windows WPF build and C# formatting passed; host lifecycle tests passed."
         ],
         "tests_failed": [
           "Product build run 39740433414: C# formatter still failed because Windows checkout converted LF files to CRLF; add .gitattributes eol=lf to make checkout deterministic.",
-          "Product build run 39740433414: ktlintCheck failed on wildcard import in app/build.gradle.kts and naming/trailing-comma/line-length formatting in MainActivity.kt."
+          "Product build run 39740433414: ktlintCheck failed on wildcard import in app/build.gradle.kts and naming/trailing-comma/line-length formatting in MainActivity.kt.",
+          "GitHub Actions run 39740700118 — Android ktlintCheck failed at MainActivity.kt:55:34; Android APK build was skipped."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -4143,6 +4146,37 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Inspect product-build run for the next commit and mark T0025 done only when the formatter, ktlint, and build all pass."
+        },
+        {
+          "attempt_id": "T0025-A004",
+          "started_at": "2026-10-22T07:34:33.721Z",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Inspected exact-commit CI failure and corrected Kotlin multiline-expression formatting. Awaiting the next product build before claiming acceptance.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
+            "step three/T0025/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "command": "GitHub Actions run 39740700118",
+              "result": "failed",
+              "summary": "Windows build, C# format, and host lifecycle tests passed; Android ktlint failed at MainActivity.kt:55:34 and assembleDebug was skipped.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/39740700118"
+            },
+            {
+              "command": "Post-fix Android ktlintCheck and assembleDebug",
+              "result": "not_run",
+              "summary": "Will be evaluated by the product-build workflow triggered by this commit."
+            }
+          ],
+          "failure_details": "Prior exact-commit Android lint failure: A multiline expression should start on a new line.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Check the product-build workflow for this commit. If all jobs pass, record the successful CI run and then mark T0025 done in a follow-up version commit."
         }
       ]
     },
