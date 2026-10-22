@@ -12,3 +12,13 @@
 
 ## Next
 Verify the exact-commit quality and product workflows. Only record this task as done after its decision-contract test and graph guard pass. Later P2P implementation and product runtime acceptance remain separate tasks.
+
+
+## Attempt T0019-A002 — CI regression found in source-contract test
+- The quality gate for commit [3428fe8425c7b3b0d6bf0ad2d79bf55501d82cb5](https://github.com/artinrahimii/project/commit/3428fe8425c7b3b0d6bf0ad2d79bf55501d82cb5) failed in run [39735575767](https://github.com/artinrahimii/project/actions/runs/39735575767). Of 54 tests, one new assertion failed because it expected the English word `transport` in a README section written in Persian. The architecture test did not fail on P2P policy; the assertion was inconsistent with the file's actual language.
+- The product-build run [39735575690](https://github.com/artinrahimii/project/actions/runs/39735575690) was still in progress when inspected; no result is claimed here.
+- Corrected the source-contract test to assert the actual Persian statement (“انتقال P2P … هنوز موجود نیست” and “این تصمیم هنوز پیاده‌سازی نیست”) rather than requiring English wording. This is a test-fixture correction; no transport implementation or P2P runtime evidence is implied.
+- **Status remains in progress** pending the new exact-commit quality and product workflows.
+
+## Next
+Run the exact-commit quality gate and product build for the correction. Keep `AC-P2P-01` NOT RUN until direct multi-process/device transfer and payload-path inspection are implemented and verified.

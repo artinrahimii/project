@@ -28,9 +28,12 @@ class DirectP2PDecisionTests(unittest.TestCase):
         self.assertIn("must not silently fall back to a server-relayed inference payload", decision)
 
     def test_documentation_links_the_decision_without_claiming_transport_exists(self):
+        # The README's statement is Persian, so assert the actual source wording
+        # rather than requiring English terms that are not present in that text.
         self.assertIn("docs/decisions/ADR-0002-direct-p2p-data-path.md", README)
-        self.assertIn("transport", README.lower())
-        self.assertIn("not implemented", README.lower())
+        self.assertIn("انتقال p2p", README.lower())
+        self.assertIn("هنوز موجود نیست", README)
+        self.assertIn("این تصمیم هنوز پیاده‌سازی نیست", README)
         self.assertIn("AC-P2P-01", ACCEPTANCE)
         self.assertIn("not an implementation claim", ACCEPTANCE.lower())
 

@@ -3108,24 +3108,24 @@
         "docs/acceptance.md",
         "tests/test_p2p_data_path_decision.py"
       ],
-      "notes": "T0019's architecture decision and source-contract test have been authored. The decision is explicitly not a claim of transport implementation. Keep in_progress until the exact-commit quality gate validates the new test and the graph guard; AC-P2P-01 remains NOT RUN.",
+      "notes": "T0019 architecture decision is documented, but its new source-contract test failed on V 3.0.59 because an English token was asserted against Persian README prose. The test correction is recorded as T0019-A003 and awaits exact-commit CI. Do not mark done until quality gate and product build pass; AC-P2P-01 remains NOT RUN.",
       "execution_summary": {
-        "attempt_count": 1,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "T0019-A001",
+        "attempt_count": 3,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "T0019-A003",
         "last_attempt_result": "partial",
         "changed_files": [
-          "README.md",
-          "docs/acceptance.md",
-          "docs/decisions/ADR-0002-direct-p2p-data-path.md",
           "tests/test_p2p_data_path_decision.py",
-          "step three/T0018/execution-report.md",
           "step three/T0019/execution-report.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
+        "related_commits": [
+          "3428fe8425c7b3b0d6bf0ad2d79bf55501d82cb5"
+        ],
         "tests_passed": [],
-        "tests_failed": [],
+        "tests_failed": [
+          "Quality gate run 39735575767 failed on V 3.0.59: one source-contract test required an English README token absent from Persian prose; the assertion is being corrected to match the actual README text."
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -3160,6 +3160,46 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "After the code/document/test commit is created, inspect exact-commit GitHub Actions runs. Record the commit SHA and mark succeeded only if quality gate and product build are successful."
+        },
+        {
+          "attempt_id": "T0019-A002",
+          "started_at": "2026-10-22T06:41:57Z",
+          "ended_at": "2026-10-22T06:42:04Z",
+          "result": "failed",
+          "summary": "Exact-commit quality run exposed a faulty test assertion: the new decision contract test searched the Persian README for the English token `transport`. This was a test-language mismatch, not evidence that the written decision violates the P2P boundary.",
+          "changed_files": [
+            "tests/test_p2p_data_path_decision.py"
+          ],
+          "commit_sha": "3428fe8425c7b3b0d6bf0ad2d79bf55501d82cb5",
+          "tests": [
+            "GitHub Actions quality run 39735575767: 53 tests passed; test_documentation_links_the_decision_without_claiming_transport_exists failed only at self.assertIn('transport', README.lower()). Later steps were skipped."
+          ],
+          "failure_details": "The assertion used English wording that is not present in the Persian README. Correct the test to assert the actual Persian limitation statement, then rerun the exact-commit gate.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Use repository-language text assertions and verify all CI checks on the corrected commit."
+        },
+        {
+          "attempt_id": "T0019-A003",
+          "started_at": "2026-10-22T06:43:56.451Z",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Corrected the architecture contract test to use the actual Persian README wording. The corrected change is committed in V 3.0.60; the exact-commit CI outcome is pending.",
+          "changed_files": [
+            "tests/test_p2p_data_path_decision.py",
+            "step three/T0019/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            "Pending new quality gate and product build on V 3.0.60; no pass claim before observing exact-commit run results."
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect V 3.0.60 runs. On full quality gate and product-build success, append a successful attempt and only then mark T0019 done at architecture-decision scope; P2P runtime acceptance stays NOT RUN."
         }
       ]
     },
