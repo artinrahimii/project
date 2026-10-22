@@ -3887,20 +3887,42 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0023 و T0020 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
-      "expected_output_paths": [
-        "src/Shared.Contracts/ + tests/contracts/"
+      "status": "in_progress",
+      "status_fa": "در حال انجام",
+      "actual_output_paths": [
+        "global.json",
+        "src/Client.Android/build.gradle.kts",
+        ".github/workflows/product-build.yml",
+        "tests/test_product_build_contract.py",
+        "tests/test_reproducible_build_contract.py"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "expected_output_paths": [
+        "global.json",
+        "src/Client.Android/build.gradle.kts",
+        ".github/workflows/product-build.yml",
+        "tests/test_product_build_contract.py",
+        "tests/test_reproducible_build_contract.py"
+      ],
+      "evidence": [
+        "global.json",
+        "src/Client.Android/build.gradle.kts",
+        "src/Client.Android/app/build.gradle.kts",
+        ".github/workflows/product-build.yml",
+        "tests/test_product_build_contract.py",
+        "tests/test_reproducible_build_contract.py",
+        "step three/T0024/execution-report.md"
+      ],
+      "notes": "Reviewed both incoming edges and preserved type=blocks. T0023→T0024 is validated as contract_or_interface_dependency because toolchain pins configure the Android Gradle project; T0020→T0024 is validated as contract_or_interface_dependency because ADR-0001 establishes the SDK/JDK/Gradle/Android SDK baseline. The versions were already specified in global.json, Gradle plugin declarations, and CI; added an automated contract test to prevent drift. Exact-commit CI is pending.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0024-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "tests/test_product_build_contract.py",
+          "step three/T0024/execution-report.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
@@ -3913,7 +3935,29 @@
           "review_evidence": []
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0024-A001",
+          "started_at": "2026-10-22T07:13:37Z",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Reviewed T0023/T0020 dependency evidence and audited existing version pins: .NET SDK 10.0.100, JDK 17, AGP 8.13.0, Kotlin/Compose 2.2.20, Protobuf Gradle plugin 0.10.0, and Gradle 8.13. Added a contract test that asserts the pinned versions in real config files. Exact-commit CI is pending.",
+          "changed_files": [
+            "tests/test_product_build_contract.py",
+            "step three/T0024/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            "Pending exact-commit quality gate and product build."
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Verify the new version-pin contract test in GitHub Actions; only mark T0024 done after the exact commit passes."
+        }
+      ]
     },
     {
       "id": "T0025",
@@ -13554,19 +13598,29 @@
       "from": "T0023",
       "to": "T0024",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "The Android toolchain lock task operates directly on the Gradle project and plugin declarations created for the Android module; those configuration files are its inputs.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Client.Android/settings.gradle.kts",
+        "src/Client.Android/build.gradle.kts",
+        "src/Client.Android/app/build.gradle.kts",
+        ".github/workflows/product-build.yml"
+      ]
     },
     {
       "from": "T0020",
       "to": "T0024",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "ADR-0001 defines the accepted .NET SDK, JDK, Gradle, Android Gradle Plugin and Android SDK baseline that this task must lock in executable configuration.",
+      "validation_status": "validated",
+      "evidence": [
+        "docs/decisions/ADR-0001-platform-build-baselines.md",
+        "global.json",
+        "src/Client.Android/build.gradle.kts",
+        ".github/workflows/product-build.yml"
+      ]
     },
     {
       "from": "T0024",
@@ -17674,6 +17728,36 @@
         "src/Client.Android/app/build.gradle.kts",
         ".github/workflows/product-build.yml",
         "GitHub Actions product build run 39737717682"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-22T07:13:37Z",
+      "edge_from": "T0023",
+      "edge_to": "T0024",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "reason": "The Android toolchain lock task operates directly on the Gradle project and plugin declarations created for the Android module; those configuration files are its inputs.",
+      "evidence": [
+        "src/Client.Android/settings.gradle.kts",
+        "src/Client.Android/build.gradle.kts",
+        "src/Client.Android/app/build.gradle.kts",
+        ".github/workflows/product-build.yml"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-22T07:13:37Z",
+      "edge_from": "T0020",
+      "edge_to": "T0024",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "reason": "ADR-0001 defines the accepted .NET SDK, JDK, Gradle, Android Gradle Plugin and Android SDK baseline that this task must lock in executable configuration.",
+      "evidence": [
+        "docs/decisions/ADR-0001-platform-build-baselines.md",
+        "global.json",
+        "src/Client.Android/build.gradle.kts",
+        ".github/workflows/product-build.yml"
       ],
       "reviewed_by": "Step Three execution review"
     }

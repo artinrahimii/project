@@ -32,6 +32,16 @@ class ProductBuildContractTests(unittest.TestCase):
         self.assertIn("Build Windows WPF host", workflow)
         self.assertIn("Build Android client APK", workflow)
 
+    def test_android_gradle_plugin_versions_are_pinned(self):
+        root_build = (ROOT / "src/Client.Android/build.gradle.kts").read_text(encoding="utf-8")
+        workflow = (ROOT / ".github/workflows/product-build.yml").read_text(encoding="utf-8")
+        self.assertIn('id("com.android.application") version "8.13.0" apply false', root_build)
+        self.assertIn('id("org.jetbrains.kotlin.android") version "2.2.20" apply false', root_build)
+        self.assertIn('id("org.jetbrains.kotlin.plugin.compose") version "2.2.20" apply false', root_build)
+        self.assertIn('id("com.google.protobuf") version "0.10.0" apply false', root_build)
+        self.assertIn("gradle-version: '8.13'", workflow)
+        self.assertIn("java-version: '17'", workflow)
+        self.assertEqual(json.loads((ROOT / "global.json").read_text(encoding="utf-8"))["sdk"]["version"], "10.0.100")
     def test_solution_builds_host_and_shared_contract_library(self):
         solution = (ROOT / "WhiteP.sln").read_text(encoding="utf-8")
         shared = (ROOT / "src/Shared.Contracts/WhiteP.Shared.Contracts.csproj").read_text(encoding="utf-8")
