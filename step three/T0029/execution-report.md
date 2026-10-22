@@ -14,3 +14,8 @@
 ## Result
 - Status: `done` based on the checked-in Android workflow and exact-commit CI evidence.
 - The commit SHA for this tracker/report update is resolved from online `main` after commit creation.
+
+
+## Post-commit tracker-validation correction — V 3.0.85
+- Quality run [39744728550](https://github.com/artinrahimii/project/actions/runs/39744728550) failed at recorded-output/evidence validation because the graph evidence array mixed a repository file path with an Actions URL. The graph now keeps only file paths in `evidence`; the workflow URL remains in this report and execution-history test records.
+- The original Android lint/APK job was green on exact commit 7169cb200f3b28d12184247e2272388825690c8b. The graph correction is revalidated by the V 3.0.86 workflow run.

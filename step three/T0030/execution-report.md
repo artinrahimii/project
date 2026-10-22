@@ -14,3 +14,8 @@
 ## Result
 - Status: `done` based on concrete workflow configuration, required artifact behavior, contract tests, and passing exact-commit runs.
 - The commit SHA for this tracker/report update is resolved from online `main` after commit creation.
+
+
+## Post-commit tracker-validation correction — V 3.0.85
+- Quality run [39744728550](https://github.com/artinrahimii/project/actions/runs/39744728550) failed at recorded-output/evidence validation because the graph evidence array included an Actions URL, while the validator expects repository file paths. URLs have been removed from graph evidence fields and retained in this report and test-result records.
+- Workflow inspection still shows ordinary run steps with default failure propagation and required-artifact errors. Successful build/test evidence remains linked above; no deliberately failing build was pushed.

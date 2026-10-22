@@ -27,3 +27,9 @@ Inspect the exact-commit quality gate and product build; only then mark T0027 do
 - White-P product build [run 39743813489](https://github.com/artinrahimii/project/actions/runs/39743813489) completed successfully. All three jobs passed: Windows WPF Release build, Android Kotlin lint + debug APK build, and host lifecycle unit/integration tests.
 - This confirms T0027's README-command contract and the CI/build entrypoints on the exact revision; it does **not** prove runtime inference with a real model, P2P transfer, hardware detection, or release signing.
 - Status: `done`, with both prior attempts retained in the graph history. This attempt only records the successful revalidation; it does not claim the README or workflow was originally written in this attempt.
+
+
+## Post-commit tracker-validation correction — V 3.0.85
+- GitHub Actions quality run [39744728550](https://github.com/artinrahimii/project/actions/runs/39744728550) failed only in `Validate recorded outputs and evidence`. The validator requires graph `evidence` entries to be repository file paths; the new T0028–T0030 records mistakenly included Actions URLs in those path-only arrays.
+- The task-level build/test results above are based on the successful exact-commit runs. URLs remain in the report/test-result records, while graph evidence arrays are restricted to repository files.
+- This correction is included in commit V 3.0.86; its exact-commit quality workflow must pass before this tracker correction is considered verified.

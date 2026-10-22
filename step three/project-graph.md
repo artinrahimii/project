@@ -4669,10 +4669,9 @@
         ".github/workflows/product-build.yml",
         "WhiteP.sln",
         "src/Host.Windows/WhiteP.Host.Windows.csproj",
-        "tests/HostLifecycle.Tests/Program.cs",
-        "https://github.com/artinrahimii/project/actions/runs/39743813489"
+        "tests/HostLifecycle.Tests/Program.cs"
       ],
-      "notes": "Output-path discrepancy corrected: the initial generated graph pointed this workflow task at src/Shared.Contracts/ + tests/contracts/, which did not match the task title. The checked-in product-build workflow builds WhiteP.sln and runs the executable HostLifecycle test harness. Exact-commit Windows and lifecycle-test jobs passed in run 39743813489. No source/workflow implementation change was needed in this verification attempt; the workflow already existed in the checked-in revision.",
+      "notes": "Output-path discrepancy corrected: the initial generated graph pointed this workflow task at src/Shared.Contracts/ + tests/contracts/, which did not match the task title. The checked-in product-build workflow builds WhiteP.sln and runs the executable HostLifecycle test harness. Exact-commit Windows and lifecycle-test jobs passed in run 39743813489. No source/workflow implementation change was needed in this verification attempt; the workflow already existed in the checked-in revision.\nPost-commit validation correction: quality run 39744728550 failed at recorded-output/evidence validation because action URLs were placed in path-only evidence fields. File references remain here; action URLs remain in execution-history test records and the task report.",
       "execution_summary": {
         "attempt_count": 1,
         "failed_attempt_count": 0,
@@ -4768,10 +4767,9 @@
       "evidence": [
         ".github/workflows/product-build.yml",
         "src/Client.Android/app/build.gradle.kts",
-        "tests/test_product_build_contract.py",
-        "https://github.com/artinrahimii/project/actions/runs/39743813489"
+        "tests/test_product_build_contract.py"
       ],
-      "notes": "Output-path discrepancy corrected: the initial generated graph pointed this workflow task at src/Shared.Contracts/ + tests/contracts/, inconsistent with the task. The existing product-build workflow installs the documented Android toolchain, executes ktlintCheck and assembleDebug, and uploads the APK. The exact-commit Android build/lint job passed in run 39743813489. No source/workflow implementation change was needed in this verification attempt.",
+      "notes": "Output-path discrepancy corrected: the initial generated graph pointed this workflow task at src/Shared.Contracts/ + tests/contracts/, inconsistent with the task. The existing product-build workflow installs the documented Android toolchain, executes ktlintCheck and assembleDebug, and uploads the APK. The exact-commit Android build/lint job passed in run 39743813489. No source/workflow implementation change was needed in this verification attempt.\nPost-commit validation correction: quality run 39744728550 failed at recorded-output/evidence validation because action URLs were placed in path-only evidence fields. File references remain here; action URLs remain in execution-history test records and the task report.",
       "execution_summary": {
         "attempt_count": 1,
         "failed_attempt_count": 0,
@@ -4860,11 +4858,9 @@
       "evidence": [
         ".github/workflows/product-build.yml",
         ".github/workflows/quality.yml",
-        "tests/test_product_build_contract.py",
-        "https://github.com/artinrahimii/project/actions/runs/39743813489",
-        "https://github.com/artinrahimii/project/actions/runs/39743813514"
+        "tests/test_product_build_contract.py"
       ],
-      "notes": "Output-path discrepancy corrected: the initial generated graph pointed this CI-failure-handling task at src/Shared.Contracts/ + tests/contracts/, which did not match the task. Inspection found ordinary run steps without continue-on-error; GitHub Actions default non-zero-exit handling therefore fails the job/workflow, while if-no-files-found: error protects required artifacts. Both CI workflows passed on the exact revision. No deliberate broken commit was introduced merely to prove the failure path.",
+      "notes": "Output-path discrepancy corrected: the initial generated graph pointed this CI-failure-handling task at src/Shared.Contracts/ + tests/contracts/, which did not match the task. Inspection found ordinary run steps without continue-on-error; GitHub Actions default non-zero-exit handling therefore fails the job/workflow, while if-no-files-found: error protects required artifacts. Both CI workflows passed on the exact revision. No deliberate broken commit was introduced merely to prove the failure path.\nPost-commit validation correction: quality run 39744728550 failed at recorded-output/evidence validation because action URLs were placed in path-only evidence fields. File references remain here; action URLs remain in execution-history test records and the task report.",
       "execution_summary": {
         "attempt_count": 1,
         "failed_attempt_count": 0,
@@ -14443,8 +14439,7 @@
       "rationale": "The .NET and Android jobs are separate jobs in the same workflow and neither consumes the other's outputs; this edge preserves conservative task order only.",
       "validation_status": "validated",
       "evidence": [
-        ".github/workflows/product-build.yml: windows-host and android-client are separate jobs",
-        "https://github.com/artinrahimii/project/actions/runs/39743813489"
+        ".github/workflows/product-build.yml: windows-host and android-client are separate jobs"
       ]
     },
     {
@@ -14469,8 +14464,7 @@
       "validation_status": "validated",
       "evidence": [
         ".github/workflows/product-build.yml",
-        "tests/test_product_build_contract.py",
-        "https://github.com/artinrahimii/project/actions/runs/39743813489"
+        "tests/test_product_build_contract.py"
       ]
     },
     {

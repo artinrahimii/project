@@ -15,3 +15,8 @@
 ## Result
 - Status: `done` based on the checked-in workflow, real job configuration, and exact-commit passing CI evidence.
 - The commit SHA for this tracker/report update is resolved from online `main` after commit creation.
+
+
+## Post-commit tracker-validation correction — V 3.0.85
+- Quality run [39744728550](https://github.com/artinrahimii/project/actions/runs/39744728550) failed at recorded-output/evidence validation because the graph's evidence field contained an Actions URL rather than a repository file path. The path-only evidence field has been corrected; the workflow URL remains in this report and test-result records.
+- The original .NET workflow and test jobs were green on exact commit 7169cb200f3b28d12184247e2272388825690c8b. This correction does not claim to re-run the build locally.
