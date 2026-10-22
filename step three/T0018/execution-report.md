@@ -24,3 +24,14 @@ Run the quality gate and product build for this exact integration commit. If bot
 - The product-build run [39733805441](https://github.com/artinrahimii/project/actions/runs/39733805441) failed in lifecycle tests because the unconfigured-backend message no longer included the established phrase `not configured`.
 - Updated the audit to verify the new endpoint/model fields, connect action, prompt control, and generation action; restored the explicit unconfigured-backend reason. These are compatibility fixes, not evidence of live inference success.
 - **Status remains in progress** until a new exact-commit quality gate and product build pass.
+
+
+## Attempt T0018-A004 — exact-commit CI verification
+- **Result: succeeded for the backend/UI integration acceptance at task scope.** Commit [1d4760ae30c340144a95f8c29a9cabd724295b04](https://github.com/artinrahimii/project/commit/1d4760ae30c340144a95f8c29a9cabd724295b04) passed the exact-commit quality gate [39733953285](https://github.com/artinrahimii/project/actions/runs/39733953285) and product build [39733953294](https://github.com/artinrahimii/project/actions/runs/39733953294).
+- Quality job passed automated Python tests, Python syntax compilation, graph structure validation, and recorded-output/evidence validation.
+- Product jobs passed the Windows WPF Release build, the Android debug APK build and artifact upload, and host lifecycle unit/integration tests.
+- **Task-level outcome:** the real `LlamaCppServerBackend` is integrated with the Windows UI for endpoint configuration, health checks, prompts, and returned text; T0018 can be marked done against this evidence.
+- **Explicit limits:** the server and model are installed separately. CI did not run a live model on the target machine, did not prove single-active inference under overlapping live requests, and did not pass AC-LOCAL-01/AC-LOCAL-02 as product runtime gates. P2P remains separate.
+
+## Next
+T0019 may now be executed after reviewing its incoming edges. Keep runtime local-model and network acceptance gates separate from task completion.

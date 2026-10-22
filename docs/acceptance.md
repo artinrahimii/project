@@ -48,7 +48,7 @@ These CI results demonstrate that the configured Windows and Android build entry
 
 ## T0013 — Final Windows, Android, and P2P acceptance matrix
 
-**Gate status:** defined; not yet passed by the product and not accepted for release. The repository now contains a Windows WPF host shell, an Android Gradle app, and an executable host lifecycle harness, and CI builds those components. Shared Protobuf contracts, a real local inference engine, hardware discovery, P2P transport, cryptographic transport, and product-level request/network/storage test harnesses remain unimplemented. Compilation and lifecycle checks supply only part of the evidence; they do not pass the end-to-end release gates.
+**Gate status:** defined; not yet passed by the product and not accepted for release. The repository contains a Windows WPF host, an Android Gradle app, versioned shared Protobuf contracts, a host lifecycle harness, and a Windows UI connected to a local llama.cpp HTTP backend adapter. CI builds both platform projects and runs the lifecycle harness. Live generation against an installed model on the target host remains unverified. Hardware discovery, Android-to-host/P2P transport, cryptographic transport, and product-level request/network/storage test harnesses remain unimplemented. Compilation and controlled tests do not pass the end-to-end release gates.
 
 ### Release decision rule
 
@@ -118,7 +118,7 @@ The lifecycle source used by the Windows host is independent of WPF and can be t
 
 Run with .NET 10: `dotnet run --project tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj --configuration Release`.
 
-The host must not display `Ready` while the backend is unavailable. The current adapter deliberately reports an unconfigured backend; it does not fabricate model inference or hardware discovery. These tests do not establish real inference, hardware capability detection, Android-to-host networking, P2P transport, or physical-device behavior. Those gates remain NOT RUN until implemented and tested.
+The host must not display `Ready` while the backend is unavailable. A new session starts with `UnconfiguredInferenceBackend` until the user connects to a server; the connected `LlamaCppServerBackend` performs real HTTP health and generation requests. The controlled tests do not establish generation with an installed production model, hardware capability detection, Android-to-host networking, P2P transport, or physical-device behavior. Those product gates remain NOT RUN until verified with corresponding runtime evidence.
 
 
 ## T0007 — executable lifecycle decision trace
@@ -132,12 +132,12 @@ The test result for this revision is pending the GitHub Actions run. This single
 
 HostStartup.Start now converts an exception thrown while checking the inference backend into a stable Error status rather than allowing the exception to escape the startup path. The user-facing message deliberately excludes raw exception details. The executable lifecycle harness adds a throwing-backend regression case and checks both the Error state and absence of leaked exception text.
 
-Run in CI with .NET 10: dotnet run --project tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj --configuration Release. This covers error containment around backend availability checking only; it does not implement or verify a real inference backend. Result for the new revision: pending GitHub Actions.
+Run in CI with .NET 10: `dotnet run --project tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj --configuration Release`. The harness covers lifecycle/error handling and controlled local-backend endpoint contracts; it does not establish live generation against an installed model on the target machine. The product-build workflow for commit `1d4760ae30c340144a95f8c29a9cabd724295b04` passed on 2026-10-22, including this harness.
 
 
 ## T0007-A004 — unavailable-reason getter failure
 
-The lifecycle harness also exercises a backend that reports `IsAvailable == false` but throws while reading `UnavailableReason`. The expected behavior is a stable `Error` status with a generic startup-check failure message; raw exception details must not reach the user-facing status. This closes a separate exception path in the existing startup decision logic without pretending to provide a real inference engine.
+The lifecycle harness also exercises a backend that reports `IsAvailable == false` but throws while reading `UnavailableReason`. The expected behavior is a stable `Error` status with a generic startup-check failure message; raw exception details must not reach the user-facing status. This validates startup error handling and does not replace the separate live-model inference acceptance test.
 
 Result for this revision: pending the GitHub Actions run. The case uses a test double and does not establish production backend availability.
 
@@ -153,14 +153,14 @@ When a backend reports unavailable, HostStartup now trims a non-empty reason and
 
 - Verification target: `dotnet run --project tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj --configuration Release`
 - CI evidence for commit `aa1bc7e77bc5bbce80e9d7f987de75c1bdc71c36` (`V 3.0.42`): [Step Three quality gate run 39671083734](https://github.com/artinrahimii/project/actions/runs/39671083734) and [White-P product build run 39671083885](https://github.com/artinrahimii/project/actions/runs/39671083885) both passed.
-- Scope limit: the configured production backend remains `UnconfiguredInferenceBackend`; this change does not implement real inference, hardware discovery, or P2P.
+- Scope limit: `LlamaCppServerBackend` now provides a real HTTP adapter for a separately installed llama.cpp server and the Windows UI calls it; live generation with a supported model on the target host is still unverified. Hardware discovery and P2P transport are not implemented.
 
 
 ## T0008 — repeatable audit of capability and privacy claims
 
 **Audit scope and result:** Reviewed the checked-in Windows and Android UI source, host lifecycle/backend source, `README.md`, `docs/requirements.md`, and the release acceptance matrix on `main` at `aa1bc7e77bc5bbce80e9d7f987de75c1bdc71c36`. The source review found the following actual limitations:
 
-- The Windows UI is an initial host preview. `UnconfiguredInferenceBackend.IsAvailable` returns `false`, so the host reports an unavailable/error state; there is no production inference integration in this snapshot.
+- The Windows UI now exposes connection, health-check, prompt, and generated-output controls backed by `HostInferenceSession` and `LlamaCppServerBackend`. An unconfigured session correctly reports unavailable; CI verifies build and controlled tests, while a live model run on the target machine remains unverified.
 - The Android request button only updates local UI status. It does not transmit the request, and the UI explicitly says that transport is not implemented.
 - The code and documents describe local inference, P2P, privacy, and no-central-history as goals/requirements, not as proven delivered capabilities. The UI labels were changed to identify the Windows host and Android client as previews and to disclose the missing transport.
 - No encrypted transport or product-level storage/network audit has been implemented. This source/document review therefore **does not prove** that a future runtime will keep prompt/response data local, encrypted, or unpersisted.
@@ -200,3 +200,7 @@ Verification history for T0017: on commit `f3783ee3af38c2d2086777950e97778273190
 ## T0018 — local inference backend client
 
 The Windows host contains a concrete `LlamaCppServerBackend` HTTP client for a locally running llama.cpp server: `GET /health` for readiness and `POST /v1/chat/completions` for generation. The test harness verifies request/response mapping, health-state changes, prompt validation and the endpoint paths using a controlled HTTP handler. This verifies the client contract, not actual model inference. Release acceptance still requires a separate real-server/model integration run, confirmation that the backend listens only on the intended local interface, and UI lifecycle integration. No prompt or generated response should be logged.
+
+## T0019 — selected P2P data-path decision
+
+[ADR-0002 — Direct P2P data path](decisions/ADR-0002-direct-p2p-data-path.md) records the first-release architecture: inference requests and responses travel directly between peers; rendezvous/coordination is limited to discovery and connection setup and must not relay inference payloads. This is an architecture decision, not an implementation claim. The source-contract test checks traceability and policy wording; **AC-P2P-01 remains NOT RUN** until real multi-process or multi-device transport evidence and payload-path inspection pass.

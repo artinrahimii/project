@@ -2919,8 +2919,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0017 و T0010 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "src/Host.Windows/HostLifecycle.cs",
         "src/Host.Windows/LlamaCppServerBackend.cs",
@@ -2937,23 +2937,31 @@
         "tests/HostLifecycle.Tests/Program.cs",
         "src/Host.Windows/LlamaCppServerBackend.cs",
         "src/Host.Windows/MainWindow.xaml.cs",
-        "GitHub Actions run 39681737725: product build succeeded; quality gate run 39681738413 failed because T0018 completion metadata lacked a succeeded attempt and test-source evidence."
+        "GitHub Actions run 39681737725: product build succeeded; quality gate run 39681738413 failed because T0018 completion metadata lacked a succeeded attempt and test-source evidence.",
+        "src/Host.Windows/HostLifecycle.cs",
+        "src/Host.Windows/MainWindow.xaml",
+        "https://github.com/artinrahimii/project/actions/runs/39733953285",
+        "https://github.com/artinrahimii/project/actions/runs/39733953294"
       ],
-      "notes": "T0018-A002 added a real Windows UI path to the local backend but its first CI run exposed two stale tests that asserted the former preview-only UI and exact unconfigured message. T0018-A003 updates those checks; keep in_progress until the exact-commit quality gate and product build pass. Live local-model inference is not yet verified.",
+      "notes": "T0018 is done at task scope: LlamaCppServerBackend is wired to the Windows host UI for endpoint/model configuration, health checks, and generation output; exact-commit quality and product CI passed at 1d4760ae30c340144a95f8c29a9cabd724295b04. The installed llama.cpp server/model has not been exercised on a target machine, and AC-LOCAL-01/AC-LOCAL-02 remain NOT RUN as product runtime gates.",
       "execution_summary": {
-        "attempt_count": 3,
+        "attempt_count": 4,
         "failed_attempt_count": 1,
-        "last_attempt_id": "T0018-A003",
-        "last_attempt_result": "failed",
+        "last_attempt_id": "T0018-A004",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Host.Windows/HostLifecycle.cs",
           "tests/test_claims_audit.py",
           "step three/T0018/execution-report.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
+        "related_commits": [
+          "1d4760ae30c340144a95f8c29a9cabd724295b04"
+        ],
         "tests_passed": [
-          "Previous backend endpoint-contract tests passed in run 39681349154; new host-session integration awaits exact-commit CI."
+          "Previous backend endpoint-contract tests passed in run 39681349154; new host-session integration awaits exact-commit CI.",
+          "Exact-commit quality gate 39733953285 passed: automated Python tests, compileall, graph validation, and recorded-output/evidence validation.",
+          "Exact-commit product build 39733953294 passed: Windows WPF Release build, Android debug APK build/upload, and host lifecycle unit/integration tests."
         ],
         "tests_failed": [
           "Quality gate run 39733805458 failed because tests/test_claims_audit.py still asserted the removed preview-only WPF UI.",
@@ -3043,6 +3051,24 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Update source-contract tests to assert the new usable UI and preserve a clear unconfigured-backend reason, then rerun exact-commit CI."
+        },
+        {
+          "attempt_id": "T0018-A004",
+          "started_at": "2026-10-22T06:26:33Z",
+          "ended_at": "2026-10-22T06:28:03Z",
+          "result": "succeeded",
+          "summary": "Revalidated the real local llama.cpp HTTP backend integration and Windows UI on the exact V 3.0.58 commit. Both GitHub Actions workflows passed, including Windows/Android builds, host lifecycle tests, Python tests, graph validation, and output/evidence validation. Marking the task done at adapter/UI-integration scope; live model inference and product single-active-inference acceptance remain unverified.",
+          "changed_files": [],
+          "commit_sha": "1d4760ae30c340144a95f8c29a9cabd724295b04",
+          "tests": [
+            "Quality gate run 39733953285 passed all steps on the exact commit.",
+            "Product build run 39733953294 passed Windows host Release build, Android debug APK build and upload, and host lifecycle unit/integration tests."
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Keep AC-LOCAL-01 and AC-LOCAL-02 as NOT RUN until live-model and overlapping-request runtime evidence is captured; review T0018 -> T0019 before starting T0019."
         }
       ]
     },
@@ -3063,20 +3089,40 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0018 و T0010 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال انجام",
+      "actual_output_paths": [
+        "docs/decisions/ADR-0002-direct-p2p-data-path.md",
+        "tests/test_p2p_data_path_decision.py",
+        "README.md",
+        "docs/acceptance.md",
+        "step three/T0019/execution-report.md"
+      ],
       "expected_output_paths": [
         "README.md + docs/decisions/ + فایل‌های تنظیمات build"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "docs/decisions/ADR-0002-direct-p2p-data-path.md",
+        "docs/requirements.md",
+        "README.md",
+        "docs/acceptance.md",
+        "tests/test_p2p_data_path_decision.py"
+      ],
+      "notes": "T0019's architecture decision and source-contract test have been authored. The decision is explicitly not a claim of transport implementation. Keep in_progress until the exact-commit quality gate validates the new test and the graph guard; AC-P2P-01 remains NOT RUN.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0019-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "README.md",
+          "docs/acceptance.md",
+          "docs/decisions/ADR-0002-direct-p2p-data-path.md",
+          "tests/test_p2p_data_path_decision.py",
+          "step three/T0018/execution-report.md",
+          "step three/T0019/execution-report.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
@@ -3089,7 +3135,33 @@
           "review_evidence": []
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0019-A001",
+          "started_at": "2026-10-22T06:41:37.940Z",
+          "ended_at": "2026-10-22T06:41:37.940Z",
+          "result": "partial",
+          "summary": "Recorded the direct-P2P architecture decision and added a source-contract test. Reviewed both incoming edges: they remain in execution order and retain type=blocks, but evidence supports sequencing_only rather than an asserted technical dependency. Exact-commit CI has not yet been observed, so the task remains in_progress.",
+          "changed_files": [
+            "README.md",
+            "docs/acceptance.md",
+            "docs/decisions/ADR-0002-direct-p2p-data-path.md",
+            "tests/test_p2p_data_path_decision.py",
+            "step three/T0018/execution-report.md",
+            "step three/T0019/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            "Pending: python -m unittest discover -s tests -v on the new exact commit; not claimed as run yet."
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "After the code/document/test commit is created, inspect exact-commit GitHub Actions runs. Record the commit SHA and mark succeeded only if quality gate and product build are successful."
+        }
+      ]
     },
     {
       "id": "T0020",
@@ -12823,19 +12895,28 @@
       "from": "T0018",
       "to": "T0019",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0019 selects the product's direct-P2P control/data-plane boundary from REQ-010 and REQ-011. It does not consume a specific backend function, output artifact, or interface implemented uniquely by T0018. Keep the original order and type=blocks, but treat the edge as safe sequencing rather than a proven technical prerequisite.",
+      "validation_status": "validated",
+      "evidence": [
+        "step one/V1.0.md: T0018 implements the local model backend; T0019 selects the default P2P data path and coordinator boundary.",
+        "docs/requirements.md REQ-010 and REQ-011 define direct peer transfer and prohibit central prompt/response/history handling independently of the selected local HTTP adapter.",
+        "src/Host.Windows/LlamaCppServerBackend.cs: local backend request handling does not implement or supply a peer transport/rendezvous artifact.",
+        "README.md: direct P2P is the intended data path but transport remains unimplemented."
+      ]
     },
     {
       "from": "T0010",
       "to": "T0019",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0010 provides repeatable build/test entrypoints. T0019's architecture decision is derived from the product's privacy and direct-P2P requirements and does not consume a build artifact or configuration generated uniquely by T0010. Preserve the established order while recording sequencing-only semantics.",
+      "validation_status": "validated",
+      "evidence": [
+        "step one/V1.0.md: T0010 concerns reproducible build/test workflows; T0019 concerns the direct-P2P data-path decision.",
+        ".github/workflows/product-build.yml and .github/workflows/quality.yml provide verification commands but are not inputs to the P2P architecture decision.",
+        "docs/requirements.md REQ-010 defines the data-path boundary independently of CI toolchain configuration."
+      ]
     },
     {
       "from": "T0019",
@@ -16884,6 +16965,35 @@
         "step one/V1.0.md: T0010 defines clean-checkout build/test reproducibility; T0017 defines shared Protobuf source and generated bindings.",
         "src/Host.Windows/WhiteP.Host.Windows.csproj and src/Client.Android/app/build.gradle.kts: code generation is configured directly in platform projects.",
         ".github/workflows/product-build.yml: builds both projects as the verification gate; T0017 does not consume uploaded artifacts."
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-22T06:41:37.940Z",
+      "edge_from": "T0018",
+      "edge_to": "T0019",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "reason": "T0019 selects the product's direct-P2P control/data-plane boundary from REQ-010 and REQ-011. It does not consume a specific backend function, output artifact, or interface implemented uniquely by T0018. Keep the original order and type=blocks, but treat the edge as safe sequencing rather than a proven technical prerequisite.",
+      "evidence": [
+        "step one/V1.0.md: T0018 implements the local model backend; T0019 selects the default P2P data path and coordinator boundary.",
+        "docs/requirements.md REQ-010 and REQ-011 define direct peer transfer and prohibit central prompt/response/history handling independently of the selected local HTTP adapter.",
+        "src/Host.Windows/LlamaCppServerBackend.cs: local backend request handling does not implement or supply a peer transport/rendezvous artifact.",
+        "README.md: direct P2P is the intended data path but transport remains unimplemented."
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-22T06:41:37.940Z",
+      "edge_from": "T0010",
+      "edge_to": "T0019",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "reason": "T0010 provides repeatable build/test entrypoints. T0019's architecture decision is derived from the product's privacy and direct-P2P requirements and does not consume a build artifact or configuration generated uniquely by T0010. Preserve the established order while recording sequencing-only semantics.",
+      "evidence": [
+        "step one/V1.0.md: T0010 concerns reproducible build/test workflows; T0019 concerns the direct-P2P data-path decision.",
+        ".github/workflows/product-build.yml and .github/workflows/quality.yml provide verification commands but are not inputs to the P2P architecture decision.",
+        "docs/requirements.md REQ-010 defines the data-path boundary independently of CI toolchain configuration."
       ],
       "reviewed_by": "Step Three execution review"
     }
