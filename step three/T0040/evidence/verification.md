@@ -25,3 +25,14 @@
 - [C# host harness](https://github.com/artinrahimii/project/actions/runs/39861144217): failed because the intentionally incomplete HostAnnouncement triggered a NullReferenceException before validation.
 - [Android product job](https://github.com/artinrahimii/project/actions/runs/39861144217): lint passed; APK steps were pending when this failure was recorded.
 - A002 adds a defensive missing-capabilities check. Completion is still pending.
+
+
+## Attempt A002 — successful exact-commit verification
+- Implementation: `55c49f1595aa4bc48533fb3bcd2df77fdeb27896` (`V 3.0.121`).
+- [Step Three quality gate](https://github.com/artinrahimii/project/actions/runs/39861360027): success.
+- [Full product workflow](https://github.com/artinrahimii/project/actions/runs/39861360067): success.
+- The C# harness explicitly reported successful rejection of malformed, incomplete, oversized, incompatible-version and invalid-value messages; valid fixtures also passed.
+- All 11 primary Protobuf round trips/shared wire fixtures passed.
+- Windows WPF and Android APK were built; their generated-source checks, Android Protobuf tests and both artifact uploads passed.
+- The A001 null-capabilities crash is retained as historical failure and corrected in A002.
+- T0040 is accepted. Network peer transport remains out of scope for this task.

@@ -23,3 +23,15 @@
 ## Attempt T0040-A002 — null-capabilities correction pending
 - Added explicit rejection of a `HostAnnouncement` without `HostCapabilities` immediately after parsing.
 - Expected error is `PROTOCOL_ERROR_CODE_INVALID_MESSAGE` without an exception. Exact-commit C# and product CI results are pending.
+
+
+## Attempt T0040-A002 — successful exact-commit verification
+- Tested fix commit: `55c49f1595aa4bc48533fb3bcd2df77fdeb27896` (`V 3.0.121`).
+- [Step Three quality gate](https://github.com/artinrahimii/project/actions/runs/39861360027): **success**.
+- [Full product build workflow](https://github.com/artinrahimii/project/actions/runs/39861360067): **success**, all three jobs:
+  - C# host lifecycle and message-validation harness passed. Its log confirms malformed, incomplete, oversized, incompatible-version and invalid-value messages are rejected, plus all 11 Protobuf round trips/shared fixtures and the size-boundary tests.
+  - Windows WPF formatting, app build, generated C# source verification and artifact upload passed.
+  - Android lint, debug APK build, Protobuf round-trip unit tests, generated Java/Kotlin checks and APK upload passed.
+- The original A001 failure remains recorded: an announcement without `HostCapabilities` caused NullReferenceException. A002 now returns InvalidMessage instead; no crash.
+- **Result:** T0040 is `done`.
+- Scope boundary: the parser is an executable pre-parse validation boundary, not a P2P transport implementation; sockets, peer discovery and end-to-end peer inference are not claimed.

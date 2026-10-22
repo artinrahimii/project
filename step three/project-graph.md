@@ -6567,8 +6567,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0039 و T0030 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "تکمیل‌شده",
       "actual_output_paths": [
         "src/Shared.Contracts/ProtocolMessageValidator.cs",
         "src/Shared.Contracts/ProtocolMessageLimits.cs",
@@ -6606,14 +6606,16 @@
         "tests/test_message_validation.py",
         "tests/test_protocol_limits.py",
         "docs/requirements.md",
-        "src/Shared.Contracts/README.md"
+        "src/Shared.Contracts/README.md",
+        "step three/T0040/execution-report.md",
+        "step three/T0040/evidence/verification.md"
       ],
-      "notes": "A001 hit a real parser bug: an announcement with no capabilities caused NullReferenceException instead of a validation result. A002 adds explicit missing-capabilities rejection before reading fields. Keep the task in progress until the executable C# harness and product workflow pass.",
+      "notes": "Completed on V 3.0.121 after the exact-commit quality gate and all three product workflow jobs succeeded. Parser rejects oversized raw inference/control messages before Protobuf parsing, maps malformed wire data and missing fields/capabilities to InvalidMessage, classifies unsupported versions, and validates request/host capability/response semantics. C# tests passed for all targeted negative/positive cases, plus all 11 Protobuf round trips and size checks. Scope: no network P2P socket or peer-discovery flow has been added.",
       "execution_summary": {
         "attempt_count": 2,
         "failed_attempt_count": 1,
         "last_attempt_id": "T0040-A002",
-        "last_attempt_result": "in_progress",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Shared.Contracts/ProtocolMessageValidator.cs",
           "src/Shared.Contracts/ProtocolMessageLimits.cs",
@@ -6632,15 +6634,20 @@
         ],
         "related_commits": [
           "e802c59b3fc13932de268fd079f027a6e1b0f200",
-          "3cc3687c6dc7d68fe51656d383a42f418ef0d5cf"
+          "3cc3687c6dc7d68fe51656d383a42f418ef0d5cf",
+          "55c49f1595aa4bc48533fb3bcd2df77fdeb27896"
         ],
         "tests_passed": [
-          "Step Three quality gate run 39861144156 passed.",
-          "Windows WPF build, C# formatting and generated Protobuf source checks passed on V 3.0.120.",
-          "Android Kotlin lint passed on V 3.0.120."
+          "Step Three quality gate run 39861360027 completed successfully.",
+          "C# host lifecycle job 120112599368 passed; log explicitly reports malformed, incomplete, oversized, incompatible-version and invalid-value messages are rejected.",
+          "C# harness passed serialize/deserialize round-trips for all 11 primary Protobuf message types and all 11 shared cross-language wire fixtures.",
+          "Runtime tests passed for request, capsule, prompt, response and local HTTP body size ceilings and pre-inference rejection.",
+          "Windows WPF C# formatting, application build, generated Protobuf C# checks and artifact upload passed.",
+          "Android Kotlin lint, debug APK build, Protobuf round-trip unit tests, generated Java/Kotlin checks and APK upload passed.",
+          "Full product run 39861360067 concluded success."
         ],
         "tests_failed": [
-          "C# lifecycle/integration test job run 39861144217 failed on the incomplete HostAnnouncement negative case with NullReferenceException in ProtocolMessageParser.ParseHostAnnouncement."
+          "Attempt T0040-A001 failed: absent HostCapabilities caused NullReferenceException in parser; explicit validation was added and verified by A002."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -6716,39 +6723,48 @@
         {
           "attempt_id": "T0040-A002",
           "started_at": "2026-10-22T21:57:31.922Z",
-          "ended_at": null,
-          "result": "in_progress",
-          "summary": "Added an explicit check for missing HostCapabilities immediately after Protobuf parsing, returning InvalidMessage before the parser dereferences capability fields.",
+          "ended_at": "2026-10-22T22:00:12Z",
+          "result": "succeeded",
+          "summary": "The exact-commit C# integration suite passed all invalid-message acceptance cases including absent HostCapabilities, without exception. The 11-message C# Protobuf round trips/shared fixtures, size boundary integration checks and lifecycle suite passed. Step Three quality gate passed; Windows WPF build/generated-source checks and artifact upload passed; Android lint, APK build, Protobuf round-trip tests, generated source checks and APK upload passed.",
           "changed_files": [
             "src/Host.Windows/ProtocolMessageParser.cs",
             "step three/T0040/execution-report.md",
             "step three/T0040/evidence/verification.md",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "55c49f1595aa4bc48533fb3bcd2df77fdeb27896",
           "tests": [
             {
-              "command": "dotnet run --project tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj --configuration Release",
-              "result": "pending"
+              "command": "Step Three quality gate run 39861360027",
+              "result": "succeeded",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39861360027"
             },
             {
-              "command": "python -m unittest discover -s tests -v",
-              "result": "pending"
+              "command": "C# host lifecycle and message validation job 120112599368",
+              "result": "succeeded",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39861360067"
             },
             {
-              "command": "dotnet format WhiteP.sln --verify-no-changes",
-              "result": "pending"
+              "command": "Windows WPF format/build/generated Protobuf C# verification and artifact upload — job 120112599010",
+              "result": "succeeded",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39861360067"
             },
             {
-              "command": "White-P product build workflow",
-              "result": "pending"
+              "command": "Android lint, APK build, Protobuf round-trip tests, generated Java/Kotlin checks and artifact upload — job 120112599294",
+              "result": "succeeded",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39861360067"
+            },
+            {
+              "command": "Full White-P product build run 39861360067",
+              "result": "succeeded",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39861360067"
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Verify the missing-capabilities case is rejected without exception and all other parser acceptance cases pass."
+          "follow_up": "Proceed to the next ready task by current graph dependency order. The parser is callable but no peer transport/socket has been integrated yet."
         }
       ]
     },
