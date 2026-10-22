@@ -42,3 +42,14 @@
 - Indented each of the 11 generated Kotlin DSL builder bodies to the correct nesting level and aligned the closing brace with the builder invocation.
 - Retains the successful Python/graph and C# evidence from A002; A002's Android formatting failure stays in the history.
 - Awaiting exact-commit lint, Android APK compilation, Kotlin JUnit round-trip tests, generated-source assertions, and full product build.
+
+
+## Attempt T0037-A003 — exact-commit verification and completion
+- Tested implementation commit: `e332ef952d991d8e5297af62193b7d988d458234` (`V 3.0.109`).
+- [Step Three quality gate run 39845169303](https://github.com/artinrahimii/project/actions/runs/39845169303): **success**; 79 Python tests, Python syntax, graph structure, and repository output/evidence checks all passed.
+- [White-P product build run 39845169399](https://github.com/artinrahimii/project/actions/runs/39845169399): **success**, all three jobs:
+  - Windows WPF host formatting/build, generated Protobuf C# source presence assertion, and artifact upload passed.
+  - .NET harness printed PASS for round-trip serialization/deserialization/re-serialization for all 11 primary messages, as well as existing host lifecycle/backend assertions.
+  - Android Kotlin formatting/lint, debug APK build, `testDebugUnitTest` for all 11 primary messages, generated Java/Kotlin source presence checks, and APK artifact upload passed.
+- Result: **T0037 complete**. Failed attempts A001 and A002 remain in the history; neither was deleted or overwritten.
+- Scope boundary: these tests verify round-trip integrity in each language. They do not yet assert C#-written bytes are parsed by Kotlin (or vice versa), and they do not claim a live network/P2P transport.

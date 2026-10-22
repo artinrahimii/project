@@ -5811,8 +5811,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0036 و T0030 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "تکمیل‌شده",
       "actual_output_paths": [
         "tests/HostLifecycle.Tests/Program.cs",
         "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
@@ -5841,12 +5841,12 @@
         ".github/workflows/product-build.yml",
         "step three/T0037/execution-report.md"
       ],
-      "notes": "T0037-A001 introduces executable C# and Android Kotlin round-trip suites for every message currently declared in the canonical schema. Exact-commit CI is pending. These tests verify encode/decode integrity within each language, not end-to-end cross-language transport or P2P. A001 exact-commit verification failed and is preserved in execution_history; no round-trip acceptance is claimed until a later attempt passes both languages on the same commit. A002 achieved full Python/graph validation and C# 11-message round-trip success, but Android ktlint failed and the Kotlin unit test suite did not execute; A003 corrects the exact indentation reported by ktlint.",
+      "notes": "T0037 acceptance verified on exact implementation commit e332ef952d991d8e5297af62193b7d988d458234 (V 3.0.109): all 79 Python tests, graph/repository-evidence validation, C# round-trip tests for all 11 primary Protobuf messages, Android ktlint, APK build, Kotlin JUnit round-trip tests for the same 11 messages, generated Java/Kotlin checks, Windows host build/generated-C# checks, and artifact upload passed. The tests validate serialize/deserialize/re-serialize integrity independently per language. They do not prove cross-language wire compatibility or a running peer-to-peer transport. A001 and A002 failures are preserved in execution_history.",
       "execution_summary": {
         "attempt_count": 3,
         "failed_attempt_count": 2,
         "last_attempt_id": "T0037-A003",
-        "last_attempt_result": "in_progress",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "tests/HostLifecycle.Tests/Program.cs",
           "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
@@ -5860,15 +5860,16 @@
         ],
         "related_commits": [
           "04b1fcb9d0656c0995f92ec5b6cb613b81979047",
-          "dd87b8e3edc56c40a7383dea340e47adc44e5b8d"
+          "dd87b8e3edc56c40a7383dea340e47adc44e5b8d",
+          "e332ef952d991d8e5297af62193b7d988d458234"
         ],
         "tests_passed": [
-          "V 3.0.108 quality run 39844860940 — 79 Python tests, syntax, graph guard, and repo-root output/evidence validator passed.",
-          "V 3.0.108 product run 39844860924 — dotnet harness passed C# Protobuf round-trips for all 11 primary messages and existing host lifecycle/backend assertions."
+          "Step Three quality gate run 39845169303 — success: 79 Python tests, syntax, graph structure, recorded output/evidence checks.",
+          "White-P product build run 39845169399 — all three jobs successful: Windows WPF/generated C# check/artifact; .NET 11-message round-trip and lifecycle harness; Android ktlint, debug APK, 11-message Kotlin JUnit round-trips, generated Java/Kotlin checks and artifact."
         ],
         "tests_failed": [
-          "A001 V 3.0.107 failed Python schema-name regex enumeration, C# CS0104 HostStatus ambiguity, and Android ktlint.",
-          "A002 V 3.0.108 Android ktlint failed because nested Kotlin DSL builder indentation was not shifted along with multiline initializer; Kotlin unit tests not executed."
+          "A001 (V 3.0.107) failures: over-escaped schema regex, CS0104 HostStatus ambiguity, Kotlin ktlint formatting.",
+          "A002 (V 3.0.108) failure: Kotlin builder body/closing-brace indentation; round-trip JUnit skipped."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -5992,27 +5993,64 @@
         {
           "attempt_id": "T0037-A003",
           "started_at": "2026-10-22T20:00:30Z",
-          "ended_at": null,
-          "result": "in_progress",
-          "summary": "Correcting Kotlin DSL body/brace indentation from A002 while retaining its successful Python, graph and C# test evidence and recording its Android lint failure.",
+          "ended_at": "2026-10-22T20:04:36Z",
+          "result": "succeeded",
+          "summary": "Exact-commit quality and product workflows both succeeded. All 79 Python tests and graph/evidence validators passed; C# round-tripped all 11 primary messages; Android ktlint, APK build, Kotlin JUnit round-trip tests, generated Java/Kotlin source checks, and artifact upload succeeded; Windows host build and generated C# source check passed.",
           "changed_files": [
             "src/Client.Android/app/src/test/java/com/whitep/client/protocol/ProtoRoundTripTest.kt",
             "step three/T0037/execution-report.md",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "e332ef952d991d8e5297af62193b7d988d458234",
           "tests": [
             {
-              "command": "Android ktlint, assembleDebug, testDebugUnitTest, generated-source assertions, plus quality graph/test gate",
-              "result": "pending",
-              "summary": "Exact-commit proof still required for the Kotlin test compilation and round-trip assertions for the full 11-message set."
+              "command": "Step Three quality gate run 39845169303",
+              "result": "passed",
+              "summary": "All 79 Python tests, Python syntax compilation, graph structure, and repository output/evidence validation passed on exact commit e332ef952d991d8e5297af62193b7d988d458234.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/39845169303"
+            },
+            {
+              "command": "dotnet run --project tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj --configuration Release",
+              "result": "passed",
+              "summary": "The harness logged PASS for serialize/deserialize/re-serialize byte-stable round-trip tests for all 11 primary Protobuf messages and existing host lifecycle/backend checks.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/39845169399"
+            },
+            {
+              "command": "Windows WPF host product build",
+              "result": "passed",
+              "summary": "C# formatting, Windows host build, explicit generated Protobuf C# source check and artifact upload succeeded.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/39845169399"
+            },
+            {
+              "command": "gradle --no-daemon ktlintCheck",
+              "result": "passed",
+              "summary": "Kotlin formatting and lint succeeded.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/39845169399"
+            },
+            {
+              "command": "gradle --no-daemon assembleDebug",
+              "result": "passed",
+              "summary": "Android debug APK compiled successfully including generated Protobuf Kotlin DSL usage.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/39845169399"
+            },
+            {
+              "command": "gradle --no-daemon testDebugUnitTest",
+              "result": "passed",
+              "summary": "Android round-trip JUnit suite for all 11 primary Protobuf message types succeeded.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/39845169399"
+            },
+            {
+              "command": "Android generated Java/Kotlin source verification and artifact upload",
+              "result": "passed",
+              "summary": "Both generated source files were present and the debug APK artifact uploaded successfully.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/39845169399"
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect new exact-commit workflow; if Kotlin compilation/JUnit reveals generated API or runtime errors, fix those before completion."
+          "follow_up": "T0037 is complete for independent C# and Kotlin Protobuf round-trip serialization integrity across all currently declared primary messages. End-to-end cross-language byte compatibility and live P2P transport remain separate tasks."
         }
       ]
     },
