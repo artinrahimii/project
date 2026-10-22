@@ -111,7 +111,8 @@
 ## دادهٔ کامل گراف v2.1
 ساختار زیر JSON معتبر و قابل‌پردازش ماشینی است. فهرست `nodes` همهٔ وظایف را دارد و `edges` یال‌های جهت‌دار وابستگی را ارائه می‌کند.
 
-```json{
+```json
+{
   "schema_version": "1.0",
   "document": "v2.1",
   "title": "گراف وابستگی اجرای پروژهٔ شبکهٔ همتابه‌همتای هوش مصنوعی محلی",
@@ -2918,45 +2919,48 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0017 و T0010 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "done",
-      "status_fa": "تکمیل‌شده",
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
       "actual_output_paths": [
+        "src/Host.Windows/HostLifecycle.cs",
         "src/Host.Windows/LlamaCppServerBackend.cs",
+        "src/Host.Windows/MainWindow.xaml",
+        "src/Host.Windows/MainWindow.xaml.cs",
         "tests/HostLifecycle.Tests/Program.cs",
-        "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
         "README.md",
-        "docs/acceptance.md",
         "step three/T0018/execution-report.md"
       ],
       "expected_output_paths": [
         "README.md + docs/decisions/ + فایل‌های تنظیمات build"
       ],
       "evidence": [
-        "Commit 74d4605149999c249bb63bc08741c6d0d49d9145: https://github.com/artinrahimii/project/commit/74d4605149999c249bb63bc08741c6d0d49d9145",
-        "White-P product build workflow run 39681349154 succeeded; Windows WPF host build, host lifecycle unit/integration tests, and Android debug APK build all passed: https://github.com/artinrahimii/project/actions/runs/39681349154",
-        "Host lifecycle test job log confirms endpoint contracts, health readiness, generated-response parsing, safe startup errors, and input bounds."
+        "tests/HostLifecycle.Tests/Program.cs",
+        "src/Host.Windows/LlamaCppServerBackend.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "GitHub Actions run 39681737725: product build succeeded; quality gate run 39681738413 failed because T0018 completion metadata lacked a succeeded attempt and test-source evidence."
       ],
-      "notes": "T0018-A001 implements a real HTTP backend client for a locally hosted llama.cpp server, with /health readiness and OpenAI-compatible /v1/chat/completions generation. This is a backend integration, not a bundled model/server binary. Acceptance remains in_progress until exact-commit quality and Windows build/test CI passes. Inference is bounded to one active request per backend instance; prompt/response payloads are not logged.",
+      "notes": "T0018-A002 integrates the local llama.cpp backend into the Windows host UI through HostInferenceSession. The UI can configure a local HTTP(S) endpoint and model ID, check /health, submit prompts, and display generated text. No server/model binary is bundled. Status remains in_progress until exact-commit quality gate and Windows/Android build/tests pass; live model inference remains unverified.",
       "execution_summary": {
-        "attempt_count": 1,
+        "attempt_count": 2,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0018-A001",
-        "last_attempt_result": "done",
+        "last_attempt_id": "T0018-A002",
+        "last_attempt_result": "partial",
         "changed_files": [
-          "src/Host.Windows/LlamaCppServerBackend.cs",
+          "src/Host.Windows/HostLifecycle.cs",
+          "src/Host.Windows/MainWindow.xaml",
+          "src/Host.Windows/MainWindow.xaml.cs",
           "tests/HostLifecycle.Tests/Program.cs",
-          "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
           "README.md",
-          "docs/acceptance.md",
-          "step three/T0018/execution-report.md"
+          "step three/T0018/execution-report.md",
+          "step three/project-graph.md"
         ],
         "related_commits": [],
         "tests_passed": [
-          "Windows WPF host Release build (GitHub Actions)",
-          "Host lifecycle unit and integration tests (GitHub Actions)",
-          "Android debug APK build (GitHub Actions)"
+          "Previous backend endpoint-contract tests passed in run 39681349154; new host-session integration awaits exact-commit CI."
         ],
-        "tests_failed": [],
+        "tests_failed": [
+          "Quality gate run 39681738413 failed: T0018 lacked a succeeded history entry and test-source path in evidence; product build run 39681737725 succeeded."
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -2993,6 +2997,31 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Continue with the next eligible task after checking its dependencies."
+        },
+        {
+          "attempt_id": "T0018-A002",
+          "started_at": "2026-10-22T06:20:00Z",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Integrated the real local llama.cpp backend into the Windows host UI with configurable endpoint/model, health connection, prompt submission, and local response display. Added host-session lifecycle coverage. Exact-commit CI pending; task remains in_progress.",
+          "changed_files": [
+            "src/Host.Windows/HostLifecycle.cs",
+            "src/Host.Windows/MainWindow.xaml",
+            "src/Host.Windows/MainWindow.xaml.cs",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "README.md",
+            "step three/T0018/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            "Host lifecycle and backend tests in tests/HostLifecycle.Tests/Program.cs (pending exact-commit CI)"
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": "The backend class was not connected to the Windows UI; previous quality gate rejected the unsupported done metadata.",
+          "contract_changes": [],
+          "follow_up": "Run exact-commit quality gate and Windows/Android product build; only mark done after both pass."
         }
       ]
     },
@@ -16838,4 +16867,5 @@
       "reviewed_by": "Step Three execution review"
     }
   ]
-}```
+}
+```

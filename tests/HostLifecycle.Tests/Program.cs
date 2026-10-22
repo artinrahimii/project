@@ -41,7 +41,15 @@ Assert(!await backend.CheckHealthAsync(),"Unhealthy backend must not be marked a
 Assert(!backend.IsAvailable,"Failed health check must clear readiness");
 var badInput=false; try { await backend.GenerateAsync(" ",32); } catch(ArgumentException) { badInput=true; }
 Assert(badInput,"Empty prompts must be rejected before network access");
-Console.WriteLine("PASS: lifecycle validation, safe startup errors, real HTTP backend endpoint contracts, health readiness, generated response parsing, and input bounds.");
+using (var session = new HostInferenceSession(backend: new SessionTestBackend()))
+{
+    var connected = await session.CheckBackendAsync();
+    Assert(connected.State == HostState.Ready, "Session should become Ready after successful backend health check.");
+    var generated = await session.GenerateAsync("session prompt", 32);
+    Assert(generated == "session response", "Session should return generated text.");
+    Assert(session.Status.State == HostState.Ready, "Session should return to Ready after generation.");
+}
+Console.WriteLine("PASS: lifecycle validation, backend endpoint contracts, health readiness, generated response parsing, input bounds, and host-session lifecycle.");
 
 sealed class RecordingHandler : HttpMessageHandler
 {
@@ -60,3 +68,11 @@ sealed class AvailableTestBackend : IInferenceBackend { public bool IsAvailable=
 sealed class ThrowingBackend : IInferenceBackend { public bool IsAvailable=>throw new InvalidOperationException("secret backend details"); public string UnavailableReason=>throw new InvalidOperationException("secret backend details"); }
 sealed class ThrowingUnavailableReasonBackend : IInferenceBackend { public bool IsAvailable=>false; public string UnavailableReason=>throw new InvalidOperationException("private-reason details"); }
 sealed class EmptyUnavailableReasonBackend : IInferenceBackend { public bool IsAvailable=>false; public string UnavailableReason=>"   "; }
+
+sealed class SessionTestBackend : IInferenceBackend
+{
+ public bool IsAvailable=>true;
+ public string UnavailableReason=>string.Empty;
+ public Task<bool> CheckHealthAsync(CancellationToken cancellationToken=default)=>Task.FromResult(true);
+ public Task<string> GenerateAsync(string prompt,uint maxOutputTokens,CancellationToken cancellationToken=default)=>Task.FromResult("session response");
+}

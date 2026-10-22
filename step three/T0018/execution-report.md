@@ -1,13 +1,19 @@
 # T0018 — execution report
 
-## Attempt T0018-A001 — real local llama.cpp HTTP backend
+## Attempt T0018-A001 — local llama.cpp backend
+- Implemented a real HTTP client for `GET /health` and OpenAI-compatible `POST /v1/chat/completions`, bounded output tokens, deadlines/cancellation, and per-instance request serialization.
+- Product-build run [39681349154](https://github.com/artinrahimii/project/actions/runs/39681349154) passed for the backend implementation commit.
+- Review found that the backend class existed but the Windows UI still displayed a preview-only message and did not call it.
 
-- **Status: done (CI acceptance passed on the implementation commit).**
-- **Dependency review**
-  - `T0017 → T0018`: validated as `contract_or_interface_dependency`. The backend uses the existing local inference boundary and aligns with the shared request's model, prompt, and output-token fields; evidence: `protocol/whitep/v1/messages.proto`, `tests/test_proto_contract.py`, and the T0017 execution report.
-  - `T0010 → T0018`: validated as `sequencing_only`. T0010's clean-checkout workflow is a quality gate, not a runtime artifact consumed by the backend; evidence: `README.md`, `.github/workflows/product-build.yml`, and the T0010 execution report.
-- **Implementation:** added `LlamaCppServerBackend`, a real HTTP client for a separately running local llama.cpp server. It checks `GET /health`, sends prompts to `POST /v1/chat/completions`, parses generated output, enforces request deadlines/cancellation, bounds output tokens, serializes inference calls per backend instance, and does not log prompt/response content.
-- **Tests added:** controlled HTTP-handler tests check exact endpoints, request body, response parsing, health failure, and invalid-input rejection. These are backend contract/integration-boundary tests, not a live model run.
-- **CI evidence:** implementation commit [74d4605149999c249bb63bc08741c6d0d49d9145](https://github.com/artinrahimii/project/commit/74d4605149999c249bb63bc08741c6d0d49d9145) passed [White-P product build run 39681349154](https://github.com/artinrahimii/project/actions/runs/39681349154): Windows WPF host Release build, host lifecycle unit/integration tests, and Android debug APK build all succeeded.
-- **Runtime limitation:** no llama.cpp server binary or model is bundled. Live inference against an explicitly installed local server/model remains unverified. The backend integration and CI acceptance are complete; this does not claim that a live model has been run on a user machine.
-- **Next:** continue with the next graph-eligible task after reviewing its dependencies.
+## Attempt T0018-A002 — connect the backend to the Windows host UI
+- **Status: partial; exact-commit CI pending.**
+- Added `HostInferenceSession` for connection/readiness, busy/ready/error transitions, and local generation.
+- Replaced the preview-only WPF window with controls for local server URL, model ID, health connection, prompt entry, and generated output.
+- Extended the backend interface with health and generation methods and added host-session lifecycle tests.
+- Updated README to remove the stale statement that the UI was not connected to live inference.
+- Dependency review remains unchanged: `T0017 → T0018` is a validated contract/interface dependency; `T0010 → T0018` is sequencing-only.
+- **Runtime limitation:** llama.cpp and a model must be installed separately. CI verifies build and controlled tests, not a live inference session on a target machine.
+- **Prior CI issue:** quality gate run [39681738413](https://github.com/artinrahimii/project/actions/runs/39681738413) failed because the previous graph entry marked T0018 done without a `succeeded` history result or test-source evidence. This attempt records T0018 as in progress until new exact-commit checks pass.
+
+## Next
+Run the quality gate and product build for this exact integration commit. If both pass, record a successful attempt and mark T0018 done; then review the T0018 → T0019 edge before starting T0019.
