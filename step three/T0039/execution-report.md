@@ -16,3 +16,14 @@
 
 ## Tracker quality-gate correction
 - `V 3.0.115` product CI passed for the implementation preceding it, but its graph quality workflow failed because CI URLs were entered in the graph's file-path-only `evidence` array. The URL references have been removed from that array and remain linked under task history and reports; repository paths are now used as evidence entries.
+
+
+## Attempt T0039-A001 — failed quality-gate verification retained
+- Tested commit: `c0070b88f71e075ce2d03fd15fb88ce716fd1fee` (`V 3.0.116`).
+- [Step Three quality gate](https://github.com/artinrahimii/project/actions/runs/39859692462) failed one static traceability assertion in `tests/test_decision_traceability.py`: it required `PostAsJsonAsync("v1/chat/completions"`.
+- That assertion was stale after the implementation deliberately switched to `JsonSerializer.SerializeToUtf8Bytes`, pre-send body-size validation, `ByteArrayContent`, `ResponseHeadersRead`, and `ReadLimitedBodyAsync` to enforce the documented body ceilings.
+- [Product build](https://github.com/artinrahimii/project/actions/runs/39859692488) had a passing C# host/lifecycle job, including the new runtime bounds harness. Its Android and Windows jobs were still reported as in progress at the last status check. Overall product success is not claimed for A001.
+
+## Attempt T0039-A002 — correction pending exact-commit CI
+- Replaced the obsolete `PostAsJsonAsync` assertion with assertions for bounded serialization, request-body validation, `ResponseHeadersRead`, and the bounded response reader.
+- T0039 remains `in_progress`. No acceptance is claimed until the full Step Three quality gate and product workflow succeed for the same exact commit.
