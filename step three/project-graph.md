@@ -3087,8 +3087,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0018 و T0010 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال انجام",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "docs/decisions/ADR-0002-direct-p2p-data-path.md",
         "tests/test_p2p_data_path_decision.py",
@@ -3104,25 +3104,33 @@
         "docs/requirements.md",
         "README.md",
         "docs/acceptance.md",
-        "tests/test_p2p_data_path_decision.py"
+        "tests/test_p2p_data_path_decision.py",
+        "step three/T0019/execution-report.md"
       ],
-      "notes": "The direct-P2P architecture decision and its contract test are implemented. Test suite passed all 54 tests on V 3.0.60, but the repository-root graph guard failed because a predecessor node had workflow URLs in its path-only evidence field. That metadata has been corrected in V 3.0.61; task remains in_progress pending exact-commit quality and product CI. AC-P2P-01 remains NOT RUN.",
+      "notes": "T0019's architecture-decision scope is complete: ADR-0002 selects direct P2P as the default inference data path and constrains rendezvous services to discovery/connection setup. Its source-contract test, full 54-test suite, Python syntax checks, graph structure validation and repository-root output/evidence validation passed on commit 37cc31eb3a24f1bb2a8fca3c1f81aa0c50622d06. Product build passed on the immediate predecessor c245e7bcd6cdf59403b2acd30645c0f877e83f64; the only changes in 37cc31e were graph and execution reports. The product-build workflow run for 37cc31e was still in progress when this completion was recorded. This task does not implement or prove P2P transport; AC-P2P-01 remains NOT RUN.",
       "execution_summary": {
-        "attempt_count": 5,
+        "attempt_count": 6,
         "failed_attempt_count": 2,
-        "last_attempt_id": "T0019-A005",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "T0019-A006",
+        "last_attempt_result": "succeeded",
         "changed_files": [
-          "step three/project-graph.md",
-          "step three/T0018/execution-report.md",
-          "step three/T0019/execution-report.md"
+          "README.md",
+          "docs/acceptance.md",
+          "docs/decisions/ADR-0002-direct-p2p-data-path.md",
+          "tests/test_p2p_data_path_decision.py",
+          "step three/T0019/execution-report.md",
+          "step three/project-graph.md"
         ],
         "related_commits": [
           "3428fe8425c7b3b0d6bf0ad2d79bf55501d82cb5",
-          "c245e7bcd6cdf59403b2acd30645c0f877e83f64"
+          "c245e7bcd6cdf59403b2acd30645c0f877e83f64",
+          "37cc31eb3a24f1bb2a8fca3c1f81aa0c50622d06"
         ],
         "tests_passed": [
-          "GitHub Actions automated test suite passed all 54 tests in run 39735812127; compileall and graph structure validation also passed. The subsequent repo-root evidence-path validation failed due to T0018 Actions URLs in its file-path evidence list."
+          "GitHub Actions automated test suite passed all 54 tests in run 39735812127; compileall and graph structure validation also passed. The subsequent repo-root evidence-path validation failed due to T0018 Actions URLs in its file-path evidence list.",
+          "Exact-commit quality run 39735969624 passed on 37cc31eb3a24f1bb2a8fca3c1f81aa0c50622d06: all 54 automated tests, Python syntax compilation, graph structure validation, and recorded-output/evidence validation.",
+          "Product-build run 39735812104 passed on immediate predecessor c245e7bcd6cdf59403b2acd30645c0f877e83f64: Windows WPF Release build, Android debug APK build/upload, and host lifecycle tests. Commit 37cc31e changed only the task graph and execution reports; the product source/build inputs were unchanged.",
+          "The product-build workflow for 37cc31eb3a24f1bb2a8fca3c1f81aa0c50622d06 (run 39735969646) was still in_progress when this task status was recorded; its outcome is not claimed."
         ],
         "tests_failed": [
           "Quality gate run 39735575767 failed on V 3.0.59: one source-contract test required an English README token absent from Persian prose; the assertion is being corrected to match the actual README text.",
@@ -3243,6 +3251,32 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Inspect V 3.0.61 CI. Mark T0019 done only after its source-contract test and all graph quality checks pass; AC-P2P-01 stays NOT RUN."
+        },
+        {
+          "attempt_id": "T0019-A006",
+          "started_at": "2026-10-22T06:47:08.406Z",
+          "ended_at": "2026-10-22T06:47:08.406Z",
+          "result": "succeeded",
+          "summary": "Completed T0019 at architecture-decision scope. The direct-P2P path and rendezvous control-plane boundary are documented in ADR-0002, linked from README and acceptance criteria, and checked by a dedicated source-contract test. The exact V 3.0.61 quality gate passed all 54 tests, syntax, graph structure and output/evidence validation. The product build passed on the immediate predecessor; the intervening commit changed only graph/report metadata, while the exact V 3.0.61 product workflow remained in progress at recording time. This is not a claim that P2P transport exists.",
+          "changed_files": [
+            "README.md",
+            "docs/acceptance.md",
+            "docs/decisions/ADR-0002-direct-p2p-data-path.md",
+            "tests/test_p2p_data_path_decision.py",
+            "step three/T0019/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": "37cc31eb3a24f1bb2a8fca3c1f81aa0c50622d06",
+          "tests": [
+            "GitHub Actions quality run 39735969624 succeeded for V 3.0.61: 54 automated tests, compileall, graph validation, and repo-root evidence validation all passed.",
+            "GitHub Actions product build run 39735812104 succeeded for V 3.0.60: Windows WPF Release build, Android debug APK upload, and lifecycle tests all passed. V 3.0.61 changed only graph/report metadata.",
+            "GitHub Actions product build run 39735969646 on V 3.0.61 was still in_progress at this recording point; no success is claimed for that run."
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Proceed to T0020 per graph after validating its prerequisite edge(s). Keep AC-P2P-01 NOT RUN until real multi-process/device transport and payload-path inspection pass."
         }
       ]
     },

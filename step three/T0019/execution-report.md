@@ -33,3 +33,13 @@ Run the exact-commit quality gate and product build for the correction. Keep `AC
 ## Attempt T0019-A005 — correct path-based graph evidence
 - Removed run URLs from `T0018.evidence`; kept the URLs in `execution_summary.tests_passed` and `step three/T0018/execution-report.md`. The failed validation is preserved above.
 - **Status remains in progress** pending the new exact-commit quality and product workflows.
+
+
+## Attempt T0019-A006 — complete the architecture-decision task
+- **Result: succeeded at the task's architecture-decision scope.** Quality gate run [39735969624](https://github.com/artinrahimii/project/actions/runs/39735969624) passed for commit [37cc31eb3a24f1bb2a8fca3c1f81aa0c50622d06](https://github.com/artinrahimii/project/commit/37cc31eb3a24f1bb2a8fca3c1f81aa0c50622d06): all 54 automated tests passed, Python syntax compilation passed, and graph structure plus repository-root recorded-output/evidence validation passed.
+- Product-build run [39735812104](https://github.com/artinrahimii/project/actions/runs/39735812104) passed for immediate predecessor `c245e7bcd6cdf59403b2acd30645c0f877e83f64`, including Windows WPF Release build, Android debug APK build/upload, and host lifecycle tests. The subsequent `37cc31e` commit changed only the graph and execution reports; application/build source files were unchanged.
+- At the time this completion was recorded, the separate product-build run [39735969646](https://github.com/artinrahimii/project/actions/runs/39735969646) for `37cc31e` remained in progress; its outcome is not represented as a pass.
+- Task status is now **done** for the architecture decision and decision-contract test. This does not implement P2P transport. Peer discovery, direct request/response transfer, network payload inspection, encryption verification and `AC-P2P-01` remain unimplemented / NOT RUN.
+
+## Next
+Proceed to T0020 after reviewing its incoming dependency edge. The next transport implementation remains a distinct task and requires executable code plus multi-process/device tests.
