@@ -6123,7 +6123,7 @@
           "started_at": "2026-10-22T20:08:30Z",
           "ended_at": null,
           "result": "in_progress",
-          "summary": "Shared Base64 wire fixtures and C#/Kotlin parser assertions added for all 11 messages. CI pending.",
+          "summary": "Added shared wire fixtures and C#/Kotlin parser assertions; corrected the Python guard to split actual tab-delimited fixtures and parse the schema's message declarations. CI is still running.",
           "changed_files": [
             "tests/contracts/protobuf-wire-fixtures.txt",
             "tests/HostLifecycle.Tests/Program.cs",

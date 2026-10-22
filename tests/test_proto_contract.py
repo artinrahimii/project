@@ -177,9 +177,9 @@ class ProtoContractTests(unittest.TestCase):
 
     def test_shared_wire_fixtures_cover_every_primary_message_in_both_languages(self):
         self.assertTrue(SHARED_FIXTURE_PATH.is_file())
-        fixture_names = [line.split("\\t", 1)[0] for line in SHARED_FIXTURE_TEXT.splitlines()
+        fixture_names = [line.split(chr(9), 1)[0] for line in SHARED_FIXTURE_TEXT.splitlines()
                          if line.strip() and not line.startswith("#")]
-        schema_names = re.findall(r"message\\s+(\\w+)\\s*\\{", SCHEMA)
+        schema_names = re.findall(r"message\s+(\w+)\s*\{", SCHEMA)
         self.assertEqual(schema_names, fixture_names)
         self.assertIn("FindRepositoryFile", CSHARP_ROUND_TRIP)
         self.assertIn('findRepositoryFile("tests/contracts/protobuf-wire-fixtures.txt")', KOTLIN_ROUND_TRIP)
