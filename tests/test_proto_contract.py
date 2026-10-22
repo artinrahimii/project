@@ -57,6 +57,32 @@ class ProtoContractTests(unittest.TestCase):
             with self.subTest(field=declaration):
                 self.assertRegex(body, declaration)
 
+
+    def test_host_announcement_and_capabilities_expose_only_ephemeral_discovery_metadata(self):
+        announcement = re.search(r"message\\s+HostAnnouncement\\s*\\{([^{}]*)\\}", SCHEMA, re.S)
+        capabilities = re.search(r"message\\s+HostCapabilities\\s*\\{([^{}]*)\\}", SCHEMA, re.S)
+        self.assertIsNotNone(announcement)
+        self.assertIsNotNone(capabilities)
+        announcement_body = announcement.group(1)
+        capabilities_body = capabilities.group(1)
+        for declaration in (
+            r"string\\s+ephemeral_host_id\\s*=\\s*1\\s*;",
+            r"string\\s+protocol_version\\s*=\\s*2\\s*;",
+            r"HostCapabilities\\s+capabilities\\s*=\\s*3\\s*;",
+            r"uint64\\s+announced_at_unix_ms\\s*=\\s*4\\s*;",
+        ):
+            with self.subTest(announcement_field=declaration):
+                self.assertRegex(announcement_body, declaration)
+        for declaration in (
+            r"string\\s+ephemeral_host_id\\s*=\\s*1\\s*;",
+            r"repeated\\s+ModelCapability\\s+models\\s*=\\s*3\\s*;",
+            r"uint32\\s+max_concurrent_requests\\s*=\\s*4\\s*;",
+        ):
+            with self.subTest(capability_field=declaration):
+                self.assertRegex(capabilities_body, declaration)
+        self.assertNotRegex(announcement_body, r"(?i)\\b(?:prompt|request_text|user_id|permanent_user_id|account_id)\\b")
+        self.assertNotRegex(capabilities_body, r"(?i)\\b(?:prompt|request_text|user_id|permanent_user_id|account_id)\\b")
+
     def test_field_numbers_are_unique_inside_each_message_and_enum(self):
         blocks = re.findall(r"\b(?:message|enum)\s+\w+\s*\{([^{}]*)\}", SCHEMA, re.S)
         self.assertGreaterEqual(len(blocks), 11)

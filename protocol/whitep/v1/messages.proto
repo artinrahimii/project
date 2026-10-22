@@ -52,6 +52,13 @@ message HostCapabilities {
   uint64 max_prompt_bytes = 6;
 }
 
+message HostAnnouncement {
+  string ephemeral_host_id = 1;
+  string protocol_version = 2;
+  HostCapabilities capabilities = 3;
+  uint64 announced_at_unix_ms = 4;
+}
+
 message InferenceRequest {
   string request_id = 1;
   string attempt_id = 2;

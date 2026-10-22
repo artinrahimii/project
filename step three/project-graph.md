@@ -5091,8 +5091,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0031 و T0030 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "protocol/whitep/v1/messages.proto",
         "tests/test_proto_contract.py",
@@ -5111,15 +5111,20 @@
         "attempt_count": 1,
         "failed_attempt_count": 0,
         "last_attempt_id": "T0032-A001",
-        "last_attempt_result": "in_progress",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "protocol/whitep/v1/messages.proto",
           "tests/test_proto_contract.py",
           "step three/T0032/execution-report.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
+        "related_commits": [
+          "2df8bf68f694ef9ec0a187145e35359fd120a1df"
+        ],
+        "tests_passed": [
+          "Quality gate run 39758236312 on exact commit 2df8bf68f694ef9ec0a187145e35359fd120a1df: passed.",
+          "Product build run 39758236429 on exact commit 2df8bf68f694ef9ec0a187145e35359fd120a1df: passed."
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -5134,21 +5139,28 @@
         {
           "attempt_id": "T0032-A001",
           "started_at": "2026-10-22T10:10:00Z",
-          "ended_at": null,
-          "result": "in_progress",
-          "summary": "Added error_message field 8 to the canonical InferenceResponse and added source-level acceptance assertions for request ID, outcome, output text, completion timestamp and error detail. Exact-commit CI evidence is still pending; task is intentionally not marked done.",
+          "ended_at": "2026-10-22T09:49:55Z",
+          "result": "succeeded",
+          "summary": "Added the displayable error field and regression assertions. Both the quality gate and product-build workflows passed on the exact implementation commit.",
           "changed_files": [
             "protocol/whitep/v1/messages.proto",
             "tests/test_proto_contract.py",
             "step three/T0032/execution-report.md",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "2df8bf68f694ef9ec0a187145e35359fd120a1df",
           "tests": [
             {
-              "command": "GitHub Actions quality gate and product build on updated main",
-              "result": "pending",
-              "summary": "No exact-commit result observed at report time; do not claim test success."
+              "command": "Step Three quality gate run 39758236312",
+              "result": "passed",
+              "summary": "Completed successfully on exact commit 2df8bf68f694ef9ec0a187145e35359fd120a1df.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/39758236312"
+            },
+            {
+              "command": "White-P product build run 39758236429",
+              "result": "passed",
+              "summary": "Completed successfully on exact commit 2df8bf68f694ef9ec0a187145e35359fd120a1df.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/39758236429"
             }
           ],
           "failure_details": null,
@@ -5157,7 +5169,7 @@
           "contract_changes": [
             "Added InferenceResponse.error_message = 8; existing field numbers 1–7 preserved."
           ],
-          "follow_up": "Observe quality and product-build workflows for the latest main commit. If either fails, fix the issue and retry before marking done."
+          "follow_up": "T0032 acceptance verified; proceed to T0033 after reviewing its incoming edges."
         }
       ]
     },
@@ -5178,20 +5190,34 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0032 و T0030 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "protocol/whitep/v1/messages.proto",
+        "tests/test_proto_contract.py",
+        "step three/T0033/execution-report.md"
+      ],
       "expected_output_paths": [
         "src/Shared.Contracts/ + tests/contracts/"
       ],
-      "evidence": [],
+      "evidence": [
+        "protocol/whitep/v1/messages.proto",
+        "tests/test_proto_contract.py",
+        "step three/T0033/execution-report.md"
+      ],
       "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0033-A001",
+        "last_attempt_result": "in_progress",
+        "changed_files": [
+          "protocol/whitep/v1/messages.proto",
+          "tests/test_proto_contract.py",
+          "step three/T0032/execution-report.md",
+          "step three/T0033/execution-report.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
@@ -5204,7 +5230,37 @@
           "review_evidence": []
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0033-A001",
+          "started_at": "2026-10-22T10:41:00Z",
+          "ended_at": null,
+          "result": "in_progress",
+          "summary": "Reviewed incoming edges and confirmed the existing HostCapabilities contract. Added HostAnnouncement with ephemeral host ID, protocol version, capabilities, and timestamp; added regression assertions excluding prompt/request text and persistent identifiers. Exact-commit CI is pending.",
+          "changed_files": [
+            "protocol/whitep/v1/messages.proto",
+            "tests/test_proto_contract.py",
+            "step three/T0032/execution-report.md",
+            "step three/T0033/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "command": "GitHub Actions quality gate and product build",
+              "result": "pending",
+              "summary": "Await exact-commit workflow results before claiming acceptance."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "Added HostAnnouncement message in the canonical Protobuf schema; HostCapabilities existing field numbers unchanged."
+          ],
+          "follow_up": "Check exact-commit quality and product-build runs; mark done only if both pass."
+        }
+      ]
     },
     {
       "id": "T0034",
@@ -14672,19 +14728,27 @@
       "from": "T0032",
       "to": "T0033",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "The discovery announcement/capability messages do not consume InferenceResponse fields. The existing edge is retained as conservative execution order only.",
+      "validation_status": "validated",
+      "evidence": [
+        "protocol/whitep/v1/messages.proto",
+        "tests/test_proto_contract.py",
+        "step three/T0032/execution-report.md"
+      ]
     },
     {
       "from": "T0030",
       "to": "T0033",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "CI failure-propagation behavior does not define the discovery-message wire contract; retain the edge as conservative execution order only.",
+      "validation_status": "validated",
+      "evidence": [
+        ".github/workflows/quality.yml",
+        ".github/workflows/product-build.yml",
+        "step three/T0030/execution-report.md"
+      ]
     },
     {
       "from": "T0033",
