@@ -19,6 +19,8 @@ CSHARP_ROUND_TRIP_PATH = ROOT / "tests/HostLifecycle.Tests/Program.cs"
 CSHARP_ROUND_TRIP = CSHARP_ROUND_TRIP_PATH.read_text(encoding="utf-8")
 KOTLIN_ROUND_TRIP_PATH = ROOT / "src/Client.Android/app/src/test/java/com/whitep/client/protocol/ProtoRoundTripTest.kt"
 KOTLIN_ROUND_TRIP = KOTLIN_ROUND_TRIP_PATH.read_text(encoding="utf-8")
+SHARED_FIXTURE_PATH = ROOT / "tests/contracts/protobuf-wire-fixtures.txt"
+SHARED_FIXTURE_TEXT = SHARED_FIXTURE_PATH.read_text(encoding="utf-8")
 VERSION_POLICY_PATH = ROOT / "src/Shared.Contracts/ProtocolVersionPolicy.cs"
 VERSION_POLICY = VERSION_POLICY_PATH.read_text(encoding="utf-8")
 
@@ -172,6 +174,20 @@ class ProtoContractTests(unittest.TestCase):
         self.assertIn('<Protobuf Include="../../protocol/whitep/v1/messages.proto"', CSHARP_TEST_PROJECT)
         self.assertIn('testImplementation("junit:junit:4.13.2")', ANDROID_APP)
         self.assertIn("gradle --no-daemon testDebugUnitTest", PRODUCT_WORKFLOW)
+
+    def test_shared_wire_fixtures_cover_every_primary_message_in_both_languages(self):
+        self.assertTrue(SHARED_FIXTURE_PATH.is_file())
+        fixture_names = [line.split("\\t", 1)[0] for line in SHARED_FIXTURE_TEXT.splitlines()
+                         if line.strip() and not line.startswith("#")]
+        schema_names = re.findall(r"message\\s+(\\w+)\\s*\\{", SCHEMA)
+        self.assertEqual(schema_names, fixture_names)
+        self.assertIn("FindRepositoryFile", CSHARP_ROUND_TRIP)
+        self.assertIn('findRepositoryFile("tests/contracts/protobuf-wire-fixtures.txt")', KOTLIN_ROUND_TRIP)
+        for name in schema_names:
+            with self.subTest(message=name):
+                self.assertIn(f'"{name}" =>', CSHARP_ROUND_TRIP)
+                self.assertIn(f'"{name}" ->', KOTLIN_ROUND_TRIP)
+        self.assertEqual(len(fixture_names), len(set(fixture_names)))
 
     def test_kotlin_protocol_helper_uses_generated_contract_types(self):
         helper_path = ROOT / "src/Client.Android/app/src/main/java/com/whitep/client/protocol/ProtocolMessages.kt"

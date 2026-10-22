@@ -143,6 +143,47 @@ var protoProtocolError = new ProtocolError
 AssertProtoRoundTrip("ProtocolError", protoProtocolError, bytes => ProtocolError.Parser.ParseFrom(bytes));
 Console.WriteLine("PASS: C# Protobuf serialize/deserialize round-trip for all 11 primary messages.");
 
+var sharedFixturePath = FindRepositoryFile("tests/contracts/protobuf-wire-fixtures.txt");
+var sharedFixtureCount = 0;
+foreach (var fixtureLine in File.ReadAllLines(sharedFixturePath))
+{
+    if (string.IsNullOrWhiteSpace(fixtureLine) || fixtureLine.StartsWith("#", StringComparison.Ordinal)) continue;
+    var columns = fixtureLine.Split('\t');
+    Assert(columns.Length == 2, "Shared Protobuf fixture must have two tab-separated columns.");
+    var fixtureBytes = Convert.FromBase64String(columns[1]);
+    IMessage parsed = columns[0] switch
+    {
+        "ModelCapability" => ModelCapability.Parser.ParseFrom(fixtureBytes),
+        "HostCapabilities" => HostCapabilities.Parser.ParseFrom(fixtureBytes),
+        "HostAnnouncement" => HostAnnouncement.Parser.ParseFrom(fixtureBytes),
+        "InferenceRequest" => InferenceRequest.Parser.ParseFrom(fixtureBytes),
+        "InferenceResponse" => InferenceResponse.Parser.ParseFrom(fixtureBytes),
+        "CancelRequest" => CancelRequest.Parser.ParseFrom(fixtureBytes),
+        "HostBusy" => HostBusy.Parser.ParseFrom(fixtureBytes),
+        "UnsupportedModel" => UnsupportedModel.Parser.ParseFrom(fixtureBytes),
+        "HostStatusRequest" => HostStatusRequest.Parser.ParseFrom(fixtureBytes),
+        "HostStatus" => ProtoHostStatus.Parser.ParseFrom(fixtureBytes),
+        "ProtocolError" => ProtocolError.Parser.ParseFrom(fixtureBytes),
+        _ => throw new Exception($"Unknown shared fixture '{columns[0]}'.")
+    };
+    Assert(fixtureBytes.SequenceEqual(parsed.ToByteArray()), $"{columns[0]} changed shared wire bytes in C#.");
+    sharedFixtureCount++;
+}
+Assert(sharedFixtureCount == 11, $"Expected 11 shared fixtures, found {sharedFixtureCount}.");
+Console.WriteLine("PASS: C# parsed all 11 shared cross-language wire fixtures.");
+
+static string FindRepositoryFile(string relativePath)
+{
+    var directory = new DirectoryInfo(Directory.GetCurrentDirectory());
+    while (directory is not null)
+    {
+        var candidate = Path.Combine(directory.FullName, relativePath.Replace('/', Path.DirectorySeparatorChar));
+        if (File.Exists(candidate)) return candidate;
+        directory = directory.Parent;
+    }
+    throw new FileNotFoundException($"Could not find repository file '{relativePath}'.");
+}
+
 var m=new HostLifecycle(); Assert(m.Status.State==HostState.Stopped,"Initial state");
 m.Transition(HostState.Starting,"Starting");m.Transition(HostState.Ready,"Ready");m.Transition(HostState.Busy,"Busy");m.Transition(HostState.Ready,"Complete");m.Transition(HostState.Stopped,"Stop");
 ExpectInvalid(()=>m.Transition(HostState.Busy,"Invalid"));

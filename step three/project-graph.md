@@ -6071,21 +6071,41 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0037 و T0030 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "tests/contracts/protobuf-wire-fixtures.txt",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "src/Client.Android/app/src/test/java/com/whitep/client/protocol/ProtoRoundTripTest.kt",
+        "tests/test_proto_contract.py"
+      ],
       "expected_output_paths": [
         "src/Shared.Contracts/ + tests/contracts/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "protocol/whitep/v1/messages.proto",
+        "tests/contracts/protobuf-wire-fixtures.txt",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "src/Client.Android/app/src/test/java/com/whitep/client/protocol/ProtoRoundTripTest.kt",
+        "tests/test_proto_contract.py"
+      ],
+      "notes": "Shared wire fixture corpus added; do not mark complete until both language suites and CI pass.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
-        "related_commits": [],
+        "last_attempt_id": "T0038-A001",
+        "last_attempt_result": "in_progress",
+        "changed_files": [
+          "tests/contracts/protobuf-wire-fixtures.txt",
+          "tests/HostLifecycle.Tests/Program.cs",
+          "src/Client.Android/app/src/test/java/com/whitep/client/protocol/ProtoRoundTripTest.kt",
+          "tests/test_proto_contract.py",
+          "step three/T0038/execution-report.md",
+          "step three/project-graph.md"
+        ],
+        "related_commits": [
+          "d210a646d705fe5d99273ecc03ec6c695a88762d"
+        ],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
@@ -6097,7 +6117,43 @@
           "review_evidence": []
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0038-A001",
+          "started_at": "2026-10-22T20:08:30Z",
+          "ended_at": null,
+          "result": "in_progress",
+          "summary": "Shared Base64 wire fixtures and C#/Kotlin parser assertions added for all 11 messages. CI pending.",
+          "changed_files": [
+            "tests/contracts/protobuf-wire-fixtures.txt",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "src/Client.Android/app/src/test/java/com/whitep/client/protocol/ProtoRoundTripTest.kt",
+            "tests/test_proto_contract.py",
+            "step three/T0038/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": "d210a646d705fe5d99273ecc03ec6c695a88762d",
+          "tests": [
+            {
+              "command": "python -m unittest discover -s tests -v",
+              "result": "pending"
+            },
+            {
+              "command": "dotnet run --project tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj --configuration Release",
+              "result": "pending"
+            },
+            {
+              "command": "gradle --no-daemon ktlintCheck && gradle --no-daemon testDebugUnitTest",
+              "result": "pending"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Run CI and fix all failures before completion."
+        }
+      ]
     },
     {
       "id": "T0039",

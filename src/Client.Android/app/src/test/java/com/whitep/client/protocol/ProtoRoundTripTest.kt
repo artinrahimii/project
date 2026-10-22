@@ -1,5 +1,6 @@
 package com.whitep.client.protocol
 
+import java.io.File
 import com.google.protobuf.ByteString
 import com.google.protobuf.MessageLite
 import com.google.protobuf.Parser
@@ -151,4 +152,43 @@ class ProtoRoundTripTest {
             }
         assertRoundTrip("ProtocolError", error, ProtocolError.parser())
     }
+    @Test
+    fun parsesSharedCrossLanguageWireFixtures() {
+        val fixtureFile = findRepositoryFile("tests/contracts/protobuf-wire-fixtures.txt")
+        val fixtures = fixtureFile.readLines().filter { it.isNotBlank() && !it.startsWith("#") }
+        var count = 0
+        fixtures.forEach { line ->
+            val columns = line.split('\t')
+            assertEquals("Fixture must contain message name and Base64 bytes", 2, columns.size)
+            val bytes = java.util.Base64.getDecoder().decode(columns[1])
+            val parsed: MessageLite = when (columns[0]) {
+                "ModelCapability" -> ModelCapability.parseFrom(bytes)
+                "HostCapabilities" -> HostCapabilities.parseFrom(bytes)
+                "HostAnnouncement" -> HostAnnouncement.parseFrom(bytes)
+                "InferenceRequest" -> InferenceRequest.parseFrom(bytes)
+                "InferenceResponse" -> InferenceResponse.parseFrom(bytes)
+                "CancelRequest" -> CancelRequest.parseFrom(bytes)
+                "HostBusy" -> HostBusy.parseFrom(bytes)
+                "UnsupportedModel" -> UnsupportedModel.parseFrom(bytes)
+                "HostStatusRequest" -> HostStatusRequest.parseFrom(bytes)
+                "HostStatus" -> HostStatus.parseFrom(bytes)
+                "ProtocolError" -> ProtocolError.parseFrom(bytes)
+                else -> throw AssertionError("Unknown shared fixture: ${columns[0]}")
+            }
+            assertArrayEquals("${columns[0]} changed shared wire bytes in Kotlin", bytes, parsed.toByteArray())
+            count++
+        }
+        assertEquals("All 11 shared fixtures must be exercised", 11, count)
+    }
+
+    private fun findRepositoryFile(relativePath: String): File {
+        var directory: File? = File(System.getProperty("user.dir")).canonicalFile
+        while (directory != null) {
+            val candidate = File(directory, relativePath)
+            if (candidate.isFile) return candidate
+            directory = directory.parentFile
+        }
+        throw AssertionError("Could not find repository file '$relativePath'")
+    }
+
 }
