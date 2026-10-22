@@ -26,11 +26,21 @@ class ProductBuildContractTests(unittest.TestCase):
 
     def test_ci_builds_both_platforms_and_installs_android_sdk(self):
         workflow = (ROOT / ".github/workflows/product-build.yml").read_text(encoding="utf-8")
-        self.assertIn("dotnet build src/Host.Windows/WhiteP.Host.Windows.csproj --configuration Release", workflow)
+        self.assertIn("dotnet build WhiteP.sln --configuration Release", workflow)
         self.assertIn('"platforms;android-36"', workflow)
         self.assertIn('"build-tools;36.0.0"', workflow)
         self.assertIn("Build Windows WPF host", workflow)
         self.assertIn("Build Android client APK", workflow)
+
+    def test_solution_builds_host_and_shared_contract_library(self):
+        solution = (ROOT / "WhiteP.sln").read_text(encoding="utf-8")
+        shared = (ROOT / "src/Shared.Contracts/WhiteP.Shared.Contracts.csproj").read_text(encoding="utf-8")
+        host = (ROOT / "src/Host.Windows/WhiteP.Host.Windows.csproj").read_text(encoding="utf-8")
+        self.assertIn(r"src\Host.Windows\WhiteP.Host.Windows.csproj", solution)
+        self.assertIn(r"src\Shared.Contracts\WhiteP.Shared.Contracts.csproj", solution)
+        self.assertIn("<TargetFramework>net10.0</TargetFramework>", shared)
+        self.assertIn('<ProjectReference Include="../Shared.Contracts/WhiteP.Shared.Contracts.csproj" />', host)
+        self.assertIn("dotnet build WhiteP.sln --configuration Release", (ROOT / ".github/workflows/product-build.yml").read_text(encoding="utf-8"))
 
 
 if __name__ == "__main__":

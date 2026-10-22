@@ -3584,20 +3584,51 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0021 و T0020 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال انجام",
+      "actual_output_paths": [
+        "WhiteP.sln",
+        "src/Shared.Contracts/WhiteP.Shared.Contracts.csproj",
+        "src/Host.Windows/WhiteP.Host.Windows.csproj",
+        ".github/workflows/product-build.yml",
+        "tests/test_product_build_contract.py",
+        "tests/test_reproducible_build_contract.py",
+        "README.md",
+        "src/Shared.Contracts/README.md",
+        "step three/T0022/execution-report.md"
+      ],
       "expected_output_paths": [
         "src/Shared.Contracts/ + tests/contracts/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "WhiteP.sln",
+        "src/Shared.Contracts/WhiteP.Shared.Contracts.csproj",
+        "src/Host.Windows/WhiteP.Host.Windows.csproj",
+        ".github/workflows/product-build.yml",
+        "tests/test_product_build_contract.py",
+        "tests/test_reproducible_build_contract.py",
+        "README.md",
+        "src/Shared.Contracts/README.md",
+        "step one/V1.0.md"
+      ],
+      "notes": "Both incoming edges were reviewed before execution and remain type=blocks; now validated as contract_or_interface_dependency with rationale/evidence and edge-log entries. Creating the root .NET solution with the existing WPF host and a buildable net10.0 shared-contract library; the host references the shared project and CI builds the solution. Generated Protobuf classes/wiring remain owned by T0036.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0022-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "WhiteP.sln",
+          "src/Shared.Contracts/WhiteP.Shared.Contracts.csproj",
+          "src/Host.Windows/WhiteP.Host.Windows.csproj",
+          ".github/workflows/product-build.yml",
+          "tests/test_product_build_contract.py",
+          "tests/test_reproducible_build_contract.py",
+          "README.md",
+          "src/Shared.Contracts/README.md",
+          "step three/T0022/execution-report.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
@@ -3610,7 +3641,36 @@
           "review_evidence": []
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0022-A001",
+          "started_at": "2026-10-22T07:01:38.147Z",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Reviewed both incoming edges and created the root .NET solution plus a net10.0 shared-contract library referenced by the existing Windows WPF host. Updated the Windows CI job and build-contract tests to build WhiteP.sln, retained the artifact path, and preserved the single canonical Protobuf schema. Exact-commit CI is pending.",
+          "changed_files": [
+            "WhiteP.sln",
+            "src/Shared.Contracts/WhiteP.Shared.Contracts.csproj",
+            "src/Host.Windows/WhiteP.Host.Windows.csproj",
+            ".github/workflows/product-build.yml",
+            "tests/test_product_build_contract.py",
+            "tests/test_reproducible_build_contract.py",
+            "README.md",
+            "src/Shared.Contracts/README.md",
+            "step three/T0022/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            "Pending exact-commit quality gate, graph validation, and real Windows solution build."
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect exact V 3.0.68 quality and product workflow. Only mark done if the Windows solution build and graph checks pass."
+        }
+      ]
     },
     {
       "id": "T0023",
@@ -13281,19 +13341,31 @@
       "from": "T0021",
       "to": "T0022",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0022 builds upon the shared-contract directory boundary and canonical schema location established by T0021; these are direct inputs to the buildable shared project and solution.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Shared.Contracts/README.md",
+        "tests/contracts/test_contract_layout.py",
+        "protocol/whitep/v1/messages.proto",
+        "step one/V1.0.md"
+      ]
     },
     {
       "from": "T0020",
       "to": "T0022",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "The .NET SDK/target-framework baseline and technology decision register from T0020 constrain the shared library project and solution configuration. ADR-0001 and global.json are explicit configuration inputs.",
+      "validation_status": "validated",
+      "evidence": [
+        "docs/decisions/README.md",
+        "docs/decisions/ADR-0001-platform-build-baselines.md",
+        "docs/decisions/ADR-0003-local-inference-backend.md",
+        "global.json",
+        "src/Host.Windows/WhiteP.Host.Windows.csproj",
+        "step one/V1.0.md"
+      ]
     },
     {
       "from": "T0022",
@@ -17372,6 +17444,38 @@
         "docs/decisions/ADR-0003-local-inference-backend.md",
         "src/Host.Windows/WhiteP.Host.Windows.csproj",
         "src/Client.Android/app/build.gradle.kts",
+        "step one/V1.0.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-22T07:01:38.147Z",
+      "edge_from": "T0021",
+      "edge_to": "T0022",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "reason": "T0022 builds upon the shared-contract directory boundary and canonical schema location established by T0021; these are direct inputs to the buildable shared project and solution.",
+      "evidence": [
+        "src/Shared.Contracts/README.md",
+        "tests/contracts/test_contract_layout.py",
+        "protocol/whitep/v1/messages.proto",
+        "step one/V1.0.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-22T07:01:38.147Z",
+      "edge_from": "T0020",
+      "edge_to": "T0022",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "reason": "The .NET SDK/target-framework baseline and technology decision register from T0020 constrain the shared library project and solution configuration. ADR-0001 and global.json are explicit configuration inputs.",
+      "evidence": [
+        "docs/decisions/README.md",
+        "docs/decisions/ADR-0001-platform-build-baselines.md",
+        "docs/decisions/ADR-0003-local-inference-backend.md",
+        "global.json",
+        "src/Host.Windows/WhiteP.Host.Windows.csproj",
         "step one/V1.0.md"
       ],
       "reviewed_by": "Step Three execution review"

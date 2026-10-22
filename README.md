@@ -21,7 +21,8 @@ White-P با هدف ساخت دو برنامه طراحی می‌شود: یک م
 
 - `src/Host.Windows/`: میزبان ویندوز با رابط WPF و backend محلی.
 - `src/Client.Android/`: کلاینت اندروید.
-- `src/Shared.Contracts/`: مرز ساختاری کدهای مشترک .NET؛ فایل پروژه و اتصال آن به solution در وظیفهٔ T0022 قرار دارد.
+- `WhiteP.sln`: solution ریشه که پروژهٔ میزبان ویندوز و کتابخانهٔ مشترک .NET را با هم build می‌کند.
+- `src/Shared.Contracts/`: کتابخانهٔ buildable برای قراردادهای مشترک .NET با هدف `net10.0`؛ فایل‌های تولیدشده از Protobuf در وظیفهٔ T0036 یکپارچه می‌شوند.
 - `protocol/whitep/v1/messages.proto`: منبع یگانهٔ قرارداد wire؛ کپی جداگانهٔ فایل proto در پوشهٔ پروژهٔ مشترک ایجاد نشده است.
 - `tests/`: آزمون‌های پایتون و چرخهٔ عمر میزبان.
 - `tests/contracts/`: آزمون‌های کشف‌پذیر برای ساختار قراردادها و مسیر منبع canonical.
@@ -73,10 +74,10 @@ python tools/graph_guard.py "step three/project-graph.md" --repo-root .
 
 دستورهای زیر با workflowهای فعلی هماهنگ‌اند. برای میزبان ویندوز، .NET SDK باید با `global.json` سازگار باشد: نسخهٔ پایه `10.0.100` و سیاست `latestFeature`. برای اندروید، JDK 17، Gradle 8.13 و Android SDK platform `android-36`، build-tools `36.0.0` و platform-tools لازم است. محیط CI همین ورودی‌ها را از یک checkout تازه تنظیم می‌کند.
 
-از ریشهٔ مخزن، ساخت میزبان ویندوز و اجرای آزمون چرخهٔ عمر:
+از ریشهٔ مخزن، ساخت هر دو پروژهٔ دات‌نت از طریق solution و اجرای آزمون چرخهٔ عمر:
 
 ```bash
-dotnet build src/Host.Windows/WhiteP.Host.Windows.csproj --configuration Release
+dotnet build WhiteP.sln --configuration Release
 dotnet run --project tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj --configuration Release
 ```
 

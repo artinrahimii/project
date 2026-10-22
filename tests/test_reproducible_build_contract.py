@@ -16,7 +16,7 @@ GLOBAL = json.loads((ROOT / "global.json").read_text(encoding="utf-8"))
 
 class ReproducibleBuildContractTests(unittest.TestCase):
     def test_windows_build_and_lifecycle_commands_match_documentation_and_ci(self):
-        build = "dotnet build src/Host.Windows/WhiteP.Host.Windows.csproj --configuration Release"
+        build = "dotnet build WhiteP.sln --configuration Release"
         lifecycle = "dotnet run --project tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj --configuration Release"
         self.assertIn(build, README)
         self.assertIn(build, PRODUCT)
