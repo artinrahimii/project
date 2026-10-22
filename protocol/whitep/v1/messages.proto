@@ -88,6 +88,19 @@ message CancelRequest {
   string reason = 3;
 }
 
+message HostBusy {
+  string request_id = 1;
+  string ephemeral_host_id = 2;
+  uint64 retry_after_unix_ms = 3;
+  string message = 4;
+}
+
+message UnsupportedModel {
+  string request_id = 1;
+  string model_id = 2;
+  string message = 3;
+}
+
 message HostStatusRequest {
   string ephemeral_host_id = 1;
 }

@@ -5190,8 +5190,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0032 و T0030 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "protocol/whitep/v1/messages.proto",
         "tests/test_proto_contract.py",
@@ -5210,7 +5210,7 @@
         "attempt_count": 2,
         "failed_attempt_count": 1,
         "last_attempt_id": "T0033-A002",
-        "last_attempt_result": "in_progress",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "protocol/whitep/v1/messages.proto",
           "tests/test_proto_contract.py",
@@ -5221,7 +5221,10 @@
         "related_commits": [
           "e99a07318b8856a958024b5a8f111f55ef234bcf"
         ],
-        "tests_passed": [],
+        "tests_passed": [
+          "Step Three quality gate run 39765495544 on exact commit 8f5d1dd195b0af6a1f530148fd033f5b3da724d9: passed.",
+          "White-P product build run 39765495527 on exact commit 8f5d1dd195b0af6a1f530148fd033f5b3da724d9: passed."
+        ],
         "tests_failed": [
           "Quality gate run 39765354245 failed on e99a07318b8856a958024b5a8f111f55ef234bcf: newly added contract test used over-escaped regex patterns, causing automated tests to fail."
         ],
@@ -5268,27 +5271,34 @@
         {
           "attempt_id": "T0033-A002",
           "started_at": "2026-10-22T10:46:00Z",
-          "ended_at": null,
-          "result": "in_progress",
+          "ended_at": "2026-10-22T10:47:06Z",
+          "result": "succeeded",
           "summary": "Corrected the acceptance test's regular expressions to use standard whitespace and word-boundary escapes. Awaiting exact-commit CI.",
           "changed_files": [
             "tests/test_proto_contract.py",
             "step three/T0033/execution-report.md",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "8f5d1dd195b0af6a1f530148fd033f5b3da724d9",
           "tests": [
             {
-              "command": "GitHub Actions quality gate and product build",
-              "result": "pending",
-              "summary": "Await exact-commit results."
+              "command": "Step Three quality gate run 39765495544",
+              "result": "passed",
+              "summary": "Completed successfully on exact commit 8f5d1dd195b0af6a1f530148fd033f5b3da724d9.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/39765495544"
+            },
+            {
+              "command": "White-P product build run 39765495527",
+              "result": "passed",
+              "summary": "Completed successfully on exact commit 8f5d1dd195b0af6a1f530148fd033f5b3da724d9.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/39765495527"
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Verify both workflows pass before marking T0033 done."
+          "follow_up": "T0033 acceptance verified; proceed with T0034."
         }
       ]
     },
@@ -5309,20 +5319,34 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0033 و T0030 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "protocol/whitep/v1/messages.proto",
+        "tests/test_proto_contract.py",
+        "step three/T0034/execution-report.md"
+      ],
       "expected_output_paths": [
         "src/Shared.Contracts/ + tests/contracts/"
       ],
-      "evidence": [],
+      "evidence": [
+        "protocol/whitep/v1/messages.proto",
+        "tests/test_proto_contract.py",
+        "step three/T0034/execution-report.md"
+      ],
       "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0034-A001",
+        "last_attempt_result": "in_progress",
+        "changed_files": [
+          "protocol/whitep/v1/messages.proto",
+          "tests/test_proto_contract.py",
+          "step three/T0033/execution-report.md",
+          "step three/T0034/execution-report.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
@@ -5335,7 +5359,37 @@
           "review_evidence": []
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0034-A001",
+          "started_at": "2026-10-22T10:50:00Z",
+          "ended_at": null,
+          "result": "in_progress",
+          "summary": "Reviewed incoming dependencies; added HostBusy and UnsupportedModel to the canonical schema and tests covering CancelRequest, HostBusy, UnsupportedModel, and ProtocolError. Waiting for exact-commit CI.",
+          "changed_files": [
+            "protocol/whitep/v1/messages.proto",
+            "tests/test_proto_contract.py",
+            "step three/T0033/execution-report.md",
+            "step three/T0034/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "command": "GitHub Actions Step Three quality gate and White-P product build",
+              "result": "pending",
+              "summary": "Must pass on the exact implementation commit."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "Added HostBusy and UnsupportedModel wire messages; preserved existing CancelRequest and ProtocolError field numbering."
+          ],
+          "follow_up": "Check exact-commit quality gate and product build. Mark done only if both pass."
+        }
+      ]
     },
     {
       "id": "T0035",
@@ -14784,19 +14838,27 @@
       "from": "T0033",
       "to": "T0034",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0034 adds cancellation/error messages to the canonical schema but does not consume fields from HostAnnouncement/HostCapabilities. Retain the edge as conservative execution order only.",
+      "validation_status": "validated",
+      "evidence": [
+        "protocol/whitep/v1/messages.proto",
+        "tests/test_proto_contract.py",
+        "step three/T0033/execution-report.md"
+      ]
     },
     {
       "from": "T0030",
       "to": "T0034",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0030 validates CI failure propagation; it does not define the cancellation/error wire contract. Retain the edge as conservative execution order only.",
+      "validation_status": "validated",
+      "evidence": [
+        ".github/workflows/quality.yml",
+        ".github/workflows/product-build.yml",
+        "step three/T0030/execution-report.md"
+      ]
     },
     {
       "from": "T0034",
@@ -18839,6 +18901,7 @@
       ],
       "reviewed_by": "Step Three execution review"
     }
-  ]
+  ],
+  "updated_at": "2026-10-22T10:50:00Z"
 }
 ```
