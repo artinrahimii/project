@@ -31,3 +31,9 @@ Inspect the next exact-commit workflow, fix any remaining violations, and mark T
 - Exact failure: `MainActivity.kt:55:34 A multiline expression should start on a new line`.
 - Changed only the formatting of the multiline `if` expression assigned to `status`; no runtime behavior was intentionally changed.
 - This is a source correction, not yet a verified pass. The next exact-commit product workflow must pass ktlint and proceed to `assembleDebug` before T0025 can be marked done.
+
+## Attempt T0025-A005 — reconcile graph execution ledger (partial; CI pending)
+- Quality gate run [39741508726](https://github.com/artinrahimii/project/actions/runs/39741508726) ran 65 Python tests successfully and passed Python syntax validation, but graph validation failed because the task summary claimed three failed attempts while the preserved history contains two entries whose result is `failed`.
+- Corrected the summary count to `2`, matching the append-only execution history. No historical attempt record was deleted or rewritten.
+- The exact-commit product workflow [39741508623](https://github.com/artinrahimii/project/actions/runs/39741508623) has already passed Kotlin lint and reached the Android debug APK build; final completion is pending.
+- T0025 remains `in_progress` until the new commit's graph gate and full product build pass.

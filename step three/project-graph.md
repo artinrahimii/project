@@ -4035,9 +4035,9 @@
       ],
       "notes": "Two exact-commit attempts exposed real formatting issues. A001 found pre-existing C# formatting violations; A002 reformatted C# but CI revealed Windows line-ending conversion and Kotlin ktlint violations. A003 adds .gitattributes and corrects the reported Kotlin issues; keep in_progress until the next exact-commit product build succeeds.",
       "execution_summary": {
-        "attempt_count": 4,
-        "failed_attempt_count": 3,
-        "last_attempt_id": "T0025-A004",
+        "attempt_count": 5,
+        "failed_attempt_count": 2,
+        "last_attempt_id": "T0025-A005",
         "last_attempt_result": "partial",
         "changed_files": [
           ".gitattributes",
@@ -4060,7 +4060,8 @@
         "tests_failed": [
           "Product build run 39740433414: C# formatter still failed because Windows checkout converted LF files to CRLF; add .gitattributes eol=lf to make checkout deterministic.",
           "Product build run 39740433414: ktlintCheck failed on wildcard import in app/build.gradle.kts and naming/trailing-comma/line-length formatting in MainActivity.kt.",
-          "GitHub Actions run 39740700118 — Android ktlintCheck failed at MainActivity.kt:55:34; Android APK build was skipped."
+          "GitHub Actions run 39740700118 — Android ktlintCheck failed at MainActivity.kt:55:34; Android APK build was skipped.",
+          "GitHub Actions quality gate run 39741508726 failed because failed_attempt_count=3 did not match the two failed records in execution_history; ledger corrected in T0025-A005."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -4177,6 +4178,35 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Check the product-build workflow for this commit. If all jobs pass, record the successful CI run and then mark T0025 done in a follow-up version commit."
+        },
+        {
+          "attempt_id": "T0025-A005",
+          "started_at": "2026-10-22T07:36:39.036Z",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Reconciled the task's failed-attempt summary with its append-only execution_history after the quality gate detected a count mismatch. No source behavior changed.",
+          "changed_files": [
+            "step three/T0025/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "command": "GitHub Actions quality gate run 39741508726",
+              "result": "failed",
+              "summary": "Graph guard found FAILED_ATTEMPT_COUNT_MISMATCH for T0025: summary=3, history=2."
+            },
+            {
+              "command": "Post-correction graph validation",
+              "result": "not_run",
+              "summary": "Will run on the new commit."
+            }
+          ],
+          "failure_details": "The prior graph update incremented failed_attempt_count to 3 although only two execution_history entries have result=failed. Corrected the summary to match the preserved history.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Verify the new commit's quality gate and product build. Keep T0025 in_progress until the exact-commit product build, including Android APK packaging, succeeds."
         }
       ]
     },
