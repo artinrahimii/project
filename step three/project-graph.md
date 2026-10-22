@@ -3463,8 +3463,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0020 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال انجام",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "src/Shared.Contracts/README.md",
         "tests/contracts/__init__.py",
@@ -3484,12 +3484,12 @@
         "src/Client.Android/app/build.gradle.kts",
         "tests/test_proto_contract.py"
       ],
-      "notes": "Verified current tree: src/Host.Windows, src/Client.Android, tests/, and docs/ already contain real files; src/Shared.Contracts and tests/contracts were missing. The canonical protobuf schema already lives at protocol/whitep/v1/messages.proto and is preserved as the single source. T0021 adds the two missing structural boundaries, a package-based contract-layout test, and the README's repository layout. Project/solution files and generation wiring remain for their separate graph tasks.",
+      "notes": "T0021 complete at structural-boundary scope. The existing Windows, Android, tests, docs and canonical protocol locations were preserved. The previously missing src/Shared.Contracts and tests/contracts boundaries are now tracked by a project-boundary note plus a discoverable contract-layout test package. The source layout test and all 62 Python tests passed on V 3.0.66; graph checks returned 0 errors and one pre-existing T0001 warning. No .NET project/solution or generated contract classes were added prematurely; T0022 and T0036 remain responsible for those.",
       "execution_summary": {
-        "attempt_count": 1,
+        "attempt_count": 2,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0021-A001",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "T0021-A002",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "README.md",
           "src/Shared.Contracts/README.md",
@@ -3498,8 +3498,13 @@
           "step three/T0021/execution-report.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
+        "related_commits": [
+          "7404fed8499a34ab11f8c445485abb6219de549f"
+        ],
+        "tests_passed": [
+          "GitHub Actions quality run 39736910542 passed on V 3.0.66: all 62 Python tests passed; Python syntax check passed; graph structure and repo-root evidence checks passed with 0 errors and 1 preserved UNMAPPED_DEPENDENCY warning for T0001.",
+          "Product build run 39736653107 succeeded on V 3.0.65; V 3.0.66 changed README, structural documentation, tests, task report and graph but did not change application/build source. Current product build run 39736910547 for V 3.0.66 was in_progress when completion was recorded and is not claimed as passed."
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -3534,6 +3539,31 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Inspect exact-commit CI. Do not create .csproj/solution files early; T0022 owns project/solution creation and T0036 owns generated-contract wiring."
+        },
+        {
+          "attempt_id": "T0021-A002",
+          "started_at": "2026-10-22T06:55:19.760Z",
+          "ended_at": "2026-10-22T06:55:19.760Z",
+          "result": "succeeded",
+          "summary": "Completed the tracked directory-boundary task. The new contract-layout tests passed as part of the 62-test Python suite, syntax checks passed, and both graph validation passes completed with zero errors and one existing T0001 warning preserved. The current product-build workflow is still running; a prior successful product build covers the unchanged app/build sources.",
+          "changed_files": [
+            "README.md",
+            "src/Shared.Contracts/README.md",
+            "tests/contracts/__init__.py",
+            "tests/contracts/test_contract_layout.py",
+            "step three/T0021/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": "7404fed8499a34ab11f8c445485abb6219de549f",
+          "tests": [
+            "Quality run 39736910542 on V 3.0.66: 62 tests passed, compileall passed, graph guard reported 0 errors and one preserved UNMAPPED_DEPENDENCY warning.",
+            "Product build run 39736653107 succeeded on V 3.0.65 for unchanged app/build source files. Product run 39736910547 on V 3.0.66 was in_progress at recording time; no outcome is claimed."
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Proceed to T0022 after reviewing its incoming edges; do not create the project/solution files before T0022, and do not move or duplicate the canonical proto source."
         }
       ]
     },
