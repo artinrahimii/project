@@ -169,11 +169,15 @@ public sealed class HostInferenceSession : IDisposable
         ObjectDisposedException.ThrowIf(_disposed, this);
         ArgumentNullException.ThrowIfNull(request);
 
-        var validation = ProtocolMessageLimits.ValidateInferenceRequest(
+        var validation = ProtocolMessageValidator.ValidateInferenceRequest(
+            request.RequestId,
+            request.AttemptId,
+            request.ModelId,
             request.Prompt,
+            request.DeadlineUnixMs,
+            request.MaxOutputTokens,
             request.ContextCapsule.Length,
-            request.CalculateSize(),
-            request.MaxOutputTokens);
+            request.CalculateSize());
         if (!validation.IsValid)
         {
             throw new InvalidDataException(validation.Message);

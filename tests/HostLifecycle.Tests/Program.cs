@@ -40,6 +40,153 @@ foreach (var unsupportedVersion in new[] { "1.0.1", "1.1.0", "2.0.0" })
     Assert(result.ErrorCodeName == ProtocolVersionPolicy.UnsupportedVersionErrorCode, "Incompatible versions must map to UnsupportedVersion.");
 }
 
+var validParserRequest = new InferenceRequest
+{
+    RequestId = "parser-request",
+    AttemptId = "parser-attempt",
+    ModelId = "fixture-model",
+    Prompt = "valid prompt",
+    DeadlineUnixMs = 1770000000999,
+    MaxOutputTokens = 64
+};
+var validParsedRequest = ProtocolMessageParser.ParseInferenceRequest(validParserRequest.ToByteArray());
+Assert(validParsedRequest.IsValid, "A complete in-limit inference request must parse and validate.");
+Assert(validParsedRequest.Message!.RequestId == "parser-request", "The parser must return the validated request.");
+
+var missingFieldRequest = new InferenceRequest
+{
+    RequestId = "incomplete-request",
+    ModelId = "fixture-model",
+    Prompt = "valid prompt",
+    DeadlineUnixMs = 1770000000999,
+    MaxOutputTokens = 64
+};
+var missingFieldResult = ProtocolMessageParser.ParseInferenceRequest(missingFieldRequest.ToByteArray());
+Assert(!missingFieldResult.IsValid, "A request missing attempt_id must be rejected.");
+Assert(missingFieldResult.Validation.ErrorCodeName == ProtocolVersionPolicy.InvalidMessageErrorCode, "Incomplete request must map to InvalidMessage.");
+
+var zeroTokenRequest = validParserRequest.Clone();
+zeroTokenRequest.MaxOutputTokens = 0;
+var zeroTokenResult = ProtocolMessageParser.ParseInferenceRequest(zeroTokenRequest.ToByteArray());
+Assert(!zeroTokenResult.IsValid, "A request with max_output_tokens zero must be rejected.");
+Assert(zeroTokenResult.Validation.ErrorCodeName == ProtocolVersionPolicy.InvalidMessageErrorCode, "Zero output tokens must map to InvalidMessage.");
+
+var missingDeadlineRequest = validParserRequest.Clone();
+missingDeadlineRequest.DeadlineUnixMs = 0;
+var missingDeadlineResult = ProtocolMessageParser.ParseInferenceRequest(missingDeadlineRequest.ToByteArray());
+Assert(!missingDeadlineResult.IsValid, "A request with no deadline must be rejected.");
+
+var oversizedWireRequest = new byte[ProtocolMessageLimits.MaximumRequestMessageBytes + 1];
+var oversizedWireResult = ProtocolMessageParser.ParseInferenceRequest(oversizedWireRequest);
+Assert(!oversizedWireResult.IsValid, "An oversized raw request must be rejected before Protobuf parsing.");
+Assert(oversizedWireResult.Validation.Kind == ProtocolMessageValidationKind.ResourceLimit, "An oversized request must return ResourceLimit.");
+Assert(oversizedWireResult.Validation.ErrorCodeName == ProtocolMessageLimits.ResourceLimitErrorCode, "An oversized request must map to the resource-limit error code.");
+
+using (var malformedFixtures = JsonDocument.Parse(File.ReadAllText(FindRepositoryFile("tests/contracts/invalid-message-cases.json"))))
+{
+    var malformedCases = malformedFixtures.RootElement.GetProperty("cases");
+    Assert(malformedCases.GetArrayLength() == 3, "The malformed wire corpus must contain all documented fixtures.");
+    foreach (var fixture in malformedCases.EnumerateArray())
+    {
+        var name = fixture.GetProperty("id").GetString()!;
+        var wire = Convert.FromBase64String(fixture.GetProperty("wireBase64").GetString()!);
+        var expectedCode = fixture.GetProperty("expectedErrorCode").GetString();
+        var result = ProtocolMessageParser.ParseInferenceRequest(wire);
+        Assert(!result.IsValid, $"Malformed wire fixture '{name}' must be rejected.");
+        Assert(result.Validation.ErrorCodeName == expectedCode, $"Malformed wire fixture '{name}' returned the wrong error code.");
+    }
+}
+
+var validAnnouncement = new HostAnnouncement
+{
+    EphemeralHostId = "host-parser",
+    ProtocolVersion = ProtocolVersionPolicy.CurrentVersion,
+    AnnouncedAtUnixMs = 1770000000123,
+    Capabilities = new HostCapabilities
+    {
+        EphemeralHostId = "host-parser",
+        ProtocolVersion = ProtocolVersionPolicy.CurrentVersion,
+        MaxConcurrentRequests = 1,
+        MaxContextCapsuleBytes = ProtocolMessageLimits.MaximumContextCapsuleBytes,
+        MaxPromptBytes = ProtocolMessageLimits.MaximumPromptUtf8Bytes
+    }
+};
+validAnnouncement.Capabilities.Models.Add(new ModelCapability
+{
+    ModelId = "fixture-model",
+    DisplayName = "Fixture model",
+    MaxContextTokens = 8192,
+    MaxOutputTokens = 1024
+});
+var parsedAnnouncement = ProtocolMessageParser.ParseHostAnnouncement(validAnnouncement.ToByteArray());
+Assert(parsedAnnouncement.IsValid, "A complete supported HostAnnouncement must be accepted.");
+
+var unsupportedAnnouncement = validAnnouncement.Clone();
+unsupportedAnnouncement.ProtocolVersion = "2.0.0";
+unsupportedAnnouncement.Capabilities.ProtocolVersion = "2.0.0";
+var unsupportedAnnouncementResult = ProtocolMessageParser.ParseHostAnnouncement(unsupportedAnnouncement.ToByteArray());
+Assert(!unsupportedAnnouncementResult.IsValid, "An announcement with an incompatible protocol version must be rejected.");
+Assert(unsupportedAnnouncementResult.Validation.Kind == ProtocolMessageValidationKind.UnsupportedVersion, "Incompatible announcement must preserve UnsupportedVersion classification.");
+Assert(unsupportedAnnouncementResult.Validation.ErrorCodeName == ProtocolVersionPolicy.UnsupportedVersionErrorCode, "Incompatible announcement must map to UnsupportedVersion.");
+
+var malformedVersionAnnouncement = validAnnouncement.Clone();
+malformedVersionAnnouncement.ProtocolVersion = "v1.0.0";
+malformedVersionAnnouncement.Capabilities.ProtocolVersion = "v1.0.0";
+var malformedVersionResult = ProtocolMessageParser.ParseHostAnnouncement(malformedVersionAnnouncement.ToByteArray());
+Assert(!malformedVersionResult.IsValid, "A malformed version string must be rejected.");
+Assert(malformedVersionResult.Validation.ErrorCodeName == ProtocolVersionPolicy.InvalidMessageErrorCode, "Malformed versions must map to InvalidMessage.");
+
+var incompleteAnnouncement = new HostAnnouncement
+{
+    ProtocolVersion = ProtocolVersionPolicy.CurrentVersion,
+    AnnouncedAtUnixMs = 1770000000123
+};
+var incompleteAnnouncementResult = ProtocolMessageParser.ParseHostAnnouncement(incompleteAnnouncement.ToByteArray());
+Assert(!incompleteAnnouncementResult.IsValid, "An announcement missing host identity/capabilities must be rejected.");
+
+var oversizedAnnouncement = new byte[ProtocolMessageLimits.MaximumControlMessageBytes + 1];
+var oversizedAnnouncementResult = ProtocolMessageParser.ParseHostAnnouncement(oversizedAnnouncement);
+Assert(!oversizedAnnouncementResult.IsValid, "An oversized raw control message must be rejected before parsing.");
+Assert(oversizedAnnouncementResult.Validation.Kind == ProtocolMessageValidationKind.ResourceLimit, "Oversized control message must map to ResourceLimit.");
+
+var invalidConcurrencyAnnouncement = validAnnouncement.Clone();
+invalidConcurrencyAnnouncement.Capabilities.MaxConcurrentRequests = 2;
+var invalidConcurrencyResult = ProtocolMessageParser.ParseHostAnnouncement(invalidConcurrencyAnnouncement.ToByteArray());
+Assert(!invalidConcurrencyResult.IsValid, "Host capabilities that violate the single-request host constraint must be rejected.");
+
+var invalidModelAnnouncement = validAnnouncement.Clone();
+invalidModelAnnouncement.Capabilities.Models[0].MaxOutputTokens = 0;
+var invalidModelResult = ProtocolMessageParser.ParseHostAnnouncement(invalidModelAnnouncement.ToByteArray());
+Assert(!invalidModelResult.IsValid, "A model capability with an invalid output-token ceiling must be rejected.");
+
+var invalidResponseOutcome = ProtocolMessageValidator.ValidateInferenceResponse(
+    "request-id",
+    "attempt-id",
+    "host-id",
+    0,
+    "generated text",
+    1770000000999,
+    "fixture-model",
+    string.Empty,
+    64);
+Assert(!invalidResponseOutcome.IsValid, "An unspecified InferenceResponse outcome must be rejected.");
+Assert(invalidResponseOutcome.ErrorCodeName == ProtocolVersionPolicy.InvalidMessageErrorCode, "Invalid response enum values must map to InvalidMessage.");
+
+var oversizedResponseMessage = ProtocolMessageValidator.ValidateInferenceResponse(
+    "request-id",
+    "attempt-id",
+    "host-id",
+    1,
+    "generated text",
+    1770000000999,
+    "fixture-model",
+    string.Empty,
+    ProtocolMessageLimits.MaximumResponseMessageBytes + 1L);
+Assert(!oversizedResponseMessage.IsValid, "An oversized serialized InferenceResponse must be rejected.");
+Assert(oversizedResponseMessage.ErrorCodeName == ProtocolMessageLimits.ResourceLimitErrorCode, "An oversized response must map to ResourceLimit.");
+
+Console.WriteLine("PASS: malformed, incomplete, oversized, incompatible-version and invalid-value messages are rejected.");
+
 
 var atLimitRequest = ProtocolMessageLimits.ValidateInferenceRequest(
     new string('p', ProtocolMessageLimits.MaximumPromptUtf8Bytes),
@@ -324,6 +471,7 @@ using (var limitedSession = new HostInferenceSession(backend: limitedSessionBack
         AttemptId = "bounded-attempt",
         ModelId = "fixture-model",
         Prompt = "short prompt",
+        DeadlineUnixMs = 1770000000999,
         MaxOutputTokens = 32,
         ContextCapsule = ByteString.CopyFrom(new byte[ProtocolMessageLimits.MaximumContextCapsuleBytes + 1])
     };
@@ -344,6 +492,7 @@ using (var limitedSession = new HostInferenceSession(backend: limitedSessionBack
         AttemptId = "bounded-attempt",
         ModelId = "fixture-model",
         Prompt = "short prompt",
+        DeadlineUnixMs = 1770000000999,
         MaxOutputTokens = 32
     };
     var messageRejected = false;
@@ -365,6 +514,7 @@ using (var limitedSession = new HostInferenceSession(backend: limitedSessionBack
         AttemptId = "valid-attempt",
         ModelId = "fixture-model",
         Prompt = "short prompt",
+        DeadlineUnixMs = 1770000000999,
         MaxOutputTokens = 32,
         ContextCapsule = ByteString.CopyFrom(new byte[] { 1, 2, 3 })
     };

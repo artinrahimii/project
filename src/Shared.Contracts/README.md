@@ -28,6 +28,14 @@ Exact-match checking is intentionally conservative: this project has not yet def
 
 The host checks prompt and response text before returning a result, checks typed inference requests before calling the backend, and bounds the local HTTP response stream before deserialization. Size failures map to `PROTOCOL_ERROR_CODE_RESOURCE_LIMIT`; negative byte lengths map to `PROTOCOL_ERROR_CODE_INVALID_MESSAGE`. These checks do not mean a P2P frame parser exists yet: when that transport is implemented, it must check raw frame lengths before Protobuf parsing and apply the lower of the local and negotiated capsule limits.
 
+## Typed-message validation and safe parsing
+
+`ProtocolMessageValidator` checks required inference identifiers, prompt/model values, deadlines, output-token values, advertised host capabilities, exact protocol-version compatibility, response outcomes and shared byte ceilings. `HostInferenceSession.GenerateAsync(InferenceRequest)` runs this validator before calling the local inference backend.
+
+`ProtocolMessageParser` is the Windows-side boundary for inbound Protobuf bytes: it rejects oversized inference-request and host-control messages before invoking generated Protobuf parsers, translates malformed wire bytes to `PROTOCOL_ERROR_CODE_INVALID_MESSAGE`, and rejects parsed messages whose required values or protocol version are invalid. `tests/contracts/invalid-message-cases.json` holds invalid-tag, truncated-varint and truncated-length-delimited regression fixtures.
+
+This is a testable parser/validation boundary that a future peer transport can call; it does not create a socket, discover peers, or implement P2P transport.
+
 ## Generated Kotlin bindings
 
 Android builds generate both Java Lite message classes and Kotlin DSL APIs from `protocol/whitep/v1/messages.proto`. The Kotlin generated source roots are registered for the Android debug and release variants, and the Android workflow verifies the generated `.java` and `.kt` files after compilation. `ProtocolMessages.kt` imports the generated `HostAnnouncement` type and builder DSL so an APK build fails if Kotlin generation or source registration is broken.

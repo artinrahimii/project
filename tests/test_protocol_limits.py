@@ -16,6 +16,7 @@ class ProtocolLimitContractTests(unittest.TestCase):
     def test_shared_source_defines_explicit_initial_byte_ceilings(self):
         expected = {
             "MaximumRequestMessageBytes": "16 * 1024",
+            "MaximumControlMessageBytes": "16 * 1024",
             "MaximumPromptUtf8Bytes": "8 * 1024",
             "MaximumContextCapsuleBytes": "4 * 1024",
             "MaximumResponseTextUtf8Bytes": "1024 * 1024",
@@ -35,7 +36,8 @@ class ProtocolLimitContractTests(unittest.TestCase):
         self.assertIn("2 MiB", SCHEMA)
 
     def test_runtime_paths_validate_typed_requests_and_bound_local_http_bodies(self):
-        self.assertIn("ProtocolMessageLimits.ValidateInferenceRequest", HOST)
+        self.assertIn("ProtocolMessageValidator.ValidateInferenceRequest", HOST)
+        self.assertIn("ProtocolMessageLimits.ValidateInferenceRequest", (ROOT / "src/Shared.Contracts/ProtocolMessageValidator.cs").read_text(encoding="utf-8"))
         self.assertIn("ProtocolMessageLimits.ValidatePromptText", HOST)
         self.assertIn("ProtocolMessageLimits.ValidateResponseText", HOST)
         self.assertIn("ReadLimitedBodyAsync", BACKEND)
@@ -58,6 +60,7 @@ class ProtocolLimitContractTests(unittest.TestCase):
             with self.subTest(limit=value):
                 self.assertIn(value, REQUIREMENTS)
         self.assertIn("raw frame length before Protobuf parsing", REQUIREMENTS)
+        self.assertIn("ValidateControlMessageBytes", LIMITS)
 
 
 if __name__ == "__main__":

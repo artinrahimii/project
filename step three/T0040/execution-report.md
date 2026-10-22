@@ -1,0 +1,14 @@
+# T0040 — execution report
+
+## Dependency review
+- `T0039 → T0040`: reviewed and classified as `contract_or_interface_dependency`. The new tests validate the byte ceilings and error categories introduced by `ProtocolMessageLimits`, so T0040 depends on that shared policy and its passing C# harness.
+- `T0030 → T0040`: reviewed and classified as `sequencing_only`. T0030 supplies the quality-gate and product-build failure propagation but no message-validation code interface; its original `blocks` edge is retained as conservative verification order.
+- Both edges have written rationales, file-path evidence and `validation_status=validated`. No unrelated `unreviewed` edge was changed.
+
+## Attempt T0040-A001 — implementation in progress
+- Added `src/Shared.Contracts/ProtocolMessageValidator.cs` for semantic checks of required request values/deadlines/tokens, host announcement identity/version/capability/model values, and response enum/required values/sizes.
+- Added `src/Host.Windows/ProtocolMessageParser.cs`. It enforces request/control byte limits before Protobuf parsing, translates malformed wire bytes into the canonical InvalidMessage error, and then calls the shared validator. It does not claim to implement a network socket or P2P transport.
+- Routed `HostInferenceSession.GenerateAsync(InferenceRequest)` through the semantic validator so incomplete and invalid values are rejected before the model backend is called.
+- Added `tests/contracts/invalid-message-cases.json` containing invalid-tag, truncated-varint, and truncated-length-delimited fixtures; tests synthesize an over-limit input to avoid a large fixture blob.
+- Extended the C# executable harness for invalid fields, malformed wire data, oversized raw bytes, incompatible/malformed versions, invalid response outcome values and oversized serialized responses. Added Python repository-contract checks to keep validator, parser and fixtures in trace.
+- Exact-commit test/build results have not yet been observed. T0040 remains `in_progress` until the actual C# harness and full quality/product CI pass.

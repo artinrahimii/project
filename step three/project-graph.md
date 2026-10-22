@@ -6567,33 +6567,141 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0039 و T0030 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
-      "expected_output_paths": [
-        "src/Shared.Contracts/ + tests/contracts/"
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "src/Shared.Contracts/ProtocolMessageValidator.cs",
+        "src/Shared.Contracts/ProtocolMessageLimits.cs",
+        "src/Host.Windows/ProtocolMessageParser.cs",
+        "src/Host.Windows/HostLifecycle.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+        "tests/contracts/invalid-message-cases.json",
+        "tests/test_message_validation.py",
+        "tests/test_protocol_limits.py",
+        "docs/requirements.md",
+        "src/Shared.Contracts/README.md",
+        "step three/T0040/execution-report.md",
+        "step three/T0040/evidence/verification.md"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "expected_output_paths": [
+        "src/Shared.Contracts/ProtocolMessageValidator.cs",
+        "src/Shared.Contracts/ProtocolMessageLimits.cs",
+        "src/Host.Windows/ProtocolMessageParser.cs",
+        "src/Host.Windows/HostLifecycle.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+        "tests/contracts/invalid-message-cases.json",
+        "tests/test_message_validation.py",
+        "tests/test_protocol_limits.py"
+      ],
+      "evidence": [
+        "src/Shared.Contracts/ProtocolMessageValidator.cs",
+        "src/Shared.Contracts/ProtocolMessageLimits.cs",
+        "src/Host.Windows/ProtocolMessageParser.cs",
+        "src/Host.Windows/HostLifecycle.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+        "tests/contracts/invalid-message-cases.json",
+        "tests/test_message_validation.py",
+        "tests/test_protocol_limits.py",
+        "docs/requirements.md",
+        "src/Shared.Contracts/README.md"
+      ],
+      "notes": "A001 adds a real pre-parse byte boundary for request/control messages and semantic validators for requests, host announcements and responses. No peer transport is claimed; the parser can be called by a future transport and typed requests are semantically validated before local inference.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
-        "related_commits": [],
+        "last_attempt_id": "T0040-A001",
+        "last_attempt_result": "in_progress",
+        "changed_files": [
+          "src/Shared.Contracts/ProtocolMessageValidator.cs",
+          "src/Shared.Contracts/ProtocolMessageLimits.cs",
+          "src/Host.Windows/ProtocolMessageParser.cs",
+          "src/Host.Windows/HostLifecycle.cs",
+          "tests/HostLifecycle.Tests/Program.cs",
+          "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+          "tests/contracts/invalid-message-cases.json",
+          "tests/test_message_validation.py",
+          "tests/test_protocol_limits.py",
+          "docs/requirements.md",
+          "src/Shared.Contracts/README.md",
+          "step three/T0040/execution-report.md",
+          "step three/T0040/evidence/verification.md"
+        ],
+        "related_commits": [
+          "e802c59b3fc13932de268fd079f027a6e1b0f200"
+        ],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
+          "state": "in_progress",
+          "triggering_contracts": [
+            "src/Shared.Contracts/ProtocolMessageLimits.cs",
+            "src/Shared.Contracts/ProtocolVersionPolicy.cs",
+            "protocol/whitep/v1/messages.proto"
+          ],
           "affected_by_contract_changes": [],
-          "review_evidence": []
+          "review_evidence": [
+            "step three/T0039/execution-report.md",
+            "tests/test_proto_contract.py",
+            "tests/HostLifecycle.Tests/Program.cs"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0040-A001",
+          "started_at": "2026-10-22T21:55:44.555Z",
+          "ended_at": null,
+          "result": "in_progress",
+          "summary": "Reviewed the two predecessor edges. Added shared semantic validation for request, announcement and response values, a pre-parse Protobuf parser that checks wire byte length first, malformed-wire fixtures, and executable C# plus Python regression tests.",
+          "changed_files": [
+            "src/Shared.Contracts/ProtocolMessageValidator.cs",
+            "src/Shared.Contracts/ProtocolMessageLimits.cs",
+            "src/Host.Windows/ProtocolMessageParser.cs",
+            "src/Host.Windows/HostLifecycle.cs",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+            "tests/contracts/invalid-message-cases.json",
+            "tests/test_message_validation.py",
+            "tests/test_protocol_limits.py",
+            "docs/requirements.md",
+            "src/Shared.Contracts/README.md",
+            "step three/T0040/execution-report.md",
+            "step three/T0040/evidence/verification.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "command": "python -m unittest discover -s tests -v",
+              "result": "pending"
+            },
+            {
+              "command": "dotnet run --project tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj --configuration Release",
+              "result": "pending"
+            },
+            {
+              "command": "dotnet format WhiteP.sln --verify-no-changes",
+              "result": "pending"
+            },
+            {
+              "command": "White-P product build workflow (Windows + Android)",
+              "result": "pending"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "Add a 16 KiB control-message ceiling for host announcements.",
+            "Add semantic checks for required request fields, nonzero deadline/token values, matching host/capability identity and versions, one-request host capability, model capability values and response enum/size fields."
+          ],
+          "follow_up": "Run exact-commit tests and full Windows/Android product build; fix failures without overwriting history."
+        }
+      ]
     },
     {
       "id": "T0041",
@@ -15933,19 +16041,28 @@
       "from": "T0039",
       "to": "T0040",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0040 validates and consumes the request/payload ceilings and shared limit policy introduced and verified by T0039; its boundary cases depend on those stable constants and error mappings.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Shared.Contracts/ProtocolMessageLimits.cs",
+        "src/Host.Windows/HostLifecycle.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0039/execution-report.md"
+      ]
     },
     {
       "from": "T0030",
       "to": "T0040",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0030 supplies the quality-gate and product-build failure propagation used to verify this task, but produces no message-validation code interface. Retain the original blocks edge as conservative verification order.",
+      "validation_status": "validated",
+      "evidence": [
+        ".github/workflows/quality.yml",
+        ".github/workflows/product-build.yml",
+        "step three/T0030/execution-report.md"
+      ]
     },
     {
       "from": "T0040",

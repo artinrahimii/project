@@ -10,6 +10,7 @@ namespace WhiteP.Shared.Contracts;
 public static class ProtocolMessageLimits
 {
     public const int MaximumRequestMessageBytes = 16 * 1024;
+    public const int MaximumControlMessageBytes = 16 * 1024;
     public const int MaximumPromptUtf8Bytes = 8 * 1024;
     public const int MaximumContextCapsuleBytes = 4 * 1024;
     public const uint MaximumOutputTokens = 131_072U;
@@ -72,6 +73,13 @@ public static class ProtocolMessageLimits
             MaximumContextCapsuleBytes,
             ProtocolLimitViolation.ContextCapsuleTooLarge,
             $"Context capsule exceeds the protocol limit of {MaximumContextCapsuleBytes} bytes.");
+
+    public static ProtocolLimitValidationResult ValidateControlMessageBytes(long byteCount) =>
+        ValidateSize(
+            byteCount,
+            MaximumControlMessageBytes,
+            ProtocolLimitViolation.ControlMessageTooLarge,
+            $"Serialized control message exceeds the protocol limit of {MaximumControlMessageBytes} bytes.");
 
     public static ProtocolLimitValidationResult ValidateRequestMessageBytes(long byteCount) =>
         ValidateSize(
@@ -159,7 +167,8 @@ public enum ProtocolLimitViolation
     ResponseMessageTooLarge = 6,
     ResponseTextTooLarge = 7,
     LocalRequestBodyTooLarge = 8,
-    LocalResponseBodyTooLarge = 9
+    LocalResponseBodyTooLarge = 9,
+    ControlMessageTooLarge = 10
 }
 
 public readonly record struct ProtocolLimitValidationResult(
