@@ -6324,8 +6324,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0038 و T0030 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "تکمیل‌شده",
       "actual_output_paths": [
         "src/Shared.Contracts/ProtocolMessageLimits.cs",
         "src/Host.Windows/HostLifecycle.cs",
@@ -6357,14 +6357,15 @@
         "docs/requirements.md",
         "step three/T0039/execution-report.md",
         "step three/T0039/evidence/verification.md",
-        "tests/test_decision_traceability.py"
+        "tests/test_decision_traceability.py",
+        "src/Shared.Contracts/README.md"
       ],
-      "notes": "A001 is implementing and documenting fixed byte ceilings and runtime validation. This bounds parsed typed messages and the current local llama.cpp HTTP adapter; raw peer-frame rejection before Protobuf parsing remains a later transport task.",
+      "notes": "Completed on V 3.0.118 after the exact-commit Step Three quality gate and full White-P product-build workflow passed. C# tests exercise exact ceiling acceptance and over-limit rejection for request/capsule/prompt/response/local HTTP bodies before inference/deserialization. Windows WPF build, generated C# check and Android APK/protocol tests all passed. Scope boundary: there is still no P2P transport frame parser; its pre-parse bound must be implemented with that transport.",
       "execution_summary": {
         "attempt_count": 3,
         "failed_attempt_count": 2,
         "last_attempt_id": "T0039-A003",
-        "last_attempt_result": "in_progress",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Shared.Contracts/ProtocolMessageLimits.cs",
           "src/Host.Windows/HostLifecycle.cs",
@@ -6381,31 +6382,35 @@
         ],
         "related_commits": [
           "0a39f8ad4c3fb1d5cee95b122521ab5a5193a1a4",
-          "c0070b88f71e075ce2d03fd15fb88ce716fd1fee"
+          "c0070b88f71e075ce2d03fd15fb88ce716fd1fee",
+          "dccfeca05c0fc49b02fbcaad88937544a614fab3",
+          "64b34cfd1b4817449c90049cedbfea904b2ac1e1"
         ],
         "tests_passed": [
-          "Step Three quality gate run 39859947826 passed all 85 Python tests.",
-          "C# lifecycle test job passed the new protocol request/capsule/prompt/response/local HTTP body boundary tests on V 3.0.117."
+          "Step Three quality gate run 39860175394 succeeded: all 85 Python tests passed, including five protocol-limit contract guards and updated decision traceability.",
+          "C# host lifecycle job 120108548051 succeeded; log reports PASS for protocol request, capsule, prompt, response, HTTP-body ceilings and pre-inference rejection.",
+          "Windows WPF job 120108548070 succeeded: C# formatting, product build, generated Protobuf C# source check and artifact upload passed.",
+          "Android job 120108547572 succeeded: ktlint, debug APK build, Protobuf round-trip unit tests, generated Java/Kotlin source checks and APK artifact upload passed.",
+          "Full product run 39860175367 completed with conclusion success."
         ],
         "tests_failed": [
-          "Windows WPF build job failed with CS0246 because HostLifecycle.cs lacked using System.IO for InvalidDataException.",
-          "Prior .116 quality workflow failure due stale PostAsJsonAsync assertion is retained in T0039-A001."
+          "Attempt T0039-A001, tested on V 3.0.116: the quality gate exposed a stale decision-traceability assertion requiring the removed PostAsJsonAsync call; updated in A002.",
+          "Attempt T0039-A002, tested on V 3.0.117: the Windows build found missing System.IO for InvalidDataException; fixed by A003."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "in_progress",
+          "state": "validated",
           "triggering_contracts": [
             "protocol/whitep/v1/messages.proto"
           ],
-          "affected_by_contract_changes": [
-            "T0037",
-            "T0038",
-            "T0040"
-          ],
+          "affected_by_contract_changes": [],
           "review_evidence": [
-            "step three/T0038/execution-report.md",
-            "tests/test_proto_contract.py"
+            "protocol/whitep/v1/messages.proto",
+            "tests/test_proto_contract.py",
+            "tests/test_protocol_limits.py",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "src/Client.Android/app/src/test/java/com/whitep/client/protocol/ProtoRoundTripTest.kt"
           ]
         }
       },
@@ -6500,39 +6505,48 @@
         {
           "attempt_id": "T0039-A003",
           "started_at": "2026-10-22T21:48:08.097Z",
-          "ended_at": null,
-          "result": "in_progress",
-          "summary": "Added explicit System.IO import in HostLifecycle.cs to resolve exact Windows build compiler errors for InvalidDataException at lines 178 and 205.",
+          "ended_at": "2026-10-22T21:50:49Z",
+          "result": "succeeded",
+          "summary": "Explicit System.IO import fixed the Windows WPF compiler errors. On this exact commit, the quality gate passed all 85 Python tests; the C# host lifecycle/size-boundary tests passed; Windows WPF formatting, build, generated Protobuf check and artifact upload passed; Android lint, APK build, Protobuf round-trip tests, generated Java/Kotlin check and APK upload passed.",
           "changed_files": [
             "src/Host.Windows/HostLifecycle.cs",
             "step three/T0039/execution-report.md",
             "step three/T0039/evidence/verification.md",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "64b34cfd1b4817449c90049cedbfea904b2ac1e1",
           "tests": [
             {
-              "command": "WhiteP product build — Windows WPF host job",
-              "result": "pending"
+              "command": "Step Three quality gate — run 39860175394",
+              "result": "succeeded",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39860175394"
             },
             {
-              "command": "WhiteP product build — host lifecycle/bounds test job",
-              "result": "pending"
+              "command": "C# lifecycle, Protobuf and size-boundary test job 120108548051",
+              "result": "succeeded",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39860175367"
             },
             {
-              "command": "Step Three quality gate",
-              "result": "pending"
+              "command": "Windows WPF format/build/generated source/artifact job 120108548070",
+              "result": "succeeded",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39860175367"
             },
             {
-              "command": "WhiteP product build — Android client APK job",
-              "result": "pending"
+              "command": "Android lint, APK, round-trip tests, generated-source check and artifact job 120108547572",
+              "result": "succeeded",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39860175367"
+            },
+            {
+              "command": "Complete White-P product build run 39860175367",
+              "result": "succeeded",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39860175367"
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Verify the explicit import fixes Windows WPF build and all required current-commit checks pass."
+          "follow_up": "Proceed to T0040. A future P2P transport must reject oversized raw frames before Protobuf parsing, using the same limits and the lower of local/negotiated capsule ceilings."
         }
       ]
     },

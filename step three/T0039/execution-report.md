@@ -39,3 +39,14 @@
 ## Attempt T0039-A003 — compiler correction pending
 - Added explicit `using System.IO;` to `src/Host.Windows/HostLifecycle.cs`, covering the two reported `InvalidDataException` references.
 - T0039 stays `in_progress` until the exact-commit Windows build and required tests pass.
+
+
+## Attempt T0039-A003 — successful exact-commit verification
+- Tested implementation commit: `64b34cfd1b4817449c90049cedbfea904b2ac1e1` (`V 3.0.118`).
+- [Step Three quality gate](https://github.com/artinrahimii/project/actions/runs/39860175394): **success**, all 85 Python tests passed, including the new limit-contract tests and corrected decision-traceability assertion.
+- [Full White-P product build](https://github.com/artinrahimii/project/actions/runs/39860175367): **completed successfully**:
+  - Host lifecycle/contract test job passed, printing `PASS: protocol request, capsule, prompt, response, HTTP-body ceilings and pre-inference rejection.`
+  - Windows WPF C# formatting, application build, generated Protobuf source verification and artifact upload passed.
+  - Android Kotlin lint, debug APK build, Protobuf round-trip unit tests, generated Java/Kotlin source checks and APK upload passed.
+- The explicit `System.IO` import fixed the compiler error from A002. A001 and A002 failures remain in history and are not overwritten.
+- **Result:** T0039 is `done` based on these testable code paths and exact-commit evidence. Boundary note: there is no P2P transport frame parser yet, so raw-frame rejection before Protobuf parsing remains necessary when that transport is implemented. The current local HTTP adapter is genuinely bounded.

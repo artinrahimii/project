@@ -36,3 +36,13 @@ The policy validates typed request/response lengths and the live local HTTP adap
 - [C# lifecycle/bounds test job](https://github.com/artinrahimii/project/actions/runs/39859947626): passed size-boundary tests for requests, capsules, prompts, responses and local HTTP bodies.
 - [Windows WPF product job](https://github.com/artinrahimii/project/actions/runs/39859947626): failed compilation because `HostLifecycle.cs` did not explicitly import `System.IO` for `InvalidDataException`.
 - A003 adds the missing import; exact-commit product build remains pending.
+
+
+## Attempt A003 — successful exact-commit verification
+- Code and host fix tested on `64b34cfd1b4817449c90049cedbfea904b2ac1e1` (`V 3.0.118`).
+- [Step Three quality gate](https://github.com/artinrahimii/project/actions/runs/39860175394): successful, 85 tests.
+- [Full product workflow](https://github.com/artinrahimii/project/actions/runs/39860175367): completed successfully.
+- Host integration test verified acceptance at the documented ceilings and rejection of oversized requests, capsules, prompts, outputs and HTTP bodies before inference/deserialization.
+- Windows WPF build, generated C# contract verification and build artifact upload passed.
+- Android lint, debug APK build, shared-wire Protobuf tests, generated Java/Kotlin source verification and APK artifact upload passed.
+- T0039 is accepted. The two prior failed attempts remain in history.
