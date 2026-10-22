@@ -10,3 +10,9 @@
 ## Corrective attempt
 
 The fixture corpus and Kotlin test formatting have been corrected in the current attempt. The exact-commit product run has not completed yet; no passing C#/Kotlin shared fixture test is claimed here until CI evidence is recorded.
+
+
+## Attempt A003 result
+- Commit `17cd09a637aedf989bd6337b91cdf4552265c022`: quality gate, C# host tests/shared-fixture parsing and Windows WPF build passed.
+- Android ktlint failed only because `ProtoRoundTripTest.kt` had no trailing newline; Kotlin unit tests and APK build were skipped.
+- This is a failed verification attempt, not acceptance. A004 adds the exact newline fix; its CI result is pending.

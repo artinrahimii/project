@@ -6097,9 +6097,9 @@
       ],
       "notes": "T0038-A001 history retained. CI at V 3.0.112 exposed malformed nested HostCapabilities fixture bytes and Kotlin ktlint failures. A003 regenerates ordered wire bytes and corrects test formatting; do not complete until both C# and Kotlin fixture suites pass in exact-commit CI.",
       "execution_summary": {
-        "attempt_count": 3,
-        "failed_attempt_count": 1,
-        "last_attempt_id": "T0038-A003",
+        "attempt_count": 4,
+        "failed_attempt_count": 2,
+        "last_attempt_id": "T0038-A004",
         "last_attempt_result": "in_progress",
         "changed_files": [
           "tests/contracts/protobuf-wire-fixtures.txt",
@@ -6113,14 +6113,15 @@
         "related_commits": [
           "d210a646d705fe5d99273ecc03ec6c695a88762d",
           "4dc65b081e782ea2bd62f2db52cdd3b9e4f72118",
-          "20832c67a78a04841f8e6f2ef81969e099603791"
+          "20832c67a78a04841f8e6f2ef81969e099603791",
+          "17cd09a637aedf989bd6337b91cdf4552265c022"
         ],
         "tests_passed": [
-          "Step Three quality gate run 39851178922 passed on V 3.0.112; this verifies Python guards only, not T0038 acceptance."
+          "Step Three quality gate run 39858286362 passed on V 3.0.113.",
+          "C# host lifecycle and shared fixture job passed in product run 39858286367."
         ],
         "tests_failed": [
-          "Product run 39851178925: C# shared HostCapabilities fixture parsing failed with invalid tag (zero).",
-          "Product run 39851178925: Android ktlint failed; APK build and Kotlin fixture tests were skipped."
+          "Product run 39858286367 Android ktlint failed because ProtoRoundTripTest.kt lacked its required terminal newline; APK and Kotlin tests were skipped."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -6206,9 +6207,9 @@
         {
           "attempt_id": "T0038-A003",
           "started_at": "2026-10-22T21:33:39.295Z",
-          "ended_at": null,
-          "result": "in_progress",
-          "summary": "Regenerated all 11 shared fixtures from schema-consistent Protobuf wire encodings and fixed observed Kotlin test formatting failures. Waiting for exact-commit CI.",
+          "ended_at": "2026-10-22T21:35:30Z",
+          "result": "failed",
+          "summary": "Fixture byte correction passed the C# shared-fixture and host integration job and Windows build, but Kotlin ktlint failed only because the test file lacked a terminal newline; APK and Kotlin unit tests were skipped.",
           "changed_files": [
             "tests/contracts/protobuf-wire-fixtures.txt",
             "src/Client.Android/app/src/test/java/com/whitep/client/protocol/ProtoRoundTripTest.kt",
@@ -6219,7 +6220,48 @@
           "commit_sha": null,
           "tests": [
             {
-              "command": "python -m unittest discover -s tests -v (exact-commit Step Three quality gate)",
+              "command": "Step Three quality gate run 39858286362",
+              "result": "succeeded",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39858286362"
+            },
+            {
+              "command": "C# host lifecycle and shared fixtures job 120102079325",
+              "result": "succeeded",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39858286367"
+            },
+            {
+              "command": "Windows WPF build job 120102079805",
+              "result": "succeeded",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39858286367"
+            },
+            {
+              "command": "Android ktlint job 120102079737",
+              "result": "failed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39858286367"
+            }
+          ],
+          "failure_details": "Android product job 120102079737, run 39858286367, step 'Verify Kotlin formatting and lint': ktlint reported at line 196:1 'File must end with a newline (\\n)'.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Append terminal newline to ProtoRoundTripTest.kt and rerun the full product workflow; require Android APK, Kotlin test and source generation steps to pass."
+        },
+        {
+          "attempt_id": "T0038-A004",
+          "started_at": "2026-10-22T21:35:50.297Z",
+          "ended_at": null,
+          "result": "in_progress",
+          "summary": "Applied the exact final fix reported by ktlint: ensure ProtoRoundTripTest.kt ends with exactly one newline.",
+          "changed_files": [
+            "src/Client.Android/app/src/test/java/com/whitep/client/protocol/ProtoRoundTripTest.kt",
+            "step three/T0038/execution-report.md",
+            "step three/project-graph.md",
+            "step three/T0038/evidence/verification.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "command": "Step Three quality gate workflow",
               "result": "pending"
             },
             {
@@ -6239,7 +6281,7 @@
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect exact-commit product build and mark complete only after both .NET and Kotlin shared fixture suites pass."
+          "follow_up": "Confirm all three product workflow jobs pass before marking T0038 done."
         }
       ]
     },

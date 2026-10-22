@@ -20,3 +20,15 @@
 - Corrected Kotlin imports, the blank line between test declarations, the multiline `when` expression and the trailing blank line identified by ktlint.
 - A lightweight local wire-structure validation ran over the generated fixture bytes, rejecting invalid tags, invalid wire types, truncated varints and truncated fixed/length-delimited fields. This check is not a substitute for the actual C#/Kotlin parsers.
 - Exact-commit CI is still pending. T0038 remains `in_progress` until C# and Kotlin both parse and reserialize all 11 shared fixtures and the product workflow succeeds.
+
+
+## Attempt T0038-A003 — failed Kotlin formatting verification retained
+- Tested commit: `17cd09a637aedf989bd6337b91cdf4552265c022` (`V 3.0.113`).
+- [Step Three quality gate](https://github.com/artinrahimii/project/actions/runs/39858286362) passed.
+- [C# host lifecycle/shared-fixture job](https://github.com/artinrahimii/project/actions/runs/39858286367) passed, including the fixture parsing that failed on A002. The Windows WPF build and generated C# source checks also passed.
+- The Android job failed only at ktlint: `ProtoRoundTripTest.kt:196:1 File must end with a newline (\\n)`. The APK, Kotlin fixture test and generated Java/Kotlin source assertions were skipped because lint is a gate.
+- No T0038 acceptance is claimed for A003 because the Android suite did not run.
+
+## Attempt T0038-A004 — final-newline correction pending CI
+- Applied the exact reported correction: the Kotlin test source now ends with one newline.
+- Re-running exact-commit CI is required to verify Android lint, APK compilation, Kotlin parsing of all 11 fixtures and source-generation assertions. T0038 remains `in_progress` until that evidence is available.
