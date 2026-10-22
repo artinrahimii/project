@@ -56,47 +56,67 @@ White-P با هدف ساخت دو برنامه طراحی می‌شود: یک م
 - هر ادعای «محلی»، «P2P»، «رمزگذاری‌شده» یا «بدون ذخیره‌سازی» تنها پس از آزمون یا بررسی قابل‌تکرار قابل تأیید است.
 - تا زمانی که آزمون‌های متناظر اجرا نشده‌اند، این موارد الزامات طراحی‌اند، نه ادعاهای اثبات‌شدهٔ محصول.
 
-## توسعه و آزمون
+## Restore، build، test و package
 
-با Python 3.11 یا جدیدتر، کنترل‌های فعلی مخزن را اجرا کن:
+این دستورها از checkout تمیز قابل اجرا هستند؛ مسیرها نسبت به ریشهٔ مخزن‌اند مگر آن‌که دستور صریحاً وارد پوشهٔ Android شود. نسخه‌های ابزار با فایل‌های مخزن و workflowهای فعلی تطبیق داده شده‌اند.
 
-```bash
-python -m unittest discover -s tests -v
-python -m compileall -q tools tests
-python tools/graph_guard.py "step three/project-graph.md" --repo-root .
-```
+### پیش‌نیازهای ابزار
 
-ساخت میزبان ویندوز در runner ویندوز با .NET SDK 10 انجام می‌شود؛ ساخت APK اندروید در runner لینوکس با JDK 17، Gradle 8.13 و Android SDK platform/build-tools 36 انجام می‌شود. workflow متناظر: [product-build.yml](.github/workflows/product-build.yml). برای نتیجهٔ واقعی به اجرای موفق GitHub Actions و artifactهای همان اجرا مراجعه کن؛ اجرای آزمون‌های Python جایگزین build یا آزمون runtime محصول نیست.
+- **Windows host:** Windows، .NET SDK نسخهٔ پایهٔ `10.0.100` با سیاست `latestFeature` در `global.json`. پروژهٔ میزبان WPF روی `.NET 10` ساخته می‌شود.
+- **Android client:** JDK 17، Gradle 8.13، Android SDK platform 36، build-tools 36.0.0 و platform-tools؛ متغیرهای `ANDROID_HOME` و `ANDROID_SDK_ROOT` باید به مسیر SDK اشاره کنند.
+- **Repository checks:** Python 3.13 برای تطبیق با workflow کنترل کیفیت.
+- این مخزن در حال حاضر Gradle Wrapper (`gradlew`) ندارد؛ Gradle 8.13 باید جداگانه نصب یا از محیطی مشابه workflow CI فراهم شود.
 
+### Restore، build و آزمون میزبان ویندوز
 
+از ریشهٔ مخزن در یک ترمینال ویندوز:
 
-### ساخت و آزمون از checkout تمیز
-
-دستورهای زیر با workflowهای فعلی هماهنگ‌اند. برای میزبان ویندوز، .NET SDK باید با `global.json` سازگار باشد: نسخهٔ پایه `10.0.100` و سیاست `latestFeature`. برای اندروید، JDK 17، Gradle 8.13 و Android SDK platform `android-36`، build-tools `36.0.0` و platform-tools لازم است. محیط CI همین ورودی‌ها را از یک checkout تازه تنظیم می‌کند.
-
-از ریشهٔ مخزن، ساخت هر دو پروژهٔ دات‌نت از طریق solution و اجرای آزمون چرخهٔ عمر:
-
-```bash
+```powershell
+dotnet restore WhiteP.sln
+dotnet format whitespace WhiteP.sln --verify-no-changes
 dotnet build WhiteP.sln --configuration Release
 dotnet run --project tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj --configuration Release
 ```
 
-برای ساخت APK اندروید، ابتدا JDK 17، Gradle 8.13 و بسته‌های Android SDK یادشده را نصب و `ANDROID_HOME` را به SDK root تنظیم کن؛ سپس:
+آزمون چرخهٔ عمر یک برنامهٔ کنسولی آزمون است که با `dotnet run` اجرا می‌شود؛ در وضعیت فعلی آن را با `dotnet test` جایگزین نکن. برای تولید پوشهٔ انتشار میزبان win-x64:
+
+```powershell
+dotnet publish src/Host.Windows/WhiteP.Host.Windows.csproj --configuration Release --runtime win-x64 --self-contained false --output artifacts/windows-host
+```
+
+خروجی `publish` یک پوشهٔ برنامه برای سیستمی است که .NET Runtime سازگار دارد؛ این دستور به‌تنهایی نصب‌کنندهٔ MSI یا بستهٔ امضاشده تولید نمی‌کند. workflow فعلی میزبان را build و خروجی build را artifact می‌کند؛ اجرای دستور publish بالا فعلاً مرحله‌ای مستقل است و در workflow محصول اجرا نمی‌شود.
+
+### Lint، build و package اندروید
+
+در ریشهٔ مخزن، ابتدا ابزارها و بسته‌های Android SDK بالا را نصب کن؛ سپس:
 
 ```bash
 cd src/Client.Android
+gradle --no-daemon ktlintCheck
 gradle --no-daemon assembleDebug
 ```
 
-آزمون‌ها و کنترل‌های مخزن از ریشه:
+بستهٔ APK توسعه در `src/Client.Android/app/build/outputs/apk/debug/app-debug.apk` ساخته می‌شود. این debug APK جایگزین بستهٔ release امضاشده نیست. workflow محصول همین lint و ساخت APK را اجرا و artifact را برای ۷ روز نگه می‌دارد. در حال حاضر آزمون runtime اندروید روی دستگاه فیزیکی به‌وسیلهٔ این workflow اثبات نمی‌شود.
+
+### آزمون‌های مخزن و اعتبارسنجی گراف
+
+از ریشهٔ مخزن با Python 3.13:
 
 ```bash
 python -m unittest discover -s tests -v
 python -m compileall -q tools tests
+python tools/graph_guard.py "step three/project-graph.md"
 python tools/graph_guard.py "step three/project-graph.md" --repo-root .
 ```
 
-workflow محصول پس از build، خروجی میزبان ویندوز و فایل `app-debug.apk` را به‌عنوان artifact برای ۷ روز منتشر می‌کند و در صورت نبودن فایل خروجی شکست می‌خورد. موفقیت ساخت و وجود artifact، اجرای درست برنامه، inference محلی یا تبادل P2P را اثبات نمی‌کند.
+اولین فرمان آزمون‌های خودکار را اجرا می‌کند؛ فرمان دوم نحو فایل‌های Python را بررسی می‌کند؛ دو فرمان آخر به‌ترتیب ساختار گراف و وجود مسیرهای خروجی/شواهد ثبت‌شده را اعتبارسنجی می‌کنند. این کنترل‌ها جایگزین build محصول یا آزمون inference واقعی نیستند.
+
+### Workflowهای CI و محدودیت نتیجه
+
+- [کنترل کیفیت و آزمون‌های Python](.github/workflows/quality.yml)
+- [ساخت میزبان ویندوز، آزمون چرخهٔ عمر و APK اندروید](.github/workflows/product-build.yml)
+
+workflow محصول build میزبان، قالب‌بندی C#، آزمون چرخهٔ عمر و lint/build اندروید را اجرا می‌کند. موفقیت CI و وجود artifact، اجرای برنامه روی دستگاه هدف، تولید پاسخ از مدل زنده، نصب‌کنندهٔ release، یا انتقال P2P را به‌خودی‌خود اثبات نمی‌کند.
 
 ## وضعیت توسعه
 

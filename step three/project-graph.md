@@ -4469,24 +4469,46 @@
         "نیازمندی مرتبط: دستورهای restore، build، test و package را در `README.md` دقیق و قابل‌تکرار ثبت کن."
       ],
       "outputs": [
-        "خروجی قابل بررسی مربوط به «دستورهای restore، build، test و package را در `README.md` دقیق و قابل‌تکرار ثبت کن.» در مسیر src/Shared.Contracts/ + tests/contracts/؛ همراه با آزمون/شاهد پذیرش متناسب."
+        "دستورهای قابل‌اجرا و محدودیت‌های دقیق restore/build/test/package در README.md؛ همراه با آزمون قراردادی که فرمان‌ها را با پیکربندی و workflowهای مخزن تطبیق دهد."
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0026 و T0020 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
-      "expected_output_paths": [
-        "src/Shared.Contracts/ + tests/contracts/"
+      "status": "in_progress",
+      "status_fa": "در حال انجام",
+      "actual_output_paths": [
+        "README.md",
+        "tests/test_readme_build_commands.py",
+        "step three/T0027/execution-report.md",
+        "step three/project-graph.md"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "expected_output_paths": [
+        "README.md",
+        "tests/test_readme_build_commands.py",
+        "step three/T0027/execution-report.md"
+      ],
+      "evidence": [
+        "README.md",
+        "tests/test_readme_build_commands.py",
+        "global.json",
+        "WhiteP.sln",
+        "src/Client.Android/build.gradle.kts",
+        "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+        ".github/workflows/product-build.yml",
+        ".github/workflows/quality.yml",
+        "docs/decisions/ADR-0001-platform-build-baselines.md"
+      ],
+      "notes": "Reviewed both incoming edges. T0026→T0027 is sequencing-only because the secret-ignore/sample configuration does not supply command inputs. T0020→T0027 is a toolchain/build-contract dependency because the documented commands must match ADR-0001, global.json, the solution, Android Gradle config, and CI. The README documents that Windows publish is a manual command not currently executed by CI and that the Android artifact is a debug APK, not a signed release.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0027-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "README.md",
+          "tests/test_readme_build_commands.py",
+          "step three/T0027/execution-report.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
@@ -4499,7 +4521,42 @@
           "review_evidence": []
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0027-A001",
+          "started_at": "2026-10-22T07:50:00Z",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Validated incoming dependency edges and replaced the README's duplicated/incomplete build section with explicit restore, build, test, publish, Android APK, and repository-check commands. Added a contract test to compare documented commands with checked-in toolchain and CI entrypoints; exact-commit CI is pending.",
+          "changed_files": [
+            "README.md",
+            "tests/test_readme_build_commands.py",
+            "step three/T0027/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "command": "Step Three quality gate",
+              "result": "pending",
+              "summary": "Run unit tests, Python syntax checks, graph structure, and evidence validation on the exact commit."
+            },
+            {
+              "command": "White-P product build",
+              "result": "pending",
+              "summary": "Verify the Windows build/lifecycle tests and Android lint/debug APK build on the exact commit."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "Validated T0026→T0027 as sequencing_only; preserved the edge direction and type=blocks.",
+            "Validated T0020→T0027 as contract_or_interface_dependency based on ADR-0001 and checked-in toolchain/CI inputs; preserved the edge direction and type=blocks."
+          ],
+          "follow_up": "Inspect exact-commit CI. Mark T0027 done only after the graph/evidence quality gate and product build pass."
+        }
+      ]
     },
     {
       "id": "T0028",
@@ -14091,19 +14148,32 @@
       "from": "T0026",
       "to": "T0027",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "The local-secret ignore rules and non-secret .env.example do not supply inputs consumed by the restore/build/test/package commands. Keep this edge only as conservative within-section ordering.",
+      "validation_status": "validated",
+      "evidence": [
+        ".gitignore",
+        ".env.example",
+        "README.md",
+        ".github/workflows/product-build.yml"
+      ]
     },
     {
       "from": "T0020",
       "to": "T0027",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "The documented tool prerequisites and build entrypoints must match the accepted platform baseline and checked-in project/CI contracts; otherwise the README commands could be irreproducible or wrong.",
+      "validation_status": "validated",
+      "evidence": [
+        "docs/decisions/ADR-0001-platform-build-baselines.md",
+        "global.json",
+        "WhiteP.sln",
+        "src/Client.Android/build.gradle.kts",
+        ".github/workflows/product-build.yml",
+        ".github/workflows/quality.yml",
+        "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj"
+      ]
     },
     {
       "from": "T0027",
