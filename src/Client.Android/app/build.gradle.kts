@@ -14,6 +14,14 @@ android {
                 srcDir("../../../protocol")
             }
         }
+        getByName("debug") {
+            java.srcDir(layout.buildDirectory.dir("generated/sources/proto/debug/kotlin"))
+            java.srcDir(layout.buildDirectory.dir("generated/source/proto/debug/kotlin"))
+        }
+        getByName("release") {
+            java.srcDir(layout.buildDirectory.dir("generated/sources/proto/release/kotlin"))
+            java.srcDir(layout.buildDirectory.dir("generated/source/proto/release/kotlin"))
+        }
     }
     namespace = "com.whitep.client"
     compileSdk = 36
@@ -37,6 +45,7 @@ protobuf {
         all().configureEach {
             builtins {
                 create("java") { option("lite") }
+                create("kotlin") { option("lite") }
             }
         }
     }
@@ -44,6 +53,7 @@ protobuf {
 
 dependencies {
     implementation("com.google.protobuf:protobuf-javalite:4.36.2")
+    implementation("com.google.protobuf:protobuf-kotlin-lite:4.36.2")
     implementation("androidx.core:core-ktx:1.17.0")
     implementation("androidx.activity:activity-compose:1.11.0")
     implementation("androidx.compose.ui:ui:1.9.2")

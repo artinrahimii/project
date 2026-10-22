@@ -5672,24 +5672,54 @@
         "نیازمندی مرتبط: کد تولید قراردادهای C# و Kotlin را در build تولید کن، نه با ویرایش دستی."
       ],
       "outputs": [
-        "خروجی قابل بررسی مربوط به «کد تولید قراردادهای C# و Kotlin را در build تولید کن، نه با ویرایش دستی.» در مسیر src/Shared.Contracts/ + tests/contracts/؛ همراه با آزمون/شاهد پذیرش متناسب."
+        "C# Protobuf messages generated from `protocol/whitep/v1/messages.proto` during the Windows .NET build.",
+        "Android Java Lite and Kotlin DSL contract code generated from the same schema and compiled into the Android APK; `ProtocolMessages.kt` consumes a generated message and DSL factory.",
+        "CI assertions that generated C# source plus Android generated Java and Kotlin sources are present."
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0035 و T0030 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
-      "expected_output_paths": [
-        "src/Shared.Contracts/ + tests/contracts/"
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "src/Host.Windows/WhiteP.Host.Windows.csproj",
+        "src/Client.Android/app/build.gradle.kts",
+        "src/Client.Android/app/src/main/java/com/whitep/client/protocol/ProtocolMessages.kt",
+        "src/Shared.Contracts/README.md",
+        "tests/test_proto_contract.py",
+        ".github/workflows/product-build.yml",
+        "step three/T0036/execution-report.md"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "expected_output_paths": [
+        "src/Host.Windows/WhiteP.Host.Windows.csproj",
+        "src/Client.Android/app/build.gradle.kts",
+        "src/Client.Android/app/src/main/java/com/whitep/client/protocol/ProtocolMessages.kt",
+        "tests/test_proto_contract.py",
+        ".github/workflows/product-build.yml"
+      ],
+      "evidence": [
+        "protocol/whitep/v1/messages.proto",
+        "src/Host.Windows/WhiteP.Host.Windows.csproj",
+        "src/Client.Android/app/build.gradle.kts",
+        "src/Client.Android/app/src/main/java/com/whitep/client/protocol/ProtocolMessages.kt",
+        "tests/test_proto_contract.py",
+        ".github/workflows/product-build.yml",
+        "step three/T0036/execution-report.md"
+      ],
+      "notes": "T0036-A001 requests real Kotlin DSL generation, registers generated Kotlin output with Android variant sources, consumes the generated builder API in ProtocolMessages.kt, and adds CI checks for generated C#/Java/Kotlin source files. Acceptance is pending exact-commit CI; generated files remain build outputs and are not hand-checked-in. This task is not network transport.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0036-A001",
+        "last_attempt_result": "in_progress",
+        "changed_files": [
+          "src/Client.Android/app/build.gradle.kts",
+          "src/Client.Android/app/src/main/java/com/whitep/client/protocol/ProtocolMessages.kt",
+          "src/Shared.Contracts/README.md",
+          "tests/test_proto_contract.py",
+          ".github/workflows/product-build.yml",
+          "step three/T0036/execution-report.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
@@ -5702,7 +5732,39 @@
           "review_evidence": []
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0036-A001",
+          "started_at": "2026-10-22T19:43:00Z",
+          "ended_at": null,
+          "result": "in_progress",
+          "summary": "Reviewed incoming sequencing edges and expanded Android generation to emit Kotlin DSL, registered its variant-scoped source roots, added actual Kotlin contract helper, and added generated-source CI checks for C#, Java, and Kotlin. Exact-commit CI pending.",
+          "changed_files": [
+            "src/Client.Android/app/build.gradle.kts",
+            "src/Client.Android/app/src/main/java/com/whitep/client/protocol/ProtocolMessages.kt",
+            "src/Shared.Contracts/README.md",
+            "tests/test_proto_contract.py",
+            ".github/workflows/product-build.yml",
+            "step three/T0036/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "command": "Exact-commit quality gate and White-P product build",
+              "result": "pending",
+              "summary": "Require Python contract tests, Windows generated C# assertion, Android generated Java/Kotlin assertions, and compilation of ProtocolMessages.kt using generated HostAnnouncement Kotlin DSL."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "Android Protobuf build now requests Kotlin DSL output in addition to Java Lite from the existing canonical schema."
+          ],
+          "follow_up": "Verify exact-commit CI output locations and compile. If generation/source wiring fails, use the actual build log to correct it; do not mark T0036 done without generated Kotlin compile proof."
+        }
+      ]
     },
     {
       "id": "T0037",
@@ -15114,19 +15176,29 @@
       "from": "T0035",
       "to": "T0036",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0035's strict version decision helper is implemented in the .NET shared library, while T0036's generators consume the canonical Protobuf source directly; code generation does not consume a type/API produced by the version helper. Keep the original blocks edge as conservative ordering, not a proven technical dependency.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Shared.Contracts/ProtocolVersionPolicy.cs",
+        "protocol/whitep/v1/messages.proto",
+        "src/Host.Windows/WhiteP.Host.Windows.csproj",
+        "src/Client.Android/app/build.gradle.kts",
+        "step three/T0035/execution-report.md"
+      ]
     },
     {
       "from": "T0030",
       "to": "T0036",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0030 reviews CI failure propagation and required-artifact handling. T0036 uses those established workflows for verification but does not consume any code/interface output from T0030. Keep the existing edge as execution order only.",
+      "validation_status": "validated",
+      "evidence": [
+        ".github/workflows/quality.yml",
+        ".github/workflows/product-build.yml",
+        "step three/T0030/execution-report.md"
+      ]
     },
     {
       "from": "T0036",

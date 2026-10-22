@@ -11,6 +11,8 @@ ANDROID_ROOT = (ROOT / "src/Client.Android/build.gradle.kts").read_text(encoding
 ANDROID_APP_PATH = ROOT / "src/Client.Android/app/build.gradle.kts"
 ANDROID_APP = ANDROID_APP_PATH.read_text(encoding="utf-8")
 README = (ROOT / "README.md").read_text(encoding="utf-8")
+PRODUCT_WORKFLOW_PATH = ROOT / ".github/workflows/product-build.yml"
+PRODUCT_WORKFLOW = PRODUCT_WORKFLOW_PATH.read_text(encoding="utf-8")
 VERSION_POLICY_PATH = ROOT / "src/Shared.Contracts/ProtocolVersionPolicy.cs"
 VERSION_POLICY = VERSION_POLICY_PATH.read_text(encoding="utf-8")
 
@@ -134,7 +136,7 @@ class ProtoContractTests(unittest.TestCase):
         self.assertIn('PackageReference Include="Google.Protobuf" Version="3.36.2"', CSPROJ)
         self.assertIn('PackageReference Include="Grpc.Tools" Version="2.84.0"', CSPROJ)
 
-    def test_android_generates_java_lite_from_the_same_repository_schema(self):
+    def test_android_generates_java_and_kotlin_lite_from_the_same_repository_schema(self):
         self.assertIn('id("com.google.protobuf") version "0.10.0" apply false', ANDROID_ROOT)
         self.assertIn('id("com.google.protobuf")', ANDROID_APP)
         self.assertIn("import com.google.protobuf.gradle.*", ANDROID_APP)
@@ -142,7 +144,20 @@ class ProtoContractTests(unittest.TestCase):
         self.assertIn('com.google.protobuf:protoc:4.36.2', ANDROID_APP)
         self.assertIn('com.google.protobuf:protobuf-javalite:4.36.2', ANDROID_APP)
         self.assertIn('create("java") { option("lite") }', ANDROID_APP)
+        self.assertIn('create("kotlin") { option("lite") }', ANDROID_APP)
+        self.assertIn('implementation("com.google.protobuf:protobuf-kotlin-lite:4.36.2")', ANDROID_APP)
+        self.assertIn('generated/sources/proto/debug/kotlin', ANDROID_APP)
+        self.assertIn('generated/sources/proto/release/kotlin', ANDROID_APP)
+        self.assertIn("Verify generated Protobuf Java and Kotlin sources", PRODUCT_WORKFLOW)
         self.assertEqual((ANDROID_APP_PATH.parent / "../../../protocol").resolve(), SCHEMA_PATH.parent.parent.parent.resolve())
+
+    def test_kotlin_protocol_helper_uses_generated_contract_types(self):
+        helper_path = ROOT / "src/Client.Android/app/src/main/java/com/whitep/client/protocol/ProtocolMessages.kt"
+        helper = helper_path.read_text(encoding="utf-8")
+        self.assertIn("import org.whitep.shared.contracts.v1.HostAnnouncement", helper)
+        self.assertIn("import org.whitep.shared.contracts.v1.hostAnnouncement", helper)
+        self.assertIn("HostAnnouncement.parseFrom(bytes)", helper)
+        self.assertIn("message.toByteArray()", helper)
 
     def test_protocol_version_policy_maps_rejections_to_wire_error_codes(self):
         self.assertIn('public const string CurrentVersion = "1.0.0";', VERSION_POLICY)
