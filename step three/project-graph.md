@@ -4499,9 +4499,9 @@
       ],
       "notes": "Reviewed both incoming edges. T0026→T0027 is sequencing-only because the secret-ignore/sample configuration does not supply command inputs. T0020→T0027 is a toolchain/build-contract dependency because the documented commands must match ADR-0001, global.json, the solution, Android Gradle config, and CI. The README documents that Windows publish is a manual command not currently executed by CI and that the Android artifact is a debug APK, not a signed release.",
       "execution_summary": {
-        "attempt_count": 1,
+        "attempt_count": 2,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0027-A001",
+        "last_attempt_id": "T0027-A002",
         "last_attempt_result": "partial",
         "changed_files": [
           "README.md",
@@ -4511,7 +4511,9 @@
         ],
         "related_commits": [],
         "tests_passed": [],
-        "tests_failed": [],
+        "tests_failed": [
+          "Quality gate run 39743623233: existing test_readme_contract.py asserted the phrase 'جایگزین build یا آزمون runtime محصول نیست'; the revised README conveyed the limit with different wording. Restoring the expected explicit sentence, without weakening the existing test."
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -4525,7 +4527,7 @@
         {
           "attempt_id": "T0027-A001",
           "started_at": "2026-10-22T07:50:00Z",
-          "ended_at": null,
+          "ended_at": "2026-10-22T07:52:58Z",
           "result": "partial",
           "summary": "Validated incoming dependency edges and replaced the README's duplicated/incomplete build section with explicit restore, build, test, publish, Android APK, and repository-check commands. Added a contract test to compare documented commands with checked-in toolchain and CI entrypoints; exact-commit CI is pending.",
           "changed_files": [
@@ -4537,14 +4539,9 @@
           "commit_sha": null,
           "tests": [
             {
-              "command": "Step Three quality gate",
-              "result": "pending",
-              "summary": "Run unit tests, Python syntax checks, graph structure, and evidence validation on the exact commit."
-            },
-            {
-              "command": "White-P product build",
-              "result": "pending",
-              "summary": "Verify the Windows build/lifecycle tests and Android lint/debug APK build on the exact commit."
+              "command": "Step Three quality gate run 39743623233",
+              "result": "failed",
+              "summary": "71 tests passed; existing test_readme_contract.py failed because the README rewrite removed the exact documented limitation phrase it asserts. The new README command-contract test did not produce a reported failure."
             }
           ],
           "failure_details": null,
@@ -4555,6 +4552,36 @@
             "Validated T0020→T0027 as contract_or_interface_dependency based on ADR-0001 and checked-in toolchain/CI inputs; preserved the edge direction and type=blocks."
           ],
           "follow_up": "Inspect exact-commit CI. Mark T0027 done only after the graph/evidence quality gate and product build pass."
+        },
+        {
+          "attempt_id": "T0027-A002",
+          "started_at": "2026-10-22T07:53:10Z",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Restoring the exact pre-existing README limitation wording required by test_readme_contract.py while retaining the new command guidance; rerun exact-commit CI after commit.",
+          "changed_files": [
+            "README.md",
+            "step three/T0027/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "command": "Step Three quality gate run 39743623233",
+              "result": "failed",
+              "summary": "Existing README contract test failed on a removed exact phrase; no graph or product build check was reached."
+            },
+            {
+              "command": "Next exact-commit CI",
+              "result": "pending",
+              "summary": "Verify all Python tests, graph/evidence checks, Windows build/lifecycle tests, and Android lint/APK build."
+            }
+          ],
+          "failure_details": "The README rewrite replaced a sentence required verbatim by an existing regression test. The test is retained; the sentence will be restored.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Check the exact-commit quality gate and product build after restoring the phrase; do not mark T0027 done until both pass."
         }
       ]
     },

@@ -13,3 +13,9 @@
 
 ## Next
 Inspect the exact-commit quality gate and product build; only then mark T0027 done.
+
+
+## Attempt T0027-A002 — restore README contract wording (partial; CI pending)
+- Exact-commit quality gate run [39743623233](https://github.com/artinrahimii/project/actions/runs/39743623233) ran 72 tests and failed one pre-existing README contract assertion: `test_readme_contract.py` requires the exact limitation phrase `جایگزین build یا آزمون runtime محصول نیست`.
+- The README already communicated the limitation in different words. Restored the explicit existing phrase rather than weakening or deleting the regression test; the new command documentation remains in place.
+- T0027 remains `in_progress` until a new exact-commit quality gate and product build pass.
