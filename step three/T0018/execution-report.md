@@ -17,3 +17,10 @@
 
 ## Next
 Run the quality gate and product build for this exact integration commit. If both pass, record a successful attempt and mark T0018 done; then review the T0018 → T0019 edge before starting T0019.
+
+
+## Attempt T0018-A003 — repair CI regressions
+- The exact-commit quality gate [39733805458](https://github.com/artinrahimii/project/actions/runs/39733805458) failed because `tests/test_claims_audit.py` still expected the old preview-only title and explanatory text after the UI became functional.
+- The product-build run [39733805441](https://github.com/artinrahimii/project/actions/runs/39733805441) failed in lifecycle tests because the unconfigured-backend message no longer included the established phrase `not configured`.
+- Updated the audit to verify the new endpoint/model fields, connect action, prompt control, and generation action; restored the explicit unconfigured-backend reason. These are compatibility fixes, not evidence of live inference success.
+- **Status remains in progress** until a new exact-commit quality gate and product build pass.

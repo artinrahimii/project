@@ -31,7 +31,7 @@ public sealed class HostStartup(HostLifecycle lifecycle,IInferenceBackend backen
 }
 public sealed class UnconfiguredInferenceBackend : IInferenceBackend {
  public bool IsAvailable=>false;
- public string UnavailableReason=>"Enter a local llama.cpp server URL and connect.";
+ public string UnavailableReason=>"Local inference backend is not configured. Enter a server URL and connect.";
  public Task<bool> CheckHealthAsync(CancellationToken cancellationToken=default)=>Task.FromResult(false);
  public Task<string> GenerateAsync(string prompt,uint maxOutputTokens,CancellationToken cancellationToken=default)=>Task.FromException<string>(new InvalidOperationException(UnavailableReason));
 }

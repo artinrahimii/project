@@ -21,12 +21,15 @@ class ClaimsAuditTests(unittest.TestCase):
         self.assertIn("Requests are not sent yet; transport is not implemented.", ANDROID_UI)
         self.assertIn("Request not sent: no host transport yet", ANDROID_UI)
 
-    def test_windows_ui_discloses_preview_and_unavailable_inference(self):
-        self.assertIn('Title="White-P Host Preview"', WINDOW_UI)
-        self.assertIn('Text="White-P — Host Preview"', WINDOW_UI)
-        self.assertIn("Local inference, hardware discovery, and peer-to-peer transport are not implemented yet.", WINDOW_UI)
+    def test_windows_ui_exposes_local_backend_connection_and_generation(self):
+        self.assertIn('Title="White-P Local AI Host"', WINDOW_UI)
+        self.assertIn('x:Name="ServerUrl"', WINDOW_UI)
+        self.assertIn('x:Name="ModelId"', WINDOW_UI)
+        self.assertIn('Click="ConnectButton_Click"', WINDOW_UI)
+        self.assertIn('x:Name="PromptInput"', WINDOW_UI)
+        self.assertIn('Click="GenerateButton_Click"', WINDOW_UI)
+        self.assertIn("public sealed class HostInferenceSession", HOST_LIFECYCLE)
         self.assertIn("public sealed class UnconfiguredInferenceBackend", HOST_LIFECYCLE)
-        self.assertIn("public bool IsAvailable=>false;", HOST_LIFECYCLE)
         self.assertIn("Local inference backend is not configured.", HOST_LIFECYCLE)
 
     def test_privacy_and_capability_statements_are_requirements_not_proven_claims(self):

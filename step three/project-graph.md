@@ -2939,18 +2939,15 @@
         "src/Host.Windows/MainWindow.xaml.cs",
         "GitHub Actions run 39681737725: product build succeeded; quality gate run 39681738413 failed because T0018 completion metadata lacked a succeeded attempt and test-source evidence."
       ],
-      "notes": "T0018-A002 integrates the local llama.cpp backend into the Windows host UI through HostInferenceSession. The UI can configure a local HTTP(S) endpoint and model ID, check /health, submit prompts, and display generated text. No server/model binary is bundled. Status remains in_progress until exact-commit quality gate and Windows/Android build/tests pass; live model inference remains unverified.",
+      "notes": "T0018-A002 added a real Windows UI path to the local backend but its first CI run exposed two stale tests that asserted the former preview-only UI and exact unconfigured message. T0018-A003 updates those checks; keep in_progress until the exact-commit quality gate and product build pass. Live local-model inference is not yet verified.",
       "execution_summary": {
-        "attempt_count": 2,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "T0018-A002",
-        "last_attempt_result": "partial",
+        "attempt_count": 3,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "T0018-A003",
+        "last_attempt_result": "failed",
         "changed_files": [
           "src/Host.Windows/HostLifecycle.cs",
-          "src/Host.Windows/MainWindow.xaml",
-          "src/Host.Windows/MainWindow.xaml.cs",
-          "tests/HostLifecycle.Tests/Program.cs",
-          "README.md",
+          "tests/test_claims_audit.py",
           "step three/T0018/execution-report.md",
           "step three/project-graph.md"
         ],
@@ -2959,7 +2956,8 @@
           "Previous backend endpoint-contract tests passed in run 39681349154; new host-session integration awaits exact-commit CI."
         ],
         "tests_failed": [
-          "Quality gate run 39681738413 failed: T0018 lacked a succeeded history entry and test-source path in evidence; product build run 39681737725 succeeded."
+          "Quality gate run 39733805458 failed because tests/test_claims_audit.py still asserted the removed preview-only WPF UI.",
+          "Product build run 39733805441 lifecycle test failed because UnconfiguredInferenceBackend.UnavailableReason no longer contained the expected 'not configured' text."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -3022,6 +3020,29 @@
           "reopened_reason": "The backend class was not connected to the Windows UI; previous quality gate rejected the unsupported done metadata.",
           "contract_changes": [],
           "follow_up": "Run exact-commit quality gate and Windows/Android product build; only mark done after both pass."
+        },
+        {
+          "attempt_id": "T0018-A003",
+          "started_at": "2026-10-22T06:25:00Z",
+          "ended_at": "2026-10-22T06:26:00Z",
+          "result": "failed",
+          "summary": "Exact-commit CI exposed two stale compatibility checks after connecting the UI: claims audit expected preview-only text, and the unconfigured backend message changed. Updating the tests to assert actual connection/generation controls and restoring the explicit not-configured message.",
+          "changed_files": [
+            "src/Host.Windows/HostLifecycle.cs",
+            "tests/test_claims_audit.py",
+            "step three/T0018/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": "9df2805b03644e8200c7a25850443aaf90d68761",
+          "tests": [
+            "GitHub Actions quality gate run 39733805458 failed in tests/test_claims_audit.py: preview-only UI expectation is stale.",
+            "GitHub Actions product build run 39733805441 failed in Host lifecycle unit and integration tests: expected not-configured reason text."
+          ],
+          "failure_details": "Both failures are compatibility assertions made obsolete by UI integration; no evidence of a failed live model request is implied.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Update source-contract tests to assert the new usable UI and preserve a clear unconfigured-backend reason, then rerun exact-commit CI."
         }
       ]
     },
