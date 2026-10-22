@@ -34,6 +34,8 @@ White-P با هدف ساخت دو برنامه طراحی می‌شود: یک م
 - مبنای میزبان ویندوز: .NET SDK نسخهٔ `10.0.100` با `global.json` و هدف `net10.0-windows` همراه WPF.
 - مبنای Android: JDK 17، Gradle 8.13 در CI، `compileSdk/targetSdk = 36` و `minSdk = 26`.
 - دلیل و محدودیت این انتخاب‌ها در [ADR-0001 — Platform build baselines](docs/decisions/ADR-0001-platform-build-baselines.md) ثبت شده است.
+- فهرست تصمیم‌های فناوری و پیوند هر تصمیم به کد/آزمون متناظر در [دفتر تصمیم‌ها](docs/decisions/README.md) قرار دارد.
+- تصمیم انتخاب backend استنتاج محلی و اتصال آن به رابط میزبان در [ADR-0003 — Local inference backend](docs/decisions/ADR-0003-local-inference-backend.md) ثبت شده است.
 - نسخه‌های فوق baseline فعلی build هستند، نه تضمین پشتیبانی همهٔ دستگاه‌ها یا آمادگی انتشار.
 
 ## اصول حریم خصوصی و امنیت

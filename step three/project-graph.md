@@ -3297,20 +3297,44 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0019 و T0010 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال انجام",
+      "actual_output_paths": [
+        "docs/decisions/README.md",
+        "docs/decisions/ADR-0003-local-inference-backend.md",
+        "tests/test_decision_traceability.py",
+        "README.md",
+        "step three/T0020/execution-report.md"
+      ],
       "expected_output_paths": [
         "README.md + docs/decisions/ + فایل‌های تنظیمات build"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "docs/decisions/README.md",
+        "docs/decisions/ADR-0001-platform-build-baselines.md",
+        "docs/decisions/ADR-0002-direct-p2p-data-path.md",
+        "docs/decisions/ADR-0003-local-inference-backend.md",
+        "tests/test_decision_traceability.py",
+        "tests/test_product_build_contract.py",
+        "tests/test_p2p_data_path_decision.py",
+        "src/Host.Windows/LlamaCppServerBackend.cs",
+        "tests/HostLifecycle.Tests/Program.cs"
+      ],
+      "notes": "Reviewed incoming edges before execution. T0019 -> T0020 is a validated contract_or_interface_dependency because the direct-P2P decision ADR-0002 is an explicit input to the decision register; T0010 -> T0020 is validated sequencing_only because no unique build artifact is consumed. Technology decision traceability files and a source-contract test are being added; the task remains in_progress pending exact-commit CI.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0020-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "README.md",
+          "docs/decisions/README.md",
+          "docs/decisions/ADR-0003-local-inference-backend.md",
+          "tests/test_decision_traceability.py",
+          "step three/T0020/execution-report.md",
+          "step three/T0019/execution-report.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
@@ -3323,7 +3347,33 @@
           "review_evidence": []
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0020-A001",
+          "started_at": "2026-10-22T06:49:36.791Z",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Reviewed both incoming graph edges with evidence; added a decision register and a third ADR for the local inference backend, linking decisions to repository source, build configuration, tests, and runtime acceptance gates. Added a traceability contract test. Exact-commit CI is pending.",
+          "changed_files": [
+            "README.md",
+            "docs/decisions/README.md",
+            "docs/decisions/ADR-0003-local-inference-backend.md",
+            "tests/test_decision_traceability.py",
+            "step three/T0020/execution-report.md",
+            "step three/T0019/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            "Pending: python -m unittest discover -s tests -v, Python syntax check, graph structure validation, and recorded-output/evidence validation on the exact commit."
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect exact-commit quality CI. Only mark T0020 done after its traceability tests and graph guard pass. Keep runtime model and P2P gates separate."
+        }
+      ]
     },
     {
       "id": "T0021",
@@ -13039,19 +13089,29 @@
       "from": "T0019",
       "to": "T0020",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0020 creates a traceability register of the selected technology decisions and must include the verified direct-P2P/rendezvous boundary from T0019. ADR-0002 is a required decision input for the register, although it does not mean P2P transport is implemented.",
+      "validation_status": "validated",
+      "evidence": [
+        "docs/decisions/ADR-0002-direct-p2p-data-path.md",
+        "tests/test_p2p_data_path_decision.py",
+        "docs/requirements.md",
+        "step one/V1.0.md"
+      ]
     },
     {
       "from": "T0010",
       "to": "T0020",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0010 establishes repeatable build/test entrypoints, but T0020's decision index and traceability assertions do not consume a build artifact produced uniquely by T0010. Preserve order without treating the tooling task as a technical prerequisite.",
+      "validation_status": "validated",
+      "evidence": [
+        "README.md",
+        ".github/workflows/product-build.yml",
+        ".github/workflows/quality.yml",
+        "tests/test_reproducible_build_contract.py"
+      ]
     },
     {
       "from": "T0020",
@@ -17111,6 +17171,36 @@
         "step one/V1.0.md: T0010 concerns reproducible build/test workflows; T0019 concerns the direct-P2P data-path decision.",
         ".github/workflows/product-build.yml and .github/workflows/quality.yml provide verification commands but are not inputs to the P2P architecture decision.",
         "docs/requirements.md REQ-010 defines the data-path boundary independently of CI toolchain configuration."
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-22T06:49:36.791Z",
+      "edge_from": "T0019",
+      "edge_to": "T0020",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "reason": "T0020 creates a traceability register of the selected technology decisions and must include the verified direct-P2P/rendezvous boundary from T0019. ADR-0002 is a required decision input for the register, although it does not mean P2P transport is implemented.",
+      "evidence": [
+        "docs/decisions/ADR-0002-direct-p2p-data-path.md",
+        "tests/test_p2p_data_path_decision.py",
+        "docs/requirements.md",
+        "step one/V1.0.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-22T06:49:36.791Z",
+      "edge_from": "T0010",
+      "edge_to": "T0020",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "reason": "T0010 establishes repeatable build/test entrypoints, but T0020's decision index and traceability assertions do not consume a build artifact produced uniquely by T0010. Preserve order without treating the tooling task as a technical prerequisite.",
+      "evidence": [
+        "README.md",
+        ".github/workflows/product-build.yml",
+        ".github/workflows/quality.yml",
+        "tests/test_reproducible_build_contract.py"
       ],
       "reviewed_by": "Step Three execution review"
     }
