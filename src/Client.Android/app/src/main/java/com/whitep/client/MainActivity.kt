@@ -24,19 +24,20 @@ import androidx.compose.ui.unit.dp
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent { WhitePClientScreen() }
+        setContent { whitePClientScreen() }
     }
 }
 
 @Composable
-private fun WhitePClientScreen() {
+private fun whitePClientScreen() {
     var requestText by remember { mutableStateOf("") }
     var status by remember { mutableStateOf("Not connected") }
+
     MaterialTheme {
         Surface(modifier = Modifier.fillMaxSize()) {
             Column(
                 modifier = Modifier.fillMaxSize().padding(24.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 Text("White-P", style = MaterialTheme.typography.headlineMedium)
                 Text("White-P — P2P client preview (transport not implemented)")
@@ -45,12 +46,22 @@ private fun WhitePClientScreen() {
                     onValueChange = { requestText = it },
                     modifier = Modifier.fillMaxWidth(),
                     label = { Text("Request") },
-                    supportingText = { Text("Requests are not sent yet; transport is not implemented.") }
+                    supportingText = {
+                        Text("Requests are not sent yet; transport is not implemented.")
+                    },
                 )
                 Button(
-                    onClick = { status = if (requestText.isBlank()) "Enter a request first" else "Request not sent: no host transport yet" },
-                    modifier = Modifier.fillMaxWidth()
-                ) { Text("Prepare request") }
+                    onClick = {
+                        status = if (requestText.isBlank()) {
+                            "Enter a request first"
+                        } else {
+                            "Request not sent: no host transport yet"
+                        }
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Text("Prepare request")
+                }
                 Text("Status: $status")
             }
         }

@@ -4033,13 +4033,17 @@
         "tests/test_product_build_contract.py",
         "step three/T0025/execution-report.md"
       ],
-      "notes": "The initial exact-commit quality gate passed, but the product build exposed existing C# whitespace and line-ending violations in the newly enabled formatter. Attempt T0025-A001 is recorded as failed; A002 reformats the Windows solution sources. Do not mark done until both C# formatting and Kotlin ktlint run successfully on an exact commit.",
+      "notes": "Two exact-commit attempts exposed real formatting issues. A001 found pre-existing C# formatting violations; A002 reformatted C# but CI revealed Windows line-ending conversion and Kotlin ktlint violations. A003 adds .gitattributes and corrects the reported Kotlin issues; keep in_progress until the next exact-commit product build succeeds.",
       "execution_summary": {
-        "attempt_count": 2,
-        "failed_attempt_count": 1,
-        "last_attempt_id": "T0025-A002",
+        "attempt_count": 3,
+        "failed_attempt_count": 2,
+        "last_attempt_id": "T0025-A003",
         "last_attempt_result": "in_progress",
         "changed_files": [
+          ".gitattributes",
+          ".editorconfig",
+          "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
+          "src/Client.Android/app/build.gradle.kts",
           "src/Host.Windows/App.xaml.cs",
           "src/Host.Windows/HostLifecycle.cs",
           "src/Host.Windows/LlamaCppServerBackend.cs",
@@ -4049,10 +4053,11 @@
         ],
         "related_commits": [],
         "tests_passed": [
-          "GitHub Actions quality gate run 39740152727 — success; graph guard and Python contract tests passed."
+          "GitHub Actions quality gate run 39740433229 — success; graph structure, evidence validation and Python tests passed."
         ],
         "tests_failed": [
-          "GitHub Actions product build run 39740152718: Windows `dotnet format whitespace WhiteP.sln --verify-no-changes` failed on existing C# whitespace and line-ending differences; Windows build was skipped. Android lint/build still pending at time of report."
+          "Product build run 39740433414: C# formatter still failed because Windows checkout converted LF files to CRLF; add .gitattributes eol=lf to make checkout deterministic.",
+          "Product build run 39740433414: ktlintCheck failed on wildcard import in app/build.gradle.kts and naming/trailing-comma/line-length formatting in MainActivity.kt."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -4094,8 +4099,8 @@
           "attempt_id": "T0025-A002",
           "started_at": "2026-10-22T10:28:00+03:30",
           "ended_at": null,
-          "result": "in_progress",
-          "summary": "Reformatted the Windows C# source files to satisfy the formatter diagnostics from the actual CI run. Awaiting exact-commit CI and Android ktlint result.",
+          "result": "failed",
+          "summary": "C# source was reformatted, but Windows checkout still converted line endings; Kotlin ktlint also found a wildcard import and source formatting violations.",
           "changed_files": [
             "src/Host.Windows/App.xaml.cs",
             "src/Host.Windows/HostLifecycle.cs",
@@ -4106,13 +4111,38 @@
           ],
           "commit_sha": null,
           "tests": [
-            "Pending rerun of `dotnet format whitespace WhiteP.sln --verify-no-changes` and Android `ktlintCheck`."
+            "GitHub Actions Step Three quality gate run 39740433229 — passed.",
+            "GitHub Actions product build run 39740433414 — failed: C# formatter found ENDOFLINE diagnostics; ktlint found wildcard import, function naming, trailing commas, and line-length issues."
+          ],
+          "failure_details": "The Windows runner checked out C# files with CRLF despite .editorconfig LF; Android ktlint reported a wildcard import in app/build.gradle.kts and code-style violations in MainActivity.kt.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Add .gitattributes eol=lf rules, configure ktlint to permit the protobuf Gradle DSL wildcard import only in Gradle Kotlin scripts, and correct MainActivity naming/formatting."
+        },
+        {
+          "attempt_id": "T0025-A003",
+          "started_at": "2026-10-22T10:35:00+03:30",
+          "ended_at": null,
+          "result": "in_progress",
+          "summary": "Added repository-level LF checkout rules and corrected Kotlin source/style configuration based on exact CI diagnostics. Waiting for the next exact-commit run.",
+          "changed_files": [
+            ".gitattributes",
+            ".editorconfig",
+            "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
+            "src/Client.Android/app/build.gradle.kts",
+            "step three/T0025/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            "Pending exact-commit C# formatting, Kotlin ktlint, and product build."
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect the next product-build run; fix any remaining formatting or ktlint violations before marking T0025 done."
+          "follow_up": "Inspect product-build run for the next commit and mark T0025 done only when the formatter, ktlint, and build all pass."
         }
       ]
     },
