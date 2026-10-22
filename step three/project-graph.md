@@ -5841,11 +5841,11 @@
         ".github/workflows/product-build.yml",
         "step three/T0037/execution-report.md"
       ],
-      "notes": "T0037-A001 introduces executable C# and Android Kotlin round-trip suites for every message currently declared in the canonical schema. Exact-commit CI is pending. These tests verify encode/decode integrity within each language, not end-to-end cross-language transport or P2P. A001 exact-commit verification failed and is preserved in execution_history; no round-trip acceptance is claimed until a later attempt passes both languages on the same commit.",
+      "notes": "T0037-A001 introduces executable C# and Android Kotlin round-trip suites for every message currently declared in the canonical schema. Exact-commit CI is pending. These tests verify encode/decode integrity within each language, not end-to-end cross-language transport or P2P. A001 exact-commit verification failed and is preserved in execution_history; no round-trip acceptance is claimed until a later attempt passes both languages on the same commit. A002 achieved full Python/graph validation and C# 11-message round-trip success, but Android ktlint failed and the Kotlin unit test suite did not execute; A003 corrects the exact indentation reported by ktlint.",
       "execution_summary": {
-        "attempt_count": 2,
-        "failed_attempt_count": 1,
-        "last_attempt_id": "T0037-A002",
+        "attempt_count": 3,
+        "failed_attempt_count": 2,
+        "last_attempt_id": "T0037-A003",
         "last_attempt_result": "in_progress",
         "changed_files": [
           "tests/HostLifecycle.Tests/Program.cs",
@@ -5859,12 +5859,16 @@
           "step three/project-graph.md"
         ],
         "related_commits": [
-          "04b1fcb9d0656c0995f92ec5b6cb613b81979047"
+          "04b1fcb9d0656c0995f92ec5b6cb613b81979047",
+          "dd87b8e3edc56c40a7383dea340e47adc44e5b8d"
         ],
-        "tests_passed": [],
+        "tests_passed": [
+          "V 3.0.108 quality run 39844860940 — 79 Python tests, syntax, graph guard, and repo-root output/evidence validator passed.",
+          "V 3.0.108 product run 39844860924 — dotnet harness passed C# Protobuf round-trips for all 11 primary messages and existing host lifecycle/backend assertions."
+        ],
         "tests_failed": [
-          "A001 quality gate run 39844383014: 79 Python tests with one regex-based coverage test failure.",
-          "A001 product build run 39844383044: C# CS0104 ambiguity for HostStatus; Android ktlint failed and skipped JUnit."
+          "A001 V 3.0.107 failed Python schema-name regex enumeration, C# CS0104 HostStatus ambiguity, and Android ktlint.",
+          "A002 V 3.0.108 Android ktlint failed because nested Kotlin DSL builder indentation was not shifted along with multiline initializer; Kotlin unit tests not executed."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -5929,9 +5933,9 @@
         {
           "attempt_id": "T0037-A002",
           "started_at": "2026-10-22T19:58:00Z",
-          "ended_at": null,
-          "result": "in_progress",
-          "summary": "Repairing A001's regex, C# name ambiguity, and Kotlin formatting failures; correcting the T0036 execution-history JSON container found by graph_guard. The failed attempt remains recorded.",
+          "ended_at": "2026-10-22T20:00:12Z",
+          "result": "failed",
+          "summary": "Python quality and both graph-guard validations passed; the C# harness passed round-trip serialization for all 11 messages. Android ktlint then failed because builder-body and closing-brace indentation remained at the old nesting level after splitting the initializer across lines; APK and Kotlin JUnit steps were skipped.",
           "changed_files": [
             "tests/test_proto_contract.py",
             "tests/HostLifecycle.Tests/Program.cs",
@@ -5940,19 +5944,75 @@
             "step three/T0036/execution-report.md",
             "step three/project-graph.md"
           ],
+          "commit_sha": "dd87b8e3edc56c40a7383dea340e47adc44e5b8d",
+          "tests": [
+            {
+              "command": "python -m unittest discover -s tests -v",
+              "result": "passed",
+              "summary": "79 tests passed on exact commit dd87b8e3edc56c40a7383dea340e47adc44e5b8d.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/39844860940"
+            },
+            {
+              "command": "python tools/graph_guard.py \"step three/project-graph.md\"",
+              "result": "passed",
+              "summary": "229 tasks, 426 edges; zero errors, one pre-existing warning that T0001 contains non-task metadata in depends_on.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/39844860940"
+            },
+            {
+              "command": "python tools/graph_guard.py \"step three/project-graph.md\" --repo-root .",
+              "result": "passed",
+              "summary": "Recorded outputs and evidence validated against repository files.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/39844860940"
+            },
+            {
+              "command": "dotnet run --project tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj --configuration Release",
+              "result": "passed",
+              "summary": "Logged PASS for C# round-trip serialization/deserialization/re-serialization of all 11 primary messages and existing host lifecycle/backend tests.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/39844860924"
+            },
+            {
+              "command": "gradle --no-daemon ktlintCheck",
+              "result": "failed",
+              "summary": "Multiline Kotlin DSL builder bodies/closing braces used incorrect indentation. APK and testDebugUnitTest steps were skipped.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/39844860924"
+            },
+            {
+              "command": "gradle --no-daemon testDebugUnitTest",
+              "result": "skipped",
+              "summary": "Not run because ktlintCheck failed first.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/39844860924"
+            }
+          ],
+          "failure_details": "Quality run 39844860940 succeeded (79 Python tests, Python compile, graph structure and repo-root evidence validation). Product run 39844860924 .NET harness succeeded and printed PASS for all 11 C# Protobuf round-trips plus host lifecycle checks. Android job 120055367150 failed :app:ktlintTestSourceSetCheck with unexpected indentation at the body lines and closing braces of each Kotlin DSL builder; Android unit tests did not run.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Indent each DSL block's property lines four spaces deeper than the builder call and place each closing brace at the builder's indentation; rerun Android lint, APK generation and all 11 Kotlin JUnit round-trips."
+        },
+        {
+          "attempt_id": "T0037-A003",
+          "started_at": "2026-10-22T20:00:30Z",
+          "ended_at": null,
+          "result": "in_progress",
+          "summary": "Correcting Kotlin DSL body/brace indentation from A002 while retaining its successful Python, graph and C# test evidence and recording its Android lint failure.",
+          "changed_files": [
+            "src/Client.Android/app/src/test/java/com/whitep/client/protocol/ProtoRoundTripTest.kt",
+            "step three/T0037/execution-report.md",
+            "step three/project-graph.md"
+          ],
           "commit_sha": null,
           "tests": [
             {
-              "command": "Exact-commit quality gate and product build including both round-trip suites",
+              "command": "Android ktlint, assembleDebug, testDebugUnitTest, generated-source assertions, plus quality graph/test gate",
               "result": "pending",
-              "summary": "Require schema coverage, graph validation, C# round-trips for 11 messages, Kotlin JUnit round-trips for the same 11 messages, Windows build, Android lint/APK and generated-source checks."
+              "summary": "Exact-commit proof still required for the Kotlin test compilation and round-trip assertions for the full 11-message set."
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Check the exact-commit Python, .NET, Kotlin JUnit, and product build results; do not mark T0037 done until all required checks pass."
+          "follow_up": "Inspect new exact-commit workflow; if Kotlin compilation/JUnit reveals generated API or runtime errors, fix those before completion."
         }
       ]
     },

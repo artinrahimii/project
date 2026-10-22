@@ -30,3 +30,15 @@
 - Reformatted all 11 Kotlin DSL builder initializers so multiline expressions begin on the required next line.
 - Normalized the preserved successful T0036-A001 history record to a one-element array, recalculated count fields and retained the V 3.0.106 graph-guard failure in the T0036 report. No past attempt was removed.
 - Exact-commit Python, graph guard, .NET round-trip, Android lint/APK and JUnit results remain pending.
+
+
+## Attempt T0037-A002 — failed Android formatting check retained
+- Tested commit `dd87b8e3edc56c40a7383dea340e47adc44e5b8d` (`V 3.0.108`).
+- [Quality run 39844860940](https://github.com/artinrahimii/project/actions/runs/39844860940): **success**. All 79 Python tests, syntax, graph structure, and repository output/evidence validation passed. The graph guard reports only one pre-existing warning: the T0001 dependency metadata string is not a task ID.
+- [Product run 39844860924](https://github.com/artinrahimii/project/actions/runs/39844860924): the .NET harness **passed**, including round-trip encode/decode/re-encode for all 11 primary Protobuf messages. Android ktlint failed because the DSL block contents and closing braces weren't indented at the new nesting level; APK and Kotlin unit-test steps were skipped.
+- No cross-language acceptance is claimed for A002 because Kotlin JUnit did not run.
+
+## Attempt T0037-A003 — Kotlin formatting correction in progress
+- Indented each of the 11 generated Kotlin DSL builder bodies to the correct nesting level and aligned the closing brace with the builder invocation.
+- Retains the successful Python/graph and C# evidence from A002; A002's Android formatting failure stays in the history.
+- Awaiting exact-commit lint, Android APK compilation, Kotlin JUnit round-trip tests, generated-source assertions, and full product build.
