@@ -37,3 +37,13 @@ Inspect the next exact-commit workflow, fix any remaining violations, and mark T
 - Corrected the summary count to `2`, matching the append-only execution history. No historical attempt record was deleted or rewritten.
 - The exact-commit product workflow [39741508623](https://github.com/artinrahimii/project/actions/runs/39741508623) has already passed Kotlin lint and reached the Android debug APK build; final completion is pending.
 - T0025 remains `in_progress` until the new commit's graph gate and full product build pass.
+
+
+## Attempt T0025-A006 — exact-commit product verification (success)
+- Verified product build run [39741735136](https://github.com/artinrahimii/project/actions/runs/39741735136) completed successfully on commit `2896815974f82e906c0231cc1b88261543e8c56d`.
+- Windows WPF host: build and C# formatting passed; host lifecycle unit/integration tests passed.
+- Android client: ktlint passed; `assembleDebug` passed; the debug APK artifact was uploaded.
+- Verified Step Three quality gate run [39741735152](https://github.com/artinrahimii/project/actions/runs/39741735152) passed on the same commit; graph/evidence validation and 65 Python tests passed.
+- Artifacts: `whitep-android-debug-apk` (ID `12409921258`, SHA-256 `e9c179bbbc18420149c21bf273e871783c91d02265ac9983ff88e39211e3e08c`) and `whitep-windows-host` (ID `12409606925`, SHA-256 `11f029a3909446c00ea18e9abfc2346320f0562f3b83ec37a59f478d96630e36`).
+- Acceptance is satisfied for the formatter/linter integration. Corrected the task-specific expected-output list in the graph from a generic `src/Shared.Contracts/ + tests/contracts/` template to the actual implementation files verified by CI. No dependency edge was changed.
+- T0025 is now marked `done`; earlier failed attempts remain in the append-only history.
