@@ -1,0 +1,30 @@
+# Local environment and secret-bearing files
+.env
+.env.*
+!/.env.example
+**/.env
+**/.env.*
+!**/.env.example
+secrets/
+**/secrets/
+*.local.json
+*.local.yaml
+*.local.yml
+appsettings.Local.json
+appsettings.*.Local.json
+
+# Local Android SDK path and signing material
+local.properties
+**/local.properties
+*.jks
+*.keystore
+
+# Generated build output and local IDE state
+**/bin/
+**/obj/
+**/.gradle/
+**/build/
+.vs/
+.idea/
+*.user
+*.suo

@@ -4056,7 +4056,7 @@
         "attempt_count": 6,
         "failed_attempt_count": 2,
         "last_attempt_id": "T0025-A006",
-        "last_attempt_result": "success",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           ".gitattributes",
           ".editorconfig",
@@ -4235,7 +4235,7 @@
           "attempt_id": "T0025-A006",
           "started_at": "2026-10-22T07:39:50Z",
           "ended_at": "2026-10-22T07:40:30Z",
-          "result": "success",
+          "result": "succeeded",
           "summary": "The exact-commit CI product build and graph quality gate passed. Verified Windows WPF host build, C# formatting, host lifecycle tests, Android ktlint, Android debug APK packaging, and artifact uploads. Marked T0025 complete based on these observable checks.",
           "changed_files": [
             ".gitattributes",
@@ -4293,20 +4293,42 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0025 و T0020 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
-      "expected_output_paths": [
-        "src/Shared.Contracts/ + tests/contracts/"
+      "status": "in_progress",
+      "status_fa": "در حال انجام",
+      "actual_output_paths": [
+        ".gitignore",
+        ".env.example",
+        "tests/test_local_config_safety.py",
+        "step three/T0026/execution-report.md"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "expected_output_paths": [
+        ".gitignore",
+        ".env.example",
+        "tests/test_local_config_safety.py",
+        "step three/T0026/execution-report.md"
+      ],
+      "evidence": [
+        "docs/decisions/ADR-0003-local-inference-backend.md",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "src/Host.Windows/LlamaCppServerBackend.cs",
+        ".gitignore",
+        ".env.example",
+        "tests/test_local_config_safety.py",
+        "step three/T0026/execution-report.md"
+      ],
+      "notes": "Reviewed both incoming edges. T0025 is sequencing-only for this task; T0020 supplies the local backend URL/model contract. Root .gitignore and non-secret example settings are being added. The current Windows host reads URL/model from its UI, so the example file is explicitly a template and is not represented as runtime-loaded configuration.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0026-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          ".gitignore",
+          ".env.example",
+          "tests/test_local_config_safety.py",
+          "step three/T0026/execution-report.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
@@ -4319,7 +4341,33 @@
           "review_evidence": []
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0026-A001",
+          "started_at": "2026-10-22T07:42:00Z",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Reviewed the incoming dependency edges and drafted local-secret ignore rules plus a non-secret environment template. Added automated contract tests; exact-commit CI is pending.",
+          "changed_files": [
+            ".gitignore",
+            ".env.example",
+            "tests/test_local_config_safety.py",
+            "step three/T0026/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            "Pending exact-commit Python test suite, graph validation, and recorded-output/evidence validation."
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "Validated T0025→T0026 as sequencing_only; validated T0020→T0026 as contract_or_interface_dependency. Existing edge direction and type=blocks are retained."
+          ],
+          "follow_up": "Inspect exact-commit CI; mark T0026 done only after the secret-ignore/template tests and graph evidence checks pass."
+        }
+      ]
     },
     {
       "id": "T0027",
@@ -13928,19 +13976,29 @@
       "from": "T0025",
       "to": "T0026",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0026 creates local secret-ignore rules and non-secret configuration examples. The formatter/linter tooling delivered by T0025 is not imported or consumed by these files; the edge preserves the conservative within-section execution order only.",
+      "validation_status": "validated",
+      "evidence": [
+        ".editorconfig",
+        ".gitattributes",
+        ".github/workflows/product-build.yml",
+        "step one/V1.0.md#T0026"
+      ]
     },
     {
       "from": "T0020",
       "to": "T0026",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "The sample host settings are derived from the selected local inference backend contract: an absolute HTTP(S) server base URL and the model identifier are the values currently requested by the host UI and accepted by LlamaCppServerBackend. The template remains an example and is not claimed to be auto-loaded by the app.",
+      "validation_status": "validated",
+      "evidence": [
+        "docs/decisions/ADR-0003-local-inference-backend.md",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "src/Host.Windows/LlamaCppServerBackend.cs",
+        "step one/V1.0.md#T0026"
+      ]
     },
     {
       "from": "T0026",
