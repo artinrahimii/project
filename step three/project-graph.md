@@ -4033,24 +4033,27 @@
         "tests/test_product_build_contract.py",
         "step three/T0025/execution-report.md"
       ],
-      "notes": "Attempt T0025-A001 wires .NET formatting verification and ktlint into the real platform CI workflows, adds shared editor configuration, and adds a contract test for the tool wiring. Status remains in_progress until exact-commit CI confirms formatting/lint passes across the configured source sets.",
+      "notes": "The initial exact-commit quality gate passed, but the product build exposed existing C# whitespace and line-ending violations in the newly enabled formatter. Attempt T0025-A001 is recorded as failed; A002 reformats the Windows solution sources. Do not mark done until both C# formatting and Kotlin ktlint run successfully on an exact commit.",
       "execution_summary": {
-        "attempt_count": 1,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "T0025-A001",
-        "last_attempt_result": "partial",
+        "attempt_count": 2,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "T0025-A002",
+        "last_attempt_result": "in_progress",
         "changed_files": [
-          ".editorconfig",
-          "src/Client.Android/build.gradle.kts",
-          "src/Client.Android/app/build.gradle.kts",
-          ".github/workflows/product-build.yml",
-          "tests/test_product_build_contract.py",
+          "src/Host.Windows/App.xaml.cs",
+          "src/Host.Windows/HostLifecycle.cs",
+          "src/Host.Windows/LlamaCppServerBackend.cs",
+          "src/Host.Windows/MainWindow.xaml.cs",
           "step three/T0025/execution-report.md",
           "step three/project-graph.md"
         ],
         "related_commits": [],
-        "tests_passed": [],
-        "tests_failed": [],
+        "tests_passed": [
+          "GitHub Actions quality gate run 39740152727 — success; graph guard and Python contract tests passed."
+        ],
+        "tests_failed": [
+          "GitHub Actions product build run 39740152718: Windows `dotnet format whitespace WhiteP.sln --verify-no-changes` failed on existing C# whitespace and line-ending differences; Windows build was skipped. Android lint/build still pending at time of report."
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -4065,8 +4068,8 @@
           "attempt_id": "T0025-A001",
           "started_at": "2026-10-22T10:12:00+03:30",
           "ended_at": null,
-          "result": "partial",
-          "summary": "Added .editorconfig rules, Gradle ktlint plugin and CI lint steps for Kotlin and C#; added static contract assertions. Exact-commit CI is pending.",
+          "result": "failed",
+          "summary": "The new CI formatter correctly exposed existing formatting/line-ending violations across the Windows C# sources. The quality gate passed, but the product workflow did not pass.",
           "changed_files": [
             ".editorconfig",
             "src/Client.Android/build.gradle.kts",
@@ -4078,13 +4081,38 @@
           ],
           "commit_sha": null,
           "tests": [
-            "Pending exact-commit product build and quality gate."
+            "GitHub Actions Step Three quality gate run 39740152727 — passed.",
+            "GitHub Actions Windows formatter step in product build run 39740152718 — failed on existing C# formatting/line endings."
+          ],
+          "failure_details": "`dotnet format whitespace WhiteP.sln --verify-no-changes` reported WHITESPACE and ENDOFLINE diagnostics in App.xaml.cs, HostLifecycle.cs, LlamaCppServerBackend.cs, and MainWindow.xaml.cs.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Normalize and format all C# files in the solution, then rerun exact-commit CI."
+        },
+        {
+          "attempt_id": "T0025-A002",
+          "started_at": "2026-10-22T10:28:00+03:30",
+          "ended_at": null,
+          "result": "in_progress",
+          "summary": "Reformatted the Windows C# source files to satisfy the formatter diagnostics from the actual CI run. Awaiting exact-commit CI and Android ktlint result.",
+          "changed_files": [
+            "src/Host.Windows/App.xaml.cs",
+            "src/Host.Windows/HostLifecycle.cs",
+            "src/Host.Windows/LlamaCppServerBackend.cs",
+            "src/Host.Windows/MainWindow.xaml.cs",
+            "step three/T0025/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            "Pending rerun of `dotnet format whitespace WhiteP.sln --verify-no-changes` and Android `ktlintCheck`."
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect exact-commit CI. Fix any C# format or Kotlin ktlint violations and only then mark T0025 done."
+          "follow_up": "Inspect the next product-build run; fix any remaining formatting or ktlint violations before marking T0025 done."
         }
       ]
     },
