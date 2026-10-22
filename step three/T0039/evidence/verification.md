@@ -29,3 +29,10 @@ The policy validates typed request/response lengths and the live local HTTP adap
 - [Step Three quality gate run 39859692462](https://github.com/artinrahimii/project/actions/runs/39859692462) failed one old static assertion expecting `PostAsJsonAsync`, which is intentionally no longer used after the adapter gained pre-send request body bounds and bounded response streaming.
 - [Product build run 39859692488](https://github.com/artinrahimii/project/actions/runs/39859692488): C# host lifecycle/contract test job passed. Android and Windows were in progress at the last check.
 - A002 updates only the stale traceability test to match the actual bounded adapter; exact-commit workflow results are pending.
+
+
+## Attempt A002 — test and build evidence
+- [Step Three quality gate](https://github.com/artinrahimii/project/actions/runs/39859947826): passed all 85 Python tests.
+- [C# lifecycle/bounds test job](https://github.com/artinrahimii/project/actions/runs/39859947626): passed size-boundary tests for requests, capsules, prompts, responses and local HTTP bodies.
+- [Windows WPF product job](https://github.com/artinrahimii/project/actions/runs/39859947626): failed compilation because `HostLifecycle.cs` did not explicitly import `System.IO` for `InvalidDataException`.
+- A003 adds the missing import; exact-commit product build remains pending.

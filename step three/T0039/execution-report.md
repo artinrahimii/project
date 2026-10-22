@@ -27,3 +27,15 @@
 ## Attempt T0039-A002 — correction pending exact-commit CI
 - Replaced the obsolete `PostAsJsonAsync` assertion with assertions for bounded serialization, request-body validation, `ResponseHeadersRead`, and the bounded response reader.
 - T0039 remains `in_progress`. No acceptance is claimed until the full Step Three quality gate and product workflow succeed for the same exact commit.
+
+
+## Attempt T0039-A002 — failed Windows build retained
+- Tested commit: `dccfeca05c0fc49b02fbcaad88937544a614fab3` (`V 3.0.117`).
+- [Step Three quality gate](https://github.com/artinrahimii/project/actions/runs/39859947826) passed all 85 Python tests after the decision-traceability assertion was updated.
+- [C# lifecycle/bounds test job](https://github.com/artinrahimii/project/actions/runs/39859947626) passed and printed: `PASS: protocol request, capsule, prompt, response, HTTP-body ceilings and pre-inference rejection.`
+- The [Windows WPF product job](https://github.com/artinrahimii/project/actions/runs/39859947626) failed compilation at `HostLifecycle.cs` lines 178 and 205: `CS0246 InvalidDataException could not be found`. The whitespace-format check passed. The direct harness has broader implicit usings, so this app build caught the missing explicit namespace import.
+- Android was still in progress at the last status check; no complete product build is claimed for A002.
+
+## Attempt T0039-A003 — compiler correction pending
+- Added explicit `using System.IO;` to `src/Host.Windows/HostLifecycle.cs`, covering the two reported `InvalidDataException` references.
+- T0039 stays `in_progress` until the exact-commit Windows build and required tests pass.

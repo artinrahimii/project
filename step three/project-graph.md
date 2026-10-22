@@ -6361,9 +6361,9 @@
       ],
       "notes": "A001 is implementing and documenting fixed byte ceilings and runtime validation. This bounds parsed typed messages and the current local llama.cpp HTTP adapter; raw peer-frame rejection before Protobuf parsing remains a later transport task.",
       "execution_summary": {
-        "attempt_count": 2,
-        "failed_attempt_count": 1,
-        "last_attempt_id": "T0039-A002",
+        "attempt_count": 3,
+        "failed_attempt_count": 2,
+        "last_attempt_id": "T0039-A003",
         "last_attempt_result": "in_progress",
         "changed_files": [
           "src/Shared.Contracts/ProtocolMessageLimits.cs",
@@ -6384,10 +6384,12 @@
           "c0070b88f71e075ce2d03fd15fb88ce716fd1fee"
         ],
         "tests_passed": [
-          "Product build C# host lifecycle/contract harness passed on V 3.0.116, including executable size-boundary checks."
+          "Step Three quality gate run 39859947826 passed all 85 Python tests.",
+          "C# lifecycle test job passed the new protocol request/capsule/prompt/response/local HTTP body boundary tests on V 3.0.117."
         ],
         "tests_failed": [
-          "Step Three quality gate run 39859692462 failed solely in an older decision-traceability assertion requiring PostAsJsonAsync; the new bounded adapter intentionally no longer uses that API."
+          "Windows WPF build job failed with CS0246 because HostLifecycle.cs lacked using System.IO for InvalidDataException.",
+          "Prior .116 quality workflow failure due stale PostAsJsonAsync assertion is retained in T0039-A001."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -6457,9 +6459,9 @@
         {
           "attempt_id": "T0039-A002",
           "started_at": "2026-10-22T21:46:19.788Z",
-          "ended_at": null,
-          "result": "in_progress",
-          "summary": "Updated existing decision-traceability test to assert pre-send body bounds, explicit JSON serialization, ResponseHeadersRead and the bounded response reader rather than obsolete unbounded PostAsJsonAsync.",
+          "ended_at": "2026-10-22T21:47:34Z",
+          "result": "failed",
+          "summary": "Updated legacy decision-traceability assertion and achieved a passing quality gate, but the exact-commit product workflow's Windows WPF build failed because HostLifecycle.cs uses InvalidDataException without an explicit System.IO import. The host test harness passed because its project has broader implicit usings.",
           "changed_files": [
             "tests/test_decision_traceability.py",
             "step three/T0039/execution-report.md",
@@ -6469,19 +6471,60 @@
           "commit_sha": null,
           "tests": [
             {
-              "command": "python -m unittest tests.test_decision_traceability -v",
+              "command": "Step Three quality gate run 39859947826",
+              "result": "succeeded",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39859947826"
+            },
+            {
+              "command": "C# lifecycle/size-boundary test job 120107747122",
+              "result": "succeeded",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39859947626"
+            },
+            {
+              "command": "Windows WPF build job 120107747049",
+              "result": "failed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39859947626"
+            },
+            {
+              "command": "Android product build job 120107747383",
+              "result": "pending_at_last_check",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39859947626"
+            }
+          ],
+          "failure_details": "Product run 39859947626 / Windows job 120107747049: CS0246 at HostLifecycle.cs lines 178 and 205: InvalidDataException could not be found. dotnet format whitespace passed. C# host lifecycle test job 120107747122 passed including 'PASS: protocol request, capsule, prompt, response, HTTP-body ceilings and pre-inference rejection.' Android job was still in progress at the last API check; no product workflow success is claimed.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Add explicit System.IO import to HostLifecycle.cs, rerun the exact Windows host build, lifecycle tests, quality gate and Android workflow."
+        },
+        {
+          "attempt_id": "T0039-A003",
+          "started_at": "2026-10-22T21:48:08.097Z",
+          "ended_at": null,
+          "result": "in_progress",
+          "summary": "Added explicit System.IO import in HostLifecycle.cs to resolve exact Windows build compiler errors for InvalidDataException at lines 178 and 205.",
+          "changed_files": [
+            "src/Host.Windows/HostLifecycle.cs",
+            "step three/T0039/execution-report.md",
+            "step three/T0039/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "command": "WhiteP product build — Windows WPF host job",
               "result": "pending"
             },
             {
-              "command": "python -m unittest discover -s tests -v",
+              "command": "WhiteP product build — host lifecycle/bounds test job",
               "result": "pending"
             },
             {
-              "command": "Step Three quality gate workflow on exact commit",
+              "command": "Step Three quality gate",
               "result": "pending"
             },
             {
-              "command": "White-P product build workflow on exact commit",
+              "command": "WhiteP product build — Android client APK job",
               "result": "pending"
             }
           ],
@@ -6489,7 +6532,7 @@
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Verify the updated traceability test passes and continue product CI until both Android and Windows jobs finish."
+          "follow_up": "Verify the explicit import fixes Windows WPF build and all required current-commit checks pass."
         }
       ]
     },

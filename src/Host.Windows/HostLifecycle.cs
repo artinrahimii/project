@@ -1,3 +1,4 @@
+using System.IO;
 using WhiteP.Shared.Contracts;
 using WhiteP.Shared.Contracts.V1;
 
