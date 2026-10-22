@@ -74,6 +74,9 @@ jobs:
       - name: Build debug APK
         working-directory: src/Client.Android
         run: gradle --no-daemon assembleDebug
+      - name: Run Android Protobuf round-trip unit tests
+        working-directory: src/Client.Android
+        run: gradle --no-daemon testDebugUnitTest
       - name: Verify generated Protobuf Java and Kotlin sources
         working-directory: src/Client.Android
         shell: bash

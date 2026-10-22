@@ -60,5 +60,6 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview:1.9.2")
     implementation("androidx.compose.material3:material3:1.4.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.9.3")
+    testImplementation("junit:junit:4.13.2")
     debugImplementation("androidx.compose.ui:ui-tooling:1.9.2")
 }

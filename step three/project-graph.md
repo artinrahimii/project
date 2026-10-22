@@ -5801,24 +5801,59 @@
         "نیازمندی مرتبط: آزمون round-trip برای serialize/deserialize همهٔ پیام‌های اصلی در هر دو زبان بنویس."
       ],
       "outputs": [
-        "خروجی قابل بررسی مربوط به «آزمون round-trip برای serialize/deserialize همهٔ پیام‌های اصلی در هر دو زبان بنویس.» در مسیر src/Shared.Contracts/ + tests/contracts/؛ همراه با آزمون/شاهد پذیرش متناسب."
+        "C# executable round-trip assertions for all 11 message types declared in `protocol/whitep/v1/messages.proto`.",
+        "Android JUnit round-trip assertions for the same 11 message types using the generated Kotlin DSL and Java Lite parser.",
+        "CI and Python coverage checks that ensure both suites cover all current schema message names."
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0036 و T0030 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
-      "expected_output_paths": [
-        "src/Shared.Contracts/ + tests/contracts/"
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "tests/HostLifecycle.Tests/Program.cs",
+        "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+        "src/Client.Android/app/src/test/java/com/whitep/client/protocol/ProtoRoundTripTest.kt",
+        "src/Client.Android/app/build.gradle.kts",
+        "tests/test_proto_contract.py",
+        ".github/workflows/product-build.yml",
+        "src/Shared.Contracts/README.md",
+        "step three/T0037/execution-report.md"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "expected_output_paths": [
+        "tests/HostLifecycle.Tests/Program.cs",
+        "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+        "src/Client.Android/app/src/test/java/com/whitep/client/protocol/ProtoRoundTripTest.kt",
+        "src/Client.Android/app/build.gradle.kts",
+        "tests/test_proto_contract.py",
+        ".github/workflows/product-build.yml"
+      ],
+      "evidence": [
+        "protocol/whitep/v1/messages.proto",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+        "src/Client.Android/app/src/test/java/com/whitep/client/protocol/ProtoRoundTripTest.kt",
+        "src/Client.Android/app/build.gradle.kts",
+        "tests/test_proto_contract.py",
+        ".github/workflows/product-build.yml",
+        "step three/T0037/execution-report.md"
+      ],
+      "notes": "T0037-A001 introduces executable C# and Android Kotlin round-trip suites for every message currently declared in the canonical schema. Exact-commit CI is pending. These tests verify encode/decode integrity within each language, not end-to-end cross-language transport or P2P.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0037-A001",
+        "last_attempt_result": "in_progress",
+        "changed_files": [
+          "tests/HostLifecycle.Tests/Program.cs",
+          "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+          "src/Client.Android/app/src/test/java/com/whitep/client/protocol/ProtoRoundTripTest.kt",
+          "src/Client.Android/app/build.gradle.kts",
+          "tests/test_proto_contract.py",
+          ".github/workflows/product-build.yml",
+          "src/Shared.Contracts/README.md",
+          "step three/T0037/execution-report.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
@@ -5831,7 +5866,39 @@
           "review_evidence": []
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0037-A001",
+          "started_at": "2026-10-22T19:55:00Z",
+          "ended_at": null,
+          "result": "in_progress",
+          "summary": "Implemented C# and Kotlin round-trip suites for all 11 currently declared message types and wired them into the existing CI workflow. Exact-commit execution pending.",
+          "changed_files": [
+            "tests/HostLifecycle.Tests/Program.cs",
+            "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+            "src/Client.Android/app/src/test/java/com/whitep/client/protocol/ProtoRoundTripTest.kt",
+            "src/Client.Android/app/build.gradle.kts",
+            "tests/test_proto_contract.py",
+            ".github/workflows/product-build.yml",
+            "src/Shared.Contracts/README.md",
+            "step three/T0037/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "command": "python -m unittest discover -s tests -v; dotnet run --project tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj --configuration Release; gradle --no-daemon testDebugUnitTest",
+              "result": "pending",
+              "summary": "Exact-commit checks must prove schema coverage and execute both C# and Kotlin binary round-trip suites."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Review the quality gate, .NET test harness and Android unit test workflow. Fix actual compilation/runtime failures before marking done."
+        }
+      ]
     },
     {
       "id": "T0038",
@@ -15226,19 +15293,29 @@
       "from": "T0036",
       "to": "T0037",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0037's C# and Kotlin round-trip tests instantiate and parse generated message types, so it requires the build-time Protobuf bindings and source compilation established by T0036. The original blocks edge is retained and the generated-type dependency is technically necessary.",
+      "validation_status": "validated",
+      "evidence": [
+        "protocol/whitep/v1/messages.proto",
+        "src/Host.Windows/WhiteP.Host.Windows.csproj",
+        "src/Client.Android/app/build.gradle.kts",
+        "src/Client.Android/app/src/main/java/com/whitep/client/protocol/ProtocolMessages.kt",
+        "step three/T0036/execution-report.md"
+      ]
     },
     {
       "from": "T0030",
       "to": "T0037",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0030 verifies CI result and artifact failure propagation. T0037 uses the CI workflows to run and report test results but consumes no code or interface artifact created by T0030. The original edge is retained as conservative sequencing only.",
+      "validation_status": "validated",
+      "evidence": [
+        ".github/workflows/quality.yml",
+        ".github/workflows/product-build.yml",
+        "step three/T0030/execution-report.md"
+      ]
     },
     {
       "from": "T0037",

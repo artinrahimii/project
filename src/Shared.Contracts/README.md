@@ -20,3 +20,7 @@ Exact-match checking is intentionally conservative: this project has not yet def
 Android builds generate both Java Lite message classes and Kotlin DSL APIs from `protocol/whitep/v1/messages.proto`. The Kotlin generated source roots are registered for the Android debug and release variants, and the Android workflow verifies the generated `.java` and `.kt` files after compilation. `ProtocolMessages.kt` imports the generated `HostAnnouncement` type and builder DSL so an APK build fails if Kotlin generation or source registration is broken.
 
 Generated sources stay under the build directory; they are not hand-edited or checked into the repository. This code provides serialization helpers only. It does not implement network discovery or peer-to-peer transport.
+
+## Protobuf round-trip verification
+
+The C# harness compiles the canonical `messages.proto` through `Grpc.Tools` and round-trips each of its 11 primary message types through the generated C# parser. Android unit tests do the same with the generated Kotlin DSL and Java Lite message parsers. Each test compares both the parsed message and the re-serialized bytes. The two suites run in CI; they verify per-language serialization integrity, not a live network connection or peer-to-peer transport.

@@ -13,6 +13,12 @@ ANDROID_APP = ANDROID_APP_PATH.read_text(encoding="utf-8")
 README = (ROOT / "README.md").read_text(encoding="utf-8")
 PRODUCT_WORKFLOW_PATH = ROOT / ".github/workflows/product-build.yml"
 PRODUCT_WORKFLOW = PRODUCT_WORKFLOW_PATH.read_text(encoding="utf-8")
+CSHARP_TEST_PROJECT_PATH = ROOT / "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj"
+CSHARP_TEST_PROJECT = CSHARP_TEST_PROJECT_PATH.read_text(encoding="utf-8")
+CSHARP_ROUND_TRIP_PATH = ROOT / "tests/HostLifecycle.Tests/Program.cs"
+CSHARP_ROUND_TRIP = CSHARP_ROUND_TRIP_PATH.read_text(encoding="utf-8")
+KOTLIN_ROUND_TRIP_PATH = ROOT / "src/Client.Android/app/src/test/java/com/whitep/client/protocol/ProtoRoundTripTest.kt"
+KOTLIN_ROUND_TRIP = KOTLIN_ROUND_TRIP_PATH.read_text(encoding="utf-8")
 VERSION_POLICY_PATH = ROOT / "src/Shared.Contracts/ProtocolVersionPolicy.cs"
 VERSION_POLICY = VERSION_POLICY_PATH.read_text(encoding="utf-8")
 
@@ -150,6 +156,22 @@ class ProtoContractTests(unittest.TestCase):
         self.assertIn('generated/sources/proto/release/kotlin', ANDROID_APP)
         self.assertIn("Verify generated Protobuf Java and Kotlin sources", PRODUCT_WORKFLOW)
         self.assertEqual((ANDROID_APP_PATH.parent / "../../../protocol").resolve(), SCHEMA_PATH.parent.parent.parent.resolve())
+
+    def test_round_trip_suites_cover_every_primary_message_in_both_languages(self):
+        message_names = re.findall(r"message\\s+(\\w+)\\s*\\{", SCHEMA)
+        self.assertEqual(
+            11,
+            len(message_names),
+            "Update this test when the canonical schema adds/removes a primary message.",
+        )
+        for name in message_names:
+            with self.subTest(message=name):
+                self.assertIn(f'AssertProtoRoundTrip("{name}"', CSHARP_ROUND_TRIP)
+                self.assertIn(f'assertRoundTrip("{name}"', KOTLIN_ROUND_TRIP)
+        self.assertIn('<PackageReference Include="Google.Protobuf" Version="3.36.2" />', CSHARP_TEST_PROJECT)
+        self.assertIn('<Protobuf Include="../../protocol/whitep/v1/messages.proto"', CSHARP_TEST_PROJECT)
+        self.assertIn('testImplementation("junit:junit:4.13.2")', ANDROID_APP)
+        self.assertIn("gradle --no-daemon testDebugUnitTest", PRODUCT_WORKFLOW)
 
     def test_kotlin_protocol_helper_uses_generated_contract_types(self):
         helper_path = ROOT / "src/Client.Android/app/src/main/java/com/whitep/client/protocol/ProtocolMessages.kt"
