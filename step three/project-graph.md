@@ -2939,11 +2939,9 @@
         "src/Host.Windows/MainWindow.xaml.cs",
         "GitHub Actions run 39681737725: product build succeeded; quality gate run 39681738413 failed because T0018 completion metadata lacked a succeeded attempt and test-source evidence.",
         "src/Host.Windows/HostLifecycle.cs",
-        "src/Host.Windows/MainWindow.xaml",
-        "https://github.com/artinrahimii/project/actions/runs/39733953285",
-        "https://github.com/artinrahimii/project/actions/runs/39733953294"
+        "src/Host.Windows/MainWindow.xaml"
       ],
-      "notes": "T0018 is done at task scope: LlamaCppServerBackend is wired to the Windows host UI for endpoint/model configuration, health checks, and generation output; exact-commit quality and product CI passed at 1d4760ae30c340144a95f8c29a9cabd724295b04. The installed llama.cpp server/model has not been exercised on a target machine, and AC-LOCAL-01/AC-LOCAL-02 remain NOT RUN as product runtime gates.",
+      "notes": "T0018 is done at task scope: LlamaCppServerBackend is wired to the Windows host UI for endpoint/model configuration, health checks, and generation output; exact-commit quality and product CI passed at 1d4760ae30c340144a95f8c29a9cabd724295b04. The installed llama.cpp server/model has not been exercised on a target machine, and AC-LOCAL-01/AC-LOCAL-02 remain NOT RUN as product runtime gates. Graph evidence validation initially rejected Actions run URLs because `evidence` is reserved for in-repository file paths; the CI URLs remain recorded in execution_summary.tests_passed and step three/T0018/execution-report.md, while evidence now points only to inspectable repository files.",
       "execution_summary": {
         "attempt_count": 4,
         "failed_attempt_count": 1,
@@ -3108,23 +3106,27 @@
         "docs/acceptance.md",
         "tests/test_p2p_data_path_decision.py"
       ],
-      "notes": "T0019 architecture decision is documented, but its new source-contract test failed on V 3.0.59 because an English token was asserted against Persian README prose. The test correction is recorded as T0019-A003 and awaits exact-commit CI. Do not mark done until quality gate and product build pass; AC-P2P-01 remains NOT RUN.",
+      "notes": "The direct-P2P architecture decision and its contract test are implemented. Test suite passed all 54 tests on V 3.0.60, but the repository-root graph guard failed because a predecessor node had workflow URLs in its path-only evidence field. That metadata has been corrected in V 3.0.61; task remains in_progress pending exact-commit quality and product CI. AC-P2P-01 remains NOT RUN.",
       "execution_summary": {
-        "attempt_count": 3,
-        "failed_attempt_count": 1,
-        "last_attempt_id": "T0019-A003",
+        "attempt_count": 5,
+        "failed_attempt_count": 2,
+        "last_attempt_id": "T0019-A005",
         "last_attempt_result": "partial",
         "changed_files": [
-          "tests/test_p2p_data_path_decision.py",
-          "step three/T0019/execution-report.md",
-          "step three/project-graph.md"
+          "step three/project-graph.md",
+          "step three/T0018/execution-report.md",
+          "step three/T0019/execution-report.md"
         ],
         "related_commits": [
-          "3428fe8425c7b3b0d6bf0ad2d79bf55501d82cb5"
+          "3428fe8425c7b3b0d6bf0ad2d79bf55501d82cb5",
+          "c245e7bcd6cdf59403b2acd30645c0f877e83f64"
         ],
-        "tests_passed": [],
+        "tests_passed": [
+          "GitHub Actions automated test suite passed all 54 tests in run 39735812127; compileall and graph structure validation also passed. The subsequent repo-root evidence-path validation failed due to T0018 Actions URLs in its file-path evidence list."
+        ],
         "tests_failed": [
-          "Quality gate run 39735575767 failed on V 3.0.59: one source-contract test required an English README token absent from Persian prose; the assertion is being corrected to match the actual README text."
+          "Quality gate run 39735575767 failed on V 3.0.59: one source-contract test required an English README token absent from Persian prose; the assertion is being corrected to match the actual README text.",
+          "Quality run 39735812127 on V 3.0.60 failed only at `graph_guard.py --repo-root .`: it treated T0018 evidence URLs https://github.com/artinrahimii/project/actions/runs/39733953285 and /39733953294 as missing repository files. The workflow itself is evidence and remains linked in task report/tests_passed; the graph evidence list is being corrected to contain file paths only."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -3200,6 +3202,47 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Inspect V 3.0.60 runs. On full quality gate and product-build success, append a successful attempt and only then mark T0019 done at architecture-decision scope; P2P runtime acceptance stays NOT RUN."
+        },
+        {
+          "attempt_id": "T0019-A004",
+          "started_at": "2026-10-22T06:43:57Z",
+          "ended_at": "2026-10-22T06:44:20Z",
+          "result": "failed",
+          "summary": "V 3.0.60's new source-contract tests (54 tests total), compileall, and graph structure validation all passed; the repository-root evidence check failed because T0018.evidence contained GitHub Actions URLs, but graph_guard interprets that field as in-repository file paths.",
+          "changed_files": [
+            "step three/project-graph.md"
+          ],
+          "commit_sha": "c245e7bcd6cdf59403b2acd30645c0f877e83f64",
+          "tests": [
+            "Quality run 39735812127: automated tests passed, Python syntax compilation passed, graph structure validation passed.",
+            "Quality run 39735812127: graph_guard.py --repo-root . failed with two MISSING_EVIDENCE_FILE errors for T0018's Actions run URLs."
+          ],
+          "failure_details": "The evidence model distinguishes repository file paths from test-run references. The Actions links are already preserved in T0018's report and execution_summary.tests_passed, so they should not appear in the path-based evidence array.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Remove URLs from T0018.evidence while retaining them in report/test results, then rerun the exact-commit quality workflow."
+        },
+        {
+          "attempt_id": "T0019-A005",
+          "started_at": "2026-10-22T06:45:22.415Z",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Adjusted T0018.evidence to include only repository file paths; exact-commit graph validation is pending.",
+          "changed_files": [
+            "step three/project-graph.md",
+            "step three/T0018/execution-report.md",
+            "step three/T0019/execution-report.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            "Pending exact-commit quality gate and product build for V 3.0.61."
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect V 3.0.61 CI. Mark T0019 done only after its source-contract test and all graph quality checks pass; AC-P2P-01 stays NOT RUN."
         }
       ]
     },

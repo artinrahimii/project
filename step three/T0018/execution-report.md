@@ -35,3 +35,8 @@ Run the quality gate and product build for this exact integration commit. If bot
 
 ## Next
 T0019 may now be executed after reviewing its incoming edges. Keep runtime local-model and network acceptance gates separate from task completion.
+
+
+## Graph metadata correction after T0018-A004
+- Quality run [39735812127](https://github.com/artinrahimii/project/actions/runs/39735812127) passed all 54 Python tests, syntax compilation, and graph structure validation, then failed the repository-root evidence pass because the graph's `evidence` array included two workflow URLs.
+- This is a graph evidence-schema issue, not an application/runtime failure. The workflow links remain in this report and `execution_summary.tests_passed`; `T0018.evidence` is restricted to tracked, inspectable repository paths so graph_guard can validate it.

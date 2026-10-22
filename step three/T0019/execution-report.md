@@ -22,3 +22,14 @@ Verify the exact-commit quality and product workflows. Only record this task as 
 
 ## Next
 Run the exact-commit quality gate and product build for the correction. Keep `AC-P2P-01` NOT RUN until direct multi-process/device transfer and payload-path inspection are implemented and verified.
+
+
+## Attempt T0019-A004 — graph evidence validation error
+- On commit [c245e7bcd6cdf59403b2acd30645c0f877e83f64](https://github.com/artinrahimii/project/commit/c245e7bcd6cdf59403b2acd30645c0f877e83f64), all 54 automated tests passed, Python syntax compilation passed, and graph structure validation passed in quality run [39735812127](https://github.com/artinrahimii/project/actions/runs/39735812127).
+- The final repository-root evidence validation failed with two `MISSING_EVIDENCE_FILE` errors for T0018 because the `evidence` array contained GitHub Actions URLs, which `graph_guard.py --repo-root .` treats as file paths.
+- Product build run [39735812104](https://github.com/artinrahimii/project/actions/runs/39735812104) was still running when last inspected; no outcome is assumed.
+- The workflow links remain preserved in T0018's report and test-result fields. The graph evidence array has been corrected to keep only repository paths.
+
+## Attempt T0019-A005 — correct path-based graph evidence
+- Removed run URLs from `T0018.evidence`; kept the URLs in `execution_summary.tests_passed` and `step three/T0018/execution-report.md`. The failed validation is preserved above.
+- **Status remains in progress** pending the new exact-commit quality and product workflows.
