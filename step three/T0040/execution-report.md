@@ -12,3 +12,14 @@
 - Added `tests/contracts/invalid-message-cases.json` containing invalid-tag, truncated-varint, and truncated-length-delimited fixtures; tests synthesize an over-limit input to avoid a large fixture blob.
 - Extended the C# executable harness for invalid fields, malformed wire data, oversized raw bytes, incompatible/malformed versions, invalid response outcome values and oversized serialized responses. Added Python repository-contract checks to keep validator, parser and fixtures in trace.
 - Exact-commit test/build results have not yet been observed. T0040 remains `in_progress` until the actual C# harness and full quality/product CI pass.
+
+
+## Attempt T0040-A001 — failed verification retained
+- Tested commit: `3cc3687c6dc7d68fe51656d383a42f418ef0d5cf` (`V 3.0.120`).
+- [Step Three quality gate](https://github.com/artinrahimii/project/actions/runs/39861144156) passed.
+- [Windows WPF build and generated C# verification](https://github.com/artinrahimii/project/actions/runs/39861144217) passed; Android Kotlin lint also passed.
+- The [C# lifecycle/contract test job](https://github.com/artinrahimii/project/actions/runs/39861144217) failed in the intended incomplete-`HostAnnouncement` rejection case: `NullReferenceException` in `ProtocolMessageParser.ParseHostAnnouncement` because missing capabilities were dereferenced before validation. This is a real acceptance failure and T0040 is not complete on A001.
+
+## Attempt T0040-A002 — null-capabilities correction pending
+- Added explicit rejection of a `HostAnnouncement` without `HostCapabilities` immediately after parsing.
+- Expected error is `PROTOCOL_ERROR_CODE_INVALID_MESSAGE` without an exception. Exact-commit C# and product CI results are pending.

@@ -77,6 +77,12 @@ public static class ProtocolMessageParser
         {
             var announcement = HostAnnouncement.Parser.ParseFrom(wireBytes);
             var capabilities = announcement.Capabilities;
+            if (capabilities is null)
+            {
+                return Invalid<HostAnnouncement>(ProtocolMessageValidator.InvalidMessage(
+                    "HostAnnouncement is missing HostCapabilities."));
+            }
+
             var models = capabilities.Models
                 .Select(model => new ModelCapabilityValidationInput(
                     model.ModelId,

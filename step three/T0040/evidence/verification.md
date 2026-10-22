@@ -17,3 +17,11 @@
 - Host identity/capability mismatch, concurrency above the single-request contract and invalid model-output capability are rejected.
 - Unspecified response outcome and oversized serialized response are rejected.
 - Exact-commit test/build results are pending; this document does not assert they have passed yet.
+
+
+## Attempt A001 result
+- [Step Three quality gate](https://github.com/artinrahimii/project/actions/runs/39861144156): passed.
+- [Windows WPF build and generated C# source check](https://github.com/artinrahimii/project/actions/runs/39861144217): passed.
+- [C# host harness](https://github.com/artinrahimii/project/actions/runs/39861144217): failed because the intentionally incomplete HostAnnouncement triggered a NullReferenceException before validation.
+- [Android product job](https://github.com/artinrahimii/project/actions/runs/39861144217): lint passed; APK steps were pending when this failure was recorded.
+- A002 adds a defensive missing-capabilities check. Completion is still pending.

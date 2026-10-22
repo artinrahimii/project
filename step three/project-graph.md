@@ -6608,11 +6608,11 @@
         "docs/requirements.md",
         "src/Shared.Contracts/README.md"
       ],
-      "notes": "A001 adds a real pre-parse byte boundary for request/control messages and semantic validators for requests, host announcements and responses. No peer transport is claimed; the parser can be called by a future transport and typed requests are semantically validated before local inference.",
+      "notes": "A001 hit a real parser bug: an announcement with no capabilities caused NullReferenceException instead of a validation result. A002 adds explicit missing-capabilities rejection before reading fields. Keep the task in progress until the executable C# harness and product workflow pass.",
       "execution_summary": {
-        "attempt_count": 1,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "T0040-A001",
+        "attempt_count": 2,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "T0040-A002",
         "last_attempt_result": "in_progress",
         "changed_files": [
           "src/Shared.Contracts/ProtocolMessageValidator.cs",
@@ -6627,13 +6627,21 @@
           "docs/requirements.md",
           "src/Shared.Contracts/README.md",
           "step three/T0040/execution-report.md",
-          "step three/T0040/evidence/verification.md"
+          "step three/T0040/evidence/verification.md",
+          "step three/project-graph.md"
         ],
         "related_commits": [
-          "e802c59b3fc13932de268fd079f027a6e1b0f200"
+          "e802c59b3fc13932de268fd079f027a6e1b0f200",
+          "3cc3687c6dc7d68fe51656d383a42f418ef0d5cf"
         ],
-        "tests_passed": [],
-        "tests_failed": [],
+        "tests_passed": [
+          "Step Three quality gate run 39861144156 passed.",
+          "Windows WPF build, C# formatting and generated Protobuf source checks passed on V 3.0.120.",
+          "Android Kotlin lint passed on V 3.0.120."
+        ],
+        "tests_failed": [
+          "C# lifecycle/integration test job run 39861144217 failed on the incomplete HostAnnouncement negative case with NullReferenceException in ProtocolMessageParser.ParseHostAnnouncement."
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -6655,9 +6663,9 @@
         {
           "attempt_id": "T0040-A001",
           "started_at": "2026-10-22T21:55:44.555Z",
-          "ended_at": null,
-          "result": "in_progress",
-          "summary": "Reviewed the two predecessor edges. Added shared semantic validation for request, announcement and response values, a pre-parse Protobuf parser that checks wire byte length first, malformed-wire fixtures, and executable C# plus Python regression tests.",
+          "ended_at": "2026-10-22T21:56:29Z",
+          "result": "failed",
+          "summary": "Quality gate passed, Windows WPF build and generated-code checks passed, and Android lint passed, but the executable C# harness crashed when parsing an intentionally incomplete HostAnnouncement because the parser dereferenced missing capabilities before validation.",
           "changed_files": [
             "src/Shared.Contracts/ProtocolMessageValidator.cs",
             "src/Shared.Contracts/ProtocolMessageLimits.cs",
@@ -6676,11 +6684,55 @@
           "commit_sha": null,
           "tests": [
             {
-              "command": "python -m unittest discover -s tests -v",
+              "command": "Step Three quality gate run 39861144156",
+              "result": "succeeded",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39861144156"
+            },
+            {
+              "command": "Windows WPF build, C# formatting and generated source checks — job 120111852336",
+              "result": "succeeded",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39861144217"
+            },
+            {
+              "command": "Android Kotlin lint — job 120111852114",
+              "result": "succeeded",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39861144217"
+            },
+            {
+              "command": "C# host lifecycle unit/integration tests — job 120111851823",
+              "result": "failed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39861144217"
+            }
+          ],
+          "failure_details": "Product run 39861144217 / C# host lifecycle job 120111851823 failed with System.NullReferenceException in ProtocolMessageParser.ParseHostAnnouncement at line 80, reached by the incomplete-announcement test at Program.cs line 144. The scenario is a required negative acceptance case; this is not an ignorable test fixture issue.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "Add a 16 KiB control-message ceiling for host announcements.",
+            "Add semantic checks for required request fields, nonzero deadline/token values, matching host/capability identity and versions, one-request host capability, model capability values and response enum/size fields."
+          ],
+          "follow_up": "Return InvalidMessage when HostAnnouncement has no capabilities before reading any capabilities fields; rerun C# harness and full product workflow."
+        },
+        {
+          "attempt_id": "T0040-A002",
+          "started_at": "2026-10-22T21:57:31.922Z",
+          "ended_at": null,
+          "result": "in_progress",
+          "summary": "Added an explicit check for missing HostCapabilities immediately after Protobuf parsing, returning InvalidMessage before the parser dereferences capability fields.",
+          "changed_files": [
+            "src/Host.Windows/ProtocolMessageParser.cs",
+            "step three/T0040/execution-report.md",
+            "step three/T0040/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "command": "dotnet run --project tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj --configuration Release",
               "result": "pending"
             },
             {
-              "command": "dotnet run --project tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj --configuration Release",
+              "command": "python -m unittest discover -s tests -v",
               "result": "pending"
             },
             {
@@ -6688,18 +6740,15 @@
               "result": "pending"
             },
             {
-              "command": "White-P product build workflow (Windows + Android)",
+              "command": "White-P product build workflow",
               "result": "pending"
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
-          "contract_changes": [
-            "Add a 16 KiB control-message ceiling for host announcements.",
-            "Add semantic checks for required request fields, nonzero deadline/token values, matching host/capability identity and versions, one-request host capability, model capability values and response enum/size fields."
-          ],
-          "follow_up": "Run exact-commit tests and full Windows/Android product build; fix failures without overwriting history."
+          "contract_changes": [],
+          "follow_up": "Verify the missing-capabilities case is rejected without exception and all other parser acceptance cases pass."
         }
       ]
     },
