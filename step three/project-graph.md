@@ -7220,14 +7220,14 @@
         "attempt_count": 2,
         "failed_attempt_count": 0,
         "last_attempt_id": "T0043-A002",
-        "last_attempt_result": "in_progress",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "tests/HostLifecycle.Tests/Program.cs",
           "step three/T0043/execution-report.md",
           "step three/project-graph.md"
         ],
         "related_commits": [
-          "81cacab7e4820692ed72430fd1d2b28094c70c78"
+          "dc7699db406089677cd7f7b7428a62e9e6989af8"
         ],
         "tests_passed": [
           {
@@ -7247,6 +7247,12 @@
             "result": "passed",
             "evidence": "https://github.com/artinrahimii/project/actions/runs/39910955252",
             "summary": "Android debug APK build, generated Java/Kotlin Protobuf checks and artifact upload passed on the exact tested commit."
+          },
+          {
+            "name": "Step Three quality gate",
+            "result": "passed",
+            "evidence": "https://github.com/artinrahimii/project/actions/runs/39911742961",
+            "summary": "Exact current main commit passed graph structure, repository evidence, Python tests and syntax checks."
           }
         ],
         "tests_failed": [
@@ -7321,17 +7327,24 @@
         {
           "attempt_id": "T0043-A002",
           "started_at": "2026-10-23T06:24:10Z",
-          "ended_at": null,
-          "result": "in_progress",
-          "commit_sha": null,
-          "summary": "Recorded exact-commit CI results from 81cacab7e4820692ed72430fd1d2b28094c70c78; correcting graph history so quality gate can validate the evidence.",
+          "ended_at": "2026-10-23T10:00:00Z",
+          "result": "succeeded",
+          "commit_sha": "dc7699db406089677cd7f7b7428a62e9e6989af8",
+          "summary": "The graph-history correction passed the exact-commit Step Three quality gate; the product build also passed on this commit.",
           "changed_files": [
             "step three/project-graph.md",
             "step three/T0043/execution-report.md"
           ],
-          "tests": [],
+          "tests": [
+            {
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39911742961",
+              "summary": "Graph structure, evidence validation, Python tests and syntax checks passed on exact commit dc7699d."
+            }
+          ],
           "failure_details": null,
-          "follow_up": "Await CI on the graph-history correction; only then close this attempt as succeeded."
+          "follow_up": "T0043 accepted; continue to T0044."
         }
       ]
     },
@@ -7352,33 +7365,73 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0043 و T0040 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "src/Host.Domain/HostLifecycle.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0044/execution-report.md",
+        "step three/T0044/evidence/verification.md"
+      ],
       "expected_output_paths": [
         "src/Host.Windows/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "src/Host.Domain/HostLifecycle.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj"
+      ],
+      "notes": "The implementation belongs to Host.Domain after the T0042 assembly split; the graph's old src/Host.Windows expected path is stale. This task adds exhaustive transition-matrix regression assertions rather than duplicating the existing production state machine.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0044-A001",
+        "last_attempt_result": "in_progress",
+        "changed_files": [
+          "tests/HostLifecycle.Tests/Program.cs",
+          "step three/T0044/execution-report.md",
+          "step three/T0044/evidence/verification.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
-          "affected_by_contract_changes": [],
-          "review_evidence": []
+          "state": "in_progress",
+          "triggering_contracts": [
+            "HostLifecycle transition matrix"
+          ],
+          "affected_by_contract_changes": [
+            "T0045",
+            "T0007"
+          ],
+          "review_evidence": [
+            "src/Host.Domain/HostLifecycle.cs",
+            "tests/HostLifecycle.Tests/Program.cs"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0044-A001",
+          "started_at": "2026-10-23T10:00:00Z",
+          "ended_at": null,
+          "result": "in_progress",
+          "commit_sha": null,
+          "summary": "Reviewed incoming dependency evidence and added exhaustive transition-matrix tests. Exact-commit CI validation is pending.",
+          "changed_files": [
+            "tests/HostLifecycle.Tests/Program.cs",
+            "step three/T0044/execution-report.md",
+            "step three/T0044/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "tests": [],
+          "failure_details": null,
+          "follow_up": "Accept only after the exact-commit product and quality workflows pass."
+        }
+      ]
     },
     {
       "id": "T0045",
@@ -16641,19 +16694,27 @@
       "from": "T0043",
       "to": "T0044",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0044 extends the exact HostLifecycle state/transition contract verified by T0043; exhaustive transition-matrix assertions require the production enum and lifecycle implementation.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Domain/HostLifecycle.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "https://github.com/artinrahimii/project/actions/runs/39911743013"
+      ]
     },
     {
       "from": "T0040",
       "to": "T0044",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0040's shared contracts are referenced by the integration test harness, but HostLifecycle itself does not consume protocol types. Retain the edge conservatively for full-suite validation order.",
+      "validation_status": "validated",
+      "evidence": [
+        "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "src/Shared.Contracts/WhiteP.Shared.Contracts.csproj"
+      ]
     },
     {
       "from": "T0044",

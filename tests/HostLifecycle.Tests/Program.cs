@@ -406,6 +406,64 @@ catch (ArgumentException)
 {
     // Expected: status messages must not be empty or whitespace.
 }
+
+
+// T0044: exhaustively verify the HostLifecycle transition matrix independently of UI wiring.
+var lifecycleTransitions = new (HostState From, HostState To, bool Allowed)[]
+{
+    (HostState.Stopped, HostState.Starting, true),
+    (HostState.Stopped, HostState.Ready, false),
+    (HostState.Stopped, HostState.Busy, false),
+    (HostState.Stopped, HostState.Error, false),
+    (HostState.Starting, HostState.Ready, true),
+    (HostState.Starting, HostState.Error, true),
+    (HostState.Starting, HostState.Stopped, true),
+    (HostState.Starting, HostState.Busy, false),
+    (HostState.Ready, HostState.Busy, true),
+    (HostState.Ready, HostState.Error, true),
+    (HostState.Ready, HostState.Stopped, true),
+    (HostState.Ready, HostState.Starting, false),
+    (HostState.Busy, HostState.Ready, true),
+    (HostState.Busy, HostState.Error, true),
+    (HostState.Busy, HostState.Stopped, false),
+    (HostState.Busy, HostState.Starting, false),
+    (HostState.Error, HostState.Starting, true),
+    (HostState.Error, HostState.Stopped, true),
+    (HostState.Error, HostState.Ready, false),
+    (HostState.Error, HostState.Busy, false)
+};
+foreach (var (from, to, allowed) in lifecycleTransitions)
+{
+    var lifecycle = new HostLifecycle();
+    if (from != HostState.Stopped)
+    {
+        lifecycle.Transition(HostState.Starting, "Matrix setup");
+        if (from is HostState.Ready or HostState.Busy)
+        {
+            lifecycle.Transition(HostState.Ready, "Matrix setup ready");
+        }
+        if (from == HostState.Busy)
+        {
+            lifecycle.Transition(HostState.Busy, "Matrix setup busy");
+        }
+        if (from == HostState.Error)
+        {
+            lifecycle.Transition(HostState.Error, "Matrix setup error");
+        }
+    }
+
+    if (allowed)
+    {
+        var result = lifecycle.Transition(to, "Matrix transition");
+        Assert(result.State == to, $"Allowed transition {from} -> {to} did not reach its destination.");
+        Assert(lifecycle.Status.State == to, $"Allowed transition {from} -> {to} was not persisted.");
+    }
+    else
+    {
+        ExpectInvalid(() => lifecycle.Transition(to, "Matrix transition"));
+        Assert(lifecycle.Status.State == from, $"Rejected transition {from} -> {to} mutated the current state.");
+    }
+}
 var status=new HostStartup(new HostLifecycle(),new UnconfiguredInferenceBackend()).Start();
 Assert(status.State==HostState.Error,"Unavailable backend must report Error");
 Assert(status.Message.Contains("not configured",StringComparison.OrdinalIgnoreCase),"Reason must be visible");
