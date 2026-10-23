@@ -34,3 +34,8 @@
 - Scope limitation: adapter enumeration is not proof of GPU compute or model offload support; backend reporting reflects the configured local llama.cpp endpoint health.
 - Historical note: attempts A002/A003 failed graph metadata validation and remain in history. The final corrected revision passed; the earlier failures were not erased.
 - Next: T0051, after reviewing T0048/T0050 outputs and validating the still-unreviewed T0050 → T0051 edge.
+
+
+## Attempt T0050-A005 — post-update graph schema failure (preserved)
+- [Quality run 39945533015](https://github.com/artinrahimii/project/actions/runs/39945533015) rejected the node status token `completed` with `INVALID_NODE_STATUS`; the graph schema uses `done`.
+- Corrected T0050 to the schema-supported `done` status. The prior parent revision's product workflow passed, but this correction must pass its own quality gate before the task status is considered final.

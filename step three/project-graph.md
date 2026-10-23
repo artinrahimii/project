@@ -8455,7 +8455,7 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0049 و T0048 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "completed",
+      "status": "done",
       "status_fa": "تکمیل‌شده",
       "actual_output_paths": [
         "src/Host.Windows/WindowsHostHardwareDiscovery.cs",
@@ -8472,12 +8472,12 @@
         "tests/test_windows_hardware_discovery.py",
         "tests/test_wpf_entrypoint.py"
       ],
-      "notes": "Implemented Windows display-adapter enumeration using EnumDisplayDevicesW and surfaced actual configured local llama.cpp endpoint health in WPF. CI passed on parent revision 77d0e2821bf012fee0525041744a6dd4ad786ded: graph/Python quality gate, host lifecycle tests, Windows WPF build, and Android APK build. This identifies display adapters, not CUDA/Vulkan/DirectML or model GPU-offload capability; backend status is the configured endpoint health check.",
+      "notes": "Implementation and product CI passed on parent revision, but the first post-update quality run rejected status value 'completed' as unsupported. Use schema-supported 'done'; rerun quality gate on this corrected revision. Display adapter inventory does not imply compute support.",
       "execution_summary": {
-        "attempt_count": 4,
-        "failed_attempt_count": 1,
-        "last_attempt_id": "T0050-A004",
-        "last_attempt_result": "passed",
+        "attempt_count": 5,
+        "failed_attempt_count": 2,
+        "last_attempt_id": "T0050-A005",
+        "last_attempt_result": "failed",
         "changed_files": [
           "src/Host.Windows/WindowsHostHardwareDiscovery.cs",
           "src/Host.Windows/MainWindow.xaml",
@@ -8519,7 +8519,8 @@
           }
         ],
         "tests_failed": [
-          "Step Three quality gate run 39943630991 failed graph validation: INVALID_EDGE_CLASSIFICATION for T0049 → T0050 because 'technical' is not an allowed graph class. No conclusion about Windows C# build can be drawn from this failure. Corrected to supported contract_or_interface_dependency in this revision."
+          "Step Three quality gate run 39943630991 failed graph validation: INVALID_EDGE_CLASSIFICATION for T0049 → T0050 because 'technical' is not an allowed graph class. No conclusion about Windows C# build can be drawn from this failure. Corrected to supported contract_or_interface_dependency in this revision.",
+          "Step Three quality gate run 39945533015 failed graph validation: INVALID_NODE_STATUS: T0050: 'completed'. The graph schema uses 'done' for completed nodes; corrected in next revision."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -8640,6 +8641,30 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Proceed to T0051 after checking T0048 and T0050 outputs; review T0050 → T0051 edge because it remains unreviewed."
+        },
+        {
+          "attempt_id": "T0050-A005",
+          "started_at": "2026-10-23T11:08:36Z",
+          "ended_at": "2026-10-23T11:21:55Z",
+          "result": "failed",
+          "summary": "Post-update quality gate failed graph schema validation because the status token 'completed' is unsupported; graph nodes must use 'done'. The previous parent revision's product CI had passed, but the new graph revision is not quality-verified yet.",
+          "changed_files": [
+            "step three/project-graph.md"
+          ],
+          "commit_sha": "108f811dbfb030fefada389d9af4acb7d613248c",
+          "tests": [
+            {
+              "name": "Step Three graph validation",
+              "result": "failed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39945533015",
+              "summary": "INVALID_NODE_STATUS: T0050: 'completed'."
+            }
+          ],
+          "failure_details": "Used unsupported node status token 'completed'; schema requires 'done'.",
+          "blocked_reason": null,
+          "reopened_reason": "Graph metadata needs a schema-compatible status token and a passing exact-revision quality gate.",
+          "contract_changes": [],
+          "follow_up": "Change T0050 status to done and rerun quality gate; then verify product workflow for corrected commit."
         }
       ]
     },
@@ -21703,6 +21728,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-23T11:21:23.862Z"
+  "updated_at": "2026-10-23T11:22:41.016Z"
 }
 ```
