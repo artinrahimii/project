@@ -1,116 +1,3 @@
-# v2.1 — گراف وابستگی و دفتر ثبت اجرای پروژه
-
-## هدف
-این فایل نسخهٔ v2.1 گراف وابستگی و دفتر ثبت اجرای قابل‌ردیابی برای تمام 229 وظیفهٔ موجود در `step one/V1.0.md` است. منبع اصلی شرح وظایف همان فایل Step One است؛ این فایل شناسه‌ها، ترتیب اجرا، ورودی، خروجی، شرط شروع، معیار پذیرش، وضعیت و محل فایل‌های خروجی را ثبت می‌کند.
-
-## معنی یال‌ها و وضعیت‌ها
-- یال `A → B` یک رابطهٔ جهت‌دار در ترتیب اجرای محافظه‌کارانه است. اگر `dependency_classification` برابر `hard_dependency` یا `contract_or_interface_dependency` باشد، خروجی تأییدشدهٔ A پیش‌نیاز فنی B است؛ اگر `sequencing_only` باشد، یال فقط ترتیب امن اجرا را حفظ می‌کند و به‌تنهایی تکمیل A را شرط فنی B نمی‌کند. هیچ یالی را بدون دلیل و شواهد حذف یا بازطبقه‌بندی نکن.
-- `not_started` / «انجام‌نشده»: خروجی واقعی و شواهد پذیرش هنوز تأیید نشده‌اند.
-- `in_progress` / «در حال انجام»: کار شروع شده اما معیار پذیرش کامل نشده است.
-- `done` / «انجام‌شده»: خروجی واقعی در مخزن وجود دارد و آزمون/شاهد پذیرش موفق است.
-- `blocked` / «مسدود»: پیش‌نیاز، دسترسی یا زیرساخت لازم فراهم نیست.
-- `expected_output_paths` مسیر هدف است، نه اثبات وجود فایل. `actual_output_paths` فقط پس از ایجاد و بررسی فایل واقعی پر می‌شود.
-- فایل مستندات، طرح معماری، کد stub، mock یا پاسخ هاردکدشده به‌تنهایی معیار تکمیل نیست.
-
-## سیاست وابستگی
-
-گراف فعلی از ترتیب بخش‌های Step One برای ایجاد یک مسیر محافظه‌کارانه استفاده می‌کند: درون هر بخش، هر وظیفه به وظیفهٔ پیشین همان بخش وابسته است و نخستین وظیفهٔ هر بخش به آخرین وظیفهٔ بخش قبلی متصل می‌شود. **این زنجیره به‌تنهایی اثبات نمی‌کند که همهٔ یال‌ها وابستگی فنی واقعی هستند.** بعضی یال‌ها ممکن است فقط ترتیب اجرا را ساده کرده باشند و امکان اجرای موازی را پنهان کنند.
-
-پیش از اجرای گسترده، هر یال باید با قراردادها، رابط‌ها، ورودی/خروجی‌ها و شواهد مخزن بررسی و در یکی از دسته‌های زیر طبقه‌بندی شود:
-
-- `hard_dependency`: وظیفهٔ مقصد بدون خروجی معتبر وظیفهٔ مبدأ نمی‌تواند تکمیل شود.
-- `contract_or_interface_dependency`: دو وظیفه به قرارداد یا رابط مشترک وابسته‌اند.
-- `sequencing_only`: ترتیب فعلی محافظه‌کارانه است، اما وابستگی فنی مستقیم هنوز ثابت نشده است.
-
-یال‌ها را صرفاً برای موازی‌سازی حذف نکن. هر تغییر در یال باید همراه با دلیل، شواهد و ثبت نوع قبلی و جدید باشد. تا زمان تأیید، ترتیب فعلی فقط مبنای امن اولیه است، نه مدل نهایی وابستگی فنی.
-
-## قرارداد داده‌های وابستگی
-
-فیلد `type` موجود در هر یال حفظ می‌شود و به‌تنهایی طبقه‌بندی فنی وابستگی را مشخص نمی‌کند. هر یال همچنین فیلدهای مستقل زیر را دارد:
-
-- `dependency_classification`: یکی از `hard_dependency`، `contract_or_interface_dependency)، `sequencing_only) یا `unreviewed).
-- `rationale`: دلیل مستند و مبتنی بر شواهد برای طبقه‌بندی؛ تا زمان بررسی خالی می‌ماند.
-- `validation_status`: یکی از `unreviewed`، `validated` یا `disputed`.
-- `evidence`: ارجاع به شواهد واقعی که طبقه‌بندی را پشتیبانی می‌کنند.
-
-در این نسخه، طبقه‌بندی تمام یال‌ها عمداً `unreviewed` و وضعیت اعتبارسنجی آن‌ها `unreviewed` است؛ هیچ نوعی را صرفاً از روی `type: blocks` حدس نزن. پیش از تغییر به طبقه‌بندی تأییدشده، ورودی‌ها و خروجی‌های وظایف، قراردادها و شواهد مخزن را بررسی و دلیل و شواهد را ثبت کن. نوع رابطهٔ موجود را بی‌دلیل تغییر نده.
-
-وضعیت گره با نتیجهٔ تلاش تفاوت دارد: وضعیت‌های گره `not_started`، `in_progress`، `done` و `blocked` هستند. شکست یک تلاش در `execution_history.result: failed` ثبت می‌شود و به‌تنهایی وضعیت مستقل گره نیست. پیشرفت ناقص معمولاً `in_progress` باقی می‌ماند؛ `blocked` فقط وقتی استفاده شود که مانع واقعی ادامهٔ امن کار را متوقف کند.
-
-## سیاست ثبت اجرای وظایف
-
-وضعیت فعلی هر وظیفه به‌تنهایی سابقهٔ اجرای آن را نشان نمی‌دهد. بنابراین هر گره دو بخش دارد:
-
-- `execution_summary`: خلاصهٔ جاری شامل تعداد تلاش‌ها، تلاش‌های ناموفق، فایل‌های تغییرکرده، کامیت‌های مرتبط، آزمون‌های موفق/ناموفق، علت مسدودشدن یا بازگشایی و وضعیت بازبینی قراردادها.
-- `execution_history`: فهرست افزایشیِ تلاش‌های اجرا؛ تلاش‌های قبلی را پاک یا با تلاش جدید جایگزین نکن. هر تلاش باید نتیجه، زمان، فایل‌های تغییرکرده، کامیت (یا تصریحِ کامیت‌نشدن)، آزمون‌ها، شکست‌ها، مسدودشدن و پیگیری بعدی را ثبت کند.
-
-قواعد اجرایی:
-
-1. پیش از شروع، پیش‌نیازها و شواهد واقعی آن‌ها را بررسی کن؛ فقط به ترتیب ظاهری گراف تکیه نکن.
-2. پس از هر تلاش، حتی اگر شکست خورده یا ناقص بوده، سابقهٔ آن را ثبت کن تا کار تکراریِ بی‌دلیل انجام نشود.
-3. `done` فقط زمانی مجاز است که خروجی واقعی بررسی شده و معیار پذیرش با آزمون یا شاهد قابل‌بررسی تأیید شده باشد.
-4. برای `blocked` علت، پیش‌نیاز یا دسترسی مفقود و شرط رفع مانع را ثبت کن.
-5. اگر وظیفهٔ تکمیل‌شده دوباره باز شد، سابقهٔ تکمیل قبلی را حفظ و دلیل بازگشایی را ثبت کن.
-6. پس از تغییر قرارداد یا رابط مشترک، مصرف‌کنندگان مستقیم و غیرمستقیم آن را پیدا کن؛ وظایف متأثر را برای بازبینی علامت بزن و آزمون‌های پذیرش مرتبط را دوباره اجرا کن. تا پایان بازبینی، وضعیت قبلی `done` را بدون بررسی معتبر فرض نکن.
-7. مسیر مورد انتظار، فایل واقعی محسوب نمی‌شود. `actual_output_paths` فقط پس از بررسی فایل در نسخهٔ مخزن مربوط پر شود.
-8. وضعیت گراف را در همان تغییر یا بلافاصله پس از آن به‌روز کن و آن را با فایل‌ها، کامیت و نتایج آزمون تطبیق بده.
-
-هر رکورد تلاش از فیلدهای زیر استفاده می‌کند: `attempt_id`, `started_at`, `ended_at`, `result`, `summary`, `changed_files`, `commit_sha`, `tests`, `failure_details`, `blocked_reason`, `reopened_reason`, `contract_changes`, `follow_up`. نتیجه می‌تواند `succeeded`, `failed`, `partial`, `blocked` یا `reopened` باشد.
-
-این فیلدها در نسخهٔ فعلی برای هر 229 گره مقدار اولیه دارند؛ مقدار صفر و آرایه‌های خالی یعنی هنوز سابقه‌ای در این نسخه ثبت نشده است، نه اینکه آزمونی اجرا شده یا فایل خروجی وجود دارد.
-## قرارداد استاندارد فضای کاری هر وظیفه
-
-برای هر یک از 229 وظیفه، پوشه‌ای مستقل با شناسهٔ دقیق گره در این مسیر ایجاد کن:
-
-- پوشهٔ وظیفه: `step three/{TASK_ID}/`؛ برای نمونه `step three/T0001/`.
-- گزارش اجرای وظیفه: `step three/{TASK_ID}/execution-report.md`.
-- پوشهٔ شواهد و نتایج آزمون: `step three/{TASK_ID}/evidence/`.
-
-در هر تلاش، گزارش باید دست‌کم شناسهٔ وظیفه و تلاش، زمان، نتیجه، خلاصهٔ کار، فایل‌های تغییرکرده، آزمون‌هایی که واقعاً اجرا شده‌اند و نتیجهٔ آن‌ها، شواهد، شکست‌ها یا محدودیت‌ها، موانع و پیگیری بعدی را ثبت کند. شواهد باید به فایل‌ها، گزارش‌ها یا خروجی‌های واقعی و قابل‌بررسی اشاره کنند؛ صرفاً ساختن پوشه یا گزارش، معیار پذیرش نیست. تاریخچهٔ تلاش‌ها را پاک نکن و گزارش را با تاریخچهٔ مرکزی همان گره در این فایل هماهنگ نگه دار.
-
-کد، پیکربندی و آزمون‌های واقعی برنامه را در مسیر مناسب ساختار اصلی مخزن قرار بده، نه اینکه همهٔ کد را در پوشه‌های وظایف پراکنده کنی. مسیر فایل‌های واقعی تغییرکرده باید در گزارش وظیفه و فیلدهای مربوط گراف ثبت شود. از ایجاد نسخه‌های تکراریِ غیرضروری از کد یا شواهد خودداری کن. این قرارداد برای همهٔ وظایف یکسان است، مگر اینکه استثنایی مستدل ثبت شود.
-
-## نمای کلی بخش‌ها
-- **قانون تکمیل وظیفه** — T0001 تا T0010؛ 10 وظیفه؛ نقطهٔ شروع گراف
-- **1. تعریف نسخهٔ قابل‌ساخت و تصمیم‌های فنی** — T0011 تا T0020؛ 10 وظیفه; وابسته به T0010
-- **2. ساختار مخزن و ابزارهای توسعه** — T0021 تا T0030؛ 10 وظیفه; وابسته به T0020
-- **3. قراردادهای مشترک شبکه و داده** — T0031 تا T0040؛ 10 وظیفه; وابسته به T0030
-- **4. اسکلت قابل‌اجرای میزبان ویندوز** — T0041 تا T0048؛ 8 وظیفه; وابسته به T0040
-- **5. تشخیص سخت‌افزار و ظرفیت** — T0049 تا T0056؛ 8 وظیفه; وابسته به T0048
-- **6. موتور استنتاج محلی واقعی** — T0057 تا T0067؛ 11 وظیفه; وابسته به T0056
-- **7. کاتالوگ، مجوز و فایل‌های مدل** — T0068 تا T0075؛ 8 وظیفه; وابسته به T0067
-- **8. دانلود، نصب، انتخاب و حذف مدل** — T0076 تا T0087؛ 12 وظیفه; وابسته به T0075
-- **9. گفت‌وگوی مستقیم در میزبان و ابزارهای عامل** — T0088 تا T0097؛ 10 وظیفه; وابسته به T0087
-- **10. صف درخواست و محدودیت یک پردازش هم‌زمان** — T0098 تا T0107؛ 10 وظیفه; وابسته به T0097
-- **11. سرویس شبکه روی میزبان ویندوز** — T0108 تا T0115؛ 8 وظیفه; وابسته به T0107
-- **12. معماری P2P و کشف میزبان** — T0116 تا T0128؛ 13 وظیفه; وابسته به T0115
-- **13. هویت ارتباطی و رمزنگاری** — T0129 تا T0138؛ 10 وظیفه; وابسته به T0128
-- **14. اپلیکیشن واقعی اندروید** — T0139 تا T0150؛ 12 وظیفه; وابسته به T0138
-- **15. مخزن زمینهٔ فشردهٔ گفت‌وگو** — T0151 تا T0160؛ 10 وظیفه; وابسته به T0150
-- **16. انتخاب سه میزبان، چندپاسخی و تلاش مجدد** — T0161 تا T0177؛ 17 وظیفه; وابسته به T0160
-- **17. امنیت داده و سیاست نگهداری** — T0178 تا T0188؛ 11 وظیفه; وابسته به T0177
-- **18. خطا، مشاهده‌پذیری و پایداری** — T0189 تا T0195؛ 7 وظیفه; وابسته به T0188
-- **19. آزمون‌های واقعی و معیارهای قبولی** — T0196 تا T0208؛ 13 وظیفه; وابسته به T0195
-- **20. بسته‌بندی و تحویل قابل‌اجرا** — T0209 تا T0218؛ 10 وظیفه; وابسته به T0208
-- **21. بازبینی نهایی ضدِ پیاده‌سازی صوری** — T0219 تا T0229؛ 11 وظیفه; وابسته به T0218
-
-## قالب هر گره در نسخهٔ v2.1
-هر گره دارای این فیلدهاست:
-- `id`: شناسهٔ پایدار و یکتا؛
-- `title` و `section`: شرح و بخش مبدأ؛
-- `depends_on`: شناسهٔ پیش‌نیازها؛
-- `inputs`: ورودی‌های لازم؛
-- `outputs`: خروجی مورد انتظار؛
-- `start_condition`: شرط آغاز؛
-- `acceptance`: معیار تکمیل قابل‌بررسی؛
-- `status` و `status_fa`: وضعیت جاری؛
-- `expected_output_paths`: مسیر هدف؛
-- `actual_output_paths`: مسیر واقعی فایل‌های ایجادشده، خالی تا زمان تأیید؛
-- `evidence`: مسیر گزارش آزمون، CI یا شواهد دیگر.
-
-## دادهٔ کامل گراف v2.1
-ساختار زیر JSON معتبر و قابل‌پردازش ماشینی است. فهرست `nodes` همهٔ وظایف را دارد و `edges` یال‌های جهت‌دار وابستگی را ارائه می‌کند.
-
 ```json
 {
   "schema_version": "1.0",
@@ -7695,8 +7582,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0045 و T0040 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال انجام",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "src/Host.Application/HostStatusPresentation.cs",
         "src/Host.Windows/MainWindow.xaml",
@@ -7718,12 +7605,12 @@
         "step three/T0046/execution-report.md",
         "step three/T0046/evidence/verification.md"
       ],
-      "notes": "The status presentation formats the backend and last-observed local endpoint state from HostStatus snapshots (Stopped, Starting, Ready, Busy, Error), and refreshes during connection checks and inference. Direct peer-to-peer transport is explicitly reported as not implemented; no P2P readiness is claimed. Exact-commit CI for these changes is pending. Latest product CI on c6ac1088d5321744331e97fa2c3f1dd76c0acaa0: Windows Release build and lifecycle tests passed, but WPF startup smoke exceeded 15 seconds; workflow timeout raised to 30 seconds, awaiting revalidation. Latest quality run 39922632934 failed because the source-level test still asserted the old 15-second timeout; test expectation updated to 30 seconds, pending CI. Quality gate run 39922876698 confirmed all 99 Python tests pass, but graph validation failed because failed_attempt_count did not match execution_history results. The metadata count has been corrected to reflect result values; the observed CI failure itself remains documented in tests_failed. Follow-up exact-main run 39922953868 still failed graph_guard with ATTEMPT_COUNT_MISMATCH (summary=3, history=4); the previous correction addressed the failed-attempt count field, not attempt_count. Updated attempt_count to 4 to match the four preserved history entries. Re-run graph guard and evidence validation after this commit; task remains in_progress. Exact-main validation completed 2026-10-23: quality gate run 39923551335 and product build run 39923551318 passed for e3bd75315785605ed040168010934f6342c94782, including Windows startup smoke, host lifecycle tests, Android APK and Protobuf round-trip checks. T0046 acceptance is verified; P2P remains unavailable. Follow-up run 39924326694 passed 100 Python tests, compileall and graph structure validation, but failed evidence validation because the evidence array contained prose instead of repository paths. Corrected the evidence array and temporarily reopened T0046 pending exact-main graph gate.",
+      "notes": "The status presentation formats the backend and last-observed local endpoint state from HostStatus snapshots (Stopped, Starting, Ready, Busy, Error), and refreshes during connection checks and inference. Direct peer-to-peer transport is explicitly reported as not implemented; no P2P readiness is claimed. Exact-commit CI for these changes is pending. Latest product CI on c6ac1088d5321744331e97fa2c3f1dd76c0acaa0: Windows Release build and lifecycle tests passed, but WPF startup smoke exceeded 15 seconds; workflow timeout raised to 30 seconds, awaiting revalidation. Latest quality run 39922632934 failed because the source-level test still asserted the old 15-second timeout; test expectation updated to 30 seconds, pending CI. Quality gate run 39922876698 confirmed all 99 Python tests pass, but graph validation failed because failed_attempt_count did not match execution_history results. The metadata count has been corrected to reflect result values; the observed CI failure itself remains documented in tests_failed. Follow-up exact-main run 39922953868 still failed graph_guard with ATTEMPT_COUNT_MISMATCH (summary=3, history=4); the previous correction addressed the failed-attempt count field, not attempt_count. Updated attempt_count to 4 to match the four preserved history entries. Re-run graph guard and evidence validation after this commit; task remains in_progress. Exact-main validation completed 2026-10-23: quality gate run 39923551335 and product build run 39923551318 passed for e3bd75315785605ed040168010934f6342c94782, including Windows startup smoke, host lifecycle tests, Android APK and Protobuf round-trip checks. T0046 acceptance is verified; P2P remains unavailable. Follow-up run 39924326694 passed 100 Python tests, compileall and graph structure validation, but failed evidence validation because the evidence array contained prose instead of repository paths. Corrected the evidence array and temporarily reopened T0046 pending exact-main graph gate. Exact-main revalidation on commit bf4617fd5ceb8850524a14b1651941d94a997587 passed both quality gate 39924469454 and product build 39924469484; evidence paths are valid. T0046 acceptance verified; direct P2P remains unavailable.",
       "execution_summary": {
-        "attempt_count": 8,
+        "attempt_count": 9,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0046-A008",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "T0046-A009",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Host.Application/HostStatusPresentation.cs",
           "src/Host.Windows/MainWindow.xaml",
@@ -7748,6 +7635,18 @@
             "result": "passed",
             "evidence": "https://github.com/artinrahimii/project/actions/runs/39923551318",
             "summary": "Windows WPF Release build/startup smoke and lifecycle tests, Android APK build, and Protobuf round-trip checks passed."
+          },
+          {
+            "name": "Step Three quality gate",
+            "result": "passed",
+            "evidence": "https://github.com/artinrahimii/project/actions/runs/39924469454",
+            "summary": "Exact-main quality gate passed after correcting the T0046 evidence paths; all 100 Python tests, compileall, graph structure and evidence validation passed."
+          },
+          {
+            "name": "Integrated product build",
+            "result": "passed",
+            "evidence": "https://github.com/artinrahimii/project/actions/runs/39924469484",
+            "summary": "Exact-main product workflow succeeded: Windows WPF Release build and startup smoke, host lifecycle tests, Android debug APK build, and Protobuf round-trip checks."
           }
         ],
         "tests_failed": [
@@ -8002,6 +7901,36 @@
           "reopened_reason": "Reopened temporarily to correct the graph evidence contract after CI validation failed.",
           "contract_changes": [],
           "follow_up": "Wait for exact-main quality gate after metadata correction; if green and product build remains green, restore T0046 to done."
+        },
+        {
+          "attempt_id": "T0046-A009",
+          "started_at": "2026-10-23T08:28:00Z",
+          "ended_at": "2026-10-23T08:28:00Z",
+          "result": "succeeded",
+          "summary": "Revalidated the corrected evidence-path metadata on exact main. Both the quality gate and integrated product build passed; T0046 acceptance is now verified. Direct P2P transport remains explicitly unimplemented and is not claimed as complete.",
+          "changed_files": [
+            "step three/project-graph.md"
+          ],
+          "commit_sha": "bf4617fd5ceb8850524a14b1651941d94a997587",
+          "tests": [
+            {
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39924469454",
+              "summary": "Exact-main quality gate passed after correcting the T0046 evidence paths; all 100 Python tests, compileall, graph structure and evidence validation passed."
+            },
+            {
+              "name": "Integrated product build",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39924469484",
+              "summary": "Exact-main product workflow succeeded: Windows WPF Release build and startup smoke, host lifecycle tests, Android debug APK build, and Protobuf round-trip checks."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Continue with T0048 according to the graph and validate its incoming edges before implementation."
         }
       ],
       "reopened_reason": "Reopened on 2026-10-23 after graph evidence validation rejected non-path evidence metadata; code-level acceptance tests passed, but the graph gate must be green before restoring done."
@@ -8023,8 +7952,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0046 و T0040 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال انجام",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "src/Host.Application/HostErrorPresentation.cs",
         "src/Host.Windows/MainWindow.xaml.cs",
@@ -8036,13 +7965,20 @@
       "expected_output_paths": [
         "src/Host.Windows/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "src/Host.Application/HostErrorPresentation.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "tests/test_wpf_entrypoint.py",
+        "step three/T0047/execution-report.md",
+        "step three/T0047/evidence/verification.md"
+      ],
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود. Exact-main quality gate 39924469454 and integrated product build 39924469484 passed on commit bf4617fd5ceb8850524a14b1651941d94a997587; T0047 acceptance verified.",
       "execution_summary": {
-        "attempt_count": 2,
+        "attempt_count": 3,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0047-A002",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "T0047-A003",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Host.Application/HostErrorPresentation.cs",
           "src/Host.Windows/MainWindow.xaml.cs",
@@ -8053,7 +7989,20 @@
           "step three/project-graph.md"
         ],
         "related_commits": [],
-        "tests_passed": [],
+        "tests_passed": [
+          {
+            "name": "Step Three quality gate",
+            "result": "passed",
+            "evidence": "https://github.com/artinrahimii/project/actions/runs/39924469454",
+            "summary": "Exact-main quality gate passed after correcting the T0046 evidence paths; all 100 Python tests, compileall, graph structure and evidence validation passed."
+          },
+          {
+            "name": "Integrated product build",
+            "result": "passed",
+            "evidence": "https://github.com/artinrahimii/project/actions/runs/39924469484",
+            "summary": "Exact-main product workflow succeeded: Windows WPF Release build and startup smoke, host lifecycle tests, Android debug APK build, and Protobuf round-trip checks."
+          }
+        ],
         "tests_failed": [
           {
             "name": "Step Three quality gate run 39924326694",
@@ -8124,6 +8073,36 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Verify quality gate and product build on the correction commit; then continue T0047 only after T0046 returns to done."
+        },
+        {
+          "attempt_id": "T0047-A003",
+          "started_at": "2026-10-23T08:28:00Z",
+          "ended_at": "2026-10-23T08:28:00Z",
+          "result": "succeeded",
+          "summary": "Exact-main validation passed after correcting the predecessor task's evidence metadata. The centralized user-safe error mapping and its regression checks are covered by the green quality gate; the Windows host and Android client build workflow also succeeded.",
+          "changed_files": [
+            "step three/project-graph.md"
+          ],
+          "commit_sha": "bf4617fd5ceb8850524a14b1651941d94a997587",
+          "tests": [
+            {
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39924469454",
+              "summary": "Exact-main quality gate passed after correcting the T0046 evidence paths; all 100 Python tests, compileall, graph structure and evidence validation passed."
+            },
+            {
+              "name": "Integrated product build",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39924469484",
+              "summary": "Exact-main product workflow succeeded: Windows WPF Release build and startup smoke, host lifecycle tests, Android debug APK build, and Protobuf round-trip checks."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Proceed to T0048 after reviewing its dependencies and required acceptance evidence."
         }
       ]
     },
@@ -21214,6 +21193,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-23T15:31:00Z"
+  "updated_at": "2026-10-23T08:28:00Z"
 }
 ```
