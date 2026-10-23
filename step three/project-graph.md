@@ -8455,8 +8455,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0049 و T0048 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "completed",
+      "status_fa": "تکمیل‌شده",
       "actual_output_paths": [
         "src/Host.Windows/WindowsHostHardwareDiscovery.cs",
         "src/Host.Windows/MainWindow.xaml",
@@ -8472,12 +8472,12 @@
         "tests/test_windows_hardware_discovery.py",
         "tests/test_wpf_entrypoint.py"
       ],
-      "notes": "In progress. Two quality-gate attempts exposed and preserved graph metadata issues (unsupported edge class, then attempt-count mismatch). Both are corrected in the current graph revision; exact revalidation and product build are pending. Display adapter inventory does not imply compute support.",
+      "notes": "Implemented Windows display-adapter enumeration using EnumDisplayDevicesW and surfaced actual configured local llama.cpp endpoint health in WPF. CI passed on parent revision 77d0e2821bf012fee0525041744a6dd4ad786ded: graph/Python quality gate, host lifecycle tests, Windows WPF build, and Android APK build. This identifies display adapters, not CUDA/Vulkan/DirectML or model GPU-offload capability; backend status is the configured endpoint health check.",
       "execution_summary": {
-        "attempt_count": 3,
+        "attempt_count": 4,
         "failed_attempt_count": 1,
-        "last_attempt_id": "T0050-A003",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "T0050-A004",
+        "last_attempt_result": "passed",
         "changed_files": [
           "src/Host.Windows/WindowsHostHardwareDiscovery.cs",
           "src/Host.Windows/MainWindow.xaml",
@@ -8489,8 +8489,35 @@
           "step three/T0050/evidence/verification.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
+        "related_commits": [
+          "77d0e2821bf012fee0525041744a6dd4ad786ded"
+        ],
+        "tests_passed": [
+          {
+            "name": "Step Three quality gate",
+            "result": "passed",
+            "evidence": "https://github.com/artinrahimii/project/actions/runs/39944021280",
+            "summary": "Exact-commit quality gate passed, including graph validation and Python checks."
+          },
+          {
+            "name": "Host lifecycle unit and integration tests",
+            "result": "passed",
+            "evidence": "https://github.com/artinrahimii/project/actions/runs/39944021286",
+            "summary": "Host lifecycle unit/integration workflow job passed."
+          },
+          {
+            "name": "Windows WPF Release build",
+            "result": "passed",
+            "evidence": "https://github.com/artinrahimii/project/actions/runs/39944021286",
+            "summary": "Windows WPF host build job passed."
+          },
+          {
+            "name": "Android client APK build",
+            "result": "passed",
+            "evidence": "https://github.com/artinrahimii/project/actions/runs/39944021286",
+            "summary": "Android APK build job passed; this is pipeline evidence, not a claim of device runtime validation."
+          }
+        ],
         "tests_failed": [
           "Step Three quality gate run 39943630991 failed graph validation: INVALID_EDGE_CLASSIFICATION for T0049 → T0050 because 'technical' is not an allowed graph class. No conclusion about Windows C# build can be drawn from this failure. Corrected to supported contract_or_interface_dependency in this revision."
         ],
@@ -8569,6 +8596,50 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Run graph guard, evidence validation and inspect product CI before marking T0050 done."
+        },
+        {
+          "attempt_id": "T0050-A004",
+          "started_at": "2026-10-23T11:08:36Z",
+          "ended_at": "2026-10-23T11:11:24Z",
+          "result": "passed",
+          "summary": "Verified the implementation on exact parent commit 77d0e2821bf012fee0525041744a6dd4ad786ded. The Step Three quality gate passed, and all three product CI jobs passed: host lifecycle unit/integration tests, Windows WPF build, and Android APK build. T0050 acceptance is satisfied for display-adapter inventory and configured backend health reporting; no GPU compute backend/offload support is claimed.",
+          "changed_files": [
+            "step three/project-graph.md",
+            "step three/T0050/execution-report.md",
+            "step three/T0050/evidence/verification.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39944021280",
+              "summary": "Exact-commit quality gate passed, including graph validation and Python checks."
+            },
+            {
+              "name": "Host lifecycle unit and integration tests",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39944021286",
+              "summary": "Host lifecycle unit/integration workflow job passed."
+            },
+            {
+              "name": "Windows WPF Release build",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39944021286",
+              "summary": "Windows WPF host build job passed."
+            },
+            {
+              "name": "Android client APK build",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39944021286",
+              "summary": "Android APK build job passed; this is pipeline evidence, not a claim of device runtime validation."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Proceed to T0051 after checking T0048 and T0050 outputs; review T0050 → T0051 edge because it remains unreviewed."
         }
       ]
     },
@@ -8596,7 +8667,7 @@
         "src/Host.Windows/ (سرویس تشخیص سخت‌افزار و UI)"
       ],
       "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "notes": "Next logical task after T0050 completion. Before implementation, validate outputs from T0048/T0050 and review the existing unreviewed T0050 → T0051 edge; do not treat its blocks type alone as proof of a technical dependency.",
       "execution_summary": {
         "attempt_count": 0,
         "failed_attempt_count": 0,
@@ -21632,6 +21703,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-23T11:08:23.614Z"
+  "updated_at": "2026-10-23T11:21:23.862Z"
 }
 ```

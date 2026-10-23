@@ -24,3 +24,13 @@
 - Quality run [39943857531](https://github.com/artinrahimii/project/actions/runs/39943857531) failed `graph_guard.py` with `ATTEMPT_COUNT_MISMATCH: T0050: summary=2, history=3`.
 - Preserved the failure in the history and corrected the summary count to 3, with A003 as the latest attempt.
 - The product build for this task is still pending; this metadata correction is not represented as a product-test pass.
+
+
+## Attempt T0050-A004 — exact-commit CI verification passed
+- Parent commit tested: `77d0e2821bf012fee0525041744a6dd4ad786ded` (`V 3.0.155`).
+- [Step Three quality gate](https://github.com/artinrahimii/project/actions/runs/39944021280): **success**.
+- [Product build workflow](https://github.com/artinrahimii/project/actions/runs/39944021286): **success**. Jobs passed: host lifecycle unit/integration tests, Windows WPF host build, Android client APK build.
+- T0050 is marked completed based on these CI results and the existing implementation/test files.
+- Scope limitation: adapter enumeration is not proof of GPU compute or model offload support; backend reporting reflects the configured local llama.cpp endpoint health.
+- Historical note: attempts A002/A003 failed graph metadata validation and remain in history. The final corrected revision passed; the earlier failures were not erased.
+- Next: T0051, after reviewing T0048/T0050 outputs and validating the still-unreviewed T0050 → T0051 edge.
