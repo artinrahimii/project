@@ -112,7 +112,6 @@
 ساختار زیر JSON معتبر و قابل‌پردازش ماشینی است. فهرست `nodes` همهٔ وظایف را دارد و `edges` یال‌های جهت‌دار وابستگی را ارائه می‌کند.
 
 ```json
-
 {
   "schema_version": "1.0",
   "document": "v2.1",
@@ -7718,11 +7717,11 @@
         "tests/test_wpf_entrypoint.py",
         "step three/T0046/evidence/verification.md"
       ],
-      "notes": "The status presentation formats the backend and last-observed local endpoint state from HostStatus snapshots (Stopped, Starting, Ready, Busy, Error), and refreshes during connection checks and inference. Direct peer-to-peer transport is explicitly reported as not implemented; no P2P readiness is claimed. Exact-commit CI for these changes is pending. Latest product CI on c6ac1088d5321744331e97fa2c3f1dd76c0acaa0: Windows Release build and lifecycle tests passed, but WPF startup smoke exceeded 15 seconds; workflow timeout raised to 30 seconds, awaiting revalidation.",
+      "notes": "The status presentation formats the backend and last-observed local endpoint state from HostStatus snapshots (Stopped, Starting, Ready, Busy, Error), and refreshes during connection checks and inference. Direct peer-to-peer transport is explicitly reported as not implemented; no P2P readiness is claimed. Exact-commit CI for these changes is pending. Latest product CI on c6ac1088d5321744331e97fa2c3f1dd76c0acaa0: Windows Release build and lifecycle tests passed, but WPF startup smoke exceeded 15 seconds; workflow timeout raised to 30 seconds, awaiting revalidation. Latest quality run 39922632934 failed because the source-level test still asserted the old 15-second timeout; test expectation updated to 30 seconds, pending CI.",
       "execution_summary": {
-        "attempt_count": 2,
-        "failed_attempt_count": 1,
-        "last_attempt_id": "T0046-A002",
+        "attempt_count": 3,
+        "failed_attempt_count": 2,
+        "last_attempt_id": "T0046-A003",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Host.Application/HostStatusPresentation.cs",
@@ -7743,6 +7742,12 @@
             "result": "failed",
             "evidence": "https://github.com/artinrahimii/project/actions/runs/39922278392",
             "summary": "The Windows host compiled successfully and lifecycle tests passed, but the startup smoke test exceeded its 15-second process timeout. Increasing the smoke-test allowance to 30 seconds; this is a CI smoke-test failure, not proof of a UI logic failure."
+          },
+          {
+            "name": "Step Three quality gate run 39922632934",
+            "result": "failed",
+            "evidence": "https://github.com/artinrahimii/project/actions/runs/39922632934",
+            "summary": "98/99 tests passed; one stale assertion expected WaitForExit(15000) while product-build.yml had been increased to WaitForExit(30000)."
           }
         ],
         "blocked_reason": null,
@@ -7817,6 +7822,31 @@
           ],
           "failure_details": "WPF startup smoke test exceeded its configured 15-second timeout on Windows runner although compilation succeeded.",
           "follow_up": "Verify the 30-second startup smoke test and Android build/test workflow on the next exact main commit."
+        },
+        {
+          "attempt_id": "T0046-A003",
+          "started_at": "2026-10-23T11:00:00-04:00",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "The exact-main quality workflow exposed a stale test assertion: product-build.yml uses the 30-second startup bound, while tests/test_wpf_entrypoint.py still expected the former 15-second value. Updated the assertion to match the configured bound; exact-commit CI is pending.",
+          "changed_files": [
+            "tests/test_wpf_entrypoint.py",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Step Three quality gate run 39922632934",
+              "result": "failed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39922632934",
+              "summary": "98/99 tests passed; failure was only the outdated 15-second marker."
+            }
+          ],
+          "failure_details": "The timeout assertion did not match the current workflow configuration.",
+          "blocked_reason": null,
+          "reopened_reason": "Latest exact-main quality workflow failed due to stale assertion.",
+          "contract_changes": [],
+          "follow_up": "Verify this updated assertion in exact-commit quality CI and verify Windows WPF startup plus Android build/tests in product CI."
         }
       ]
     },
@@ -20952,7 +20982,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-23T08:07:30Z"
+  "updated_at": "2026-10-23T15:00:00Z"
 }
-
 ```

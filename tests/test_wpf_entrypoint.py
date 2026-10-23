@@ -47,7 +47,7 @@ class WpfEntryPointTests(unittest.TestCase):
             "Smoke test WPF application startup",
             "WhiteP.Host.Windows.exe",
             '-ArgumentList "--smoke-test"',
-            "WaitForExit(15000)",
+            "WaitForExit(30000)",
             "$process.Kill()",
             "$process.ExitCode -ne 0",
             "PASS: WPF entry point displayed MainWindow",
