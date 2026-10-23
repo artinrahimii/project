@@ -8685,20 +8685,41 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0050 و T0048 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "src/Host.Windows/ModelMemoryCompatibilityEstimator.cs",
+        "src/Host.Windows/WindowsHostHardwareDiscovery.cs",
+        "src/Host.Windows/MainWindow.xaml",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "tests/test_windows_hardware_discovery.py",
+        "step three/T0051/execution-report.md",
+        "step three/T0051/evidence/verification.md"
+      ],
       "expected_output_paths": [
         "src/Host.Windows/ (سرویس تشخیص سخت‌افزار و UI)"
       ],
-      "evidence": [],
-      "notes": "Next logical task after T0050 completion. Before implementation, validate outputs from T0048/T0050 and review the existing unreviewed T0050 → T0051 edge; do not treat its blocks type alone as proof of a technical dependency.",
+      "evidence": [
+        "tests/test_windows_hardware_discovery.py",
+        "step three/T0051/execution-report.md",
+        "step three/T0051/evidence/verification.md"
+      ],
+      "notes": "Implemented estimate comparing an explicitly declared model-memory requirement with live available physical RAM from GlobalMemoryStatusEx. Scope excludes GPU/VRAM, context length, model format and backend overhead. Exact-commit CI pending.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0051-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Host.Windows/ModelMemoryCompatibilityEstimator.cs",
+          "src/Host.Windows/WindowsHostHardwareDiscovery.cs",
+          "src/Host.Windows/MainWindow.xaml",
+          "src/Host.Windows/MainWindow.xaml.cs",
+          "tests/test_windows_hardware_discovery.py",
+          "step three/T0051/execution-report.md",
+          "step three/T0051/evidence/verification.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
@@ -8711,7 +8732,32 @@
           "review_evidence": []
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0051-A001",
+          "started_at": "2026-10-23T11:40:00Z",
+          "ended_at": "2026-10-23T11:40:00Z",
+          "result": "partial",
+          "summary": "Added live available physical RAM to the Windows hardware snapshot, a declared-requirement estimator, and WPF controls. CI pending; task is not complete.",
+          "changed_files": [
+            "src/Host.Windows/ModelMemoryCompatibilityEstimator.cs",
+            "src/Host.Windows/WindowsHostHardwareDiscovery.cs",
+            "src/Host.Windows/MainWindow.xaml",
+            "src/Host.Windows/MainWindow.xaml.cs",
+            "tests/test_windows_hardware_discovery.py",
+            "step three/T0051/execution-report.md",
+            "step three/T0051/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Run exact-commit quality gate, Windows WPF Release build/startup smoke test, lifecycle tests and Android build; mark done only if all required checks pass."
+        }
+      ]
     },
     {
       "id": "T0052",
@@ -17830,19 +17876,26 @@
       "from": "T0050",
       "to": "T0051",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0051 consumes AvailablePhysicalMemoryBytes from the Windows hardware snapshot introduced by T0050.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/WindowsHostHardwareDiscovery.cs",
+        "src/Host.Windows/ModelMemoryCompatibilityEstimator.cs",
+        "tests/test_windows_hardware_discovery.py"
+      ]
     },
     {
       "from": "T0048",
       "to": "T0051",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0051 does not consume lifecycle-recovery outputs from T0048; retain the existing blocks edge as conservative ordering.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Application/HostInferenceSession.cs",
+        "step three/T0048/execution-report.md"
+      ]
     },
     {
       "from": "T0051",
@@ -21728,6 +21781,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-23T11:22:41.016Z"
+  "updated_at": "2026-10-23T11:40:00.000Z"
 }
 ```

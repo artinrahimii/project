@@ -1,4 +1,5 @@
 using System.IO;
+using System.Globalization;
 using System.Windows;
 using WhiteP.Host.Application;
 using WhiteP.Host.Domain;
@@ -148,6 +149,29 @@ public partial class MainWindow : Window
         catch (Exception)
         {
             GpuStatus.Text = "GPU/display adapters: discovery failed; compute capability is unknown.";
+        }
+    }
+
+
+    private void EstimateModelCompatibility_Click(object sender, RoutedEventArgs e)
+    {
+        if (!double.TryParse(ModelMemoryRequirementGiB.Text.Trim(), NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out var requiredGiB) ||
+            !double.IsFinite(requiredGiB) || requiredGiB <= 0 || requiredGiB > 1_048_576)
+        {
+            ModelCompatibilityStatus.Text = "Enter a positive model memory requirement in GiB using a decimal point (for example, 6.5).";
+            return;
+        }
+        try
+        {
+            var hardware = WindowsHostHardwareDiscovery.Discover();
+            var requiredBytes = checked((long)Math.Ceiling(requiredGiB * 1024d * 1024d * 1024d));
+            var result = ModelMemoryCompatibilityEstimator.Estimate(requiredBytes, hardware.AvailablePhysicalMemoryBytes);
+            var availableGiB = hardware.AvailablePhysicalMemoryBytes / (1024d * 1024d * 1024d);
+            ModelCompatibilityStatus.Text = $"{result.Message} Available RAM now: {availableGiB:F2} GiB; declared model requirement: {requiredGiB:F2} GiB.";
+        }
+        catch (Exception)
+        {
+            ModelCompatibilityStatus.Text = "Compatibility estimate unavailable: Windows could not report current hardware memory.";
         }
     }
 

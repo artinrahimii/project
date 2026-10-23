@@ -9,6 +9,7 @@ public sealed record WindowsHostHardwareSnapshot(
     Version OperatingSystemVersion,
     string SystemDriveName,
     ulong TotalPhysicalMemoryBytes,
+    ulong AvailablePhysicalMemoryBytes,
     long SystemDriveTotalBytes,
     long SystemDriveAvailableBytes);
 
@@ -89,6 +90,7 @@ public static class WindowsHostHardwareDiscovery
             operatingSystemVersion,
             systemDrive.Name,
             memoryStatus.TotalPhysical,
+            memoryStatus.AvailablePhysical,
             totalSystemDriveBytes,
             availableSystemDriveBytes);
     }
