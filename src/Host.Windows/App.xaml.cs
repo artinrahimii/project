@@ -42,9 +42,18 @@ public partial class App : System.Windows.Application
                     string.IsNullOrWhiteSpace(status.Text) ||
                     window.FindName("PromptInput") is not TextBox ||
                     window.FindName("OutputText") is not TextBox ||
-                    window.FindName("GenerateButton") is not Button)
+                    window.FindName("GenerateButton") is not Button ||
+                    window.FindName("GpuStatus") is not TextBlock ||
+                    window.FindName("BackendCapabilityStatus") is not TextBlock)
                 {
                     Shutdown(2);
+                    return;
+                }
+
+                var displayAdapters = WindowsHostHardwareDiscovery.DiscoverDisplayAdapters();
+                if (displayAdapters.Any(adapter => string.IsNullOrWhiteSpace(adapter.DeviceName) || string.IsNullOrWhiteSpace(adapter.Description)))
+                {
+                    Shutdown(4);
                     return;
                 }
 

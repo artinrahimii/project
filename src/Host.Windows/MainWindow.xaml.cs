@@ -30,6 +30,8 @@ public partial class MainWindow : Window
         ServerUrl.Text = _settings.ServerUrl;
         ModelId.Text = _settings.ModelId;
         RenderStatus(_session.Status);
+        RenderDisplayAdapters();
+        BackendCapabilityStatus.Text = "Backend: not checked; Connect will test the configured local llama.cpp endpoint.";
         if (settingsLoadFailed)
         {
             LifecycleState.Text = "Error — local settings are invalid; correct the settings file before reconnecting.";
@@ -123,6 +125,30 @@ public partial class MainWindow : Window
     {
         LifecycleState.Text = HostStatusPresentation.FormatBackendStatus(status);
         NetworkState.Text = HostStatusPresentation.FormatNetworkStatus(status);
+        BackendCapabilityStatus.Text = status.State switch
+        {
+            HostState.Ready => "Backend: available — the configured local llama.cpp endpoint passed its health check.",
+            HostState.Error => "Backend: unavailable or not ready — " + status.Message,
+            HostState.Starting => "Backend: checking the configured local endpoint…",
+            HostState.Busy => "Backend: available — one local inference request is running.",
+            _ => "Backend: not checked or disconnected."
+        };
+    }
+
+    private void RenderDisplayAdapters()
+    {
+        try
+        {
+            var adapters = WindowsHostHardwareDiscovery.DiscoverDisplayAdapters();
+            GpuStatus.Text = adapters.Count == 0
+                ? "GPU/display adapters: Windows reported no display adapters."
+                : "GPU/display adapters (display inventory only; compute support is not inferred): " +
+                  string.Join("; ", adapters.Select(adapter => adapter.Description + (adapter.AttachedToDesktop ? " (active)" : " (not attached)")));
+        }
+        catch (Exception)
+        {
+            GpuStatus.Text = "GPU/display adapters: discovery failed; compute capability is unknown.";
+        }
     }
 
     private void MainWindow_Closed(object? sender, EventArgs e)

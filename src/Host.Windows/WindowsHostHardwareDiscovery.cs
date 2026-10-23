@@ -12,8 +12,28 @@ public sealed record WindowsHostHardwareSnapshot(
     long SystemDriveTotalBytes,
     long SystemDriveAvailableBytes);
 
+public sealed record WindowsDisplayAdapter(string DeviceName, string Description, bool AttachedToDesktop);
+
 public static class WindowsHostHardwareDiscovery
 {
+    private const uint DisplayDeviceAttachedToDesktop = 0x00000001;
+    private const uint DisplayDeviceMirroringDriver = 0x00000008;
+
+    public static IReadOnlyList<WindowsDisplayAdapter> DiscoverDisplayAdapters()
+    {
+        if (!OperatingSystem.IsWindows()) throw new PlatformNotSupportedException("Display adapter discovery requires Windows.");
+        var adapters = new List<WindowsDisplayAdapter>();
+        for (uint index = 0; index < 64; index++)
+        {
+            var device = new DisplayDevice { Size = Marshal.SizeOf<DisplayDevice>() };
+            if (!NativeMethods.EnumDisplayDevices(null, index, ref device, 0)) break;
+            if ((device.StateFlags & DisplayDeviceMirroringDriver) != 0 || string.IsNullOrWhiteSpace(device.DeviceString)) continue;
+            adapters.Add(new WindowsDisplayAdapter(device.DeviceName.Trim(), device.DeviceString.Trim(),
+                (device.StateFlags & DisplayDeviceAttachedToDesktop) != 0));
+        }
+        return adapters;
+    }
+
     public static WindowsHostHardwareSnapshot Discover()
     {
         if (!OperatingSystem.IsWindows())
@@ -73,6 +93,17 @@ public static class WindowsHostHardwareDiscovery
             availableSystemDriveBytes);
     }
 
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+    private struct DisplayDevice
+    {
+        public int Size;
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)] public string DeviceName;
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)] public string DeviceString;
+        public uint StateFlags;
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)] public string DeviceId;
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)] public string DeviceKey;
+    }
+
     [StructLayout(LayoutKind.Sequential)]
     private struct MemoryStatusEx
     {
@@ -89,6 +120,10 @@ public static class WindowsHostHardwareDiscovery
 
     private static class NativeMethods
     {
+        [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true, EntryPoint = "EnumDisplayDevicesW")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        internal static extern bool EnumDisplayDevices(string? device, uint deviceNumber, ref DisplayDevice displayDevice, uint flags);
+
         [DllImport("kernel32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool GlobalMemoryStatusEx(ref MemoryStatusEx buffer);

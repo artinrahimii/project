@@ -8455,20 +8455,40 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0049 و T0048 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "src/Host.Windows/WindowsHostHardwareDiscovery.cs",
+        "src/Host.Windows/MainWindow.xaml",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "src/Host.Windows/App.xaml.cs",
+        "tests/test_windows_hardware_discovery.py",
+        "tests/test_wpf_entrypoint.py"
+      ],
       "expected_output_paths": [
         "src/Host.Windows/ (سرویس تشخیص سخت‌افزار و UI)"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "tests/test_windows_hardware_discovery.py",
+        "tests/test_wpf_entrypoint.py"
+      ],
+      "notes": "In progress; real Windows display adapter enumeration, backend health state UI, exact-commit CI pending. Display adapters do not prove CUDA/Vulkan/compute capability.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0050-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Host.Windows/WindowsHostHardwareDiscovery.cs",
+          "src/Host.Windows/MainWindow.xaml",
+          "src/Host.Windows/MainWindow.xaml.cs",
+          "src/Host.Windows/App.xaml.cs",
+          "tests/test_windows_hardware_discovery.py",
+          "tests/test_wpf_entrypoint.py",
+          "step three/T0050/execution-report.md",
+          "step three/T0050/evidence/verification.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
@@ -8481,7 +8501,33 @@
           "review_evidence": []
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0050-A001",
+          "started_at": "2026-10-23T11:04:58.932Z",
+          "ended_at": "2026-10-23T11:04:58.932Z",
+          "result": "partial",
+          "summary": "Implemented EnumDisplayDevicesW-based Windows display-adapter discovery and surfaced the actual configured local llama.cpp health state in WPF. UI explicitly distinguishes display inventory from compute support. Exact-commit CI pending.",
+          "changed_files": [
+            "src/Host.Windows/WindowsHostHardwareDiscovery.cs",
+            "src/Host.Windows/MainWindow.xaml",
+            "src/Host.Windows/MainWindow.xaml.cs",
+            "src/Host.Windows/App.xaml.cs",
+            "tests/test_windows_hardware_discovery.py",
+            "tests/test_wpf_entrypoint.py",
+            "step three/T0050/execution-report.md",
+            "step three/T0050/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Run exact-commit quality gate and all product CI checks before marking done."
+        }
+      ]
     },
     {
       "id": "T0051",
@@ -17619,19 +17665,27 @@
       "from": "T0049",
       "to": "T0050",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "technical",
+      "rationale": "T0050 extends the Windows-specific hardware discovery service established by T0049; retain blocks edge.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/WindowsHostHardwareDiscovery.cs",
+        "step three/T0048/execution-report.md",
+        "step three/T0049/execution-report.md"
+      ]
     },
     {
       "from": "T0048",
       "to": "T0050",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0050 does not consume lifecycle-recovery outputs from T0048; retain blocks edge as conservative ordering.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Application/HostInferenceSession.cs",
+        "step three/T0048/execution-report.md",
+        "step three/T0049/execution-report.md"
+      ]
     },
     {
       "from": "T0050",
@@ -21492,8 +21546,36 @@
         "step three/T0049/execution-report.md"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-23T11:04:58.931Z",
+      "edge_from": "T0049",
+      "edge_to": "T0050",
+      "old_classification": "unreviewed",
+      "new_classification": "technical",
+      "reason": "T0050 extends the Windows-specific hardware discovery service established by T0049; retain blocks edge.",
+      "evidence": [
+        "src/Host.Windows/WindowsHostHardwareDiscovery.cs",
+        "step three/T0048/execution-report.md",
+        "step three/T0049/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-23T11:04:58.931Z",
+      "edge_from": "T0048",
+      "edge_to": "T0050",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "reason": "T0050 does not consume lifecycle-recovery outputs from T0048; retain blocks edge as conservative ordering.",
+      "evidence": [
+        "src/Host.Application/HostInferenceSession.cs",
+        "step three/T0048/execution-report.md",
+        "step three/T0049/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-23T10:33:07.253Z"
+  "updated_at": "2026-10-23T11:04:58.932Z"
 }
 ```

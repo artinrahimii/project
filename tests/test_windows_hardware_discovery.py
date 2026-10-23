@@ -15,6 +15,14 @@ class WindowsHardwareDiscoveryTests(unittest.TestCase):
         self.assertIn("OperatingSystemDescription", SERVICE)
         self.assertIn("OperatingSystemVersion", SERVICE)
 
+    def test_display_adapters_are_enumerated_through_the_real_windows_api(self):
+        self.assertIn("EnumDisplayDevicesW", SERVICE)
+        self.assertIn("DiscoverDisplayAdapters()", SERVICE)
+        self.assertIn("DisplayDeviceAttachedToDesktop", SERVICE)
+        self.assertIn("DisplayDeviceMirroringDriver", SERVICE)
+        self.assertIn("WindowsHostHardwareDiscovery.DiscoverDisplayAdapters()", APP_CODE)
+        self.assertIn("GPU/display adapters", (ROOT / "src/Host.Windows/MainWindow.xaml.cs").read_text(encoding="utf-8"))
+
     def test_physical_memory_comes_from_the_real_windows_api(self):
         self.assertIn('DllImport("kernel32.dll", SetLastError = true)', SERVICE)
         self.assertIn("GlobalMemoryStatusEx", SERVICE)
