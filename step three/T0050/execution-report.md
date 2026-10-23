@@ -18,3 +18,9 @@
 
 ## Attempt T0050-A003 — metadata correction
 - The graph classification is now schema-compatible. Exact-commit revalidation and the Windows/Android product workflow remain pending.
+
+
+## Attempt T0050-A003 — graph history consistency correction
+- Quality run [39943857531](https://github.com/artinrahimii/project/actions/runs/39943857531) failed `graph_guard.py` with `ATTEMPT_COUNT_MISMATCH: T0050: summary=2, history=3`.
+- Preserved the failure in the history and corrected the summary count to 3, with A003 as the latest attempt.
+- The product build for this task is still pending; this metadata correction is not represented as a product-test pass.

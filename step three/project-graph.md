@@ -8472,11 +8472,11 @@
         "tests/test_windows_hardware_discovery.py",
         "tests/test_wpf_entrypoint.py"
       ],
-      "notes": "In progress. First quality gate exposed unsupported graph class 'technical'; corrected to supported contract_or_interface_dependency. Await revalidation and product build. Display adapter inventory does not imply compute support.",
+      "notes": "In progress. Two quality-gate attempts exposed and preserved graph metadata issues (unsupported edge class, then attempt-count mismatch). Both are corrected in the current graph revision; exact revalidation and product build are pending. Display adapter inventory does not imply compute support.",
       "execution_summary": {
-        "attempt_count": 2,
+        "attempt_count": 3,
         "failed_attempt_count": 1,
-        "last_attempt_id": "T0050-A002",
+        "last_attempt_id": "T0050-A003",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Host.Windows/WindowsHostHardwareDiscovery.cs",
@@ -21632,6 +21632,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-23T11:06:59.281Z"
+  "updated_at": "2026-10-23T11:08:23.614Z"
 }
 ```
