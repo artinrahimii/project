@@ -7217,23 +7217,50 @@
       ],
       "notes": "HostState was already present in the production domain assembly after T0042. This task added explicit regression assertions for the five states, allowed/rejected transitions, and status-message validation; no duplicate implementation was created.",
       "execution_summary": {
-        "attempt_count": 1,
+        "attempt_count": 2,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0043-A001",
-        "last_attempt_result": "awaiting_ci",
+        "last_attempt_id": "T0043-A002",
+        "last_attempt_result": "in_progress",
         "changed_files": [
           "tests/HostLifecycle.Tests/Program.cs",
-          "step three/project-graph.md",
           "step three/T0043/execution-report.md",
-          "step three/T0043/evidence/verification.md"
+          "step three/project-graph.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
-        "tests_failed": [],
+        "related_commits": [
+          "81cacab7e4820692ed72430fd1d2b28094c70c78"
+        ],
+        "tests_passed": [
+          {
+            "name": "Host lifecycle unit and integration tests",
+            "result": "passed",
+            "evidence": "https://github.com/artinrahimii/project/actions/runs/39910955252",
+            "summary": "The exact tested commit 81cacab7e4820692ed72430fd1d2b28094c70c78 passed the lifecycle test job."
+          },
+          {
+            "name": "Windows WPF host build and startup smoke test",
+            "result": "passed",
+            "evidence": "https://github.com/artinrahimii/project/actions/runs/39910955252",
+            "summary": "Windows host build, generated C# Protobuf check and startup smoke test passed on the exact tested commit."
+          },
+          {
+            "name": "Android client build and Protobuf checks",
+            "result": "passed",
+            "evidence": "https://github.com/artinrahimii/project/actions/runs/39910955252",
+            "summary": "Android debug APK build, generated Java/Kotlin Protobuf checks and artifact upload passed on the exact tested commit."
+          }
+        ],
+        "tests_failed": [
+          {
+            "name": "Step Three quality gate",
+            "result": "failed",
+            "evidence": "https://github.com/artinrahimii/project/actions/runs/39910955163",
+            "summary": "Graph validator failed because the task history had no successful attempt and no recorded passing tests. This is a graph-recording failure, not a code-test failure."
+          }
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "awaiting_ci",
+          "state": "passed",
           "triggering_contracts": [
             "HostLifecycle state-transition contract"
           ],
@@ -7244,7 +7271,8 @@
           ],
           "review_evidence": [
             "src/Host.Domain/HostLifecycle.cs",
-            "tests/HostLifecycle.Tests/Program.cs"
+            "tests/HostLifecycle.Tests/Program.cs",
+            "https://github.com/artinrahimii/project/actions/runs/39910955252"
           ]
         }
       },
@@ -7252,16 +7280,58 @@
         {
           "attempt_id": "T0043-A001",
           "started_at": "2026-10-23T06:10:00Z",
+          "ended_at": "2026-10-23T06:24:02Z",
+          "result": "succeeded",
+          "commit_sha": "81cacab7e4820692ed72430fd1d2b28094c70c78",
+          "summary": "The exact tested revision passed the host lifecycle unit/integration tests, Windows WPF build and startup smoke test, and Android APK/Protobuf build checks. The Step Three quality gate then exposed a missing successful-history record; this follow-up records the already-observed exact-commit evidence rather than claiming the quality gate itself passed.",
+          "changed_files": [
+            "tests/HostLifecycle.Tests/Program.cs",
+            "step three/T0043/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "tests": [
+            {
+              "name": "Step Three quality gate",
+              "result": "failed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39910955163",
+              "summary": "Graph validator failed because the task history had no successful attempt and no recorded passing tests. This is a graph-recording failure, not a code-test failure."
+            },
+            {
+              "name": "Host lifecycle unit and integration tests",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39910955252",
+              "summary": "The exact tested commit 81cacab7e4820692ed72430fd1d2b28094c70c78 passed the lifecycle test job."
+            },
+            {
+              "name": "Windows WPF host build and startup smoke test",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39910955252",
+              "summary": "Windows host build, generated C# Protobuf check and startup smoke test passed on the exact tested commit."
+            },
+            {
+              "name": "Android client build and Protobuf checks",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39910955252",
+              "summary": "Android debug APK build, generated Java/Kotlin Protobuf checks and artifact upload passed on the exact tested commit."
+            }
+          ],
+          "failure_details": "The quality gate run 39910955163 failed only its graph validation step because the graph had no succeeded history entry and no recorded passing tests. Product build run 39910955252 passed all jobs.",
+          "follow_up": "Re-run quality gate after this history correction; proceed to T0044 only if the new exact-commit quality gate passes."
+        },
+        {
+          "attempt_id": "T0043-A002",
+          "started_at": "2026-10-23T06:24:10Z",
           "ended_at": null,
           "result": "in_progress",
           "commit_sha": null,
-          "summary": "Confirmed HostState implementation exists in the correct Domain assembly; expanded the actual C# regression harness to cover all five states, invalid transitions, message trimming and blank-message rejection. Awaiting exact-commit CI before acceptance.",
+          "summary": "Recorded exact-commit CI results from 81cacab7e4820692ed72430fd1d2b28094c70c78; correcting graph history so quality gate can validate the evidence.",
           "changed_files": [
-            "tests/HostLifecycle.Tests/Program.cs"
+            "step three/project-graph.md",
+            "step three/T0043/execution-report.md"
           ],
           "tests": [],
           "failure_details": null,
-          "follow_up": "Check Step Three quality gate and product build on the commit; only then mark succeeded."
+          "follow_up": "Await CI on the graph-history correction; only then close this attempt as succeeded."
         }
       ]
     },
@@ -20456,6 +20526,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-22T10:50:00Z"
+  "updated_at": "2026-10-23T06:24:02Z"
 }
 ```
