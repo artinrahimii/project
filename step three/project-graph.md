@@ -9704,20 +9704,32 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0057 و T0056 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال انجام",
+      "actual_output_paths": [
+        "src/Host.Windows/Inference/LlamaCppInferenceEngine.cs"
+      ],
       "expected_output_paths": [
         "src/Host.Windows/Inference/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "step three/T0058/execution-report.md",
+        "tests/test_llama_cpp_inference_engine.py",
+        "src/Host.Application/Inference/IInferenceEngine.cs",
+        "src/Host.Infrastructure/LlamaCppServerBackend.cs"
+      ],
+      "notes": "A001 implements a real adapter over the existing local llama.cpp HTTP backend. It verifies /health and /v1/models, serializes generation, propagates cancellation, and does not claim server-side model unload. CI and live-server validation are pending; do not mark done until acceptance evidence passes.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "A001",
+        "last_attempt_result": "in_progress",
+        "changed_files": [
+          "src/Host.Windows/Inference/LlamaCppInferenceEngine.cs",
+          "tests/test_llama_cpp_inference_engine.py",
+          "step three/T0058/execution-report.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
@@ -9730,7 +9742,22 @@
           "review_evidence": []
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "A001",
+          "started_at": "2026-10-23T19:20:00Z",
+          "result": "in_progress",
+          "summary": "Implemented the Windows adapter to the existing local llama.cpp server backend; source-level tests added. Exact-commit CI and live-server checks have not yet been observed.",
+          "changed_files": [
+            "src/Host.Windows/Inference/LlamaCppInferenceEngine.cs",
+            "tests/test_llama_cpp_inference_engine.py",
+            "step three/T0058/execution-report.md"
+          ],
+          "tests": [],
+          "failures": [],
+          "related_commits": []
+        }
+      ]
     },
     {
       "id": "T0059",
@@ -22676,6 +22703,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-23T14:18:19.618Z"
+  "updated_at": "2026-10-23T19:20:00.000Z"
 }
 ```
