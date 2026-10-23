@@ -49,7 +49,7 @@ public static class HostReadinessEvaluator
         {
             return new HostReadinessResult(
                 false,
-                "Host is not Ready: free space on the Windows system drive is below the declared minimum.");
+                "Host is not Ready: free disk space on the Windows system drive is below the declared minimum.");
         }
 
         return new HostReadinessResult(

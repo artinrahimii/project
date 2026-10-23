@@ -9102,11 +9102,11 @@
         "step three/T0054/execution-report.md",
         "step three/T0054/evidence/verification.md"
       ],
-      "notes": "The WPF host now gates Ready on backend health plus the declared model RAM requirement and minimum free Windows system-drive space, rechecking both before each generation. Tests for low RAM, low disk, invalid declarations and unknown disk measurement were added; exact-commit CI is pending.",
+      "notes": "The Windows host fails closed on unhealthy backend, invalid RAM/disk declarations, insufficient available RAM, insufficient system-drive free space, or unknown hardware capacity. A low-disk message assertion failed in attempt A002 and is corrected in A003; exact-commit CI is pending.",
       "execution_summary": {
-        "attempt_count": 2,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "T0054-A002",
+        "attempt_count": 3,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "T0054-A003",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Host.Application/HostReadinessResult.cs",
@@ -9121,7 +9121,9 @@
         ],
         "related_commits": [],
         "tests_passed": [],
-        "tests_failed": [],
+        "tests_failed": [
+          "Host lifecycle unit/integration — FAILED on 8611918c4e7dcd8bff075a3c76ab8535ba5bd574: low-disk message assertion expected 'disk'; wording corrected in T0054-A003."
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -9158,8 +9160,8 @@
         {
           "attempt_id": "T0054-A002",
           "started_at": "2026-10-23T12:50:26.030Z",
-          "ended_at": "2026-10-23T12:50:26.030Z",
-          "result": "partial",
+          "ended_at": "2026-10-23T12:51:20Z",
+          "result": "failed",
           "summary": "Integrated a fail-closed policy checking the declared model RAM requirement and minimum free Windows system-drive space. Added C# regression assertions for sufficient capacity, low RAM, low disk, invalid declarations, and unknown disk measurement. Exact-commit GitHub Actions is pending.",
           "changed_files": [
             "src/Host.Application/HostReadinessResult.cs",
@@ -9173,12 +9175,39 @@
             "src/Host.Windows/MainWindow.xaml"
           ],
           "commit_sha": null,
+          "tests": [
+            {
+              "name": "Host lifecycle unit and integration tests",
+              "result": "failed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39956417838/job/120423261666",
+              "summary": "The newly added low-disk regression assertion failed because the user-facing not-ready message omitted the word 'disk'; no test pass is claimed for this commit."
+            }
+          ],
+          "failure_details": "HostReadinessEvaluator failed closed for low disk, but the test expected a disk-specific message while the message used 'free space on the Windows system drive'.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Correct the message wording and rerun all product-build and quality checks on the new exact commit."
+        },
+        {
+          "attempt_id": "T0054-A003",
+          "started_at": "2026-10-23T12:53:02.938Z",
+          "ended_at": "2026-10-23T12:53:02.938Z",
+          "result": "partial",
+          "summary": "Corrected the low-disk not-ready message to explicitly name disk space, matching the executable acceptance assertion. Full product/quality CI is pending on this correction commit.",
+          "changed_files": [
+            "src/Host.Application/HostReadinessEvaluator.cs",
+            "step three/T0054/execution-report.md",
+            "step three/T0054/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
           "tests": [],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Verify the exact implementation commit's product-build and quality-gate workflows; fix any failures before recording completion."
+          "follow_up": "Check all jobs for the exact A003 commit and repair further failures before marking T0054 done."
         }
       ]
     },
@@ -22181,6 +22210,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-23T12:50:26.030Z"
+  "updated_at": "2026-10-23T12:53:02.938Z"
 }
 ```

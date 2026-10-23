@@ -24,3 +24,9 @@ Added executable assertions for:
 5. Unknown disk capacity cannot produce Ready.
 
 Runtime integration uses `WindowsHostHardwareDiscovery.Discover()` for current available physical RAM and system-drive free space. These assertions and the Windows/Android product builds await exact-commit GitHub Actions results before this task can be marked complete.
+
+ 
+## Failed exact-commit verification (T0054-A002)
+
+- Host lifecycle unit/integration job failed on commit `8611918c4e7dcd8bff075a3c76ab8535ba5bd574`: assertion "Insufficient live system-drive space must fail readiness with a disk-specific message." The result message expressed the low system-drive space condition but omitted the expected word "disk".
+- The failure is retained in the execution history. Attempt A003 changes the user-facing text to "free disk space..." and reruns the product and quality workflows.

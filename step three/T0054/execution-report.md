@@ -30,3 +30,10 @@ Exact-commit GitHub Actions results are pending. This task remains in progress u
 ## Verification update
 
 The earlier verification note above records the state of attempt A001. Attempt A002 expands the runtime guard to cover both resources; no test success is claimed until CI completes on the implementation commit.
+
+ 
+## Verification result for T0054-A002
+
+- The exact implementation commit `8611918c4e7dcd8bff075a3c76ab8535ba5bd574` failed the host lifecycle workflow at the low-disk message assertion in `tests/HostLifecycle.Tests/Program.cs`.
+- The readiness policy correctly returned not-ready when free disk was below the declared minimum, but the user-facing message said "free space on the Windows system drive" and did not contain the word "disk" expected by the assertion.
+- This is recorded as a failed verification attempt. The result is not treated as a passing acceptance test. The message wording is corrected in attempt A003; the revised commit must pass the full product workflow before completion.
