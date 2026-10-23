@@ -10063,8 +10063,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0059 و T0056 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال انجام",
+      "status": "done",
+      "status_fa": "تکمیل‌شده",
       "actual_output_paths": [
         "src/Host.Windows/Inference/LlamaCppInferenceEngine.cs",
         "src/Host.Infrastructure/LlamaCppServerBackend.cs",
@@ -10082,59 +10082,82 @@
         "tests/HostLifecycle.Tests/Program.cs",
         "step three/T0060/execution-report.md"
       ],
-      "notes": "The health path already exists in LlamaCppServerBackend.CheckHealthAsync and HostInferenceSession.CheckBackendAsync; T0060-A001 adds a focused regression proving the order health -> capacity -> Ready and that failed health never advertises Ready. Incoming edges reviewed with evidence; outgoing T0060->T0061 remains unreviewed. Exact-commit CI pending.",
+      "notes": "T0060-A001 passed the graph/evidence gate, the C# host lifecycle test (including direct health-before-capacity/Ready ordering), and Windows Release build/Protobuf/startup smoke on V 3.0.184. Existing real GET /health and lifecycle guard code was verified; the new regression proves failure keeps the host non-Ready and success orders health before capacity. A real llama-server plus real GGUF model was not launched; that remains a separate live integration test.",
       "execution_summary": {
         "attempt_count": 1,
         "failed_attempt_count": 0,
         "last_attempt_id": "T0060-A001",
-        "last_attempt_result": "in_progress",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "tests/HostLifecycle.Tests/Program.cs",
           "step three/T0060/execution-report.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
+        "related_commits": [
+          "0162ecb89940008eba124a7e7facc1b74deddc61"
+        ],
+        "tests_passed": [
+          "Step Three quality gate (run 40003784530): automated tests, Python syntax compilation, graph structure and output/evidence validation passed — https://github.com/artinrahimii/project/actions/runs/40003784530.",
+          "Host lifecycle test job in product run 40003784231: PASS: T0060 backend health is checked before capacity readiness and blocks Ready on failure — https://github.com/artinrahimii/project/actions/runs/40003784231.",
+          "Windows host job in product run 40003784231: C# formatting, WPF Release build, generated Protobuf validation, and application startup smoke passed — https://github.com/artinrahimii/project/actions/runs/40003784231."
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
+          "state": "passed",
+          "triggering_contracts": [
+            "HostReadinessResult / backend health before Ready"
+          ],
           "affected_by_contract_changes": [],
-          "review_evidence": []
+          "review_evidence": [
+            "src/Host.Application/HostInferenceSession.cs",
+            "src/Host.Infrastructure/LlamaCppServerBackend.cs",
+            "src/Host.Windows/Inference/LlamaCppInferenceEngine.cs",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "https://github.com/artinrahimii/project/actions/runs/40003784530",
+            "https://github.com/artinrahimii/project/actions/runs/40003784231"
+          ]
         }
       },
       "execution_history": [
         {
           "attempt_id": "T0060-A001",
           "started_at": "2026-10-23T18:29:36.514Z",
-          "ended_at": "2026-10-23T18:29:36.514Z",
-          "result": "in_progress",
-          "summary": "Reviewed existing production health gate and added a regression in the actual C# lifecycle harness for failed-health/no-Ready and successful-health-before-capacity ordering; awaiting exact-commit CI.",
+          "ended_at": "2026-10-23T18:33:00.286Z",
+          "result": "succeeded",
+          "summary": "Verified the existing real /health → model-discovery/readiness ordering and added an explicit C# lifecycle regression. Exact-commit quality/evidence gate, host lifecycle test and Windows WPF build/startup smoke passed.",
           "changed_files": [
             "tests/HostLifecycle.Tests/Program.cs",
             "step three/T0060/execution-report.md",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "0162ecb89940008eba124a7e7facc1b74deddc61",
           "tests": [
             {
-              "command": "GitHub Actions host lifecycle test harness",
-              "result": "pending",
-              "summary": "The new C# test must compile and pass on this implementation commit."
+              "command": "Step Three quality gate",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40003784530",
+              "summary": "Automated tests, Python syntax, graph structure, and recorded output/evidence all passed."
             },
             {
-              "command": "Step Three graph/evidence quality gate",
-              "result": "pending",
-              "summary": "The new graph edge validations, output paths, and execution history must pass graph guard."
+              "command": "Host lifecycle unit and integration tests",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40003784231",
+              "summary": "Logged PASS: T0060 backend health is checked before capacity readiness and blocks Ready on failure."
+            },
+            {
+              "command": "Windows WPF Release build/startup smoke",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40003784231",
+              "summary": "C# formatting, Release build, Protobuf source validation, WPF startup smoke passed."
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect exact-commit CI; if both host lifecycle and quality/evidence gates plus product builds pass, record evidence and mark done in a follow-up commit."
+          "follow_up": "Next task is T0061. Before changes, validate T0060->T0061 and T0056->T0061 from real APIs/contract usage and preserve any unrelated unreviewed edges."
         }
       ]
     },
@@ -23076,6 +23099,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-23T18:29:36.514Z"
+  "updated_at": "2026-10-23T18:33:00.286Z"
 }
 ```
