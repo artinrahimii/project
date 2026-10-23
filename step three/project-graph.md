@@ -6948,9 +6948,9 @@
       ],
       "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
       "execution_summary": {
-        "attempt_count": 2,
+        "attempt_count": 3,
         "failed_attempt_count": 1,
-        "last_attempt_id": "T0042-A002",
+        "last_attempt_id": "T0042-A003",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Host.Domain/WhiteP.Host.Domain.csproj",
@@ -6980,16 +6980,23 @@
           "src/Host.Windows/HostLifecycle.cs",
           "step three/project-graph.md",
           "step three/T0042/execution-report.md",
-          "step three/T0042/evidence/verification.md"
+          "step three/T0042/evidence/verification.md",
+          "src/Host.Windows/App.xaml.cs",
+          "src/Host.Windows/LlamaCppServerBackend.cs",
+          "src/Host.Windows/ProtocolMessageParser.cs"
         ],
         "related_commits": [
-          "6afb2ce746a5d72822ac26f412e968b507159ee0"
+          "6afb2ce746a5d72822ac26f412e968b507159ee0",
+          "eae94f3f93ad437f94994c180f5c715a5ee6b083"
         ],
         "tests_passed": [
-          "Step Three quality gate run 39907451222 passed for commit 6afb2ce746a5d72822ac26f412e968b507159ee0."
+          "Step Three quality gate run 39907451222 passed for commit 6afb2ce746a5d72822ac26f412e968b507159ee0.",
+          "Step Three quality gate run 39907571842 passed on eae94f3f93ad437f94994c180f5c715a5ee6b083.",
+          "C# host lifecycle/integration job 120262918459 passed on eae94f3f93ad437f94994c180f5c715a5ee6b083."
         ],
         "tests_failed": [
-          "Product run 39907451227 / C# lifecycle job 120262552559 failed compilation with CS0104: HostStatus ambiguous between WhiteP.Host.Domain.HostStatus and WhiteP.Shared.Contracts.V1.HostStatus in HostInferenceSession.cs lines 25, 29, 66."
+          "Product run 39907451227 / C# lifecycle job 120262552559 failed compilation with CS0104: HostStatus ambiguous between WhiteP.Host.Domain.HostStatus and WhiteP.Shared.Contracts.V1.HostStatus in HostInferenceSession.cs lines 25, 29, 66.",
+          "Windows product build run 39907571806 failed with CS0118 in App.xaml.cs and CS0246 in the stale Host.Windows LlamaCppServerBackend.cs copy."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -7072,11 +7079,50 @@
         {
           "attempt_id": "T0042-A002",
           "started_at": "2026-10-23T05:45:25Z",
-          "ended_at": null,
-          "result": "in_progress",
+          "ended_at": "2026-10-23T05:47:00Z",
+          "result": "partial",
           "summary": "Added an explicit alias so HostInferenceSession return types use WhiteP.Host.Domain.HostStatus rather than the generated Protobuf HostStatus. Exact-commit build/test outcome pending.",
           "changed_files": [
             "src/Host.Application/HostInferenceSession.cs",
+            "step three/T0042/execution-report.md",
+            "step three/T0042/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": "eae94f3f93ad437f94994c180f5c715a5ee6b083",
+          "tests": [
+            {
+              "command": "Step Three quality gate run 39907571842",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39907571842"
+            },
+            {
+              "command": "Host lifecycle unit and integration tests job 120262918459",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39907571806"
+            },
+            {
+              "command": "Windows WPF build — product run 39907571806, job 120262918212",
+              "result": "failed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39907571806",
+              "summary": "CS0118 App namespace shadows WPF Application; CS0246 stale Windows backend copy cannot resolve moved interface."
+            }
+          ],
+          "failure_details": "Exact-commit product run 39907571806: Windows WPF Build host failed with CS0118 because WhiteP.Host.Application namespace shadowed System.Windows.Application in App.xaml.cs, and CS0246 because stale src/Host.Windows/LlamaCppServerBackend.cs still implements IInferenceBackend without the moved Application namespace. C# lifecycle/integration job passed after the HostStatus alias fix.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Qualify System.Windows.Application and remove stale backend/parser files remaining under src/Host.Windows; rerun exact-commit CI."
+        },
+        {
+          "attempt_id": "T0042-A003",
+          "started_at": "2026-10-23T05:47:10Z",
+          "ended_at": null,
+          "result": "in_progress",
+          "summary": "Qualified the WPF Application base type explicitly and removed the old WPF copies of the backend/parser now owned by Infrastructure. Verification of the exact commit is pending.",
+          "changed_files": [
+            "src/Host.Windows/App.xaml.cs",
+            "src/Host.Windows/LlamaCppServerBackend.cs",
+            "src/Host.Windows/ProtocolMessageParser.cs",
             "step three/T0042/execution-report.md",
             "step three/T0042/evidence/verification.md",
             "step three/project-graph.md"
@@ -7088,7 +7134,15 @@
               "result": "pending"
             },
             {
-              "command": "Product build / C# lifecycle tests / Windows WPF build & smoke / Android build",
+              "command": "Windows build, generated Protobuf check and WPF smoke test",
+              "result": "pending"
+            },
+            {
+              "command": "C# lifecycle/integration harness",
+              "result": "pending"
+            },
+            {
+              "command": "Android build and Protobuf tests",
               "result": "pending"
             }
           ],
@@ -7096,7 +7150,7 @@
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Verify the exact commit. Fix subsequent actual build/test errors and do not set status done until both workflows succeed."
+          "follow_up": "Check new exact-commit workflows; fix all remaining compiler/test failures before closing T0042."
         }
       ]
     },

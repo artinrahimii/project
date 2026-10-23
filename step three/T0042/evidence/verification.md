@@ -4,14 +4,11 @@
 - Domain: `src/Host.Domain/WhiteP.Host.Domain.csproj`, `HostLifecycle.cs`.
 - Application: `src/Host.Application/WhiteP.Host.Application.csproj`, `IInferenceBackend.cs`, `HostStartup.cs`, `UnconfiguredInferenceBackend.cs`, `HostInferenceSession.cs`.
 - Infrastructure: `src/Host.Infrastructure/WhiteP.Host.Infrastructure.csproj`, `LlamaCppServerBackend.cs`, `ProtocolMessageParser.cs`.
-- UI: `src/Host.Windows/WhiteP.Host.Windows.csproj` and WPF entry-point/window code.
+- UI: `src/Host.Windows/WhiteP.Host.Windows.csproj`, `App.xaml.cs`, `MainWindow.xaml.cs`.
 - Shared contracts: `src/Shared.Contracts/WhiteP.Shared.Contracts.csproj` owns C# Protobuf generation from the canonical schema.
-- Regression checks: `tests/test_host_layer_projects.py`, updated product/protocol tests, and `tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj`.
 
-## Attempt A001 — observed failure
-- [Step Three quality gate run 39907451222](https://github.com/artinrahimii/project/actions/runs/39907451222) passed.
-- [Product build run 39907451227](https://github.com/artinrahimii/project/actions/runs/39907451227): C# lifecycle job failed because `HostStatus` resolved ambiguously to the domain record and generated Protobuf message.
-- The compile failure is recorded; it is not treated as a successful test.
-
-## Attempt A002 — correction pending
-The domain type is now explicitly aliased in `HostInferenceSession.cs`. New exact-commit product/quality workflow outcomes are pending; this file must be revised with the observed conclusions before T0042 can be marked done.
+## Exact-commit evidence
+- [Quality gate 39907571842](https://github.com/artinrahimii/project/actions/runs/39907571842): passed.
+- The C# host lifecycle/integration job passed on commit `eae94f3f93ad437f94994c180f5c715a5ee6b083`.
+- [Product build 39907571806](https://github.com/artinrahimii/project/actions/runs/39907571806): Windows build failed because of namespace/type ambiguity in `App.xaml.cs` and stale WPF copies of moved infrastructure classes. This was not an accepted build.
+- Attempt A003 fixes those concrete failures; rerun all product gates before acceptance.

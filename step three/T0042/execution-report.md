@@ -22,3 +22,14 @@
 ## Attempt T0042-A002 — explicit domain type alias
 - Added `using HostStatus = WhiteP.Host.Domain.HostStatus;` so session return types resolve to the domain lifecycle status while Protobuf request types remain available.
 - Rebuild and all exact-commit workflows are pending.
+
+
+## Attempt T0042-A002 — partial result from exact-commit product workflow
+- The C# lifecycle/integration job passed on commit `eae94f3f93ad437f94994c180f5c715a5ee6b083`.
+- The Windows WPF build failed in [product build run 39907571806](https://github.com/artinrahimii/project/actions/runs/39907571806) with two compilation errors: `App.xaml.cs` resolved `Application` to the new namespace rather than `System.Windows.Application`; stale copies of `LlamaCppServerBackend.cs` and `ProtocolMessageParser.cs` still remained in the WPF project after those classes moved to Infrastructure.
+- The partial result and both errors are retained. They do not qualify T0042 as done.
+
+## Attempt T0042-A003 — remove stale copies and qualify WPF base class
+- Qualified the WPF base class as `System.Windows.Application`.
+- Removed the stale WPF-project copies of the backend and parser, so the source of truth is now the Infrastructure project.
+- Exact-commit CI is pending.
