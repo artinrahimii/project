@@ -1,4 +1,3 @@
-```json
 {
   "schema_version": "1.0",
   "document": "v2.1",
@@ -9704,8 +9703,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0057 و T0056 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال انجام",
+      "status": "done",
+      "status_fa": "تکمیل‌شده",
       "actual_output_paths": [
         "src/Host.Windows/Inference/LlamaCppInferenceEngine.cs"
       ],
@@ -9718,28 +9717,42 @@
         "src/Host.Application/Inference/IInferenceEngine.cs",
         "src/Host.Infrastructure/LlamaCppServerBackend.cs"
       ],
-      "notes": "A001 implements a real adapter over the existing local llama.cpp HTTP backend. It verifies /health and /v1/models, serializes generation, propagates cancellation, and does not claim server-side model unload. CI and live-server validation are pending; do not mark done until acceptance evidence passes.",
+      "notes": "Implementation and acceptance evidence verified in GitHub Actions for commit 7fee1b1fbe9b5e027a17307f1f854f3fee55481f. Source-level regression tests, Windows host build/startup smoke test, and host lifecycle tests passed. Live llama.cpp server/model end-to-end verification remains a later integration concern; do not infer it from CI.",
       "execution_summary": {
         "attempt_count": 1,
         "failed_attempt_count": 0,
         "last_attempt_id": "A001",
-        "last_attempt_result": "in_progress",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Host.Windows/Inference/LlamaCppInferenceEngine.cs",
           "tests/test_llama_cpp_inference_engine.py",
           "step three/T0058/execution-report.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
+        "related_commits": [
+          "7fee1b1fbe9b5e027a17307f1f854f3fee55481f"
+        ],
+        "tests_passed": [
+          "GitHub Actions run 39982293461: automated tests, Python syntax, graph structure, recorded outputs/evidence validation — success",
+          "GitHub Actions run 39982293551: Windows host build, generated Protobuf C# validation, WPF startup smoke test — success",
+          "GitHub Actions run 39982293551: Host lifecycle unit and integration tests — success",
+          "GitHub Actions run 39982293551: Android debug APK build, ktlintCheck, Protobuf round-trip tests — success"
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
+          "state": "passed",
+          "triggering_contracts": [
+            "IInferenceEngine"
+          ],
           "affected_by_contract_changes": [],
-          "review_evidence": []
+          "review_evidence": [
+            "src/Host.Application/Inference/IInferenceEngine.cs",
+            "tests/HostLifecycle.Tests/InferenceEngineContractTests.cs",
+            "CI run 39982293461",
+            "CI run 39982293551"
+          ]
         }
       },
       "execution_history": [
@@ -9756,6 +9769,45 @@
           "tests": [],
           "failures": [],
           "related_commits": []
+        },
+        {
+          "attempt_id": "A002",
+          "started_at": "2026-10-23T20:00:00Z",
+          "ended_at": "2026-10-23T20:00:00Z",
+          "result": "succeeded",
+          "summary": "Reviewed exact-commit GitHub Actions results. Source regression tests, host build/startup smoke test, lifecycle tests, Android build/tests, and graph/evidence checks passed; T0058 acceptance evidence is now recorded. No live llama.cpp server test was claimed.",
+          "changed_files": [
+            "step three/project-graph.md",
+            "step three/T0058/execution-report.md"
+          ],
+          "commit_sha": "pending",
+          "tests": [
+            {
+              "name": "Task graph and Python quality checks",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39982293461"
+            },
+            {
+              "name": "Windows host build and WPF startup smoke test",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39982293551"
+            },
+            {
+              "name": "Host lifecycle unit and integration tests",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39982293551"
+            },
+            {
+              "name": "Android APK build, lint, and Protobuf unit tests",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39982293551"
+            }
+          ],
+          "failure_details": [],
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Continue with T0059 after validating its incoming dependency edges; live-server/model integration must be demonstrated by the appropriate downstream task."
         }
       ]
     },
@@ -18753,10 +18805,14 @@
       "from": "T0056",
       "to": "T0058",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "Reviewed against the T0058 adapter contract and the T0056 lifecycle/capacity evidence: T0058 consumes the interface contract from T0057, while T0056 is retained as conservative execution order but is not a direct code/interface input to this adapter.",
+      "validation_status": "validated",
+      "evidence": [
+        "step three/T0058/execution-report.md",
+        "src/Host.Windows/Inference/LlamaCppInferenceEngine.cs",
+        "src/Host.Infrastructure/LlamaCppServerBackend.cs"
+      ]
     },
     {
       "from": "T0058",
@@ -22703,6 +22759,5 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-23T19:20:00.000Z"
+  "updated_at": "2026-10-23T20:00:00.000Z"
 }
-```
