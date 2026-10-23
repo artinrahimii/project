@@ -7,7 +7,7 @@ namespace WhiteP.Host.Infrastructure;
 /// Validated settings for the local llama.cpp-compatible inference endpoint.
 /// The persisted document is explicitly schema-versioned so future changes fail closed.
 /// </summary>
-public sealed record LocalHostSettings(string ServerUrl, string ModelId, int RequestTimeoutSeconds)
+public sealed record LocalHostSettings(string ServerUrl, string ModelId, int RequestTimeoutSeconds, string? EngineExecutablePath = null, string? ModelFilePath = null)
 {
     public const int CurrentSchemaVersion = 1;
     public static LocalHostSettings Defaults { get; } =
@@ -36,7 +36,7 @@ public sealed record LocalHostSettings(string ServerUrl, string ModelId, int Req
             throw new ArgumentOutOfRangeException(nameof(settings), "Request timeout must be between 1 and 3600 seconds.");
         }
 
-        return new LocalHostSettings(endpoint.ToString(), model, settings.RequestTimeoutSeconds);
+        return new LocalHostSettings(endpoint.ToString(), model, settings.RequestTimeoutSeconds, NormalizeOptionalPath(settings.EngineExecutablePath, nameof(settings.EngineExecutablePath)), NormalizeOptionalPath(settings.ModelFilePath, nameof(settings.ModelFilePath)));
     }
 }
 
@@ -63,6 +63,14 @@ public sealed class LocalHostSettingsStore
             "settings.json");
     }
 
+    private static string? NormalizeOptionalPath(string? path, string parameterName)
+    {
+        if (string.IsNullOrWhiteSpace(path)) return null;
+        try { return Path.GetFullPath(path.Trim()); }
+        catch (Exception exception) when (exception is ArgumentException or NotSupportedException or PathTooLongException)
+        { throw new ArgumentException("A configured local engine path is invalid.", parameterName); }
+    }
+
     public string FilePath => _filePath;
 
     public LocalHostSettings LoadOrDefault()
@@ -85,7 +93,9 @@ public sealed class LocalHostSettingsStore
             return LocalHostSettings.Validate(new LocalHostSettings(
                 document.ServerUrl ?? string.Empty,
                 document.ModelId ?? string.Empty,
-                document.RequestTimeoutSeconds));
+                document.RequestTimeoutSeconds,
+                document.EngineExecutablePath,
+                document.ModelFilePath));
         }
         catch (JsonException exception)
         {
@@ -105,7 +115,9 @@ public sealed class LocalHostSettingsStore
             SchemaVersion = LocalHostSettings.CurrentSchemaVersion,
             ServerUrl = validated.ServerUrl,
             ModelId = validated.ModelId,
-            RequestTimeoutSeconds = validated.RequestTimeoutSeconds
+            RequestTimeoutSeconds = validated.RequestTimeoutSeconds,
+            EngineExecutablePath = validated.EngineExecutablePath,
+            ModelFilePath = validated.ModelFilePath
         };
         var temporaryPath = _filePath + "." + Guid.NewGuid().ToString("N") + ".tmp";
         try
@@ -141,5 +153,11 @@ public sealed class LocalHostSettingsStore
 
         [JsonPropertyName("requestTimeoutSeconds")]
         public int RequestTimeoutSeconds { get; init; }
+
+        [JsonPropertyName("engineExecutablePath")]
+        public string? EngineExecutablePath { get; init; }
+
+        [JsonPropertyName("modelFilePath")]
+        public string? ModelFilePath { get; init; }
     }
 }

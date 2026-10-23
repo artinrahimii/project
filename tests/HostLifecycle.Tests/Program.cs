@@ -55,6 +55,7 @@ Assert(BuildDomainHostCapabilities(availableDiskBytes: 600L * 1024L * 1024L * 10
 Console.WriteLine("PASS: HostCapabilities keeps incomplete/invalid measurements Unknown and blocks inference for failed capacity checks.");
 HostCapacityAcceptanceTests.Run();
 InferenceEngineContractTests.Run();
+LocalInferenceProcessLauncherTests.Run();
 
 const ulong gibibyte = 1024UL * 1024UL * 1024UL;
 var sufficientHostReadiness = HostReadinessEvaluator.Evaluate(

@@ -4,12 +4,14 @@ using System.Windows;
 using WhiteP.Host.Application;
 using WhiteP.Host.Domain;
 using WhiteP.Host.Infrastructure;
+using WhiteP.Host.Windows.Inference;
 
 namespace WhiteP.Host.Windows;
 
 public partial class MainWindow : Window
 {
     private readonly LocalHostSettingsStore _settingsStore = new();
+    private readonly LocalInferenceProcessLauncher _localInferenceProcessLauncher = new();
     private LocalHostSettings _settings = LocalHostSettings.Defaults;
     private readonly HostInferenceSession _session;
     private string? _requestedModelMemoryRequirementText;
@@ -35,10 +37,13 @@ public partial class MainWindow : Window
 
         ServerUrl.Text = _settings.ServerUrl;
         ModelId.Text = _settings.ModelId;
+        EngineExecutablePath.Text = _settings.EngineExecutablePath ?? string.Empty;
+        ModelFilePath.Text = _settings.ModelFilePath ?? string.Empty;
         RenderStatus(_session.Status);
         RenderHostHardwareSummary();
         RenderDisplayAdapters();
         BackendCapabilityStatus.Text = "Backend: not checked; Connect will test the configured local llama.cpp endpoint.";
+        LocalProcessStatus.Text = "Local engine process: not started by this app.";
         if (settingsLoadFailed)
         {
             LifecycleState.Text = "Error — local settings are invalid; correct the settings file before reconnecting.";
@@ -71,7 +76,9 @@ public partial class MainWindow : Window
                 _settings = _settingsStore.Save(new LocalHostSettings(
                     endpoint.ToString(),
                     ModelId.Text,
-                    _settings.RequestTimeoutSeconds));
+                    _settings.RequestTimeoutSeconds,
+                    EngineExecutablePath.Text,
+                    ModelFilePath.Text));
             }
             catch (ArgumentException exception)
             {
@@ -96,6 +103,30 @@ public partial class MainWindow : Window
         finally
         {
             ConnectButton.IsEnabled = true;
+        }
+    }
+
+    private void StartLocalEngineButton_Click(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            if (!Uri.TryCreate(ServerUrl.Text.Trim(), UriKind.Absolute, out var endpoint) ||
+                (endpoint.Scheme != Uri.UriSchemeHttp && endpoint.Scheme != Uri.UriSchemeHttps))
+            {
+                LocalProcessStatus.Text = "Local engine start failed: enter a valid HTTP(S) URL first.";
+                return;
+            }
+
+            var process = _localInferenceProcessLauncher.Start(
+                EngineExecutablePath.Text,
+                ModelFilePath.Text,
+                endpoint,
+                ModelId.Text);
+            LocalProcessStatus.Text = $"Local llama.cpp process started (PID {process.Id}). Press Connect to verify health and model availability.";
+        }
+        catch (Exception exception)
+        {
+            LocalProcessStatus.Text = "Local engine start failed: " + HostErrorPresentation.ToUserMessage(exception);
         }
     }
 
@@ -338,5 +369,6 @@ public partial class MainWindow : Window
         _operationCancellation?.Cancel();
         _operationCancellation?.Dispose();
         _session.Dispose();
+        _localInferenceProcessLauncher.Dispose();
     }
 }

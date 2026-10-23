@@ -9828,20 +9828,43 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0058 و T0056 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال انجام",
+      "actual_output_paths": [
+        "src/Host.Windows/Inference/LocalInferenceProcessLauncher.cs",
+        "src/Host.Windows/MainWindow.xaml",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "src/Host.Infrastructure/LocalHostSettingsStore.cs",
+        "src/Host.Windows/App.xaml.cs",
+        "tests/HostLifecycle.Tests/LocalInferenceProcessLauncherTests.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0059/execution-report.md",
+        "step three/project-graph.md"
+      ],
       "expected_output_paths": [
         "src/Host.Windows/Inference/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "tests/HostLifecycle.Tests/LocalInferenceProcessLauncherTests.cs",
+        "step three/T0059/execution-report.md"
+      ],
+      "notes": "T0059-A001 adds managed shell-free process startup with ProcessStartInfo.ArgumentList, validates llama-server.exe/GGUF paths, loopback-only binding, and WPF controls. Exact-commit CI is pending; live binary/model launch was not tested. T0059->T0060 stays unreviewed.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0059-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Host.Windows/Inference/LocalInferenceProcessLauncher.cs",
+          "src/Host.Windows/MainWindow.xaml",
+          "src/Host.Windows/MainWindow.xaml.cs",
+          "src/Host.Infrastructure/LocalHostSettingsStore.cs",
+          "src/Host.Windows/App.xaml.cs",
+          "tests/HostLifecycle.Tests/LocalInferenceProcessLauncherTests.cs",
+          "tests/HostLifecycle.Tests/Program.cs",
+          "step three/T0059/execution-report.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
@@ -9854,7 +9877,44 @@
           "review_evidence": []
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0059-A001",
+          "started_at": "2026-10-23T18:16:17.034Z",
+          "ended_at": "2026-10-23T18:16:17.034Z",
+          "result": "partial",
+          "summary": "Added shell-free local llama.cpp process launch, persisted executable/model paths, window lifecycle ownership, and argument/loopback regression tests. Exact-commit CI has not yet been inspected.",
+          "changed_files": [
+            "src/Host.Windows/Inference/LocalInferenceProcessLauncher.cs",
+            "src/Host.Windows/MainWindow.xaml",
+            "src/Host.Windows/MainWindow.xaml.cs",
+            "src/Host.Infrastructure/LocalHostSettingsStore.cs",
+            "src/Host.Windows/App.xaml.cs",
+            "tests/HostLifecycle.Tests/LocalInferenceProcessLauncherTests.cs",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "step three/T0059/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "command": "GitHub Actions quality workflow",
+              "result": "pending",
+              "summary": "Exact implementation-commit result pending; no pass claimed."
+            },
+            {
+              "command": "Windows WPF build/startup smoke and host-lifecycle tests",
+              "result": "pending",
+              "summary": "Exact implementation-commit result pending; no pass claimed."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect CI runs for this exact commit; record passing evidence and mark done in a follow-up version commit only if tests succeed, otherwise record and fix failures."
+        }
+      ]
     },
     {
       "id": "T0060",
@@ -18818,19 +18878,29 @@
       "from": "T0058",
       "to": "T0059",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0059 starts the local server endpoint and model alias consumed by LlamaCppInferenceEngine/LlamaCppServerBackend; actual URI, model-discovery and configured model-ID contract evidence supports this dependency. Preserve type=blocks.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/Inference/LlamaCppInferenceEngine.cs",
+        "src/Host.Infrastructure/LlamaCppServerBackend.cs",
+        "src/Host.Windows/Inference/LocalInferenceProcessLauncher.cs",
+        "step three/T0058/execution-report.md"
+      ]
     },
     {
       "from": "T0056",
       "to": "T0059",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0059 does not consume the capacity evaluator as an implementation interface. Preserve type=blocks only as conservative ordering; existing readiness checks still gate inference.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "src/Host.Domain/HostCapabilities.cs",
+        "src/Host.Application/HostInferenceSession.cs",
+        "step three/T0056/execution-report.md"
+      ]
     },
     {
       "from": "T0059",
@@ -22757,7 +22827,37 @@
         "step three/T0057/evidence/contract-verification.md"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-23T18:16:17.034Z",
+      "edge_from": "T0058",
+      "edge_to": "T0059",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "reason": "T0059 starts the local server endpoint and model alias consumed by LlamaCppInferenceEngine/LlamaCppServerBackend; actual URI, model-discovery and configured model-ID contract evidence supports this dependency. Preserve type=blocks.",
+      "evidence": [
+        "src/Host.Windows/Inference/LlamaCppInferenceEngine.cs",
+        "src/Host.Infrastructure/LlamaCppServerBackend.cs",
+        "src/Host.Windows/Inference/LocalInferenceProcessLauncher.cs",
+        "step three/T0058/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-23T18:16:17.034Z",
+      "edge_from": "T0056",
+      "edge_to": "T0059",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "reason": "T0059 does not consume the capacity evaluator as an implementation interface. Preserve type=blocks only as conservative ordering; existing readiness checks still gate inference.",
+      "evidence": [
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "src/Host.Domain/HostCapabilities.cs",
+        "src/Host.Application/HostInferenceSession.cs",
+        "step three/T0056/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-23T20:00:00.000Z"
+  "updated_at": "2026-10-23T18:16:17.034Z"
 }

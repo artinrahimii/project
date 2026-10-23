@@ -47,7 +47,11 @@ public partial class App : System.Windows.Application
                     window.FindName("CpuStatus") is not TextBlock ||
                     window.FindName("MemoryStatus") is not TextBlock ||
                     window.FindName("CapacityStatus") is not TextBlock ||
-                    window.FindName("BackendCapabilityStatus") is not TextBlock)
+                    window.FindName("BackendCapabilityStatus") is not TextBlock ||
+                    window.FindName("EngineExecutablePath") is not TextBox ||
+                    window.FindName("ModelFilePath") is not TextBox ||
+                    window.FindName("StartLocalEngineButton") is not Button ||
+                    window.FindName("LocalProcessStatus") is not TextBlock)
                 {
                     Shutdown(2);
                     return;
