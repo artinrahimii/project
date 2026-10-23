@@ -48,3 +48,8 @@ The earlier verification note above records the state of attempt A001. Attempt A
 - T0054 acceptance is verified for the implemented scope: backend health, declared RAM and minimum free system-drive capacity are all required before Ready and are rechecked before inference. This does not claim model-file disk-size estimation, GPU/VRAM validation, or P2P transport implementation.
 - A002's failed assertion remains in the execution history. A003 is the successful corrective attempt.
 - The outgoing dependency `T0054 → T0055` remains `unreviewed`; review its real dependency before beginning T0055.
+
+
+## Graph quality-gate correction after implementation verification
+
+The product implementation passed all four exact-commit checks on `e3027d8ce8764849f2152362293c7ee52eb9b96b`. The separate graph-documentation commit `e39a34c1dcdf23a61e1aab8c548bbb2592a56fda` then failed the repository quality gate because the graph guard expects `evidence` entries to be repository-relative file paths; two workflow URLs were incorrectly added to that list. The failure is retained in `execution_summary.tests_failed`. The external CI URLs remain in this report and the verification evidence, while the graph's `evidence` list now contains only actual repository paths. The corrected graph must pass its new exact-commit quality gate.

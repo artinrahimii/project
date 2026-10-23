@@ -43,3 +43,8 @@ Implementation reviewed: `e3027d8ce8764849f2152362293c7ee52eb9b96b` (`V 3.0.168`
 - Overall [product build workflow](https://github.com/artinrahimii/project/actions/runs/39956743018) and [quality workflow](https://github.com/artinrahimii/project/actions/runs/39956741851) both completed with success on this exact commit.
 
 The prior A002 low-disk assertion failure was corrected in A003 and is preserved as historical failure evidence. T0054 now meets the implemented acceptance scope. Exact runtime inference with a real configured model and peer-to-peer transport were not exercised by these workflows and are not claimed.
+
+
+## Graph quality-gate follow-up
+
+The implementation commit's C#, Windows, Android and quality checks passed. A later documentation/graph-only commit failed the graph output/evidence validator because URLs were inserted into the file-path evidence list. This was a graph evidence-formatting error, not a product test failure. URLs are retained here as clickable prose links, while the graph's evidence field now lists only repository-relative evidence files. Correction commit: pending exact-commit graph quality gate.

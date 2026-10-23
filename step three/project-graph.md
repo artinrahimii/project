@@ -9100,11 +9100,9 @@
       "evidence": [
         "tests/HostLifecycle.Tests/Program.cs",
         "step three/T0054/execution-report.md",
-        "step three/T0054/evidence/verification.md",
-        "https://github.com/artinrahimii/project/actions/runs/39956743018",
-        "https://github.com/artinrahimii/project/actions/runs/39956741851"
+        "step three/T0054/evidence/verification.md"
       ],
-      "notes": "Verified on exact commit e3027d8ce8764849f2152362293c7ee52eb9b96b: the WPF host requires a healthy local backend plus valid declared model RAM and minimum free system-drive space; both capacities are rechecked before each inference. A low-disk message assertion failed in A002 and was corrected in A003. Product build and graph quality workflows both passed. This does not implement disk-size prediction for model files, GPU/VRAM checks, or P2P transport.",
+      "notes": "Verified on exact commit e3027d8ce8764849f2152362293c7ee52eb9b96b: the WPF host requires a healthy local backend plus valid declared model RAM and minimum free system-drive space; both capacities are rechecked before each inference. A low-disk message assertion failed in A002 and was corrected in A003. Product build and graph quality workflows both passed. This does not implement disk-size prediction for model files, GPU/VRAM checks, or P2P transport.\nGraph evidence format follow-up: the quality gate on V 3.0.169 rejected external workflow URLs in the graph's file-path evidence list; these URLs remain in the report/evidence prose and the graph evidence field has been restricted to repository-relative files.",
       "execution_summary": {
         "attempt_count": 3,
         "failed_attempt_count": 1,
@@ -9132,7 +9130,8 @@
         ],
         "tests_failed": [
           "Host lifecycle unit/integration — FAILED on 8611918c4e7dcd8bff075a3c76ab8535ba5bd574: low-disk message assertion expected 'disk'; wording corrected in T0054-A003.",
-          "Host lifecycle unit/integration — FAILED on 8611918c4e7dcd8bff075a3c76ab8535ba5bd574: low-disk message assertion expected 'disk'; wording corrected and all exact-commit CI passed on e3027d8ce8764849f2152362293c7ee52eb9b96b."
+          "Host lifecycle unit/integration — FAILED on 8611918c4e7dcd8bff075a3c76ab8535ba5bd574: low-disk message assertion expected 'disk'; wording corrected and all exact-commit CI passed on e3027d8ce8764849f2152362293c7ee52eb9b96b.",
+          "Step Three quality gate — FAILED on graph/documentation commit e39a34c1dcdf23a61e1aab8c548bbb2592a56fda: MISSING_EVIDENCE_FILE for T0054 because workflow URLs were placed in the graph's file-path evidence list. The URLs remain in the execution report/evidence prose; task.evidence now contains repository-relative files only."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -22245,6 +22244,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-23T12:55:11Z"
+  "updated_at": "2026-10-23T12:58:10Z"
 }
 ```
