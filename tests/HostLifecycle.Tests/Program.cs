@@ -3,6 +3,7 @@ using System.Text;
 using System.Text.Json;
 using Google.Protobuf;
 using WhiteP.Shared.Contracts.V1;
+using HostCapabilities = WhiteP.Shared.Contracts.V1.HostCapabilities;
 using ProtoHostStatus = WhiteP.Shared.Contracts.V1.HostStatus;
 using WhiteP.Host.Application;
 using WhiteP.Host.Domain;
@@ -17,6 +18,39 @@ static void AssertProtoRoundTrip<T>(string messageName, T message, Func<byte[], 
     Assert(message.Equals(decoded), $"{messageName} fields changed after Protobuf round-trip.");
     Assert(encoded.SequenceEqual(decoded.ToByteArray()), $"{messageName} re-serialization changed its wire bytes.");
 }
+
+static WhiteP.Host.Domain.HostCapabilities BuildDomainHostCapabilities(
+    bool? sufficientMemory = true,
+    bool? sufficientDisk = true,
+    bool? backendSupported = true,
+    ulong availableMemoryBytes = 8UL * 1024UL * 1024UL * 1024UL,
+    long availableDiskBytes = 100L * 1024L * 1024L * 1024L) => new()
+{
+    OperatingSystemDescription = "Test Windows host",
+    OperatingSystemVersion = new Version(10, 0),
+    LogicalProcessorCount = 8,
+    DisplayAdapters = [new HostDisplayAdapterCapability("DISPLAY1", "Test display adapter", true)],
+    TotalPhysicalMemoryBytes = 16UL * 1024UL * 1024UL * 1024UL,
+    AvailablePhysicalMemoryBytes = availableMemoryBytes,
+    SystemDriveTotalBytes = 500L * 1024L * 1024L * 1024L,
+    SystemDriveAvailableBytes = availableDiskBytes,
+    HasSufficientMemory = sufficientMemory,
+    HasSufficientDiskSpace = sufficientDisk,
+    IsInferenceBackendSupported = backendSupported
+};
+
+var unknownDomainCapabilities = new WhiteP.Host.Domain.HostCapabilities();
+Assert(unknownDomainCapabilities.CapacityState == HostCapacityState.Unknown, "Missing host measurements/checks must remain Unknown.");
+Assert(!unknownDomainCapabilities.CanRunInference, "Unknown capacity must never be considered runnable.");
+Assert(BuildDomainHostCapabilities().CapacityState == HostCapacityState.Ready, "A fully measured host with all checks passing must be Ready.");
+Assert(BuildDomainHostCapabilities().CanRunInference, "Only a fully passing capacity model may run inference.");
+Assert(BuildDomainHostCapabilities(sufficientMemory: false).CapacityState == HostCapacityState.Insufficient, "Insufficient model RAM must produce Insufficient.");
+Assert(BuildDomainHostCapabilities(sufficientDisk: false).CapacityState == HostCapacityState.Insufficient, "Insufficient system-drive space must produce Insufficient.");
+Assert(BuildDomainHostCapabilities(backendSupported: false).CapacityState == HostCapacityState.Insufficient, "An unsupported inference backend must produce Insufficient.");
+Assert(BuildDomainHostCapabilities(sufficientMemory: null).CapacityState == HostCapacityState.Unknown, "An unverified memory check must remain Unknown.");
+Assert(BuildDomainHostCapabilities(availableMemoryBytes: 20UL * 1024UL * 1024UL * 1024UL).CapacityState == HostCapacityState.Unknown, "Inconsistent RAM measurements must not produce Ready.");
+Assert(BuildDomainHostCapabilities(availableDiskBytes: 600L * 1024L * 1024L * 1024L).CapacityState == HostCapacityState.Unknown, "Inconsistent disk measurements must not produce Ready.");
+Console.WriteLine("PASS: HostCapabilities keeps incomplete/invalid measurements Unknown and blocks inference for failed capacity checks.");
 
 var supportedProtocol = ProtocolVersionPolicy.Evaluate(ProtocolVersionPolicy.CurrentVersion);
 Assert(supportedProtocol.IsCompatible, "The exact current protocol version must be accepted.");

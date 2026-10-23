@@ -8685,8 +8685,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0050 و T0048 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "تکمیل‌شده",
       "actual_output_paths": [
         "src/Host.Windows/ModelMemoryCompatibilityEstimator.cs",
         "src/Host.Windows/WindowsHostHardwareDiscovery.cs",
@@ -8704,12 +8704,12 @@
         "step three/T0051/execution-report.md",
         "step three/T0051/evidence/verification.md"
       ],
-      "notes": "Implemented estimate comparing an explicitly declared model-memory requirement with live available physical RAM from GlobalMemoryStatusEx. Scope excludes GPU/VRAM, context length, model format and backend overhead. Exact-commit CI pending.",
+      "notes": "The implementation at e0ea090668e68a189830caa86149aa46f7caaebb and its exact-commit GitHub Actions verification both succeeded. RAM estimate scope is explicitly limited to declared model requirement versus live available physical RAM; GPU/VRAM, context length, model format, and backend overhead remain outside the estimate.",
       "execution_summary": {
-        "attempt_count": 1,
+        "attempt_count": 2,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0051-A001",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "T0051-A002",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Host.Windows/ModelMemoryCompatibilityEstimator.cs",
           "src/Host.Windows/WindowsHostHardwareDiscovery.cs",
@@ -8720,8 +8720,15 @@
           "step three/T0051/evidence/verification.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
+        "related_commits": [
+          "e0ea090668e68a189830caa86149aa46f7caaebb"
+        ],
+        "tests_passed": [
+          "Windows WPF Release build and startup smoke: PASS on exact implementation commit e0ea090668e68a189830caa86149aa46f7caaebb (workflow run 39947543829).",
+          "Host lifecycle unit/integration tests: PASS on exact implementation commit e0ea090668e68a189830caa86149aa46f7caaebb (workflow run 39947543829).",
+          "Android debug APK, Kotlin format/lint and Protobuf round-trip tests: PASS on exact implementation commit e0ea090668e68a189830caa86149aa46f7caaebb (workflow run 39947543829).",
+          "Python tests, graph structure, output/evidence checks and syntax validation: PASS on exact implementation commit e0ea090668e68a189830caa86149aa46f7caaebb (quality run 39947543809)."
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -8756,6 +8763,38 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Run exact-commit quality gate, Windows WPF Release build/startup smoke test, lifecycle tests and Android build; mark done only if all required checks pass."
+        },
+        {
+          "attempt_id": "T0051-A002",
+          "started_at": "2026-10-23T11:38:54Z",
+          "ended_at": "2026-10-23T11:41:42Z",
+          "result": "succeeded",
+          "summary": "Verified the exact implementation commit against both GitHub Actions workflows; Windows WPF build/startup, host lifecycle checks, Android debug APK and Protobuf checks, and the Step Three quality gate all passed.",
+          "changed_files": [
+            "step three/T0051/execution-report.md",
+            "step three/T0051/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": "e0ea090668e68a189830caa86149aa46f7caaebb",
+          "tests": [
+            {
+              "name": "White-P product build",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39947543829",
+              "summary": "Completed with success on exact implementation commit e0ea090668e68a189830caa86149aa46f7caaebb."
+            },
+            {
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39947543809",
+              "summary": "Completed with success on exact implementation commit e0ea090668e68a189830caa86149aa46f7caaebb."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Proceed to T0052 after reviewing T0051 and T0048 dependencies."
         }
       ]
     },
@@ -8776,20 +8815,35 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0051 و T0048 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "src/Host.Domain/HostCapabilities.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0052/execution-report.md",
+        "step three/T0052/evidence/verification.md"
+      ],
       "expected_output_paths": [
         "src/Host.Windows/ (سرویس تشخیص سخت‌افزار و UI)"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0052/execution-report.md",
+        "step three/T0052/evidence/verification.md"
+      ],
+      "notes": "The platform-neutral HostCapabilities domain model and executable C# assertions have been added. Exact-commit CI is pending, so acceptance is not yet claimed.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0052-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Host.Domain/HostCapabilities.cs",
+          "tests/HostLifecycle.Tests/Program.cs",
+          "step three/T0052/execution-report.md",
+          "step three/T0052/evidence/verification.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
@@ -8802,7 +8856,29 @@
           "review_evidence": []
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0052-A001",
+          "started_at": "2026-10-23T12:08:35.502Z",
+          "ended_at": "2026-10-23T12:08:35.502Z",
+          "result": "partial",
+          "summary": "Added HostCapabilities domain model and executable C# assertions. Exact-commit CI was not yet available; task remains in progress.",
+          "changed_files": [
+            "src/Host.Domain/HostCapabilities.cs",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "step three/T0052/execution-report.md",
+            "step three/T0052/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Verify the exact implementation commit through GitHub Actions before marking done."
+        }
+      ]
     },
     {
       "id": "T0053",
@@ -17901,19 +17977,28 @@
       "from": "T0051",
       "to": "T0052",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0052 introduces the domain-level capacity model for the RAM measurements and explicit model-memory compatibility result implemented by T0051. This is a data/interface dependency; it is not inferred from type=blocks alone.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/WindowsHostHardwareDiscovery.cs",
+        "src/Host.Windows/ModelMemoryCompatibilityEstimator.cs",
+        "tests/test_windows_hardware_discovery.py",
+        "step three/T0051/evidence/verification.md"
+      ]
     },
     {
       "from": "T0048",
       "to": "T0052",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "HostCapabilities is a platform-neutral domain value and does not consume lifecycle recovery or shutdown outputs from T0048. Preserve the existing blocks edge as conservative execution order only.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Domain/HostLifecycle.cs",
+        "step three/T0048/execution-report.md",
+        "step three/T0048/evidence/verification.md"
+      ]
     },
     {
       "from": "T0052",
@@ -21779,8 +21864,37 @@
         "step three/T0049/execution-report.md"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-23T12:08:35.502Z",
+      "edge_from": "T0051",
+      "edge_to": "T0052",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "reason": "T0052 models the RAM measurement and memory compatibility data produced by T0051; the dependency is a concrete data/interface relationship.",
+      "evidence": [
+        "src/Host.Windows/WindowsHostHardwareDiscovery.cs",
+        "src/Host.Windows/ModelMemoryCompatibilityEstimator.cs",
+        "tests/test_windows_hardware_discovery.py",
+        "step three/T0051/evidence/verification.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-23T12:08:35.502Z",
+      "edge_from": "T0048",
+      "edge_to": "T0052",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "reason": "The new domain model does not consume HostLifecycle; keep this blocks edge as conservative order rather than a technical dependency.",
+      "evidence": [
+        "src/Host.Domain/HostLifecycle.cs",
+        "step three/T0048/execution-report.md",
+        "step three/T0048/evidence/verification.md"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-23T11:40:00.000Z"
+  "updated_at": "2026-10-23T12:08:35.502Z"
 }
 ```
