@@ -8815,8 +8815,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0051 و T0048 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "تکمیل‌شده",
       "actual_output_paths": [
         "src/Host.Domain/HostCapabilities.cs",
         "tests/HostLifecycle.Tests/Program.cs",
@@ -8831,12 +8831,12 @@
         "step three/T0052/execution-report.md",
         "step three/T0052/evidence/verification.md"
       ],
-      "notes": "The platform-neutral HostCapabilities domain model and executable C# assertions have been added. Exact-commit CI is pending, so acceptance is not yet claimed.",
+      "notes": "The HostCapabilities domain model and executable C# assertions passed exact-commit GitHub Actions verification. The domain readiness state remains Unknown when required checks/measurements are missing or inconsistent; failed memory, disk, or backend checks yield Insufficient, and only complete valid measurements plus all checks passing yield Ready.",
       "execution_summary": {
-        "attempt_count": 1,
+        "attempt_count": 2,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0052-A001",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "T0052-A002",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Host.Domain/HostCapabilities.cs",
           "tests/HostLifecycle.Tests/Program.cs",
@@ -8844,8 +8844,15 @@
           "step three/T0052/evidence/verification.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
+        "related_commits": [
+          "e99880c08dc7b9005607fc063ccc4850342822d3"
+        ],
+        "tests_passed": [
+          "Host lifecycle unit/integration tests — PASS on exact commit e99880c08dc7b9005607fc063ccc4850342822d3; product workflow run 39951137894: https://github.com/artinrahimii/project/actions/runs/39951137894/job/120405605352",
+          "Windows WPF Release build, formatting and startup/close smoke — PASS on exact commit e99880c08dc7b9005607fc063ccc4850342822d3; product workflow run 39951137894: https://github.com/artinrahimii/project/actions/runs/39951137894/job/120405605744",
+          "Android Kotlin lint, debug APK build and Protobuf round-trip tests — PASS on exact commit e99880c08dc7b9005607fc063ccc4850342822d3; product workflow run 39951137894: https://github.com/artinrahimii/project/actions/runs/39951137894/job/120405605698",
+          "Python regression tests, compileall, graph structure and recorded-output/evidence checks — PASS on exact commit e99880c08dc7b9005607fc063ccc4850342822d3; quality workflow run 39951137898: https://github.com/artinrahimii/project/actions/runs/39951137898"
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -8877,6 +8884,50 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Verify the exact implementation commit through GitHub Actions before marking done."
+        },
+        {
+          "attempt_id": "T0052-A002",
+          "started_at": "2026-10-23T12:08:51Z",
+          "ended_at": "2026-10-23T12:10:59Z",
+          "result": "succeeded",
+          "summary": "Verified the exact implementation commit through both GitHub Actions workflows. Domain C# assertions passed; Windows WPF Release build/startup smoke, Android debug APK and Protobuf tests, and the graph/Python quality gate all passed.",
+          "changed_files": [
+            "step three/T0052/execution-report.md",
+            "step three/T0052/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": "e99880c08dc7b9005607fc063ccc4850342822d3",
+          "tests": [
+            {
+              "name": "Host lifecycle unit/integration tests",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39951137894/job/120405605352",
+              "summary": "The executable C# harness including HostCapabilities readiness assertions succeeded."
+            },
+            {
+              "name": "Windows WPF Release build and startup smoke",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39951137894/job/120405605744",
+              "summary": "Build, formatting, real WPF startup/control smoke and close succeeded."
+            },
+            {
+              "name": "Android APK and Protobuf checks",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39951137894/job/120405605698",
+              "summary": "Kotlin lint, assembleDebug and Protobuf round-trip tests succeeded."
+            },
+            {
+              "name": "Graph and Python quality gate",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39951137898",
+              "summary": "Python tests, compileall, graph structure validation and repo-root output/evidence validation succeeded."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Proceed to T0053 after reviewing its incoming dependencies; retain unreviewed edge classifications unless separately validated."
         }
       ]
     },
@@ -21895,6 +21946,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-23T12:08:35.502Z"
+  "updated_at": "2026-10-23T12:12:13.762Z"
 }
 ```

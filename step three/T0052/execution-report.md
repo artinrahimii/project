@@ -1,23 +1,25 @@
 # T0052 execution report
 
 ## Dependency review
-- `T0051 → T0052`: validated as `contract_or_interface_dependency`. The new domain model represents the live RAM measurements and the model-memory check produced by T0051.
-- `T0048 → T0052`: validated as `sequencing_only`. The domain model does not consume host lifecycle-recovery outputs; the existing conservative ordering is preserved.
+- `T0051 → T0052`: validated as `contract_or_interface_dependency`. The new domain model represents the live RAM measurements and the explicit memory-compatibility result produced by T0051.
+- `T0048 → T0052`: validated as `sequencing_only`. `HostCapabilities` does not consume lifecycle recovery/shutdown outputs from T0048; the existing conservative ordering edge is preserved.
 
-## Attempt T0052-A001 — domain model and executable checks
+## Attempt T0052-A001 — implementation
 - Added `src/Host.Domain/HostCapabilities.cs`, a platform-neutral model for OS/hardware measurements, optional display-adapter inventory, RAM/disk check results, and inference-backend support.
-- Capacity is `Unknown` unless all required checks and valid RAM/disk measurements are present. An explicit failed check yields `Insufficient`; only complete, consistent measurements plus all passing checks yield `Ready`.
-- `CanRunInference` is true only for `Ready`. Display-adapter inventory alone does not imply compute support.
+- Capacity is `Unknown` unless all required checks and valid RAM/disk measurements are present. An explicit failed check produces `Insufficient`; only complete, consistent measurements and all checks passing produce `Ready`.
+- `CanRunInference` is true only when the computed capacity state is `Ready`.
 - Added executable C# assertions to `tests/HostLifecycle.Tests/Program.cs` for Unknown, Ready, low-memory, low-disk, unsupported-backend, missing-check and inconsistent-measurement cases.
-- Reconciled T0051 to done using exact-commit workflow evidence: product workflow run [39947543829](https://github.com/artinrahimii/project/actions/runs/39947543829) and quality workflow run [39947543809](https://github.com/artinrahimii/project/actions/runs/39947543809) both succeeded on implementation commit `e0ea090668e68a189830caa86149aa46f7caaebb`.
-- Local .NET execution was not available in this tool session. Exact-commit GitHub Actions verification remains pending for T0052; this attempt is not marked completed.
 
-## Files changed
-- `src/Host.Domain/HostCapabilities.cs`
-- `tests/HostLifecycle.Tests/Program.cs`
-- `step three/T0052/execution-report.md`
-- `step three/T0052/evidence/verification.md`
-- `step three/project-graph.md`
+## Attempt T0052-A002 — exact-commit verification
+- Implementation commit: [`e99880c08dc7b9005607fc063ccc4850342822d3`](https://github.com/artinrahimii/project/commit/e99880c08dc7b9005607fc063ccc4850342822d3) (`V 3.0.162`).
+- Host lifecycle unit/integration tests including the new C# assertions: **PASS** — [job](https://github.com/artinrahimii/project/actions/runs/39951137894/job/120405605352).
+- Windows WPF Release build, format verification and actual startup/close smoke test: **PASS** — [job](https://github.com/artinrahimii/project/actions/runs/39951137894/job/120405605744).
+- Android Kotlin lint, debug APK build and Protobuf round-trip tests: **PASS** — [job](https://github.com/artinrahimii/project/actions/runs/39951137894/job/120405605698).
+- Python regression suite, Python syntax compilation, graph validation and repo-root output/evidence checks: **PASS** — [quality workflow](https://github.com/artinrahimii/project/actions/runs/39951137898).
+- Both workflows completed successfully for the exact implementation commit. This verifies the declared scope; it does not imply end-to-end P2P, live-model inference or GPU compute support.
 
-## Follow-up
-After the new commit's quality and product-build workflows complete, inspect their actual conclusions and head SHA. Mark T0052 done only if the exact-commit checks pass; otherwise record the observed failure and correct it.
+## Result
+**Done.** The acceptance checks for this task's declared output and automated tests passed on the exact implementation commit.
+
+## Next
+Proceed to T0053, first reviewing its incoming edges. Its outgoing-related tasks must not be treated as completed merely because T0052 passed.
