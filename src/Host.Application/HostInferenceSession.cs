@@ -11,16 +11,19 @@ public sealed class HostInferenceSession : IDisposable
     private readonly HostLifecycle _lifecycle;
     private IInferenceBackend _backend;
     private readonly Func<Uri, string, IInferenceBackend>? _backendFactory;
+    private readonly Func<CancellationToken, Task<HostReadinessResult>>? _readinessEvaluator;
     private bool _disposed;
 
     public HostInferenceSession(
         HostLifecycle? lifecycle = null,
         IInferenceBackend? backend = null,
-        Func<Uri, string, IInferenceBackend>? backendFactory = null)
+        Func<Uri, string, IInferenceBackend>? backendFactory = null,
+        Func<CancellationToken, Task<HostReadinessResult>>? readinessEvaluator = null)
     {
         _lifecycle = lifecycle ?? new HostLifecycle();
         _backend = backend ?? new UnconfiguredInferenceBackend();
         _backendFactory = backendFactory;
+        _readinessEvaluator = readinessEvaluator;
     }
 
     public HostStatus Status => _lifecycle.Status;
@@ -80,12 +83,18 @@ public sealed class HostInferenceSession : IDisposable
         _lifecycle.Transition(HostState.Starting, "Checking local inference backend.");
         try
         {
-            if (await _backend.CheckHealthAsync(cancellationToken).ConfigureAwait(false))
+            if (!await _backend.CheckHealthAsync(cancellationToken).ConfigureAwait(false))
             {
-                return _lifecycle.Transition(HostState.Ready, "Local inference backend is ready.");
+                return _lifecycle.Transition(HostState.Error, _backend.UnavailableReason);
             }
 
-            return _lifecycle.Transition(HostState.Error, _backend.UnavailableReason);
+            var readiness = await EvaluateReadinessAsync(cancellationToken).ConfigureAwait(false);
+            if (!readiness.IsReady)
+            {
+                return _lifecycle.Transition(HostState.Error, readiness.Message);
+            }
+
+            return _lifecycle.Transition(HostState.Ready, readiness.Message);
         }
         catch (OperationCanceledException)
         {
@@ -134,6 +143,28 @@ public sealed class HostInferenceSession : IDisposable
             throw new ArgumentOutOfRangeException(nameof(prompt), promptValidation.Message);
         }
 
+        HostReadinessResult readiness;
+        try
+        {
+            readiness = await EvaluateReadinessAsync(cancellationToken).ConfigureAwait(false);
+        }
+        catch (OperationCanceledException)
+        {
+            _lifecycle.Transition(HostState.Error, "Host readiness check was cancelled. Host is not Ready.");
+            throw;
+        }
+        catch (Exception)
+        {
+            _lifecycle.Transition(HostState.Error, "Host readiness check failed. Host is not Ready.");
+            throw new InvalidOperationException("Host readiness check failed. Host is not Ready.");
+        }
+
+        if (!readiness.IsReady)
+        {
+            _lifecycle.Transition(HostState.Error, readiness.Message);
+            throw new InvalidOperationException(readiness.Message);
+        }
+
         _lifecycle.Transition(HostState.Busy, "Generating locally; one request at a time.");
         try
         {
@@ -152,6 +183,26 @@ public sealed class HostInferenceSession : IDisposable
             _lifecycle.Transition(HostState.Error, "Local inference failed. Check the local backend and reconnect.");
             throw;
         }
+    }
+
+    private async Task<HostReadinessResult> EvaluateReadinessAsync(CancellationToken cancellationToken)
+    {
+        if (_readinessEvaluator is null)
+        {
+            return new HostReadinessResult(
+                false,
+                "Host readiness checks are not configured; capacity remains unknown and the host is not Ready.");
+        }
+
+        var result = await _readinessEvaluator(cancellationToken).ConfigureAwait(false);
+        if (result is null || string.IsNullOrWhiteSpace(result.Message))
+        {
+            return new HostReadinessResult(
+                false,
+                "Host readiness check returned no verified result; the host is not Ready.");
+        }
+
+        return result;
     }
 
     public void Dispose()

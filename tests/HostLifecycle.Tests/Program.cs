@@ -11,6 +11,8 @@ using WhiteP.Host.Infrastructure;
 using WhiteP.Shared.Contracts;
 static void Assert(bool ok,string message){if(!ok)throw new Exception(message);}
 static void ExpectInvalid(Action action){try{action();}catch(InvalidOperationException){return;}throw new Exception("Invalid transition accepted.");}
+static Task<HostReadinessResult> ReadyHostReadiness(CancellationToken _) =>
+    Task.FromResult(new HostReadinessResult(true, "Test host capacity checks passed."));
 static void AssertProtoRoundTrip<T>(string messageName, T message, Func<byte[], T> parse) where T : IMessage<T>
 {
     var encoded = message.ToByteArray();
@@ -586,7 +588,7 @@ Assert(!await backend.CheckHealthAsync(),"Unhealthy backend must not be marked a
 Assert(!backend.IsAvailable,"Failed health check must clear readiness");
 var badInput=false; try { await backend.GenerateAsync(" ",32); } catch(ArgumentException) { badInput=true; }
 Assert(badInput,"Empty prompts must be rejected before network access");
-using (var session = new HostInferenceSession(backend: new SessionTestBackend()))
+using (var session = new HostInferenceSession(backend: new SessionTestBackend(), readinessEvaluator: ReadyHostReadiness))
 {
     var connected = await session.CheckBackendAsync();
     Assert(connected.State == HostState.Ready, "Session should become Ready after successful backend health check.");
@@ -594,8 +596,53 @@ using (var session = new HostInferenceSession(backend: new SessionTestBackend())
     Assert(generated == "session response", "Session should return generated text.");
     Assert(session.Status.State == HostState.Ready, "Session should return to Ready after generation.");
 }
+
+// A healthy endpoint is not enough when no host-readiness check is configured.
+using (var unverifiedSession = new HostInferenceSession(backend: new SessionTestBackend()))
+{
+    var unverifiedStatus = await unverifiedSession.CheckBackendAsync();
+    Assert(unverifiedStatus.State == HostState.Error, "Missing readiness verification must keep the host out of Ready.");
+    Assert(!unverifiedSession.IsConnected, "The host must not advertise connectivity when capacity is unknown.");
+}
+
+// A model/backend that is not healthy must never report Ready.
+using (var loadingModelSession = new HostInferenceSession(
+    backend: new RecoverableTestBackend(),
+    readinessEvaluator: ReadyHostReadiness))
+{
+    var loadingStatus = await loadingModelSession.CheckBackendAsync();
+    Assert(loadingStatus.State == HostState.Error, "An unready model/backend must keep the host out of Ready.");
+    Assert(!loadingModelSession.IsConnected, "An unready model/backend must not advertise connectivity.");
+}
+
+// Recheck capacity before generation; if it has become insufficient, exit Ready.
+var capacityChecks = 0;
+using (var guardedSession = new HostInferenceSession(
+    backend: new SessionTestBackend(),
+    readinessEvaluator: _ => Task.FromResult(
+        Interlocked.Increment(ref capacityChecks) == 1
+            ? new HostReadinessResult(true, "Test host capacity check passed.")
+            : new HostReadinessResult(false, "Host is not Ready: insufficient available RAM."))))
+{
+    var readyStatus = await guardedSession.CheckBackendAsync();
+    Assert(readyStatus.State == HostState.Ready, "A healthy backend with a passing capacity check may become Ready.");
+    var blockedByCapacity = false;
+    try
+    {
+        await guardedSession.GenerateAsync("capacity regression prompt", 16);
+    }
+    catch (InvalidOperationException)
+    {
+        blockedByCapacity = true;
+    }
+
+    Assert(blockedByCapacity, "Generation must be refused when the live capacity check fails.");
+    Assert(guardedSession.Status.State == HostState.Error, "Capacity failure must transition the session out of Ready.");
+    Assert(!guardedSession.IsConnected, "Capacity failure must clear the connected/Ready flag.");
+}
+
 var limitedSessionBackend = new SessionTestBackend();
-using (var limitedSession = new HostInferenceSession(backend: limitedSessionBackend))
+using (var limitedSession = new HostInferenceSession(backend: limitedSessionBackend, readinessEvaluator: ReadyHostReadiness))
 {
     var ready = await limitedSession.CheckBackendAsync();
     Assert(ready.State == HostState.Ready, "The bounded session should be ready before validation tests.");
@@ -673,7 +720,7 @@ using (var limitedSession = new HostInferenceSession(backend: limitedSessionBack
 
 // T0048: disposing an idle, healthy session must stop its lifecycle and clear readiness.
 var shutdownLifecycle = new HostLifecycle();
-var shutdownSession = new HostInferenceSession(lifecycle: shutdownLifecycle, backend: new SessionTestBackend());
+var shutdownSession = new HostInferenceSession(lifecycle: shutdownLifecycle, backend: new SessionTestBackend(), readinessEvaluator: ReadyHostReadiness);
 var readyBeforeShutdown = await shutdownSession.CheckBackendAsync();
 Assert(readyBeforeShutdown.State == HostState.Ready && shutdownSession.IsConnected, "Shutdown test requires a connected session.");
 shutdownSession.Dispose();

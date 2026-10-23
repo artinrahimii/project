@@ -11,13 +11,16 @@ public partial class MainWindow : Window
 {
     private readonly LocalHostSettingsStore _settingsStore = new();
     private LocalHostSettings _settings = LocalHostSettings.Defaults;
-    private readonly HostInferenceSession _session = new(
-        backendFactory: static (address, model) => new LlamaCppServerBackend(address, model));
+    private readonly HostInferenceSession _session;
+    private string? _requestedModelMemoryRequirementText;
     private CancellationTokenSource? _operationCancellation;
 
     public MainWindow()
     {
         InitializeComponent();
+        _session = new HostInferenceSession(
+            backendFactory: static (address, model) => new LlamaCppServerBackend(address, model),
+            readinessEvaluator: EvaluateHostReadinessAsync);
         var settingsLoadFailed = false;
         try
         {
@@ -41,6 +44,7 @@ public partial class MainWindow : Window
 
     private async void ConnectButton_Click(object sender, RoutedEventArgs e)
     {
+        _requestedModelMemoryRequirementText = ModelMemoryRequirementGiB.Text;
         ConnectButton.IsEnabled = false;
         GenerateButton.IsEnabled = false;
         try
@@ -98,6 +102,7 @@ public partial class MainWindow : Window
             return;
         }
 
+        _requestedModelMemoryRequirementText = ModelMemoryRequirementGiB.Text;
         GenerateButton.IsEnabled = false;
         ConnectButton.IsEnabled = false;
         OutputText.Clear();
@@ -152,6 +157,55 @@ public partial class MainWindow : Window
         }
     }
 
+
+    private Task<HostReadinessResult> EvaluateHostReadinessAsync(CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        if (!double.TryParse(
+                _requestedModelMemoryRequirementText?.Trim(),
+                NumberStyles.AllowDecimalPoint,
+                CultureInfo.InvariantCulture,
+                out var requiredGiB) ||
+            !double.IsFinite(requiredGiB) ||
+            requiredGiB <= 0 ||
+            requiredGiB > 1_048_576)
+        {
+            return Task.FromResult(new HostReadinessResult(
+                false,
+                "Host is not Ready: enter a positive declared model RAM requirement in GiB."));
+        }
+
+        try
+        {
+            var hardware = WindowsHostHardwareDiscovery.Discover();
+            var requiredBytes = checked((long)Math.Ceiling(requiredGiB * 1024d * 1024d * 1024d));
+            var estimate = ModelMemoryCompatibilityEstimator.Estimate(
+                requiredBytes,
+                hardware.AvailablePhysicalMemoryBytes);
+
+            if (!estimate.IsCompatible)
+            {
+                return Task.FromResult(new HostReadinessResult(
+                    false,
+                    "Host is not Ready: " + estimate.Message));
+            }
+
+            return Task.FromResult(new HostReadinessResult(
+                true,
+                "Local backend health passed and the declared RAM requirement is compatible with currently available memory."));
+        }
+        catch (OperationCanceledException)
+        {
+            throw;
+        }
+        catch (Exception)
+        {
+            return Task.FromResult(new HostReadinessResult(
+                false,
+                "Host is not Ready: current hardware capacity could not be verified."));
+        }
+    }
 
     private void EstimateModelCompatibility_Click(object sender, RoutedEventArgs e)
     {

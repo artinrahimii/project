@@ -9081,20 +9081,39 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0053 و T0048 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "src/Host.Application/HostReadinessResult.cs",
+        "src/Host.Application/HostInferenceSession.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0054/execution-report.md",
+        "step three/T0054/evidence/verification.md"
+      ],
       "expected_output_paths": [
         "src/Host.Windows/ (سرویس تشخیص سخت‌افزار و UI)"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0054/execution-report.md",
+        "step three/T0054/evidence/verification.md"
+      ],
+      "notes": "WPF Connect now gates Ready on a healthy local backend plus a positive declared RAM requirement compared with live available physical RAM, and capacity is rechecked before each generation. Missing readiness verification or failed health/capacity checks leads to Error rather than Ready. Disk-space thresholds and exact configured model-ID validation remain outside this change.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0054-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Host.Application/HostReadinessResult.cs",
+          "src/Host.Application/HostInferenceSession.cs",
+          "src/Host.Windows/MainWindow.xaml.cs",
+          "tests/HostLifecycle.Tests/Program.cs",
+          "step three/T0054/execution-report.md",
+          "step three/T0054/evidence/verification.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
@@ -9107,7 +9126,31 @@
           "review_evidence": []
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0054-A001",
+          "started_at": "2026-10-23T12:25:24.311Z",
+          "ended_at": "2026-10-23T12:25:24.311Z",
+          "result": "partial",
+          "summary": "Added a mandatory readiness check before HostInferenceSession enters Ready and before every inference. The WPF host checks the configured local backend health and declared model-memory requirement against live available RAM; C# regression assertions cover missing guard, unready backend and capacity failure after an initially Ready state. Exact-commit CI pending.",
+          "changed_files": [
+            "src/Host.Application/HostReadinessResult.cs",
+            "src/Host.Application/HostInferenceSession.cs",
+            "src/Host.Windows/MainWindow.xaml.cs",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "step three/T0054/execution-report.md",
+            "step three/T0054/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Check both GitHub Actions workflows for the exact commit; record the actual results and repair any failures before marking done."
+        }
+      ]
     },
     {
       "id": "T0055",
@@ -18169,19 +18212,28 @@
       "from": "T0053",
       "to": "T0054",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0054 applies the capacity-readiness semantics protected by T0053's executable low-RAM/low-disk/backend acceptance tests; the tests are now a verified regression contract.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Domain/HostCapabilities.cs",
+        "tests/HostLifecycle.Tests/HostCapacityAcceptanceTests.cs",
+        "step three/T0053/evidence/verification.md"
+      ]
     },
     {
       "from": "T0048",
       "to": "T0054",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0054 changes HostInferenceSession lifecycle readiness transitions; its guard relies on the lifecycle state contract and must preserve Ready/Error/Stopped semantics verified by T0048.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Domain/HostLifecycle.cs",
+        "src/Host.Application/HostInferenceSession.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0048/evidence/verification.md"
+      ]
     },
     {
       "from": "T0054",
@@ -22068,8 +22120,37 @@
         "tests/HostLifecycle.Tests/HostCapacityAcceptanceTests.cs"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-23T12:25:24.311Z",
+      "edge_from": "T0053",
+      "edge_to": "T0054",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "reason": "The runtime guard consumes the capacity-readiness semantics exercised by T0053's acceptance tests.",
+      "evidence": [
+        "src/Host.Domain/HostCapabilities.cs",
+        "tests/HostLifecycle.Tests/HostCapacityAcceptanceTests.cs",
+        "step three/T0053/evidence/verification.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-23T12:25:24.311Z",
+      "edge_from": "T0048",
+      "edge_to": "T0054",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "reason": "The guard transitions the existing HostInferenceSession lifecycle to Error rather than falsely preserving Ready; T0048 verifies these lifecycle transitions.",
+      "evidence": [
+        "src/Host.Domain/HostLifecycle.cs",
+        "src/Host.Application/HostInferenceSession.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0048/evidence/verification.md"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-23T12:18:48.540Z"
+  "updated_at": "2026-10-23T12:25:24.311Z"
 }
 ```
