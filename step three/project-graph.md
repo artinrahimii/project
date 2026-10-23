@@ -7197,33 +7197,73 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0042 و T0040 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "done",
+      "status_fa": "تکمیل‌شده",
+      "actual_output_paths": [
+        "src/Host.Domain/WhiteP.Host.Domain.csproj",
+        "src/Host.Domain/HostLifecycle.cs",
+        "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+        "tests/HostLifecycle.Tests/Program.cs"
+      ],
       "expected_output_paths": [
         "src/Host.Windows/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "src/Host.Domain/HostLifecycle.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+        "step three/T0043/execution-report.md",
+        "step three/T0043/evidence/verification.md"
+      ],
+      "notes": "HostState was already present in the production domain assembly after T0042. This task added explicit regression assertions for the five states, allowed/rejected transitions, and status-message validation; no duplicate implementation was created.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0043-A001",
+        "last_attempt_result": "awaiting_ci",
+        "changed_files": [
+          "tests/HostLifecycle.Tests/Program.cs",
+          "step three/project-graph.md",
+          "step three/T0043/execution-report.md",
+          "step three/T0043/evidence/verification.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
-          "affected_by_contract_changes": [],
-          "review_evidence": []
+          "state": "awaiting_ci",
+          "triggering_contracts": [
+            "HostLifecycle state-transition contract"
+          ],
+          "affected_by_contract_changes": [
+            "T0042",
+            "T0044",
+            "T0007"
+          ],
+          "review_evidence": [
+            "src/Host.Domain/HostLifecycle.cs",
+            "tests/HostLifecycle.Tests/Program.cs"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0043-A001",
+          "started_at": "2026-10-23T06:10:00Z",
+          "ended_at": null,
+          "result": "in_progress",
+          "commit_sha": null,
+          "summary": "Confirmed HostState implementation exists in the correct Domain assembly; expanded the actual C# regression harness to cover all five states, invalid transitions, message trimming and blank-message rejection. Awaiting exact-commit CI before acceptance.",
+          "changed_files": [
+            "tests/HostLifecycle.Tests/Program.cs"
+          ],
+          "tests": [],
+          "failure_details": null,
+          "follow_up": "Check Step Three quality gate and product build on the commit; only then mark succeeded."
+        }
+      ]
     },
     {
       "id": "T0044",
@@ -16501,19 +16541,31 @@
       "from": "T0042",
       "to": "T0043",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "hard_dependency",
+      "rationale": "The task consumes the separated, buildable Host.Domain and Host.Application projects produced by T0042; HostLifecycle.cs is now in Host.Domain and the C# harness references that project directly.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Domain/WhiteP.Host.Domain.csproj",
+        "src/Host.Domain/HostLifecycle.cs",
+        "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "https://github.com/artinrahimii/project/actions/runs/39908129970"
+      ]
     },
     {
       "from": "T0040",
       "to": "T0043",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0043's state model is used by the application/session layer and its C# regression harness references Shared.Contracts; this prerequisite's validation suite must remain green before accepting the lifecycle state contract.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Application/HostInferenceSession.cs",
+        "src/Shared.Contracts/WhiteP.Shared.Contracts.csproj",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0040/evidence/verification.md",
+        "https://github.com/artinrahimii/project/actions/runs/39908129970"
+      ]
     },
     {
       "from": "T0043",

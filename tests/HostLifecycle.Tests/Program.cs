@@ -376,9 +376,36 @@ static string FindRepositoryFile(string relativePath)
     throw new FileNotFoundException($"Could not find repository file '{relativePath}'.");
 }
 
-var m=new HostLifecycle(); Assert(m.Status.State==HostState.Stopped,"Initial state");
-m.Transition(HostState.Starting,"Starting");m.Transition(HostState.Ready,"Ready");m.Transition(HostState.Busy,"Busy");m.Transition(HostState.Ready,"Complete");m.Transition(HostState.Stopped,"Stop");
-ExpectInvalid(()=>m.Transition(HostState.Busy,"Invalid"));
+// T0043: exercise every lifecycle state and the permitted/rejected transitions.
+var m = new HostLifecycle();
+Assert(m.Status.State == HostState.Stopped, "Initial state must be Stopped.");
+Assert(m.Status.Message == "Host stopped.", "Initial status must have a stable message.");
+ExpectInvalid(() => m.Transition(HostState.Ready, "Skip startup"));
+ExpectInvalid(() => m.Transition(HostState.Busy, "Busy before ready"));
+ExpectInvalid(() => m.Transition(HostState.Stopped, "Already stopped"));
+var starting = m.Transition(HostState.Starting, "  Starting  ");
+Assert(starting.State == HostState.Starting && starting.Message == "Starting", "Transition messages must be trimmed.");
+ExpectInvalid(() => m.Transition(HostState.Busy, "Skip ready"));
+m.Transition(HostState.Ready, "Ready");
+m.Transition(HostState.Busy, "Busy");
+m.Transition(HostState.Ready, "Complete");
+m.Transition(HostState.Stopped, "Stop");
+m.Transition(HostState.Starting, "Restart");
+m.Transition(HostState.Error, "Startup failed");
+m.Transition(HostState.Starting, "Retry");
+m.Transition(HostState.Ready, "Recovered");
+m.Transition(HostState.Error, "Runtime failure");
+m.Transition(HostState.Stopped, "Stop after error");
+ExpectInvalid(() => m.Transition(HostState.Busy, "Busy after stop"));
+try
+{
+    m.Transition(HostState.Starting, "  ");
+    throw new Exception("Blank status messages must be rejected.");
+}
+catch (ArgumentException)
+{
+    // Expected: status messages must not be empty or whitespace.
+}
 var status=new HostStartup(new HostLifecycle(),new UnconfiguredInferenceBackend()).Start();
 Assert(status.State==HostState.Error,"Unavailable backend must report Error");
 Assert(status.Message.Contains("not configured",StringComparison.OrdinalIgnoreCase),"Reason must be visible");
