@@ -12,7 +12,7 @@ public sealed record WindowsHostHardwareSnapshot(
     long SystemDriveTotalBytes,
     long SystemDriveAvailableBytes);
 
-public static partial class WindowsHostHardwareDiscovery
+public static class WindowsHostHardwareDiscovery
 {
     public static WindowsHostHardwareSnapshot Discover()
     {
@@ -87,10 +87,10 @@ public static partial class WindowsHostHardwareDiscovery
         public ulong AvailableExtendedVirtual;
     }
 
-    private static partial class NativeMethods
+    private static class NativeMethods
     {
-        [LibraryImport("kernel32.dll", SetLastError = true)]
+        [DllImport("kernel32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        internal static partial bool GlobalMemoryStatusEx(ref MemoryStatusEx buffer);
+        internal static extern bool GlobalMemoryStatusEx(ref MemoryStatusEx buffer);
     }
 }

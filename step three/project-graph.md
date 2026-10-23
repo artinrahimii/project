@@ -8274,11 +8274,11 @@
         "src/Host.Windows/WindowsHostHardwareDiscovery.cs",
         "tests/test_windows_hardware_discovery.py"
       ],
-      "notes": "Attempt T0049-A001 adds native Windows OS/RAM/system-drive discovery and invokes it from the real Windows WPF smoke test. Exact-commit CI is required before completion.",
+      "notes": "Attempt T0049-A001 was not verified: the Windows build failed because LibraryImport-generated code required unsafe compilation. Attempt A003 switches to DllImport without enabling unsafe compilation. Status remains in_progress until exact-commit CI passes.",
       "execution_summary": {
-        "attempt_count": 1,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "T0049-A001",
+        "attempt_count": 3,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "T0049-A003",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Host.Windows/WindowsHostHardwareDiscovery.cs",
@@ -8288,9 +8288,16 @@
           "step three/T0049/evidence/verification.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
-        "tests_failed": [],
+        "related_commits": [
+          "1925a0b25b550fcacf33b013422f1284d42d5334"
+        ],
+        "tests_passed": [
+          "Step Three quality gate run 39939563867 passed for V 3.0.150; this does not verify the corrected DllImport revision.",
+          "Host lifecycle job 120367370545 passed for V 3.0.150; this does not verify the corrected DllImport revision."
+        ],
+        "tests_failed": [
+          "Windows WPF build job 120367370825 failed on V 3.0.150 with SYSLIB1062 and CS0227 before the hardware discovery smoke; failure details are preserved in T0049-A002."
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -8322,6 +8329,64 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Run and inspect the quality gate, Windows WPF Release/runtime smoke test, C# lifecycle tests and Android build for the exact implementation commit. Fix observed failures and preserve this attempt's history."
+        },
+        {
+          "attempt_id": "T0049-A002",
+          "started_at": "2026-10-23T10:30:18Z",
+          "ended_at": "2026-10-23T10:31:16Z",
+          "result": "failed",
+          "summary": "The exact-commit Windows WPF build failed before startup smoke because LibraryImport source generation required unsafe compilation (SYSLIB1062, CS0227). No hardware-discovery runtime result was obtained.",
+          "changed_files": [
+            "src/Host.Windows/WindowsHostHardwareDiscovery.cs",
+            "src/Host.Windows/App.xaml.cs"
+          ],
+          "commit_sha": "1925a0b25b550fcacf33b013422f1284d42d5334",
+          "tests": [
+            {
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39939563867",
+              "summary": "Python tests, syntax checks, graph structure and recorded-output/evidence validation passed on V 3.0.150."
+            },
+            {
+              "name": "Host lifecycle unit and integration tests",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39939563803/job/120367370545",
+              "summary": "The C# host lifecycle harness passed on V 3.0.150."
+            },
+            {
+              "name": "Windows WPF Release build",
+              "result": "failed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39939563803/job/120367370825",
+              "summary": "SYSLIB1062 and CS0227 due to LibraryImport-generated code requiring unsafe compilation. The WPF startup smoke did not execute."
+            }
+          ],
+          "failure_details": "The LibraryImport source generator emitted SYSLIB1062 and CS0227. Do not enable unsafe compilation project-wide; replace the declaration with conventional DllImport and rerun the exact-commit workflow.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Replace LibraryImport with DllImport, keep unsafe compilation disabled, and verify the corrected exact commit."
+        },
+        {
+          "attempt_id": "T0049-A003",
+          "started_at": "2026-10-23T10:33:07.253Z",
+          "ended_at": "2026-10-23T10:33:07.253Z",
+          "result": "partial",
+          "summary": "Replaced the source-generated LibraryImport declaration with conventional DllImport to avoid enabling unsafe compilation; updated the Python contract test. Exact-commit CI is pending.",
+          "changed_files": [
+            "src/Host.Windows/WindowsHostHardwareDiscovery.cs",
+            "tests/test_windows_hardware_discovery.py",
+            "step three/T0049/execution-report.md",
+            "step three/T0049/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect exact-commit quality gate, Windows Release build/runtime smoke, C# lifecycle harness and Android build. Mark T0049 done only after required acceptance evidence passes."
         }
       ]
     },
@@ -21381,6 +21446,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-23T10:29:57.573Z"
+  "updated_at": "2026-10-23T10:33:07.253Z"
 }
 ```

@@ -16,7 +16,7 @@ class WindowsHardwareDiscoveryTests(unittest.TestCase):
         self.assertIn("OperatingSystemVersion", SERVICE)
 
     def test_physical_memory_comes_from_the_real_windows_api(self):
-        self.assertIn('LibraryImport("kernel32.dll", SetLastError = true)', SERVICE)
+        self.assertIn('DllImport("kernel32.dll", SetLastError = true)', SERVICE)
         self.assertIn("GlobalMemoryStatusEx", SERVICE)
         self.assertIn("Marshal.SizeOf<MemoryStatusEx>()", SERVICE)
         self.assertIn("memoryStatus.TotalPhysical", SERVICE)

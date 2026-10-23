@@ -1,15 +1,15 @@
 # T0049 verification evidence
 
-Status: pending exact-commit GitHub Actions results.
+## Attempt A001 / V 3.0.150 — failed build
+- [Step Three quality gate run 39939563867](https://github.com/artinrahimii/project/actions/runs/39939563867): passed.
+- [Host lifecycle job 120367370545](https://github.com/artinrahimii/project/actions/runs/39939563803/job/120367370545): passed.
+- [Windows WPF build job 120367370825](https://github.com/artinrahimii/project/actions/runs/39939563803/job/120367370825): failed before runtime smoke with `SYSLIB1062` / `CS0227`, because the `LibraryImport` source generator required unsafe compilation.
+- Corrective action: use conventional `DllImport` for the Windows native API while leaving unsafe compilation disabled.
 
-Expected observable runtime checks on the Windows CI runner:
-- Windows OS description/version are present.
-- `GlobalMemoryStatusEx` successfully returns non-zero installed physical memory.
-- The Windows directory resolves to a system-drive root and `DriveInfo` reports a ready drive with positive total capacity and an available capacity within the valid range.
-- The production WPF startup smoke calls `WindowsHostHardwareDiscovery.Discover()` and exits non-zero if metrics are missing or inconsistent.
+## Attempt A003 — pending
+Required checks on the corrected implementation commit:
+1. Python quality gate and graph/evidence validation.
+2. Windows WPF Release build and startup smoke that calls `WindowsHostHardwareDiscovery.Discover()` on the Windows runner and rejects absent or inconsistent OS/RAM/disk values.
+3. C# lifecycle harness and Android APK/Protobuf workflow.
 
-Additional quality checks:
-- Python contract tests verify the implementation calls real Windows APIs and that the runtime smoke is wired into the actual entry point.
-- The Windows Release build and C# lifecycle harness must pass; the existing Android APK/Protobuf workflow must also complete successfully.
-
-No test is recorded as passed here until the workflow result for the implementation commit has been inspected.
+No result is marked passed for the corrected declaration until the new exact-commit workflow completes.
