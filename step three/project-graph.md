@@ -8948,20 +8948,35 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0052 و T0048 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "tests/HostLifecycle.Tests/HostCapacityAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0053/execution-report.md",
+        "step three/T0053/evidence/verification.md"
+      ],
       "expected_output_paths": [
         "src/Host.Windows/ (سرویس تشخیص سخت‌افزار و UI)"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "tests/HostLifecycle.Tests/HostCapacityAcceptanceTests.cs",
+        "step three/T0053/execution-report.md",
+        "step three/T0053/evidence/verification.md"
+      ],
+      "notes": "Dedicated executable acceptance tests were added for low RAM, insufficient disk, unsupported backend, failure precedence, missing checks and inconsistent measurements. Exact-commit CI is pending.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0053-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "tests/HostLifecycle.Tests/HostCapacityAcceptanceTests.cs",
+          "tests/HostLifecycle.Tests/Program.cs",
+          "step three/T0053/execution-report.md",
+          "step three/T0053/evidence/verification.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
@@ -8974,7 +8989,29 @@
           "review_evidence": []
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0053-A001",
+          "started_at": "2026-10-23T12:15:07.067Z",
+          "ended_at": "2026-10-23T12:15:07.067Z",
+          "result": "partial",
+          "summary": "Added a separate executable C# acceptance suite for RAM/disk/backend-capacity failure states and wired it into the existing harness. Exact-commit CI has not yet completed.",
+          "changed_files": [
+            "tests/HostLifecycle.Tests/HostCapacityAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "step three/T0053/execution-report.md",
+            "step three/T0053/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect the exact implementation commit's GitHub Actions results, then record success or failure honestly."
+        }
+      ]
     },
     {
       "id": "T0054",
@@ -18055,19 +18092,27 @@
       "from": "T0052",
       "to": "T0053",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "The dedicated T0053 acceptance checks exercise the HostCapabilities domain model introduced by T0052; this is a direct code/interface dependency, not inferred solely from type=blocks.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Domain/HostCapabilities.cs",
+        "tests/HostLifecycle.Tests/HostCapacityAcceptanceTests.cs",
+        "step three/T0052/evidence/verification.md"
+      ]
     },
     {
       "from": "T0048",
       "to": "T0053",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "The capacity-check assertions do not consume lifecycle recovery or shutdown outputs from T0048; preserve the existing blocks edge as conservative ordering only.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Domain/HostLifecycle.cs",
+        "step three/T0048/execution-report.md",
+        "tests/HostLifecycle.Tests/HostCapacityAcceptanceTests.cs"
+      ]
     },
     {
       "from": "T0053",
@@ -21944,8 +21989,36 @@
         "step three/T0048/evidence/verification.md"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-23T12:15:07.067Z",
+      "edge_from": "T0052",
+      "edge_to": "T0053",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "reason": "T0053 tests the HostCapabilities model implemented by T0052; the dependency is a concrete code/interface relationship.",
+      "evidence": [
+        "src/Host.Domain/HostCapabilities.cs",
+        "tests/HostLifecycle.Tests/HostCapacityAcceptanceTests.cs",
+        "step three/T0052/evidence/verification.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-23T12:15:07.067Z",
+      "edge_from": "T0048",
+      "edge_to": "T0053",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "reason": "T0053 does not consume lifecycle recovery or shutdown outputs from T0048; retain the pre-existing blocks edge only as conservative task order.",
+      "evidence": [
+        "src/Host.Domain/HostLifecycle.cs",
+        "step three/T0048/execution-report.md",
+        "tests/HostLifecycle.Tests/HostCapacityAcceptanceTests.cs"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-23T12:12:13.762Z"
+  "updated_at": "2026-10-23T12:15:07.067Z"
 }
 ```
