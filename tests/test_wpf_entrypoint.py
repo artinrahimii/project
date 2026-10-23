@@ -64,6 +64,15 @@ class WpfEntryPointTests(unittest.TestCase):
         presenter = (ROOT / "src/Host.Application/HostStatusPresentation.cs").read_text(encoding="utf-8")
         self.assertIn("Direct peer-to-peer transport: not implemented in this build.", presenter)
 
+    def test_user_visible_errors_use_safe_mapping_not_exception_details(self):
+        self.assertIn("HostErrorPresentation.ToUserMessage(exception)", WINDOW_CODE)
+        self.assertNotIn('LifecycleState.Text = $"Error — {exception.Message}"', WINDOW_CODE)
+        self.assertNotIn('OutputText.Text = exception.Message', WINDOW_CODE)
+        presenter = (ROOT / "src/Host.Application/HostErrorPresentation.cs").read_text(encoding="utf-8")
+        self.assertIn("Details are hidden to protect local paths and sensitive data.", presenter)
+        self.assertIn("HttpRequestException", presenter)
+        self.assertIn("OperationCanceledException", presenter)
+
     def test_window_status_starts_without_connecting_to_a_backend(self):
         self.assertIn('Text="Stopped — connect to a local backend."', WINDOW_XAML)
         self.assertNotIn(".ConnectAsync(", APP_CODE)

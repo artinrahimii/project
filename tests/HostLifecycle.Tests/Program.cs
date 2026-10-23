@@ -640,6 +640,19 @@ Assert(HostStatusPresentation.FormatNetworkStatus(presentedError).Contains("stat
 Assert(HostStatusPresentation.FormatNetworkStatus(presentedReady).Contains("Direct peer-to-peer transport: not implemented", StringComparison.Ordinal), "The UI must not imply the unimplemented P2P transport is available.");
 Console.WriteLine("PASS: backend and local-endpoint status presentation reflects all HostState values and discloses unavailable P2P transport.");
 
+ // T0047: safe user-facing error mapping must never expose exception details.
+Assert(HostErrorPresentation.ToUserMessage(new OperationCanceledException()).Contains("cancelled or timed out", StringComparison.Ordinal), "Cancellation must map to user-friendly guidance.");
+Assert(HostErrorPresentation.ToUserMessage(new HttpRequestException("secret URL token")).Contains("Could not reach the local inference server", StringComparison.Ordinal), "Network errors must map to actionable guidance.");
+Assert(HostErrorPresentation.ToUserMessage(new ArgumentException(@"C:\private\settings.json")).Contains("server URL and model ID", StringComparison.Ordinal), "Invalid settings must map to safe guidance.");
+Assert(HostErrorPresentation.ToUserMessage(new InvalidDataException(@"C:\private\settings.json")).Contains("Local settings or the server response", StringComparison.Ordinal), "Invalid data must map to safe guidance.");
+Assert(HostErrorPresentation.ToUserMessage(new UnauthorizedAccessException(@"C:\Users\secret\token.json")).Contains("file permissions", StringComparison.Ordinal), "Access failures must map to safe guidance.");
+var secretException = new Exception(@"C:\Users\private\token.json");
+var safeUnexpectedMessage = HostErrorPresentation.ToUserMessage(secretException);
+Assert(safeUnexpectedMessage.Contains("Details are hidden", StringComparison.Ordinal), "Unexpected failures must explain that details are hidden.");
+Assert(!safeUnexpectedMessage.Contains("token.json", StringComparison.OrdinalIgnoreCase), "Unexpected exception text and local paths must not leak.");
+Console.WriteLine("PASS: user-safe error mapping hides exception details and provides actionable guidance.");
+
+
 // T0045: versioned local settings persistence and validation.
 var settingsTestDirectory = Path.Combine(Path.GetTempPath(), "whitep-settings-" + Guid.NewGuid().ToString("N"));
 var settingsPath = Path.Combine(settingsTestDirectory, "settings.json");

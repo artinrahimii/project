@@ -64,7 +64,7 @@ public partial class MainWindow : Window
             }
             catch (ArgumentException exception)
             {
-                LifecycleState.Text = $"Error — {exception.Message}";
+                LifecycleState.Text = $"Error — {HostErrorPresentation.ToUserMessage(exception)}";
                 return;
             }
 
@@ -107,10 +107,10 @@ public partial class MainWindow : Window
             OutputText.Text = await generationTask;
             RenderStatus(_session.Status);
         }
-        catch (Exception)
+        catch (Exception exception)
         {
             RenderStatus(_session.Status);
-            OutputText.Text = "Generation failed. Check the local server status and reconnect; prompt/response contents are not logged by the backend client.";
+            OutputText.Text = HostErrorPresentation.ToUserMessage(exception);
         }
         finally
         {

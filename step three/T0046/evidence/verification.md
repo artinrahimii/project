@@ -1,12 +1,10 @@
 # T0046 verification evidence
 
-## Implemented paths
-- `src/Host.Application/HostStatusPresentation.cs`: pure presentation mapping from live `HostStatus` snapshots to backend and local endpoint status.
-- `src/Host.Windows/MainWindow.xaml`: accessible separate endpoint/network status line.
-- `src/Host.Windows/MainWindow.xaml.cs`: status refresh after entering connection-checking/Busy states and after each operation result.
-- `tests/HostLifecycle.Tests/Program.cs`: executable assertions for all five host states and explicit P2P-unavailable disclosure.
-- `tests/test_wpf_entrypoint.py`: checks that the main window uses the presentation mapping and refreshes during operations.
+- `src/Host.Application/HostStatusPresentation.cs`: maps all five host states to backend and local endpoint status.
+- `src/Host.Windows/MainWindow.xaml` and `MainWindow.xaml.cs`: accessible status line wired to actual `HostStatus` and refreshed during connect/generate.
+- `tests/HostLifecycle.Tests/Program.cs`: assertions cover Stopped, Starting, Ready, Busy, Error, and explicit P2P-unavailable disclosure.
+- `tests/test_wpf_entrypoint.py`: checks live status wiring and the explicit transport limitation.
+- Exact-main quality gate passed: https://github.com/artinrahimii/project/actions/runs/39923551335
+- Exact-main product build, WPF startup smoke, lifecycle tests, Android APK and Protobuf round-trip checks passed: https://github.com/artinrahimii/project/actions/runs/39923551318
 
-## Limits
-- Exact-commit GitHub Actions results are pending; no passing result is claimed yet.
-- This reports backend health observed through the local endpoint and host-session state. It is not continuous polling and does not replace future direct P2P transport.
+Limit: status reflects the latest observed local backend state; it is not continuous polling. P2P transport is not implemented.

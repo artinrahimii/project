@@ -7695,8 +7695,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0045 و T0040 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال انجام",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "src/Host.Application/HostStatusPresentation.cs",
         "src/Host.Windows/MainWindow.xaml",
@@ -7715,14 +7715,17 @@
         "src/Host.Windows/MainWindow.xaml.cs",
         "tests/HostLifecycle.Tests/Program.cs",
         "tests/test_wpf_entrypoint.py",
-        "step three/T0046/evidence/verification.md"
+        "step three/T0046/evidence/verification.md",
+        "Step Three quality gate 39923551335 passed for e3bd75315785605ed040168010934f6342c94782",
+        "Product build 39923551318 passed for e3bd75315785605ed040168010934f6342c94782",
+        "Windows WPF build/startup smoke and host lifecycle tests passed; Android build and Protobuf checks passed"
       ],
-      "notes": "The status presentation formats the backend and last-observed local endpoint state from HostStatus snapshots (Stopped, Starting, Ready, Busy, Error), and refreshes during connection checks and inference. Direct peer-to-peer transport is explicitly reported as not implemented; no P2P readiness is claimed. Exact-commit CI for these changes is pending. Latest product CI on c6ac1088d5321744331e97fa2c3f1dd76c0acaa0: Windows Release build and lifecycle tests passed, but WPF startup smoke exceeded 15 seconds; workflow timeout raised to 30 seconds, awaiting revalidation. Latest quality run 39922632934 failed because the source-level test still asserted the old 15-second timeout; test expectation updated to 30 seconds, pending CI. Quality gate run 39922876698 confirmed all 99 Python tests pass, but graph validation failed because failed_attempt_count did not match execution_history results. The metadata count has been corrected to reflect result values; the observed CI failure itself remains documented in tests_failed. Follow-up exact-main run 39922953868 still failed graph_guard with ATTEMPT_COUNT_MISMATCH (summary=3, history=4); the previous correction addressed the failed-attempt count field, not attempt_count. Updated attempt_count to 4 to match the four preserved history entries. Re-run graph guard and evidence validation after this commit; task remains in_progress.",
+      "notes": "The status presentation formats the backend and last-observed local endpoint state from HostStatus snapshots (Stopped, Starting, Ready, Busy, Error), and refreshes during connection checks and inference. Direct peer-to-peer transport is explicitly reported as not implemented; no P2P readiness is claimed. Exact-commit CI for these changes is pending. Latest product CI on c6ac1088d5321744331e97fa2c3f1dd76c0acaa0: Windows Release build and lifecycle tests passed, but WPF startup smoke exceeded 15 seconds; workflow timeout raised to 30 seconds, awaiting revalidation. Latest quality run 39922632934 failed because the source-level test still asserted the old 15-second timeout; test expectation updated to 30 seconds, pending CI. Quality gate run 39922876698 confirmed all 99 Python tests pass, but graph validation failed because failed_attempt_count did not match execution_history results. The metadata count has been corrected to reflect result values; the observed CI failure itself remains documented in tests_failed. Follow-up exact-main run 39922953868 still failed graph_guard with ATTEMPT_COUNT_MISMATCH (summary=3, history=4); the previous correction addressed the failed-attempt count field, not attempt_count. Updated attempt_count to 4 to match the four preserved history entries. Re-run graph guard and evidence validation after this commit; task remains in_progress. Exact-main validation completed 2026-10-23: quality gate run 39923551335 and product build run 39923551318 passed for e3bd75315785605ed040168010934f6342c94782, including Windows startup smoke, host lifecycle tests, Android APK and Protobuf round-trip checks. T0046 acceptance is verified; P2P remains unavailable.",
       "execution_summary": {
-        "attempt_count": 6,
+        "attempt_count": 7,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0046-A006",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "T0046-A007",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Host.Application/HostStatusPresentation.cs",
           "src/Host.Windows/MainWindow.xaml",
@@ -7735,7 +7738,20 @@
           ".github/workflows/product-build.yml"
         ],
         "related_commits": [],
-        "tests_passed": [],
+        "tests_passed": [
+          {
+            "name": "Step Three quality gate",
+            "result": "passed",
+            "evidence": "https://github.com/artinrahimii/project/actions/runs/39923551335",
+            "summary": "Exact-main quality gate passed for e3bd75315785605ed040168010934f6342c94782."
+          },
+          {
+            "name": "Integrated product build",
+            "result": "passed",
+            "evidence": "https://github.com/artinrahimii/project/actions/runs/39923551318",
+            "summary": "Windows WPF Release build/startup smoke and lifecycle tests, Android APK build, and Protobuf round-trip checks passed."
+          }
+        ],
         "tests_failed": [
           {
             "name": "Windows WPF startup smoke test",
@@ -7926,6 +7942,38 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Verify graph_guard and evidence validation after this correction; inspect the product-build run for the same commit and do not close T0046 until both workflows pass."
+        },
+        {
+          "attempt_id": "T0046-A007",
+          "started_at": "2026-10-23T08:20:00Z",
+          "ended_at": "2026-10-23T08:20:00Z",
+          "result": "succeeded",
+          "summary": "Exact-main CI revalidation passed: Step Three quality gate, Windows WPF Release build and startup smoke, host lifecycle tests, Android APK build, and Protobuf round-trip checks. The status panel uses actual HostStatus snapshots and explicitly discloses that direct P2P transport is not implemented.",
+          "changed_files": [
+            "step three/project-graph.md",
+            "step three/T0046/execution-report.md",
+            "step three/T0046/evidence/verification.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39923551335",
+              "summary": "Exact-main quality gate succeeded."
+            },
+            {
+              "name": "Integrated product build",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39923551318",
+              "summary": "Windows WPF, startup smoke, lifecycle tests, Android APK and Protobuf checks succeeded."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "T0047 can proceed; keep direct P2P marked unavailable."
         }
       ]
     },
@@ -7946,20 +7994,34 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0046 و T0040 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال انجام",
+      "actual_output_paths": [
+        "src/Host.Application/HostErrorPresentation.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "tests/test_wpf_entrypoint.py",
+        "step three/T0047/execution-report.md",
+        "step three/T0047/evidence/verification.md"
+      ],
       "expected_output_paths": [
         "src/Host.Windows/"
       ],
       "evidence": [],
       "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0047-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Host.Application/HostErrorPresentation.cs",
+          "src/Host.Windows/MainWindow.xaml.cs",
+          "tests/HostLifecycle.Tests/Program.cs",
+          "tests/test_wpf_entrypoint.py",
+          "step three/T0047/execution-report.md",
+          "step three/T0047/evidence/verification.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
@@ -7970,9 +8032,39 @@
           "triggering_contracts": [],
           "affected_by_contract_changes": [],
           "review_evidence": []
-        }
+        },
+        "notes": "User-safe error mapping added; exact-commit CI pending. Do not mark done until product build and quality gate pass."
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0047-A001",
+          "started_at": "2026-10-23T08:20:00Z",
+          "ended_at": "2026-10-23T08:20:00Z",
+          "result": "partial",
+          "summary": "Added centralized user-safe error mapping for cancellation, local-server reachability, invalid settings/data, access, invalid state and unexpected failures. WPF handlers now avoid showing raw exception details; C# and Python regression assertions added. Exact-commit CI is pending.",
+          "changed_files": [
+            "src/Host.Application/HostErrorPresentation.cs",
+            "src/Host.Windows/MainWindow.xaml.cs",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "tests/test_wpf_entrypoint.py",
+            "step three/T0047/execution-report.md",
+            "step three/T0047/evidence/verification.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Exact-commit Step Three quality gate and product build",
+              "result": "pending",
+              "summary": "Must pass before T0047 can be marked done."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect exact-main CI; preserve this attempt and append a new attempt for any fixes."
+        }
+      ]
     },
     {
       "id": "T0048",
