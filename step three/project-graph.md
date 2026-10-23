@@ -8123,20 +8123,35 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0047 و T0040 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال انجام",
+      "actual_output_paths": [
+        "src/Host.Application/HostInferenceSession.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0048/execution-report.md",
+        "step three/T0048/evidence/verification.md"
+      ],
       "expected_output_paths": [
         "src/Host.Windows/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "step three/T0048/execution-report.md",
+        "step three/T0048/evidence/verification.md",
+        "tests/HostLifecycle.Tests/Program.cs"
+      ],
+      "notes": "Attempt T0048-A001 adds lifecycle shutdown semantics and regression checks for startup recovery and disposal. Completion awaits exact-commit GitHub Actions quality gate, C# lifecycle tests, Windows WPF startup smoke test, and Android product workflow.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0048-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Host.Application/HostInferenceSession.cs",
+          "tests/HostLifecycle.Tests/Program.cs",
+          "step three/T0048/execution-report.md",
+          "step three/T0048/evidence/verification.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
@@ -8149,7 +8164,29 @@
           "review_evidence": []
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0048-A001",
+          "started_at": "2026-10-23T10:22:51.109Z",
+          "ended_at": "2026-10-23T10:22:51.109Z",
+          "result": "partial",
+          "summary": "Implemented lifecycle-aware disposal for idle host sessions; added executable regression checks for failed startup recovery and shutdown/disposal; reviewed and documented the two incoming dependency edges as sequencing-only. Exact-commit CI is pending.",
+          "changed_files": [
+            "src/Host.Application/HostInferenceSession.cs",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "step three/T0048/execution-report.md",
+            "step three/T0048/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect quality and product workflow results for this exact implementation commit. If all required checks pass, append a successful verification attempt and mark T0048 done; otherwise record the observed failure and fix it."
+        }
+      ]
     },
     {
       "id": "T0049",
@@ -17335,19 +17372,28 @@
       "from": "T0047",
       "to": "T0048",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0048 tests startup recovery and session shutdown behavior; these checks consume HostLifecycle and HostInferenceSession behavior, not T0047's HostErrorPresentation mapping. Preserve the existing blocks edge as conservative execution order only.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Application/HostErrorPresentation.cs",
+        "src/Host.Application/HostInferenceSession.cs",
+        "step three/T0047/execution-report.md"
+      ]
     },
     {
       "from": "T0040",
       "to": "T0048",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0048's new startup-retry and disposal assertions use HostStartup/HostInferenceSession lifecycle behavior and do not consume T0040's protocol parser or request-validation outputs. Preserve the existing blocks edge as conservative execution order only.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Application/HostStartup.cs",
+        "src/Host.Application/HostInferenceSession.cs",
+        "src/Shared.Contracts/ProtocolMessageValidator.cs",
+        "step three/T0040/execution-report.md"
+      ]
     },
     {
       "from": "T0048",
@@ -21191,8 +21237,37 @@
         "step three/T0046/execution-report.md"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-23T10:22:51.109Z",
+      "edge_from": "T0047",
+      "edge_to": "T0048",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "reason": "T0048 tests startup recovery and session shutdown behavior; these checks consume HostLifecycle and HostInferenceSession behavior, not T0047's HostErrorPresentation mapping. Preserve the existing blocks edge as conservative execution order only.",
+      "evidence": [
+        "src/Host.Application/HostErrorPresentation.cs",
+        "src/Host.Application/HostInferenceSession.cs",
+        "step three/T0047/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-23T10:22:51.109Z",
+      "edge_from": "T0040",
+      "edge_to": "T0048",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "reason": "T0048's new startup-retry and disposal assertions use HostStartup/HostInferenceSession lifecycle behavior and do not consume T0040's protocol parser or request-validation outputs. Preserve the existing blocks edge as conservative execution order only.",
+      "evidence": [
+        "src/Host.Application/HostStartup.cs",
+        "src/Host.Application/HostInferenceSession.cs",
+        "src/Shared.Contracts/ProtocolMessageValidator.cs",
+        "step three/T0040/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-23T08:28:00Z"
+  "updated_at": "2026-10-23T10:22:51.109Z"
 }
 ```

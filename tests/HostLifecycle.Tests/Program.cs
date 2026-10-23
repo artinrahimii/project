@@ -484,6 +484,19 @@ Assert(emptyReasonStatus.State==HostState.Error,"Unavailable backend with an emp
 Assert(!string.IsNullOrWhiteSpace(emptyReasonStatus.Message),"Empty backend reason must be replaced with a stable message");
 Assert(emptyReasonStatus.Message=="Local inference backend is unavailable. Host is not ready.","Empty backend reason must use the explicit unavailable fallback");
 
+// T0048: a failed startup must remain non-ready, and a retry must recover using the same lifecycle.
+var recoveryLifecycle = new HostLifecycle();
+var recoverableBackend = new RecoverableTestBackend();
+var recoverableStartup = new HostStartup(recoveryLifecycle, recoverableBackend);
+var failedStartup = recoverableStartup.Start();
+Assert(failedStartup.State == HostState.Error, "A temporary backend startup failure must report Error.");
+Assert(failedStartup.State != HostState.Ready, "A failed startup must never advertise Ready.");
+recoverableBackend.IsAvailable = true;
+var recoveredStartup = recoverableStartup.Start();
+Assert(recoveredStartup.State == HostState.Ready, "A retry must recover from Error when the backend becomes available.");
+Assert(recoveryLifecycle.Status.State == HostState.Ready, "Successful retry must update the shared lifecycle state.");
+Console.WriteLine("PASS: failed host startup remains non-ready and can recover on a subsequent retry.");
+
 var handler = new RecordingHandler();
 using var client = new HttpClient(handler);
 using var backend = new LlamaCppServerBackend(new Uri("http://127.0.0.1:8080/"), "fixture-model", client, TimeSpan.FromSeconds(2));
@@ -622,6 +635,27 @@ using (var limitedSession = new HostInferenceSession(backend: limitedSessionBack
     Assert(oversizedSessionResponseRejected, "The host session must reject oversized output from any inference backend.");
     Assert(limitedSession.Status.State == HostState.Error, "An oversized response must not be reported as a successful inference.");
 }
+
+// T0048: disposing an idle, healthy session must stop its lifecycle and clear readiness.
+var shutdownLifecycle = new HostLifecycle();
+var shutdownSession = new HostInferenceSession(lifecycle: shutdownLifecycle, backend: new SessionTestBackend());
+var readyBeforeShutdown = await shutdownSession.CheckBackendAsync();
+Assert(readyBeforeShutdown.State == HostState.Ready && shutdownSession.IsConnected, "Shutdown test requires a connected session.");
+shutdownSession.Dispose();
+Assert(shutdownSession.Status.State == HostState.Stopped, "Disposing a healthy idle session must set the lifecycle to Stopped.");
+Assert(!shutdownSession.IsConnected, "A disposed session must never advertise itself as connected.");
+shutdownSession.Dispose();
+var disposedSessionRejectedWork = false;
+try
+{
+    await shutdownSession.CheckBackendAsync();
+}
+catch (ObjectDisposedException)
+{
+    disposedSessionRejectedWork = true;
+}
+Assert(disposedSessionRejectedWork, "A disposed session must reject further health checks.");
+Console.WriteLine("PASS: host session shutdown clears readiness, is idempotent, and rejects reuse.");
 Console.WriteLine("PASS: protocol request, capsule, prompt, response, HTTP-body ceilings and pre-inference rejection.");
 
 
@@ -734,6 +768,11 @@ sealed class AvailableTestBackend : IInferenceBackend { public bool IsAvailable=
 sealed class ThrowingBackend : IInferenceBackend { public bool IsAvailable=>throw new InvalidOperationException("secret backend details"); public string UnavailableReason=>throw new InvalidOperationException("secret backend details"); }
 sealed class ThrowingUnavailableReasonBackend : IInferenceBackend { public bool IsAvailable=>false; public string UnavailableReason=>throw new InvalidOperationException("private-reason details"); }
 sealed class EmptyUnavailableReasonBackend : IInferenceBackend { public bool IsAvailable=>false; public string UnavailableReason=>"   "; }
+sealed class RecoverableTestBackend : IInferenceBackend
+{
+    public bool IsAvailable { get; set; }
+    public string UnavailableReason => IsAvailable ? "Test backend is available." : "Temporary test startup failure.";
+}
 
 sealed class SessionTestBackend : IInferenceBackend
 {

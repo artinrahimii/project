@@ -25,7 +25,7 @@ public sealed class HostInferenceSession : IDisposable
 
     public HostStatus Status => _lifecycle.Status;
 
-    public bool IsConnected => _lifecycle.Status.State == HostState.Ready;
+    public bool IsConnected => !_disposed && _lifecycle.Status.State == HostState.Ready;
 
     public async Task<HostStatus> ConnectAsync(Uri serverBaseAddress, string model, CancellationToken cancellationToken = default)
     {
@@ -159,6 +159,14 @@ public sealed class HostInferenceSession : IDisposable
         if (_disposed)
         {
             return;
+        }
+
+        // A closed, idle session must not continue to advertise a healthy backend.
+        // An in-flight request remains Busy until its cancellation/error path settles.
+        if (_lifecycle.Status.State != HostState.Stopped &&
+            _lifecycle.Status.State != HostState.Busy)
+        {
+            _lifecycle.Transition(HostState.Stopped, "Host session disposed.");
         }
 
         _disposed = true;
