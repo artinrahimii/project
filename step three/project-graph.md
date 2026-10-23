@@ -6784,8 +6784,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0040 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "تکمیل‌شده",
       "actual_output_paths": [
         "src/Host.Windows/App.xaml.cs",
         ".github/workflows/product-build.yml",
@@ -6807,14 +6807,15 @@
         "src/Host.Windows/MainWindow.xaml",
         "src/Host.Windows/MainWindow.xaml.cs",
         ".github/workflows/product-build.yml",
-        "tests/test_wpf_entrypoint.py"
+        "tests/test_wpf_entrypoint.py",
+        "step three/T0041/evidence/verification.md"
       ],
       "notes": "A001 adds a real process smoke mode to the WPF entry point and runs the compiled WinExe on the Windows CI runner. Acceptance requires the actual StartupUri to display MainWindow, all required XAML controls to exist, status to be initialized, and the process to exit cleanly within 15 seconds. Static Python guards alone do not count as runtime acceptance.",
       "execution_summary": {
         "attempt_count": 1,
         "failed_attempt_count": 0,
         "last_attempt_id": "T0041-A001",
-        "last_attempt_result": "in_progress",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Host.Windows/App.xaml.cs",
           ".github/workflows/product-build.yml",
@@ -6824,21 +6825,23 @@
           "step three/project-graph.md"
         ],
         "related_commits": [
-          "4f0bc321b0f98840138da73a2122b404acddad0f"
+          "4f0bc321b0f98840138da73a2122b404acddad0f",
+          "d5fe343a96c524625ee650792f3548330152ae7f"
         ],
-        "tests_passed": [],
+        "tests_passed": [
+          "Step Three quality gate run 39862296293 passed for exact commit d5fe343a96c524625ee650792f3548330152ae7f.",
+          "White-P product build run 39862296386 passed for exact commit d5fe343a96c524625ee650792f3548330152ae7f; includes Windows WPF --smoke-test, C# harness, Android build and unit tests."
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
+          "state": "completed",
           "triggering_contracts": [],
           "affected_by_contract_changes": [],
           "review_evidence": [
-            "src/Host.Windows/App.xaml",
-            "src/Host.Windows/MainWindow.xaml",
-            "src/Host.Windows/MainWindow.xaml.cs",
-            ".github/workflows/product-build.yml"
+            "https://github.com/artinrahimii/project/actions/runs/39862296293",
+            "https://github.com/artinrahimii/project/actions/runs/39862296386"
           ]
         }
       },
@@ -6846,9 +6849,9 @@
         {
           "attempt_id": "T0041-A001",
           "started_at": "2026-10-22T22:04:50.223Z",
-          "ended_at": null,
-          "result": "in_progress",
-          "summary": "Reviewed T0040→T0041 as sequencing-only. Added a bounded --smoke-test path that waits for the real StartupUri window to be loaded/visible, checks the main controls/status and exits nonzero on failure; wired it into the Windows product build and added regression guards.",
+          "ended_at": "2026-10-22T22:08:05Z",
+          "result": "succeeded",
+          "summary": "Added the bounded --smoke-test path and verified this exact commit through both successful GitHub Actions workflows. Windows executable startup smoke, C# host tests, Android build/unit tests and the graph quality gate passed.",
           "changed_files": [
             "src/Host.Windows/App.xaml.cs",
             ".github/workflows/product-build.yml",
@@ -6857,34 +6860,24 @@
             "step three/T0041/evidence/verification.md",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "d5fe343a96c524625ee650792f3548330152ae7f",
           "tests": [
             {
-              "command": "python -m unittest discover -s tests -v",
-              "result": "pending"
+              "command": "Step Three quality gate",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39862296293"
             },
             {
-              "command": "dotnet format whitespace WhiteP.sln --verify-no-changes",
-              "result": "pending"
-            },
-            {
-              "command": "dotnet build WhiteP.sln --configuration Release",
-              "result": "pending"
-            },
-            {
-              "command": "Windows WPF startup smoke test --smoke-test",
-              "result": "pending"
-            },
-            {
-              "command": "White-P product workflow Android and host lifecycle jobs",
-              "result": "pending"
+              "command": "White-P product build; Windows build and WPF --smoke-test; C# harness; Android build/unit tests",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39862296386"
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Require the actual Windows executable smoke test and existing Android/C# product jobs to pass before closing T0041."
+          "follow_up": "T0041 acceptance verified; review incoming dependencies before starting T0042. This does not claim live model inference or P2P readiness."
         }
       ]
     },

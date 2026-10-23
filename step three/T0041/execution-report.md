@@ -10,3 +10,10 @@
 - Wired a bounded 15-second process-level smoke test into the Windows job in `.github/workflows/product-build.yml`; timeout, missing executable or nonzero process exit causes CI to fail.
 - Added `tests/test_wpf_entrypoint.py` to guard the startup XAML, required controls, cleanup, smoke-mode contract and Windows CI invocation.
 - Exact-commit tests and the real Windows smoke execution are pending. T0041 remains `in_progress` until that process-level check passes.
+
+
+## Acceptance verification — T0041-A001
+- Verified against the exact `main` head `d5fe343a96c524625ee650792f3548330152ae7f` (`V 3.0.123`).
+- Step Three quality gate run [39862296293](https://github.com/artinrahimii/project/actions/runs/39862296293): **passed**.
+- White-P product build run [39862296386](https://github.com/artinrahimii/project/actions/runs/39862296386): **passed**. This workflow runs the Windows WPF build and `--smoke-test` process, the C# lifecycle/validation harness, and the Android build/unit tests.
+- The smoke test and both workflows passed on the same commit; T0041 acceptance is verified. This does not prove live installed-model inference or Android-to-host/P2P transport.
