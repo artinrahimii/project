@@ -7,8 +7,8 @@ ROOT = Path(__file__).resolve().parents[1]
 LIMITS = (ROOT / "src/Shared.Contracts/ProtocolMessageLimits.cs").read_text(encoding="utf-8")
 SCHEMA = (ROOT / "protocol/whitep/v1/messages.proto").read_text(encoding="utf-8")
 REQUIREMENTS = (ROOT / "docs/requirements.md").read_text(encoding="utf-8")
-HOST = (ROOT / "src/Host.Windows/HostLifecycle.cs").read_text(encoding="utf-8")
-BACKEND = (ROOT / "src/Host.Windows/LlamaCppServerBackend.cs").read_text(encoding="utf-8")
+HOST = (ROOT / "src/Host.Application/HostInferenceSession.cs").read_text(encoding="utf-8")
+BACKEND = (ROOT / "src/Host.Infrastructure/LlamaCppServerBackend.cs").read_text(encoding="utf-8")
 CSHARP_TESTS = (ROOT / "tests/HostLifecycle.Tests/Program.cs").read_text(encoding="utf-8")
 
 

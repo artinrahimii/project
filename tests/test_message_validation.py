@@ -6,8 +6,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 VALIDATOR_PATH = ROOT / "src/Shared.Contracts/ProtocolMessageValidator.cs"
-PARSER_PATH = ROOT / "src/Host.Windows/ProtocolMessageParser.cs"
-HOST_PATH = ROOT / "src/Host.Windows/HostLifecycle.cs"
+PARSER_PATH = ROOT / "src/Host.Infrastructure/ProtocolMessageParser.cs"
+HOST_PATH = ROOT / "src/Host.Application/HostInferenceSession.cs"
 LIMITS_PATH = ROOT / "src/Shared.Contracts/ProtocolMessageLimits.cs"
 HARNESS_PATH = ROOT / "tests/HostLifecycle.Tests/Program.cs"
 FIXTURES_PATH = ROOT / "tests/contracts/invalid-message-cases.json"

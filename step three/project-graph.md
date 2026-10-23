@@ -951,19 +951,21 @@
       "status": "done",
       "status_fa": "تکمیل‌شده",
       "actual_output_paths": [
-        "src/Host.Windows/HostLifecycle.cs",
+        "src/Host.Domain/HostLifecycle.cs",
         "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
         "tests/HostLifecycle.Tests/Program.cs",
-        "step three/T0006/execution-report.md"
+        "step three/T0006/execution-report.md",
+        "src/Host.Application/HostInferenceSession.cs"
       ],
       "expected_output_paths": [
         "docs/acceptance.md + tests/ (معیار و آزمون متناظر)"
       ],
       "evidence": [
         "tests/HostLifecycle.Tests/Program.cs",
-        "src/Host.Windows/HostLifecycle.cs",
+        "src/Host.Domain/HostLifecycle.cs",
         "docs/acceptance.md",
-        ".github/workflows/product-build.yml"
+        ".github/workflows/product-build.yml",
+        "src/Host.Application/HostInferenceSession.cs"
       ],
       "notes": "Executable host lifecycle coverage and truthful unavailable-backend startup implemented. Real inference, hardware discovery, Android/P2P and physical-device tests remain unclaimed.",
       "execution_summary": {
@@ -1079,9 +1081,10 @@
       ],
       "evidence": [
         "tests/HostLifecycle.Tests/Program.cs",
-        "src/Host.Windows/HostLifecycle.cs",
+        "src/Host.Domain/HostLifecycle.cs",
         "docs/acceptance.md",
-        "step three/T0007/execution-report.md"
+        "step three/T0007/execution-report.md",
+        "src/Host.Application/HostInferenceSession.cs"
       ],
       "notes": "T0007 remains a broad traceability task. A007's deterministic unavailable-backend fallback and exact-message regression assertion were both built/tested successfully by GitHub Actions on V 3.0.42. The configured UnconfiguredInferenceBackend still prevents production inference, so do not mark T0007 done. The T0007 -> T0008 edge has been reviewed and retained as sequencing_only; T0008 is an independent claim-audit task.",
       "execution_summary": {
@@ -1322,7 +1325,7 @@
         "docs/acceptance.md",
         "README.md",
         "docs/requirements.md",
-        "src/Host.Windows/HostLifecycle.cs",
+        "src/Host.Domain/HostLifecycle.cs",
         "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
         "src/Host.Windows/MainWindow.xaml"
       ],
@@ -1465,7 +1468,7 @@
         "docs/requirements.md",
         "README.md",
         "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
-        "src/Host.Windows/HostLifecycle.cs"
+        "src/Host.Domain/HostLifecycle.cs"
       ],
       "notes": "Done for the bounded repository/source boundary: current src inventory has no central inference/history API handler, and a CI-tested regression guard rejects common prompt/inference/chat/completion/response/conversation/history POST/PUT/PATCH handlers outside the local Windows host. This does not prove runtime traffic routing or absence of persistence; REQ-011 network/endpoint/storage acceptance remains NOT RUN until transport exists.",
       "execution_summary": {
@@ -2922,8 +2925,8 @@
       "status": "done",
       "status_fa": "انجام‌شده",
       "actual_output_paths": [
-        "src/Host.Windows/HostLifecycle.cs",
-        "src/Host.Windows/LlamaCppServerBackend.cs",
+        "src/Host.Domain/HostLifecycle.cs",
+        "src/Host.Infrastructure/LlamaCppServerBackend.cs",
         "src/Host.Windows/MainWindow.xaml",
         "src/Host.Windows/MainWindow.xaml.cs",
         "tests/HostLifecycle.Tests/Program.cs",
@@ -2935,10 +2938,10 @@
       ],
       "evidence": [
         "tests/HostLifecycle.Tests/Program.cs",
-        "src/Host.Windows/LlamaCppServerBackend.cs",
+        "src/Host.Infrastructure/LlamaCppServerBackend.cs",
         "src/Host.Windows/MainWindow.xaml.cs",
         "GitHub Actions run 39681737725: product build succeeded; quality gate run 39681738413 failed because T0018 completion metadata lacked a succeeded attempt and test-source evidence.",
-        "src/Host.Windows/HostLifecycle.cs",
+        "src/Host.Domain/HostLifecycle.cs",
         "src/Host.Windows/MainWindow.xaml"
       ],
       "notes": "T0018 is done at task scope: LlamaCppServerBackend is wired to the Windows host UI for endpoint/model configuration, health checks, and generation output; exact-commit quality and product CI passed at 1d4760ae30c340144a95f8c29a9cabd724295b04. The installed llama.cpp server/model has not been exercised on a target machine, and AC-LOCAL-01/AC-LOCAL-02 remain NOT RUN as product runtime gates. Graph evidence validation initially rejected Actions run URLs because `evidence` is reserved for in-repository file paths; the CI URLs remain recorded in execution_summary.tests_passed and step three/T0018/execution-report.md, while evidence now points only to inspectable repository files.",
@@ -3317,7 +3320,7 @@
         "tests/test_decision_traceability.py",
         "tests/test_product_build_contract.py",
         "tests/test_p2p_data_path_decision.py",
-        "src/Host.Windows/LlamaCppServerBackend.cs",
+        "src/Host.Infrastructure/LlamaCppServerBackend.cs",
         "tests/HostLifecycle.Tests/Program.cs"
       ],
       "notes": "T0020 complete at decision-traceability scope. The register maps ADR-0001 through ADR-0003 to real source/config/test paths, and ADR-0003 documents the integrated llama.cpp HTTP adapter and its controlled tests. Exact V 3.0.64 quality gate passed 59 Python tests, syntax compilation, graph structure validation, and repository-root evidence checks (0 errors, 1 pre-existing unmapped-dependency warning preserved). Product-build run 39736539846 was in_progress at the time status was checked and is not counted as a passed run here. This task does not prove live-model or P2P runtime acceptance.",
@@ -4018,8 +4021,8 @@
         ".gitattributes",
         ".editorconfig",
         "src/Host.Windows/App.xaml.cs",
-        "src/Host.Windows/HostLifecycle.cs",
-        "src/Host.Windows/LlamaCppServerBackend.cs",
+        "src/Host.Domain/HostLifecycle.cs",
+        "src/Host.Infrastructure/LlamaCppServerBackend.cs",
         "src/Host.Windows/MainWindow.xaml.cs",
         "src/Client.Android/app/build.gradle.kts",
         "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
@@ -4307,7 +4310,7 @@
       "evidence": [
         "docs/decisions/ADR-0003-local-inference-backend.md",
         "src/Host.Windows/MainWindow.xaml.cs",
-        "src/Host.Windows/LlamaCppServerBackend.cs",
+        "src/Host.Infrastructure/LlamaCppServerBackend.cs",
         ".gitignore",
         ".env.example",
         "tests/test_local_config_safety.py",
@@ -6328,8 +6331,8 @@
       "status_fa": "تکمیل‌شده",
       "actual_output_paths": [
         "src/Shared.Contracts/ProtocolMessageLimits.cs",
-        "src/Host.Windows/HostLifecycle.cs",
-        "src/Host.Windows/LlamaCppServerBackend.cs",
+        "src/Host.Domain/HostLifecycle.cs",
+        "src/Host.Infrastructure/LlamaCppServerBackend.cs",
         "tests/HostLifecycle.Tests/Program.cs",
         "protocol/whitep/v1/messages.proto",
         "tests/test_protocol_limits.py",
@@ -6337,7 +6340,8 @@
         "src/Shared.Contracts/README.md",
         "step three/T0039/execution-report.md",
         "step three/T0039/evidence/verification.md",
-        "tests/test_decision_traceability.py"
+        "tests/test_decision_traceability.py",
+        "src/Host.Application/HostInferenceSession.cs"
       ],
       "expected_output_paths": [
         "src/Shared.Contracts/ProtocolMessageLimits.cs",
@@ -6349,8 +6353,8 @@
       ],
       "evidence": [
         "src/Shared.Contracts/ProtocolMessageLimits.cs",
-        "src/Host.Windows/HostLifecycle.cs",
-        "src/Host.Windows/LlamaCppServerBackend.cs",
+        "src/Host.Domain/HostLifecycle.cs",
+        "src/Host.Infrastructure/LlamaCppServerBackend.cs",
         "protocol/whitep/v1/messages.proto",
         "tests/HostLifecycle.Tests/Program.cs",
         "tests/test_protocol_limits.py",
@@ -6358,7 +6362,8 @@
         "step three/T0039/execution-report.md",
         "step three/T0039/evidence/verification.md",
         "tests/test_decision_traceability.py",
-        "src/Shared.Contracts/README.md"
+        "src/Shared.Contracts/README.md",
+        "src/Host.Application/HostInferenceSession.cs"
       ],
       "notes": "Completed on V 3.0.118 after the exact-commit Step Three quality gate and full White-P product-build workflow passed. C# tests exercise exact ceiling acceptance and over-limit rejection for request/capsule/prompt/response/local HTTP bodies before inference/deserialization. Windows WPF build, generated C# check and Android APK/protocol tests all passed. Scope boundary: there is still no P2P transport frame parser; its pre-parse bound must be implemented with that transport.",
       "execution_summary": {
@@ -6572,8 +6577,8 @@
       "actual_output_paths": [
         "src/Shared.Contracts/ProtocolMessageValidator.cs",
         "src/Shared.Contracts/ProtocolMessageLimits.cs",
-        "src/Host.Windows/ProtocolMessageParser.cs",
-        "src/Host.Windows/HostLifecycle.cs",
+        "src/Host.Infrastructure/ProtocolMessageParser.cs",
+        "src/Host.Domain/HostLifecycle.cs",
         "tests/HostLifecycle.Tests/Program.cs",
         "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
         "tests/contracts/invalid-message-cases.json",
@@ -6582,7 +6587,8 @@
         "docs/requirements.md",
         "src/Shared.Contracts/README.md",
         "step three/T0040/execution-report.md",
-        "step three/T0040/evidence/verification.md"
+        "step three/T0040/evidence/verification.md",
+        "src/Host.Application/HostInferenceSession.cs"
       ],
       "expected_output_paths": [
         "src/Shared.Contracts/ProtocolMessageValidator.cs",
@@ -6598,8 +6604,8 @@
       "evidence": [
         "src/Shared.Contracts/ProtocolMessageValidator.cs",
         "src/Shared.Contracts/ProtocolMessageLimits.cs",
-        "src/Host.Windows/ProtocolMessageParser.cs",
-        "src/Host.Windows/HostLifecycle.cs",
+        "src/Host.Infrastructure/ProtocolMessageParser.cs",
+        "src/Host.Domain/HostLifecycle.cs",
         "tests/HostLifecycle.Tests/Program.cs",
         "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
         "tests/contracts/invalid-message-cases.json",
@@ -6608,7 +6614,8 @@
         "docs/requirements.md",
         "src/Shared.Contracts/README.md",
         "step three/T0040/execution-report.md",
-        "step three/T0040/evidence/verification.md"
+        "step three/T0040/evidence/verification.md",
+        "src/Host.Application/HostInferenceSession.cs"
       ],
       "notes": "Completed on V 3.0.121 after the exact-commit quality gate and all three product workflow jobs succeeded. Parser rejects oversized raw inference/control messages before Protobuf parsing, maps malformed wire data and missing fields/capabilities to InvalidMessage, classifies unsupported versions, and validates request/host capability/response semantics. C# tests passed for all targeted negative/positive cases, plus all 11 Protobuf round trips and size checks. Scope: no network P2P socket or peer-discovery flow has been added.",
       "execution_summary": {
@@ -6830,7 +6837,9 @@
         ],
         "tests_passed": [
           "Step Three quality gate run 39862296293 passed for exact commit d5fe343a96c524625ee650792f3548330152ae7f.",
-          "White-P product build run 39862296386 passed for exact commit d5fe343a96c524625ee650792f3548330152ae7f; includes Windows WPF --smoke-test, C# harness, Android build and unit tests."
+          "White-P product build run 39862296386 passed for exact commit d5fe343a96c524625ee650792f3548330152ae7f; includes Windows WPF --smoke-test, C# harness, Android build and unit tests.",
+          "Exact-commit Step Three quality gate run 39862296293 passed for d5fe343a96c524625ee650792f3548330152ae7f.",
+          "Exact-commit White-P product build run 39862296386 passed for d5fe343a96c524625ee650792f3548330152ae7f, including Windows WPF --smoke-test, C# harness and Android build/unit tests."
         ],
         "tests_failed": [],
         "blocked_reason": null,
@@ -6898,33 +6907,166 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0041 و T0040 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال انجام",
+      "actual_output_paths": [
+        "src/Host.Domain/WhiteP.Host.Domain.csproj",
+        "src/Host.Domain/HostLifecycle.cs",
+        "src/Host.Application/WhiteP.Host.Application.csproj",
+        "src/Host.Application/IInferenceBackend.cs",
+        "src/Host.Application/HostStartup.cs",
+        "src/Host.Application/UnconfiguredInferenceBackend.cs",
+        "src/Host.Application/HostInferenceSession.cs",
+        "src/Host.Infrastructure/WhiteP.Host.Infrastructure.csproj",
+        "src/Host.Infrastructure/LlamaCppServerBackend.cs",
+        "src/Host.Infrastructure/ProtocolMessageParser.cs",
+        "src/Host.Windows/WhiteP.Host.Windows.csproj",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "WhiteP.sln",
+        "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+        "tests/HostLifecycle.Tests/Program.cs",
+        ".github/workflows/product-build.yml",
+        "tests/test_proto_contract.py",
+        "tests/test_product_build_contract.py",
+        "tests/test_claims_audit.py",
+        "tests/test_protocol_limits.py",
+        "tests/test_message_validation.py",
+        "tests/test_decision_traceability.py",
+        "tests/test_host_layer_projects.py",
+        "step three/T0042/execution-report.md",
+        "step three/T0042/evidence/verification.md"
+      ],
       "expected_output_paths": [
         "src/Host.Windows/"
       ],
-      "evidence": [],
+      "evidence": [
+        "step three/T0042/execution-report.md",
+        "step three/T0042/evidence/verification.md",
+        "tests/test_host_layer_projects.py",
+        "tests/test_proto_contract.py",
+        "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj"
+      ],
       "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0042-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Host.Domain/WhiteP.Host.Domain.csproj",
+          "src/Host.Domain/HostLifecycle.cs",
+          "src/Host.Application/WhiteP.Host.Application.csproj",
+          "src/Host.Application/IInferenceBackend.cs",
+          "src/Host.Application/HostStartup.cs",
+          "src/Host.Application/UnconfiguredInferenceBackend.cs",
+          "src/Host.Application/HostInferenceSession.cs",
+          "src/Host.Infrastructure/WhiteP.Host.Infrastructure.csproj",
+          "src/Host.Infrastructure/LlamaCppServerBackend.cs",
+          "src/Host.Infrastructure/ProtocolMessageParser.cs",
+          "src/Shared.Contracts/WhiteP.Shared.Contracts.csproj",
+          "src/Host.Windows/WhiteP.Host.Windows.csproj",
+          "src/Host.Windows/MainWindow.xaml.cs",
+          "WhiteP.sln",
+          "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+          "tests/HostLifecycle.Tests/Program.cs",
+          ".github/workflows/product-build.yml",
+          "tests/test_proto_contract.py",
+          "tests/test_product_build_contract.py",
+          "tests/test_claims_audit.py",
+          "tests/test_protocol_limits.py",
+          "tests/test_message_validation.py",
+          "tests/test_decision_traceability.py",
+          "tests/test_host_layer_projects.py",
+          "src/Host.Windows/HostLifecycle.cs",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
-          "affected_by_contract_changes": [],
-          "review_evidence": []
+          "state": "in_progress",
+          "triggering_contracts": [
+            "Host lifecycle/session/backend/parser now cross separate .NET assemblies",
+            "Canonical C# Protobuf generation moved to Shared.Contracts"
+          ],
+          "affected_by_contract_changes": [
+            "T0006",
+            "T0007",
+            "T0040",
+            "T0041"
+          ],
+          "review_evidence": [
+            "step three/T0042/execution-report.md",
+            "tests/test_host_layer_projects.py"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0042-A001",
+          "started_at": "2026-10-23T05:30:00Z",
+          "ended_at": null,
+          "result": "in_progress",
+          "summary": "Created Domain, Application and Infrastructure project layers alongside the existing WPF UI; moved production lifecycle/session/backend/parser code to their owning assemblies; moved canonical Protobuf generation to Shared.Contracts; updated solution, C# harness and static contract tests. Exact-commit CI is pending.",
+          "changed_files": [
+            "src/Host.Domain/WhiteP.Host.Domain.csproj",
+            "src/Host.Domain/HostLifecycle.cs",
+            "src/Host.Application/WhiteP.Host.Application.csproj",
+            "src/Host.Application/IInferenceBackend.cs",
+            "src/Host.Application/HostStartup.cs",
+            "src/Host.Application/UnconfiguredInferenceBackend.cs",
+            "src/Host.Application/HostInferenceSession.cs",
+            "src/Host.Infrastructure/WhiteP.Host.Infrastructure.csproj",
+            "src/Host.Infrastructure/LlamaCppServerBackend.cs",
+            "src/Host.Infrastructure/ProtocolMessageParser.cs",
+            "src/Shared.Contracts/WhiteP.Shared.Contracts.csproj",
+            "src/Host.Windows/WhiteP.Host.Windows.csproj",
+            "src/Host.Windows/MainWindow.xaml.cs",
+            "WhiteP.sln",
+            "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+            "tests/HostLifecycle.Tests/Program.cs",
+            ".github/workflows/product-build.yml",
+            "tests/test_proto_contract.py",
+            "tests/test_product_build_contract.py",
+            "tests/test_claims_audit.py",
+            "tests/test_protocol_limits.py",
+            "tests/test_message_validation.py",
+            "tests/test_decision_traceability.py",
+            "tests/test_host_layer_projects.py",
+            "src/Host.Windows/HostLifecycle.cs",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "command": "Python quality gate / static regression tests",
+              "result": "pending"
+            },
+            {
+              "command": "dotnet format whitespace WhiteP.sln --verify-no-changes",
+              "result": "pending"
+            },
+            {
+              "command": "dotnet build WhiteP.sln --configuration Release and WPF startup smoke",
+              "result": "pending"
+            },
+            {
+              "command": "C# message/lifecycle harness and Android build/unit tests",
+              "result": "pending"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "Host layer project/assembly boundaries",
+            "Shared Protobuf generation ownership"
+          ],
+          "follow_up": "Check exact-commit GitHub Actions; fix any build/lint/test failures before closing T0042; revalidate affected consumer tasks."
+        }
+      ]
     },
     {
       "id": "T0043",
@@ -15386,7 +15528,7 @@
       "rationale": "T0007 extends and verifies the HostLifecycle/HostStartup implementation and executable harness delivered by T0006; its regression tests compile and exercise the same production source. The existing blocks relationship is preserved as the graph's ordering relation.",
       "validation_status": "validated",
       "evidence": [
-        "src/Host.Windows/HostLifecycle.cs",
+        "src/Host.Domain/HostLifecycle.cs",
         "tests/HostLifecycle.Tests/Program.cs",
         "step three/T0006/execution-report.md",
         "step three/T0007/execution-report.md"
@@ -15835,7 +15977,7 @@
       "evidence": [
         "docs/decisions/ADR-0003-local-inference-backend.md",
         "src/Host.Windows/MainWindow.xaml.cs",
-        "src/Host.Windows/LlamaCppServerBackend.cs",
+        "src/Host.Infrastructure/LlamaCppServerBackend.cs",
         "step one/V1.0.md"
       ]
     },
@@ -16155,7 +16297,7 @@
       "evidence": [
         "step three/T0038/execution-report.md",
         "protocol/whitep/v1/messages.proto",
-        "src/Host.Windows/HostLifecycle.cs"
+        "src/Host.Domain/HostLifecycle.cs"
       ]
     },
     {
@@ -16180,7 +16322,7 @@
       "validation_status": "validated",
       "evidence": [
         "src/Shared.Contracts/ProtocolMessageLimits.cs",
-        "src/Host.Windows/HostLifecycle.cs",
+        "src/Host.Domain/HostLifecycle.cs",
         "tests/HostLifecycle.Tests/Program.cs",
         "step three/T0039/execution-report.md"
       ]
@@ -16218,19 +16360,30 @@
       "from": "T0041",
       "to": "T0042",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "hard_dependency",
+      "rationale": "T0042 separates the verified WPF startup/window path into buildable projects; the real entry point, window and smoke-test contract are the source baseline to preserve.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/App.xaml",
+        "src/Host.Windows/App.xaml.cs",
+        "src/Host.Windows/MainWindow.xaml",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "https://github.com/artinrahimii/project/actions/runs/39862296386"
+      ]
     },
     {
       "from": "T0040",
       "to": "T0042",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "The refactor relocates the validated Protobuf parser and typed-request validation across assembly boundaries and centralizes generation in Shared.Contracts, so T0042 must preserve the tested schema, size limits and validator interfaces.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Shared.Contracts/ProtocolMessageLimits.cs",
+        "src/Shared.Contracts/ProtocolMessageValidator.cs",
+        "step three/T0040/evidence/verification.md",
+        "tests/HostLifecycle.Tests/Program.cs"
+      ]
     },
     {
       "from": "T0042",

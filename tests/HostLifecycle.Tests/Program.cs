@@ -4,7 +4,9 @@ using System.Text.Json;
 using Google.Protobuf;
 using WhiteP.Shared.Contracts.V1;
 using ProtoHostStatus = WhiteP.Shared.Contracts.V1.HostStatus;
-using WhiteP.Host.Windows;
+using WhiteP.Host.Application;
+using WhiteP.Host.Domain;
+using WhiteP.Host.Infrastructure;
 using WhiteP.Shared.Contracts;
 static void Assert(bool ok,string message){if(!ok)throw new Exception(message);}
 static void ExpectInvalid(Action action){try{action();}catch(InvalidOperationException){return;}throw new Exception("Invalid transition accepted.");}

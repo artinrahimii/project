@@ -56,8 +56,8 @@ class DecisionTraceabilityTests(unittest.TestCase):
         self.assertIn("NOT RUN", ACCEPTANCE)
 
     def test_local_backend_decision_maps_to_real_adapter_ui_and_controlled_tests(self):
-        backend = (ROOT / "src/Host.Windows/LlamaCppServerBackend.cs").read_text(encoding="utf-8")
-        lifecycle = (ROOT / "src/Host.Windows/HostLifecycle.cs").read_text(encoding="utf-8")
+        backend = (ROOT / "src/Host.Infrastructure/LlamaCppServerBackend.cs").read_text(encoding="utf-8")
+        lifecycle = (ROOT / "src/Host.Application/HostInferenceSession.cs").read_text(encoding="utf-8")
         ui = (ROOT / "src/Host.Windows/MainWindow.xaml").read_text(encoding="utf-8")
         harness = (ROOT / "tests/HostLifecycle.Tests/Program.cs").read_text(encoding="utf-8")
         self.assertIn("public sealed class LlamaCppServerBackend", backend)

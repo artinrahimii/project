@@ -1,10 +1,14 @@
 using System.Windows;
+using WhiteP.Host.Application;
+using WhiteP.Host.Domain;
+using WhiteP.Host.Infrastructure;
 
 namespace WhiteP.Host.Windows;
 
 public partial class MainWindow : Window
 {
-    private readonly HostInferenceSession _session = new();
+    private readonly HostInferenceSession _session = new(
+        backendFactory: static (address, model) => new LlamaCppServerBackend(address, model));
     private CancellationTokenSource? _operationCancellation;
 
     public MainWindow()

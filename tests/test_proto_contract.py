@@ -7,6 +7,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SCHEMA_PATH = ROOT / "protocol/whitep/v1/messages.proto"
 SCHEMA = SCHEMA_PATH.read_text(encoding="utf-8")
 CSPROJ = (ROOT / "src/Host.Windows/WhiteP.Host.Windows.csproj").read_text(encoding="utf-8")
+SHARED_CSPROJ = (ROOT / "src/Shared.Contracts/WhiteP.Shared.Contracts.csproj").read_text(encoding="utf-8")
 ANDROID_ROOT = (ROOT / "src/Client.Android/build.gradle.kts").read_text(encoding="utf-8")
 ANDROID_APP_PATH = ROOT / "src/Client.Android/app/build.gradle.kts"
 ANDROID_APP = ANDROID_APP_PATH.read_text(encoding="utf-8")
@@ -138,11 +139,11 @@ class ProtoContractTests(unittest.TestCase):
                 self.assertEqual(len(numbers), len(set(numbers)), "duplicate field/enum number")
 
     def test_windows_build_generates_csharp_from_the_shared_schema(self):
-        self.assertIn('Include="../../protocol/whitep/v1/messages.proto"', CSPROJ)
-        self.assertIn('ProtoRoot="../../protocol"', CSPROJ)
-        self.assertIn('GrpcServices="None"', CSPROJ)
-        self.assertIn('PackageReference Include="Google.Protobuf" Version="3.36.2"', CSPROJ)
-        self.assertIn('PackageReference Include="Grpc.Tools" Version="2.84.0"', CSPROJ)
+        self.assertIn('Include="../../protocol/whitep/v1/messages.proto"', SHARED_CSPROJ)
+        self.assertIn('ProtoRoot="../../protocol"', SHARED_CSPROJ)
+        self.assertIn('GrpcServices="None"', SHARED_CSPROJ)
+        self.assertIn('PackageReference Include="Google.Protobuf" Version="3.36.2"', SHARED_CSPROJ)
+        self.assertIn('PackageReference Include="Grpc.Tools" Version="2.84.0"', SHARED_CSPROJ)
 
     def test_android_generates_java_and_kotlin_lite_from_the_same_repository_schema(self):
         self.assertIn('id("com.google.protobuf") version "0.10.0" apply false', ANDROID_ROOT)
@@ -171,7 +172,8 @@ class ProtoContractTests(unittest.TestCase):
                 self.assertIn(f'AssertProtoRoundTrip("{name}"', CSHARP_ROUND_TRIP)
                 self.assertIn(f'assertRoundTrip("{name}"', KOTLIN_ROUND_TRIP)
         self.assertIn('<PackageReference Include="Google.Protobuf" Version="3.36.2" />', CSHARP_TEST_PROJECT)
-        self.assertIn('<Protobuf Include="../../protocol/whitep/v1/messages.proto"', CSHARP_TEST_PROJECT)
+        self.assertNotIn('<Protobuf Include="../../protocol/whitep/v1/messages.proto"', CSHARP_TEST_PROJECT)
+        self.assertIn('<ProjectReference Include="../../src/Shared.Contracts/WhiteP.Shared.Contracts.csproj" />', CSHARP_TEST_PROJECT)
         self.assertIn('testImplementation("junit:junit:4.13.2")', ANDROID_APP)
         self.assertIn("gradle --no-daemon testDebugUnitTest", PRODUCT_WORKFLOW)
 

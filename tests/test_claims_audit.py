@@ -12,7 +12,9 @@ ACCEPTANCE = (ROOT / "docs/acceptance.md").read_text(encoding="utf-8")
 REQUIREMENTS = (ROOT / "docs/requirements.md").read_text(encoding="utf-8")
 ANDROID_UI = (ROOT / "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt").read_text(encoding="utf-8")
 WINDOW_UI = (ROOT / "src/Host.Windows/MainWindow.xaml").read_text(encoding="utf-8")
-HOST_LIFECYCLE = (ROOT / "src/Host.Windows/HostLifecycle.cs").read_text(encoding="utf-8")
+HOST_LIFECYCLE = (ROOT / "src/Host.Domain/HostLifecycle.cs").read_text(encoding="utf-8")
+HOST_SESSION = (ROOT / "src/Host.Application/HostInferenceSession.cs").read_text(encoding="utf-8")
+UNCONFIGURED_BACKEND = (ROOT / "src/Host.Application/UnconfiguredInferenceBackend.cs").read_text(encoding="utf-8")
 
 
 class ClaimsAuditTests(unittest.TestCase):
@@ -28,9 +30,9 @@ class ClaimsAuditTests(unittest.TestCase):
         self.assertIn('Click="ConnectButton_Click"', WINDOW_UI)
         self.assertIn('x:Name="PromptInput"', WINDOW_UI)
         self.assertIn('Click="GenerateButton_Click"', WINDOW_UI)
-        self.assertIn("public sealed class HostInferenceSession", HOST_LIFECYCLE)
-        self.assertIn("public sealed class UnconfiguredInferenceBackend", HOST_LIFECYCLE)
-        self.assertIn("Local inference backend is not configured.", HOST_LIFECYCLE)
+        self.assertIn("public sealed class HostInferenceSession", HOST_SESSION)
+        self.assertIn("public sealed class UnconfiguredInferenceBackend", UNCONFIGURED_BACKEND)
+        self.assertIn("Local inference backend is not configured.", UNCONFIGURED_BACKEND)
 
     def test_privacy_and_capability_statements_are_requirements_not_proven_claims(self):
         self.assertIn("الزامات طراحی‌اند، نه ادعاهای اثبات‌شده", README)

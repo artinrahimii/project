@@ -1,106 +1,25 @@
 using System.IO;
+using WhiteP.Host.Domain;
 using WhiteP.Shared.Contracts;
 using WhiteP.Shared.Contracts.V1;
 
-namespace WhiteP.Host.Windows;
-
-public enum HostState
-{
-    Stopped,
-    Starting,
-    Ready,
-    Busy,
-    Error
-}
-
-public sealed record HostStatus(HostState State, string Message);
-
-public sealed class HostLifecycle
-{
-    private static readonly IReadOnlyDictionary<HostState, HostState[]> Allowed = new Dictionary<HostState, HostState[]>
-    {
-        [HostState.Stopped] = [HostState.Starting],
-        [HostState.Starting] = [HostState.Ready, HostState.Error, HostState.Stopped],
-        [HostState.Ready] = [HostState.Busy, HostState.Error, HostState.Stopped],
-        [HostState.Busy] = [HostState.Ready, HostState.Error],
-        [HostState.Error] = [HostState.Starting, HostState.Stopped]
-    };
-
-    public HostStatus Status { get; private set; } = new(HostState.Stopped, "Host stopped.");
-
-    public HostStatus Transition(HostState next, string message)
-    {
-        ArgumentException.ThrowIfNullOrWhiteSpace(message);
-        if (!Allowed[Status.State].Contains(next))
-        {
-            throw new InvalidOperationException($"Invalid host lifecycle transition: {Status.State} -> {next}.");
-        }
-
-        return Status = new HostStatus(next, message.Trim());
-    }
-}
-
-public interface IInferenceBackend
-{
-    bool IsAvailable { get; }
-
-    string UnavailableReason { get; }
-
-    Task<bool> CheckHealthAsync(CancellationToken cancellationToken = default) =>
-        Task.FromResult(IsAvailable);
-
-    Task<string> GenerateAsync(string prompt, uint maxOutputTokens, CancellationToken cancellationToken = default) =>
-        Task.FromException<string>(new NotSupportedException("This backend does not support text generation."));
-}
-
-public sealed class HostStartup(HostLifecycle lifecycle, IInferenceBackend backend)
-{
-    public HostStatus Start()
-    {
-        lifecycle.Transition(HostState.Starting, "Checking local inference backend.");
-        try
-        {
-            if (backend.IsAvailable)
-            {
-                return lifecycle.Transition(HostState.Ready, "Local inference backend is ready.");
-            }
-
-            var reason = backend.UnavailableReason;
-            return lifecycle.Transition(
-                HostState.Error,
-                string.IsNullOrWhiteSpace(reason)
-                    ? "Local inference backend is unavailable. Host is not ready."
-                    : reason.Trim());
-        }
-        catch (Exception)
-        {
-            return lifecycle.Transition(HostState.Error, "Local inference backend check failed. Host is not ready.");
-        }
-    }
-}
-
-public sealed class UnconfiguredInferenceBackend : IInferenceBackend
-{
-    public bool IsAvailable => false;
-
-    public string UnavailableReason => "Local inference backend is not configured. Enter a server URL and connect.";
-
-    public Task<bool> CheckHealthAsync(CancellationToken cancellationToken = default) => Task.FromResult(false);
-
-    public Task<string> GenerateAsync(string prompt, uint maxOutputTokens, CancellationToken cancellationToken = default) =>
-        Task.FromException<string>(new InvalidOperationException(UnavailableReason));
-}
+namespace WhiteP.Host.Application;
 
 public sealed class HostInferenceSession : IDisposable
 {
     private readonly HostLifecycle _lifecycle;
     private IInferenceBackend _backend;
+    private readonly Func<Uri, string, IInferenceBackend>? _backendFactory;
     private bool _disposed;
 
-    public HostInferenceSession(HostLifecycle? lifecycle = null, IInferenceBackend? backend = null)
+    public HostInferenceSession(
+        HostLifecycle? lifecycle = null,
+        IInferenceBackend? backend = null,
+        Func<Uri, string, IInferenceBackend>? backendFactory = null)
     {
         _lifecycle = lifecycle ?? new HostLifecycle();
         _backend = backend ?? new UnconfiguredInferenceBackend();
+        _backendFactory = backendFactory;
     }
 
     public HostStatus Status => _lifecycle.Status;
@@ -121,12 +40,26 @@ public sealed class HostInferenceSession : IDisposable
         }
 
         _lifecycle.Transition(HostState.Starting, "Checking local inference backend.");
-        if (_backend is IDisposable oldBackend)
+        if (_backendFactory is null)
         {
-            oldBackend.Dispose();
+            return _lifecycle.Transition(HostState.Error, "No local inference backend factory is configured.");
         }
 
-        _backend = new LlamaCppServerBackend(serverBaseAddress, model);
+        try
+        {
+            var replacement = _backendFactory(serverBaseAddress, model);
+            if (_backend is IDisposable oldBackend)
+            {
+                oldBackend.Dispose();
+            }
+
+            _backend = replacement;
+        }
+        catch (Exception)
+        {
+            return _lifecycle.Transition(HostState.Error, "Local inference connection failed.");
+        }
+
         return await CheckBackendAsync(cancellationToken).ConfigureAwait(false);
     }
 
