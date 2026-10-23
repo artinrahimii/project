@@ -645,6 +645,38 @@ using (var session = new HostInferenceSession(backend: new SessionTestBackend(),
     Assert(session.Status.State == HostState.Ready, "Session should return to Ready after generation.");
 }
 
+// T0060: backend health is a required gate before the capacity evaluator and Ready state.
+var failedHealthOrder = new List<string>();
+using (var failedHealthSession = new HostInferenceSession(
+    backend: new OrderedHealthTestBackend(failedHealthOrder, healthResult: false),
+    readinessEvaluator: _ =>
+    {
+        failedHealthOrder.Add("capacity");
+        return Task.FromResult(new HostReadinessResult(true, "Test capacity result passed."));
+    }))
+{
+    var failedHealthStatus = await failedHealthSession.CheckBackendAsync();
+    Assert(failedHealthStatus.State == HostState.Error, "An unsuccessful backend /health probe must not enter Ready.");
+    Assert(!failedHealthSession.IsConnected, "A backend with failed health must never be advertised connected.");
+    Assert(failedHealthOrder.SequenceEqual(["health"]), "The capacity/Ready path must not execute when backend health fails.");
+}
+
+var successfulHealthOrder = new List<string>();
+using (var successfulHealthSession = new HostInferenceSession(
+    backend: new OrderedHealthTestBackend(successfulHealthOrder, healthResult: true),
+    readinessEvaluator: _ =>
+    {
+        successfulHealthOrder.Add("capacity");
+        return Task.FromResult(new HostReadinessResult(true, "Test capacity result passed."));
+    }))
+{
+    var successfulHealthStatus = await successfulHealthSession.CheckBackendAsync();
+    Assert(successfulHealthStatus.State == HostState.Ready, "A healthy backend with a verified capacity result may enter Ready.");
+    Assert(successfulHealthSession.IsConnected, "Ready state must be advertised only after health and capacity checks pass.");
+    Assert(successfulHealthOrder.SequenceEqual(["health", "capacity"]), "Backend health must complete before the capacity readiness check.");
+}
+Console.WriteLine("PASS: T0060 backend health is checked before capacity readiness and blocks Ready on failure.");
+
 // A healthy endpoint is not enough when no host-readiness check is configured.
 using (var unverifiedSession = new HostInferenceSession(backend: new SessionTestBackend()))
 {
@@ -902,6 +934,30 @@ sealed class RecoverableTestBackend : IInferenceBackend
 {
     public bool IsAvailable { get; set; }
     public string UnavailableReason => IsAvailable ? "Test backend is available." : "Temporary test startup failure.";
+}
+
+sealed class OrderedHealthTestBackend : IInferenceBackend
+{
+    private readonly List<string> _calls;
+    private readonly bool _healthResult;
+
+    public OrderedHealthTestBackend(List<string> calls, bool healthResult)
+    {
+        _calls = calls;
+        _healthResult = healthResult;
+    }
+
+    public bool IsAvailable => _healthResult;
+    public string UnavailableReason => _healthResult ? string.Empty : "Test backend health check failed.";
+
+    public Task<bool> CheckHealthAsync(CancellationToken cancellationToken = default)
+    {
+        _calls.Add("health");
+        return Task.FromResult(_healthResult);
+    }
+
+    public Task<string> GenerateAsync(string prompt, uint maxOutputTokens, CancellationToken cancellationToken = default) =>
+        Task.FromResult("not used by the health gate test");
 }
 
 sealed class SessionTestBackend : IInferenceBackend

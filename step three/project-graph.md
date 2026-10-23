@@ -10063,20 +10063,36 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0059 و T0056 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال انجام",
+      "actual_output_paths": [
+        "src/Host.Windows/Inference/LlamaCppInferenceEngine.cs",
+        "src/Host.Infrastructure/LlamaCppServerBackend.cs",
+        "src/Host.Application/HostInferenceSession.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0060/execution-report.md"
+      ],
       "expected_output_paths": [
         "src/Host.Windows/Inference/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "src/Host.Windows/Inference/LlamaCppInferenceEngine.cs",
+        "src/Host.Infrastructure/LlamaCppServerBackend.cs",
+        "src/Host.Application/HostInferenceSession.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0060/execution-report.md"
+      ],
+      "notes": "The health path already exists in LlamaCppServerBackend.CheckHealthAsync and HostInferenceSession.CheckBackendAsync; T0060-A001 adds a focused regression proving the order health -> capacity -> Ready and that failed health never advertises Ready. Incoming edges reviewed with evidence; outgoing T0060->T0061 remains unreviewed. Exact-commit CI pending.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0060-A001",
+        "last_attempt_result": "in_progress",
+        "changed_files": [
+          "tests/HostLifecycle.Tests/Program.cs",
+          "step three/T0060/execution-report.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
@@ -10089,7 +10105,38 @@
           "review_evidence": []
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0060-A001",
+          "started_at": "2026-10-23T18:29:36.514Z",
+          "ended_at": "2026-10-23T18:29:36.514Z",
+          "result": "in_progress",
+          "summary": "Reviewed existing production health gate and added a regression in the actual C# lifecycle harness for failed-health/no-Ready and successful-health-before-capacity ordering; awaiting exact-commit CI.",
+          "changed_files": [
+            "tests/HostLifecycle.Tests/Program.cs",
+            "step three/T0060/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "command": "GitHub Actions host lifecycle test harness",
+              "result": "pending",
+              "summary": "The new C# test must compile and pass on this implementation commit."
+            },
+            {
+              "command": "Step Three graph/evidence quality gate",
+              "result": "pending",
+              "summary": "The new graph edge validations, output paths, and execution history must pass graph guard."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect exact-commit CI; if both host lifecycle and quality/evidence gates plus product builds pass, record evidence and mark done in a follow-up commit."
+        }
+      ]
     },
     {
       "id": "T0061",
@@ -19036,19 +19083,29 @@
       "from": "T0059",
       "to": "T0060",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0059 starts and owns the local llama.cpp process; T0060 probes the endpoint after it is available. The health-check code depends on the HTTP endpoint lifecycle, not on calling an internal launcher interface. Preserve type=blocks as the conservative runtime order.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/Inference/LocalInferenceProcessLauncher.cs",
+        "src/Host.Infrastructure/LlamaCppServerBackend.cs",
+        "src/Host.Application/HostInferenceSession.cs",
+        "tests/HostLifecycle.Tests/Program.cs"
+      ]
     },
     {
       "from": "T0056",
       "to": "T0060",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "HostInferenceSession runs backend health first, then the injected HostReadinessResult/capacity gate, and enters Ready only when both succeed. T0056 owns that readiness contract; T0060's regression test asserts that failed health skips the capacity gate and successful health precedes it. Preserve type=blocks.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Application/HostInferenceSession.cs",
+        "src/Host.Domain/HostReadinessEvaluator.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0056/execution-report.md"
+      ]
     },
     {
       "from": "T0060",
@@ -22987,8 +23044,38 @@
         "step three/T0056/execution-report.md"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-23T18:29:36.514Z",
+      "edge_from": "T0059",
+      "edge_to": "T0060",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "reason": "T0059 starts and owns the local llama.cpp process; T0060 probes the endpoint after it is available. The health-check code depends on the HTTP endpoint lifecycle, not on calling an internal launcher interface. Preserve type=blocks as the conservative runtime order.",
+      "evidence": [
+        "src/Host.Windows/Inference/LocalInferenceProcessLauncher.cs",
+        "src/Host.Infrastructure/LlamaCppServerBackend.cs",
+        "src/Host.Application/HostInferenceSession.cs",
+        "tests/HostLifecycle.Tests/Program.cs"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-23T18:29:36.514Z",
+      "edge_from": "T0056",
+      "edge_to": "T0060",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "reason": "HostInferenceSession runs backend health first, then the injected HostReadinessResult/capacity gate, and enters Ready only when both succeed. T0056 owns that readiness contract; T0060's regression test asserts that failed health skips the capacity gate and successful health precedes it. Preserve type=blocks.",
+      "evidence": [
+        "src/Host.Application/HostInferenceSession.cs",
+        "src/Host.Domain/HostReadinessEvaluator.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0056/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-23T18:25:40.259Z"
+  "updated_at": "2026-10-23T18:29:36.514Z"
 }
 ```
