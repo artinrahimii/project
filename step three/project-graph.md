@@ -9547,8 +9547,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0056 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "تکمیل‌شده",
       "actual_output_paths": [
         "src/Host.Application/Inference/IInferenceEngine.cs",
         "tests/HostLifecycle.Tests/InferenceEngineContractTests.cs",
@@ -9566,24 +9566,32 @@
         "step three/T0057/execution-report.md",
         "step three/T0057/evidence/contract-verification.md"
       ],
-      "notes": "IInferenceEngine در لایهٔ Host.Application قرار گرفته است، نه مسیر اولیهٔ src/Host.Windows/Inference؛ چون لایهٔ Infrastructure باید این abstraction را پیاده‌سازی کند و مجاز به ارجاع معکوس به UI نیست. یال ورودی T0056→T0057 به‌عنوان sequencing_only بررسی شد و یال T0057→T0058 به‌عنوان contract_or_interface_dependency؛ هر دو با type=blocks حفظ شدند. آزمون محلی اجرا نشده و تکمیل وظیفه تا تأیید CI معلق است. تلاش اول T0057-A001 در CI کامپایل نشد: CS0103 برای Require در InferenceEngineContractTests.cs خط 8. T0057-A002 دسترسی آزمون را اصلاح می‌کند؛ تا اجرای دوباره و مشاهدهٔ نتیجهٔ دقیق همان commit، وضعیت تکمیل نمی‌شود.",
+      "notes": "IInferenceEngine در لایهٔ Host.Application قرار گرفته است، نه مسیر اولیهٔ src/Host.Windows/Inference؛ چون لایهٔ Infrastructure باید این abstraction را پیاده‌سازی کند و مجاز به ارجاع معکوس به UI نیست. یال ورودی T0056→T0057 به‌عنوان sequencing_only بررسی شد و یال T0057→T0058 به‌عنوان contract_or_interface_dependency؛ هر دو با type=blocks حفظ شدند. آزمون محلی اجرا نشده و تکمیل وظیفه تا تأیید CI معلق است. تلاش اول T0057-A001 در CI کامپایل نشد: CS0103 برای Require در InferenceEngineContractTests.cs خط 8. T0057-A002 دسترسی آزمون را اصلاح می‌کند؛ تا اجرای دوباره و مشاهدهٔ نتیجهٔ دقیق همان commit، وضعیت تکمیل نمی‌شود. نتیجهٔ تلاش نخست A001 با خطای کامپایل CS0103 ثبت شد و در A002 اصلاح گردید. روی commit 0b9fbdba94f14d75d8582aeda1acc6b680047e0a چهار کنترل دقیق همگی موفق شدند: کیفیت گراف/پایتون، آزمون چرخهٔ عمر میزبان شامل آزمون IInferenceEngine، ساخت و smoke test میزبان WPF و lint/build/APK/Protobuf اندروید. این تکمیل فقط قرارداد IInferenceEngine را پوشش می‌دهد؛ موتور llama.cpp و اجرای زندهٔ مدل هنوز انجام نشده‌اند.",
       "execution_summary": {
         "attempt_count": 2,
         "failed_attempt_count": 1,
         "last_attempt_id": "T0057-A002",
-        "last_attempt_result": "partial",
+        "last_attempt_result": "succeeded",
         "changed_files": [
+          "src/Host.Application/Inference/IInferenceEngine.cs",
           "tests/HostLifecycle.Tests/InferenceEngineContractTests.cs",
+          "tests/HostLifecycle.Tests/Program.cs",
           "step three/T0057/execution-report.md",
           "step three/T0057/evidence/contract-verification.md",
           "step three/project-graph.md"
         ],
         "related_commits": [
-          "6046193446183ba1298079e223b66f8813c89e00"
+          "6046193446183ba1298079e223b66f8813c89e00",
+          "0b9fbdba94f14d75d8582aeda1acc6b680047e0a"
         ],
-        "tests_passed": [],
+        "tests_passed": [
+          "Step Three quality gate — PASS on 0b9fbdba94f14d75d8582aeda1acc6b680047e0a: https://github.com/artinrahimii/project/actions/runs/39967936221/job/120462623745",
+          "Host lifecycle unit and integration tests — PASS on 0b9fbdba94f14d75d8582aeda1acc6b680047e0a: https://github.com/artinrahimii/project/actions/runs/39967936124/job/120462620973",
+          "Windows WPF Release build and startup smoke — PASS on 0b9fbdba94f14d75d8582aeda1acc6b680047e0a: https://github.com/artinrahimii/project/actions/runs/39967936124/job/120462621141",
+          "Android debug APK and Protobuf checks — PASS on 0b9fbdba94f14d75d8582aeda1acc6b680047e0a: https://github.com/artinrahimii/project/actions/runs/39967936124/job/120462621169"
+        ],
         "tests_failed": [
-          "Host lifecycle unit/integration tests failed on 6046193446183ba1298079e223b66f8813c89e00: CS0103 (Require is not available from InferenceEngineContractTests.cs); https://github.com/artinrahimii/project/actions/runs/39967342302/job/120460555222"
+          "Historical failed attempt T0057-A001, fixed in A002: CS0103 (Require not accessible from InferenceEngineContractTests.cs); 6046193446183ba1298079e223b66f8813c89e00: https://github.com/artinrahimii/project/actions/runs/39967342302/job/120460555222"
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -9635,47 +9643,47 @@
         {
           "attempt_id": "T0057-A002",
           "started_at": "2026-10-23T14:14:08.221Z",
-          "ended_at": null,
-          "result": "partial",
-          "summary": "Corrected the contract test to use an explicit local guard rather than referencing the top-level Program.cs local function Require. Corrective commit queued for new exact-commit CI; no test pass is claimed yet.",
+          "ended_at": "2026-10-23T14:18:19.618Z",
+          "result": "succeeded",
+          "summary": "Corrected the inaccessible Require call. All four exact-commit checks passed on 0b9fbdba94f14d75d8582aeda1acc6b680047e0a: Step Three quality gate, host lifecycle tests, Windows WPF Release/startup smoke, and Android debug APK/Protobuf checks. T0057 acceptance is satisfied for the interface and contract-test scope only; no live model inference or LlamaCppInferenceEngine is claimed.",
           "changed_files": [
             "tests/HostLifecycle.Tests/InferenceEngineContractTests.cs",
             "step three/T0057/execution-report.md",
             "step three/T0057/evidence/contract-verification.md",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "0b9fbdba94f14d75d8582aeda1acc6b680047e0a",
           "tests": [
-            {
-              "name": "Host lifecycle unit and integration tests",
-              "result": "pending",
-              "evidence": "https://github.com/artinrahimii/project/actions",
-              "summary": "Re-run on the corrective commit; the previous attempt failed compilation with CS0103."
-            },
-            {
-              "name": "Windows WPF build and startup smoke",
-              "result": "pending",
-              "evidence": "https://github.com/artinrahimii/project/actions",
-              "summary": "The prior run was still in progress; verify the new exact-commit result."
-            },
-            {
-              "name": "Android debug APK and Protobuf",
-              "result": "pending",
-              "evidence": "https://github.com/artinrahimii/project/actions",
-              "summary": "The prior run was still in progress; verify the new exact-commit result."
-            },
             {
               "name": "Step Three quality gate",
               "result": "passed",
-              "evidence": "https://github.com/artinrahimii/project/actions/runs/39967342312",
-              "summary": "The graph/Python quality gate passed on the prior implementation commit; it must run against this corrective commit too."
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39967936221/job/120462623745",
+              "summary": "Task graph and Python quality checks passed on 0b9fbdba94f14d75d8582aeda1acc6b680047e0a."
+            },
+            {
+              "name": "Host lifecycle unit and integration tests",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39967936124/job/120462620973",
+              "summary": "Console harness passed including the explicit IInferenceEngine contract-test output on 0b9fbdba94f14d75d8582aeda1acc6b680047e0a."
+            },
+            {
+              "name": "Windows WPF Release build and startup smoke",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39967936124/job/120462621141",
+              "summary": "Formatting, host build, generated C# Protobuf checks, WPF startup smoke and artifact upload passed on 0b9fbdba94f14d75d8582aeda1acc6b680047e0a."
+            },
+            {
+              "name": "Android debug APK and Protobuf checks",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39967936124/job/120462621169",
+              "summary": "Kotlin formatting/lint, debug APK, Protobuf round-trip tests, generated Java/Kotlin sources and artifact upload passed on 0b9fbdba94f14d75d8582aeda1acc6b680047e0a."
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect every workflow/job for this corrective commit. Update the attempt and mark T0057 done only if required checks pass; fix any subsequent failures."
+          "follow_up": "Proceed to T0058 only after re-reading the latest main and reviewing any other T0058 incoming dependencies. Implement the real LlamaCppInferenceEngine; do not interpret T0057 completion as proof of live inference."
         }
       ]
     },
@@ -22668,6 +22676,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-23T14:14:08.221Z"
+  "updated_at": "2026-10-23T14:18:19.618Z"
 }
 ```
