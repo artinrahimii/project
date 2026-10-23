@@ -7717,10 +7717,10 @@
         "tests/test_wpf_entrypoint.py",
         "step three/T0046/evidence/verification.md"
       ],
-      "notes": "The status presentation formats the backend and last-observed local endpoint state from HostStatus snapshots (Stopped, Starting, Ready, Busy, Error), and refreshes during connection checks and inference. Direct peer-to-peer transport is explicitly reported as not implemented; no P2P readiness is claimed. Exact-commit CI for these changes is pending. Latest product CI on c6ac1088d5321744331e97fa2c3f1dd76c0acaa0: Windows Release build and lifecycle tests passed, but WPF startup smoke exceeded 15 seconds; workflow timeout raised to 30 seconds, awaiting revalidation. Latest quality run 39922632934 failed because the source-level test still asserted the old 15-second timeout; test expectation updated to 30 seconds, pending CI.",
+      "notes": "The status presentation formats the backend and last-observed local endpoint state from HostStatus snapshots (Stopped, Starting, Ready, Busy, Error), and refreshes during connection checks and inference. Direct peer-to-peer transport is explicitly reported as not implemented; no P2P readiness is claimed. Exact-commit CI for these changes is pending. Latest product CI on c6ac1088d5321744331e97fa2c3f1dd76c0acaa0: Windows Release build and lifecycle tests passed, but WPF startup smoke exceeded 15 seconds; workflow timeout raised to 30 seconds, awaiting revalidation. Latest quality run 39922632934 failed because the source-level test still asserted the old 15-second timeout; test expectation updated to 30 seconds, pending CI. Quality gate run 39922876698 confirmed all 99 Python tests pass, but graph validation failed because failed_attempt_count did not match execution_history results. The metadata count has been corrected to reflect result values; the observed CI failure itself remains documented in tests_failed.",
       "execution_summary": {
         "attempt_count": 3,
-        "failed_attempt_count": 2,
+        "failed_attempt_count": 0,
         "last_attempt_id": "T0046-A003",
         "last_attempt_result": "partial",
         "changed_files": [
@@ -7847,6 +7847,30 @@
           "reopened_reason": "Latest exact-main quality workflow failed due to stale assertion.",
           "contract_changes": [],
           "follow_up": "Verify this updated assertion in exact-commit quality CI and verify Windows WPF startup plus Android build/tests in product CI."
+        },
+        {
+          "attempt_id": "T0046-A004",
+          "started_at": "2026-10-23T11:10:00-04:00",
+          "ended_at": "2026-10-23T11:11:00-04:00",
+          "result": "partial",
+          "summary": "After fixing the stale timeout assertion, all 99 Python tests passed. Graph guard then detected an inconsistent failed_attempt_count in T0046 execution_summary (2 vs 0 history entries marked result=failed). Corrected the summary count to match the recorded result taxonomy; CI revalidation pending.",
+          "changed_files": [
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "GitHub Actions quality run 39922876698",
+              "result": "partial",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39922876698",
+              "summary": "99/99 Python tests passed and compileall passed; graph guard failed on FAILED_ATTEMPT_COUNT_MISMATCH for T0046."
+            }
+          ],
+          "failure_details": "Execution summary failed-attempt count disagreed with history result values; recorded partial attempts are not classified as result=failed by graph_guard.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Verify graph guard and repo-root evidence validation on the next exact-main quality run; verify all product-build jobs before closing T0046."
         }
       ]
     },
@@ -20982,6 +21006,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-23T15:00:00Z"
+  "updated_at": "2026-10-23T15:11:00Z"
 }
 ```
