@@ -7530,8 +7530,8 @@
       "notes": "The service belongs in Host.Infrastructure, where persistence and validation belong; MainWindow loads and saves it through the production project reference. The old expected src/Host.Windows path is stale as the location for a reusable settings service.",
       "execution_summary": {
         "attempt_count": 1,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "T0045-A001",
+        "failed_attempt_count": 1,
+        "last_attempt_id": "T0045-A002",
         "last_attempt_result": "in_progress",
         "changed_files": [
           "src/Host.Infrastructure/LocalHostSettingsStore.cs",
@@ -7542,8 +7542,22 @@
           "step three/project-graph.md"
         ],
         "related_commits": [],
-        "tests_passed": [],
-        "tests_failed": [],
+        "tests_passed": [
+          {
+            "name": "Host lifecycle and local-settings regression harness",
+            "result": "passed",
+            "evidence": "https://github.com/artinrahimii/project/actions/runs/39913421658",
+            "summary": "C# test job passed including all new LocalHostSettingsStore cases."
+          }
+        ],
+        "tests_failed": [
+          {
+            "name": "Windows WPF build",
+            "result": "failed",
+            "evidence": "https://github.com/artinrahimii/project/actions/runs/39913421658",
+            "summary": "CS0246: InvalidDataException not found in MainWindow.xaml.cs due to missing System.IO import."
+          }
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -7563,8 +7577,8 @@
         {
           "attempt_id": "T0045-A001",
           "started_at": "2026-10-23T10:08:00Z",
-          "ended_at": null,
-          "result": "in_progress",
+          "ended_at": "2026-10-23T10:09:00Z",
+          "result": "failed",
           "commit_sha": null,
           "summary": "Reviewed incoming edges: T0044 and T0040 are sequencing-only for settings persistence, with the conservative order retained. Implementing a versioned local settings store, validation and UI integration with regression coverage.",
           "changed_files": [
@@ -7575,9 +7589,39 @@
             "step three/T0045/evidence/verification.md",
             "step three/project-graph.md"
           ],
+          "tests": [
+            {
+              "name": "Host lifecycle and local-settings regression harness",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39913421658",
+              "summary": "The C# executable test job passed, including the new settings defaults, save/load, schema version, endpoint policy, timeout, malformed JSON and future-version checks."
+            },
+            {
+              "name": "Windows WPF build",
+              "result": "failed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39913421658",
+              "summary": "Compilation failed because MainWindow.xaml.cs referenced InvalidDataException without importing System.IO."
+            }
+          ],
+          "failure_details": "Windows WPF build failed at src/Host.Windows/MainWindow.xaml.cs(24,16): InvalidDataException was unresolved because System.IO was not imported. The host lifecycle/settings regression test job passed; Windows product build did not pass.",
+          "follow_up": "Add using System.IO to MainWindow.xaml.cs and rerun the exact-commit product workflow."
+        },
+        {
+          "attempt_id": "T0045-A002",
+          "started_at": "2026-10-23T10:09:00Z",
+          "ended_at": null,
+          "result": "in_progress",
+          "commit_sha": null,
+          "summary": "Correcting the missing System.IO import discovered by the first product build; rerunning exact-commit CI.",
+          "changed_files": [
+            "src/Host.Windows/MainWindow.xaml.cs",
+            "step three/T0045/execution-report.md",
+            "step three/T0045/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
           "tests": [],
           "failure_details": null,
-          "follow_up": "Require exact-commit CI product build and quality gate before marking complete."
+          "follow_up": "Complete only after Windows WPF build, Android build, C# regression harness and quality gate pass."
         }
       ]
     },
@@ -20698,6 +20742,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-23T10:08:00Z"
+  "updated_at": "2026-10-23T10:09:00Z"
 }
 ```

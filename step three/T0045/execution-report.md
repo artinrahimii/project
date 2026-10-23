@@ -15,3 +15,8 @@
 
 ## Validation status
 The implementation is pending exact-commit CI. T0045 remains in progress until the product build, settings/lifecycle test job, and Step Three quality gate pass.
+
+## Attempt A001 failure and correction
+- The first exact-commit C# regression harness passed, including the new settings persistence and validation cases.
+- The Windows WPF build failed with CS0246 at `MainWindow.xaml.cs(24,16)`: `InvalidDataException` was not found because `System.IO` was not imported.
+- Attempt A002 adds the missing import. The task remains in progress until a fresh exact-commit product build and quality gate pass.
