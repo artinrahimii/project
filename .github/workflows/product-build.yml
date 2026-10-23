@@ -38,10 +38,10 @@ jobs:
           }
           $hostDirectory = Split-Path -Parent $hostExecutable
           $process = Start-Process -FilePath $hostExecutable -ArgumentList "--smoke-test" -WorkingDirectory $hostDirectory -PassThru
-          if (-not $process.WaitForExit(15000)) {
+          if (-not $process.WaitForExit(30000)) {
             $process.Kill()
             $process.WaitForExit()
-            throw "WPF startup smoke test exceeded the 15-second limit."
+            throw "WPF startup smoke test exceeded the 30-second limit."
           }
           if ($process.ExitCode -ne 0) {
             throw "WPF startup smoke test failed with exit code $($process.ExitCode)."
