@@ -8948,8 +8948,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0052 و T0048 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "تکمیل‌شده",
       "actual_output_paths": [
         "tests/HostLifecycle.Tests/HostCapacityAcceptanceTests.cs",
         "tests/HostLifecycle.Tests/Program.cs",
@@ -8964,12 +8964,12 @@
         "step three/T0053/execution-report.md",
         "step three/T0053/evidence/verification.md"
       ],
-      "notes": "Dedicated executable acceptance tests were added for low RAM, insufficient disk, unsupported backend, failure precedence, missing checks and inconsistent measurements. Exact-commit CI is pending.",
+      "notes": "Dedicated executable C# capacity acceptance tests passed on the exact implementation commit. Product build workflow and quality gate both completed successfully. The tests verify capacity-state decisions and do not claim live inference, actual model installation or GPU compute support.",
       "execution_summary": {
-        "attempt_count": 1,
+        "attempt_count": 2,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0053-A001",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "T0053-A002",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "tests/HostLifecycle.Tests/HostCapacityAcceptanceTests.cs",
           "tests/HostLifecycle.Tests/Program.cs",
@@ -8977,8 +8977,15 @@
           "step three/T0053/evidence/verification.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
+        "related_commits": [
+          "8b17b8f39cdceef7bd2f56fab98585daafae8da2"
+        ],
+        "tests_passed": [
+          "Host lifecycle unit/integration tests including HostCapacityAcceptanceTests — PASS on exact commit 8b17b8f39cdceef7bd2f56fab98585daafae8da2; job 120408312444: https://github.com/artinrahimii/project/actions/runs/39951961035/job/120408312444",
+          "Windows WPF Release build, C# format, generated Protobuf and startup/close smoke — PASS on exact commit 8b17b8f39cdceef7bd2f56fab98585daafae8da2; job 120408312549: https://github.com/artinrahimii/project/actions/runs/39951961035/job/120408312549",
+          "Android Kotlin lint, debug APK, Protobuf round-trip tests and generated-source checks — PASS on exact commit 8b17b8f39cdceef7bd2f56fab98585daafae8da2; job 120408312489: https://github.com/artinrahimii/project/actions/runs/39951961035/job/120408312489",
+          "Step Three Python/graph quality gate — PASS on exact commit 8b17b8f39cdceef7bd2f56fab98585daafae8da2; https://github.com/artinrahimii/project/actions/runs/39951961121"
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -9010,6 +9017,50 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Inspect the exact implementation commit's GitHub Actions results, then record success or failure honestly."
+        },
+        {
+          "attempt_id": "T0053-A002",
+          "started_at": "2026-10-23T12:15:28Z",
+          "ended_at": "2026-10-23T12:18:48.540Z",
+          "result": "succeeded",
+          "summary": "The exact implementation commit passed the product workflow's C# lifecycle tests, Windows WPF release build/startup smoke, Android APK/Protobuf checks, and the separate graph/Python quality gate.",
+          "changed_files": [
+            "step three/T0053/execution-report.md",
+            "step three/T0053/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": "8b17b8f39cdceef7bd2f56fab98585daafae8da2",
+          "tests": [
+            {
+              "name": "C# host lifecycle and capacity acceptance tests",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39951961035/job/120408312444",
+              "summary": "The executable harness completed with success."
+            },
+            {
+              "name": "Windows WPF build and startup smoke",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39951961035/job/120408312549",
+              "summary": "Release build, generated Protobuf check, live WPF startup/control smoke and close passed."
+            },
+            {
+              "name": "Android APK and Protobuf checks",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39951961035/job/120408312489",
+              "summary": "Kotlin lint, debug APK build, Protobuf round-trip tests and generated-source checks passed."
+            },
+            {
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39951961121",
+              "summary": "Python regression suite, compileall, graph structure and recorded-output/evidence validation passed."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Proceed to T0054 after reviewing incoming dependencies; do not assume readiness logic outside the checked domain model has been integrated into runtime startup yet."
         }
       ]
     },
@@ -22019,6 +22070,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-23T12:15:07.067Z"
+  "updated_at": "2026-10-23T12:18:48.540Z"
 }
 ```

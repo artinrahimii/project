@@ -1,9 +1,17 @@
 # T0053 verification evidence
 
-Implementation under verification:
+## Implementation
 - `tests/HostLifecycle.Tests/HostCapacityAcceptanceTests.cs`
 - `tests/HostLifecycle.Tests/Program.cs`
 
-The executable suite asserts that failed RAM, disk, or backend checks resolve to `Insufficient`, even when other checks are unknown. Missing/unknown checks or inconsistent hardware measurements must not produce `Ready`.
+## Exact-commit results
+All checks below ran against implementation commit [`8b17b8f39cdceef7bd2f56fab98585daafae8da2`](https://github.com/artinrahimii/project/commit/8b17b8f39cdceef7bd2f56fab98585daafae8da2):
 
-**Verification status:** pending exact-commit GitHub Actions quality and product-build workflows. No pass is claimed until those runs finish.
+- [C# host lifecycle and capacity acceptance tests](`https://github.com/artinrahimii/project/actions/runs/39951961035/job/120408312444`): **PASS**.
+- [Windows WPF Release build and startup/close smoke](`https://github.com/artinrahimii/project/actions/runs/39951961035/job/120408312549`): **PASS**.
+- [Android lint, debug APK, Protobuf round-trip and generated-source checks](`https://github.com/artinrahimii/project/actions/runs/39951961035/job/120408312489`): **PASS**.
+- [Step Three Python/graph quality gate](`https://github.com/artinrahimii/project/actions/runs/39951961121`): **PASS**.
+
+Coverage includes low RAM, insufficient disk, unsupported backend, explicit failure when other checks are unknown, missing checks and inconsistent capacity measurements.
+
+These results verify the domain model and repository build/test scope. They do not prove runtime readiness wiring, live inference, P2P connectivity, or GPU compute capability.
