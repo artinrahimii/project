@@ -55,6 +55,52 @@ Assert(BuildDomainHostCapabilities(availableDiskBytes: 600L * 1024L * 1024L * 10
 Console.WriteLine("PASS: HostCapabilities keeps incomplete/invalid measurements Unknown and blocks inference for failed capacity checks.");
 HostCapacityAcceptanceTests.Run();
 
+const ulong gibibyte = 1024UL * 1024UL * 1024UL;
+var sufficientHostReadiness = HostReadinessEvaluator.Evaluate(
+    requiredModelMemoryGiB: 4,
+    availablePhysicalMemoryBytes: 8UL * gibibyte,
+    requiredFreeDiskGiB: 2,
+    availableSystemDriveBytes: 16L * 1024L * 1024L * 1024L);
+Assert(sufficientHostReadiness.IsReady, "A healthy backend with sufficient declared RAM and free disk must pass host readiness.");
+
+var lowRamReadiness = HostReadinessEvaluator.Evaluate(
+    requiredModelMemoryGiB: 9,
+    availablePhysicalMemoryBytes: 8UL * gibibyte,
+    requiredFreeDiskGiB: 2,
+    availableSystemDriveBytes: 16L * 1024L * 1024L * 1024L);
+Assert(!lowRamReadiness.IsReady && lowRamReadiness.Message.Contains("RAM", StringComparison.Ordinal),
+    "Insufficient live RAM must fail readiness with a RAM-specific message.");
+
+var lowDiskReadiness = HostReadinessEvaluator.Evaluate(
+    requiredModelMemoryGiB: 4,
+    availablePhysicalMemoryBytes: 8UL * gibibyte,
+    requiredFreeDiskGiB: 5,
+    availableSystemDriveBytes: 4L * 1024L * 1024L * 1024L);
+Assert(!lowDiskReadiness.IsReady && lowDiskReadiness.Message.Contains("disk", StringComparison.OrdinalIgnoreCase),
+    "Insufficient live system-drive space must fail readiness with a disk-specific message.");
+
+var invalidRamReadiness = HostReadinessEvaluator.Evaluate(
+    requiredModelMemoryGiB: 0,
+    availablePhysicalMemoryBytes: 8UL * gibibyte,
+    requiredFreeDiskGiB: 1,
+    availableSystemDriveBytes: 16L * 1024L * 1024L * 1024L);
+Assert(!invalidRamReadiness.IsReady, "A missing/invalid model RAM requirement must fail closed.");
+
+var invalidDiskReadiness = HostReadinessEvaluator.Evaluate(
+    requiredModelMemoryGiB: 4,
+    availablePhysicalMemoryBytes: 8UL * gibibyte,
+    requiredFreeDiskGiB: 0,
+    availableSystemDriveBytes: 16L * 1024L * 1024L * 1024L);
+Assert(!invalidDiskReadiness.IsReady, "A missing/invalid minimum disk requirement must fail closed.");
+
+var unknownDiskReadiness = HostReadinessEvaluator.Evaluate(
+    requiredModelMemoryGiB: 4,
+    availablePhysicalMemoryBytes: 8UL * gibibyte,
+    requiredFreeDiskGiB: 1,
+    availableSystemDriveBytes: -1);
+Assert(!unknownDiskReadiness.IsReady, "Unverified system-drive capacity must never produce Ready.");
+Console.WriteLine("PASS: host readiness requires verified RAM and free system-drive space; insufficient or unknown capacity fails closed.");
+
 var supportedProtocol = ProtocolVersionPolicy.Evaluate(ProtocolVersionPolicy.CurrentVersion);
 Assert(supportedProtocol.IsCompatible, "The exact current protocol version must be accepted.");
 Assert(supportedProtocol.Status == ProtocolVersionStatus.Compatible, "Current version must return Compatible.");

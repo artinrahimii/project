@@ -13,6 +13,7 @@ public partial class MainWindow : Window
     private LocalHostSettings _settings = LocalHostSettings.Defaults;
     private readonly HostInferenceSession _session;
     private string? _requestedModelMemoryRequirementText;
+    private string? _requestedMinimumFreeDiskRequirementText;
     private CancellationTokenSource? _operationCancellation;
 
     public MainWindow()
@@ -45,6 +46,7 @@ public partial class MainWindow : Window
     private async void ConnectButton_Click(object sender, RoutedEventArgs e)
     {
         _requestedModelMemoryRequirementText = ModelMemoryRequirementGiB.Text;
+        _requestedMinimumFreeDiskRequirementText = MinimumFreeDiskGiB.Text;
         ConnectButton.IsEnabled = false;
         GenerateButton.IsEnabled = false;
         try
@@ -103,6 +105,7 @@ public partial class MainWindow : Window
         }
 
         _requestedModelMemoryRequirementText = ModelMemoryRequirementGiB.Text;
+        _requestedMinimumFreeDiskRequirementText = MinimumFreeDiskGiB.Text;
         GenerateButton.IsEnabled = false;
         ConnectButton.IsEnabled = false;
         OutputText.Clear();
@@ -166,34 +169,38 @@ public partial class MainWindow : Window
                 _requestedModelMemoryRequirementText?.Trim(),
                 NumberStyles.AllowDecimalPoint,
                 CultureInfo.InvariantCulture,
-                out var requiredGiB) ||
-            !double.IsFinite(requiredGiB) ||
-            requiredGiB <= 0 ||
-            requiredGiB > 1_048_576)
+                out var requiredModelMemoryGiB) ||
+            !double.IsFinite(requiredModelMemoryGiB) ||
+            requiredModelMemoryGiB <= 0 ||
+            requiredModelMemoryGiB > 1_048_576)
         {
             return Task.FromResult(new HostReadinessResult(
                 false,
                 "Host is not Ready: enter a positive declared model RAM requirement in GiB."));
         }
 
+        if (!double.TryParse(
+                _requestedMinimumFreeDiskRequirementText?.Trim(),
+                NumberStyles.AllowDecimalPoint,
+                CultureInfo.InvariantCulture,
+                out var requiredFreeDiskGiB) ||
+            !double.IsFinite(requiredFreeDiskGiB) ||
+            requiredFreeDiskGiB <= 0 ||
+            requiredFreeDiskGiB > 1_048_576)
+        {
+            return Task.FromResult(new HostReadinessResult(
+                false,
+                "Host is not Ready: enter a positive minimum free system-drive requirement in GiB."));
+        }
+
         try
         {
             var hardware = WindowsHostHardwareDiscovery.Discover();
-            var requiredBytes = checked((long)Math.Ceiling(requiredGiB * 1024d * 1024d * 1024d));
-            var estimate = ModelMemoryCompatibilityEstimator.Estimate(
-                requiredBytes,
-                hardware.AvailablePhysicalMemoryBytes);
-
-            if (!estimate.IsCompatible)
-            {
-                return Task.FromResult(new HostReadinessResult(
-                    false,
-                    "Host is not Ready: " + estimate.Message));
-            }
-
-            return Task.FromResult(new HostReadinessResult(
-                true,
-                "Local backend health passed and the declared RAM requirement is compatible with currently available memory."));
+            return Task.FromResult(HostReadinessEvaluator.Evaluate(
+                requiredModelMemoryGiB,
+                hardware.AvailablePhysicalMemoryBytes,
+                requiredFreeDiskGiB,
+                hardware.SystemDriveAvailableBytes));
         }
         catch (OperationCanceledException)
         {

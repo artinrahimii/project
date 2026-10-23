@@ -18,3 +18,15 @@
 
 ## Verification
 Exact-commit GitHub Actions results are pending. This task remains in progress until the product build, lifecycle tests and graph quality gate have been inspected.
+
+ 
+## Attempt T0054-A002 — enforce both RAM and disk capacity
+
+- Added `HostReadinessEvaluator` in the application layer as a fail-closed policy for the declared model RAM requirement and minimum free system-drive space.
+- The Windows UI now exposes a minimum free-disk requirement (GiB), and the host checks current Windows RAM and system-drive free space after backend health succeeds and before each inference.
+- Added executable policy assertions for sufficient capacity, low RAM, low disk, invalid declarations, and unknown disk measurement.
+- The exact-commit GitHub Actions result is pending; this attempt remains in progress until the C# tests and product/quality workflows pass.
+
+## Verification update
+
+The earlier verification note above records the state of attempt A001. Attempt A002 expands the runtime guard to cover both resources; no test success is claimed until CI completes on the implementation commit.
