@@ -8256,8 +8256,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0048 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال انجام",
+      "status": "done",
+      "status_fa": "تکمیل‌شده",
       "actual_output_paths": [
         "src/Host.Windows/WindowsHostHardwareDiscovery.cs",
         "src/Host.Windows/App.xaml.cs",
@@ -8272,14 +8272,15 @@
         "step three/T0049/execution-report.md",
         "step three/T0049/evidence/verification.md",
         "src/Host.Windows/WindowsHostHardwareDiscovery.cs",
-        "tests/test_windows_hardware_discovery.py"
+        "tests/test_windows_hardware_discovery.py",
+        "src/Host.Windows/App.xaml.cs"
       ],
-      "notes": "Attempt T0049-A001 was not verified: the Windows build failed because LibraryImport-generated code required unsafe compilation. Attempt A003 switches to DllImport without enabling unsafe compilation. Status remains in_progress until exact-commit CI passes.",
+      "notes": "T0049 acceptance verified on exact implementation commit af1bfa552726913c2d77972635efee2abc0edccd. The corrected DllImport builds without enabling unsafe compilation; Windows WPF startup smoke exercised the actual OS/RAM/system-drive discovery and all required workflow checks passed. The earlier LibraryImport build failure remains recorded as T0049-A002.",
       "execution_summary": {
-        "attempt_count": 3,
+        "attempt_count": 4,
         "failed_attempt_count": 1,
-        "last_attempt_id": "T0049-A003",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "T0049-A004",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Host.Windows/WindowsHostHardwareDiscovery.cs",
           "src/Host.Windows/App.xaml.cs",
@@ -8289,14 +8290,17 @@
           "step three/project-graph.md"
         ],
         "related_commits": [
-          "1925a0b25b550fcacf33b013422f1284d42d5334"
+          "1925a0b25b550fcacf33b013422f1284d42d5334",
+          "af1bfa552726913c2d77972635efee2abc0edccd"
         ],
         "tests_passed": [
-          "Step Three quality gate run 39939563867 passed for V 3.0.150; this does not verify the corrected DllImport revision.",
-          "Host lifecycle job 120367370545 passed for V 3.0.150; this does not verify the corrected DllImport revision."
+          "Step Three quality gate: passed. Quality checks, Python tests, graph structure, syntax and recorded-output/evidence validation passed on exact commit af1bfa552726913c2d77972635efee2abc0edccd. Evidence: https://github.com/artinrahimii/project/actions/runs/39939963156",
+          "Windows WPF Release build and hardware-discovery smoke: passed. Windows build, C# formatting, generated Protobuf verification and the real WPF startup smoke all passed. The smoke called WindowsHostHardwareDiscovery.Discover() on Windows and verified OS description/version, non-zero physical RAM, and plausible total/free system-drive capacity. Evidence: https://github.com/artinrahimii/project/actions/runs/39939963271/job/120368677492",
+          "Host lifecycle unit/integration tests: passed. The C# lifecycle test harness passed on the same exact commit. Evidence: https://github.com/artinrahimii/project/actions/runs/39939963271/job/120368677922",
+          "Android APK and Protobuf verification: passed. Kotlin lint, debug APK build, Android Protobuf round-trip tests, generated Java/Kotlin source checks and artifact upload passed. Evidence: https://github.com/artinrahimii/project/actions/runs/39939963271/job/120368677995"
         ],
         "tests_failed": [
-          "Windows WPF build job 120367370825 failed on V 3.0.150 with SYSLIB1062 and CS0227 before the hardware discovery smoke; failure details are preserved in T0049-A002."
+          "Historical failure retained: Windows WPF build on V 3.0.150 (job 120367370825) failed before runtime smoke with SYSLIB1062/CS0227 due to LibraryImport requiring unsafe compilation. Fixed with DllImport in V 3.0.151; the subsequent exact-commit workflow passed."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -8387,6 +8391,50 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Inspect exact-commit quality gate, Windows Release build/runtime smoke, C# lifecycle harness and Android build. Mark T0049 done only after required acceptance evidence passes."
+        },
+        {
+          "attempt_id": "T0049-A004",
+          "started_at": "2026-10-23T10:36:58.022Z",
+          "ended_at": "2026-10-23T10:36:58.022Z",
+          "result": "succeeded",
+          "summary": "Verified corrected implementation commit af1bfa552726913c2d77972635efee2abc0edccd through the exact-commit Step Three quality gate and the full product build. The Windows smoke exercised real OS, physical-memory, and system-drive APIs; C# lifecycle and Android APK/Protobuf jobs also passed. Earlier A002 build failure is retained as historical attempt.",
+          "changed_files": [
+            "step three/T0049/execution-report.md",
+            "step three/T0049/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": "af1bfa552726913c2d77972635efee2abc0edccd",
+          "tests": [
+            {
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39939963156",
+              "summary": "Quality checks, Python tests, graph structure, syntax and recorded-output/evidence validation passed on exact commit af1bfa552726913c2d77972635efee2abc0edccd."
+            },
+            {
+              "name": "Windows WPF Release build and hardware-discovery smoke",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39939963271/job/120368677492",
+              "summary": "Windows build, C# formatting, generated Protobuf verification and the real WPF startup smoke all passed. The smoke called WindowsHostHardwareDiscovery.Discover() on Windows and verified OS description/version, non-zero physical RAM, and plausible total/free system-drive capacity."
+            },
+            {
+              "name": "Host lifecycle unit/integration tests",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39939963271/job/120368677922",
+              "summary": "The C# lifecycle test harness passed on the same exact commit."
+            },
+            {
+              "name": "Android APK and Protobuf verification",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39939963271/job/120368677995",
+              "summary": "Kotlin lint, debug APK build, Android Protobuf round-trip tests, generated Java/Kotlin source checks and artifact upload passed."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "The next sequential task is T0050 (real GPU and available-backend capability detection). Review its incoming edges before implementation; T0049 is now verified done."
         }
       ]
     },

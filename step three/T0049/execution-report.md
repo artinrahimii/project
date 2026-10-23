@@ -25,3 +25,14 @@
 - Replaced `LibraryImport` with `DllImport` without adding project-wide `AllowUnsafeBlocks`.
 - Updated the Python contract test to guard the native declaration.
 - T0049 remains `in_progress` until exact-commit CI confirms the Windows Release build and real hardware-discovery smoke, the quality gate, C# lifecycle tests and Android build.
+
+
+## Attempt T0049-A004 — successful exact-commit verification
+- Tested corrected implementation commit: `af1bfa552726913c2d77972635efee2abc0edccd` (`V 3.0.151`).
+- [Step Three quality gate run 39939963156](https://github.com/artinrahimii/project/actions/runs/39939963156): **success**.
+- [Full product build run 39939963271](https://github.com/artinrahimii/project/actions/runs/39939963271): **success**.
+- [Windows WPF job 120368677492](https://github.com/artinrahimii/project/actions/runs/39939963271/job/120368677492): **success**; C# formatting, Release build, generated Protobuf checks, actual WPF startup smoke, and artifact upload passed. The startup smoke invoked `WindowsHostHardwareDiscovery.Discover()` on Windows and checked plausible OS, physical-RAM and system-drive values.
+- [C# host lifecycle job 120368677922](https://github.com/artinrahimii/project/actions/runs/39939963271/job/120368677922): **success**.
+- [Android APK/Protobuf job 120368677995](https://github.com/artinrahimii/project/actions/runs/39939963271/job/120368677995): **success**.
+- **Final status: T0049 is `done`.** Attempt A002 preserves the initial `LibraryImport` build failure. Attempt A003 corrected the native declaration to `DllImport`, avoiding project-wide unsafe compilation, and A004 records successful verification.
+- Next sequential task: T0050, real GPU and available-backend detection. It was not started in this execution.
