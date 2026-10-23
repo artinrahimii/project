@@ -626,11 +626,11 @@ Console.WriteLine("PASS: protocol request, capsule, prompt, response, HTTP-body 
 
 
  // T0046: status presentation must derive from the observed host/backend state.
-var presentedStopped = new HostStatus(HostState.Stopped, "Host stopped.");
-var presentedStarting = new HostStatus(HostState.Starting, "Checking local inference backend.");
-var presentedReady = new HostStatus(HostState.Ready, "Local inference backend is ready.");
-var presentedBusy = new HostStatus(HostState.Busy, "Generating locally; one request at a time.");
-var presentedError = new HostStatus(HostState.Error, "Local inference connection failed.");
+var presentedStopped = new WhiteP.Host.Domain.HostStatus(HostState.Stopped, "Host stopped.");
+var presentedStarting = new WhiteP.Host.Domain.HostStatus(HostState.Starting, "Checking local inference backend.");
+var presentedReady = new WhiteP.Host.Domain.HostStatus(HostState.Ready, "Local inference backend is ready.");
+var presentedBusy = new WhiteP.Host.Domain.HostStatus(HostState.Busy, "Generating locally; one request at a time.");
+var presentedError = new WhiteP.Host.Domain.HostStatus(HostState.Error, "Local inference connection failed.");
 Assert(HostStatusPresentation.FormatBackendStatus(presentedReady).Contains("Ready", StringComparison.Ordinal), "Backend status presentation must use the actual Ready state.");
 Assert(HostStatusPresentation.FormatNetworkStatus(presentedStopped).Contains("not checked", StringComparison.Ordinal), "Stopped state must not claim an endpoint is connected.");
 Assert(HostStatusPresentation.FormatNetworkStatus(presentedStarting).Contains("checking backend health", StringComparison.Ordinal), "Starting state must report a live health check.");
