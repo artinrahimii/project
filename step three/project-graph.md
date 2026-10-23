@@ -4034,8 +4034,8 @@
         ".gitattributes",
         ".editorconfig",
         "src/Host.Windows/App.xaml.cs",
-        "src/Host.Windows/HostLifecycle.cs",
-        "src/Host.Windows/LlamaCppServerBackend.cs",
+        "src/Host.Domain/HostLifecycle.cs",
+        "src/Host.Infrastructure/LlamaCppServerBackend.cs",
         "src/Host.Windows/MainWindow.xaml.cs",
         "src/Client.Android/app/build.gradle.kts",
         "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
@@ -6345,11 +6345,12 @@
       ],
       "expected_output_paths": [
         "src/Shared.Contracts/ProtocolMessageLimits.cs",
-        "src/Host.Windows/HostLifecycle.cs",
-        "src/Host.Windows/LlamaCppServerBackend.cs",
+        "src/Host.Domain/HostLifecycle.cs",
+        "src/Host.Infrastructure/LlamaCppServerBackend.cs",
         "protocol/whitep/v1/messages.proto",
         "tests/HostLifecycle.Tests/Program.cs",
-        "tests/test_protocol_limits.py"
+        "tests/test_protocol_limits.py",
+        "src/Host.Application/HostInferenceSession.cs"
       ],
       "evidence": [
         "src/Shared.Contracts/ProtocolMessageLimits.cs",
@@ -6593,13 +6594,14 @@
       "expected_output_paths": [
         "src/Shared.Contracts/ProtocolMessageValidator.cs",
         "src/Shared.Contracts/ProtocolMessageLimits.cs",
-        "src/Host.Windows/ProtocolMessageParser.cs",
-        "src/Host.Windows/HostLifecycle.cs",
+        "src/Host.Infrastructure/ProtocolMessageParser.cs",
+        "src/Host.Domain/HostLifecycle.cs",
         "tests/HostLifecycle.Tests/Program.cs",
         "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
         "tests/contracts/invalid-message-cases.json",
         "tests/test_message_validation.py",
-        "tests/test_protocol_limits.py"
+        "tests/test_protocol_limits.py",
+        "src/Host.Application/HostInferenceSession.cs"
       ],
       "evidence": [
         "src/Shared.Contracts/ProtocolMessageValidator.cs",
@@ -6907,8 +6909,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0041 و T0040 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال انجام",
+      "status": "done",
+      "status_fa": "تکمیل‌شده",
       "actual_output_paths": [
         "src/Host.Domain/WhiteP.Host.Domain.csproj",
         "src/Host.Domain/HostLifecycle.cs",
@@ -6934,24 +6936,33 @@
         "tests/test_decision_traceability.py",
         "tests/test_host_layer_projects.py",
         "step three/T0042/execution-report.md",
-        "step three/T0042/evidence/verification.md"
+        "step three/T0042/evidence/verification.md",
+        "src/Host.Windows/App.xaml.cs",
+        "src/Shared.Contracts/WhiteP.Shared.Contracts.csproj"
       ],
       "expected_output_paths": [
-        "src/Host.Windows/"
+        "src/Host.Domain/WhiteP.Host.Domain.csproj",
+        "src/Host.Application/WhiteP.Host.Application.csproj",
+        "src/Host.Infrastructure/WhiteP.Host.Infrastructure.csproj",
+        "src/Host.Windows/WhiteP.Host.Windows.csproj",
+        "src/Shared.Contracts/WhiteP.Shared.Contracts.csproj",
+        "WhiteP.sln"
       ],
       "evidence": [
         "step three/T0042/execution-report.md",
         "step three/T0042/evidence/verification.md",
         "tests/test_host_layer_projects.py",
         "tests/test_proto_contract.py",
-        "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj"
+        "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "tests/test_product_build_contract.py"
       ],
       "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
       "execution_summary": {
         "attempt_count": 3,
         "failed_attempt_count": 1,
         "last_attempt_id": "T0042-A003",
-        "last_attempt_result": "partial",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Host.Domain/WhiteP.Host.Domain.csproj",
           "src/Host.Domain/HostLifecycle.cs",
@@ -6983,16 +6994,24 @@
           "step three/T0042/evidence/verification.md",
           "src/Host.Windows/App.xaml.cs",
           "src/Host.Windows/LlamaCppServerBackend.cs",
-          "src/Host.Windows/ProtocolMessageParser.cs"
+          "src/Host.Windows/ProtocolMessageParser.cs",
+          "docs/acceptance.md",
+          "docs/decisions/ADR-0003-local-inference-backend.md",
+          "docs/decisions/README.md",
+          "step three/T0040/evidence/verification.md",
+          "step three/T0040/execution-report.md"
         ],
         "related_commits": [
           "6afb2ce746a5d72822ac26f412e968b507159ee0",
-          "eae94f3f93ad437f94994c180f5c715a5ee6b083"
+          "eae94f3f93ad437f94994c180f5c715a5ee6b083",
+          "638e0f9f3e5e0253c64bbc9ecdc3b0d6260b1c33"
         ],
         "tests_passed": [
-          "Step Three quality gate run 39907451222 passed for commit 6afb2ce746a5d72822ac26f412e968b507159ee0.",
-          "Step Three quality gate run 39907571842 passed on eae94f3f93ad437f94994c180f5c715a5ee6b083.",
-          "C# host lifecycle/integration job 120262918459 passed on eae94f3f93ad437f94994c180f5c715a5ee6b083."
+          "Step Three quality gate run 39907751870 passed for exact code commit 638e0f9f3e5e0253c64bbc9ecdc3b0d6260b1c33.",
+          "White-P product build run 39907751958 completed successfully for exact code commit 638e0f9f3e5e0253c64bbc9ecdc3b0d6260b1c33.",
+          "Windows job 120263487660: dotnet format, dotnet build WhiteP.sln Release, generated Protobuf C# verification, WPF --smoke-test, and artifact upload all succeeded.",
+          "C# host lifecycle/integration job 120263487834 succeeded.",
+          "Android job 120263487838: Kotlin formatting/lint, debug APK build, Protobuf round-trip tests, generated Java/Kotlin source verification, and APK artifact upload all succeeded."
         ],
         "tests_failed": [
           "Product run 39907451227 / C# lifecycle job 120262552559 failed compilation with CS0104: HostStatus ambiguous between WhiteP.Host.Domain.HostStatus and WhiteP.Shared.Contracts.V1.HostStatus in HostInferenceSession.cs lines 25, 29, 66.",
@@ -7001,10 +7020,10 @@
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "in_progress",
+          "state": "completed",
           "triggering_contracts": [
-            "Host lifecycle/session/backend/parser now cross separate .NET assemblies",
-            "Canonical C# Protobuf generation moved to Shared.Contracts"
+            "Host lifecycle/session/backend/parser project boundaries",
+            "Single canonical Protobuf generation in Shared.Contracts"
           ],
           "affected_by_contract_changes": [
             "T0006",
@@ -7013,8 +7032,11 @@
             "T0041"
           ],
           "review_evidence": [
-            "step three/T0042/execution-report.md",
-            "tests/test_host_layer_projects.py"
+            "tests/test_host_layer_projects.py",
+            "tests/test_proto_contract.py",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "step three/T0040/evidence/verification.md",
+            "step three/T0041/evidence/verification.md"
           ]
         }
       },
@@ -7116,9 +7138,9 @@
         {
           "attempt_id": "T0042-A003",
           "started_at": "2026-10-23T05:47:10Z",
-          "ended_at": null,
-          "result": "in_progress",
-          "summary": "Qualified the WPF Application base type explicitly and removed the old WPF copies of the backend/parser now owned by Infrastructure. Verification of the exact commit is pending.",
+          "ended_at": "2026-10-23T05:50:40Z",
+          "result": "succeeded",
+          "summary": "Exact-commit quality gate and product build passed. The WPF startup smoke test, generated C# Protobuf source check, C# lifecycle/protocol harness, Android APK build, Kotlin lint, Android Protobuf round-trip tests, generated Java/Kotlin checks and both artifact uploads all succeeded.",
           "changed_files": [
             "src/Host.Windows/App.xaml.cs",
             "src/Host.Windows/LlamaCppServerBackend.cs",
@@ -7127,30 +7149,34 @@
             "step three/T0042/evidence/verification.md",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "638e0f9f3e5e0253c64bbc9ecdc3b0d6260b1c33",
           "tests": [
             {
-              "command": "Step Three quality gate",
-              "result": "pending"
+              "command": "Step Three quality gate run 39907751870",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39907751870"
             },
             {
-              "command": "Windows build, generated Protobuf check and WPF smoke test",
-              "result": "pending"
+              "command": "Windows WPF build, C# formatting, generated Protobuf C# verification and WPF --smoke-test (job 120263487660)",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39907751958"
             },
             {
-              "command": "C# lifecycle/integration harness",
-              "result": "pending"
+              "command": "Host lifecycle and integration tests (job 120263487834)",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39907751958"
             },
             {
-              "command": "Android build and Protobuf tests",
-              "result": "pending"
+              "command": "Android lint, APK build, Protobuf round-trip tests, generated Java/Kotlin verification and APK upload (job 120263487838)",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39907751958"
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Check new exact-commit workflows; fix all remaining compiler/test failures before closing T0042."
+          "follow_up": "Proceed to the next ready task only after reviewing its incoming edges; T0042→T0043 remains unreviewed."
         }
       ]
     },

@@ -35,3 +35,7 @@
 - The original A001 failure remains recorded: an announcement without `HostCapabilities` caused NullReferenceException. A002 now returns InvalidMessage instead; no crash.
 - **Result:** T0040 is `done`.
 - Scope boundary: the parser is an executable pre-parse validation boundary, not a P2P transport implementation; sockets, peer discovery and end-to-end peer inference are not claimed.
+
+
+## Current path reconciliation after T0042
+The original attempts retain their historical file paths as written at the time. Current implementation paths are now `src/Host.Infrastructure/ProtocolMessageParser.cs`, `src/Host.Application/HostInferenceSession.cs`, and `src/Host.Domain/HostLifecycle.cs`. The actual C# test harness references product assemblies through project references, and canonical Protobuf generation lives in Shared.Contracts. Exact post-refactor acceptance evidence is recorded in `step three/T0042/evidence/verification.md`.

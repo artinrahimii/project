@@ -2,8 +2,8 @@
 
 ## Current implementation
 - Shared semantic validator: `src/Shared.Contracts/ProtocolMessageValidator.cs`
-- Pre-parse raw Protobuf byte checks: `src/Host.Windows/ProtocolMessageParser.cs`
-- Runtime typed-request validation before generation: `src/Host.Windows/HostLifecycle.cs`
+- Pre-parse raw Protobuf byte checks: `src/Host.Infrastructure/ProtocolMessageParser.cs`
+- Runtime typed-request validation before generation: `src/Host.Application/HostInferenceSession.cs (request validation) and src/Host.Domain/HostLifecycle.cs (state machine)`
 - Invalid-wire corpus: `tests/contracts/invalid-message-cases.json`
 - C# execution tests: `tests/HostLifecycle.Tests/Program.cs`
 - Python contract tests: `tests/test_message_validation.py`

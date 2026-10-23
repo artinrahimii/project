@@ -28,8 +28,10 @@ The Windows host needs to call inference running on the host computer, without s
 
 ## Code and test traceability
 
-- Interface, lifecycle, and session: `src/Host.Windows/HostLifecycle.cs`.
-- HTTP backend implementation: `src/Host.Windows/LlamaCppServerBackend.cs`.
+- Domain lifecycle: `src/Host.Domain/HostLifecycle.cs`.
+- Backend interface, session, and startup coordination: `src/Host.Application/`.
+- Concrete HTTP backend adapter: `src/Host.Infrastructure/LlamaCppServerBackend.cs`.
+- HTTP backend implementation: `src/Host.Infrastructure/LlamaCppServerBackend.cs`.
 - Host UI and request actions: `src/Host.Windows/MainWindow.xaml` and `src/Host.Windows/MainWindow.xaml.cs`.
 - Controlled endpoint/lifecycle tests: `tests/HostLifecycle.Tests/Program.cs`.
 - Build and lifecycle CI: `.github/workflows/product-build.yml`.

@@ -123,7 +123,7 @@ The host must not display `Ready` while the backend is unavailable. A new sessio
 
 ## T0007 — executable lifecycle decision trace
 
-The host lifecycle decision “Ready is allowed only when the configured inference backend reports available” is reflected in `src/Host.Windows/HostLifecycle.cs` and covered by the executable harness `tests/HostLifecycle.Tests/Program.cs`. The harness checks both sides of the decision: an unconfigured backend must yield Error, while an available test backend may yield Ready. The available backend is a test double used only to exercise the branch; it is not a production inference backend.
+The host lifecycle decision “Ready is allowed only when the configured inference backend reports available” is reflected in `src/Host.Domain/HostLifecycle.cs` and `src/Host.Application/HostInferenceSession.cs` and covered by the executable harness `tests/HostLifecycle.Tests/Program.cs`. The harness checks both sides of the decision: an unconfigured backend must yield Error, while an available test backend may yield Ready. The available backend is a test double used only to exercise the branch; it is not a production inference backend.
 
 The test result for this revision is pending the GitHub Actions run. This single traced decision does not complete the broader T0007 requirement or establish real inference readiness.
 
