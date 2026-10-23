@@ -7514,33 +7514,72 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0044 و T0040 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "src/Host.Infrastructure/LocalHostSettingsStore.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0045/execution-report.md",
+        "step three/T0045/evidence/verification.md"
+      ],
       "expected_output_paths": [
         "src/Host.Windows/"
       ],
       "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "notes": "The service belongs in Host.Infrastructure, where persistence and validation belong; MainWindow loads and saves it through the production project reference. The old expected src/Host.Windows path is stale as the location for a reusable settings service.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0045-A001",
+        "last_attempt_result": "in_progress",
+        "changed_files": [
+          "src/Host.Infrastructure/LocalHostSettingsStore.cs",
+          "src/Host.Windows/MainWindow.xaml.cs",
+          "tests/HostLifecycle.Tests/Program.cs",
+          "step three/T0045/execution-report.md",
+          "step three/T0045/evidence/verification.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
+          "state": "in_progress",
+          "triggering_contracts": [
+            "LocalHostSettings schema version 1",
+            "loopback-only backend endpoint policy"
+          ],
           "affected_by_contract_changes": [],
-          "review_evidence": []
+          "review_evidence": [
+            "src/Host.Infrastructure/LocalHostSettingsStore.cs",
+            "tests/HostLifecycle.Tests/Program.cs"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0045-A001",
+          "started_at": "2026-10-23T10:08:00Z",
+          "ended_at": null,
+          "result": "in_progress",
+          "commit_sha": null,
+          "summary": "Reviewed incoming edges: T0044 and T0040 are sequencing-only for settings persistence, with the conservative order retained. Implementing a versioned local settings store, validation and UI integration with regression coverage.",
+          "changed_files": [
+            "src/Host.Infrastructure/LocalHostSettingsStore.cs",
+            "src/Host.Windows/MainWindow.xaml.cs",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "step three/T0045/execution-report.md",
+            "step three/T0045/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "tests": [],
+          "failure_details": null,
+          "follow_up": "Require exact-commit CI product build and quality gate before marking complete."
+        }
+      ]
     },
     {
       "id": "T0046",
@@ -16784,19 +16823,27 @@
       "from": "T0044",
       "to": "T0045",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "The graph requires T0044 first, but LocalHostSettingsStore validates and persists configuration independently of HostLifecycle transitions; no code-level interface dependency was found. Preserve the conservative execution order.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Domain/HostLifecycle.cs",
+        "src/Host.Infrastructure/WhiteP.Host.Infrastructure.csproj",
+        "src/Host.Windows/MainWindow.xaml.cs"
+      ]
     },
     {
       "from": "T0040",
       "to": "T0045",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "The graph requires T0040 first, but local settings persistence does not call the protocol parser/validator; the new store validates its own schema and loopback endpoint independently. Preserve the conservative execution order.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Infrastructure/ProtocolMessageParser.cs",
+        "src/Shared.Contracts/ProtocolMessageValidator.cs",
+        "src/Host.Infrastructure/WhiteP.Host.Infrastructure.csproj"
+      ]
     },
     {
       "from": "T0045",

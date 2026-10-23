@@ -624,6 +624,61 @@ using (var limitedSession = new HostInferenceSession(backend: limitedSessionBack
 }
 Console.WriteLine("PASS: protocol request, capsule, prompt, response, HTTP-body ceilings and pre-inference rejection.");
 
+
+ // T0045: versioned local settings persistence and validation.
+var settingsTestDirectory = Path.Combine(Path.GetTempPath(), "whitep-settings-" + Guid.NewGuid().ToString("N"));
+var settingsPath = Path.Combine(settingsTestDirectory, "settings.json");
+try
+{
+    var settingsStore = new LocalHostSettingsStore(settingsPath);
+    var defaults = settingsStore.LoadOrDefault();
+    Assert(defaults == LocalHostSettings.Defaults, "Missing settings must return the documented safe defaults.");
+
+    var savedSettings = settingsStore.Save(new LocalHostSettings("http://localhost:8080/", "  test-model  ", 45));
+    Assert(savedSettings.ModelId == "test-model", "Saved model IDs must be normalized.");
+    var reloadedSettings = settingsStore.LoadOrDefault();
+    Assert(reloadedSettings == savedSettings, "Versioned settings must survive save/load round-trip.");
+    using (var settingsJson = JsonDocument.Parse(File.ReadAllText(settingsPath)))
+    {
+        Assert(settingsJson.RootElement.GetProperty("schemaVersion").GetInt32() == 1, "Settings file must contain explicit schema version 1.");
+    }
+
+    var remoteRejected = false;
+    try { settingsStore.Save(new LocalHostSettings("https://example.com/", "model", 30)); }
+    catch (ArgumentException) { remoteRejected = true; }
+    Assert(remoteRejected, "Settings must reject non-loopback endpoints.");
+
+    var credentialUrlRejected = false;
+    try { settingsStore.Save(new LocalHostSettings("http://user:password@127.0.0.1:8080/", "model", 30)); }
+    catch (ArgumentException) { credentialUrlRejected = true; }
+    Assert(credentialUrlRejected, "Settings must reject endpoint credentials.");
+
+    var timeoutRejected = false;
+    try { settingsStore.Save(new LocalHostSettings("http://127.0.0.1:8080/", "model", 0)); }
+    catch (ArgumentOutOfRangeException) { timeoutRejected = true; }
+    Assert(timeoutRejected, "Settings must reject a zero timeout.");
+
+    File.WriteAllText(settingsPath, "{ invalid json");
+    var malformedRejected = false;
+    try { settingsStore.LoadOrDefault(); }
+    catch (InvalidDataException) { malformedRejected = true; }
+    Assert(malformedRejected, "Malformed settings must fail closed rather than silently reset.");
+
+    File.WriteAllText(settingsPath, JsonSerializer.Serialize(new { schemaVersion = 99, serverUrl = "http://127.0.0.1:8080/", modelId = "model", requestTimeoutSeconds = 30 }));
+    var futureVersionRejected = false;
+    try { settingsStore.LoadOrDefault(); }
+    catch (InvalidDataException) { futureVersionRejected = true; }
+    Assert(futureVersionRejected, "Unknown future schema versions must be rejected.");
+}
+finally
+{
+    if (Directory.Exists(settingsTestDirectory))
+    {
+        Directory.Delete(settingsTestDirectory, recursive: true);
+    }
+}
+Console.WriteLine("PASS: versioned local settings persistence, loopback validation, timeout bounds, and fail-closed schema handling.");
+
 Console.WriteLine("PASS: lifecycle validation, backend endpoint contracts, health readiness, generated response parsing, input bounds, and host-session lifecycle.");
 
 sealed class RecordingHandler : HttpMessageHandler

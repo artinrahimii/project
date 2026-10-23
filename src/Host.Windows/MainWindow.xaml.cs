@@ -7,6 +7,8 @@ namespace WhiteP.Host.Windows;
 
 public partial class MainWindow : Window
 {
+    private readonly LocalHostSettingsStore _settingsStore = new();
+    private LocalHostSettings _settings = LocalHostSettings.Defaults;
     private readonly HostInferenceSession _session = new(
         backendFactory: static (address, model) => new LlamaCppServerBackend(address, model));
     private CancellationTokenSource? _operationCancellation;
@@ -14,7 +16,23 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+        var settingsLoadFailed = false;
+        try
+        {
+            _settings = _settingsStore.LoadOrDefault();
+        }
+        catch (InvalidDataException)
+        {
+            settingsLoadFailed = true;
+        }
+
+        ServerUrl.Text = _settings.ServerUrl;
+        ModelId.Text = _settings.ModelId;
         RenderStatus(_session.Status);
+        if (settingsLoadFailed)
+        {
+            LifecycleState.Text = "Error — local settings are invalid; correct the settings file before reconnecting.";
+        }
     }
 
     private async void ConnectButton_Click(object sender, RoutedEventArgs e)
@@ -36,9 +54,22 @@ public partial class MainWindow : Window
                 return;
             }
 
+            try
+            {
+                _settings = _settingsStore.Save(new LocalHostSettings(
+                    endpoint.ToString(),
+                    ModelId.Text,
+                    _settings.RequestTimeoutSeconds));
+            }
+            catch (ArgumentException exception)
+            {
+                LifecycleState.Text = $"Error — {exception.Message}";
+                return;
+            }
+
             _operationCancellation?.Dispose();
             _operationCancellation = new CancellationTokenSource();
-            var status = await _session.ConnectAsync(endpoint, ModelId.Text.Trim(), _operationCancellation.Token);
+            var status = await _session.ConnectAsync(new Uri(_settings.ServerUrl), _settings.ModelId, _operationCancellation.Token);
             RenderStatus(status);
             GenerateButton.IsEnabled = status.State == HostState.Ready;
         }
