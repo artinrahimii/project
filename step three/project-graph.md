@@ -1,3 +1,4 @@
+```json
 {
   "schema_version": "1.0",
   "document": "v2.1",
@@ -9848,11 +9849,11 @@
         "tests/HostLifecycle.Tests/LocalInferenceProcessLauncherTests.cs",
         "step three/T0059/execution-report.md"
       ],
-      "notes": "T0059-A001 adds managed shell-free process startup with ProcessStartInfo.ArgumentList, validates llama-server.exe/GGUF paths, loopback-only binding, and WPF controls. Exact-commit CI is pending; live binary/model launch was not tested. T0059->T0060 stays unreviewed.",
+      "notes": "T0059-A001 failed exact-commit CI for two recorded reasons: graph_guard.py requires a fenced JSON block, and NormalizeOptionalPath was scoped in LocalHostSettingsStore instead of LocalHostSettings. T0059-A002 moves the helper into the record and restores the JSON fence. Task remains in_progress pending the new exact-commit CI.",
       "execution_summary": {
-        "attempt_count": 1,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "T0059-A001",
+        "attempt_count": 2,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "T0059-A002",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Host.Windows/Inference/LocalInferenceProcessLauncher.cs",
@@ -9865,9 +9866,18 @@
           "step three/T0059/execution-report.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
-        "tests_failed": [],
+        "related_commits": [
+          "9beb9234db60adad3e87da64f11b41c632f692a5"
+        ],
+        "tests_passed": [
+          "GitHub Actions run 40001969597: automated Python tests — passed (these do not substitute for T0059's C# acceptance test).",
+          "GitHub Actions run 40001969597: Python syntax compilation — passed.",
+          "GitHub Actions run 40001969578: dotnet format whitespace verification — passed."
+        ],
+        "tests_failed": [
+          "GitHub Actions run 40001969597: graph validation failed because the Markdown file lacked a fenced JSON block.",
+          "GitHub Actions run 40001969578: Windows build and host lifecycle tests failed with CS0103 for NormalizeOptionalPath."
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -9881,8 +9891,8 @@
         {
           "attempt_id": "T0059-A001",
           "started_at": "2026-10-23T18:16:17.034Z",
-          "ended_at": "2026-10-23T18:16:17.034Z",
-          "result": "partial",
+          "ended_at": "2026-10-23T18:19:00.963Z",
+          "result": "failed",
           "summary": "Added shell-free local llama.cpp process launch, persisted executable/model paths, window lifecycle ownership, and argument/loopback regression tests. Exact-commit CI has not yet been inspected.",
           "changed_files": [
             "src/Host.Windows/Inference/LocalInferenceProcessLauncher.cs",
@@ -9895,24 +9905,85 @@
             "step three/T0059/execution-report.md",
             "step three/project-graph.md"
           ],
+          "commit_sha": "9beb9234db60adad3e87da64f11b41c632f692a5",
+          "tests": [
+            {
+              "command": "GitHub Actions quality run 40001969597 — automated tests",
+              "result": "passed",
+              "summary": "The Python unittest step completed successfully.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40001969597"
+            },
+            {
+              "command": "GitHub Actions quality run 40001969597 — Python syntax",
+              "result": "passed",
+              "summary": "python -m compileall -q tools tests succeeded.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40001969597"
+            },
+            {
+              "command": "GitHub Actions quality run 40001969597 — Validate graph structure",
+              "result": "failed",
+              "summary": "ERROR GRAPH_READ: No fenced JSON graph with both 'nodes' and 'edges' was found.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40001969597"
+            },
+            {
+              "command": "GitHub Actions product run 40001969578 — Windows WPF build",
+              "result": "failed",
+              "summary": "CS0103: NormalizeOptionalPath does not exist in the current context in LocalHostSettingsStore.cs.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40001969578"
+            },
+            {
+              "command": "GitHub Actions product run 40001969578 — Host lifecycle tests",
+              "result": "failed",
+              "summary": "The test harness failed to compile due to the same NormalizeOptionalPath scope error.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40001969578"
+            },
+            {
+              "command": "GitHub Actions product run 40001969578 — Verify C# formatting",
+              "result": "passed",
+              "summary": "dotnet format whitespace verification passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40001969578"
+            }
+          ],
+          "failure_details": "Exact-commit CI failed: graph guard reported ERROR GRAPH_READ because step three/project-graph.md lacked a fenced JSON block; Windows build and host-lifecycle job failed with CS0103 because NormalizeOptionalPath was placed in LocalHostSettingsStore, outside the LocalHostSettings record where Validate calls it.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect CI runs for this exact commit; record passing evidence and mark done in a follow-up version commit only if tests succeed, otherwise record and fix failures."
+        },
+        {
+          "attempt_id": "T0059-A002",
+          "started_at": "2026-10-23T18:19:00.963Z",
+          "ended_at": "2026-10-23T18:19:00.963Z",
+          "result": "partial",
+          "summary": "Corrected the settings helper's class scope and restored the Markdown JSON fence required by tools/graph_guard.py without editing graph JSON fields or task content. Await exact-commit CI confirmation.",
+          "changed_files": [
+            "src/Host.Infrastructure/LocalHostSettingsStore.cs",
+            "step three/project-graph.md",
+            "step three/T0059/execution-report.md"
+          ],
           "commit_sha": null,
           "tests": [
             {
-              "command": "GitHub Actions quality workflow",
-              "result": "pending",
-              "summary": "Exact implementation-commit result pending; no pass claimed."
+              "command": "Source review of LocalHostSettingsStore.cs",
+              "result": "passed",
+              "summary": "NormalizeOptionalPath is now inside the LocalHostSettings record called by Validate."
             },
             {
-              "command": "Windows WPF build/startup smoke and host-lifecycle tests",
+              "command": "tools/graph_guard.py",
               "result": "pending",
-              "summary": "Exact implementation-commit result pending; no pass claimed."
+              "summary": "The graph is fenced for the required parser, but the post-fix workflow result is not yet available."
+            },
+            {
+              "command": "Windows build and host-lifecycle test harness",
+              "result": "pending",
+              "summary": "Must pass on the follow-up commit; no result claimed yet."
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect CI runs for this exact commit; record passing evidence and mark done in a follow-up version commit only if tests succeed, otherwise record and fix failures."
+          "follow_up": "Inspect the exact V 3.0.181 CI results. If graph structure/evidence and Windows build plus host-lifecycle tests pass, then record verification and close T0059; otherwise preserve this attempt and fix the new reported issue."
         }
       ]
     },
@@ -22859,5 +22930,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-23T18:16:17.034Z"
+  "updated_at": "2026-10-23T18:19:00.963Z"
 }
+```

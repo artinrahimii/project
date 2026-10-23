@@ -38,6 +38,15 @@ public sealed record LocalHostSettings(string ServerUrl, string ModelId, int Req
 
         return new LocalHostSettings(endpoint.ToString(), model, settings.RequestTimeoutSeconds, NormalizeOptionalPath(settings.EngineExecutablePath, nameof(settings.EngineExecutablePath)), NormalizeOptionalPath(settings.ModelFilePath, nameof(settings.ModelFilePath)));
     }
+
+    private static string? NormalizeOptionalPath(string? path, string parameterName)
+    {
+        if (string.IsNullOrWhiteSpace(path)) return null;
+        try { return Path.GetFullPath(path.Trim()); }
+        catch (Exception exception) when (exception is ArgumentException or NotSupportedException or PathTooLongException)
+        { throw new ArgumentException("A configured local engine path is invalid.", parameterName); }
+    }
+
 }
 
 /// <summary>
@@ -61,14 +70,6 @@ public sealed class LocalHostSettingsStore
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
             "WhiteP",
             "settings.json");
-    }
-
-    private static string? NormalizeOptionalPath(string? path, string parameterName)
-    {
-        if (string.IsNullOrWhiteSpace(path)) return null;
-        try { return Path.GetFullPath(path.Trim()); }
-        catch (Exception exception) when (exception is ArgumentException or NotSupportedException or PathTooLongException)
-        { throw new ArgumentException("A configured local engine path is invalid.", parameterName); }
     }
 
     public string FilePath => _filePath;

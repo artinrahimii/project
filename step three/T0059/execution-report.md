@@ -30,3 +30,17 @@
 ## Next action
 
 Inspect the `V 3.0.180` workflows. If the quality gate, WPF Release build/startup smoke, and host-lifecycle tests pass, record exact commit/run evidence and mark `T0059` done in a follow-up commit; otherwise record failures, fix, and rerun.
+
+
+## Attempt T0059-A001 — exact-commit CI results
+
+- Implementation commit: `9beb9234db60adad3e87da64f11b41c632f692a5` (`V 3.0.180`).
+- [Quality gate run 40001969597](`https://github.com/artinrahimii/project/actions/runs/40001969597`): Python automated tests and Python syntax compilation passed. The graph-structure step failed with `ERROR GRAPH_READ: No fenced JSON graph with both 'nodes' and 'edges' was found.`
+- [Product build run 40001969578](`https://github.com/artinrahimii/project/actions/runs/40001969578`): C# formatting passed, but the Windows build and host-lifecycle test job failed to compile with `CS0103: NormalizeOptionalPath does not exist in the current context`.
+- These results are recorded as a failed attempt rather than hidden or counted as task completion.
+
+## Attempt T0059-A002 — correction for rerun
+
+- Moved `NormalizeOptionalPath` into the `LocalHostSettings` record, where `Validate` invokes it; it had mistakenly been placed inside `LocalHostSettingsStore`.
+- Restored the outer `json` Markdown fence around the full graph JSON because the existing `tools/graph_guard.py` parser explicitly extracts only fenced JSON from this `.md` file. The JSON object itself was preserved and parses as 229 nodes and 426 edges.
+- This correction is not marked successful until exact-commit GitHub Actions verifies it. `T0059` remains `in_progress`; no successful C# acceptance test or real-model inference is claimed.
