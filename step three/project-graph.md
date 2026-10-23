@@ -7529,7 +7529,7 @@
       "evidence": [],
       "notes": "The service belongs in Host.Infrastructure, where persistence and validation belong; MainWindow loads and saves it through the production project reference. The old expected src/Host.Windows path is stale as the location for a reusable settings service.",
       "execution_summary": {
-        "attempt_count": 1,
+        "attempt_count": 2,
         "failed_attempt_count": 1,
         "last_attempt_id": "T0045-A002",
         "last_attempt_result": "in_progress",
@@ -7556,6 +7556,12 @@
             "result": "failed",
             "evidence": "https://github.com/artinrahimii/project/actions/runs/39913421658",
             "summary": "CS0246: InvalidDataException not found in MainWindow.xaml.cs due to missing System.IO import."
+          },
+          {
+            "name": "Step Three quality gate on V 3.0.135",
+            "result": "failed",
+            "evidence": "https://github.com/artinrahimii/project/actions/runs/39913689302",
+            "summary": "The gate's graph guard found ATTEMPT_COUNT_MISMATCH: T0045 summary said 1 while execution history contained A001 and A002. This is a tracking metadata error; the code fix remains under product build validation."
           }
         ],
         "blocked_reason": null,
@@ -7619,9 +7625,16 @@
             "step three/T0045/evidence/verification.md",
             "step three/project-graph.md"
           ],
-          "tests": [],
+          "tests": [
+            {
+              "name": "Step Three quality gate on V 3.0.135",
+              "result": "failed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39913689302",
+              "summary": "The gate's graph guard found ATTEMPT_COUNT_MISMATCH: T0045 summary said 1 while execution history contained A001 and A002. This is a tracking metadata error; the code fix remains under product build validation."
+            }
+          ],
           "failure_details": null,
-          "follow_up": "Complete only after Windows WPF build, Android build, C# regression harness and quality gate pass."
+          "follow_up": "Synchronize execution_summary.attempt_count with the two history records, then rerun the graph quality gate and product build."
         }
       ]
     },
@@ -20742,6 +20755,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-23T10:09:00Z"
+  "updated_at": "2026-10-23T10:10:00Z"
 }
 ```
