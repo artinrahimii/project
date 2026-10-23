@@ -18,3 +18,9 @@
 
 ## Result
 Implementation and exact-commit CI evidence are successful. This task's implementation is verified within the declared scope; it is not a guarantee that any particular model will run. GPU memory, model format, context size, and backend overhead are not evaluated.
+
+## Continuation note — V 3.0.161
+- The task-specific execution and verification evidence has been refreshed in the online repository.
+- The graph file `step three/project-graph.md` could not be safely updated in this pass: the connected GitHub file reader returned an empty content payload for that large file, so replacing it would risk overwriting unrelated graph data. Its task status is therefore not claimed as updated here.
+- Next logical task from the project task list: `T0052` — integrate capacity state into the `HostCapabilities` domain model, after reading and validating its current graph dependencies.
+- Commit-history note: two sequential commits were inadvertently created with the same message `V 3.0.160` while updating the report and verification evidence separately. This was a versioning error; no history rewrite was performed. This note is recorded in the next corrective version.
