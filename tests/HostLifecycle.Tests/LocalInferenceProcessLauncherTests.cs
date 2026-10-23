@@ -16,7 +16,7 @@ internal static class LocalInferenceProcessLauncherTests
             var info = LocalInferenceProcessLauncher.CreateStartInfo(executable, model, new Uri("http://127.0.0.1:8080/"), "local-model");
             Assert(!info.UseShellExecute, "The local engine must not use a shell.");
             Assert(info.CreateNoWindow, "The local engine must not open an interactive console window.");
-            Assert(info.Arguments.Length == 0, "Arguments must not be assembled into a command string.");
+            Assert(info.ArgumentList.Count == 9, "All process parameters must be represented by individual argument-list items.");
             Assert(info.FileName == Path.GetFullPath(executable), "The validated absolute executable path must be used.");
 
             var expected = new[]

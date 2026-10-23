@@ -44,3 +44,19 @@ Inspect the `V 3.0.180` workflows. If the quality gate, WPF Release build/startu
 - Moved `NormalizeOptionalPath` into the `LocalHostSettings` record, where `Validate` invokes it; it had mistakenly been placed inside `LocalHostSettingsStore`.
 - Restored the outer `json` Markdown fence around the full graph JSON because the existing `tools/graph_guard.py` parser explicitly extracts only fenced JSON from this `.md` file. The JSON object itself was preserved and parses as 229 nodes and 426 edges.
 - This correction is not marked successful until exact-commit GitHub Actions verifies it. `T0059` remains `in_progress`; no successful C# acceptance test or real-model inference is claimed.
+
+
+## Attempt T0059-A002 — exact-commit CI results
+
+- Commit `60fa66631b45eddaf3bd37a0897d502dc62bdc36` (`V 3.0.181`).
+- [Quality gate run 40002334497](https://github.com/artinrahimii/project/actions/runs/40002334497): Python automated tests and syntax checks passed, but graph structure validation failed because `T0058.execution_summary.attempt_count=1` while its retained `execution_history` has two entries.
+- [Product build run 40002334353](https://github.com/artinrahimii/project/actions/runs/40002334353): Windows formatting, Release build, generated Protobuf checks and WPF startup smoke passed. The portable host-lifecycle test harness failed to compile the new test source because that project did not reference the Windows WPF assembly.
+- Both failures are recorded below in the task ledger; neither has been treated as a passed T0059 acceptance test.
+
+## Attempt T0059-A003 — correction for revalidation
+
+- Linked the actual `LocalInferenceProcessLauncher.cs` source into `tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj` with a `Compile Include`, allowing the portable .NET test harness to compile and test the same process-launch implementation without referencing the WPF assembly.
+- Updated the argument-construction test to inspect `ArgumentList` directly instead of reading the alternate `Arguments` property.
+- Reconciled T0058's stale `execution_summary` counter with its two existing execution-history entries. Both history entries remain intact; the summary now reflects them.
+- The full graph remains inside the required `json` Markdown fence so `tools/graph_guard.py` can read it. The embedded JSON parses to 229 tasks and 426 edges.
+- These fixes remain pending exact-commit CI. `T0059` is still `in_progress`; no successful C# acceptance run or live-model generation is claimed.

@@ -9718,11 +9718,11 @@
         "src/Host.Application/Inference/IInferenceEngine.cs",
         "src/Host.Infrastructure/LlamaCppServerBackend.cs"
       ],
-      "notes": "Implementation and acceptance evidence verified in GitHub Actions for commit 7fee1b1fbe9b5e027a17307f1f854f3fee55481f. Source-level regression tests, Windows host build/startup smoke test, and host lifecycle tests passed. Live llama.cpp server/model end-to-end verification remains a later integration concern; do not infer it from CI.",
+      "notes": "Implementation and acceptance evidence verified in GitHub Actions for commit 7fee1b1fbe9b5e027a17307f1f854f3fee55481f. Source-level regression tests, Windows host build/startup smoke test, and host lifecycle tests passed. Live llama.cpp server/model end-to-end verification remains a later integration concern; do not infer it from CI. Ledger correction in V 3.0.182: execution_summary counters now match the two retained A001/A002 history entries; no history record was removed.",
       "execution_summary": {
-        "attempt_count": 1,
+        "attempt_count": 2,
         "failed_attempt_count": 0,
-        "last_attempt_id": "A001",
+        "last_attempt_id": "A002",
         "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Host.Windows/Inference/LlamaCppInferenceEngine.cs",
@@ -9849,11 +9849,11 @@
         "tests/HostLifecycle.Tests/LocalInferenceProcessLauncherTests.cs",
         "step three/T0059/execution-report.md"
       ],
-      "notes": "T0059-A001 failed exact-commit CI for two recorded reasons: graph_guard.py requires a fenced JSON block, and NormalizeOptionalPath was scoped in LocalHostSettingsStore instead of LocalHostSettings. T0059-A002 moves the helper into the record and restores the JSON fence. Task remains in_progress pending the new exact-commit CI.",
+      "notes": "T0059-A001 and A002 both failed exact-commit CI and their failure evidence is preserved. A003 links the platform-independent launcher source into the existing portable harness, avoids reading ProcessStartInfo.Arguments when ArgumentList is used, and reconciles T0058's stale summary count with its retained two-entry history. Exact-commit revalidation remains pending.",
       "execution_summary": {
-        "attempt_count": 2,
-        "failed_attempt_count": 1,
-        "last_attempt_id": "T0059-A002",
+        "attempt_count": 3,
+        "failed_attempt_count": 2,
+        "last_attempt_id": "T0059-A003",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Host.Windows/Inference/LocalInferenceProcessLauncher.cs",
@@ -9862,21 +9862,25 @@
           "src/Host.Infrastructure/LocalHostSettingsStore.cs",
           "src/Host.Windows/App.xaml.cs",
           "tests/HostLifecycle.Tests/LocalInferenceProcessLauncherTests.cs",
+          "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
           "tests/HostLifecycle.Tests/Program.cs",
           "step three/T0059/execution-report.md",
           "step three/project-graph.md"
         ],
         "related_commits": [
-          "9beb9234db60adad3e87da64f11b41c632f692a5"
+          "9beb9234db60adad3e87da64f11b41c632f692a5",
+          "60fa66631b45eddaf3bd37a0897d502dc62bdc36"
         ],
         "tests_passed": [
-          "GitHub Actions run 40001969597: automated Python tests — passed (these do not substitute for T0059's C# acceptance test).",
-          "GitHub Actions run 40001969597: Python syntax compilation — passed.",
-          "GitHub Actions run 40001969578: dotnet format whitespace verification — passed."
+          "GitHub Actions run 40001969597: Python unit tests and syntax compilation — passed (implementation acceptance still failed in other gates).",
+          "GitHub Actions run 40001969578: C# formatting — passed.",
+          "GitHub Actions run 40002334353: Windows WPF Release build, generated Protobuf checks, and startup smoke — passed."
         ],
         "tests_failed": [
-          "GitHub Actions run 40001969597: graph validation failed because the Markdown file lacked a fenced JSON block.",
-          "GitHub Actions run 40001969578: Windows build and host lifecycle tests failed with CS0103 for NormalizeOptionalPath."
+          "GitHub Actions run 40001969597: graph parser rejected raw JSON because graph_guard.py requires a fenced JSON object.",
+          "GitHub Actions run 40001969578: initial compile failure for NormalizeOptionalPath scope; fixed in V 3.0.181.",
+          "GitHub Actions run 40002334497: graph structural validation found T0058 attempt_count mismatch.",
+          "GitHub Actions run 40002334353: host lifecycle harness compile failed because the new Windows-namespace test source was not linked into the portable test project."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -9953,37 +9957,83 @@
         {
           "attempt_id": "T0059-A002",
           "started_at": "2026-10-23T18:19:00.963Z",
-          "ended_at": "2026-10-23T18:19:00.963Z",
-          "result": "partial",
+          "ended_at": "2026-10-23T18:21:45.864Z",
+          "result": "failed",
           "summary": "Corrected the settings helper's class scope and restored the Markdown JSON fence required by tools/graph_guard.py without editing graph JSON fields or task content. Await exact-commit CI confirmation.",
           "changed_files": [
             "src/Host.Infrastructure/LocalHostSettingsStore.cs",
             "step three/project-graph.md",
             "step three/T0059/execution-report.md"
           ],
+          "commit_sha": "60fa66631b45eddaf3bd37a0897d502dc62bdc36",
+          "tests": [
+            {
+              "command": "GitHub Actions quality run 40002334497 — automated tests",
+              "result": "passed",
+              "summary": "Python unit tests passed."
+            },
+            {
+              "command": "GitHub Actions quality run 40002334497 — Python syntax",
+              "result": "passed",
+              "summary": "Python compileall passed."
+            },
+            {
+              "command": "GitHub Actions quality run 40002334497 — Validate graph structure",
+              "result": "failed",
+              "summary": "ERROR ATTEMPT_COUNT_MISMATCH: T0058 summary=1, history=2; one preserved unmapped metadata warning was non-fatal."
+            },
+            {
+              "command": "GitHub Actions product run 40002334353 — Windows WPF build/startup smoke",
+              "result": "passed",
+              "summary": "C# formatting, Windows build, generated Protobuf validation, and WPF startup smoke passed."
+            },
+            {
+              "command": "GitHub Actions product run 40002334353 — Host lifecycle tests",
+              "result": "failed",
+              "summary": "CS0234: the portable test project could not resolve WhiteP.Host.Windows.Inference because it doesn't reference the Windows WPF assembly."
+            }
+          ],
+          "failure_details": "Exact-commit CI failed with ERROR ATTEMPT_COUNT_MISMATCH for T0058 (summary attempt_count=1 while execution_history has two entries), and Host lifecycle tests failed to compile LocalInferenceProcessLauncherTests.cs because the portable test project did not reference the net10.0-windows assembly that defines the launcher.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect the exact V 3.0.181 CI results. If graph structure/evidence and Windows build plus host-lifecycle tests pass, then record verification and close T0059; otherwise preserve this attempt and fix the new reported issue."
+        },
+        {
+          "attempt_id": "T0059-A003",
+          "started_at": "2026-10-23T18:21:45.864Z",
+          "ended_at": "2026-10-23T18:21:45.864Z",
+          "result": "partial",
+          "summary": "Linked the actual launcher source into the portable host-lifecycle test project so it can exercise real ProcessStartInfo argument construction without referencing WPF; adjusted the assertion to verify ArgumentList count. Corrected the T0058 ledger count to match its two preserved history entries.",
+          "changed_files": [
+            "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+            "tests/HostLifecycle.Tests/LocalInferenceProcessLauncherTests.cs",
+            "step three/project-graph.md",
+            "step three/T0059/execution-report.md"
+          ],
           "commit_sha": null,
           "tests": [
             {
-              "command": "Source review of LocalHostSettingsStore.cs",
+              "command": "Source and ledger preflight",
               "result": "passed",
-              "summary": "NormalizeOptionalPath is now inside the LocalHostSettings record called by Validate."
+              "summary": "The Compile Link path exists in the current source tree; T0058 attempt_count is reconciled with its two preserved history records."
             },
             {
-              "command": "tools/graph_guard.py",
+              "command": "GitHub Actions quality gate on V 3.0.182",
               "result": "pending",
-              "summary": "The graph is fenced for the required parser, but the post-fix workflow result is not yet available."
+              "summary": "Must validate fenced graph and repository-backed evidence."
             },
             {
-              "command": "Windows build and host-lifecycle test harness",
+              "command": "GitHub Actions host lifecycle tests on V 3.0.182",
               "result": "pending",
-              "summary": "Must pass on the follow-up commit; no result claimed yet."
+              "summary": "Must compile and run LocalInferenceProcessLauncherTests.Run() in the portable harness."
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect the exact V 3.0.181 CI results. If graph structure/evidence and Windows build plus host-lifecycle tests pass, then record verification and close T0059; otherwise preserve this attempt and fix the new reported issue."
+          "follow_up": "Inspect the exact V 3.0.182 CI. Only close T0059 after graph/evidence gate, host lifecycle C# tests, Windows build/smoke, and other relevant CI jobs succeed."
         }
       ]
     },
@@ -22930,6 +22980,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-23T18:19:00.963Z"
+  "updated_at": "2026-10-23T18:21:45.864Z"
 }
 ```

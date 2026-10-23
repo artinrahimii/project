@@ -12,4 +12,7 @@
     <ProjectReference Include="../../src/Host.Infrastructure/WhiteP.Host.Infrastructure.csproj" />
     <ProjectReference Include="../../src/Shared.Contracts/WhiteP.Shared.Contracts.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Compile Include="../../src/Host.Windows/Inference/LocalInferenceProcessLauncher.cs" Link="LocalInferenceProcessLauncher.cs" />
+  </ItemGroup>
 </Project>
