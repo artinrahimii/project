@@ -7695,8 +7695,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0045 و T0040 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "done",
-      "status_fa": "انجام‌شده",
+      "status": "in_progress",
+      "status_fa": "در حال انجام",
       "actual_output_paths": [
         "src/Host.Application/HostStatusPresentation.cs",
         "src/Host.Windows/MainWindow.xaml",
@@ -7715,17 +7715,15 @@
         "src/Host.Windows/MainWindow.xaml.cs",
         "tests/HostLifecycle.Tests/Program.cs",
         "tests/test_wpf_entrypoint.py",
-        "step three/T0046/evidence/verification.md",
-        "Step Three quality gate 39923551335 passed for e3bd75315785605ed040168010934f6342c94782",
-        "Product build 39923551318 passed for e3bd75315785605ed040168010934f6342c94782",
-        "Windows WPF build/startup smoke and host lifecycle tests passed; Android build and Protobuf checks passed"
+        "step three/T0046/execution-report.md",
+        "step three/T0046/evidence/verification.md"
       ],
-      "notes": "The status presentation formats the backend and last-observed local endpoint state from HostStatus snapshots (Stopped, Starting, Ready, Busy, Error), and refreshes during connection checks and inference. Direct peer-to-peer transport is explicitly reported as not implemented; no P2P readiness is claimed. Exact-commit CI for these changes is pending. Latest product CI on c6ac1088d5321744331e97fa2c3f1dd76c0acaa0: Windows Release build and lifecycle tests passed, but WPF startup smoke exceeded 15 seconds; workflow timeout raised to 30 seconds, awaiting revalidation. Latest quality run 39922632934 failed because the source-level test still asserted the old 15-second timeout; test expectation updated to 30 seconds, pending CI. Quality gate run 39922876698 confirmed all 99 Python tests pass, but graph validation failed because failed_attempt_count did not match execution_history results. The metadata count has been corrected to reflect result values; the observed CI failure itself remains documented in tests_failed. Follow-up exact-main run 39922953868 still failed graph_guard with ATTEMPT_COUNT_MISMATCH (summary=3, history=4); the previous correction addressed the failed-attempt count field, not attempt_count. Updated attempt_count to 4 to match the four preserved history entries. Re-run graph guard and evidence validation after this commit; task remains in_progress. Exact-main validation completed 2026-10-23: quality gate run 39923551335 and product build run 39923551318 passed for e3bd75315785605ed040168010934f6342c94782, including Windows startup smoke, host lifecycle tests, Android APK and Protobuf round-trip checks. T0046 acceptance is verified; P2P remains unavailable.",
+      "notes": "The status presentation formats the backend and last-observed local endpoint state from HostStatus snapshots (Stopped, Starting, Ready, Busy, Error), and refreshes during connection checks and inference. Direct peer-to-peer transport is explicitly reported as not implemented; no P2P readiness is claimed. Exact-commit CI for these changes is pending. Latest product CI on c6ac1088d5321744331e97fa2c3f1dd76c0acaa0: Windows Release build and lifecycle tests passed, but WPF startup smoke exceeded 15 seconds; workflow timeout raised to 30 seconds, awaiting revalidation. Latest quality run 39922632934 failed because the source-level test still asserted the old 15-second timeout; test expectation updated to 30 seconds, pending CI. Quality gate run 39922876698 confirmed all 99 Python tests pass, but graph validation failed because failed_attempt_count did not match execution_history results. The metadata count has been corrected to reflect result values; the observed CI failure itself remains documented in tests_failed. Follow-up exact-main run 39922953868 still failed graph_guard with ATTEMPT_COUNT_MISMATCH (summary=3, history=4); the previous correction addressed the failed-attempt count field, not attempt_count. Updated attempt_count to 4 to match the four preserved history entries. Re-run graph guard and evidence validation after this commit; task remains in_progress. Exact-main validation completed 2026-10-23: quality gate run 39923551335 and product build run 39923551318 passed for e3bd75315785605ed040168010934f6342c94782, including Windows startup smoke, host lifecycle tests, Android APK and Protobuf round-trip checks. T0046 acceptance is verified; P2P remains unavailable. Follow-up run 39924326694 passed 100 Python tests, compileall and graph structure validation, but failed evidence validation because the evidence array contained prose instead of repository paths. Corrected the evidence array and temporarily reopened T0046 pending exact-main graph gate.",
       "execution_summary": {
-        "attempt_count": 7,
+        "attempt_count": 8,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0046-A007",
-        "last_attempt_result": "succeeded",
+        "last_attempt_id": "T0046-A008",
+        "last_attempt_result": "partial",
         "changed_files": [
           "src/Host.Application/HostStatusPresentation.cs",
           "src/Host.Windows/MainWindow.xaml",
@@ -7770,10 +7768,16 @@
             "result": "failed",
             "evidence": "https://github.com/artinrahimii/project/actions/runs/39923173194",
             "summary": "99 Python tests and compileall passed; graph_guard failed with ATTEMPT_COUNT_MISMATCH because summary=4 while execution_history contains five records."
+          },
+          {
+            "name": "Step Three evidence validation run 39924326694",
+            "result": "failed",
+            "evidence": "https://github.com/artinrahimii/project/actions/runs/39924326694",
+            "summary": "Python tests (100/100), compileall, and graph structure validation passed, but evidence validation rejected a prose string in T0046.evidence because this field requires repository file paths. Corrected the evidence list to point to actual files."
           }
         ],
         "blocked_reason": null,
-        "reopened_reason": null,
+        "reopened_reason": "Reopened on 2026-10-23 after graph evidence validation rejected non-path evidence metadata; code-level acceptance tests passed, but the graph gate must be green before restoring done.",
         "contract_revalidation": {
           "state": "not_required",
           "triggering_contracts": [],
@@ -7974,8 +7978,33 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "T0047 can proceed; keep direct P2P marked unavailable."
+        },
+        {
+          "attempt_id": "T0046-A008",
+          "started_at": "2026-10-23T08:25:00Z",
+          "ended_at": "2026-10-23T08:25:00Z",
+          "result": "partial",
+          "summary": "The latest quality gate passed all 100 Python tests, compileall, and graph structure checks, but evidence validation rejected a prose summary incorrectly stored in T0046.evidence. This was a graph metadata issue; replaced non-path entries with the actual implementation, report and verification file paths. Revalidate before restoring done status.",
+          "changed_files": [
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Step Three quality gate run 39924326694",
+              "result": "failed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39924326694",
+              "summary": "100 Python tests passed; evidence validation failed because T0046.evidence contained a prose string rather than a repository path."
+            }
+          ],
+          "failure_details": "Evidence validator treats every entry in evidence as a repository file path.",
+          "blocked_reason": null,
+          "reopened_reason": "Reopened temporarily to correct the graph evidence contract after CI validation failed.",
+          "contract_changes": [],
+          "follow_up": "Wait for exact-main quality gate after metadata correction; if green and product build remains green, restore T0046 to done."
         }
-      ]
+      ],
+      "reopened_reason": "Reopened on 2026-10-23 after graph evidence validation rejected non-path evidence metadata; code-level acceptance tests passed, but the graph gate must be green before restoring done."
     },
     {
       "id": "T0047",
@@ -8010,9 +8039,9 @@
       "evidence": [],
       "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
       "execution_summary": {
-        "attempt_count": 1,
+        "attempt_count": 2,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0047-A001",
+        "last_attempt_id": "T0047-A002",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Host.Application/HostErrorPresentation.cs",
@@ -8020,11 +8049,19 @@
           "tests/HostLifecycle.Tests/Program.cs",
           "tests/test_wpf_entrypoint.py",
           "step three/T0047/execution-report.md",
-          "step three/T0047/evidence/verification.md"
+          "step three/T0047/evidence/verification.md",
+          "step three/project-graph.md"
         ],
         "related_commits": [],
         "tests_passed": [],
-        "tests_failed": [],
+        "tests_failed": [
+          {
+            "name": "Step Three quality gate run 39924326694",
+            "result": "failed",
+            "evidence": "https://github.com/artinrahimii/project/actions/runs/39924326694",
+            "summary": "100 Python tests passed; graph/evidence validation failed on the T0046 evidence metadata. The failure does not identify a T0047 source/test failure."
+          }
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -8063,6 +8100,30 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Inspect exact-main CI; preserve this attempt and append a new attempt for any fixes."
+        },
+        {
+          "attempt_id": "T0047-A002",
+          "started_at": "2026-10-23T08:25:00Z",
+          "ended_at": "2026-10-23T08:25:00Z",
+          "result": "partial",
+          "summary": "Recorded the exact-commit quality gate outcome. The new T0047 Python regression test passed and all 100 Python tests passed, but the graph evidence validator failed on an unrelated malformed T0046.evidence entry. Corrected that metadata in the same follow-up; T0047 remains in progress until quality gate and product build pass.",
+          "changed_files": [
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Step Three quality gate run 39924326694",
+              "result": "failed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39924326694",
+              "summary": "All 100 Python tests passed; evidence validation failed on a T0046 metadata path."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Verify quality gate and product build on the correction commit; then continue T0047 only after T0046 returns to done."
         }
       ]
     },
