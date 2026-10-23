@@ -7719,7 +7719,7 @@
       ],
       "notes": "The status presentation formats the backend and last-observed local endpoint state from HostStatus snapshots (Stopped, Starting, Ready, Busy, Error), and refreshes during connection checks and inference. Direct peer-to-peer transport is explicitly reported as not implemented; no P2P readiness is claimed. Exact-commit CI for these changes is pending. Latest product CI on c6ac1088d5321744331e97fa2c3f1dd76c0acaa0: Windows Release build and lifecycle tests passed, but WPF startup smoke exceeded 15 seconds; workflow timeout raised to 30 seconds, awaiting revalidation. Latest quality run 39922632934 failed because the source-level test still asserted the old 15-second timeout; test expectation updated to 30 seconds, pending CI. Quality gate run 39922876698 confirmed all 99 Python tests pass, but graph validation failed because failed_attempt_count did not match execution_history results. The metadata count has been corrected to reflect result values; the observed CI failure itself remains documented in tests_failed. Follow-up exact-main run 39922953868 still failed graph_guard with ATTEMPT_COUNT_MISMATCH (summary=3, history=4); the previous correction addressed the failed-attempt count field, not attempt_count. Updated attempt_count to 4 to match the four preserved history entries. Re-run graph guard and evidence validation after this commit; task remains in_progress.",
       "execution_summary": {
-        "attempt_count": 5,
+        "attempt_count": 6,
         "failed_attempt_count": 0,
         "last_attempt_id": "T0046-A006",
         "last_attempt_result": "partial",
@@ -7764,7 +7764,7 @@
           "affected_by_contract_changes": [],
           "review_evidence": []
         },
-        "notes": " Exact-main quality run 39923173194 on b6ae544759e593f93534d6ba3ad227f2ca97bb94 passed all 99 Python tests and compileall but failed graph_guard because attempt_count=4 while execution_history contained five records; corrected summary count to 5 and recorded attempt T0046-A006. Revalidate before closing."
+        "notes": " Exact-main quality run 39923173194 on b6ae544759e593f93534d6ba3ad227f2ca97bb94 passed all 99 Python tests and compileall but failed graph_guard because attempt_count=4 while execution_history contained five records; corrected summary count to 5 and recorded attempt T0046-A006. Revalidate before closing. Reconciliation on 2026-10-23: attempt_count corrected from 5 to 6 to match the 6 preserved execution_history records. Exact-main quality gate run 39923390338 on a344f414da8e44d1e3bbc2c8f83de08d4a10f5b8 failed graph validation before product-level validation could be considered green; do not treat this as a completed task."
       },
       "execution_history": [
         {
