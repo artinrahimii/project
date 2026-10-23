@@ -7717,9 +7717,9 @@
         "tests/test_wpf_entrypoint.py",
         "step three/T0046/evidence/verification.md"
       ],
-      "notes": "The status presentation formats the backend and last-observed local endpoint state from HostStatus snapshots (Stopped, Starting, Ready, Busy, Error), and refreshes during connection checks and inference. Direct peer-to-peer transport is explicitly reported as not implemented; no P2P readiness is claimed. Exact-commit CI for these changes is pending. Latest product CI on c6ac1088d5321744331e97fa2c3f1dd76c0acaa0: Windows Release build and lifecycle tests passed, but WPF startup smoke exceeded 15 seconds; workflow timeout raised to 30 seconds, awaiting revalidation. Latest quality run 39922632934 failed because the source-level test still asserted the old 15-second timeout; test expectation updated to 30 seconds, pending CI. Quality gate run 39922876698 confirmed all 99 Python tests pass, but graph validation failed because failed_attempt_count did not match execution_history results. The metadata count has been corrected to reflect result values; the observed CI failure itself remains documented in tests_failed.",
+      "notes": "The status presentation formats the backend and last-observed local endpoint state from HostStatus snapshots (Stopped, Starting, Ready, Busy, Error), and refreshes during connection checks and inference. Direct peer-to-peer transport is explicitly reported as not implemented; no P2P readiness is claimed. Exact-commit CI for these changes is pending. Latest product CI on c6ac1088d5321744331e97fa2c3f1dd76c0acaa0: Windows Release build and lifecycle tests passed, but WPF startup smoke exceeded 15 seconds; workflow timeout raised to 30 seconds, awaiting revalidation. Latest quality run 39922632934 failed because the source-level test still asserted the old 15-second timeout; test expectation updated to 30 seconds, pending CI. Quality gate run 39922876698 confirmed all 99 Python tests pass, but graph validation failed because failed_attempt_count did not match execution_history results. The metadata count has been corrected to reflect result values; the observed CI failure itself remains documented in tests_failed. Follow-up exact-main run 39922953868 still failed graph_guard with ATTEMPT_COUNT_MISMATCH (summary=3, history=4); the previous correction addressed the failed-attempt count field, not attempt_count. Updated attempt_count to 4 to match the four preserved history entries. Re-run graph guard and evidence validation after this commit; task remains in_progress.",
       "execution_summary": {
-        "attempt_count": 3,
+        "attempt_count": 4,
         "failed_attempt_count": 0,
         "last_attempt_id": "T0046-A003",
         "last_attempt_result": "partial",
@@ -7871,6 +7871,30 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Verify graph guard and repo-root evidence validation on the next exact-main quality run; verify all product-build jobs before closing T0046."
+        },
+        {
+          "attempt_id": "T0046-A005",
+          "started_at": "2026-10-23T11:25:00-04:00",
+          "ended_at": "2026-10-23T11:26:00-04:00",
+          "result": "partial",
+          "summary": "Inspected exact-main quality workflow logs: all 99 Python tests and compileall passed, but graph_guard failed because execution_summary.attempt_count=3 while execution_history contains four records. Updated attempt_count to 4; graph/evidence validation and product build for this commit remain pending.",
+          "changed_files": [
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Step Three quality gate run 39922953868",
+              "result": "failed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39922953868",
+              "summary": "99 Python tests and compileall passed; graph_guard reported ATTEMPT_COUNT_MISMATCH: T0046 summary=3, history=4."
+            }
+          ],
+          "failure_details": "A previous metadata correction fixed failed_attempt_count but left attempt_count inconsistent with execution_history length.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Verify graph_guard and recorded-output/evidence validation on the next exact-main quality run; wait for Android build/tests and inspect the product-build result before changing T0046 status."
         }
       ]
     },
@@ -21006,6 +21030,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-23T15:11:00Z"
+  "updated_at": "2026-10-23T15:26:00Z"
 }
 ```
