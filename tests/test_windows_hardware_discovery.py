@@ -91,6 +91,25 @@ class ModelMemoryCompatibilityTests(unittest.TestCase):
         self.assertIn('x:Name="ModelCompatibilityStatus"', XAML)
         self.assertIn("GPU/VRAM", ESTIMATOR)
 
+    def test_capacity_is_unknown_until_measurements_and_readiness_checks_are_verified(self):
+        self.assertIn("using WhiteP.Host.Domain;", WINDOW_CODE)
+        self.assertIn("new HostCapabilities", WINDOW_CODE)
+        for marker in (
+            "HasSufficientMemory =",
+            "HasSufficientDiskSpace =",
+            "IsInferenceBackendSupported =",
+            "HostCapacityState.Unknown",
+            "HostCapacityState.Insufficient",
+            "HostCapacityState.Ready",
+            "Capacity: Unknown",
+            "GPU compute/VRAM capability is not verified",
+            "Host is not Ready",
+            "capacityState == HostCapacityState.Ready",
+        ):
+            with self.subTest(marker=marker):
+                self.assertIn(marker, WINDOW_CODE)
+        self.assertIn('x:Name="CapacityStatus"', XAML)
+
 
 if __name__ == "__main__":
     unittest.main()

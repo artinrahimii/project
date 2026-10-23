@@ -15,6 +15,7 @@ public partial class MainWindow : Window
     private string? _requestedModelMemoryRequirementText;
     private string? _requestedMinimumFreeDiskRequirementText;
     private CancellationTokenSource? _operationCancellation;
+    private bool _capacityReady;
 
     public MainWindow()
     {
@@ -85,7 +86,7 @@ public partial class MainWindow : Window
             var status = await connectTask;
             RenderStatus(status);
             RenderHostHardwareSummary();
-            GenerateButton.IsEnabled = status.State == HostState.Ready;
+            GenerateButton.IsEnabled = status.State == HostState.Ready && _capacityReady;
         }
         catch (OperationCanceledException)
         {
@@ -129,13 +130,18 @@ public partial class MainWindow : Window
         {
             RenderHostHardwareSummary();
             ConnectButton.IsEnabled = true;
-            GenerateButton.IsEnabled = _session.IsConnected;
+            GenerateButton.IsEnabled = _session.IsConnected && _capacityReady;
         }
     }
 
     private void RenderStatus(HostStatus status)
     {
-        LifecycleState.Text = HostStatusPresentation.FormatBackendStatus(status);
+        var capacityState = RenderCapacityStatus(status);
+        LifecycleState.Text = status.State == HostState.Ready && capacityState != HostCapacityState.Ready
+            ? capacityState == HostCapacityState.Insufficient
+                ? "Not Ready — measured host capacity is insufficient."
+                : "Unknown — host capacity could not be verified; the host is not Ready."
+            : HostStatusPresentation.FormatBackendStatus(status);
         NetworkState.Text = HostStatusPresentation.FormatNetworkStatus(status);
         BackendCapabilityStatus.Text = status.State switch
         {
@@ -145,6 +151,78 @@ public partial class MainWindow : Window
             HostState.Busy => "Backend: available — one local inference request is running.",
             _ => "Backend: not checked or disconnected."
         };
+        GenerateButton.IsEnabled = status.State == HostState.Ready && capacityState == HostCapacityState.Ready;
+    }
+
+    private HostCapacityState RenderCapacityStatus(HostStatus status)
+    {
+        try
+        {
+            var hardware = WindowsHostHardwareDiscovery.Discover();
+            var capacity = new HostCapabilities
+            {
+                OperatingSystemDescription = hardware.OperatingSystemDescription,
+                OperatingSystemVersion = hardware.OperatingSystemVersion,
+                LogicalProcessorCount = hardware.LogicalProcessorCount,
+                TotalPhysicalMemoryBytes = hardware.TotalPhysicalMemoryBytes,
+                AvailablePhysicalMemoryBytes = hardware.AvailablePhysicalMemoryBytes,
+                SystemDriveTotalBytes = hardware.SystemDriveTotalBytes,
+                SystemDriveAvailableBytes = hardware.SystemDriveAvailableBytes,
+                HasSufficientMemory = CheckMemoryRequirement(ModelMemoryRequirementGiB.Text, hardware.AvailablePhysicalMemoryBytes),
+                HasSufficientDiskSpace = CheckDiskRequirement(MinimumFreeDiskGiB.Text, hardware.SystemDriveAvailableBytes),
+                IsInferenceBackendSupported = status.State is HostState.Ready or HostState.Busy ? true : (bool?)null
+            };
+
+            var state = capacity.CapacityState;
+            _capacityReady = state == HostCapacityState.Ready;
+            CapacityStatus.Text = state switch
+            {
+                HostCapacityState.Ready => "Capacity: Ready for the configured local backend and the declared RAM/disk checks. GPU compute/VRAM capability is not verified.",
+                HostCapacityState.Insufficient => "Capacity: Insufficient — measured RAM or system-drive space does not meet the declared requirement. Host is not Ready.",
+                _ => "Capacity: Unknown — required hardware measurements or checks are unavailable/unverified. Host is not Ready."
+            };
+            return state;
+        }
+        catch (Exception)
+        {
+            _capacityReady = false;
+            CapacityStatus.Text = "Capacity: Unknown — live hardware capacity could not be verified; host is not Ready.";
+            return HostCapacityState.Unknown;
+        }
+    }
+
+    private static bool? CheckMemoryRequirement(string? requirementText, ulong availableMemoryBytes)
+    {
+        if (!TryParseCapacityRequirement(requirementText, out var requiredGiB))
+        {
+            return null;
+        }
+
+        var requiredBytes = checked((ulong)Math.Ceiling(requiredGiB * 1024d * 1024d * 1024d));
+        return requiredBytes <= availableMemoryBytes;
+    }
+
+    private static bool? CheckDiskRequirement(string? requirementText, long availableDiskBytes)
+    {
+        if (availableDiskBytes < 0 || !TryParseCapacityRequirement(requirementText, out var requiredGiB))
+        {
+            return null;
+        }
+
+        var requiredBytes = checked((long)Math.Ceiling(requiredGiB * 1024d * 1024d * 1024d));
+        return requiredBytes <= availableDiskBytes;
+    }
+
+    private static bool TryParseCapacityRequirement(string? requirementText, out double requiredGiB)
+    {
+        return double.TryParse(
+                requirementText?.Trim(),
+                NumberStyles.AllowDecimalPoint,
+                CultureInfo.InvariantCulture,
+                out requiredGiB) &&
+            double.IsFinite(requiredGiB) &&
+            requiredGiB > 0 &&
+            requiredGiB <= 1_048_576;
     }
 
     private void RenderHostHardwareSummary()

@@ -46,6 +46,7 @@ public partial class App : System.Windows.Application
                     window.FindName("GpuStatus") is not TextBlock ||
                     window.FindName("CpuStatus") is not TextBlock ||
                     window.FindName("MemoryStatus") is not TextBlock ||
+                    window.FindName("CapacityStatus") is not TextBlock ||
                     window.FindName("BackendCapabilityStatus") is not TextBlock)
                 {
                     Shutdown(2);

@@ -20,7 +20,7 @@ class WpfEntryPointTests(unittest.TestCase):
         self.assertIn("<UseWPF>true</UseWPF>", PROJECT)
 
     def test_main_window_has_required_operational_controls_and_cleanup(self):
-        for name in ("ServerUrl", "ModelId", "ConnectButton", "LifecycleState", "CpuStatus", "MemoryStatus", "PromptInput", "OutputText", "GenerateButton"):
+        for name in ("ServerUrl", "ModelId", "ConnectButton", "LifecycleState", "CpuStatus", "MemoryStatus", "CapacityStatus", "PromptInput", "OutputText", "GenerateButton"):
             with self.subTest(control=name):
                 self.assertIn(f'x:Name="{name}"', WINDOW_XAML)
                 self.assertIn(f'window.FindName("{name}")', APP_CODE)

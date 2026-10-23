@@ -9396,20 +9396,48 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0055 و T0048 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "src/Host.Windows/MainWindow.xaml",
+        "src/Host.Windows/App.xaml.cs",
+        "tests/test_windows_hardware_discovery.py",
+        "tests/test_wpf_entrypoint.py",
+        "step three/T0056/execution-report.md",
+        "step three/T0056/evidence/verification.md",
+        "step three/project-graph.md"
+      ],
       "expected_output_paths": [
         "src/Host.Windows/ (سرویس تشخیص سخت‌افزار و UI)"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "src/Host.Windows/MainWindow.xaml",
+        "src/Host.Windows/App.xaml.cs",
+        "src/Host.Domain/HostCapabilities.cs",
+        "tests/test_windows_hardware_discovery.py",
+        "tests/test_wpf_entrypoint.py",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0056/execution-report.md",
+        "step three/T0056/evidence/verification.md"
+      ],
+      "notes": "Incoming edges T0055 → T0056 and T0048 → T0056 were reviewed against the exact-commit Windows hardware snapshot/UI, HostCapabilities tri-state model and verified lifecycle/session tests. Their type=blocks is retained; both are validated contract/interface dependencies. Outgoing T0056 → T0057…T0067 edges remain unreviewed.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0056-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Host.Windows/MainWindow.xaml.cs",
+          "src/Host.Windows/MainWindow.xaml",
+          "src/Host.Windows/App.xaml.cs",
+          "tests/test_windows_hardware_discovery.py",
+          "tests/test_wpf_entrypoint.py",
+          "step three/T0056/execution-report.md",
+          "step three/T0056/evidence/verification.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
@@ -9422,7 +9450,31 @@
           "review_evidence": []
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0056-A001",
+          "started_at": "2026-10-23T13:31:57.063Z",
+          "ended_at": "2026-10-23T13:31:57.988Z",
+          "result": "partial",
+          "summary": "Reviewed T0055/T0048 incoming dependency edges. Added a live tri-state host-capacity summary bound to the existing HostCapabilities domain contract; missing/invalid requirements or unavailable measurements stay Unknown, visible lifecycle Ready and Generate remain gated on the computed Ready state, and GPU/VRAM is explicitly not claimed. Exact-commit CI verification pending.",
+          "changed_files": [
+            "src/Host.Windows/MainWindow.xaml.cs",
+            "src/Host.Windows/MainWindow.xaml",
+            "src/Host.Windows/App.xaml.cs",
+            "tests/test_windows_hardware_discovery.py",
+            "tests/test_wpf_entrypoint.py",
+            "step three/T0056/execution-report.md",
+            "step three/T0056/evidence/verification.md"
+          ],
+          "commit_sha": null,
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect the exact implementation commit's Step Three quality gate and all product-build jobs. Only append a successful verification attempt and mark T0056 done after those exact-commit checks pass. Keep outgoing T0056 dependencies unreviewed until reviewed before those tasks."
+        }
+      ]
     },
     {
       "id": "T0057",
@@ -18449,19 +18501,30 @@
       "from": "T0055",
       "to": "T0056",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0056 consumes the real Windows hardware measurements and WPF hardware/status surface delivered by T0055; the existing blocks relationship is retained as a conservative ordering constraint while the data/UI contract is now verified.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/WindowsHostHardwareDiscovery.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "src/Host.Domain/HostCapabilities.cs",
+        "tests/test_windows_hardware_discovery.py",
+        "step three/T0055/evidence/verification.md"
+      ]
     },
     {
       "from": "T0048",
       "to": "T0056",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0056 gates the visible Ready state and Generate control on the verified HostLifecycle/HostInferenceSession state. T0048's lifecycle tests establish that failed readiness cannot safely be presented as Ready and that lifecycle errors remain fail-closed.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Domain/HostLifecycle.cs",
+        "src/Host.Application/HostInferenceSession.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0048/evidence/verification.md"
+      ]
     },
     {
       "from": "T0056",
@@ -22371,8 +22434,39 @@
         "step three/T0048/evidence/verification.md"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-23T13:31:57.988Z",
+      "edge_from": "T0055",
+      "edge_to": "T0056",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "reason": "T0056 consumes the real Windows hardware measurements and WPF hardware/status surface delivered by T0055; the existing blocks relationship is retained as a conservative ordering constraint while the data/UI contract is now verified.",
+      "evidence": [
+        "src/Host.Windows/WindowsHostHardwareDiscovery.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "src/Host.Domain/HostCapabilities.cs",
+        "tests/test_windows_hardware_discovery.py",
+        "step three/T0055/evidence/verification.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-23T13:31:57.988Z",
+      "edge_from": "T0048",
+      "edge_to": "T0056",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "reason": "T0056 gates the visible Ready state and Generate control on the verified HostLifecycle/HostInferenceSession state. T0048's lifecycle tests establish that failed readiness cannot safely be presented as Ready and that lifecycle errors remain fail-closed.",
+      "evidence": [
+        "src/Host.Domain/HostLifecycle.cs",
+        "src/Host.Application/HostInferenceSession.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0048/evidence/verification.md"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-23T13:12:34Z"
+  "updated_at": "2026-10-23T13:31:57.988Z"
 }
 ```
