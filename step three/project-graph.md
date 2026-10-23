@@ -8602,7 +8602,7 @@
           "attempt_id": "T0050-A004",
           "started_at": "2026-10-23T11:08:36Z",
           "ended_at": "2026-10-23T11:11:24Z",
-          "result": "passed",
+          "result": "succeeded",
           "summary": "Verified the implementation on exact parent commit 77d0e2821bf012fee0525041744a6dd4ad786ded. The Step Three quality gate passed, and all three product CI jobs passed: host lifecycle unit/integration tests, Windows WPF build, and Android APK build. T0050 acceptance is satisfied for display-adapter inventory and configured backend health reporting; no GPU compute backend/offload support is claimed.",
           "changed_files": [
             "step three/project-graph.md",
