@@ -7382,11 +7382,9 @@
         "tests/HostLifecycle.Tests/Program.cs",
         "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
         "step three/T0044/execution-report.md",
-        "step three/T0044/evidence/verification.md",
-        "https://github.com/artinrahimii/project/actions/runs/39912424198",
-        "https://github.com/artinrahimii/project/actions/runs/39912424256"
+        "step three/T0044/evidence/verification.md"
       ],
-      "notes": "The production state machine is in Host.Domain after the T0042 assembly split; the old expected src/Host.Windows path is stale. Exhaustive transition-matrix regression assertions were run in CI. All permitted transitions are accepted, forbidden transitions are rejected, and rejected transitions preserve the current state.",
+      "notes": "The production state machine is in Host.Domain after the T0042 assembly split; the old expected src/Host.Windows path is stale. Exhaustive transition-matrix regression assertions were run in CI. All permitted transitions are accepted, forbidden transitions are rejected, and rejected transitions preserve the current state. Graph-recording correction: V 3.0.132 quality gate flagged workflow URLs placed in the file-path-only evidence list. URLs remain in test evidence fields; evidence list now contains repository paths only.",
       "execution_summary": {
         "attempt_count": 1,
         "failed_attempt_count": 0,
@@ -7427,7 +7425,14 @@
             "summary": "The graph validator, repository evidence validation, Python tests and syntax checks passed on the exact implementation commit."
           }
         ],
-        "tests_failed": [],
+        "tests_failed": [
+          {
+            "name": "Step Three quality gate on graph-recording commit V 3.0.132",
+            "result": "failed",
+            "evidence": "https://github.com/artinrahimii/project/actions/runs/39912837496",
+            "summary": "Graph guard rejected two URL strings in T0044.evidence because this field must contain repository file paths. Product build and lifecycle tests passed; this was an evidence-index recording error, now corrected by keeping workflow URLs in tests_passed evidence fields only."
+          }
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -20646,6 +20651,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-23T10:07:00Z"
+  "updated_at": "2026-10-23T10:08:00Z"
 }
 ```
