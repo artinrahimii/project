@@ -55,6 +55,15 @@ class WpfEntryPointTests(unittest.TestCase):
             with self.subTest(marker=marker):
                 self.assertIn(marker, WORKFLOW)
 
+    def test_status_panel_uses_live_backend_state_and_discloses_p2p_limit(self):
+        self.assertIn('x:Name="NetworkState"', WINDOW_XAML)
+        self.assertIn("HostStatusPresentation.FormatBackendStatus(status)", WINDOW_CODE)
+        self.assertIn("HostStatusPresentation.FormatNetworkStatus(status)", WINDOW_CODE)
+        self.assertIn("var connectTask = _session.ConnectAsync", WINDOW_CODE)
+        self.assertIn("var generationTask = _session.GenerateAsync", WINDOW_CODE)
+        presenter = (ROOT / "src/Host.Application/HostStatusPresentation.cs").read_text(encoding="utf-8")
+        self.assertIn("Direct peer-to-peer transport: not implemented in this build.", presenter)
+
     def test_window_status_starts_without_connecting_to_a_backend(self):
         self.assertIn('Text="Stopped — connect to a local backend."', WINDOW_XAML)
         self.assertNotIn(".ConnectAsync(", APP_CODE)

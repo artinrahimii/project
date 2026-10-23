@@ -14,7 +14,7 @@
 - Added executable C# regression checks for defaults, save/load round-trip, schema version, remote endpoint rejection, credential rejection, timeout bounds, malformed JSON, and future schema rejection.
 
 ## Validation status
-The implementation is pending exact-commit CI. T0045 remains in progress until the product build, settings/lifecycle test job, and Step Three quality gate pass.
+The exact-commit CI evidence is now available for main commit 2a21259407681c793fb213b7ed4ada162a739220 (V 3.0.136). Step Three quality gate run 39913820033 and White-P product build run 39913820020 both succeeded. This verifies repository checks, the C# settings/lifecycle regression harness, Windows WPF build/startup smoke, and Android build checks. It does not claim that a live model has been run.
 
 ## Attempt A001 failure and correction
 - The first exact-commit C# regression harness passed, including the new settings persistence and validation cases.
@@ -24,3 +24,10 @@ The implementation is pending exact-commit CI. T0045 remains in progress until t
 ## Graph-gate bookkeeping correction
 - The quality gate for V 3.0.135 failed because `execution_summary.attempt_count` remained 1 after the A002 history entry was added; the validator correctly required 2.
 - The summary count is now synchronized with the two preserved attempt records. This is a graph-recording correction, not a product-code test failure.
+
+
+## Attempt A003 — exact-commit verification
+- Tested commit: `2a21259407681c793fb213b7ed4ada162a739220` (V 3.0.136), the inspected `main` head before this change.
+- Step Three quality gate: passed — https://github.com/artinrahimii/project/actions/runs/39913820033
+- White-P product build: passed — https://github.com/artinrahimii/project/actions/runs/39913820020
+- Outcome: T0045 acceptance criteria verified; previous failed and in-progress attempts are preserved above.

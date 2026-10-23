@@ -70,12 +70,15 @@ public partial class MainWindow : Window
 
             _operationCancellation?.Dispose();
             _operationCancellation = new CancellationTokenSource();
-            var status = await _session.ConnectAsync(new Uri(_settings.ServerUrl), _settings.ModelId, _operationCancellation.Token);
+            var connectTask = _session.ConnectAsync(new Uri(_settings.ServerUrl), _settings.ModelId, _operationCancellation.Token);
+            RenderStatus(_session.Status);
+            var status = await connectTask;
             RenderStatus(status);
             GenerateButton.IsEnabled = status.State == HostState.Ready;
         }
         catch (OperationCanceledException)
         {
+            RenderStatus(_session.Status);
             LifecycleState.Text = "Connection cancelled.";
         }
         finally
@@ -99,12 +102,14 @@ public partial class MainWindow : Window
         {
             _operationCancellation?.Dispose();
             _operationCancellation = new CancellationTokenSource();
-            OutputText.Text = await _session.GenerateAsync(PromptInput.Text, 1024, _operationCancellation.Token);
+            var generationTask = _session.GenerateAsync(PromptInput.Text, 1024, _operationCancellation.Token);
+            RenderStatus(_session.Status);
+            OutputText.Text = await generationTask;
             RenderStatus(_session.Status);
         }
         catch (Exception)
         {
-            LifecycleState.Text = _session.Status.Message;
+            RenderStatus(_session.Status);
             OutputText.Text = "Generation failed. Check the local server status and reconnect; prompt/response contents are not logged by the backend client.";
         }
         finally
@@ -114,7 +119,11 @@ public partial class MainWindow : Window
         }
     }
 
-    private void RenderStatus(HostStatus status) => LifecycleState.Text = $"{status.State} — {status.Message}";
+    private void RenderStatus(HostStatus status)
+    {
+        LifecycleState.Text = HostStatusPresentation.FormatBackendStatus(status);
+        NetworkState.Text = HostStatusPresentation.FormatNetworkStatus(status);
+    }
 
     private void MainWindow_Closed(object? sender, EventArgs e)
     {

@@ -625,7 +625,22 @@ using (var limitedSession = new HostInferenceSession(backend: limitedSessionBack
 Console.WriteLine("PASS: protocol request, capsule, prompt, response, HTTP-body ceilings and pre-inference rejection.");
 
 
- // T0045: versioned local settings persistence and validation.
+ // T0046: status presentation must derive from the observed host/backend state.
+var presentedStopped = new HostStatus(HostState.Stopped, "Host stopped.");
+var presentedStarting = new HostStatus(HostState.Starting, "Checking local inference backend.");
+var presentedReady = new HostStatus(HostState.Ready, "Local inference backend is ready.");
+var presentedBusy = new HostStatus(HostState.Busy, "Generating locally; one request at a time.");
+var presentedError = new HostStatus(HostState.Error, "Local inference connection failed.");
+Assert(HostStatusPresentation.FormatBackendStatus(presentedReady).Contains("Ready", StringComparison.Ordinal), "Backend status presentation must use the actual Ready state.");
+Assert(HostStatusPresentation.FormatNetworkStatus(presentedStopped).Contains("not checked", StringComparison.Ordinal), "Stopped state must not claim an endpoint is connected.");
+Assert(HostStatusPresentation.FormatNetworkStatus(presentedStarting).Contains("checking backend health", StringComparison.Ordinal), "Starting state must report a live health check.");
+Assert(HostStatusPresentation.FormatNetworkStatus(presentedReady).Contains("healthy", StringComparison.Ordinal), "Ready state must report the health-check result.");
+Assert(HostStatusPresentation.FormatNetworkStatus(presentedBusy).Contains("inference is in progress", StringComparison.Ordinal), "Busy state must be visible while an inference request is running.");
+Assert(HostStatusPresentation.FormatNetworkStatus(presentedError).Contains("status: error", StringComparison.Ordinal), "Error state must not be presented as a healthy endpoint.");
+Assert(HostStatusPresentation.FormatNetworkStatus(presentedReady).Contains("Direct peer-to-peer transport: not implemented", StringComparison.Ordinal), "The UI must not imply the unimplemented P2P transport is available.");
+Console.WriteLine("PASS: backend and local-endpoint status presentation reflects all HostState values and discloses unavailable P2P transport.");
+
+// T0045: versioned local settings persistence and validation.
 var settingsTestDirectory = Path.Combine(Path.GetTempPath(), "whitep-settings-" + Guid.NewGuid().ToString("N"));
 var settingsPath = Path.Combine(settingsTestDirectory, "settings.json");
 try

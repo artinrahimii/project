@@ -7514,8 +7514,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0044 و T0040 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "src/Host.Infrastructure/LocalHostSettingsStore.cs",
         "src/Host.Windows/MainWindow.xaml.cs",
@@ -7526,13 +7526,19 @@
       "expected_output_paths": [
         "src/Host.Windows/"
       ],
-      "evidence": [],
-      "notes": "The service belongs in Host.Infrastructure, where persistence and validation belong; MainWindow loads and saves it through the production project reference. The old expected src/Host.Windows path is stale as the location for a reusable settings service.",
+      "evidence": [
+        "src/Host.Infrastructure/LocalHostSettingsStore.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0045/execution-report.md",
+        "step three/T0045/evidence/verification.md"
+      ],
+      "notes": "The service belongs in Host.Infrastructure, where persistence and validation belong; MainWindow loads and saves it through the production project reference. The old expected src/Host.Windows path is stale as the location for a reusable settings service. Exact-commit verification passed on main commit 2a21259407681c793fb213b7ed4ada162a739220: Step Three quality gate run 39913820033 and White-P product build run 39913820020 both succeeded. This verifies settings persistence/validation, Windows build/startup smoke and host settings/lifecycle regression checks; it does not claim live inference or P2P.",
       "execution_summary": {
-        "attempt_count": 2,
+        "attempt_count": 3,
         "failed_attempt_count": 1,
-        "last_attempt_id": "T0045-A002",
-        "last_attempt_result": "in_progress",
+        "last_attempt_id": "T0045-A003",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Host.Infrastructure/LocalHostSettingsStore.cs",
           "src/Host.Windows/MainWindow.xaml.cs",
@@ -7541,14 +7547,20 @@
           "step three/T0045/evidence/verification.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
+        "related_commits": [
+          "38afc8041e99fa89b41aecf349b2de3a15fa9d16",
+          "696cfdfb18b94d0177e2fbc9e1aba736fed7b42d",
+          "2a21259407681c793fb213b7ed4ada162a739220"
+        ],
         "tests_passed": [
           {
             "name": "Host lifecycle and local-settings regression harness",
             "result": "passed",
             "evidence": "https://github.com/artinrahimii/project/actions/runs/39913421658",
             "summary": "C# test job passed including all new LocalHostSettingsStore cases."
-          }
+          },
+          "Step Three quality gate — run 39913820033: passed on exact main commit 2a21259407681c793fb213b7ed4ada162a739220 (https://github.com/artinrahimii/project/actions/runs/39913820033).",
+          "White-P product build — run 39913820020: passed on exact main commit 2a21259407681c793fb213b7ed4ada162a739220; Windows build/startup smoke, C# lifecycle/settings tests and Android build checks passed (https://github.com/artinrahimii/project/actions/runs/39913820020)."
         ],
         "tests_failed": [
           {
@@ -7635,6 +7647,34 @@
           ],
           "failure_details": null,
           "follow_up": "Synchronize execution_summary.attempt_count with the two history records, then rerun the graph quality gate and product build."
+        },
+        {
+          "attempt_id": "T0045-A003",
+          "started_at": "2026-10-23T06:49:03Z",
+          "ended_at": "2026-10-23T07:15:32.411Z",
+          "result": "succeeded",
+          "summary": "Re-validated the versioned local settings service against exact main commit 2a21259407681c793fb213b7ed4ada162a739220. Both GitHub Actions workflows succeeded for that SHA.",
+          "changed_files": [],
+          "commit_sha": "2a21259407681c793fb213b7ed4ada162a739220",
+          "tests": [
+            {
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39913820033",
+              "summary": "Repository tests, Python syntax, graph structure, and recorded output/evidence validation succeeded."
+            },
+            {
+              "name": "White-P product build",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39913820020",
+              "summary": "C# formatting, Windows WPF build and startup smoke, lifecycle/settings harness, Android lint/build/Protobuf tests, and artifact uploads succeeded."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "T0045 acceptance is verified; proceed to T0046 without claiming live-model inference or P2P readiness."
         }
       ]
     },
@@ -7655,20 +7695,44 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0045 و T0040 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال انجام",
+      "actual_output_paths": [
+        "src/Host.Application/HostStatusPresentation.cs",
+        "src/Host.Windows/MainWindow.xaml",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "tests/test_wpf_entrypoint.py",
+        "step three/T0046/execution-report.md",
+        "step three/T0046/evidence/verification.md"
+      ],
       "expected_output_paths": [
         "src/Host.Windows/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "src/Host.Application/HostStatusPresentation.cs",
+        "src/Host.Windows/MainWindow.xaml",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "tests/test_wpf_entrypoint.py",
+        "step three/T0046/evidence/verification.md"
+      ],
+      "notes": "The status presentation formats the backend and last-observed local endpoint state from HostStatus snapshots (Stopped, Starting, Ready, Busy, Error), and refreshes during connection checks and inference. Direct peer-to-peer transport is explicitly reported as not implemented; no P2P readiness is claimed. Exact-commit CI for these changes is pending.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0046-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Host.Application/HostStatusPresentation.cs",
+          "src/Host.Windows/MainWindow.xaml",
+          "src/Host.Windows/MainWindow.xaml.cs",
+          "tests/HostLifecycle.Tests/Program.cs",
+          "tests/test_wpf_entrypoint.py",
+          "step three/T0046/execution-report.md",
+          "step three/T0046/evidence/verification.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
@@ -7681,7 +7745,37 @@
           "review_evidence": []
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0046-A001",
+          "started_at": "2026-10-23T07:15:32.411Z",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Connected the Windows status panel to a status presenter driven by the live HostStatus from the local backend session. It distinguishes not checked, checking, healthy, inference in progress and error; the UI clearly states that direct P2P transport is not implemented.",
+          "changed_files": [
+            "src/Host.Application/HostStatusPresentation.cs",
+            "src/Host.Windows/MainWindow.xaml",
+            "src/Host.Windows/MainWindow.xaml.cs",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "tests/test_wpf_entrypoint.py",
+            "step three/T0046/execution-report.md",
+            "step three/T0046/evidence/verification.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Exact-commit CI",
+              "result": "pending",
+              "summary": "The Step Three quality gate and product build must run after commit; no passing result is claimed yet."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Commit and verify the new UI wiring on exact main; P2P transport remains a separate unimplemented capability."
+        }
+      ]
     },
     {
       "id": "T0047",
@@ -16906,28 +17000,43 @@
       "from": "T0045",
       "to": "T0046",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "The status panel consumes the persisted server URL and model settings loaded and validated by the versioned local settings service; this is a real configuration/interface dependency.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Infrastructure/LocalHostSettingsStore.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "step three/T0045/execution-report.md",
+        "step three/T0046/execution-report.md"
+      ]
     },
     {
       "from": "T0040",
       "to": "T0046",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "The status panel uses HostStatus from the local backend session and does not consume protocol parser/validator outputs. Preserve the conservative order without asserting a technical contract dependency.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Infrastructure/ProtocolMessageParser.cs",
+        "src/Shared.Contracts/ProtocolMessageValidator.cs",
+        "step three/T0040/execution-report.md",
+        "step three/T0046/execution-report.md"
+      ]
     },
     {
       "from": "T0046",
       "to": "T0047",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0047's user-safe error mapping is to refine the same status presentation boundary introduced by T0046; retain the edge as a real presentation-interface dependency.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Application/HostStatusPresentation.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "step one/V1.0.md",
+        "step three/T0046/execution-report.md"
+      ]
     },
     {
       "from": "T0040",
@@ -20753,8 +20862,53 @@
         "step three/T0030/execution-report.md"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-23T07:15:32.411Z",
+      "edge_from": "T0045",
+      "edge_to": "T0046",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "reason": "The status panel consumes the persisted server URL and model settings loaded and validated by the versioned local settings service; this is a real configuration/interface dependency.",
+      "evidence": [
+        "src/Host.Infrastructure/LocalHostSettingsStore.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "step three/T0045/execution-report.md",
+        "step three/T0046/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-23T07:15:32.411Z",
+      "edge_from": "T0040",
+      "edge_to": "T0046",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "reason": "The status panel uses HostStatus from the local backend session and does not consume protocol parser/validator outputs. Preserve the conservative order without asserting a technical contract dependency.",
+      "evidence": [
+        "src/Host.Infrastructure/ProtocolMessageParser.cs",
+        "src/Shared.Contracts/ProtocolMessageValidator.cs",
+        "step three/T0040/execution-report.md",
+        "step three/T0046/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-23T07:15:32.411Z",
+      "edge_from": "T0046",
+      "edge_to": "T0047",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "reason": "T0047's user-safe error mapping is to refine the same status presentation boundary introduced by T0046; retain the edge as a real presentation-interface dependency.",
+      "evidence": [
+        "src/Host.Application/HostStatusPresentation.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "step one/V1.0.md",
+        "step three/T0046/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-23T10:10:00Z"
+  "updated_at": "2026-10-23T07:15:32.411Z"
 }
 ```
