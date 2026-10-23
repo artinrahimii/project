@@ -7719,9 +7719,9 @@
       ],
       "notes": "The status presentation formats the backend and last-observed local endpoint state from HostStatus snapshots (Stopped, Starting, Ready, Busy, Error), and refreshes during connection checks and inference. Direct peer-to-peer transport is explicitly reported as not implemented; no P2P readiness is claimed. Exact-commit CI for these changes is pending. Latest product CI on c6ac1088d5321744331e97fa2c3f1dd76c0acaa0: Windows Release build and lifecycle tests passed, but WPF startup smoke exceeded 15 seconds; workflow timeout raised to 30 seconds, awaiting revalidation. Latest quality run 39922632934 failed because the source-level test still asserted the old 15-second timeout; test expectation updated to 30 seconds, pending CI. Quality gate run 39922876698 confirmed all 99 Python tests pass, but graph validation failed because failed_attempt_count did not match execution_history results. The metadata count has been corrected to reflect result values; the observed CI failure itself remains documented in tests_failed. Follow-up exact-main run 39922953868 still failed graph_guard with ATTEMPT_COUNT_MISMATCH (summary=3, history=4); the previous correction addressed the failed-attempt count field, not attempt_count. Updated attempt_count to 4 to match the four preserved history entries. Re-run graph guard and evidence validation after this commit; task remains in_progress.",
       "execution_summary": {
-        "attempt_count": 4,
+        "attempt_count": 5,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0046-A003",
+        "last_attempt_id": "T0046-A006",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Host.Application/HostStatusPresentation.cs",
@@ -7748,6 +7748,12 @@
             "result": "failed",
             "evidence": "https://github.com/artinrahimii/project/actions/runs/39922632934",
             "summary": "98/99 tests passed; one stale assertion expected WaitForExit(15000) while product-build.yml had been increased to WaitForExit(30000)."
+          },
+          {
+            "name": "Step Three quality gate run 39923173194",
+            "result": "failed",
+            "evidence": "https://github.com/artinrahimii/project/actions/runs/39923173194",
+            "summary": "99 Python tests and compileall passed; graph_guard failed with ATTEMPT_COUNT_MISMATCH because summary=4 while execution_history contains five records."
           }
         ],
         "blocked_reason": null,
@@ -7757,7 +7763,8 @@
           "triggering_contracts": [],
           "affected_by_contract_changes": [],
           "review_evidence": []
-        }
+        },
+        "notes": " Exact-main quality run 39923173194 on b6ae544759e593f93534d6ba3ad227f2ca97bb94 passed all 99 Python tests and compileall but failed graph_guard because attempt_count=4 while execution_history contained five records; corrected summary count to 5 and recorded attempt T0046-A006. Revalidate before closing."
       },
       "execution_history": [
         {
@@ -7895,6 +7902,30 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Verify graph_guard and recorded-output/evidence validation on the next exact-main quality run; wait for Android build/tests and inspect the product-build result before changing T0046 status."
+        },
+        {
+          "attempt_id": "T0046-A006",
+          "started_at": "2026-10-23T11:30:00-04:00",
+          "ended_at": "2026-10-23T11:31:00-04:00",
+          "result": "partial",
+          "summary": "Inspected the exact-main quality workflow for commit b6ae544759e593f93534d6ba3ad227f2ca97bb94. All 99 Python tests and compileall passed; graph_guard found attempt_count=4 while five execution_history entries were preserved. Updated attempt_count to 5 and recorded this CI failure; revalidation on the next commit remains required.",
+          "changed_files": [
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Step Three quality gate run 39923173194",
+              "result": "failed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39923173194",
+              "summary": "99 Python tests and compileall passed; graph_guard reported ATTEMPT_COUNT_MISMATCH: T0046 summary=4, history=5."
+            }
+          ],
+          "failure_details": "Attempt counter remained one behind the preserved execution history after the prior correction.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Verify graph_guard and evidence validation after this correction; inspect the product-build run for the same commit and do not close T0046 until both workflows pass."
         }
       ]
     },
@@ -21030,6 +21061,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-23T15:26:00Z"
+  "updated_at": "2026-10-23T15:31:00Z"
 }
 ```
