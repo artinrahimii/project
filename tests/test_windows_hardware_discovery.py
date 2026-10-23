@@ -26,6 +26,17 @@ class WindowsHardwareDiscoveryTests(unittest.TestCase):
         self.assertIn("WindowsHostHardwareDiscovery.DiscoverDisplayAdapters()", APP_CODE)
         self.assertIn("GPU/display adapters", (ROOT / "src/Host.Windows/MainWindow.xaml.cs").read_text(encoding="utf-8"))
 
+    def test_cpu_name_and_logical_processor_count_come_from_the_real_system(self):
+        self.assertIn("Registry.LocalMachine.OpenSubKey", SERVICE)
+        self.assertIn("ProcessorNameString", SERVICE)
+        self.assertIn("Environment.ProcessorCount", SERVICE)
+        self.assertIn("hardware.ProcessorName", WINDOW_CODE)
+        self.assertIn("hardware.LogicalProcessorCount", WINDOW_CODE)
+        self.assertIn('x:Name="CpuStatus"', XAML)
+        self.assertIn('x:Name="MemoryStatus"', XAML)
+        self.assertIn("hardware.TotalPhysicalMemoryBytes", WINDOW_CODE)
+        self.assertIn("hardware.AvailablePhysicalMemoryBytes", WINDOW_CODE)
+
     def test_physical_memory_comes_from_the_real_windows_api(self):
         self.assertIn('DllImport("kernel32.dll", SetLastError = true)', SERVICE)
         self.assertIn("GlobalMemoryStatusEx", SERVICE)
@@ -47,6 +58,9 @@ class WindowsHardwareDiscoveryTests(unittest.TestCase):
         self.assertIn("WindowsHostHardwareDiscovery.Discover()", APP_CODE)
         for marker in (
             "hardware.OperatingSystemDescription",
+            "hardware.ProcessorName",
+            "hardware.LogicalProcessorCount",
+            "hardware.AvailablePhysicalMemoryBytes",
             "hardware.OperatingSystemVersion.Major",
             "hardware.TotalPhysicalMemoryBytes",
             "hardware.SystemDriveName",

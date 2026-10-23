@@ -35,6 +35,7 @@ public partial class MainWindow : Window
         ServerUrl.Text = _settings.ServerUrl;
         ModelId.Text = _settings.ModelId;
         RenderStatus(_session.Status);
+        RenderHostHardwareSummary();
         RenderDisplayAdapters();
         BackendCapabilityStatus.Text = "Backend: not checked; Connect will test the configured local llama.cpp endpoint.";
         if (settingsLoadFailed)
@@ -83,6 +84,7 @@ public partial class MainWindow : Window
             RenderStatus(_session.Status);
             var status = await connectTask;
             RenderStatus(status);
+            RenderHostHardwareSummary();
             GenerateButton.IsEnabled = status.State == HostState.Ready;
         }
         catch (OperationCanceledException)
@@ -125,6 +127,7 @@ public partial class MainWindow : Window
         }
         finally
         {
+            RenderHostHardwareSummary();
             ConnectButton.IsEnabled = true;
             GenerateButton.IsEnabled = _session.IsConnected;
         }
@@ -142,6 +145,22 @@ public partial class MainWindow : Window
             HostState.Busy => "Backend: available — one local inference request is running.",
             _ => "Backend: not checked or disconnected."
         };
+    }
+
+    private void RenderHostHardwareSummary()
+    {
+        try
+        {
+            var hardware = WindowsHostHardwareDiscovery.Discover();
+            const double gib = 1024d * 1024d * 1024d;
+            CpuStatus.Text = $"CPU: {hardware.ProcessorName}; {hardware.LogicalProcessorCount} logical processors available to this process.";
+            MemoryStatus.Text = $"Physical memory: {(hardware.AvailablePhysicalMemoryBytes / gib).ToString("F2", CultureInfo.InvariantCulture)} GiB available of {(hardware.TotalPhysicalMemoryBytes / gib).ToString("F2", CultureInfo.InvariantCulture)} GiB total.";
+        }
+        catch (Exception)
+        {
+            CpuStatus.Text = "CPU: processor details could not be verified.";
+            MemoryStatus.Text = "Physical memory: live measurements are unavailable.";
+        }
     }
 
     private void RenderDisplayAdapters()

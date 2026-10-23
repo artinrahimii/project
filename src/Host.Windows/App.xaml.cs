@@ -44,6 +44,8 @@ public partial class App : System.Windows.Application
                     window.FindName("OutputText") is not TextBox ||
                     window.FindName("GenerateButton") is not Button ||
                     window.FindName("GpuStatus") is not TextBlock ||
+                    window.FindName("CpuStatus") is not TextBlock ||
+                    window.FindName("MemoryStatus") is not TextBlock ||
                     window.FindName("BackendCapabilityStatus") is not TextBlock)
                 {
                     Shutdown(2);
@@ -61,8 +63,11 @@ public partial class App : System.Windows.Application
                 var hardware = WindowsHostHardwareDiscovery.Discover();
                 if (string.IsNullOrWhiteSpace(hardware.OperatingSystemDescription) ||
                     hardware.OperatingSystemVersion.Major < 1 ||
+                    string.IsNullOrWhiteSpace(hardware.ProcessorName) ||
+                    hardware.LogicalProcessorCount <= 0 ||
                     string.IsNullOrWhiteSpace(hardware.SystemDriveName) ||
                     hardware.TotalPhysicalMemoryBytes == 0 ||
+                    hardware.AvailablePhysicalMemoryBytes > hardware.TotalPhysicalMemoryBytes ||
                     hardware.SystemDriveTotalBytes <= 0 ||
                     hardware.SystemDriveAvailableBytes < 0 ||
                     hardware.SystemDriveAvailableBytes > hardware.SystemDriveTotalBytes)

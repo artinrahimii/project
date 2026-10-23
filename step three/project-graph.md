@@ -9262,20 +9262,49 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0054 و T0048 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
-      "expected_output_paths": [
-        "src/Host.Windows/ (سرویس تشخیص سخت‌افزار و UI)"
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "src/Host.Windows/WindowsHostHardwareDiscovery.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "src/Host.Windows/MainWindow.xaml",
+        "src/Host.Windows/App.xaml.cs",
+        "tests/test_windows_hardware_discovery.py",
+        "tests/test_wpf_entrypoint.py",
+        "step three/T0055/execution-report.md",
+        "step three/T0055/evidence/verification.md"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "expected_output_paths": [
+        "src/Host.Windows/WindowsHostHardwareDiscovery.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "src/Host.Windows/MainWindow.xaml"
+      ],
+      "evidence": [
+        "src/Host.Windows/WindowsHostHardwareDiscovery.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "src/Host.Windows/MainWindow.xaml",
+        "src/Host.Windows/App.xaml.cs",
+        "tests/test_windows_hardware_discovery.py",
+        "tests/test_wpf_entrypoint.py",
+        "step three/T0055/execution-report.md",
+        "step three/T0055/evidence/verification.md"
+      ],
+      "notes": "CPU model name is read from the Windows processor registry with a safe fallback; logical processor count from Environment.ProcessorCount; physical RAM from GlobalMemoryStatusEx; display-adapter inventory from EnumDisplayDevicesW. Display-adapter presence does not prove GPU compute/VRAM support.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0055-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Host.Windows/WindowsHostHardwareDiscovery.cs",
+          "src/Host.Windows/MainWindow.xaml.cs",
+          "src/Host.Windows/MainWindow.xaml",
+          "src/Host.Windows/App.xaml.cs",
+          "tests/test_windows_hardware_discovery.py",
+          "tests/test_wpf_entrypoint.py",
+          "step three/T0055/execution-report.md",
+          "step three/T0055/evidence/verification.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
@@ -9288,7 +9317,32 @@
           "review_evidence": []
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0055-A001",
+          "started_at": "2026-10-23T13:09:28.868Z",
+          "ended_at": "2026-10-23T13:09:28.868Z",
+          "result": "partial",
+          "summary": "Reviewed both incoming edges against current code and predecessor evidence, retaining blocks links as validated sequencing-only relationships. Added real CPU name/logical-processor discovery and WPF readouts for CPU and physical RAM; GPU/display inventory is explicitly not a compute/VRAM claim. Exact-commit CI is pending.",
+          "changed_files": [
+            "src/Host.Windows/WindowsHostHardwareDiscovery.cs",
+            "src/Host.Windows/MainWindow.xaml.cs",
+            "src/Host.Windows/MainWindow.xaml",
+            "src/Host.Windows/App.xaml.cs",
+            "tests/test_windows_hardware_discovery.py",
+            "tests/test_wpf_entrypoint.py",
+            "step three/T0055/execution-report.md",
+            "step three/T0055/evidence/verification.md"
+          ],
+          "commit_sha": null,
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect Python/graph quality, C# lifecycle, Windows WPF build/startup smoke and Android product jobs for the exact implementation commit."
+        }
+      ]
     },
     {
       "id": "T0056",
@@ -18332,19 +18386,29 @@
       "from": "T0054",
       "to": "T0055",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0055 presents WindowsHostHardwareDiscovery output in the same WPF status panel but does not consume a readiness-evaluator contract from T0054. Retain blocks only as conservative sequencing because both touch the same discovery/UI surface.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/WindowsHostHardwareDiscovery.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "src/Host.Application/HostReadinessEvaluator.cs",
+        "step three/T0054/evidence/verification.md"
+      ]
     },
     {
       "from": "T0048",
       "to": "T0055",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0055 reads processor/display/memory measurements and does not consume T0048 startup-recovery or shutdown behavior. Retain blocks solely as conservative order, not a technical contract.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Application/HostInferenceSession.cs",
+        "src/Host.Domain/HostLifecycle.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0048/evidence/verification.md"
+      ]
     },
     {
       "from": "T0055",
@@ -22242,8 +22306,38 @@
         "step three/T0048/evidence/verification.md"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-23T13:09:28.868Z",
+      "edge_from": "T0054",
+      "edge_to": "T0055",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "reason": "T0055 presents WindowsHostHardwareDiscovery output in the same WPF status panel but does not consume a readiness-evaluator contract from T0054. Retain blocks only as conservative sequencing because both touch the same discovery/UI surface.",
+      "evidence": [
+        "src/Host.Windows/WindowsHostHardwareDiscovery.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "src/Host.Application/HostReadinessEvaluator.cs",
+        "step three/T0054/evidence/verification.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-23T13:09:28.868Z",
+      "edge_from": "T0048",
+      "edge_to": "T0055",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "reason": "T0055 reads processor/display/memory measurements and does not consume T0048 startup-recovery or shutdown behavior. Retain blocks solely as conservative order, not a technical contract.",
+      "evidence": [
+        "src/Host.Application/HostInferenceSession.cs",
+        "src/Host.Domain/HostLifecycle.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0048/evidence/verification.md"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-23T12:58:10Z"
+  "updated_at": "2026-10-23T13:09:28.868Z"
 }
 ```

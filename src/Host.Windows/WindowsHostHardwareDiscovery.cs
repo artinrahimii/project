@@ -1,12 +1,15 @@
 using System.ComponentModel;
 using System.IO;
 using System.Runtime.InteropServices;
+using Microsoft.Win32;
 
 namespace WhiteP.Host.Windows;
 
 public sealed record WindowsHostHardwareSnapshot(
     string OperatingSystemDescription,
     Version OperatingSystemVersion,
+    string ProcessorName,
+    int LogicalProcessorCount,
     string SystemDriveName,
     ulong TotalPhysicalMemoryBytes,
     ulong AvailablePhysicalMemoryBytes,
@@ -49,6 +52,13 @@ public static class WindowsHostHardwareDiscovery
             throw new InvalidOperationException("Windows operating system information is unavailable.");
         }
 
+        var processorName = DiscoverProcessorName();
+        var logicalProcessorCount = Environment.ProcessorCount;
+        if (logicalProcessorCount <= 0)
+        {
+            throw new InvalidOperationException("Windows returned an invalid logical processor count.");
+        }
+
         var memoryStatus = new MemoryStatusEx
         {
             Length = checked((uint)Marshal.SizeOf<MemoryStatusEx>())
@@ -58,9 +68,9 @@ public static class WindowsHostHardwareDiscovery
             throw new Win32Exception(Marshal.GetLastWin32Error(), "Windows could not report physical memory.");
         }
 
-        if (memoryStatus.TotalPhysical == 0)
+        if (memoryStatus.TotalPhysical == 0 || memoryStatus.AvailablePhysical > memoryStatus.TotalPhysical)
         {
-            throw new InvalidOperationException("Windows returned an invalid total physical memory value.");
+            throw new InvalidOperationException("Windows returned invalid physical memory measurements.");
         }
 
         var windowsDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Windows);
@@ -88,11 +98,24 @@ public static class WindowsHostHardwareDiscovery
         return new WindowsHostHardwareSnapshot(
             operatingSystemDescription,
             operatingSystemVersion,
+            processorName,
+            logicalProcessorCount,
             systemDrive.Name,
             memoryStatus.TotalPhysical,
             memoryStatus.AvailablePhysical,
             totalSystemDriveBytes,
             availableSystemDriveBytes);
+    }
+
+    private static string DiscoverProcessorName()
+    {
+        try
+        {
+            using var key = Registry.LocalMachine.OpenSubKey(@"HARDWARE\DESCRIPTION\System\CentralProcessor\0", writable: false);
+            var name = key?.GetValue("ProcessorNameString") as string;
+            return string.IsNullOrWhiteSpace(name) ? "Processor name unavailable" : name.Trim();
+        }
+        catch (Exception) { return "Processor name unavailable"; }
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
