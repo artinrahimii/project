@@ -48,6 +48,20 @@ public partial class App : System.Windows.Application
                     return;
                 }
 
+                // This runs on a real Windows CI host and verifies the OS, RAM and system-drive APIs.
+                var hardware = WindowsHostHardwareDiscovery.Discover();
+                if (string.IsNullOrWhiteSpace(hardware.OperatingSystemDescription) ||
+                    hardware.OperatingSystemVersion.Major < 1 ||
+                    string.IsNullOrWhiteSpace(hardware.SystemDriveName) ||
+                    hardware.TotalPhysicalMemoryBytes == 0 ||
+                    hardware.SystemDriveTotalBytes <= 0 ||
+                    hardware.SystemDriveAvailableBytes < 0 ||
+                    hardware.SystemDriveAvailableBytes > hardware.SystemDriveTotalBytes)
+                {
+                    Shutdown(3);
+                    return;
+                }
+
                 window.Close();
                 Shutdown(0);
             }

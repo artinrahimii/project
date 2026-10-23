@@ -8256,20 +8256,38 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0048 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال انجام",
+      "actual_output_paths": [
+        "src/Host.Windows/WindowsHostHardwareDiscovery.cs",
+        "src/Host.Windows/App.xaml.cs",
+        "tests/test_windows_hardware_discovery.py",
+        "step three/T0049/execution-report.md",
+        "step three/T0049/evidence/verification.md"
+      ],
       "expected_output_paths": [
         "src/Host.Windows/ (سرویس تشخیص سخت‌افزار و UI)"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "step three/T0049/execution-report.md",
+        "step three/T0049/evidence/verification.md",
+        "src/Host.Windows/WindowsHostHardwareDiscovery.cs",
+        "tests/test_windows_hardware_discovery.py"
+      ],
+      "notes": "Attempt T0049-A001 adds native Windows OS/RAM/system-drive discovery and invokes it from the real Windows WPF smoke test. Exact-commit CI is required before completion.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0049-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Host.Windows/WindowsHostHardwareDiscovery.cs",
+          "src/Host.Windows/App.xaml.cs",
+          "tests/test_windows_hardware_discovery.py",
+          "step three/T0049/execution-report.md",
+          "step three/T0049/evidence/verification.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
@@ -8282,7 +8300,30 @@
           "review_evidence": []
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0049-A001",
+          "started_at": "2026-10-23T10:29:57.573Z",
+          "ended_at": "2026-10-23T10:29:57.573Z",
+          "result": "partial",
+          "summary": "Implemented native Windows OS/RAM/system-drive discovery, wired the service into the real WPF startup smoke test, and added Python contract tests. The relevant edge was reviewed and retained as sequencing-only. Exact-commit CI is pending.",
+          "changed_files": [
+            "src/Host.Windows/WindowsHostHardwareDiscovery.cs",
+            "src/Host.Windows/App.xaml.cs",
+            "tests/test_windows_hardware_discovery.py",
+            "step three/T0049/execution-report.md",
+            "step three/T0049/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Run and inspect the quality gate, Windows WPF Release/runtime smoke test, C# lifecycle tests and Android build for the exact implementation commit. Fix observed failures and preserve this attempt's history."
+        }
+      ]
     },
     {
       "id": "T0050",
@@ -17451,10 +17492,15 @@
       "from": "T0048",
       "to": "T0049",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0049 discovers Windows OS, physical RAM and system-drive capacity. It does not consume a lifecycle/recovery artifact produced by T0048; retain the blocks edge as conservative execution order only.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Application/HostInferenceSession.cs",
+        "src/Host.Windows/WindowsHostHardwareDiscovery.cs",
+        "step three/T0048/execution-report.md",
+        "step three/T0049/execution-report.md"
+      ]
     },
     {
       "from": "T0049",
@@ -21318,8 +21364,23 @@
         "step three/T0040/execution-report.md"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-23T10:29:57.573Z",
+      "edge_from": "T0048",
+      "edge_to": "T0049",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "reason": "T0049 discovers Windows OS, physical RAM and system-drive capacity. It does not consume a lifecycle/recovery artifact produced by T0048; retain the blocks edge as conservative execution order only.",
+      "evidence": [
+        "src/Host.Application/HostInferenceSession.cs",
+        "src/Host.Windows/WindowsHostHardwareDiscovery.cs",
+        "step three/T0048/execution-report.md",
+        "step three/T0049/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-23T10:26:05.273Z"
+  "updated_at": "2026-10-23T10:29:57.573Z"
 }
 ```
