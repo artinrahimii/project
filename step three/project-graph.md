@@ -7365,11 +7365,12 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0043 و T0040 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "تکمیل‌شده",
       "actual_output_paths": [
         "src/Host.Domain/HostLifecycle.cs",
         "tests/HostLifecycle.Tests/Program.cs",
+        "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
         "step three/T0044/execution-report.md",
         "step three/T0044/evidence/verification.md"
       ],
@@ -7379,27 +7380,58 @@
       "evidence": [
         "src/Host.Domain/HostLifecycle.cs",
         "tests/HostLifecycle.Tests/Program.cs",
-        "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj"
+        "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+        "step three/T0044/execution-report.md",
+        "step three/T0044/evidence/verification.md",
+        "https://github.com/artinrahimii/project/actions/runs/39912424198",
+        "https://github.com/artinrahimii/project/actions/runs/39912424256"
       ],
-      "notes": "The implementation belongs to Host.Domain after the T0042 assembly split; the graph's old src/Host.Windows expected path is stale. This task adds exhaustive transition-matrix regression assertions rather than duplicating the existing production state machine.",
+      "notes": "The production state machine is in Host.Domain after the T0042 assembly split; the old expected src/Host.Windows path is stale. Exhaustive transition-matrix regression assertions were run in CI. All permitted transitions are accepted, forbidden transitions are rejected, and rejected transitions preserve the current state.",
       "execution_summary": {
         "attempt_count": 1,
         "failed_attempt_count": 0,
         "last_attempt_id": "T0044-A001",
-        "last_attempt_result": "in_progress",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "tests/HostLifecycle.Tests/Program.cs",
           "step three/T0044/execution-report.md",
           "step three/T0044/evidence/verification.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
+        "related_commits": [
+          "4b893f86fd6bc69e2d8f938fc70f8c3483dc30ad"
+        ],
+        "tests_passed": [
+          {
+            "name": "Host lifecycle unit and integration tests (transition matrix)",
+            "result": "passed",
+            "evidence": "https://github.com/artinrahimii/project/actions/runs/39912424198",
+            "summary": "Exact implementation commit 4b893f8 passed the Host lifecycle test job, including the exhaustive permitted/forbidden transition matrix and no-mutation assertions for rejected transitions."
+          },
+          {
+            "name": "Windows WPF host build and startup smoke test",
+            "result": "passed",
+            "evidence": "https://github.com/artinrahimii/project/actions/runs/39912424198",
+            "summary": "The Windows host build, generated C# Protobuf checks, startup smoke test and artifact upload all passed on the exact implementation commit."
+          },
+          {
+            "name": "Android debug APK and Protobuf checks",
+            "result": "passed",
+            "evidence": "https://github.com/artinrahimii/project/actions/runs/39912424198",
+            "summary": "The Android debug APK build, Kotlin formatting/lint, Protobuf round-trip tests, generated-source checks and artifact upload passed on the exact implementation commit."
+          },
+          {
+            "name": "Step Three quality gate",
+            "result": "passed",
+            "evidence": "https://github.com/artinrahimii/project/actions/runs/39912424256",
+            "summary": "The graph validator, repository evidence validation, Python tests and syntax checks passed on the exact implementation commit."
+          }
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "in_progress",
+          "state": "passed",
           "triggering_contracts": [
             "HostLifecycle transition matrix"
           ],
@@ -7409,7 +7441,9 @@
           ],
           "review_evidence": [
             "src/Host.Domain/HostLifecycle.cs",
-            "tests/HostLifecycle.Tests/Program.cs"
+            "tests/HostLifecycle.Tests/Program.cs",
+            "https://github.com/artinrahimii/project/actions/runs/39912424198",
+            "https://github.com/artinrahimii/project/actions/runs/39912424256"
           ]
         }
       },
@@ -7417,19 +7451,44 @@
         {
           "attempt_id": "T0044-A001",
           "started_at": "2026-10-23T10:00:00Z",
-          "ended_at": null,
-          "result": "in_progress",
-          "commit_sha": null,
-          "summary": "Reviewed incoming dependency evidence and added exhaustive transition-matrix tests. Exact-commit CI validation is pending.",
+          "ended_at": "2026-10-23T10:07:00Z",
+          "result": "succeeded",
+          "commit_sha": "4b893f86fd6bc69e2d8f938fc70f8c3483dc30ad",
+          "summary": "Added exhaustive transition-matrix regression assertions and validated the exact implementation revision in CI. Product build and Step Three quality gate both passed.",
           "changed_files": [
             "tests/HostLifecycle.Tests/Program.cs",
             "step three/T0044/execution-report.md",
             "step three/T0044/evidence/verification.md",
             "step three/project-graph.md"
           ],
-          "tests": [],
+          "tests": [
+            {
+              "name": "Host lifecycle unit and integration tests (transition matrix)",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39912424198",
+              "summary": "Exact implementation commit 4b893f8 passed the Host lifecycle test job, including the exhaustive permitted/forbidden transition matrix and no-mutation assertions for rejected transitions."
+            },
+            {
+              "name": "Windows WPF host build and startup smoke test",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39912424198",
+              "summary": "The Windows host build, generated C# Protobuf checks, startup smoke test and artifact upload all passed on the exact implementation commit."
+            },
+            {
+              "name": "Android debug APK and Protobuf checks",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39912424198",
+              "summary": "The Android debug APK build, Kotlin formatting/lint, Protobuf round-trip tests, generated-source checks and artifact upload passed on the exact implementation commit."
+            },
+            {
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39912424256",
+              "summary": "The graph validator, repository evidence validation, Python tests and syntax checks passed on the exact implementation commit."
+            }
+          ],
           "failure_details": null,
-          "follow_up": "Accept only after the exact-commit product and quality workflows pass."
+          "follow_up": "Proceed to T0045 after rechecking its dependencies and acceptance criteria."
         }
       ]
     },
@@ -20587,6 +20646,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-23T06:24:02Z"
+  "updated_at": "2026-10-23T10:07:00Z"
 }
 ```
