@@ -8472,11 +8472,11 @@
         "tests/test_windows_hardware_discovery.py",
         "tests/test_wpf_entrypoint.py"
       ],
-      "notes": "In progress; real Windows display adapter enumeration, backend health state UI, exact-commit CI pending. Display adapters do not prove CUDA/Vulkan/compute capability.",
+      "notes": "In progress. First quality gate exposed unsupported graph class 'technical'; corrected to supported contract_or_interface_dependency. Await revalidation and product build. Display adapter inventory does not imply compute support.",
       "execution_summary": {
-        "attempt_count": 1,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "T0050-A001",
+        "attempt_count": 2,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "T0050-A002",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Host.Windows/WindowsHostHardwareDiscovery.cs",
@@ -8491,7 +8491,9 @@
         ],
         "related_commits": [],
         "tests_passed": [],
-        "tests_failed": [],
+        "tests_failed": [
+          "Step Three quality gate run 39943630991 failed graph validation: INVALID_EDGE_CLASSIFICATION for T0049 → T0050 because 'technical' is not an allowed graph class. No conclusion about Windows C# build can be drawn from this failure. Corrected to supported contract_or_interface_dependency in this revision."
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -8526,6 +8528,47 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Run exact-commit quality gate and all product CI checks before marking done."
+        },
+        {
+          "attempt_id": "T0050-A002",
+          "started_at": "2026-10-23T11:05:32Z",
+          "ended_at": "2026-10-23T11:06:59.281Z",
+          "result": "failed",
+          "summary": "The quality gate rejected the graph edge class 'technical' as unsupported. The Python test suite completed before graph validation; this failure is a graph metadata validation failure, not a product build result.",
+          "changed_files": [
+            "step three/project-graph.md"
+          ],
+          "commit_sha": "9e1825c34615ede3aed7eafb655f9ff91960b77b",
+          "tests": [
+            {
+              "name": "Step Three graph validation",
+              "result": "failed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39943630991",
+              "summary": "graph_guard.py reported INVALID_EDGE_CLASSIFICATION: T0049 -> T0050: unsupported class."
+            }
+          ],
+          "failure_details": "Allowed graph classes are hard_dependency, contract_or_interface_dependency, sequencing_only, and unreviewed. The value technical was invalid.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Use contract_or_interface_dependency for T0049 → T0050 and rerun exact-commit quality gate; inspect product workflow result."
+        },
+        {
+          "attempt_id": "T0050-A003",
+          "started_at": "2026-10-23T11:06:59.281Z",
+          "ended_at": "2026-10-23T11:06:59.281Z",
+          "result": "partial",
+          "summary": "Corrected T0049 → T0050 edge classification to the graph guard's supported contract_or_interface_dependency value. Verification pending on this revision.",
+          "changed_files": [
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Run graph guard, evidence validation and inspect product CI before marking T0050 done."
         }
       ]
     },
@@ -17665,8 +17708,8 @@
       "from": "T0049",
       "to": "T0050",
       "type": "blocks",
-      "dependency_classification": "technical",
-      "rationale": "T0050 extends the Windows-specific hardware discovery service established by T0049; retain blocks edge.",
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0050 extends the Windows hardware discovery service introduced by T0049 and consumes that service boundary; retain the existing blocks edge.",
       "validation_status": "validated",
       "evidence": [
         "src/Host.Windows/WindowsHostHardwareDiscovery.cs",
@@ -21574,8 +21617,21 @@
         "step three/T0049/execution-report.md"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-23T11:06:59.281Z",
+      "edge_from": "T0049",
+      "edge_to": "T0050",
+      "old_classification": "technical",
+      "new_classification": "contract_or_interface_dependency",
+      "reason": "The graph guard only permits hard_dependency, contract_or_interface_dependency, sequencing_only, or unreviewed. The service interface dependency is therefore recorded using the supported contract_or_interface_dependency classification.",
+      "evidence": [
+        "src/Host.Windows/WindowsHostHardwareDiscovery.cs",
+        "step three/T0049/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-23T11:04:58.932Z"
+  "updated_at": "2026-10-23T11:06:59.281Z"
 }
 ```
