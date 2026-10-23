@@ -9566,23 +9566,25 @@
         "step three/T0057/execution-report.md",
         "step three/T0057/evidence/contract-verification.md"
       ],
-      "notes": "IInferenceEngine در لایهٔ Host.Application قرار گرفته است، نه مسیر اولیهٔ src/Host.Windows/Inference؛ چون لایهٔ Infrastructure باید این abstraction را پیاده‌سازی کند و مجاز به ارجاع معکوس به UI نیست. یال ورودی T0056→T0057 به‌عنوان sequencing_only بررسی شد و یال T0057→T0058 به‌عنوان contract_or_interface_dependency؛ هر دو با type=blocks حفظ شدند. آزمون محلی اجرا نشده و تکمیل وظیفه تا تأیید CI معلق است.",
+      "notes": "IInferenceEngine در لایهٔ Host.Application قرار گرفته است، نه مسیر اولیهٔ src/Host.Windows/Inference؛ چون لایهٔ Infrastructure باید این abstraction را پیاده‌سازی کند و مجاز به ارجاع معکوس به UI نیست. یال ورودی T0056→T0057 به‌عنوان sequencing_only بررسی شد و یال T0057→T0058 به‌عنوان contract_or_interface_dependency؛ هر دو با type=blocks حفظ شدند. آزمون محلی اجرا نشده و تکمیل وظیفه تا تأیید CI معلق است. تلاش اول T0057-A001 در CI کامپایل نشد: CS0103 برای Require در InferenceEngineContractTests.cs خط 8. T0057-A002 دسترسی آزمون را اصلاح می‌کند؛ تا اجرای دوباره و مشاهدهٔ نتیجهٔ دقیق همان commit، وضعیت تکمیل نمی‌شود.",
       "execution_summary": {
-        "attempt_count": 1,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "T0057-A001",
+        "attempt_count": 2,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "T0057-A002",
         "last_attempt_result": "partial",
         "changed_files": [
-          "src/Host.Application/Inference/IInferenceEngine.cs",
           "tests/HostLifecycle.Tests/InferenceEngineContractTests.cs",
-          "tests/HostLifecycle.Tests/Program.cs",
           "step three/T0057/execution-report.md",
           "step three/T0057/evidence/contract-verification.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
+        "related_commits": [
+          "6046193446183ba1298079e223b66f8813c89e00"
+        ],
         "tests_passed": [],
-        "tests_failed": [],
+        "tests_failed": [
+          "Host lifecycle unit/integration tests failed on 6046193446183ba1298079e223b66f8813c89e00: CS0103 (Require is not available from InferenceEngineContractTests.cs); https://github.com/artinrahimii/project/actions/runs/39967342302/job/120460555222"
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -9596,9 +9598,9 @@
         {
           "attempt_id": "T0057-A001",
           "started_at": "2026-10-23T14:02:00.000Z",
-          "ended_at": "2026-10-23T14:09:53.571Z",
-          "result": "partial",
-          "summary": "Added the application-layer IInferenceEngine contract and a reflection regression check. Reviewed T0056→T0057 as sequencing-only and T0057→T0058 as a contract/interface dependency, preserving both original blocks edge types. Exact-commit CI is pending; no production engine or live inference is claimed.",
+          "ended_at": "2026-10-23T14:10:48.000Z",
+          "result": "failed",
+          "summary": "Added IInferenceEngine and a reflection contract test; the first exact-commit CI run failed to compile the new test because it referenced an inaccessible top-level local function. No application acceptance test was reached.",
           "changed_files": [
             "src/Host.Application/Inference/IInferenceEngine.cs",
             "tests/HostLifecycle.Tests/InferenceEngineContractTests.cs",
@@ -9607,7 +9609,7 @@
             "step three/T0057/evidence/contract-verification.md",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "6046193446183ba1298079e223b66f8813c89e00",
           "tests": [
             {
               "name": "Local .NET host harness",
@@ -9616,19 +9618,64 @@
               "summary": "A local checkout and dotnet CLI were not available through the connected GitHub interface; no local pass is claimed."
             },
             {
-              "name": "Exact-commit GitHub Actions",
-              "result": "pending",
-              "evidence": "step three/T0057/evidence/contract-verification.md",
-              "summary": "Inspect after publishing this implementation commit; only a verified exact-commit pass can complete T0057."
+              "name": "Host lifecycle unit and integration tests",
+              "result": "failed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39967342302/job/120460555222",
+              "summary": "Failed on exact commit 6046193446183ba1298079e223b66f8813c89e00: CS0103, Require does not exist in current context in InferenceEngineContractTests.cs line 8."
             }
           ],
-          "failure_details": null,
+          "failure_details": "CS0103 in tests/HostLifecycle.Tests/InferenceEngineContractTests.cs: Require is a top-level local function defined in Program.cs and cannot be referenced from a separate class.",
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [
             "Introduced the IInferenceEngine application-layer contract."
           ],
-          "follow_up": "Inspect the exact implementation commit's quality gate and all product-build jobs. Only append a successful verification attempt and mark T0057 done after the exact-commit checks pass."
+          "follow_up": "Replace inaccessible Require usage with a local guard, commit a corrective attempt, then re-run host lifecycle tests and inspect Windows/Android build results before considering T0057 complete."
+        },
+        {
+          "attempt_id": "T0057-A002",
+          "started_at": "2026-10-23T14:14:08.221Z",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Corrected the contract test to use an explicit local guard rather than referencing the top-level Program.cs local function Require. Corrective commit queued for new exact-commit CI; no test pass is claimed yet.",
+          "changed_files": [
+            "tests/HostLifecycle.Tests/InferenceEngineContractTests.cs",
+            "step three/T0057/execution-report.md",
+            "step three/T0057/evidence/contract-verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Host lifecycle unit and integration tests",
+              "result": "pending",
+              "evidence": "https://github.com/artinrahimii/project/actions",
+              "summary": "Re-run on the corrective commit; the previous attempt failed compilation with CS0103."
+            },
+            {
+              "name": "Windows WPF build and startup smoke",
+              "result": "pending",
+              "evidence": "https://github.com/artinrahimii/project/actions",
+              "summary": "The prior run was still in progress; verify the new exact-commit result."
+            },
+            {
+              "name": "Android debug APK and Protobuf",
+              "result": "pending",
+              "evidence": "https://github.com/artinrahimii/project/actions",
+              "summary": "The prior run was still in progress; verify the new exact-commit result."
+            },
+            {
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39967342312",
+              "summary": "The graph/Python quality gate passed on the prior implementation commit; it must run against this corrective commit too."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect every workflow/job for this corrective commit. Update the attempt and mark T0057 done only if required checks pass; fix any subsequent failures."
         }
       ]
     },
@@ -22621,6 +22668,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-23T14:09:53.571Z"
+  "updated_at": "2026-10-23T14:14:08.221Z"
 }
 ```

@@ -2,29 +2,30 @@
 
 ## Attempt T0057-A001 — establish the inference-engine contract
 
-- **Status:** partial; exact-commit GitHub Actions verification is pending.
-- **Start:** 2026-10-23T14:02:00.000Z
-- **Implementation prepared:** 2026-10-23T14:09:53.571Z
-- **Branch/base inspected:** `main` at `9b91b5b35396dab4a6106fb84f1cf33f2a1784d5` (`V 3.0.174`).
-- **Graph integrity:** 229 unique task IDs, 426 dependency edges, valid JSON; no duplicate task IDs or unresolved task-ID dependencies were found.
+- **Final result:** failed during exact-commit host test compilation; no acceptance tests ran.
+- **Implementation commit:** [`6046193446183ba1298079e223b66f8813c89e00`](https://github.com/artinrahimii/project/commit/6046193446183ba1298079e223b66f8813c89e00) (`V 3.0.175`).
+- **CI failure:** [Host lifecycle unit and integration tests](`https://github.com/artinrahimii/project/actions/runs/39967342302/job/120460555222`) — failed with `CS0103: The name 'Require' does not exist in the current context` at `InferenceEngineContractTests.cs:8`. The function was a top-level local function in `Program.cs`, so a separate class could not access it.
+- **Graph integrity:** 229 unique task IDs and 426 dependency edges; the graph JSON and advertised Blob ID were validated before changes.
 
-## Dependency review before implementation
+## Dependency review
 
-- `T0056 → T0057`: retained the existing `type: blocks` edge but classified it as `sequencing_only` and `validated`. T0056's capacity display and lifecycle gate are not a consumed interface required to define IInferenceEngine; preserving this edge remains a conservative execution order.
-- `T0057 → T0058`: retained `type: blocks`, classified it as `contract_or_interface_dependency` and `validated`. T0058 is explicitly the LlamaCppInferenceEngine implementation; it needs the contract introduced by this task.
-- No other edges were changed. In particular, the other outgoing edges from T0056 remain unreviewed.
+- `T0056 → T0057`: the existing `type: blocks` edge is retained and classified `sequencing_only`, validated. The capacity display and lifecycle guard do not provide a consumed interface for defining IInferenceEngine.
+- `T0057 → T0058`: existing `type: blocks` retained and classified `contract_or_interface_dependency`, validated. T0058 implements the backend contract introduced here.
+- Other edges were not changed.
 
 ## Implementation
 
-- Added `src/Host.Application/Inference/IInferenceEngine.cs`.
-- The interface exposes actual backend discovery, model load/select, cancellable generation, explicit cancellation, model unload, and asynchronous resource disposal.
-- Added `tests/HostLifecycle.Tests/InferenceEngineContractTests.cs` and wired it into the existing host lifecycle console harness.
-- **Architecture/path discrepancy:** the graph's initial expected path was `src/Host.Windows/Inference/`. The interface is placed in `src/Host.Application/Inference/` instead because `Host.Infrastructure` must implement the interface and already references `Host.Application`; putting the interface in the Windows UI project would create an invalid reverse project dependency. The graph's expected/actual paths were adjusted with this rationale recorded here.
+- Added `src/Host.Application/Inference/IInferenceEngine.cs` for discovery, model selection/loading, cancellable text generation, explicit cancellation, unloading, and asynchronous resource disposal.
+- Added `tests/HostLifecycle.Tests/InferenceEngineContractTests.cs`.
+- The interface lives in `src/Host.Application/Inference/` instead of the graph's initial `src/Host.Windows/Inference/` path. The Infrastructure project references Application and must implement this contract; placing the interface in the Windows UI layer would invert the production dependency direction.
 
-## Verification and limits
+## Attempt T0057-A002 — fix the failing test
 
-- The graph JSON was retrieved from the exact commit's Blob ID and parsed completely. Its returned content's Git blob hash matches `351950132da3fa8e4f36b703c16c64cad004ec84`.
-- The contract regression test is added but **has not been run locally in this session**; a local repository checkout and .NET CLI were not available through the connected GitHub interface.
-- GitHub Actions for the implementation commit must be inspected before T0057 can be marked `done`. No passing test or working production adapter is inferred merely from the new interface.
-- This task does not implement the llama.cpp engine or prove live-model inference. Those belong to subsequent tasks, beginning with T0058.
-- **Follow-up:** inspect the exact implementation commit's quality gate and product build jobs, then append a verification attempt and mark T0057 done only if those checks pass.
+- **Start:** 2026-10-23T14:14:08.221Z
+- Replaced the inaccessible `Require` call with an explicit local guard that throws when `IInferenceEngine` does not implement `IAsyncDisposable`.
+- Recorded A001's compiler failure and linked the exact failed CI job in the graph history.
+- **Status:** correction committed separately as `V 3.0.176`; exact-commit CI is pending. No test pass is claimed until the new workflow results are inspected.
+
+## Limits
+
+The local .NET harness was not available in the connector execution environment. CI is the executable verification route. This task introduces an abstraction and contract test only; it does not implement a llama.cpp engine or prove live-model inference.

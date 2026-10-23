@@ -5,8 +5,10 @@ internal static class InferenceEngineContractTests
     public static void Run()
     {
         var contract = typeof(IInferenceEngine);
-        Require(typeof(IAsyncDisposable).IsAssignableFrom(contract),
-            "IInferenceEngine must expose asynchronous resource disposal.");
+        if (!typeof(IAsyncDisposable).IsAssignableFrom(contract))
+        {
+            throw new Exception("IInferenceEngine must expose asynchronous resource disposal.");
+        }
 
         RequireMethod(nameof(IInferenceEngine.DiscoverAsync),
             typeof(Task<InferenceEngineDiscoveryResult>), typeof(CancellationToken));
