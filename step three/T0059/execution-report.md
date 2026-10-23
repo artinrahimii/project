@@ -60,3 +60,13 @@ Inspect the `V 3.0.180` workflows. If the quality gate, WPF Release build/startu
 - Reconciled T0058's stale `execution_summary` counter with its two existing execution-history entries. Both history entries remain intact; the summary now reflects them.
 - The full graph remains inside the required `json` Markdown fence so `tools/graph_guard.py` can read it. The embedded JSON parses to 229 tasks and 426 edges.
 - These fixes remain pending exact-commit CI. `T0059` is still `in_progress`; no successful C# acceptance run or live-model generation is claimed.
+
+
+## Attempt T0059-A003 — exact-commit verification succeeded
+
+- Implementation + correction commit: `9af9a44c0b808ab6eae6dd9d3df781968c6badf1` (`V 3.0.182`).
+- [Step Three quality gate run 40002719605](https://github.com/artinrahimii/project/actions/runs/40002719605) completed successfully, including automated tests, Python syntax compilation, graph structure and repository-backed output/evidence validation.
+- [Product build run 40002719620](https://github.com/artinrahimii/project/actions/runs/40002719620) completed successfully. The host lifecycle test job emitted: `PASS: managed process launch keeps argv separate, validates loopback and rejects unsafe values.` The Windows host job passed C# formatting, Release build, generated Protobuf checks, and the WPF entry-point startup smoke test. The Android job also passed its formatting/lint, APK build, Protobuf, generated-source, and artifact-upload steps.
+- The two earlier failed attempts remain in the graph and report. Their causes were fixed and the current exact-commit checks pass.
+- `T0059` is now recorded as `done`, based on its actual code output, the C# regression test, build/smoke evidence and the quality gate. This does **not** claim that a real `llama-server.exe` plus a real GGUF model was started or that real model text was generated in this environment; the live-model integration remains the purpose of downstream `T0064`.
+- Next graph task: `T0060` (real backend health check before advertising model readiness). Its incoming edges must be validated before implementation.

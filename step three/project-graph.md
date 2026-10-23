@@ -9829,8 +9829,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0058 و T0056 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال انجام",
+      "status": "done",
+      "status_fa": "تکمیل‌شده",
       "actual_output_paths": [
         "src/Host.Windows/Inference/LocalInferenceProcessLauncher.cs",
         "src/Host.Windows/MainWindow.xaml",
@@ -9849,12 +9849,12 @@
         "tests/HostLifecycle.Tests/LocalInferenceProcessLauncherTests.cs",
         "step three/T0059/execution-report.md"
       ],
-      "notes": "T0059-A001 and A002 both failed exact-commit CI and their failure evidence is preserved. A003 links the platform-independent launcher source into the existing portable harness, avoids reading ProcessStartInfo.Arguments when ArgumentList is used, and reconciles T0058's stale summary count with its retained two-entry history. Exact-commit revalidation remains pending.",
+      "notes": "T0059 completed after T0059-A003 passed exact-commit quality, graph/evidence, host lifecycle argument-construction tests, Windows WPF build/startup smoke, and Android product workflow. Earlier failed attempts A001/A002 remain preserved with diagnostics. Live llama-server plus real GGUF inference was not run and is not claimed; that remains a separate integration task.",
       "execution_summary": {
         "attempt_count": 3,
         "failed_attempt_count": 2,
         "last_attempt_id": "T0059-A003",
-        "last_attempt_result": "partial",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Host.Windows/Inference/LocalInferenceProcessLauncher.cs",
           "src/Host.Windows/MainWindow.xaml",
@@ -9869,18 +9869,18 @@
         ],
         "related_commits": [
           "9beb9234db60adad3e87da64f11b41c632f692a5",
-          "60fa66631b45eddaf3bd37a0897d502dc62bdc36"
+          "60fa66631b45eddaf3bd37a0897d502dc62bdc36",
+          "9af9a44c0b808ab6eae6dd9d3df781968c6badf1"
         ],
         "tests_passed": [
-          "GitHub Actions run 40001969597: Python unit tests and syntax compilation — passed (implementation acceptance still failed in other gates).",
-          "GitHub Actions run 40001969578: C# formatting — passed.",
-          "GitHub Actions run 40002334353: Windows WPF Release build, generated Protobuf checks, and startup smoke — passed."
+          "GitHub Actions quality run 40002719605: automated tests, Python syntax compilation, graph structure, and recorded outputs/evidence — success (https://github.com/artinrahimii/project/actions/runs/40002719605).",
+          "GitHub Actions product run 40002719620 / Host lifecycle unit and integration tests — success; emitted PASS: managed process launch keeps argv separate, validates loopback and rejects unsafe values (https://github.com/artinrahimii/project/actions/runs/40002719620).",
+          "GitHub Actions product run 40002719620 / Windows WPF host — C# formatting, Release build, generated Protobuf checks, and WPF startup smoke — success (https://github.com/artinrahimii/project/actions/runs/40002719620).",
+          "GitHub Actions product run 40002719620 / Android client — formatting/lint, debug APK build, Protobuf round-trip, generated-source check, artifact upload — success (https://github.com/artinrahimii/project/actions/runs/40002719620)."
         ],
         "tests_failed": [
-          "GitHub Actions run 40001969597: graph parser rejected raw JSON because graph_guard.py requires a fenced JSON object.",
-          "GitHub Actions run 40001969578: initial compile failure for NormalizeOptionalPath scope; fixed in V 3.0.181.",
-          "GitHub Actions run 40002334497: graph structural validation found T0058 attempt_count mismatch.",
-          "GitHub Actions run 40002334353: host lifecycle harness compile failed because the new Windows-namespace test source was not linked into the portable test project."
+          "T0059-A001 / V 3.0.180: graph fence missing and NormalizeOptionalPath placed in the wrong class; both fixed in later attempts.",
+          "T0059-A002 / V 3.0.181: T0058 summary/history count mismatch and the process-launcher test source was not linked into the portable test project; both fixed in T0059-A003."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -10002,38 +10002,47 @@
         {
           "attempt_id": "T0059-A003",
           "started_at": "2026-10-23T18:21:45.864Z",
-          "ended_at": "2026-10-23T18:21:45.864Z",
-          "result": "partial",
-          "summary": "Linked the actual launcher source into the portable host-lifecycle test project so it can exercise real ProcessStartInfo argument construction without referencing WPF; adjusted the assertion to verify ArgumentList count. Corrected the T0058 ledger count to match its two preserved history entries.",
+          "ended_at": "2026-10-23T18:25:40.259Z",
+          "result": "succeeded",
+          "summary": "Passed exact-commit quality/evidence validation, the C# host-lifecycle regression test for safe process argument construction/loopback, Windows Release build and startup smoke, and Android build/test workflow. Completion does not claim live inference with a real GGUF model.",
           "changed_files": [
             "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
             "tests/HostLifecycle.Tests/LocalInferenceProcessLauncherTests.cs",
             "step three/project-graph.md",
             "step three/T0059/execution-report.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "9af9a44c0b808ab6eae6dd9d3df781968c6badf1",
           "tests": [
             {
-              "command": "Source and ledger preflight",
+              "command": "Step Three quality gate",
               "result": "passed",
-              "summary": "The Compile Link path exists in the current source tree; T0058 attempt_count is reconciled with its two preserved history records."
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40002719605",
+              "summary": "Automated Python tests, syntax compilation, graph structure and recorded outputs/evidence all passed."
             },
             {
-              "command": "GitHub Actions quality gate on V 3.0.182",
-              "result": "pending",
-              "summary": "Must validate fenced graph and repository-backed evidence."
+              "command": "Host lifecycle unit and integration tests",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40002719620",
+              "summary": "Output included PASS: managed process launch keeps argv separate, validates loopback and rejects unsafe values."
             },
             {
-              "command": "GitHub Actions host lifecycle tests on V 3.0.182",
-              "result": "pending",
-              "summary": "Must compile and run LocalInferenceProcessLauncherTests.Run() in the portable harness."
+              "command": "Windows WPF host build and startup smoke",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40002719620",
+              "summary": "Formatting, Release build, generated Protobuf validation and real entry-point startup smoke passed."
+            },
+            {
+              "command": "Android product build",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40002719620",
+              "summary": "Formatting/lint, debug APK, Protobuf round-trip, generated sources and artifact upload passed."
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect the exact V 3.0.182 CI. Only close T0059 after graph/evidence gate, host lifecycle C# tests, Windows build/smoke, and other relevant CI jobs succeed."
+          "follow_up": "Next task is T0060. Before editing it, validate incoming edges T0059->T0060 and T0056->T0060 from actual code contracts; keep the existing conservative order until reviewed."
         }
       ]
     },
@@ -22980,6 +22989,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-23T18:21:45.864Z"
+  "updated_at": "2026-10-23T18:25:40.259Z"
 }
 ```
