@@ -9543,24 +9543,43 @@
         "نیازمندی مرتبط: رابط `IInferenceEngine` برای کشف backend، بارگذاری مدل، تولید پاسخ، لغو و آزادسازی منابع ایجاد کن."
       ],
       "outputs": [
-        "خروجی قابل بررسی مربوط به «رابط `IInferenceEngine` برای کشف backend، بارگذاری مدل، تولید پاسخ، لغو و آزادسازی منابع ایجاد کن.» در مسیر src/Host.Windows/Inference/؛ همراه با آزمون/شاهد پذیرش متناسب."
+        "خروجی قابل بررسی مربوط به رابط IInferenceEngine در مسیر src/Host.Application/Inference/IInferenceEngine.cs؛ همراه با آزمون قرارداد و شاهد پذیرش متناسب."
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0056 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
-      "expected_output_paths": [
-        "src/Host.Windows/Inference/"
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "src/Host.Application/Inference/IInferenceEngine.cs",
+        "tests/HostLifecycle.Tests/InferenceEngineContractTests.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0057/execution-report.md",
+        "step three/T0057/evidence/contract-verification.md",
+        "step three/project-graph.md"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "expected_output_paths": [
+        "src/Host.Application/Inference/IInferenceEngine.cs"
+      ],
+      "evidence": [
+        "src/Host.Application/Inference/IInferenceEngine.cs",
+        "tests/HostLifecycle.Tests/InferenceEngineContractTests.cs",
+        "step three/T0057/execution-report.md",
+        "step three/T0057/evidence/contract-verification.md"
+      ],
+      "notes": "IInferenceEngine در لایهٔ Host.Application قرار گرفته است، نه مسیر اولیهٔ src/Host.Windows/Inference؛ چون لایهٔ Infrastructure باید این abstraction را پیاده‌سازی کند و مجاز به ارجاع معکوس به UI نیست. یال ورودی T0056→T0057 به‌عنوان sequencing_only بررسی شد و یال T0057→T0058 به‌عنوان contract_or_interface_dependency؛ هر دو با type=blocks حفظ شدند. آزمون محلی اجرا نشده و تکمیل وظیفه تا تأیید CI معلق است.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0057-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Host.Application/Inference/IInferenceEngine.cs",
+          "tests/HostLifecycle.Tests/InferenceEngineContractTests.cs",
+          "tests/HostLifecycle.Tests/Program.cs",
+          "step three/T0057/execution-report.md",
+          "step three/T0057/evidence/contract-verification.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
@@ -9573,7 +9592,45 @@
           "review_evidence": []
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0057-A001",
+          "started_at": "2026-10-23T14:02:00.000Z",
+          "ended_at": "2026-10-23T14:09:53.571Z",
+          "result": "partial",
+          "summary": "Added the application-layer IInferenceEngine contract and a reflection regression check. Reviewed T0056→T0057 as sequencing-only and T0057→T0058 as a contract/interface dependency, preserving both original blocks edge types. Exact-commit CI is pending; no production engine or live inference is claimed.",
+          "changed_files": [
+            "src/Host.Application/Inference/IInferenceEngine.cs",
+            "tests/HostLifecycle.Tests/InferenceEngineContractTests.cs",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "step three/T0057/execution-report.md",
+            "step three/T0057/evidence/contract-verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Local .NET host harness",
+              "result": "not_run",
+              "evidence": "step three/T0057/evidence/contract-verification.md",
+              "summary": "A local checkout and dotnet CLI were not available through the connected GitHub interface; no local pass is claimed."
+            },
+            {
+              "name": "Exact-commit GitHub Actions",
+              "result": "pending",
+              "evidence": "step three/T0057/evidence/contract-verification.md",
+              "summary": "Inspect after publishing this implementation commit; only a verified exact-commit pass can complete T0057."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "Introduced the IInferenceEngine application-layer contract."
+          ],
+          "follow_up": "Inspect the exact implementation commit's quality gate and all product-build jobs. Only append a successful verification attempt and mark T0057 done after the exact-commit checks pass."
+        }
+      ]
     },
     {
       "id": "T0058",
@@ -18585,19 +18642,30 @@
       "from": "T0056",
       "to": "T0057",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0056's capacity status and UI lifecycle guard do not supply an interface consumed to define IInferenceEngine. Keep the pre-existing blocks relation as conservative execution order, not as a technical contract dependency.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "src/Host.Domain/HostCapabilities.cs",
+        "src/Host.Application/HostInferenceSession.cs",
+        "step three/T0056/evidence/verification.md",
+        "step three/T0057/evidence/contract-verification.md"
+      ]
     },
     {
       "from": "T0057",
       "to": "T0058",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0058's task explicitly implements LlamaCppInferenceEngine after this interface task; the new public application-layer IInferenceEngine contract and signature regression test are direct inputs to that implementation.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Application/Inference/IInferenceEngine.cs",
+        "tests/HostLifecycle.Tests/InferenceEngineContractTests.cs",
+        "step one/V1.0.md",
+        "step three/T0057/evidence/contract-verification.md"
+      ]
     },
     {
       "from": "T0056",
@@ -22520,8 +22588,39 @@
         "step three/T0048/evidence/verification.md"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-23T14:09:53.571Z",
+      "edge_from": "T0056",
+      "edge_to": "T0057",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "reason": "T0056's capacity status and UI lifecycle guard do not supply an interface consumed to define IInferenceEngine. Keep the pre-existing blocks relation as conservative execution order, not as a technical contract dependency.",
+      "evidence": [
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "src/Host.Domain/HostCapabilities.cs",
+        "src/Host.Application/HostInferenceSession.cs",
+        "step three/T0056/evidence/verification.md",
+        "step three/T0057/evidence/contract-verification.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-23T14:09:53.571Z",
+      "edge_from": "T0057",
+      "edge_to": "T0058",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "reason": "T0058's task explicitly implements LlamaCppInferenceEngine after this interface task; the new public application-layer IInferenceEngine contract and signature regression test are direct inputs to that implementation.",
+      "evidence": [
+        "src/Host.Application/Inference/IInferenceEngine.cs",
+        "tests/HostLifecycle.Tests/InferenceEngineContractTests.cs",
+        "step one/V1.0.md",
+        "step three/T0057/evidence/contract-verification.md"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-23T13:38:52.517Z"
+  "updated_at": "2026-10-23T14:09:53.571Z"
 }
 ```
