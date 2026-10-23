@@ -12,3 +12,13 @@
 - Shared.Contracts now owns canonical C# generation from `protocol/whitep/v1/messages.proto`. The WPF app and C# test harness reference this one shared generated contract assembly instead of generating duplicate contracts.
 - Added structural regression coverage and updated static tests for the new source boundaries. The old mixed source file was removed to avoid duplicate definitions.
 - T0042 remains `in_progress` until exact-commit CI passes. No build, test, or formatting success is claimed here before that evidence is available.
+
+
+## Attempt T0042-A001 — failed build observed and cause isolated
+- Product workflow run [39907451227](https://github.com/artinrahimii/project/actions/runs/39907451227), C# lifecycle/unit job, failed while compiling `HostInferenceSession.cs`.
+- Exact compiler errors CS0104 at lines 25, 29 and 66: `HostStatus` was ambiguous between `WhiteP.Host.Domain.HostStatus` and generated `WhiteP.Shared.Contracts.V1.HostStatus`.
+- This is a real compile failure; the task remains in progress. No acceptance or product-build success is claimed for this commit.
+
+## Attempt T0042-A002 — explicit domain type alias
+- Added `using HostStatus = WhiteP.Host.Domain.HostStatus;` so session return types resolve to the domain lifecycle status while Protobuf request types remain available.
+- Rebuild and all exact-commit workflows are pending.

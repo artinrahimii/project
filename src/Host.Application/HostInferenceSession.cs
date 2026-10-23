@@ -1,5 +1,6 @@
 using System.IO;
 using WhiteP.Host.Domain;
+using HostStatus = WhiteP.Host.Domain.HostStatus;
 using WhiteP.Shared.Contracts;
 using WhiteP.Shared.Contracts.V1;
 

@@ -6948,9 +6948,9 @@
       ],
       "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
       "execution_summary": {
-        "attempt_count": 1,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "T0042-A001",
+        "attempt_count": 2,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "T0042-A002",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Host.Domain/WhiteP.Host.Domain.csproj",
@@ -6978,11 +6978,19 @@
           "tests/test_decision_traceability.py",
           "tests/test_host_layer_projects.py",
           "src/Host.Windows/HostLifecycle.cs",
-          "step three/project-graph.md"
+          "step three/project-graph.md",
+          "step three/T0042/execution-report.md",
+          "step three/T0042/evidence/verification.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
-        "tests_failed": [],
+        "related_commits": [
+          "6afb2ce746a5d72822ac26f412e968b507159ee0"
+        ],
+        "tests_passed": [
+          "Step Three quality gate run 39907451222 passed for commit 6afb2ce746a5d72822ac26f412e968b507159ee0."
+        ],
+        "tests_failed": [
+          "Product run 39907451227 / C# lifecycle job 120262552559 failed compilation with CS0104: HostStatus ambiguous between WhiteP.Host.Domain.HostStatus and WhiteP.Shared.Contracts.V1.HostStatus in HostInferenceSession.cs lines 25, 29, 66."
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -7007,8 +7015,8 @@
         {
           "attempt_id": "T0042-A001",
           "started_at": "2026-10-23T05:30:00Z",
-          "ended_at": null,
-          "result": "in_progress",
+          "ended_at": "2026-10-23T05:45:10Z",
+          "result": "failed",
           "summary": "Created Domain, Application and Infrastructure project layers alongside the existing WPF UI; moved production lifecycle/session/backend/parser code to their owning assemblies; moved canonical Protobuf generation to Shared.Contracts; updated solution, C# harness and static contract tests. Exact-commit CI is pending.",
           "changed_files": [
             "src/Host.Domain/WhiteP.Host.Domain.csproj",
@@ -7038,33 +7046,57 @@
             "src/Host.Windows/HostLifecycle.cs",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "6afb2ce746a5d72822ac26f412e968b507159ee0",
           "tests": [
             {
-              "command": "Python quality gate / static regression tests",
-              "result": "pending"
+              "command": "Step Three quality gate run 39907451222",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39907451222"
             },
             {
-              "command": "dotnet format whitespace WhiteP.sln --verify-no-changes",
-              "result": "pending"
-            },
-            {
-              "command": "dotnet build WhiteP.sln --configuration Release and WPF startup smoke",
-              "result": "pending"
-            },
-            {
-              "command": "C# message/lifecycle harness and Android build/unit tests",
-              "result": "pending"
+              "command": "Product build C# lifecycle job 120262552559",
+              "result": "failed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/39907451227",
+              "summary": "Compiler CS0104 for ambiguous HostStatus."
             }
           ],
-          "failure_details": null,
+          "failure_details": "Exact compiler errors CS0104 on HostInferenceSession.cs lines 25, 29 and 66: ambiguous HostStatus between WhiteP.Host.Domain.HostStatus and WhiteP.Shared.Contracts.V1.HostStatus. C# host lifecycle job failed before running the harness.",
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [
             "Host layer project/assembly boundaries",
             "Shared Protobuf generation ownership"
           ],
-          "follow_up": "Check exact-commit GitHub Actions; fix any build/lint/test failures before closing T0042; revalidate affected consumer tasks."
+          "follow_up": "Disambiguate domain HostStatus in HostInferenceSession.cs, then rerun exact-commit product workflow."
+        },
+        {
+          "attempt_id": "T0042-A002",
+          "started_at": "2026-10-23T05:45:25Z",
+          "ended_at": null,
+          "result": "in_progress",
+          "summary": "Added an explicit alias so HostInferenceSession return types use WhiteP.Host.Domain.HostStatus rather than the generated Protobuf HostStatus. Exact-commit build/test outcome pending.",
+          "changed_files": [
+            "src/Host.Application/HostInferenceSession.cs",
+            "step three/T0042/execution-report.md",
+            "step three/T0042/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "command": "Step Three quality gate",
+              "result": "pending"
+            },
+            {
+              "command": "Product build / C# lifecycle tests / Windows WPF build & smoke / Android build",
+              "result": "pending"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Verify the exact commit. Fix subsequent actual build/test errors and do not set status done until both workflows succeed."
         }
       ]
     },
