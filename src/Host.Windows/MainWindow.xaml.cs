@@ -72,6 +72,7 @@ public partial class MainWindow : Window
     private void LoadCatalogButton_Click(object sender, RoutedEventArgs e)
     {
         CatalogItems.ItemsSource = null;
+        CatalogModelDetails.Text = "Select a model record to inspect its source, license metadata, size, checksum, backend and limitations.";
         try
         {
             var sourceHosts = ParseTrustedHostList(CatalogTrustedSourceHosts.Text);
@@ -89,6 +90,38 @@ public partial class MainWindow : Window
         {
             CatalogStatus.Text = "Catalog not loaded. Check the local file, JSON metadata, and explicit trusted source/license host allowlists.";
         }
+    }
+
+    private void CatalogItems_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+    {
+        if (CatalogItems.SelectedItem is not ModelCatalogEntry model)
+        {
+            CatalogModelDetails.Text = "Select a model record to inspect its source, license metadata, size, checksum, backend and limitations.";
+            return;
+        }
+
+        var sizeMiB = model.SizeBytes / (1024d * 1024d);
+        var sizeGiB = model.SizeBytes / (1024d * 1024d * 1024d);
+        var licenseStatus = model.License.Status;
+        var licenseLimit = model.License.RequiresReview
+            ? "License status is unverified or requires review. Do not assume permission to use, modify, or redistribute this model."
+            : "The catalog declares a license status, but the app has not independently verified legal terms or usage restrictions.";
+        var licenseUrl = model.License.Url?.ToString() ?? "Not provided";
+        var licenseId = model.License.Identifier ?? "Not provided";
+        var backends = string.Join(", ", model.BackendIds);
+
+        CatalogModelDetails.Text =
+            $"Name: {model.Name}\n" +
+            $"Model ID: {model.Id}\n" +
+            $"Format: {model.Format}\n" +
+            $"Declared size: {model.SizeBytes:N0} bytes ({sizeMiB:N2} MiB / {sizeGiB:N3} GiB)\n" +
+            $"Source: {model.SourceUrl}\n" +
+            $"License status: {licenseStatus}\n" +
+            $"License identifier: {licenseId}\n" +
+            $"License terms URL: {licenseUrl}\n" +
+            $"Supported backend IDs: {backends}\n" +
+            $"Checksum: {model.ChecksumAlgorithm.ToUpperInvariant()} {model.ChecksumValue}\n" +
+            $"Usage limitations: {licenseLimit} Catalog metadata does not establish model safety, performance, hardware compatibility, or the accuracy of the publisher's claims.";
     }
 
     private static string[] ParseTrustedHostList(string? value) =>

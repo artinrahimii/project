@@ -25,6 +25,19 @@ class ModelCatalogUiTests(unittest.TestCase):
         self.assertIn("new ModelCatalogFileLoader()", code)
         self.assertIn("LocalInferenceBackendFactory.SupportedBackendIds", code)
 
+    def test_selected_model_details_show_license_source_size_and_limitations(self):
+        xaml = XAML.read_text(encoding="utf-8")
+        code = CODE_BEHIND.read_text(encoding="utf-8")
+        self.assertIn('x:Name="CatalogModelDetails"', xaml)
+        self.assertIn('SelectionChanged="CatalogItems_SelectionChanged"', xaml)
+        for field in ("model.SourceUrl", "model.SizeBytes", "model.License.Status",
+                      "model.License.Identifier", "model.License.Url", "model.ChecksumValue",
+                      "model.BackendIds", "Usage limitations:", "RequiresReview"):
+            with self.subTest(field=field):
+                self.assertIn(field, code)
+        self.assertIn("Do not assume permission to use, modify, or redistribute this model.", code)
+        self.assertIn("has not independently verified legal terms", code)
+
     def test_loader_is_bounded_strict_utf8_and_delegates_validation(self):
         source = LOADER.read_text(encoding="utf-8")
         for required in ("new FileStream", "ModelCatalogParser.MaximumCatalogBytes",

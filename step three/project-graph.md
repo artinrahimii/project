@@ -11956,8 +11956,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0069 و T0067 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال انجام",
+      "status": "done",
+      "status_fa": "تکمیل‌شده",
       "actual_output_paths": [
         "src/Host.Windows/Models/Catalog/ModelCatalogFileLoader.cs",
         "src/Host.Windows/Models/Catalog/ModelCatalogParser.cs",
@@ -11983,14 +11983,17 @@
         "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs",
         "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
         "tests/test_model_catalog_ui.py",
-        "step three/T0070/execution-report.md"
+        "step three/T0070/execution-report.md",
+        "https://github.com/artinrahimii/project/actions/runs/40114464819",
+        "https://github.com/artinrahimii/project/actions/runs/40114464818",
+        "https://github.com/artinrahimii/project/actions/runs/40114464822"
       ],
-      "notes": "Reviewed both incoming edges against actual parser/model records and host backend composition. UI loads a user-selected local catalog with explicit trusted host allowlists; no fabricated entries are bundled. Keep in_progress until exact-head quality gate and Windows/product build pass.",
+      "notes": "Completed for loading metadata from a real user-selected local catalog file and binding parsed model records to the UI. Exact-head CI passed. No catalog is bundled; loading does not download or install model weights.",
       "execution_summary": {
-        "attempt_count": 1,
+        "attempt_count": 2,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0070-A001",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "T0070-A002",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Host.Windows/MainWindow.xaml",
           "src/Host.Windows/MainWindow.xaml.cs",
@@ -12002,13 +12005,20 @@
           "step three/T0070/execution-report.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
+        "related_commits": [
+          "7b1268fb177d087be9ef252a4582d9c2e8ab4497"
+        ],
+        "tests_passed": [
+          "Step Three quality gate passed (145 Python tests; graph guard 0 errors, one preserved warning).",
+          "Windows WPF product build passed.",
+          "HostLifecycle.Tests passed including catalog parser/file-loader acceptance.",
+          "Real local inference integration regression passed."
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "in_review",
+          "state": "passed",
           "triggering_contracts": [
             "versioned ModelCatalog parser output",
             "LocalInferenceBackendFactory.SupportedBackendIds",
@@ -12022,7 +12032,10 @@
             "src/Host.Windows/Models/Catalog/ModelCatalogFileLoader.cs",
             "src/Host.Windows/MainWindow.xaml.cs",
             "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs",
-            "tests/test_model_catalog_ui.py"
+            "tests/test_model_catalog_ui.py",
+            "https://github.com/artinrahimii/project/actions/runs/40114464819",
+            "https://github.com/artinrahimii/project/actions/runs/40114464818",
+            "https://github.com/artinrahimii/project/actions/runs/40114464822"
           ]
         }
       },
@@ -12056,6 +12069,46 @@
             }
           ],
           "follow_up": "Inspect exact-head quality and product-build runs. Fix failures before marking T0070 done; revalidate the additive T0067 contract."
+        },
+        {
+          "attempt_id": "T0070-A002",
+          "started_at": "2026-10-24T17:04:37Z",
+          "ended_at": "2026-10-24T17:07:16Z",
+          "result": "succeeded",
+          "summary": "Exact-head CI verified the real local catalog file loader and metadata list: Step Three quality gate, Windows WPF product build and local inference regression all passed.",
+          "changed_files": [],
+          "commit_sha": "7b1268fb177d087be9ef252a4582d9c2e8ab4497",
+          "tests": [
+            {
+              "command": "Step Three quality gate",
+              "result": "passed",
+              "summary": "145 Python tests passed; graph guard validated 229 tasks and 426 edges with zero errors and one preserved T0001 warning.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40114464819"
+            },
+            {
+              "command": "Windows WPF product build",
+              "result": "passed",
+              "summary": "The product build workflow completed successfully on the exact head commit.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40114464818"
+            },
+            {
+              "command": "Catalog parser/file-loader acceptance harness",
+              "result": "passed",
+              "summary": "HostLifecycle.Tests passed, including a real local-file load and oversized-file rejection.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40114464818/job/120932780730"
+            },
+            {
+              "command": "Real local inference integration",
+              "result": "passed",
+              "summary": "The local inference integration regression workflow completed successfully.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40114464822"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "T0071: add per-model detail view showing source, license metadata, size and known limitations."
         }
       ]
     },
@@ -12076,33 +12129,79 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0070 و T0067 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "src/Host.Windows/MainWindow.xaml",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "tests/test_model_catalog_ui.py",
+        "step three/T0071/execution-report.md"
+      ],
       "expected_output_paths": [
         "src/Host.Windows/Models/Catalog/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "src/Host.Windows/Models/Catalog/ModelCatalogModels.cs",
+        "src/Host.Windows/Models/Catalog/ModelCatalogParser.cs",
+        "src/Host.Windows/MainWindow.xaml",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "tests/test_model_catalog_ui.py"
+      ],
+      "notes": "Implementation added: selecting a real catalog entry displays source URL, declared size in bytes/MiB/GiB, license status/identifier/terms URL, supported backend IDs, checksum and explicit limits on what metadata proves. CI/build and UI tests still need to run on this implementation commit.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0071-A001",
+        "last_attempt_result": "in_progress",
+        "changed_files": [
+          "src/Host.Windows/MainWindow.xaml",
+          "src/Host.Windows/MainWindow.xaml.cs",
+          "tests/test_model_catalog_ui.py",
+          "step three/T0071/execution-report.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
+          "state": "in_review",
+          "triggering_contracts": [
+            "ModelCatalogEntry metadata",
+            "ModelLicenseMetadata.RequiresReview",
+            "LocalInferenceBackendFactory.SupportedBackendIds"
+          ],
           "affected_by_contract_changes": [],
-          "review_evidence": []
+          "review_evidence": [
+            "src/Host.Windows/Models/Catalog/ModelCatalogModels.cs",
+            "src/Host.Windows/Models/Catalog/ModelCatalogParser.cs",
+            "src/Host.Windows/MainWindow.xaml.cs",
+            "tests/test_model_catalog_ui.py"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0071-A001",
+          "started_at": "2026-10-24T17:10:00Z",
+          "ended_at": null,
+          "result": "in_progress",
+          "summary": "Added a WPF selected-model detail panel wired to actual parsed ModelCatalogEntry values and added regression assertions for license/source/size/limitations.",
+          "changed_files": [
+            "src/Host.Windows/MainWindow.xaml",
+            "src/Host.Windows/MainWindow.xaml.cs",
+            "tests/test_model_catalog_ui.py"
+          ],
+          "commit_sha": null,
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Run Step Three quality gate and Windows WPF build; only then mark T0071 done."
+        }
+      ]
     },
     {
       "id": "T0072",
@@ -24744,6 +24843,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-24T17:03:50.363Z"
+  "updated_at": "2026-10-24T17:10:00Z"
 }
 ```
