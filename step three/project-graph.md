@@ -12266,8 +12266,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0071 و T0067 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "src/Host.Windows/Models/Catalog/ModelCatalogModels.cs",
         "src/Host.Windows/MainWindow.xaml",
@@ -12285,12 +12285,12 @@
         "tests/test_model_catalog_ui.py",
         "step three/T0072/execution-report.md"
       ],
-      "notes": "Implementation adds a visible REVIEW REQUIRED label for absent/unknown license metadata. Python tests passed on implementation commit. Graph guard failures were due to an unsupported dependency class (corrected) and then failed-attempt count mismatches in execution metadata; counts now reflect one failed attempt and all history entries. Awaiting exact-head validation. A005 adds a C# acceptance assertion for the declared-but-not-independently-verified label on the positive license-metadata case; exact-head executable validation remains required.",
+      "notes": "Implemented a visible REVIEW REQUIRED label for missing/unknown license metadata. Earlier failed runs were graph-record validation failures and remain in execution_history; the exact tested head 3ee8fffe1624c17addfb9e8f07744d4c6a7e18d1 passed the Python/graph quality gate, HostLifecycle.Tests, Windows WPF build, and real local llama.cpp/GGUF integration. A catalog declaration is still shown as not independently legally verified.",
       "execution_summary": {
-        "attempt_count": 5,
+        "attempt_count": 6,
         "failed_attempt_count": 1,
-        "last_attempt_id": "T0072-A005",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "T0072-A006",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Host.Windows/Models/Catalog/ModelCatalogModels.cs",
           "src/Host.Windows/MainWindow.xaml",
@@ -12299,9 +12299,15 @@
           "step three/T0072/execution-report.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
+        "related_commits": [
+          "3ee8fffe1624c17addfb9e8f07744d4c6a7e18d1"
+        ],
         "tests_passed": [
-          "Python quality suite: 146 tests passed on commit 329ba9c70a6ee53df1cfefcc71b8cf1c7c658960 (workflow run 40121120011, test step)."
+          "Python quality suite: 146 tests passed on commit 329ba9c70a6ee53df1cfefcc71b8cf1c7c658960 (workflow run 40121120011, test step).",
+          "Exact-head Step Three graph/Python quality gate — passed, run 40122299470 (automated tests, Python syntax, graph structure and output/evidence validation).",
+          "Exact-head HostLifecycle.Tests — passed, run 40122299496 job 120956288798; parser acceptance harness logged PASS for catalog metadata, checksums, backend compatibility, URL allowlists and license review state.",
+          "Exact-head Windows WPF host build — passed, run 40122299496 job 120956288933.",
+          "Exact-head real llama.cpp process and GGUF response — passed, run 40122299478 job 120956288819."
         ],
         "tests_failed": [
           "Graph guard failed on commit 329ba9c70a6ee53df1cfefcc71b8cf1c7c658960 because dependency classification 'sequencing_dependency' is not an allowed enum; changed to supported value 'sequencing_only' in this follow-up.",
@@ -12311,9 +12317,10 @@
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "pending",
+          "state": "passed",
           "triggering_contracts": [
             "ModelLicenseMetadata.RequiresReview",
+            "ModelLicenseMetadata.ReviewLabel",
             "ModelCatalogEntry.License"
           ],
           "affected_by_contract_changes": [],
@@ -12321,7 +12328,9 @@
             "src/Host.Windows/Models/Catalog/ModelCatalogModels.cs",
             "src/Host.Windows/MainWindow.xaml",
             "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs",
-            "tests/test_model_catalog_ui.py"
+            "tests/test_model_catalog_ui.py",
+            "https://github.com/artinrahimii/project/actions/runs/40122299496/job/120956288798",
+            "https://github.com/artinrahimii/project/actions/runs/40122299470/job/120956288761"
           ]
         }
       },
@@ -12443,6 +12452,46 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Run the exact-head Step Three quality gate, HostLifecycle.Tests, and Windows WPF product build. Mark done only if the required checks pass."
+        },
+        {
+          "attempt_id": "T0072-A006",
+          "started_at": "2026-10-24T18:56:43Z",
+          "ended_at": "2026-10-24T18:56:43Z",
+          "result": "succeeded",
+          "summary": "Verified the exact tested head after A005. The graph/Python quality gate, HostLifecycle.Tests, Windows WPF build, and real local llama.cpp/GGUF integration all passed. The positive license case now asserts that even a catalog status of verified is displayed as declared metadata rather than independent legal verification.",
+          "changed_files": [
+            "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs",
+            "step three/T0072/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": "3ee8fffe1624c17addfb9e8f07744d4c6a7e18d1",
+          "tests": [
+            {
+              "name": "Step Three graph/Python quality gate",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40122299470/job/120956288761"
+            },
+            {
+              "name": "HostLifecycle.Tests",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40122299496/job/120956288798"
+            },
+            {
+              "name": "Windows WPF host build",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40122299496/job/120956288933"
+            },
+            {
+              "name": "Real llama.cpp/GGUF integration",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40122299478/job/120956288819"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Proceed with the next dependency-ready catalog task; do not equate catalog license metadata with independent legal advice."
         }
       ]
     },
@@ -12463,33 +12512,95 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0072 و T0067 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "done",
+      "status_fa": "انجام‌شده",
+      "actual_output_paths": [
+        "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs",
+        "tests/test_model_catalog_parser.py",
+        "tests/test_model_catalog_schema.py",
+        "step three/T0073/execution-report.md",
+        "step three/project-graph.md"
+      ],
       "expected_output_paths": [
         "src/Host.Windows/Models/Catalog/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs",
+        "tests/test_model_catalog_parser.py",
+        "tests/test_model_catalog_schema.py",
+        "src/Host.Windows/Models/Catalog/ModelCatalogParser.cs",
+        "src/Host.Windows/Models/Catalog/model-catalog-v1.schema.json",
+        "step three/T0073/execution-report.md"
+      ],
+      "notes": "The required real C# and Python parser/schema regression coverage existed in the repository and was inspected rather than duplicated. Exact-head CI on 3ee8fffe1624c17addfb9e8f07744d4c6a7e18d1 ran the C# HostLifecycle acceptance harness and Python/graph quality gate successfully. The task only establishes metadata validation, not legal approval or a model download.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
-        "related_commits": [],
-        "tests_passed": [],
+        "last_attempt_id": "T0073-A001",
+        "last_attempt_result": "succeeded",
+        "changed_files": [
+          "step three/T0073/execution-report.md",
+          "step three/project-graph.md"
+        ],
+        "related_commits": [
+          "3ee8fffe1624c17addfb9e8f07744d4c6a7e18d1"
+        ],
+        "tests_passed": [
+          "C# HostLifecycle.Tests — passed for exact tested head 3ee8fffe1624c17addfb9e8f07744d4c6a7e18d1; its parser acceptance harness passed checksum, backend compatibility, HTTPS allowlist, duplicate-ID and license-review tests. https://github.com/artinrahimii/project/actions/runs/40122299496/job/120956288798",
+          "Python/graph quality gate — passed for exact tested head 3ee8fffe1624c17addfb9e8f07744d4c6a7e18d1. https://github.com/artinrahimii/project/actions/runs/40122299470/job/120956288761"
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
+          "state": "passed",
+          "triggering_contracts": [
+            "ModelCatalogParser v1",
+            "ModelLicenseMetadata.RequiresReview",
+            "HTTPS source/license allowlists",
+            "SHA-256 checksum validation"
+          ],
           "affected_by_contract_changes": [],
-          "review_evidence": []
+          "review_evidence": [
+            "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs",
+            "tests/test_model_catalog_parser.py",
+            "tests/test_model_catalog_schema.py",
+            "src/Host.Windows/Models/Catalog/ModelCatalogParser.cs",
+            "src/Host.Windows/Models/Catalog/model-catalog-v1.schema.json"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0073-A001",
+          "started_at": "2026-10-24T18:56:43Z",
+          "ended_at": "2026-10-24T18:56:43Z",
+          "result": "succeeded",
+          "summary": "Inspected the production ModelCatalogParser and its schema plus the C# and Python acceptance suites. The existing tests cover a valid licensed model, missing/unknown license metadata, incorrect/missing checksums, unsafe/unapproved source URLs, unsafe/unverified license URLs, backend/format restrictions and malformed catalog records. The exact tested head passed both the C# host lifecycle job and the Python/graph quality gate.",
+          "changed_files": [
+            "step three/T0073/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": "3ee8fffe1624c17addfb9e8f07744d4c6a7e18d1",
+          "tests": [
+            {
+              "name": "C# HostLifecycle acceptance harness",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40122299496/job/120956288798"
+            },
+            {
+              "name": "Python and graph quality gate",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40122299470/job/120956288761"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Use this validated catalog contract for the sample metadata catalog in T0074."
+        }
+      ]
     },
     {
       "id": "T0074",
@@ -12508,33 +12619,82 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0073 و T0067 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "src/Host.Windows/Models/Catalog/sample-model-catalog.json",
+        "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs",
+        "step three/T0074/execution-report.md",
+        "step three/project-graph.md"
+      ],
       "expected_output_paths": [
         "src/Host.Windows/Models/Catalog/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "src/Host.Windows/Models/Catalog/sample-model-catalog.json",
+        "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs",
+        "src/Host.Windows/Models/Catalog/model-catalog-v1.schema.json",
+        "src/Host.Windows/Models/Catalog/ModelCatalogParser.cs",
+        "src/Host.Windows/Inference/LocalInferenceBackendFactory.cs",
+        "step three/T0074/execution-report.md"
+      ],
+      "notes": "Added a real metadata-only sample for SmolLM2-135M-Instruct Q4_K_M. The quantized model card and original model card both declare Apache-2.0; the Hugging Face Xet pointer reports size 105454432 bytes and SHA-256 2e8040ceae7815abe0dcb3540b9995eaa1fa0d2ca9e797d0a635ae4433c68c2d. Added a runnable C# loader/parser acceptance check using the host backend registry and explicit Hugging Face host allowlist. CI for this implementation commit is pending; the manifest does not bundle or download model weights and its UI still disclaims independent legal verification.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0074-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Host.Windows/Models/Catalog/sample-model-catalog.json",
+          "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs",
+          "step three/T0074/execution-report.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
+          "state": "pending",
+          "triggering_contracts": [
+            "ModelCatalog v1 JSON schema",
+            "ModelCatalogParser",
+            "LocalInferenceBackendFactory.SupportedBackendIds",
+            "ModelLicenseMetadata.ReviewLabel"
+          ],
           "affected_by_contract_changes": [],
-          "review_evidence": []
+          "review_evidence": [
+            "src/Host.Windows/Models/Catalog/sample-model-catalog.json",
+            "src/Host.Windows/Models/Catalog/model-catalog-v1.schema.json",
+            "src/Host.Windows/Models/Catalog/ModelCatalogParser.cs",
+            "src/Host.Windows/Inference/LocalInferenceBackendFactory.cs",
+            "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0074-A001",
+          "started_at": "2026-10-24T18:56:43Z",
+          "ended_at": "2026-10-24T18:56:43Z",
+          "result": "partial",
+          "summary": "Added a metadata-only catalog record for a small GGUF model with the upstream-reported exact file size and SHA-256, HTTPS source URL, llama.cpp backend and Apache-2.0 license metadata. Added a C# acceptance test that loads and parses this file using the current host backend registry. Exact-head CI is pending.",
+          "changed_files": [
+            "src/Host.Windows/Models/Catalog/sample-model-catalog.json",
+            "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs",
+            "step three/T0074/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Run the exact-head Python/graph quality gate, HostLifecycle.Tests and Windows WPF build; only then mark T0074 done."
+        }
+      ]
     },
     {
       "id": "T0075",
@@ -21187,37 +21347,58 @@
       "from": "T0072",
       "to": "T0073",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "The parser acceptance task directly exercises the ModelLicenseMetadata contract that T0072 makes visible: absent and unknown license metadata must require review, and the display must avoid overstating independent legal verification. Preserve type=blocks and the existing order.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/Models/Catalog/ModelCatalogModels.cs",
+        "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs",
+        "tests/test_model_catalog_ui.py",
+        "step three/T0072/execution-report.md"
+      ]
     },
     {
       "from": "T0067",
       "to": "T0073",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "The parser acceptance cases use an explicit test backend allowlist and do not consume a factory-created IInferenceBackend. Keep type=blocks as conservative sequence rather than claiming the test task has a technical dependency on backend composition.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/Inference/LocalInferenceBackendFactory.cs",
+        "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs",
+        "tests/test_model_catalog_parser.py",
+        "step three/T0073/execution-report.md"
+      ]
     },
     {
       "from": "T0073",
       "to": "T0074",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "The sample catalog must conform to the versioned v1 schema and parser behavior that T0073's acceptance suite exercises, including checksum, URL allowlisting, backend compatibility, and license metadata. Keep type=blocks; validation proves a shared data-contract dependency.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/Models/Catalog/model-catalog-v1.schema.json",
+        "src/Host.Windows/Models/Catalog/ModelCatalogParser.cs",
+        "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs",
+        "tests/test_model_catalog_schema.py",
+        "src/Host.Windows/Models/Catalog/sample-model-catalog.json"
+      ]
     },
     {
       "from": "T0067",
       "to": "T0074",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "The sample manifest declares backend ID llama.cpp and the new acceptance test loads it using LocalInferenceBackendFactory.SupportedBackendIds. That shared supported-backend identifier contract is a concrete dependency; retain the original type=blocks.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/Inference/LocalInferenceBackendFactory.cs",
+        "src/Host.Windows/Models/Catalog/ModelCatalogParser.cs",
+        "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs",
+        "src/Host.Windows/Models/Catalog/sample-model-catalog.json"
+      ]
     },
     {
       "from": "T0074",
@@ -25057,8 +25238,69 @@
         "src/Host.Application/Inference/IInferenceEngine.cs"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-24T18:56:43Z",
+      "edge_from": "T0072",
+      "edge_to": "T0073",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "reason": "The parser acceptance task directly exercises the ModelLicenseMetadata contract that T0072 makes visible: absent and unknown license metadata must require review, and the display must avoid overstating independent legal verification. Preserve type=blocks and the existing order.",
+      "evidence": [
+        "src/Host.Windows/Models/Catalog/ModelCatalogModels.cs",
+        "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs",
+        "tests/test_model_catalog_ui.py",
+        "step three/T0072/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-24T18:56:43Z",
+      "edge_from": "T0067",
+      "edge_to": "T0073",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "reason": "The parser acceptance cases use an explicit test backend allowlist and do not consume a factory-created IInferenceBackend. Keep type=blocks as conservative sequence rather than claiming the test task has a technical dependency on backend composition.",
+      "evidence": [
+        "src/Host.Windows/Inference/LocalInferenceBackendFactory.cs",
+        "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs",
+        "tests/test_model_catalog_parser.py",
+        "step three/T0073/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-24T18:56:43Z",
+      "edge_from": "T0073",
+      "edge_to": "T0074",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "reason": "The sample catalog must conform to the versioned v1 schema and parser behavior that T0073's acceptance suite exercises, including checksum, URL allowlisting, backend compatibility, and license metadata. Keep type=blocks; validation proves a shared data-contract dependency.",
+      "evidence": [
+        "src/Host.Windows/Models/Catalog/model-catalog-v1.schema.json",
+        "src/Host.Windows/Models/Catalog/ModelCatalogParser.cs",
+        "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs",
+        "tests/test_model_catalog_schema.py",
+        "src/Host.Windows/Models/Catalog/sample-model-catalog.json"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-24T18:56:43Z",
+      "edge_from": "T0067",
+      "edge_to": "T0074",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "reason": "The sample manifest declares backend ID llama.cpp and the new acceptance test loads it using LocalInferenceBackendFactory.SupportedBackendIds. That shared supported-backend identifier contract is a concrete dependency; retain the original type=blocks.",
+      "evidence": [
+        "src/Host.Windows/Inference/LocalInferenceBackendFactory.cs",
+        "src/Host.Windows/Models/Catalog/ModelCatalogParser.cs",
+        "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs",
+        "src/Host.Windows/Models/Catalog/sample-model-catalog.json"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-24T18:41:00Z"
+  "updated_at": "2026-10-24T18:56:43.753Z"
 }
 ```

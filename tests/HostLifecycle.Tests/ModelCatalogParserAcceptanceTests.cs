@@ -14,6 +14,7 @@ internal static class ModelCatalogParserAcceptanceTests
     {
         ParsesValidCatalogAndNormalizesChecksum();
         LoadsCatalogFromFileUsingTheHostBackendRegistry();
+        LoadsBundledSampleCatalog();
         RejectsOversizedCatalogFile();
         MissingLicenseDefaultsToReviewRequired();
         RejectsMalformedJsonAndUnsupportedSchemaVersions();
@@ -126,6 +127,42 @@ internal static class ModelCatalogParserAcceptanceTests
         {
             if (Directory.Exists(folder)) Directory.Delete(folder, recursive: true);
         }
+    }
+
+    private static void LoadsBundledSampleCatalog()
+    {
+        var path = Path.Combine("src", "Host.Windows", "Models", "Catalog", "sample-model-catalog.json");
+        if (!File.Exists(path))
+            throw new Exception("The checked-in sample model catalog is missing.");
+
+        var catalog = new ModelCatalogFileLoader().Load(
+            path,
+            new[] { "huggingface.co" },
+            LocalInferenceBackendFactory.SupportedBackendIds,
+            new[] { "huggingface.co" });
+
+        if (catalog.SchemaVersion != 1 || catalog.Models.Count != 1)
+            throw new Exception("The sample model catalog has an unexpected schema version or model count.");
+
+        var model = catalog.Models.Single();
+        if (model.Id != "smollm2-135m-instruct-q4-k-m" ||
+            model.Name != "SmolLM2-135M-Instruct Q4_K_M" ||
+            model.Format != "GGUF" ||
+            model.SizeBytes != 105454432L ||
+            model.ChecksumAlgorithm != "sha256" ||
+            model.ChecksumValue != "2e8040ceae7815abe0dcb3540b9995eaa1fa0d2ca9e797d0a635ae4433c68c2d" ||
+            model.BackendIds.Single() != "llama.cpp" ||
+            model.SourceUrl.AbsoluteUri != "https://huggingface.co/bartowski/SmolLM2-135M-Instruct-GGUF/resolve/main/SmolLM2-135M-Instruct-Q4_K_M.gguf" ||
+            model.License.Status != "verified" ||
+            model.License.Identifier != "Apache-2.0" ||
+            model.License.Url?.AbsoluteUri != "https://huggingface.co/bartowski/SmolLM2-135M-Instruct-GGUF/blob/main/README.md" ||
+            model.License.RequiresReview ||
+            model.License.ReviewLabel != "Declared; not independently verified")
+        {
+            throw new Exception("The sample catalog metadata does not match the reviewed upstream source and license declaration.");
+        }
+
+        Console.WriteLine("PASS: sample model catalog file, upstream SHA-256/size, llama.cpp backend, and Apache-2.0 declaration validated.");
     }
 
     private static void RejectsOversizedCatalogFile()
