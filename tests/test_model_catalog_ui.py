@@ -22,7 +22,9 @@ class ModelCatalogUiTests(unittest.TestCase):
             with self.subTest(required=required): self.assertIn(required, xaml)
         self.assertNotIn("<ListViewItem", xaml)
         self.assertIn("CatalogItems.ItemsSource = catalog.Models;", code)
-        self.assertIn("new ModelCatalogFileLoader()", code)
+        self.assertIn("new OfflineModelCatalogStore()", code)
+        store = (ROOT / "src" / "Host.Windows" / "Models" / "Catalog" / "OfflineModelCatalogStore.cs").read_text(encoding="utf-8")
+        self.assertIn("new ModelCatalogFileLoader()", store)
         self.assertIn("LocalInferenceBackendFactory.SupportedBackendIds", code)
 
     def test_selected_model_details_show_license_source_size_and_limitations(self):

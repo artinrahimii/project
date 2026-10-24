@@ -12781,21 +12781,24 @@
         "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs",
         "step three/T0075/execution-report.md"
       ],
-      "notes": "Implemented validated local catalog cache fallback. Source catalog is validated before cache refresh; cache is revalidated with current allowlists and backend registry before display. Exact-head CI is pending; retain in_progress until it passes.",
+      "notes": "Implemented validated local catalog cache fallback. Initial exact-head quality gate failed only because a Python structural test still required direct loader construction in MainWindow; updated that test to check the new OfflineModelCatalogStore integration. Awaiting CI rerun; keep in_progress until all required workflows pass.",
       "execution_summary": {
-        "attempt_count": 1,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "T0075-attempt-1",
-        "last_attempt_result": "in_progress_ci_pending",
+        "attempt_count": 2,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "T0075-attempt-2",
+        "last_attempt_result": "test_failure_fixed_ci_pending",
         "changed_files": [
           "src/Host.Windows/Models/Catalog/OfflineModelCatalogStore.cs",
           "src/Host.Windows/MainWindow.xaml.cs",
           "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs",
-          "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj"
+          "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+          "tests/test_model_catalog_ui.py"
         ],
         "related_commits": [],
         "tests_passed": [],
-        "tests_failed": [],
+        "tests_failed": [
+          "Step Three quality gate run 40124499347: tests/test_model_catalog_ui.py expected direct ModelCatalogFileLoader construction in MainWindow; integration moved it into OfflineModelCatalogStore. Test updated to assert the new abstraction."
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -12827,6 +12830,21 @@
           "tests_failed": [],
           "related_commits": [],
           "timestamp": "2026-10-24T00:00:00Z"
+        },
+        {
+          "attempt_id": "T0075-attempt-2",
+          "result": "test_failure_fixed_ci_pending",
+          "base_commit": "246480b97dbbedeb3ed3332f36d8d8115631d36c",
+          "summary": "Exact-head quality gate exposed a stale structural assertion after catalog loading was correctly delegated to OfflineModelCatalogStore. Updated the assertion to validate the new store integration and the loader remains inside the store. Rerun CI pending.",
+          "changed_files": [
+            "tests/test_model_catalog_ui.py"
+          ],
+          "tests_passed": [],
+          "tests_failed": [
+            "Run 40124499347: test_ui_binds_parsed_catalog_records_not_static_rows"
+          ],
+          "related_commits": [],
+          "timestamp": "2026-10-24T19:20:00Z"
         }
       ]
     },
@@ -25400,6 +25418,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-24T00:00:00Z"
+  "updated_at": "2026-10-24T19:20:00Z"
 }
 ```
