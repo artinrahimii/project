@@ -1008,7 +1008,12 @@ if (string.Equals(Environment.GetEnvironmentVariable("WHITEP_RUN_REAL_INFERENCE_
     var liveResponse = await liveBackend.GenerateAsync(prompt, 32, inferenceTimeout.Token);
     Assert(!string.IsNullOrWhiteSpace(liveResponse), "The real local model returned an empty response.");
     Assert(!string.Equals(liveResponse.Trim(), "generated fixture output", StringComparison.Ordinal), "A recording-handler fixture is not valid evidence of real inference.");
-    Console.WriteLine("PASS: real local llama.cpp process started, health check passed, and the configured GGUF model returned a non-empty generated response.");
+    // Verify controlled shutdown of the owned process after a real model response.
+    launcher.Stop();
+    Assert(!launcher.IsRunning, "The managed local inference process must no longer be running after Stop.");
+    var stoppedHealthCheck = await liveBackend.CheckHealthAsync();
+    Assert(!stoppedHealthCheck, "The local endpoint must be unavailable after its managed process is stopped.");
+    Console.WriteLine("PASS: real local llama.cpp inference succeeded and the managed process stopped cleanly.");
 }
 else
 {

@@ -142,6 +142,7 @@ public partial class MainWindow : Window
         _requestedMinimumFreeDiskRequirementText = MinimumFreeDiskGiB.Text;
         GenerateButton.IsEnabled = false;
         ConnectButton.IsEnabled = false;
+        CancelGenerationButton.IsEnabled = true;
         OutputText.Clear();
         try
         {
@@ -152,6 +153,18 @@ public partial class MainWindow : Window
             OutputText.Text = await generationTask;
             RenderStatus(_session.Status);
         }
+        catch (OperationCanceledException)
+        {
+            // Closing the client request may not stop llama.cpp's in-flight computation.
+            // Stop the managed process as a fallback so the host does not keep consuming resources.
+            if (_localInferenceProcessLauncher.IsRunning)
+            {
+                _localInferenceProcessLauncher.Stop();
+                LocalProcessStatus.Text = "Local engine process stopped after inference cancellation; reconnect before generating again.";
+            }
+            RenderStatus(_session.Status);
+            OutputText.Text = "Inference cancelled. If this app started the local engine, that process was stopped. Reconnect before the next request.";
+        }
         catch (Exception exception)
         {
             RenderStatus(_session.Status);
@@ -159,9 +172,21 @@ public partial class MainWindow : Window
         }
         finally
         {
+            CancelGenerationButton.IsEnabled = false;
             RenderHostHardwareSummary();
             ConnectButton.IsEnabled = true;
             GenerateButton.IsEnabled = _session.IsConnected && _capacityReady;
+        }
+    }
+
+    private void CancelGenerationButton_Click(object sender, RoutedEventArgs e)
+    {
+        CancelGenerationButton.IsEnabled = false;
+        _operationCancellation?.Cancel();
+        if (_localInferenceProcessLauncher.IsRunning)
+        {
+            _localInferenceProcessLauncher.Stop();
+            LocalProcessStatus.Text = "Local engine process stopped to cancel inference; reconnect before generating again.";
         }
     }
 

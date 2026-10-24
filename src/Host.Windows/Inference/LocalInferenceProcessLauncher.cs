@@ -86,16 +86,48 @@ public sealed class LocalInferenceProcessLauncher : IDisposable
         return info;
     }
 
+    /// <summary>Whether this launcher currently owns a live inference process.</summary>
+    public bool IsRunning
+    {
+        get
+        {
+            lock (_sync)
+            {
+                return !_disposed && _process is not null && !_process.HasExited;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Stops the owned server process and its descendants. This is the cancellation fallback
+    /// when the inference server continues computing after the client disconnects.
+    /// The launcher remains reusable after Stop.
+    /// </summary>
+    public void Stop()
+    {
+        lock (_sync)
+        {
+            if (_disposed) return;
+            var process = _process;
+            _process = null;
+            StopProcess(process);
+        }
+    }
+
     public void Dispose()
     {
-        Process? process;
         lock (_sync)
         {
             if (_disposed) return;
             _disposed = true;
-            process = _process;
+            var process = _process;
             _process = null;
+            StopProcess(process);
         }
+    }
+
+    private static void StopProcess(Process? process)
+    {
         if (process is null) return;
         try
         {

@@ -10585,33 +10585,71 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0062 و T0056 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "src/Host.Windows/Inference/LocalInferenceProcessLauncher.cs",
+        "src/Host.Windows/MainWindow.xaml",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0063/execution-report.md"
+      ],
       "expected_output_paths": [
         "src/Host.Windows/Inference/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "Implementation commit pending verification; process cancellation UI and managed process stop fallback added. CI execution is required before acceptance can be marked done."
+      ],
+      "notes": "Implementation is present on the current execution candidate; acceptance remains in progress until the exact commit's automated and real-inference workflows report success.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0063-A001",
+        "last_attempt_result": "implementation_pending_ci",
+        "changed_files": [
+          "src/Host.Windows/Inference/LocalInferenceProcessLauncher.cs",
+          "src/Host.Windows/MainWindow.xaml",
+          "src/Host.Windows/MainWindow.xaml.cs",
+          "tests/HostLifecycle.Tests/Program.cs"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
+          "state": "pending_ci",
+          "triggering_contracts": [
+            "LlamaCppServerBackend cancellation",
+            "WPF generation cancellation",
+            "managed process lifecycle"
+          ],
           "affected_by_contract_changes": [],
-          "review_evidence": []
+          "review_evidence": [
+            "src/Host.Infrastructure/LlamaCppServerBackend.cs: GenerateAsync passes the linked timeout/caller token to SendAsync and response-body reads; caller cancellation is not rewritten as TimeoutException.",
+            "step three/T0062/execution-report.md: backend cancellation/timeout contract and CI evidence",
+            "src/Host.Windows/MainWindow.xaml.cs: _operationCancellation is passed to HostInferenceSession.GenerateAsync and LocalInferenceProcessLauncher is owned by MainWindow.",
+            "src/Host.Windows/Inference/LocalInferenceProcessLauncher.cs: Start owns a single Process and Dispose kills its process tree"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0063-A001",
+          "result": "implementation_pending_ci",
+          "summary": "Added a Cancel inference UI action, propagated cancellation through the existing operation token, and stopped the managed llama.cpp process tree as a fallback. Added real-process stop assertions to the opt-in live inference test. CI has not run for this candidate yet.",
+          "changed_files": [
+            "src/Host.Windows/Inference/LocalInferenceProcessLauncher.cs",
+            "src/Host.Windows/MainWindow.xaml",
+            "src/Host.Windows/MainWindow.xaml.cs",
+            "tests/HostLifecycle.Tests/Program.cs"
+          ],
+          "tests_passed": [],
+          "tests_failed": [],
+          "commit": null,
+          "at_commit": "a90289432cfff2ee80dd5bfcd197ab7ab13a16f2"
+        }
+      ]
     },
     {
       "id": "T0064",
@@ -19506,19 +19544,25 @@
       "from": "T0062",
       "to": "T0063",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0063 consumes the cancellation and timeout contract implemented by T0062: LlamaCppServerBackend accepts a CancellationToken and translates timeout separately from caller cancellation. T0063 adds the process-level fallback when disconnecting the request does not stop the managed server.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Infrastructure/LlamaCppServerBackend.cs: GenerateAsync passes the linked timeout/caller token to SendAsync and response-body reads; caller cancellation is not rewritten as TimeoutException.",
+        "step three/T0062/execution-report.md: backend cancellation/timeout contract and CI evidence"
+      ]
     },
     {
       "from": "T0056",
       "to": "T0063",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0063 connects the existing WPF operation CancellationTokenSource and managed LocalInferenceProcessLauncher lifecycle; cancellation UI must stop a host-owned process without changing the external-server path.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/MainWindow.xaml.cs: _operationCancellation is passed to HostInferenceSession.GenerateAsync and LocalInferenceProcessLauncher is owned by MainWindow.",
+        "src/Host.Windows/Inference/LocalInferenceProcessLauncher.cs: Start owns a single Process and Dispose kills its process tree"
+      ]
     },
     {
       "from": "T0063",
@@ -23494,6 +23538,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-24T13:00:00-04:00"
+  "updated_at": "2026-10-24T15:00:00-04:00"
 }
 ```
