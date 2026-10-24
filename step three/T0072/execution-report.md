@@ -11,4 +11,4 @@
   - Added a visible `Review state` column to the real catalog ListView, so users can spot entries needing review without selecting each row.
   - Extended Python and C# acceptance checks for the visible label and the missing/unknown-license cases.
   - No license is approved by this UI label; missing/unknown metadata remains unverified.
-- Validation at report creation: tests and Windows build have **not yet been observed on this implementation commit**. The task must remain in progress until exact-head CI confirms the relevant checks.
+- Validation on implementation commit `329ba9c70a6ee53df1cfefcc71b8cf1c7c658960`: Python suite passed (146 tests), but graph guard failed because the `T0067 -> T0072` classification used unsupported value `sequencing_dependency`. The graph enum was checked in `tools/graph_guard.py`; the allowed value is `sequencing_only`, now corrected. Windows WPF build and local inference integration were still running at the last check. Task remains in progress pending exact-head CI after this correction.

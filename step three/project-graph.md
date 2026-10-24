@@ -12285,11 +12285,11 @@
         "tests/test_model_catalog_ui.py",
         "step three/T0072/execution-report.md"
       ],
-      "notes": "Implementation adds an explicit REVIEW REQUIRED label to catalog rows whenever license metadata is absent or has status review_required/unknown. Exact-head automated acceptance checks are pending; do not mark done until CI and Windows build pass.",
+      "notes": "Implementation adds an explicit REVIEW REQUIRED label to catalog rows whenever license metadata is absent or has status review_required/unknown. The first CI run passed all 146 Python tests but graph guard caught an unsupported edge-classification enum; corrected to sequencing_only. Awaiting exact-head rerun before completion.",
       "execution_summary": {
-        "attempt_count": 1,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "T0072-A001",
+        "attempt_count": 2,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "T0072-A002",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Host.Windows/Models/Catalog/ModelCatalogModels.cs",
@@ -12299,8 +12299,12 @@
           "step three/T0072/execution-report.md"
         ],
         "related_commits": [],
-        "tests_passed": [],
-        "tests_failed": [],
+        "tests_passed": [
+          "Python quality suite: 146 tests passed on commit 329ba9c70a6ee53df1cfefcc71b8cf1c7c658960 (workflow run 40121120011, test step)."
+        ],
+        "tests_failed": [
+          "Graph guard failed on commit 329ba9c70a6ee53df1cfefcc71b8cf1c7c658960 because dependency classification 'sequencing_dependency' is not an allowed enum; changed to supported value 'sequencing_only' in this follow-up."
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -12339,6 +12343,36 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Run exact-head Step Three quality gate, HostLifecycle.Tests and Windows WPF product build; mark done only if required checks pass."
+        },
+        {
+          "attempt_id": "T0072-A002",
+          "started_at": "2026-10-24T18:31:52Z",
+          "ended_at": "2026-10-24T18:32:10Z",
+          "result": "partial",
+          "summary": "CI ran all 146 Python tests successfully, but graph_guard rejected the newly added edge classification because it must be sequencing_only. Correcting the graph enum and rerunning exact-head checks.",
+          "changed_files": [
+            "step three/project-graph.md"
+          ],
+          "commit_sha": "329ba9c70a6ee53df1cfefcc71b8cf1c7c658960",
+          "tests": [
+            {
+              "name": "Python quality suite",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40121120011",
+              "summary": "146 tests passed."
+            },
+            {
+              "name": "Graph guard",
+              "result": "failed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40121120011",
+              "summary": "Unsupported class sequencing_dependency on T0067 -> T0072; enum corrected to sequencing_only."
+            }
+          ],
+          "failure_details": "Graph schema only permits hard_dependency, contract_or_interface_dependency, sequencing_only, and unreviewed.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Re-run graph guard and Windows build on corrected graph commit."
         }
       ]
     },
@@ -21070,7 +21104,7 @@
       "from": "T0067",
       "to": "T0072",
       "type": "blocks",
-      "dependency_classification": "sequencing_dependency",
+      "dependency_classification": "sequencing_only",
       "rationale": "The catalog/parser/backend registry are part of the same catalog acceptance path, but license review labeling does not technically require a specific inference backend; retain the existing blocks edge conservatively as sequencing only.",
       "validation_status": "validated",
       "evidence": [
