@@ -77,13 +77,18 @@ public partial class MainWindow : Window
         {
             var sourceHosts = ParseTrustedHostList(CatalogTrustedSourceHosts.Text);
             var licenseHosts = ParseTrustedHostList(CatalogTrustedLicenseHosts.Text);
-            var catalog = new ModelCatalogFileLoader().Load(
-                CatalogFilePath.Text, sourceHosts, LocalInferenceBackendFactory.SupportedBackendIds,
-                licenseHosts.Length == 0 ? null : licenseHosts);
+            var cachePath = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                "WhiteP", "model-catalog-cache.json");
+            var catalog = new OfflineModelCatalogStore().Load(
+                CatalogFilePath.Text, cachePath, sourceHosts, LocalInferenceBackendFactory.SupportedBackendIds,
+                licenseHosts.Length == 0 ? null : licenseHosts, out var usedCache);
             CatalogItems.ItemsSource = catalog.Models;
-            CatalogStatus.Text = catalog.Models.Count == 0
-                ? $"Catalog schema v{catalog.SchemaVersion} loaded successfully; it contains no model entries."
-                : $"Loaded {catalog.Models.Count} metadata record(s) from schema v{catalog.SchemaVersion}. No model was downloaded or installed.";
+            CatalogStatus.Text = usedCache
+                ? $"Internet or selected catalog unavailable. Showing {catalog.Models.Count} model metadata record(s) from the last validated local cache; no model was downloaded or installed."
+                : catalog.Models.Count == 0
+                    ? $"Catalog schema v{catalog.SchemaVersion} loaded successfully; it contains no model entries."
+                    : $"Loaded {catalog.Models.Count} metadata record(s) from schema v{catalog.SchemaVersion}. No model was downloaded or installed.";
         }
         catch (Exception exception) when (
             exception is IOException or InvalidDataException or UnauthorizedAccessException or ArgumentException or NotSupportedException)

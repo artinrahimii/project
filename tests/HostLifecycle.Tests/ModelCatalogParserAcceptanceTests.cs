@@ -14,6 +14,8 @@ internal static class ModelCatalogParserAcceptanceTests
     {
         ParsesValidCatalogAndNormalizesChecksum();
         LoadsCatalogFromFileUsingTheHostBackendRegistry();
+        OfflineCatalogStoreCachesOnlyValidatedDataAndFallsBackWhenSourceIsMissing();
+        OfflineCatalogStoreRejectsInvalidCache();
         LoadsBundledSampleCatalog();
         RejectsOversizedCatalogFile();
         MissingLicenseDefaultsToReviewRequired();
@@ -106,6 +108,57 @@ internal static class ModelCatalogParserAcceptanceTests
         }
 
         throw new Exception($"Model catalog parser accepted invalid input: {reason}");
+    }
+
+    private static void OfflineCatalogStoreCachesOnlyValidatedDataAndFallsBackWhenSourceIsMissing()
+    {
+        var folder = Path.Combine(Path.GetTempPath(), "whitep-catalog-offline-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(folder);
+        var sourcePath = Path.Combine(folder, "catalog.json");
+        var cachePath = Path.Combine(folder, "cache", "catalog.json");
+        try
+        {
+            File.WriteAllText(sourcePath, Catalog(Model(id: "offline-record")), new UTF8Encoding(false));
+            var store = new OfflineModelCatalogStore();
+            var first = store.Load(sourcePath, cachePath, new[] { "models.example.test" },
+                LocalInferenceBackendFactory.SupportedBackendIds, new[] { "licenses.example.test" }, out var usedCache);
+            if (usedCache || first.Models.Single().Id != "offline-record" || !File.Exists(cachePath))
+                throw new Exception("A valid online/local catalog must be loaded and cached without claiming fallback.");
+
+            File.Delete(sourcePath);
+            var offline = store.Load(sourcePath, cachePath, new[] { "models.example.test" },
+                LocalInferenceBackendFactory.SupportedBackendIds, new[] { "licenses.example.test" }, out usedCache);
+            if (!usedCache || offline.Models.Single().Id != "offline-record")
+                throw new Exception("A missing source catalog must fall back to the last validated cached catalog.");
+        }
+        finally
+        {
+            if (Directory.Exists(folder)) Directory.Delete(folder, recursive: true);
+        }
+    }
+
+    private static void OfflineCatalogStoreRejectsInvalidCache()
+    {
+        var folder = Path.Combine(Path.GetTempPath(), "whitep-catalog-offline-invalid-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(folder);
+        var sourcePath = Path.Combine(folder, "missing.json");
+        var cachePath = Path.Combine(folder, "cache.json");
+        try
+        {
+            File.WriteAllText(cachePath, "{ invalid json", new UTF8Encoding(false));
+            try
+            {
+                _ = new OfflineModelCatalogStore().Load(sourcePath, cachePath,
+                    new[] { "models.example.test" }, LocalInferenceBackendFactory.SupportedBackendIds,
+                    new[] { "licenses.example.test" }, out _);
+            }
+            catch (InvalidDataException) { return; }
+            throw new Exception("Invalid cached catalog data must not be displayed as a valid offline catalog.");
+        }
+        finally
+        {
+            if (Directory.Exists(folder)) Directory.Delete(folder, recursive: true);
+        }
     }
 
     private static void LoadsCatalogFromFileUsingTheHostBackendRegistry()

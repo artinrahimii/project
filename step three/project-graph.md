@@ -12760,33 +12760,75 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0074 و T0067 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "src/Host.Windows/Models/Catalog/OfflineModelCatalogStore.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+        "step three/T0075/execution-report.md",
+        "step three/project-graph.md"
+      ],
       "expected_output_paths": [
         "src/Host.Windows/Models/Catalog/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "src/Host.Windows/Models/Catalog/ModelCatalogFileLoader.cs",
+        "src/Host.Windows/Models/Catalog/ModelCatalogParser.cs",
+        "src/Host.Windows/Models/Catalog/OfflineModelCatalogStore.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs",
+        "step three/T0075/execution-report.md"
+      ],
+      "notes": "Implemented validated local catalog cache fallback. Source catalog is validated before cache refresh; cache is revalidated with current allowlists and backend registry before display. Exact-head CI is pending; retain in_progress until it passes.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0075-attempt-1",
+        "last_attempt_result": "in_progress_ci_pending",
+        "changed_files": [
+          "src/Host.Windows/Models/Catalog/OfflineModelCatalogStore.cs",
+          "src/Host.Windows/MainWindow.xaml.cs",
+          "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs",
+          "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
+          "state": "reviewed",
+          "triggering_contracts": [
+            "T0074 catalog loader/parser contract",
+            "T0067 host backend registry"
+          ],
           "affected_by_contract_changes": [],
-          "review_evidence": []
+          "review_evidence": [
+            "ModelCatalogFileLoader.Load performs strict UTF-8, size, JSON and metadata validation before returning a catalog.",
+            "MainWindow passes LocalInferenceBackendFactory.SupportedBackendIds into catalog validation; fallback uses the same registry and allowlists."
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0075-attempt-1",
+          "result": "in_progress_ci_pending",
+          "base_commit": "8a9226ca4a8013ce63f6b9cbb607eed2a7cea635",
+          "summary": "Added offline catalog cache with revalidation and UI fallback status. Exact-head CI has not yet run.",
+          "changed_files": [
+            "src/Host.Windows/Models/Catalog/OfflineModelCatalogStore.cs",
+            "src/Host.Windows/MainWindow.xaml.cs",
+            "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj"
+          ],
+          "tests_passed": [],
+          "tests_failed": [],
+          "related_commits": [],
+          "timestamp": "2026-10-24T00:00:00Z"
+        }
+      ]
     },
     {
       "id": "T0076",
@@ -21451,19 +21493,29 @@
       "from": "T0074",
       "to": "T0075",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "The offline store reuses the strict loader/parser introduced by T0074; invalid catalog metadata cannot enter or leave the cache without validation.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/Models/Catalog/ModelCatalogFileLoader.cs",
+        "src/Host.Windows/Models/Catalog/ModelCatalogParser.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "src/Host.Windows/Inference/LocalInferenceBackendFactory.cs"
+      ]
     },
     {
       "from": "T0067",
       "to": "T0075",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "The catalog loader and offline fallback use the host's supported-backend registry exposed by LocalInferenceBackendFactory.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/Models/Catalog/ModelCatalogFileLoader.cs",
+        "src/Host.Windows/Models/Catalog/ModelCatalogParser.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "src/Host.Windows/Inference/LocalInferenceBackendFactory.cs"
+      ]
     },
     {
       "from": "T0075",
@@ -25348,6 +25400,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-24T19:00:00Z"
+  "updated_at": "2026-10-24T00:00:00Z"
 }
 ```
