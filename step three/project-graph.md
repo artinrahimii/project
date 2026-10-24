@@ -11748,7 +11748,7 @@
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [
-          "Previous exact-head CI failed to compile duplicate-root-property test fixture; corrected in this commit. Rerun CI pending."
+          "T0069-A002: HostLifecycle.Tests compilation failed (CS1003/CS1026/CS1010) at ModelCatalogParserAcceptanceTests.cs:225; fixed in A003; re-run pending."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -11799,7 +11799,7 @@
           "attempt_id": "T0069-A002",
           "started_at": "2026-10-24T15:24:12Z",
           "ended_at": "2026-10-24T15:24:40Z",
-          "result": "partial",
+          "result": "failed",
           "summary": "Inspected exact-head GitHub Actions. Quality gate passed, but HostLifecycle.Tests failed to compile because the duplicate-root-property fixture contained an unescaped quote in its C# string literal. Windows host build and Android APK jobs passed, but the aggregate product build and real-inference workflow failed; T0069 cannot be marked done until lifecycle tests pass.",
           "changed_files": [],
           "commit_sha": null,
@@ -11825,7 +11825,7 @@
               "evidence": "https://github.com/artinrahimii/project/actions/runs/40106803542/job/120910070094"
             }
           ],
-          "failure_details": "C# compiler errors CS1003/CS1026/CS1010 caused by malformed string literal in duplicate-root-property test fixture (line 225).",
+          "failure_details": "Exact-head HostLifecycle.Tests did not compile due to malformed C# JSON string literal in duplicate-root-property test. This is the failed attempt counted by execution_summary.failed_attempt_count.",
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],

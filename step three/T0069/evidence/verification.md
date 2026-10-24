@@ -19,3 +19,7 @@
 
 ## T0069-A003
 - Corrected the duplicate-root-property JSON fixture's escaped string literal. Verification is pending the new commit's CI.
+
+
+## Graph validation follow-up — T0069-A004
+- The quality gate caught a mismatch between `execution_summary.failed_attempt_count` and `execution_history`. The A002 entry now records the real failed compile attempt, and A003 remains partial pending a passing CI run.

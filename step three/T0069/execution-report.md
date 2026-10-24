@@ -23,3 +23,10 @@
 
 - Escaped the `models` property value correctly in the duplicate-root-property fixture so the test source compiles and can exercise duplicate-property rejection.
 - Exact-head CI for this correction is pending; do not mark the task complete until the runtime suite passes.
+
+
+## T0069-A004 — graph quality-gate correction
+
+- The exact-head quality gate for `V 3.0.216` identified `FAILED_ATTEMPT_COUNT_MISMATCH`: summary counted one failed attempt while no history entry had `result=failed`.
+- Corrected the existing `T0069-A002` history entry to `result=failed`, with the observed C# compiler failure details. Kept `T0069-A003` partial because its corrected source has not yet been verified by CI.
+- The latest quality-gate run is not green yet; exact-head rerun after this metadata correction is pending. T0069 remains in progress.
