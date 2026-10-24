@@ -10909,8 +10909,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0064 و T0056 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال انجام",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "tests/test_no_cloud_provider_inference.py",
         "step three/T0065/execution-report.md"
@@ -10924,11 +10924,11 @@
         "src/Host.Windows/Inference/LlamaCppInferenceEngine.cs",
         "src/Host.Infrastructure/LlamaCppServerBackend.cs"
       ],
-      "notes": "Source-level regression test rejects known cloud-provider endpoints/SDK references in the concrete local inference implementation and asserts the configured local server URI and llama.cpp routes. Exact-head quality gate and product build passed. Not runtime network-capture proof.",
+      "notes": "Source-level regression test rejects known cloud-provider endpoints/SDK references in the concrete local inference implementation and asserts the configured local server URI and llama.cpp routes. Exact-head quality gate and product build passed on 49823014f48f79ab55525126c5d7b3b649d75ceb. Scope limitation: not runtime network-capture proof.",
       "execution_summary": {
-        "attempt_count": 3,
+        "attempt_count": 4,
         "failed_attempt_count": 1,
-        "last_attempt_id": "T0065-A003",
+        "last_attempt_id": "T0065-A004",
         "last_attempt_result": "succeeded",
         "changed_files": [
           "tests/test_no_cloud_provider_inference.py",
@@ -10936,11 +10936,14 @@
           "step three/project-graph.md"
         ],
         "related_commits": [
-          "7dd0133fbce7058279787a7f01d29f513f711bc1"
+          "7dd0133fbce7058279787a7f01d29f513f711bc1",
+          "49823014f48f79ab55525126c5d7b3b649d75ceb"
         ],
         "tests_passed": [
           "Step Three quality gate run 40093939074/job 120872159357 passed Python tests, syntax, graph structure, and evidence validation.",
-          "White-P product build workflow run 40093939126 passed on the same head."
+          "White-P product build workflow run 40093939126 passed on the same head.",
+          "Step Three quality gate run 40094709423 passed on exact inspected head 49823014f48f79ab55525126c5d7b3b649d75ceb.",
+          "White-P product build run 40094709452 passed on exact inspected head 49823014f48f79ab55525126c5d7b3b649d75ceb."
         ],
         "tests_failed": [
           "Earlier quality run 40093857725 failed repo-root evidence validation because older T0063/T0064 evidence fields were not repository-relative paths; the T0065 test itself passed.",
@@ -11028,6 +11031,38 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Confirm graph guard passes on this commit; then mark done only after exact-head quality gate passes."
+        },
+        {
+          "attempt_id": "T0065-A004",
+          "started_at": "2026-10-24T16:40:00+03:30",
+          "ended_at": "2026-10-24T16:40:00+03:30",
+          "result": "succeeded",
+          "summary": "Exact-head Step Three quality gate and product build both passed on 49823014f48f79ab55525126c5d7b3b649d75ceb. The existing source-level cloud-provider boundary test is accepted for its stated scope; runtime packet capture is not claimed.",
+          "changed_files": [
+            "step three/project-graph.md",
+            "step three/T0065/execution-report.md"
+          ],
+          "commit_sha": null,
+          "at_commit": "49823014f48f79ab55525126c5d7b3b649d75ceb",
+          "tests": [
+            {
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40094709423",
+              "summary": "Python tests, syntax, graph structure, and evidence validation passed on exact inspected head."
+            },
+            {
+              "name": "White-P product build",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40094709452",
+              "summary": "Product build passed on exact inspected head."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Review T0065->T0066 and T0056->T0066 edges against the real binary launch/checksum implementation before starting T0066."
         }
       ]
     },
@@ -23898,6 +23933,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-24T16:35:00+03:30"
+  "updated_at": "2026-10-24T16:40:00+03:30"
 }
 ```
