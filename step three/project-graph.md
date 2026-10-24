@@ -11402,8 +11402,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0066 و T0056 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال انجام",
+      "status": "done",
+      "status_fa": "تکمیل‌شده",
       "actual_output_paths": [
         "src/Host.Windows/Inference/LocalInferenceBackendFactory.cs",
         "src/Host.Windows/MainWindow.xaml.cs",
@@ -11425,28 +11425,32 @@
         "src/Host.Application/HostInferenceSession.cs",
         "src/Host.Application/IInferenceBackend.cs"
       ],
-      "notes": "Initial code/test implementation submitted for exact-head CI. MainWindow now selects the concrete adapter through LocalInferenceBackendFactory.Create; HostInferenceSession remains dependent on IInferenceBackend. A runtime regression injects a different implementation and validates the session lifecycle. The two incoming blocks edges were preserved and reviewed as sequencing_only; outgoing edges T0068-T0075 remain unreviewed.",
+      "notes": "T0067 is complete for its stated acceptance: MainWindow delegates concrete backend composition to LocalInferenceBackendFactory, and HostInferenceSession uses IInferenceBackend. The C# host lifecycle runtime test injected an alternate implementation, reached Ready, generated the expected response and returned to Ready. Exact-head quality, Windows build/smoke, host tests and live local inference passed. The Android job in the aggregate product workflow was still running when checked; no Android success is claimed for that run. This does not claim P2P, encryption, no-storage, or whole-project completion.",
       "execution_summary": {
-        "attempt_count": 1,
+        "attempt_count": 2,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0067-A001",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "T0067-A002",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Host.Windows/Inference/LocalInferenceBackendFactory.cs",
           "src/Host.Windows/MainWindow.xaml.cs",
           "tests/HostLifecycle.Tests/Program.cs",
-          "tests/test_inference_backend_abstraction.py",
-          "step three/T0067/execution-report.md",
-          "step three/T0067/evidence/verification.md",
-          "step three/project-graph.md"
+          "tests/test_inference_backend_abstraction.py"
         ],
-        "related_commits": [],
-        "tests_passed": [],
+        "related_commits": [
+          "a2fb3f7dd7815b65cfc009f8920d5dc3482fc9b3"
+        ],
+        "tests_passed": [
+          "Step Three quality gate — run 40105391421: 127 Python tests passed; syntax, graph structure and recorded-output/evidence checks passed on the exact implementation commit.",
+          "Windows WPF host build — job 120905903221, run 40105391441: Release host build succeeded and the WPF entry point smoke test displayed MainWindow, validated required controls and shut down cleanly.",
+          "Host lifecycle unit/integration tests — job 120905903414, run 40105391441: The runtime log explicitly reports: PASS: HostInferenceSession supports an alternate IInferenceBackend through its factory without changing dialog/network logic.",
+          "Real local inference integration — run 40105391434: The b11443 archive checksum matched; the executable version 11443 and SHA-256 were verified; real local GGUF inference succeeded and active-generation cancellation stopped the owned process cleanly."
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "in_review",
+          "state": "passed",
           "triggering_contracts": [
             "IInferenceBackend selection boundary"
           ],
@@ -11457,7 +11461,10 @@
             "src/Host.Application/HostInferenceSession.cs",
             "src/Host.Application/IInferenceBackend.cs",
             "tests/HostLifecycle.Tests/Program.cs",
-            "tests/test_inference_backend_abstraction.py"
+            "tests/test_inference_backend_abstraction.py",
+            "https://github.com/artinrahimii/project/actions/runs/40105391421",
+            "https://github.com/artinrahimii/project/actions/runs/40105391441",
+            "https://github.com/artinrahimii/project/actions/runs/40105391434"
           ]
         }
       },
@@ -11477,13 +11484,58 @@
             "step three/T0067/evidence/verification.md",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "a2fb3f7dd7815b65cfc009f8920d5dc3482fc9b3",
           "tests": [],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Verify exact-head Step Three quality gate, Windows WPF build and HostLifecycle.Tests. Fix any failures before marking T0067 done; keep downstream T0067 edges unreviewed until they are affected."
+        },
+        {
+          "attempt_id": "T0067-A002",
+          "started_at": "2026-10-24T18:37:00+03:30",
+          "ended_at": "2026-10-24T18:38:48.265+03:30",
+          "result": "succeeded",
+          "summary": "Exact-head acceptance checks succeeded on a2fb3f7dd7815b65cfc009f8920d5dc3482fc9b3. The quality workflow passed 127 Python tests, including all four new source-boundary tests. The Windows WPF Release build and host lifecycle job passed; the C# harness logged the expected PASS for injecting an alternate IInferenceBackend and generating through it. The pinned live-inference workflow also passed, confirming the implementation commit did not break binary verification or real local llama.cpp inference. The Android job in the combined product workflow was still running when inspected; it is not required for the Windows backend-abstraction acceptance and is not counted as a pass here.",
+          "changed_files": [
+            "src/Host.Windows/Inference/LocalInferenceBackendFactory.cs",
+            "src/Host.Windows/MainWindow.xaml.cs",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "tests/test_inference_backend_abstraction.py"
+          ],
+          "commit_sha": "a2fb3f7dd7815b65cfc009f8920d5dc3482fc9b3",
+          "tests": [
+            {
+              "name": "Step Three quality gate — run 40105391421",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40105391421",
+              "summary": "127 Python tests passed; syntax, graph structure and recorded-output/evidence checks passed on the exact implementation commit."
+            },
+            {
+              "name": "Windows WPF host build — job 120905903221, run 40105391441",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40105391441",
+              "summary": "Release host build succeeded and the WPF entry point smoke test displayed MainWindow, validated required controls and shut down cleanly."
+            },
+            {
+              "name": "Host lifecycle unit/integration tests — job 120905903414, run 40105391441",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40105391441",
+              "summary": "The runtime log explicitly reports: PASS: HostInferenceSession supports an alternate IInferenceBackend through its factory without changing dialog/network logic."
+            },
+            {
+              "name": "Real local inference integration — run 40105391434",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40105391434",
+              "summary": "The b11443 archive checksum matched; the executable version 11443 and SHA-256 were verified; real local GGUF inference succeeded and active-generation cancellation stopped the owned process cleanly."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "T0067 is complete for its stated interface/factory acceptance. Continue with the next eligible task only after reviewing its incoming dependency edges. Do not infer P2P, encryption, no-storage, or overall product completion from this task."
         }
       ]
     },
@@ -24282,6 +24334,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-24T18:34:57.586+03:30"
+  "updated_at": "2026-10-24T18:38:48.265+03:30"
 }
 ```

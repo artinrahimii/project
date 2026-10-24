@@ -11,3 +11,12 @@
 - `tests/HostLifecycle.Tests/Program.cs` adds a runtime test that supplies a different backend via the factory and asserts Ready -> generation -> Ready behavior with the expected response.
 - `tests/test_inference_backend_abstraction.py` asserts that MainWindow uses the factory and the session depends on the interface.
 - CI is pending; no passing test is claimed yet.
+
+## T0067-A002 — verified runtime and build evidence
+
+- Quality gate: [run 40105391421](https://github.com/artinrahimii/project/actions/runs/40105391421), 127 tests passed, including `test_inference_backend_abstraction.py`.
+- Windows WPF Release build and startup smoke: [run 40105391441](https://github.com/artinrahimii/project/actions/runs/40105391441), job `120905903221`, successful.
+- Host lifecycle runtime regression: [run 40105391441](https://github.com/artinrahimii/project/actions/runs/40105391441), job `120905903414`, successful; log emitted the exact alternate-`IInferenceBackend` PASS message.
+- Real local model integration: [run 40105391434](https://github.com/artinrahimii/project/actions/runs/40105391434), successful. Binary build/version/hash checks and real non-empty GGUF inference/cancellation passed.
+- Combined Android APK job remained in progress at inspection time and was not counted as passed here.
+- Earlier A001 remained a partial implementation checkpoint; this A002 records the successful exact-head verification.
