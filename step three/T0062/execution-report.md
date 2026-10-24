@@ -23,4 +23,12 @@
 
 ## Verification status
 
-The source changes and regression cases have been prepared, but exact-commit CI has not yet run. Therefore this attempt is recorded as `partial`, and T0062 remains `in_progress` pending the exact-commit quality gate, C# host lifecycle tests, and product-build checks. No test is marked passed before CI reports its actual result.
+Exact-commit verification on `5c049dc380d0b3c52c376c9cfafab72cd11a3e36` (`V 3.0.193`):
+
+- [Step Three quality gate, run 40078502194](https://github.com/artinrahimii/project/actions/runs/40078502194) — PASS.
+- [Host lifecycle unit/integration job, run 40078502247](https://github.com/artinrahimii/project/actions/runs/40078502247) — PASS, including the new malformed JSON, disconnect and timeout regression tests.
+- [Windows Release build and startup smoke, run 40078502247](https://github.com/artinrahimii/project/actions/runs/40078502247) — PASS.
+- [Real local llama.cpp integration, run 40078502151](https://github.com/artinrahimii/project/actions/runs/40078502151) — PASS with a non-empty response from the pinned local GGUF model.
+- The Android job in product workflow 40078502247 was still running when this report was updated. It is not a direct dependency of the T0062 backend error-handling code, but the overall product workflow is not yet claimed fully complete.
+
+T0062 remains `in_progress` for this round pending final product workflow completion and a final re-read of the online branch. The historical task attempt is now linked to its actual implementation commit. No unobserved test is marked passed.

@@ -10425,7 +10425,7 @@
         "tests/HostLifecycle.Tests/Program.cs",
         "step three/T0062/execution-report.md"
       ],
-      "notes": "T0062-A001 adds stable timeout, transport/process-stop, and incomplete/invalid-response handling with regression tests. Status remains in_progress until exact-commit CI validates the new tests and product builds. Process termination is represented at the HTTP boundary as a connection failure; the launcher integration test separately detects an early process exit.",
+      "notes": "T0062-A001 is implemented and its direct exact-commit quality gate, host lifecycle regression tests, Windows Release/startup smoke, and live local-inference workflow passed on 5c049dc380d0b3c52c376c9cfafab72cd11a3e36. The full product workflow's Android job was still running at the time of this graph update; task status remains in_progress pending that workflow's final result.",
       "execution_summary": {
         "attempt_count": 1,
         "failed_attempt_count": 0,
@@ -10437,13 +10437,20 @@
           "step three/T0062/execution-report.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
+        "related_commits": [
+          "5c049dc380d0b3c52c376c9cfafab72cd11a3e36"
+        ],
+        "tests_passed": [
+          "Step Three quality gate: Exact commit 5c049dc380d0b3c52c376c9cfafab72cd11a3e36 passed graph structure, Python syntax, automated tests and recorded-output/evidence validation. (https://github.com/artinrahimii/project/actions/runs/40078502194)",
+          "Host lifecycle unit and integration tests: The C# host lifecycle job passed, including the new malformed JSON, connection loss and timeout regression tests. (https://github.com/artinrahimii/project/actions/runs/40078502247)",
+          "Windows WPF host build and startup smoke: Windows Release build, generated C# Protobuf checks, WPF startup smoke and artifact upload passed. (https://github.com/artinrahimii/project/actions/runs/40078502247)",
+          "Real local llama.cpp integration: Real local llama.cpp process, health check and non-empty response from the pinned GGUF model passed. (https://github.com/artinrahimii/project/actions/runs/40078502151)"
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "in_review",
+          "state": "passed",
           "triggering_contracts": [
             "LlamaCppServerBackend GenerateAsync error/response contract"
           ],
@@ -10452,7 +10459,10 @@
           ],
           "review_evidence": [
             "src/Host.Infrastructure/LlamaCppServerBackend.cs",
-            "tests/HostLifecycle.Tests/Program.cs"
+            "tests/HostLifecycle.Tests/Program.cs",
+            "https://github.com/artinrahimii/project/actions/runs/40078502194",
+            "https://github.com/artinrahimii/project/actions/runs/40078502247",
+            "https://github.com/artinrahimii/project/actions/runs/40078502151"
           ]
         }
       },
@@ -10460,7 +10470,7 @@
         {
           "attempt_id": "T0062-A001",
           "started_at": "2026-10-24T11:00:00-04:00",
-          "ended_at": "2026-10-24T11:00:00-04:00",
+          "ended_at": "2026-10-24T11:05:00-04:00",
           "result": "partial",
           "summary": "Added deterministic failure mapping for request timeout, connection loss/server process stop, malformed/incomplete JSON, and invalid response bodies. Added regression cases for timeout, transport disconnect, and truncated JSON; exact-commit CI remains pending.",
           "changed_files": [
@@ -10469,8 +10479,33 @@
             "step three/T0062/execution-report.md",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
-          "tests": [],
+          "commit_sha": "5c049dc380d0b3c52c376c9cfafab72cd11a3e36",
+          "tests": [
+            {
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40078502194",
+              "summary": "Exact commit 5c049dc380d0b3c52c376c9cfafab72cd11a3e36 passed graph structure, Python syntax, automated tests and recorded-output/evidence validation."
+            },
+            {
+              "name": "Host lifecycle unit and integration tests",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40078502247",
+              "summary": "The C# host lifecycle job passed, including the new malformed JSON, connection loss and timeout regression tests."
+            },
+            {
+              "name": "Windows WPF host build and startup smoke",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40078502247",
+              "summary": "Windows Release build, generated C# Protobuf checks, WPF startup smoke and artifact upload passed."
+            },
+            {
+              "name": "Real local llama.cpp integration",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40078502151",
+              "summary": "Real local llama.cpp process, health check and non-empty response from the pinned GGUF model passed."
+            }
+          ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
@@ -23407,6 +23442,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-24T11:00:00-04:00"
+  "updated_at": "2026-10-24T11:05:00-04:00"
 }
 ```
