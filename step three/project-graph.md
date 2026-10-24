@@ -10909,8 +10909,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0064 و T0056 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "done",
-      "status_fa": "انجام‌شده",
+      "status": "in_progress",
+      "status_fa": "در حال انجام",
       "actual_output_paths": [
         "tests/test_no_cloud_provider_inference.py",
         "step three/T0065/execution-report.md"
@@ -10926,9 +10926,9 @@
       ],
       "notes": "Source-level regression test rejects known cloud-provider endpoints/SDK references in the concrete local inference implementation and asserts the configured local server URI and llama.cpp routes. Exact-head quality gate and product build passed. Not runtime network-capture proof.",
       "execution_summary": {
-        "attempt_count": 2,
+        "attempt_count": 3,
         "failed_attempt_count": 1,
-        "last_attempt_id": "T0065-A002",
+        "last_attempt_id": "T0065-A003",
         "last_attempt_result": "succeeded",
         "changed_files": [
           "tests/test_no_cloud_provider_inference.py",
@@ -10943,7 +10943,8 @@
           "White-P product build workflow run 40093939126 passed on the same head."
         ],
         "tests_failed": [
-          "Earlier quality run 40093857725 failed repo-root evidence validation because older T0063/T0064 evidence fields were not repository-relative paths; the T0065 test itself passed."
+          "Earlier quality run 40093857725 failed repo-root evidence validation because older T0063/T0064 evidence fields were not repository-relative paths; the T0065 test itself passed.",
+          "Quality run 40094617046 failed graph structure validation: FAILED_ATTEMPT_COUNT_MISMATCH (summary=1, history=0)."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -10986,8 +10987,8 @@
           "attempt_id": "T0065-A002",
           "started_at": "2026-10-24T16:18:00+03:30",
           "ended_at": "2026-10-24T16:30:00+03:30",
-          "result": "succeeded",
-          "summary": "The exact-head quality gate passed all tests, syntax, graph structure and repository-path/evidence checks after correcting pre-existing graph evidence metadata. Product build also passed. Source-level guard only; no runtime packet capture claim.",
+          "result": "failed",
+          "summary": "The test and product code were not failing, but the full quality gate rejected graph metadata because failed_attempt_count was set to 1 while the execution history contained no failed attempt. The status must remain in progress until this accounting error is repaired.",
           "changed_files": [
             "tests/test_no_cloud_provider_inference.py",
             "step three/T0065/execution-report.md",
@@ -10998,22 +10999,35 @@
           "tests": [
             {
               "name": "Step Three quality gate",
-              "result": "passed",
-              "evidence": "https://github.com/artinrahimii/project/actions/runs/40093939074",
-              "summary": "Python tests, syntax, graph structure, and evidence validation passed."
-            },
-            {
-              "name": "Product build",
-              "result": "passed",
-              "evidence": "https://github.com/artinrahimii/project/actions/runs/40093939126",
-              "summary": "Product build workflow passed on exact inspected head."
+              "result": "failed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40094617046",
+              "summary": "Python tests passed; graph structure validation failed on failed-attempt count mismatch."
             }
           ],
-          "failure_details": null,
+          "failure_details": "GitHub Actions run 40094617046, job 120874154277: graph_guard reported FAILED_ATTEMPT_COUNT_MISMATCH: T0065: summary=1, history=0.",
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Proceed to T0066 after reviewing dependencies and actual binary distribution/checksum design."
+        },
+        {
+          "attempt_id": "T0065-A003",
+          "started_at": "2026-10-24T16:34:00+03:30",
+          "ended_at": "2026-10-24T16:35:00+03:30",
+          "result": "succeeded",
+          "summary": "Recorded the failed exact-head quality-gate attempt as T0065-A002 and aligned summary counters with the full attempt history. Re-run exact-head CI before marking done.",
+          "changed_files": [
+            "step three/project-graph.md",
+            "step three/T0065/execution-report.md"
+          ],
+          "commit_sha": null,
+          "at_commit": "dc21c0f321e64b310948f11e6dfec473c9fff6a3",
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Confirm graph guard passes on this commit; then mark done only after exact-head quality gate passes."
         }
       ]
     },
@@ -23884,6 +23898,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-24T16:30:00+03:30"
+  "updated_at": "2026-10-24T16:35:00+03:30"
 }
 ```

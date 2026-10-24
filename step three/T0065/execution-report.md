@@ -38,3 +38,9 @@
 - Earlier quality run `40093857725` failed because older T0063/T0064 evidence fields were not repository-relative paths; that failed attempt is retained in graph history.
 - Acceptance decision: T0065 is complete for its scoped source-level guard. This is not runtime network capture and does not prove absence of every possible outbound connection.
 - Next action: review T0066's dependency edges and the actual binary distribution/checksum implementation before changing application code.
+
+
+## CI follow-up
+
+- The first follow-up commit `dc21c0f321e64b310948f11e6dfec473c9fff6a3` failed graph structure validation because `failed_attempt_count=1` had no matching failed attempt in the task history. This was a metadata-accounting error, not a Python test failure.
+- The failure is recorded as attempt `T0065-A002`; the correction is tracked as `T0065-A003`. T0065 remains `in_progress` until the next exact-head quality gate passes.
