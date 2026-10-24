@@ -10598,11 +10598,9 @@
         "src/Host.Windows/Inference/"
       ],
       "evidence": [
-        "Exact main commit 694b0fcf847a9a2087af292910112c9c041d86df: GitHub Actions run 40092245411, job 120867130271 completed successfully.",
-        "Job log line at 2026-10-24T12:02:42.994Z: PASS: real local llama.cpp inference succeeded; active generation cancellation was observed and the owned process stopped cleanly.",
-        "Same commit workflow run 40092245473: Windows WPF host build/startup smoke, host lifecycle tests, and Android debug APK build all succeeded.",
-        "Same commit workflow run 40092245370: graph/Python quality checks succeeded.",
-        "tests/HostLifecycle.Tests/Program.cs"
+        "tests/HostLifecycle.Tests/Program.cs",
+        ".github/workflows/real-inference.yml",
+        "step three/T0063/execution-report.md"
       ],
       "notes": "لغو تولید واقعیِ درحال‌اجرا با مدل GGUF و توقف فرایند اختصاصی در CI همان commit تأیید شد؛ آزمون‌های ساخت ویندوز، چرخهٔ عمر میزبان، APK اندروید و کنترل کیفیت نیز موفق‌اند.",
       "execution_summary": {
@@ -10803,10 +10801,9 @@
         "src/Host.Windows/Inference/"
       ],
       "evidence": [
-        ".github/workflows/real-inference.yml: downloads the pinned SmolLM2-135M-Instruct.Q4_K_M GGUF from repository revision a6b7826ed969c3926a98359e39912af137b464cb, validates the GGUF signature and size, and sets WHITEP_RUN_REAL_INFERENCE_TEST=1.",
-        "tests/HostLifecycle.Tests/Program.cs: the opt-in live-model path checks non-empty real inference output, active-generation cancellation, owned process shutdown, and endpoint unavailability.",
-        "GitHub Actions run 40092245411, job 120867130271, on commit 694b0fcf847a9a2087af292910112c9c041d86df completed successfully; the job log reports real inference and cancellation passed.",
-        "Official model card identifies QuantFactory/SmolLM2-135M-Instruct-GGUF as Apache-2.0 licensed: https://huggingface.co/QuantFactory/SmolLM2-135M-Instruct-GGUF/blob/a6b7826ed969c3926a98359e39912af137b464cb/README.md"
+        "tests/HostLifecycle.Tests/Program.cs",
+        ".github/workflows/real-inference.yml",
+        "step three/T0064/execution-report.md"
       ],
       "notes": "Implementation pre-existed this execution; acceptance was verified against the exact-commit live-model CI result and the pinned model card. No claim that new model-test code was written in this attempt.",
       "execution_summary": {
@@ -10943,7 +10940,8 @@
           "Automated Python test stage passed in quality run 40093732203 (117 tests; the new test was included)."
         ],
         "tests_failed": [
-          "The overall quality gate failed at graph_guard because existing T0063/T0064 graph metadata lacked successful history entries and T0063 lacked a test-source evidence path; this was not a failure of the new test."
+          "The overall quality gate failed at graph_guard because existing T0063/T0064 graph metadata lacked successful history entries and T0063 lacked a test-source evidence path; this was not a failure of the new test.",
+          "Quality run 40093857725: graph structure passed; repo-root evidence validation failed because older T0063/T0064 evidence arrays contained descriptive prose/URLs in file-path fields. No application test failed."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -23850,6 +23848,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-24T16:12:00+03:30"
+  "updated_at": "2026-10-24T16:18:00+03:30"
 }
 ```
