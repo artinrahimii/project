@@ -1,26 +1,35 @@
 # T0063 execution report
 
-## Baseline and dependency review
+## Baseline and exact-revision validation
 
 - Repository/branch: `artinrahimii/project` / `main`.
-- Baseline: `a90289432cfff2ee80dd5bfcd197ab7ab13a16f2` (`V 3.0.195`), re-read from the online branch before editing.
-- Graph path: `step three/project-graph.md`; ordinary file fetch returned an empty body, so the graph was read through its exact baseline Blob `f35dbff0df44255ebe7417e5df830f9a3f729529`. The Markdown-fenced JSON parsed successfully with 229 unique tasks and 426 edges. The response was 1,065,019 characters. Blob SHA was not recomputed from local bytes in this environment.
-- `T0056` and `T0062` are marked done in the graph and have task reports with prior exact-commit CI evidence. Their outgoing edges to `T0063` were previously unreviewed. For this task, the `T0062 → T0063` and `T0056 → T0063` edges were reviewed against the exact-baseline backend cancellation token, WPF operation token, and managed process launcher; their original `type=blocks` values are preserved, and the graph records `contract_or_interface_dependency` plus evidence. The outgoing `T0063 → T0064` edge remains unreviewed.
+- Baseline at start of this review: `62e790193161a8e662dde6348bb90859392f3d74` (`V 3.0.196`).
+- Graph: `step three/project-graph.md`; Git tree blob `79c2e083cbbe9c8e85834e9553c0d68c2d0a4c47`, reported size 1,191,877 bytes. The normal file fetch returned an empty body, so the exact blob was fetched via Git Blob API. Its Markdown-fenced JSON parsed successfully: 229 unique task IDs and 426 edges. The decoded content is 1,068,587 characters; the API returned the complete closing fence. A local Git client was not available to independently recompute the blob hash from bytes.
+- Prior implementation is in commit `a90289432cfff2ee80dd5bfcd197ab7ab13a16f2` (`V 3.0.195`); current head `62e790193161a8e662dde6348bb90859392f3d74` is `V 3.0.196`.
 
-## T0063-A001 implementation
+## Implementation and evidence reviewed
 
-- `src/Host.Windows/Inference/LocalInferenceProcessLauncher.cs`: added `IsRunning` and reusable `Stop()`; stopping kills the owned process tree, waits up to the existing five-second shutdown timeout, and disposes the process handle.
-- `src/Host.Windows/MainWindow.xaml`: added a disabled-by-default Cancel inference button.
-- `src/Host.Windows/MainWindow.xaml.cs`: the button cancels the active operation token. If this app owns a live llama.cpp process, cancellation also stops that process as a fallback because disconnecting an HTTP request does not guarantee that the server cancels model computation. The UI instructs the user to reconnect before the next request.
-- `tests/HostLifecycle.Tests/Program.cs`: the opt-in real-model test now verifies that the managed server process can be stopped after a real response and that its health endpoint is no longer available.
-- The external-server path is not killed by the launcher because it is not owned by this application.
+- `src/Host.Windows/Inference/LocalInferenceProcessLauncher.cs`: owns a managed llama.cpp process, exposes `IsRunning`, and `Stop()` kills its process tree, waits up to five seconds, and disposes the process handle.
+- `src/Host.Windows/MainWindow.xaml` and `MainWindow.xaml.cs`: a Cancel inference control cancels the active operation token. If the host owns the local inference process, it stops that process as a fallback and instructs the user to reconnect before another request. External inference processes are not killed.
+- `src/Host.Infrastructure/LlamaCppServerBackend.cs`: cancellation token is passed to HTTP send/body-read operations; the backend does not convert caller cancellation into a timeout.
+- `tests/HostLifecycle.Tests/Program.cs`: the opt-in real-model path checks that real llama.cpp inference returns non-empty, non-fixture output and that the managed process can be stopped and its health endpoint becomes unavailable.
 
-## Verification status
+## CI evidence for the exact current head
 
-- No local .NET build/test runner is available through this GitHub editing session.
-- The new test assertions are wired into the existing opt-in Windows real-inference workflow, but that workflow has not yet reported a result for the candidate commit.
-- Therefore T0063 remains `in_progress`; no test is recorded as passed for this attempt. Acceptance will only be completed after CI verifies the exact commit.
+The GitHub Actions check-runs API for `62e790193161a8e662dde6348bb90859392f3d74` reports all five checks completed successfully:
+
+- Real llama.cpp process and GGUF response — success. Job log explicitly reports: real local llama.cpp inference succeeded and the managed process stopped cleanly.
+- Host lifecycle unit and integration tests — success.
+- Build Android client APK — success.
+- Build Windows WPF host — success.
+- Task graph and Python quality checks — success, including graph validation and recorded-output/evidence validation.
+
+These are remote CI results; no local build or test execution was performed in this session.
+
+## Acceptance decision
+
+**T0063 remains in progress, not done.** CI proves real inference and controlled process shutdown after a response, while the UI cancellation path and fallback exist in source. However, the checked-in real-model test stops the process after a completed response; it does not yet demonstrate cancellation during an in-flight generation and confirm the canceled UI state. That specific acceptance gap must be closed before marking this task complete.
 
 ## Next action
 
-Check the Step Three quality gate, Windows host lifecycle tests, product build, and opt-in real-inference workflow for the new commit. Fix any failures before marking T0063 done.
+Extend the opt-in Windows real-inference test to cancel an active generation (not only stop the process after a successful response), assert cancellation is surfaced and the owned process is stopped, then rerun the exact-commit lifecycle and real-inference workflows. Do not start dependent T0064 until T0063 is accepted.
