@@ -23,7 +23,7 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         _session = new HostInferenceSession(
-            backendFactory: static (address, model) => new LlamaCppServerBackend(address, model),
+            backendFactory: LocalInferenceBackendFactory.Create,
             readinessEvaluator: EvaluateHostReadinessAsync);
         var settingsLoadFailed = false;
         try

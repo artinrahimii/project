@@ -11402,33 +11402,90 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0066 و T0056 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال انجام",
+      "actual_output_paths": [
+        "src/Host.Windows/Inference/LocalInferenceBackendFactory.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "tests/test_inference_backend_abstraction.py",
+        "step three/T0067/execution-report.md",
+        "step three/T0067/evidence/verification.md"
+      ],
       "expected_output_paths": [
         "src/Host.Windows/Inference/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "src/Host.Windows/Inference/LocalInferenceBackendFactory.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "tests/test_inference_backend_abstraction.py",
+        "step three/T0067/execution-report.md",
+        "step three/T0067/evidence/verification.md",
+        "src/Host.Application/HostInferenceSession.cs",
+        "src/Host.Application/IInferenceBackend.cs"
+      ],
+      "notes": "Initial code/test implementation submitted for exact-head CI. MainWindow now selects the concrete adapter through LocalInferenceBackendFactory.Create; HostInferenceSession remains dependent on IInferenceBackend. A runtime regression injects a different implementation and validates the session lifecycle. The two incoming blocks edges were preserved and reviewed as sequencing_only; outgoing edges T0068-T0075 remain unreviewed.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0067-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Host.Windows/Inference/LocalInferenceBackendFactory.cs",
+          "src/Host.Windows/MainWindow.xaml.cs",
+          "tests/HostLifecycle.Tests/Program.cs",
+          "tests/test_inference_backend_abstraction.py",
+          "step three/T0067/execution-report.md",
+          "step three/T0067/evidence/verification.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
+          "state": "in_review",
+          "triggering_contracts": [
+            "IInferenceBackend selection boundary"
+          ],
           "affected_by_contract_changes": [],
-          "review_evidence": []
+          "review_evidence": [
+            "src/Host.Windows/Inference/LocalInferenceBackendFactory.cs",
+            "src/Host.Windows/MainWindow.xaml.cs",
+            "src/Host.Application/HostInferenceSession.cs",
+            "src/Host.Application/IInferenceBackend.cs",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "tests/test_inference_backend_abstraction.py"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0067-A001",
+          "started_at": "2026-10-24T18:34:57.586+03:30",
+          "ended_at": "2026-10-24T18:34:57.586+03:30",
+          "result": "partial",
+          "summary": "Reviewed the two incoming dependency edges and validated them as sequencing-only while retaining their blocks type and order. Extracted concrete backend construction to LocalInferenceBackendFactory and added both source-boundary checks and a runnable alternate-backend session regression. Exact-head CI is pending.",
+          "changed_files": [
+            "src/Host.Windows/Inference/LocalInferenceBackendFactory.cs",
+            "src/Host.Windows/MainWindow.xaml.cs",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "tests/test_inference_backend_abstraction.py",
+            "step three/T0067/execution-report.md",
+            "step three/T0067/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Verify exact-head Step Three quality gate, Windows WPF build and HostLifecycle.Tests. Fix any failures before marking T0067 done; keep downstream T0067 edges unreviewed until they are affected."
+        }
+      ]
     },
     {
       "id": "T0068",
@@ -20242,19 +20299,31 @@
       "from": "T0066",
       "to": "T0067",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "Reviewed against actual sources. T0066's trusted executable verifier is invoked by LocalInferenceProcessLauncher, but T0067's factory/interface boundary does not import or consume a verifier artifact. Keep the conservative blocks/order relation while recording that it is sequencing-only rather than a technical artifact dependency.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/Inference/LocalInferenceBinaryVerifier.cs",
+        "src/Host.Windows/Inference/LocalInferenceProcessLauncher.cs",
+        "src/Host.Application/IInferenceBackend.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "step three/T0066/execution-report.md"
+      ]
     },
     {
       "from": "T0056",
       "to": "T0067",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "Reviewed against actual sources. T0056's verified hardware/capacity readiness is injected separately into HostInferenceSession; the backend-factory boundary neither consumes nor produces capacity measurements. Keep the conservative blocks/order relation while recording sequencing-only semantics.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "src/Host.Application/HostInferenceSession.cs",
+        "src/Host.Domain/HostCapabilities.cs",
+        "tests/test_windows_hardware_discovery.py",
+        "step three/T0056/execution-report.md"
+      ]
     },
     {
       "from": "T0067",
@@ -24213,6 +24282,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-24T18:29:54.318+03:30"
+  "updated_at": "2026-10-24T18:34:57.586+03:30"
 }
 ```

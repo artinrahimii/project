@@ -706,6 +706,33 @@ using (var session = new HostInferenceSession(backend: new SessionTestBackend(),
     Assert(session.Status.State == HostState.Ready, "Session should return to Ready after generation.");
 }
 
+
+var alternateFactoryCalls = 0;
+Uri? alternateFactoryAddress = null;
+string? alternateFactoryModel = null;
+using (var alternateSession = new HostInferenceSession(
+    backendFactory: (address, model) =>
+    {
+        alternateFactoryCalls++;
+        alternateFactoryAddress = address;
+        alternateFactoryModel = model;
+        return new AlternateFactoryTestBackend();
+    },
+    readinessEvaluator: ReadyHostReadiness))
+{
+    var selectedEndpoint = new Uri("http://127.0.0.1:18080/");
+    var connectedStatus = await alternateSession.ConnectAsync(selectedEndpoint, "alternate-test-model");
+    Assert(connectedStatus.State == HostState.Ready, "A replacement IInferenceBackend should connect through the backend factory.");
+    Assert(alternateFactoryCalls == 1, "The backend factory should be called once when connecting.");
+    Assert(Equals(alternateFactoryAddress, selectedEndpoint), "The backend factory must receive the configured server endpoint.");
+    Assert(alternateFactoryModel == "alternate-test-model", "The backend factory must receive the selected model ID.");
+
+    var alternateResponse = await alternateSession.GenerateAsync("alternate prompt", 32);
+    Assert(alternateResponse == "alternate backend response", "The session should route generation through a different IInferenceBackend.");
+    Assert(alternateSession.Status.State == HostState.Ready, "A replacement backend should preserve the session Ready transition.");
+}
+Console.WriteLine("PASS: HostInferenceSession supports an alternate IInferenceBackend through its factory without changing dialog/network logic.");
+
 // T0060: backend health is a required gate before the capacity evaluator and Ready state.
 var failedHealthOrder = new List<string>();
 using (var failedHealthSession = new HostInferenceSession(
@@ -1128,6 +1155,19 @@ sealed class OrderedHealthTestBackend : IInferenceBackend
 
     public Task<string> GenerateAsync(string prompt, uint maxOutputTokens, CancellationToken cancellationToken = default) =>
         Task.FromResult("not used by the health gate test");
+}
+
+
+sealed class AlternateFactoryTestBackend : IInferenceBackend
+{
+    public bool IsAvailable => true;
+    public string UnavailableReason => string.Empty;
+
+    public Task<string> GenerateAsync(string prompt, uint maxOutputTokens, CancellationToken cancellationToken = default)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        return Task.FromResult("alternate backend response");
+    }
 }
 
 sealed class SessionTestBackend : IInferenceBackend
