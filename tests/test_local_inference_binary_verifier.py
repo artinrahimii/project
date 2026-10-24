@@ -6,7 +6,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 VERIFIER = ROOT / "src" / "Host.Windows" / "Inference" / "LocalInferenceBinaryVerifier.cs"
 LAUNCHER = ROOT / "src" / "Host.Windows" / "Inference" / "LocalInferenceProcessLauncher.cs"
-HOST_TEST_PROJECT = ROOT / "tests" / "HostLifecycle.Tests" / "HostLifecycle.Tests.csproj
+HOST_TEST_PROJECT = ROOT / "tests" / "HostLifecycle.Tests" / "HostLifecycle.Tests.csproj"
 LIVE_WORKFLOW = ROOT / ".github" / "workflows" / "real-inference.yml"
 
 class LocalInferenceBinaryVerificationSourceTests(unittest.TestCase):

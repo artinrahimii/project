@@ -23,3 +23,14 @@
 - After the pinned b11443 archive passes its SHA-256 check, the live-model workflow now sets expected build `11443` and the extracted executable's SHA-256.
 - Added regression checks for source linkage and verified release/hash configuration.
 - Status remains partial until the exact pushed commit passes the quality gate, Windows build/lifecycle tests and a real local-model inference run.
+
+## T0066-A004 — regression-test syntax failure (preserved)
+
+- Exact commit: `d83d6e0e82bbddd0d7fa2ef26de549ed40a007a5`.
+- [Step Three quality gate run 40104554822](https://github.com/artinrahimii/project/actions/runs/40104554822) failed while importing `test_local_inference_binary_verifier.py`: a missing closing quote in the `HOST_TEST_PROJECT` path caused `SyntaxError: unterminated string literal`.
+- This was a test-file syntax error. The production workflow results were still running at the time this failure was reviewed, so this attempt does not claim product or live-inference success.
+
+## T0066-A005 — syntax correction (CI pending)
+
+- Fixed the unterminated `HOST_TEST_PROJECT` string.
+- The task remains partial until exact-head quality, Windows build/lifecycle tests and real local-model inference are confirmed.
