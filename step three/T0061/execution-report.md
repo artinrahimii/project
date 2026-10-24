@@ -60,3 +60,15 @@
 - The job pins the official llama.cpp b11443 Windows CPU archive and verifies its published SHA-256 before use. It pins the GGUF model file to revision `a6b7826ed969c3926a98359e39912af137b464cb` from `QuantFactory/SmolLM2-135M-Instruct-GGUF`; the model page labels the repository Apache-2.0. The workflow validates the expected file-size range and GGUF magic, logs its SHA-256, starts the server on loopback, and requires a non-empty generated response.
 - Sources: https://github.com/ggml-org/llama.cpp/releases/tag/b11443 and https://huggingface.co/QuantFactory/SmolLM2-135M-Instruct-GGUF
 - No live response is claimed at commit creation. The new workflow must finish successfully and its step log must show the live-inference PASS line before T0061 can be marked done. No cloud inference provider is used.
+
+
+## Attempt T0061-A004 — verified live-model result
+
+- Verification commit: [`7f25b649c7684194b6ec33340e9e4e41a67e3375` — `V 3.0.190`](https://github.com/artinrahimii/project/commit/7f25b649c7684194b6ec33340e9e4e41a67e3375).
+- Real inference workflow [run 40077575618](https://github.com/artinrahimii/project/actions/runs/40077575618) completed with `success`. Its Windows job `120824173177` passed each step: downloading and validating the pinned llama.cpp binary, downloading and validating the pinned GGUF, and the live local-model acceptance test.
+- The official llama.cpp b11443 Windows CPU archive SHA-256 matched: `98303a5a688a606d4a32522e47ed7cafa0ddff04d3be56ab927e25d3b1ea45c6`.
+- Model file: `SmolLM2-135M-Instruct.Q4_K_M.gguf`, pinned repository revision `a6b7826ed969c3926a98359e39912af137b464cb`; observed size `105454144` bytes and SHA-256 `8030f04528538d47bda434f6f0bdf3952c40a58123e4d5e755332f23731a8684`. The workflow verified the GGUF magic and constrained the endpoint to loopback.
+- Actual job log: `PASS: real local llama.cpp process started, health check passed, and the configured GGUF model returned a non-empty generated response.` This is live local inference from the production backend, not the recording-handler fixture.
+- Exact-commit [Step Three quality gate run 40077575900](https://github.com/artinrahimii/project/actions/runs/40077575900) passed graph structure, syntax, automated tests, and evidence/output checks.
+- Exact-commit [White-P product build run 40077575695](https://github.com/artinrahimii/project/actions/runs/40077575695) passed Windows WPF Release build/startup smoke, host lifecycle tests, Android debug APK, Kotlin lint, Protobuf round-trip tests, and generated-source validation.
+- Result: T0061 meets its graph criterion for routing a request through the local inference backend and receiving real model output, so its graph status is now `done`. The earlier failed compile attempt A002 remains in history. This evidence does not claim the complete Android-to-P2P product is finished.
