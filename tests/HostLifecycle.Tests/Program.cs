@@ -915,6 +915,57 @@ finally
 }
 Console.WriteLine("PASS: versioned local settings persistence, loopback validation, timeout bounds, and fail-closed schema handling.");
 
+
+// T0061: opt-in live-model integration path. Enable only against a local llama.cpp binary and a real GGUF model.
+if (string.Equals(Environment.GetEnvironmentVariable("WHITEP_RUN_REAL_INFERENCE_TEST"), "1", StringComparison.Ordinal))
+{
+    var serverExecutable = Environment.GetEnvironmentVariable("WHITEP_LLAMA_SERVER_EXE");
+    var modelPath = Environment.GetEnvironmentVariable("WHITEP_LLAMA_MODEL_PATH");
+    var serverUrl = Environment.GetEnvironmentVariable("WHITEP_LLAMA_SERVER_URL");
+    var modelId = Environment.GetEnvironmentVariable("WHITEP_LLAMA_MODEL_ID");
+    var prompt = Environment.GetEnvironmentVariable("WHITEP_LLAMA_PROMPT") ?? "Reply with the single word READY.";
+
+    Assert(!string.IsNullOrWhiteSpace(serverExecutable), "WHITEP_LLAMA_SERVER_EXE is required for the live inference test.");
+    Assert(!string.IsNullOrWhiteSpace(modelPath), "WHITEP_LLAMA_MODEL_PATH is required for the live inference test.");
+    Assert(!string.IsNullOrWhiteSpace(serverUrl), "WHITEP_LLAMA_SERVER_URL is required for the live inference test.");
+    Assert(!string.IsNullOrWhiteSpace(modelId), "WHITEP_LLAMA_MODEL_ID is required for the live inference test.");
+    Assert(Uri.TryCreate(serverUrl, UriKind.Absolute, out var liveServerUri), "WHITEP_LLAMA_SERVER_URL must be an absolute URL.");
+    Assert(liveServerUri!.IsLoopback, "The live inference integration test must use a loopback endpoint.");
+
+    using var launcher = new LocalInferenceProcessLauncher();
+    var serverProcess = launcher.Start(serverExecutable!, modelPath!, liveServerUri!, modelId!);
+    using var liveBackend = new LlamaCppServerBackend(liveServerUri!, modelId!, requestTimeout: TimeSpan.FromMinutes(5));
+    using var startupTimeout = new CancellationTokenSource(TimeSpan.FromMinutes(2));
+    var isHealthy = false;
+
+    while (!startupTimeout.IsCancellationRequested)
+    {
+        if (serverProcess.HasExited)
+        {
+            throw new InvalidOperationException($"Local llama.cpp server exited before becoming healthy (exit code {serverProcess.ExitCode}).");
+        }
+
+        isHealthy = await liveBackend.CheckHealthAsync(startupTimeout.Token);
+        if (isHealthy)
+        {
+            break;
+        }
+
+        await Task.Delay(TimeSpan.FromSeconds(1), startupTimeout.Token);
+    }
+
+    Assert(isHealthy, "The real local llama.cpp server did not become healthy within two minutes.");
+    using var inferenceTimeout = new CancellationTokenSource(TimeSpan.FromMinutes(5));
+    var liveResponse = await liveBackend.GenerateAsync(prompt, 32, inferenceTimeout.Token);
+    Assert(!string.IsNullOrWhiteSpace(liveResponse), "The real local model returned an empty response.");
+    Assert(!string.Equals(liveResponse.Trim(), "generated fixture output", StringComparison.Ordinal), "A recording-handler fixture is not valid evidence of real inference.");
+    Console.WriteLine("PASS: real local llama.cpp process started, health check passed, and the configured GGUF model returned a non-empty generated response.");
+}
+else
+{
+    Console.WriteLine("SKIP: real-model integration test is opt-in; set WHITEP_RUN_REAL_INFERENCE_TEST=1 and the four required local configuration variables to execute it.");
+}
+
 Console.WriteLine("PASS: lifecycle validation, backend endpoint contracts, health readiness, generated response parsing, input bounds, and host-session lifecycle.");
 
 sealed class RecordingHandler : HttpMessageHandler

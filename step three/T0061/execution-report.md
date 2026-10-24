@@ -28,3 +28,12 @@
 
 - Task status: `in_progress`; attempt result: `partial`. Two incoming edges were reviewed and recorded in `edge_change_log`; the outgoing `T0061 → T0062` edge remains unreviewed.
 - Next: run the opt-in real-local-model integration path using a compatible local server and license-acceptable GGUF model, record the actual generated response, and only then revisit completion of T0061.
+
+
+## Attempt T0061-A002 — executable opt-in live-model verification path
+
+- Baseline commit: `00f4edb0fef5b4aebbd563403f7f09f13d5c8c3f` (`V 3.0.187`); target branch remains `main`.
+- Added an opt-in path to `tests/HostLifecycle.Tests/Program.cs`. When explicitly enabled, the harness starts the real `llama-server.exe` through the existing shell-free process launcher, waits up to two minutes for the local health endpoint, sends an inference request to the configured model, and requires a non-empty response. It rejects the known recording-handler fixture string as evidence of live inference.
+- The opt-in path requires `WHITEP_RUN_REAL_INFERENCE_TEST=1`, `WHITEP_LLAMA_SERVER_EXE`, `WHITEP_LLAMA_MODEL_PATH`, `WHITEP_LLAMA_SERVER_URL`, and `WHITEP_LLAMA_MODEL_ID`. It defaults the prompt to a short request; no model is downloaded and no external provider is contacted by this test path.
+- This attempt adds an executable verification path but does **not** claim that a live model was run in this environment. The normal CI run skips this opt-in section unless its explicit environment flag is configured. T0061 therefore remains `in_progress` until a real server process and license-acceptable GGUF model produce a response under this test.
+- Baseline CI at `V 3.0.187`: Step Three quality gate run 40074032000 and product build run 40074031978 both report success for the baseline commit. They do not test the new change; results for the new commit must be read from its own workflow runs.

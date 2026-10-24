@@ -10193,13 +10193,14 @@
         "src/Host.Infrastructure/LlamaCppServerBackend.cs",
         "tests/HostLifecycle.Tests/Program.cs",
         "https://github.com/artinrahimii/project/actions/runs/40073802629",
-        "https://github.com/artinrahimii/project/actions/runs/40073802621"
+        "https://github.com/artinrahimii/project/actions/runs/40073802621",
+        "step three/T0061/execution-report.md"
       ],
-      "notes": "T0061-A001 corrected the OpenAI-compatible max_tokens wire field and added assertions against the exact serialized HTTP request (POST endpoint, JSON content type, configured model, single user message and token limit) plus generated response mapping. Exact-commit quality gate, C# host lifecycle harness and Windows WPF build/startup smoke passed. No live llama-server.exe with a real GGUF model was launched in this attempt; the requested real-model response remains unverified, so T0061 stays in_progress.",
+      "notes": "T0061-A001 corrected the OpenAI-compatible max_tokens wire field and added assertions against the exact serialized HTTP request (POST endpoint, JSON content type, configured model, single user message and token limit) plus generated response mapping. Exact-commit quality gate, C# host lifecycle harness and Windows WPF build/startup smoke passed. No live llama-server.exe with a real GGUF model was launched in this attempt; the requested real-model response remains unverified, so T0061 stays in_progress. Attempt T0061-A002 adds an opt-in live local-model integration path, but no real model execution is claimed until the test is run with a real llama-server.exe and a license-acceptable GGUF model.",
       "execution_summary": {
-        "attempt_count": 1,
+        "attempt_count": 2,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0061-A001",
+        "last_attempt_id": "T0061-A002",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Host.Infrastructure/LlamaCppServerBackend.cs",
@@ -10210,11 +10211,7 @@
         "related_commits": [
           "9b164aab3fae39752a733732a3cb781dc223981f"
         ],
-        "tests_passed": [
-          "Step Three quality gate — exact code commit 9b164aab3fae39752a733732a3cb781dc223981f: passed https://github.com/artinrahimii/project/actions/runs/40073802629.",
-          "Host lifecycle unit/integration harness — exact code commit 9b164aab3fae39752a733732a3cb781dc223981f: passed; its recording HTTP handler regression asserts request route/method/content-type/model/messages/max_tokens and generated response mapping. https://github.com/artinrahimii/project/actions/runs/40073802621.",
-          "Windows WPF Release build, formatting, generated Protobuf validation and startup smoke — exact code commit 9b164aab3fae39752a733732a3cb781dc223981f: passed in https://github.com/artinrahimii/project/actions/runs/40073802621."
-        ],
+        "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -10272,6 +10269,25 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Run the opt-in integration path with a real local llama-server.exe and a license-acceptable GGUF model; only then decide whether T0061 meets its real-model response acceptance. Keep T0062 and all unrelated edges at their current states until the graph says their prerequisites are satisfied."
+        },
+        {
+          "attempt_id": "T0061-A002",
+          "started_at": "2026-10-24T08:09:53.464Z",
+          "ended_at": "2026-10-24T08:09:53.464Z",
+          "result": "partial",
+          "summary": "Added an opt-in live integration path that starts a local llama.cpp server with the existing process launcher, checks health, requests generation, and rejects fixture output. The real model path has not been run in this environment.",
+          "changed_files": [
+            "tests/HostLifecycle.Tests/Program.cs",
+            "step three/T0061/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Run the HostLifecycle.Tests executable on a Windows host with a license-acceptable GGUF model and llama-server.exe, with WHITEP_RUN_REAL_INFERENCE_TEST=1 and the required environment variables. Only mark T0061 done after the live generated response is observed."
         }
       ]
     },
@@ -23208,6 +23224,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-24T07:24:32.197Z"
+  "updated_at": "2026-10-24T08:09:53.464Z"
 }
 ```
