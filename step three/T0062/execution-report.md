@@ -3,32 +3,25 @@
 ## Exact baseline and graph validation
 
 - Repository/branch: `artinrahimii/project` / `main`.
-- Baseline commit: `d305c8b74ad17ca287c9dbd8645232e3ed680945` (`V 3.0.192`).
-- Graph path: `step three/project-graph.md`; fetched via the Git Blob API using Blob `9bd64692a71b425659cb561e9b5e948fe96dec42` from the recursive tree of the exact baseline commit.
-- The full response parsed as JSON and contained 229 unique task nodes and 426 dependency edges. Tree-reported size was 1176636 bytes; returned UTF-8 text length was 1053161 characters. A local Git-blob SHA recomputation was not available in this execution environment, so no cryptographic blob-match claim is made.
-- Before this attempt, graph counts were 60 done, 1 in_progress, and 168 not_started.
-
-## Dependency review
-
-- `T0061 → T0062`: reviewed against the actual backend implementation and tests. Classified as `contract_or_interface_dependency`: T0062 directly hardens the HTTP response/error contract produced by T0061. The original `type=blocks` is preserved.
-- `T0056 → T0062`: reviewed against `HostCapabilities` and `HostInferenceSession`. Classified as `sequencing_only`: T0062 does not consume the capacity evaluator as an implementation interface; the original `type=blocks` remains as conservative ordering.
-- Other edges, including `T0062 → T0063`, remain unchanged and unreviewed.
+- Verification baseline: `dfccecb08f57cffdd0c01ad4a6eba9e23fa43164` (`V 3.0.194`).
+- Graph path: `step three/project-graph.md`; fetched at the exact baseline through the GitHub Contents API after the ordinary file fetch returned an empty body. The returned Markdown contained a complete fenced JSON document that parsed successfully: 229 unique tasks and 426 dependency edges. The recursive tree for the same commit was not truncated and identified graph Blob `f9dc9cb81d418c18225e4345cbfdfa9ec15f9d9c` with tree-reported size 1,184,384 bytes. The Contents API representation was 1,061,001 characters because it includes API formatting/JSON representation; a cryptographic blob recomputation was not performed in this turn.
+- Before this update: 60 tasks were `done`, 2 were `in_progress`, and 167 were `not_started`.
+- Dependency review for T0062 remains as previously recorded: `T0061 → T0062` is a validated contract/interface dependency; `T0056 → T0062` is validated sequencing-only. The original `type=blocks` values remain unchanged. `T0062 → T0063` remains unreviewed.
 
 ## T0062-A001 — implementation
 
-- `src/Host.Infrastructure/LlamaCppServerBackend.cs`: request timeout now clears availability and returns a stable `TimeoutException`; transport errors now clear availability and expose a stable `HttpRequestException` message rather than raw transport details; malformed JSON and incomplete/invalid response bodies clear availability and become safe `InvalidDataException` failures.
-- `tests/HostLifecycle.Tests/Program.cs`: added regression cases for truncated JSON, connection loss (including verifying secret-like transport details are not surfaced), and a request that stalls until the configured timeout.
-- No prompt or generated response content is written to logs.
-- The launcher already throws when the managed process fails to start, and the opt-in real-model integration path checks for early process exit before health becomes ready. T0062's HTTP layer maps a process stopping after startup to a connection failure; this attempt does not claim a separate process-kill integration test.
+- `src/Host.Infrastructure/LlamaCppServerBackend.cs`: request timeout clears availability and returns a stable `TimeoutException`; transport errors clear availability and expose a stable `HttpRequestException` message rather than raw transport details; malformed JSON and incomplete/invalid response bodies clear availability and become safe `InvalidDataException` failures.
+- `tests/HostLifecycle.Tests/Program.cs`: regression tests cover truncated JSON, connection loss (including checking secret-like transport details are not surfaced), and a request that stalls until the configured timeout.
+- Prompt and generated response content are not written to logs.
+- No separate process-kill integration test is claimed. A process stopping after startup is covered at the HTTP boundary as a connection failure; startup failure is handled by the process launcher.
 
-## Verification status
+## T0062-A002 — final verification
 
-Exact-commit verification on `5c049dc380d0b3c52c376c9cfafab72cd11a3e36` (`V 3.0.193`):
+- Step Three quality gate passed on verification baseline `dfccecb08f57cffdd0c01ad4a6eba9e23fa43164`: [workflow run 40078637236](https://github.com/artinrahimii/project/actions/runs/40078637236).
+- Product build workflow passed on the same baseline: [workflow run 40078637260](https://github.com/artinrahimii/project/actions/runs/40078637260). The host lifecycle tests, Windows WPF Release build/startup smoke, and Android debug APK build all completed successfully.
+- The dedicated real-local-inference workflow passed on implementation commit `5c049dc380d0b3c52c376c9cfafab72cd11a3e36`: [workflow run 40078502151](https://github.com/artinrahimii/project/actions/runs/40078502151). It launched the pinned local llama.cpp CPU server, passed its health check, and received a non-empty response from the pinned GGUF model.
+- Together, these results verify the acceptance criteria for T0062's backend timeout, transport-failure, and invalid-response handling. They do not establish complete Android-to-P2P end-to-end behavior.
 
-- [Step Three quality gate, run 40078502194](https://github.com/artinrahimii/project/actions/runs/40078502194) — PASS.
-- [Host lifecycle unit/integration job, run 40078502247](https://github.com/artinrahimii/project/actions/runs/40078502247) — PASS, including the new malformed JSON, disconnect and timeout regression tests.
-- [Windows Release build and startup smoke, run 40078502247](https://github.com/artinrahimii/project/actions/runs/40078502247) — PASS.
-- [Real local llama.cpp integration, run 40078502151](https://github.com/artinrahimii/project/actions/runs/40078502151) — PASS with a non-empty response from the pinned local GGUF model.
-- The Android job in product workflow 40078502247 was still running when this report was updated. It is not a direct dependency of the T0062 backend error-handling code, but the overall product workflow is not yet claimed fully complete.
+## Result
 
-T0062 remains `in_progress` for this round pending final product workflow completion and a final re-read of the online branch. The historical task attempt is now linked to its actual implementation commit. No unobserved test is marked passed.
+T0062 is marked `done` based on implementation and verifiable test evidence. The graph retains the previous attempt and adds the final verification attempt. Next task by the conservative dependency order is T0063: propagate inference cancellation to the backend and stop the dedicated process in a controlled way when cancellation is unsupported. Recheck T0056 and T0062 on the current branch before starting it.

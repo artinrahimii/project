@@ -10409,8 +10409,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0061 و T0056 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال انجام",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "src/Host.Infrastructure/LlamaCppServerBackend.cs",
         "tests/HostLifecycle.Tests/Program.cs",
@@ -10425,12 +10425,12 @@
         "tests/HostLifecycle.Tests/Program.cs",
         "step three/T0062/execution-report.md"
       ],
-      "notes": "T0062-A001 is implemented and its direct exact-commit quality gate, host lifecycle regression tests, Windows Release/startup smoke, and live local-inference workflow passed on 5c049dc380d0b3c52c376c9cfafab72cd11a3e36. The full product workflow's Android job was still running at the time of this graph update; task status remains in_progress pending that workflow's final result.",
+      "notes": "T0062-A001 implementation and acceptance evidence are verified. The backend safely maps request timeout to TimeoutException, transport/server disconnect to HttpRequestException, and malformed/incomplete response data to InvalidDataException while clearing availability and avoiding sensitive transport details in the surfaced message. The exact-commit Step Three quality gate and product build workflows passed on dfccecb08f57cffdd0c01ad4a6eba9e23fa43164; product workflow jobs confirm host lifecycle tests, Windows WPF Release build/startup smoke, and Android debug APK build all passed. The dedicated real-local-inference workflow passed on implementation commit 5c049dc380d0b3c52c376c9cfafab72cd11a3e36 with a non-empty response from the pinned local GGUF model. This verifies the T0062 backend error-handling acceptance; it does not claim Android-to-P2P end-to-end completion.",
       "execution_summary": {
-        "attempt_count": 1,
+        "attempt_count": 2,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0062-A001",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "T0062-A002",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Host.Infrastructure/LlamaCppServerBackend.cs",
           "tests/HostLifecycle.Tests/Program.cs",
@@ -10438,13 +10438,16 @@
           "step three/project-graph.md"
         ],
         "related_commits": [
-          "5c049dc380d0b3c52c376c9cfafab72cd11a3e36"
+          "5c049dc380d0b3c52c376c9cfafab72cd11a3e36",
+          "dfccecb08f57cffdd0c01ad4a6eba9e23fa43164"
         ],
         "tests_passed": [
           "Step Three quality gate: Exact commit 5c049dc380d0b3c52c376c9cfafab72cd11a3e36 passed graph structure, Python syntax, automated tests and recorded-output/evidence validation. (https://github.com/artinrahimii/project/actions/runs/40078502194)",
           "Host lifecycle unit and integration tests: The C# host lifecycle job passed, including the new malformed JSON, connection loss and timeout regression tests. (https://github.com/artinrahimii/project/actions/runs/40078502247)",
           "Windows WPF host build and startup smoke: Windows Release build, generated C# Protobuf checks, WPF startup smoke and artifact upload passed. (https://github.com/artinrahimii/project/actions/runs/40078502247)",
-          "Real local llama.cpp integration: Real local llama.cpp process, health check and non-empty response from the pinned GGUF model passed. (https://github.com/artinrahimii/project/actions/runs/40078502151)"
+          "Real local llama.cpp integration: Real local llama.cpp process, health check and non-empty response from the pinned GGUF model passed. (https://github.com/artinrahimii/project/actions/runs/40078502151)",
+          "Step Three quality gate passed on baseline dfccecb08f57cffdd0c01ad4a6eba9e23fa43164 (workflow run 40078637236).",
+          "White-P product build passed on baseline dfccecb08f57cffdd0c01ad4a6eba9e23fa43164 (workflow run 40078637260): host lifecycle tests, Windows WPF Release build/startup smoke, and Android debug APK build all succeeded."
         ],
         "tests_failed": [],
         "blocked_reason": null,
@@ -10513,6 +10516,55 @@
             "LlamaCppServerBackend now clears IsAvailable and sets a stable safe UnavailableReason on timeout, transport failure, malformed JSON and invalid response."
           ],
           "follow_up": "Run the exact-commit Step Three quality gate, host lifecycle tests and product build. Only mark T0062 done if all relevant jobs pass; otherwise preserve the failed attempt and repair."
+        },
+        {
+          "attempt_id": "T0062-A002",
+          "started_at": "2026-10-24T08:35:18Z",
+          "ended_at": "2026-10-24T08:38:05Z",
+          "result": "succeeded",
+          "summary": "Re-read the latest online main commit and confirmed the Step Three quality gate and all product build jobs passed. The earlier exact implementation commit's host lifecycle regression suite and real local llama.cpp integration also passed. T0062 acceptance is therefore verified; no separate process-kill integration test is claimed.",
+          "changed_files": [
+            "step three/project-graph.md",
+            "step three/T0062/execution-report.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40078637236",
+              "summary": "Exact baseline dfccecb08f57cffdd0c01ad4a6eba9e23fa43164 passed graph structure, Python syntax, automated tests and recorded-output/evidence validation."
+            },
+            {
+              "name": "Host lifecycle unit and integration tests",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40078502247",
+              "summary": "Timeout, transport disconnect and malformed/truncated JSON regression tests passed on implementation commit 5c049dc380d0b3c52c376c9cfafab72cd11a3e36."
+            },
+            {
+              "name": "Windows WPF host build and startup smoke",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40078637260",
+              "summary": "Windows Release build and startup smoke passed on baseline dfccecb08f57cffdd0c01ad4a6eba9e23fa43164."
+            },
+            {
+              "name": "Android client APK build",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40078637260",
+              "summary": "Android debug APK build and associated Protobuf validation passed on baseline dfccecb08f57cffdd0c01ad4a6eba9e23fa43164."
+            },
+            {
+              "name": "Real local llama.cpp inference integration",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40078502151",
+              "summary": "Dedicated Windows job started the pinned local llama.cpp CPU server, passed health check and received a non-empty response from the pinned GGUF model on implementation commit 5c049dc380d0b3c52c376c9cfafab72cd11a3e36."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Proceed to T0063 only after rechecking T0056 and T0062 are done on the current main graph. Implement backend cancellation with controlled process stop where cancellation is unsupported, then add regression tests for cancellation and process lifecycle."
         }
       ]
     },
@@ -23442,6 +23494,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-24T11:05:00-04:00"
+  "updated_at": "2026-10-24T13:00:00-04:00"
 }
 ```
