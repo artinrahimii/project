@@ -146,17 +146,28 @@ public sealed class LlamaCppServerBackend : IInferenceBackend, IDisposable
         }
         catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
         {
-            throw new TimeoutException("Local inference request exceeded its configured deadline.");
+            IsAvailable = false;
+            _unavailableReason = "Local inference backend request timed out.";
+            throw new TimeoutException(_unavailableReason);
         }
         catch (HttpRequestException)
         {
             IsAvailable = false;
-            if (string.IsNullOrWhiteSpace(_unavailableReason))
-            {
-                _unavailableReason = "Local inference backend request failed.";
-            }
-
-            throw;
+            _unavailableReason = "Local inference backend connection failed or the server process stopped.";
+            // Do not propagate transport exception text: it can contain environment-specific details.
+            throw new HttpRequestException(_unavailableReason);
+        }
+        catch (JsonException)
+        {
+            IsAvailable = false;
+            _unavailableReason = "Local inference backend returned incomplete or invalid JSON.";
+            throw new InvalidDataException(_unavailableReason);
+        }
+        catch (InvalidDataException)
+        {
+            IsAvailable = false;
+            _unavailableReason = "Local inference backend returned an incomplete or invalid response.";
+            throw new InvalidDataException(_unavailableReason);
         }
         finally
         {

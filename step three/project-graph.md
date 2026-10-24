@@ -10409,33 +10409,77 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0061 و T0056 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال انجام",
+      "actual_output_paths": [
+        "src/Host.Infrastructure/LlamaCppServerBackend.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0062/execution-report.md",
+        "step three/project-graph.md"
+      ],
       "expected_output_paths": [
         "src/Host.Windows/Inference/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "src/Host.Infrastructure/LlamaCppServerBackend.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0062/execution-report.md"
+      ],
+      "notes": "T0062-A001 adds stable timeout, transport/process-stop, and incomplete/invalid-response handling with regression tests. Status remains in_progress until exact-commit CI validates the new tests and product builds. Process termination is represented at the HTTP boundary as a connection failure; the launcher integration test separately detects an early process exit.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0062-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Host.Infrastructure/LlamaCppServerBackend.cs",
+          "tests/HostLifecycle.Tests/Program.cs",
+          "step three/T0062/execution-report.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
-          "affected_by_contract_changes": [],
-          "review_evidence": []
+          "state": "in_review",
+          "triggering_contracts": [
+            "LlamaCppServerBackend GenerateAsync error/response contract"
+          ],
+          "affected_by_contract_changes": [
+            "callers that distinguish TimeoutException, HttpRequestException and InvalidDataException"
+          ],
+          "review_evidence": [
+            "src/Host.Infrastructure/LlamaCppServerBackend.cs",
+            "tests/HostLifecycle.Tests/Program.cs"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0062-A001",
+          "started_at": "2026-10-24T11:00:00-04:00",
+          "ended_at": "2026-10-24T11:00:00-04:00",
+          "result": "partial",
+          "summary": "Added deterministic failure mapping for request timeout, connection loss/server process stop, malformed/incomplete JSON, and invalid response bodies. Added regression cases for timeout, transport disconnect, and truncated JSON; exact-commit CI remains pending.",
+          "changed_files": [
+            "src/Host.Infrastructure/LlamaCppServerBackend.cs",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "step three/T0062/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "LlamaCppServerBackend now clears IsAvailable and sets a stable safe UnavailableReason on timeout, transport failure, malformed JSON and invalid response."
+          ],
+          "follow_up": "Run the exact-commit Step Three quality gate, host lifecycle tests and product build. Only mark T0062 done if all relevant jobs pass; otherwise preserve the failed attempt and repair."
+        }
+      ]
     },
     {
       "id": "T0063",
@@ -19348,19 +19392,28 @@
       "from": "T0061",
       "to": "T0062",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0062 directly hardens the response, timeout, and transport-failure behavior of the HTTP backend introduced and verified by T0061. The backend throws TimeoutException for its configured deadline, HttpRequestException for connection/process termination, and InvalidDataException for incomplete or invalid responses; the tests added for T0062 exercise those exact outcomes. Preserve type=blocks.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Infrastructure/LlamaCppServerBackend.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0061/execution-report.md"
+      ]
     },
     {
       "from": "T0056",
       "to": "T0062",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0056 gates host Ready/generation on the capacity contract, but T0062's exception mapping and HTTP response validation consume no capacity evaluator interface. Preserve type=blocks as conservative execution order only.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Domain/HostCapabilities.cs",
+        "src/Host.Application/HostInferenceSession.cs",
+        "src/Host.Infrastructure/LlamaCppServerBackend.cs",
+        "step three/T0056/execution-report.md"
+      ]
     },
     {
       "from": "T0062",
@@ -23323,8 +23376,37 @@
         "step three/T0056/execution-report.md"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-24T11:00:00-04:00",
+      "edge_from": "T0061",
+      "edge_to": "T0062",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "reason": "T0062 directly hardens the response, timeout, and transport-failure behavior of the HTTP backend introduced and verified by T0061. The backend throws TimeoutException for its configured deadline, HttpRequestException for connection/process termination, and InvalidDataException for incomplete or invalid responses; the tests added for T0062 exercise those exact outcomes. Preserve type=blocks.",
+      "evidence": [
+        "src/Host.Infrastructure/LlamaCppServerBackend.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0061/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-24T11:00:00-04:00",
+      "edge_from": "T0056",
+      "edge_to": "T0062",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "reason": "T0056 gates host Ready/generation on the capacity contract, but T0062's exception mapping and HTTP response validation consume no capacity evaluator interface. Preserve type=blocks as conservative execution order only.",
+      "evidence": [
+        "src/Host.Domain/HostCapabilities.cs",
+        "src/Host.Application/HostInferenceSession.cs",
+        "src/Host.Infrastructure/LlamaCppServerBackend.cs",
+        "step three/T0056/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-24T08:23:15.000Z"
+  "updated_at": "2026-10-24T11:00:00-04:00"
 }
 ```

@@ -644,6 +644,54 @@ catch (InvalidDataException)
 Assert(hugeResponseBodyRejected, "The local backend adapter must reject an oversized HTTP response body before JSON deserialization.");
 handler.GeneratedText = "generated fixture output";
 
+
+var malformedResponseHandler = new FaultingInferenceHandler(FaultMode.MalformedJson);
+using (var malformedClient = new HttpClient(malformedResponseHandler))
+using (var malformedBackend = new LlamaCppServerBackend(new Uri("http://127.0.0.1:8080/"), "fixture-model", malformedClient, TimeSpan.FromSeconds(1)))
+{
+    var incompleteResponseRejected = false;
+    try { await malformedBackend.GenerateAsync("safe test prompt", 16); }
+    catch (InvalidDataException ex)
+    {
+        incompleteResponseRejected = true;
+        Assert(ex.Message == "Local inference backend returned incomplete or invalid JSON.", "Malformed response errors must use a stable, non-sensitive message.");
+    }
+    Assert(incompleteResponseRejected, "An incomplete JSON response must be rejected.");
+    Assert(!malformedBackend.IsAvailable, "An incomplete response must clear backend availability.");
+    Assert(malformedBackend.UnavailableReason == "Local inference backend returned incomplete or invalid JSON.", "Malformed response reason must be stable.");
+}
+
+var disconnectHandler = new FaultingInferenceHandler(FaultMode.Disconnect);
+using (var disconnectClient = new HttpClient(disconnectHandler))
+using (var disconnectBackend = new LlamaCppServerBackend(new Uri("http://127.0.0.1:8080/"), "fixture-model", disconnectClient, TimeSpan.FromSeconds(1)))
+{
+    var disconnectHandled = false;
+    try { await disconnectBackend.GenerateAsync("safe test prompt", 16); }
+    catch (HttpRequestException ex)
+    {
+        disconnectHandled = true;
+        Assert(ex.Message == "Local inference backend connection failed or the server process stopped.", "Transport failures must not expose raw exception details.");
+        Assert(!ex.Message.Contains("secret", StringComparison.OrdinalIgnoreCase), "Transport exception details must not be exposed.");
+    }
+    Assert(disconnectHandled, "A backend disconnect must be surfaced as a stable HTTP transport failure.");
+    Assert(!disconnectBackend.IsAvailable, "A backend disconnect must clear availability.");
+}
+
+var timeoutHandler = new FaultingInferenceHandler(FaultMode.Timeout);
+using (var timeoutClient = new HttpClient(timeoutHandler))
+using (var timeoutBackend = new LlamaCppServerBackend(new Uri("http://127.0.0.1:8080/"), "fixture-model", timeoutClient, TimeSpan.FromMilliseconds(50)))
+{
+    var timeoutHandled = false;
+    try { await timeoutBackend.GenerateAsync("safe test prompt", 16); }
+    catch (TimeoutException ex)
+    {
+        timeoutHandled = true;
+        Assert(ex.Message == "Local inference backend request timed out.", "Timeouts must use a stable diagnostic.");
+    }
+    Assert(timeoutHandled, "A stalled backend request must time out.");
+    Assert(!timeoutBackend.IsAvailable, "A timed-out backend request must clear availability.");
+}
+
 handler.HealthStatus=HttpStatusCode.ServiceUnavailable;
 Assert(!await backend.CheckHealthAsync(),"Unhealthy backend must not be marked available");
 Assert(!backend.IsAvailable,"Failed health check must clear readiness");
@@ -968,6 +1016,33 @@ else
 }
 
 Console.WriteLine("PASS: lifecycle validation, backend endpoint contracts, health readiness, generated response parsing, input bounds, and host-session lifecycle.");
+
+
+enum FaultMode { MalformedJson, Disconnect, Timeout }
+
+sealed class FaultingInferenceHandler : HttpMessageHandler
+{
+    private readonly FaultMode _mode;
+    public FaultingInferenceHandler(FaultMode mode) => _mode = mode;
+
+    protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+    {
+        if (request.Method == HttpMethod.Get && request.RequestUri!.AbsolutePath.EndsWith("/health", StringComparison.Ordinal))
+            return new HttpResponseMessage(HttpStatusCode.OK);
+
+        if (_mode == FaultMode.Disconnect)
+            throw new HttpRequestException("secret transport detail from the simulated failed process");
+        if (_mode == FaultMode.Timeout)
+            await Task.Delay(Timeout.InfiniteTimeSpan, cancellationToken);
+        if (_mode == FaultMode.MalformedJson)
+            return new HttpResponseMessage(HttpStatusCode.OK)
+            {
+                Content = new StringContent("{\"choices\":[", Encoding.UTF8, "application/json")
+            };
+
+        throw new InvalidOperationException("Unsupported test fault mode.");
+    }
+}
 
 sealed class RecordingHandler : HttpMessageHandler
 {
