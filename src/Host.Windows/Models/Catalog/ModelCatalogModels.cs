@@ -19,4 +19,7 @@ public sealed record ModelCatalogEntry(
 public sealed record ModelLicenseMetadata(string Status, string? Identifier, Uri? Url)
 {
     public bool RequiresReview => Status is "review_required" or "unknown";
+
+    /// <summary>Human-readable warning label for catalogs that lack complete license evidence.</summary>
+    public string ReviewLabel => RequiresReview ? "REVIEW REQUIRED" : "Declared; not independently verified";
 }

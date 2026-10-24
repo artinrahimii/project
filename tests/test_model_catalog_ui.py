@@ -36,6 +36,9 @@ class ModelCatalogUiTests(unittest.TestCase):
             with self.subTest(field=field):
                 self.assertIn(field, code)
         self.assertIn("Do not assume permission to use, modify, or redistribute this model.", code)
+        self.assertIn("Review state", xaml)
+        self.assertIn("License.ReviewLabel", xaml)
+        self.assertIn("REVIEW REQUIRED", (ROOT / "src" / "Host.Windows" / "Models" / "Catalog" / "ModelCatalogModels.cs").read_text(encoding="utf-8"))
         self.assertIn("has not independently verified legal terms", code)
 
     def test_loader_is_bounded_strict_utf8_and_delegates_validation(self):

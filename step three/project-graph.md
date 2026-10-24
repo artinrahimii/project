@@ -12266,33 +12266,81 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0071 و T0067 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "src/Host.Windows/Models/Catalog/ModelCatalogModels.cs",
+        "src/Host.Windows/MainWindow.xaml",
+        "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs",
+        "tests/test_model_catalog_ui.py",
+        "step three/T0072/execution-report.md"
+      ],
       "expected_output_paths": [
         "src/Host.Windows/Models/Catalog/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "src/Host.Windows/Models/Catalog/ModelCatalogModels.cs",
+        "src/Host.Windows/MainWindow.xaml",
+        "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs",
+        "tests/test_model_catalog_ui.py",
+        "step three/T0072/execution-report.md"
+      ],
+      "notes": "Implementation adds an explicit REVIEW REQUIRED label to catalog rows whenever license metadata is absent or has status review_required/unknown. Exact-head automated acceptance checks are pending; do not mark done until CI and Windows build pass.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0072-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Host.Windows/Models/Catalog/ModelCatalogModels.cs",
+          "src/Host.Windows/MainWindow.xaml",
+          "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs",
+          "tests/test_model_catalog_ui.py",
+          "step three/T0072/execution-report.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
+          "state": "pending",
+          "triggering_contracts": [
+            "ModelLicenseMetadata.RequiresReview",
+            "ModelCatalogEntry.License"
+          ],
           "affected_by_contract_changes": [],
-          "review_evidence": []
+          "review_evidence": [
+            "src/Host.Windows/Models/Catalog/ModelCatalogModels.cs",
+            "src/Host.Windows/MainWindow.xaml",
+            "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs",
+            "tests/test_model_catalog_ui.py"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0072-A001",
+          "started_at": "2026-10-24T00:00:00Z",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Added a user-visible catalog review-state label and regression assertions for missing/unknown license metadata. CI/build validation pending; task remains in progress.",
+          "changed_files": [
+            "src/Host.Windows/Models/Catalog/ModelCatalogModels.cs",
+            "src/Host.Windows/MainWindow.xaml",
+            "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs",
+            "tests/test_model_catalog_ui.py",
+            "step three/T0072/execution-report.md"
+          ],
+          "commit_sha": null,
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Run exact-head Step Three quality gate, HostLifecycle.Tests and Windows WPF product build; mark done only if required checks pass."
+        }
+      ]
     },
     {
       "id": "T0073",
@@ -21009,19 +21057,27 @@
       "from": "T0071",
       "to": "T0072",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0071 exposes License metadata in the selected-model detail view; T0072 adds a clear review label using the same ModelLicenseMetadata.RequiresReview contract.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "src/Host.Windows/Models/Catalog/ModelCatalogModels.cs",
+        "step three/T0071/execution-report.md"
+      ]
     },
     {
       "from": "T0067",
       "to": "T0072",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_dependency",
+      "rationale": "The catalog/parser/backend registry are part of the same catalog acceptance path, but license review labeling does not technically require a specific inference backend; retain the existing blocks edge conservatively as sequencing only.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/Models/Catalog/ModelCatalogParser.cs",
+        "src/Host.Windows/Inference/LocalInferenceBackendFactory.cs",
+        "step three/T0071/execution-report.md"
+      ]
     },
     {
       "from": "T0072",

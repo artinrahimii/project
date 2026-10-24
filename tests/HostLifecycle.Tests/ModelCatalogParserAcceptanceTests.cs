@@ -180,6 +180,7 @@ internal static class ModelCatalogParserAcceptanceTests
         var model = Parser.Parse(Catalog(Model(includeLicense: false))).Models.Single();
         if (model.License.Status != "review_required" ||
             !model.License.RequiresReview ||
+            model.License.ReviewLabel != "REVIEW REQUIRED" ||
             model.License.Identifier is not null ||
             model.License.Url is not null)
         {
@@ -187,7 +188,7 @@ internal static class ModelCatalogParserAcceptanceTests
         }
 
         var explicitlyUnverified = Parser.Parse(Catalog(Model(license: new JsonObject { ["status"] = "unknown" }))).Models.Single();
-        if (!explicitlyUnverified.License.RequiresReview)
+        if (!explicitlyUnverified.License.RequiresReview || explicitlyUnverified.License.ReviewLabel != "REVIEW REQUIRED")
         {
             throw new Exception("An unknown license must require review.");
         }
