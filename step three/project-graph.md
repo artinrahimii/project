@@ -11983,10 +11983,7 @@
         "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs",
         "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
         "tests/test_model_catalog_ui.py",
-        "step three/T0070/execution-report.md",
-        "https://github.com/artinrahimii/project/actions/runs/40114464819",
-        "https://github.com/artinrahimii/project/actions/runs/40114464818",
-        "https://github.com/artinrahimii/project/actions/runs/40114464822"
+        "step three/T0070/execution-report.md"
       ],
       "notes": "Completed for loading metadata from a real user-selected local catalog file and binding parsed model records to the UI. Exact-head CI passed. No catalog is bundled; loading does not download or install model weights.",
       "execution_summary": {
@@ -12012,7 +12009,8 @@
           "Step Three quality gate passed (145 Python tests; graph guard 0 errors, one preserved warning).",
           "Windows WPF product build passed.",
           "HostLifecycle.Tests passed including catalog parser/file-loader acceptance.",
-          "Real local inference integration regression passed."
+          "Real local inference integration regression passed.",
+          "Latest exact-head Step Three run: 146 Python tests passed; graph guard found zero structural errors but --repo-root evidence validation failed because three CI URLs had been placed in the file-path evidence field. This metadata-only issue is corrected in V 3.0.221."
         ],
         "tests_failed": [],
         "blocked_reason": null,
@@ -12032,10 +12030,7 @@
             "src/Host.Windows/Models/Catalog/ModelCatalogFileLoader.cs",
             "src/Host.Windows/MainWindow.xaml.cs",
             "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs",
-            "tests/test_model_catalog_ui.py",
-            "https://github.com/artinrahimii/project/actions/runs/40114464819",
-            "https://github.com/artinrahimii/project/actions/runs/40114464818",
-            "https://github.com/artinrahimii/project/actions/runs/40114464822"
+            "tests/test_model_catalog_ui.py"
           ]
         }
       },
@@ -12147,12 +12142,12 @@
         "src/Host.Windows/MainWindow.xaml.cs",
         "tests/test_model_catalog_ui.py"
       ],
-      "notes": "Implementation added: selecting a real catalog entry displays source URL, declared size in bytes/MiB/GiB, license status/identifier/terms URL, supported backend IDs, checksum and explicit limits on what metadata proves. CI/build and UI tests still need to run on this implementation commit.",
+      "notes": "Implementation exists and the 146-test Python suite passed. Full acceptance is pending after correcting a graph evidence-format error found by CI and confirming the Windows product build.",
       "execution_summary": {
         "attempt_count": 1,
         "failed_attempt_count": 0,
         "last_attempt_id": "T0071-A001",
-        "last_attempt_result": "in_progress",
+        "last_attempt_result": "partial",
         "changed_files": [
           "src/Host.Windows/MainWindow.xaml",
           "src/Host.Windows/MainWindow.xaml.cs",
@@ -12161,8 +12156,12 @@
           "step three/project-graph.md"
         ],
         "related_commits": [],
-        "tests_passed": [],
-        "tests_failed": [],
+        "tests_passed": [
+          "146 Python tests passed in run 40114997229, including selected-model detail panel assertions."
+        ],
+        "tests_failed": [
+          "Step Three quality gate failed after the Python suite: graph_guard.py --repo-root flagged three CI URLs in T0070.evidence as missing local evidence files; follow-up corrects the evidence-field format."
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -12185,16 +12184,29 @@
         {
           "attempt_id": "T0071-A001",
           "started_at": "2026-10-24T17:10:00Z",
-          "ended_at": null,
-          "result": "in_progress",
-          "summary": "Added a WPF selected-model detail panel wired to actual parsed ModelCatalogEntry values and added regression assertions for license/source/size/limitations.",
+          "ended_at": "2026-10-24T17:12:00Z",
+          "result": "partial",
+          "summary": "Implementation is committed. CI ran 146 Python tests successfully, but graph guard failed because T0070 evidence incorrectly listed workflow URLs as local evidence-file paths; the metadata validation issue is being corrected in a follow-up commit. Windows product build result not yet final at the time of this report.",
           "changed_files": [
             "src/Host.Windows/MainWindow.xaml",
             "src/Host.Windows/MainWindow.xaml.cs",
             "tests/test_model_catalog_ui.py"
           ],
           "commit_sha": null,
-          "tests": [],
+          "tests": [
+            {
+              "command": "Python quality suite",
+              "result": "passed",
+              "summary": "146 Python tests passed, including the new selected-model detail view regression tests.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40114997229"
+            },
+            {
+              "command": "Graph guard --repo-root",
+              "result": "failed",
+              "summary": "Three GitHub Actions URLs in T0070.evidence were treated as missing local evidence files; removed those URLs from the file-path-only evidence list. URLs remain in task test records/report.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40114997229"
+            }
+          ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
@@ -24843,6 +24855,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-24T17:10:00Z"
+  "updated_at": "2026-10-24T17:12:00Z"
 }
 ```
