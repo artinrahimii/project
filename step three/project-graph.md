@@ -12781,11 +12781,11 @@
         "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs",
         "step three/T0075/execution-report.md"
       ],
-      "notes": "Offline catalog cache implementation and UI delegation are present. Two prior CI failures are retained in history. Added regression coverage for malformed source data falling back only to a previously validated cache; this new test is awaiting exact-head CI. Do not mark done until the resulting exact-head quality gate and Windows host build/lifecycle tests pass.",
+      "notes": "A newly added malformed-source regression exposed a real bug: InvalidDataException from catalog parsing was not classified as a recoverable catalog-load failure, so the last validated cache was not used. Added InvalidDataException to the filter; this correction is awaiting exact-head Windows/CI verification.",
       "execution_summary": {
-        "attempt_count": 4,
-        "failed_attempt_count": 2,
-        "last_attempt_id": "T0075-attempt-4",
+        "attempt_count": 5,
+        "failed_attempt_count": 3,
+        "last_attempt_id": "T0075-attempt-5",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Host.Windows/Models/Catalog/OfflineModelCatalogStore.cs",
@@ -12798,12 +12798,13 @@
         ],
         "related_commits": [],
         "tests_passed": [
-          "Parent commit 77dc359ad939e0dc193e06a7d918452908e040df: Step Three quality gate run 40126392140 succeeded (not evidence for the newly added regression assertion).",
-          "Parent commit 77dc359ad939e0dc193e06a7d918452908e040df: Windows host build and HostLifecycle tests succeeded in product build run 40126392164 (not evidence for the newly added regression assertion)."
+          "Exact-head Step Three quality gate run 40132118485 passed on 7321f42101120c2ebbf954d86d18f7511a0c656f; this covers graph/Python checks, not the C# test that failed."
         ],
         "tests_failed": [
           "Run 40124499347: stale tests/test_model_catalog_ui.py assertion failed before correction.",
-          "Run 40124596599: graph_guard rejected a mismatched failed-attempt count/history before correction."
+          "Run 40124596599: graph_guard rejected mismatched failed-attempt count/history before correction.",
+          "Run 40132118455, HostLifecycle job 120985856979: malformed-source fallback failed because InvalidDataException was not caught.",
+          "Run 40132118503, job 120985856545: real-inference workflow stopped at the same catalog fallback failure."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -12874,11 +12875,48 @@
         },
         {
           "attempt_id": "T0075-attempt-4",
-          "result": "partial",
+          "result": "failed",
           "base_commit": "77dc359ad939e0dc193e06a7d918452908e040df",
-          "summary": "Added a C# acceptance regression asserting that a malformed source catalog falls back to the last validated cache, while retaining the existing missing-source and invalid-cache checks. The new assertion has not yet run in CI.",
+          "summary": "The exact-head quality gate passed, but the Windows HostLifecycle acceptance run and real-inference workflow both failed on malformed catalog JSON. OfflineModelCatalogStore's IsCatalogLoadFailure filter omitted InvalidDataException, so malformed source data bypassed offline-cache fallback.",
           "changed_files": [
             "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs",
+            "step three/T0075/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40132118485",
+              "summary": "Graph guard, Python tests, syntax and evidence validation passed for exact commit 7321f42101120c2ebbf954d86d18f7511a0c656f; C# acceptance did not run in this workflow."
+            },
+            {
+              "name": "Windows HostLifecycle tests",
+              "result": "failed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40132118455",
+              "summary": "The new malformed-source fallback regression failed because InvalidDataException was excluded from IsCatalogLoadFailure."
+            },
+            {
+              "name": "Real local inference integration",
+              "result": "failed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40132118503",
+              "summary": "The integration workflow reached the host acceptance harness but stopped on the same catalog fallback exception before inference assertion."
+            }
+          ],
+          "failure_details": "Exact-head run 40132118455 Host lifecycle job 120985856979 failed in OfflineCatalogStoreCachesOnlyValidatedDataAndFallsBackWhenSourceIsMissing at ModelCatalogParserAcceptanceTests.cs:130 because InvalidDataException was not caught. Exact-head run 40132118503 job 120985856545 failed at the same test before real inference could execute.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Wait for exact-head Step Three quality gate and Windows host/lifecycle tests. If they pass, record the actual resulting commit/run evidence and then mark T0075 done. Before starting T0076, review T0075 -> T0076 using the real task contract."
+        },
+        {
+          "attempt_id": "T0075-attempt-5",
+          "result": "partial",
+          "base_commit": "7321f42101120c2ebbf954d86d18f7511a0c656f",
+          "summary": "Fixed the failure found by attempt 4: IsCatalogLoadFailure now explicitly includes InvalidDataException, allowing malformed JSON/catalog metadata to trigger validated-cache fallback. Exact-head CI is pending.",
+          "changed_files": [
+            "src/Host.Windows/Models/Catalog/OfflineModelCatalogStore.cs",
             "step three/T0075/execution-report.md",
             "step three/project-graph.md"
           ],
@@ -12888,7 +12926,7 @@
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Wait for exact-head Step Three quality gate and Windows host/lifecycle tests. If they pass, record the actual resulting commit/run evidence and then mark T0075 done. Before starting T0076, review T0075 -> T0076 using the real task contract."
+          "follow_up": "Run exact-head Step Three quality gate, Windows HostLifecycle tests, Windows host build, and real local inference integration. Only mark T0075 done after the relevant exact-head checks pass. Before T0076, validate the T0075 -> T0076 edge against T0076's actual streaming-download contract."
         }
       ]
     },
@@ -25462,6 +25500,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-25T00:24:00+03:30"
+  "updated_at": "2026-10-25T00:26:00+03:30"
 }
 ```

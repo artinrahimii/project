@@ -48,7 +48,7 @@ public sealed class OfflineModelCatalogStore
     }
 
     private static bool IsCatalogLoadFailure(Exception exception) =>
-        exception is IOException or UnauthorizedAccessException or ArgumentException or NotSupportedException;
+        exception is IOException or InvalidDataException or UnauthorizedAccessException or ArgumentException or NotSupportedException;
 
     private static void SaveValidatedCopy(string sourcePath, string cachePath)
     {

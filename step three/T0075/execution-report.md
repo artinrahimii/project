@@ -19,3 +19,12 @@
 - Change: extended `OfflineCatalogStoreCachesOnlyValidatedDataAndFallsBackWhenSourceIsMissing` to also overwrite the selected source with malformed JSON after a valid cache exists, then assert the store returns the prior validated catalog with `usedCache == true`. Existing missing-source fallback and invalid-cache rejection remain covered.
 - This is a real acceptance-test change; the test has not yet been executed on the new revision. The parent revision's Step Three quality gate (run `40126392140`) and Windows host build/lifecycle test jobs (run `40126392164`) passed, but are not evidence for this new assertion.
 - Task remains `in_progress` until the exact-head quality gate and Windows host/lifecycle tests pass. Previous failed attempts remain preserved in the graph history.
+
+
+## Attempt 5 — malformed catalog fallback fix (V 3.0.234)
+
+- Base: `7321f42101120c2ebbf954d86d18f7511a0c656f` on `main`.
+- Exact-head results for V 3.0.233: Step Three quality gate run [40132118485](https://github.com/artinrahimii/project/actions/runs/40132118485) passed. Windows HostLifecycle run [40132118455](https://github.com/artinrahimii/project/actions/runs/40132118455) failed at the new malformed-source regression; real-inference workflow [40132118503](https://github.com/artinrahimii/project/actions/runs/40132118503) stopped at the same earlier acceptance failure.
+- Root cause from logs: `ModelCatalogParser.Parse` wraps malformed JSON in `InvalidDataException`, but `OfflineModelCatalogStore.IsCatalogLoadFailure` did not include that exception type. Therefore the offline fallback was skipped.
+- Fix: explicitly classify `InvalidDataException` as a recoverable catalog-load failure. The cached file still goes through the same strict loader/parser and current host allowlists before being returned.
+- Status remains `in_progress` until exact-head CI verifies this correction. The attempt-4 failure is preserved in the graph history.
