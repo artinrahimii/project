@@ -12285,11 +12285,11 @@
         "tests/test_model_catalog_ui.py",
         "step three/T0072/execution-report.md"
       ],
-      "notes": "Implementation adds an explicit REVIEW REQUIRED label to catalog rows whenever license metadata is absent or has status review_required/unknown. The first CI run passed all 146 Python tests but graph guard caught an unsupported edge-classification enum; corrected to sequencing_only. Awaiting exact-head rerun before completion.",
+      "notes": "Implementation adds a visible REVIEW REQUIRED label for absent/unknown license metadata. Python tests passed on implementation commit. Graph guard failures were due to an unsupported dependency class (corrected) and then failed-attempt count mismatches in execution metadata; counts now reflect one failed attempt and all history entries. Awaiting exact-head validation.",
       "execution_summary": {
-        "attempt_count": 3,
-        "failed_attempt_count": 2,
-        "last_attempt_id": "T0072-A003",
+        "attempt_count": 4,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "T0072-A004",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Host.Windows/Models/Catalog/ModelCatalogModels.cs",
@@ -12304,7 +12304,8 @@
         ],
         "tests_failed": [
           "Graph guard failed on commit 329ba9c70a6ee53df1cfefcc71b8cf1c7c658960 because dependency classification 'sequencing_dependency' is not an allowed enum; changed to supported value 'sequencing_only' in this follow-up.",
-          "Graph guard on commit 74e29d313f33083eedc9f562c8c8a9b89b06a9b7: FAILED_ATTEMPT_COUNT_MISMATCH (summary=1, history=0); execution history is being reconciled with the actual failed run."
+          "Graph guard on commit 74e29d313f33083eedc9f562c8c8a9b89b06a9b7: FAILED_ATTEMPT_COUNT_MISMATCH (summary=1, history=0); execution history is being reconciled with the actual failed run.",
+          "Graph guard on commit e2afa0d5b8c4d5b2fb78956277764f3d2e2ea0fc: failed_attempt_count was set to 2 while only T0072-A002 has result=failed; corrected to 1 to match execution_history."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -12398,6 +12399,30 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Rerun the quality gate and verify the graph guard now accepts the corrected execution history."
+        },
+        {
+          "attempt_id": "T0072-A004",
+          "started_at": "2026-10-24T18:34:22Z",
+          "ended_at": "2026-10-24T18:34:35Z",
+          "result": "partial",
+          "summary": "The graph guard accepted the edge class but found failed_attempt_count=2 while only one execution_history entry had result=failed. Corrected the summary count to 1; the other attempts are partial.",
+          "changed_files": [
+            "step three/project-graph.md"
+          ],
+          "commit_sha": "e2afa0d5b8c4d5b2fb78956277764f3d2e2ea0fc",
+          "tests": [
+            {
+              "name": "Graph guard",
+              "result": "failed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40121311387",
+              "summary": "FAILED_ATTEMPT_COUNT_MISMATCH: summary=2, history=1."
+            }
+          ],
+          "failure_details": "Execution metadata count mismatch; product tests not implicated.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Run quality gate against this correction and verify graph guard success."
         }
       ]
     },
