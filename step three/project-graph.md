@@ -11939,7 +11939,7 @@
         }
       ]
     },
-    {
+        {
       "id": "T0070",
       "title": "صفحهٔ کاتالوگ را از دادهٔ واقعی کاتالوگ بخوان، نه از فهرست هاردکدشدهٔ UI.",
       "section": "7. کاتالوگ، مجوز و فایل‌های مدل",
@@ -11956,33 +11956,108 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0069 و T0067 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال انجام",
+      "actual_output_paths": [
+        "src/Host.Windows/Models/Catalog/ModelCatalogFileLoader.cs",
+        "src/Host.Windows/Models/Catalog/ModelCatalogParser.cs",
+        "src/Host.Windows/Models/Catalog/ModelCatalogModels.cs",
+        "src/Host.Windows/MainWindow.xaml",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "src/Host.Windows/Inference/LocalInferenceBackendFactory.cs",
+        "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+        "tests/test_model_catalog_ui.py",
+        "step three/T0070/execution-report.md"
+      ],
       "expected_output_paths": [
         "src/Host.Windows/Models/Catalog/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "src/Host.Windows/Models/Catalog/ModelCatalogFileLoader.cs",
+        "src/Host.Windows/Models/Catalog/ModelCatalogParser.cs",
+        "src/Host.Windows/Models/Catalog/ModelCatalogModels.cs",
+        "src/Host.Windows/MainWindow.xaml",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "src/Host.Windows/Inference/LocalInferenceBackendFactory.cs",
+        "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+        "tests/test_model_catalog_ui.py",
+        "step three/T0070/execution-report.md"
+      ],
+      "notes": "Reviewed both incoming edges against actual parser/model records and host backend composition. UI loads a user-selected local catalog with explicit trusted host allowlists; no fabricated entries are bundled. Keep in_progress until exact-head quality gate and Windows/product build pass.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0070-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Host.Windows/MainWindow.xaml",
+          "src/Host.Windows/MainWindow.xaml.cs",
+          "src/Host.Windows/Inference/LocalInferenceBackendFactory.cs",
+          "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+          "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs",
+          "src/Host.Windows/Models/Catalog/ModelCatalogFileLoader.cs",
+          "tests/test_model_catalog_ui.py",
+          "step three/T0070/execution-report.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
-          "affected_by_contract_changes": [],
-          "review_evidence": []
+          "state": "in_review",
+          "triggering_contracts": [
+            "versioned ModelCatalog parser output",
+            "LocalInferenceBackendFactory.SupportedBackendIds",
+            "catalog trusted-host policy"
+          ],
+          "affected_by_contract_changes": [
+            "T0067: additive supported-backend registry is consumed by T0070"
+          ],
+          "review_evidence": [
+            "src/Host.Windows/Inference/LocalInferenceBackendFactory.cs",
+            "src/Host.Windows/Models/Catalog/ModelCatalogFileLoader.cs",
+            "src/Host.Windows/MainWindow.xaml.cs",
+            "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs",
+            "tests/test_model_catalog_ui.py"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0070-A001",
+          "started_at": "2026-10-24T17:03:50.363Z",
+          "ended_at": "2026-10-24T17:03:50.363Z",
+          "result": "partial",
+          "summary": "Reviewed both incoming dependency edges and implemented the local-file catalog loader and WPF ListView binding. Runtime C# and Python regression tests were added; exact-head CI is pending.",
+          "changed_files": [
+            "src/Host.Windows/MainWindow.xaml",
+            "src/Host.Windows/MainWindow.xaml.cs",
+            "src/Host.Windows/Inference/LocalInferenceBackendFactory.cs",
+            "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+            "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs",
+            "src/Host.Windows/Models/Catalog/ModelCatalogFileLoader.cs",
+            "tests/test_model_catalog_ui.py",
+            "step three/T0070/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            {
+              "contract": "LocalInferenceBackendFactory.SupportedBackendIds",
+              "change": "Additive read-only registry of supported backend identifiers for current host composition; consumed by catalog validation instead of duplicating identifiers in UI code."
+            }
+          ],
+          "follow_up": "Inspect exact-head quality and product-build runs. Fix failures before marking T0070 done; revalidate the additive T0067 contract."
+        }
+      ]
     },
     {
       "id": "T0071",
@@ -20729,23 +20804,33 @@
         "src/Host.Windows/Models/Catalog/model-catalog-v1.schema.json"
       ]
     },
-    {
+        {
       "from": "T0069",
       "to": "T0070",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0069 produces the versioned ModelCatalog/ModelCatalogEntry parser contract. T0070 consumes those parsed records in the local-file loader and binds them to the WPF catalog ListView; this is a data-contract dependency rather than ordering alone.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/Models/Catalog/ModelCatalogParser.cs",
+        "src/Host.Windows/Models/Catalog/ModelCatalogModels.cs",
+        "src/Host.Windows/Models/Catalog/ModelCatalogFileLoader.cs",
+        "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs"
+      ]
     },
-    {
+        {
       "from": "T0067",
       "to": "T0070",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0070 uses the explicit supported-backend-ID registry exposed by the current host factory and supplies it to catalog parsing. The UI does not create an inference backend; it uses this supported-ID contract to reject incompatible catalog entries.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/Inference/LocalInferenceBackendFactory.cs",
+        "src/Host.Windows/Models/Catalog/ModelCatalogFileLoader.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "tests/test_model_catalog_ui.py"
+      ]
     },
     {
       "from": "T0070",
@@ -24659,6 +24744,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-24T16:47:57.000Z"
+  "updated_at": "2026-10-24T17:03:50.363Z"
 }
 ```

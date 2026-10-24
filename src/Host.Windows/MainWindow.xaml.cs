@@ -1,6 +1,9 @@
 using System.IO;
 using System.Globalization;
 using System.Windows;
+using Microsoft.Win32;
+using System.Linq;
+using WhiteP.Host.Windows.Models.Catalog;
 using WhiteP.Host.Application;
 using WhiteP.Host.Domain;
 using WhiteP.Host.Infrastructure;
@@ -49,6 +52,50 @@ public partial class MainWindow : Window
             LifecycleState.Text = "Error — local settings are invalid; correct the settings file before reconnecting.";
         }
     }
+
+    private void BrowseCatalogButton_Click(object sender, RoutedEventArgs e)
+    {
+        var dialog = new OpenFileDialog
+        {
+            CheckFileExists = true,
+            Multiselect = false,
+            Filter = "Model catalog JSON (*.json)|*.json|All files (*.*)|*.*",
+            Title = "Select a versioned model catalog"
+        };
+        if (dialog.ShowDialog(this) == true)
+        {
+            CatalogFilePath.Text = dialog.FileName;
+            CatalogStatus.Text = "Catalog file selected. Enter the trusted source-host allowlist, then load to validate its metadata.";
+        }
+    }
+
+    private void LoadCatalogButton_Click(object sender, RoutedEventArgs e)
+    {
+        CatalogItems.ItemsSource = null;
+        try
+        {
+            var sourceHosts = ParseTrustedHostList(CatalogTrustedSourceHosts.Text);
+            var licenseHosts = ParseTrustedHostList(CatalogTrustedLicenseHosts.Text);
+            var catalog = new ModelCatalogFileLoader().Load(
+                CatalogFilePath.Text, sourceHosts, LocalInferenceBackendFactory.SupportedBackendIds,
+                licenseHosts.Length == 0 ? null : licenseHosts);
+            CatalogItems.ItemsSource = catalog.Models;
+            CatalogStatus.Text = catalog.Models.Count == 0
+                ? $"Catalog schema v{catalog.SchemaVersion} loaded successfully; it contains no model entries."
+                : $"Loaded {catalog.Models.Count} metadata record(s) from schema v{catalog.SchemaVersion}. No model was downloaded or installed.";
+        }
+        catch (Exception exception) when (
+            exception is IOException or InvalidDataException or UnauthorizedAccessException or ArgumentException or NotSupportedException)
+        {
+            CatalogStatus.Text = "Catalog not loaded. Check the local file, JSON metadata, and explicit trusted source/license host allowlists.";
+        }
+    }
+
+    private static string[] ParseTrustedHostList(string? value) =>
+        (value ?? string.Empty)
+            .Split(new[] { ';', ',', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToArray();
 
     private async void ConnectButton_Click(object sender, RoutedEventArgs e)
     {

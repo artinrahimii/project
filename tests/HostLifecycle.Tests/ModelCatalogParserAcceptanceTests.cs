@@ -1,6 +1,8 @@
 using System.IO;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using System.Text;
+using WhiteP.Host.Windows.Inference;
 using WhiteP.Host.Windows.Models.Catalog;
 
 internal static class ModelCatalogParserAcceptanceTests
@@ -11,6 +13,8 @@ internal static class ModelCatalogParserAcceptanceTests
     public static void Run()
     {
         ParsesValidCatalogAndNormalizesChecksum();
+        LoadsCatalogFromFileUsingTheHostBackendRegistry();
+        RejectsOversizedCatalogFile();
         MissingLicenseDefaultsToReviewRequired();
         RejectsMalformedJsonAndUnsupportedSchemaVersions();
         RejectsMissingAndUnknownMetadata();
@@ -101,6 +105,50 @@ internal static class ModelCatalogParserAcceptanceTests
         }
 
         throw new Exception($"Model catalog parser accepted invalid input: {reason}");
+    }
+
+    private static void LoadsCatalogFromFileUsingTheHostBackendRegistry()
+    {
+        var folder = Path.Combine(Path.GetTempPath(), "whitep-catalog-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(folder);
+        var path = Path.Combine(folder, "catalog.json");
+        try
+        {
+            File.WriteAllText(path, Catalog(Model(id: "from-file", name: "Catalog loaded from a real file")), new UTF8Encoding(false));
+            var catalog = new ModelCatalogFileLoader().Load(
+                path, new[] { "models.example.test" }, LocalInferenceBackendFactory.SupportedBackendIds,
+                new[] { "licenses.example.test" });
+            if (catalog.SchemaVersion != 1 || catalog.Models.Count != 1 ||
+                catalog.Models[0].Id != "from-file" || catalog.Models[0].Name != "Catalog loaded from a real file")
+                throw new Exception("The file loader did not return the real catalog records parsed from disk.");
+        }
+        finally
+        {
+            if (Directory.Exists(folder)) Directory.Delete(folder, recursive: true);
+        }
+    }
+
+    private static void RejectsOversizedCatalogFile()
+    {
+        var folder = Path.Combine(Path.GetTempPath(), "whitep-catalog-size-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(folder);
+        var path = Path.Combine(folder, "oversized.json");
+        var rejected = false;
+        try
+        {
+            File.WriteAllText(path, new string('x', ModelCatalogParser.MaximumCatalogBytes + 1), new UTF8Encoding(false));
+            try
+            {
+                _ = new ModelCatalogFileLoader().Load(path, new[] { "models.example.test" },
+                    LocalInferenceBackendFactory.SupportedBackendIds, new[] { "licenses.example.test" });
+            }
+            catch (InvalidDataException) { rejected = true; }
+        }
+        finally
+        {
+            if (Directory.Exists(folder)) Directory.Delete(folder, recursive: true);
+        }
+        if (!rejected) throw new Exception("The catalog file loader must reject files above the configured byte limit.");
     }
 
     private static void ParsesValidCatalogAndNormalizesChecksum()

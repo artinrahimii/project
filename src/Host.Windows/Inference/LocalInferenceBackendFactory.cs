@@ -10,6 +10,9 @@ namespace WhiteP.Host.Windows.Inference;
 /// </summary>
 public static class LocalInferenceBackendFactory
 {
+    /// <summary>Backend identifiers supported by the current host composition.</summary>
+    public static IReadOnlyList<string> SupportedBackendIds { get; } = Array.AsReadOnly(new[] { "llama.cpp" });
+
     public static IInferenceBackend Create(Uri serverAddress, string modelId)
     {
         ArgumentNullException.ThrowIfNull(serverAddress);
