@@ -10861,33 +10861,72 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0064 و T0056 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
+      "status": "in_progress",
       "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
-      "expected_output_paths": [
-        "src/Host.Windows/Inference/"
+      "actual_output_paths": [
+        "tests/test_no_cloud_provider_inference.py",
+        "step three/T0065/execution-report.md"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "expected_output_paths": [
+        "tests/test_no_cloud_provider_inference.py"
+      ],
+      "evidence": [
+        "tests/test_no_cloud_provider_inference.py",
+        "step three/T0065/execution-report.md",
+        "src/Host.Windows/Inference/LlamaCppInferenceEngine.cs",
+        "src/Host.Infrastructure/LlamaCppServerBackend.cs"
+      ],
+      "notes": "Added a source-level guard against known cloud-provider API endpoints/SDK references in the concrete local inference implementation. This does not substitute for runtime network capture; completion awaits exact-commit CI.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0065-A001",
+        "last_attempt_result": "pending_ci",
+        "changed_files": [
+          "tests/test_no_cloud_provider_inference.py",
+          "step three/T0065/execution-report.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
+          "state": "passed",
+          "triggering_contracts": [
+            "host-configured local server URI",
+            "llama.cpp local health and chat-completion endpoints"
+          ],
           "affected_by_contract_changes": [],
-          "review_evidence": []
+          "review_evidence": [
+            "tests/test_no_cloud_provider_inference.py",
+            "src/Host.Windows/Inference/LlamaCppInferenceEngine.cs",
+            "src/Host.Infrastructure/LlamaCppServerBackend.cs"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0065-A001",
+          "started_at": "2026-10-24T16:05:00+03:30",
+          "ended_at": "2026-10-24T16:05:00+03:30",
+          "result": "partial",
+          "summary": "Added source-level regression tests to detect known cloud provider API endpoints/SDK references in the actual local inference implementation. Exact-commit CI verification is pending; this is not runtime network-capture proof.",
+          "changed_files": [
+            "tests/test_no_cloud_provider_inference.py",
+            "step three/T0065/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect exact-commit quality gate and mark done only if it passes; otherwise repair the test."
+        }
+      ]
     },
     {
       "id": "T0066",
@@ -19740,19 +19779,28 @@
       "from": "T0064",
       "to": "T0065",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "The source-level cloud-provider boundary audit can inspect the local inference implementation without requiring the opt-in live-model test; the existing conservative order is retained.",
+      "validation_status": "validated",
+      "evidence": [
+        "tests/test_no_cloud_provider_inference.py",
+        "src/Host.Windows/Inference/LlamaCppInferenceEngine.cs",
+        "src/Host.Infrastructure/LlamaCppServerBackend.cs"
+      ]
     },
     {
       "from": "T0056",
       "to": "T0065",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0065 inspects the concrete local inference engine and backend endpoints established by the host inference interface and local backend contract.",
+      "validation_status": "validated",
+      "evidence": [
+        "tests/test_no_cloud_provider_inference.py",
+        "src/Host.Windows/Inference/LlamaCppInferenceEngine.cs",
+        "src/Host.Infrastructure/LlamaCppServerBackend.cs",
+        "src/Host.Application/Inference/IInferenceEngine.cs"
+      ]
     },
     {
       "from": "T0065",
@@ -23716,8 +23764,37 @@
         "tests/HostLifecycle.Tests/Program.cs"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-24T16:05:00+03:30",
+      "edge_from": "T0064",
+      "edge_to": "T0065",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "reason": "The source-level cloud-provider boundary audit can inspect the local inference implementation without requiring the opt-in live-model test; the existing conservative order is retained.",
+      "evidence": [
+        "tests/test_no_cloud_provider_inference.py",
+        "src/Host.Windows/Inference/LlamaCppInferenceEngine.cs",
+        "src/Host.Infrastructure/LlamaCppServerBackend.cs"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-24T16:05:00+03:30",
+      "edge_from": "T0056",
+      "edge_to": "T0065",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "reason": "T0065 inspects the concrete local inference engine and backend endpoints established by the host inference interface and local backend contract.",
+      "evidence": [
+        "tests/test_no_cloud_provider_inference.py",
+        "src/Host.Windows/Inference/LlamaCppInferenceEngine.cs",
+        "src/Host.Infrastructure/LlamaCppServerBackend.cs",
+        "src/Host.Application/Inference/IInferenceEngine.cs"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-24T15:42:00+03:30"
+  "updated_at": "2026-10-24T16:05:00+03:30"
 }
 ```
