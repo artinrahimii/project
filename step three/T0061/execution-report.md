@@ -72,3 +72,12 @@
 - Exact-commit [Step Three quality gate run 40077575900](https://github.com/artinrahimii/project/actions/runs/40077575900) passed graph structure, syntax, automated tests, and evidence/output checks.
 - Exact-commit [White-P product build run 40077575695](https://github.com/artinrahimii/project/actions/runs/40077575695) passed Windows WPF Release build/startup smoke, host lifecycle tests, Android debug APK, Kotlin lint, Protobuf round-trip tests, and generated-source validation.
 - Result: T0061 meets its graph criterion for routing a request through the local inference backend and receiving real model output, so its graph status is now `done`. The earlier failed compile attempt A002 remains in history. This evidence does not claim the complete Android-to-P2P product is finished.
+
+
+## Graph-evidence validation correction — V 3.0.191
+
+- The live inference acceptance result remains successful: real local llama.cpp process started, health check passed, and the pinned GGUF model returned a non-empty response in workflow [run 40077575618](https://github.com/artinrahimii/project/actions/runs/40077575618).
+- The subsequent Step Three quality gate [run 40077809529](https://github.com/artinrahimii/project/actions/runs/40077809529) failed only at the recorded-output/evidence validation step. The failure was caused by remote URLs placed in the task's top-level `evidence` array; `graph_guard.py` treats values with slashes in that array as repository paths and requires the files to exist locally.
+- The graph correction now stores only existing source/test/workflow/report files in `nodes[T0061].evidence`. The external run/release/model URLs remain in this report and the relevant execution history, where they serve as navigable links rather than repo-file evidence.
+- This preserves the successful live-model history, does not erase the historical A002 compile failure, and avoids treating CI URLs themselves as local evidence files.
+- Workflow run [White-P product build 40077809527](https://github.com/artinrahimii/project/actions/runs/40077809527) on V 3.0.191 showed the host lifecycle suite and Windows WPF Release build/startup smoke passed; Android lint/build/tests and artifact upload steps also passed before the final job result was rechecked.

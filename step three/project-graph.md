@@ -10193,19 +10193,10 @@
       "evidence": [
         "src/Host.Infrastructure/LlamaCppServerBackend.cs",
         "tests/HostLifecycle.Tests/Program.cs",
-        "https://github.com/artinrahimii/project/actions/runs/40073802629",
-        "https://github.com/artinrahimii/project/actions/runs/40073802621",
-        "step three/T0061/execution-report.md",
         ".github/workflows/real-inference.yml",
-        "https://github.com/ggml-org/llama.cpp/releases/tag/b11443",
-        "https://huggingface.co/QuantFactory/SmolLM2-135M-Instruct-GGUF",
-        "https://github.com/artinrahimii/project/actions/runs/40077091311",
-        "https://github.com/artinrahimii/project/actions/runs/40077091319",
-        "https://github.com/artinrahimii/project/actions/runs/40077575618",
-        "https://github.com/artinrahimii/project/actions/runs/40077575900",
-        "https://github.com/artinrahimii/project/actions/runs/40077575695"
+        "step three/T0061/execution-report.md"
       ],
-      "notes": "T0061-A001 corrected the OpenAI-compatible max_tokens wire field and added assertions against the exact serialized HTTP request (POST endpoint, JSON content type, configured model, single user message and token limit) plus generated response mapping. Exact-commit quality gate, C# host lifecycle harness and Windows WPF build/startup smoke passed. No live llama-server.exe with a real GGUF model was launched in this attempt; the requested real-model response remains unverified, so T0061 stays in_progress. Attempt T0061-A002 adds an opt-in live local-model integration path, but no real model execution is claimed until the test is run with a real llama-server.exe and a license-acceptable GGUF model. CI run 40076984165 found a missing namespace import in the new opt-in test path (CS0246). Attempt T0061-A002 is recorded as failed; T0061-A003 adds the import and remains partial pending exact-commit CI and a real-model run. Exact-commit V 3.0.189 product and quality workflows passed, including host lifecycle, Windows WPF startup smoke, and Android checks. T0061-A004 adds a dedicated pinned live-model workflow; no real-model success is claimed until that workflow returns the generated-response PASS line. Verified in V 3.0.190 by real Windows CI: official llama.cpp b11443 CPU archive SHA-256 matched; the pinned GGUF file (105454144 bytes, SHA-256 8030f04528538d47bda434f6f0bdf3952c40a58123e4d5e755332f23731a8684) passed GGUF signature checks; live server health passed and real backend generation returned non-empty output. Quality and product workflows also passed. T0061 is now done for its local backend request/real-response criterion; this does not claim full Android-to-P2P end-to-end completion.",
+      "notes": "T0061-A001 corrected the OpenAI-compatible max_tokens wire field and added assertions against the exact serialized HTTP request (POST endpoint, JSON content type, configured model, single user message and token limit) plus generated response mapping. Exact-commit quality gate, C# host lifecycle harness and Windows WPF build/startup smoke passed. No live llama-server.exe with a real GGUF model was launched in this attempt; the requested real-model response remains unverified, so T0061 stays in_progress. Attempt T0061-A002 adds an opt-in live local-model integration path, but no real model execution is claimed until the test is run with a real llama-server.exe and a license-acceptable GGUF model. CI run 40076984165 found a missing namespace import in the new opt-in test path (CS0246). Attempt T0061-A002 is recorded as failed; T0061-A003 adds the import and remains partial pending exact-commit CI and a real-model run. Exact-commit V 3.0.189 product and quality workflows passed, including host lifecycle, Windows WPF startup smoke, and Android checks. T0061-A004 adds a dedicated pinned live-model workflow; no real-model success is claimed until that workflow returns the generated-response PASS line. Verified in V 3.0.190 by real Windows CI: official llama.cpp b11443 CPU archive SHA-256 matched; the pinned GGUF file (105454144 bytes, SHA-256 8030f04528538d47bda434f6f0bdf3952c40a58123e4d5e755332f23731a8684) passed GGUF signature checks; live server health passed and real backend generation returned non-empty output. Quality and product workflows also passed. T0061 is now done for its local backend request/real-response criterion; this does not claim full Android-to-P2P end-to-end completion. Quality gate on V 3.0.191 rejected URL entries in the node-level evidence array as MISSING_EVIDENCE_FILE because this repository's graph_guard requires evidence-array values with slash characters to be repository file paths. The CI URLs and detailed verification remain in step three/T0061/execution-report.md and execution-history summaries; node-level evidence is now limited to real repository files.",
       "execution_summary": {
         "attempt_count": 4,
         "failed_attempt_count": 1,
@@ -10232,7 +10223,8 @@
         ],
         "tests_failed": [
           "T0061-A002: live-model test path did not compile due missing LocalInferenceProcessLauncher namespace import (workflow run 40076984165); fixed in T0061-A003.",
-          "Historical attempt T0061-A002 failed compile (CS0246 missing LocalInferenceProcessLauncher namespace; run 40076984165); repaired in A003 and verified in A003/A004."
+          "Historical attempt T0061-A002 failed compile (CS0246 missing LocalInferenceProcessLauncher namespace; run 40076984165); repaired in A003 and verified in A003/A004.",
+          "V 3.0.191 graph evidence gate failed with 9 MISSING_EVIDENCE_FILE errors because remote URLs were stored in the node-level evidence array; graph_guard expects repository file paths there. This is a traceability metadata issue, not a failed real-inference run; corrected with file paths in V 3.0.192."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -23333,6 +23325,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-24T08:21:31.000Z"
+  "updated_at": "2026-10-24T08:23:15.000Z"
 }
 ```
