@@ -1,0 +1,91 @@
+name: Real local inference integration
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/real-inference.yml"
+      - "src/Host.Infrastructure/**"
+      - "src/Host.Windows/Inference/**"
+      - "tests/HostLifecycle.Tests/**"
+  pull_request:
+    paths:
+      - ".github/workflows/real-inference.yml"
+      - "src/Host.Infrastructure/**"
+      - "src/Host.Windows/Inference/**"
+      - "tests/HostLifecycle.Tests/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  live-local-inference:
+    name: Real llama.cpp process and GGUF response
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Download and verify pinned llama.cpp CPU binary
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+          $ProgressPreference = "SilentlyContinue"
+          $archive = Join-Path $env:RUNNER_TEMP "llama-b11443-bin-win-cpu-x64.zip"
+          $extractRoot = Join-Path $env:RUNNER_TEMP "llama-b11443"
+          $url = "https://github.com/ggml-org/llama.cpp/releases/download/b11443/llama-b11443-bin-win-cpu-x64.zip"
+          $expectedSha256 = "98303a5a688a606d4a32522e47ed7cafa0ddff04d3be56ab927e25d3b1ea45c6"
+          Invoke-WebRequest -Uri $url -OutFile $archive -MaximumRedirection 10 -TimeoutSec 300
+          $actualSha256 = (Get-FileHash -LiteralPath $archive -Algorithm SHA256).Hash.ToLowerInvariant()
+          if ($actualSha256 -ne $expectedSha256) {
+            throw "llama.cpp archive SHA-256 mismatch. Expected $expectedSha256; got $actualSha256."
+          }
+          Expand-Archive -LiteralPath $archive -DestinationPath $extractRoot -Force
+          $server = Get-ChildItem -LiteralPath $extractRoot -Filter "llama-server.exe" -File -Recurse | Select-Object -First 1
+          if ($null -eq $server) {
+            throw "Pinned llama.cpp archive did not contain llama-server.exe."
+          }
+          "WHITEP_LLAMA_SERVER_EXE=$($server.FullName)" | Add-Content -LiteralPath $env:GITHUB_ENV -Encoding utf8
+          Write-Host "Verified llama.cpp b11443 CPU archive SHA-256: $actualSha256"
+          Write-Host "Found local server executable: $($server.FullName)"
+
+      - name: Download and validate pinned Apache-2.0 GGUF model
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+          $ProgressPreference = "SilentlyContinue"
+          $modelPath = Join-Path $env:RUNNER_TEMP "SmolLM2-135M-Instruct.Q4_K_M.gguf"
+          $modelUrl = "https://huggingface.co/QuantFactory/SmolLM2-135M-Instruct-GGUF/resolve/a6b7826ed969c3926a98359e39912af137b464cb/SmolLM2-135M-Instruct.Q4_K_M.gguf"
+          Invoke-WebRequest -Uri $modelUrl -OutFile $modelPath -MaximumRedirection 10 -TimeoutSec 900
+          $model = Get-Item -LiteralPath $modelPath
+          if ($model.Length -lt 100MB -or $model.Length -gt 110MB) {
+            throw "Pinned GGUF file has an unexpected size: $($model.Length) bytes."
+          }
+          $stream = [System.IO.File]::OpenRead($modelPath)
+          try {
+            $magic = New-Object byte[] 4
+            $read = $stream.Read($magic, 0, 4)
+          }
+          finally {
+            $stream.Dispose()
+          }
+          if ($read -ne 4 -or [System.Text.Encoding]::ASCII.GetString($magic) -ne "GGUF") {
+            throw "Downloaded model does not have the GGUF file signature."
+          }
+          $modelSha256 = (Get-FileHash -LiteralPath $modelPath -Algorithm SHA256).Hash.ToLowerInvariant()
+          "WHITEP_LLAMA_MODEL_PATH=$modelPath" | Add-Content -LiteralPath $env:GITHUB_ENV -Encoding utf8
+          "WHITEP_LLAMA_SERVER_URL=http://127.0.0.1:18080/" | Add-Content -LiteralPath $env:GITHUB_ENV -Encoding utf8
+          "WHITEP_LLAMA_MODEL_ID=smollm2-ci" | Add-Content -LiteralPath $env:GITHUB_ENV -Encoding utf8
+          "WHITEP_LLAMA_PROMPT=Reply with the single word READY." | Add-Content -LiteralPath $env:GITHUB_ENV -Encoding utf8
+          "WHITEP_RUN_REAL_INFERENCE_TEST=1" | Add-Content -LiteralPath $env:GITHUB_ENV -Encoding utf8
+          Write-Host "Validated pinned GGUF model revision a6b7826ed969c3926a98359e39912af137b464cb; size=$($model.Length) bytes; SHA-256=$modelSha256"
+
+      - name: Run live local-model inference acceptance test
+        run: dotnet run --project tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj --configuration Release

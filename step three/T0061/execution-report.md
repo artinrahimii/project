@@ -44,3 +44,19 @@
 - The opt-in test path was added in commit `941e2535357c4aaefde5ece4c1572fe24ca893e4` (`V 3.0.188`).
 - Exact-commit workflow run [40076984165](https://github.com/artinrahimii/project/actions/runs/40076984165) exposed a compile failure in the host lifecycle test project: `CS0246`, `LocalInferenceProcessLauncher` was not found because its namespace was not imported. The real-model path was not executed.
 - This is recorded as a failed attempt, not a passing test. The follow-up adds the missing namespace import; the fix remains unverified until the next exact-commit workflow run completes.
+
+
+## Verification follow-up — T0061-A003
+
+- Verification commit: `3d579d9185f3aa7a34a41d6f500a136841b7f88d` (`V 3.0.189`).
+- Exact-commit [White-P product build run 40077091311](https://github.com/artinrahimii/project/actions/runs/40077091311) completed successfully. The host lifecycle harness, Windows WPF Release build/startup smoke, and Android debug APK/tests all passed.
+- Exact-commit [Step Three quality gate run 40077091319](https://github.com/artinrahimii/project/actions/runs/40077091319) passed automated tests, Python compilation, graph structure, and recorded-output/evidence validation.
+- This verifies the namespace-import repair and normal product checks. It does not perform real-model inference because the live test configuration is opt-in; T0061 remains `in_progress`.
+
+## Attempt T0061-A004 — pinned live-model CI verification path
+
+- Started: `2026-10-24T08:19:02.145Z`.
+- Added `.github/workflows/real-inference.yml`, a dedicated Windows job that runs the existing opt-in acceptance path against a real local process rather than the recording-handler fixture.
+- The job pins the official llama.cpp b11443 Windows CPU archive and verifies its published SHA-256 before use. It pins the GGUF model file to revision `a6b7826ed969c3926a98359e39912af137b464cb` from `QuantFactory/SmolLM2-135M-Instruct-GGUF`; the model page labels the repository Apache-2.0. The workflow validates the expected file-size range and GGUF magic, logs its SHA-256, starts the server on loopback, and requires a non-empty generated response.
+- Sources: https://github.com/ggml-org/llama.cpp/releases/tag/b11443 and https://huggingface.co/QuantFactory/SmolLM2-135M-Instruct-GGUF
+- No live response is claimed at commit creation. The new workflow must finish successfully and its step log must show the live-inference PASS line before T0061 can be marked done. No cloud inference provider is used.

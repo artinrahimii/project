@@ -10184,7 +10184,8 @@
         "src/Host.Infrastructure/LlamaCppServerBackend.cs",
         "tests/HostLifecycle.Tests/Program.cs",
         "step three/T0061/execution-report.md",
-        "step three/project-graph.md"
+        "step three/project-graph.md",
+        ".github/workflows/real-inference.yml"
       ],
       "expected_output_paths": [
         "src/Host.Windows/Inference/"
@@ -10194,25 +10195,37 @@
         "tests/HostLifecycle.Tests/Program.cs",
         "https://github.com/artinrahimii/project/actions/runs/40073802629",
         "https://github.com/artinrahimii/project/actions/runs/40073802621",
-        "step three/T0061/execution-report.md"
+        "step three/T0061/execution-report.md",
+        ".github/workflows/real-inference.yml",
+        "https://github.com/ggml-org/llama.cpp/releases/tag/b11443",
+        "https://huggingface.co/QuantFactory/SmolLM2-135M-Instruct-GGUF",
+        "https://github.com/artinrahimii/project/actions/runs/40077091311",
+        "https://github.com/artinrahimii/project/actions/runs/40077091319"
       ],
-      "notes": "T0061-A001 corrected the OpenAI-compatible max_tokens wire field and added assertions against the exact serialized HTTP request (POST endpoint, JSON content type, configured model, single user message and token limit) plus generated response mapping. Exact-commit quality gate, C# host lifecycle harness and Windows WPF build/startup smoke passed. No live llama-server.exe with a real GGUF model was launched in this attempt; the requested real-model response remains unverified, so T0061 stays in_progress. Attempt T0061-A002 adds an opt-in live local-model integration path, but no real model execution is claimed until the test is run with a real llama-server.exe and a license-acceptable GGUF model. CI run 40076984165 found a missing namespace import in the new opt-in test path (CS0246). Attempt T0061-A002 is recorded as failed; T0061-A003 adds the import and remains partial pending exact-commit CI and a real-model run.",
+      "notes": "T0061-A001 corrected the OpenAI-compatible max_tokens wire field and added assertions against the exact serialized HTTP request (POST endpoint, JSON content type, configured model, single user message and token limit) plus generated response mapping. Exact-commit quality gate, C# host lifecycle harness and Windows WPF build/startup smoke passed. No live llama-server.exe with a real GGUF model was launched in this attempt; the requested real-model response remains unverified, so T0061 stays in_progress. Attempt T0061-A002 adds an opt-in live local-model integration path, but no real model execution is claimed until the test is run with a real llama-server.exe and a license-acceptable GGUF model. CI run 40076984165 found a missing namespace import in the new opt-in test path (CS0246). Attempt T0061-A002 is recorded as failed; T0061-A003 adds the import and remains partial pending exact-commit CI and a real-model run. Exact-commit V 3.0.189 product and quality workflows passed, including host lifecycle, Windows WPF startup smoke, and Android checks. T0061-A004 adds a dedicated pinned live-model workflow; no real-model success is claimed until that workflow returns the generated-response PASS line.",
       "execution_summary": {
-        "attempt_count": 3,
+        "attempt_count": 4,
         "failed_attempt_count": 1,
-        "last_attempt_id": "T0061-A003",
+        "last_attempt_id": "T0061-A004",
         "last_attempt_result": "partial",
         "changed_files": [
-          "src/Host.Infrastructure/LlamaCppServerBackend.cs",
-          "tests/HostLifecycle.Tests/Program.cs",
+          ".github/workflows/real-inference.yml",
           "step three/T0061/execution-report.md",
           "step three/project-graph.md"
         ],
         "related_commits": [
-          "9b164aab3fae39752a733732a3cb781dc223981f"
+          "9b164aab3fae39752a733732a3cb781dc223981f",
+          "3d579d9185f3aa7a34a41d6f500a136841b7f88d"
         ],
-        "tests_passed": [],
-        "tests_failed": [],
+        "tests_passed": [
+          "V 3.0.189 HostLifecycle.Tests passed (workflow run 40077091311); live-model path was not enabled in that workflow.",
+          "V 3.0.189 Windows WPF Release build and startup smoke passed (workflow run 40077091311).",
+          "V 3.0.189 Android debug APK and Protobuf checks passed (workflow run 40077091311).",
+          "V 3.0.189 Step Three quality gate passed (workflow run 40077091319)."
+        ],
+        "tests_failed": [
+          "T0061-A002: live-model test path did not compile due missing LocalInferenceProcessLauncher namespace import (workflow run 40076984165); fixed in T0061-A003."
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -10298,11 +10311,55 @@
         {
           "attempt_id": "T0061-A003",
           "started_at": "2026-10-24T08:11:14.223Z",
-          "ended_at": "2026-10-24T08:11:14.223Z",
+          "ended_at": "2026-10-24T08:14:54Z",
           "result": "partial",
           "summary": "Fixed the exact-commit CI compile failure by importing the namespace that contains the existing local inference process launcher. Waiting for the next workflow run; no real model inference is claimed.",
           "changed_files": [
             "tests/HostLifecycle.Tests/Program.cs",
+            "step three/T0061/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": "3d579d9185f3aa7a34a41d6f500a136841b7f88d",
+          "tests": [
+            {
+              "command": "HostLifecycle.Tests on V 3.0.189 (workflow run 40077091311)",
+              "result": "passed",
+              "summary": "C# lifecycle harness compiled and passed after the namespace import repair.",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40077091311"
+            },
+            {
+              "command": "Windows WPF Release build and startup smoke (workflow run 40077091311)",
+              "result": "passed",
+              "summary": "Formatting, Release build, generated Protobuf validation, WPF startup smoke, and artifact upload passed.",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40077091311"
+            },
+            {
+              "command": "Android debug APK and Protobuf checks (workflow run 40077091311)",
+              "result": "passed",
+              "summary": "Kotlin formatting/lint, APK build, Protobuf tests, and generated source validation passed.",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40077091311"
+            },
+            {
+              "command": "Step Three quality gate (workflow run 40077091319)",
+              "result": "passed",
+              "summary": "Automated tests, Python syntax, graph structure, and recorded-output/evidence checks passed.",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40077091319"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "The ordinary product checks passed. Run the dedicated live-model workflow on the next code commit; only mark T0061 done when a real local GGUF response is observed."
+        },
+        {
+          "attempt_id": "T0061-A004",
+          "started_at": "2026-10-24T08:19:02.145Z",
+          "ended_at": "2026-10-24T08:19:02.145Z",
+          "result": "partial",
+          "summary": "Added a dedicated Windows CI workflow to run the existing opt-in harness against a pinned llama.cpp CPU binary and a pinned Apache-2.0 GGUF model. Exact-commit workflow and real generated response are pending.",
+          "changed_files": [
+            ".github/workflows/real-inference.yml",
             "step three/T0061/execution-report.md",
             "step three/project-graph.md"
           ],
@@ -10312,7 +10369,7 @@
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Confirm the host lifecycle test harness compiles and passes on the new commit. Then run the opt-in path on Windows with a license-acceptable GGUF model and real llama-server.exe before marking T0061 done."
+          "follow_up": "Inspect the exact commit's real-inference workflow and require its log to show the real local llama.cpp process became healthy and generated non-empty output. Fix any failure and rerun before marking T0061 done."
         }
       ]
     },
@@ -23249,6 +23306,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-24T08:11:14.223Z"
+  "updated_at": "2026-10-24T08:19:02.145Z"
 }
 ```
