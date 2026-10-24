@@ -10601,14 +10601,15 @@
         "Exact main commit 694b0fcf847a9a2087af292910112c9c041d86df: GitHub Actions run 40092245411, job 120867130271 completed successfully.",
         "Job log line at 2026-10-24T12:02:42.994Z: PASS: real local llama.cpp inference succeeded; active generation cancellation was observed and the owned process stopped cleanly.",
         "Same commit workflow run 40092245473: Windows WPF host build/startup smoke, host lifecycle tests, and Android debug APK build all succeeded.",
-        "Same commit workflow run 40092245370: graph/Python quality checks succeeded."
+        "Same commit workflow run 40092245370: graph/Python quality checks succeeded.",
+        "tests/HostLifecycle.Tests/Program.cs"
       ],
       "notes": "لغو تولید واقعیِ درحال‌اجرا با مدل GGUF و توقف فرایند اختصاصی در CI همان commit تأیید شد؛ آزمون‌های ساخت ویندوز، چرخهٔ عمر میزبان، APK اندروید و کنترل کیفیت نیز موفق‌اند.",
       "execution_summary": {
-        "attempt_count": 4,
+        "attempt_count": 5,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0063-A004",
-        "last_attempt_result": "accepted_exact_commit_ci",
+        "last_attempt_id": "T0063-A005",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "tests/HostLifecycle.Tests/Program.cs",
           "step three/T0063/execution-report.md",
@@ -10622,7 +10623,8 @@
           "Host lifecycle unit and integration tests passed (workflow 40092245473).",
           "Windows WPF build and startup smoke test passed (workflow 40092245473).",
           "Android debug APK build passed (workflow 40092245473).",
-          "Task graph and Python quality checks passed (workflow 40092245370)."
+          "Task graph and Python quality checks passed (workflow 40092245370).",
+          "Exact-head verification review: the live inference/cancellation CI evidence is recorded in T0063 history; the source test path is tests/HostLifecycle.Tests/Program.cs."
         ],
         "tests_failed": [],
         "blocked_reason": null,
@@ -10747,6 +10749,30 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Review T0064 and its dependency evidence before beginning the opt-in small licensed-model integration task."
+        },
+        {
+          "attempt_id": "T0063-A005",
+          "started_at": "2026-10-24T16:12:00+03:30",
+          "ended_at": "2026-10-24T16:12:00+03:30",
+          "result": "succeeded",
+          "summary": "Reconciled graph evidence metadata with the already recorded exact-commit test source and CI evidence; no application behavior was changed by this metadata repair.",
+          "changed_files": [
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Graph evidence consistency review",
+              "result": "passed",
+              "evidence": "tests/HostLifecycle.Tests/Program.cs",
+              "summary": "The existing done status is supported by the test source and recorded exact-commit live inference/cancellation CI evidence."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "No additional implementation action for T0063 unless its code or acceptance criteria change."
         }
       ]
     },
@@ -10784,10 +10810,10 @@
       ],
       "notes": "Implementation pre-existed this execution; acceptance was verified against the exact-commit live-model CI result and the pinned model card. No claim that new model-test code was written in this attempt.",
       "execution_summary": {
-        "attempt_count": 1,
+        "attempt_count": 2,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0064-A001",
-        "last_attempt_result": "existing_implementation_verified",
+        "last_attempt_id": "T0064-A002",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           ".github/workflows/real-inference.yml",
           "tests/HostLifecycle.Tests/Program.cs",
@@ -10799,7 +10825,8 @@
         ],
         "tests_passed": [
           "Real local llama.cpp inference returned non-empty output and active-generation cancellation stopped the owned process cleanly (run 40092245411, job 120867130271).",
-          "Windows host lifecycle tests, Windows WPF build/startup smoke, Android debug APK build, and graph quality checks passed on commit 694b0fcf847a9a2087af292910112c9c041d86df."
+          "Windows host lifecycle tests, Windows WPF build/startup smoke, Android debug APK build, and graph quality checks passed on commit 694b0fcf847a9a2087af292910112c9c041d86df.",
+          "Exact-head graph consistency review: .github/workflows/real-inference.yml and tests/HostLifecycle.Tests/Program.cs; live-model CI run 40092245411 passed."
         ],
         "tests_failed": [],
         "blocked_reason": null,
@@ -10841,6 +10868,30 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Proceed to T0065 only after validating its own dependencies and acceptance criteria."
+        },
+        {
+          "attempt_id": "T0064-A002",
+          "started_at": "2026-10-24T16:12:00+03:30",
+          "ended_at": "2026-10-24T16:12:00+03:30",
+          "result": "succeeded",
+          "summary": "Reconciled the execution-history result with the existing exact-commit CI evidence for the opt-in real-model test.",
+          "changed_files": [
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Existing real inference workflow evidence review",
+              "result": "passed",
+              "evidence": ".github/workflows/real-inference.yml",
+              "summary": "The exact-commit run 40092245411 previously passed the pinned local model inference and cancellation checks."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "No additional implementation action for T0064 unless code or acceptance criteria change."
         }
       ]
     },
@@ -10881,15 +10932,19 @@
         "attempt_count": 1,
         "failed_attempt_count": 0,
         "last_attempt_id": "T0065-A001",
-        "last_attempt_result": "pending_ci",
+        "last_attempt_result": "partial",
         "changed_files": [
           "tests/test_no_cloud_provider_inference.py",
           "step three/T0065/execution-report.md",
           "step three/project-graph.md"
         ],
         "related_commits": [],
-        "tests_passed": [],
-        "tests_failed": [],
+        "tests_passed": [
+          "Automated Python test stage passed in quality run 40093732203 (117 tests; the new test was included)."
+        ],
+        "tests_failed": [
+          "The overall quality gate failed at graph_guard because existing T0063/T0064 graph metadata lacked successful history entries and T0063 lacked a test-source evidence path; this was not a failure of the new test."
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -23795,6 +23850,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-24T16:05:00+03:30"
+  "updated_at": "2026-10-24T16:12:00+03:30"
 }
 ```

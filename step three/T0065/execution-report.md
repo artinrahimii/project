@@ -21,8 +21,9 @@
 
 ## Verification state
 
-- The new test has been committed for the repository quality workflow to execute.
-- T0065 remains `in_progress` until the exact-commit CI result is checked. No passing test is claimed in advance.
+- The new test passed in the Python test stage of quality run 40093732203 (117 tests total).
+- The overall quality workflow failed later at graph validation because the pre-existing T0063/T0064 history metadata did not satisfy the guard. This is being repaired without changing application code or erasing prior history.
+- T0065 remains `in_progress` until the full exact-commit quality gate passes. This source test is not runtime network-capture proof.
 
 ## Next action
 
