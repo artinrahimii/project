@@ -11685,7 +11685,7 @@
         }
       ]
     },
-        {
+    {
       "id": "T0069",
       "title": "parser کاتالوگ را با رد ورودی نامعتبر و URL غیرمجاز پیاده‌سازی کن.",
       "section": "7. کاتالوگ، مجوز و فایل‌های مدل",
@@ -11939,7 +11939,7 @@
         }
       ]
     },
-        {
+    {
       "id": "T0070",
       "title": "صفحهٔ کاتالوگ را از دادهٔ واقعی کاتالوگ بخوان، نه از فهرست هاردکدشدهٔ UI.",
       "section": "7. کاتالوگ، مجوز و فایل‌های مدل",
@@ -12124,8 +12124,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0070 و T0067 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "تکمیل‌شده",
       "actual_output_paths": [
         "src/Host.Windows/MainWindow.xaml",
         "src/Host.Windows/MainWindow.xaml.cs",
@@ -12142,12 +12142,12 @@
         "src/Host.Windows/MainWindow.xaml.cs",
         "tests/test_model_catalog_ui.py"
       ],
-      "notes": "Implementation exists and the 146-test Python suite passed. Full acceptance is pending after correcting a graph evidence-format error found by CI and confirming the Windows product build.",
+      "notes": "Selected-model detail panel implemented and exact-head validation passed: 146 Python tests, Step Three quality gate (including repository evidence checks), and Windows WPF product build all succeeded. The view reads actual parsed catalog records and presents source, declared size, license metadata, checksum, supported backends and limitations; it does not download/install model weights or claim independent legal verification.",
       "execution_summary": {
-        "attempt_count": 1,
+        "attempt_count": 2,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0071-A001",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "T0071-A002",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Host.Windows/MainWindow.xaml",
           "src/Host.Windows/MainWindow.xaml.cs",
@@ -12155,17 +12155,19 @@
           "step three/T0071/execution-report.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
+        "related_commits": [
+          "175dd6ff5541459a8b0c5c60004781c0adf3e9b2"
+        ],
         "tests_passed": [
-          "146 Python tests passed in run 40114997229, including selected-model detail panel assertions."
+          "Python quality suite: 146 tests passed, including selected-model details regression tests; run 40115099003.",
+          "Step Three quality gate: passed on exact head 33f6ada3bddda0aad99c5322b2960454be0afc35; run 40115099003.",
+          "Windows WPF product build: passed on exact head 33f6ada3bddda0aad99c5322b2960454be0afc35; run 40115099007."
         ],
-        "tests_failed": [
-          "Step Three quality gate failed after the Python suite: graph_guard.py --repo-root flagged three CI URLs in T0070.evidence as missing local evidence files; follow-up corrects the evidence-field format."
-        ],
+        "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "in_review",
+          "state": "passed",
           "triggering_contracts": [
             "ModelCatalogEntry metadata",
             "ModelLicenseMetadata.RequiresReview",
@@ -12176,7 +12178,8 @@
             "src/Host.Windows/Models/Catalog/ModelCatalogModels.cs",
             "src/Host.Windows/Models/Catalog/ModelCatalogParser.cs",
             "src/Host.Windows/MainWindow.xaml.cs",
-            "tests/test_model_catalog_ui.py"
+            "tests/test_model_catalog_ui.py",
+            "step three/T0071/execution-report.md"
           ]
         }
       },
@@ -12212,6 +12215,37 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Run Step Three quality gate and Windows WPF build; only then mark T0071 done."
+        },
+        {
+          "attempt_id": "T0071-A002",
+          "started_at": "2026-10-24T17:12:00Z",
+          "ended_at": "2026-10-24T17:16:07Z",
+          "result": "succeeded",
+          "summary": "Corrected the graph evidence metadata and revalidated the selected-model details feature. Exact-head Step Three quality gate and Windows WPF product build both passed; the gate includes 146 passing Python tests and repository evidence validation.",
+          "changed_files": [
+            "step three/T0071/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": "33f6ada3bddda0aad99c5322b2960454be0afc35",
+          "tests": [
+            {
+              "command": "Step Three quality gate",
+              "result": "passed",
+              "summary": "146 Python tests passed; graph guard and repository evidence checks passed on exact head.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40115099003"
+            },
+            {
+              "command": "Windows WPF product build",
+              "result": "passed",
+              "summary": "Windows WPF product build workflow succeeded on exact head.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40115099007"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Continue with the next dependency-ready task in the Step Three graph."
         }
       ]
     },
@@ -20915,7 +20949,7 @@
         "src/Host.Windows/Models/Catalog/model-catalog-v1.schema.json"
       ]
     },
-        {
+    {
       "from": "T0069",
       "to": "T0070",
       "type": "blocks",
@@ -20929,7 +20963,7 @@
         "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs"
       ]
     },
-        {
+    {
       "from": "T0067",
       "to": "T0070",
       "type": "blocks",
@@ -20947,19 +20981,29 @@
       "from": "T0070",
       "to": "T0071",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0071 binds the detail panel to the actual ModelCatalogEntry records produced and validated by T0070's local catalog loader. The UI consumes these parsed records rather than synthesizing its own catalog entries.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/Models/Catalog/ModelCatalogFileLoader.cs",
+        "src/Host.Windows/Models/Catalog/ModelCatalogModels.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "tests/test_model_catalog_ui.py"
+      ]
     },
     {
       "from": "T0067",
       "to": "T0071",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0071 displays the backend identifiers attached to each validated catalog record; T0070's loader checks those identifiers against the supported-backend registry provided by T0067. This is a concrete shared-interface dependency.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/Inference/LocalInferenceBackendFactory.cs",
+        "src/Host.Windows/Models/Catalog/ModelCatalogParser.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "tests/test_model_catalog_ui.py"
+      ]
     },
     {
       "from": "T0071",
@@ -24855,6 +24899,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-24T17:12:00Z"
+  "updated_at": "2026-10-24T17:16:07Z"
 }
 ```
