@@ -588,10 +588,22 @@ using var backend = new LlamaCppServerBackend(new Uri("http://127.0.0.1:8080/"),
 Assert(await backend.CheckHealthAsync(),"Successful /health must mark backend available");
 Assert(handler.LastPath=="health","Health check must call the local backend /health endpoint");
 var output=await backend.GenerateAsync("test prompt",64);
-Assert(output=="generated fixture output","Generated text must be read from the backend response");
+Assert(output=="generated fixture output","Generated text must be mapped from choices[0].message.content");
 Assert(handler.LastPath=="v1/chat/completions","Inference must call the OpenAI-compatible local chat-completions endpoint");
-Assert(handler.LastBody!.Contains("test prompt",StringComparison.Ordinal),"Prompt must be sent to local backend");
-Assert(handler.LastBody.Contains("fixture-model",StringComparison.Ordinal),"Configured model must be selected");
+Assert(handler.LastMethod==HttpMethod.Post,"Inference must use HTTP POST");
+Assert(handler.LastContentType=="application/json","Inference must send an application/json request body");
+Assert(handler.LastBody is not null,"Inference must send a request body");
+using (var requestPayload=JsonDocument.Parse(handler.LastBody!))
+{
+    var requestRoot=requestPayload.RootElement;
+    Assert(requestRoot.TryGetProperty("model",out var modelId) && modelId.GetString()=="fixture-model","The configured model ID must be sent as model");
+    Assert(requestRoot.TryGetProperty("max_tokens",out var tokenLimit) && tokenLimit.GetInt32()==64,"The token ceiling must use the OpenAI-compatible max_tokens field");
+    Assert(!requestRoot.TryGetProperty("maxTokens",out _),"The non-standard maxTokens field must not be sent");
+    Assert(requestRoot.TryGetProperty("messages",out var messages) && messages.ValueKind==JsonValueKind.Array && messages.GetArrayLength()==1,"Inference must map one user prompt to a single chat message");
+    var message=messages[0];
+    Assert(message.TryGetProperty("role",out var role) && role.GetString()=="user","The chat message role must be user");
+    Assert(message.TryGetProperty("content",out var prompt) && prompt.GetString()=="test prompt","The exact prompt must be mapped into message content");
+}
 
 var requestsBeforeLongPrompt = handler.InferenceRequestCount;
 var longPromptRejected = false;
@@ -909,6 +921,8 @@ sealed class RecordingHandler : HttpMessageHandler
 {
  public string? LastPath {get;private set;}
  public string? LastBody {get;private set;}
+ public HttpMethod? LastMethod {get;private set;}
+ public string? LastContentType {get;private set;}
  public HttpStatusCode HealthStatus {get;set;}=HttpStatusCode.OK;
  public string GeneratedText {get;set;}="generated fixture output";
  public int InferenceRequestCount {get;private set;}
@@ -916,6 +930,8 @@ sealed class RecordingHandler : HttpMessageHandler
  protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request,CancellationToken cancellationToken)
  {
   LastPath=request.RequestUri!.AbsolutePath.TrimStart('/');
+   LastMethod=request.Method;
+   LastContentType=request.Content?.Headers.ContentType?.MediaType;
   if(request.Method==HttpMethod.Get && LastPath=="health") return new HttpResponseMessage(HealthStatus);
   InferenceRequestCount++;
   LastBody=await request.Content!.ReadAsStringAsync(cancellationToken);

@@ -223,7 +223,7 @@ public sealed class LlamaCppServerBackend : IInferenceBackend, IDisposable
         if (_ownsClient) _http.Dispose();
     }
 
-    private sealed record ChatCompletionRequest(string Model, IReadOnlyList<ChatMessage> Messages, int MaxTokens);
+    private sealed record ChatCompletionRequest(string Model, IReadOnlyList<ChatMessage> Messages, [property: JsonPropertyName("max_tokens")] int MaxTokens);
     private sealed record ChatMessage(string Role, string Content);
     private sealed record ChatCompletionResponse(IReadOnlyList<Choice>? Choices);
     private sealed record Choice(ChatMessage? Message);
