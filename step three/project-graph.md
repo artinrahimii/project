@@ -12781,12 +12781,12 @@
         "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs",
         "step three/T0075/execution-report.md"
       ],
-      "notes": "Implemented validated local catalog cache fallback. Initial exact-head quality gate failed only because a Python structural test still required direct loader construction in MainWindow; updated that test to check the new OfflineModelCatalogStore integration. Awaiting CI rerun; keep in_progress until all required workflows pass.",
+      "notes": "Offline catalog cache implementation and the stale UI assertion have been corrected. The exact-head quality gate then exposed inconsistent attempt-history classification in this graph record; corrected the history to retain both failed attempts accurately. Keep in_progress until a new exact-head quality gate, Windows build/host tests, and local inference integration workflow pass.",
       "execution_summary": {
-        "attempt_count": 2,
-        "failed_attempt_count": 1,
-        "last_attempt_id": "T0075-attempt-2",
-        "last_attempt_result": "test_failure_fixed_ci_pending",
+        "attempt_count": 3,
+        "failed_attempt_count": 2,
+        "last_attempt_id": "T0075-attempt-3",
+        "last_attempt_result": "graph_guard_failed",
         "changed_files": [
           "src/Host.Windows/Models/Catalog/OfflineModelCatalogStore.cs",
           "src/Host.Windows/MainWindow.xaml.cs",
@@ -12797,7 +12797,8 @@
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [
-          "Step Three quality gate run 40124499347: tests/test_model_catalog_ui.py expected direct ModelCatalogFileLoader construction in MainWindow; integration moved it into OfflineModelCatalogStore. Test updated to assert the new abstraction."
+          "Step Three quality gate run 40124499347: tests/test_model_catalog_ui.py expected direct ModelCatalogFileLoader construction in MainWindow; updated test now checks OfflineModelCatalogStore integration.",
+          "Step Three quality gate run 40124596599: tools/graph_guard.py rejected T0075 because failed_attempt_count=1 but execution_history contained zero entries with result='failed'."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -12833,18 +12834,38 @@
         },
         {
           "attempt_id": "T0075-attempt-2",
-          "result": "test_failure_fixed_ci_pending",
+          "result": "failed",
           "base_commit": "246480b97dbbedeb3ed3332f36d8d8115631d36c",
-          "summary": "Exact-head quality gate exposed a stale structural assertion after catalog loading was correctly delegated to OfflineModelCatalogStore. Updated the assertion to validate the new store integration and the loader remains inside the store. Rerun CI pending.",
+          "summary": "Exact-head quality gate failed because tests/test_model_catalog_ui.py still expected direct loader construction after delegation to OfflineModelCatalogStore. The test was corrected, but the next quality-gate run failed graph consistency because this attempt was labeled test_failure_fixed_ci_pending instead of failed.",
           "changed_files": [
             "tests/test_model_catalog_ui.py"
           ],
           "tests_passed": [],
           "tests_failed": [
-            "Run 40124499347: test_ui_binds_parsed_catalog_records_not_static_rows"
+            "Step Three quality gate run 40124499347: tests/test_model_catalog_ui.py expected direct ModelCatalogFileLoader construction in MainWindow; updated test now checks OfflineModelCatalogStore integration."
           ],
           "related_commits": [],
           "timestamp": "2026-10-24T19:20:00Z"
+        },
+        {
+          "attempt_id": "T0075-attempt-3",
+          "result": "failed",
+          "base_commit": "73da9d8f189211f288c4c749eb37cad2e1630ade",
+          "summary": "Exact-head quality gate run 40124596599 passed 146 Python tests and syntax checks but failed graph_guard: summary failed_attempt_count=1 while history had zero result='failed' entries. Correcting the recorded attempt classification; rerun CI on the correction commit.",
+          "changed_files": [
+            "step three/project-graph.md"
+          ],
+          "tests_passed": [
+            "146 Python tests passed in quality gate run 40124596599",
+            "python -m compileall -q tools tests"
+          ],
+          "tests_failed": [
+            "Step Three quality gate run 40124596599: FAILED_ATTEMPT_COUNT_MISMATCH for T0075 (summary=1, history=0)."
+          ],
+          "related_commits": [
+            "73da9d8f189211f288c4c749eb37cad2e1630ade"
+          ],
+          "timestamp": "2026-10-24T00:00:00Z"
         }
       ]
     },
