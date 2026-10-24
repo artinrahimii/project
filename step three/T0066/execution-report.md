@@ -34,3 +34,11 @@
 
 - Fixed the unterminated `HOST_TEST_PROJECT` string.
 - The task remains partial until exact-head quality, Windows build/lifecycle tests and real local-model inference are confirmed.
+
+## T0066-A006 — acceptance verified
+
+- Exact-head Step Three quality gate passed on `1e4ec9821710f8a8a88a1de5462d77447c4ae5da`: [run 40104682026](https://github.com/artinrahimii/project/actions/runs/40104682026). The suite ran 123 Python tests; Python syntax, graph structure, and recorded-output/evidence checks passed.
+- Exact-head Windows host Release build, generated Protobuf validation, WPF startup smoke and host lifecycle tests passed on [product run 40104681998](https://github.com/artinrahimii/project/actions/runs/40104681998). The Android APK build and Protobuf round-trip tests also passed on that run.
+- Full product workflow on implementation commit `d83d6e0e82bbddd0d7fa2ef26de549ed40a007a5` passed all three jobs: [run 40104554847](https://github.com/artinrahimii/project/actions/runs/40104554847).
+- The pinned live local-model workflow passed on that implementation commit: [run 40104554823](https://github.com/artinrahimii/project/actions/runs/40104554823). The pinned llama.cpp archive SHA-256 matched; the extracted `llama-server.exe` reported expected build `11443` and SHA-256 `4cdaae426a798b49717e3ce9b8a7756a16355c83c812d9d59bc99e26ae6d3968`; the pinned 105,454,144-byte GGUF model was loaded; real inference returned non-empty output; active-generation cancellation was observed and the owned process stopped cleanly.
+- Result: T0066 meets its stated acceptance criteria and is marked done. The earlier T0066-A002 and T0066-A004 failures remain in the append-only history and were corrected. This is not a claim that all 229 project tasks are complete.

@@ -11083,14 +11083,16 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0065 و T0056 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال انجام",
+      "status": "done",
+      "status_fa": "تکمیل‌شده",
       "actual_output_paths": [
         "src/Host.Windows/Inference/LocalInferenceBinaryVerifier.cs",
         "src/Host.Windows/Inference/LocalInferenceProcessLauncher.cs",
         "tests/test_local_inference_binary_verifier.py",
         "step three/T0066/execution-report.md",
-        "step three/T0066/evidence/verification.md"
+        "step three/T0066/evidence/verification.md",
+        "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+        ".github/workflows/real-inference.yml"
       ],
       "expected_output_paths": [
         "src/Host.Windows/Inference/"
@@ -11098,34 +11100,43 @@
       "evidence": [
         "tests/test_local_inference_binary_verifier.py",
         "step three/T0066/execution-report.md",
-        "step three/T0066/evidence/verification.md"
+        "step three/T0066/evidence/verification.md",
+        "src/Host.Windows/Inference/LocalInferenceBinaryVerifier.cs",
+        "src/Host.Windows/Inference/LocalInferenceProcessLauncher.cs",
+        "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+        ".github/workflows/real-inference.yml"
       ],
-      "notes": "T0066-A002 preserves the exact-head C# compile integration failure. T0066-A003 fixed the missing System.IO import, linked LocalInferenceBinaryVerifier into HostLifecycle.Tests and wired pinned b11443 version/hash environment values after archive verification; that commit's quality gate then exposed a malformed string in the added Python test (T0066-A004). T0066-A005 fixes that syntax error. Keep in_progress until exact-head quality, Windows build/lifecycle and real local-model inference all pass.",
+      "notes": "T0066 is complete for its stated criterion. The launcher verifies a trusted expected SHA-256 before a shell-free bounded --version probe and rechecks the hash before accepting the executable; the managed launch fails closed when version/hash settings are absent. On the pinned implementation commit, GitHub Actions confirmed archive checksum, executable build 11443 and executable SHA-256, then real GGUF inference and clean cancellation. Exact-head quality, Windows host build/WPF smoke, host lifecycle tests and Android client build passed on V 3.0.209. Prior failures A002 and A004 remain preserved and were corrected; no overall project completion is implied.",
       "execution_summary": {
-        "attempt_count": 5,
+        "attempt_count": 6,
         "failed_attempt_count": 2,
-        "last_attempt_id": "T0066-A005",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "T0066-A006",
+        "last_attempt_result": "succeeded",
         "changed_files": [
+          "step three/project-graph.md",
           "step three/T0066/execution-report.md",
-          "step three/T0066/evidence/verification.md",
-          "tests/test_local_inference_binary_verifier.py",
-          "step three/project-graph.md"
+          "step three/T0066/evidence/verification.md"
         ],
         "related_commits": [
-          "d83d6e0e82bbddd0d7fa2ef26de549ed40a007a5"
+          "d83d6e0e82bbddd0d7fa2ef26de549ed40a007a5",
+          "1e4ec9821710f8a8a88a1de5462d77447c4ae5da"
         ],
-        "tests_passed": [],
+        "tests_passed": [
+          "Step Three quality gate — run 40104682026: 123 Python tests passed; Python syntax, graph structure and recorded outputs/evidence validation passed on exact head 1e4ec9821710f8a8a88a1de5462d77447c4ae5da.",
+          "Windows WPF host build — run 40104681998: Release build, generated Protobuf validation and WPF startup smoke passed on the exact inspected head.",
+          "Host lifecycle unit/integration tests — run 40104681998: The C# host lifecycle test job passed on the exact inspected head.",
+          "Android client build — run 40104681998: Debug APK build, Kotlin lint/format, Protobuf round-trip checks and artifact upload passed.",
+          "Full White-P product build — run 40104554847: Windows WPF host, lifecycle tests and Android client all passed on implementation commit d83d6e0e82bbddd0d7fa2ef26de549ed40a007a5.",
+          "Real local inference integration — run 40104554823: Pinned llama.cpp b11443 archive hash matched; executable --version/hash verification passed; real GGUF inference returned non-empty output; active generation cancellation was observed and the owned process stopped cleanly."
+        ],
         "tests_failed": [
-          "T0066-A002: Windows host build failed due to missing System.IO names; run 40104020991.",
-          "T0066-A002: HostLifecycle.Tests did not compile LocalInferenceBinaryVerifier.cs; run 40104020991.",
-          "T0066-A002: live-inference workflow failed at compile time before model launch; run 40104021005.",
-          "T0066-A004: Python quality gate failed to import test_local_inference_binary_verifier.py due to an unterminated string literal; run 40104554822."
+          "T0066-A002 (corrected): initial Windows build and portable test compile failed due missing System.IO import and verifier source link.",
+          "T0066-A004 (corrected): quality gate failed on an unterminated string in a regression test."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "in_review",
+          "state": "passed",
           "triggering_contracts": [
             "local engine executable version and SHA-256",
             "shell-free process startup"
@@ -11135,10 +11146,12 @@
             "src/Host.Windows/Inference/LocalInferenceBinaryVerifier.cs",
             "src/Host.Windows/Inference/LocalInferenceProcessLauncher.cs",
             "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+            "tests/test_local_inference_binary_verifier.py",
             ".github/workflows/real-inference.yml",
-            "https://github.com/artinrahimii/project/actions/runs/40104020991",
-            "https://github.com/artinrahimii/project/actions/runs/40104021005",
-            "https://github.com/artinrahimii/project/actions/runs/40104554822"
+            "https://github.com/artinrahimii/project/actions/runs/40104682026",
+            "https://github.com/artinrahimii/project/actions/runs/40104681998",
+            "https://github.com/artinrahimii/project/actions/runs/40104554847",
+            "https://github.com/artinrahimii/project/actions/runs/40104554823"
           ]
         }
       },
@@ -11313,6 +11326,62 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Verify exact-head workflows. Do not mark T0066 done until quality gate, Windows build/lifecycle and live local-model inference pass."
+        },
+        {
+          "attempt_id": "T0066-A006",
+          "started_at": "2026-10-24T18:26:00+03:30",
+          "ended_at": "2026-10-24T18:29:54.318+03:30",
+          "result": "succeeded",
+          "summary": "Exact-head acceptance evidence is now available. The Step Three quality gate passed on 1e4ec9821710f8a8a88a1de5462d77447c4ae5da (123 Python tests, syntax, graph structure and evidence checks). The Windows host release build, generated Protobuf validation, WPF startup smoke and host lifecycle tests passed on that same head. The full product-build workflow also passed on the implementation commit d83d6e0e82bbddd0d7fa2ef26de549ed40a007a5. The pinned live-inference workflow passed on that implementation commit: archive SHA-256 matched, the extracted llama.cpp executable matched expected build 11443 and SHA-256 4cdaae426a798b49717e3ce9b8a7756a16355c83c812d9d59bc99e26ae6d3968, the pinned GGUF model loaded, real inference returned non-empty output, and active-generation cancellation stopped the owned process cleanly. Acceptance for T0066 is met; earlier failed attempts remain in history.",
+          "changed_files": [
+            "step three/project-graph.md",
+            "step three/T0066/execution-report.md",
+            "step three/T0066/evidence/verification.md"
+          ],
+          "commit_sha": "1e4ec9821710f8a8a88a1de5462d77447c4ae5da",
+          "tests": [
+            {
+              "name": "Step Three quality gate — run 40104682026",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40104682026",
+              "summary": "123 Python tests passed; Python syntax, graph structure and recorded outputs/evidence validation passed on exact head 1e4ec9821710f8a8a88a1de5462d77447c4ae5da."
+            },
+            {
+              "name": "Windows WPF host build — run 40104681998",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40104681998",
+              "summary": "Release build, generated Protobuf validation and WPF startup smoke passed on the exact inspected head."
+            },
+            {
+              "name": "Host lifecycle unit/integration tests — run 40104681998",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40104681998",
+              "summary": "The C# host lifecycle test job passed on the exact inspected head."
+            },
+            {
+              "name": "Android client build — run 40104681998",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40104681998",
+              "summary": "Debug APK build, Kotlin lint/format, Protobuf round-trip checks and artifact upload passed."
+            },
+            {
+              "name": "Full White-P product build — run 40104554847",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40104554847",
+              "summary": "Windows WPF host, lifecycle tests and Android client all passed on implementation commit d83d6e0e82bbddd0d7fa2ef26de549ed40a007a5."
+            },
+            {
+              "name": "Real local inference integration — run 40104554823",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40104554823",
+              "summary": "Pinned llama.cpp b11443 archive hash matched; executable --version/hash verification passed; real GGUF inference returned non-empty output; active generation cancellation was observed and the owned process stopped cleanly."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Proceed to T0067 only after its own dependency edges and acceptance criteria are reviewed; T0066 is complete for its stated binary version/hash verification acceptance, without implying the complete project is finished."
         }
       ]
     },
@@ -24144,6 +24213,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-24T14:55:33.556Z"
+  "updated_at": "2026-10-24T18:29:54.318+03:30"
 }
 ```
