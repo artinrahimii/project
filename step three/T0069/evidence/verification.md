@@ -10,3 +10,12 @@
 - `ModelCatalogParserAcceptanceTests.cs`: runtime tests for valid input and rejection cases; linked and invoked by `HostLifecycle.Tests`.
 - `tests/test_model_catalog_parser.py`: automated contract checks for parser files, schema parity, test harness wiring, and injected allowlist configuration.
 - Exact-head CI is pending; no passing test is claimed at this attempt.
+
+
+## Exact-head CI evidence — T0069-A002
+- Quality gate passed: https://github.com/artinrahimii/project/actions/runs/40106803595
+- Windows host build and Android APK jobs passed, but the lifecycle test job failed at compile time due to a malformed C# JSON string literal: https://github.com/artinrahimii/project/actions/runs/40106803542/job/120910070094
+- T0069 remains partial until the corrected test suite passes on an exact commit.
+
+## T0069-A003
+- Corrected the duplicate-root-property JSON fixture's escaped string literal. Verification is pending the new commit's CI.

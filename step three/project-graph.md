@@ -11730,9 +11730,9 @@
       ],
       "notes": "T0069-A001 implements a strict parser that accepts only schema v1, size-bounds JSON input, rejects duplicate/unknown JSON properties and duplicate model IDs, enforces positive size/SHA-256/GGUF/v1 backend restrictions, validates HTTPS source and license URLs against caller-supplied DNS host allowlists, and normalizes missing licenses to review_required. It performs no network access. A runtime C# acceptance suite covers valid and invalid cases and is wired into HostLifecycle.Tests. Exact-head CI is pending.",
       "execution_summary": {
-        "attempt_count": 1,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "T0069-A001",
+        "attempt_count": 3,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "T0069-A003",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Host.Windows/Models/Catalog/ModelCatalogParser.cs",
@@ -11747,7 +11747,9 @@
         ],
         "related_commits": [],
         "tests_passed": [],
-        "tests_failed": [],
+        "tests_failed": [
+          "Previous exact-head CI failed to compile duplicate-root-property test fixture; corrected in this commit. Rerun CI pending."
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -11792,6 +11794,62 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Run exact-head quality, Windows build and C# lifecycle tests. Fix errors before marking T0069 done; do not wire model downloads or claim P2P from this parser."
+        },
+        {
+          "attempt_id": "T0069-A002",
+          "started_at": "2026-10-24T15:24:12Z",
+          "ended_at": "2026-10-24T15:24:40Z",
+          "result": "partial",
+          "summary": "Inspected exact-head GitHub Actions. Quality gate passed, but HostLifecycle.Tests failed to compile because the duplicate-root-property fixture contained an unescaped quote in its C# string literal. Windows host build and Android APK jobs passed, but the aggregate product build and real-inference workflow failed; T0069 cannot be marked done until lifecycle tests pass.",
+          "changed_files": [],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40106803595"
+            },
+            {
+              "name": "Windows WPF host build",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40106803542/job/120910070259"
+            },
+            {
+              "name": "Android client APK",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40106803542/job/120910070411"
+            },
+            {
+              "name": "Host lifecycle tests",
+              "result": "failed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40106803542/job/120910070094"
+            }
+          ],
+          "failure_details": "C# compiler errors CS1003/CS1026/CS1010 caused by malformed string literal in duplicate-root-property test fixture (line 225).",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Fix the escaped JSON string literal and rerun exact-head CI before marking T0069 done."
+        },
+        {
+          "attempt_id": "T0069-A003",
+          "started_at": "2026-10-24T16:40:00Z",
+          "ended_at": "2026-10-24T16:40:00Z",
+          "result": "partial",
+          "summary": "Corrected the C# JSON string literal used to test duplicate root properties. Exact-head CI must be rerun; no new test pass is claimed.",
+          "changed_files": [
+            "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs",
+            "step three/T0069/execution-report.md",
+            "step three/T0069/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Verify the runtime C# suite and Windows build on this commit; then address any remaining test failures."
         }
       ]
     },

@@ -222,7 +222,7 @@ internal static class ModelCatalogParserAcceptanceTests
     private static void RejectsDuplicateIdsAndDuplicateJsonProperties()
     {
         ExpectInvalid(Catalog(Model(id: "duplicate"), Model(id: "duplicate")), "duplicate IDs");
-        ExpectInvalid("{\"schemaVersion\":1,\"schemaVersion\":1,\"models":[]}", "duplicate root property");
+        ExpectInvalid("{\"schemaVersion\":1,\"schemaVersion\":1,\"models\":[]}", "duplicate root property");
         var duplicateModelProperty = "{\"schemaVersion\":1,\"models\":[{\"id\":\"x\",\"id\":\"y\"}]}";
         ExpectInvalid(duplicateModelProperty, "duplicate model property");
     }
