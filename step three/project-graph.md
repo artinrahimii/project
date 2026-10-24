@@ -11702,33 +11702,98 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0068 و T0067 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال انجام",
+      "actual_output_paths": [
+        "src/Host.Windows/Models/Catalog/ModelCatalogParser.cs",
+        "src/Host.Windows/Models/Catalog/ModelCatalogModels.cs",
+        "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "tests/test_model_catalog_parser.py",
+        "step three/T0069/execution-report.md",
+        "step three/T0069/evidence/verification.md"
+      ],
       "expected_output_paths": [
         "src/Host.Windows/Models/Catalog/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "src/Host.Windows/Models/Catalog/ModelCatalogParser.cs",
+        "src/Host.Windows/Models/Catalog/ModelCatalogModels.cs",
+        "src/Host.Windows/Models/Catalog/model-catalog-v1.schema.json",
+        "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+        "tests/test_model_catalog_parser.py",
+        "docs/requirements.md",
+        "step three/T0069/execution-report.md",
+        "step three/T0069/evidence/verification.md"
+      ],
+      "notes": "T0069-A001 implements a strict parser that accepts only schema v1, size-bounds JSON input, rejects duplicate/unknown JSON properties and duplicate model IDs, enforces positive size/SHA-256/GGUF/v1 backend restrictions, validates HTTPS source and license URLs against caller-supplied DNS host allowlists, and normalizes missing licenses to review_required. It performs no network access. A runtime C# acceptance suite covers valid and invalid cases and is wired into HostLifecycle.Tests. Exact-head CI is pending.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0069-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Host.Windows/Models/Catalog/ModelCatalogParser.cs",
+          "src/Host.Windows/Models/Catalog/ModelCatalogModels.cs",
+          "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs",
+          "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+          "tests/HostLifecycle.Tests/Program.cs",
+          "tests/test_model_catalog_parser.py",
+          "step three/T0069/execution-report.md",
+          "step three/T0069/evidence/verification.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
+          "state": "in_review",
+          "triggering_contracts": [
+            "model-catalog-v1.schema.json",
+            "REQ-007 metadata and URL safety",
+            "supported backend identifiers"
+          ],
           "affected_by_contract_changes": [],
-          "review_evidence": []
+          "review_evidence": [
+            "src/Host.Windows/Models/Catalog/model-catalog-v1.schema.json",
+            "src/Host.Windows/Models/Catalog/ModelCatalogParser.cs",
+            "src/Host.Windows/Models/Catalog/ModelCatalogModels.cs",
+            "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs",
+            "tests/test_model_catalog_parser.py"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0069-A001",
+          "started_at": "2026-10-24T15:22:38.294Z",
+          "ended_at": "2026-10-24T15:22:38.294Z",
+          "result": "partial",
+          "summary": "Reviewed T0068 -> T0069 as a contract dependency (the parser consumes the versioned JSON schema) and T0067 -> T0069 as sequencing-only (backend IDs are supplied to the parser; it doesn't instantiate the factory). Implemented the bounded, strict catalog parser and runtime tests for malformed JSON, IDs, checksums, formats, backends, URL allowlists and missing license review state. CI pending.",
+          "changed_files": [
+            "src/Host.Windows/Models/Catalog/ModelCatalogParser.cs",
+            "src/Host.Windows/Models/Catalog/ModelCatalogModels.cs",
+            "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "tests/test_model_catalog_parser.py",
+            "step three/T0069/execution-report.md",
+            "step three/T0069/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Run exact-head quality, Windows build and C# lifecycle tests. Fix errors before marking T0069 done; do not wire model downloads or claim P2P from this parser."
+        }
+      ]
     },
     {
       "id": "T0070",
@@ -20497,19 +20562,28 @@
       "from": "T0068",
       "to": "T0069",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "Reviewed against the exact schema artifact. T0069 consumes schema v1's root version, required metadata shape, GGUF format, SHA-256 checksum form, backend IDs, HTTPS source field, and license status constraints. This is a direct schema/contract dependency.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/Models/Catalog/model-catalog-v1.schema.json",
+        "tests/test_model_catalog_schema.py",
+        "docs/requirements.md"
+      ]
     },
     {
       "from": "T0067",
       "to": "T0069",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "Reviewed against the actual factory/interface. T0067 exposes IInferenceBackend and the current llama.cpp implementation, but the parser receives a trusted supported-backend ID set from its caller; it does not instantiate or consume a factory output. Preserve conservative ordering while marking the edge sequencing-only.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/Inference/LocalInferenceBackendFactory.cs",
+        "src/Host.Application/IInferenceBackend.cs",
+        "src/Host.Infrastructure/LlamaCppServerBackend.cs",
+        "src/Host.Windows/Models/Catalog/model-catalog-v1.schema.json"
+      ]
     },
     {
       "from": "T0069",
@@ -24441,6 +24515,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-24T15:17:43.368Z"
+  "updated_at": "2026-10-24T15:22:38.294Z"
 }
 ```

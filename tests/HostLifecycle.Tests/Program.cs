@@ -9,6 +9,7 @@ using WhiteP.Host.Application;
 using WhiteP.Host.Domain;
 using WhiteP.Host.Infrastructure;
 using WhiteP.Host.Windows.Inference;
+using WhiteP.Host.Windows.Models.Catalog;
 using WhiteP.Shared.Contracts;
 static void Assert(bool ok,string message){if(!ok)throw new Exception(message);}
 static void ExpectInvalid(Action action){try{action();}catch(InvalidOperationException){return;}throw new Exception("Invalid transition accepted.");}
@@ -56,6 +57,7 @@ Assert(BuildDomainHostCapabilities(availableDiskBytes: 600L * 1024L * 1024L * 10
 Console.WriteLine("PASS: HostCapabilities keeps incomplete/invalid measurements Unknown and blocks inference for failed capacity checks.");
 HostCapacityAcceptanceTests.Run();
 InferenceEngineContractTests.Run();
+ModelCatalogParserAcceptanceTests.Run();
 LocalInferenceProcessLauncherTests.Run();
 
 const ulong gibibyte = 1024UL * 1024UL * 1024UL;

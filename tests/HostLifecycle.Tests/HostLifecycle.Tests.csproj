@@ -15,5 +15,7 @@
   <ItemGroup>
     <Compile Include="../../src/Host.Windows/Inference/LocalInferenceProcessLauncher.cs" Link="LocalInferenceProcessLauncher.cs" />
     <Compile Include="../../src/Host.Windows/Inference/LocalInferenceBinaryVerifier.cs" Link="LocalInferenceBinaryVerifier.cs" />
+    <Compile Include="../../src/Host.Windows/Models/Catalog/ModelCatalogModels.cs" Link="ModelCatalogModels.cs" />
+    <Compile Include="../../src/Host.Windows/Models/Catalog/ModelCatalogParser.cs" Link="ModelCatalogParser.cs" />
   </ItemGroup>
 </Project>
