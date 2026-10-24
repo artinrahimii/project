@@ -28,3 +28,13 @@
 ## Next action
 
 - Check the quality gate on this exact commit. If it passes, record the successful attempt and mark T0065 done; if it fails, preserve the failure evidence and repair the test before marking it complete.
+
+
+## Follow-up verification (2026-10-24)
+
+- Exact head reviewed: `7dd0133fbce7058279787a7f01d29f513f711bc1` (`V 3.0.203`).
+- Step Three quality gate run `40093939074`, job `120872159357`: passed Python tests, syntax, graph structure, and recorded-output/evidence validation.
+- Product build workflow run `40093939126` on the same head: passed.
+- Earlier quality run `40093857725` failed because older T0063/T0064 evidence fields were not repository-relative paths; that failed attempt is retained in graph history.
+- Acceptance decision: T0065 is complete for its scoped source-level guard. This is not runtime network capture and does not prove absence of every possible outbound connection.
+- Next action: review T0066's dependency edges and the actual binary distribution/checksum implementation before changing application code.

@@ -10909,8 +10909,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0064 و T0056 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "انجام‌نشده",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "tests/test_no_cloud_provider_inference.py",
         "step three/T0065/execution-report.md"
@@ -10924,29 +10924,31 @@
         "src/Host.Windows/Inference/LlamaCppInferenceEngine.cs",
         "src/Host.Infrastructure/LlamaCppServerBackend.cs"
       ],
-      "notes": "Added a source-level guard against known cloud-provider API endpoints/SDK references in the concrete local inference implementation. This does not substitute for runtime network capture; completion awaits exact-commit CI.",
+      "notes": "Source-level regression test rejects known cloud-provider endpoints/SDK references in the concrete local inference implementation and asserts the configured local server URI and llama.cpp routes. Exact-head quality gate and product build passed. Not runtime network-capture proof.",
       "execution_summary": {
-        "attempt_count": 1,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "T0065-A001",
-        "last_attempt_result": "partial",
+        "attempt_count": 2,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "T0065-A002",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "tests/test_no_cloud_provider_inference.py",
           "step three/T0065/execution-report.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
+        "related_commits": [
+          "7dd0133fbce7058279787a7f01d29f513f711bc1"
+        ],
         "tests_passed": [
-          "Automated Python test stage passed in quality run 40093732203 (117 tests; the new test was included)."
+          "Step Three quality gate run 40093939074/job 120872159357 passed Python tests, syntax, graph structure, and evidence validation.",
+          "White-P product build workflow run 40093939126 passed on the same head."
         ],
         "tests_failed": [
-          "The overall quality gate failed at graph_guard because existing T0063/T0064 graph metadata lacked successful history entries and T0063 lacked a test-source evidence path; this was not a failure of the new test.",
-          "Quality run 40093857725: graph structure passed; repo-root evidence validation failed because older T0063/T0064 evidence arrays contained descriptive prose/URLs in file-path fields. No application test failed."
+          "Earlier quality run 40093857725 failed repo-root evidence validation because older T0063/T0064 evidence fields were not repository-relative paths; the T0065 test itself passed."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "passed",
+          "state": "passed_exact_commit_ci",
           "triggering_contracts": [
             "host-configured local server URI",
             "llama.cpp local health and chat-completion endpoints"
@@ -10955,7 +10957,8 @@
           "review_evidence": [
             "tests/test_no_cloud_provider_inference.py",
             "src/Host.Windows/Inference/LlamaCppInferenceEngine.cs",
-            "src/Host.Infrastructure/LlamaCppServerBackend.cs"
+            "src/Host.Infrastructure/LlamaCppServerBackend.cs",
+            "GitHub Actions run 40093939074"
           ]
         }
       },
@@ -10978,6 +10981,39 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Inspect exact-commit quality gate and mark done only if it passes; otherwise repair the test."
+        },
+        {
+          "attempt_id": "T0065-A002",
+          "started_at": "2026-10-24T16:18:00+03:30",
+          "ended_at": "2026-10-24T16:30:00+03:30",
+          "result": "succeeded",
+          "summary": "The exact-head quality gate passed all tests, syntax, graph structure and repository-path/evidence checks after correcting pre-existing graph evidence metadata. Product build also passed. Source-level guard only; no runtime packet capture claim.",
+          "changed_files": [
+            "tests/test_no_cloud_provider_inference.py",
+            "step three/T0065/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "at_commit": "7dd0133fbce7058279787a7f01d29f513f711bc1",
+          "tests": [
+            {
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40093939074",
+              "summary": "Python tests, syntax, graph structure, and evidence validation passed."
+            },
+            {
+              "name": "Product build",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40093939126",
+              "summary": "Product build workflow passed on exact inspected head."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Proceed to T0066 after reviewing dependencies and actual binary distribution/checksum design."
         }
       ]
     },
@@ -23848,6 +23884,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-24T16:18:00+03:30"
+  "updated_at": "2026-10-24T16:30:00+03:30"
 }
 ```
