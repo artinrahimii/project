@@ -22,7 +22,12 @@ public sealed class LocalInferenceProcessLauncher : IDisposable
             _process?.Dispose();
             _process = null;
 
-            var process = new Process { StartInfo = CreateStartInfo(executablePath, modelPath, serverAddress, modelId), EnableRaisingEvents = true };
+            var expectedVersion = Environment.GetEnvironmentVariable("WHITEP_LLAMA_SERVER_VERSION");
+            var expectedSha256 = Environment.GetEnvironmentVariable("WHITEP_LLAMA_SERVER_SHA256");
+            if (string.IsNullOrWhiteSpace(expectedVersion) || string.IsNullOrWhiteSpace(expectedSha256))
+                throw new InvalidOperationException("Set WHITEP_LLAMA_SERVER_VERSION and WHITEP_LLAMA_SERVER_SHA256 from a trusted llama.cpp release before starting the local engine.");
+            var verification = LocalInferenceBinaryVerifier.Verify(executablePath, expectedVersion, expectedSha256);
+            var process = new Process { StartInfo = CreateStartInfo(verification.ExecutablePath, modelPath, serverAddress, modelId), EnableRaisingEvents = true };
             try
             {
                 if (!process.Start()) throw new InvalidOperationException("The local llama.cpp server process did not start.");

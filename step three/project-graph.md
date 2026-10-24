@@ -11083,33 +11083,87 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0065 و T0056 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال انجام",
+      "actual_output_paths": [
+        "src/Host.Windows/Inference/LocalInferenceBinaryVerifier.cs",
+        "src/Host.Windows/Inference/LocalInferenceProcessLauncher.cs",
+        "tests/test_local_inference_binary_verifier.py",
+        "step three/T0066/execution-report.md",
+        "step three/T0066/evidence/verification.md"
+      ],
       "expected_output_paths": [
         "src/Host.Windows/Inference/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "tests/test_local_inference_binary_verifier.py",
+        "step three/T0066/execution-report.md",
+        "step three/T0066/evidence/verification.md"
+      ],
+      "notes": "The managed launcher now requires WHITEP_LLAMA_SERVER_VERSION and WHITEP_LLAMA_SERVER_SHA256 from a trusted release source. It checks the executable hash, probes --version without a shell, rechecks the hash, then starts the inference server. Exact-head CI is still required before completion.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0066-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Host.Windows/Inference/LocalInferenceBinaryVerifier.cs",
+          "src/Host.Windows/Inference/LocalInferenceProcessLauncher.cs",
+          "tests/test_local_inference_binary_verifier.py",
+          "step three/T0066/execution-report.md",
+          "step three/T0066/evidence/verification.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
+          "state": "pending_exact_commit_ci",
+          "triggering_contracts": [
+            "local engine executable version and SHA-256",
+            "shell-free process startup"
+          ],
           "affected_by_contract_changes": [],
-          "review_evidence": []
+          "review_evidence": [
+            "src/Host.Windows/Inference/LocalInferenceBinaryVerifier.cs",
+            "src/Host.Windows/Inference/LocalInferenceProcessLauncher.cs",
+            "tests/test_local_inference_binary_verifier.py"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0066-A001",
+          "started_at": "2026-10-24T18:06:00+03:30",
+          "ended_at": "2026-10-24T18:06:00+03:30",
+          "result": "partial",
+          "summary": "Added a fail-closed executable verifier and integrated it before managed llama-server startup. The launcher requires a trusted expected version and SHA-256 through environment configuration. Added source-level regression tests; exact-head CI has not run yet.",
+          "changed_files": [
+            "src/Host.Windows/Inference/LocalInferenceBinaryVerifier.cs",
+            "src/Host.Windows/Inference/LocalInferenceProcessLauncher.cs",
+            "tests/test_local_inference_binary_verifier.py",
+            "step three/T0066/execution-report.md",
+            "step three/T0066/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Binary verifier source regression tests",
+              "result": "pending",
+              "evidence": "tests/test_local_inference_binary_verifier.py",
+              "summary": "Must pass on the exact implementation commit."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Run the Step Three quality gate and Windows product build on this exact commit; repair any failure before marking T0066 done."
+        }
+      ]
     },
     {
       "id": "T0067",
@@ -19944,19 +19998,25 @@
       "from": "T0065",
       "to": "T0066",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "Reviewed against actual task outputs and T0066-A001: T0065 does not produce a binary-verification artifact consumed by the checksum/version verifier. This is conservative execution order, not a technical input. Preserve type=blocks and ordering; do not remove the edge.",
+      "validation_status": "validated",
+      "evidence": [
+        "tests/test_no_cloud_provider_inference.py",
+        "src/Host.Windows/Inference/LocalInferenceBinaryVerifier.cs"
+      ]
     },
     {
       "from": "T0056",
       "to": "T0066",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "Reviewed against actual task outputs and T0066-A001: T0056 does not produce a binary-verification artifact consumed by the checksum/version verifier. This is conservative execution order, not a technical input. Preserve type=blocks and ordering; do not remove the edge.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "src/Host.Windows/Inference/LocalInferenceBinaryVerifier.cs"
+      ]
     },
     {
       "from": "T0066",
@@ -23933,6 +23993,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-24T16:40:00+03:30"
+  "updated_at": "2026-10-24T18:06:00+03:30"
 }
 ```
