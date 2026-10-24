@@ -11555,8 +11555,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0067 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال انجام",
+      "status": "done",
+      "status_fa": "تکمیل‌شده",
       "actual_output_paths": [
         "src/Host.Windows/Models/Catalog/model-catalog-v1.schema.json",
         "src/Host.Windows/WhiteP.Host.Windows.csproj",
@@ -11577,27 +11577,32 @@
         "src/Host.Windows/Inference/LocalInferenceBackendFactory.cs",
         "src/Host.Application/IInferenceBackend.cs"
       ],
-      "notes": "T0068-A001 added a versioned JSON Schema and project packaging entry, plus structural regression tests. The schema defines metadata only and intentionally does not invent a model catalog entry. Missing license data is representable and defaults to review_required for the next parser to surface; only current GGUF/llama.cpp compatibility is described. Exact-head CI is pending; keep in_progress until the quality gate and Windows build pass.",
+      "notes": "T0068 is complete for the versioned schema and build/publish packaging. JSON Schema Draft 2020-12 schema version 1 defines id, name, GGUF format, positive byte size, SHA-256 checksum, current llama.cpp compatibility, HTTPS source URL and optional license-review metadata. Exact-head quality gate passed 136 Python tests; Windows host build and host lifecycle test job passed. The catalog data itself, parser-level trusted-host allowlist, duplicate-ID checks and missing-license normalization are assigned to T0069; no model entries were fabricated.",
       "execution_summary": {
-        "attempt_count": 1,
+        "attempt_count": 2,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0068-A001",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "T0068-A002",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Host.Windows/Models/Catalog/model-catalog-v1.schema.json",
           "src/Host.Windows/WhiteP.Host.Windows.csproj",
           "tests/test_model_catalog_schema.py",
           "step three/T0068/execution-report.md",
-          "step three/T0068/evidence/verification.md",
-          "step three/project-graph.md"
+          "step three/T0068/evidence/verification.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
+        "related_commits": [
+          "a72112b6dbc421de820868efb696168c28e1c21a"
+        ],
+        "tests_passed": [
+          "Step Three quality gate — run 40106114209: 136 Python tests passed, including nine test_model_catalog_schema checks; Python syntax, graph structure, and recorded output/evidence validation passed on the exact implementation commit.",
+          "Windows WPF host build — job 120908033095, run 40106114148: Windows host build job completed successfully with the schema declared as copy-to-output and copy-to-publish content.",
+          "Host lifecycle tests — job 120908032905, run 40106114148: The C# lifecycle unit/integration job completed successfully."
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "in_review",
+          "state": "passed",
           "triggering_contracts": [
             "REQ-007 model metadata and license transparency",
             "current backend identifier"
@@ -11605,10 +11610,13 @@
           "affected_by_contract_changes": [],
           "review_evidence": [
             "docs/requirements.md",
+            "src/Host.Windows/Models/Catalog/model-catalog-v1.schema.json",
+            "src/Host.Windows/WhiteP.Host.Windows.csproj",
             "src/Host.Windows/Inference/LocalInferenceBackendFactory.cs",
             "src/Host.Application/IInferenceBackend.cs",
-            "src/Host.Infrastructure/LlamaCppServerBackend.cs",
-            "tests/test_model_catalog_schema.py"
+            "tests/test_model_catalog_schema.py",
+            "https://github.com/artinrahimii/project/actions/runs/40106114209",
+            "https://github.com/artinrahimii/project/actions/runs/40106114148"
           ]
         }
       },
@@ -11627,13 +11635,53 @@
             "step three/T0068/evidence/verification.md",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "a72112b6dbc421de820868efb696168c28e1c21a",
           "tests": [],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Run exact-head quality and Windows host build. Correct any schema/test/build failures before marking T0068 done; T0069 remains unstarted until this schema is accepted."
+        },
+        {
+          "attempt_id": "T0068-A002",
+          "started_at": "2026-10-24T15:15:00Z",
+          "ended_at": "2026-10-24T15:17:43.368Z",
+          "result": "succeeded",
+          "summary": "Exact-head GitHub Actions checks passed on a72112b6dbc421de820868efb696168c28e1c21a. The Step Three quality gate passed all 136 Python tests, including nine new model-catalog schema tests, plus syntax, graph structure and recorded-output/evidence checks. The Windows WPF host build and host lifecycle unit/integration job also completed successfully. The schema is packaged as Windows host Content for build and publish output. The combined Android APK job was still in progress when inspected and is not claimed as passed here.",
+          "changed_files": [
+            "src/Host.Windows/Models/Catalog/model-catalog-v1.schema.json",
+            "src/Host.Windows/WhiteP.Host.Windows.csproj",
+            "tests/test_model_catalog_schema.py",
+            "step three/T0068/execution-report.md",
+            "step three/T0068/evidence/verification.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Step Three quality gate — run 40106114209",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40106114209",
+              "summary": "136 Python tests passed, including nine test_model_catalog_schema checks; Python syntax, graph structure, and recorded output/evidence validation passed on the exact implementation commit."
+            },
+            {
+              "name": "Windows WPF host build — job 120908033095, run 40106114148",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40106114148",
+              "summary": "Windows host build job completed successfully with the schema declared as copy-to-output and copy-to-publish content."
+            },
+            {
+              "name": "Host lifecycle tests — job 120908032905, run 40106114148",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40106114148",
+              "summary": "The C# lifecycle unit/integration job completed successfully."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "T0068 is complete for the versioned schema and packaging scope. T0069 must implement actual catalog parsing, duplicate-ID rejection, trusted source URL allowlisting, backend compatibility checks, and normalization of omitted license metadata to review_required. Do not claim any real catalog entries are bundled."
         }
       ]
     },
@@ -24393,6 +24441,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-24T15:14:30.297Z"
+  "updated_at": "2026-10-24T15:17:43.368Z"
 }
 ```
