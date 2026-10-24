@@ -12619,8 +12619,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0073 و T0067 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "src/Host.Windows/Models/Catalog/sample-model-catalog.json",
         "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs",
@@ -12638,25 +12638,33 @@
         "src/Host.Windows/Inference/LocalInferenceBackendFactory.cs",
         "step three/T0074/execution-report.md"
       ],
-      "notes": "Added a real metadata-only sample for SmolLM2-135M-Instruct Q4_K_M. The quantized model card and original model card both declare Apache-2.0; the Hugging Face Xet pointer reports size 105454432 bytes and SHA-256 2e8040ceae7815abe0dcb3540b9995eaa1fa0d2ca9e797d0a635ae4433c68c2d. Added a runnable C# loader/parser acceptance check using the host backend registry and explicit Hugging Face host allowlist. CI for this implementation commit is pending; the manifest does not bundle or download model weights and its UI still disclaims independent legal verification.",
+      "notes": "Added a real metadata-only sample for SmolLM2-135M-Instruct Q4_K_M. The quantized model card and original model card both declare Apache-2.0; the Hugging Face Xet pointer reports size 105454432 bytes and SHA-256 2e8040ceae7815abe0dcb3540b9995eaa1fa0d2ca9e797d0a635ae4433c68c2d. Added a runnable C# loader/parser acceptance check using the host backend registry and explicit Hugging Face host allowlist. CI for this implementation commit is pending; the manifest does not bundle or download model weights and its UI still disclaims independent legal verification. اجرای دقیق کامیت b11d9fed82edf482b9fc5f452a339cd6fb7bb80d با سه workflow آنلاین موفق تأیید شد: آزمون‌های گراف/Python، آزمون‌های چرخهٔ عمر میزبان، ساخت Windows WPF، ساخت Android APK و آزمون استنتاج واقعی llama.cpp/GGUF. این نتیجه فقط معیارهای T0074 را تأیید می‌کند و به معنی دانلود مدل یا تأیید حقوقی مستقل مجوز نیست.",
       "execution_summary": {
-        "attempt_count": 1,
+        "attempt_count": 2,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0074-A001",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "T0074-A002",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Host.Windows/Models/Catalog/sample-model-catalog.json",
           "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs",
           "step three/T0074/execution-report.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
+        "related_commits": [
+          "b11d9fed82edf482b9fc5f452a339cd6fb7bb80d"
+        ],
+        "tests_passed": [
+          "Step Three quality gate run 40123058807 — success on exact commit b11d9fed82edf482b9fc5f452a339cd6fb7bb80d.",
+          "Host lifecycle unit and integration tests — run 40123058861, job completed successfully on exact commit b11d9fed82edf482b9fc5f452a339cd6fb7bb80d.",
+          "Windows WPF Release build — run 40123058861, job completed successfully on exact commit b11d9fed82edf482b9fc5f452a339cd6fb7bb80d.",
+          "Android client APK build — run 40123058861, job completed successfully on exact commit b11d9fed82edf482b9fc5f452a339cd6fb7bb80d.",
+          "Real llama.cpp process and GGUF response — run 40123058748, success on exact commit b11d9fed82edf482b9fc5f452a339cd6fb7bb80d."
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "pending",
+          "state": "passed",
           "triggering_contracts": [
             "ModelCatalog v1 JSON schema",
             "ModelCatalogParser",
@@ -12669,7 +12677,10 @@
             "src/Host.Windows/Models/Catalog/model-catalog-v1.schema.json",
             "src/Host.Windows/Models/Catalog/ModelCatalogParser.cs",
             "src/Host.Windows/Inference/LocalInferenceBackendFactory.cs",
-            "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs"
+            "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs",
+            "https://github.com/artinrahimii/project/actions/runs/40123058807",
+            "https://github.com/artinrahimii/project/actions/runs/40123058861",
+            "https://github.com/artinrahimii/project/actions/runs/40123058748"
           ]
         }
       },
@@ -12693,6 +12704,42 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Run the exact-head Python/graph quality gate, HostLifecycle.Tests and Windows WPF build; only then mark T0074 done."
+        },
+        {
+          "attempt_id": "T0074-A002",
+          "started_at": "2026-10-24T18:57:14Z",
+          "ended_at": "2026-10-24T18:59:56Z",
+          "result": "succeeded",
+          "summary": "Validated the real checked-in metadata catalog and C# acceptance test on the exact implementation head. All three relevant GitHub Actions workflows passed: graph/Python quality gate, Windows host lifecycle + WPF Release build + Android APK build, and real local llama.cpp/GGUF inference. The task acceptance is met for metadata catalog and executable validation; no model weights were downloaded and no independent legal clearance is claimed.",
+          "changed_files": [
+            "src/Host.Windows/Models/Catalog/sample-model-catalog.json",
+            "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs",
+            "step three/T0074/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40123058807"
+            },
+            {
+              "name": "Host lifecycle tests, Windows WPF Release build, Android APK build",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40123058861"
+            },
+            {
+              "name": "Real local llama.cpp process and GGUF response",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40123058748"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Proceed to T0075 only after reviewing its incoming edges from T0074 and T0067. Implement offline catalog behavior and display a cached catalog only if it was previously validated."
         }
       ]
     },
@@ -25301,6 +25348,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-24T18:56:43.753Z"
+  "updated_at": "2026-10-24T19:00:00Z"
 }
 ```
