@@ -11555,33 +11555,87 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0067 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال انجام",
+      "actual_output_paths": [
+        "src/Host.Windows/Models/Catalog/model-catalog-v1.schema.json",
+        "src/Host.Windows/WhiteP.Host.Windows.csproj",
+        "tests/test_model_catalog_schema.py",
+        "step three/T0068/execution-report.md",
+        "step three/T0068/evidence/verification.md"
+      ],
       "expected_output_paths": [
         "src/Host.Windows/Models/Catalog/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "src/Host.Windows/Models/Catalog/model-catalog-v1.schema.json",
+        "src/Host.Windows/WhiteP.Host.Windows.csproj",
+        "tests/test_model_catalog_schema.py",
+        "docs/requirements.md",
+        "step three/T0068/execution-report.md",
+        "step three/T0068/evidence/verification.md",
+        "src/Host.Windows/Inference/LocalInferenceBackendFactory.cs",
+        "src/Host.Application/IInferenceBackend.cs"
+      ],
+      "notes": "T0068-A001 added a versioned JSON Schema and project packaging entry, plus structural regression tests. The schema defines metadata only and intentionally does not invent a model catalog entry. Missing license data is representable and defaults to review_required for the next parser to surface; only current GGUF/llama.cpp compatibility is described. Exact-head CI is pending; keep in_progress until the quality gate and Windows build pass.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0068-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Host.Windows/Models/Catalog/model-catalog-v1.schema.json",
+          "src/Host.Windows/WhiteP.Host.Windows.csproj",
+          "tests/test_model_catalog_schema.py",
+          "step three/T0068/execution-report.md",
+          "step three/T0068/evidence/verification.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
+          "state": "in_review",
+          "triggering_contracts": [
+            "REQ-007 model metadata and license transparency",
+            "current backend identifier"
+          ],
           "affected_by_contract_changes": [],
-          "review_evidence": []
+          "review_evidence": [
+            "docs/requirements.md",
+            "src/Host.Windows/Inference/LocalInferenceBackendFactory.cs",
+            "src/Host.Application/IInferenceBackend.cs",
+            "src/Host.Infrastructure/LlamaCppServerBackend.cs",
+            "tests/test_model_catalog_schema.py"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0068-A001",
+          "started_at": "2026-10-24T15:14:30.297Z",
+          "ended_at": "2026-10-24T15:14:30.297Z",
+          "result": "partial",
+          "summary": "Reviewed T0067 -> T0068 as sequencing_only while preserving the blocks edge. Added model-catalog-v1.schema.json for versioned metadata and included it as copy-to-output/publish content. Added Python regression tests for required metadata, SHA-256 syntax, current backend/format bounds, HTTPS URL scheme, license-review semantics, and project packaging. No model entry was fabricated. CI is pending.",
+          "changed_files": [
+            "src/Host.Windows/Models/Catalog/model-catalog-v1.schema.json",
+            "src/Host.Windows/WhiteP.Host.Windows.csproj",
+            "tests/test_model_catalog_schema.py",
+            "step three/T0068/execution-report.md",
+            "step three/T0068/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Run exact-head quality and Windows host build. Correct any schema/test/build failures before marking T0068 done; T0069 remains unstarted until this schema is accepted."
+        }
+      ]
     },
     {
       "id": "T0069",
@@ -20381,10 +20435,15 @@
       "from": "T0067",
       "to": "T0068",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "Reviewed against the current backend composition and REQ-007. The factory returns IInferenceBackend and currently constructs LlamaCppServerBackend, but no catalog/schema artifact is produced by T0067 and the factory does not consume a catalog. The schema records the current backend ID without consuming a T0067 output. Preserve the blocks edge and conservative order; validate its meaning as sequencing_only. T0069 must enforce trusted-source allowlisting and supported-backend checks when the parser is implemented.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/Inference/LocalInferenceBackendFactory.cs",
+        "src/Host.Application/IInferenceBackend.cs",
+        "src/Host.Infrastructure/LlamaCppServerBackend.cs",
+        "docs/requirements.md"
+      ]
     },
     {
       "from": "T0068",
@@ -24334,6 +24393,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-24T18:38:48.265+03:30"
+  "updated_at": "2026-10-24T15:14:30.297Z"
 }
 ```

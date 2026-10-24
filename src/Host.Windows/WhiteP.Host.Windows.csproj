@@ -15,4 +15,9 @@
     <ProjectReference Include="../Host.Infrastructure/WhiteP.Host.Infrastructure.csproj" />
     <ProjectReference Include="../Shared.Contracts/WhiteP.Shared.Contracts.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="Models\Catalog\model-catalog-v1.schema.json"
+             CopyToOutputDirectory="PreserveNewest"
+             CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
 </Project>
