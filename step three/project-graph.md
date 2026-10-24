@@ -10178,33 +10178,102 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0060 و T0056 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال انجام",
+      "actual_output_paths": [
+        "src/Host.Infrastructure/LlamaCppServerBackend.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0061/execution-report.md",
+        "step three/project-graph.md"
+      ],
       "expected_output_paths": [
         "src/Host.Windows/Inference/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "src/Host.Infrastructure/LlamaCppServerBackend.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "https://github.com/artinrahimii/project/actions/runs/40073802629",
+        "https://github.com/artinrahimii/project/actions/runs/40073802621"
+      ],
+      "notes": "T0061-A001 corrected the OpenAI-compatible max_tokens wire field and added assertions against the exact serialized HTTP request (POST endpoint, JSON content type, configured model, single user message and token limit) plus generated response mapping. Exact-commit quality gate, C# host lifecycle harness and Windows WPF build/startup smoke passed. No live llama-server.exe with a real GGUF model was launched in this attempt; the requested real-model response remains unverified, so T0061 stays in_progress.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
-        "related_commits": [],
-        "tests_passed": [],
+        "last_attempt_id": "T0061-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Host.Infrastructure/LlamaCppServerBackend.cs",
+          "tests/HostLifecycle.Tests/Program.cs",
+          "step three/T0061/execution-report.md",
+          "step three/project-graph.md"
+        ],
+        "related_commits": [
+          "9b164aab3fae39752a733732a3cb781dc223981f"
+        ],
+        "tests_passed": [
+          "Step Three quality gate — exact code commit 9b164aab3fae39752a733732a3cb781dc223981f: passed https://github.com/artinrahimii/project/actions/runs/40073802629.",
+          "Host lifecycle unit/integration harness — exact code commit 9b164aab3fae39752a733732a3cb781dc223981f: passed; its recording HTTP handler regression asserts request route/method/content-type/model/messages/max_tokens and generated response mapping. https://github.com/artinrahimii/project/actions/runs/40073802621.",
+          "Windows WPF Release build, formatting, generated Protobuf validation and startup smoke — exact code commit 9b164aab3fae39752a733732a3cb781dc223981f: passed in https://github.com/artinrahimii/project/actions/runs/40073802621."
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
+          "state": "passed",
+          "triggering_contracts": [
+            "llama.cpp OpenAI-compatible POST /v1/chat/completions request payload and choices[0].message.content response mapping"
+          ],
           "affected_by_contract_changes": [],
-          "review_evidence": []
+          "review_evidence": [
+            "src/Host.Infrastructure/LlamaCppServerBackend.cs",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "https://github.com/ggml-org/llama.cpp/blob/master/tools/server/README.md",
+            "https://github.com/artinrahimii/project/actions/runs/40073802629",
+            "https://github.com/artinrahimii/project/actions/runs/40073802621"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0061-A001",
+          "started_at": "2026-10-24T07:21:17Z",
+          "ended_at": "2026-10-24T07:24:32.197Z",
+          "result": "partial",
+          "summary": "Corrected the serialized max token field to the OpenAI-compatible max_tokens name and added exact HTTP request/response mapping assertions. Exact-commit quality, host lifecycle tests and Windows build/startup smoke passed; live llama-server + GGUF inference was not performed, so the full task acceptance is not yet proven.",
+          "changed_files": [
+            "src/Host.Infrastructure/LlamaCppServerBackend.cs",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "step three/T0061/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": "9b164aab3fae39752a733732a3cb781dc223981f",
+          "tests": [
+            {
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40073802629",
+              "summary": "Exact-commit Python tests, syntax and graph/evidence guard passed."
+            },
+            {
+              "name": "Host lifecycle unit and integration harness",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40073802621",
+              "summary": "C# test harness passed, including the strengthened recording-handler HTTP wire contract assertions."
+            },
+            {
+              "name": "Windows WPF Release build/startup smoke",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40073802621",
+              "summary": "Formatting, Windows Release build, generated Protobuf checks and WPF startup smoke passed."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Run the opt-in integration path with a real local llama-server.exe and a license-acceptable GGUF model; only then decide whether T0061 meets its real-model response acceptance. Keep T0062 and all unrelated edges at their current states until the graph says their prerequisites are satisfied."
+        }
+      ]
     },
     {
       "id": "T0062",
@@ -19134,19 +19203,29 @@
       "from": "T0060",
       "to": "T0061",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "LlamaCppServerBackend.GenerateAsync checks backend health before transmitting an inference request when the backend is not already available; HostInferenceSession also gates Ready on the real health path. The existing blocks relationship is preserved.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Infrastructure/LlamaCppServerBackend.cs",
+        "src/Host.Application/HostInferenceSession.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0060/execution-report.md"
+      ]
     },
     {
       "from": "T0056",
       "to": "T0061",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "HostInferenceSession applies the T0056 capacity/readiness contract before allowing an inference session to proceed, but LlamaCppServerBackend does not consume the capacity evaluator as an interface. Retain blocks as conservative execution ordering, not as a proven adapter-level technical dependency.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Application/HostInferenceSession.cs",
+        "src/Host.Domain/HostCapabilities.cs",
+        "src/Host.Domain/HostReadinessEvaluator.cs",
+        "step three/T0056/execution-report.md"
+      ]
     },
     {
       "from": "T0061",
@@ -23097,8 +23176,38 @@
         "step three/T0056/execution-report.md"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-24T07:24:32.197Z",
+      "edge_from": "T0060",
+      "edge_to": "T0061",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "reason": "LlamaCppServerBackend.GenerateAsync checks backend health before transmitting an inference request when the backend is not already available; HostInferenceSession also gates Ready on the real health path. The existing blocks relationship is preserved.",
+      "evidence": [
+        "src/Host.Infrastructure/LlamaCppServerBackend.cs",
+        "src/Host.Application/HostInferenceSession.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0060/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-24T07:24:32.197Z",
+      "edge_from": "T0056",
+      "edge_to": "T0061",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "reason": "HostInferenceSession applies the T0056 capacity/readiness contract before allowing an inference session to proceed, but LlamaCppServerBackend does not consume the capacity evaluator as an interface. Retain blocks as conservative execution ordering, not as a proven adapter-level technical dependency.",
+      "evidence": [
+        "src/Host.Application/HostInferenceSession.cs",
+        "src/Host.Domain/HostCapabilities.cs",
+        "src/Host.Domain/HostReadinessEvaluator.cs",
+        "step three/T0056/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-23T18:33:00.286Z"
+  "updated_at": "2026-10-24T07:24:32.197Z"
 }
 ```
