@@ -10767,33 +10767,82 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0063 و T0056 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "done",
+      "status_fa": "انجام‌شده",
+      "actual_output_paths": [
+        ".github/workflows/real-inference.yml",
+        "tests/HostLifecycle.Tests/Program.cs"
+      ],
       "expected_output_paths": [
         "src/Host.Windows/Inference/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        ".github/workflows/real-inference.yml: downloads the pinned SmolLM2-135M-Instruct.Q4_K_M GGUF from repository revision a6b7826ed969c3926a98359e39912af137b464cb, validates the GGUF signature and size, and sets WHITEP_RUN_REAL_INFERENCE_TEST=1.",
+        "tests/HostLifecycle.Tests/Program.cs: the opt-in live-model path checks non-empty real inference output, active-generation cancellation, owned process shutdown, and endpoint unavailability.",
+        "GitHub Actions run 40092245411, job 120867130271, on commit 694b0fcf847a9a2087af292910112c9c041d86df completed successfully; the job log reports real inference and cancellation passed.",
+        "Official model card identifies QuantFactory/SmolLM2-135M-Instruct-GGUF as Apache-2.0 licensed: https://huggingface.co/QuantFactory/SmolLM2-135M-Instruct-GGUF/blob/a6b7826ed969c3926a98359e39912af137b464cb/README.md"
+      ],
+      "notes": "Implementation pre-existed this execution; acceptance was verified against the exact-commit live-model CI result and the pinned model card. No claim that new model-test code was written in this attempt.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
-        "related_commits": [],
-        "tests_passed": [],
+        "last_attempt_id": "T0064-A001",
+        "last_attempt_result": "existing_implementation_verified",
+        "changed_files": [
+          ".github/workflows/real-inference.yml",
+          "tests/HostLifecycle.Tests/Program.cs",
+          "step three/T0064/execution-report.md",
+          "step three/project-graph.md"
+        ],
+        "related_commits": [
+          "6ec75e986c68a56dc16e871479ead671b5bbe991"
+        ],
+        "tests_passed": [
+          "Real local llama.cpp inference returned non-empty output and active-generation cancellation stopped the owned process cleanly (run 40092245411, job 120867130271).",
+          "Windows host lifecycle tests, Windows WPF build/startup smoke, Android debug APK build, and graph quality checks passed on commit 694b0fcf847a9a2087af292910112c9c041d86df."
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
+          "state": "passed_exact_commit_ci",
           "triggering_contracts": [],
           "affected_by_contract_changes": [],
-          "review_evidence": []
+          "review_evidence": [
+            ".github/workflows/real-inference.yml pins model repository revision and sets opt-in environment variables.",
+            "tests/HostLifecycle.Tests/Program.cs implements the opt-in live-model test.",
+            "Official pinned model card lists Apache 2.0 license: https://huggingface.co/QuantFactory/SmolLM2-135M-Instruct-GGUF/blob/a6b7826ed969c3926a98359e39912af137b464cb/README.md",
+            "Exact-commit CI run 40092245411 passed."
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0064-A001",
+          "started_at": "2026-10-24T15:38:00+03:30",
+          "ended_at": "2026-10-24T15:42:00+03:30",
+          "result": "existing_implementation_verified",
+          "summary": "Reviewed existing opt-in real-model integration test and workflow, verified Apache-2.0 license in the pinned model card, and confirmed successful exact-commit live-model CI. No new application/test implementation was needed for acceptance in this attempt.",
+          "changed_files": [
+            "step three/T0064/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "at_commit": "6ec75e986c68a56dc16e871479ead671b5bbe991",
+          "tests": [
+            {
+              "command": "GitHub Actions run 40092245411, job 120867130271",
+              "result": "passed",
+              "summary": "Live local inference, active-generation cancellation, and owned-process shutdown passed."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Proceed to T0065 only after validating its own dependencies and acceptance criteria."
+        }
+      ]
     },
     {
       "id": "T0065",
@@ -19667,19 +19716,25 @@
       "from": "T0063",
       "to": "T0064",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0064's opt-in real-model test can be executed independently of the cancellation feature; the same existing test now also verifies T0063 cancellation. Keep the conservative order, but this edge is sequencing rather than a strict technical prerequisite.",
+      "validation_status": "validated",
+      "evidence": [
+        "tests/HostLifecycle.Tests/Program.cs: opt-in live-model test contains distinct response, cancellation, and process-stop assertions",
+        "GitHub Actions run 40092245411, job 120867130271 passed"
+      ]
     },
     {
       "from": "T0056",
       "to": "T0064",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0064's live-model workflow launches the model server and exercises inference directly; it does not call the WPF host capacity-readiness gate implemented by T0056. Preserve the current order as a sequencing guard, not a hard interface dependency.",
+      "validation_status": "validated",
+      "evidence": [
+        ".github/workflows/real-inference.yml: direct process launch and live-model test configuration",
+        "tests/HostLifecycle.Tests/Program.cs: test invokes the backend/process launcher directly"
+      ]
     },
     {
       "from": "T0064",
@@ -23635,8 +23690,34 @@
         "step three/T0056/execution-report.md"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-24T15:42:00+03:30",
+      "edge_from": "T0063",
+      "edge_to": "T0064",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "reason": "The live-model integration test and cancellation assertion coexist in Program.cs, but the model-response integration test does not technically require the cancellation feature. Preserve conservative ordering without claiming a hard interface dependency.",
+      "evidence": [
+        "tests/HostLifecycle.Tests/Program.cs",
+        "GitHub Actions run 40092245411, job 120867130271"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-24T15:42:00+03:30",
+      "edge_from": "T0056",
+      "edge_to": "T0064",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "reason": "The live-model workflow launches llama.cpp and calls the backend directly; it does not invoke the WPF host capacity-readiness gate. Keep existing order as a sequencing guard.",
+      "evidence": [
+        ".github/workflows/real-inference.yml",
+        "tests/HostLifecycle.Tests/Program.cs"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-24T15:26:00+03:30"
+  "updated_at": "2026-10-24T15:42:00+03:30"
 }
 ```
