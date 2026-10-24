@@ -1008,12 +1008,34 @@ if (string.Equals(Environment.GetEnvironmentVariable("WHITEP_RUN_REAL_INFERENCE_
     var liveResponse = await liveBackend.GenerateAsync(prompt, 32, inferenceTimeout.Token);
     Assert(!string.IsNullOrWhiteSpace(liveResponse), "The real local model returned an empty response.");
     Assert(!string.Equals(liveResponse.Trim(), "generated fixture output", StringComparison.Ordinal), "A recording-handler fixture is not valid evidence of real inference.");
-    // Verify controlled shutdown of the owned process after a real model response.
+    // T0063: exercise cancellation while a real generation is still in flight, not only after completion.
+    using var cancellation = new CancellationTokenSource();
+    var cancellationTask = liveBackend.GenerateAsync(
+        Environment.GetEnvironmentVariable("WHITEP_LLAMA_CANCEL_PROMPT") ??
+            "Write a long, detailed explanation of how a distributed peer-to-peer network works. Continue with many examples and do not stop early.",
+        4096,
+        cancellation.Token);
+    await Task.Delay(TimeSpan.FromMilliseconds(150));
+    Assert(!cancellationTask.IsCompleted,
+        "The live-model cancellation check requires generation to still be in flight after 150 ms; use a slower local model or a longer cancellation prompt.");
+    cancellation.Cancel();
+    var cancellationObserved = false;
+    try
+    {
+        _ = await cancellationTask;
+    }
+    catch (OperationCanceledException) when (cancellation.IsCancellationRequested)
+    {
+        cancellationObserved = true;
+    }
+
+    Assert(cancellationObserved, "Cancelling an active real inference request must surface OperationCanceledException.");
+    // HTTP cancellation does not guarantee llama.cpp stopped computing, so terminate only the process this test owns.
     launcher.Stop();
-    Assert(!launcher.IsRunning, "The managed local inference process must no longer be running after Stop.");
+    Assert(!launcher.IsRunning, "The managed local inference process must no longer be running after cancellation.");
     var stoppedHealthCheck = await liveBackend.CheckHealthAsync();
     Assert(!stoppedHealthCheck, "The local endpoint must be unavailable after its managed process is stopped.");
-    Console.WriteLine("PASS: real local llama.cpp inference succeeded and the managed process stopped cleanly.");
+    Console.WriteLine("PASS: real local llama.cpp inference succeeded; active generation cancellation was observed and the owned process stopped cleanly.");
 }
 else
 {

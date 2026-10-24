@@ -3,8 +3,8 @@
 ## Baseline and exact-revision validation
 
 - Repository/branch: `artinrahimii/project` / `main`.
-- Baseline at start of this review: `62e790193161a8e662dde6348bb90859392f3d74` (`V 3.0.196`).
-- Graph: `step three/project-graph.md`; Git tree blob `79c2e083cbbe9c8e85834e9553c0d68c2d0a4c47`, reported size 1,191,877 bytes. The normal file fetch returned an empty body, so the exact blob was fetched via Git Blob API. Its Markdown-fenced JSON parsed successfully: 229 unique task IDs and 426 edges. The decoded content is 1,068,587 characters; the API returned the complete closing fence. A local Git client was not available to independently recompute the blob hash from bytes.
+- Baseline at start of this review: `2f68b9fa35014ccf08cdda00877ca88621cff773` (`V 3.0.197`).
+- Graph: `step three/project-graph.md`; exact main-head blob `023bbebfe1cd2138f2a6aca54b7ee798b9849933`. Ordinary file fetch returned an empty body, so the blob endpoint was used. Full JSON parse succeeded with 229 unique task IDs and 426 edges; decoded content is 1,071,492 characters and ends with the closing fence. The API response does not expose raw bytes for an independent local Git object-hash recomputation in this session.
 - Prior implementation is in commit `a90289432cfff2ee80dd5bfcd197ab7ab13a16f2` (`V 3.0.195`); current head `62e790193161a8e662dde6348bb90859392f3d74` is `V 3.0.196`.
 
 ## Implementation and evidence reviewed
@@ -33,3 +33,12 @@ These are remote CI results; no local build or test execution was performed in t
 ## Next action
 
 Extend the opt-in Windows real-inference test to cancel an active generation (not only stop the process after a successful response), assert cancellation is surfaced and the owned process is stopped, then rerun the exact-commit lifecycle and real-inference workflows. Do not start dependent T0064 until T0063 is accepted.
+## Current attempt: T0063-A003
+
+- Updated `tests/HostLifecycle.Tests/Program.cs` to launch a second real-model generation with a long prompt and a 4096-token ceiling, require that generation still be in flight after 150 ms, cancel the caller token, and assert that `OperationCanceledException` is observed.
+- After cancellation, the test stops only the launcher-owned process and checks both launcher state and the health endpoint. The graph records the attempt as pending exact-commit CI; T0063 remains `in_progress`.
+- The source and graph are not locally compiled or executed in this session. This is an implementation attempt, not proof that the acceptance criteria pass.
+
+## Next action
+
+Run exact-commit CI, including Windows host lifecycle/build checks and the opt-in real-model workflow. If the 150 ms in-flight assertion is too strict for the configured test model, adjust the test based on actual CI evidence rather than weakening the acceptance claim. Do not start dependent T0064 until T0063 is accepted.

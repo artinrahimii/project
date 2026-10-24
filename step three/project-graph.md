@@ -10600,14 +10600,15 @@
       "evidence": [
         "Exact main head 62e790193161a8e662dde6348bb90859392f3d74: GitHub Actions checks all succeeded; real-inference job log confirms non-fixture inference and clean managed-process shutdown after response.",
         "src/Host.Windows/MainWindow.xaml.cs: Cancel action cancels the operation token and stops the owned local process as fallback.",
-        "tests/HostLifecycle.Tests/Program.cs: opt-in real model test currently verifies a real response and process stop after completion, but does not yet exercise cancellation during in-flight generation."
+        "tests/HostLifecycle.Tests/Program.cs: opt-in real model test currently verifies a real response and process stop after completion, but does not yet exercise cancellation during in-flight generation.",
+        "tests/HostLifecycle.Tests/Program.cs: T0063-A003 adds an opt-in live-model test for cancellation during an in-flight generation; exact-commit CI result pending."
       ],
-      "notes": "CI is green for the exact current main head, but acceptance remains in progress: active-generation cancellation and resulting canceled UI state are not yet demonstrated by an automated test.",
+      "notes": "In-flight cancellation assertion added to the opt-in live-model test; keep in_progress until exact-commit CI demonstrates the owned-process shutdown checks.",
       "execution_summary": {
-        "attempt_count": 2,
+        "attempt_count": 3,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0063-A002",
-        "last_attempt_result": "ci_passed_acceptance_gap_open",
+        "last_attempt_id": "T0063-A003",
+        "last_attempt_result": "implementation_pending_exact_commit_ci",
         "changed_files": [
           "src/Host.Windows/Inference/LocalInferenceProcessLauncher.cs",
           "src/Host.Windows/MainWindow.xaml",
@@ -10618,20 +10619,15 @@
         ],
         "related_commits": [
           "a90289432cfff2ee80dd5bfcd197ab7ab13a16f2",
-          "62e790193161a8e662dde6348bb90859392f3d74"
+          "62e790193161a8e662dde6348bb90859392f3d74",
+          "2f68b9fa35014ccf08cdda00877ca88621cff773"
         ],
-        "tests_passed": [
-          "GitHub Actions check: Real llama.cpp process and GGUF response — success (job 120860825259)",
-          "GitHub Actions check: Host lifecycle unit and integration tests — success (job 120860825228)",
-          "GitHub Actions check: Build Android client APK — success (job 120860825134)",
-          "GitHub Actions check: Build Windows WPF host — success (job 120860825220)",
-          "GitHub Actions check: Task graph and Python quality checks — success (job 120860825069)"
-        ],
+        "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "passed_with_acceptance_gap",
+          "state": "pending_exact_commit_ci",
           "triggering_contracts": [
             "LlamaCppServerBackend cancellation",
             "WPF generation cancellation",
@@ -10645,7 +10641,8 @@
             "src/Host.Windows/Inference/LocalInferenceProcessLauncher.cs: Start owns a single Process and Dispose kills its process tree",
             "Exact-head CI at 62e790193161a8e662dde6348bb90859392f3d74: all five check runs succeeded.",
             "Job 120860825259 log: real local llama.cpp inference succeeded and managed process stopped cleanly after response.",
-            "Acceptance gap: no assertion currently cancels an active in-flight generation and checks the canceled UI state."
+            "Acceptance gap: no assertion currently cancels an active in-flight generation and checks the canceled UI state.",
+            "tests/HostLifecycle.Tests/Program.cs: new opt-in real-model assertion requires an active generation, observes caller cancellation, then checks the owned process and endpoint are stopped."
           ]
         }
       },
@@ -10688,6 +10685,25 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Extend the real-inference test to cancel during active generation, assert the canceled state and owned-process stop, then rerun CI. Keep T0063 in progress until that evidence exists."
+        },
+        {
+          "attempt_id": "T0063-A003",
+          "started_at": "2026-10-24T15:26:00+03:30",
+          "ended_at": null,
+          "result": "implementation_pending_exact_commit_ci",
+          "summary": "Added a live-model cancellation attempt that requires generation to remain active after 150 ms, asserts OperationCanceledException after caller cancellation, then verifies the owned process and health endpoint are stopped. Not yet run; exact-commit CI required.",
+          "changed_files": [
+            "tests/HostLifecycle.Tests/Program.cs",
+            "step three/T0063/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Run exact-commit Windows lifecycle/build and opt-in real-inference checks. Keep T0063 in_progress unless the live cancellation path passes."
         }
       ]
     },
@@ -23578,6 +23594,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-24T15:15:00-04:00"
+  "updated_at": "2026-10-24T15:26:00+03:30"
 }
 ```
