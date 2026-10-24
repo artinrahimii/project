@@ -37,3 +37,10 @@
 - The opt-in path requires `WHITEP_RUN_REAL_INFERENCE_TEST=1`, `WHITEP_LLAMA_SERVER_EXE`, `WHITEP_LLAMA_MODEL_PATH`, `WHITEP_LLAMA_SERVER_URL`, and `WHITEP_LLAMA_MODEL_ID`. It defaults the prompt to a short request; no model is downloaded and no external provider is contacted by this test path.
 - This attempt adds an executable verification path but does **not** claim that a live model was run in this environment. The normal CI run skips this opt-in section unless its explicit environment flag is configured. T0061 therefore remains `in_progress` until a real server process and license-acceptable GGUF model produce a response under this test.
 - Baseline CI at `V 3.0.187`: Step Three quality gate run 40074032000 and product build run 40074031978 both report success for the baseline commit. They do not test the new change; results for the new commit must be read from its own workflow runs.
+
+
+## Attempt T0061-A002 — CI failure found after commit
+
+- The opt-in test path was added in commit `941e2535357c4aaefde5ece4c1572fe24ca893e4` (`V 3.0.188`).
+- Exact-commit workflow run [40076984165](https://github.com/artinrahimii/project/actions/runs/40076984165) exposed a compile failure in the host lifecycle test project: `CS0246`, `LocalInferenceProcessLauncher` was not found because its namespace was not imported. The real-model path was not executed.
+- This is recorded as a failed attempt, not a passing test. The follow-up adds the missing namespace import; the fix remains unverified until the next exact-commit workflow run completes.

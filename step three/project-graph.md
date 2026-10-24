@@ -10196,11 +10196,11 @@
         "https://github.com/artinrahimii/project/actions/runs/40073802621",
         "step three/T0061/execution-report.md"
       ],
-      "notes": "T0061-A001 corrected the OpenAI-compatible max_tokens wire field and added assertions against the exact serialized HTTP request (POST endpoint, JSON content type, configured model, single user message and token limit) plus generated response mapping. Exact-commit quality gate, C# host lifecycle harness and Windows WPF build/startup smoke passed. No live llama-server.exe with a real GGUF model was launched in this attempt; the requested real-model response remains unverified, so T0061 stays in_progress. Attempt T0061-A002 adds an opt-in live local-model integration path, but no real model execution is claimed until the test is run with a real llama-server.exe and a license-acceptable GGUF model.",
+      "notes": "T0061-A001 corrected the OpenAI-compatible max_tokens wire field and added assertions against the exact serialized HTTP request (POST endpoint, JSON content type, configured model, single user message and token limit) plus generated response mapping. Exact-commit quality gate, C# host lifecycle harness and Windows WPF build/startup smoke passed. No live llama-server.exe with a real GGUF model was launched in this attempt; the requested real-model response remains unverified, so T0061 stays in_progress. Attempt T0061-A002 adds an opt-in live local-model integration path, but no real model execution is claimed until the test is run with a real llama-server.exe and a license-acceptable GGUF model. CI run 40076984165 found a missing namespace import in the new opt-in test path (CS0246). Attempt T0061-A002 is recorded as failed; T0061-A003 adds the import and remains partial pending exact-commit CI and a real-model run.",
       "execution_summary": {
-        "attempt_count": 2,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "T0061-A002",
+        "attempt_count": 3,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "T0061-A003",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Host.Infrastructure/LlamaCppServerBackend.cs",
@@ -10274,8 +10274,33 @@
           "attempt_id": "T0061-A002",
           "started_at": "2026-10-24T08:09:53.464Z",
           "ended_at": "2026-10-24T08:09:53.464Z",
-          "result": "partial",
+          "result": "failed",
           "summary": "Added an opt-in live integration path that starts a local llama.cpp server with the existing process launcher, checks health, requests generation, and rejects fixture output. The real model path has not been run in this environment.",
+          "changed_files": [
+            "tests/HostLifecycle.Tests/Program.cs",
+            "step three/T0061/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "command": "dotnet run --project tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj --configuration Release (run 40076984165)",
+              "result": "failed",
+              "summary": "Compile error CS0246: LocalInferenceProcessLauncher could not be found."
+            }
+          ],
+          "failure_details": "GitHub Actions product-build run 40076984165 failed to compile tests/HostLifecycle.Tests/Program.cs with CS0246: LocalInferenceProcessLauncher not found; the namespace import was missing. No live-model test ran.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Run the HostLifecycle.Tests executable on a Windows host with a license-acceptable GGUF model and llama-server.exe, with WHITEP_RUN_REAL_INFERENCE_TEST=1 and the required environment variables. Only mark T0061 done after the live generated response is observed."
+        },
+        {
+          "attempt_id": "T0061-A003",
+          "started_at": "2026-10-24T08:11:14.223Z",
+          "ended_at": "2026-10-24T08:11:14.223Z",
+          "result": "partial",
+          "summary": "Fixed the exact-commit CI compile failure by importing the namespace that contains the existing local inference process launcher. Waiting for the next workflow run; no real model inference is claimed.",
           "changed_files": [
             "tests/HostLifecycle.Tests/Program.cs",
             "step three/T0061/execution-report.md",
@@ -10287,7 +10312,7 @@
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Run the HostLifecycle.Tests executable on a Windows host with a license-acceptable GGUF model and llama-server.exe, with WHITEP_RUN_REAL_INFERENCE_TEST=1 and the required environment variables. Only mark T0061 done after the live generated response is observed."
+          "follow_up": "Confirm the host lifecycle test harness compiles and passes on the new commit. Then run the opt-in path on Windows with a license-acceptable GGUF model and real llama-server.exe before marking T0061 done."
         }
       ]
     },
@@ -23224,6 +23249,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-24T08:09:53.464Z"
+  "updated_at": "2026-10-24T08:11:14.223Z"
 }
 ```
