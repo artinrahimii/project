@@ -10585,8 +10585,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0062 و T0056 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "src/Host.Windows/Inference/LocalInferenceProcessLauncher.cs",
         "src/Host.Windows/MainWindow.xaml",
@@ -10598,36 +10598,37 @@
         "src/Host.Windows/Inference/"
       ],
       "evidence": [
-        "Exact main head 62e790193161a8e662dde6348bb90859392f3d74: GitHub Actions checks all succeeded; real-inference job log confirms non-fixture inference and clean managed-process shutdown after response.",
-        "src/Host.Windows/MainWindow.xaml.cs: Cancel action cancels the operation token and stops the owned local process as fallback.",
-        "tests/HostLifecycle.Tests/Program.cs: opt-in real model test currently verifies a real response and process stop after completion, but does not yet exercise cancellation during in-flight generation.",
-        "tests/HostLifecycle.Tests/Program.cs: T0063-A003 adds an opt-in live-model test for cancellation during an in-flight generation; exact-commit CI result pending."
+        "Exact main commit 694b0fcf847a9a2087af292910112c9c041d86df: GitHub Actions run 40092245411, job 120867130271 completed successfully.",
+        "Job log line at 2026-10-24T12:02:42.994Z: PASS: real local llama.cpp inference succeeded; active generation cancellation was observed and the owned process stopped cleanly.",
+        "Same commit workflow run 40092245473: Windows WPF host build/startup smoke, host lifecycle tests, and Android debug APK build all succeeded.",
+        "Same commit workflow run 40092245370: graph/Python quality checks succeeded."
       ],
-      "notes": "In-flight cancellation assertion added to the opt-in live-model test; keep in_progress until exact-commit CI demonstrates the owned-process shutdown checks.",
+      "notes": "لغو تولید واقعیِ درحال‌اجرا با مدل GGUF و توقف فرایند اختصاصی در CI همان commit تأیید شد؛ آزمون‌های ساخت ویندوز، چرخهٔ عمر میزبان، APK اندروید و کنترل کیفیت نیز موفق‌اند.",
       "execution_summary": {
-        "attempt_count": 3,
+        "attempt_count": 4,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0063-A003",
-        "last_attempt_result": "implementation_pending_exact_commit_ci",
+        "last_attempt_id": "T0063-A004",
+        "last_attempt_result": "accepted_exact_commit_ci",
         "changed_files": [
-          "src/Host.Windows/Inference/LocalInferenceProcessLauncher.cs",
-          "src/Host.Windows/MainWindow.xaml",
-          "src/Host.Windows/MainWindow.xaml.cs",
           "tests/HostLifecycle.Tests/Program.cs",
           "step three/T0063/execution-report.md",
           "step three/project-graph.md"
         ],
         "related_commits": [
-          "a90289432cfff2ee80dd5bfcd197ab7ab13a16f2",
-          "62e790193161a8e662dde6348bb90859392f3d74",
-          "2f68b9fa35014ccf08cdda00877ca88621cff773"
+          "694b0fcf847a9a2087af292910112c9c041d86df"
         ],
-        "tests_passed": [],
+        "tests_passed": [
+          "Real llama.cpp live-model generation cancellation observed; owned process stopped cleanly (workflow 40092245411, job 120867130271).",
+          "Host lifecycle unit and integration tests passed (workflow 40092245473).",
+          "Windows WPF build and startup smoke test passed (workflow 40092245473).",
+          "Android debug APK build passed (workflow 40092245473).",
+          "Task graph and Python quality checks passed (workflow 40092245370)."
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "pending_exact_commit_ci",
+          "state": "passed_exact_commit_ci",
           "triggering_contracts": [
             "LlamaCppServerBackend cancellation",
             "WPF generation cancellation",
@@ -10642,7 +10643,8 @@
             "Exact-head CI at 62e790193161a8e662dde6348bb90859392f3d74: all five check runs succeeded.",
             "Job 120860825259 log: real local llama.cpp inference succeeded and managed process stopped cleanly after response.",
             "Acceptance gap: no assertion currently cancels an active in-flight generation and checks the canceled UI state.",
-            "tests/HostLifecycle.Tests/Program.cs: new opt-in real-model assertion requires an active generation, observes caller cancellation, then checks the owned process and endpoint are stopped."
+            "tests/HostLifecycle.Tests/Program.cs: new opt-in real-model assertion requires an active generation, observes caller cancellation, then checks the owned process and endpoint are stopped.",
+            "Exact commit 694b0fcf847a9a2087af292910112c9c041d86df live-model CI log confirms cancellation during active generation and clean stop of the owned process."
           ]
         }
       },
@@ -10689,21 +10691,62 @@
         {
           "attempt_id": "T0063-A003",
           "started_at": "2026-10-24T15:26:00+03:30",
-          "ended_at": null,
-          "result": "implementation_pending_exact_commit_ci",
+          "ended_at": "2026-10-24T15:26:00+03:30",
+          "result": "ci_passed",
           "summary": "Added a live-model cancellation attempt that requires generation to remain active after 150 ms, asserts OperationCanceledException after caller cancellation, then verifies the owned process and health endpoint are stopped. Not yet run; exact-commit CI required.",
           "changed_files": [
             "tests/HostLifecycle.Tests/Program.cs",
             "step three/T0063/execution-report.md",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
-          "tests": [],
+          "commit_sha": "694b0fcf847a9a2087af292910112c9c041d86df",
+          "tests": [
+            {
+              "command": "GitHub Actions real local inference, run 40092245411 job 120867130271",
+              "result": "passed",
+              "summary": "Real model generated a response; cancellation during active generation was observed and owned process stopped cleanly."
+            }
+          ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Run exact-commit Windows lifecycle/build and opt-in real-inference checks. Keep T0063 in_progress unless the live cancellation path passes."
+          "follow_up": "T0063 acceptance criteria satisfied on exact commit; proceed to T0064 after validating its specific inputs and edges."
+        },
+        {
+          "attempt_id": "T0063-A004",
+          "started_at": "2026-10-24T15:35:00+03:30",
+          "ended_at": "2026-10-24T15:26:00+03:30",
+          "result": "accepted_exact_commit_ci",
+          "summary": "Reviewed exact-commit GitHub Actions results and live-model job log. Active generation cancellation was observed and the owned llama.cpp process stopped cleanly; Windows host build/lifecycle, Android APK build, and graph quality checks all passed.",
+          "changed_files": [
+            "step three/T0063/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "at_commit": "694b0fcf847a9a2087af292910112c9c041d86df",
+          "tests": [
+            {
+              "command": "GitHub Actions run 40092245411, job 120867130271",
+              "result": "passed",
+              "summary": "PASS: real local llama.cpp inference succeeded; active generation cancellation was observed and the owned process stopped cleanly."
+            },
+            {
+              "command": "GitHub Actions run 40092245473",
+              "result": "passed",
+              "summary": "Windows WPF build/startup smoke, host lifecycle tests, and Android debug APK build passed."
+            },
+            {
+              "command": "GitHub Actions run 40092245370",
+              "result": "passed",
+              "summary": "Graph and Python quality checks passed."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Review T0064 and its dependency evidence before beginning the opt-in small licensed-model integration task."
         }
       ]
     },

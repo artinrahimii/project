@@ -42,3 +42,13 @@ Extend the opt-in Windows real-inference test to cancel an active generation (no
 ## Next action
 
 Run exact-commit CI, including Windows host lifecycle/build checks and the opt-in real-model workflow. If the 150 ms in-flight assertion is too strict for the configured test model, adjust the test based on actual CI evidence rather than weakening the acceptance claim. Do not start dependent T0064 until T0063 is accepted.
+
+
+## T0063-A004 — exact-commit CI acceptance
+
+- Reviewed the GitHub Actions runs for exact main commit `694b0fcf847a9a2087af292910112c9c041d86df`.
+- The real local inference job log reports: `PASS: real local llama.cpp inference succeeded; active generation cancellation was observed and the owned process stopped cleanly.`
+- On the same commit, Windows WPF build/startup smoke, host lifecycle unit/integration tests, Android debug APK build, and graph/Python quality checks all passed.
+- **Acceptance decision: T0063 is done.** The live-model cancellation criterion is now backed by exact-commit CI evidence rather than code presence alone.
+- No local test run was performed in this session; all test evidence cited above is from GitHub Actions.
+- Next: validate T0064's own requirements and dependencies before implementing or accepting it.
