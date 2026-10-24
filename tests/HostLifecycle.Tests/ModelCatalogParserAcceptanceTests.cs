@@ -169,7 +169,8 @@ internal static class ModelCatalogParserAcceptanceTests
             model.BackendIds.Single() != "llama.cpp" ||
             model.SourceUrl.Host != "models.example.test" ||
             model.License.Status != "verified" ||
-            model.License.RequiresReview)
+            model.License.RequiresReview ||
+            model.License.ReviewLabel != "Declared; not independently verified")
         {
             throw new Exception("A valid catalog did not produce the expected normalized metadata.");
         }

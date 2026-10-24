@@ -12285,18 +12285,19 @@
         "tests/test_model_catalog_ui.py",
         "step three/T0072/execution-report.md"
       ],
-      "notes": "Implementation adds a visible REVIEW REQUIRED label for absent/unknown license metadata. Python tests passed on implementation commit. Graph guard failures were due to an unsupported dependency class (corrected) and then failed-attempt count mismatches in execution metadata; counts now reflect one failed attempt and all history entries. Awaiting exact-head validation.",
+      "notes": "Implementation adds a visible REVIEW REQUIRED label for absent/unknown license metadata. Python tests passed on implementation commit. Graph guard failures were due to an unsupported dependency class (corrected) and then failed-attempt count mismatches in execution metadata; counts now reflect one failed attempt and all history entries. Awaiting exact-head validation. A005 adds a C# acceptance assertion for the declared-but-not-independently-verified label on the positive license-metadata case; exact-head executable validation remains required.",
       "execution_summary": {
-        "attempt_count": 4,
+        "attempt_count": 5,
         "failed_attempt_count": 1,
-        "last_attempt_id": "T0072-A004",
+        "last_attempt_id": "T0072-A005",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Host.Windows/Models/Catalog/ModelCatalogModels.cs",
           "src/Host.Windows/MainWindow.xaml",
           "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs",
           "tests/test_model_catalog_ui.py",
-          "step three/T0072/execution-report.md"
+          "step three/T0072/execution-report.md",
+          "step three/project-graph.md"
         ],
         "related_commits": [],
         "tests_passed": [
@@ -12423,6 +12424,25 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Run quality gate against this correction and verify graph guard success."
+        },
+        {
+          "attempt_id": "T0072-A005",
+          "started_at": "2026-10-24T18:41:00Z",
+          "ended_at": "2026-10-24T18:41:00Z",
+          "result": "partial",
+          "summary": "Strengthened the C# acceptance harness so a catalog entry whose license status is declared as verified is still labeled as declared metadata, not as independently verified legal terms. The assertion was added to the existing positive parser case. This execution environment could not run the .NET test suite or observe an exact-head CI result, so the task remains in_progress.",
+          "changed_files": [
+            "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs",
+            "step three/T0072/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Run the exact-head Step Three quality gate, HostLifecycle.Tests, and Windows WPF product build. Mark done only if the required checks pass."
         }
       ]
     },
@@ -25039,6 +25059,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-24T17:16:07Z"
+  "updated_at": "2026-10-24T18:41:00Z"
 }
 ```

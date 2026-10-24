@@ -12,3 +12,13 @@
   - Extended Python and C# acceptance checks for the visible label and the missing/unknown-license cases.
   - No license is approved by this UI label; missing/unknown metadata remains unverified.
 - Validation on implementation commit `329ba9c70a6ee53df1cfefcc71b8cf1c7c658960`: Python suite passed (146 tests), but graph guard failed because the `T0067 -> T0072` classification used unsupported value `sequencing_dependency`. The graph enum was checked in `tools/graph_guard.py`; the allowed value is `sequencing_only`, now corrected. The next graph-guard run then caught an audit consistency error: the summary counted a failed attempt while its history entry was labeled partial. That record is now corrected to `failed`. The subsequent run revealed that the summary count was set to two even though only one history entry was marked failed; the count is now corrected to one. These were graph metadata validation failures, not product-test failures. The Windows WPF build was still running at the last check. Task remains in progress pending exact-head CI after these corrections.
+
+
+## Attempt T0072-A005 — V 3.0.227
+
+- Starting commit: `cdc87593fe7fdc546cdcac3fefcb52552d9c6382` on `main`.
+- Dependency gate: `T0071` and `T0067` are recorded as done. The incoming edge `T0071 -> T0072` is validated as `contract_or_interface_dependency`; `T0067 -> T0072` is validated as `sequencing_only`. Both original `type=blocks` relations remain unchanged.
+- Implementation change: strengthened `tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs` so the positive case checks that the UI label remains `Declared; not independently verified`, even when the catalog declares status `verified`. This avoids implying independent legal review from a catalog claim.
+- Graph integrity: read the graph Blob `029ebeeb9aa29f3702af0887b011ad010ef68650` from the tree of `cdc87593fe7fdc546cdcac3fefcb52552d9c6382`; the Blob endpoint returned 1163331 characters and the JSON parsed as 229 nodes and 426 edges. The ordinary file endpoint returned empty content, so it was not used for the graph.
+- Validation: patch uniqueness and graph structural/history checks passed in this execution. The .NET test harness, Windows build, and exact-head GitHub Actions result were **not run or confirmed by the available execution interface**. This is therefore partial progress, not a passed test or completed task.
+- Follow-up: run the exact-head Step Three quality gate, `HostLifecycle.Tests`, and Windows WPF build; retain `in_progress` until those checks pass.
