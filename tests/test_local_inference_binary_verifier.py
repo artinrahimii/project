@@ -6,6 +6,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 VERIFIER = ROOT / "src" / "Host.Windows" / "Inference" / "LocalInferenceBinaryVerifier.cs"
 LAUNCHER = ROOT / "src" / "Host.Windows" / "Inference" / "LocalInferenceProcessLauncher.cs"
+HOST_TEST_PROJECT = ROOT / "tests" / "HostLifecycle.Tests" / "HostLifecycle.Tests.csproj
+LIVE_WORKFLOW = ROOT / ".github" / "workflows" / "real-inference.yml"
 
 class LocalInferenceBinaryVerificationSourceTests(unittest.TestCase):
     @classmethod
@@ -34,6 +36,19 @@ class LocalInferenceBinaryVerificationSourceTests(unittest.TestCase):
         self.assertLess(verify, start)
         self.assertIn("WHITEP_LLAMA_SERVER_VERSION", self.launcher)
         self.assertIn("WHITEP_LLAMA_SERVER_SHA256", self.launcher)
+
+
+    def test_portable_host_test_project_compiles_the_verifier_source(self):
+        project = HOST_TEST_PROJECT.read_text(encoding="utf-8")
+        self.assertIn("LocalInferenceBinaryVerifier.cs", project)
+
+    def test_live_workflow_provides_pinned_release_version_and_verified_binary_hash(self):
+        workflow = LIVE_WORKFLOW.read_text(encoding="utf-8")
+        archive_verification = workflow.index("if ($actualSha256 -ne $expectedSha256)")
+        executable_hash = workflow.index('$serverSha256 = (Get-FileHash -LiteralPath $server.FullName -Algorithm SHA256).Hash.ToLowerInvariant()')
+        self.assertLess(archive_verification, executable_hash)
+        self.assertIn('"WHITEP_LLAMA_SERVER_VERSION=11443"', workflow)
+        self.assertIn('"WHITEP_LLAMA_SERVER_SHA256=$serverSha256"', workflow)
 
 if __name__ == "__main__":
     unittest.main()

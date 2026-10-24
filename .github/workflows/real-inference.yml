@@ -54,6 +54,11 @@ jobs:
           }
           "WHITEP_LLAMA_SERVER_EXE=$($server.FullName)" | Add-Content -LiteralPath $env:GITHUB_ENV -Encoding utf8
           Write-Host "Verified llama.cpp b11443 CPU archive SHA-256: $actualSha256"
+          $serverSha256 = (Get-FileHash -LiteralPath $server.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
+          # The pinned b11443 release reports build number 11443 with --version.
+          "WHITEP_LLAMA_SERVER_VERSION=11443" | Add-Content -LiteralPath $env:GITHUB_ENV -Encoding utf8
+          "WHITEP_LLAMA_SERVER_SHA256=$serverSha256" | Add-Content -LiteralPath $env:GITHUB_ENV -Encoding utf8
+          Write-Host "Verified llama.cpp executable build 11443 SHA-256: $serverSha256"
           Write-Host "Found local server executable: $($server.FullName)"
 
       - name: Download and validate pinned Apache-2.0 GGUF model

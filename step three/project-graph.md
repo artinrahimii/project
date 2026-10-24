@@ -11100,27 +11100,32 @@
         "step three/T0066/execution-report.md",
         "step three/T0066/evidence/verification.md"
       ],
-      "notes": "The managed launcher now requires WHITEP_LLAMA_SERVER_VERSION and WHITEP_LLAMA_SERVER_SHA256 from a trusted release source. It checks the executable hash, probes --version without a shell, rechecks the hash, then starts the inference server. Exact-head CI is still required before completion.",
+      "notes": "The verifier was added, but exact-head CI on 08583bd892e3a2e5fdf081fd2e80e44afdecbab0 exposed compile integration failures: the Windows target lacked explicit System.IO imports and HostLifecycle.Tests did not compile the verifier source. The live-inference job failed before launching the real model. T0066-A002 preserves that failure; T0066-A003 adds the explicit import, test-project source link and verified b11443 release version/hash inputs. T0066 remains in_progress pending exact-head quality, Windows host/lifecycle and live-model CI success.",
       "execution_summary": {
-        "attempt_count": 1,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "T0066-A001",
+        "attempt_count": 3,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "T0066-A003",
         "last_attempt_result": "partial",
         "changed_files": [
-          "src/Host.Windows/Inference/LocalInferenceBinaryVerifier.cs",
-          "src/Host.Windows/Inference/LocalInferenceProcessLauncher.cs",
-          "tests/test_local_inference_binary_verifier.py",
+          "step three/project-graph.md",
           "step three/T0066/execution-report.md",
           "step three/T0066/evidence/verification.md",
-          "step three/project-graph.md"
+          "src/Host.Windows/Inference/LocalInferenceBinaryVerifier.cs",
+          "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+          "tests/test_local_inference_binary_verifier.py",
+          ".github/workflows/real-inference.yml"
         ],
         "related_commits": [],
         "tests_passed": [],
-        "tests_failed": [],
+        "tests_failed": [
+          "T0066-A002: Windows host build failed on missing System.IO symbols (run 40104020991).",
+          "T0066-A002: HostLifecycle.Tests did not compile LocalInferenceBinaryVerifier.cs (run 40104020991).",
+          "T0066-A002: live-inference job failed at compilation; no model inference ran (run 40104021005)."
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "pending_exact_commit_ci",
+          "state": "in_review",
           "triggering_contracts": [
             "local engine executable version and SHA-256",
             "shell-free process startup"
@@ -11129,7 +11134,10 @@
           "review_evidence": [
             "src/Host.Windows/Inference/LocalInferenceBinaryVerifier.cs",
             "src/Host.Windows/Inference/LocalInferenceProcessLauncher.cs",
-            "tests/test_local_inference_binary_verifier.py"
+            "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+            ".github/workflows/real-inference.yml",
+            "https://github.com/artinrahimii/project/actions/runs/40104020991",
+            "https://github.com/artinrahimii/project/actions/runs/40104021005"
           ]
         }
       },
@@ -11162,6 +11170,99 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Run the Step Three quality gate and Windows product build on this exact commit; repair any failure before marking T0066 done."
+        },
+        {
+          "attempt_id": "T0066-A002",
+          "started_at": "2026-10-24T18:16:50+03:30",
+          "ended_at": "2026-10-24T18:17:48+03:30",
+          "result": "failed",
+          "summary": "Exact-head CI ran on 08583bd892e3a2e5fdf081fd2e80e44afdecbab0. The Windows app failed compilation because LocalInferenceBinaryVerifier.cs lacked explicit System.IO imports. The portable HostLifecycle.Tests project also failed because it did not compile LocalInferenceBinaryVerifier.cs. Android APK and quality gate passed; Windows build, host lifecycle test, and live inference failed before the model was exercised.",
+          "changed_files": [
+            "src/Host.Windows/Inference/LocalInferenceBinaryVerifier.cs",
+            "src/Host.Windows/Inference/LocalInferenceProcessLauncher.cs",
+            "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+            ".github/workflows/real-inference.yml"
+          ],
+          "commit_sha": "08583bd892e3a2e5fdf081fd2e80e44afdecbab0",
+          "tests": [
+            {
+              "name": "Step Three quality gate — run 40104021001",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40104021001",
+              "summary": "Python tests, syntax, graph structure and output/evidence validation passed."
+            },
+            {
+              "name": "Windows WPF host build — run 40104020991",
+              "result": "failed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40104020991",
+              "summary": "Compile errors from missing System.IO names in LocalInferenceBinaryVerifier.cs."
+            },
+            {
+              "name": "Host lifecycle tests — run 40104020991",
+              "result": "failed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40104020991",
+              "summary": "LocalInferenceBinaryVerifier type was not included in HostLifecycle.Tests compile inputs."
+            },
+            {
+              "name": "Real local inference integration — run 40104021005",
+              "result": "failed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40104021005",
+              "summary": "Failed at test-project compilation; the model was not launched."
+            },
+            {
+              "name": "Android APK build — run 40104020991",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40104020991",
+              "summary": "Debug APK, Kotlin checks and Protobuf tests passed."
+            }
+          ],
+          "failure_details": "The new verifier source was not independently compiled by HostLifecycle.Tests and lacked explicit System.IO imports required by the Windows target build. The live-model test did not reach process/version/hash verification.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Add System.IO explicitly, link the verifier source into HostLifecycle.Tests, and configure live-model CI with expected release version 11443 and executable SHA-256 derived only after the pinned archive SHA check. Re-run quality, Windows product build/lifecycle and real local-model inference."
+        },
+        {
+          "attempt_id": "T0066-A003",
+          "started_at": "2026-10-24T14:53:46.858Z",
+          "ended_at": "2026-10-24T14:53:46.858Z",
+          "result": "partial",
+          "summary": "Repaired compile integration for the binary verifier and wired its runtime version/hash inputs into the pinned b11443 live-inference workflow. The workflow derives executable SHA-256 only after validating the archive against its pinned SHA-256 and expects build version 11443. Exact-head CI is pending; completion is not claimed until Windows build, lifecycle tests and live local-model inference pass.",
+          "changed_files": [
+            "step three/project-graph.md",
+            "step three/T0066/execution-report.md",
+            "step three/T0066/evidence/verification.md",
+            "src/Host.Windows/Inference/LocalInferenceBinaryVerifier.cs",
+            "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+            "tests/test_local_inference_binary_verifier.py",
+            ".github/workflows/real-inference.yml"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Python binary-verifier regression suite",
+              "result": "pending",
+              "evidence": "tests/test_local_inference_binary_verifier.py",
+              "summary": "New assertions cover test-project source linkage and verified release/hash configuration; exact-head CI pending."
+            },
+            {
+              "name": "Windows WPF host build and lifecycle tests",
+              "result": "pending",
+              "evidence": ".github/workflows/product-build.yml",
+              "summary": "Must compile the verifier in both the product and portable test project."
+            },
+            {
+              "name": "Real local inference integration",
+              "result": "pending",
+              "evidence": ".github/workflows/real-inference.yml",
+              "summary": "Must verify pinned version/SHA, start the real local model and return non-empty output."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect exact-head GitHub Actions results. Mark T0066 done only if the quality gate, Windows host build/lifecycle tests and live local GGUF inference all pass; otherwise preserve failures and repair."
         }
       ]
     },
@@ -23993,6 +24094,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-24T18:06:00+03:30"
+  "updated_at": "2026-10-24T14:53:46.858Z"
 }
 ```
