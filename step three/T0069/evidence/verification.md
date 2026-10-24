@@ -23,3 +23,13 @@
 
 ## Graph validation follow-up — T0069-A004
 - The quality gate caught a mismatch between `execution_summary.failed_attempt_count` and `execution_history`. The A002 entry now records the real failed compile attempt, and A003 remains partial pending a passing CI run.
+
+
+## Exact-head acceptance — T0069-A005
+
+- Exact commit tested: `bce405706d5a2430f4212ced748f88e20f83b72f` on `main`.
+- Quality gate: 141 Python tests passed; graph guard reported 0 errors and one preserved T0001 unmapped-dependency warning. [Run 40113006243](https://github.com/artinrahimii/project/actions/runs/40113006243).
+- Production parser acceptance harness: passed in the HostLifecycle.Tests job. `Program.cs` invokes `ModelCatalogParserAcceptanceTests.Run()`; the test project compiles the production parser source. [Job 120928467278](https://github.com/artinrahimii/project/actions/runs/40113006228/job/120928467278).
+- Windows WPF build: passed. [Job 120928467089](https://github.com/artinrahimii/project/actions/runs/40113006228/job/120928467089).
+- Android APK and unit-test job: passed. [Job 120928467328](https://github.com/artinrahimii/project/actions/runs/40113006228/job/120928467328).
+- Scope limit: parser/metadata checks only; no catalog entries or model download, installation, and P2P claims.

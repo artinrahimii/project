@@ -11685,7 +11685,7 @@
         }
       ]
     },
-    {
+        {
       "id": "T0069",
       "title": "parser کاتالوگ را با رد ورودی نامعتبر و URL غیرمجاز پیاده‌سازی کن.",
       "section": "7. کاتالوگ، مجوز و فایل‌های مدل",
@@ -11702,8 +11702,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0068 و T0067 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال انجام",
+      "status": "done",
+      "status_fa": "تکمیل‌شده",
       "actual_output_paths": [
         "src/Host.Windows/Models/Catalog/ModelCatalogParser.cs",
         "src/Host.Windows/Models/Catalog/ModelCatalogModels.cs",
@@ -11728,12 +11728,12 @@
         "step three/T0069/execution-report.md",
         "step three/T0069/evidence/verification.md"
       ],
-      "notes": "T0069-A001 implements a strict parser that accepts only schema v1, size-bounds JSON input, rejects duplicate/unknown JSON properties and duplicate model IDs, enforces positive size/SHA-256/GGUF/v1 backend restrictions, validates HTTPS source and license URLs against caller-supplied DNS host allowlists, and normalizes missing licenses to review_required. It performs no network access. A runtime C# acceptance suite covers valid and invalid cases and is wired into HostLifecycle.Tests. Exact-head CI is pending.",
+      "notes": "T0069-A001 implements a strict parser that accepts only schema v1, size-bounds JSON input, rejects duplicate/unknown JSON properties and duplicate model IDs, enforces positive size/SHA-256/GGUF/v1 backend restrictions, validates HTTPS source and license URLs against caller-supplied DNS host allowlists, and normalizes missing licenses to review_required. It performs no network access. A runtime C# acceptance suite covers valid and invalid cases and is wired into HostLifecycle.Tests. Exact-head CI is pending.\n\nExact-head acceptance verified on V 3.0.217 (commit bce405706d5a2430f4212ced748f88e20f83b72f): quality gate (141 Python tests), Windows WPF build, HostLifecycle.Tests including ModelCatalogParserAcceptanceTests.Run(), and Android product-build jobs passed. T0069 is complete for parsing/validation only; this does not imply that any real catalog entries are bundled or that model download, installation, or P2P transport exists.",
       "execution_summary": {
-        "attempt_count": 3,
+        "attempt_count": 5,
         "failed_attempt_count": 1,
-        "last_attempt_id": "T0069-A003",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "T0069-A005",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Host.Windows/Models/Catalog/ModelCatalogParser.cs",
           "src/Host.Windows/Models/Catalog/ModelCatalogModels.cs",
@@ -11745,15 +11745,23 @@
           "step three/T0069/evidence/verification.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
+        "related_commits": [
+          "6edc1af359c8d2e81e3b3a6b1502c888f8224b3b",
+          "bce405706d5a2430f4212ced748f88e20f83b72f"
+        ],
+        "tests_passed": [
+          "GitHub Actions Step Three quality gate run 40113006243 on exact head bce405706d5a2430f4212ced748f88e20f83b72f: 141 Python tests passed; graph/evidence checks passed with 0 errors and one preserved warning.",
+          "GitHub Actions product build run 40113006228 on exact head: Windows WPF host build, HostLifecycle.Tests parser acceptance harness, Android APK and Android unit tests passed.",
+          "ModelCatalogParserAcceptanceTests.Run() is invoked by tests/HostLifecycle.Tests/Program.cs and the test project compiles src/Host.Windows/Models/Catalog/ModelCatalogParser.cs."
+        ],
         "tests_failed": [
-          "T0069-A002: HostLifecycle.Tests compilation failed (CS1003/CS1026/CS1010) at ModelCatalogParserAcceptanceTests.cs:225; fixed in A003; re-run pending."
+          "T0069-A002: HostLifecycle.Tests failed to compile due to a malformed duplicate-root-property JSON fixture (CS1003/CS1026/CS1010); source string was corrected in A003 and the exact-head suite subsequently passed.",
+          "T0069-A004: Step Three quality gate on V 3.0.216 failed with FAILED_ATTEMPT_COUNT_MISMATCH for the A002 execution-history metadata; corrected in V 3.0.217 and subsequently passed."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "in_review",
+          "state": "passed",
           "triggering_contracts": [
             "model-catalog-v1.schema.json",
             "REQ-007 metadata and URL safety",
@@ -11765,7 +11773,9 @@
             "src/Host.Windows/Models/Catalog/ModelCatalogParser.cs",
             "src/Host.Windows/Models/Catalog/ModelCatalogModels.cs",
             "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs",
-            "tests/test_model_catalog_parser.py"
+            "tests/test_model_catalog_parser.py",
+            "https://github.com/artinrahimii/project/actions/runs/40113006243",
+            "https://github.com/artinrahimii/project/actions/runs/40113006228"
           ]
         }
       },
@@ -11850,6 +11860,82 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Verify the runtime C# suite and Windows build on this commit; then address any remaining test failures."
+        },
+        {
+          "attempt_id": "T0069-A004",
+          "started_at": "2026-10-24T16:43:24Z",
+          "ended_at": "2026-10-24T16:45:00Z",
+          "result": "partial",
+          "summary": "The quality gate on V 3.0.216 found FAILED_ATTEMPT_COUNT_MISMATCH: A002's compiler failure was counted in the summary but still labeled partial in execution_history. The A002 record was reconciled to result=failed in V 3.0.217. This was a task-history/quality-gate correction; no new parser-code failure was observed in this attempt.",
+          "changed_files": [
+            "step three/project-graph.md",
+            "step three/T0069/execution-report.md",
+            "step three/T0069/evidence/verification.md"
+          ],
+          "commit_sha": "bce405706d5a2430f4212ced748f88e20f83b72f",
+          "tests": [
+            {
+              "command": "Step Three quality gate on V 3.0.216",
+              "result": "failed",
+              "summary": "FAILED_ATTEMPT_COUNT_MISMATCH; the summary counted A002 as failed while the history entry remained partial.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40112876178"
+            },
+            {
+              "command": "Step Three quality gate on V 3.0.217",
+              "result": "passed",
+              "summary": "Metadata/history consistency correction passed on the exact main head.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40113006243"
+            }
+          ],
+          "failure_details": "The earlier quality-gate failure was a graph consistency issue involving the recorded A002 result; it is preserved here and was corrected in V 3.0.217.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Rerun the exact-head C# parser acceptance suite and product builds after the history correction; do not mark T0069 done until the parser tests pass."
+        },
+        {
+          "attempt_id": "T0069-A005",
+          "started_at": "2026-10-24T16:45:09Z",
+          "ended_at": "2026-10-24T16:47:57Z",
+          "result": "succeeded",
+          "summary": "Exact-head acceptance verification passed on bce405706d5a2430f4212ced748f88e20f83b72f. The quality gate ran 141 Python tests and graph/evidence checks; the product workflow built the Windows WPF host and Android APK and ran the lifecycle harness. The harness invokes ModelCatalogParserAcceptanceTests.Run(), and the test project compiles the production ModelCatalogParser.cs, so the corrected duplicate-property tests executed successfully.",
+          "changed_files": [
+            "step three/T0069/execution-report.md",
+            "step three/T0069/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": "bce405706d5a2430f4212ced748f88e20f83b72f",
+          "tests": [
+            {
+              "command": "GitHub Actions Step Three quality gate",
+              "result": "passed",
+              "summary": "141 Python tests passed; graph guard validated 229 tasks and 426 edges with 0 errors and one pre-existing unmapped-dependency warning for T0001; recorded output/evidence checks passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40113006243"
+            },
+            {
+              "command": "Windows host lifecycle and parser acceptance harness",
+              "result": "passed",
+              "summary": "dotnet run --project tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj --configuration Release passed on exact head; Program.cs invokes ModelCatalogParserAcceptanceTests.Run(), and the project compiles the production parser source.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40113006228/job/120928467278"
+            },
+            {
+              "command": "Windows WPF host build",
+              "result": "passed",
+              "summary": "Windows host build job completed successfully on exact head.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40113006228/job/120928467089"
+            },
+            {
+              "command": "Android client APK and unit tests",
+              "result": "passed",
+              "summary": "Android client build, formatting/lint and unit-test job completed successfully; this is product-build evidence and not a claim that Android P2P is implemented.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40113006228/job/120928467328"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Proceed to T0070 only after validating its incoming dependency edges. This acceptance is limited to strict model-catalog parsing and metadata validation; it does not establish bundled model entries, download/install functionality, or P2P transport."
         }
       ]
     },
@@ -24573,6 +24659,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-24T15:22:38.294Z"
+  "updated_at": "2026-10-24T16:47:57.000Z"
 }
 ```

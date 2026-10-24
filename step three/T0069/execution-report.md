@@ -30,3 +30,14 @@
 - The exact-head quality gate for `V 3.0.216` identified `FAILED_ATTEMPT_COUNT_MISMATCH`: summary counted one failed attempt while no history entry had `result=failed`.
 - Corrected the existing `T0069-A002` history entry to `result=failed`, with the observed C# compiler failure details. Kept `T0069-A003` partial because its corrected source has not yet been verified by CI.
 - The latest quality-gate run is not green yet; exact-head rerun after this metadata correction is pending. T0069 remains in progress.
+
+
+## T0069-A005 — exact-head acceptance passed
+
+- Verified against the exact online `main` commit `bce405706d5a2430f4212ced748f88e20f83b72f`; no parser source changes were made in this verification-only attempt.
+- Step Three quality gate passed: 141 Python tests; graph guard validated 229 tasks / 426 edges with zero errors and one preserved warning for T0001's non-ID assumption metadata; recorded-output and evidence checks passed. [Run 40113006243](https://github.com/artinrahimii/project/actions/runs/40113006243).
+- Product workflow passed on the same head: Windows WPF host build, HostLifecycle.Tests, and Android APK/unit-test jobs. [Run 40113006228](https://github.com/artinrahimii/project/actions/runs/40113006228).
+- The lifecycle harness invokes `ModelCatalogParserAcceptanceTests.Run()` from `tests/HostLifecycle.Tests/Program.cs`, and `HostLifecycle.Tests.csproj` compiles the production `ModelCatalogParser.cs`; the corrected duplicate-root-property acceptance cases therefore ran on this exact head.
+- The earlier compile failure (A002) and graph-quality metadata failure (A004) remain in the execution history. Their fixes are followed by the passing exact-head checks above.
+- T0069 is complete for strict catalog parsing and validation only. This does not claim that the repository currently bundles model catalog entries or implements model download/installation or P2P transport.
+- Next candidate: T0070, after its incoming dependency edges are reviewed against actual parser and UI contracts.
