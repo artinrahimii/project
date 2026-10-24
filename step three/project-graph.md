@@ -12781,24 +12781,29 @@
         "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs",
         "step three/T0075/execution-report.md"
       ],
-      "notes": "Offline catalog cache implementation and the stale UI assertion have been corrected. The exact-head quality gate then exposed inconsistent attempt-history classification in this graph record; corrected the history to retain both failed attempts accurately. Keep in_progress until a new exact-head quality gate, Windows build/host tests, and local inference integration workflow pass.",
+      "notes": "Offline catalog cache implementation and UI delegation are present. Two prior CI failures are retained in history. Added regression coverage for malformed source data falling back only to a previously validated cache; this new test is awaiting exact-head CI. Do not mark done until the resulting exact-head quality gate and Windows host build/lifecycle tests pass.",
       "execution_summary": {
-        "attempt_count": 3,
+        "attempt_count": 4,
         "failed_attempt_count": 2,
-        "last_attempt_id": "T0075-attempt-3",
-        "last_attempt_result": "graph_guard_failed",
+        "last_attempt_id": "T0075-attempt-4",
+        "last_attempt_result": "partial",
         "changed_files": [
           "src/Host.Windows/Models/Catalog/OfflineModelCatalogStore.cs",
           "src/Host.Windows/MainWindow.xaml.cs",
           "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs",
           "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
-          "tests/test_model_catalog_ui.py"
+          "tests/test_model_catalog_ui.py",
+          "step three/T0075/execution-report.md",
+          "step three/project-graph.md"
         ],
         "related_commits": [],
-        "tests_passed": [],
+        "tests_passed": [
+          "Parent commit 77dc359ad939e0dc193e06a7d918452908e040df: Step Three quality gate run 40126392140 succeeded (not evidence for the newly added regression assertion).",
+          "Parent commit 77dc359ad939e0dc193e06a7d918452908e040df: Windows host build and HostLifecycle tests succeeded in product build run 40126392164 (not evidence for the newly added regression assertion)."
+        ],
         "tests_failed": [
-          "Step Three quality gate run 40124499347: tests/test_model_catalog_ui.py expected direct ModelCatalogFileLoader construction in MainWindow; updated test now checks OfflineModelCatalogStore integration.",
-          "Step Three quality gate run 40124596599: tools/graph_guard.py rejected T0075 because failed_attempt_count=1 but execution_history contained zero entries with result='failed'."
+          "Run 40124499347: stale tests/test_model_catalog_ui.py assertion failed before correction.",
+          "Run 40124596599: graph_guard rejected a mismatched failed-attempt count/history before correction."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -12866,6 +12871,24 @@
             "73da9d8f189211f288c4c749eb37cad2e1630ade"
           ],
           "timestamp": "2026-10-24T00:00:00Z"
+        },
+        {
+          "attempt_id": "T0075-attempt-4",
+          "result": "partial",
+          "base_commit": "77dc359ad939e0dc193e06a7d918452908e040df",
+          "summary": "Added a C# acceptance regression asserting that a malformed source catalog falls back to the last validated cache, while retaining the existing missing-source and invalid-cache checks. The new assertion has not yet run in CI.",
+          "changed_files": [
+            "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs",
+            "step three/T0075/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Wait for exact-head Step Three quality gate and Windows host/lifecycle tests. If they pass, record the actual resulting commit/run evidence and then mark T0075 done. Before starting T0076, review T0075 -> T0076 using the real task contract."
         }
       ]
     },
@@ -25439,6 +25462,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-24T19:20:00Z"
+  "updated_at": "2026-10-25T00:24:00+03:30"
 }
 ```

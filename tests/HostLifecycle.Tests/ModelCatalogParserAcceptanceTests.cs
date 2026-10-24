@@ -125,6 +125,13 @@ internal static class ModelCatalogParserAcceptanceTests
             if (usedCache || first.Models.Single().Id != "offline-record" || !File.Exists(cachePath))
                 throw new Exception("A valid online/local catalog must be loaded and cached without claiming fallback.");
 
+            // An existing but malformed source must not hide the last valid cache.
+            File.WriteAllText(sourcePath, "{ invalid json", new UTF8Encoding(false));
+            var malformedSourceFallback = store.Load(sourcePath, cachePath, new[] { "models.example.test" },
+                LocalInferenceBackendFactory.SupportedBackendIds, new[] { "licenses.example.test" }, out usedCache);
+            if (!usedCache || malformedSourceFallback.Models.Single().Id != "offline-record")
+                throw new Exception("A malformed source catalog must fall back to the last validated cached catalog.");
+
             File.Delete(sourcePath);
             var offline = store.Load(sourcePath, cachePath, new[] { "models.example.test" },
                 LocalInferenceBackendFactory.SupportedBackendIds, new[] { "licenses.example.test" }, out usedCache);

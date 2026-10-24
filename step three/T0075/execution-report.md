@@ -11,3 +11,11 @@
 - CI attempt 2: quality gate run `40124596599` passed all 146 Python tests and Python syntax compilation, but `tools/graph_guard.py` failed on a history consistency mismatch (`failed_attempt_count=1`, while no history entry was labeled `failed`). The graph record now retains both failed attempts and reports three attempts, two failures; the latest quality gate must rerun before T0075 can be marked done.
 - Cache location: under the current user's LocalApplicationData/WhiteP/model-catalog-cache.json. The cache contains public catalog metadata only; no model weights or secrets.
 - Status: in progress. Do not mark done until the exact-head quality gate, Windows build/host tests, and local inference integration workflows pass.
+
+
+## Attempt 4 — regression coverage (V 3.0.233)
+
+- Base: `77dc359ad939e0dc193e06a7d918452908e040df` on `main`.
+- Change: extended `OfflineCatalogStoreCachesOnlyValidatedDataAndFallsBackWhenSourceIsMissing` to also overwrite the selected source with malformed JSON after a valid cache exists, then assert the store returns the prior validated catalog with `usedCache == true`. Existing missing-source fallback and invalid-cache rejection remain covered.
+- This is a real acceptance-test change; the test has not yet been executed on the new revision. The parent revision's Step Three quality gate (run `40126392140`) and Windows host build/lifecycle test jobs (run `40126392164`) passed, but are not evidence for this new assertion.
+- Task remains `in_progress` until the exact-head quality gate and Windows host/lifecycle tests pass. Previous failed attempts remain preserved in the graph history.
