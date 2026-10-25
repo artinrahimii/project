@@ -13816,8 +13816,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0081 و T0075 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "تکمیل‌شده",
       "actual_output_paths": [
         "src/Host.Infrastructure/LocalHostSettingsStore.cs",
         "src/Host.Windows/MainWindow.xaml.cs",
@@ -13832,14 +13832,15 @@
         "src/Host.Infrastructure/LocalHostSettingsStore.cs",
         "src/Host.Windows/MainWindow.xaml.cs",
         "tests/HostLifecycle.Tests/LocalHostSettingsPersistenceTests.cs",
-        "tests/HostLifecycle.Tests/Program.cs"
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0082/execution-report.md"
       ],
-      "notes": "Persists selected catalog entry ID as a preference, distinct from the server ModelId; this alone does not activate/load a model in the inference backend.",
+      "notes": "Selection preference is persisted and restored; it remains distinct from the inference server ModelId and does not itself load/activate model weights. Exact-head quality gate, HostLifecycle suite, Windows WPF build/startup smoke test, and live local inference integration passed.",
       "execution_summary": {
-        "attempt_count": 1,
+        "attempt_count": 2,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0082-A001",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "T0082-A002",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Host.Infrastructure/LocalHostSettingsStore.cs",
           "src/Host.Windows/MainWindow.xaml.cs",
@@ -13848,13 +13849,20 @@
           "step three/T0082/execution-report.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
+        "related_commits": [
+          "54042409bc3ac798461c5fb2a558995e37252497"
+        ],
+        "tests_passed": [
+          "Step Three quality gate passed: https://github.com/artinrahimii/project/actions/runs/40166342063",
+          "HostLifecycle suite passed including LocalHostSettingsPersistenceTests: https://github.com/artinrahimii/project/actions/runs/40166342049/job/121088065005",
+          "Windows WPF Release build and startup smoke test passed: https://github.com/artinrahimii/project/actions/runs/40166342049/job/121088064905",
+          "Real local llama.cpp inference and pinned GGUF acceptance passed: https://github.com/artinrahimii/project/actions/runs/40166342073"
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "in_review",
+          "state": "passed",
           "triggering_contracts": [
             "LocalHostSettings schema and validation",
             "OfflineModelCatalogStore.Load catalog entry ID",
@@ -13866,7 +13874,8 @@
           "review_evidence": [
             "src/Host.Infrastructure/LocalHostSettingsStore.cs",
             "src/Host.Windows/Models/Catalog/OfflineModelCatalogStore.cs",
-            "src/Host.Windows/MainWindow.xaml.cs"
+            "src/Host.Windows/MainWindow.xaml.cs",
+            "tests/HostLifecycle.Tests/LocalHostSettingsPersistenceTests.cs"
           ]
         }
       },
@@ -13894,6 +13903,45 @@
             "Added optional activeCatalogModelId JSON field without changing schema version; missing field deserializes as null."
           ],
           "follow_up": "Run exact-head quality gate and Windows HostLifecycle/product build; mark done only after actual results pass."
+        },
+        {
+          "attempt_id": "T0082-A002",
+          "started_at": "2026-10-25T05:40:01Z",
+          "ended_at": "2026-10-25T05:40:19Z",
+          "result": "succeeded",
+          "summary": "Exact-head quality gate passed; HostLifecycle tests passed including active-selection persistence/legacy settings tests; Windows WPF Release build and startup smoke test passed; live local llama.cpp/GGUF integration passed. Android build remains part of the wider product workflow but is not needed to verify this host-settings task.",
+          "changed_files": [
+            "step three/T0082/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40166342063"
+            },
+            {
+              "name": "HostLifecycle suite including LocalHostSettingsPersistenceTests",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40166342049/job/121088065005"
+            },
+            {
+              "name": "Windows WPF Release build and startup smoke test",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40166342049/job/121088064905"
+            },
+            {
+              "name": "Real local inference integration",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40166342073"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Proceed to T0083 only after reviewing its incoming dependency edges; the active catalog selection is a preference, not proof that the model is installed or active in the backend."
         }
       ]
     },
@@ -26371,6 +26419,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-25T05:30:00.000Z"
+  "updated_at": "2026-10-25T05:41:00.000Z"
 }
 ```
