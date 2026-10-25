@@ -13165,33 +13165,85 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0076 و T0075 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "src/Host.Windows/Models/VerifiedModelInstaller.cs",
+        "tests/HostLifecycle.Tests/VerifiedModelInstallerAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0077/execution-report.md",
+        "step three/project-graph.md"
+      ],
       "expected_output_paths": [
         "src/Host.Windows/Models/ + tests/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "src/Host.Windows/Models/VerifiedModelInstaller.cs",
+        "tests/HostLifecycle.Tests/VerifiedModelInstallerAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0077/execution-report.md"
+      ],
+      "notes": "Implemented a staged installer that hashes completed output incrementally with SHA-256, compares the checksum in constant time, and only then moves the file from a same-directory temporary path to the final name. Exact-head acceptance tests and graph quality gate are pending.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0077-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Host.Windows/Models/VerifiedModelInstaller.cs",
+          "tests/HostLifecycle.Tests/VerifiedModelInstallerAcceptanceTests.cs",
+          "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+          "tests/HostLifecycle.Tests/Program.cs",
+          "step three/T0077/execution-report.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
+          "state": "reviewed",
+          "triggering_contracts": [
+            "ModelStreamingDownloader.DownloadAsync",
+            "ModelCatalogEntry.SizeBytes",
+            "ModelCatalogEntry.ChecksumAlgorithm",
+            "ModelCatalogEntry.ChecksumValue"
+          ],
           "affected_by_contract_changes": [],
-          "review_evidence": []
+          "review_evidence": [
+            "src/Host.Windows/Models/ModelStreamingDownloader.cs",
+            "src/Host.Windows/Models/Catalog/ModelCatalogModels.cs",
+            "tests/HostLifecycle.Tests/ModelStreamingDownloaderAcceptanceTests.cs"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0077-A001",
+          "started_at": "2026-10-25T04:30:37.669Z",
+          "ended_at": "2026-10-25T04:30:37.669Z",
+          "result": "partial",
+          "summary": "Implemented VerifiedModelInstaller. It downloads via the existing bounded streaming downloader into a unique staging file, verifies SHA-256 from a FileStream, compares digests in constant time, refuses existing destinations, and promotes only a verified file. The new acceptance suite covers valid installation, checksum mismatch cleanup, unsupported algorithm rejection before network access, and not overwriting an existing file. CI is pending.",
+          "changed_files": [
+            "src/Host.Windows/Models/VerifiedModelInstaller.cs",
+            "tests/HostLifecycle.Tests/VerifiedModelInstallerAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "step three/T0077/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "related_commits": [],
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Run the exact-head graph quality gate and HostLifecycle tests. Correct any compile/test failures before marking done."
+        }
+      ]
     },
     {
       "id": "T0078",
@@ -21810,19 +21862,29 @@
       "from": "T0076",
       "to": "T0077",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0077 directly calls ModelStreamingDownloader.DownloadAsync and consumes ModelCatalogEntry.SizeBytes, ChecksumAlgorithm, and ChecksumValue; it cannot implement safe promotion without that real downloader/metadata contract. Retain type=blocks.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/Models/ModelStreamingDownloader.cs",
+        "src/Host.Windows/Models/Catalog/ModelCatalogModels.cs",
+        "tests/HostLifecycle.Tests/ModelStreamingDownloaderAcceptanceTests.cs",
+        "step three/T0076/execution-report.md"
+      ]
     },
     {
       "from": "T0075",
       "to": "T0077",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0077 consumes already validated catalog metadata but does not call OfflineModelCatalogStore. The graph start condition still requires T0075 acceptance, so retain type=blocks and the conservative order without claiming a direct technical interface dependency.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/Models/Catalog/OfflineModelCatalogStore.cs",
+        "src/Host.Windows/Models/Catalog/ModelCatalogParser.cs",
+        "src/Host.Windows/Models/Catalog/ModelCatalogModels.cs",
+        "step three/T0075/execution-report.md"
+      ]
     },
     {
       "from": "T0077",
@@ -25693,8 +25755,38 @@
         "step three/T0075/execution-report.md"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-25T04:30:37.669Z",
+      "edge_from": "T0076",
+      "edge_to": "T0077",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "reason": "T0077 directly calls ModelStreamingDownloader.DownloadAsync and consumes ModelCatalogEntry.SizeBytes, ChecksumAlgorithm, and ChecksumValue; it cannot implement safe promotion without that real downloader/metadata contract. Retain type=blocks.",
+      "evidence": [
+        "src/Host.Windows/Models/ModelStreamingDownloader.cs",
+        "src/Host.Windows/Models/Catalog/ModelCatalogModels.cs",
+        "tests/HostLifecycle.Tests/ModelStreamingDownloaderAcceptanceTests.cs",
+        "step three/T0076/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-25T04:30:37.669Z",
+      "edge_from": "T0075",
+      "edge_to": "T0077",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "reason": "T0077 consumes already validated catalog metadata but does not call OfflineModelCatalogStore. The graph start condition still requires T0075 acceptance, so retain type=blocks and the conservative order without claiming a direct technical interface dependency.",
+      "evidence": [
+        "src/Host.Windows/Models/Catalog/OfflineModelCatalogStore.cs",
+        "src/Host.Windows/Models/Catalog/ModelCatalogParser.cs",
+        "src/Host.Windows/Models/Catalog/ModelCatalogModels.cs",
+        "step three/T0075/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-25T04:28:35.598Z"
+  "updated_at": "2026-10-25T04:30:37.669Z"
 }
 ```

@@ -21,5 +21,6 @@
     <Compile Include="../../src/Host.Windows/Models/Catalog/ModelCatalogModels.cs" Link="ModelCatalogModels.cs" />
     <Compile Include="../../src/Host.Windows/Models/Catalog/ModelCatalogParser.cs" Link="ModelCatalogParser.cs" />
     <Compile Include="../../src/Host.Windows/Models/ModelStreamingDownloader.cs" Link="ModelStreamingDownloader.cs" />
+    <Compile Include="../../src/Host.Windows/Models/VerifiedModelInstaller.cs" Link="VerifiedModelInstaller.cs" />
   </ItemGroup>
 </Project>
