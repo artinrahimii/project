@@ -975,9 +975,9 @@
       ],
       "notes": "T0007 remains a broad traceability task. A007's deterministic unavailable-backend fallback and exact-message regression assertion passed GitHub Actions on V 3.0.42. Revalidation of main commit 2b15191008128bdf98cda5a6eaacbf5796c964ed shows MainWindow explicitly injects LocalInferenceBackendFactory.Create, which returns LlamaCppServerBackend; UnconfiguredInferenceBackend is only the HostInferenceSession default fallback when no backend/factory is configured, not evidence by itself that the current UI has no production backend. Keep T0007 in_progress because the broad task-wide traceability criterion is not yet proven complete. Current-round CI retries failed before runner allocation, so no new tests were executed. The T0007 -> T0008 edge remains validated as sequencing_only. Latest exact-main commit 95addc4385000528d2f7e10cea646ad84da05e8a was revalidated: both current workflows failed on retry before runner allocation (runner_id=0, empty runner_name, steps=[]). The validation tool's compatibility with the documented result 'passed' and two graph counter mismatches were corrected in this round; this does not complete T0007 or prove product acceptance.",
       "execution_summary": {
-        "attempt_count": 9,
+        "attempt_count": 10,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0007-A009",
+        "last_attempt_id": "T0007-A010",
         "last_attempt_result": "partial",
         "changed_files": [
           "tools/graph_guard.py",
@@ -987,7 +987,8 @@
           "step three/project-graph.md"
         ],
         "related_commits": [
-          "632c36d257ca079dd9bdee07f5415aa3c7c97cc3"
+          "632c36d257ca079dd9bdee07f5415aa3c7c97cc3",
+          "150c3eb3ff3b25c73cf68d3ccf0fa4ce191c3d84"
         ],
         "tests_passed": [
           "GitHub Actions Step Three quality gate run 39671083734 — passed for exact commit aa1bc7e77bc5bbce80e9d7f987de75c1bdc71c36 (V 3.0.42).",
@@ -1243,6 +1244,37 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Restore runner allocation or use a suitable environment with the repository and required .NET/Android toolchains. Run the graph-guard regression test and full quality gate, then Windows build, Android APK build, and host lifecycle tests. Keep T0007 in_progress until the broad acceptance criterion is supported by evidence."
+        },
+        {
+          "attempt_id": "T0007-A010",
+          "started_at": "2026-10-25T13:02:29Z",
+          "ended_at": "2026-10-25T13:02:37Z",
+          "result": "partial",
+          "summary": "Re-ran the exact-current-commit GitHub Actions quality gate and product build. Both retry attempts again failed before runner allocation; raw job API reports runner_id=0, empty runner_name, and steps=[]. No test/build command ran, so this provides no evidence of a product-code failure or a passing acceptance criterion.",
+          "changed_files": [
+            "step three/T0007/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Step Three quality gate retry — run 40191738844, attempt 2",
+              "result": "not_run",
+              "summary": "Workflow failed before runner allocation; job runner_id=0, runner_name empty, steps=[]. Python tests and graph checks did not execute.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40191738844"
+            },
+            {
+              "name": "White-P product build retry — run 40191738848, attempt 2",
+              "result": "not_run",
+              "summary": "All three jobs failed before runner allocation; runner_id=0, runner_name empty, steps=[]. Windows build, Android APK build and lifecycle tests did not execute.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40191738848"
+            }
+          ],
+          "failure_details": "The GitHub Actions API shows both workflows ended failure before any runner was assigned. No source-level root cause was established. The added graph-guard regression test and all product build/test commands remain unexecuted for this revision.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Restore a working GitHub Actions runner or run from a suitable checkout with Python 3.13, .NET 8 and Android SDK/JDK available. Then execute tests/test_graph_guard.py, the complete quality gate, Windows host build/lifecycle tests and Android APK build. Keep T0007 in_progress until its broad acceptance criterion is demonstrated."
         }
       ]
     },

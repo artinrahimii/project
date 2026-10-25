@@ -92,3 +92,12 @@
 - No product source changed and no product acceptance criterion was newly proven. T0007 remains `in_progress`; this is a validation-infrastructure correction and partial review, not product completion.
 - Next action: obtain a functioning GitHub Actions runner or suitable local toolchain, run the new regression test and full quality gate, then rerun the Windows/Android build and host lifecycle tests. Keep the broad T0007 acceptance open until task-wide traceability is supported by actual evidence.
 
+
+## Attempt T0007-A010 — current-main workflow retry (2026-10-25)
+
+- Exact base commit: `150c3eb3ff3b25c73cf68d3ccf0fa4ce191c3d84` (`V 3.0.281`).
+- Retried [Step Three quality gate run 40191738844](https://github.com/artinrahimii/project/actions/runs/40191738844) and [White-P product build run 40191738848](https://github.com/artinrahimii/project/actions/runs/40191738848).
+- Both second attempts failed before runner allocation. The GitHub Jobs API reports `runner_id=0`, an empty `runner_name`, and `steps=[]` for the quality job and all three product-build jobs.
+- Result: `partial`; no Python test, .NET test, Windows build, or Android APK build ran. This is not evidence of a source-code failure and does not prove the new graph-guard regression test passes.
+- No product implementation was changed in this attempt. T0007 remains `in_progress`.
+- Follow-up: restore runner availability or use a suitable local checkout/toolchain, execute the graph guard regression and full quality/build suite, then revisit the broad T0007 acceptance criterion.
