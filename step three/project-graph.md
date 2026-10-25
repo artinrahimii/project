@@ -14602,8 +14602,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0085 و T0075 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال انجام",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "src/Host.Windows/Models/VerifiedModelInstaller.cs",
         "tests/HostLifecycle.Tests/UpdateModelSafetyAcceptanceTests.cs",
@@ -14621,14 +14621,20 @@
         "tests/HostLifecycle.Tests/HostInferenceSessionConcurrencyTests.cs",
         "tests/HostLifecycle.Tests/Program.cs",
         "step three/T0086/execution-report.md",
-        "step three/project-graph.md"
+        "step three/project-graph.md",
+        ".github/workflows/quality.yml",
+        ".github/workflows/product-build.yml",
+        ".github/workflows/real-inference.yml",
+        "https://github.com/artinrahimii/project/actions/runs/40172805758",
+        "https://github.com/artinrahimii/project/actions/runs/40172805864",
+        "https://github.com/artinrahimii/project/actions/runs/40172805708"
       ],
       "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
       "execution_summary": {
-        "attempt_count": 1,
+        "attempt_count": 2,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0086-2026-10-25-01",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "T0086-2026-10-25-02",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Host.Windows/Models/VerifiedModelInstaller.cs",
           "tests/HostLifecycle.Tests/UpdateModelSafetyAcceptanceTests.cs",
@@ -14637,20 +14643,28 @@
           "step three/T0086/execution-report.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
+        "related_commits": [
+          "4968818d92762c64b8078111478000d10c48d4cd"
+        ],
+        "tests_passed": [
+          "Step Three graph and Python quality gate — https://github.com/artinrahimii/project/actions/runs/40172805758",
+          "HostLifecycle unit/integration tests and T0086 failure-path acceptance tests — https://github.com/artinrahimii/project/actions/runs/40172805864",
+          "Windows WPF Release build and startup smoke test — https://github.com/artinrahimii/project/actions/runs/40172805864",
+          "Real local llama.cpp/GGUF inference — https://github.com/artinrahimii/project/actions/runs/40172805708"
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "in_review",
+          "state": "passed",
           "triggering_contracts": [
             "T0085 verified atomic model-update contract",
-            "T0075 validated model catalog metadata and explicit source-host allowlist"
+            "T0075 validated model catalog metadata and explicit source-host allowlist",
+            "T0084 disconnect serializes backend disposal against in-flight work"
           ],
           "affected_by_contract_changes": [
-            "Installer adds actual destination-volume free-space preflight before network transfer or staging writes.",
-            "Model removal regression verifies disconnect serialization with an in-flight generation."
+            "VerifiedModelInstaller checks destination-volume free space before network/staging writes and keeps the existing model during failure/cancellation.",
+            "Host session disconnect waits until generation is finished before disposing backend resources."
           ],
           "review_evidence": [
             "src/Host.Windows/Models/VerifiedModelInstaller.cs",
@@ -14659,7 +14673,8 @@
             "tests/HostLifecycle.Tests/UpdateModelSafetyAcceptanceTests.cs",
             "tests/HostLifecycle.Tests/HostInferenceSessionConcurrencyTests.cs"
           ]
-        }
+        },
+        "started_at": "2026-10-25T07:26:32.450Z"
       },
       "execution_history": [
         {
@@ -14706,6 +14721,51 @@
             "Added model removal serialization test."
           ],
           "follow_up": "Run exact-head quality, HostLifecycle, and Windows build checks. Preserve T0086 as in_progress until all added cases pass."
+        },
+        {
+          "attempt_id": "T0086-2026-10-25-02",
+          "started_at": "2026-10-25T07:27:02Z",
+          "ended_at": "2026-10-25T07:27:59Z",
+          "result": "succeeded",
+          "summary": "On exact implementation commit 4968818d92762c64b8078111478000d10c48d4cd, the Step Three graph quality gate, HostLifecycle test suite (including the new failure-path and in-flight removal regression tests), Windows WPF Release build and startup smoke test, and real llama.cpp/GGUF inference all passed. The Android APK job was still in progress during this task’s final validation and is unrelated to the changed Windows/installer code.",
+          "changed_files": [],
+          "commit_sha": "4968818d92762c64b8078111478000d10c48d4cd",
+          "tests": [
+            {
+              "name": "Step Three graph and Python quality gate",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40172805758"
+            },
+            {
+              "name": "HostLifecycle unit/integration tests and T0086 failure-path acceptance tests",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40172805864",
+              "job_url": "https://github.com/artinrahimii/project/actions/runs/40172805864/job/121107046376",
+              "summary": "Observed both PASS lines: insufficient disk space/HTTP failure/invalid checksum/cancelled updates preserve the existing model; model removal waits for in-flight inference before releasing backend resources."
+            },
+            {
+              "name": "Windows WPF Release build and startup smoke test",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40172805864",
+              "job_url": "https://github.com/artinrahimii/project/actions/runs/121107046194"
+            },
+            {
+              "name": "Real local llama.cpp/GGUF inference",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40172805708"
+            },
+            {
+              "name": "Android APK build",
+              "result": "pending_at_task_close",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40172805864",
+              "summary": "No failing step was reported, but this platform-independent job had not completed when T0086 evidence was recorded."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "T0086 is complete. Before implementing T0087, review its incoming T0086 and T0075 dependencies against the current license/catalog code and preserve unvalidated edges until then."
         }
       ]
     },
@@ -27139,6 +27199,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-25T07:26:32.450Z"
+  "updated_at": "2026-10-25T07:29:07.833Z"
 }
 ```

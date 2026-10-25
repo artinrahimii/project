@@ -1,10 +1,34 @@
 # T0086 — Execution report
 
-- Base commit: \`9e12e03b34e3f0f154e8aae79a05ce9d16f032f4\` (\`V 3.0.258\`), branch \`main\`.
-- Preconditions: T0085 and T0075 are done with verified evidence. Reviewed the incoming edges \`T0085 -> T0086\` and \`T0075 -> T0086\` against the current installer/catalog contracts. Both are concrete interface/contract dependencies; their existing \`type=blocks\` edges remain unchanged.
-- Production change: \`VerifiedModelInstaller\` now rejects non-positive declared sizes and checks actual free bytes on the destination volume before network access or staging-file creation. An injectable free-space provider permits deterministic insufficient-space tests without filling a real disk. The default implementation queries \`DriveInfo.AvailableFreeSpace\` for the destination volume and fails closed if capacity is unavailable.
-- New \`UpdateModelSafetyAcceptanceTests\`: (1) insufficient free space refuses the update before HTTP and leaves the previous file unchanged, (2) HTTP 503 keeps the previous file and leaves no temp/backup artifact, (3) malformed SHA-256 is rejected before networking, and (4) cancellation after actual partial download progress cleans the staging file and preserves the previous model byte-for-byte.
-- New removal regression: \`DisconnectWaitsForGenerationBeforeDisposalAsync\` starts an in-flight request, requests disconnect/removal, proves the backend remains undisposed while generation is in flight, then releases generation and checks stopped/disposed/not-connected state.
-- Existing coverage remains registered for interrupted network reads, partial-download cancellation, checksum mismatch, atomic replacement, and ordinary backend disposal.
-- Task status is **in progress** until the new exact-head quality gate, HostLifecycle suite and Windows build actually pass. No new test result is claimed yet.
-- Next action: inspect CI for the versioned commit, fix failures if any, record each attempt, and only then mark T0086 done.
+## Target
+
+- Repository \`artinrahimii/project\`, branch \`main\`.
+- Implementation commit \`4968818d92762c64b8078111478000d10c48d4cd\` (\`V 3.0.259\`): https://github.com/artinrahimii/project/commit/4968818d92762c64b8078111478000d10c48d4cd
+- The graph was read from the exact target commit tree and parsed as complete fenced JSON; the pre-update graph had 229 tasks and 426 edges, round-tripped with no duplicate task identifiers or dangling edge endpoints.
+
+## Changes implemented
+
+- \`VerifiedModelInstaller\` now validates positive declared model size and checks real free bytes on the destination volume using \`DriveInfo.AvailableFreeSpace\` before network access or staging creation. An injectable provider makes insufficient-space testing deterministic without filling a real disk.
+- New \`UpdateModelSafetyAcceptanceTests.cs\` exercises four real failure-path scenarios: insufficient disk space before HTTP, HTTP 503, malformed SHA-256 metadata before HTTP, and cancellation after observed partial download progress. Each update failure keeps the original model byte-for-byte and leaves no staging/backup artifact.
+- New \`DisconnectWaitsForGenerationBeforeDisposalAsync\` starts an in-flight inference, requests disconnect, confirms the active backend is not disposed prematurely, releases inference, and then verifies the stopped/disposed/disconnected state.
+- The new tests are explicitly registered in \`tests/HostLifecycle.Tests/Program.cs\`. Existing tests for truncated downloads, install checksum mismatch, update replacement, cancellation during initial download and ordinary disconnect remain intact.
+
+## Dependency review
+
+- \`T0085 -> T0086\`: validated as \`contract_or_interface_dependency\`; new safety assertions exercise the staged atomic-update and preservation behavior introduced by T0085.
+- \`T0075 -> T0086\`: validated as \`contract_or_interface_dependency\`; the tested installer consumes model catalog metadata for declared size, format, checksum and allowlisted HTTPS source.
+- Existing edge type \`blocks\` was preserved for both edges; neither edge was deleted nor weakened. Rationale and evidence are stored in the graph edge-change log.
+
+## Test results on commit \`4968818d92762c64b8078111478000d10c48d4cd\`
+
+- Step Three quality gate **passed**: https://github.com/artinrahimii/project/actions/runs/40172805758
+- HostLifecycle unit/integration suite **passed**: https://github.com/artinrahimii/project/actions/runs/40172805864/job/121107046376
+  - Observed in the actual log: \`PASS: insufficient disk space, HTTP failure, invalid checksum, and cancelled updates preserve the existing model.\`
+  - Observed in the actual log: \`PASS: model removal waits for in-flight inference before releasing backend resources.\`
+- Windows WPF Release build and startup smoke test **passed**: https://github.com/artinrahimii/project/actions/runs/40172805864/job/121107046194
+- Real local llama.cpp/GGUF inference **passed**: https://github.com/artinrahimii/project/actions/runs/40172805708
+- The broader Android APK job was still running at this task close, with no failing step reported. Android source was not modified by T0086; the pending platform job is not presented as a passed test.
+
+## Outcome
+
+**T0086 is complete** against its acceptance criteria: the disk-capacity check exists in production code, the targeted failure paths and safe-removal concurrency case passed in CI, and the Windows host built and started successfully. This does not assert that every unrelated CI job was completed when this record was written.
