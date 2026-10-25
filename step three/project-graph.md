@@ -13689,8 +13689,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0080 و T0075 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "src/Host.Windows/Models/VerifiedModelInstaller.cs",
         "tests/HostLifecycle.Tests/VerifiedModelInstallerAcceptanceTests.cs",
@@ -13705,20 +13705,25 @@
         "tests/HostLifecycle.Tests/VerifiedModelInstallerAcceptanceTests.cs",
         "step three/T0081/execution-report.md"
       ],
-      "notes": "Extended installer acceptance beyond checksum: catalog entries must declare GGUF, and after SHA-256 matches the staged file must contain the GGUF magic and a supported header version before it can be promoted. Added negative tests with checksum-correct but invalid headers/versions; exact-head CI is pending.",
+      "notes": "Exact-head Step Three quality gate and HostLifecycle tests passed on commit 96887ab62ae49d16eb1abd052464491054f194a1. The acceptance suite validates a checksum-correct valid GGUF file, rejects checksum-correct invalid magic, rejects an unsupported GGUF version, and rejects non-GGUF declared format before network access. No invalid payload is promoted; staging cleanup assertions passed. The wider Windows/Android product build was still in progress at the time of this task record.",
       "execution_summary": {
-        "attempt_count": 1,
+        "attempt_count": 2,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0081-A001",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "T0081-A002",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Host.Windows/Models/VerifiedModelInstaller.cs",
           "tests/HostLifecycle.Tests/VerifiedModelInstallerAcceptanceTests.cs",
           "step three/T0081/execution-report.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
+        "related_commits": [
+          "96887ab62ae49d16eb1abd052464491054f194a1"
+        ],
+        "tests_passed": [
+          "Exact-head Step Three quality gate passed: https://github.com/artinrahimii/project/actions/runs/40162939731",
+          "Exact-head HostLifecycle suite passed, including GGUF header validation: https://github.com/artinrahimii/project/actions/runs/40162939679/job/121078109102"
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -13758,6 +13763,39 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Run graph quality gate and HostLifecycle acceptance suite; fix any failure before marking T0081 done."
+        },
+        {
+          "attempt_id": "T0081-A002",
+          "started_at": "2026-10-25T04:45:05.653Z",
+          "ended_at": "2026-10-25T04:45:05.653Z",
+          "result": "succeeded",
+          "summary": "Exact-head Step Three quality gate and HostLifecycle tests passed. The registered VerifiedModelInstallerAcceptanceTests suite ran its positive and negative cases, including checksum-correct invalid magic, unsupported GGUF version, and unsupported declared format before network access. The generic acceptance PASS log was emitted only after all checks completed, and invalid inputs left no final or staging files. Full WPF/Android product build was still active and is not claimed as passed here.",
+          "changed_files": [
+            "src/Host.Windows/Models/VerifiedModelInstaller.cs",
+            "tests/HostLifecycle.Tests/VerifiedModelInstallerAcceptanceTests.cs",
+            "step three/T0081/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "related_commits": [
+            "96887ab62ae49d16eb1abd052464491054f194a1"
+          ],
+          "tests": [
+            {
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40162939731"
+            },
+            {
+              "name": "HostLifecycle unit and integration tests",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40162939679/job/121078109102"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Proceed to T0082; use persistent local settings for selected model identity and fail closed on malformed settings."
         }
       ]
     },
@@ -26271,6 +26309,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-25T04:43:15.393Z"
+  "updated_at": "2026-10-25T04:45:05.653Z"
 }
 ```
