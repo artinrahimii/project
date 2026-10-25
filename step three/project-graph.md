@@ -15303,33 +15303,104 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0089 و T0087 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال انجام",
+      "actual_output_paths": [
+        "src/Host.Application/Chat/ChatConversation.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "tests/HostLifecycle.Tests/ChatConversationAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "tests/test_wpf_entrypoint.py",
+        "step three/T0090/execution-report.md"
+      ],
       "expected_output_paths": [
         "src/Host.Windows/Chat/ و src/Host.Windows/Tools/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "src/Host.Application/Chat/ChatConversation.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "tests/HostLifecycle.Tests/ChatConversationAcceptanceTests.cs",
+        "tests/test_wpf_entrypoint.py",
+        "step three/T0090/execution-report.md"
+      ],
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود. پیاده‌سازی اولیه در V 3.0.272 انجام شد؛ تا پیش از اجرای موفق CI روی همین کد، تکمیل تأیید نشده است.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
-        "related_commits": [],
+        "last_attempt_id": "T0090-2026-10-25-01",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Host.Application/Chat/ChatConversation.cs",
+          "src/Host.Windows/MainWindow.xaml.cs",
+          "tests/HostLifecycle.Tests/ChatConversationAcceptanceTests.cs",
+          "tests/HostLifecycle.Tests/Program.cs",
+          "tests/test_wpf_entrypoint.py",
+          "step three/T0090/execution-report.md",
+          "step three/project-graph.md"
+        ],
+        "related_commits": [
+          "818c657a3a106b52de85bcca316ad3967e04f54c"
+        ],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
+          "state": "pending",
+          "triggering_contracts": [
+            "T0089 chat send/response flow",
+            "T0087 model-license disclosure sequencing"
+          ],
           "affected_by_contract_changes": [],
-          "review_evidence": []
+          "review_evidence": [
+            "src/Host.Windows/MainWindow.xaml.cs",
+            "src/Host.Application/HostInferenceSession.cs",
+            "step three/T0089/execution-report.md",
+            "step three/T0087/execution-report.md"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0090-2026-10-25-01",
+          "started_at": "2026-10-25T09:44:00Z",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Added an ordered in-memory conversation object, integrated user/assistant/system message insertion into the WPF chat flow, and added C# acceptance tests plus a Python integration guard. Awaiting execution of CI/build/lifecycle tests on this commit.",
+          "changed_files": [
+            "src/Host.Application/Chat/ChatConversation.cs",
+            "src/Host.Windows/MainWindow.xaml.cs",
+            "tests/HostLifecycle.Tests/ChatConversationAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "tests/test_wpf_entrypoint.py",
+            "step three/T0090/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": "818c657a3a106b52de85bcca316ad3967e04f54c",
+          "tests": [
+            {
+              "name": "ChatConversationAcceptanceTests",
+              "result": "not_run",
+              "summary": "Added and registered; awaiting GitHub Actions execution."
+            },
+            {
+              "name": "Python quality gate",
+              "result": "pending",
+              "summary": "Regression guard added; awaiting GitHub Actions execution."
+            },
+            {
+              "name": "Windows WPF build/startup smoke test",
+              "result": "pending",
+              "summary": "Awaiting GitHub Actions execution."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect the GitHub Actions runs for the implementation commit. Mark done only if the quality gate, Windows build/startup smoke, and lifecycle tests pass; otherwise fix failures and rerun."
+        }
+      ]
     },
     {
       "id": "T0091",
@@ -23705,19 +23776,26 @@
       "from": "T0089",
       "to": "T0090",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0090 consumes the established chat request/response flow and uses its ordering to append the user message before the local model response. This is a concrete application/interface dependency; type=blocks alone is not proof.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "src/Host.Application/HostInferenceSession.cs",
+        "step three/T0089/execution-report.md"
+      ]
     },
     {
       "from": "T0087",
       "to": "T0090",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0087's model-license disclosure does not supply or define the in-memory conversation collection. Keep conservative ordering without claiming a technical dependency.",
+      "validation_status": "validated",
+      "evidence": [
+        "step three/T0087/execution-report.md",
+        "src/Host.Windows/MainWindow.xaml.cs"
+      ]
     },
     {
       "from": "T0090",
@@ -27627,8 +27705,35 @@
         "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-25T09:44:00Z",
+      "edge_from": "T0089",
+      "edge_to": "T0090",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "reason": "T0090 consumes the established chat request/response flow and uses its ordering to append the user message before the local model response. This is a concrete application/interface dependency; type=blocks alone is not proof.",
+      "evidence": [
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "src/Host.Application/HostInferenceSession.cs",
+        "step three/T0089/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-25T09:44:00Z",
+      "edge_from": "T0087",
+      "edge_to": "T0090",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "reason": "T0087's model-license disclosure does not supply or define the in-memory conversation collection. Keep conservative ordering without claiming a technical dependency.",
+      "evidence": [
+        "step three/T0087/execution-report.md",
+        "src/Host.Windows/MainWindow.xaml.cs"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-25T12:38:00Z"
+  "updated_at": "2026-10-25T09:44:00Z"
 }
 ```
