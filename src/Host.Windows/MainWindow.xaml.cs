@@ -426,46 +426,58 @@ public partial class MainWindow : Window
 
     private async void GenerateButton_Click(object sender, RoutedEventArgs e)
     {
-        if (string.IsNullOrWhiteSpace(PromptInput.Text))
+        var prompt = PromptInput.Text.Trim();
+        if (string.IsNullOrWhiteSpace(prompt))
         {
-            LifecycleState.Text = "Error — enter a prompt first.";
+            LifecycleState.Text = "Error — enter a message first.";
+            return;
+        }
+
+        if (!_session.IsConnected || !_capacityReady)
+        {
+            LifecycleState.Text = "Connect to a ready local backend and verify host capacity before sending a message.";
             return;
         }
 
         _requestedModelMemoryRequirementText = ModelMemoryRequirementGiB.Text;
         _requestedMinimumFreeDiskRequirementText = MinimumFreeDiskGiB.Text;
+        ChatMessages.Items.Add("You: " + prompt);
+        ChatMessages.ScrollIntoView(ChatMessages.Items[ChatMessages.Items.Count - 1]);
+        PromptInput.Clear();
         GenerateButton.IsEnabled = false;
         ConnectButton.IsEnabled = false;
         CancelGenerationButton.IsEnabled = true;
-        OutputText.Clear();
         try
         {
             _operationCancellation?.Dispose();
             _operationCancellation = new CancellationTokenSource();
-            var generationTask = _session.GenerateAsync(PromptInput.Text, 1024, _operationCancellation.Token);
+            var generationTask = _session.GenerateAsync(prompt, 1024, _operationCancellation.Token);
             RenderStatus(_session.Status);
-            OutputText.Text = await generationTask;
+            var response = await generationTask;
+            ChatMessages.Items.Add("Local AI: " + response);
             RenderStatus(_session.Status);
         }
         catch (OperationCanceledException)
         {
-            // Closing the client request may not stop llama.cpp's in-flight computation.
-            // Stop the managed process as a fallback so the host does not keep consuming resources.
             if (_localInferenceProcessLauncher.IsRunning)
             {
                 _localInferenceProcessLauncher.Stop();
                 LocalProcessStatus.Text = "Local engine process stopped after inference cancellation; reconnect before generating again.";
             }
             RenderStatus(_session.Status);
-            OutputText.Text = "Inference cancelled. If this app started the local engine, that process was stopped. Reconnect before the next request.";
+            ChatMessages.Items.Add("System: Inference cancelled. Reconnect before the next request.");
         }
         catch (Exception exception)
         {
             RenderStatus(_session.Status);
-            OutputText.Text = HostErrorPresentation.ToUserMessage(exception);
+            ChatMessages.Items.Add("System: " + HostErrorPresentation.ToUserMessage(exception));
         }
         finally
         {
+            if (ChatMessages.Items.Count > 0)
+            {
+                ChatMessages.ScrollIntoView(ChatMessages.Items[ChatMessages.Items.Count - 1]);
+            }
             CancelGenerationButton.IsEnabled = false;
             RenderHostHardwareSummary();
             ConnectButton.IsEnabled = true;

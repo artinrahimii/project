@@ -20,13 +20,17 @@ class WpfEntryPointTests(unittest.TestCase):
         self.assertIn("<UseWPF>true</UseWPF>", PROJECT)
 
     def test_main_window_has_required_operational_controls_and_cleanup(self):
-        for name in ("ServerUrl", "ModelId", "ConnectButton", "LifecycleState", "CpuStatus", "MemoryStatus", "CapacityStatus", "PromptInput", "OutputText", "GenerateButton"):
+        for name in ("ServerUrl", "ModelId", "ConnectButton", "LifecycleState", "CpuStatus", "MemoryStatus", "CapacityStatus", "PromptInput", "OutputText", "GenerateButton", "ChatMessages"):
             with self.subTest(control=name):
                 self.assertIn(f'x:Name="{name}"', WINDOW_XAML)
                 self.assertIn(f'window.FindName("{name}")', APP_CODE)
         self.assertIn("InitializeComponent();", WINDOW_CODE)
         self.assertIn("RenderStatus(_session.Status);", WINDOW_CODE)
         self.assertIn("_session.Dispose();", WINDOW_CODE)
+        self.assertIn('Content="Send message"', WINDOW_XAML)
+        self.assertIn('ChatMessages.Items.Add("You: " + prompt);', WINDOW_CODE)
+        self.assertIn('ChatMessages.Items.Add("Local AI: " + response);', WINDOW_CODE)
+        self.assertIn("_session.GenerateAsync(prompt, 1024", WINDOW_CODE)
 
     def test_smoke_mode_waits_for_loaded_visible_main_window_then_exits(self):
         for marker in (

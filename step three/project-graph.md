@@ -15037,20 +15037,30 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0087 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال انجام",
+      "actual_output_paths": [
+        "src/Host.Windows/MainWindow.xaml",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "tests/test_wpf_entrypoint.py",
+        "step three/T0088/execution-report.md"
+      ],
       "expected_output_paths": [
         "src/Host.Windows/Chat/ و src/Host.Windows/Tools/"
       ],
       "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "notes": "پیاده‌سازی رابط گفت‌وگوی محلی و اتصال دکمه ارسال به HostInferenceSession انجام شده است؛ تا اجرای موفق آزمون‌ها و ساخت ویندوزی، معیار پذیرش تکمیل‌شده محسوب نمی‌شود.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0088-2026-10-25-01",
+        "last_attempt_result": "in_progress",
+        "changed_files": [
+          "src/Host.Windows/MainWindow.xaml",
+          "src/Host.Windows/MainWindow.xaml.cs",
+          "tests/test_wpf_entrypoint.py",
+          "step three/T0088/execution-report.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
@@ -15063,7 +15073,28 @@
           "review_evidence": []
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0088-2026-10-25-01",
+          "started_at": "2026-10-25T10:00:00Z",
+          "ended_at": null,
+          "result": "in_progress",
+          "summary": "Implemented local chat message list and wired the send action to the existing local inference session. Awaiting CI/build/test validation.",
+          "changed_files": [
+            "src/Host.Windows/MainWindow.xaml",
+            "src/Host.Windows/MainWindow.xaml.cs",
+            "tests/test_wpf_entrypoint.py",
+            "step three/T0088/execution-report.md"
+          ],
+          "commit_sha": null,
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Run quality gate and Windows WPF build/startup smoke test; only then mark done."
+        }
+      ]
     },
     {
       "id": "T0089",
@@ -23490,10 +23521,14 @@
       "from": "T0087",
       "to": "T0088",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0088 consumes the existing HostInferenceSession and MainWindow controls, not a catalog/license artifact from T0087. T0087 is still retained as a conservative ordering prerequisite; this edge is not asserted to be a technical dependency.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/MainWindow.xaml",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "step three/T0087/execution-report.md"
+      ]
     },
     {
       "from": "T0088",
@@ -27441,6 +27476,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-25T09:01:31.506Z"
+  "updated_at": "2026-10-25T10:00:00.000Z"
 }
 ```
