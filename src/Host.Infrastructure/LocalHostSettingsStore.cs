@@ -7,7 +7,7 @@ namespace WhiteP.Host.Infrastructure;
 /// Validated settings for the local llama.cpp-compatible inference endpoint.
 /// The persisted document is explicitly schema-versioned so future changes fail closed.
 /// </summary>
-public sealed record LocalHostSettings(string ServerUrl, string ModelId, int RequestTimeoutSeconds, string? EngineExecutablePath = null, string? ModelFilePath = null)
+public sealed record LocalHostSettings(string ServerUrl, string ModelId, int RequestTimeoutSeconds, string? EngineExecutablePath = null, string? ModelFilePath = null, string? ActiveCatalogModelId = null)
 {
     public const int CurrentSchemaVersion = 1;
     public static LocalHostSettings Defaults { get; } =
@@ -36,7 +36,19 @@ public sealed record LocalHostSettings(string ServerUrl, string ModelId, int Req
             throw new ArgumentOutOfRangeException(nameof(settings), "Request timeout must be between 1 and 3600 seconds.");
         }
 
-        return new LocalHostSettings(endpoint.ToString(), model, settings.RequestTimeoutSeconds, NormalizeOptionalPath(settings.EngineExecutablePath, nameof(settings.EngineExecutablePath)), NormalizeOptionalPath(settings.ModelFilePath, nameof(settings.ModelFilePath)));
+        var activeCatalogModelId = NormalizeOptionalModelId(settings.ActiveCatalogModelId);
+        return new LocalHostSettings(endpoint.ToString(), model, settings.RequestTimeoutSeconds,
+            NormalizeOptionalPath(settings.EngineExecutablePath, nameof(settings.EngineExecutablePath)),
+            NormalizeOptionalPath(settings.ModelFilePath, nameof(settings.ModelFilePath)), activeCatalogModelId);
+    }
+
+    private static string? NormalizeOptionalModelId(string? modelId)
+    {
+        if (string.IsNullOrWhiteSpace(modelId)) return null;
+        var normalized = modelId.Trim();
+        if (normalized.Length > 128 || normalized.Any(char.IsControl))
+            throw new ArgumentException("Active catalog model ID must contain at most 128 non-control characters.", nameof(modelId));
+        return normalized;
     }
 
     private static string? NormalizeOptionalPath(string? path, string parameterName)
@@ -96,7 +108,8 @@ public sealed class LocalHostSettingsStore
                 document.ModelId ?? string.Empty,
                 document.RequestTimeoutSeconds,
                 document.EngineExecutablePath,
-                document.ModelFilePath));
+                document.ModelFilePath,
+                document.ActiveCatalogModelId));
         }
         catch (JsonException exception)
         {
@@ -118,7 +131,8 @@ public sealed class LocalHostSettingsStore
             ModelId = validated.ModelId,
             RequestTimeoutSeconds = validated.RequestTimeoutSeconds,
             EngineExecutablePath = validated.EngineExecutablePath,
-            ModelFilePath = validated.ModelFilePath
+            ModelFilePath = validated.ModelFilePath,
+            ActiveCatalogModelId = validated.ActiveCatalogModelId
         };
         var temporaryPath = _filePath + "." + Guid.NewGuid().ToString("N") + ".tmp";
         try
@@ -160,5 +174,8 @@ public sealed class LocalHostSettingsStore
 
         [JsonPropertyName("modelFilePath")]
         public string? ModelFilePath { get; init; }
+
+        [JsonPropertyName("activeCatalogModelId")]
+        public string? ActiveCatalogModelId { get; init; }
     }
 }

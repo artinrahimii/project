@@ -13816,33 +13816,86 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0081 و T0075 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "src/Host.Infrastructure/LocalHostSettingsStore.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "tests/HostLifecycle.Tests/LocalHostSettingsPersistenceTests.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0082/execution-report.md"
+      ],
       "expected_output_paths": [
         "src/Host.Windows/Models/ + tests/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "src/Host.Infrastructure/LocalHostSettingsStore.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "tests/HostLifecycle.Tests/LocalHostSettingsPersistenceTests.cs",
+        "tests/HostLifecycle.Tests/Program.cs"
+      ],
+      "notes": "Persists selected catalog entry ID as a preference, distinct from the server ModelId; this alone does not activate/load a model in the inference backend.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0082-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Host.Infrastructure/LocalHostSettingsStore.cs",
+          "src/Host.Windows/MainWindow.xaml.cs",
+          "tests/HostLifecycle.Tests/LocalHostSettingsPersistenceTests.cs",
+          "tests/HostLifecycle.Tests/Program.cs",
+          "step three/T0082/execution-report.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
-          "affected_by_contract_changes": [],
-          "review_evidence": []
+          "state": "in_review",
+          "triggering_contracts": [
+            "LocalHostSettings schema and validation",
+            "OfflineModelCatalogStore.Load catalog entry ID",
+            "MainWindow CatalogItems selection"
+          ],
+          "affected_by_contract_changes": [
+            "T0083 must review the persisted selection preference before implementing safe model switching"
+          ],
+          "review_evidence": [
+            "src/Host.Infrastructure/LocalHostSettingsStore.cs",
+            "src/Host.Windows/Models/Catalog/OfflineModelCatalogStore.cs",
+            "src/Host.Windows/MainWindow.xaml.cs"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0082-A001",
+          "started_at": "2026-10-25T05:30:00Z",
+          "ended_at": "2026-10-25T05:30:00Z",
+          "result": "partial",
+          "summary": "Added persistent ActiveCatalogModelId, restored matching catalog selection, and added round-trip, legacy-compatibility and invalid-ID tests. Exact-head CI pending.",
+          "changed_files": [
+            "src/Host.Infrastructure/LocalHostSettingsStore.cs",
+            "src/Host.Windows/MainWindow.xaml.cs",
+            "tests/HostLifecycle.Tests/LocalHostSettingsPersistenceTests.cs",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "step three/T0082/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "Added optional activeCatalogModelId JSON field without changing schema version; missing field deserializes as null."
+          ],
+          "follow_up": "Run exact-head quality gate and Windows HostLifecycle/product build; mark done only after actual results pass."
+        }
+      ]
     },
     {
       "id": "T0083",
@@ -22370,19 +22423,28 @@
       "from": "T0081",
       "to": "T0082",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "The selected catalog preference does not call VerifiedModelInstaller or consume its installed-file result; retain the graph-required order without claiming a direct installer dependency.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/Models/VerifiedModelInstaller.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "step three/T0081/execution-report.md"
+      ]
     },
     {
       "from": "T0075",
       "to": "T0082",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "MainWindow obtains model entries from OfflineModelCatalogStore.Load and persists the selected ModelCatalogEntry.Id, so the catalog-entry ID contract is consumed directly.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/Models/Catalog/OfflineModelCatalogStore.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "src/Host.Windows/Models/Catalog/ModelCatalogModels.cs",
+        "step three/T0075/execution-report.md"
+      ]
     },
     {
       "from": "T0082",
@@ -26309,6 +26371,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-25T04:45:05.653Z"
+  "updated_at": "2026-10-25T05:30:00.000Z"
 }
 ```

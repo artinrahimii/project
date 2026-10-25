@@ -63,6 +63,7 @@ VerifiedModelInstallerAcceptanceTests.Run();
 IncompleteModelDownloadAcceptanceTests.Run();
 ModelDownloadCancellationAcceptanceTests.Run();
 LocalInferenceProcessLauncherTests.Run();
+LocalHostSettingsPersistenceTests.Run();
 
 const ulong gibibyte = 1024UL * 1024UL * 1024UL;
 var sufficientHostReadiness = HostReadinessEvaluator.Evaluate(

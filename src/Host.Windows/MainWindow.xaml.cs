@@ -84,6 +84,13 @@ public partial class MainWindow : Window
                 CatalogFilePath.Text, cachePath, sourceHosts, LocalInferenceBackendFactory.SupportedBackendIds,
                 licenseHosts.Length == 0 ? null : licenseHosts, out var usedCache);
             CatalogItems.ItemsSource = catalog.Models;
+            var savedSelection = catalog.Models.FirstOrDefault(model =>
+                string.Equals(model.Id, _settings.ActiveCatalogModelId, StringComparison.Ordinal));
+            if (savedSelection is not null)
+            {
+                CatalogItems.SelectedItem = savedSelection;
+            }
+
             CatalogStatus.Text = usedCache
                 ? $"Internet or selected catalog unavailable. Showing {catalog.Models.Count} model metadata record(s) from the last validated local cache; no model was downloaded or installed."
                 : catalog.Models.Count == 0
@@ -114,6 +121,16 @@ public partial class MainWindow : Window
         var licenseUrl = model.License.Url?.ToString() ?? "Not provided";
         var licenseId = model.License.Identifier ?? "Not provided";
         var backends = string.Join(", ", model.BackendIds);
+
+        try
+        {
+            _settings = _settingsStore.Save(_settings with { ActiveCatalogModelId = model.Id });
+            CatalogStatus.Text = $"Saved model selection: {model.Id}. Selection is a persistent preference; it does not download, install, or activate the model in the inference backend.";
+        }
+        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or ArgumentException)
+        {
+            CatalogStatus.Text = "Model selection is not persisted. Check access to the local settings file.";
+        }
 
         CatalogModelDetails.Text =
             $"Name: {model.Name}\n" +
@@ -163,7 +180,8 @@ public partial class MainWindow : Window
                     ModelId.Text,
                     _settings.RequestTimeoutSeconds,
                     EngineExecutablePath.Text,
-                    ModelFilePath.Text));
+                    ModelFilePath.Text,
+                    _settings.ActiveCatalogModelId));
             }
             catch (ArgumentException exception)
             {
