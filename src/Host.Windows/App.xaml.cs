@@ -43,6 +43,7 @@ public partial class App : System.Windows.Application
                     window.FindName("PromptInput") is not TextBox ||
                     window.FindName("OutputText") is not TextBox ||
                     window.FindName("GenerateButton") is not Button ||
+                    window.FindName("ChatMessages") is not System.Windows.Controls.ListBox ||
                     window.FindName("GpuStatus") is not TextBlock ||
                     window.FindName("CpuStatus") is not TextBlock ||
                     window.FindName("MemoryStatus") is not TextBlock ||

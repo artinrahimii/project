@@ -15042,6 +15042,7 @@
       "actual_output_paths": [
         "src/Host.Windows/MainWindow.xaml",
         "src/Host.Windows/MainWindow.xaml.cs",
+        "src/Host.Windows/App.xaml.cs",
         "tests/test_wpf_entrypoint.py",
         "step three/T0088/execution-report.md"
       ],
@@ -15058,10 +15059,13 @@
         "changed_files": [
           "src/Host.Windows/MainWindow.xaml",
           "src/Host.Windows/MainWindow.xaml.cs",
+          "src/Host.Windows/App.xaml.cs",
           "tests/test_wpf_entrypoint.py",
           "step three/T0088/execution-report.md"
         ],
-        "related_commits": [],
+        "related_commits": [
+          "f194e78f24ca21480c982c216beb53d7062ac5a1"
+        ],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
@@ -15079,10 +15083,11 @@
           "started_at": "2026-10-25T10:00:00Z",
           "ended_at": null,
           "result": "in_progress",
-          "summary": "Implemented local chat message list and wired the send action to the existing local inference session. Awaiting CI/build/test validation.",
+          "summary": "Implemented local chat message list and send action using local inference; included the new ListBox in the WPF startup smoke-test assertions. Awaiting CI/build/test validation.",
           "changed_files": [
             "src/Host.Windows/MainWindow.xaml",
             "src/Host.Windows/MainWindow.xaml.cs",
+            "src/Host.Windows/App.xaml.cs",
             "tests/test_wpf_entrypoint.py",
             "step three/T0088/execution-report.md"
           ],
