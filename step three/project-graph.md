@@ -13563,33 +13563,76 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0079 و T0075 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "tests/HostLifecycle.Tests/ModelDownloadCancellationAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0080/execution-report.md",
+        "step three/project-graph.md"
+      ],
       "expected_output_paths": [
         "src/Host.Windows/Models/ + tests/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "tests/HostLifecycle.Tests/ModelDownloadCancellationAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0080/execution-report.md"
+      ],
+      "notes": "Added an acceptance test that cancels only after the real progress callback reports nonzero partial bytes from a multi-megabyte response. The test asserts that cancellation leaves neither the final model nor the staging file. Exact-head CI is pending.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0080-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "tests/HostLifecycle.Tests/ModelDownloadCancellationAcceptanceTests.cs",
+          "tests/HostLifecycle.Tests/Program.cs",
+          "step three/T0080/execution-report.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
+          "state": "reviewed",
+          "triggering_contracts": [
+            "ModelDownloadProgress.BytesDownloaded",
+            "ModelDownloadProgress.TotalBytes",
+            "VerifiedModelInstaller.DownloadAndInstallAsync cancellation token"
+          ],
           "affected_by_contract_changes": [],
-          "review_evidence": []
+          "review_evidence": [
+            "src/Host.Windows/Models/ModelStreamingDownloader.cs",
+            "src/Host.Windows/Models/VerifiedModelInstaller.cs",
+            "tests/HostLifecycle.Tests/ModelDownloadCancellationAcceptanceTests.cs"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0080-A001",
+          "started_at": "2026-10-25T04:39:13.629Z",
+          "ended_at": "2026-10-25T04:39:13.629Z",
+          "result": "partial",
+          "summary": "Added a deterministic cancellation acceptance test. A multi-megabyte response begins, the actual progress callback observes a positive byte count below the total and cancels the caller's token. The test verifies an OperationCanceledException and asserts no final model or staging file remains. Exact-head CI pending.",
+          "changed_files": [
+            "tests/HostLifecycle.Tests/ModelDownloadCancellationAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "step three/T0080/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "related_commits": [],
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Run the exact-head HostLifecycle suite and graph quality gate. Fix failures before marking T0080 done."
+        }
+      ]
     },
     {
       "id": "T0081",
@@ -22154,19 +22197,27 @@
       "from": "T0079",
       "to": "T0080",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "The cancellation test listens to ModelDownloadProgress and cancels only after bytes actually downloaded are reported; the new test directly consumes the progress contract from the T0079 API extension.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/Models/ModelStreamingDownloader.cs",
+        "tests/HostLifecycle.Tests/ModelStreamingDownloaderAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/ModelDownloadCancellationAcceptanceTests.cs"
+      ]
     },
     {
       "from": "T0075",
       "to": "T0080",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "The offline model catalog store is not called by the cancellation or staging-file cleanup path. Keep type=blocks and the graph-required order without claiming a direct technical interface dependency.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/Models/Catalog/OfflineModelCatalogStore.cs",
+        "src/Host.Windows/Models/VerifiedModelInstaller.cs",
+        "step three/T0075/execution-report.md"
+      ]
     },
     {
       "from": "T0080",
@@ -26070,8 +26121,36 @@
         "step three/T0075/execution-report.md"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-25T04:39:13.629Z",
+      "edge_from": "T0079",
+      "edge_to": "T0080",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "reason": "The cancellation test listens to ModelDownloadProgress and cancels only after bytes actually downloaded are reported; the new test directly consumes the progress contract from the T0079 API extension.",
+      "evidence": [
+        "src/Host.Windows/Models/ModelStreamingDownloader.cs",
+        "tests/HostLifecycle.Tests/ModelStreamingDownloaderAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/ModelDownloadCancellationAcceptanceTests.cs"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-25T04:39:13.629Z",
+      "edge_from": "T0075",
+      "edge_to": "T0080",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "reason": "The offline model catalog store is not called by the cancellation or staging-file cleanup path. Keep type=blocks and the graph-required order without claiming a direct technical interface dependency.",
+      "evidence": [
+        "src/Host.Windows/Models/Catalog/OfflineModelCatalogStore.cs",
+        "src/Host.Windows/Models/VerifiedModelInstaller.cs",
+        "step three/T0075/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-25T04:38:17.272Z"
+  "updated_at": "2026-10-25T04:39:13.629Z"
 }
 ```

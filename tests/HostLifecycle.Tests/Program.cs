@@ -61,6 +61,7 @@ ModelCatalogParserAcceptanceTests.Run();
 ModelStreamingDownloaderAcceptanceTests.Run();
 VerifiedModelInstallerAcceptanceTests.Run();
 IncompleteModelDownloadAcceptanceTests.Run();
+ModelDownloadCancellationAcceptanceTests.Run();
 LocalInferenceProcessLauncherTests.Run();
 
 const ulong gibibyte = 1024UL * 1024UL * 1024UL;
