@@ -14602,33 +14602,112 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0085 و T0075 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال انجام",
+      "actual_output_paths": [
+        "src/Host.Windows/Models/VerifiedModelInstaller.cs",
+        "tests/HostLifecycle.Tests/UpdateModelSafetyAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/HostInferenceSessionConcurrencyTests.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0086/execution-report.md",
+        "step three/project-graph.md"
+      ],
       "expected_output_paths": [
         "src/Host.Windows/Models/ + tests/"
       ],
-      "evidence": [],
+      "evidence": [
+        "src/Host.Windows/Models/VerifiedModelInstaller.cs",
+        "tests/HostLifecycle.Tests/UpdateModelSafetyAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/HostInferenceSessionConcurrencyTests.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0086/execution-report.md",
+        "step three/project-graph.md"
+      ],
       "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0086-2026-10-25-01",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Host.Windows/Models/VerifiedModelInstaller.cs",
+          "tests/HostLifecycle.Tests/UpdateModelSafetyAcceptanceTests.cs",
+          "tests/HostLifecycle.Tests/HostInferenceSessionConcurrencyTests.cs",
+          "tests/HostLifecycle.Tests/Program.cs",
+          "step three/T0086/execution-report.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
-          "affected_by_contract_changes": [],
-          "review_evidence": []
+          "state": "in_review",
+          "triggering_contracts": [
+            "T0085 verified atomic model-update contract",
+            "T0075 validated model catalog metadata and explicit source-host allowlist"
+          ],
+          "affected_by_contract_changes": [
+            "Installer adds actual destination-volume free-space preflight before network transfer or staging writes.",
+            "Model removal regression verifies disconnect serialization with an in-flight generation."
+          ],
+          "review_evidence": [
+            "src/Host.Windows/Models/VerifiedModelInstaller.cs",
+            "src/Host.Windows/Models/Catalog/ModelCatalogModels.cs",
+            "src/Host.Windows/Models/Catalog/ModelCatalogParser.cs",
+            "tests/HostLifecycle.Tests/UpdateModelSafetyAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/HostInferenceSessionConcurrencyTests.cs"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0086-2026-10-25-01",
+          "started_at": "2026-10-25T07:26:32.450Z",
+          "ended_at": "2026-10-25T07:26:32.450Z",
+          "result": "partial",
+          "summary": "Added deterministic free-space preflight and new failure-path acceptance tests for insufficient space, HTTP 503, malformed checksum, update cancellation after partial progress, and model removal while generation is in flight. New tests not yet executed by CI.",
+          "changed_files": [
+            "src/Host.Windows/Models/VerifiedModelInstaller.cs",
+            "tests/HostLifecycle.Tests/UpdateModelSafetyAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/HostInferenceSessionConcurrencyTests.cs",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "step three/T0086/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "UpdateModelSafetyAcceptanceTests",
+              "result": "pending",
+              "summary": "Insufficient disk, HTTP 503, malformed SHA-256 and cancellation-preservation cases."
+            },
+            {
+              "name": "HostInferenceSessionConcurrencyTests.DisconnectWaitsForGenerationBeforeDisposalAsync",
+              "result": "pending",
+              "summary": "New safe-removal-during-generation regression."
+            },
+            {
+              "name": "Step Three quality gate",
+              "result": "pending"
+            },
+            {
+              "name": "Windows WPF Release build/startup smoke",
+              "result": "pending"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "Injected destination-volume free-space provider into VerifiedModelInstaller without breaking existing constructor callers.",
+            "Free-space failure now occurs before networking or staging-file creation.",
+            "Added model removal serialization test."
+          ],
+          "follow_up": "Run exact-head quality, HostLifecycle, and Windows build checks. Preserve T0086 as in_progress until all added cases pass."
+        }
+      ]
     },
     {
       "id": "T0087",
@@ -23090,19 +23169,29 @@
       "from": "T0085",
       "to": "T0086",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0086 explicitly verifies T0085's atomic model update API and failure-preservation contract, including bad checksum, cancellation, network failure and existing destination safety. Keep the existing type=blocks.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/Models/VerifiedModelInstaller.cs",
+        "tests/HostLifecycle.Tests/VerifiedModelInstallerAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/UpdateModelSafetyAcceptanceTests.cs",
+        "step three/T0085/execution-report.md"
+      ]
     },
     {
       "from": "T0075",
       "to": "T0086",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "Installer safety tests use ModelCatalogEntry's declared size, SHA-256, GGUF format and trusted HTTPS source metadata under the validated catalog schema. Keep the existing type=blocks.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/Models/Catalog/ModelCatalogModels.cs",
+        "src/Host.Windows/Models/Catalog/ModelCatalogParser.cs",
+        "src/Host.Windows/Models/Catalog/OfflineModelCatalogStore.cs",
+        "tests/HostLifecycle.Tests/UpdateModelSafetyAcceptanceTests.cs"
+      ]
     },
     {
       "from": "T0086",
@@ -27018,8 +27107,38 @@
         "step three/T0075/execution-report.md"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-25T07:26:32.450Z",
+      "edge_from": "T0085",
+      "edge_to": "T0086",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "reason": "T0086 explicitly verifies T0085's atomic model update API and failure-preservation contract, including bad checksum, cancellation, network failure and existing destination safety. Keep the existing type=blocks.",
+      "evidence": [
+        "src/Host.Windows/Models/VerifiedModelInstaller.cs",
+        "tests/HostLifecycle.Tests/VerifiedModelInstallerAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/UpdateModelSafetyAcceptanceTests.cs",
+        "step three/T0085/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-25T07:26:32.450Z",
+      "edge_from": "T0075",
+      "edge_to": "T0086",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "reason": "Installer safety tests use ModelCatalogEntry's declared size, SHA-256, GGUF format and trusted HTTPS source metadata under the validated catalog schema. Keep the existing type=blocks.",
+      "evidence": [
+        "src/Host.Windows/Models/Catalog/ModelCatalogModels.cs",
+        "src/Host.Windows/Models/Catalog/ModelCatalogParser.cs",
+        "src/Host.Windows/Models/Catalog/OfflineModelCatalogStore.cs",
+        "tests/HostLifecycle.Tests/UpdateModelSafetyAcceptanceTests.cs"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-25T07:15:50.132Z"
+  "updated_at": "2026-10-25T07:26:32.450Z"
 }
 ```

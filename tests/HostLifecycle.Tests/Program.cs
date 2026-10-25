@@ -62,10 +62,12 @@ ModelStreamingDownloaderAcceptanceTests.Run();
 VerifiedModelInstallerAcceptanceTests.Run();
 IncompleteModelDownloadAcceptanceTests.Run();
 ModelDownloadCancellationAcceptanceTests.Run();
+UpdateModelSafetyAcceptanceTests.Run();
 LocalInferenceProcessLauncherTests.Run();
 LocalHostSettingsPersistenceTests.Run();
 await HostInferenceSessionConcurrencyTests.RunAsync();
 await HostInferenceSessionConcurrencyTests.DisconnectReleasesBackendAsync();
+await HostInferenceSessionConcurrencyTests.DisconnectWaitsForGenerationBeforeDisposalAsync();
 
 const ulong gibibyte = 1024UL * 1024UL * 1024UL;
 var sufficientHostReadiness = HostReadinessEvaluator.Evaluate(

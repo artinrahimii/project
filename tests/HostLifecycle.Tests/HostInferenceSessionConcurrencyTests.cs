@@ -87,6 +87,51 @@ internal static class HostInferenceSessionConcurrencyTests
         Console.WriteLine("PASS: disconnect disposes backend resources and leaves the host stopped.");
     }
 
+    public static async Task DisconnectWaitsForGenerationBeforeDisposalAsync()
+    {
+        var backend = new BlockingInferenceBackend();
+        var session = new HostInferenceSession(
+            backend: new ImmediateInferenceBackend(),
+            backendFactory: (_, _) => backend,
+            readinessEvaluator: _ => Task.FromResult(new HostReadinessResult(true, "Test readiness passed.")));
+        Task<string>? generationTask = null;
+
+        try
+        {
+            var connected = await session.ConnectAsync(new Uri("http://127.0.0.1:8080/"), "model-a");
+            Assert(connected.State == HostState.Ready, "The model must be connected before removal is attempted.");
+            generationTask = session.GenerateAsync("in-flight removal test", 32);
+            await backend.GenerationStarted.WaitAsync(TimeSpan.FromSeconds(5));
+
+            var disconnectTask = session.DisconnectAsync();
+            Assert(!disconnectTask.IsCompleted,
+                "Model removal must wait until the in-flight generation releases the shared operation gate.");
+            Assert(!backend.Disposed,
+                "The active backend must not be disposed while generation still uses it.");
+
+            backend.ReleaseGeneration();
+            Assert(await generationTask.WaitAsync(TimeSpan.FromSeconds(5)) == "generation finished",
+                "The in-flight generation must finish before model removal releases its backend.");
+            var disconnected = await disconnectTask.WaitAsync(TimeSpan.FromSeconds(5));
+            Assert(disconnected.State == HostState.Stopped, "Model removal must leave the host stopped.");
+            Assert(backend.Disposed, "Model removal must dispose the backend after in-flight work ends.");
+            Assert(!session.IsConnected, "Removed model resources must not remain advertised as connected.");
+        }
+        finally
+        {
+            backend.ReleaseGeneration();
+            if (generationTask is not null)
+            {
+                try { await generationTask.WaitAsync(TimeSpan.FromSeconds(5)); }
+                catch (Exception) { /* The assertions above report the expected failure. */ }
+            }
+
+            session.Dispose();
+        }
+
+        Console.WriteLine("PASS: model removal waits for in-flight inference before releasing backend resources.");
+    }
+
     private sealed class DisposableTrackingBackend : IInferenceBackend, IDisposable
     {
         public bool IsAvailable => true;
@@ -115,6 +160,7 @@ internal static class HostInferenceSessionConcurrencyTests
         public bool IsAvailable => true;
         public string UnavailableReason => string.Empty;
         public bool GenerationCompleted { get; private set; }
+        public bool Disposed { get; private set; }
         public Task GenerationStarted => _generationStarted.Task;
 
         public async Task<string> GenerateAsync(string prompt, uint maxOutputTokens, CancellationToken cancellationToken = default)
@@ -132,7 +178,7 @@ internal static class HostInferenceSessionConcurrencyTests
         }
 
         public void ReleaseGeneration() => _releaseGeneration.TrySetResult(true);
-        public void Dispose() { }
+        public void Dispose() => Disposed = true;
     }
 
     private sealed class ImmediateInferenceBackend : IInferenceBackend, IDisposable

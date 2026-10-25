@@ -15,11 +15,15 @@ public sealed record ModelInstallationResult(string InstalledPath, long SizeByte
 public sealed class VerifiedModelInstaller
 {
     private readonly ModelStreamingDownloader _downloader;
+    private readonly Func<string, long> _availableFreeSpaceBytesProvider;
 
-    public VerifiedModelInstaller(ModelStreamingDownloader downloader)
+    public VerifiedModelInstaller(
+        ModelStreamingDownloader downloader,
+        Func<string, long>? availableFreeSpaceBytesProvider = null)
     {
         ArgumentNullException.ThrowIfNull(downloader);
         _downloader = downloader;
+        _availableFreeSpaceBytesProvider = availableFreeSpaceBytesProvider ?? GetAvailableFreeSpaceBytes;
     }
 
     public Task<ModelInstallationResult> DownloadAndInstallAsync(
@@ -50,6 +54,11 @@ public sealed class VerifiedModelInstaller
         ArgumentNullException.ThrowIfNull(model);
         ArgumentException.ThrowIfNullOrWhiteSpace(destinationPath);
         ValidateDeclaredFormat(model.Format);
+        if (model.SizeBytes <= 0)
+        {
+            throw new InvalidDataException("Model metadata must declare a positive file size.");
+        }
+
         var expectedHash = ParseExpectedSha256(model);
 
         var fullDestinationPath = Path.GetFullPath(destinationPath);
@@ -83,6 +92,13 @@ public sealed class VerifiedModelInstaller
         else if (File.Exists(fullDestinationPath))
         {
             throw new IOException("The destination model already exists; refusing to overwrite it.");
+        }
+
+        var availableFreeSpaceBytes = _availableFreeSpaceBytesProvider(directory);
+        if (availableFreeSpaceBytes < model.SizeBytes)
+        {
+            throw new IOException(
+                $"Insufficient free disk space for the model staging file. Required at least {model.SizeBytes} bytes; available {availableFreeSpaceBytes} bytes. The installed model was not changed.");
         }
 
         // Keep staging, destination, and backup on the same filesystem for atomic promotion.
@@ -145,6 +161,29 @@ public sealed class VerifiedModelInstaller
             TryDelete(temporaryPath);
             throw;
         }
+    }
+
+    private static long GetAvailableFreeSpaceBytes(string directory)
+    {
+        var root = Path.GetPathRoot(Path.GetFullPath(directory));
+        if (string.IsNullOrWhiteSpace(root))
+        {
+            throw new IOException("The destination storage volume could not be identified.");
+        }
+
+        var drive = new DriveInfo(root);
+        if (!drive.IsReady)
+        {
+            throw new IOException("The destination storage volume is not ready for a model download.");
+        }
+
+        var available = drive.AvailableFreeSpace;
+        if (available < 0)
+        {
+            throw new IOException("The destination storage volume returned an invalid free-space measurement.");
+        }
+
+        return available;
     }
 
     private static void ValidateDeclaredFormat(string format)
