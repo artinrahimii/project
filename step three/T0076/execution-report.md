@@ -16,3 +16,10 @@
 - The passing suite covers multi-chunk streaming and exact output bytes, bounded read buffers, progress reporting, denial of an unapproved initial host and cross-host redirect, short response rejection, and partial-file cleanup.
 - The Step Three quality gate run [40161883353](https://github.com/artinrahimii/project/actions/runs/40161883353) failed only at recorded-evidence validation: a separate T0075 evidence list contained URLs instead of repository-relative paths. The 146 Python tests and graph-structure check passed. The evidence list is corrected in the next commit; exact-head revalidation remains required.
 - Status: `done` for T0076's implementation/test acceptance on the tested code commit. T0077 still owns checksum verification and secure temporary-path promotion; this downloader does not claim to implement those requirements.
+
+
+## Graph evidence-format correction after V 3.0.237
+
+- Re-scanned the graph's `evidence` lists and found one remaining external Actions URL under `T0076`. The graph guard expects repository-relative file paths in this field; the same run URL is retained in `execution_summary.tests_passed` and this report.
+- Removed the URL from `T0076.evidence`. Task status and its passing HostLifecycle test result are unchanged; this is a graph traceability correction, not a newly failed implementation test.
+- A new exact-head graph quality-gate run is required to verify the corrected metadata.

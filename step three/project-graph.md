@@ -13053,10 +13053,9 @@
         "tests/HostLifecycle.Tests/ModelStreamingDownloaderAcceptanceTests.cs",
         "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
         "tests/HostLifecycle.Tests/Program.cs",
-        "step three/T0076/execution-report.md",
-        "https://github.com/artinrahimii/project/actions/runs/40161883199/job/121074984915"
+        "step three/T0076/execution-report.md"
       ],
-      "notes": "The streaming downloader and its registered HostLifecycle acceptance suite were built and executed successfully on exact implementation commit 767dd90fd333f86722e16cfb4ccd75105fa6ff5b. The new graph-guard failure on that same commit is traceability-only: T0075 evidence had external URLs where repository paths are required; this commit fixes those evidence entries. Checksums and secure temporary-install policy remain T0077.",
+      "notes": "The streaming downloader and its registered HostLifecycle acceptance suite were built and executed successfully on exact implementation commit 767dd90fd333f86722e16cfb4ccd75105fa6ff5b. The new graph-guard failure on that same commit is traceability-only: T0075 evidence had external URLs where repository paths are required; this commit fixes those evidence entries. Checksums and secure temporary-install policy remain T0077. Workflow URLs are recorded as test evidence in execution_summary.tests_passed and execution-report.md, not in the repository-relative evidence file list.",
       "execution_summary": {
         "attempt_count": 2,
         "failed_attempt_count": 0,
@@ -25696,6 +25695,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-25T04:27:55.631Z"
+  "updated_at": "2026-10-25T04:28:35.598Z"
 }
 ```
