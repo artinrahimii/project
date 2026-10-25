@@ -13689,33 +13689,77 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0080 و T0075 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "src/Host.Windows/Models/VerifiedModelInstaller.cs",
+        "tests/HostLifecycle.Tests/VerifiedModelInstallerAcceptanceTests.cs",
+        "step three/T0081/execution-report.md",
+        "step three/project-graph.md"
+      ],
       "expected_output_paths": [
         "src/Host.Windows/Models/ + tests/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "src/Host.Windows/Models/VerifiedModelInstaller.cs",
+        "tests/HostLifecycle.Tests/VerifiedModelInstallerAcceptanceTests.cs",
+        "step three/T0081/execution-report.md"
+      ],
+      "notes": "Extended installer acceptance beyond checksum: catalog entries must declare GGUF, and after SHA-256 matches the staged file must contain the GGUF magic and a supported header version before it can be promoted. Added negative tests with checksum-correct but invalid headers/versions; exact-head CI is pending.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0081-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Host.Windows/Models/VerifiedModelInstaller.cs",
+          "tests/HostLifecycle.Tests/VerifiedModelInstallerAcceptanceTests.cs",
+          "step three/T0081/execution-report.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
+          "state": "reviewed",
+          "triggering_contracts": [
+            "ModelCatalogEntry.Format",
+            "ModelCatalogEntry.ChecksumAlgorithm",
+            "ModelCatalogEntry.ChecksumValue",
+            "VerifiedModelInstaller.DownloadAndInstallAsync"
+          ],
           "affected_by_contract_changes": [],
-          "review_evidence": []
+          "review_evidence": [
+            "src/Host.Windows/Models/Catalog/ModelCatalogParser.cs",
+            "src/Host.Windows/Models/Catalog/ModelCatalogModels.cs",
+            "src/Host.Windows/Models/VerifiedModelInstaller.cs"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0081-A001",
+          "started_at": "2026-10-25T04:43:15.393Z",
+          "ended_at": "2026-10-25T04:43:15.393Z",
+          "result": "partial",
+          "summary": "Added declared-format validation plus staged-file validation. The installer now rejects non-GGUF catalog entries before network access, checks the actual GGUF magic and supported version after the SHA-256 matches, and only then promotes the staged file. Tests cover checksum-correct bytes with invalid magic/version and ensure they are not promoted. Exact-head CI pending.",
+          "changed_files": [
+            "src/Host.Windows/Models/VerifiedModelInstaller.cs",
+            "tests/HostLifecycle.Tests/VerifiedModelInstallerAcceptanceTests.cs",
+            "step three/T0081/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "related_commits": [],
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Run graph quality gate and HostLifecycle acceptance suite; fix any failure before marking T0081 done."
+        }
+      ]
     },
     {
       "id": "T0082",
@@ -22261,19 +22305,28 @@
       "from": "T0080",
       "to": "T0081",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "The format-validation step uses the staging and promotion sequence established by VerifiedModelInstaller, but does not call the cancellation test artifact or depend on its output contract. Preserve type=blocks and the graph-required order as sequencing-only.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/Models/VerifiedModelInstaller.cs",
+        "tests/HostLifecycle.Tests/ModelDownloadCancellationAcceptanceTests.cs",
+        "step three/T0080/execution-report.md"
+      ]
     },
     {
       "from": "T0075",
       "to": "T0081",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "The installer validates the parsed catalog entry and file bytes; it does not call OfflineModelCatalogStore. Preserve type=blocks and the graph-required order as sequencing-only.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/Models/Catalog/ModelCatalogParser.cs",
+        "src/Host.Windows/Models/Catalog/OfflineModelCatalogStore.cs",
+        "src/Host.Windows/Models/VerifiedModelInstaller.cs",
+        "step three/T0075/execution-report.md"
+      ]
     },
     {
       "from": "T0081",
@@ -26187,8 +26240,37 @@
         "step three/T0075/execution-report.md"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-25T04:43:15.393Z",
+      "edge_from": "T0080",
+      "edge_to": "T0081",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "reason": "The format-validation step uses the staging and promotion sequence established by VerifiedModelInstaller, but does not call the cancellation test artifact or depend on its output contract. Preserve type=blocks and the graph-required order as sequencing-only.",
+      "evidence": [
+        "src/Host.Windows/Models/VerifiedModelInstaller.cs",
+        "tests/HostLifecycle.Tests/ModelDownloadCancellationAcceptanceTests.cs",
+        "step three/T0080/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-25T04:43:15.393Z",
+      "edge_from": "T0075",
+      "edge_to": "T0081",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "reason": "The installer validates the parsed catalog entry and file bytes; it does not call OfflineModelCatalogStore. Preserve type=blocks and the graph-required order as sequencing-only.",
+      "evidence": [
+        "src/Host.Windows/Models/Catalog/ModelCatalogParser.cs",
+        "src/Host.Windows/Models/Catalog/OfflineModelCatalogStore.cs",
+        "src/Host.Windows/Models/VerifiedModelInstaller.cs",
+        "step three/T0075/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-25T04:41:37.926Z"
+  "updated_at": "2026-10-25T04:43:15.393Z"
 }
 ```

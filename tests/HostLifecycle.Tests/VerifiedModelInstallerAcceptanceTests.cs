@@ -13,6 +13,9 @@ internal static class VerifiedModelInstallerAcceptanceTests
         RejectsChecksumMismatchAndDeletesStagingFile();
         RejectsUnsupportedChecksumBeforeNetworkAccess();
         PreservesExistingDestinationWithoutDownloading();
+        RejectsInvalidGgufMagicAfterChecksumMatch();
+        RejectsUnsupportedGgufVersionAfterChecksumMatch();
+        RejectsUnsupportedDeclaredFormatBeforeNetworkAccess();
         Console.WriteLine("PASS: model installation stages downloads, verifies SHA-256, and preserves final-path integrity.");
     }
 
@@ -142,22 +145,115 @@ internal static class VerifiedModelInstallerAcceptanceTests
         }
     }
 
+    private static void RejectsInvalidGgufMagicAfterChecksumMatch()
+    {
+        var bytes = CreateModelBytes();
+        bytes[0] = (byte)'B';
+        var checksum = Convert.ToHexString(SHA256.HashData(bytes));
+        var handler = CreateHandler(bytes);
+        using var client = new HttpClient(handler, disposeHandler: false);
+        using var downloader = new ModelStreamingDownloader(new[] { "models.example.test" }, client);
+        var installer = new VerifiedModelInstaller(downloader);
+        var folder = CreateTemporaryDirectory();
+        var destination = Path.Combine(folder, "invalid-magic.gguf");
+
+        try
+        {
+            ExpectInvalidData(
+                () => installer.DownloadAndInstallAsync(CreateModel(bytes, checksum), destination).GetAwaiter().GetResult(),
+                "A checksum-correct file with invalid GGUF magic must not be installed.");
+            Assert(handler.RequestCount == 1, "The checksum-correct but malformed payload should be downloaded before byte-format verification.");
+            Assert(!File.Exists(destination), "Invalid GGUF magic must not reach the final path.");
+            Assert(Directory.GetFiles(folder).Length == 0, "The malformed staging file must be removed.");
+        }
+        finally
+        {
+            Directory.Delete(folder, recursive: true);
+        }
+    }
+
+    private static void RejectsUnsupportedGgufVersionAfterChecksumMatch()
+    {
+        var bytes = CreateModelBytes();
+        bytes[4] = 99;
+        bytes[5] = 0;
+        bytes[6] = 0;
+        bytes[7] = 0;
+        var checksum = Convert.ToHexString(SHA256.HashData(bytes));
+        var handler = CreateHandler(bytes);
+        using var client = new HttpClient(handler, disposeHandler: false);
+        using var downloader = new ModelStreamingDownloader(new[] { "models.example.test" }, client);
+        var installer = new VerifiedModelInstaller(downloader);
+        var folder = CreateTemporaryDirectory();
+        var destination = Path.Combine(folder, "unsupported-version.gguf");
+
+        try
+        {
+            ExpectInvalidData(
+                () => installer.DownloadAndInstallAsync(CreateModel(bytes, checksum), destination).GetAwaiter().GetResult(),
+                "An unsupported GGUF header version must not be installed.");
+            Assert(!File.Exists(destination), "An unsupported GGUF version must not reach the final path.");
+            Assert(Directory.GetFiles(folder).Length == 0, "The unsupported-version staging file must be removed.");
+        }
+        finally
+        {
+            Directory.Delete(folder, recursive: true);
+        }
+    }
+
+    private static void RejectsUnsupportedDeclaredFormatBeforeNetworkAccess()
+    {
+        var bytes = CreateModelBytes();
+        var checksum = Convert.ToHexString(SHA256.HashData(bytes));
+        var handler = CreateHandler(bytes);
+        using var client = new HttpClient(handler, disposeHandler: false);
+        using var downloader = new ModelStreamingDownloader(new[] { "models.example.test" }, client);
+        var installer = new VerifiedModelInstaller(downloader);
+        var folder = CreateTemporaryDirectory();
+        var destination = Path.Combine(folder, "wrong-format.gguf");
+
+        try
+        {
+            ExpectInvalidData(
+                () => installer.DownloadAndInstallAsync(CreateModel(bytes, checksum, format: "ONNX"), destination).GetAwaiter().GetResult(),
+                "The installer should reject a non-GGUF declaration.");
+            Assert(handler.RequestCount == 0, "An unsupported declared format must be rejected before network access.");
+            Assert(Directory.GetFiles(folder).Length == 0, "An unsupported declaration must not create a staging file.");
+        }
+        finally
+        {
+            Directory.Delete(folder, recursive: true);
+        }
+    }
+
     private static byte[] CreateModelBytes()
     {
         var bytes = new byte[180 * 1024 + 19];
-        for (var index = 0; index < bytes.Length; index++)
+        for (var index = 8; index < bytes.Length; index++)
         {
             bytes[index] = (byte)((index * 17) % 251);
         }
 
+        bytes[0] = (byte)'G';
+        bytes[1] = (byte)'G';
+        bytes[2] = (byte)'U';
+        bytes[3] = (byte)'F';
+        bytes[4] = 3; // GGUF v3, little-endian.
+        bytes[5] = 0;
+        bytes[6] = 0;
+        bytes[7] = 0;
         return bytes;
     }
 
-    private static ModelCatalogEntry CreateModel(byte[] bytes, string checksum, string checksumAlgorithm = "sha256") =>
+    private static ModelCatalogEntry CreateModel(
+        byte[] bytes,
+        string checksum,
+        string checksumAlgorithm = "sha256",
+        string format = "GGUF") =>
         new(
             "verified-install-test",
             "Verified install test model",
-            "GGUF",
+            format,
             bytes.LongLength,
             checksumAlgorithm,
             checksum,

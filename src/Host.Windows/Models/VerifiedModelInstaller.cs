@@ -1,3 +1,4 @@
+using System.Buffers.Binary;
 using System.IO;
 using System.Security.Cryptography;
 using WhiteP.Host.Windows.Models.Catalog;
@@ -29,6 +30,7 @@ public sealed class VerifiedModelInstaller
     {
         ArgumentNullException.ThrowIfNull(model);
         ArgumentException.ThrowIfNullOrWhiteSpace(destinationPath);
+        ValidateDeclaredFormat(model.Format);
         var expectedHash = ParseExpectedSha256(model);
 
         var fullDestinationPath = Path.GetFullPath(destinationPath);
@@ -67,6 +69,7 @@ public sealed class VerifiedModelInstaller
                 throw new InvalidDataException("The downloaded model SHA-256 does not match the catalog metadata.");
             }
 
+            await ValidateModelFileFormatAsync(model.Format, temporaryPath, cancellationToken).ConfigureAwait(false);
             cancellationToken.ThrowIfCancellationRequested();
             File.Move(temporaryPath, fullDestinationPath);
             return new ModelInstallationResult(
@@ -78,6 +81,60 @@ public sealed class VerifiedModelInstaller
         {
             TryDelete(temporaryPath);
             throw;
+        }
+    }
+
+    private static void ValidateDeclaredFormat(string format)
+    {
+        if (!string.Equals(format, "GGUF", StringComparison.Ordinal))
+        {
+            throw new InvalidDataException("Only GGUF model files can be installed by this catalog schema version.");
+        }
+    }
+
+    private static async Task ValidateModelFileFormatAsync(
+        string format,
+        string path,
+        CancellationToken cancellationToken)
+    {
+        ValidateDeclaredFormat(format);
+        var header = new byte[8];
+        var bytesRead = 0;
+        await using (var input = new FileStream(
+            path,
+            FileMode.Open,
+            FileAccess.Read,
+            FileShare.Read,
+            header.Length,
+            FileOptions.Asynchronous | FileOptions.SequentialScan))
+        {
+            while (bytesRead < header.Length)
+            {
+                var count = await input.ReadAsync(
+                    header.AsMemory(bytesRead, header.Length - bytesRead),
+                    cancellationToken).ConfigureAwait(false);
+                if (count == 0)
+                {
+                    break;
+                }
+
+                bytesRead += count;
+            }
+        }
+
+        if (bytesRead < header.Length ||
+            header[0] != (byte)'G' ||
+            header[1] != (byte)'G' ||
+            header[2] != (byte)'U' ||
+            header[3] != (byte)'F')
+        {
+            throw new InvalidDataException("The downloaded file does not contain a complete GGUF header.");
+        }
+
+        var version = BinaryPrimitives.ReadUInt32LittleEndian(header.AsSpan(4, 4));
+        if (version is < 1 or > 3)
+        {
+            throw new InvalidDataException("The GGUF header version is not supported by this installer.");
         }
     }
 
