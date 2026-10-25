@@ -1,32 +1,33 @@
 # T0085 — Execution report
 
-## Implementation commit
+## Target and commits
 
-- Base commit: \`38521356b602b999b8dae365d8540358b06a6544\` (\`V 3.0.255\`), branch \`main\`.
-- Initial implementation commit: \`e47f0e1db66e539f75a77b82ee0cc70ea8dc197d\` (\`V 3.0.256\`): https://github.com/artinrahimii/project/commit/e47f0e1db66e539f75a77b82ee0cc70ea8dc197d
-- Precondition review: T0084 and T0075 are both marked done with evidence. Reviewed \`T0075 -> T0085\` against the actual catalog-to-installer flow; the selected \`ModelCatalogEntry\` comes from the offline-aware validated catalog and supplies source URL, declared size, SHA-256 and GGUF metadata.
+- Repository: \`artinrahimii/project\`; branch: \`main\`.
+- Base used for implementation: \`38521356b602b999b8dae365d8540358b06a6544\` (\`V 3.0.255\`).
+- Implementation commit: \`e47f0e1db66e539f75a77b82ee0cc70ea8dc197d\` (\`V 3.0.256\`): https://github.com/artinrahimii/project/commit/e47f0e1db66e539f75a77b82ee0cc70ea8dc197d
+- Compile correction commit: \`19f462500726f5f64b851745904a6128369fe5f1\` (\`V 3.0.257\`): https://github.com/artinrahimii/project/commit/19f462500726f5f64b851745904a6128369fe5f1
 
 ## Implemented behavior
 
-- Added \`VerifiedModelInstaller.DownloadAndUpdateAsync\`. The new payload is streamed into a unique same-directory staging file, checked against declared size and SHA-256, and validated for GGUF magic/version before the target file is touched.
-- Before promotion, the updater checks that the destination still exists and that its size/last-write timestamp have not changed during download. It then calls same-volume \`File.Replace\` with a unique backup path, so a failed transfer/checksum/format/target-change check leaves the installed model untouched. The old \`DownloadAndInstallAsync\` path continues to refuse overwriting an existing destination.
-- Added tests for successful atomic replacement, checksum-failure preservation, missing target rejection before networking, and refusing to overwrite a destination changed by another writer during download.
-- Connected the update API to the Windows catalog UI with explicit confirmation, a selected-entry requirement, exact trusted-host checking, streamed byte/speed progress, cancellation, disconnect of the host and stopping only the app-owned engine, and settings persistence after successful replacement. The UI explains that an external engine may need restarting and a locked file can cause replacement to be refused.
+- Added \`VerifiedModelInstaller.DownloadAndUpdateAsync\`. The new model is streamed into a unique staging file beside the installed file, then checked against the catalog's declared size, SHA-256 and GGUF magic/version. The current destination is checked for deletion/replacement during the download; only after validation does the implementation use same-volume \`File.Replace\` with a unique backup file.
+- The original install method still refuses to overwrite an existing file. The update path separately requires an existing regular model file. Failed download/checksum/format checks and detected concurrent destination changes leave the existing destination untouched; the staged file is cleaned up.
+- Added and registered acceptance cases for successful replacement, checksum failure retaining the prior model byte-for-byte, refusing an absent destination before networking, and refusing to overwrite a destination changed by another writer during download.
+- Integrated this capability in the Windows catalog UI. The user must select a validated model, explicitly trust its source hostname and confirm the update. The UI disconnects the host, stops only an engine process owned by this app, reports progress from actual downloaded bytes, supports cancellation, and persists the new model path/ID only after success. A locked destination may still cause replacement to be refused; external engines need restarting to load the new file.
 
-## CI results and correction
+## Validation results
 
-The first CI run for \`V 3.0.256\` was mixed:
-- Step Three graph quality gate passed: https://github.com/artinrahimii/project/actions/runs/40171951129
-- HostLifecycle suite passed, including the aggregate model installer acceptance tests: https://github.com/artinrahimii/project/actions/runs/40171951154/jobs/121104457271
-- Real local llama.cpp/GGUF inference passed: https://github.com/artinrahimii/project/actions/runs/40171951202
-- Windows WPF Release build **failed** because \`MainWindow.xaml.cs\` was missing \`using WhiteP.Host.Windows.Models;\`, leaving \`ModelStreamingDownloader\`, \`VerifiedModelInstaller\` and \`ModelDownloadProgress\` unresolved. Failure log: https://github.com/artinrahimii/project/actions/runs/40171951154/jobs/121104457161
+- Step Three graph quality gate **passed** on correction commit \`19f462500726f5f64b851745904a6128369fe5f1\`: https://github.com/artinrahimii/project/actions/runs/40172132207
+- HostLifecycle acceptance suite **passed** on the corrected commit. The log shows the aggregate model installer acceptance line; the runner invokes the new update methods and assertions before printing it: https://github.com/artinrahimii/project/actions/runs/40172132118/jobs/121105014399
+- Windows WPF Release build, C# format check, generated Protobuf source check and application startup smoke test **passed** on the corrected commit: https://github.com/artinrahimii/project/actions/runs/40172132118/jobs/121105014394
+- Real local llama.cpp/GGUF inference **passed** on implementation commit \`e47f0e1db66e539f75a77b82ee0cc70ea8dc197d\`; the only subsequent code change was the missing namespace import: https://github.com/artinrahimii/project/actions/runs/40171951202
+- The first implementation attempt's Windows build failure was recorded and corrected: the missing \`using WhiteP.Host.Windows.Models;\` is now present. The failed attempt remains in the execution history; \`failed_attempt_count\` is 1.
+- The broader product-build workflow's Android APK job was still in progress in its final validation/cleanup phase when this report was written, with no failing step reported. Android was not modified and is not part of T0085's acceptance surface.
 
-The missing namespace import has now been added in the follow-up change. This report deliberately does not mark T0085 complete until the exact post-fix commit has a successful Windows Release build and the remaining checks have been observed.
+## Dependency review
 
-## Remaining limitation
+- \`T0084 -> T0085\`: validated as a contract/interface dependency. Updating an active model needs the serialized disconnect lifecycle before file replacement.
+- \`T0075 -> T0085\`: validated as a contract/interface dependency. The update consumes a \`ModelCatalogEntry\` from the validated offline-aware catalog and relies on its source URL, size, checksum and format metadata. Both edges retain their existing \`type=blocks\`; no edge was removed or relaxed.
 
-If an external process keeps the target file locked, atomic replacement can fail; the prior file is not removed beforehand. A successful file update does not hot-reload an external inference server; restart the engine/service before further inference.
+## Outcome
 
-## Next validation
-
-Check the new versioned commit's Windows WPF Release build and startup smoke test, HostLifecycle unit/integration tests, Step Three quality gate, Android build/tests, and applicable real-inference evidence. Only then set task status to done.
+**T0085 is complete** under its current graph acceptance rule: real update code is connected to the Windows UI, the original install semantics remain safe, the focused regression tests passed, and the corrected Windows host built and started successfully in CI. This does not claim that an external server hot-reloads the model or that every platform-wide CI job had completed at report time.

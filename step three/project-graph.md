@@ -14323,8 +14323,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0084 و T0075 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال انجام",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "src/Host.Windows/Models/VerifiedModelInstaller.cs",
         "src/Host.Windows/MainWindow.xaml",
@@ -14341,14 +14341,16 @@
         "src/Host.Windows/MainWindow.xaml",
         "src/Host.Windows/MainWindow.xaml.cs",
         "tests/HostLifecycle.Tests/VerifiedModelInstallerAcceptanceTests.cs",
-        "step three/T0085/execution-report.md"
+        "step three/T0085/execution-report.md",
+        ".github/workflows/product-build.yml",
+        ".github/workflows/quality.yml"
       ],
       "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
       "execution_summary": {
-        "attempt_count": 3,
+        "attempt_count": 4,
         "failed_attempt_count": 1,
-        "last_attempt_id": "T0085-2026-10-25-03",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "T0085-2026-10-25-04",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Host.Windows/Models/VerifiedModelInstaller.cs",
           "src/Host.Windows/MainWindow.xaml",
@@ -14358,31 +14360,35 @@
           "step three/project-graph.md"
         ],
         "related_commits": [
-          "e47f0e1db66e539f75a77b82ee0cc70ea8dc197d"
+          "e47f0e1db66e539f75a77b82ee0cc70ea8dc197d",
+          "19f462500726f5f64b851745904a6128369fe5f1"
         ],
         "tests_passed": [
-          "Step Three quality gate passed at the implementation commit: https://github.com/artinrahimii/project/actions/runs/40171951129",
-          "HostLifecycle acceptance suite passed at the implementation commit, including the VerifiedModelInstaller acceptance methods: https://github.com/artinrahimii/project/actions/runs/40171951154/jobs/121104457271",
-          "Real local llama.cpp/GGUF inference passed at the implementation commit: https://github.com/artinrahimii/project/actions/runs/40171951202"
+          "Step Three graph quality gate passed on correction commit 19f462500726f5f64b851745904a6128369fe5f1: https://github.com/artinrahimii/project/actions/runs/40172132207",
+          "HostLifecycle test suite passed on correction commit 19f462500726f5f64b851745904a6128369fe5f1, including VerifiedModelInstallerAcceptanceTests: https://github.com/artinrahimii/project/actions/runs/40172132118/jobs/121105014399",
+          "Windows WPF Release build, C# formatting, Protobuf generated-source verification, and startup smoke test passed on correction commit 19f462500726f5f64b851745904a6128369fe5f1: https://github.com/artinrahimii/project/actions/runs/40172132118/jobs/121105014394",
+          "The HostLifecycle log contains PASS: model installation stages downloads, verifies SHA-256, and preserves final-path integrity; the suite invokes the new atomic update success, checksum-failure, missing-target, and concurrent-change acceptance tests.",
+          "Real local llama.cpp/GGUF inference passed on implementation commit e47f0e1db66e539f75a77b82ee0cc70ea8dc197d before the import-only compilation correction: https://github.com/artinrahimii/project/actions/runs/40171951202"
         ],
-        "tests_failed": [
-          "Windows WPF Release build failed at commit e47f0e1db66e539f75a77b82ee0cc70ea8dc197d: CS0246 for ModelStreamingDownloader, VerifiedModelInstaller and ModelDownloadProgress; code-behind lacked using WhiteP.Host.Windows.Models. Job: https://github.com/artinrahimii/project/actions/runs/40171951154/jobs/121104457161"
-        ],
+        "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "in_review",
+          "state": "passed",
           "triggering_contracts": [
             "T0084 HostInferenceSession disconnect lifecycle",
-            "T0075 validated catalog metadata and source-host allowlist",
-            "VerifiedModelInstaller staging and verification contract"
+            "T0075 validated catalog metadata and explicit source allowlist",
+            "VerifiedModelInstaller staging/checksum/GGUF validation"
           ],
           "affected_by_contract_changes": [
-            "VerifiedModelInstaller adds DownloadAndUpdateAsync and MainWindow invokes the streaming download/update API."
+            "Added an independent atomic update operation while preserving refuse-overwrite semantics for initial installation.",
+            "MainWindow now disconnects the current host before update and persists new model path/ID only after successful replacement."
           ],
           "review_evidence": [
             "src/Host.Windows/Models/VerifiedModelInstaller.cs",
+            "src/Host.Windows/MainWindow.xaml",
             "src/Host.Windows/MainWindow.xaml.cs",
+            "src/Host.Windows/Models/Catalog/OfflineModelCatalogStore.cs",
             "src/Host.Windows/Models/Catalog/ModelCatalogParser.cs",
             "tests/HostLifecycle.Tests/VerifiedModelInstallerAcceptanceTests.cs"
           ]
@@ -14530,6 +14536,52 @@
             "Added the missing using directive for the model installation API types."
           ],
           "follow_up": "Validate commit V 3.0.257 in GitHub Actions; keep T0085 in_progress until the Windows Release build and task acceptance checks pass."
+        },
+        {
+          "attempt_id": "T0085-2026-10-25-04",
+          "started_at": "2026-10-25T07:16:07Z",
+          "ended_at": "2026-10-25T07:19:51.836Z",
+          "result": "succeeded",
+          "summary": "After fixing the missing namespace import, the exact correction commit passed the Step Three quality gate, HostLifecycle acceptance suite, Windows WPF Release build, generated-Protobuf verification, and startup smoke test. The HostLifecycle aggregate success line was observed after the new model update methods were registered and invoked. The real local inference workflow had already passed on the implementation commit before the import-only correction.",
+          "changed_files": [],
+          "commit_sha": "19f462500726f5f64b851745904a6128369fe5f1",
+          "tests": [
+            {
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40172132207"
+            },
+            {
+              "name": "Atomic update/install acceptance suite",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40172132118/jobs/121105014399",
+              "summary": "The test harness prints its final PASS line only after all registered update/install assertions complete; the new scenarios were registered in VerifiedModelInstallerAcceptanceTests.Run()."
+            },
+            {
+              "name": "Windows WPF Release build and startup smoke test",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40172132118/jobs/121105014394"
+            },
+            {
+              "name": "Real local llama.cpp/GGUF inference",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40171951202",
+              "summary": "Ran at implementation commit e47f0e1db66e539f75a77b82ee0cc70ea8dc197d before the compile-only using-directive correction."
+            },
+            {
+              "name": "Android APK build",
+              "result": "pending_at_record_time",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40172132118",
+              "summary": "The unrelated Android job was still in progress in its final validation/cleanup phase at the time this task record was written; no failed step had been reported."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "The failed Windows build due to a missing using directive was fixed in commit 19f462500726f5f64b851745904a6128369fe5f1."
+          ],
+          "follow_up": "T0085 is complete. Continue to the next eligible graph task only after validating its incoming dependencies and current implementation state."
         }
       ]
     },
