@@ -8472,12 +8472,12 @@
         "tests/test_windows_hardware_discovery.py",
         "tests/test_wpf_entrypoint.py"
       ],
-      "notes": "Implementation and product CI passed on parent revision, but the first post-update quality run rejected status value 'completed' as unsupported. Use schema-supported 'done'; rerun quality gate on this corrected revision. Display adapter inventory does not imply compute support.",
+      "notes": "Implementation and product CI passed on parent revision, but the first post-update quality run rejected status value 'completed' as unsupported. Use schema-supported 'done'; rerun quality gate on this corrected revision. Display adapter inventory does not imply compute support. Reconciled a stale execution_summary.last_attempt_result via appended successful attempt T0050-A006. Historical failed attempts remain preserved; latest verified summary now reflects post-correction graph validation and exact-code product CI.",
       "execution_summary": {
-        "attempt_count": 5,
+        "attempt_count": 6,
         "failed_attempt_count": 2,
-        "last_attempt_id": "T0050-A005",
-        "last_attempt_result": "failed",
+        "last_attempt_id": "T0050-A006",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Host.Windows/WindowsHostHardwareDiscovery.cs",
           "src/Host.Windows/MainWindow.xaml",
@@ -8496,31 +8496,37 @@
           {
             "name": "Step Three quality gate",
             "result": "passed",
-            "evidence": "https://github.com/artinrahimii/project/actions/runs/39944021280",
-            "summary": "Exact-commit quality gate passed, including graph validation and Python checks."
+            "evidence": "https://github.com/artinrahimii/project/actions/runs/40168614445",
+            "summary": "Exact tested code revision V 3.0.251."
           },
           {
             "name": "Host lifecycle unit and integration tests",
             "result": "passed",
-            "evidence": "https://github.com/artinrahimii/project/actions/runs/39944021286",
-            "summary": "Host lifecycle unit/integration workflow job passed."
+            "evidence": "https://github.com/artinrahimii/project/actions/runs/40168614453/job/121094695622",
+            "summary": "Exact tested code revision V 3.0.251."
           },
           {
             "name": "Windows WPF Release build",
             "result": "passed",
-            "evidence": "https://github.com/artinrahimii/project/actions/runs/39944021286",
-            "summary": "Windows WPF host build job passed."
+            "evidence": "https://github.com/artinrahimii/project/actions/runs/40168614453/job/121094695509",
+            "summary": "Exact tested code revision V 3.0.251."
           },
           {
             "name": "Android client APK build",
             "result": "passed",
-            "evidence": "https://github.com/artinrahimii/project/actions/runs/39944021286",
-            "summary": "Android APK build job passed; this is pipeline evidence, not a claim of device runtime validation."
+            "evidence": "https://github.com/artinrahimii/project/actions/runs/40168614453/job/121094695637",
+            "summary": "Exact tested code revision V 3.0.251."
+          },
+          {
+            "name": "Step Three quality gate after graph metadata correction",
+            "result": "passed",
+            "evidence": "https://github.com/artinrahimii/project/actions/runs/40168764078",
+            "summary": "V 3.0.252 accepted the corrected done status and current graph structure."
           }
         ],
         "tests_failed": [
-          "Step Three quality gate run 39943630991 failed graph validation: INVALID_EDGE_CLASSIFICATION for T0049 → T0050 because 'technical' is not an allowed graph class. No conclusion about Windows C# build can be drawn from this failure. Corrected to supported contract_or_interface_dependency in this revision.",
-          "Step Three quality gate run 39945533015 failed graph validation: INVALID_NODE_STATUS: T0050: 'completed'. The graph schema uses 'done' for completed nodes; corrected in next revision."
+          "Step Three quality gate run 39943630991: unsupported edge class technical (corrected; historical failure retained).",
+          "Step Three quality gate run 39945533015: unsupported node status completed (corrected; historical failure retained)."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -8665,6 +8671,50 @@
           "reopened_reason": "Graph metadata needs a schema-compatible status token and a passing exact-revision quality gate.",
           "contract_changes": [],
           "follow_up": "Change T0050 status to done and rerun quality gate; then verify product workflow for corrected commit."
+        },
+        {
+          "attempt_id": "T0050-A006",
+          "started_at": "2026-10-25T06:18:13Z",
+          "ended_at": "2026-10-25T06:20:49Z",
+          "result": "succeeded",
+          "summary": "Reconciled a stale last_attempt_result after the historical graph-status correction. Current graph validation passed on V 3.0.252, and the exact current code revision V 3.0.251 passed the full product workflow (HostLifecycle tests, Windows host build, Android APK) and Step Three gate. Earlier metadata failures remain in history.",
+          "changed_files": [
+            "step three/T0050/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Step Three quality gate after status correction",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40168764078"
+            },
+            {
+              "name": "Step Three quality gate on tested code revision",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40168614445"
+            },
+            {
+              "name": "Host lifecycle unit/integration tests",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40168614453/job/121094695622"
+            },
+            {
+              "name": "Windows WPF host build",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40168614453/job/121094695509"
+            },
+            {
+              "name": "Android client APK build",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40168614453/job/121094695637"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Continue with the next task only after validating its current graph dependencies and evidence. Preserve all prior T0050 failure records."
         }
       ]
     },
@@ -26534,6 +26584,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-25T06:20:00Z"
+  "updated_at": "2026-10-25T06:22:00.000Z"
 }
 ```

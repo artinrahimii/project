@@ -39,3 +39,12 @@
 ## Attempt T0050-A005 — post-update graph schema failure (preserved)
 - [Quality run 39945533015](https://github.com/artinrahimii/project/actions/runs/39945533015) rejected the node status token `completed` with `INVALID_NODE_STATUS`; the graph schema uses `done`.
 - Corrected T0050 to the schema-supported `done` status. The prior parent revision's product workflow passed, but this correction must pass its own quality gate before the task status is considered final.
+
+
+## Attempt T0050-A006 — reconciliation of stale last-attempt summary
+
+- The previous `T0050-A005` graph-status validation failure remains preserved above. It concerned graph metadata, not a newly observed runtime regression.
+- Revalidated the current repository revision after the correction: the Step Three quality gate passed on `V 3.0.252` ([run 40168764078](https://github.com/artinrahimii/project/actions/runs/40168764078)). This gate accepted the schema-supported `done` status and current graph metadata.
+- The exact implementation revision `V 3.0.251` passed the full product workflow ([run 40168614453](https://github.com/artinrahimii/project/actions/runs/40168614453)): HostLifecycle tests [passed](https://github.com/artinrahimii/project/actions/runs/40168614453/job/121094695622), Windows WPF build [passed](https://github.com/artinrahimii/project/actions/runs/40168614453/job/121094695509), Android APK build [passed](https://github.com/artinrahimii/project/actions/runs/40168614453/job/121094695637). The matching Step Three quality gate also [passed](https://github.com/artinrahimii/project/actions/runs/40168614445).
+- This latest verification supplies the missing post-correction success record. It does not erase the earlier failures or claim that the display-adapter inventory provides GPU compute/offload.
+- Result: `succeeded`; task status remains `done`. The summary now points to this successful verification attempt rather than leaving the failed graph-metadata attempt as the final result.
