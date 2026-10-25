@@ -13962,8 +13962,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0082 و T0075 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال انجام",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "src/Host.Application/HostInferenceSession.cs",
         "tests/HostLifecycle.Tests/HostInferenceSessionConcurrencyTests.cs",
@@ -13979,12 +13979,12 @@
         "tests/HostLifecycle.Tests/Program.cs",
         "step three/T0083/execution-report.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود. Dependency review completed for T0082 -> T0083 and T0075 -> T0083; both edges remain type=blocks and are validated as sequencing_only because current catalog selection is only a persisted preference, not a live inference-backend switch.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود. Dependency review completed for T0082 -> T0083 and T0075 -> T0083; both edges remain type=blocks and are validated as sequencing_only because current catalog selection is only a persisted preference, not a live inference-backend switch. Exact-commit regression test passed in GitHub Actions. The broader product build's Android APK job was still running at the time of ledger update; the task is marked done based on the task-specific quality gate, host lifecycle regression, Windows host build, and real local inference workflow, not on a claim that all project workflows have finished.",
       "execution_summary": {
-        "attempt_count": 1,
+        "attempt_count": 2,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0083-A001",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "T0083-A002",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Host.Application/HostInferenceSession.cs",
           "tests/HostLifecycle.Tests/HostInferenceSessionConcurrencyTests.cs",
@@ -13992,16 +13992,31 @@
           "step three/T0083/execution-report.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
+        "related_commits": [
+          "3d91ac00f3183e25dbcfcc7e3e201901cab10e03"
+        ],
+        "tests_passed": [
+          "Step Three quality gate passed on exact commit 3d91ac00f3183e25dbcfcc7e3e201901cab10e03: https://github.com/artinrahimii/project/actions/runs/40168614445",
+          "Host lifecycle unit and integration tests passed on exact commit 3d91ac00f3183e25dbcfcc7e3e201901cab10e03; regression assertion confirmed serialized reconnect: https://github.com/artinrahimii/project/actions/runs/40168614453/job/121094695622",
+          "Windows WPF host build passed on exact commit 3d91ac00f3183e25dbcfcc7e3e201901cab10e03: https://github.com/artinrahimii/project/actions/runs/40168614453/job/121094695509",
+          "Real local llama.cpp process and GGUF response passed on exact commit 3d91ac00f3183e25dbcfcc7e3e201901cab10e03: https://github.com/artinrahimii/project/actions/runs/40168614454"
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
-          "affected_by_contract_changes": [],
-          "review_evidence": []
+          "state": "passed",
+          "triggering_contracts": [
+            "HostInferenceSession operation serialization and HostLifecycle busy/ready/error transitions"
+          ],
+          "affected_by_contract_changes": [
+            "Connect/reconnect and backend health checks are serialized with generation"
+          ],
+          "review_evidence": [
+            "src/Host.Application/HostInferenceSession.cs",
+            "tests/HostLifecycle.Tests/HostInferenceSessionConcurrencyTests.cs",
+            "tests/HostLifecycle.Tests/Program.cs"
+          ]
         }
       },
       "execution_history": [
@@ -14031,6 +14046,52 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Inspect exact-commit GitHub Actions. Record the commit SHA and observed results in the next graph-only ledger update; do not mark done until the regression and relevant build/test workflows pass."
+        },
+        {
+          "attempt_id": "T0083-A002",
+          "started_at": "2026-10-25T06:18:13Z",
+          "ended_at": "2026-10-25T06:19:25Z",
+          "result": "succeeded",
+          "summary": "Exact-commit GitHub Actions verified that the host-session concurrency regression test passes, the Windows WPF host builds, the Step Three quality gate passes, and live local llama.cpp/GGUF inference succeeds. The implementation commit was tested as-is.",
+          "changed_files": [
+            "step three/T0083/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40168614445"
+            },
+            {
+              "name": "Host lifecycle unit and integration tests",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40168614453/job/121094695622",
+              "summary": "Output includes PASS: reconnect/model switching is serialized until the in-flight inference completes."
+            },
+            {
+              "name": "Windows WPF host build",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40168614453/job/121094695509"
+            },
+            {
+              "name": "Real local llama.cpp process and GGUF response",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40168614454"
+            },
+            {
+              "name": "Android APK build",
+              "result": "pending",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40168614453",
+              "summary": "Broader product-build workflow was in progress; not used as T0083 acceptance evidence."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Proceed to T0084 only after reviewing its incoming edges and confirming T0083/T0075 outputs; T0084 must implement explicit confirmation and safe backend release before active-model removal."
         }
       ]
     },
@@ -26473,6 +26534,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-25T06:15:00.000Z"
+  "updated_at": "2026-10-25T06:20:00Z"
 }
 ```
