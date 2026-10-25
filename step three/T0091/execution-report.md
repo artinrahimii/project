@@ -59,3 +59,13 @@
 - GitHub Actions quality gate run [40199831076](https://github.com/artinrahimii/project/actions/runs/40199831076) and product build run [40199831124](https://github.com/artinrahimii/project/actions/runs/40199831124) both concluded failure before runner allocation (`runner_id=0`, no steps). No Python unittest, Windows build, Android APK build, startup smoke test, or HostLifecycle test ran. Root cause of runner allocation failure remains unconfirmed.
 - Outcome: T0091 remains `blocked` pending actual test/build execution. No application-wide acceptance or task completion is claimed.
 - Next: rerun the quality gate, graph guard, Windows build/startup and HostLifecycle tests when Actions allocates a runner; only unblock T0091 after the required checks actually pass.
+
+
+## Attempt T0091-2026-10-25-06 — validation on current main (2026-10-25)
+- Exact tested main commit: `cac4757623634ae5389b2a31e42a01d10b334c3c` (`V 3.0.286`). The application source and tests were already present at this revision; this attempt validated them without changing product code.
+- [Step Three quality gate, run 40200490663, attempt 4](https://github.com/artinrahimii/project/actions/runs/40200490663) passed all steps. The automated suite reported 149 tests passed, including `WpfEntryPointTests.test_clear_session_suppresses_late_generation_errors`; Python compileall and both graph guard checks passed.
+- [White-P product build, run 40200490646, attempt 6](https://github.com/artinrahimii/project/actions/runs/40200490646) passed all three jobs: Windows WPF formatting/build/generated-Protobuf/startup smoke; HostLifecycle unit/integration tests; Android formatting/lint, debug APK build, Protobuf round-trip tests, generated-source validation, and artifact upload.
+- Contract review: T0090 -> T0091 remains a validated `contract_or_interface_dependency`; T0087 -> T0091 remains validated `sequencing_only`. No edge was changed.
+- Outcome: T0091 is marked `done` for its implemented cancellation/session-clear behavior based on the existing production output, method-scoped regression coverage, lifecycle acceptance checks, and successful current-main CI/build evidence.
+- Limitation: the Python UI test is source-contract verification, not a dynamic WPF stress test proving every cancellation/clear race. Do not describe this run as exhaustive concurrent runtime validation.
+- Next: before T0092 starts, validate its two currently `unreviewed` incoming edges (`T0091 -> T0092` and `T0087 -> T0092`) against source, contracts, and evidence; do not alter their classifications without grounded rationale.

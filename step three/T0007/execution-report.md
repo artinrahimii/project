@@ -109,3 +109,12 @@
 - No test or build step was observed, so this is **not** evidence of a product-code defect or of passing acceptance.
 - No application source code changed in this attempt. T0007 remains `in_progress`; the broad traceability criterion is not satisfied by this infrastructure-only retry.
 - Next action: obtain runnable CI/log access or use a checkout with Python 3.13, .NET 8, and Android SDK/JDK; run the checks and record actual results.
+
+
+## Attempt T0007-A012 — successful current-main CI revalidation (2026-10-25)
+- Exact tested main commit: `cac4757623634ae5389b2a31e42a01d10b334c3c` (`V 3.0.286`).
+- [Step Three quality gate, run 40200490663, attempt 4](https://github.com/artinrahimii/project/actions/runs/40200490663) passed: 149 Python tests, syntax compilation, graph structure validation, and repository-backed output/evidence validation all succeeded.
+- [White-P product build, run 40200490646, attempt 6](https://github.com/artinrahimii/project/actions/runs/40200490646) passed: C# formatting, Windows Release build, generated Protobuf C# verification, WPF startup smoke test, HostLifecycle tests, Android formatting/lint, debug APK build, Protobuf round-trip tests, generated-source verification, and artifact upload all succeeded.
+- No product source code changed in this validation attempt. These checks resolve the current CI-runner blocker for rerunning tests, but do not establish that every technical decision is fully reflected in implementation/configuration/tests.
+- Outcome: `partial`; T0007 remains `in_progress`. The earlier pre-runner failures remain in this report and graph history.
+- Next: continue task-wide traceability verification against the real source tree and acceptance matrix; validate relevant dependency edges before advancing.

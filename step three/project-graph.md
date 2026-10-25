@@ -975,9 +975,9 @@
       ],
       "notes": "T0007 remains a broad traceability task. A007's deterministic unavailable-backend fallback and exact-message regression assertion passed GitHub Actions on V 3.0.42. Revalidation of main commit 2b15191008128bdf98cda5a6eaacbf5796c964ed shows MainWindow explicitly injects LocalInferenceBackendFactory.Create, which returns LlamaCppServerBackend; UnconfiguredInferenceBackend is only the HostInferenceSession default fallback when no backend/factory is configured, not evidence by itself that the current UI has no production backend. Keep T0007 in_progress because the broad task-wide traceability criterion is not yet proven complete. Current-round CI retries failed before runner allocation, so no new tests were executed. The T0007 -> T0008 edge remains validated as sequencing_only. Latest exact-main commit 95addc4385000528d2f7e10cea646ad84da05e8a was revalidated: both current workflows failed on retry before runner allocation (runner_id=0, empty runner_name, steps=[]). The validation tool's compatibility with the documented result 'passed' and two graph counter mismatches were corrected in this round; this does not complete T0007 or prove product acceptance.",
       "execution_summary": {
-        "attempt_count": 11,
+        "attempt_count": 12,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0007-A011",
+        "last_attempt_id": "T0007-A012",
         "last_attempt_result": "partial",
         "changed_files": [
           "step three/T0007/execution-report.md",
@@ -985,12 +985,15 @@
         ],
         "related_commits": [
           "632c36d257ca079dd9bdee07f5415aa3c7c97cc3",
-          "150c3eb3ff3b25c73cf68d3ccf0fa4ce191c3d84"
+          "150c3eb3ff3b25c73cf68d3ccf0fa4ce191c3d84",
+          "cac4757623634ae5389b2a31e42a01d10b334c3c"
         ],
         "tests_passed": [
           "GitHub Actions Step Three quality gate run 39671083734 — passed for exact commit aa1bc7e77bc5bbce80e9d7f987de75c1bdc71c36 (V 3.0.42).",
           "GitHub Actions White-P product build run 39671083885 — passed for exact commit aa1bc7e77bc5bbce80e9d7f987de75c1bdc71c36 (V 3.0.42).",
-          "In-memory exact-graph structural check: 229 unique task IDs, 426 valid-endpoint edges, no dependency cycle, matching task-history counters after correction, and existing output/evidence paths for done tasks; full graph_guard.py command and product tests were not run."
+          "In-memory exact-graph structural check: 229 unique task IDs, 426 valid-endpoint edges, no dependency cycle, matching task-history counters after correction, and existing output/evidence paths for done tasks; full graph_guard.py command and product tests were not run.",
+          "Step Three quality gate run 40200490663, attempt 4 — passed on exact main commit cac4757623634ae5389b2a31e42a01d10b334c3c: 149 Python tests, compileall, graph structure, output/evidence checks.",
+          "White-P product build run 40200490646, attempt 6 — passed on exact main commit cac4757623634ae5389b2a31e42a01d10b334c3c: Windows WPF Release build/startup smoke, HostLifecycle tests, Android lint/APK/Protobuf tests and generated-source validation."
         ],
         "tests_failed": [],
         "blocked_reason": null,
@@ -999,7 +1002,10 @@
           "state": "not_required",
           "triggering_contracts": [],
           "affected_by_contract_changes": [],
-          "review_evidence": []
+          "review_evidence": [
+            "https://github.com/artinrahimii/project/actions/runs/40200490663",
+            "https://github.com/artinrahimii/project/actions/runs/40200490646"
+          ]
         }
       },
       "execution_history": [
@@ -1303,6 +1309,39 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Restore usable workflow runner/log access or use an available checkout with Python 3.13, .NET 8, and Android SDK/JDK. Run the graph guard, Windows build/startup/lifecycle tests, and Android APK checks; only correct failures established by actual output. Keep T0007 in_progress until its broad acceptance criterion is demonstrated."
+        },
+        {
+          "attempt_id": "T0007-A012",
+          "started_at": "2026-10-25T20:30:00Z",
+          "ended_at": "2026-10-25T20:33:19Z",
+          "result": "partial",
+          "summary": "Re-ran the current-main quality gate and product build on exact commit cac4757623634ae5389b2a31e42a01d10b334c3c (V 3.0.286). The quality workflow passed all Python tests, syntax, graph validation, and repository-backed output/evidence checks. The product workflow passed Windows formatting/build/Protobuf generation/startup smoke, HostLifecycle tests, Android lint/build/APK, Android Protobuf unit tests and generated-source checks. T0007 remains in progress because its broad decision-to-code/configuration/test traceability criterion is not fully discharged by these workflows.",
+          "changed_files": [
+            "step three/T0007/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "related_commits": [
+            "cac4757623634ae5389b2a31e42a01d10b334c3c"
+          ],
+          "tests": [
+            {
+              "name": "Step Three quality gate — run 40200490663, attempt 4",
+              "result": "passed",
+              "summary": "149 Python tests passed; Python compileall, graph structure validation, and repository-backed output/evidence validation passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40200490663"
+            },
+            {
+              "name": "White-P product build — run 40200490646, attempt 6",
+              "result": "passed",
+              "summary": "Windows formatting, Release build, generated Protobuf C# verification, WPF startup smoke, HostLifecycle tests, Android lint, debug APK build, Protobuf round-trip unit tests, generated Java/Kotlin Protobuf checks, and APK artifact upload all passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40200490646"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Continue the broader T0007 traceability review against the actual implementation and acceptance matrix. Do not mark this task done merely because this revision's validation workflows passed. Preserve all unreviewed edge classifications and validate relevant incoming edges before selecting the next task."
         }
       ]
     },
@@ -15593,8 +15632,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0090 و T0087 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "blocked",
-      "status_fa": "مسدود",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "src/Host.Application/Chat/ChatConversation.cs",
         "src/Host.Windows/MainWindow.xaml",
@@ -15613,17 +15652,24 @@
       ],
       "notes": "Implementation exists in V 3.0.278, but required acceptance validation remains unavailable. The original three workflows failed; rerunning them (attempt 2) again ended before any job step executed: all jobs reported runner_id=0, empty runner_name, and steps=[]. Job-log retrieval for the original attempt returned BlobNotFound. No application-level failure cause or passing test has been established. T0091 is blocked at validation; do not mark done or change implementation speculatively. Graph counter reconciled on 2026-10-25T12:07:08.318Z: failed_attempt_count follows tools/graph_guard.py and counts top-level execution-history entries whose result is failed. Nested workflow evidence and all historic entries remain unchanged. Attempt T0091-2026-10-25-04 added a regression guard so a late generic generation error cannot repopulate a just-cleared conversation. Test is not run; status remains blocked pending executable CI validation.\n\nAttempt T0091-2026-10-25-05 corrected the scope of the source-contract regression test: it now examines only ClearSessionButton_Click and the generic exception handler within GenerateButton_Click. A targeted remote-source probe passed, including a mutation check; Python unittest and product acceptance remain unrun because current Actions jobs did not allocate runners. T0091 remains blocked.",
       "execution_summary": {
-        "attempt_count": 5,
+        "attempt_count": 6,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0091-2026-10-25-05",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "T0091-2026-10-25-06",
+        "last_attempt_result": "succeeded",
         "changed_files": [
-          "tests/test_wpf_entrypoint.py",
           "step three/T0091/execution-report.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
+        "related_commits": [
+          "cac4757623634ae5389b2a31e42a01d10b334c3c"
+        ],
+        "tests_passed": [
+          "WpfEntryPointTests.test_clear_session_suppresses_late_generation_errors — passed: Passed as part of 149 tests in the quality gate; verifies ClearSession cancellation and the method-scoped _clearSessionRequested guard around late System-error messages. (https://github.com/artinrahimii/project/actions/runs/40200490663)",
+          "Graph guard and recorded outputs/evidence — passed: Both graph-structure and repository-backed output/evidence validation steps passed. (https://github.com/artinrahimii/project/actions/runs/40200490663)",
+          "Windows host formatting, Release build, generated Protobuf verification and startup smoke — passed: All Windows job steps passed; the smoke test confirmed MainWindow displayed, required controls validated, and shutdown cleanly. (https://github.com/artinrahimii/project/actions/runs/40200490646)",
+          "HostLifecycle unit/integration tests — passed: Harness passed, including the in-memory ChatConversation tests for ordering, roles, clear operation, and sequence reset. (https://github.com/artinrahimii/project/actions/runs/40200490646)",
+          "Android lint, debug APK, Protobuf unit tests and generated-source validation — passed: All Android job steps passed and the debug APK artifact uploaded successfully. (https://github.com/artinrahimii/project/actions/runs/40200490646)"
+        ],
         "tests_failed": [
           "GitHub Actions product build run 40182706376 concluded failure (Windows host build, Android APK, and host lifecycle jobs failed); detailed job logs could not be retrieved by the GitHub connector.",
           "GitHub Actions quality gate run 40182706403 concluded failure; detailed job logs could not be retrieved by the GitHub connector.",
@@ -15632,19 +15678,23 @@
           "GitHub Actions retry attempt 2: quality gate run 40182706403 failed before any job step ran; the job reported runner_id=0, empty runner_name, and steps=[].",
           "GitHub Actions retry attempt 2: real local inference run 40182706368 failed before any job step ran; the job reported runner_id=0, empty runner_name, and steps=[]."
         ],
-        "blocked_reason": "T0091's acceptance is still blocked pending an actual Python quality-gate run, Windows build/startup smoke test, and HostLifecycle tests on a runner that executes job steps.",
+        "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "pending",
+          "state": "passed",
           "triggering_contracts": [
-            "T0090 in-memory conversation Clear API",
-            "WPF cancellation and generation completion"
+            "T0090 in-memory ChatConversation.Clear API",
+            "WPF cancellation and generation completion",
+            "T0087 model-license disclosure ordering"
           ],
           "affected_by_contract_changes": [],
           "review_evidence": [
             "src/Host.Application/Chat/ChatConversation.cs",
             "src/Host.Windows/MainWindow.xaml.cs",
-            "tests/HostLifecycle.Tests/ChatConversationAcceptanceTests.cs"
+            "tests/HostLifecycle.Tests/ChatConversationAcceptanceTests.cs",
+            "tests/test_wpf_entrypoint.py",
+            "https://github.com/artinrahimii/project/actions/runs/40200490663",
+            "https://github.com/artinrahimii/project/actions/runs/40200490646"
           ]
         }
       },
@@ -15817,6 +15867,57 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Rerun python -m unittest discover -s tests -v, python -m compileall -q tools tests, both graph_guard checks, the Windows WPF build/startup smoke and HostLifecycle tests when a runner is allocated; retain T0091 as blocked until these checks actually run and pass."
+        },
+        {
+          "attempt_id": "T0091-2026-10-25-06",
+          "started_at": "2026-10-25T20:30:00Z",
+          "ended_at": "2026-10-25T20:33:19Z",
+          "result": "succeeded",
+          "summary": "Validated the existing clear-session/cancel implementation and its test evidence on exact current-main commit cac4757623634ae5389b2a31e42a01d10b334c3c (V 3.0.286). The quality gate passed all 149 Python tests including the method-scoped late-error regression check, plus compileall and both graph guard modes. The product workflow passed the Windows WPF Release build, startup smoke, host lifecycle harness (including ChatConversation clearing/order assertions), Android lint/build/APK, Protobuf unit tests, generated-source checks, and artifact upload. No application source was changed in this validation attempt. The Python UI test is source-contract coverage, not a dynamic stress test of WPF cancellation races.",
+          "changed_files": [
+            "step three/T0091/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "related_commits": [
+            "cac4757623634ae5389b2a31e42a01d10b334c3c"
+          ],
+          "tests": [
+            {
+              "name": "WpfEntryPointTests.test_clear_session_suppresses_late_generation_errors",
+              "result": "passed",
+              "summary": "Passed as part of 149 tests in the quality gate; verifies ClearSession cancellation and the method-scoped _clearSessionRequested guard around late System-error messages.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40200490663"
+            },
+            {
+              "name": "Graph guard and recorded outputs/evidence",
+              "result": "passed",
+              "summary": "Both graph-structure and repository-backed output/evidence validation steps passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40200490663"
+            },
+            {
+              "name": "Windows host formatting, Release build, generated Protobuf verification and startup smoke",
+              "result": "passed",
+              "summary": "All Windows job steps passed; the smoke test confirmed MainWindow displayed, required controls validated, and shutdown cleanly.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40200490646"
+            },
+            {
+              "name": "HostLifecycle unit/integration tests",
+              "result": "passed",
+              "summary": "Harness passed, including the in-memory ChatConversation tests for ordering, roles, clear operation, and sequence reset.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40200490646"
+            },
+            {
+              "name": "Android lint, debug APK, Protobuf unit tests and generated-source validation",
+              "result": "passed",
+              "summary": "All Android job steps passed and the debug APK artifact uploaded successfully.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40200490646"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "T0091 is accepted for its implemented cancellation/session-clear behavior under the recorded source-contract, lifecycle, and full CI checks. Remaining limitation: there is no dynamic WPF race-stress test in this run; that limitation must not be represented as proof of exhaustive concurrent cancellation behavior. Next, review the currently unreviewed incoming edges to T0092 and T0087 -> T0092 before any work on T0092."
         }
       ]
     },
@@ -28114,6 +28215,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-25T14:02:07.963Z"
+  "updated_at": "2026-10-25T20:33:19.000Z"
 }
 ```
