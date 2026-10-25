@@ -14345,9 +14345,9 @@
       ],
       "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
       "execution_summary": {
-        "attempt_count": 1,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "T0085-2026-10-25-01",
+        "attempt_count": 3,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "T0085-2026-10-25-03",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Host.Windows/Models/VerifiedModelInstaller.cs",
@@ -14357,9 +14357,17 @@
           "step three/T0085/execution-report.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
-        "tests_failed": [],
+        "related_commits": [
+          "e47f0e1db66e539f75a77b82ee0cc70ea8dc197d"
+        ],
+        "tests_passed": [
+          "Step Three quality gate passed at the implementation commit: https://github.com/artinrahimii/project/actions/runs/40171951129",
+          "HostLifecycle acceptance suite passed at the implementation commit, including the VerifiedModelInstaller acceptance methods: https://github.com/artinrahimii/project/actions/runs/40171951154/jobs/121104457271",
+          "Real local llama.cpp/GGUF inference passed at the implementation commit: https://github.com/artinrahimii/project/actions/runs/40171951202"
+        ],
+        "tests_failed": [
+          "Windows WPF Release build failed at commit e47f0e1db66e539f75a77b82ee0cc70ea8dc197d: CS0246 for ModelStreamingDownloader, VerifiedModelInstaller and ModelDownloadProgress; code-behind lacked using WhiteP.Host.Windows.Models. Job: https://github.com/artinrahimii/project/actions/runs/40171951154/jobs/121104457161"
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -14370,13 +14378,12 @@
             "VerifiedModelInstaller staging and verification contract"
           ],
           "affected_by_contract_changes": [
-            "VerifiedModelInstaller adds a separate existing-destination update path; MainWindow now invokes it from explicit confirmation and cancellation controls."
+            "VerifiedModelInstaller adds DownloadAndUpdateAsync and MainWindow invokes the streaming download/update API."
           ],
           "review_evidence": [
             "src/Host.Windows/Models/VerifiedModelInstaller.cs",
             "src/Host.Windows/MainWindow.xaml.cs",
             "src/Host.Windows/Models/Catalog/ModelCatalogParser.cs",
-            "src/Host.Windows/Models/Catalog/OfflineModelCatalogStore.cs",
             "tests/HostLifecycle.Tests/VerifiedModelInstallerAcceptanceTests.cs"
           ]
         }
@@ -14437,6 +14444,92 @@
             "Added the update-selected-model UI flow and explicit cancellation."
           ],
           "follow_up": "Observe exact-head GitHub Actions. Mark T0085 done only after update acceptance cases, host build and graph quality checks all pass."
+        },
+        {
+          "attempt_id": "T0085-2026-10-25-02",
+          "started_at": "2026-10-25T07:13:11Z",
+          "ended_at": "2026-10-25T07:14:20Z",
+          "result": "failed",
+          "summary": "GitHub Actions exercised the new update tests and real local inference successfully, and the graph quality gate passed, but the Windows WPF Release build failed to resolve three model installer types from MainWindow.xaml.cs because the code-behind lacked using WhiteP.Host.Windows.Models. A code correction is required before completion.",
+          "changed_files": [],
+          "commit_sha": "e47f0e1db66e539f75a77b82ee0cc70ea8dc197d",
+          "tests": [
+            {
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40171951129"
+            },
+            {
+              "name": "HostLifecycle unit and integration tests",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40171951154/jobs/121104457271",
+              "summary": "The aggregate model installer acceptance test completed successfully; it invokes the newly added atomic-update success/failure/preservation tests."
+            },
+            {
+              "name": "Real local llama.cpp/GGUF integration",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40171951202"
+            },
+            {
+              "name": "Windows WPF Release build",
+              "result": "failed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40171951154/jobs/121104457161",
+              "summary": "CS0246: ModelStreamingDownloader, VerifiedModelInstaller and ModelDownloadProgress were not found in MainWindow.xaml.cs."
+            },
+            {
+              "name": "Android debug APK build",
+              "result": "pending",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40171951154",
+              "summary": "The Android job was still running when this failure record was written."
+            }
+          ],
+          "failure_details": "Missing `using WhiteP.Host.Windows.Models;` in the WPF code-behind; no model-update logic test failure was observed.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Add the missing namespace import, push a new versioned commit, and rerun exact-head Windows, HostLifecycle and quality checks."
+        },
+        {
+          "attempt_id": "T0085-2026-10-25-03",
+          "started_at": "2026-10-25T07:15:50.132Z",
+          "ended_at": "2026-10-25T07:15:50.132Z",
+          "result": "partial",
+          "summary": "Applied the compiler-diagnostic fix by importing the existing WhiteP.Host.Windows.Models namespace in MainWindow.xaml.cs. The fix is not yet verified by a successful post-fix Windows build.",
+          "changed_files": [
+            "src/Host.Windows/MainWindow.xaml.cs",
+            "step three/T0085/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Windows WPF Release build",
+              "result": "pending",
+              "summary": "Must confirm the namespace correction on the new exact commit."
+            },
+            {
+              "name": "HostLifecycle unit and integration tests",
+              "result": "pending",
+              "summary": "Rerun after the source correction."
+            },
+            {
+              "name": "Step Three quality gate",
+              "result": "pending",
+              "summary": "Rerun after the source correction."
+            },
+            {
+              "name": "Android debug APK build",
+              "result": "pending",
+              "summary": "Inspect final result for the parent implementation commit."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "Added the missing using directive for the model installation API types."
+          ],
+          "follow_up": "Validate commit V 3.0.257 in GitHub Actions; keep T0085 in_progress until the Windows Release build and task acceptance checks pass."
         }
       ]
     },
@@ -26875,6 +26968,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-25T07:12:52.238Z"
+  "updated_at": "2026-10-25T07:15:50.132Z"
 }
 ```

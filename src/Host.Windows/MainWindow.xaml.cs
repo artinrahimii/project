@@ -8,6 +8,7 @@ using WhiteP.Host.Application;
 using WhiteP.Host.Domain;
 using WhiteP.Host.Infrastructure;
 using WhiteP.Host.Windows.Inference;
+using WhiteP.Host.Windows.Models;
 
 namespace WhiteP.Host.Windows;
 

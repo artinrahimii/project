@@ -1,11 +1,32 @@
 # T0085 — Execution report
 
+## Implementation commit
+
 - Base commit: \`38521356b602b999b8dae365d8540358b06a6544\` (\`V 3.0.255\`), branch \`main\`.
-- Precondition review: T0084 and T0075 are both marked done with CI evidence. Reviewed \`T0075 -> T0085\` against the actual catalog-to-installer flow; the update consumes a \`ModelCatalogEntry\` from the validated offline-aware catalog and its source URL, declared size, SHA-256 and GGUF format metadata.
-- Implementation added: \`VerifiedModelInstaller.DownloadAndUpdateAsync\` stages the new download beside the target, streams fixed-size chunks, verifies declared size, SHA-256 and GGUF header/version, checks that the existing destination has not changed during download, then uses same-volume \`File.Replace\` with a recoverable backup for atomic replacement. The existing \`DownloadAndInstallAsync\` still refuses to overwrite a pre-existing destination.
-- Failure safety coverage added: a valid update replaces the previous bytes and removes staging/backup artifacts; checksum failure preserves the previous destination byte-for-byte; missing destination is rejected before any network request; a destination changed concurrently during download is not overwritten.
-- UI integration added: an explicit “Update selected model” action requires a selected catalog entry and exact trusted-source hostname, asks for confirmation, disconnects the host and stops only an app-owned engine before updating, reports real byte progress, supports cancellation, and persists the model path/ID after successful replacement. On failed transfer or validation, the existing target is not promoted over.
-- Files changed in this implementation attempt: \`src/Host.Windows/Models/VerifiedModelInstaller.cs\`, \`src/Host.Windows/MainWindow.xaml\`, \`src/Host.Windows/MainWindow.xaml.cs\`, \`tests/HostLifecycle.Tests/VerifiedModelInstallerAcceptanceTests.cs\`, \`step three/T0085/execution-report.md\`, \`step three/project-graph.md\`.
-- **Tests have not yet been observed for this new commit**. The task remains \`in_progress\` until the exact-head quality gate, HostLifecycle acceptance suite, Windows WPF Release build/startup smoke test, Android build/tests, and real-inference workflow are checked. No test is claimed to have passed based only on source edits.
-- Limitation: if an external process keeps the destination file locked, atomic replacement can fail; the UI reports failure and the existing file remains intact. A successful file update does not hot-reload an external inference server; the engine/service must be restarted before further inference.
-- Next action: validate the exact new commit in GitHub Actions, inspect test output for the new update scenarios, fix any observed failures, and only then mark T0085 complete.
+- Initial implementation commit: \`e47f0e1db66e539f75a77b82ee0cc70ea8dc197d\` (\`V 3.0.256\`): https://github.com/artinrahimii/project/commit/e47f0e1db66e539f75a77b82ee0cc70ea8dc197d
+- Precondition review: T0084 and T0075 are both marked done with evidence. Reviewed \`T0075 -> T0085\` against the actual catalog-to-installer flow; the selected \`ModelCatalogEntry\` comes from the offline-aware validated catalog and supplies source URL, declared size, SHA-256 and GGUF metadata.
+
+## Implemented behavior
+
+- Added \`VerifiedModelInstaller.DownloadAndUpdateAsync\`. The new payload is streamed into a unique same-directory staging file, checked against declared size and SHA-256, and validated for GGUF magic/version before the target file is touched.
+- Before promotion, the updater checks that the destination still exists and that its size/last-write timestamp have not changed during download. It then calls same-volume \`File.Replace\` with a unique backup path, so a failed transfer/checksum/format/target-change check leaves the installed model untouched. The old \`DownloadAndInstallAsync\` path continues to refuse overwriting an existing destination.
+- Added tests for successful atomic replacement, checksum-failure preservation, missing target rejection before networking, and refusing to overwrite a destination changed by another writer during download.
+- Connected the update API to the Windows catalog UI with explicit confirmation, a selected-entry requirement, exact trusted-host checking, streamed byte/speed progress, cancellation, disconnect of the host and stopping only the app-owned engine, and settings persistence after successful replacement. The UI explains that an external engine may need restarting and a locked file can cause replacement to be refused.
+
+## CI results and correction
+
+The first CI run for \`V 3.0.256\` was mixed:
+- Step Three graph quality gate passed: https://github.com/artinrahimii/project/actions/runs/40171951129
+- HostLifecycle suite passed, including the aggregate model installer acceptance tests: https://github.com/artinrahimii/project/actions/runs/40171951154/jobs/121104457271
+- Real local llama.cpp/GGUF inference passed: https://github.com/artinrahimii/project/actions/runs/40171951202
+- Windows WPF Release build **failed** because \`MainWindow.xaml.cs\` was missing \`using WhiteP.Host.Windows.Models;\`, leaving \`ModelStreamingDownloader\`, \`VerifiedModelInstaller\` and \`ModelDownloadProgress\` unresolved. Failure log: https://github.com/artinrahimii/project/actions/runs/40171951154/jobs/121104457161
+
+The missing namespace import has now been added in the follow-up change. This report deliberately does not mark T0085 complete until the exact post-fix commit has a successful Windows Release build and the remaining checks have been observed.
+
+## Remaining limitation
+
+If an external process keeps the target file locked, atomic replacement can fail; the prior file is not removed beforehand. A successful file update does not hot-reload an external inference server; restart the engine/service before further inference.
+
+## Next validation
+
+Check the new versioned commit's Windows WPF Release build and startup smoke test, HostLifecycle unit/integration tests, Step Three quality gate, Android build/tests, and applicable real-inference evidence. Only then set task status to done.
