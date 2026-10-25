@@ -31,3 +31,11 @@
 - T0091 is now `blocked` at the acceptance-validation stage. No speculative source edit was made. T0092 must remain unstarted until T0091's prerequisite is resolved.
 - Next action: restore usable Actions runner/log execution, then rerun the quality gate, Windows and Android builds, host lifecycle tests, and real local inference acceptance.
 
+
+## CI retry follow-up — current main (2026-10-25)
+- Exact base commit: `4802cee550236fb7b01c692394a6ed5152de2541` (`V 3.0.282`).
+- Retried [White-P product build, run 40195886046](https://github.com/artinrahimii/project/actions/runs/40195886046) and [Step Three quality gate, run 40195886042](https://github.com/artinrahimii/project/actions/runs/40195886042), attempt 2.
+- Both concluded `failure`; the API returned no job steps, and fetching each job log returned `BlobNotFound`. The exact infrastructure root cause could not be established from the available response.
+- No Windows build, Android APK build, or lifecycle test result was observable. This does not prove a source-code defect and does not satisfy acceptance.
+- No application source code changed in this attempt. T0091 remains `blocked`; T0092 must remain unstarted until checks execute and pass.
+- Next action: restore access to runnable CI/logs or run a real checkout with Python 3.13, .NET 8, Android SDK/JDK; inspect actual output and fix only demonstrated failures.

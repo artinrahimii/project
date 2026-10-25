@@ -940,7 +940,7 @@
         }
       ]
     },
-    {
+        {
       "id": "T0007",
       "title": "هر تصمیم فنی را در کد اجرایی، پیکربندی و آزمون‌های متناظر منعکس کن؛ سند به‌تنهایی معیار پذیرش نیست.",
       "section": "قانون تکمیل وظیفه",
@@ -975,14 +975,11 @@
       ],
       "notes": "T0007 remains a broad traceability task. A007's deterministic unavailable-backend fallback and exact-message regression assertion passed GitHub Actions on V 3.0.42. Revalidation of main commit 2b15191008128bdf98cda5a6eaacbf5796c964ed shows MainWindow explicitly injects LocalInferenceBackendFactory.Create, which returns LlamaCppServerBackend; UnconfiguredInferenceBackend is only the HostInferenceSession default fallback when no backend/factory is configured, not evidence by itself that the current UI has no production backend. Keep T0007 in_progress because the broad task-wide traceability criterion is not yet proven complete. Current-round CI retries failed before runner allocation, so no new tests were executed. The T0007 -> T0008 edge remains validated as sequencing_only. Latest exact-main commit 95addc4385000528d2f7e10cea646ad84da05e8a was revalidated: both current workflows failed on retry before runner allocation (runner_id=0, empty runner_name, steps=[]). The validation tool's compatibility with the documented result 'passed' and two graph counter mismatches were corrected in this round; this does not complete T0007 or prove product acceptance.",
       "execution_summary": {
-        "attempt_count": 10,
+        "attempt_count": 11,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0007-A010",
+        "last_attempt_id": "T0007-A011",
         "last_attempt_result": "partial",
         "changed_files": [
-          "tools/graph_guard.py",
-          "tests/test_graph_guard.py",
-          "docs/acceptance.md",
           "step three/T0007/execution-report.md",
           "step three/project-graph.md"
         ],
@@ -1275,6 +1272,37 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Restore a working GitHub Actions runner or run from a suitable checkout with Python 3.13, .NET 8 and Android SDK/JDK available. Then execute tests/test_graph_guard.py, the complete quality gate, Windows host build/lifecycle tests and Android APK build. Keep T0007 in_progress until its broad acceptance criterion is demonstrated."
+        },
+        {
+          "attempt_id": "T0007-A011",
+          "started_at": "2026-10-25T13:44:13Z",
+          "ended_at": "2026-10-25T13:44:20Z",
+          "result": "partial",
+          "summary": "Retried the quality gate and full product build against exact main commit 4802cee550236fb7b01c692394a6ed5152de2541 (V 3.0.282). Both concluded failure before any observable step/test result; logs were unavailable. No code-level pass/fail was established, so the broad traceability task remains in progress.",
+          "changed_files": [
+            "step three/T0007/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Step Three quality gate — retry attempt 2, run 40195886042",
+              "result": "not_run",
+              "summary": "Workflow concluded failure before a test result could be observed. The only job returned steps=[] and the job-log request returned BlobNotFound; no Python/graph test command was observed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40195886042"
+            },
+            {
+              "name": "White-P product build — retry attempt 2, run 40195886046",
+              "result": "not_run",
+              "summary": "Workflow concluded failure. All three jobs returned steps=[]; job-log requests returned BlobNotFound. Windows build, Android APK build, and host lifecycle test commands were not observed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40195886046"
+            }
+          ],
+          "failure_details": "The exact base commit's quality gate and product build were retried. Both workflows concluded failure; job-step APIs returned empty step lists and job-log downloads returned BlobNotFound. The connector did not expose a definitive infrastructure root cause, so this does not establish either a code defect or passing acceptance.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Restore usable workflow runner/log access or use an available checkout with Python 3.13, .NET 8, and Android SDK/JDK. Run the graph guard, Windows build/startup/lifecycle tests, and Android APK checks; only correct failures established by actual output. Keep T0007 in_progress until its broad acceptance criterion is demonstrated."
         }
       ]
     },
@@ -15548,7 +15576,7 @@
         }
       ]
     },
-    {
+        {
       "id": "T0091",
       "title": "توقف تولید و پاک‌کردن نشست را پیاده‌سازی کن.",
       "section": "9. گفت‌وگوی مستقیم در میزبان و ابزارهای عامل",
@@ -15585,15 +15613,11 @@
       ],
       "notes": "Implementation exists in V 3.0.278, but required acceptance validation remains unavailable. The original three workflows failed; rerunning them (attempt 2) again ended before any job step executed: all jobs reported runner_id=0, empty runner_name, and steps=[]. Job-log retrieval for the original attempt returned BlobNotFound. No application-level failure cause or passing test has been established. T0091 is blocked at validation; do not mark done or change implementation speculatively. Graph counter reconciled on 2026-10-25T12:07:08.318Z: failed_attempt_count follows tools/graph_guard.py and counts top-level execution-history entries whose result is failed. Nested workflow evidence and all historic entries remain unchanged.",
       "execution_summary": {
-        "attempt_count": 2,
+        "attempt_count": 3,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0091-2026-10-25-02",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "T0091-2026-10-25-03",
+        "last_attempt_result": "blocked",
         "changed_files": [
-          "src/Host.Application/Chat/ChatConversation.cs",
-          "src/Host.Windows/MainWindow.xaml.cs",
-          "src/Host.Windows/MainWindow.xaml",
-          "tests/HostLifecycle.Tests/ChatConversationAcceptanceTests.cs",
           "step three/T0091/execution-report.md",
           "step three/project-graph.md"
         ],
@@ -15607,7 +15631,7 @@
           "GitHub Actions retry attempt 2: quality gate run 40182706403 failed before any job step ran; the job reported runner_id=0, empty runner_name, and steps=[].",
           "GitHub Actions retry attempt 2: real local inference run 40182706368 failed before any job step ran; the job reported runner_id=0, empty runner_name, and steps=[]."
         ],
-        "blocked_reason": "GitHub Actions did not allocate a runner for the retried validation: every job concluded failure before steps ran (runner_id=0, empty runner_name, steps=[]). Job logs for the original attempt were unavailable with BlobNotFound.",
+        "blocked_reason": "Required CI validation still cannot be observed: both latest workflow retries ended in failure without recorded job steps, and job logs were unavailable as BlobNotFound. Root cause remains unconfirmed; acceptance is not validated.",
         "reopened_reason": null,
         "contract_revalidation": {
           "state": "pending",
@@ -15698,6 +15722,37 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Restore usable GitHub Actions runner execution or log access, then rerun the quality gate, Windows/Android product build and host lifecycle tests. Keep T0091 blocked until required checks actually execute and pass. Do not start T0092 while its T0091 prerequisite is unresolved."
+        },
+        {
+          "attempt_id": "T0091-2026-10-25-03",
+          "started_at": "2026-10-25T13:44:13Z",
+          "ended_at": "2026-10-25T13:44:20Z",
+          "result": "blocked",
+          "summary": "Retried current-main validation on commit 4802cee550236fb7b01c692394a6ed5152de2541 (V 3.0.282). Product build and Step Three quality gate again concluded failure; the job-step API returned empty steps and log downloads returned BlobNotFound. No source-code failure was established and no test command was observed.",
+          "changed_files": [
+            "step three/T0091/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Step Three quality gate — retry attempt 2, run 40195886042",
+              "result": "not_run",
+              "summary": "Workflow concluded failure before a test result could be observed. The only job returned steps=[] and the job-log request returned BlobNotFound; no Python/graph test command was observed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40195886042"
+            },
+            {
+              "name": "White-P product build — retry attempt 2, run 40195886046",
+              "result": "not_run",
+              "summary": "Workflow concluded failure. All three jobs returned steps=[]; job-log requests returned BlobNotFound. Windows build, Android APK build, and host lifecycle test commands were not observed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40195886046"
+            }
+          ],
+          "failure_details": "The exact base commit's quality gate and product build were retried. Both workflows concluded failure; job-step APIs returned empty step lists and job-log downloads returned BlobNotFound. The connector did not expose a definitive infrastructure root cause, so this does not establish either a code defect or passing acceptance.",
+          "blocked_reason": "Required CI validation still cannot be observed: both latest workflow retries ended in failure without recorded job steps, and job logs were unavailable as BlobNotFound. Root cause remains unconfirmed; acceptance is not validated.",
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Obtain a run where quality-gate and product-build steps actually execute, or run from a checkout with Python 3.13, .NET 8, and Android SDK/JDK. Review actual logs and fix only proven errors. Keep T0091 blocked and do not start T0092 until the required checks pass."
         }
       ]
     },
@@ -27995,6 +28050,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-25T12:07:08.318Z"
+  "updated_at": "2026-10-25T13:44:20.000Z"
 }
 ```
