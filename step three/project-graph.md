@@ -15053,9 +15053,7 @@
         "src/Host.Windows/MainWindow.xaml",
         "src/Host.Windows/MainWindow.xaml.cs",
         "src/Host.Windows/App.xaml.cs",
-        "tests/test_wpf_entrypoint.py",
-        "https://github.com/artinrahimii/project/actions/runs/40179954129",
-        "https://github.com/artinrahimii/project/actions/runs/40179954088"
+        "tests/test_wpf_entrypoint.py"
       ],
       "notes": "معیار پذیرش در commit 3d4c5dc0659d3159f0641bfb2e4210634e037c8a با شواهد CI تأیید شد: فهرست پیام‌های محلی، ورودی متن، دکمهٔ ارسال متصل به HostInferenceSession و ارسال با Enter با حفظ Shift+Enter برای چندخطی. مسیر کد موجود در MainWindow است؛ پوشه‌های Chat/Tools ایجاد نشده‌اند، اما رابط و رفتار واقعی در فایل‌های موجود پیاده‌سازی شده‌اند.",
       "execution_summary": {
@@ -15217,9 +15215,7 @@
         "tests/test_inference_backend_abstraction.py",
         "tests/HostLifecycle.Tests/Program.cs",
         "step three/T0088/execution-report.md",
-        "step three/T0087/execution-report.md",
-        "https://github.com/artinrahimii/project/actions/runs/40179954129",
-        "https://github.com/artinrahimii/project/actions/runs/40179954088"
+        "step three/T0087/execution-report.md"
       ],
       "notes": "کد واقعی اتصال گفت‌وگوی WPF به HostInferenceSession و factory موتور محلی از قبل در فایل‌های تولیدی وجود داشت و در این وظیفه بررسی شد. وضعیت تولید با RenderStatus و پیام‌های خطا/لغو در UI نمایش داده می‌شود. شواهد CI ثبت‌شده متعلق به revision پیاده‌سازی مرتبط با T0088 است؛ اجرای تازه‌ای در این نوبت شروع نشد. اتصال end-to-end از Android از راه P2P با این شواهد اثبات نمی‌شود.",
       "execution_summary": {
@@ -27633,6 +27629,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-25T12:35:00Z"
+  "updated_at": "2026-10-25T12:38:00Z"
 }
 ```

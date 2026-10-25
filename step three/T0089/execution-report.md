@@ -23,5 +23,9 @@
 - The existing Windows WPF Release build/startup smoke test and host lifecycle tests passed in [40179954088](https://github.com/artinrahimii/project/actions/runs/40179954088). Android APK/Protobuf checks in that run also passed but are not direct evidence for T0089.
 - These CI results are from the implementation revision associated with T0088; inspected production source files are the current source at baseline. No new test run was started by this execution, so results are reported as previously recorded CI evidence, not as a newly executed test.
 
+## Follow-up quality gate
+- The first quality-gate run on commit `5122e4eebc31a66a60ac937af769d3220c0ab259` failed at the recorded-output/evidence validation step, although all 146 Python tests and the structural graph check passed.
+- Root cause: the guard interprets strings containing slashes in the `evidence` field as repository-relative file paths, so GitHub Actions URLs in the pre-existing T0088 evidence and new T0089 evidence were incorrectly checked as local files. The URLs remain in this report as clickable CI references; graph evidence fields now contain repository-local paths only. No task outputs or historical attempts were removed.
+
 ## Result
 T0089 acceptance is considered satisfied by the inspected real implementation plus existing successful regression/build evidence. The task record is updated to `done`. Physical-device P2P end-to-end behavior remains outside this task's demonstrated evidence.
