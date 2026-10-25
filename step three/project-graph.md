@@ -15486,10 +15486,10 @@
         "src/Host.Windows/MainWindow.xaml.cs",
         "tests/HostLifecycle.Tests/ChatConversationAcceptanceTests.cs"
       ],
-      "notes": "پیاده‌سازی اولیهٔ Clear برای مکالمهٔ درون‌حافظه‌ای، دکمهٔ پاک‌کردن نشست و جلوگیری از افزودن پاسخ/پیام لغو به نشست تازه‌شده اضافه شده است. وابستگی T0090 بررسی شد و فنی است؛ وابستگی T0087 صرفاً ترتیب اجرایی است. هنوز CI برای این تغییر اجرا نشده؛ تکمیل تأیید نمی‌شود.",
+      "notes": "Implementation pushed in V 3.0.278, but CI did not pass: product build, quality gate, and real local inference integration workflows all concluded failure. The connector's job-log endpoint returned BlobNotFound and step summaries were empty, so the failure cause is not yet established. Keep in_progress; do not claim acceptance.",
       "execution_summary": {
         "attempt_count": 1,
-        "failed_attempt_count": 0,
+        "failed_attempt_count": 1,
         "last_attempt_id": "T0091-2026-10-25-01",
         "last_attempt_result": "partial",
         "changed_files": [
@@ -15502,7 +15502,11 @@
         ],
         "related_commits": [],
         "tests_passed": [],
-        "tests_failed": [],
+        "tests_failed": [
+          "GitHub Actions product build run 40182706376 concluded failure (Windows host build, Android APK, and host lifecycle jobs failed); detailed job logs could not be retrieved by the GitHub connector.",
+          "GitHub Actions quality gate run 40182706403 concluded failure; detailed job logs could not be retrieved by the GitHub connector.",
+          "GitHub Actions real local inference integration run 40182706368 concluded failure; detailed job logs could not be retrieved by the GitHub connector."
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -15523,7 +15527,7 @@
         {
           "attempt_id": "T0091-2026-10-25-01",
           "started_at": "2026-10-25T10:04:00Z",
-          "ended_at": null,
+          "ended_at": "2026-10-25T10:07:00Z",
           "result": "partial",
           "summary": "Added a Clear method to the in-memory conversation, a WPF Clear session button, cancellation on clear when generation is active, suppression of late assistant/cancellation messages after clear, and acceptance checks for clearing and sequence reset. CI validation pending.",
           "changed_files": [
@@ -15534,24 +15538,29 @@
             "step three/T0091/execution-report.md",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "a636829b3f6ec3863da590fad5a21289cd84d78c",
           "tests": [
             {
-              "name": "ChatConversationAcceptanceTests",
-              "result": "not_run",
-              "summary": "Clear/reset assertions added; CI must compile and run them."
+              "name": "White-P product build",
+              "result": "failed",
+              "summary": "Run 40182706376 failed across Windows host build, Android APK and host lifecycle jobs; detailed logs unavailable through connector."
             },
             {
-              "name": "Windows WPF build/startup smoke",
-              "result": "pending",
-              "summary": "Requires GitHub Actions run on this change."
+              "name": "Step Three quality gate",
+              "result": "failed",
+              "summary": "Run 40182706403 failed; detailed logs unavailable through connector."
+            },
+            {
+              "name": "Real local inference integration",
+              "result": "failed",
+              "summary": "Run 40182706368 failed; detailed logs unavailable through connector."
             }
           ],
-          "failure_details": null,
+          "failure_details": "Three GitHub Actions workflows for this commit concluded failure: product build run 40182706376, quality gate run 40182706403, and real local inference integration run 40182706368. Fetching job logs returned BlobNotFound and job step summaries were empty, so root cause is currently unknown; next attempt must inspect/re-run CI and correct any proven failure.",
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect CI on this commit; fix any compile or lifecycle regressions. Mark done only when host lifecycle tests and Windows build/startup smoke pass."
+          "follow_up": "Rerun failed workflows or obtain their logs; identify root cause before editing implementation. Keep T0091 in_progress until all required acceptance checks pass."
         }
       ]
     },
@@ -27849,6 +27858,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-25T10:04:00Z"
+  "updated_at": "2026-10-25T10:07:00Z"
 }
 ```

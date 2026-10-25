@@ -16,3 +16,9 @@
 ## Validation
 - No local build/test execution is available in this tool runtime.
 - GitHub Actions has not yet run against this implementation at report creation time. T0091 remains `in_progress` until CI verifies compilation, WPF startup smoke and lifecycle tests.
+
+
+## CI follow-up (2026-10-25)
+- Commit `a636829b3f6ec3863da590fad5a21289cd84d78c` triggered three workflows, all concluded `failure`: [product build 40182706376](https://github.com/artinrahimii/project/actions/runs/40182706376), [quality gate 40182706403](https://github.com/artinrahimii/project/actions/runs/40182706403), and [real local inference integration 40182706368](https://github.com/artinrahimii/project/actions/runs/40182706368).
+- Attempts to retrieve the job logs returned `BlobNotFound`; job step summaries were empty. Therefore the root cause is not established and no speculative code correction is made.
+- T0091 remains `in_progress`, with one failed CI validation attempt recorded. Next action: obtain usable logs or rerun workflows, identify the actual failing step, fix it, and rerun acceptance checks.
