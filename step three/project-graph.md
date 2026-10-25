@@ -13434,33 +13434,79 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0078 و T0075 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "src/Host.Windows/Models/ModelStreamingDownloader.cs",
+        "tests/HostLifecycle.Tests/ModelStreamingDownloaderAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0079/execution-report.md",
+        "step three/project-graph.md"
+      ],
       "expected_output_paths": [
         "src/Host.Windows/Models/ + tests/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "src/Host.Windows/Models/ModelStreamingDownloader.cs",
+        "tests/HostLifecycle.Tests/ModelStreamingDownloaderAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0079/execution-report.md"
+      ],
+      "notes": "Extended the real progress callback with elapsed time, a byte-derived approximate throughput, and percentage computed from actual bytes written versus catalog size. The acceptance suite now validates monotonic byte/percentage progress and consistency of the reported rate with elapsed time; exact-head CI is pending.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0079-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Host.Windows/Models/ModelStreamingDownloader.cs",
+          "tests/HostLifecycle.Tests/ModelStreamingDownloaderAcceptanceTests.cs",
+          "tests/HostLifecycle.Tests/Program.cs",
+          "step three/T0079/execution-report.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
+          "state": "reviewed",
+          "triggering_contracts": [
+            "ModelDownloadProgress",
+            "ModelStreamingDownloader.DownloadAsync",
+            "ModelCatalogEntry.SizeBytes"
+          ],
           "affected_by_contract_changes": [],
-          "review_evidence": []
+          "review_evidence": [
+            "src/Host.Windows/Models/ModelStreamingDownloader.cs",
+            "tests/HostLifecycle.Tests/ModelStreamingDownloaderAcceptanceTests.cs"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0079-A001",
+          "started_at": "2026-10-25T04:36:57.749Z",
+          "ended_at": "2026-10-25T04:36:57.749Z",
+          "result": "partial",
+          "summary": "Added real throughput metrics to ModelDownloadProgress: elapsed time, bytes per second derived from actual bytes written, and a percentage derived from BytesDownloaded/TotalBytes. Extended streaming acceptance checks to validate bytes and percentage increase monotonically, the final percentage is 100%, and reported rate matches the reported byte count and elapsed duration. Exact-head CI pending.",
+          "changed_files": [
+            "src/Host.Windows/Models/ModelStreamingDownloader.cs",
+            "tests/HostLifecycle.Tests/ModelStreamingDownloaderAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "step three/T0079/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "related_commits": [],
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Run exact-head quality gate and HostLifecycle tests. Fix any compile/style/test issues before marking T0079 done."
+        }
+      ]
     },
     {
       "id": "T0080",
@@ -22044,19 +22090,27 @@
       "from": "T0078",
       "to": "T0079",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "The reporting feature consumes byte/progress events from ModelStreamingDownloader; it does not directly use T0078's interrupted-download test artifact. Keep type=blocks and the graph start order, but classify this edge as sequencing-only.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/Models/ModelStreamingDownloader.cs",
+        "tests/HostLifecycle.Tests/ModelStreamingDownloaderAcceptanceTests.cs",
+        "step three/T0078/execution-report.md"
+      ]
     },
     {
       "from": "T0075",
       "to": "T0079",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "Progress/rate measurement is performed by the streaming transfer itself and does not consume OfflineModelCatalogStore. Keep type=blocks and preserve the required sequence; this is not a demonstrated technical dependency.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/Models/Catalog/OfflineModelCatalogStore.cs",
+        "src/Host.Windows/Models/ModelStreamingDownloader.cs",
+        "step three/T0075/execution-report.md"
+      ]
     },
     {
       "from": "T0079",
@@ -25950,8 +26004,36 @@
         "step three/T0075/execution-report.md"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-25T04:36:57.749Z",
+      "edge_from": "T0078",
+      "edge_to": "T0079",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "reason": "The reporting feature consumes byte/progress events from ModelStreamingDownloader; it does not directly use T0078's interrupted-download test artifact. Keep type=blocks and the graph start order, but classify this edge as sequencing-only.",
+      "evidence": [
+        "src/Host.Windows/Models/ModelStreamingDownloader.cs",
+        "tests/HostLifecycle.Tests/ModelStreamingDownloaderAcceptanceTests.cs",
+        "step three/T0078/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-25T04:36:57.749Z",
+      "edge_from": "T0075",
+      "edge_to": "T0079",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "reason": "Progress/rate measurement is performed by the streaming transfer itself and does not consume OfflineModelCatalogStore. Keep type=blocks and preserve the required sequence; this is not a demonstrated technical dependency.",
+      "evidence": [
+        "src/Host.Windows/Models/Catalog/OfflineModelCatalogStore.cs",
+        "src/Host.Windows/Models/ModelStreamingDownloader.cs",
+        "step three/T0075/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-25T04:35:38.538Z"
+  "updated_at": "2026-10-25T04:36:57.749Z"
 }
 ```

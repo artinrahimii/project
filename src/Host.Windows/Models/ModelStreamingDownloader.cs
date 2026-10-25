@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Net.Http;
@@ -6,7 +7,15 @@ using WhiteP.Host.Windows.Models.Catalog;
 namespace WhiteP.Host.Windows.Models;
 
 /// <summary>Progress for a streaming model download.</summary>
-public sealed record ModelDownloadProgress(long BytesDownloaded, long TotalBytes);
+public sealed record ModelDownloadProgress(long BytesDownloaded, long TotalBytes)
+{
+    public TimeSpan Elapsed { get; init; }
+
+    public double BytesPerSecond { get; init; }
+
+    public double ProgressPercentage =>
+        TotalBytes > 0 ? Math.Clamp(BytesDownloaded * 100d / TotalBytes, 0d, 100d) : 0d;
+}
 
 /// <summary>
 /// Streams model bytes to a caller-selected path. The caller owns temporary-path policy and
@@ -84,6 +93,7 @@ public sealed class ModelStreamingDownloader : IDisposable
             createdDestination = true;
 
             var buffer = new byte[BufferSizeBytes];
+            var startedAt = Stopwatch.GetTimestamp();
             long totalBytes = 0;
             while (true)
             {
@@ -101,7 +111,13 @@ public sealed class ModelStreamingDownloader : IDisposable
                 }
 
                 await output.WriteAsync(buffer.AsMemory(0, bytesRead), cancellationToken).ConfigureAwait(false);
-                progress?.Report(new ModelDownloadProgress(totalBytes, model.SizeBytes));
+                var elapsed = Stopwatch.GetElapsedTime(startedAt);
+                var bytesPerSecond = elapsed.TotalSeconds > 0 ? totalBytes / elapsed.TotalSeconds : 0d;
+                progress?.Report(new ModelDownloadProgress(totalBytes, model.SizeBytes)
+                {
+                    Elapsed = elapsed,
+                    BytesPerSecond = double.IsFinite(bytesPerSecond) ? bytesPerSecond : 0d
+                });
             }
 
             await output.FlushAsync(cancellationToken).ConfigureAwait(false);

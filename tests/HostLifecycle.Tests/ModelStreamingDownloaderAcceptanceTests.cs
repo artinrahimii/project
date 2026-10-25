@@ -51,8 +51,38 @@ internal static class ModelStreamingDownloaderAcceptanceTests
             Assert(stream.MaxRequestedBufferLength <= ModelStreamingDownloader.BufferSizeBytes,
                 "The downloader must not request an unbounded response buffer.");
             Assert(progress.Updates.Count > 1, "Progress should be reported as chunks arrive.");
-            Assert(progress.Updates[^1].BytesDownloaded == bytes.LongLength,
+            var finalProgress = progress.Updates[^1];
+            Assert(finalProgress.BytesDownloaded == bytes.LongLength,
                 "The final progress report should match the completed file size.");
+            Assert(finalProgress.ProgressPercentage == 100d,
+                "A completed stream must report exactly 100 percent progress.");
+            Assert(double.IsFinite(finalProgress.BytesPerSecond) && finalProgress.BytesPerSecond >= 0d,
+                "The estimated throughput must be a finite non-negative value.");
+            Assert(finalProgress.Elapsed >= TimeSpan.Zero,
+                "Elapsed transfer time cannot be negative.");
+            long priorBytes = 0;
+            double priorPercentage = 0d;
+            TimeSpan priorElapsed = TimeSpan.Zero;
+            foreach (var update in progress.Updates)
+            {
+                Assert(update.BytesDownloaded >= priorBytes && update.BytesDownloaded <= update.TotalBytes,
+                    "Progress byte counts must be monotonic and never exceed the declared total.");
+                Assert(update.ProgressPercentage >= priorPercentage,
+                    "Progress percentage must not move backward.");
+                Assert(update.Elapsed >= priorElapsed,
+                    "Elapsed transfer time must be monotonic.");
+                if (update.Elapsed.TotalSeconds > 0d)
+                {
+                    var expectedRate = update.BytesDownloaded / update.Elapsed.TotalSeconds;
+                    Assert(Math.Abs(update.BytesPerSecond - expectedRate) < 0.001d,
+                        "Reported throughput must be derived from the actual bytes and elapsed time.");
+                }
+
+                priorBytes = update.BytesDownloaded;
+                priorPercentage = update.ProgressPercentage;
+                priorElapsed = update.Elapsed;
+            }
+
             Assert(File.ReadAllBytes(destination).SequenceEqual(bytes),
                 "The streamed file must preserve every downloaded byte in order.");
         }
