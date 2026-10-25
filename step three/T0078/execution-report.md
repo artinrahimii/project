@@ -8,3 +8,12 @@
 - Implementation: added \`tests/HostLifecycle.Tests/IncompleteModelDownloadAcceptanceTests.cs\`. A deterministic HTTP test stream emits an initial chunk then throws an I/O exception. The test executes \`VerifiedModelInstaller.DownloadAndInstallAsync\` and checks that the transfer really began, bytes were received before failure, the final destination does not exist, and no staging file remains.
 - Integration: registered the acceptance suite in \`tests/HostLifecycle.Tests/Program.cs\`.
 - Status: \`in_progress\`; exact-head HostLifecycle tests and graph-quality CI are pending. No pass is claimed until they complete.
+
+
+## Attempt 2 — interrupted-transfer test passed
+
+- Implementation commit: `6deba761f71609254542062bf12faae4fca82fe8` (`V 3.0.241`).
+- Step Three quality gate [run 40162373982](https://github.com/artinrahimii/project/actions/runs/40162373982) passed, including evidence validation.
+- HostLifecycle tests [job 121076431429](https://github.com/artinrahimii/project/actions/runs/40162373983/job/121076431429) passed. The log explicitly reports `PASS: interrupted model downloads remove partial staging files and never expose an incomplete final model.`
+- The fixture supplied an initial chunk before throwing `IOException`; the acceptance checks verified that no final file and no staging file remained.
+- The full Windows/Android product workflow was still in progress when this task's result was recorded. Task result: `done` for T0078's interrupted-transfer safety acceptance.

@@ -13308,8 +13308,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0077 و T0075 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "tests/HostLifecycle.Tests/IncompleteModelDownloadAcceptanceTests.cs",
         "tests/HostLifecycle.Tests/Program.cs",
@@ -13324,20 +13324,25 @@
         "tests/HostLifecycle.Tests/Program.cs",
         "step three/T0078/execution-report.md"
       ],
-      "notes": "Added a deterministic interrupted-response test exercising the real VerifiedModelInstaller and streaming downloader. The fixture returns one chunk and then throws IOException; acceptance asserts no final model and no residual staging file. Exact-head CI is pending.",
+      "notes": "The deterministic interrupted-response acceptance test passed on exact implementation commit 6deba761f71609254542062bf12faae4fca82fe8. It confirms bytes are received before the simulated IOException and that neither a final model file nor a residual staging file remains. The exact-head graph quality gate passed; the wider Windows/Android product-build workflow was still running when this task status was updated.",
       "execution_summary": {
-        "attempt_count": 1,
+        "attempt_count": 2,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0078-A001",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "T0078-A002",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "tests/HostLifecycle.Tests/IncompleteModelDownloadAcceptanceTests.cs",
           "tests/HostLifecycle.Tests/Program.cs",
           "step three/T0078/execution-report.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
+        "related_commits": [
+          "6deba761f71609254542062bf12faae4fca82fe8"
+        ],
+        "tests_passed": [
+          "Exact-head graph quality gate passed: https://github.com/artinrahimii/project/actions/runs/40162373982",
+          "Exact-head HostLifecycle tests passed, including IncompleteModelDownloadAcceptanceTests: https://github.com/artinrahimii/project/actions/runs/40162373983/job/121076431429"
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -13376,6 +13381,39 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Run the exact-head graph quality gate and HostLifecycle tests; correct any errors before marking T0078 done."
+        },
+        {
+          "attempt_id": "T0078-A002",
+          "started_at": "2026-10-25T04:35:38.538Z",
+          "ended_at": "2026-10-25T04:35:38.538Z",
+          "result": "succeeded",
+          "summary": "Exact-head graph quality gate passed and the HostLifecycle test job succeeded. Logs show the downloader, installer, and interrupted-download acceptance tests all emitted PASS. The interrupted-response test delivered an initial data chunk then threw IOException; the final destination and temporary staging file were both absent afterward. The broader Windows/Android build was still running and is not claimed complete here.",
+          "changed_files": [
+            "tests/HostLifecycle.Tests/IncompleteModelDownloadAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "step three/T0078/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "related_commits": [
+            "6deba761f71609254542062bf12faae4fca82fe8"
+          ],
+          "tests": [
+            {
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40162373982"
+            },
+            {
+              "name": "HostLifecycle unit and integration tests",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40162373983/job/121076431429"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Proceed to T0079 after reviewing the graph edges and confirming the new progress-rate calculation uses bytes actually received."
         }
       ]
     },
@@ -25914,6 +25952,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-25T04:34:06.748Z"
+  "updated_at": "2026-10-25T04:35:38.538Z"
 }
 ```
