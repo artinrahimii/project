@@ -14602,8 +14602,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0085 و T0075 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال انجام",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "src/Host.Windows/Models/VerifiedModelInstaller.cs",
         "tests/HostLifecycle.Tests/UpdateModelSafetyAcceptanceTests.cs",
@@ -14628,10 +14628,10 @@
       ],
       "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
       "execution_summary": {
-        "attempt_count": 3,
+        "attempt_count": 4,
         "failed_attempt_count": 1,
-        "last_attempt_id": "T0086-2026-10-25-03",
-        "last_attempt_result": "failed",
+        "last_attempt_id": "T0086-2026-10-25-04",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Host.Windows/Models/VerifiedModelInstaller.cs",
           "tests/HostLifecycle.Tests/UpdateModelSafetyAcceptanceTests.cs",
@@ -14641,19 +14641,19 @@
           "step three/project-graph.md"
         ],
         "related_commits": [
-          "4968818d92762c64b8078111478000d10c48d4cd"
+          "4968818d92762c64b8078111478000d10c48d4cd",
+          "1855cad642250ef8a04e147ac3c6fd3ba38fc6d1"
         ],
         "tests_passed": [
           "Step Three graph and Python quality gate — https://github.com/artinrahimii/project/actions/runs/40172805758",
           "HostLifecycle unit/integration tests and T0086 failure-path acceptance tests — https://github.com/artinrahimii/project/actions/runs/40172805864",
           "Windows WPF Release build and startup smoke test — https://github.com/artinrahimii/project/actions/runs/40172805864",
-          "Real local llama.cpp/GGUF inference — https://github.com/artinrahimii/project/actions/runs/40172805708"
+          "Real local llama.cpp/GGUF inference — https://github.com/artinrahimii/project/actions/runs/40172805708",
+          "Corrected Step Three graph quality gate passed: https://github.com/artinrahimii/project/actions/runs/40173154987"
         ],
-        "tests_failed": [
-          "Step Three quality gate failed because three GitHub Actions URLs were stored in the file-path-only `evidence` field; URLs must remain in nested test evidence/report hyperlinks while top-level evidence holds existing repo files only."
-        ],
+        "tests_failed": [],
         "blocked_reason": null,
-        "reopened_reason": "Graph quality gate rejected external URL strings in the evidence-file path field; software acceptance tests passed but final graph gate needs a corrected metadata revision.",
+        "reopened_reason": null,
         "contract_revalidation": {
           "state": "passed",
           "triggering_contracts": [
@@ -14805,6 +14805,43 @@
           "reopened_reason": "Correct metadata shape required before the task can remain marked done under graph validation.",
           "contract_changes": [],
           "follow_up": "Run the Step Three quality gate on the corrected graph; if it passes, add a successful graph-validation attempt and close T0086 in the next versioned commit."
+        },
+        {
+          "attempt_id": "T0086-2026-10-25-04",
+          "started_at": "2026-10-25T07:29:34Z",
+          "ended_at": "2026-10-25T07:33:30.199Z",
+          "result": "succeeded",
+          "summary": "The evidence path schema was corrected by removing workflow URLs from the top-level evidence file list. The Step Three quality gate passed on exact correction commit 1855cad642250ef8a04e147ac3c6fd3ba38fc6d1. HostLifecycle failure-path tests, Windows WPF build/startup, and real local inference had already passed on implementation commit 4968818d92762c64b8078111478000d10c48d4cd.",
+          "changed_files": [],
+          "commit_sha": "1855cad642250ef8a04e147ac3c6fd3ba38fc6d1",
+          "tests": [
+            {
+              "name": "Step Three graph and Python quality gate after evidence correction",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40173154987",
+              "summary": "The graph validation completed successfully after the T0086 top-level evidence list was restricted to repository file paths."
+            },
+            {
+              "name": "HostLifecycle failure-path acceptance tests",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40172805864/job/121107046376"
+            },
+            {
+              "name": "Windows WPF Release build and startup smoke test",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40172805864/job/121107046194"
+            },
+            {
+              "name": "Real local llama.cpp/GGUF inference",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40172805708"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "T0086 is complete. T0087 can start after reviewing its incoming dependency edges against existing license metadata and the visible UI license-limit statement."
         }
       ]
     },
@@ -27238,6 +27275,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-25T07:29:07.833Z"
+  "updated_at": "2026-10-25T07:33:30.199Z"
 }
 ```
