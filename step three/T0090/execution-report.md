@@ -16,8 +16,10 @@
 - Added `tests/HostLifecycle.Tests/ChatConversationAcceptanceTests.cs` and registered it in the lifecycle test runner. Added a Python regression guard for WPF integration.
 
 ## Validation state
-- Tests were added but have not yet run against this commit. Awaiting GitHub Actions quality gate, Windows WPF build/startup smoke test, and host lifecycle tests before marking T0090 done.
+- GitHub Actions quality gate on implementation commit `818c657a3a106b52de85bcca316ad3967e04f54c` ran 147 Python tests; 146 passed and one failed because the pre-existing WPF entrypoint test asserted the old direct `ChatMessages.Items.Add(...)` implementation. The new ordered conversation integration guard passed.
+- The regression assertion has been updated to verify the new `AppendConversationMessage(...)` contract. This correction is committed in `V 3.0.274`; the rerun result is pending.
+- Windows WPF build/startup smoke and lifecycle test runs are still being checked; no success is claimed until their actual conclusions are available.
 - No local build/test execution is claimed in this tool runtime.
 
 ## Result
-T0090 is `in_progress`, not completed. Completion requires actual successful CI/build evidence on the implementation commit. Next action: update and validate the graph, then inspect CI runs and correct any failures.
+T0090 is `in_progress`, not completed. Completion requires actual successful CI/build evidence on the implementation commit. Next action: inspect CI for the corrected commit, fix any remaining failures, and update graph history with the actual result.
