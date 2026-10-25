@@ -491,7 +491,10 @@ public partial class MainWindow : Window
         catch (Exception exception)
         {
             RenderStatus(_session.Status);
-            AppendConversationMessage(ConversationMessageRole.System, HostErrorPresentation.ToUserMessage(exception));
+            if (!_clearSessionRequested)
+            {
+                AppendConversationMessage(ConversationMessageRole.System, HostErrorPresentation.ToUserMessage(exception));
+            }
         }
         finally
         {

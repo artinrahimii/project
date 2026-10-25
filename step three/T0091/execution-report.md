@@ -39,3 +39,13 @@
 - No Windows build, Android APK build, or lifecycle test result was observable. This does not prove a source-code defect and does not satisfy acceptance.
 - No application source code changed in this attempt. T0091 remains `blocked`; T0092 must remain unstarted until checks execute and pass.
 - Next action: restore access to runnable CI/logs or run a real checkout with Python 3.13, .NET 8, Android SDK/JDK; inspect actual output and fix only demonstrated failures.
+
+
+## Attempt T0091-2026-10-25-04 — prevent late error messages after clearing a session
+- Base commit: `941fc65ec0bd739e61606e1100de94934188e49c` (`V 3.0.283`).
+- Dependency review: `T0090` is `done` and its `ChatConversation.Clear()` API is present; `T0087` is `done`. The graph edge `T0090 -> T0091` remains a validated contract/interface dependency. `T0087 -> T0091` remains validated as sequencing-only. No edge was changed.
+- Source review found a concrete race outcome: when clearing during generation, cancellation is requested and assistant/cancellation messages are suppressed, but a non-cancellation exception arriving from the same in-flight operation could still append a System error after the UI and in-memory conversation had been cleared.
+- Implementation: guarded the generic exception-message append with `if (!_clearSessionRequested)`, preserving the error display for ordinary failures while suppressing late errors during a clear operation.
+- Regression coverage: added a Python source-contract test in `tests/test_wpf_entrypoint.py` that checks the clear/cancel path and the exception guard.
+- Test result: **not run in this tool session**. GitHub Actions runner allocation has been failing before job steps (runner_id=0, no steps); this source-level change is not claimed tested or accepted.
+- Status: `blocked` pending execution of the Python quality gate, Windows build/startup smoke test, and host lifecycle tests. No task completion or product-wide success is claimed.

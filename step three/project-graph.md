@@ -15576,186 +15576,214 @@
         }
       ]
     },
-        {
-      "id": "T0091",
-      "title": "توقف تولید و پاک‌کردن نشست را پیاده‌سازی کن.",
-      "section": "9. گفت‌وگوی مستقیم در میزبان و ابزارهای عامل",
-      "depends_on": [
-        "T0090",
-        "T0087"
-      ],
-      "inputs": [
-        "خروجی تأییدشدهٔ پیش‌نیازها",
-        "نیازمندی مرتبط: توقف تولید و پاک‌کردن نشست را پیاده‌سازی کن."
-      ],
-      "outputs": [
-        "خروجی قابل بررسی مربوط به «توقف تولید و پاک‌کردن نشست را پیاده‌سازی کن.» در مسیر src/Host.Windows/Chat/ و src/Host.Windows/Tools/؛ همراه با آزمون/شاهد پذیرش متناسب."
-      ],
-      "start_condition": "همهٔ پیش‌نیازهای T0090 و T0087 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
-      "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "blocked",
-      "status_fa": "مسدود",
-      "actual_output_paths": [
-        "src/Host.Application/Chat/ChatConversation.cs",
-        "src/Host.Windows/MainWindow.xaml",
-        "src/Host.Windows/MainWindow.xaml.cs",
-        "tests/HostLifecycle.Tests/ChatConversationAcceptanceTests.cs",
-        "step three/T0091/execution-report.md"
-      ],
-      "expected_output_paths": [
-        "src/Host.Windows/Chat/ و src/Host.Windows/Tools/"
-      ],
-      "evidence": [
-        "src/Host.Application/Chat/ChatConversation.cs",
-        "src/Host.Windows/MainWindow.xaml",
-        "src/Host.Windows/MainWindow.xaml.cs",
-        "tests/HostLifecycle.Tests/ChatConversationAcceptanceTests.cs"
-      ],
-      "notes": "Implementation exists in V 3.0.278, but required acceptance validation remains unavailable. The original three workflows failed; rerunning them (attempt 2) again ended before any job step executed: all jobs reported runner_id=0, empty runner_name, and steps=[]. Job-log retrieval for the original attempt returned BlobNotFound. No application-level failure cause or passing test has been established. T0091 is blocked at validation; do not mark done or change implementation speculatively. Graph counter reconciled on 2026-10-25T12:07:08.318Z: failed_attempt_count follows tools/graph_guard.py and counts top-level execution-history entries whose result is failed. Nested workflow evidence and all historic entries remain unchanged.",
-      "execution_summary": {
-        "attempt_count": 3,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "T0091-2026-10-25-03",
-        "last_attempt_result": "blocked",
-        "changed_files": [
-          "step three/T0091/execution-report.md",
-          "step three/project-graph.md"
+                {
+        "id": "T0091",
+        "title": "توقف تولید و پاک‌کردن نشست را پیاده‌سازی کن.",
+        "section": "9. گفت‌وگوی مستقیم در میزبان و ابزارهای عامل",
+        "depends_on": [
+          "T0090",
+          "T0087"
         ],
-        "related_commits": [],
-        "tests_passed": [],
-        "tests_failed": [
-          "GitHub Actions product build run 40182706376 concluded failure (Windows host build, Android APK, and host lifecycle jobs failed); detailed job logs could not be retrieved by the GitHub connector.",
-          "GitHub Actions quality gate run 40182706403 concluded failure; detailed job logs could not be retrieved by the GitHub connector.",
-          "GitHub Actions real local inference integration run 40182706368 concluded failure; detailed job logs could not be retrieved by the GitHub connector.",
-          "GitHub Actions retry attempt 2: product build run 40182706376 failed before any job step ran; all 3 jobs reported runner_id=0, empty runner_name, and steps=[].",
-          "GitHub Actions retry attempt 2: quality gate run 40182706403 failed before any job step ran; the job reported runner_id=0, empty runner_name, and steps=[].",
-          "GitHub Actions retry attempt 2: real local inference run 40182706368 failed before any job step ran; the job reported runner_id=0, empty runner_name, and steps=[]."
+        "inputs": [
+          "خروجی تأییدشدهٔ پیش‌نیازها",
+          "نیازمندی مرتبط: توقف تولید و پاک‌کردن نشست را پیاده‌سازی کن."
         ],
-        "blocked_reason": "Required CI validation still cannot be observed: both latest workflow retries ended in failure without recorded job steps, and job logs were unavailable as BlobNotFound. Root cause remains unconfirmed; acceptance is not validated.",
-        "reopened_reason": null,
-        "contract_revalidation": {
-          "state": "pending",
-          "triggering_contracts": [
-            "T0090 in-memory conversation Clear API",
-            "WPF cancellation and generation completion"
-          ],
-          "affected_by_contract_changes": [],
-          "review_evidence": [
-            "src/Host.Application/Chat/ChatConversation.cs",
+        "outputs": [
+          "خروجی قابل بررسی مربوط به «توقف تولید و پاک‌کردن نشست را پیاده‌سازی کن.» در مسیر src/Host.Windows/Chat/ و src/Host.Windows/Tools/؛ همراه با آزمون/شاهد پذیرش متناسب."
+        ],
+        "start_condition": "همهٔ پیش‌نیازهای T0090 و T0087 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
+        "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
+        "status": "blocked",
+        "status_fa": "مسدود",
+        "actual_output_paths": [
+          "src/Host.Application/Chat/ChatConversation.cs",
+          "src/Host.Windows/MainWindow.xaml",
+          "src/Host.Windows/MainWindow.xaml.cs",
+          "tests/HostLifecycle.Tests/ChatConversationAcceptanceTests.cs",
+          "step three/T0091/execution-report.md"
+        ],
+        "expected_output_paths": [
+          "src/Host.Windows/Chat/ و src/Host.Windows/Tools/"
+        ],
+        "evidence": [
+          "src/Host.Application/Chat/ChatConversation.cs",
+          "src/Host.Windows/MainWindow.xaml",
+          "src/Host.Windows/MainWindow.xaml.cs",
+          "tests/HostLifecycle.Tests/ChatConversationAcceptanceTests.cs"
+        ],
+        "notes": "Implementation exists in V 3.0.278, but required acceptance validation remains unavailable. The original three workflows failed; rerunning them (attempt 2) again ended before any job step executed: all jobs reported runner_id=0, empty runner_name, and steps=[]. Job-log retrieval for the original attempt returned BlobNotFound. No application-level failure cause or passing test has been established. T0091 is blocked at validation; do not mark done or change implementation speculatively. Graph counter reconciled on 2026-10-25T12:07:08.318Z: failed_attempt_count follows tools/graph_guard.py and counts top-level execution-history entries whose result is failed. Nested workflow evidence and all historic entries remain unchanged. Attempt T0091-2026-10-25-04 added a regression guard so a late generic generation error cannot repopulate a just-cleared conversation. Test is not run; status remains blocked pending executable CI validation.",
+        "execution_summary": {
+          "attempt_count": 4,
+          "failed_attempt_count": 0,
+          "last_attempt_id": "T0091-2026-10-25-04",
+          "last_attempt_result": "partial",
+          "changed_files": [
             "src/Host.Windows/MainWindow.xaml.cs",
-            "tests/HostLifecycle.Tests/ChatConversationAcceptanceTests.cs"
-          ]
-        }
+            "tests/test_wpf_entrypoint.py",
+            "step three/T0091/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "related_commits": [],
+          "tests_passed": [],
+          "tests_failed": [
+            "GitHub Actions product build run 40182706376 concluded failure (Windows host build, Android APK, and host lifecycle jobs failed); detailed job logs could not be retrieved by the GitHub connector.",
+            "GitHub Actions quality gate run 40182706403 concluded failure; detailed job logs could not be retrieved by the GitHub connector.",
+            "GitHub Actions real local inference integration run 40182706368 concluded failure; detailed job logs could not be retrieved by the GitHub connector.",
+            "GitHub Actions retry attempt 2: product build run 40182706376 failed before any job step ran; all 3 jobs reported runner_id=0, empty runner_name, and steps=[].",
+            "GitHub Actions retry attempt 2: quality gate run 40182706403 failed before any job step ran; the job reported runner_id=0, empty runner_name, and steps=[].",
+            "GitHub Actions retry attempt 2: real local inference run 40182706368 failed before any job step ran; the job reported runner_id=0, empty runner_name, and steps=[]."
+          ],
+          "blocked_reason": "Acceptance validation still unavailable; run Python quality gate, Windows build/startup smoke, and host lifecycle tests when a runner is allocated.",
+          "reopened_reason": null,
+          "contract_revalidation": {
+            "state": "pending",
+            "triggering_contracts": [
+              "T0090 in-memory conversation Clear API",
+              "WPF cancellation and generation completion"
+            ],
+            "affected_by_contract_changes": [],
+            "review_evidence": [
+              "src/Host.Application/Chat/ChatConversation.cs",
+              "src/Host.Windows/MainWindow.xaml.cs",
+              "tests/HostLifecycle.Tests/ChatConversationAcceptanceTests.cs"
+            ]
+          }
+        },
+        "execution_history": [
+          {
+            "attempt_id": "T0091-2026-10-25-01",
+            "started_at": "2026-10-25T10:04:00Z",
+            "ended_at": "2026-10-25T10:07:00Z",
+            "result": "partial",
+            "summary": "Added a Clear method to the in-memory conversation, a WPF Clear session button, cancellation on clear when generation is active, suppression of late assistant/cancellation messages after clear, and acceptance checks for clearing and sequence reset. CI validation pending.",
+            "changed_files": [
+              "src/Host.Application/Chat/ChatConversation.cs",
+              "src/Host.Windows/MainWindow.xaml.cs",
+              "src/Host.Windows/MainWindow.xaml",
+              "tests/HostLifecycle.Tests/ChatConversationAcceptanceTests.cs",
+              "step three/T0091/execution-report.md",
+              "step three/project-graph.md"
+            ],
+            "commit_sha": "a636829b3f6ec3863da590fad5a21289cd84d78c",
+            "tests": [
+              {
+                "name": "White-P product build",
+                "result": "failed",
+                "summary": "Run 40182706376 failed across Windows host build, Android APK and host lifecycle jobs; detailed logs unavailable through connector."
+              },
+              {
+                "name": "Step Three quality gate",
+                "result": "failed",
+                "summary": "Run 40182706403 failed; detailed logs unavailable through connector."
+              },
+              {
+                "name": "Real local inference integration",
+                "result": "failed",
+                "summary": "Run 40182706368 failed; detailed logs unavailable through connector."
+              }
+            ],
+            "failure_details": "Three GitHub Actions workflows for this commit concluded failure: product build run 40182706376, quality gate run 40182706403, and real local inference integration run 40182706368. Fetching job logs returned BlobNotFound and job step summaries were empty, so root cause is currently unknown; next attempt must inspect/re-run CI and correct any proven failure.",
+            "blocked_reason": null,
+            "reopened_reason": null,
+            "contract_changes": [],
+            "follow_up": "Rerun failed workflows or obtain their logs; identify root cause before editing implementation. Keep T0091 in_progress until all required acceptance checks pass."
+          },
+          {
+            "attempt_id": "T0091-2026-10-25-02",
+            "started_at": "2026-10-25T11:37:29Z",
+            "ended_at": "2026-10-25T11:37:37Z",
+            "result": "partial",
+            "summary": "Retried the three failed GitHub Actions workflows. In retry attempt 2, every job failed before any step ran; runner_id was 0, runner_name was empty, and steps were absent. This does not establish a product-code defect and does not constitute passing validation.",
+            "changed_files": [
+              "step three/T0091/execution-report.md",
+              "step three/project-graph.md"
+            ],
+            "commit_sha": null,
+            "tests": [
+              {
+                "name": "White-P product build retry",
+                "result": "failed",
+                "summary": "GitHub Actions retry attempt 2: product build run 40182706376 failed before any job step ran; all 3 jobs reported runner_id=0, empty runner_name, and steps=[].",
+                "url": "https://github.com/artinrahimii/project/actions/runs/40182706376"
+              },
+              {
+                "name": "Step Three quality gate retry",
+                "result": "failed",
+                "summary": "GitHub Actions retry attempt 2: quality gate run 40182706403 failed before any job step ran; the job reported runner_id=0, empty runner_name, and steps=[].",
+                "url": "https://github.com/artinrahimii/project/actions/runs/40182706403"
+              },
+              {
+                "name": "Real local inference integration retry",
+                "result": "failed",
+                "summary": "GitHub Actions retry attempt 2: real local inference run 40182706368 failed before any job step ran; the job reported runner_id=0, empty runner_name, and steps=[].",
+                "url": "https://github.com/artinrahimii/project/actions/runs/40182706368"
+              }
+            ],
+            "failure_details": "GitHub Actions did not allocate a runner for the retried validation: every job concluded failure before steps ran (runner_id=0, empty runner_name, steps=[]). Job logs for the original attempt were unavailable with BlobNotFound.",
+            "blocked_reason": "GitHub Actions did not allocate a runner for the retried validation: every job concluded failure before steps ran (runner_id=0, empty runner_name, steps=[]). Job logs for the original attempt were unavailable with BlobNotFound.",
+            "reopened_reason": null,
+            "contract_changes": [],
+            "follow_up": "Restore usable GitHub Actions runner execution or log access, then rerun the quality gate, Windows/Android product build and host lifecycle tests. Keep T0091 blocked until required checks actually execute and pass. Do not start T0092 while its T0091 prerequisite is unresolved."
+          },
+          {
+            "attempt_id": "T0091-2026-10-25-03",
+            "started_at": "2026-10-25T13:44:13Z",
+            "ended_at": "2026-10-25T13:44:20Z",
+            "result": "blocked",
+            "summary": "Retried current-main validation on commit 4802cee550236fb7b01c692394a6ed5152de2541 (V 3.0.282). Product build and Step Three quality gate again concluded failure; the job-step API returned empty steps and log downloads returned BlobNotFound. No source-code failure was established and no test command was observed.",
+            "changed_files": [
+              "step three/T0091/execution-report.md",
+              "step three/project-graph.md"
+            ],
+            "commit_sha": null,
+            "tests": [
+              {
+                "name": "Step Three quality gate — retry attempt 2, run 40195886042",
+                "result": "not_run",
+                "summary": "Workflow concluded failure before a test result could be observed. The only job returned steps=[] and the job-log request returned BlobNotFound; no Python/graph test command was observed.",
+                "url": "https://github.com/artinrahimii/project/actions/runs/40195886042"
+              },
+              {
+                "name": "White-P product build — retry attempt 2, run 40195886046",
+                "result": "not_run",
+                "summary": "Workflow concluded failure. All three jobs returned steps=[]; job-log requests returned BlobNotFound. Windows build, Android APK build, and host lifecycle test commands were not observed.",
+                "url": "https://github.com/artinrahimii/project/actions/runs/40195886046"
+              }
+            ],
+            "failure_details": "The exact base commit's quality gate and product build were retried. Both workflows concluded failure; job-step APIs returned empty step lists and job-log downloads returned BlobNotFound. The connector did not expose a definitive infrastructure root cause, so this does not establish either a code defect or passing acceptance.",
+            "blocked_reason": "Required CI validation still cannot be observed: both latest workflow retries ended in failure without recorded job steps, and job logs were unavailable as BlobNotFound. Root cause remains unconfirmed; acceptance is not validated.",
+            "reopened_reason": null,
+            "contract_changes": [],
+            "follow_up": "Obtain a run where quality-gate and product-build steps actually execute, or run from a checkout with Python 3.13, .NET 8, and Android SDK/JDK. Review actual logs and fix only proven errors. Keep T0091 blocked and do not start T0092 until the required checks pass."
+          },
+          {
+            "attempt_id": "T0091-2026-10-25-04",
+            "started_at": "2026-10-25T14:10:00Z",
+            "ended_at": "2026-10-25T14:10:00Z",
+            "result": "partial",
+            "summary": "Reviewed T0091 prerequisites and corrected a concrete clear-session race: a late generic exception could append a System message after the session had been cleared. The append is now suppressed while clear is in progress, and a Python source-contract regression test was added. Tests were not run because the available GitHub Actions runs fail before allocating a runner; acceptance remains blocked.",
+            "changed_files": [
+              "src/Host.Windows/MainWindow.xaml.cs",
+              "tests/test_wpf_entrypoint.py",
+              "step three/T0091/execution-report.md",
+              "step three/project-graph.md"
+            ],
+            "commit_sha": null,
+            "tests": [
+              {
+                "name": "Clear-session late-error regression test",
+                "result": "not_run",
+                "summary": "Added to tests/test_wpf_entrypoint.py; not executed in this session because no local checkout/runtime is available and current GitHub Actions jobs fail before any step runs."
+              }
+            ],
+            "failure_details": "No test command was executed. Current CI attempts report runner_id=0 and steps=[].",
+            "blocked_reason": "Acceptance validation still unavailable; run Python quality gate, Windows build/startup smoke, and host lifecycle tests when a runner is allocated.",
+            "reopened_reason": null,
+            "contract_changes": [],
+            "follow_up": "Run the Python quality gate and product build on a runner that executes job steps; only then reconsider unblocking T0091."
+          }
+        ]
       },
-      "execution_history": [
-        {
-          "attempt_id": "T0091-2026-10-25-01",
-          "started_at": "2026-10-25T10:04:00Z",
-          "ended_at": "2026-10-25T10:07:00Z",
-          "result": "partial",
-          "summary": "Added a Clear method to the in-memory conversation, a WPF Clear session button, cancellation on clear when generation is active, suppression of late assistant/cancellation messages after clear, and acceptance checks for clearing and sequence reset. CI validation pending.",
-          "changed_files": [
-            "src/Host.Application/Chat/ChatConversation.cs",
-            "src/Host.Windows/MainWindow.xaml.cs",
-            "src/Host.Windows/MainWindow.xaml",
-            "tests/HostLifecycle.Tests/ChatConversationAcceptanceTests.cs",
-            "step three/T0091/execution-report.md",
-            "step three/project-graph.md"
-          ],
-          "commit_sha": "a636829b3f6ec3863da590fad5a21289cd84d78c",
-          "tests": [
-            {
-              "name": "White-P product build",
-              "result": "failed",
-              "summary": "Run 40182706376 failed across Windows host build, Android APK and host lifecycle jobs; detailed logs unavailable through connector."
-            },
-            {
-              "name": "Step Three quality gate",
-              "result": "failed",
-              "summary": "Run 40182706403 failed; detailed logs unavailable through connector."
-            },
-            {
-              "name": "Real local inference integration",
-              "result": "failed",
-              "summary": "Run 40182706368 failed; detailed logs unavailable through connector."
-            }
-          ],
-          "failure_details": "Three GitHub Actions workflows for this commit concluded failure: product build run 40182706376, quality gate run 40182706403, and real local inference integration run 40182706368. Fetching job logs returned BlobNotFound and job step summaries were empty, so root cause is currently unknown; next attempt must inspect/re-run CI and correct any proven failure.",
-          "blocked_reason": null,
-          "reopened_reason": null,
-          "contract_changes": [],
-          "follow_up": "Rerun failed workflows or obtain their logs; identify root cause before editing implementation. Keep T0091 in_progress until all required acceptance checks pass."
-        },
-        {
-          "attempt_id": "T0091-2026-10-25-02",
-          "started_at": "2026-10-25T11:37:29Z",
-          "ended_at": "2026-10-25T11:37:37Z",
-          "result": "partial",
-          "summary": "Retried the three failed GitHub Actions workflows. In retry attempt 2, every job failed before any step ran; runner_id was 0, runner_name was empty, and steps were absent. This does not establish a product-code defect and does not constitute passing validation.",
-          "changed_files": [
-            "step three/T0091/execution-report.md",
-            "step three/project-graph.md"
-          ],
-          "commit_sha": null,
-          "tests": [
-            {
-              "name": "White-P product build retry",
-              "result": "failed",
-              "summary": "GitHub Actions retry attempt 2: product build run 40182706376 failed before any job step ran; all 3 jobs reported runner_id=0, empty runner_name, and steps=[].",
-              "url": "https://github.com/artinrahimii/project/actions/runs/40182706376"
-            },
-            {
-              "name": "Step Three quality gate retry",
-              "result": "failed",
-              "summary": "GitHub Actions retry attempt 2: quality gate run 40182706403 failed before any job step ran; the job reported runner_id=0, empty runner_name, and steps=[].",
-              "url": "https://github.com/artinrahimii/project/actions/runs/40182706403"
-            },
-            {
-              "name": "Real local inference integration retry",
-              "result": "failed",
-              "summary": "GitHub Actions retry attempt 2: real local inference run 40182706368 failed before any job step ran; the job reported runner_id=0, empty runner_name, and steps=[].",
-              "url": "https://github.com/artinrahimii/project/actions/runs/40182706368"
-            }
-          ],
-          "failure_details": "GitHub Actions did not allocate a runner for the retried validation: every job concluded failure before steps ran (runner_id=0, empty runner_name, steps=[]). Job logs for the original attempt were unavailable with BlobNotFound.",
-          "blocked_reason": "GitHub Actions did not allocate a runner for the retried validation: every job concluded failure before steps ran (runner_id=0, empty runner_name, steps=[]). Job logs for the original attempt were unavailable with BlobNotFound.",
-          "reopened_reason": null,
-          "contract_changes": [],
-          "follow_up": "Restore usable GitHub Actions runner execution or log access, then rerun the quality gate, Windows/Android product build and host lifecycle tests. Keep T0091 blocked until required checks actually execute and pass. Do not start T0092 while its T0091 prerequisite is unresolved."
-        },
-        {
-          "attempt_id": "T0091-2026-10-25-03",
-          "started_at": "2026-10-25T13:44:13Z",
-          "ended_at": "2026-10-25T13:44:20Z",
-          "result": "blocked",
-          "summary": "Retried current-main validation on commit 4802cee550236fb7b01c692394a6ed5152de2541 (V 3.0.282). Product build and Step Three quality gate again concluded failure; the job-step API returned empty steps and log downloads returned BlobNotFound. No source-code failure was established and no test command was observed.",
-          "changed_files": [
-            "step three/T0091/execution-report.md",
-            "step three/project-graph.md"
-          ],
-          "commit_sha": null,
-          "tests": [
-            {
-              "name": "Step Three quality gate — retry attempt 2, run 40195886042",
-              "result": "not_run",
-              "summary": "Workflow concluded failure before a test result could be observed. The only job returned steps=[] and the job-log request returned BlobNotFound; no Python/graph test command was observed.",
-              "url": "https://github.com/artinrahimii/project/actions/runs/40195886042"
-            },
-            {
-              "name": "White-P product build — retry attempt 2, run 40195886046",
-              "result": "not_run",
-              "summary": "Workflow concluded failure. All three jobs returned steps=[]; job-log requests returned BlobNotFound. Windows build, Android APK build, and host lifecycle test commands were not observed.",
-              "url": "https://github.com/artinrahimii/project/actions/runs/40195886046"
-            }
-          ],
-          "failure_details": "The exact base commit's quality gate and product build were retried. Both workflows concluded failure; job-step APIs returned empty step lists and job-log downloads returned BlobNotFound. The connector did not expose a definitive infrastructure root cause, so this does not establish either a code defect or passing acceptance.",
-          "blocked_reason": "Required CI validation still cannot be observed: both latest workflow retries ended in failure without recorded job steps, and job logs were unavailable as BlobNotFound. Root cause remains unconfirmed; acceptance is not validated.",
-          "reopened_reason": null,
-          "contract_changes": [],
-          "follow_up": "Obtain a run where quality-gate and product-build steps actually execute, or run from a checkout with Python 3.13, .NET 8, and Android SDK/JDK. Review actual logs and fix only proven errors. Keep T0091 blocked and do not start T0092 until the required checks pass."
-        }
-      ]
-    },
     {
       "id": "T0092",
       "title": "خطاهای مدل را در UI نمایش بده و آن‌ها را به متن پاسخ موفق تبدیل نکن.",

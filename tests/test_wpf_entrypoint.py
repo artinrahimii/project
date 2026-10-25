@@ -96,6 +96,14 @@ class WpfEntryPointTests(unittest.TestCase):
         self.assertIn("deterministically", lifecycle_tests.lower())
         self.assertIn("preserve insertion order", lifecycle_tests.lower())
 
+
+    def test_clear_session_suppresses_late_generation_errors(self):
+        self.assertIn('private void ClearSessionButton_Click', WINDOW_CODE)
+        self.assertIn('_operationCancellation?.Cancel();', WINDOW_CODE)
+        catch_block = WINDOW_CODE.split('catch (Exception exception)', 1)[1].split('finally', 1)[0]
+        self.assertIn('if (!_clearSessionRequested)', catch_block)
+        self.assertIn('AppendConversationMessage(ConversationMessageRole.System, HostErrorPresentation.ToUserMessage(exception));', catch_block)
+
     def test_window_status_starts_without_connecting_to_a_backend(self):
         self.assertIn('Text="Stopped — connect to a local backend."', WINDOW_XAML)
         self.assertNotIn(".ConnectAsync(", APP_CODE)
