@@ -14162,44 +14162,75 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0083 و T0075 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال انجام",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "src/Host.Windows/MainWindow.xaml.cs",
         "src/Host.Windows/MainWindow.xaml",
         "src/Host.Application/HostInferenceSession.cs",
         "tests/HostLifecycle.Tests/HostInferenceSessionConcurrencyTests.cs",
         "tests/HostLifecycle.Tests/Program.cs",
-        "step three/T0084/execution-report.md"
+        "step three/T0084/execution-report.md",
+        "step three/project-graph.md"
       ],
       "expected_output_paths": [
         "src/Host.Windows/Models/ + tests/"
       ],
-      "evidence": [],
+      "evidence": [
+        "src/Host.Application/HostInferenceSession.cs",
+        "src/Host.Windows/MainWindow.xaml",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "tests/HostLifecycle.Tests/HostInferenceSessionConcurrencyTests.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0084/execution-report.md",
+        ".github/workflows/product-build.yml",
+        ".github/workflows/quality.yml",
+        ".github/workflows/real-inference.yml"
+      ],
       "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
       "execution_summary": {
-        "attempt_count": 1,
+        "attempt_count": 2,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0084-2026-10-25-01",
-        "last_attempt_result": "implementation_added_tests_not_run",
+        "last_attempt_id": "T0084-2026-10-25-02",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Host.Windows/MainWindow.xaml.cs",
           "src/Host.Windows/MainWindow.xaml",
           "src/Host.Application/HostInferenceSession.cs",
           "tests/HostLifecycle.Tests/HostInferenceSessionConcurrencyTests.cs",
           "tests/HostLifecycle.Tests/Program.cs",
-          "step three/T0084/execution-report.md"
+          "step three/T0084/execution-report.md",
+          "step three/project-graph.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
+        "related_commits": [
+          "da9c9bd5fd04e09a9307b8617bee74a83c592956"
+        ],
+        "tests_passed": [
+          "Step Three quality gate passed on exact commit da9c9bd5fd04e09a9307b8617bee74a83c592956: https://github.com/artinrahimii/project/actions/runs/40170781358",
+          "Host lifecycle unit/integration tests passed on exact commit da9c9bd5fd04e09a9307b8617bee74a83c592956; log confirms 'PASS: disconnect disposes backend resources and leaves the host stopped.': https://github.com/artinrahimii/project/actions/runs/40170781315/jobs/121100991241",
+          "Windows WPF Release build, formatting verification and startup smoke test passed on the exact implementation commit: https://github.com/artinrahimii/project/actions/runs/40170781315/jobs/121100990903",
+          "Android debug APK build, ktlint and Protobuf round-trip tests passed on the exact implementation commit: https://github.com/artinrahimii/project/actions/runs/40170781315/jobs/121100991035",
+          "Real local llama.cpp/GGUF inference integration passed on the exact implementation commit: https://github.com/artinrahimii/project/actions/runs/40170781304"
+        ],
         "tests_failed": [],
-        "blocked_reason": "Tests have not been run in this environment; an externally managed llama.cpp server cannot be unloaded via a portable client protocol.",
+        "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
-          "affected_by_contract_changes": [],
-          "review_evidence": []
+          "state": "passed",
+          "triggering_contracts": [
+            "T0083 HostInferenceSession operation serialization across generation, reconnect and disconnect",
+            "T0075 active catalog selection and persisted local-settings contract"
+          ],
+          "affected_by_contract_changes": [
+            "T0084 adds a serialized DisconnectAsync path that leaves the session Stopped and the backend unconfigured."
+          ],
+          "review_evidence": [
+            "src/Host.Application/HostInferenceSession.cs",
+            "src/Host.Windows/MainWindow.xaml.cs",
+            "src/Host.Infrastructure/LocalHostSettingsStore.cs",
+            "tests/HostLifecycle.Tests/HostInferenceSessionConcurrencyTests.cs",
+            "tests/HostLifecycle.Tests/Program.cs"
+          ]
         }
       },
       "execution_history": [
@@ -14228,6 +14259,50 @@
             "T0075->T0084 remains unreviewed",
             "T0084->T0085 remains unreviewed"
           ]
+        },
+        {
+          "attempt_id": "T0084-2026-10-25-02",
+          "started_at": "2026-10-25T06:54:26Z",
+          "ended_at": "2026-10-25T06:56:26Z",
+          "result": "succeeded",
+          "summary": "Verified the implementation already present in exact main commit da9c9bd5fd04e09a9307b8617bee74a83c592956. GitHub Actions passed the task-graph quality gate, lifecycle tests (including backend disposal after DisconnectAsync), WPF Release build/startup smoke test, Android build/unit tests, and live local llama.cpp/GGUF inference. This validation attempt made no source-code edits.",
+          "changed_files": [],
+          "commit_sha": "da9c9bd5fd04e09a9307b8617bee74a83c592956",
+          "tests": [
+            {
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40170781358",
+              "summary": "Automated tests, syntax checks, graph structure, and recorded-output/evidence validation passed."
+            },
+            {
+              "name": "Host lifecycle unit and integration tests",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40170781315/jobs/121100991241",
+              "summary": "Observed PASS for DisconnectReleasesBackendAsync: backend resources disposed, lifecycle stopped."
+            },
+            {
+              "name": "Windows WPF host build and startup smoke test",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40170781315/jobs/121100990903"
+            },
+            {
+              "name": "Android APK build and round-trip tests",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40170781315/jobs/121100991035"
+            },
+            {
+              "name": "Real local inference integration",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40170781304",
+              "summary": "Pinned llama.cpp binary and GGUF were validated; live local inference test succeeded."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "T0084 is complete for disconnecting the active session and releasing resources owned by this app. The model file remains on disk; remote server memory release is not guaranteed for an externally managed server. Before T0085 implementation, use this disconnect lifecycle and the existing staged installer contract, then test atomic replacement and rollback behavior."
         }
       ]
     },
@@ -22722,28 +22797,44 @@
       "from": "T0083",
       "to": "T0084",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0083 establishes the shared _operationGate that serializes GenerateAsync and ConnectAsync; T0084's DisconnectAsync uses that same gate so the active backend cannot be disposed during an in-flight generation. The exact-head lifecycle test now exercises disposal and the Stopped state. Preserve type=blocks as the conservative execution edge.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Application/HostInferenceSession.cs",
+        "tests/HostLifecycle.Tests/HostInferenceSessionConcurrencyTests.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0083/execution-report.md"
+      ]
     },
     {
       "from": "T0075",
       "to": "T0084",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0084 clears the selected catalog item and persists ActiveCatalogModelId=null through MainWindow/settings, but its disconnect path does not call OfflineModelCatalogStore directly. Keep the existing type=blocks and sequential order without claiming the offline-cache implementation is a proven hard dependency.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "src/Host.Infrastructure/LocalHostSettingsStore.cs",
+        "src/Host.Windows/Models/Catalog/OfflineModelCatalogStore.cs",
+        "step three/T0075/execution-report.md"
+      ]
     },
     {
       "from": "T0084",
       "to": "T0085",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0084 exposes the tested DisconnectAsync lifecycle and stops the local engine process owned by the app. T0085's atomic model-update flow must avoid replacing an active model before that lifecycle is safely disconnected. The existing installer refuses an existing destination, so T0085 still needs its own staged atomic-replacement and failure-preservation implementation/tests; validating this edge does not mark T0085 complete.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Application/HostInferenceSession.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "src/Host.Windows/Models/VerifiedModelInstaller.cs",
+        "tests/HostLifecycle.Tests/HostInferenceSessionConcurrencyTests.cs",
+        "step three/T0084/execution-report.md"
+      ]
     },
     {
       "from": "T0075",
@@ -26623,8 +26714,54 @@
         "step three/T0075/execution-report.md"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-25T07:04:32.029Z",
+      "edge_from": "T0083",
+      "edge_to": "T0084",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "reason": "T0083 establishes the shared _operationGate that serializes GenerateAsync and ConnectAsync; T0084's DisconnectAsync uses that same gate so the active backend cannot be disposed during an in-flight generation. The exact-head lifecycle test now exercises disposal and the Stopped state. Preserve type=blocks as the conservative execution edge.",
+      "evidence": [
+        "src/Host.Application/HostInferenceSession.cs",
+        "tests/HostLifecycle.Tests/HostInferenceSessionConcurrencyTests.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0083/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-25T07:04:32.029Z",
+      "edge_from": "T0075",
+      "edge_to": "T0084",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "reason": "T0084 clears the selected catalog item and persists ActiveCatalogModelId=null through MainWindow/settings, but its disconnect path does not call OfflineModelCatalogStore directly. Keep the existing type=blocks and sequential order without claiming the offline-cache implementation is a proven hard dependency.",
+      "evidence": [
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "src/Host.Infrastructure/LocalHostSettingsStore.cs",
+        "src/Host.Windows/Models/Catalog/OfflineModelCatalogStore.cs",
+        "step three/T0075/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-25T07:04:32.029Z",
+      "edge_from": "T0084",
+      "edge_to": "T0085",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "reason": "T0084 exposes the tested DisconnectAsync lifecycle and stops the local engine process owned by the app. T0085's atomic model-update flow must avoid replacing an active model before that lifecycle is safely disconnected. The existing installer refuses an existing destination, so T0085 still needs its own staged atomic-replacement and failure-preservation implementation/tests; validating this edge does not mark T0085 complete.",
+      "evidence": [
+        "src/Host.Application/HostInferenceSession.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "src/Host.Windows/Models/VerifiedModelInstaller.cs",
+        "tests/HostLifecycle.Tests/HostInferenceSessionConcurrencyTests.cs",
+        "step three/T0084/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-25T07:00:00.000Z"
+  "updated_at": "2026-10-25T07:04:32.029Z"
 }
 ```
