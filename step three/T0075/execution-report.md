@@ -28,3 +28,12 @@
 - Root cause from logs: `ModelCatalogParser.Parse` wraps malformed JSON in `InvalidDataException`, but `OfflineModelCatalogStore.IsCatalogLoadFailure` did not include that exception type. Therefore the offline fallback was skipped.
 - Fix: explicitly classify `InvalidDataException` as a recoverable catalog-load failure. The cached file still goes through the same strict loader/parser and current host allowlists before being returned.
 - Status remains `in_progress` until exact-head CI verifies this correction. The attempt-4 failure is preserved in the graph history.
+
+
+## Attempt 6 — exact-head acceptance recheck and integration-trigger correction
+
+- Checked against the exact current `main` head `f76694f19e6be2621deaac0e7a3b20a626bccdc9` (`V 3.0.234`).
+- Step Three quality gate [run 40132277586](https://github.com/artinrahimii/project/actions/runs/40132277586) passed. Product build [run 40132277665](https://github.com/artinrahimii/project/actions/runs/40132277665) passed all jobs: Windows WPF build/startup smoke test, HostLifecycle tests, Android APK build, formatting/lint, and Android protobuf round-trip tests.
+- The dedicated real-inference workflow was not scheduled for this head because its push/pull-request path filter omitted `src/Host.Windows/Models/Catalog/**`. The previous integration run on the unfixed parent failed before inference, at the malformed-catalog fallback regression; it is not treated as evidence of success or as a new failure on the fixed head.
+- Added `src/Host.Windows/Models/Catalog/**` to both push and pull-request path filters in `.github/workflows/real-inference.yml`. This is a test-trigger correction; the task remains `in_progress` until the exact-head real-inference workflow succeeds.
+- Reviewed edge `T0075 -> T0076`: set `dependency_classification=sequencing_only`, `validation_status=validated`; retained `type=blocks` and the order because the graph's start condition still requires T0075 acceptance. The downloader consumes validated catalog metadata; it does not directly consume the offline store. Evidence and rationale are logged in the graph.

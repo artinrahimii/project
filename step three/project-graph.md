@@ -12779,13 +12779,16 @@
         "src/Host.Windows/Models/Catalog/OfflineModelCatalogStore.cs",
         "src/Host.Windows/MainWindow.xaml.cs",
         "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs",
-        "step three/T0075/execution-report.md"
+        "step three/T0075/execution-report.md",
+        "https://github.com/artinrahimii/project/actions/runs/40132277586",
+        "https://github.com/artinrahimii/project/actions/runs/40132277665",
+        ".github/workflows/real-inference.yml"
       ],
-      "notes": "A newly added malformed-source regression exposed a real bug: InvalidDataException from catalog parsing was not classified as a recoverable catalog-load failure, so the last validated cache was not used. Added InvalidDataException to the filter; this correction is awaiting exact-head Windows/CI verification.",
+      "notes": "The InvalidDataException fallback fix in V 3.0.234 is validated by exact-head HostLifecycle tests, Windows WPF build/smoke test, Android APK build/tests, and the Step Three quality gate. The separate real-inference workflow did not run on this head because its path filter omitted src/Host.Windows/Models/Catalog/**; the workflow path filter is being corrected before final completion.",
       "execution_summary": {
-        "attempt_count": 5,
+        "attempt_count": 6,
         "failed_attempt_count": 3,
-        "last_attempt_id": "T0075-attempt-5",
+        "last_attempt_id": "T0075-attempt-6",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Host.Windows/Models/Catalog/OfflineModelCatalogStore.cs",
@@ -12794,11 +12797,16 @@
           "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
           "tests/test_model_catalog_ui.py",
           "step three/T0075/execution-report.md",
-          "step three/project-graph.md"
+          "step three/project-graph.md",
+          ".github/workflows/real-inference.yml"
         ],
-        "related_commits": [],
+        "related_commits": [
+          "f76694f19e6be2621deaac0e7a3b20a626bccdc9"
+        ],
         "tests_passed": [
-          "Exact-head Step Three quality gate run 40132118485 passed on 7321f42101120c2ebbf954d86d18f7511a0c656f; this covers graph/Python checks, not the C# test that failed."
+          "Exact-head Step Three quality gate run 40132118485 passed on 7321f42101120c2ebbf954d86d18f7511a0c656f; this covers graph/Python checks, not the C# test that failed.",
+          "Exact-head Step Three quality gate run 40132277586 passed on f76694f19e6be2621deaac0e7a3b20a626bccdc9: https://github.com/artinrahimii/project/actions/runs/40132277586",
+          "Exact-head Windows host build, WPF smoke test, HostLifecycle tests, Android APK build and Android round-trip tests passed in run 40132277665 on f76694f19e6be2621deaac0e7a3b20a626bccdc9: https://github.com/artinrahimii/project/actions/runs/40132277665"
         ],
         "tests_failed": [
           "Run 40124499347: stale tests/test_model_catalog_ui.py assertion failed before correction.",
@@ -12927,6 +12935,44 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Run exact-head Step Three quality gate, Windows HostLifecycle tests, Windows host build, and real local inference integration. Only mark T0075 done after the relevant exact-head checks pass. Before T0076, validate the T0075 -> T0076 edge against T0076's actual streaming-download contract."
+        },
+        {
+          "attempt_id": "T0075-attempt-6",
+          "started_at": "2026-10-25T04:21:49.645Z",
+          "ended_at": "2026-10-25T04:21:49.645Z",
+          "result": "partial",
+          "summary": "Verified the InvalidDataException fallback correction on the exact V 3.0.234 head. Step Three quality gate and the full product-build workflow passed, including the catalog acceptance test, HostLifecycle suite, Windows WPF build/startup smoke test, Android APK build and Android unit tests. The dedicated real-inference workflow was not triggered because its path filter omitted the model-catalog directory; its trigger is expanded to cover catalog changes, and T0075 remains in progress until that exact-head integration run succeeds.",
+          "changed_files": [
+            ".github/workflows/real-inference.yml",
+            "step three/T0075/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40132277586",
+              "summary": "Passed on exact head f76694f19e6be2621deaac0e7a3b20a626bccdc9."
+            },
+            {
+              "name": "Windows host build and smoke test, HostLifecycle tests, Android APK build and Android tests",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40132277665",
+              "summary": "All three product-build jobs succeeded on exact head f76694f19e6be2621deaac0e7a3b20a626bccdc9."
+            },
+            {
+              "name": "Real local inference integration",
+              "result": "not_run",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40132118503",
+              "summary": "The prior head's run failed at the catalog fallback test. No real-inference workflow ran for the fixed head because the workflow path filter omitted src/Host.Windows/Models/Catalog/**."
+            }
+          ],
+          "failure_details": "The exact-head acceptance/build tests passed; the missing integration result was due to workflow path filtering, not a newly observed failure on the fixed head.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Run real-inference integration on a commit that triggers .github/workflows/real-inference.yml. Mark T0075 done only after that exact-head workflow succeeds."
         }
       ]
     },
@@ -21621,10 +21667,16 @@
       "from": "T0075",
       "to": "T0076",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "The streaming downloader consumes validated model metadata (ModelCatalogEntry.SourceUrl/SizeBytes) and does not call or consume the offline cache store itself. T0075's cache/fallback behavior is therefore not a demonstrated technical interface dependency of T0076. Retain type=blocks and preserve the existing order because T0076's start_condition explicitly requires T0075 to be accepted before model-download work begins.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/Models/Catalog/ModelCatalogModels.cs",
+        "src/Host.Windows/Models/Catalog/ModelCatalogParser.cs",
+        "src/Host.Windows/Models/Catalog/OfflineModelCatalogStore.cs",
+        "step three/T0075/execution-report.md",
+        "step three/project-graph.md"
+      ]
     },
     {
       "from": "T0076",
@@ -25498,8 +25550,23 @@
         "src/Host.Windows/Models/Catalog/sample-model-catalog.json"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-25T04:21:49.645Z",
+      "edge_from": "T0075",
+      "edge_to": "T0076",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "reason": "The downloader's actual input contract is validated catalog metadata; the offline fallback store is not itself consumed by streaming download. The original type=blocks and order are retained as a conservative sequencing rule because T0076 explicitly starts only after T0075 is accepted.",
+      "evidence": [
+        "src/Host.Windows/Models/Catalog/ModelCatalogModels.cs",
+        "src/Host.Windows/Models/Catalog/ModelCatalogParser.cs",
+        "src/Host.Windows/Models/Catalog/OfflineModelCatalogStore.cs",
+        "step three/T0075/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-25T00:26:00+03:30"
+  "updated_at": "2026-10-25T04:21:49.645Z"
 }
 ```

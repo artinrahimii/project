@@ -7,12 +7,14 @@ on:
       - ".github/workflows/real-inference.yml"
       - "src/Host.Infrastructure/**"
       - "src/Host.Windows/Inference/**"
+      - "src/Host.Windows/Models/Catalog/**"
       - "tests/HostLifecycle.Tests/**"
   pull_request:
     paths:
       - ".github/workflows/real-inference.yml"
       - "src/Host.Infrastructure/**"
       - "src/Host.Windows/Inference/**"
+      - "src/Host.Windows/Models/Catalog/**"
       - "tests/HostLifecycle.Tests/**"
   workflow_dispatch:
 
