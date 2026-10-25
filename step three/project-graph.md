@@ -15193,33 +15193,102 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0088 و T0087 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "done",
+      "status_fa": "انجام‌شده",
+      "actual_output_paths": [
+        "src/Host.Windows/MainWindow.xaml",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "src/Host.Application/HostInferenceSession.cs",
+        "src/Host.Application/IInferenceBackend.cs",
+        "src/Host.Windows/Inference/LocalInferenceBackendFactory.cs",
+        "tests/test_inference_backend_abstraction.py",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0089/execution-report.md"
+      ],
       "expected_output_paths": [
         "src/Host.Windows/Chat/ و src/Host.Windows/Tools/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "src/Host.Windows/MainWindow.xaml",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "src/Host.Application/HostInferenceSession.cs",
+        "src/Host.Application/IInferenceBackend.cs",
+        "src/Host.Windows/Inference/LocalInferenceBackendFactory.cs",
+        "tests/test_inference_backend_abstraction.py",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0088/execution-report.md",
+        "step three/T0087/execution-report.md",
+        "https://github.com/artinrahimii/project/actions/runs/40179954129",
+        "https://github.com/artinrahimii/project/actions/runs/40179954088"
+      ],
+      "notes": "کد واقعی اتصال گفت‌وگوی WPF به HostInferenceSession و factory موتور محلی از قبل در فایل‌های تولیدی وجود داشت و در این وظیفه بررسی شد. وضعیت تولید با RenderStatus و پیام‌های خطا/لغو در UI نمایش داده می‌شود. شواهد CI ثبت‌شده متعلق به revision پیاده‌سازی مرتبط با T0088 است؛ اجرای تازه‌ای در این نوبت شروع نشد. اتصال end-to-end از Android از راه P2P با این شواهد اثبات نمی‌شود.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0089-2026-10-25-01",
+        "last_attempt_result": "succeeded",
+        "changed_files": [
+          "step three/T0089/execution-report.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
-        "tests_passed": [],
+        "tests_passed": [
+          "Existing Step Three quality gate: GitHub Actions run 40179954129 (previously recorded, not rerun in this turn)",
+          "Existing Windows WPF Release build/startup smoke test and HostLifecycle tests: GitHub Actions run 40179954088 (previously recorded, not rerun in this turn)",
+          "Inspected tests/test_inference_backend_abstraction.py and existing HostLifecycle regression coverage"
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
+          "state": "passed",
+          "triggering_contracts": [
+            "T0088 local chat UI / HostInferenceSession call contract",
+            "T0087 model catalog/license disclosure sequencing"
+          ],
           "affected_by_contract_changes": [],
-          "review_evidence": []
+          "review_evidence": [
+            "src/Host.Windows/MainWindow.xaml",
+            "src/Host.Windows/MainWindow.xaml.cs",
+            "src/Host.Application/HostInferenceSession.cs",
+            "src/Host.Windows/Inference/LocalInferenceBackendFactory.cs",
+            "tests/test_inference_backend_abstraction.py"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0089-2026-10-25-01",
+          "started_at": "2026-10-25T12:35:00Z",
+          "ended_at": "2026-10-25T12:35:00Z",
+          "result": "succeeded",
+          "summary": "Inspected current production source and existing CI evidence. Confirmed the WPF send handler invokes HostInferenceSession.GenerateAsync, updates lifecycle status before/after generation, displays model output, and handles cancellation/errors. Existing CI results were reviewed; no new CI run was started in this turn.",
+          "changed_files": [
+            "step three/T0089/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40179954129",
+              "summary": "Previously recorded successful run; not rerun in this turn."
+            },
+            {
+              "name": "Windows WPF Release build/startup smoke and HostLifecycle tests",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40179954088",
+              "summary": "Previously recorded successful run; not rerun in this turn."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Proceed to T0090 only after reviewing its incoming edges and acceptance criteria."
+        }
+      ]
     },
     {
       "id": "T0090",
@@ -23614,19 +23683,27 @@
       "from": "T0088",
       "to": "T0089",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0089 consumes the existing WPF chat controls and calls HostInferenceSession.GenerateAsync; this is a concrete application/interface dependency. The edge type remains blocks and is not treated as proof by itself.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/MainWindow.xaml",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "src/Host.Application/HostInferenceSession.cs",
+        "step three/T0088/execution-report.md"
+      ]
     },
     {
       "from": "T0087",
       "to": "T0089",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0087 establishes model-license disclosure; T0089 calls the inference session/factory and does not consume the license metadata contract. Preserve this as conservative ordering rather than claiming a technical prerequisite.",
+      "validation_status": "validated",
+      "evidence": [
+        "step three/T0087/execution-report.md",
+        "src/Host.Windows/Inference/LocalInferenceBackendFactory.cs"
+      ]
     },
     {
       "from": "T0089",
@@ -27556,6 +27633,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-25T10:40:00.000Z"
+  "updated_at": "2026-10-25T12:35:00Z"
 }
 ```
