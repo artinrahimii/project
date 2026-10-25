@@ -15323,7 +15323,7 @@
         "tests/test_wpf_entrypoint.py",
         "step three/T0090/execution-report.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود. پیاده‌سازی اولیه در V 3.0.272 انجام شد؛ تا پیش از اجرای موفق CI روی همین کد، تکمیل تأیید نشده است. تلاش نخست CI شکست خورد (۱۴۶ آزمون موفق و یک assertion قدیمی ناموفق)؛ assertion اصلاح شده و نتیجهٔ اجرای مجدد هنوز در انتظار است.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود. پیاده‌سازی اولیه در V 3.0.272 انجام شد؛ تا پیش از اجرای موفق CI روی همین کد، تکمیل تأیید نشده است. تلاش نخست CI شکست خورد (۱۴۶ آزمون موفق و یک assertion قدیمی ناموفق)؛ assertion اصلاح شده و نتیجهٔ اجرای مجدد هنوز در انتظار است. در اجرای مجدد، دروازهٔ کیفیت Python با موفقیت گذشت (run 40181923409)؛ ساخت Windows/Android و smoke test هنوز در حال اجراست، پس وضعیت همچنان in_progress است.",
       "execution_summary": {
         "attempt_count": 2,
         "failed_attempt_count": 1,
@@ -15343,10 +15343,10 @@
           "4fbf00cbb9606b5f76f80ec47d9045255ca8df8e"
         ],
         "tests_passed": [
-          "The new ordered-conversation integration regression test passed in GitHub Actions run 40181807435; full gate failed due one pre-existing WPF test expecting direct ListBox insertion."
+          "GitHub Actions quality gate run 40181923409 passed on commit 4fbf00cbb9606b5f76f80ec47d9045255ca8df8e; the updated Python regression suite passed."
         ],
         "tests_failed": [
-          "GitHub Actions run 40181807435: test_main_window_has_required_operational_controls_and_cleanup expected the old direct ChatMessages.Items.Add(\"You: \" + prompt) code path; corrected in 4fbf00cbb9606b5f76f80ec47d9045255ca8df8e; rerun pending."
+          "Earlier run 40181807435 failed one stale assertion; fixed in commit 4fbf00cbb9606b5f76f80ec47d9045255ca8df8e."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -15408,7 +15408,7 @@
         {
           "attempt_id": "T0090-2026-10-25-02",
           "started_at": "2026-10-25T09:47:00Z",
-          "ended_at": null,
+          "ended_at": "2026-10-25T09:48:00Z",
           "result": "partial",
           "summary": "The first GitHub Actions quality gate ran 147 Python tests: 146 passed and one existing WPF assertion failed because it expected the old direct ListBox append. The new conversation integration guard passed. Updated the old assertion to check the ordered conversation append path; rerun pending.",
           "changed_files": [
@@ -15419,25 +15419,20 @@
           "tests": [
             {
               "name": "Step Three quality gate",
-              "result": "failed",
-              "summary": "Run 40181807435: 146 passed, one failed due to a stale assertion in test_main_window_has_required_operational_controls_and_cleanup."
+              "result": "passed",
+              "summary": "GitHub Actions run 40181923409 passed after updating the stale assertion."
             },
             {
-              "name": "Correction",
-              "result": "committed",
-              "summary": "Changed stale assertions to verify AppendConversationMessage for user and assistant entries."
-            },
-            {
-              "name": "Rerun",
+              "name": "White-P product build",
               "result": "pending",
-              "summary": "Run 40181923409 triggered by commit 4fbf00cbb9606b5f76f80ec47d9045255ca8df8e."
+              "summary": "Run 40181923441 is still running; Windows WPF build/startup smoke, Android APK/lint and host lifecycle tests must finish before acceptance."
             }
           ],
           "failure_details": "Stale source-level assertion expected direct ChatMessages.Items.Add for user/model messages; implementation now routes messages through ChatConversation and AppendConversationMessage.",
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Wait for quality gate and product build on the corrected commit; fix any additional failure and only mark done after passing CI evidence."
+          "follow_up": "Await completion of product build run 40181923441. Mark T0090 done only if Windows build/startup smoke and lifecycle tests pass; report Android status separately and fix any failures."
         }
       ]
     },
@@ -27773,6 +27768,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-25T09:47:00Z"
+  "updated_at": "2026-10-25T09:48:00Z"
 }
 ```
