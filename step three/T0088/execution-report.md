@@ -1,9 +1,16 @@
 # T0088 execution report
 
-- Repository/branch baseline: `artinrahimii/project`, `main`, parent implementation commit `f194e78f24ca21480c982c216beb53d7062ac5a1` (`V 3.0.266`).
-- Implemented a visible local conversation list, retained the existing prompt composer, changed the action label to “Send message”, and connected sending to `HostInferenceSession.GenerateAsync`. User prompts, local model responses, cancellation and safe error messages appear in the list; the view scrolls to the latest item.
-- The WPF startup smoke test now explicitly verifies the new `ChatMessages` ListBox. The Python entry-point test checks the message-list control and binding to local inference.
-- Incoming edge `T0087 -> T0088` remains `type=blocks`; it was reviewed and classified `sequencing_only` because T0088 does not consume T0087's catalog/license output. The ordering constraint remains in place.
-- Follow-up implementation in this execution: pressing Enter sends a non-empty prompt; Shift+Enter keeps multiline editing available. Added regression assertions in `tests/test_wpf_entrypoint.py`.
-- Validation limitation: this session cannot run the Windows WPF build or Python test suite directly. This commit must be validated by GitHub Actions; T0088 remains `in_progress`, not done until the quality workflow and Windows startup smoke test are confirmed.
-- Next action: verify the quality workflow and Windows build/startup smoke test; fix failures before closing the task.
+- Repository/branch baseline: `artinrahimii/project`, `main`, implementation commit `3d4c5dc0659d3159f0641bfb2e4210634e037c8a` (`V 3.0.268`).
+- Task: local host chat view with a message list, text input, and send button.
+- Implementation inspected: `src/Host.Windows/MainWindow.xaml`, `src/Host.Windows/MainWindow.xaml.cs`, `src/Host.Windows/App.xaml.cs`, and `tests/test_wpf_entrypoint.py`.
+- Behavior: local chat message list is visible, the composer sends through `HostInferenceSession.GenerateAsync`, and Enter-to-send is supported while Shift+Enter remains available for multiline input.
+- Dependency: `T0087 -> T0088` remains `type=blocks`, classification `sequencing_only`, validated in the graph. Ordering was retained conservatively.
+- Validation on exact main commit `3d4c5dc0659d3159f0641bfb2e4210634e037c8a`:
+  - Step Three quality gate passed: https://github.com/artinrahimii/project/actions/runs/40179954129
+  - Windows WPF Release build and startup smoke test passed: https://github.com/artinrahimii/project/actions/runs/40179954088
+  - Host lifecycle unit/integration tests passed: https://github.com/artinrahimii/project/actions/runs/40179954088
+  - Android debug APK build and Protobuf round-trip checks passed: https://github.com/artinrahimii/project/actions/runs/40179954088
+- Result: T0088 acceptance criteria verified; task marked `done`.
+- Path note: implementation is in existing MainWindow files, not new `Chat/` and `Tools/` folders; no non-existent folders are claimed.
+- Limitation: CI does not alone prove full end-to-end P2P operation on physical devices.
+- Next: review T0089 incoming edges and acceptance criteria.

@@ -15022,68 +15022,47 @@
       ]
     },
     {
-    "id": "T0088",
-    "title": "صفحهٔ گفت‌وگوی محلی با فهرست پیام‌ها، ورودی متن و دکمهٔ ارسال بساز.",
-    "section": "9. گفت‌وگوی مستقیم در میزبان و ابزارهای عامل",
-    "depends_on": [
-      "T0087"
-    ],
-    "inputs": [
-      "خروجی تأییدشدهٔ پیش‌نیازها",
-      "نیازمندی مرتبط: صفحهٔ گفت‌وگوی محلی با فهرست پیام‌ها، ورودی متن و دکمهٔ ارسال بساز."
-    ],
-    "outputs": [
-      "خروجی قابل بررسی مربوط به «صفحهٔ گفت‌وگوی محلی با فهرست پیام‌ها، ورودی متن و دکمهٔ ارسال بساز.» در مسیر src/Host.Windows/Chat/ و src/Host.Windows/Tools/؛ همراه با آزمون/شاهد پذیرش متناسب."
-    ],
-    "start_condition": "همهٔ پیش‌نیازهای T0087 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
-    "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-    "status": "in_progress",
-    "status_fa": "در حال انجام",
-    "actual_output_paths": [
-      "src/Host.Windows/MainWindow.xaml",
-      "src/Host.Windows/MainWindow.xaml.cs",
-      "src/Host.Windows/App.xaml.cs",
-      "tests/test_wpf_entrypoint.py",
-      "step three/T0088/execution-report.md"
-    ],
-    "expected_output_paths": [
-      "src/Host.Windows/Chat/ و src/Host.Windows/Tools/"
-    ],
-    "evidence": [],
-    "notes": "پیاده‌سازی رابط گفت‌وگوی محلی و اتصال دکمه ارسال به HostInferenceSession انجام شده است؛ تا اجرای موفق آزمون‌ها و ساخت ویندوزی، معیار پذیرش تکمیل‌شده محسوب نمی‌شود.",
-    "execution_summary": {
-      "attempt_count": 2,
-      "failed_attempt_count": 0,
-      "last_attempt_id": "T0088-2026-10-25-02",
-      "last_attempt_result": "in_progress",
-      "changed_files": [
+      "id": "T0088",
+      "title": "صفحهٔ گفت‌وگوی محلی با فهرست پیام‌ها، ورودی متن و دکمهٔ ارسال بساز.",
+      "section": "9. گفت‌وگوی مستقیم در میزبان و ابزارهای عامل",
+      "depends_on": [
+        "T0087"
+      ],
+      "inputs": [
+        "خروجی تأییدشدهٔ پیش‌نیازها",
+        "نیازمندی مرتبط: صفحهٔ گفت‌وگوی محلی با فهرست پیام‌ها، ورودی متن و دکمهٔ ارسال بساز."
+      ],
+      "outputs": [
+        "خروجی قابل بررسی مربوط به «صفحهٔ گفت‌وگوی محلی با فهرست پیام‌ها، ورودی متن و دکمهٔ ارسال بساز.» در مسیر src/Host.Windows/Chat/ و src/Host.Windows/Tools/؛ همراه با آزمون/شاهد پذیرش متناسب."
+      ],
+      "start_condition": "همهٔ پیش‌نیازهای T0087 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
+      "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
+      "status": "done",
+      "status_fa": "انجام‌شده",
+      "actual_output_paths": [
         "src/Host.Windows/MainWindow.xaml",
         "src/Host.Windows/MainWindow.xaml.cs",
         "src/Host.Windows/App.xaml.cs",
         "tests/test_wpf_entrypoint.py",
         "step three/T0088/execution-report.md"
       ],
-      "related_commits": [
-        "f194e78f24ca21480c982c216beb53d7062ac5a1"
+      "expected_output_paths": [
+        "src/Host.Windows/Chat/ و src/Host.Windows/Tools/"
       ],
-      "tests_passed": [],
-      "tests_failed": [],
-      "blocked_reason": null,
-      "reopened_reason": null,
-      "contract_revalidation": {
-        "state": "not_required",
-        "triggering_contracts": [],
-        "affected_by_contract_changes": [],
-        "review_evidence": []
-      }
-    },
-    "execution_history": [
-      {
-        "attempt_id": "T0088-2026-10-25-01",
-        "started_at": "2026-10-25T10:00:00Z",
-        "ended_at": null,
-        "result": "in_progress",
-        "summary": "Implemented local chat message list and send action using local inference; included the new ListBox in the WPF startup smoke-test assertions. Awaiting CI/build/test validation.",
+      "evidence": [
+        "src/Host.Windows/MainWindow.xaml",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "src/Host.Windows/App.xaml.cs",
+        "tests/test_wpf_entrypoint.py",
+        "https://github.com/artinrahimii/project/actions/runs/40179954129",
+        "https://github.com/artinrahimii/project/actions/runs/40179954088"
+      ],
+      "notes": "معیار پذیرش در commit 3d4c5dc0659d3159f0641bfb2e4210634e037c8a با شواهد CI تأیید شد: فهرست پیام‌های محلی، ورودی متن، دکمهٔ ارسال متصل به HostInferenceSession و ارسال با Enter با حفظ Shift+Enter برای چندخطی. مسیر کد موجود در MainWindow است؛ پوشه‌های Chat/Tools ایجاد نشده‌اند، اما رابط و رفتار واقعی در فایل‌های موجود پیاده‌سازی شده‌اند.",
+      "execution_summary": {
+        "attempt_count": 3,
+        "failed_attempt_count": 0,
+        "last_attempt_id": "T0088-2026-10-25-03",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Host.Windows/MainWindow.xaml",
           "src/Host.Windows/MainWindow.xaml.cs",
@@ -15091,36 +15070,112 @@
           "tests/test_wpf_entrypoint.py",
           "step three/T0088/execution-report.md"
         ],
-        "commit_sha": null,
-        "tests": [],
-        "failure_details": null,
-        "blocked_reason": null,
-        "reopened_reason": null,
-        "contract_changes": [],
-        "follow_up": "Run quality gate and Windows WPF build/startup smoke test; only then mark done."
-      },
-      {
-        "attempt_id": "T0088-2026-10-25-02",
-        "started_at": "2026-10-25T10:30:00Z",
-        "ended_at": null,
-        "result": "in_progress",
-        "summary": "Added Enter-to-send keyboard behavior for the local chat prompt while preserving Shift+Enter for multiline input; added a source-level regression assertion. Awaiting GitHub CI validation.",
-        "changed_files": [
-          "src/Host.Windows/MainWindow.xaml",
-          "src/Host.Windows/MainWindow.xaml.cs",
-          "tests/test_wpf_entrypoint.py",
-          "step three/T0088/execution-report.md"
+        "related_commits": [
+          "3d4c5dc0659d3159f0641bfb2e4210634e037c8a"
         ],
-        "commit_sha": null,
-        "tests": [],
-        "failure_details": null,
+        "tests_passed": [
+          "Step Three quality gate passed: https://github.com/artinrahimii/project/actions/runs/40179954129",
+          "Windows WPF Release build and startup smoke test passed: https://github.com/artinrahimii/project/actions/runs/40179954088",
+          "Host lifecycle unit/integration tests passed: https://github.com/artinrahimii/project/actions/runs/40179954088",
+          "Android APK build and Protobuf round-trip passed: https://github.com/artinrahimii/project/actions/runs/40179954088"
+        ],
+        "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
-        "contract_changes": [],
-        "follow_up": "Review the quality gate and Windows WPF build/startup smoke test; record their actual result before marking done."
-      }
-    ]
-  },
+        "contract_revalidation": {
+          "state": "not_required",
+          "triggering_contracts": [],
+          "affected_by_contract_changes": [],
+          "review_evidence": []
+        }
+      },
+      "execution_history": [
+        {
+          "attempt_id": "T0088-2026-10-25-01",
+          "started_at": "2026-10-25T10:00:00Z",
+          "ended_at": null,
+          "result": "in_progress",
+          "summary": "Implemented local chat message list and send action using local inference; included the new ListBox in the WPF startup smoke-test assertions. Awaiting CI/build/test validation.",
+          "changed_files": [
+            "src/Host.Windows/MainWindow.xaml",
+            "src/Host.Windows/MainWindow.xaml.cs",
+            "src/Host.Windows/App.xaml.cs",
+            "tests/test_wpf_entrypoint.py",
+            "step three/T0088/execution-report.md"
+          ],
+          "commit_sha": null,
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Run quality gate and Windows WPF build/startup smoke test; only then mark done."
+        },
+        {
+          "attempt_id": "T0088-2026-10-25-02",
+          "started_at": "2026-10-25T10:30:00Z",
+          "ended_at": null,
+          "result": "in_progress",
+          "summary": "Added Enter-to-send keyboard behavior for the local chat prompt while preserving Shift+Enter for multiline input; added a source-level regression assertion. Awaiting GitHub CI validation.",
+          "changed_files": [
+            "src/Host.Windows/MainWindow.xaml",
+            "src/Host.Windows/MainWindow.xaml.cs",
+            "tests/test_wpf_entrypoint.py",
+            "step three/T0088/execution-report.md"
+          ],
+          "commit_sha": null,
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Review the quality gate and Windows WPF build/startup smoke test; record their actual result before marking done."
+        },
+        {
+          "attempt_id": "T0088-2026-10-25-03",
+          "started_at": "2026-10-25T10:35:00Z",
+          "ended_at": "2026-10-25T10:40:00Z",
+          "result": "succeeded",
+          "summary": "Reviewed the exact main-branch commit and completed GitHub Actions runs. Quality gate, Windows WPF Release build/startup smoke test, host lifecycle tests, and Android APK/Protobuf checks passed.",
+          "changed_files": [
+            "src/Host.Windows/MainWindow.xaml",
+            "src/Host.Windows/MainWindow.xaml.cs",
+            "src/Host.Windows/App.xaml.cs",
+            "tests/test_wpf_entrypoint.py",
+            "step three/T0088/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40179954129"
+            },
+            {
+              "name": "Windows WPF Release build and startup smoke test",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40179954088"
+            },
+            {
+              "name": "Host lifecycle tests",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40179954088"
+            },
+            {
+              "name": "Android APK and Protobuf",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40179954088"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Review T0089 incoming edges and acceptance criteria before starting."
+        }
+      ]
+    },
     {
       "id": "T0089",
       "title": "ارسال پیام را به موتور استنتاج واقعی متصل کن و وضعیت تولید را نشان بده.",
@@ -27501,6 +27556,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-25T10:00:00.000Z"
+  "updated_at": "2026-10-25T10:40:00.000Z"
 }
 ```
