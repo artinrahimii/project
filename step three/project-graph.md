@@ -14602,8 +14602,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0085 و T0075 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "done",
-      "status_fa": "انجام‌شده",
+      "status": "in_progress",
+      "status_fa": "در حال انجام",
       "actual_output_paths": [
         "src/Host.Windows/Models/VerifiedModelInstaller.cs",
         "tests/HostLifecycle.Tests/UpdateModelSafetyAcceptanceTests.cs",
@@ -14624,17 +14624,14 @@
         "step three/project-graph.md",
         ".github/workflows/quality.yml",
         ".github/workflows/product-build.yml",
-        ".github/workflows/real-inference.yml",
-        "https://github.com/artinrahimii/project/actions/runs/40172805758",
-        "https://github.com/artinrahimii/project/actions/runs/40172805864",
-        "https://github.com/artinrahimii/project/actions/runs/40172805708"
+        ".github/workflows/real-inference.yml"
       ],
       "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
       "execution_summary": {
-        "attempt_count": 2,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "T0086-2026-10-25-02",
-        "last_attempt_result": "succeeded",
+        "attempt_count": 3,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "T0086-2026-10-25-03",
+        "last_attempt_result": "failed",
         "changed_files": [
           "src/Host.Windows/Models/VerifiedModelInstaller.cs",
           "tests/HostLifecycle.Tests/UpdateModelSafetyAcceptanceTests.cs",
@@ -14652,9 +14649,11 @@
           "Windows WPF Release build and startup smoke test — https://github.com/artinrahimii/project/actions/runs/40172805864",
           "Real local llama.cpp/GGUF inference — https://github.com/artinrahimii/project/actions/runs/40172805708"
         ],
-        "tests_failed": [],
+        "tests_failed": [
+          "Step Three quality gate failed because three GitHub Actions URLs were stored in the file-path-only `evidence` field; URLs must remain in nested test evidence/report hyperlinks while top-level evidence holds existing repo files only."
+        ],
         "blocked_reason": null,
-        "reopened_reason": null,
+        "reopened_reason": "Graph quality gate rejected external URL strings in the evidence-file path field; software acceptance tests passed but final graph gate needs a corrected metadata revision.",
         "contract_revalidation": {
           "state": "passed",
           "triggering_contracts": [
@@ -14766,6 +14765,46 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "T0086 is complete. Before implementing T0087, review its incoming T0086 and T0075 dependencies against the current license/catalog code and preserve unvalidated edges until then."
+        },
+        {
+          "attempt_id": "T0086-2026-10-25-03",
+          "started_at": "2026-10-25T07:29:07Z",
+          "ended_at": "2026-10-25T07:29:34Z",
+          "result": "failed",
+          "summary": "The post-completion Step Three quality gate rejected three workflow URL strings in the top-level evidence field because that field requires paths to files present in the repository. The code, HostLifecycle, WPF and real-inference checks had already passed on the underlying implementation commit. URLs are retained in nested test evidence and the execution report; the top-level evidence list is corrected to repo paths only.",
+          "changed_files": [
+            "step three/project-graph.md",
+            "step three/T0086/execution-report.md"
+          ],
+          "commit_sha": "a2525c41cf53bb96a0e2d159267541620ffb22a5",
+          "tests": [
+            {
+              "name": "Step Three graph quality gate",
+              "result": "failed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40172952252",
+              "summary": "Failure was limited to MISSING_EVIDENCE_FILE for three URL entries in T0086's top-level evidence list."
+            },
+            {
+              "name": "HostLifecycle + new T0086 acceptance cases",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40172805864/job/121107046376"
+            },
+            {
+              "name": "Windows WPF build/startup smoke",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40172805864/job/121107046194"
+            },
+            {
+              "name": "Real local inference",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40172805708"
+            }
+          ],
+          "failure_details": "Top-level graph evidence is a file-path list. Three workflow URLs were therefore treated as missing files. The three links have been removed from that field; links remain in the report and test evidence.",
+          "blocked_reason": null,
+          "reopened_reason": "Correct metadata shape required before the task can remain marked done under graph validation.",
+          "contract_changes": [],
+          "follow_up": "Run the Step Three quality gate on the corrected graph; if it passes, add a successful graph-validation attempt and close T0086 in the next versioned commit."
         }
       ]
     },
