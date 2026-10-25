@@ -14862,8 +14862,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0086 و T0075 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال انجام",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "src/Host.Windows/Models/Catalog/ModelCatalogModels.cs",
         "src/Host.Windows/Models/Catalog/ModelCatalogParser.cs",
@@ -14888,12 +14888,12 @@
         "step three/T0087/execution-report.md",
         "tests/test_model_catalog_ui.py"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود. طبقه‌بندی مجوز از وضعیت شواهد مجوز جداست؛ مقدار حذف‌شده unknown است و مجوز بازمتن/توزیع را اثبات نمی‌کند.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود. طبقه‌بندی مجوز از وضعیت شواهد مجوز جداست؛ مقدار حذف‌شده unknown است و مجوز بازمتن/توزیع را اثبات نمی‌کند. نتیجه پذیرش با CI معتبر تأیید شد؛ خطای تلاش قبلی حفظ شده است. طبقه‌بندی open_source صرفاً ادعای کاتالوگ است و برنامه مجوز حقوقی را مستقل بررسی نمی‌کند.",
       "execution_summary": {
         "attempt_count": 2,
         "failed_attempt_count": 1,
         "last_attempt_id": "T0087-2026-10-25-02",
-        "last_attempt_result": "in_progress",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Host.Windows/Models/Catalog/ModelCatalogModels.cs",
           "src/Host.Windows/Models/Catalog/ModelCatalogParser.cs",
@@ -14906,24 +14906,28 @@
           "step three/project-graph.md"
         ],
         "related_commits": [
-          "45fb0ff2bc8f4fa257e8e31fe673ce11f70d7659"
+          "45fb0ff2bc8f4fa257e8e31fe673ce11f70d7659",
+          "d742b984891c95e80f072641872ec32b58d1cda8"
         ],
-        "tests_passed": [],
-        "tests_failed": [
-          "Step Three quality gate failed (2 stale source-inspection assertions in tests/test_model_catalog_ui.py): https://github.com/artinrahimii/project/actions/runs/40178594185"
+        "tests_passed": [
+          "Step Three quality gate passed on validation commit d742b984891c95e80f072641872ec32b58d1cda8: https://github.com/artinrahimii/project/actions/runs/40178745808",
+          "HostLifecycle unit and integration tests passed on validation commit d742b984891c95e80f072641872ec32b58d1cda8: https://github.com/artinrahimii/project/actions/runs/40178745804/job/121125036355",
+          "Windows WPF Release build, formatting verification and startup smoke test passed on validation commit d742b984891c95e80f072641872ec32b58d1cda8: https://github.com/artinrahimii/project/actions/runs/40178745804/job/121125036232",
+          "Real local llama.cpp/GGUF inference passed on implementation commit 45fb0ff2bc8f4fa257e8e31fe673ce11f70d7659; production source files were unchanged by validation commit d742b984891c95e80f072641872ec32b58d1cda8: https://github.com/artinrahimii/project/actions/runs/40178594183"
         ],
+        "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "in_progress",
+          "state": "passed",
           "triggering_contracts": [
-            "T0075 validated catalog metadata and parser contract",
-            "T0086 model-update safety contract (sequencing only)"
+            "T0075 catalog metadata/parser contract",
+            "T0086 model-update safety contract, validated as sequencing-only for T0087"
           ],
           "affected_by_contract_changes": [
-            "Added optional license.classification values open_source/restricted/unknown; missing classification defaults to unknown.",
-            "The Windows host displays restriction/unknown disclaimers before model update and in selected-model details.",
-            "Python source-inspection test was updated after CI demonstrated its old expectations no longer matched the model-level warning contract."
+            "Added optional license.classification values open_source/restricted/unknown; absent metadata defaults to unknown.",
+            "UI shows restriction/unknown warnings in catalog list, selected-model details and update confirmation.",
+            "The first quality-gate failure found two stale Python source-inspection assertions; the tests were updated to assert the new visible model-level disclosure rather than weakened or removed."
           ],
           "review_evidence": [
             "src/Host.Windows/Models/Catalog/ModelCatalogModels.cs",
@@ -14974,23 +14978,46 @@
         {
           "attempt_id": "T0087-2026-10-25-02",
           "started_at": "2026-10-25T08:58:20.279Z",
-          "ended_at": null,
-          "result": "in_progress",
-          "summary": "Updated Python source-inspection tests to assert the new model-level license classification/disclaimer contract and visible UI disclosure rather than the previous inline warning implementation.",
+          "ended_at": "2026-10-25T08:59:35Z",
+          "result": "succeeded",
+          "summary": "After updating the Python source-inspection checks to match the new explicit license classification and disclaimer contract, the exact validation commit passed the Step Three quality gate, HostLifecycle unit/integration tests, Windows WPF Release build/format/startup smoke test, and local real-inference validation (the latter was run on the implementation commit before the test-only correction). The earlier failed quality attempt remains recorded.",
           "changed_files": [
             "tests/test_model_catalog_ui.py",
             "step three/T0087/execution-report.md",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
-          "tests": [],
+          "commit_sha": "d742b984891c95e80f072641872ec32b58d1cda8",
+          "tests": [
+            {
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40178745808"
+            },
+            {
+              "name": "HostLifecycle unit and integration tests",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40178745804/job/121125036355"
+            },
+            {
+              "name": "Windows WPF Release build, formatting and startup smoke test",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40178745804/job/121125036232"
+            },
+            {
+              "name": "Real local llama.cpp/GGUF inference",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40178594183",
+              "summary": "Ran on implementation commit 45fb0ff2bc8f4fa257e8e31fe673ce11f70d7659; validation commit changed only test expectations and graph/report metadata, not production source."
+            }
+          ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [
-            "Guard tests now inspect ModelLicenseMetadata.UsageDisclaimer and explicit classification labels, while still requiring UI rendering and a pre-update warning."
+            "Updated Python UI source-inspection assertions to validate ModelLicenseMetadata.UsageDisclaimer and the visible classification/disclosure fields.",
+            "Kept the prior failed CI run and failure count rather than erasing the attempt."
           ],
-          "follow_up": "Rerun Step Three quality gate and verify HostLifecycle tests, Windows WPF build/format and real inference workflow on a single successful commit before closing T0087."
+          "follow_up": "Proceed to T0088 only after reviewing its incoming dependency edges, current outputs and acceptance criteria."
         }
       ]
     },
@@ -27414,6 +27441,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-25T08:58:20.279Z"
+  "updated_at": "2026-10-25T09:01:31.506Z"
 }
 ```
