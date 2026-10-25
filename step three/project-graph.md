@@ -14323,33 +14323,122 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0084 و T0075 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال انجام",
+      "actual_output_paths": [
+        "src/Host.Windows/Models/VerifiedModelInstaller.cs",
+        "src/Host.Windows/MainWindow.xaml",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "tests/HostLifecycle.Tests/VerifiedModelInstallerAcceptanceTests.cs",
+        "step three/T0085/execution-report.md",
+        "step three/project-graph.md"
+      ],
       "expected_output_paths": [
         "src/Host.Windows/Models/ + tests/"
       ],
-      "evidence": [],
+      "evidence": [
+        "src/Host.Windows/Models/VerifiedModelInstaller.cs",
+        "src/Host.Windows/MainWindow.xaml",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "tests/HostLifecycle.Tests/VerifiedModelInstallerAcceptanceTests.cs",
+        "step three/T0085/execution-report.md"
+      ],
       "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0085-2026-10-25-01",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Host.Windows/Models/VerifiedModelInstaller.cs",
+          "src/Host.Windows/MainWindow.xaml",
+          "src/Host.Windows/MainWindow.xaml.cs",
+          "tests/HostLifecycle.Tests/VerifiedModelInstallerAcceptanceTests.cs",
+          "step three/T0085/execution-report.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
-          "affected_by_contract_changes": [],
-          "review_evidence": []
+          "state": "in_review",
+          "triggering_contracts": [
+            "T0084 HostInferenceSession disconnect lifecycle",
+            "T0075 validated catalog metadata and source-host allowlist",
+            "VerifiedModelInstaller staging and verification contract"
+          ],
+          "affected_by_contract_changes": [
+            "VerifiedModelInstaller adds a separate existing-destination update path; MainWindow now invokes it from explicit confirmation and cancellation controls."
+          ],
+          "review_evidence": [
+            "src/Host.Windows/Models/VerifiedModelInstaller.cs",
+            "src/Host.Windows/MainWindow.xaml.cs",
+            "src/Host.Windows/Models/Catalog/ModelCatalogParser.cs",
+            "src/Host.Windows/Models/Catalog/OfflineModelCatalogStore.cs",
+            "tests/HostLifecycle.Tests/VerifiedModelInstallerAcceptanceTests.cs"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0085-2026-10-25-01",
+          "started_at": "2026-10-25T07:12:52.238Z",
+          "ended_at": "2026-10-25T07:12:52.238Z",
+          "result": "partial",
+          "summary": "Implemented staged, verified atomic model update and connected it to the Windows host UI. Added tests for successful replacement, checksum-failure preservation, missing target rejection before networking, and concurrent destination changes. Exact-head CI has not run yet.",
+          "changed_files": [
+            "src/Host.Windows/Models/VerifiedModelInstaller.cs",
+            "src/Host.Windows/MainWindow.xaml",
+            "src/Host.Windows/MainWindow.xaml.cs",
+            "tests/HostLifecycle.Tests/VerifiedModelInstallerAcceptanceTests.cs",
+            "step three/T0085/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "VerifiedModelInstallerAcceptanceTests — atomic update success",
+              "result": "pending",
+              "summary": "Added; must run on exact commit."
+            },
+            {
+              "name": "VerifiedModelInstallerAcceptanceTests — failure preserves previous file",
+              "result": "pending",
+              "summary": "Added checksum mismatch, missing target and concurrent-destination-change cases."
+            },
+            {
+              "name": "Step Three quality gate",
+              "result": "pending",
+              "summary": "Exact-head graph and Python validation must run."
+            },
+            {
+              "name": "Windows WPF Release build/startup smoke test",
+              "result": "pending",
+              "summary": "Exact-head CI must validate XAML and code-behind integration."
+            },
+            {
+              "name": "Android build and tests",
+              "result": "pending",
+              "summary": "Product-build workflow runs for main; no Android changes intended."
+            },
+            {
+              "name": "Real local inference integration",
+              "result": "pending",
+              "summary": "Workflow is expected to trigger because HostLifecycle test sources changed."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "Added DownloadAndUpdateAsync; initial-install behavior remains refuse-overwrite.",
+            "Added the update-selected-model UI flow and explicit cancellation."
+          ],
+          "follow_up": "Observe exact-head GitHub Actions. Mark T0085 done only after update acceptance cases, host build and graph quality checks all pass."
+        }
+      ]
     },
     {
       "id": "T0086",
@@ -22840,10 +22929,17 @@
       "from": "T0075",
       "to": "T0085",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "The update action accepts a selected ModelCatalogEntry from the offline-aware validated catalog loaded by MainWindow. It uses the entry's source URL, declared size, SHA-256 and GGUF format to build the installer request; retain type=blocks while classifying the concrete catalog/metadata contract.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "src/Host.Windows/Models/Catalog/OfflineModelCatalogStore.cs",
+        "src/Host.Windows/Models/Catalog/ModelCatalogParser.cs",
+        "src/Host.Windows/Models/Catalog/ModelCatalogModels.cs",
+        "src/Host.Windows/Models/VerifiedModelInstaller.cs",
+        "step three/T0075/execution-report.md"
+      ]
     },
     {
       "from": "T0085",
@@ -26760,8 +26856,25 @@
         "step three/T0084/execution-report.md"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-25T07:12:52.238Z",
+      "edge_from": "T0075",
+      "edge_to": "T0085",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "reason": "The update action accepts a selected ModelCatalogEntry from the offline-aware validated catalog loaded by MainWindow. It uses the entry's source URL, declared size, SHA-256 and GGUF format to build the installer request; retain type=blocks while classifying the concrete catalog/metadata contract.",
+      "evidence": [
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "src/Host.Windows/Models/Catalog/OfflineModelCatalogStore.cs",
+        "src/Host.Windows/Models/Catalog/ModelCatalogParser.cs",
+        "src/Host.Windows/Models/Catalog/ModelCatalogModels.cs",
+        "src/Host.Windows/Models/VerifiedModelInstaller.cs",
+        "step three/T0075/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-25T07:04:32.029Z"
+  "updated_at": "2026-10-25T07:12:52.238Z"
 }
 ```

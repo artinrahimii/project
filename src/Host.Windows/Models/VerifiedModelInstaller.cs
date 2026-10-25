@@ -22,11 +22,30 @@ public sealed class VerifiedModelInstaller
         _downloader = downloader;
     }
 
-    public async Task<ModelInstallationResult> DownloadAndInstallAsync(
+    public Task<ModelInstallationResult> DownloadAndInstallAsync(
         ModelCatalogEntry model,
         string destinationPath,
         IProgress<ModelDownloadProgress>? progress = null,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default) =>
+        DownloadAndFinalizeAsync(model, destinationPath, progress, cancellationToken, replaceExisting: false);
+
+    /// <summary>
+    /// Downloads and validates a replacement beside the installed file, then atomically swaps it.
+    /// The prior file is not touched until the replacement passes size, SHA-256, and GGUF checks.
+    /// </summary>
+    public Task<ModelInstallationResult> DownloadAndUpdateAsync(
+        ModelCatalogEntry model,
+        string destinationPath,
+        IProgress<ModelDownloadProgress>? progress = null,
+        CancellationToken cancellationToken = default) =>
+        DownloadAndFinalizeAsync(model, destinationPath, progress, cancellationToken, replaceExisting: true);
+
+    private async Task<ModelInstallationResult> DownloadAndFinalizeAsync(
+        ModelCatalogEntry model,
+        string destinationPath,
+        IProgress<ModelDownloadProgress>? progress,
+        CancellationToken cancellationToken,
+        bool replaceExisting)
     {
         ArgumentNullException.ThrowIfNull(model);
         ArgumentException.ThrowIfNullOrWhiteSpace(destinationPath);
@@ -41,15 +60,36 @@ public sealed class VerifiedModelInstaller
         }
 
         Directory.CreateDirectory(directory);
-        if (File.Exists(fullDestinationPath))
+        var originalFileLength = 0L;
+        var originalFileLastWriteUtc = DateTime.MinValue;
+        if (replaceExisting)
+        {
+            if (!File.Exists(fullDestinationPath))
+            {
+                throw new FileNotFoundException("The installed model to update does not exist.", fullDestinationPath);
+            }
+
+            var attributes = File.GetAttributes(fullDestinationPath);
+            if ((attributes & (FileAttributes.Directory | FileAttributes.ReparsePoint)) != 0)
+            {
+                throw new IOException("The update destination must be a regular model file, not a directory or link.");
+            }
+
+            var originalFile = new FileInfo(fullDestinationPath);
+            originalFile.Refresh();
+            originalFileLength = originalFile.Length;
+            originalFileLastWriteUtc = originalFile.LastWriteTimeUtc;
+        }
+        else if (File.Exists(fullDestinationPath))
         {
             throw new IOException("The destination model already exists; refusing to overwrite it.");
         }
 
-        // Keep staging and destination on the same filesystem so final promotion is a rename.
+        // Keep staging, destination, and backup on the same filesystem for atomic promotion.
         var temporaryPath = Path.Combine(directory, $".whitep-download-{Guid.NewGuid():N}.tmp");
         try
         {
+            cancellationToken.ThrowIfCancellationRequested();
             var sizeBytes = await _downloader.DownloadAsync(model, temporaryPath, progress, cancellationToken)
                 .ConfigureAwait(false);
             byte[] actualHash;
@@ -71,7 +111,30 @@ public sealed class VerifiedModelInstaller
 
             await ValidateModelFileFormatAsync(model.Format, temporaryPath, cancellationToken).ConfigureAwait(false);
             cancellationToken.ThrowIfCancellationRequested();
-            File.Move(temporaryPath, fullDestinationPath);
+            if (replaceExisting)
+            {
+                var currentFile = new FileInfo(fullDestinationPath);
+                currentFile.Refresh();
+                if (!currentFile.Exists ||
+                    currentFile.Length != originalFileLength ||
+                    currentFile.LastWriteTimeUtc != originalFileLastWriteUtc)
+                {
+                    throw new IOException("The installed model changed during update; no replacement was made.");
+                }
+
+                cancellationToken.ThrowIfCancellationRequested();
+                var backupPath = Path.Combine(directory, $".whitep-update-{Guid.NewGuid():N}.bak");
+                File.Replace(temporaryPath, fullDestinationPath, backupPath, ignoreMetadataErrors: true);
+                // Replacement is already committed atomically; backup cleanup must not turn that
+                // successful operation into a misleading failure. If deletion is denied, preserve
+                // the backup rather than risking the verified replacement or original data.
+                TryDelete(backupPath);
+            }
+            else
+            {
+                File.Move(temporaryPath, fullDestinationPath);
+            }
+
             return new ModelInstallationResult(
                 fullDestinationPath,
                 sizeBytes,

@@ -20,6 +20,7 @@ public partial class MainWindow : Window
     private string? _requestedModelMemoryRequirementText;
     private string? _requestedMinimumFreeDiskRequirementText;
     private CancellationTokenSource? _operationCancellation;
+    private CancellationTokenSource? _modelUpdateCancellation;
     private bool _capacityReady;
 
     public MainWindow()
@@ -124,6 +125,175 @@ public partial class MainWindow : Window
         catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or InvalidOperationException or OperationCanceledException or TimeoutException)
         { CatalogStatus.Text = "Active model removal did not complete. Check host state and local settings access."; RenderStatus(_session.Status); }
         finally { RemoveActiveModelButton.IsEnabled = true; ConnectButton.IsEnabled = true; GenerateButton.IsEnabled = _session.IsConnected && _capacityReady; }
+    }
+
+    private async void UpdateSelectedModelButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (_session.Status.State is HostState.Busy or HostState.Starting)
+        {
+            CatalogStatus.Text = "Wait for the current host operation to finish before updating a model.";
+            return;
+        }
+
+        if (CatalogItems.SelectedItem is not ModelCatalogEntry model)
+        {
+            CatalogStatus.Text = "Select a validated catalog entry before updating an installed model.";
+            return;
+        }
+
+        var sourceHosts = ParseTrustedHostList(CatalogTrustedSourceHosts.Text);
+        if (!sourceHosts.Contains(model.SourceUrl.IdnHost, StringComparer.OrdinalIgnoreCase))
+        {
+            CatalogStatus.Text = "Update refused: the selected model source host is not in the explicit trusted-source allowlist.";
+            return;
+        }
+
+        var destination = ModelFilePath.Text.Trim();
+        if (string.IsNullOrWhiteSpace(destination) || !File.Exists(destination))
+        {
+            CatalogStatus.Text = "Update refused: select the existing installed .gguf file in the Model file field first.";
+            return;
+        }
+
+        string fullDestinationPath;
+        try
+        {
+            fullDestinationPath = Path.GetFullPath(destination);
+        }
+        catch (Exception exception) when (exception is ArgumentException or NotSupportedException or PathTooLongException)
+        {
+            CatalogStatus.Text = "Update refused: the configured model path is invalid.";
+            return;
+        }
+
+        var licenseWarning = model.License.RequiresReview
+            ? "The catalog marks this model's license as requiring review. This app does not independently verify legal permission to use or redistribute it."
+            : "Catalog license metadata is not independently verified by this app.";
+        var answer = MessageBox.Show(
+            this,
+            $"Download {model.Name} ({model.SizeBytes:N0} bytes), verify its SHA-256 and GGUF header, then atomically replace:\n{fullDestinationPath}\n\nThe current file is retained until validation succeeds. The host will be disconnected, and only a local engine process started by this app will be stopped. An external process may keep the file locked and cause the update to be refused.\n\n{licenseWarning}\n\nContinue?",
+            "Update installed model",
+            MessageBoxButton.YesNo,
+            MessageBoxImage.Warning,
+            MessageBoxResult.No);
+        if (answer != MessageBoxResult.Yes)
+        {
+            CatalogStatus.Text = "Model update cancelled before downloading; the installed file was not changed.";
+            return;
+        }
+
+        var cancellation = new CancellationTokenSource();
+        _modelUpdateCancellation?.Dispose();
+        _modelUpdateCancellation = cancellation;
+        UpdateSelectedModelButton.IsEnabled = false;
+        CancelModelUpdateButton.IsEnabled = true;
+        CancelModelUpdateButton.Visibility = Visibility.Visible;
+        RemoveActiveModelButton.IsEnabled = false;
+        LoadCatalogButton.IsEnabled = false;
+        BrowseCatalogButton.IsEnabled = false;
+        ConnectButton.IsEnabled = false;
+        StartLocalEngineButton.IsEnabled = false;
+        GenerateButton.IsEnabled = false;
+        CatalogItems.IsEnabled = false;
+        var ownedEngineWasRunning = _localInferenceProcessLauncher.IsRunning;
+
+        try
+        {
+            // Disconnect before touching an active model file. DisconnectAsync shares the same
+            // operation gate as generation/reconnect; the owned server is then stopped if needed.
+            await _session.DisconnectAsync();
+            if (ownedEngineWasRunning)
+            {
+                _localInferenceProcessLauncher.Stop();
+                LocalProcessStatus.Text = "App-owned local engine stopped before model replacement.";
+            }
+
+            RenderStatus(_session.Status);
+            using var downloader = new ModelStreamingDownloader(sourceHosts);
+            var installer = new VerifiedModelInstaller(downloader);
+            var progress = new Progress<ModelDownloadProgress>(value =>
+            {
+                if (!ReferenceEquals(_modelUpdateCancellation, cancellation))
+                {
+                    return;
+                }
+
+                var speedMiB = value.BytesPerSecond / (1024d * 1024d);
+                CatalogStatus.Text =
+                    $"Downloading verified update for {model.Name}: {value.ProgressPercentage:F1}% " +
+                    $"({value.BytesDownloaded:N0}/{value.TotalBytes:N0} bytes; {speedMiB:F2} MiB/s). " +
+                    "The installed file has not been replaced yet.";
+            });
+
+            var result = await installer.DownloadAndUpdateAsync(
+                model,
+                fullDestinationPath,
+                progress,
+                cancellation.Token);
+
+            ModelId.Text = model.Id;
+            ModelFilePath.Text = result.InstalledPath;
+            try
+            {
+                _settings = _settingsStore.Save(_settings with
+                {
+                    ModelId = model.Id,
+                    ModelFilePath = result.InstalledPath,
+                    ActiveCatalogModelId = model.Id
+                });
+                CatalogStatus.Text =
+                    $"Model update succeeded: SHA-256 verified and the installed file was atomically replaced. " +
+                    $"Size: {result.SizeBytes:N0} bytes; SHA-256: {result.Sha256}. " +
+                    "The host remains disconnected; restart the engine/service so it loads the updated file before generating again.";
+            }
+            catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or ArgumentException)
+            {
+                CatalogStatus.Text =
+                    $"Model file update succeeded and SHA-256 was verified, but local settings could not be saved. " +
+                    $"The current UI shows the updated path; save settings access before closing. {HostErrorPresentation.ToUserMessage(exception)}";
+            }
+        }
+        catch (OperationCanceledException)
+        {
+            CatalogStatus.Text = "Model update cancelled before atomic replacement. The previously installed model was preserved; reconnect/restart the host before using it again.";
+            RenderStatus(_session.Status);
+        }
+        catch (Exception exception) when (
+            exception is IOException or InvalidDataException or UnauthorizedAccessException or ArgumentException or
+            NotSupportedException or InvalidOperationException or TimeoutException or System.Net.Http.HttpRequestException)
+        {
+            CatalogStatus.Text =
+                "Model update failed. Downloaded content is not promoted until size, SHA-256 and GGUF checks pass; " +
+                "the previous destination is preserved on validation or atomic-replacement failure. " +
+                HostErrorPresentation.ToUserMessage(exception);
+            RenderStatus(_session.Status);
+        }
+        finally
+        {
+            if (ReferenceEquals(_modelUpdateCancellation, cancellation))
+            {
+                _modelUpdateCancellation = null;
+            }
+
+            cancellation.Dispose();
+            CancelModelUpdateButton.IsEnabled = false;
+            CancelModelUpdateButton.Visibility = Visibility.Collapsed;
+            UpdateSelectedModelButton.IsEnabled = true;
+            RemoveActiveModelButton.IsEnabled = true;
+            LoadCatalogButton.IsEnabled = true;
+            BrowseCatalogButton.IsEnabled = true;
+            ConnectButton.IsEnabled = true;
+            StartLocalEngineButton.IsEnabled = true;
+            CatalogItems.IsEnabled = true;
+            GenerateButton.IsEnabled = _session.IsConnected && _capacityReady;
+        }
+    }
+
+    private void CancelModelUpdateButton_Click(object sender, RoutedEventArgs e)
+    {
+        CancelModelUpdateButton.IsEnabled = false;
+        _modelUpdateCancellation?.Cancel();
+        CatalogStatus.Text = "Cancelling model download. The installed file is not replaced until validation finishes.";
     }
 
     private void CatalogItems_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
@@ -517,6 +687,7 @@ public partial class MainWindow : Window
     private void MainWindow_Closed(object? sender, EventArgs e)
     {
         _operationCancellation?.Cancel();
+        _modelUpdateCancellation?.Cancel();
         _operationCancellation?.Dispose();
         _session.Dispose();
         _localInferenceProcessLauncher.Dispose();
