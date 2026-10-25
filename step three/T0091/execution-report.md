@@ -49,3 +49,13 @@
 - Regression coverage: added a Python source-contract test in `tests/test_wpf_entrypoint.py` that checks the clear/cancel path and the exception guard.
 - Test result: **not run in this tool session**. GitHub Actions runner allocation has been failing before job steps (runner_id=0, no steps); this source-level change is not claimed tested or accepted.
 - Status: `blocked` pending execution of the Python quality gate, Windows build/startup smoke test, and host lifecycle tests. No task completion or product-wide success is claimed.
+
+
+## Attempt T0091-2026-10-25-05 — correct the regression-test scope
+- Base commit: `264e9b0a241222005fc55466173a5e6ee07dbdd0` (`V 3.0.284`).
+- Dependency review: `T0090` is done and provides `ChatConversation.Clear()`; `T0087` is done. Existing edges into T0091 remain unchanged: `T0090 -> T0091` is a validated contract/interface dependency, and `T0087 -> T0091` is validated as sequencing-only.
+- Test review found that `tests/test_wpf_entrypoint.py` searched for the first `catch (Exception exception)` in the entire `MainWindow.xaml.cs` file instead of narrowing the source to `GenerateButton_Click`. Replaced this with method-scoped checks for `ClearSessionButton_Click` and the generic exception handler in `GenerateButton_Click`.
+- A custom source-boundary probe was executed against the exact remote source blob; it verified the cancellation call, the guard around the System-message append, and detection of a mutation removing that guard. This probe is not the Python test suite and does not prove the application builds.
+- GitHub Actions quality gate run [40199831076](https://github.com/artinrahimii/project/actions/runs/40199831076) and product build run [40199831124](https://github.com/artinrahimii/project/actions/runs/40199831124) both concluded failure before runner allocation (`runner_id=0`, no steps). No Python unittest, Windows build, Android APK build, startup smoke test, or HostLifecycle test ran. Root cause of runner allocation failure remains unconfirmed.
+- Outcome: T0091 remains `blocked` pending actual test/build execution. No application-wide acceptance or task completion is claimed.
+- Next: rerun the quality gate, graph guard, Windows build/startup and HostLifecycle tests when Actions allocates a runner; only unblock T0091 after the required checks actually pass.
