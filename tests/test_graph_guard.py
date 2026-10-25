@@ -58,6 +58,15 @@ class ValidateTests(unittest.TestCase):
             (root/"tests").mkdir(); (root/"tests"/"test_graph_guard.py").write_text("test source")
             node["evidence"].append("tests/test_graph_guard.py")
             self.assertEqual(validate_graph(g, root), [])
+    def test_done_accepts_passed_as_successful_attempt_legacy_value(self):
+        g=graph_fixture(); node=g["nodes"][0]
+        node.update({"status":"done","actual_output_paths":["output.txt"],"acceptance":"Output and evidence are present.",
+                     "evidence":["report.md","tests/test_graph_guard.py"],
+                     "execution_history":[{"result":"passed","tests":["unit tests passed"]}],
+                     "execution_summary":{"attempt_count":1,"failed_attempt_count":0,"tests_passed":["unit tests passed"]}})
+        codes={x.code for x in validate_graph(g)}
+        self.assertNotIn("DONE_WITHOUT_SUCCESSFUL_ATTEMPT", codes)
+
     def test_done_reports_missing_actual_file(self):
         import tempfile
         g=graph_fixture(); node=g["nodes"][0]

@@ -973,15 +973,15 @@
         "step three/T0007/execution-report.md",
         "src/Host.Application/HostInferenceSession.cs"
       ],
-      "notes": "T0007 remains a broad traceability task. A007's deterministic unavailable-backend fallback and exact-message regression assertion passed GitHub Actions on V 3.0.42. Revalidation of main commit 2b15191008128bdf98cda5a6eaacbf5796c964ed shows MainWindow explicitly injects LocalInferenceBackendFactory.Create, which returns LlamaCppServerBackend; UnconfiguredInferenceBackend is only the HostInferenceSession default fallback when no backend/factory is configured, not evidence by itself that the current UI has no production backend. Keep T0007 in_progress because the broad task-wide traceability criterion is not yet proven complete. Current-round CI retries failed before runner allocation, so no new tests were executed. The T0007 -> T0008 edge remains validated as sequencing_only.",
+      "notes": "T0007 remains a broad traceability task. A007's deterministic unavailable-backend fallback and exact-message regression assertion passed GitHub Actions on V 3.0.42. Revalidation of main commit 2b15191008128bdf98cda5a6eaacbf5796c964ed shows MainWindow explicitly injects LocalInferenceBackendFactory.Create, which returns LlamaCppServerBackend; UnconfiguredInferenceBackend is only the HostInferenceSession default fallback when no backend/factory is configured, not evidence by itself that the current UI has no production backend. Keep T0007 in_progress because the broad task-wide traceability criterion is not yet proven complete. Current-round CI retries failed before runner allocation, so no new tests were executed. The T0007 -> T0008 edge remains validated as sequencing_only. Latest exact-main commit 95addc4385000528d2f7e10cea646ad84da05e8a was revalidated: both current workflows failed on retry before runner allocation (runner_id=0, empty runner_name, steps=[]). The validation tool's compatibility with the documented result 'passed' and two graph counter mismatches were corrected in this round; this does not complete T0007 or prove product acceptance.",
       "execution_summary": {
-        "attempt_count": 8,
+        "attempt_count": 9,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0007-A008",
+        "last_attempt_id": "T0007-A009",
         "last_attempt_result": "partial",
         "changed_files": [
-          "src/Host.Windows/HostLifecycle.cs",
-          "tests/HostLifecycle.Tests/Program.cs",
+          "tools/graph_guard.py",
+          "tests/test_graph_guard.py",
           "docs/acceptance.md",
           "step three/T0007/execution-report.md",
           "step three/project-graph.md"
@@ -991,7 +991,8 @@
         ],
         "tests_passed": [
           "GitHub Actions Step Three quality gate run 39671083734 — passed for exact commit aa1bc7e77bc5bbce80e9d7f987de75c1bdc71c36 (V 3.0.42).",
-          "GitHub Actions White-P product build run 39671083885 — passed for exact commit aa1bc7e77bc5bbce80e9d7f987de75c1bdc71c36 (V 3.0.42)."
+          "GitHub Actions White-P product build run 39671083885 — passed for exact commit aa1bc7e77bc5bbce80e9d7f987de75c1bdc71c36 (V 3.0.42).",
+          "In-memory exact-graph structural check: 229 unique task IDs, 426 valid-endpoint edges, no dependency cycle, matching task-history counters after correction, and existing output/evidence paths for done tasks; full graph_guard.py command and product tests were not run."
         ],
         "tests_failed": [],
         "blocked_reason": null,
@@ -1196,6 +1197,52 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Continue reviewing task-specific source/configuration/tests against the acceptance matrix; execute the acceptance suite once GitHub Actions runners are available. Keep T0007 in_progress until the broad criterion is evidenced."
+        },
+        {
+          "attempt_id": "T0007-A009",
+          "started_at": "2026-10-25T11:44:41Z",
+          "ended_at": "2026-10-25T12:07:08.318Z",
+          "result": "partial",
+          "summary": "Re-reviewed current-main host composition, retried current-commit CI, and corrected graph-guard compatibility/metadata defects. The quality gate and all product-build jobs again failed before any step ran because no GitHub Actions runner was allocated; this establishes neither code failure nor passing acceptance.",
+          "changed_files": [
+            "tools/graph_guard.py",
+            "tests/test_graph_guard.py",
+            "docs/acceptance.md",
+            "step three/T0007/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "In-memory graph structural consistency check (scoped)",
+              "result": "passed",
+              "summary": "Parsed the verified exact-commit graph: 229 unique task IDs, 426 valid-endpoint edges, no dependency cycle, all task-history counters aligned after correction, and existing output/evidence paths for done tasks. This did not execute graph_guard.py or inspect implementation placeholder markers.",
+              "evidence": "step three/project-graph.md"
+            },
+            {
+              "name": "GraphGuard passed-result regression test",
+              "result": "not_run",
+              "summary": "Added a unit test ensuring a done task with execution_history.result='passed' is recognized as a successful attempt. Test not executed because no CI runner was allocated and no local checkout exists.",
+              "evidence": "tests/test_graph_guard.py"
+            },
+            {
+              "name": "Step Three quality gate — run 40190142909, retry attempt 2",
+              "result": "not_run",
+              "summary": "Workflow concluded failure before any step ran: runner_id=0, runner_name empty, steps=[]; test commands did not execute.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40190142909"
+            },
+            {
+              "name": "White-P product build — run 40190142894, retry attempt 2",
+              "result": "not_run",
+              "summary": "Windows build, Android APK build, and host lifecycle test jobs all failed before steps ran: runner_id=0, runner_name empty, steps=[]; no build or test command executed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40190142894"
+            }
+          ],
+          "failure_details": "GitHub Actions did not allocate any runner for the current commit in either workflow, including retries. Local execution is unavailable in this environment because no .NET SDK executable or repository checkout is present. No product-code failure or successful build was established.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Restore runner allocation or use a suitable environment with the repository and required .NET/Android toolchains. Run the graph-guard regression test and full quality gate, then Windows build, Android APK build, and host lifecycle tests. Keep T0007 in_progress until the broad acceptance criterion is supported by evidence."
         }
       ]
     },
@@ -15341,10 +15388,10 @@
         "tests/test_wpf_entrypoint.py",
         "step three/T0090/execution-report.md"
       ],
-      "notes": "پیاده‌سازی مکالمهٔ مرتب‌شدهٔ درون‌حافظه‌ای در کد میزبان، اتصال پیام‌های کاربر/مدل/سیستم و آزمون‌های پذیرش بررسی شد. CI اجرای محصول روی commit اصلاح‌شده موفق شد: Windows WPF build و startup smoke، Android debug APK و lint، Android Protobuf round-trip، و Host lifecycle tests همگی سبز هستند. تکمیل فقط برای معیارهای همین وظیفه ثبت می‌شود؛ پایداری بین راه‌اندازی‌ها و اتصال واقعی P2P خارج از دامنهٔ این وظیفه است.",
+      "notes": "پیاده‌سازی مکالمهٔ مرتب‌شدهٔ درون‌حافظه‌ای در کد میزبان، اتصال پیام‌های کاربر/مدل/سیستم و آزمون‌های پذیرش بررسی شد. CI اجرای محصول روی commit اصلاح‌شده موفق شد: Windows WPF build و startup smoke، Android debug APK و lint، Android Protobuf round-trip، و Host lifecycle tests همگی سبز هستند. تکمیل فقط برای معیارهای همین وظیفه ثبت می‌شود؛ پایداری بین راه‌اندازی‌ها و اتصال واقعی P2P خارج از دامنهٔ این وظیفه است. Graph counter reconciled on 2026-10-25T12:07:08.318Z: failed_attempt_count follows tools/graph_guard.py and counts top-level execution-history entries whose result is failed. Nested workflow evidence and all historic entries remain unchanged.",
       "execution_summary": {
         "attempt_count": 2,
-        "failed_attempt_count": 1,
+        "failed_attempt_count": 0,
         "last_attempt_id": "T0090-2026-10-25-02",
         "last_attempt_result": "passed",
         "changed_files": [
@@ -15504,10 +15551,10 @@
         "src/Host.Windows/MainWindow.xaml.cs",
         "tests/HostLifecycle.Tests/ChatConversationAcceptanceTests.cs"
       ],
-      "notes": "Implementation exists in V 3.0.278, but required acceptance validation remains unavailable. The original three workflows failed; rerunning them (attempt 2) again ended before any job step executed: all jobs reported runner_id=0, empty runner_name, and steps=[]. Job-log retrieval for the original attempt returned BlobNotFound. No application-level failure cause or passing test has been established. T0091 is blocked at validation; do not mark done or change implementation speculatively.",
+      "notes": "Implementation exists in V 3.0.278, but required acceptance validation remains unavailable. The original three workflows failed; rerunning them (attempt 2) again ended before any job step executed: all jobs reported runner_id=0, empty runner_name, and steps=[]. Job-log retrieval for the original attempt returned BlobNotFound. No application-level failure cause or passing test has been established. T0091 is blocked at validation; do not mark done or change implementation speculatively. Graph counter reconciled on 2026-10-25T12:07:08.318Z: failed_attempt_count follows tools/graph_guard.py and counts top-level execution-history entries whose result is failed. Nested workflow evidence and all historic entries remain unchanged.",
       "execution_summary": {
         "attempt_count": 2,
-        "failed_attempt_count": 2,
+        "failed_attempt_count": 0,
         "last_attempt_id": "T0091-2026-10-25-02",
         "last_attempt_result": "partial",
         "changed_files": [
@@ -27916,6 +27963,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-25T11:44:29.039Z"
+  "updated_at": "2026-10-25T12:07:08.318Z"
 }
 ```

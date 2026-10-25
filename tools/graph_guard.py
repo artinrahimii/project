@@ -7,6 +7,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 NODE_STATUSES = {"not_started", "in_progress", "done", "blocked"}
+SUCCESSFUL_ATTEMPT_RESULTS = {"succeeded", "passed"}
 EDGE_CLASSES = {"hard_dependency", "contract_or_interface_dependency", "sequencing_only", "unreviewed"}
 EDGE_STATES = {"unreviewed", "validated", "disputed"}
 
@@ -72,14 +73,14 @@ def validate_graph(graph: dict, repo_root: Path | None = None) -> list[Finding]:
         if status == "done":
             paths, evidence = _list(n.get("actual_output_paths")), _list(n.get("evidence"))
             tests = _list(summary.get("tests_passed"))
-            succeeded = [h for h in history if isinstance(h, dict) and h.get("result") == "succeeded"]
+            successful_attempts = [h for h in history if isinstance(h, dict) and h.get("result") in SUCCESSFUL_ATTEMPT_RESULTS]
             acceptance = n.get("acceptance")
             if not paths: out.append(Finding("ERROR", "DONE_WITHOUT_OUTPUT", f"{tid} is done but has no actual_output_paths."))
             if not isinstance(acceptance, str) or not acceptance.strip():
                 out.append(Finding("ERROR", "DONE_WITHOUT_ACCEPTANCE_CRITERIA", f"{tid} is done but has no non-empty acceptance criteria."))
             if not evidence: out.append(Finding("ERROR", "DONE_WITHOUT_EVIDENCE", f"{tid} is done but has no evidence."))
             if not tests: out.append(Finding("ERROR", "DONE_WITHOUT_PASSED_TESTS", f"{tid} has no recorded passing tests."))
-            if not succeeded: out.append(Finding("ERROR", "DONE_WITHOUT_SUCCESSFUL_ATTEMPT", f"{tid} has no succeeded execution-history entry."))
+            if not successful_attempts: out.append(Finding("ERROR", "DONE_WITHOUT_SUCCESSFUL_ATTEMPT", f"{tid} has no successful execution-history entry."))
             test_evidence = [item for item in evidence if isinstance(item, str) and (item.startswith("tests/") or item.startswith("test/"))]
             if not test_evidence:
                 out.append(Finding("ERROR", "DONE_WITHOUT_TEST_FILE_EVIDENCE", f"{tid} is done but evidence does not reference a test source file."))
