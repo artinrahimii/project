@@ -58,6 +58,7 @@ Console.WriteLine("PASS: HostCapabilities keeps incomplete/invalid measurements 
 HostCapacityAcceptanceTests.Run();
 InferenceEngineContractTests.Run();
 ModelCatalogParserAcceptanceTests.Run();
+ModelStreamingDownloaderAcceptanceTests.Run();
 LocalInferenceProcessLauncherTests.Run();
 
 const ulong gibibyte = 1024UL * 1024UL * 1024UL;

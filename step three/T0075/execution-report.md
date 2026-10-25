@@ -37,3 +37,14 @@
 - The dedicated real-inference workflow was not scheduled for this head because its push/pull-request path filter omitted `src/Host.Windows/Models/Catalog/**`. The previous integration run on the unfixed parent failed before inference, at the malformed-catalog fallback regression; it is not treated as evidence of success or as a new failure on the fixed head.
 - Added `src/Host.Windows/Models/Catalog/**` to both push and pull-request path filters in `.github/workflows/real-inference.yml`. This is a test-trigger correction; the task remains `in_progress` until the exact-head real-inference workflow succeeds.
 - Reviewed edge `T0075 -> T0076`: set `dependency_classification=sequencing_only`, `validation_status=validated`; retained `type=blocks` and the order because the graph's start condition still requires T0075 acceptance. The downloader consumes validated catalog metadata; it does not directly consume the offline store. Evidence and rationale are logged in the graph.
+
+
+## Attempt 7 — exact-head verification succeeded
+
+- Exact tested head: `f2758759cb5a28fcf9cfd2251918d21d93fcf3ce` (`V 3.0.235`).
+- Step Three quality gate [run 40161618780](https://github.com/artinrahimii/project/actions/runs/40161618780) passed.
+- HostLifecycle unit/integration tests [job 121074200657](https://github.com/artinrahimii/project/actions/runs/40161618729/job/121074200657) passed, including the malformed-source cache-fallback regression.
+- Windows WPF Release build and startup smoke test [job 121074200813](https://github.com/artinrahimii/project/actions/runs/40161618729/job/121074200813) passed.
+- Real local inference integration [run 40161618719](https://github.com/artinrahimii/project/actions/runs/40161618719) passed: the pinned llama.cpp CPU binary and GGUF were checked, and a live local-model response was obtained.
+- These checks satisfy T0075's pending verification requirement. The unrelated Android build job in product-build run [40161618729](https://github.com/artinrahimii/project/actions/runs/40161618729) had not yet completed when this record was prepared; no claim is made here that the full multi-platform workflow had already finished.
+- Result: `done`; prior failed attempts remain in the append-only history.

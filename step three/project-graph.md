@@ -12760,8 +12760,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0074 و T0067 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "src/Host.Windows/Models/Catalog/OfflineModelCatalogStore.cs",
         "src/Host.Windows/MainWindow.xaml.cs",
@@ -12782,14 +12782,18 @@
         "step three/T0075/execution-report.md",
         "https://github.com/artinrahimii/project/actions/runs/40132277586",
         "https://github.com/artinrahimii/project/actions/runs/40132277665",
-        ".github/workflows/real-inference.yml"
+        ".github/workflows/real-inference.yml",
+        "https://github.com/artinrahimii/project/actions/runs/40161618780",
+        "https://github.com/artinrahimii/project/actions/runs/40161618729/job/121074200657",
+        "https://github.com/artinrahimii/project/actions/runs/40161618729/job/121074200813",
+        "https://github.com/artinrahimii/project/actions/runs/40161618719"
       ],
-      "notes": "The InvalidDataException fallback fix in V 3.0.234 is validated by exact-head HostLifecycle tests, Windows WPF build/smoke test, Android APK build/tests, and the Step Three quality gate. The separate real-inference workflow did not run on this head because its path filter omitted src/Host.Windows/Models/Catalog/**; the workflow path filter is being corrected before final completion.",
+      "notes": "The malformed-catalog fallback fix is verified on exact commit f2758759cb5a28fcf9cfd2251918d21d93fcf3ce. The Step Three quality gate passed; HostLifecycle tests and Windows WPF Release build/startup smoke test passed; the real llama.cpp/GGUF inference workflow also passed. The Android product-build job was still running at the time of this task-status update and is not needed to establish T0075's catalog acceptance.",
       "execution_summary": {
-        "attempt_count": 6,
+        "attempt_count": 7,
         "failed_attempt_count": 3,
-        "last_attempt_id": "T0075-attempt-6",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "T0075-attempt-7",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Host.Windows/Models/Catalog/OfflineModelCatalogStore.cs",
           "src/Host.Windows/MainWindow.xaml.cs",
@@ -12801,12 +12805,17 @@
           ".github/workflows/real-inference.yml"
         ],
         "related_commits": [
-          "f76694f19e6be2621deaac0e7a3b20a626bccdc9"
+          "f76694f19e6be2621deaac0e7a3b20a626bccdc9",
+          "f2758759cb5a28fcf9cfd2251918d21d93fcf3ce"
         ],
         "tests_passed": [
           "Exact-head Step Three quality gate run 40132118485 passed on 7321f42101120c2ebbf954d86d18f7511a0c656f; this covers graph/Python checks, not the C# test that failed.",
           "Exact-head Step Three quality gate run 40132277586 passed on f76694f19e6be2621deaac0e7a3b20a626bccdc9: https://github.com/artinrahimii/project/actions/runs/40132277586",
-          "Exact-head Windows host build, WPF smoke test, HostLifecycle tests, Android APK build and Android round-trip tests passed in run 40132277665 on f76694f19e6be2621deaac0e7a3b20a626bccdc9: https://github.com/artinrahimii/project/actions/runs/40132277665"
+          "Exact-head Windows host build, WPF smoke test, HostLifecycle tests, Android APK build and Android round-trip tests passed in run 40132277665 on f76694f19e6be2621deaac0e7a3b20a626bccdc9: https://github.com/artinrahimii/project/actions/runs/40132277665",
+          "Exact-head Step Three quality gate passed on f2758759cb5a28fcf9cfd2251918d21d93fcf3ce: https://github.com/artinrahimii/project/actions/runs/40161618780",
+          "Exact-head HostLifecycle unit/integration tests passed: https://github.com/artinrahimii/project/actions/runs/40161618729/job/121074200657",
+          "Exact-head Windows WPF Release build and startup smoke test passed: https://github.com/artinrahimii/project/actions/runs/40161618729/job/121074200813",
+          "Exact-head real local llama.cpp/GGUF inference passed: https://github.com/artinrahimii/project/actions/runs/40161618719"
         ],
         "tests_failed": [
           "Run 40124499347: stale tests/test_model_catalog_ui.py assertion failed before correction.",
@@ -12973,6 +12982,46 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Run real-inference integration on a commit that triggers .github/workflows/real-inference.yml. Mark T0075 done only after that exact-head workflow succeeds."
+        },
+        {
+          "attempt_id": "T0075-attempt-7",
+          "started_at": "2026-10-25T04:26:06.408Z",
+          "ended_at": "2026-10-25T04:26:06.408Z",
+          "result": "succeeded",
+          "summary": "Exact-head verification completed after the workflow trigger correction. The quality gate, catalog/HostLifecycle acceptance tests, Windows WPF Release build and startup smoke test, and real local llama.cpp/GGUF inference all succeeded. The earlier InvalidDataException fallback failure is now covered and passing on the fixed head.",
+          "changed_files": [
+            ".github/workflows/real-inference.yml",
+            "step three/T0075/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": "f2758759cb5a28fcf9cfd2251918d21d93fcf3ce",
+          "tests": [
+            {
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40161618780"
+            },
+            {
+              "name": "HostLifecycle unit and integration tests",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40161618729/job/121074200657"
+            },
+            {
+              "name": "Windows WPF Release build and startup smoke test",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40161618729/job/121074200813"
+            },
+            {
+              "name": "Real llama.cpp process and GGUF response",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40161618719"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Proceed to T0076 after this recorded acceptance; preserve the conservative task order."
         }
       ]
     },
@@ -12992,33 +13041,84 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0075 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "src/Host.Windows/Models/ModelStreamingDownloader.cs",
+        "tests/HostLifecycle.Tests/ModelStreamingDownloaderAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0076/execution-report.md",
+        "step three/project-graph.md"
+      ],
       "expected_output_paths": [
         "src/Host.Windows/Models/ + tests/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "src/Host.Windows/Models/ModelStreamingDownloader.cs",
+        "tests/HostLifecycle.Tests/ModelStreamingDownloaderAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0076/execution-report.md"
+      ],
+      "notes": "Implemented a bounded-buffer HTTP streaming downloader and host acceptance tests. It is not marked done until the exact-head C# acceptance suite and relevant CI workflows pass.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0076-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Host.Windows/Models/ModelStreamingDownloader.cs",
+          "tests/HostLifecycle.Tests/ModelStreamingDownloaderAcceptanceTests.cs",
+          "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+          "tests/HostLifecycle.Tests/Program.cs",
+          "step three/T0076/execution-report.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
+          "state": "reviewed",
+          "triggering_contracts": [
+            "ModelCatalogEntry.SourceUrl",
+            "ModelCatalogEntry.SizeBytes",
+            "validated HTTPS source allowlist"
+          ],
           "affected_by_contract_changes": [],
-          "review_evidence": []
+          "review_evidence": [
+            "src/Host.Windows/Models/Catalog/ModelCatalogModels.cs",
+            "src/Host.Windows/Models/Catalog/ModelCatalogParser.cs",
+            "src/Host.Windows/Models/ModelStreamingDownloader.cs"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0076-A001",
+          "started_at": "2026-10-25T04:26:06.408Z",
+          "ended_at": "2026-10-25T04:26:06.408Z",
+          "result": "partial",
+          "summary": "Added ModelStreamingDownloader using ResponseHeadersRead and a fixed-size buffer. It validates HTTPS/allowlisted hosts (including redirects), limits transfer to the catalog-declared byte count, reports progress, supports cancellation and deletes partial outputs. Added acceptance coverage for chunked transfer, exact file bytes, progress, unapproved source/redirect, truncated response and cleanup. Exact-head CI is pending.",
+          "changed_files": [
+            "src/Host.Windows/Models/ModelStreamingDownloader.cs",
+            "tests/HostLifecycle.Tests/ModelStreamingDownloaderAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "step three/T0076/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "related_commits": [],
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Run the exact-head quality gate, HostLifecycle acceptance tests, Windows build and real local inference workflow; fix any failures before marking done."
+        }
+      ]
     },
     {
       "id": "T0077",
@@ -25567,6 +25667,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-25T04:21:49.645Z"
+  "updated_at": "2026-10-25T04:26:06.408Z"
 }
 ```
