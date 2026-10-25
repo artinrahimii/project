@@ -14872,7 +14872,8 @@
         "src/Host.Windows/MainWindow.xaml.cs",
         "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs",
         "step three/T0087/execution-report.md",
-        "step three/project-graph.md"
+        "step three/project-graph.md",
+        "tests/test_model_catalog_ui.py"
       ],
       "expected_output_paths": [
         "src/Host.Windows/Models/ + tests/"
@@ -14884,13 +14885,14 @@
         "src/Host.Windows/MainWindow.xaml",
         "src/Host.Windows/MainWindow.xaml.cs",
         "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs",
-        "step three/T0087/execution-report.md"
+        "step three/T0087/execution-report.md",
+        "tests/test_model_catalog_ui.py"
       ],
       "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود. طبقه‌بندی مجوز از وضعیت شواهد مجوز جداست؛ مقدار حذف‌شده unknown است و مجوز بازمتن/توزیع را اثبات نمی‌کند.",
       "execution_summary": {
-        "attempt_count": 1,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "T0087-2026-10-25-01",
+        "attempt_count": 2,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "T0087-2026-10-25-02",
         "last_attempt_result": "in_progress",
         "changed_files": [
           "src/Host.Windows/Models/Catalog/ModelCatalogModels.cs",
@@ -14899,12 +14901,17 @@
           "src/Host.Windows/MainWindow.xaml",
           "src/Host.Windows/MainWindow.xaml.cs",
           "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs",
+          "tests/test_model_catalog_ui.py",
           "step three/T0087/execution-report.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
+        "related_commits": [
+          "45fb0ff2bc8f4fa257e8e31fe673ce11f70d7659"
+        ],
         "tests_passed": [],
-        "tests_failed": [],
+        "tests_failed": [
+          "Step Three quality gate failed (2 stale source-inspection assertions in tests/test_model_catalog_ui.py): https://github.com/artinrahimii/project/actions/runs/40178594185"
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -14915,7 +14922,8 @@
           ],
           "affected_by_contract_changes": [
             "Added optional license.classification values open_source/restricted/unknown; missing classification defaults to unknown.",
-            "The Windows host displays restriction/unknown disclaimers before model update and in selected-model details."
+            "The Windows host displays restriction/unknown disclaimers before model update and in selected-model details.",
+            "Python source-inspection test was updated after CI demonstrated its old expectations no longer matched the model-level warning contract."
           ],
           "review_evidence": [
             "src/Host.Windows/Models/Catalog/ModelCatalogModels.cs",
@@ -14923,7 +14931,8 @@
             "src/Host.Windows/Models/Catalog/model-catalog-v1.schema.json",
             "src/Host.Windows/MainWindow.xaml",
             "src/Host.Windows/MainWindow.xaml.cs",
-            "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs"
+            "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs",
+            "tests/test_model_catalog_ui.py"
           ]
         }
       },
@@ -14931,8 +14940,8 @@
         {
           "attempt_id": "T0087-2026-10-25-01",
           "started_at": "2026-10-25T08:56:00.309Z",
-          "ended_at": null,
-          "result": "in_progress",
+          "ended_at": "2026-10-25T08:56:18.181Z",
+          "result": "failed",
           "summary": "Implemented explicit license usage classification separately from license evidence. Omitted classification remains unknown; restricted models are visibly disclosed as not open source. Automated CI validation is pending.",
           "changed_files": [
             "src/Host.Windows/Models/Catalog/ModelCatalogModels.cs",
@@ -14944,16 +14953,44 @@
             "step three/T0087/execution-report.md",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
-          "tests": [],
-          "failure_details": null,
+          "commit_sha": "45fb0ff2bc8f4fa257e8e31fe673ce11f70d7659",
+          "tests": [
+            {
+              "name": "Step Three quality gate — Python unit tests",
+              "result": "failed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40178594185",
+              "summary": "Two stale assertions in test_model_catalog_ui.py were incompatible with the new license disclosure model: expected RequiresReview and prior warning text in code-behind."
+            }
+          ],
+          "failure_details": "The Step Three Python quality-gate run failed 2 assertions in tests/test_model_catalog_ui.py because its static checks still expected RequiresReview and the previous warning text in MainWindow.xaml.cs. The production warning is intentionally centralized in ModelLicenseMetadata.UsageDisclaimer; update the static test contract and rerun.",
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [
             "Added optional license.classification to schema v1; existing catalogs remain parseable with unknown classification.",
             "An open_source classification requires declared identifier/URL evidence and status=verified; UI still says legal terms are not independently verified."
           ],
-          "follow_up": "Inspect CI for graph quality, HostLifecycle tests, Windows WPF build/format verification and Android compatibility before marking T0087 done."
+          "follow_up": "The source-inspection tests are being updated to validate the new model-level UsageDisclaimer, Classification and visible XAML/UI disclosures; do not mark T0087 done until rerun CI passes."
+        },
+        {
+          "attempt_id": "T0087-2026-10-25-02",
+          "started_at": "2026-10-25T08:58:20.279Z",
+          "ended_at": null,
+          "result": "in_progress",
+          "summary": "Updated Python source-inspection tests to assert the new model-level license classification/disclaimer contract and visible UI disclosure rather than the previous inline warning implementation.",
+          "changed_files": [
+            "tests/test_model_catalog_ui.py",
+            "step three/T0087/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "Guard tests now inspect ModelLicenseMetadata.UsageDisclaimer and explicit classification labels, while still requiring UI rendering and a pre-update warning."
+          ],
+          "follow_up": "Rerun Step Three quality gate and verify HostLifecycle tests, Windows WPF build/format and real inference workflow on a single successful commit before closing T0087."
         }
       ]
     },
@@ -27377,6 +27414,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-25T08:56:00.309Z"
+  "updated_at": "2026-10-25T08:58:20.279Z"
 }
 ```

@@ -10,6 +10,7 @@ FACTORY = ROOT / "src" / "Host.Windows" / "Inference" / "LocalInferenceBackendFa
 PROJECT = ROOT / "tests" / "HostLifecycle.Tests" / "HostLifecycle.Tests.csproj"
 PARSER_TESTS = ROOT / "tests" / "HostLifecycle.Tests" / "ModelCatalogParserAcceptanceTests.cs"
 SCHEMA = ROOT / "src" / "Host.Windows" / "Models" / "Catalog" / "model-catalog-v1.schema.json"
+LICENSE_MODELS = ROOT / "src" / "Host.Windows" / "Models" / "Catalog" / "ModelCatalogModels.cs"
 
 class ModelCatalogUiTests(unittest.TestCase):
     def test_ui_binds_parsed_catalog_records_not_static_rows(self):
@@ -30,18 +31,24 @@ class ModelCatalogUiTests(unittest.TestCase):
     def test_selected_model_details_show_license_source_size_and_limitations(self):
         xaml = XAML.read_text(encoding="utf-8")
         code = CODE_BEHIND.read_text(encoding="utf-8")
+        license_models = LICENSE_MODELS.read_text(encoding="utf-8")
         self.assertIn('x:Name="CatalogModelDetails"', xaml)
         self.assertIn('SelectionChanged="CatalogItems_SelectionChanged"', xaml)
         for field in ("model.SourceUrl", "model.SizeBytes", "model.License.Status",
+                      "model.License.Classification", "model.License.ReviewLabel",
                       "model.License.Identifier", "model.License.Url", "model.ChecksumValue",
-                      "model.BackendIds", "Usage limitations:", "RequiresReview"):
+                      "model.BackendIds", "Usage limitations:", "model.License.UsageDisclaimer"):
             with self.subTest(field=field):
                 self.assertIn(field, code)
-        self.assertIn("Do not assume permission to use, modify, or redistribute this model.", code)
-        self.assertIn("Review state", xaml)
+        self.assertIn("License classification:", code)
+        self.assertIn("License disclosure:", code)
+        self.assertIn("License disclosure", xaml)
         self.assertIn("License.ReviewLabel", xaml)
-        self.assertIn("REVIEW REQUIRED", (ROOT / "src" / "Host.Windows" / "Models" / "Catalog" / "ModelCatalogModels.cs").read_text(encoding="utf-8"))
-        self.assertIn("has not independently verified legal terms", code)
+        self.assertIn("REVIEW REQUIRED — DO NOT ASSUME OPEN SOURCE", license_models)
+        self.assertIn("RESTRICTIONS REPORTED — NOT OPEN SOURCE", license_models)
+        self.assertIn("Do not assume the model is open source", license_models)
+        self.assertIn("has not independently verified the legal terms", license_models)
+        self.assertIn("var licenseWarning = model.License.UsageDisclaimer;", code)
 
     def test_loader_is_bounded_strict_utf8_and_delegates_validation(self):
         source = LOADER.read_text(encoding="utf-8")
