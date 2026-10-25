@@ -8,3 +8,11 @@
 - Integration: linked the downloader into the existing HostLifecycle test project and registered its acceptance suite in the test runner.
 - Status: `in_progress`. This commit adds the implementation and tests; exact-head CI results have not yet been observed. No test is marked passed until the workflow actually completes.
 - Next action: inspect exact-head Step Three quality gate, HostLifecycle tests, Windows build and real local inference workflow. Fix any failure before setting `done`.
+
+
+## Attempt 2 — exact-head acceptance test
+
+- The implementation is in commit `767dd90fd333f86722e16cfb4ccd75105fa6ff5b` (`V 3.0.236`). HostLifecycle job [121074984915](https://github.com/artinrahimii/project/actions/runs/40161883199/job/121074984915) completed successfully and runs `ModelStreamingDownloaderAcceptanceTests.Run()` via the registered test runner.
+- The passing suite covers multi-chunk streaming and exact output bytes, bounded read buffers, progress reporting, denial of an unapproved initial host and cross-host redirect, short response rejection, and partial-file cleanup.
+- The Step Three quality gate run [40161883353](https://github.com/artinrahimii/project/actions/runs/40161883353) failed only at recorded-evidence validation: a separate T0075 evidence list contained URLs instead of repository-relative paths. The 146 Python tests and graph-structure check passed. The evidence list is corrected in the next commit; exact-head revalidation remains required.
+- Status: `done` for T0076's implementation/test acceptance on the tested code commit. T0077 still owns checksum verification and secure temporary-path promotion; this downloader does not claim to implement those requirements.

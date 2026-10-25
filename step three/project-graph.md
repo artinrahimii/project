@@ -12780,15 +12780,9 @@
         "src/Host.Windows/MainWindow.xaml.cs",
         "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs",
         "step three/T0075/execution-report.md",
-        "https://github.com/artinrahimii/project/actions/runs/40132277586",
-        "https://github.com/artinrahimii/project/actions/runs/40132277665",
-        ".github/workflows/real-inference.yml",
-        "https://github.com/artinrahimii/project/actions/runs/40161618780",
-        "https://github.com/artinrahimii/project/actions/runs/40161618729/job/121074200657",
-        "https://github.com/artinrahimii/project/actions/runs/40161618729/job/121074200813",
-        "https://github.com/artinrahimii/project/actions/runs/40161618719"
+        ".github/workflows/real-inference.yml"
       ],
-      "notes": "The malformed-catalog fallback fix is verified on exact commit f2758759cb5a28fcf9cfd2251918d21d93fcf3ce. The Step Three quality gate passed; HostLifecycle tests and Windows WPF Release build/startup smoke test passed; the real llama.cpp/GGUF inference workflow also passed. The Android product-build job was still running at the time of this task-status update and is not needed to establish T0075's catalog acceptance.",
+      "notes": "The malformed-catalog fallback fix is verified on exact commit f2758759cb5a28fcf9cfd2251918d21d93fcf3ce. The Step Three quality gate passed; HostLifecycle tests and Windows WPF Release build/startup smoke test passed; the real llama.cpp/GGUF inference workflow also passed. The Android product-build job was still running at the time of this task-status update and is not needed to establish T0075's catalog acceptance. A graph-guard run on V 3.0.236 exposed a traceability-format issue: workflow URLs had been placed in the repository-relative evidence-file list. They have been removed from that list; run links remain in tests_passed and the execution report.",
       "execution_summary": {
         "attempt_count": 7,
         "failed_attempt_count": 3,
@@ -13041,8 +13035,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0075 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "src/Host.Windows/Models/ModelStreamingDownloader.cs",
         "tests/HostLifecycle.Tests/ModelStreamingDownloaderAcceptanceTests.cs",
@@ -13059,14 +13053,15 @@
         "tests/HostLifecycle.Tests/ModelStreamingDownloaderAcceptanceTests.cs",
         "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
         "tests/HostLifecycle.Tests/Program.cs",
-        "step three/T0076/execution-report.md"
+        "step three/T0076/execution-report.md",
+        "https://github.com/artinrahimii/project/actions/runs/40161883199/job/121074984915"
       ],
-      "notes": "Implemented a bounded-buffer HTTP streaming downloader and host acceptance tests. It is not marked done until the exact-head C# acceptance suite and relevant CI workflows pass.",
+      "notes": "The streaming downloader and its registered HostLifecycle acceptance suite were built and executed successfully on exact implementation commit 767dd90fd333f86722e16cfb4ccd75105fa6ff5b. The new graph-guard failure on that same commit is traceability-only: T0075 evidence had external URLs where repository paths are required; this commit fixes those evidence entries. Checksums and secure temporary-install policy remain T0077.",
       "execution_summary": {
-        "attempt_count": 1,
+        "attempt_count": 2,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0076-A001",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "T0076-A002",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Host.Windows/Models/ModelStreamingDownloader.cs",
           "tests/HostLifecycle.Tests/ModelStreamingDownloaderAcceptanceTests.cs",
@@ -13075,8 +13070,12 @@
           "step three/T0076/execution-report.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
+        "related_commits": [
+          "767dd90fd333f86722e16cfb4ccd75105fa6ff5b"
+        ],
+        "tests_passed": [
+          "Exact-head HostLifecycle unit/integration test job passed on 767dd90fd333f86722e16cfb4ccd75105fa6ff5b: https://github.com/artinrahimii/project/actions/runs/40161883199/job/121074984915"
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -13117,6 +13116,36 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Run the exact-head quality gate, HostLifecycle acceptance tests, Windows build and real local inference workflow; fix any failures before marking done."
+        },
+        {
+          "attempt_id": "T0076-A002",
+          "started_at": "2026-10-25T04:27:55.631Z",
+          "ended_at": "2026-10-25T04:27:55.631Z",
+          "result": "succeeded",
+          "summary": "The exact-head HostLifecycle test job completed successfully on the implementation commit. ModelStreamingDownloaderAcceptanceTests is registered in the test runner and covers bounded multi-chunk transfer, exact byte preservation, progress, unapproved source/redirect rejection, truncated input rejection and partial-file cleanup. The graph-level quality gate on that same head found a separate T0075 evidence-field format issue (workflow URLs incorrectly listed as local evidence files); that traceability issue is corrected in the present commit and will be rechecked by the new gate.",
+          "changed_files": [
+            "src/Host.Windows/Models/ModelStreamingDownloader.cs",
+            "tests/HostLifecycle.Tests/ModelStreamingDownloaderAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "step three/T0076/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "related_commits": [
+            "767dd90fd333f86722e16cfb4ccd75105fa6ff5b"
+          ],
+          "tests": [
+            {
+              "name": "HostLifecycle unit and integration tests (including ModelStreamingDownloaderAcceptanceTests)",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40161883199/job/121074984915"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Confirm the current-head graph guard and build jobs succeed; then continue with T0077 for checksum verification and temporary-path installation."
         }
       ]
     },
@@ -25667,6 +25696,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-25T04:26:06.408Z"
+  "updated_at": "2026-10-25T04:27:55.631Z"
 }
 ```

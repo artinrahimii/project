@@ -48,3 +48,9 @@
 - Real local inference integration [run 40161618719](https://github.com/artinrahimii/project/actions/runs/40161618719) passed: the pinned llama.cpp CPU binary and GGUF were checked, and a live local-model response was obtained.
 - These checks satisfy T0075's pending verification requirement. The unrelated Android build job in product-build run [40161618729](https://github.com/artinrahimii/project/actions/runs/40161618729) had not yet completed when this record was prepared; no claim is made here that the full multi-platform workflow had already finished.
 - Result: `done`; prior failed attempts remain in the append-only history.
+
+
+## Traceability correction after V 3.0.236
+
+- Graph quality gate run [40161883353](https://github.com/artinrahimii/project/actions/runs/40161883353) ran all 146 Python tests and graph-structure validation successfully, then failed the recorded-evidence validation because workflow URLs had been placed in `T0075.evidence`, which must contain repository-relative evidence file paths.
+- Removed those URLs from the evidence-file list and retained the run links in the task's `tests_passed` entries and this report. No source behavior regression was reported by that gate.
