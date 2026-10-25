@@ -13434,8 +13434,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0078 و T0075 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "src/Host.Windows/Models/ModelStreamingDownloader.cs",
         "tests/HostLifecycle.Tests/ModelStreamingDownloaderAcceptanceTests.cs",
@@ -13452,12 +13452,12 @@
         "tests/HostLifecycle.Tests/Program.cs",
         "step three/T0079/execution-report.md"
       ],
-      "notes": "Extended the real progress callback with elapsed time, a byte-derived approximate throughput, and percentage computed from actual bytes written versus catalog size. The acceptance suite now validates monotonic byte/percentage progress and consistency of the reported rate with elapsed time; exact-head CI is pending.",
+      "notes": "Exact-head graph quality gate and HostLifecycle tests passed on implementation commit a2a7c6263f56ae89d94f154f1aa2c5c3858ee54b. The tests confirm progress bytes are monotonic, percentage reaches exactly 100%, elapsed time is monotonic, and reported bytes-per-second is computed from actual bytes written divided by elapsed time. The broader Windows/Android build had not completed when this task result was recorded.",
       "execution_summary": {
-        "attempt_count": 1,
+        "attempt_count": 2,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0079-A001",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "T0079-A002",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Host.Windows/Models/ModelStreamingDownloader.cs",
           "tests/HostLifecycle.Tests/ModelStreamingDownloaderAcceptanceTests.cs",
@@ -13465,8 +13465,13 @@
           "step three/T0079/execution-report.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
+        "related_commits": [
+          "a2a7c6263f56ae89d94f154f1aa2c5c3858ee54b"
+        ],
+        "tests_passed": [
+          "Exact-head graph quality gate passed: https://github.com/artinrahimii/project/actions/runs/40162553985",
+          "Exact-head HostLifecycle test suite passed, including throughput/progress assertions: https://github.com/artinrahimii/project/actions/runs/40162554123/job/121076964113"
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -13505,6 +13510,39 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Run exact-head quality gate and HostLifecycle tests. Fix any compile/style/test issues before marking T0079 done."
+        },
+        {
+          "attempt_id": "T0079-A002",
+          "started_at": "2026-10-25T04:38:17.272Z",
+          "ended_at": "2026-10-25T04:38:17.272Z",
+          "result": "succeeded",
+          "summary": "The exact-head Step Three quality gate and HostLifecycle tests passed. Streaming progress updates now expose real bytes downloaded, total bytes, elapsed time, percentage, and approximate bytes/second calculated from actual bytes divided by monotonic elapsed time. Acceptance tests verify monotonic counters, exactly 100% after a complete transfer, finite non-negative speed, and formula consistency. The wider WPF/Android build was still running; no claim is made that that full pipeline already passed.",
+          "changed_files": [
+            "src/Host.Windows/Models/ModelStreamingDownloader.cs",
+            "tests/HostLifecycle.Tests/ModelStreamingDownloaderAcceptanceTests.cs",
+            "step three/T0079/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "related_commits": [
+            "a2a7c6263f56ae89d94f154f1aa2c5c3858ee54b"
+          ],
+          "tests": [
+            {
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40162553985"
+            },
+            {
+              "name": "HostLifecycle unit and integration tests",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40162554123/job/121076964113"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Proceed to T0080 after reviewing its incoming edges; preserve the single-active-model request and ensure cancellation never leaves a final partial model."
         }
       ]
     },
@@ -26034,6 +26072,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-25T04:36:57.749Z"
+  "updated_at": "2026-10-25T04:38:17.272Z"
 }
 ```
