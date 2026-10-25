@@ -13165,8 +13165,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0076 و T0075 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "src/Host.Windows/Models/VerifiedModelInstaller.cs",
         "tests/HostLifecycle.Tests/VerifiedModelInstallerAcceptanceTests.cs",
@@ -13185,12 +13185,12 @@
         "tests/HostLifecycle.Tests/Program.cs",
         "step three/T0077/execution-report.md"
       ],
-      "notes": "Implemented a staged installer that hashes completed output incrementally with SHA-256, compares the checksum in constant time, and only then moves the file from a same-directory temporary path to the final name. Exact-head acceptance tests and graph quality gate are pending.",
+      "notes": "The exact-head Step Three quality gate and HostLifecycle test suite passed on implementation commit 4c3fd60951ba8467e0e50c99d1913de8f7a2a675. The tests verify staged downloads, SHA-256 match before promotion, cleanup on mismatch, rejection of unsupported checksum algorithm before network access, and no overwrite of an existing destination. The separate real local-inference workflow also succeeded. The broader Windows/Android product-build workflow had not completed when this task record was updated, and is not claimed as successful here.",
       "execution_summary": {
-        "attempt_count": 1,
+        "attempt_count": 2,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0077-A001",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "T0077-A002",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Host.Windows/Models/VerifiedModelInstaller.cs",
           "tests/HostLifecycle.Tests/VerifiedModelInstallerAcceptanceTests.cs",
@@ -13199,8 +13199,14 @@
           "step three/T0077/execution-report.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
+        "related_commits": [
+          "4c3fd60951ba8467e0e50c99d1913de8f7a2a675"
+        ],
+        "tests_passed": [
+          "Exact-head Step Three quality gate passed: https://github.com/artinrahimii/project/actions/runs/40162165579",
+          "Exact-head HostLifecycle unit/integration suite passed, including VerifiedModelInstallerAcceptanceTests: https://github.com/artinrahimii/project/actions/runs/40162165538/job/121075810203",
+          "Real local llama.cpp/GGUF integration passed: https://github.com/artinrahimii/project/actions/runs/40162165551"
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -13242,6 +13248,46 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Run the exact-head graph quality gate and HostLifecycle tests. Correct any compile/test failures before marking done."
+        },
+        {
+          "attempt_id": "T0077-A002",
+          "started_at": "2026-10-25T04:32:28.100Z",
+          "ended_at": "2026-10-25T04:32:28.100Z",
+          "result": "succeeded",
+          "summary": "Exact-head validation passed for the new installer and acceptance tests. The graph/Python quality gate and HostLifecycle unit/integration suite both succeeded; the installer tests cover valid SHA-256 promotion, hash-mismatch cleanup, unsupported algorithms rejected before network I/O, and refusing to overwrite a pre-existing destination. The dedicated real local inference integration workflow also succeeded on this head. The complete multi-platform product build was still running and is not represented as passed in this task record.",
+          "changed_files": [
+            "src/Host.Windows/Models/VerifiedModelInstaller.cs",
+            "tests/HostLifecycle.Tests/VerifiedModelInstallerAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "step three/T0077/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "related_commits": [
+            "4c3fd60951ba8467e0e50c99d1913de8f7a2a675"
+          ],
+          "tests": [
+            {
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40162165579"
+            },
+            {
+              "name": "HostLifecycle unit and integration tests",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40162165538/job/121075810203"
+            },
+            {
+              "name": "Real local llama.cpp and GGUF integration",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40162165551"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Proceed to T0078 only after reviewing its incoming dependency edges and checking that T0077's validated output contract is the one it actually consumes."
         }
       ]
     },
@@ -25787,6 +25833,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-25T04:30:37.669Z"
+  "updated_at": "2026-10-25T04:32:28.100Z"
 }
 ```
