@@ -13308,33 +13308,76 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0077 و T0075 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "tests/HostLifecycle.Tests/IncompleteModelDownloadAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0078/execution-report.md",
+        "step three/project-graph.md"
+      ],
       "expected_output_paths": [
         "src/Host.Windows/Models/ + tests/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "tests/HostLifecycle.Tests/IncompleteModelDownloadAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0078/execution-report.md"
+      ],
+      "notes": "Added a deterministic interrupted-response test exercising the real VerifiedModelInstaller and streaming downloader. The fixture returns one chunk and then throws IOException; acceptance asserts no final model and no residual staging file. Exact-head CI is pending.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0078-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "tests/HostLifecycle.Tests/IncompleteModelDownloadAcceptanceTests.cs",
+          "tests/HostLifecycle.Tests/Program.cs",
+          "step three/T0078/execution-report.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
+          "state": "reviewed",
+          "triggering_contracts": [
+            "VerifiedModelInstaller.DownloadAndInstallAsync",
+            "ModelStreamingDownloader.DownloadAsync",
+            "staging file cleanup and final-path promotion"
+          ],
           "affected_by_contract_changes": [],
-          "review_evidence": []
+          "review_evidence": [
+            "src/Host.Windows/Models/VerifiedModelInstaller.cs",
+            "src/Host.Windows/Models/ModelStreamingDownloader.cs",
+            "tests/HostLifecycle.Tests/VerifiedModelInstallerAcceptanceTests.cs"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0078-A001",
+          "started_at": "2026-10-25T04:34:06.748Z",
+          "ended_at": "2026-10-25T04:34:06.748Z",
+          "result": "partial",
+          "summary": "Added an acceptance test that simulates a network read failure after a partial response. It invokes the real VerifiedModelInstaller and asserts that the response started, bytes were returned, the final model path does not appear, and the temporary staging file is removed. Exact-head CI is pending.",
+          "changed_files": [
+            "tests/HostLifecycle.Tests/IncompleteModelDownloadAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "step three/T0078/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "related_commits": [],
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Run the exact-head graph quality gate and HostLifecycle tests; correct any errors before marking T0078 done."
+        }
+      ]
     },
     {
       "id": "T0079",
@@ -21936,19 +21979,28 @@
       "from": "T0077",
       "to": "T0078",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0078 tests the cleanup/promotion boundary implemented by VerifiedModelInstaller, which calls ModelStreamingDownloader and must not expose a final path after interrupted input. Keep type=blocks.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/Models/VerifiedModelInstaller.cs",
+        "src/Host.Windows/Models/ModelStreamingDownloader.cs",
+        "tests/HostLifecycle.Tests/VerifiedModelInstallerAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/IncompleteModelDownloadAcceptanceTests.cs"
+      ]
     },
     {
       "from": "T0075",
       "to": "T0078",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "The offline catalog store is not called by the partial-download cleanup path; the edge remains a conservative order because the task start condition names T0075. Keep type=blocks.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/Models/Catalog/OfflineModelCatalogStore.cs",
+        "src/Host.Windows/Models/VerifiedModelInstaller.cs",
+        "step three/T0075/execution-report.md"
+      ]
     },
     {
       "from": "T0078",
@@ -25831,8 +25883,37 @@
         "step three/T0075/execution-report.md"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-25T04:34:06.748Z",
+      "edge_from": "T0077",
+      "edge_to": "T0078",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "reason": "T0078 tests the cleanup/promotion boundary implemented by VerifiedModelInstaller, which calls ModelStreamingDownloader and must not expose a final path after interrupted input. Keep type=blocks.",
+      "evidence": [
+        "src/Host.Windows/Models/VerifiedModelInstaller.cs",
+        "src/Host.Windows/Models/ModelStreamingDownloader.cs",
+        "tests/HostLifecycle.Tests/VerifiedModelInstallerAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/IncompleteModelDownloadAcceptanceTests.cs"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-25T04:34:06.748Z",
+      "edge_from": "T0075",
+      "edge_to": "T0078",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "reason": "The offline catalog store is not called by the partial-download cleanup path; the edge remains a conservative order because the task start condition names T0075. Keep type=blocks.",
+      "evidence": [
+        "src/Host.Windows/Models/Catalog/OfflineModelCatalogStore.cs",
+        "src/Host.Windows/Models/VerifiedModelInstaller.cs",
+        "step three/T0075/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-25T04:32:28.100Z"
+  "updated_at": "2026-10-25T04:34:06.748Z"
 }
 ```
