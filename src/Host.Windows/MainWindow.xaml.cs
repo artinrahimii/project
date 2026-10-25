@@ -424,6 +424,18 @@ public partial class MainWindow : Window
         }
     }
 
+    private void PromptInput_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+    {
+        if (e.Key != System.Windows.Input.Key.Enter ||
+            System.Windows.Input.Keyboard.Modifiers.HasFlag(System.Windows.Input.ModifierKeys.Shift))
+        {
+            return;
+        }
+
+        e.Handled = true;
+        GenerateButton_Click(sender, new RoutedEventArgs());
+    }
+
     private async void GenerateButton_Click(object sender, RoutedEventArgs e)
     {
         var prompt = PromptInput.Text.Trim();

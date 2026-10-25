@@ -31,6 +31,9 @@ class WpfEntryPointTests(unittest.TestCase):
         self.assertIn('ChatMessages.Items.Add("You: " + prompt);', WINDOW_CODE)
         self.assertIn('ChatMessages.Items.Add("Local AI: " + response);', WINDOW_CODE)
         self.assertIn("_session.GenerateAsync(prompt, 1024", WINDOW_CODE)
+        self.assertIn('KeyDown="PromptInput_KeyDown"', WINDOW_XAML)
+        self.assertIn("ModifierKeys.Shift", WINDOW_CODE)
+        self.assertIn("GenerateButton_Click(sender, new RoutedEventArgs());", WINDOW_CODE)
 
     def test_smoke_mode_waits_for_loaded_visible_main_window_then_exits(self):
         for marker in (
