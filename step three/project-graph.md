@@ -15938,33 +15938,104 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0091 و T0087 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال انجام",
+      "actual_output_paths": [
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "src/Host.Application/HostErrorPresentation.cs",
+        "src/Host.Infrastructure/LlamaCppServerBackend.cs",
+        "tests/test_wpf_entrypoint.py",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0092/execution-report.md"
+      ],
       "expected_output_paths": [
         "src/Host.Windows/Chat/ و src/Host.Windows/Tools/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "tests/test_wpf_entrypoint.py",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "src/Host.Application/HostErrorPresentation.cs",
+        "step three/T0092/execution-report.md"
+      ],
+      "notes": "The error path already presents safe mapped failures as System-role chat messages and appends Assistant-role text only after GenerateAsync returns successfully. T0092 adds a dedicated regression contract that tests this separation; CI for the new assertion is pending. Incoming edges T0091 -> T0092 and T0087 -> T0092 were reviewed against their actual source/report evidence and classified without changing type=blocks. Preserve unreviewed edges elsewhere.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
-        "related_commits": [],
+        "last_attempt_id": "T0092-2026-10-25-01",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "tests/test_wpf_entrypoint.py",
+          "step three/T0092/execution-report.md",
+          "step three/project-graph.md"
+        ],
+        "related_commits": [
+          "7621bfd45a7808934c681e23f2e225200ded9281"
+        ],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
+          "state": "pending",
+          "triggering_contracts": [
+            "T0091 session-clear cancellation/UI guard",
+            "T0087 model catalog license disclosure"
+          ],
           "affected_by_contract_changes": [],
-          "review_evidence": []
+          "review_evidence": [
+            "src/Host.Windows/MainWindow.xaml.cs",
+            "tests/test_wpf_entrypoint.py",
+            "step three/T0091/execution-report.md",
+            "src/Host.Application/Chat/ChatConversation.cs",
+            "step three/T0087/execution-report.md",
+            "src/Host.Windows/Models/Catalog/ModelCatalogModels.cs",
+            "src/Host.Windows/MainWindow.xaml.cs",
+            "src/Host.Application/HostErrorPresentation.cs"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0092-2026-10-25-01",
+          "started_at": "2026-10-25T20:42:00Z",
+          "ended_at": "2026-10-25T20:42:00Z",
+          "result": "partial",
+          "summary": "Inspected current-main inference/UI/error handling. Generation appends Assistant text only after awaiting a successful GenerateAsync result; cancellation and generic failures are mapped to System-role messages, and HostErrorPresentation hides raw exception details. Added a dedicated Python source-contract regression test to ensure future edits do not move failures onto the Assistant success path. The existing backend harness already checks malformed JSON, transport failure and timeout are surfaced as exceptions with stable non-sensitive messages. The new regression test has not yet run on a commit containing it; acceptance remains in progress pending exact-commit CI and product validation.",
+          "changed_files": [
+            "tests/test_wpf_entrypoint.py",
+            "step three/T0092/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "related_commits": [
+            "7621bfd45a7808934c681e23f2e225200ded9281"
+          ],
+          "tests": [
+            {
+              "name": "Existing current-main Step Three quality gate on base commit",
+              "result": "passed",
+              "summary": "149 Python tests and graph/output-evidence checks passed on base commit; this run does not include the newly added T0092 test.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40231676597"
+            },
+            {
+              "name": "Existing current-main product build on base commit",
+              "result": "passed",
+              "summary": "Windows Release build/startup smoke, lifecycle tests, Android lint/APK/Protobuf tests passed on base commit; this run does not include the newly added T0092 test.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40231676645"
+            },
+            {
+              "name": "T0092 inference-error UI regression test",
+              "result": "not_run",
+              "summary": "Added to tests/test_wpf_entrypoint.py; awaiting CI for the commit that contains this test."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Push this regression test and task metadata to main, then inspect the exact new quality and product workflow results. Mark T0092 done only if the new test and full product workflow pass."
+        }
+      ]
     },
     {
       "id": "T0093",
@@ -24300,19 +24371,29 @@
       "from": "T0091",
       "to": "T0092",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0092's UI error path reuses the same GenerateButton_Click catch block whose _clearSessionRequested guard was added and verified by T0091. The error-display change/test must preserve the contract that a late inference failure cannot repopulate a session after Clear; this is a concrete shared UI/control-flow contract, not an inference from type=blocks.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "tests/test_wpf_entrypoint.py",
+        "step three/T0091/execution-report.md",
+        "src/Host.Application/Chat/ChatConversation.cs"
+      ]
     },
     {
       "from": "T0087",
       "to": "T0092",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0087 adds model-license classification/disclosure in catalog metadata and UI; T0092 consumes the inference exception/result presentation path, not a license metadata field or contract. Keep the existing conservative order while recording that no technical dependency is established.",
+      "validation_status": "validated",
+      "evidence": [
+        "step three/T0087/execution-report.md",
+        "src/Host.Windows/Models/Catalog/ModelCatalogModels.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "src/Host.Application/HostErrorPresentation.cs"
+      ]
     },
     {
       "from": "T0092",
@@ -28213,8 +28294,38 @@
         "src/Host.Windows/MainWindow.xaml.cs"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-25T20:42:00Z",
+      "edge_from": "T0091",
+      "edge_to": "T0092",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "reason": "T0092's UI error path reuses the same GenerateButton_Click catch block whose _clearSessionRequested guard was added and verified by T0091. The error-display change/test must preserve the contract that a late inference failure cannot repopulate a session after Clear; this is a concrete shared UI/control-flow contract, not an inference from type=blocks.",
+      "evidence": [
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "tests/test_wpf_entrypoint.py",
+        "step three/T0091/execution-report.md",
+        "src/Host.Application/Chat/ChatConversation.cs"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-25T20:42:00Z",
+      "edge_from": "T0087",
+      "edge_to": "T0092",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "reason": "T0087 adds model-license classification/disclosure in catalog metadata and UI; T0092 consumes the inference exception/result presentation path, not a license metadata field or contract. Keep the existing conservative order while recording that no technical dependency is established.",
+      "evidence": [
+        "step three/T0087/execution-report.md",
+        "src/Host.Windows/Models/Catalog/ModelCatalogModels.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "src/Host.Application/HostErrorPresentation.cs"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-25T20:33:19.000Z"
+  "updated_at": "2026-10-25T20:42:00Z"
 }
 ```

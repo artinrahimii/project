@@ -84,6 +84,36 @@ class WpfEntryPointTests(unittest.TestCase):
         self.assertIn("HttpRequestException", presenter)
         self.assertIn("OperationCanceledException", presenter)
 
+    def test_inference_failures_are_system_messages_not_assistant_responses(self):
+        generate_method = WINDOW_CODE.split("private async void GenerateButton_Click", 1)[1].split(
+            "private void AppendConversationMessage", 1
+        )[0]
+
+        await_index = generate_method.index("var response = await generationTask;")
+        assistant_index = generate_method.index(
+            "AppendConversationMessage(ConversationMessageRole.Assistant, response);"
+        )
+        self.assertLess(await_index, assistant_index)
+
+        cancellation_start = generate_method.index("catch (OperationCanceledException)")
+        cancellation_end = generate_method.index("catch (Exception exception)", cancellation_start)
+        cancellation_path = generate_method[cancellation_start:cancellation_end]
+        self.assertIn(
+            'AppendConversationMessage(ConversationMessageRole.System, "Inference cancelled. Reconnect before the next request.");',
+            cancellation_path,
+        )
+        self.assertNotIn("ConversationMessageRole.Assistant", cancellation_path)
+
+        failure_start = generate_method.index("catch (Exception exception)")
+        failure_end = generate_method.index("finally", failure_start)
+        failure_path = generate_method[failure_start:failure_end]
+        self.assertIn(
+            "AppendConversationMessage(ConversationMessageRole.System, HostErrorPresentation.ToUserMessage(exception));",
+            failure_path,
+        )
+        self.assertNotIn("ConversationMessageRole.Assistant", failure_path)
+        self.assertNotIn("OutputText.Text", failure_path)
+
     def test_chat_messages_are_backed_by_an_ordered_in_memory_conversation(self):
         conversation = (ROOT / "src/Host.Application/Chat/ChatConversation.cs").read_text(encoding="utf-8")
         lifecycle_tests = (ROOT / "tests/HostLifecycle.Tests/ChatConversationAcceptanceTests.cs").read_text(encoding="utf-8")
