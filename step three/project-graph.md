@@ -15323,11 +15323,11 @@
         "tests/test_wpf_entrypoint.py",
         "step three/T0090/execution-report.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود. پیاده‌سازی اولیه در V 3.0.272 انجام شد؛ تا پیش از اجرای موفق CI روی همین کد، تکمیل تأیید نشده است.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود. پیاده‌سازی اولیه در V 3.0.272 انجام شد؛ تا پیش از اجرای موفق CI روی همین کد، تکمیل تأیید نشده است. تلاش نخست CI شکست خورد (۱۴۶ آزمون موفق و یک assertion قدیمی ناموفق)؛ assertion اصلاح شده و نتیجهٔ اجرای مجدد هنوز در انتظار است.",
       "execution_summary": {
-        "attempt_count": 1,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "T0090-2026-10-25-01",
+        "attempt_count": 2,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "T0090-2026-10-25-02",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Host.Application/Chat/ChatConversation.cs",
@@ -15339,10 +15339,15 @@
           "step three/project-graph.md"
         ],
         "related_commits": [
-          "818c657a3a106b52de85bcca316ad3967e04f54c"
+          "818c657a3a106b52de85bcca316ad3967e04f54c",
+          "4fbf00cbb9606b5f76f80ec47d9045255ca8df8e"
         ],
-        "tests_passed": [],
-        "tests_failed": [],
+        "tests_passed": [
+          "The new ordered-conversation integration regression test passed in GitHub Actions run 40181807435; full gate failed due one pre-existing WPF test expecting direct ListBox insertion."
+        ],
+        "tests_failed": [
+          "GitHub Actions run 40181807435: test_main_window_has_required_operational_controls_and_cleanup expected the old direct ChatMessages.Items.Add(\"You: \" + prompt) code path; corrected in 4fbf00cbb9606b5f76f80ec47d9045255ca8df8e; rerun pending."
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -15399,6 +15404,40 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Inspect the GitHub Actions runs for the implementation commit. Mark done only if the quality gate, Windows build/startup smoke, and lifecycle tests pass; otherwise fix failures and rerun."
+        },
+        {
+          "attempt_id": "T0090-2026-10-25-02",
+          "started_at": "2026-10-25T09:47:00Z",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "The first GitHub Actions quality gate ran 147 Python tests: 146 passed and one existing WPF assertion failed because it expected the old direct ListBox append. The new conversation integration guard passed. Updated the old assertion to check the ordered conversation append path; rerun pending.",
+          "changed_files": [
+            "tests/test_wpf_entrypoint.py",
+            "step three/T0090/execution-report.md"
+          ],
+          "commit_sha": "4fbf00cbb9606b5f76f80ec47d9045255ca8df8e",
+          "tests": [
+            {
+              "name": "Step Three quality gate",
+              "result": "failed",
+              "summary": "Run 40181807435: 146 passed, one failed due to a stale assertion in test_main_window_has_required_operational_controls_and_cleanup."
+            },
+            {
+              "name": "Correction",
+              "result": "committed",
+              "summary": "Changed stale assertions to verify AppendConversationMessage for user and assistant entries."
+            },
+            {
+              "name": "Rerun",
+              "result": "pending",
+              "summary": "Run 40181923409 triggered by commit 4fbf00cbb9606b5f76f80ec47d9045255ca8df8e."
+            }
+          ],
+          "failure_details": "Stale source-level assertion expected direct ChatMessages.Items.Add for user/model messages; implementation now routes messages through ChatConversation and AppendConversationMessage.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Wait for quality gate and product build on the corrected commit; fix any additional failure and only mark done after passing CI evidence."
         }
       ]
     },
@@ -27734,6 +27773,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-25T09:44:00Z"
+  "updated_at": "2026-10-25T09:47:00Z"
 }
 ```
