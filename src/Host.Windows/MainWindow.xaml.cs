@@ -5,6 +5,7 @@ using Microsoft.Win32;
 using System.Linq;
 using WhiteP.Host.Windows.Models.Catalog;
 using WhiteP.Host.Application;
+using WhiteP.Host.Application.Chat;
 using WhiteP.Host.Domain;
 using WhiteP.Host.Infrastructure;
 using WhiteP.Host.Windows.Inference;
@@ -18,6 +19,7 @@ public partial class MainWindow : Window
     private readonly LocalInferenceProcessLauncher _localInferenceProcessLauncher = new();
     private LocalHostSettings _settings = LocalHostSettings.Defaults;
     private readonly HostInferenceSession _session;
+    private readonly ChatConversation _conversation = new();
     private string? _requestedModelMemoryRequirementText;
     private string? _requestedMinimumFreeDiskRequirementText;
     private CancellationTokenSource? _operationCancellation;
@@ -453,7 +455,7 @@ public partial class MainWindow : Window
 
         _requestedModelMemoryRequirementText = ModelMemoryRequirementGiB.Text;
         _requestedMinimumFreeDiskRequirementText = MinimumFreeDiskGiB.Text;
-        ChatMessages.Items.Add("You: " + prompt);
+        AppendConversationMessage(ConversationMessageRole.User, prompt);
         ChatMessages.ScrollIntoView(ChatMessages.Items[ChatMessages.Items.Count - 1]);
         PromptInput.Clear();
         GenerateButton.IsEnabled = false;
@@ -466,7 +468,7 @@ public partial class MainWindow : Window
             var generationTask = _session.GenerateAsync(prompt, 1024, _operationCancellation.Token);
             RenderStatus(_session.Status);
             var response = await generationTask;
-            ChatMessages.Items.Add("Local AI: " + response);
+            AppendConversationMessage(ConversationMessageRole.Assistant, response);
             RenderStatus(_session.Status);
         }
         catch (OperationCanceledException)
@@ -477,12 +479,12 @@ public partial class MainWindow : Window
                 LocalProcessStatus.Text = "Local engine process stopped after inference cancellation; reconnect before generating again.";
             }
             RenderStatus(_session.Status);
-            ChatMessages.Items.Add("System: Inference cancelled. Reconnect before the next request.");
+            AppendConversationMessage(ConversationMessageRole.System, "Inference cancelled. Reconnect before the next request.");
         }
         catch (Exception exception)
         {
             RenderStatus(_session.Status);
-            ChatMessages.Items.Add("System: " + HostErrorPresentation.ToUserMessage(exception));
+            AppendConversationMessage(ConversationMessageRole.System, HostErrorPresentation.ToUserMessage(exception));
         }
         finally
         {
@@ -495,6 +497,18 @@ public partial class MainWindow : Window
             ConnectButton.IsEnabled = true;
             GenerateButton.IsEnabled = _session.IsConnected && _capacityReady;
         }
+    }
+
+    private void AppendConversationMessage(ConversationMessageRole role, string content)
+    {
+        var message = _conversation.Add(role, content);
+        var label = role switch
+        {
+            ConversationMessageRole.User => "You",
+            ConversationMessageRole.Assistant => "Local AI",
+            _ => "System"
+        };
+        ChatMessages.Items.Add($"{label}: {message.Content}");
     }
 
     private void CancelGenerationButton_Click(object sender, RoutedEventArgs e)

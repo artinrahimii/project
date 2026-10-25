@@ -84,6 +84,18 @@ class WpfEntryPointTests(unittest.TestCase):
         self.assertIn("HttpRequestException", presenter)
         self.assertIn("OperationCanceledException", presenter)
 
+    def test_chat_messages_are_backed_by_an_ordered_in_memory_conversation(self):
+        conversation = (ROOT / "src/Host.Application/Chat/ChatConversation.cs").read_text(encoding="utf-8")
+        lifecycle_tests = (ROOT / "tests/HostLifecycle.Tests/ChatConversationAcceptanceTests.cs").read_text(encoding="utf-8")
+        self.assertIn("private readonly ChatConversation _conversation = new();", WINDOW_CODE)
+        self.assertIn("AppendConversationMessage(ConversationMessageRole.User, prompt);", WINDOW_CODE)
+        self.assertIn("AppendConversationMessage(ConversationMessageRole.Assistant, response);", WINDOW_CODE)
+        self.assertIn("_conversation.Add(role, content)", WINDOW_CODE)
+        self.assertIn("_messages.AsReadOnly()", conversation)
+        self.assertIn("_nextSequence++", conversation)
+        self.assertIn("deterministically", lifecycle_tests.lower())
+        self.assertIn("preserve insertion order", lifecycle_tests.lower())
+
     def test_window_status_starts_without_connecting_to_a_backend(self):
         self.assertIn('Text="Stopped — connect to a local backend."', WINDOW_XAML)
         self.assertNotIn(".ConnectAsync(", APP_CODE)
