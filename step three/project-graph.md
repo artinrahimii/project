@@ -14862,33 +14862,100 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0086 و T0075 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال انجام",
+      "actual_output_paths": [
+        "src/Host.Windows/Models/Catalog/ModelCatalogModels.cs",
+        "src/Host.Windows/Models/Catalog/ModelCatalogParser.cs",
+        "src/Host.Windows/Models/Catalog/model-catalog-v1.schema.json",
+        "src/Host.Windows/MainWindow.xaml",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs",
+        "step three/T0087/execution-report.md",
+        "step three/project-graph.md"
+      ],
       "expected_output_paths": [
         "src/Host.Windows/Models/ + tests/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "src/Host.Windows/Models/Catalog/ModelCatalogModels.cs",
+        "src/Host.Windows/Models/Catalog/ModelCatalogParser.cs",
+        "src/Host.Windows/Models/Catalog/model-catalog-v1.schema.json",
+        "src/Host.Windows/MainWindow.xaml",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs",
+        "step three/T0087/execution-report.md"
+      ],
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود. طبقه‌بندی مجوز از وضعیت شواهد مجوز جداست؛ مقدار حذف‌شده unknown است و مجوز بازمتن/توزیع را اثبات نمی‌کند.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0087-2026-10-25-01",
+        "last_attempt_result": "in_progress",
+        "changed_files": [
+          "src/Host.Windows/Models/Catalog/ModelCatalogModels.cs",
+          "src/Host.Windows/Models/Catalog/ModelCatalogParser.cs",
+          "src/Host.Windows/Models/Catalog/model-catalog-v1.schema.json",
+          "src/Host.Windows/MainWindow.xaml",
+          "src/Host.Windows/MainWindow.xaml.cs",
+          "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs",
+          "step three/T0087/execution-report.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
-          "affected_by_contract_changes": [],
-          "review_evidence": []
+          "state": "in_progress",
+          "triggering_contracts": [
+            "T0075 validated catalog metadata and parser contract",
+            "T0086 model-update safety contract (sequencing only)"
+          ],
+          "affected_by_contract_changes": [
+            "Added optional license.classification values open_source/restricted/unknown; missing classification defaults to unknown.",
+            "The Windows host displays restriction/unknown disclaimers before model update and in selected-model details."
+          ],
+          "review_evidence": [
+            "src/Host.Windows/Models/Catalog/ModelCatalogModels.cs",
+            "src/Host.Windows/Models/Catalog/ModelCatalogParser.cs",
+            "src/Host.Windows/Models/Catalog/model-catalog-v1.schema.json",
+            "src/Host.Windows/MainWindow.xaml",
+            "src/Host.Windows/MainWindow.xaml.cs",
+            "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0087-2026-10-25-01",
+          "started_at": "2026-10-25T08:56:00.309Z",
+          "ended_at": null,
+          "result": "in_progress",
+          "summary": "Implemented explicit license usage classification separately from license evidence. Omitted classification remains unknown; restricted models are visibly disclosed as not open source. Automated CI validation is pending.",
+          "changed_files": [
+            "src/Host.Windows/Models/Catalog/ModelCatalogModels.cs",
+            "src/Host.Windows/Models/Catalog/ModelCatalogParser.cs",
+            "src/Host.Windows/Models/Catalog/model-catalog-v1.schema.json",
+            "src/Host.Windows/MainWindow.xaml",
+            "src/Host.Windows/MainWindow.xaml.cs",
+            "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs",
+            "step three/T0087/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "Added optional license.classification to schema v1; existing catalogs remain parseable with unknown classification.",
+            "An open_source classification requires declared identifier/URL evidence and status=verified; UI still says legal terms are not independently verified."
+          ],
+          "follow_up": "Inspect CI for graph quality, HostLifecycle tests, Windows WPF build/format verification and Android compatibility before marking T0087 done."
+        }
+      ]
     },
     {
       "id": "T0088",
@@ -23333,19 +23400,27 @@
       "from": "T0086",
       "to": "T0087",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "The T0086 installer failure-preservation contract does not consume license classification; preserve this edge as conservative execution ordering (type=blocks), not a hard technical dependency.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/Models/Catalog/ModelCatalogModels.cs",
+        "tests/HostLifecycle.Tests/UpdateModelSafetyAcceptanceTests.cs"
+      ]
     },
     {
       "from": "T0075",
       "to": "T0087",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0087 extends catalog license metadata and parser behavior established with T0075, and renders that metadata in the host UI; existing catalog records must remain backward-compatible.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/Models/Catalog/ModelCatalogModels.cs",
+        "src/Host.Windows/Models/Catalog/ModelCatalogParser.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs"
+      ]
     },
     {
       "from": "T0087",
@@ -27273,8 +27348,35 @@
         "tests/HostLifecycle.Tests/UpdateModelSafetyAcceptanceTests.cs"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-25T08:56:00.309Z",
+      "edge_from": "T0086",
+      "edge_to": "T0087",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "reason": "Reviewed installer code: license classification is not a technical precondition for atomic update safety; preserve type=blocks as sequence ordering without claiming a hard dependency.",
+      "evidence": [
+        "src/Host.Windows/Models/VerifiedModelInstaller.cs",
+        "tests/HostLifecycle.Tests/UpdateModelSafetyAcceptanceTests.cs"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-25T08:56:00.309Z",
+      "edge_from": "T0075",
+      "edge_to": "T0087",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "reason": "The task extends the existing catalog license metadata/parser contract; existing records omitting the optional classification must remain safely unknown.",
+      "evidence": [
+        "src/Host.Windows/Models/Catalog/ModelCatalogModels.cs",
+        "src/Host.Windows/Models/Catalog/ModelCatalogParser.cs",
+        "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-25T07:33:30.199Z"
+  "updated_at": "2026-10-25T08:56:00.309Z"
 }
 ```

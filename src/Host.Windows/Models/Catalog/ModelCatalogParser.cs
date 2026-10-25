@@ -234,7 +234,7 @@ public sealed class ModelCatalogParser
 
     private ModelLicenseMetadata ParseLicense(JsonElement element)
     {
-        EnsureObjectProperties(element, "models[].license", "status", "identifier", "url");
+        EnsureObjectProperties(element, "models[].license", "status", "identifier", "url", "classification");
         var status = GetRequiredString(element, "status", "models[].license", 32);
         if (status is not ("verified" or "review_required" or "unknown"))
         {
@@ -274,12 +274,34 @@ public sealed class ModelCatalogParser
             url = ParseAllowlistedHttpsUrl(urlText, _allowedLicenseHosts, "license.url");
         }
 
+        var classification = "unknown";
+        if (element.TryGetProperty("classification", out var classificationElement))
+        {
+            if (classificationElement.ValueKind != JsonValueKind.String)
+            {
+                throw Invalid("License classification must be a string.");
+            }
+
+            classification = classificationElement.GetString() ?? "unknown";
+        }
+
+        if (classification is not ("open_source" or "restricted" or "unknown"))
+        {
+            throw Invalid("The model license classification is not recognized.");
+        }
+
         if (status == "verified" && (identifier is null || url is null))
         {
             throw Invalid("A verified license requires both identifier and URL evidence.");
         }
 
-        return new ModelLicenseMetadata(status, identifier, url);
+        if (classification == "open_source" &&
+            (status != "verified" || identifier is null || url is null))
+        {
+            throw Invalid("An open-source classification requires declared license identifier and URL evidence; the classification is still not independently verified.");
+        }
+
+        return new ModelLicenseMetadata(status, identifier, url, classification);
     }
 
     private static Uri ParseAllowlistedHttpsUrl(

@@ -167,9 +167,7 @@ public partial class MainWindow : Window
             return;
         }
 
-        var licenseWarning = model.License.RequiresReview
-            ? "The catalog marks this model's license as requiring review. This app does not independently verify legal permission to use or redistribute it."
-            : "Catalog license metadata is not independently verified by this app.";
+        var licenseWarning = model.License.UsageDisclaimer;
         var answer = MessageBox.Show(
             this,
             $"Download {model.Name} ({model.SizeBytes:N0} bytes), verify its SHA-256 and GGUF header, then atomically replace:\n{fullDestinationPath}\n\nThe current file is retained until validation succeeds. The host will be disconnected, and only a local engine process started by this app will be stopped. An external process may keep the file locked and cause the update to be refused.\n\n{licenseWarning}\n\nContinue?",
@@ -308,9 +306,7 @@ public partial class MainWindow : Window
         var sizeMiB = model.SizeBytes / (1024d * 1024d);
         var sizeGiB = model.SizeBytes / (1024d * 1024d * 1024d);
         var licenseStatus = model.License.Status;
-        var licenseLimit = model.License.RequiresReview
-            ? "License status is unverified or requires review. Do not assume permission to use, modify, or redistribute this model."
-            : "The catalog declares a license status, but the app has not independently verified legal terms or usage restrictions.";
+        var licenseLimit = model.License.UsageDisclaimer;
         var licenseUrl = model.License.Url?.ToString() ?? "Not provided";
         var licenseId = model.License.Identifier ?? "Not provided";
         var backends = string.Join(", ", model.BackendIds);
@@ -332,6 +328,8 @@ public partial class MainWindow : Window
             $"Declared size: {model.SizeBytes:N0} bytes ({sizeMiB:N2} MiB / {sizeGiB:N3} GiB)\n" +
             $"Source: {model.SourceUrl}\n" +
             $"License status: {licenseStatus}\n" +
+            $"License classification: {model.License.Classification}\n" +
+            $"License disclosure: {model.License.ReviewLabel}\n" +
             $"License identifier: {licenseId}\n" +
             $"License terms URL: {licenseUrl}\n" +
             $"Supported backend IDs: {backends}\n" +

@@ -102,6 +102,16 @@
                 "unknown"
               ]
             },
+            "classification": {
+              "type": "string",
+              "enum": [
+                "open_source",
+                "restricted",
+                "unknown"
+              ],
+              "default": "unknown",
+              "description": "Catalog-declared usage classification only. open_source remains an unverified claim; restricted must never be presented as open source; missing classification is unknown and must not imply open-source status or redistribution permission."
+            },
             "identifier": {
               "type": "string",
               "minLength": 1,

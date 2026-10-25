@@ -19,6 +19,7 @@ internal static class ModelCatalogParserAcceptanceTests
         LoadsBundledSampleCatalog();
         RejectsOversizedCatalogFile();
         MissingLicenseDefaultsToReviewRequired();
+        LicenseClassificationDefaultsSafelyAndRestrictedModelsAreDisclosed();
         RejectsMalformedJsonAndUnsupportedSchemaVersions();
         RejectsMissingAndUnknownMetadata();
         RejectsUnsafeOrUnapprovedSourceUrls();
@@ -92,6 +93,7 @@ internal static class ModelCatalogParserAcceptanceTests
     private static JsonObject VerifiedLicense() => new()
     {
         ["status"] = "verified",
+        ["classification"] = "open_source",
         ["identifier"] = "LicenseRef-TestFixture",
         ["url"] = "https://licenses.example.test/LICENSE"
     };
@@ -216,13 +218,14 @@ internal static class ModelCatalogParserAcceptanceTests
             model.License.Status != "verified" ||
             model.License.Identifier != "Apache-2.0" ||
             model.License.Url?.AbsoluteUri != "https://huggingface.co/bartowski/SmolLM2-135M-Instruct-GGUF/blob/main/README.md" ||
-            model.License.RequiresReview ||
-            model.License.ReviewLabel != "Declared; not independently verified")
+            model.License.Classification != "unknown" ||
+            !model.License.RequiresReview ||
+            model.License.ReviewLabel != "REVIEW REQUIRED — DO NOT ASSUME OPEN SOURCE")
         {
             throw new Exception("The sample catalog metadata does not match the reviewed upstream source and license declaration.");
         }
 
-        Console.WriteLine("PASS: sample model catalog file, upstream SHA-256/size, llama.cpp backend, and Apache-2.0 declaration validated.");
+        Console.WriteLine("PASS: sample catalog keeps declared license evidence separate from open-source classification; omitted classification remains unknown.");
     }
 
     private static void RejectsOversizedCatalogFile()
@@ -266,8 +269,9 @@ internal static class ModelCatalogParserAcceptanceTests
             model.BackendIds.Single() != "llama.cpp" ||
             model.SourceUrl.Host != "models.example.test" ||
             model.License.Status != "verified" ||
+            model.License.Classification != "open_source" ||
             model.License.RequiresReview ||
-            model.License.ReviewLabel != "Declared; not independently verified")
+            model.License.ReviewLabel != "Open-source claim declared; not independently verified")
         {
             throw new Exception("A valid catalog did not produce the expected normalized metadata.");
         }
@@ -277,8 +281,10 @@ internal static class ModelCatalogParserAcceptanceTests
     {
         var model = Parser.Parse(Catalog(Model(includeLicense: false))).Models.Single();
         if (model.License.Status != "review_required" ||
+            model.License.Classification != "unknown" ||
             !model.License.RequiresReview ||
-            model.License.ReviewLabel != "REVIEW REQUIRED" ||
+            model.License.ReviewLabel != "REVIEW REQUIRED — DO NOT ASSUME OPEN SOURCE" ||
+            !model.License.UsageDisclaimer.Contains("Do not assume the model is open source", StringComparison.Ordinal) ||
             model.License.Identifier is not null ||
             model.License.Url is not null)
         {
@@ -286,10 +292,61 @@ internal static class ModelCatalogParserAcceptanceTests
         }
 
         var explicitlyUnverified = Parser.Parse(Catalog(Model(license: new JsonObject { ["status"] = "unknown" }))).Models.Single();
-        if (!explicitlyUnverified.License.RequiresReview || explicitlyUnverified.License.ReviewLabel != "REVIEW REQUIRED")
+        if (!explicitlyUnverified.License.RequiresReview ||
+            explicitlyUnverified.License.Classification != "unknown" ||
+            explicitlyUnverified.License.ReviewLabel != "REVIEW REQUIRED — DO NOT ASSUME OPEN SOURCE")
         {
             throw new Exception("An unknown license must require review.");
         }
+    }
+
+    private static void LicenseClassificationDefaultsSafelyAndRestrictedModelsAreDisclosed()
+    {
+        var restricted = Parser.Parse(Catalog(Model(license: new JsonObject
+        {
+            ["status"] = "verified",
+            ["classification"] = "restricted",
+            ["identifier"] = "LicenseRef-Restricted-Test",
+            ["url"] = "https://licenses.example.test/RESTRICTED-LICENSE"
+        }))).Models.Single();
+
+        if (!restricted.License.HasDeclaredRestrictions ||
+            restricted.License.RequiresReview ||
+            restricted.License.ReviewLabel != "RESTRICTIONS REPORTED — NOT OPEN SOURCE" ||
+            !restricted.License.UsageDisclaimer.Contains("Do not present this model as open source", StringComparison.Ordinal))
+        {
+            throw new Exception("A catalog-marked restricted model must have a prominent non-open-source disclosure.");
+        }
+
+        var missingClassification = Parser.Parse(Catalog(Model(license: new JsonObject
+        {
+            ["status"] = "verified",
+            ["identifier"] = "LicenseRef-Test",
+            ["url"] = "https://licenses.example.test/LICENSE"
+        }))).Models.Single();
+
+        if (missingClassification.License.Classification != "unknown" ||
+            !missingClassification.License.RequiresReview ||
+            missingClassification.License.ReviewLabel != "REVIEW REQUIRED — DO NOT ASSUME OPEN SOURCE")
+        {
+            throw new Exception("Missing classification must remain unknown even when license metadata is present.");
+        }
+
+        ExpectInvalid(Catalog(Model(license: new JsonObject
+        {
+            ["status"] = "unknown",
+            ["classification"] = "open_source",
+            ["identifier"] = "LicenseRef-Test",
+            ["url"] = "https://licenses.example.test/LICENSE"
+        })), "open-source classification without verified-status license evidence");
+
+        ExpectInvalid(Catalog(Model(license: new JsonObject
+        {
+            ["status"] = "verified",
+            ["classification"] = "permissive",
+            ["identifier"] = "LicenseRef-Test",
+            ["url"] = "https://licenses.example.test/LICENSE"
+        })), "unsupported license classification");
     }
 
     private static void RejectsMalformedJsonAndUnsupportedSchemaVersions()
