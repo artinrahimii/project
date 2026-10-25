@@ -25,6 +25,7 @@ public partial class MainWindow : Window
     private CancellationTokenSource? _operationCancellation;
     private CancellationTokenSource? _modelUpdateCancellation;
     private bool _capacityReady;
+    private bool _clearSessionRequested;
 
     public MainWindow()
     {
@@ -468,7 +469,10 @@ public partial class MainWindow : Window
             var generationTask = _session.GenerateAsync(prompt, 1024, _operationCancellation.Token);
             RenderStatus(_session.Status);
             var response = await generationTask;
-            AppendConversationMessage(ConversationMessageRole.Assistant, response);
+            if (!_clearSessionRequested)
+            {
+                AppendConversationMessage(ConversationMessageRole.Assistant, response);
+            }
             RenderStatus(_session.Status);
         }
         catch (OperationCanceledException)
@@ -479,7 +483,10 @@ public partial class MainWindow : Window
                 LocalProcessStatus.Text = "Local engine process stopped after inference cancellation; reconnect before generating again.";
             }
             RenderStatus(_session.Status);
-            AppendConversationMessage(ConversationMessageRole.System, "Inference cancelled. Reconnect before the next request.");
+            if (!_clearSessionRequested)
+            {
+                AppendConversationMessage(ConversationMessageRole.System, "Inference cancelled. Reconnect before the next request.");
+            }
         }
         catch (Exception exception)
         {
@@ -493,6 +500,7 @@ public partial class MainWindow : Window
                 ChatMessages.ScrollIntoView(ChatMessages.Items[ChatMessages.Items.Count - 1]);
             }
             CancelGenerationButton.IsEnabled = false;
+            _clearSessionRequested = false;
             RenderHostHardwareSummary();
             ConnectButton.IsEnabled = true;
             GenerateButton.IsEnabled = _session.IsConnected && _capacityReady;
@@ -509,6 +517,29 @@ public partial class MainWindow : Window
             _ => "System"
         };
         ChatMessages.Items.Add($"{label}: {message.Content}");
+    }
+
+    private void ClearSessionButton_Click(object sender, RoutedEventArgs e)
+    {
+        var generationWasRunning = CancelGenerationButton.IsEnabled;
+        if (generationWasRunning)
+        {
+            _clearSessionRequested = true;
+            _operationCancellation?.Cancel();
+            if (_localInferenceProcessLauncher.IsRunning)
+            {
+                _localInferenceProcessLauncher.Stop();
+                LocalProcessStatus.Text = "Local engine process stopped to clear the active session; reconnect before generating again.";
+            }
+        }
+
+        _conversation.Clear();
+        ChatMessages.Items.Clear();
+        PromptInput.Clear();
+        CancelGenerationButton.IsEnabled = false;
+        LifecycleState.Text = generationWasRunning
+            ? "Session cleared; active inference cancellation requested. Reconnect before generating again."
+            : "Session cleared.";
     }
 
     private void CancelGenerationButton_Click(object sender, RoutedEventArgs e)

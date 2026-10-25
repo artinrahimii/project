@@ -17,6 +17,12 @@ public sealed class ChatConversation
 
     public IReadOnlyList<ConversationMessage> Messages => _messages.AsReadOnly();
 
+    public void Clear()
+    {
+        _messages.Clear();
+        _nextSequence = 1;
+    }
+
     public ConversationMessage Add(ConversationMessageRole role, string content)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(content);

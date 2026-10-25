@@ -15468,33 +15468,92 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0090 و T0087 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال انجام",
+      "actual_output_paths": [
+        "src/Host.Application/Chat/ChatConversation.cs",
+        "src/Host.Windows/MainWindow.xaml",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "tests/HostLifecycle.Tests/ChatConversationAcceptanceTests.cs",
+        "step three/T0091/execution-report.md"
+      ],
       "expected_output_paths": [
         "src/Host.Windows/Chat/ و src/Host.Windows/Tools/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "src/Host.Application/Chat/ChatConversation.cs",
+        "src/Host.Windows/MainWindow.xaml",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "tests/HostLifecycle.Tests/ChatConversationAcceptanceTests.cs"
+      ],
+      "notes": "پیاده‌سازی اولیهٔ Clear برای مکالمهٔ درون‌حافظه‌ای، دکمهٔ پاک‌کردن نشست و جلوگیری از افزودن پاسخ/پیام لغو به نشست تازه‌شده اضافه شده است. وابستگی T0090 بررسی شد و فنی است؛ وابستگی T0087 صرفاً ترتیب اجرایی است. هنوز CI برای این تغییر اجرا نشده؛ تکمیل تأیید نمی‌شود.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0091-2026-10-25-01",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Host.Application/Chat/ChatConversation.cs",
+          "src/Host.Windows/MainWindow.xaml.cs",
+          "src/Host.Windows/MainWindow.xaml",
+          "tests/HostLifecycle.Tests/ChatConversationAcceptanceTests.cs",
+          "step three/T0091/execution-report.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
+          "state": "pending",
+          "triggering_contracts": [
+            "T0090 in-memory conversation Clear API",
+            "WPF cancellation and generation completion"
+          ],
           "affected_by_contract_changes": [],
-          "review_evidence": []
+          "review_evidence": [
+            "src/Host.Application/Chat/ChatConversation.cs",
+            "src/Host.Windows/MainWindow.xaml.cs",
+            "tests/HostLifecycle.Tests/ChatConversationAcceptanceTests.cs"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0091-2026-10-25-01",
+          "started_at": "2026-10-25T10:04:00Z",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Added a Clear method to the in-memory conversation, a WPF Clear session button, cancellation on clear when generation is active, suppression of late assistant/cancellation messages after clear, and acceptance checks for clearing and sequence reset. CI validation pending.",
+          "changed_files": [
+            "src/Host.Application/Chat/ChatConversation.cs",
+            "src/Host.Windows/MainWindow.xaml.cs",
+            "src/Host.Windows/MainWindow.xaml",
+            "tests/HostLifecycle.Tests/ChatConversationAcceptanceTests.cs",
+            "step three/T0091/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "ChatConversationAcceptanceTests",
+              "result": "not_run",
+              "summary": "Clear/reset assertions added; CI must compile and run them."
+            },
+            {
+              "name": "Windows WPF build/startup smoke",
+              "result": "pending",
+              "summary": "Requires GitHub Actions run on this change."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect CI on this commit; fix any compile or lifecycle regressions. Mark done only when host lifecycle tests and Windows build/startup smoke pass."
+        }
+      ]
     },
     {
       "id": "T0092",
@@ -23850,19 +23909,26 @@
       "from": "T0090",
       "to": "T0091",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0091 clears the ChatConversation introduced and verified by T0090; its Clear API is the direct interface used by the UI clear-session action.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Application/Chat/ChatConversation.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "tests/HostLifecycle.Tests/ChatConversationAcceptanceTests.cs"
+      ]
     },
     {
       "from": "T0087",
       "to": "T0091",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0087 establishes model-license disclosure behavior but does not provide the cancellation token or conversation-clear API. Keep the recorded conservative order without claiming a technical dependency.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "step three/T0087/execution-report.md"
+      ]
     },
     {
       "from": "T0091",
@@ -27783,6 +27849,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-25T10:02:00Z"
+  "updated_at": "2026-10-25T10:04:00Z"
 }
 ```

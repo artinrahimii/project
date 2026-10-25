@@ -26,6 +26,13 @@ public static class ChatConversationAcceptanceTests
             throw new Exception("Whitespace-only conversation messages must be rejected.");
         if (conversation.Messages.Count != 3)
             throw new Exception("Rejected messages must not mutate the conversation.");
+
+        conversation.Clear();
+        if (conversation.Messages.Count != 0)
+            throw new Exception("Clearing a session must remove all in-memory messages.");
+        var afterClear = conversation.Add(ConversationMessageRole.User, "New session");
+        if (afterClear.Sequence != 1 || conversation.Messages.Count != 1)
+            throw new Exception("A cleared session must restart its sequence at one.");
         Console.WriteLine("PASS: in-memory conversation preserves deterministic order, roles, and content.");
     }
 }
