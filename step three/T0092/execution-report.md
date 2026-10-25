@@ -12,3 +12,12 @@
 - Validation: base commit `V 3.0.287` quality and product workflows passed ([quality](https://github.com/artinrahimii/project/actions/runs/40231676597), [product](https://github.com/artinrahimii/project/actions/runs/40231676645)); those runs do not contain the new test. New-test result: **not yet run**.
 - Outcome: `in_progress`; no false claim of test acceptance. No production source was changed because the inspected implementation already had the safe error/success separation; this attempt adds missing regression coverage.
 - Next: run the complete quality gate and product build on the commit containing this test. Only mark T0092 done if both succeed and the new regression test passes.
+
+
+## Attempt T0092-2026-10-25-02 — acceptance confirmed
+
+- Tested commit: `0d67f5bdb0aa2c5fda762d29c675b6c525137a5f` (`V 3.0.288`).
+- [Quality gate](https://github.com/artinrahimii/project/actions/runs/40232583373) passed: 150 Python tests, including the T0092 regression, syntax checks and graph/output/evidence validation.
+- [Product build](https://github.com/artinrahimii/project/actions/runs/40232583374) passed: Windows WPF format/build/Protobuf/startup smoke; HostLifecycle tests; Android lint, debug APK, Protobuf tests and generated-source checks.
+- Source inspection confirms Assistant output is appended only after successful generation; cancellation and inference exceptions become System-role messages. The opt-in live-model integration test was not run.
+- Outcome: **T0092 done**. Next: review T0093 incoming dependencies before implementation; preserve T0093 -> T0094 as unreviewed until validated.

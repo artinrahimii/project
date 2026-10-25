@@ -15938,8 +15938,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0091 و T0087 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال انجام",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "src/Host.Windows/MainWindow.xaml.cs",
         "src/Host.Application/HostErrorPresentation.cs",
@@ -15958,40 +15958,44 @@
         "src/Host.Application/HostErrorPresentation.cs",
         "step three/T0092/execution-report.md"
       ],
-      "notes": "The error path already presents safe mapped failures as System-role chat messages and appends Assistant-role text only after GenerateAsync returns successfully. T0092 adds a dedicated regression contract that tests this separation; CI for the new assertion is pending. Incoming edges T0091 -> T0092 and T0087 -> T0092 were reviewed against their actual source/report evidence and classified without changing type=blocks. Preserve unreviewed edges elsewhere.",
+      "notes": "Production code separates successful Assistant output from System-role cancellation/error messages. Regression test and exact-commit CI passed. The opt-in live-model integration test was not run.",
       "execution_summary": {
-        "attempt_count": 1,
+        "attempt_count": 2,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0092-2026-10-25-01",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "T0092-2026-10-25-02",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "tests/test_wpf_entrypoint.py",
           "step three/T0092/execution-report.md",
           "step three/project-graph.md"
         ],
         "related_commits": [
-          "7621bfd45a7808934c681e23f2e225200ded9281"
+          "7621bfd45a7808934c681e23f2e225200ded9281",
+          "0d67f5bdb0aa2c5fda762d29c675b6c525137a5f"
         ],
-        "tests_passed": [],
+        "tests_passed": [
+          "150 Python tests including T0092 regression: passed (https://github.com/artinrahimii/project/actions/runs/40232583373)",
+          "Graph guard, Python syntax, recorded outputs/evidence validation: passed (https://github.com/artinrahimii/project/actions/runs/40232583373)",
+          "Windows WPF build and startup smoke: passed (https://github.com/artinrahimii/project/actions/runs/40232583374)",
+          "Host lifecycle tests: passed (https://github.com/artinrahimii/project/actions/runs/40232583374)",
+          "Android debug APK and Protobuf tests: passed (https://github.com/artinrahimii/project/actions/runs/40232583374)"
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "pending",
+          "state": "passed",
           "triggering_contracts": [
-            "T0091 session-clear cancellation/UI guard",
-            "T0087 model catalog license disclosure"
+            "T0091 session-clear guard",
+            "T0087 model catalog/license sequencing"
           ],
           "affected_by_contract_changes": [],
           "review_evidence": [
             "src/Host.Windows/MainWindow.xaml.cs",
             "tests/test_wpf_entrypoint.py",
-            "step three/T0091/execution-report.md",
-            "src/Host.Application/Chat/ChatConversation.cs",
-            "step three/T0087/execution-report.md",
-            "src/Host.Windows/Models/Catalog/ModelCatalogModels.cs",
-            "src/Host.Windows/MainWindow.xaml.cs",
-            "src/Host.Application/HostErrorPresentation.cs"
+            "tests/HostLifecycle.Tests/Program.cs",
+            "https://github.com/artinrahimii/project/actions/runs/40232583373",
+            "https://github.com/artinrahimii/project/actions/runs/40232583374"
           ]
         }
       },
@@ -16034,6 +16038,58 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Push this regression test and task metadata to main, then inspect the exact new quality and product workflow results. Mark T0092 done only if the new test and full product workflow pass."
+        },
+        {
+          "attempt_id": "T0092-2026-10-25-02",
+          "started_at": "2026-10-25T20:49:38Z",
+          "ended_at": "2026-10-25T20:51:35Z",
+          "result": "succeeded",
+          "summary": "Completed after the dedicated regression test ran on V 3.0.288. Exact-commit quality and product workflows passed. Existing WPF UI appends Assistant text only after successful inference; cancellation and exceptions append System messages. This task adds regression coverage; the separate broader T0007 task remains open.",
+          "changed_files": [
+            "tests/test_wpf_entrypoint.py",
+            "step three/T0092/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "related_commits": [
+            "0d67f5bdb0aa2c5fda762d29c675b6c525137a5f"
+          ],
+          "tests": [
+            {
+              "name": "150 Python tests including T0092 regression",
+              "result": "passed",
+              "summary": "Exact-commit quality workflow passed all 150 tests, including test_inference_failures_are_system_messages_not_assistant_responses.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40232583373"
+            },
+            {
+              "name": "Graph guard, Python syntax, recorded outputs/evidence validation",
+              "result": "passed",
+              "summary": "All quality workflow steps passed on V 3.0.288.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40232583373"
+            },
+            {
+              "name": "Windows WPF build and startup smoke",
+              "result": "passed",
+              "summary": "Formatting, Release build, generated Protobuf source verification and bounded startup smoke passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40232583374"
+            },
+            {
+              "name": "Host lifecycle tests",
+              "result": "passed",
+              "summary": "Lifecycle unit/integration harness passed including conversation roles and inference failure scenarios.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40232583374"
+            },
+            {
+              "name": "Android debug APK and Protobuf tests",
+              "result": "passed",
+              "summary": "Kotlin lint, debug APK, Protobuf round-trip tests, generated-source checks and artifact upload passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40232583374"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Before T0093, review its incoming edges T0092 -> T0093 and T0087 -> T0093 against source and requirements; leave T0093 -> T0094 unreviewed until examined."
         }
       ]
     },
@@ -28326,6 +28382,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-25T20:42:00Z"
+  "updated_at": "2026-10-25T20:51:35Z"
 }
 ```
