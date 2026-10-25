@@ -973,11 +973,11 @@
         "step three/T0007/execution-report.md",
         "src/Host.Application/HostInferenceSession.cs"
       ],
-      "notes": "T0007 remains a broad traceability task. A007's deterministic unavailable-backend fallback and exact-message regression assertion were both built/tested successfully by GitHub Actions on V 3.0.42. The configured UnconfiguredInferenceBackend still prevents production inference, so do not mark T0007 done. The T0007 -> T0008 edge has been reviewed and retained as sequencing_only; T0008 is an independent claim-audit task.",
+      "notes": "T0007 remains a broad traceability task. A007's deterministic unavailable-backend fallback and exact-message regression assertion passed GitHub Actions on V 3.0.42. Revalidation of main commit 2b15191008128bdf98cda5a6eaacbf5796c964ed shows MainWindow explicitly injects LocalInferenceBackendFactory.Create, which returns LlamaCppServerBackend; UnconfiguredInferenceBackend is only the HostInferenceSession default fallback when no backend/factory is configured, not evidence by itself that the current UI has no production backend. Keep T0007 in_progress because the broad task-wide traceability criterion is not yet proven complete. Current-round CI retries failed before runner allocation, so no new tests were executed. The T0007 -> T0008 edge remains validated as sequencing_only.",
       "execution_summary": {
-        "attempt_count": 7,
+        "attempt_count": 8,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0007-A007",
+        "last_attempt_id": "T0007-A008",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Host.Windows/HostLifecycle.cs",
@@ -1178,6 +1178,24 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Keep T0007 in_progress: the deterministic fallback regression is verified, but the task-wide requirement to reflect every technical decision in executable code/config/tests is not yet satisfied. The T0007 -> T0008 relation has been reviewed and retained as sequencing_only; T0008 may proceed as an independent claim audit."
+        },
+        {
+          "attempt_id": "T0007-A008",
+          "started_at": "2026-10-25T11:37:29Z",
+          "ended_at": "2026-10-25T11:44:29.039Z",
+          "result": "partial",
+          "summary": "Reviewed the current Windows host composition and corrected a stale interpretation: MainWindow supplies LocalInferenceBackendFactory.Create, which constructs LlamaCppServerBackend. The UnconfiguredInferenceBackend default is not proof that the active UI lacks an inference backend. This static review does not complete the broad task-wide traceability acceptance criterion.",
+          "changed_files": [
+            "step three/T0007/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [],
+          "failure_details": "No automated test was run in this review attempt. The three GitHub Actions retry workflows failed before runner allocation; runner_id=0 and steps=[] were reported.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Continue reviewing task-specific source/configuration/tests against the acceptance matrix; execute the acceptance suite once GitHub Actions runners are available. Keep T0007 in_progress until the broad criterion is evidenced."
         }
       ]
     },
@@ -15468,8 +15486,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0090 و T0087 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال انجام",
+      "status": "blocked",
+      "status_fa": "مسدود",
       "actual_output_paths": [
         "src/Host.Application/Chat/ChatConversation.cs",
         "src/Host.Windows/MainWindow.xaml",
@@ -15486,11 +15504,11 @@
         "src/Host.Windows/MainWindow.xaml.cs",
         "tests/HostLifecycle.Tests/ChatConversationAcceptanceTests.cs"
       ],
-      "notes": "Implementation pushed in V 3.0.278, but CI did not pass: product build, quality gate, and real local inference integration workflows all concluded failure. The connector's job-log endpoint returned BlobNotFound and step summaries were empty, so the failure cause is not yet established. Keep in_progress; do not claim acceptance.",
+      "notes": "Implementation exists in V 3.0.278, but required acceptance validation remains unavailable. The original three workflows failed; rerunning them (attempt 2) again ended before any job step executed: all jobs reported runner_id=0, empty runner_name, and steps=[]. Job-log retrieval for the original attempt returned BlobNotFound. No application-level failure cause or passing test has been established. T0091 is blocked at validation; do not mark done or change implementation speculatively.",
       "execution_summary": {
-        "attempt_count": 1,
-        "failed_attempt_count": 1,
-        "last_attempt_id": "T0091-2026-10-25-01",
+        "attempt_count": 2,
+        "failed_attempt_count": 2,
+        "last_attempt_id": "T0091-2026-10-25-02",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Host.Application/Chat/ChatConversation.cs",
@@ -15505,9 +15523,12 @@
         "tests_failed": [
           "GitHub Actions product build run 40182706376 concluded failure (Windows host build, Android APK, and host lifecycle jobs failed); detailed job logs could not be retrieved by the GitHub connector.",
           "GitHub Actions quality gate run 40182706403 concluded failure; detailed job logs could not be retrieved by the GitHub connector.",
-          "GitHub Actions real local inference integration run 40182706368 concluded failure; detailed job logs could not be retrieved by the GitHub connector."
+          "GitHub Actions real local inference integration run 40182706368 concluded failure; detailed job logs could not be retrieved by the GitHub connector.",
+          "GitHub Actions retry attempt 2: product build run 40182706376 failed before any job step ran; all 3 jobs reported runner_id=0, empty runner_name, and steps=[].",
+          "GitHub Actions retry attempt 2: quality gate run 40182706403 failed before any job step ran; the job reported runner_id=0, empty runner_name, and steps=[].",
+          "GitHub Actions retry attempt 2: real local inference run 40182706368 failed before any job step ran; the job reported runner_id=0, empty runner_name, and steps=[]."
         ],
-        "blocked_reason": null,
+        "blocked_reason": "GitHub Actions did not allocate a runner for the retried validation: every job concluded failure before steps ran (runner_id=0, empty runner_name, steps=[]). Job logs for the original attempt were unavailable with BlobNotFound.",
         "reopened_reason": null,
         "contract_revalidation": {
           "state": "pending",
@@ -15561,6 +15582,43 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Rerun failed workflows or obtain their logs; identify root cause before editing implementation. Keep T0091 in_progress until all required acceptance checks pass."
+        },
+        {
+          "attempt_id": "T0091-2026-10-25-02",
+          "started_at": "2026-10-25T11:37:29Z",
+          "ended_at": "2026-10-25T11:37:37Z",
+          "result": "partial",
+          "summary": "Retried the three failed GitHub Actions workflows. In retry attempt 2, every job failed before any step ran; runner_id was 0, runner_name was empty, and steps were absent. This does not establish a product-code defect and does not constitute passing validation.",
+          "changed_files": [
+            "step three/T0091/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "White-P product build retry",
+              "result": "failed",
+              "summary": "GitHub Actions retry attempt 2: product build run 40182706376 failed before any job step ran; all 3 jobs reported runner_id=0, empty runner_name, and steps=[].",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40182706376"
+            },
+            {
+              "name": "Step Three quality gate retry",
+              "result": "failed",
+              "summary": "GitHub Actions retry attempt 2: quality gate run 40182706403 failed before any job step ran; the job reported runner_id=0, empty runner_name, and steps=[].",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40182706403"
+            },
+            {
+              "name": "Real local inference integration retry",
+              "result": "failed",
+              "summary": "GitHub Actions retry attempt 2: real local inference run 40182706368 failed before any job step ran; the job reported runner_id=0, empty runner_name, and steps=[].",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40182706368"
+            }
+          ],
+          "failure_details": "GitHub Actions did not allocate a runner for the retried validation: every job concluded failure before steps ran (runner_id=0, empty runner_name, steps=[]). Job logs for the original attempt were unavailable with BlobNotFound.",
+          "blocked_reason": "GitHub Actions did not allocate a runner for the retried validation: every job concluded failure before steps ran (runner_id=0, empty runner_name, steps=[]). Job logs for the original attempt were unavailable with BlobNotFound.",
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Restore usable GitHub Actions runner execution or log access, then rerun the quality gate, Windows/Android product build and host lifecycle tests. Keep T0091 blocked until required checks actually execute and pass. Do not start T0092 while its T0091 prerequisite is unresolved."
         }
       ]
     },
@@ -27858,6 +27916,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-25T10:07:00Z"
+  "updated_at": "2026-10-25T11:44:29.039Z"
 }
 ```

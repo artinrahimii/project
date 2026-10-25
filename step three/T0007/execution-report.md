@@ -73,3 +73,12 @@
 - CI: pending for the new commit; no pass is claimed before inspecting its actual workflow runs.
 - Status: partial; T0007 remains `in_progress`. The configured backend is still deliberately unavailable, so production inference and the broad traceability acceptance criterion remain unmet.
 - Follow-up: verify both GitHub Actions workflows for the exact commit. Do not begin T0008 while its T0007 prerequisite remains incomplete.
+
+## Attempt T0007-A008 — composition revalidation (2026-10-25)
+
+- Reviewed the exact main commit `2b15191008128bdf98cda5a6eaacbf5796c964ed`.
+- `src/Host.Windows/MainWindow.xaml.cs` injects `LocalInferenceBackendFactory.Create` into `HostInferenceSession`; `src/Host.Windows/Inference/LocalInferenceBackendFactory.cs` returns `LlamaCppServerBackend`. The `UnconfiguredInferenceBackend` is the session's default fallback when no backend/factory is supplied, so its existence alone does not establish that the current Windows UI lacks a production backend.
+- This corrects the previous note's inference about the active UI composition. It does not prove end-to-end inference for every configuration and does not complete the broad T0007 traceability criterion.
+- No automated test was run in this attempt: all three GitHub Actions retries failed before runner allocation, with `runner_id=0` and empty step lists. T0007 remains `in_progress`.
+- Next action: continue checking task-specific source/configuration/tests against the acceptance matrix and run tests when Actions can allocate a runner; do not mark T0007 done from static inspection alone.
+
