@@ -15303,8 +15303,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0089 و T0087 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال انجام",
+      "status": "done",
+      "status_fa": "تکمیل‌شده",
       "actual_output_paths": [
         "src/Host.Application/Chat/ChatConversation.cs",
         "src/Host.Windows/MainWindow.xaml.cs",
@@ -15323,12 +15323,12 @@
         "tests/test_wpf_entrypoint.py",
         "step three/T0090/execution-report.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود. پیاده‌سازی اولیه در V 3.0.272 انجام شد؛ تا پیش از اجرای موفق CI روی همین کد، تکمیل تأیید نشده است. تلاش نخست CI شکست خورد (۱۴۶ آزمون موفق و یک assertion قدیمی ناموفق)؛ assertion اصلاح شده و نتیجهٔ اجرای مجدد هنوز در انتظار است. در اجرای مجدد، دروازهٔ کیفیت Python با موفقیت گذشت (run 40181923409)؛ ساخت Windows/Android و smoke test هنوز در حال اجراست، پس وضعیت همچنان in_progress است.",
+      "notes": "پیاده‌سازی مکالمهٔ مرتب‌شدهٔ درون‌حافظه‌ای در کد میزبان، اتصال پیام‌های کاربر/مدل/سیستم و آزمون‌های پذیرش بررسی شد. CI اجرای محصول روی commit اصلاح‌شده موفق شد: Windows WPF build و startup smoke، Android debug APK و lint، Android Protobuf round-trip، و Host lifecycle tests همگی سبز هستند. تکمیل فقط برای معیارهای همین وظیفه ثبت می‌شود؛ پایداری بین راه‌اندازی‌ها و اتصال واقعی P2P خارج از دامنهٔ این وظیفه است.",
       "execution_summary": {
         "attempt_count": 2,
         "failed_attempt_count": 1,
         "last_attempt_id": "T0090-2026-10-25-02",
-        "last_attempt_result": "partial",
+        "last_attempt_result": "passed",
         "changed_files": [
           "src/Host.Application/Chat/ChatConversation.cs",
           "src/Host.Windows/MainWindow.xaml.cs",
@@ -15340,18 +15340,22 @@
         ],
         "related_commits": [
           "818c657a3a106b52de85bcca316ad3967e04f54c",
-          "4fbf00cbb9606b5f76f80ec47d9045255ca8df8e"
+          "4fbf00cbb9606b5f76f80ec47d9045255ca8df8e",
+          "40507a63c4e6384e96240006cf19582f3020ef49"
         ],
         "tests_passed": [
-          "GitHub Actions quality gate run 40181923409 passed on commit 4fbf00cbb9606b5f76f80ec47d9045255ca8df8e; the updated Python regression suite passed."
+          "GitHub Actions run 40181923409: Python quality gate passed after the stale WPF assertion was corrected.",
+          "GitHub Actions run 40181923441: Build Windows WPF host passed, including C# formatting, host build, generated Protobuf source verification, and WPF startup smoke test.",
+          "GitHub Actions run 40181923441: Build Android client APK passed, including Kotlin formatting/lint, debug APK build, Android Protobuf round-trip tests, and generated Protobuf source verification.",
+          "GitHub Actions run 40181923441: Host lifecycle unit and integration tests passed."
         ],
         "tests_failed": [
-          "Earlier run 40181807435 failed one stale assertion; fixed in commit 4fbf00cbb9606b5f76f80ec47d9045255ca8df8e."
+          "Earlier attempt failed one stale source assertion (146/147 Python tests passed); assertion corrected and quality gate rerun passed."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "pending",
+          "state": "passed",
           "triggering_contracts": [
             "T0089 chat send/response flow",
             "T0087 model-license disclosure sequencing"
@@ -15361,7 +15365,8 @@
             "src/Host.Windows/MainWindow.xaml.cs",
             "src/Host.Application/HostInferenceSession.cs",
             "step three/T0089/execution-report.md",
-            "step three/T0087/execution-report.md"
+            "step three/T0087/execution-report.md",
+            "GitHub Actions run 40181923441: Windows host build and startup smoke passed"
           ]
         }
       },
@@ -15408,9 +15413,9 @@
         {
           "attempt_id": "T0090-2026-10-25-02",
           "started_at": "2026-10-25T09:47:00Z",
-          "ended_at": "2026-10-25T09:48:00Z",
-          "result": "partial",
-          "summary": "The first GitHub Actions quality gate ran 147 Python tests: 146 passed and one existing WPF assertion failed because it expected the old direct ListBox append. The new conversation integration guard passed. Updated the old assertion to check the ordered conversation append path; rerun pending.",
+          "ended_at": "2026-10-25T10:02:00Z",
+          "result": "passed",
+          "summary": "Corrected the stale WPF integration assertion, then verified successful product CI: Windows WPF build/startup smoke, Android APK/lint/Protobuf tests, and host lifecycle tests all passed.",
           "changed_files": [
             "tests/test_wpf_entrypoint.py",
             "step three/T0090/execution-report.md"
@@ -15420,19 +15425,29 @@
             {
               "name": "Step Three quality gate",
               "result": "passed",
-              "summary": "GitHub Actions run 40181923409 passed after updating the stale assertion."
+              "summary": "Run 40181923409 passed after the stale assertion was corrected."
             },
             {
-              "name": "White-P product build",
-              "result": "pending",
-              "summary": "Run 40181923441 is still running; Windows WPF build/startup smoke, Android APK/lint and host lifecycle tests must finish before acceptance."
+              "name": "Windows WPF build and startup smoke",
+              "result": "passed",
+              "summary": "Run 40181923441 job Build Windows WPF host passed all steps."
+            },
+            {
+              "name": "Android APK, lint, and Protobuf round-trip",
+              "result": "passed",
+              "summary": "Run 40181923441 job Build Android client APK passed all steps."
+            },
+            {
+              "name": "Host lifecycle unit and integration tests",
+              "result": "passed",
+              "summary": "Run 40181923441 job Host lifecycle unit and integration tests passed."
             }
           ],
           "failure_details": "Stale source-level assertion expected direct ChatMessages.Items.Add for user/model messages; implementation now routes messages through ChatConversation and AppendConversationMessage.",
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Await completion of product build run 40181923441. Mark T0090 done only if Windows build/startup smoke and lifecycle tests pass; report Android status separately and fix any failures."
+          "follow_up": "T0090 acceptance criteria are met for the session-local ordered conversation. Before starting T0091, review the outgoing edge T0090 -> T0091 and validate all of T0091's prerequisites and expected output paths."
         }
       ]
     },
@@ -27768,6 +27783,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-25T09:48:00Z"
+  "updated_at": "2026-10-25T10:02:00Z"
 }
 ```

@@ -23,3 +23,13 @@
 
 ## Result
 T0090 is `in_progress`, not completed. Completion requires actual successful CI/build evidence on the implementation commit. Next action: inspect CI for the corrected commit, fix any remaining failures, and update graph history with the actual result.
+
+
+## Final validation update (2026-10-25)
+- Product workflow run: [40181923441](https://github.com/artinrahimii/project/actions/runs/40181923441) completed with conclusion `success` on the corrected implementation.
+- Windows host: formatting, build, generated Protobuf source verification, and WPF startup smoke test passed.
+- Android client: Kotlin formatting/lint, debug APK build, Protobuf round-trip unit tests, and generated Protobuf source verification passed.
+- Host lifecycle unit/integration tests passed.
+- The earlier Python quality-gate failure was a stale assertion; after the assertion was updated, run 40181923409 passed.
+- T0090 is marked `done` based on these checks. This does not claim persistence across restarts or end-to-end P2P connectivity.
+- Graph source at baseline `40507a63c4e6384e96240006cf19582f3020ef49`: tree entry blob `b8693ffe8234ff8cd6fa82dd4ec4089400e11efe`, reported size 1453209 bytes. The blob payload returned 1330612 characters, and the fenced JSON parsed successfully with 229 tasks and 426 edges. Local Git blob-ID recomputation is unavailable in this runtime.
