@@ -13563,8 +13563,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0079 و T0075 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "tests/HostLifecycle.Tests/ModelDownloadCancellationAcceptanceTests.cs",
         "tests/HostLifecycle.Tests/Program.cs",
@@ -13579,20 +13579,25 @@
         "tests/HostLifecycle.Tests/Program.cs",
         "step three/T0080/execution-report.md"
       ],
-      "notes": "Added an acceptance test that cancels only after the real progress callback reports nonzero partial bytes from a multi-megabyte response. The test asserts that cancellation leaves neither the final model nor the staging file. Exact-head CI is pending.",
+      "notes": "The exact-head HostLifecycle test job passed on implementation commit 6adfa1b3405e4c1295cc5c4a4c4dd2c95a44dbfa. Its logs include PASS for cancellation after actual progress was reported; the multi-megabyte response was interrupted after a partial byte count, and no final or staging file remained. The Step Three quality gate passed. The broader product build was not yet complete when this status was recorded.",
       "execution_summary": {
-        "attempt_count": 1,
+        "attempt_count": 2,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0080-A001",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "T0080-A002",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "tests/HostLifecycle.Tests/ModelDownloadCancellationAcceptanceTests.cs",
           "tests/HostLifecycle.Tests/Program.cs",
           "step three/T0080/execution-report.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
+        "related_commits": [
+          "6adfa1b3405e4c1295cc5c4a4c4dd2c95a44dbfa"
+        ],
+        "tests_passed": [
+          "Exact-head Step Three quality gate passed: https://github.com/artinrahimii/project/actions/runs/40162686757",
+          "Exact-head HostLifecycle tests passed, including cancellation after partial progress: https://github.com/artinrahimii/project/actions/runs/40162687844/job/121077361657"
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -13631,6 +13636,39 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Run the exact-head HostLifecycle suite and graph quality gate. Fix failures before marking T0080 done."
+        },
+        {
+          "attempt_id": "T0080-A002",
+          "started_at": "2026-10-25T04:41:37.926Z",
+          "ended_at": "2026-10-25T04:41:37.926Z",
+          "result": "succeeded",
+          "summary": "Exact-head graph quality gate and HostLifecycle test suite succeeded. The runner log explicitly reports PASS for cancellation after real progress. A multi-megabyte response was started, partial bytes were observed, the cancellation token was triggered, and neither the final model path nor the staging file remained. The broad Windows/Android product build was still running; it is not claimed complete in this task record.",
+          "changed_files": [
+            "tests/HostLifecycle.Tests/ModelDownloadCancellationAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "step three/T0080/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "related_commits": [
+            "6adfa1b3405e4c1295cc5c4a4c4dd2c95a44dbfa"
+          ],
+          "tests": [
+            {
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40162686757"
+            },
+            {
+              "name": "HostLifecycle unit/integration tests",
+              "result": "passed",
+              "evidence": "https://github.com/artinrahimii/project/actions/runs/40162687844/job/121077361657"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Proceed to T0081; confirm that only a checksum-valid GGUF with the required file signature can be promoted to the final installed path."
         }
       ]
     },
@@ -26151,6 +26189,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-25T04:39:13.629Z"
+  "updated_at": "2026-10-25T04:41:37.926Z"
 }
 ```
