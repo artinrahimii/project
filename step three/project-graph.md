@@ -14162,24 +14162,38 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0083 و T0075 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال انجام",
+      "actual_output_paths": [
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "src/Host.Windows/MainWindow.xaml",
+        "src/Host.Application/HostInferenceSession.cs",
+        "tests/HostLifecycle.Tests/HostInferenceSessionConcurrencyTests.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0084/execution-report.md"
+      ],
       "expected_output_paths": [
         "src/Host.Windows/Models/ + tests/"
       ],
       "evidence": [],
       "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0084-2026-10-25-01",
+        "last_attempt_result": "implementation_added_tests_not_run",
+        "changed_files": [
+          "src/Host.Windows/MainWindow.xaml.cs",
+          "src/Host.Windows/MainWindow.xaml",
+          "src/Host.Application/HostInferenceSession.cs",
+          "tests/HostLifecycle.Tests/HostInferenceSessionConcurrencyTests.cs",
+          "tests/HostLifecycle.Tests/Program.cs",
+          "step three/T0084/execution-report.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
-        "blocked_reason": null,
+        "blocked_reason": "Tests have not been run in this environment; an externally managed llama.cpp server cannot be unloaded via a portable client protocol.",
         "reopened_reason": null,
         "contract_revalidation": {
           "state": "not_required",
@@ -14188,7 +14202,34 @@
           "review_evidence": []
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0084-2026-10-25-01",
+          "started_at": "2026-10-25T07:00:00Z",
+          "result": "implementation_added_tests_not_run",
+          "summary": "Added confirmed active-model disconnect, backend disposal, owned-process stop, and acceptance coverage. Tests were not executed.",
+          "changed_files": [
+            "src/Host.Windows/MainWindow.xaml.cs",
+            "src/Host.Windows/MainWindow.xaml",
+            "src/Host.Application/HostInferenceSession.cs",
+            "tests/HostLifecycle.Tests/HostInferenceSessionConcurrencyTests.cs",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "step three/T0084/execution-report.md"
+          ],
+          "related_commits": [],
+          "tests_passed": [],
+          "tests_failed": [],
+          "blockers": [
+            "Tests not executed in this environment",
+            "External llama.cpp server memory release cannot be guaranteed"
+          ],
+          "edge_review": [
+            "T0083->T0084 remains unreviewed",
+            "T0075->T0084 remains unreviewed",
+            "T0084->T0085 remains unreviewed"
+          ]
+        }
+      ]
     },
     {
       "id": "T0085",
@@ -26584,6 +26625,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-25T06:22:00.000Z"
+  "updated_at": "2026-10-25T07:00:00.000Z"
 }
 ```

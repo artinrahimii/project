@@ -104,6 +104,28 @@ public partial class MainWindow : Window
         }
     }
 
+    private async void RemoveActiveModelButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (_session.Status.State == HostState.Busy) { CatalogStatus.Text = "Cannot remove the active model while inference is running."; return; }
+        var answer = MessageBox.Show(this, "Disconnect the active model and release backend resources? The model file on disk will not be deleted. If this app started llama.cpp, its process will be stopped.", "Remove active model", MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No);
+        if (answer != MessageBoxResult.Yes) { CatalogStatus.Text = "Active model removal cancelled."; return; }
+        RemoveActiveModelButton.IsEnabled = false; ConnectButton.IsEnabled = false; GenerateButton.IsEnabled = false;
+        try
+        {
+            var status = await _session.DisconnectAsync();
+            _localInferenceProcessLauncher.Stop();
+            ModelId.Text = string.Empty;
+            _settings = _settingsStore.Save(_settings with { ModelId = "unconfigured", ActiveCatalogModelId = null });
+            CatalogItems.SelectedItem = null;
+            RenderStatus(status);
+            LocalProcessStatus.Text = "Local engine process stopped if it was started by this app.";
+            CatalogStatus.Text = "Active model disconnected; backend resources released where owned. The model file remains on disk.";
+        }
+        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or InvalidOperationException or OperationCanceledException or TimeoutException)
+        { CatalogStatus.Text = "Active model removal did not complete. Check host state and local settings access."; RenderStatus(_session.Status); }
+        finally { RemoveActiveModelButton.IsEnabled = true; ConnectButton.IsEnabled = true; GenerateButton.IsEnabled = _session.IsConnected && _capacityReady; }
+    }
+
     private void CatalogItems_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
     {
         if (CatalogItems.SelectedItem is not ModelCatalogEntry model)

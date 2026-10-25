@@ -72,6 +72,31 @@ internal static class HostInferenceSessionConcurrencyTests
         Console.WriteLine("PASS: reconnect/model switching is serialized until the in-flight inference completes.");
     }
 
+    public static async Task DisconnectReleasesBackendAsync()
+    {
+        var activeBackend = new DisposableTrackingBackend();
+        var session = new HostInferenceSession(backend: new ImmediateInferenceBackend(), backendFactory: (_, _) => activeBackend,
+            readinessEvaluator: _ => Task.FromResult(new HostReadinessResult(true, "Test readiness passed.")));
+        var connected = await session.ConnectAsync(new Uri("http://127.0.0.1:8080/"), "model-a");
+        Assert(connected.State == HostState.Ready, "The test backend must connect before disconnection.");
+        var disconnected = await session.DisconnectAsync();
+        Assert(disconnected.State == HostState.Stopped, "Disconnect must leave the host stopped.");
+        Assert(activeBackend.Disposed, "Disconnect must dispose the active backend resources.");
+        Assert(!session.IsConnected, "A disconnected session must not advertise a connected backend.");
+        session.Dispose();
+        Console.WriteLine("PASS: disconnect disposes backend resources and leaves the host stopped.");
+    }
+
+    private sealed class DisposableTrackingBackend : IInferenceBackend, IDisposable
+    {
+        public bool IsAvailable => true;
+        public string UnavailableReason => string.Empty;
+        public bool Disposed { get; private set; }
+        public Task<bool> CheckHealthAsync(CancellationToken cancellationToken = default) => Task.FromResult(true);
+        public Task<string> GenerateAsync(string prompt, uint maxOutputTokens, CancellationToken cancellationToken = default) => Task.FromResult("test output");
+        public void Dispose() => Disposed = true;
+    }
+
     private static void Assert(bool condition, string message)
     {
         if (!condition)

@@ -243,6 +243,22 @@ public sealed class HostInferenceSession : IDisposable
         return result;
     }
 
+    public async Task<HostStatus> DisconnectAsync(CancellationToken cancellationToken = default)
+    {
+        ObjectDisposedException.ThrowIf(_disposed, this);
+        await _operationGate.WaitAsync(cancellationToken).ConfigureAwait(false);
+        try
+        {
+            ObjectDisposedException.ThrowIf(_disposed, this);
+            if (_lifecycle.Status.State != HostState.Stopped)
+                _lifecycle.Transition(HostState.Stopped, "Active model disconnected; backend client resources released.");
+            if (_backend is IDisposable backend) backend.Dispose();
+            _backend = new UnconfiguredInferenceBackend();
+            return _lifecycle.Status;
+        }
+        finally { _operationGate.Release(); }
+    }
+
     public void Dispose()
     {
         if (_disposed)
