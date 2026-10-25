@@ -12,6 +12,8 @@ public sealed class HostInferenceSession : IDisposable
     private IInferenceBackend _backend;
     private readonly Func<Uri, string, IInferenceBackend>? _backendFactory;
     private readonly Func<CancellationToken, Task<HostReadinessResult>>? _readinessEvaluator;
+    // Serializes inference with connect/reconnect so a backend cannot be replaced mid-request.
+    private readonly SemaphoreSlim _operationGate = new(1, 1);
     private bool _disposed;
 
     public HostInferenceSession(
@@ -33,54 +35,81 @@ public sealed class HostInferenceSession : IDisposable
     public async Task<HostStatus> ConnectAsync(Uri serverBaseAddress, string model, CancellationToken cancellationToken = default)
     {
         ObjectDisposedException.ThrowIf(_disposed, this);
-        if (_lifecycle.Status.State == HostState.Busy)
-        {
-            throw new InvalidOperationException("Cannot reconnect while inference is running.");
-        }
-
-        if (_lifecycle.Status.State != HostState.Stopped)
-        {
-            _lifecycle.Transition(HostState.Stopped, "Reconnecting to local inference backend.");
-        }
-
-        _lifecycle.Transition(HostState.Starting, "Checking local inference backend.");
-        if (_backendFactory is null)
-        {
-            return _lifecycle.Transition(HostState.Error, "No local inference backend factory is configured.");
-        }
-
+        await _operationGate.WaitAsync(cancellationToken).ConfigureAwait(false);
         try
         {
-            var replacement = _backendFactory(serverBaseAddress, model);
-            if (_backend is IDisposable oldBackend)
+            ObjectDisposedException.ThrowIf(_disposed, this);
+            if (_lifecycle.Status.State == HostState.Busy)
             {
-                oldBackend.Dispose();
+                throw new InvalidOperationException("Cannot reconnect while inference is running.");
             }
 
-            _backend = replacement;
-        }
-        catch (Exception)
-        {
-            return _lifecycle.Transition(HostState.Error, "Local inference connection failed.");
-        }
+            if (_lifecycle.Status.State != HostState.Stopped)
+            {
+                _lifecycle.Transition(HostState.Stopped, "Reconnecting to local inference backend.");
+            }
 
-        return await CheckBackendAsync(cancellationToken).ConfigureAwait(false);
+            _lifecycle.Transition(HostState.Starting, "Checking local inference backend.");
+            if (_backendFactory is null)
+            {
+                return _lifecycle.Transition(HostState.Error, "No local inference backend factory is configured.");
+            }
+
+            try
+            {
+                var replacement = _backendFactory(serverBaseAddress, model);
+                if (_backend is IDisposable oldBackend)
+                {
+                    oldBackend.Dispose();
+                }
+
+                _backend = replacement;
+            }
+            catch (Exception)
+            {
+                return _lifecycle.Transition(HostState.Error, "Local inference connection failed.");
+            }
+
+            return await CheckBackendCoreAsync(cancellationToken).ConfigureAwait(false);
+        }
+        finally
+        {
+            _operationGate.Release();
+        }
     }
 
     public async Task<HostStatus> CheckBackendAsync(CancellationToken cancellationToken = default)
     {
         ObjectDisposedException.ThrowIf(_disposed, this);
+        await _operationGate.WaitAsync(cancellationToken).ConfigureAwait(false);
+        try
+        {
+            ObjectDisposedException.ThrowIf(_disposed, this);
+            return await CheckBackendCoreAsync(cancellationToken).ConfigureAwait(false);
+        }
+        finally
+        {
+            _operationGate.Release();
+        }
+    }
+
+    private async Task<HostStatus> CheckBackendCoreAsync(CancellationToken cancellationToken)
+    {
         if (_lifecycle.Status.State == HostState.Busy)
         {
             throw new InvalidOperationException("Cannot check backend while inference is running.");
         }
 
-        if (_lifecycle.Status.State != HostState.Stopped)
+        if (_lifecycle.Status.State != HostState.Stopped && _lifecycle.Status.State != HostState.Starting)
         {
             _lifecycle.Transition(HostState.Stopped, "Checking local inference backend.");
         }
 
-        _lifecycle.Transition(HostState.Starting, "Checking local inference backend.");
+        if (_lifecycle.Status.State == HostState.Stopped)
+        {
+            _lifecycle.Transition(HostState.Starting, "Checking local inference backend.");
+        }
+
         try
         {
             if (!await _backend.CheckHealthAsync(cancellationToken).ConfigureAwait(false))
@@ -132,56 +161,65 @@ public sealed class HostInferenceSession : IDisposable
     public async Task<string> GenerateAsync(string prompt, uint maxOutputTokens, CancellationToken cancellationToken = default)
     {
         ObjectDisposedException.ThrowIf(_disposed, this);
-        if (!IsConnected)
-        {
-            throw new InvalidOperationException("Connect to a healthy local inference backend first.");
-        }
-
-        var promptValidation = ProtocolMessageLimits.ValidatePromptText(prompt);
-        if (!promptValidation.IsValid)
-        {
-            throw new ArgumentOutOfRangeException(nameof(prompt), promptValidation.Message);
-        }
-
-        HostReadinessResult readiness;
+        await _operationGate.WaitAsync(cancellationToken).ConfigureAwait(false);
         try
         {
-            readiness = await EvaluateReadinessAsync(cancellationToken).ConfigureAwait(false);
-        }
-        catch (OperationCanceledException)
-        {
-            _lifecycle.Transition(HostState.Error, "Host readiness check was cancelled. Host is not Ready.");
-            throw;
-        }
-        catch (Exception)
-        {
-            _lifecycle.Transition(HostState.Error, "Host readiness check failed. Host is not Ready.");
-            throw new InvalidOperationException("Host readiness check failed. Host is not Ready.");
-        }
-
-        if (!readiness.IsReady)
-        {
-            _lifecycle.Transition(HostState.Error, readiness.Message);
-            throw new InvalidOperationException(readiness.Message);
-        }
-
-        _lifecycle.Transition(HostState.Busy, "Generating locally; one request at a time.");
-        try
-        {
-            var output = await _backend.GenerateAsync(prompt, maxOutputTokens, cancellationToken).ConfigureAwait(false);
-            var responseValidation = ProtocolMessageLimits.ValidateResponseText(output);
-            if (!responseValidation.IsValid)
+            ObjectDisposedException.ThrowIf(_disposed, this);
+            if (!IsConnected)
             {
-                throw new InvalidDataException(responseValidation.Message);
+                throw new InvalidOperationException("Connect to a healthy local inference backend first.");
             }
 
-            _lifecycle.Transition(HostState.Ready, "Local inference completed.");
-            return output;
+            var promptValidation = ProtocolMessageLimits.ValidatePromptText(prompt);
+            if (!promptValidation.IsValid)
+            {
+                throw new ArgumentOutOfRangeException(nameof(prompt), promptValidation.Message);
+            }
+
+            HostReadinessResult readiness;
+            try
+            {
+                readiness = await EvaluateReadinessAsync(cancellationToken).ConfigureAwait(false);
+            }
+            catch (OperationCanceledException)
+            {
+                _lifecycle.Transition(HostState.Error, "Host readiness check was cancelled. Host is not Ready.");
+                throw;
+            }
+            catch (Exception)
+            {
+                _lifecycle.Transition(HostState.Error, "Host readiness check failed. Host is not Ready.");
+                throw new InvalidOperationException("Host readiness check failed. Host is not Ready.");
+            }
+
+            if (!readiness.IsReady)
+            {
+                _lifecycle.Transition(HostState.Error, readiness.Message);
+                throw new InvalidOperationException(readiness.Message);
+            }
+
+            _lifecycle.Transition(HostState.Busy, "Generating locally; one request at a time.");
+            try
+            {
+                var output = await _backend.GenerateAsync(prompt, maxOutputTokens, cancellationToken).ConfigureAwait(false);
+                var responseValidation = ProtocolMessageLimits.ValidateResponseText(output);
+                if (!responseValidation.IsValid)
+                {
+                    throw new InvalidDataException(responseValidation.Message);
+                }
+
+                _lifecycle.Transition(HostState.Ready, "Local inference completed.");
+                return output;
+            }
+            catch
+            {
+                _lifecycle.Transition(HostState.Error, "Local inference failed. Check the local backend and reconnect.");
+                throw;
+            }
         }
-        catch
+        finally
         {
-            _lifecycle.Transition(HostState.Error, "Local inference failed. Check the local backend and reconnect.");
-            throw;
+            _operationGate.Release();
         }
     }
 

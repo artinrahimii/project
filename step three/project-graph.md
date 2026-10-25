@@ -13962,20 +13962,36 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0082 و T0075 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال انجام",
+      "actual_output_paths": [
+        "src/Host.Application/HostInferenceSession.cs",
+        "tests/HostLifecycle.Tests/HostInferenceSessionConcurrencyTests.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0083/execution-report.md"
+      ],
       "expected_output_paths": [
         "src/Host.Windows/Models/ + tests/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "src/Host.Application/HostInferenceSession.cs",
+        "tests/HostLifecycle.Tests/HostInferenceSessionConcurrencyTests.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0083/execution-report.md"
+      ],
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود. Dependency review completed for T0082 -> T0083 and T0075 -> T0083; both edges remain type=blocks and are validated as sequencing_only because current catalog selection is only a persisted preference, not a live inference-backend switch.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0083-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Host.Application/HostInferenceSession.cs",
+          "tests/HostLifecycle.Tests/HostInferenceSessionConcurrencyTests.cs",
+          "tests/HostLifecycle.Tests/Program.cs",
+          "step three/T0083/execution-report.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
@@ -13988,7 +14004,35 @@
           "review_evidence": []
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0083-A001",
+          "started_at": "2026-10-25T06:15:00+00:00",
+          "ended_at": "2026-10-25T06:15:00+00:00",
+          "result": "partial",
+          "summary": "Serialized inference and reconnect/backend health operations with a shared asynchronous gate; added a deterministic regression test for reconnect waiting until active inference completes. GitHub Actions validation is pending.",
+          "changed_files": [
+            "src/Host.Application/HostInferenceSession.cs",
+            "tests/HostLifecycle.Tests/HostInferenceSessionConcurrencyTests.cs",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "step three/T0083/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "HostInferenceSessionConcurrencyTests",
+              "result": "pending",
+              "summary": "Registered in HostLifecycle test runner; not executed locally because no .NET SDK/test runner is available in this environment."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect exact-commit GitHub Actions. Record the commit SHA and observed results in the next graph-only ledger update; do not mark done until the regression and relevant build/test workflows pass."
+        }
+      ]
     },
     {
       "id": "T0084",
@@ -22498,19 +22542,29 @@
       "from": "T0082",
       "to": "T0083",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0082 persists ActiveCatalogModelId as a catalog preference; MainWindow explicitly states that this selection does not download, install, or activate a model in the inference backend. T0083 serializes HostInferenceSession reconnects with generation and does not consume the persisted selection field. Retain type=blocks and the graph-required order as a conservative sequencing constraint, not a proven technical prerequisite.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Infrastructure/LocalHostSettingsStore.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "src/Host.Application/HostInferenceSession.cs",
+        "step three/T0082/execution-report.md"
+      ]
     },
     {
       "from": "T0075",
       "to": "T0083",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "OfflineModelCatalogStore validates catalog metadata/cache, while the live inference session is configured separately through HostInferenceSession.ConnectAsync. MainWindow documents that catalog selection is a persisted preference and does not activate the backend. Retain type=blocks and execution order conservatively without claiming direct data/control coupling.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/Models/Catalog/OfflineModelCatalogStore.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "src/Host.Application/HostInferenceSession.cs",
+        "step three/T0075/execution-report.md"
+      ]
     },
     {
       "from": "T0083",
@@ -26419,6 +26473,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-25T05:41:00.000Z"
+  "updated_at": "2026-10-25T06:15:00.000Z"
 }
 ```
