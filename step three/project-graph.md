@@ -16928,8 +16928,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0095 و T0087 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "tests/HostLifecycle.Tests/AgentToolPolicyRejectionAcceptanceTests.cs",
         "tests/HostLifecycle.Tests/Program.cs",
@@ -16949,12 +16949,12 @@
         "tests/HostLifecycle.Tests/Program.cs",
         ".github/workflows/product-build.yml"
       ],
-      "notes": "Dedicated regression suite added for worker-side unknown-tool and invalid-argument rejection, malformed worker protocol input, and confirmation-before-process-dispatch. Tests are wired into the regular HostLifecycle run and a focused Windows product-workflow step. Exact-commit CI is pending; do not mark done until those checks pass.",
+      "notes": "Exact-commit quality and full product workflows passed on V 3.0.302. The worker-side unknown-tool and invalid-argument rejection tests, malformed protocol rejection, and confirmation-before-worker-dispatch checks ran successfully on Linux HostLifecycle and the dedicated Windows product step. Test tools are isolated to acceptance tests; no production arbitrary-command tool was added.",
       "execution_summary": {
-        "attempt_count": 1,
+        "attempt_count": 2,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0096-2026-10-26-01",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "T0096-2026-10-26-02",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "tests/HostLifecycle.Tests/AgentToolPolicyRejectionAcceptanceTests.cs",
           "tests/HostLifecycle.Tests/Program.cs",
@@ -16962,8 +16962,16 @@
           "step three/T0096/execution-report.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
+        "related_commits": [
+          "1e48d3dfd0f93c96ae1531f72ce68b5c7c4e0f50"
+        ],
+        "tests_passed": [
+          "Step Three quality gate passed for exact implementation commit V 3.0.302 (graph, evidence, Python tests and syntax): https://github.com/artinrahimii/project/actions/runs/40291070275",
+          "HostLifecycle unit/integration tests passed on V 3.0.302; log explicitly reports PASS for worker unknown-tool/invalid-input rejection and confirmation-before-dispatch: https://github.com/artinrahimii/project/actions/runs/40291070245/job/121465994468",
+          "Windows WPF Release build, startup smoke, process Job Object restrictions, and dedicated agent-tool policy rejection step passed on V 3.0.302: https://github.com/artinrahimii/project/actions/runs/40291070245/job/121465994132",
+          "Android Kotlin format/lint, debug APK build, Protobuf round-trip and generated-source checks passed on V 3.0.302: https://github.com/artinrahimii/project/actions/runs/40291070245/job/121465994411",
+          "Real local llama.cpp/GGUF inference integration passed on V 3.0.302: https://github.com/artinrahimii/project/actions/runs/40291070265"
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -16978,6 +16986,7 @@
             "src/Host.Windows/Tools/AgentToolProcessExecutor.cs",
             "src/Host.Windows/Tools/AgentToolWorkerHost.cs",
             "src/Host.Windows/Tools/AgentToolExecutionCoordinator.cs",
+            "tests/HostLifecycle.Tests/AgentToolPolicyRejectionAcceptanceTests.cs",
             "tests/HostLifecycle.Tests/AgentToolExecutionAcceptanceTests.cs"
           ]
         }
@@ -17014,6 +17023,56 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Inspect exact-commit quality gate, HostLifecycle tests and new Windows product step; then record results in a follow-up version commit."
+        },
+        {
+          "attempt_id": "T0096-2026-10-26-02",
+          "started_at": "2026-10-26T08:14:49Z",
+          "ended_at": "2026-10-26T08:17:46Z",
+          "result": "succeeded",
+          "summary": "The exact implementation commit V 3.0.302 passed quality, product and local-inference workflows. The added worker policy tests passed on Linux and the dedicated Windows step, including rejection of unknown names/invalid arguments and enforcing confirmation before worker dispatch.",
+          "changed_files": [
+            "tests/HostLifecycle.Tests/AgentToolPolicyRejectionAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/Program.cs",
+            ".github/workflows/product-build.yml",
+            "step three/T0096/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "related_commits": [
+            "1e48d3dfd0f93c96ae1531f72ce68b5c7c4e0f50"
+          ],
+          "tests": [
+            {
+              "name": "Step Three quality gate",
+              "result": "succeeded",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40291070275"
+            },
+            {
+              "name": "HostLifecycle unit/integration tests with T0096 policy suite",
+              "result": "succeeded",
+              "summary": "Output confirmed: PASS: worker rejects unknown tools and invalid input; side-effecting calls never dispatch without confirmation.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40291070245/job/121465994468"
+            },
+            {
+              "name": "Windows WPF and agent-tool policy rejection",
+              "result": "succeeded",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40291070245/job/121465994132"
+            },
+            {
+              "name": "Android build and tests",
+              "result": "succeeded",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40291070245/job/121465994411"
+            },
+            {
+              "name": "Real local inference integration",
+              "result": "succeeded",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40291070265"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "T0097 is next. Review its incoming edge evidence before implementation and gate agent capability only on explicit live backend/model support."
         }
       ]
     },
@@ -25308,19 +25367,28 @@
       "from": "T0096",
       "to": "T0097",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0096 adds regression tests for rejecting unknown tools, invalid worker requests and unconfirmed side-effecting calls. T0097's production decision must read an explicit backend/model capability contract; it does not consume a type or runtime output exported by the test suite. Preserve the existing blocks relation as conservative test-before-enable ordering rather than claiming a compile-time interface dependency.",
+      "validation_status": "validated",
+      "evidence": [
+        "tests/HostLifecycle.Tests/AgentToolPolicyRejectionAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/AgentToolExecutionAcceptanceTests.cs",
+        "src/Host.Windows/Tools/AgentToolExecutionCoordinator.cs",
+        "step three/T0096/execution-report.md"
+      ]
     },
     {
       "from": "T0087",
       "to": "T0097",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0087's model-license metadata and legal-disclosure contract are not backend tool/function-calling capability evidence. T0097 must gate on explicit runtime/model capability, not infer tool support from the model-license declaration; retain the existing edge as conservative ordering only.",
+      "validation_status": "validated",
+      "evidence": [
+        "step three/T0087/execution-report.md",
+        "src/Host.Windows/Models/Catalog/ModelCatalogModels.cs",
+        "src/Host.Windows/Inference/LocalInferenceBackendFactory.cs"
+      ]
     },
     {
       "from": "T0097",
@@ -29264,8 +29332,37 @@
         "tests/HostLifecycle.Tests/AgentToolExecutionAcceptanceTests.cs"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-26T08:20:20.269Z",
+      "edge_from": "T0096",
+      "edge_to": "T0097",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "reason": "T0096 adds regression tests for rejecting unknown tools, invalid worker requests and unconfirmed side-effecting calls. T0097's production decision must read an explicit backend/model capability contract; it does not consume a type or runtime output exported by the test suite. Preserve the existing blocks relation as conservative test-before-enable ordering rather than claiming a compile-time interface dependency.",
+      "evidence": [
+        "tests/HostLifecycle.Tests/AgentToolPolicyRejectionAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/AgentToolExecutionAcceptanceTests.cs",
+        "src/Host.Windows/Tools/AgentToolExecutionCoordinator.cs",
+        "step three/T0096/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-26T08:20:20.269Z",
+      "edge_from": "T0087",
+      "edge_to": "T0097",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "reason": "T0087's model-license metadata and legal-disclosure contract are not backend tool/function-calling capability evidence. T0097 must gate on explicit runtime/model capability, not infer tool support from the model-license declaration; retain the existing edge as conservative ordering only.",
+      "evidence": [
+        "step three/T0087/execution-report.md",
+        "src/Host.Windows/Models/Catalog/ModelCatalogModels.cs",
+        "src/Host.Windows/Inference/LocalInferenceBackendFactory.cs"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-26T08:14:12.974Z"
+  "updated_at": "2026-10-26T08:20:20.269Z"
 }
 ```

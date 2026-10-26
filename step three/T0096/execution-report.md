@@ -13,3 +13,18 @@
 - No production tool or arbitrary shell command was added. New test tools are test-only and perform no external side effects.
 - Exact-commit execution is pending; T0096 remains `in_progress` until the quality gate, HostLifecycle tests and Windows product test step pass on this implementation.
 - `T0096 -> T0097` remains unreviewed; this test-only change does not alter the downstream capability-gating contract.
+
+
+## Exact-commit validation — attempt T0096-2026-10-26-02 passed
+
+- Tested exact implementation commit: `1e48d3dfd0f93c96ae1531f72ce68b5c7c4e0f50` (`V 3.0.302`).
+- [Step Three quality gate](https://github.com/artinrahimii/project/actions/runs/40291070275) passed.
+- [Full product workflow](https://github.com/artinrahimii/project/actions/runs/40291070245) completed successfully in all three jobs: HostLifecycle, Windows WPF (including the dedicated T0096 policy rejection step), and Android APK/tests.
+- HostLifecycle log explicitly reports: `PASS: worker rejects unknown tools and invalid input; side-effecting calls never dispatch without confirmation.` The Windows log contains the same PASS line. [HostLifecycle job](https://github.com/artinrahimii/project/actions/runs/40291070245/job/121465994468), [Windows product job](https://github.com/artinrahimii/project/actions/runs/40291070245/job/121465994132).
+- [Real local inference integration](https://github.com/artinrahimii/project/actions/runs/40291070265) passed on the same exact commit; this is a separate backend integration check and does not invoke agent tools.
+- Outcome: **T0096 done**, supported by exact-commit test evidence. No earlier history was removed.
+
+## Dependency review before T0097
+
+- `T0096 -> T0097`: validated as `sequencing_only`. T0096 supplies negative-path regression evidence, but T0097 consumes an explicit backend/model capability decision, not a production interface exported by the test source. The existing `blocks` relation is retained.
+- `T0087 -> T0097`: validated as `sequencing_only`. License classification is not evidence that a particular backend/model actually supports agent tool calls. T0097 must not infer function-calling capability from license metadata.
