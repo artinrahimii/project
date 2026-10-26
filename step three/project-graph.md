@@ -16511,11 +16511,11 @@
         "tests/HostLifecycle.Tests/AgentToolProcessExecutorTests.cs",
         "step three/T0095/execution-report.md"
       ],
-      "notes": "Linux HostLifecycle and Windows WPF compilation/startup smoke passed on V 3.0.297. A targeted Windows CI test is now wired to execute the native Job Object path, because Linux tests skip Windows-only Job Object APIs. T0095 remains in progress pending exact-commit CI for that native test and all other product jobs. The worker remains same-user and is not an AppContainer/restricted-token sandbox.",
+      "notes": "Linux worker process/timeout/environment tests pass, Windows WPF build and startup smoke pass, but the dedicated Windows Job Object test exposed SetInformationJobObject failure on V 3.0.298. Native marshaling now uses an explicit unmanaged pointer and retains Win32 error code. Keep T0095 in_progress until the corrected Windows native test and all product CI pass.",
       "execution_summary": {
-        "attempt_count": 6,
-        "failed_attempt_count": 2,
-        "last_attempt_id": "T0095-2026-10-26-06",
+        "attempt_count": 8,
+        "failed_attempt_count": 3,
+        "last_attempt_id": "T0095-2026-10-26-08",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Host.Windows/Tools/IAgentToolProcessExecutor.cs",
@@ -16535,16 +16535,19 @@
         "related_commits": [
           "17e7f7ede0f3f2357fb95ae484466f1aa02f45da",
           "44be76a3f02ea579789cae6bae942c44c2f7f0cd",
-          "1aa5f1985db78f48ae602722c0f77761f473c10d"
+          "1aa5f1985db78f48ae602722c0f77761f473c10d",
+          "9b2540a70fd874da1cd5bddb5a769f12163ef295"
         ],
         "tests_passed": [
           "Step Three quality gate passed on V 3.0.297: https://github.com/artinrahimii/project/actions/runs/40280625154",
           "HostLifecycle tests on Linux, including process boundary, sanitizer and timeout tests, passed on V 3.0.297: https://github.com/artinrahimii/project/actions/runs/40280625252/job/121432889672",
-          "Windows WPF Release build, Protobuf source verification, startup smoke and artifact upload steps passed on V 3.0.297; full product run pending: https://github.com/artinrahimii/project/actions/runs/40280625252/job/121432889892"
+          "Windows WPF Release build, Protobuf source verification, startup smoke and artifact upload steps passed on V 3.0.297; full product run pending: https://github.com/artinrahimii/project/actions/runs/40280625252/job/121432889892",
+          "Step Three quality gate passed on V 3.0.298: https://github.com/artinrahimii/project/actions/runs/40280875882"
         ],
         "tests_failed": [
           "HostLifecycle compilation failed on V 3.0.295 with CS1022: https://github.com/artinrahimii/project/actions/runs/40280156905",
-          "Windows WPF compilation failed on V 3.0.296 with CS0246 for Stream and StreamReader: https://github.com/artinrahimii/project/actions/runs/40280367697"
+          "Windows WPF compilation failed on V 3.0.296 with CS0246 for Stream and StreamReader: https://github.com/artinrahimii/project/actions/runs/40280367697",
+          "Windows Job Object configuration failed on V 3.0.298; SetInformationJobObject returned false in the focused Windows test: https://github.com/artinrahimii/project/actions/runs/40280875990/job/121433660749"
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -16732,6 +16735,55 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Verify Windows Job Object assignment and timeout tests, HostLifecycle suite on Linux, Windows startup smoke, Android build/tests and Step Three quality gate on the exact commit."
+        },
+        {
+          "attempt_id": "T0095-2026-10-26-07",
+          "started_at": "2026-10-26T06:38:08Z",
+          "ended_at": "2026-10-26T06:38:17Z",
+          "result": "failed",
+          "summary": "V 3.0.298 Windows-focused process-executor test failed while configuring JobObjectBasicLimitInformation: SetInformationJobObject returned false; opaque exception originated in CreateIfSupported before starting the worker.",
+          "changed_files": [],
+          "related_commits": [
+            "9b2540a70fd874da1cd5bddb5a769f12163ef295"
+          ],
+          "tests": [
+            {
+              "name": "Windows native agent-tool process executor test",
+              "result": "failed",
+              "summary": "AgentToolWorkerFailedException thrown from WindowsWorkerJob.CreateIfSupported when SetInformationJobObject fails; native error code not yet preserved in this commit.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40280875990/job/121433660749"
+            }
+          ],
+          "failure_details": "SetInformationJobObject returned false while setting the active-process and kill-on-job-close flags.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Use explicit unmanaged structure marshaling and preserve Marshal.GetLastWin32Error() in the worker failure; rerun Windows native test."
+        },
+        {
+          "attempt_id": "T0095-2026-10-26-08",
+          "started_at": "2026-10-26T06:42:24.069Z",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Changed SetInformationJobObject to pass an explicit native pointer to unmanaged structure storage, and added Win32 error-code capture for diagnostic follow-up.",
+          "changed_files": [
+            "src/Host.Windows/Tools/AgentToolProcessExecutor.cs",
+            "step three/T0095/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "related_commits": [],
+          "tests": [
+            {
+              "name": "Exact-commit Windows native worker test",
+              "result": "not_run",
+              "summary": "V 3.0.299 will rerun the focused Windows process restrictions test."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect the native error if Job Object configuration still fails; otherwise proceed through all remaining exact-commit CI and mark T0095 done only on acceptance evidence."
         }
       ]
     },
@@ -28991,6 +29043,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-26T06:36:43.171Z"
+  "updated_at": "2026-10-26T06:42:24.069Z"
 }
 ```

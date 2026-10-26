@@ -325,17 +325,33 @@ public sealed class AgentToolProcessExecutor : IAgentToolProcessExecutor
                 ActiveProcessLimit = 1
             };
 
-            if (!SetInformationJobObject(
-                handle,
-                JobObjectBasicLimitInformationClass,
-                ref limits,
-                (uint)Marshal.SizeOf<JobObjectBasicLimitInformation>()))
+            var informationLength = Marshal.SizeOf<JobObjectBasicLimitInformation>();
+            var information = Marshal.AllocHGlobal(informationLength);
+            try
+            {
+                // Pass a native pointer explicitly. This also makes it possible to keep the
+                // exact Win32 error if the runner rejects any requested job limit.
+                Marshal.StructureToPtr(limits, information, fDeleteOld: false);
+                if (!SetInformationJobObject(
+                    handle,
+                    JobObjectBasicLimitInformationClass,
+                    information,
+                    (uint)informationLength))
+                {
+                    throw new AgentToolWorkerFailedException(Marshal.GetLastWin32Error());
+                }
+
+                return new WindowsWorkerJob(handle);
+            }
+            catch
             {
                 CloseHandle(handle);
-                throw new AgentToolWorkerFailedException();
+                throw;
             }
-
-            return new WindowsWorkerJob(handle);
+            finally
+            {
+                Marshal.FreeHGlobal(information);
+            }
         }
 
         public void Assign(Process process)
@@ -379,7 +395,7 @@ public sealed class AgentToolProcessExecutor : IAgentToolProcessExecutor
         private static extern bool SetInformationJobObject(
             IntPtr job,
             int informationClass,
-            ref JobObjectBasicLimitInformation information,
+            IntPtr information,
             uint informationLength);
 
         [DllImport("kernel32.dll", SetLastError = true)]
@@ -398,4 +414,12 @@ public sealed class AgentToolWorkerFailedException : InvalidOperationException
         : base("The isolated agent-tool worker failed or rejected the request.")
     {
     }
+
+    public AgentToolWorkerFailedException(int nativeErrorCode)
+        : base($"The agent-tool worker could not configure its Windows process job (Win32 error {nativeErrorCode}).")
+    {
+        NativeErrorCode = nativeErrorCode;
+    }
+
+    public int? NativeErrorCode { get; }
 }

@@ -69,3 +69,16 @@
 - Added the `--test-agent-tool-process-executor` entrypoint so the focused process-boundary suite can run without executing unrelated lifecycle tests.
 - Added a step to the `windows-latest` product workflow that executes this focused suite. On Windows the normal executor path must create and attach the worker to a Job Object with a one-process maximum and kill-on-job-close; assignment failures fail closed. This validates the native path instead of relying only on Linux tests and Windows compilation.
 - The new targeted Windows test step is part of `V 3.0.298`; its exact-commit CI result is pending.
+
+
+## Exact-commit validation — attempt A007 (failed)
+
+- Tested commit: `9b2540a70fd874da1cd5bddb5a769f12163ef295` (`V 3.0.298`). The Step Three quality gate passed: https://github.com/artinrahimii/project/actions/runs/40280875882.
+- Linux HostLifecycle had previously passed on the prior corrective commit; on this commit the targeted `windows-latest` test was reached after a successful Windows WPF Release build and startup smoke, but failed when `SetInformationJobObject` returned false. The failure was `AgentToolWorkerFailedException` in `WindowsWorkerJob.CreateIfSupported` at the job-limit configuration call: https://github.com/artinrahimii/project/actions/runs/40280875990/job/121433660749.
+- The test did not establish that the Windows Job Object restriction works. No success is claimed for native worker confinement in this attempt.
+
+## Corrective attempt A008 — native structure marshaling and diagnostic error code
+
+- Changed `SetInformationJobObject` to accept an explicit native `IntPtr` to a separately allocated `JOBOBJECT_BASIC_LIMIT_INFORMATION` structure, populated via `Marshal.StructureToPtr` and freed deterministically. This matches the native API's `LPVOID` contract.
+- If Windows refuses the requested limits, the exception now preserves the exact Win32 error code so the next native CI result is diagnostic rather than opaque. The executor continues to fail closed if the restrictions cannot be applied.
+- This correction is committed as `V 3.0.299`; do not mark T0095 done until the focused Windows Job Object test and the whole product CI pass on that commit.
