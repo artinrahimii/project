@@ -90,9 +90,21 @@ internal static class NetworkInferenceRequestFrameAcceptanceTests
     }
     private static async Task AssertPeerClosedAsync(TcpClient client)
     {
+        NetworkStream stream;
         try
         {
-            var read = await client.GetStream().ReadAsync(new byte[1].AsMemory()).AsTask().WaitAsync(TimeSpan.FromSeconds(5)).ConfigureAwait(false);
+            stream = client.GetStream();
+        }
+        catch (InvalidOperationException)
+        {
+            // A reset/closed socket may cease to be connected before GetStream is requested.
+            return;
+        }
+
+        try
+        {
+            var read = await stream.ReadAsync(new byte[1].AsMemory()).AsTask()
+                .WaitAsync(TimeSpan.FromSeconds(5)).ConfigureAwait(false);
             Assert(read == 0, "Server left a one-frame connection open.");
         }
         catch (IOException) { }

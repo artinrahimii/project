@@ -19481,9 +19481,9 @@
           "commit_sha": null,
           "tests": [
             {
-              "name": "TCP framed-input contract revalidation",
-              "result": "pending",
-              "summary": "Prior completion evidence remains preserved; rerun affected acceptance tests on the exact T0110 implementation commit before restoring done."
+              "name": "HostNetworkListenerParticipationTests",
+              "result": "passed",
+              "summary": "The prior T0108 participation test printed PASS on V3.0.337; the later failure occurred in the new T0110 close assertion."
             }
           ],
           "failure_details": null,
@@ -19748,9 +19748,9 @@
           "commit_sha": null,
           "tests": [
             {
-              "name": "TCP framed-input contract revalidation",
-              "result": "pending",
-              "summary": "Prior completion evidence remains preserved; rerun affected acceptance tests on the exact T0110 implementation commit before restoring done."
+              "name": "ParticipationNetworkListenerLifecycleTests",
+              "result": "passed",
+              "summary": "The T0109 lifecycle test printed PASS on V3.0.337; the later failure occurred in the new T0110 close assertion."
             }
           ],
           "failure_details": null,
@@ -19803,11 +19803,11 @@
         "docs/decisions/ADR-0003-tcp-request-framing.md",
         "step three/T0110/evidence/verification.md"
       ],
-      "notes": "T0110 adds 4-byte unsigned big-endian length framing, checks the size ceiling before allocation, reads exactly one frame with timeout/cancellation, then calls the existing shared ProtocolMessageParser. Valid requests reach an optional in-process callback; without one the connection closes after validation. T0108/T0109 are in review pending revalidation on this listener change.",
+      "notes": "T0110 implementation committed in V3.0.337. Exact-head CI found a test helper issue: TcpClient.GetStream can throw InvalidOperationException after a rejected peer socket is already disconnected. Attempt 02 fixes the assertion only; parser/listener logic is unchanged. T0108/T0109 stay in review until the full suite passes.",
       "execution_summary": {
-        "attempt_count": 1,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "T0110-2026-10-27-01",
+        "attempt_count": 2,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "T0110-2026-10-27-02",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Host.Windows/Networking/NetworkInferenceRequestFrameReader.cs",
@@ -19821,9 +19821,18 @@
           "step three/T0110/evidence/verification.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
-        "tests_failed": [],
+        "related_commits": [
+          "f090bee81a85dbdc6cac93dc6d08b36dd7e422b0"
+        ],
+        "tests_passed": [
+          "Step Three quality gate — PASS on V 3.0.337: https://github.com/artinrahimii/project/actions/runs/40405428005",
+          "Windows Release build/startup smoke — PASS on V 3.0.337: https://github.com/artinrahimii/project/actions/runs/40405428011",
+          "Android lint/APK/Protobuf checks — PASS on V 3.0.337: https://github.com/artinrahimii/project/actions/runs/40405428011"
+        ],
+        "tests_failed": [
+          "HostLifecycle harness — FAIL on V 3.0.337 in NetworkInferenceRequestFrameAcceptanceTests.AssertPeerClosedAsync: GetStream threw InvalidOperationException after the peer socket was already disconnected. https://github.com/artinrahimii/project/actions/runs/40405428011/job/121861832953",
+          "Real local inference workflow — FAIL before the opt-in inference acceptance ran because the same default harness assertion failed. https://github.com/artinrahimii/project/actions/runs/40405427961"
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -19837,8 +19846,8 @@
         {
           "attempt_id": "T0110-2026-10-27-01",
           "started_at": "2026-10-26T21:33:15.366Z",
-          "ended_at": null,
-          "result": "partial",
+          "ended_at": "2026-10-26T21:37:45.945Z",
+          "result": "failed",
           "summary": "Reviewed T0109 -> T0110 as a contract/interface dependency and T0107 -> T0110 as sequencing-only; added bounded length-prefixed TCP framing and wired it to the existing Protobuf parser with live socket tests. CI pending.",
           "changed_files": [
             "src/Host.Windows/Networking/NetworkInferenceRequestFrameReader.cs",
@@ -19852,16 +19861,43 @@
             "step three/T0110/evidence/verification.md",
             "step three/project-graph.md"
           ],
-          "related_commits": [],
-          "commit_sha": null,
+          "related_commits": [
+            "f090bee81a85dbdc6cac93dc6d08b36dd7e422b0"
+          ],
+          "commit_sha": "f090bee81a85dbdc6cac93dc6d08b36dd7e422b0",
           "tests": [
             {
+              "name": "HostNetworkListenerParticipationTests and ParticipationNetworkListenerLifecycleTests",
+              "result": "passed",
+              "summary": "Both existing tests printed explicit PASS lines before the new framing assertion failed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40405428011/job/121861832953"
+            },
+            {
               "name": "NetworkInferenceRequestFrameAcceptanceTests",
-              "result": "pending",
-              "summary": "Live loopback tests cover valid parsed request, zero/oversized length, malformed wire, truncated prefix/payload, and stop while a peer awaits a frame."
+              "result": "failed",
+              "summary": "The host harness terminated because AssertPeerClosedAsync called TcpClient.GetStream after the server had already closed/reset the invalid frame socket; GetStream raised InvalidOperationException.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40405428011/job/121861832953"
+            },
+            {
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "summary": "Graph and Python checks passed on the implementation commit.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40405428005"
+            },
+            {
+              "name": "Windows Release build and startup smoke",
+              "result": "passed",
+              "summary": "Windows build and startup smoke succeeded before the HostLifecycle harness failed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40405428011"
+            },
+            {
+              "name": "Android lint/APK/Protobuf",
+              "result": "passed",
+              "summary": "Android build and Protobuf unit checks passed despite the overall product workflow failure from HostLifecycle.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40405428011"
             }
           ],
-          "failure_details": null,
+          "failure_details": "The new frame acceptance harness failed because TcpClient.GetStream threw InvalidOperationException (operation not allowed on non-connected sockets) after the server had closed/reset a rejected peer socket. The test helper should accept this only at stream acquisition; a nonzero read must still fail.",
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [
@@ -19879,6 +19915,33 @@
             }
           ],
           "follow_up": "Run exact-head HostLifecycle, Step Three quality gate, and Windows/Android product build. Revalidate T0108/T0109 before restoring done."
+        },
+        {
+          "attempt_id": "T0110-2026-10-27-02",
+          "started_at": "2026-10-26T21:37:45.945Z",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Fix the peer-close assertion to accept a socket already disconnected at GetStream acquisition, while still failing if a connected stream returns nonzero bytes.",
+          "changed_files": [
+            "tests/HostLifecycle.Tests/NetworkInferenceRequestFrameAcceptanceTests.cs",
+            "step three/T0110/execution-report.md",
+            "step three/T0110/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "related_commits": [],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "NetworkInferenceRequestFrameAcceptanceTests",
+              "result": "pending",
+              "summary": "The test helper catches InvalidOperationException only when obtaining the stream; the read==0 assertion is outside that catch."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Run exact-head HostLifecycle, Step Three quality gate and Windows/Android product build; don't mark done until CI passes."
         }
       ]
     },
@@ -32069,6 +32132,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-26T21:33:15.366Z"
+  "updated_at": "2026-10-26T21:37:45.945Z"
 }
 ```
