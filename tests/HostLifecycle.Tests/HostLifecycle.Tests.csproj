@@ -15,6 +15,7 @@
   <ItemGroup>
     <Compile Include="../../src/Host.Windows/Inference/LocalInferenceProcessLauncher.cs" Link="LocalInferenceProcessLauncher.cs" />
     <Compile Include="../../src/Host.Windows/Inference/LocalInferenceBackendFactory.cs" Link="LocalInferenceBackendFactory.cs" />
+    <Compile Include="../../src/Host.Windows/Inference/LlamaCppInferenceEngine.cs" Link="Inference/LlamaCppInferenceEngine.cs" />
     <Compile Include="../../src/Host.Windows/Models/Catalog/ModelCatalogFileLoader.cs" Link="ModelCatalogFileLoader.cs" />
     <Compile Include="../../src/Host.Windows/Models/Catalog/OfflineModelCatalogStore.cs" Link="OfflineModelCatalogStore.cs" />
     <Compile Include="../../src/Host.Windows/Inference/LocalInferenceBinaryVerifier.cs" Link="LocalInferenceBinaryVerifier.cs" />

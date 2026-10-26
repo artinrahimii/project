@@ -18527,33 +18527,122 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0102 و T0097 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "src/Host.Windows/Requests/HostRequestCoordinator.cs",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
+        "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "tests/HostLifecycle.Tests/LlamaCppInferenceEngineCancellationTests.cs",
+        "step three/T0103/execution-report.md",
+        "step three/T0103/evidence/verification.md"
+      ],
       "expected_output_paths": [
         "src/Host.Windows/Requests/ + tests/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "src/Host.Windows/Requests/HostRequestCoordinator.cs",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
+        "tests/HostLifecycle.Tests/LlamaCppInferenceEngineCancellationTests.cs",
+        "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "src/Host.Application/Inference/IInferenceEngine.cs",
+        "src/Host.Windows/Inference/LlamaCppInferenceEngine.cs",
+        "src/Host.Infrastructure/LlamaCppServerBackend.cs",
+        "step three/T0103/execution-report.md",
+        "step three/T0103/evidence/verification.md"
+      ],
+      "notes": "Coordinator لغو صریح درخواست فعال دارد و cancellation token پیوندی را به callback می‌دهد؛ آزمون یکپارچه مسیر coordinator→LlamaCppInferenceEngine→HttpClient و API لغو engine را بررسی می‌کند. تا گذر CI همین commit وظیفه در حال اجراست. لغو HTTP تضمین نمی‌کند محاسبهٔ سمت llama.cpp فوراً متوقف شود؛ مسیر تولیدی P2P ادعا نشده است.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
-        "related_commits": [],
+        "last_attempt_id": "T0103-2026-10-26-01",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Host.Windows/Requests/HostRequestCoordinator.cs",
+          "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
+          "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+          "tests/HostLifecycle.Tests/Program.cs",
+          "tests/HostLifecycle.Tests/LlamaCppInferenceEngineCancellationTests.cs",
+          "step three/T0103/execution-report.md",
+          "step three/T0103/evidence/verification.md",
+          "step three/project-graph.md"
+        ],
+        "related_commits": [
+          "39d793913731f22aeef6ed2eff15f3878b0b8239"
+        ],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
-          "affected_by_contract_changes": [],
-          "review_evidence": []
+          "state": "in_review",
+          "triggering_contracts": [
+            "HostRequestCoordinator operation CancellationToken",
+            "IInferenceEngine.GenerateAsync/CancelAsync cancellation contract",
+            "LlamaCppServerBackend HTTP request cancellation"
+          ],
+          "affected_by_contract_changes": [
+            "The coordinator now owns a linked cancellable token for the active operation and exposes CancelActiveRequest(); engine and HTTP cancellation are exercised through that token. The deadline contract and protobuf wire schema remain unchanged."
+          ],
+          "review_evidence": [
+            "src/Host.Windows/Requests/HostRequestCoordinator.cs",
+            "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
+            "tests/HostLifecycle.Tests/LlamaCppInferenceEngineCancellationTests.cs",
+            "src/Host.Application/Inference/IInferenceEngine.cs",
+            "src/Host.Windows/Inference/LlamaCppInferenceEngine.cs",
+            "src/Host.Infrastructure/LlamaCppServerBackend.cs"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0103-2026-10-26-01",
+          "started_at": "2026-10-26T12:00:46.673Z",
+          "ended_at": "2026-10-26T12:00:46.673Z",
+          "result": "partial",
+          "summary": "Added explicit cancellation of the active HostRequestCoordinator operation, linked cancellation-token propagation, and cancellation regression tests spanning coordinator, the actual LlamaCppInferenceEngine source, and its HTTP request boundary. Exact-head CI is pending.",
+          "changed_files": [
+            "src/Host.Windows/Requests/HostRequestCoordinator.cs",
+            "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
+            "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "tests/HostLifecycle.Tests/LlamaCppInferenceEngineCancellationTests.cs",
+            "step three/T0103/execution-report.md",
+            "step three/T0103/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "related_commits": [
+            "39d793913731f22aeef6ed2eff15f3878b0b8239"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "ActiveCancellationCancelsOperationAndReleasesGateAsync",
+              "result": "pending",
+              "summary": "CancelActiveRequest signals the active callback token, the call ends as cancelled, and the semaphore is released."
+            },
+            {
+              "name": "CoordinatorCancellationReachesInferenceEngineAndHttpAsync",
+              "result": "pending",
+              "summary": "Exercises cancellation from coordinator through LlamaCppInferenceEngine into the HTTP request token."
+            },
+            {
+              "name": "EngineCancelApiReachesHttpAsync",
+              "result": "pending",
+              "summary": "Verifies IInferenceEngine.CancelAsync cancels the in-flight generation and HTTP request."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "Added public CancelActiveRequest API and linked per-request token; no protobuf schema change."
+          ],
+          "follow_up": "Inspect exact-head quality, HostLifecycle cancellation logs, Windows formatting/build and Android product checks; retain in_progress until required exact-head CI passes. Review T0103 -> T0104 before starting T0104."
+        }
+      ]
     },
     {
       "id": "T0104",
@@ -26689,10 +26778,18 @@
       "from": "T0102",
       "to": "T0103",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0102 adds deadline snapshot/check logic to the coordinator; T0103 adds active cancellation state and linked-token propagation. T0103 does not consume the deadline evaluator output as an API or data artifact. Preserve type=blocks as conservative task order, not as a claimed hard technical dependency.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/Requests/HostRequestCoordinator.cs",
+        "src/Host.Windows/Requests/HostRequestAdmissionPolicy.cs",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
+        "tests/HostLifecycle.Tests/LlamaCppInferenceEngineCancellationTests.cs",
+        "src/Host.Application/Inference/IInferenceEngine.cs",
+        "src/Host.Windows/Inference/LlamaCppInferenceEngine.cs",
+        "src/Host.Infrastructure/LlamaCppServerBackend.cs"
+      ]
     },
     {
       "from": "T0097",
@@ -30814,8 +30911,26 @@
         "protocol/whitep/v1/messages.proto"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-26T12:00:46.673Z",
+      "edge_from": "T0102",
+      "edge_to": "T0103",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "reason": "T0102 adds deadline snapshot/check logic to the coordinator; T0103 adds active cancellation state and linked-token propagation. T0103 does not consume the deadline evaluator output as an API or data artifact. Preserve type=blocks as conservative task order, not as a claimed hard technical dependency.",
+      "evidence": [
+        "src/Host.Windows/Requests/HostRequestCoordinator.cs",
+        "src/Host.Windows/Requests/HostRequestAdmissionPolicy.cs",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
+        "tests/HostLifecycle.Tests/LlamaCppInferenceEngineCancellationTests.cs",
+        "src/Host.Application/Inference/IInferenceEngine.cs",
+        "src/Host.Windows/Inference/LlamaCppInferenceEngine.cs",
+        "src/Host.Infrastructure/LlamaCppServerBackend.cs"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-26T11:43:27.036Z"
+  "updated_at": "2026-10-26T12:00:46.673Z"
 }
 ```

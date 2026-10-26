@@ -84,6 +84,7 @@ internal static class HostRequestCoordinatorTests
         Assert(afterFailure == "released", "The semaphore must be released after an operation throws.");
 
         await DeadlineIsCheckedBeforeInferenceAndResultDeliveryAsync().ConfigureAwait(false);
+        await ActiveCancellationCancelsOperationAndReleasesGateAsync().ConfigureAwait(false);
         Console.WriteLine("PASS: HostRequestCoordinator serializes active inference, rejects concurrent work as Busy without queuing, and releases its semaphore after success or failure.");
 
         void TrackActiveOperation()
@@ -151,6 +152,42 @@ internal static class HostRequestCoordinatorTests
             "fixture/ready-model",
             WhiteP.Host.Domain.HostCapacityState.Ready,
             (ulong)deadline.ToUnixTimeMilliseconds());
+
+    private static async Task ActiveCancellationCancelsOperationAndReleasesGateAsync()
+    {
+        var coordinator = new HostRequestCoordinator();
+        var operationStarted = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var tokenCancelled = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        var activeRequest = coordinator.ExecuteAsync(ValidAdmission(), async cancellationToken =>
+        {
+            operationStarted.TrySetResult(true);
+            using var registration = cancellationToken.Register(() => tokenCancelled.TrySetResult(true));
+            await Task.Delay(Timeout.InfiniteTimeSpan, cancellationToken).ConfigureAwait(false);
+            return "must-not-return";
+        });
+
+        await operationStarted.Task.WaitAsync(TimeSpan.FromSeconds(5)).ConfigureAwait(false);
+        Assert(coordinator.IsBusy, "The coordinator must remain Busy while the cancellable operation is active.");
+        Assert(coordinator.CancelActiveRequest(), "Explicit cancellation must signal the active request.");
+        Assert(tokenCancelled.Task.IsCompleted, "Coordinator cancellation must reach the operation's linked token.");
+
+        var cancellationPropagated = false;
+        try
+        {
+            _ = await activeRequest.WaitAsync(TimeSpan.FromSeconds(5)).ConfigureAwait(false);
+        }
+        catch (OperationCanceledException)
+        {
+            cancellationPropagated = true;
+        }
+
+        Assert(cancellationPropagated, "A cancelled active operation must not return a successful result.");
+        Assert(!coordinator.IsBusy, "The coordinator must release its single-request gate after cancellation.");
+        Assert(!coordinator.CancelActiveRequest(), "Cancellation after completion must report no active request.");
+
+        Console.WriteLine("PASS: HostRequestCoordinator explicitly cancels the active operation token and releases the gate.");
+    }
 
     private static HostRequestAdmissionContext ValidAdmission() => new(true, WhiteP.Host.Domain.HostState.Ready, "fixture/ready-model", "fixture/ready-model", WhiteP.Host.Domain.HostCapacityState.Ready, (ulong)DateTimeOffset.UtcNow.AddMinutes(2).ToUnixTimeMilliseconds());
 

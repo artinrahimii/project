@@ -55,7 +55,9 @@ public sealed class HostRequestAdmissionException : InvalidOperationException
 public sealed class HostRequestCoordinator
 {
     private readonly SemaphoreSlim _inferenceSemaphore = new(1, 1);
+    private readonly object _activeCancellationSync = new();
     private readonly Func<DateTimeOffset> _utcNow;
+    private CancellationTokenSource? _activeRequestCancellation;
 
     public HostRequestCoordinator(Func<DateTimeOffset>? utcNow = null)
     {
@@ -63,6 +65,30 @@ public sealed class HostRequestCoordinator
     }
 
     public bool IsBusy => _inferenceSemaphore.CurrentCount == 0;
+
+    /// <summary>Requests cancellation of the currently active coordinator operation.</summary>
+    /// <returns>True when an active request was signalled; false when no request is active.</returns>
+    public bool CancelActiveRequest()
+    {
+        lock (_activeCancellationSync)
+        {
+            if (_activeRequestCancellation is null)
+            {
+                return false;
+            }
+
+            try
+            {
+                _activeRequestCancellation.Cancel();
+                return true;
+            }
+            catch (ObjectDisposedException)
+            {
+                // Completion raced the request; the operation is no longer cancellable.
+                return false;
+            }
+        }
+    }
 
     public async Task<T> ExecuteAsync<T>(
         HostRequestAdmissionContext admission,
@@ -109,9 +135,16 @@ public sealed class HostRequestCoordinator
             return HostRequestOutcome<T>.Busy();
         }
 
+        CancellationTokenSource? activeCancellation = null;
         try
         {
-            cancellationToken.ThrowIfCancellationRequested();
+            activeCancellation = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+            lock (_activeCancellationSync)
+            {
+                _activeRequestCancellation = activeCancellation;
+            }
+
+            activeCancellation.Token.ThrowIfCancellationRequested();
 
             // Recheck readiness/deadline immediately before inference is invoked.
             var finalDecision = HostRequestAdmissionPolicy.Evaluate(receivedAdmission, _utcNow());
@@ -120,7 +153,10 @@ public sealed class HostRequestCoordinator
                 return HostRequestOutcome<T>.Rejected(finalDecision.Failure, finalDecision.Message);
             }
 
-            var result = await operation(cancellationToken).ConfigureAwait(false);
+            var result = await operation(activeCancellation.Token).ConfigureAwait(false);
+
+            // Preserve cancellation even when a callback incorrectly returns after its token was signalled.
+            activeCancellation.Token.ThrowIfCancellationRequested();
 
             // Do not deliver a result when inference finished after the request deadline.
             var responseDeadline = HostRequestAdmissionPolicy.EvaluateDeadline(receivedDeadlineUnixMs, _utcNow());
@@ -135,6 +171,19 @@ public sealed class HostRequestCoordinator
         }
         finally
         {
+            if (activeCancellation is not null)
+            {
+                lock (_activeCancellationSync)
+                {
+                    if (ReferenceEquals(_activeRequestCancellation, activeCancellation))
+                    {
+                        _activeRequestCancellation = null;
+                    }
+                }
+
+                activeCancellation.Dispose();
+            }
+
             _inferenceSemaphore.Release();
         }
     }
