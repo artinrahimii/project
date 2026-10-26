@@ -10,3 +10,4 @@
 - **Recorded correction:** an earlier quality run on V 3.0.343 exposed a graph metadata count mismatch for T0112, not a privacy test failure. The mismatch was recorded and corrected in V 3.0.344; the subsequent exact-SHA quality gate passed.
 - **Boundary:** this is a payload-logging regression guard, not a peer-authentication or encryption feature. The current code still does not claim TCP inference-response delivery.
 - **Result:** acceptance is verified and `T0113` is marked `done`.
+- **Follow-up graph integrity correction:** the V 3.0.345 quality run found `FAILED_ATTEMPT_COUNT_MISMATCH`: the summary counter was `1` but no execution-history item had result `failed`. The earlier V 3.0.343 graph-guard failure is retained inside a `partial` attempt's tests; it was not an implementation-attempt result `failed`. The counter is corrected to `0` in V 3.0.346. This was a graph metadata validation failure, not an application test failure.

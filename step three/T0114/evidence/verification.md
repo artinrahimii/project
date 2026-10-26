@@ -13,6 +13,6 @@
 - `docs/decisions/ADR-0003-tcp-request-framing.md`: records enforced loopback-only binding and the UI status behavior.
 
 ## Verification
-- Exact-head Python quality/graph guard: pending.
+- V 3.0.345 Python tests and syntax checks passed. The graph guard failed on a T0113 `FAILED_ATTEMPT_COUNT_MISMATCH` only; graph metadata correction is in V 3.0.346.
 - Exact-head HostLifecycle/Windows WPF build and startup smoke: pending.
 - Do not mark T0114 done until these jobs pass.

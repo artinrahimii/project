@@ -20423,10 +20423,10 @@
         "step three/T0113/execution-report.md",
         "step three/T0113/evidence/verification.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nAudited the current production request path and found no ordinary logging sink in the TCP listener, protocol mapper or adjacent host/network application layers. Added a static regression guard over production C# source plus a real loopback acceptance test proving a marker prompt reaches the typed callback without appearing in Console.Out. This does not claim encrypted peer identity or network response delivery.\nV 3.0.343 Step Three graph guard found a metadata-only ATTEMPT_COUNT_MISMATCH on T0112 (summary count 1 vs 2 history records); the Python suite (153 tests), compileall and HostLifecycle job passed. The mismatch is being corrected in V 3.0.344; T0113 stays in progress until the exact-head quality gate also passes.\nT0113 acceptance passed on V 3.0.344: Python quality/compileall/graph guard, HostLifecycle prompt-marker privacy test, Windows and Android product checks all passed. Earlier V343 graph metadata mismatch was preserved and corrected. Next task T0114 is now under implementation after edge review.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nAudited the current production request path and found no ordinary logging sink in the TCP listener, protocol mapper or adjacent host/network application layers. Added a static regression guard over production C# source plus a real loopback acceptance test proving a marker prompt reaches the typed callback without appearing in Console.Out. This does not claim encrypted peer identity or network response delivery.\nV 3.0.343 Step Three graph guard found a metadata-only ATTEMPT_COUNT_MISMATCH on T0112 (summary count 1 vs 2 history records); the Python suite (153 tests), compileall and HostLifecycle job passed. The mismatch is being corrected in V 3.0.344; T0113 stays in progress until the exact-head quality gate also passes.\nT0113 acceptance passed on V 3.0.344: Python quality/compileall/graph guard, HostLifecycle prompt-marker privacy test, Windows and Android product checks all passed. Earlier V343 graph metadata mismatch was preserved and corrected. Next task T0114 is now under implementation after edge review.\nV 3.0.345 graph guard raised FAILED_ATTEMPT_COUNT_MISMATCH because summary.failed_attempt_count was 1 while none of the history entries had result='failed' (historical V343 graph-guard failure is recorded in the partial attempt's test evidence, not as a failed implementation attempt). Corrected to zero in V 3.0.346; privacy/HostLifecycle/Windows/Android tests had passed in V3.0.344.",
       "execution_summary": {
         "attempt_count": 2,
-        "failed_attempt_count": 1,
+        "failed_attempt_count": 0,
         "last_attempt_id": "T0113-A001-verification",
         "last_attempt_result": "succeeded",
         "changed_files": [
@@ -20595,7 +20595,7 @@
         "step three/T0114/execution-report.md",
         "step three/T0114/evidence/verification.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nThe V 3.0.345 Step Three quality gate failed only on a metadata mismatch in T0113.failed_attempt_count; Python tests and compileall passed. Corrected metadata is being committed in V 3.0.346; T0114 acceptance still awaits exact-head HostLifecycle and product workflow.",
       "execution_summary": {
         "attempt_count": 1,
         "failed_attempt_count": 0,
@@ -20611,8 +20611,12 @@
           "step three/project-graph.md"
         ],
         "related_commits": [],
-        "tests_passed": [],
-        "tests_failed": [],
+        "tests_passed": [
+          "Python test suite and syntax validation passed on V 3.0.345; NetworkListenerExposureTests is included in the suite."
+        ],
+        "tests_failed": [
+          "Step Three graph guard on V 3.0.345 failed with FAILED_ATTEMPT_COUNT_MISMATCH for T0113 metadata; unrelated to T0114 source/test behavior. The source-quality gate is being corrected in V 3.0.346."
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -32876,6 +32880,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-26T22:58:23.386Z"
+  "updated_at": "2026-10-26T23:00:10.524Z"
 }
 ```

@@ -16,5 +16,8 @@
 ## Historical issue
 V 3.0.343 quality gate detected a graph metadata mismatch (T0112 attempt_count 1 vs 2 execution-history entries). This was explicitly preserved as a failed verification event and corrected in V 3.0.344; graph structure and recorded evidence checks then passed. Application behavior tests did not fail.
 
+## Follow-up metadata correction
+V 3.0.345 quality run detected `FAILED_ATTEMPT_COUNT_MISMATCH` because the task summary counted one failed attempt while the execution-history records contained no entry with final result `failed`. The earlier graph-guard failure is recorded inside the partial verification record's test details. `failed_attempt_count` is corrected to zero in V 3.0.346; successful privacy acceptance results on V 3.0.344 remain valid.
+
 ## Scope boundary
 The guard does not imply encryption, cryptographic peer identity, or a completed network response channel.
