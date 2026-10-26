@@ -8,6 +8,7 @@ namespace WhiteP.Host.Windows.Networking;
 
 /// <summary>
 /// Converts host admission/validation failures into stable protocol message types.
+/// Messages intentionally contain fixed, sanitized text and must not be copied into ordinary logs.
 /// This mapper does not serialize or send a TCP response; that is a separate transport step.
 /// </summary>
 public static class NetworkInferenceRequestResponseMapper

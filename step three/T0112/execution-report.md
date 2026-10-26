@@ -1,12 +1,15 @@
-# T0112 execution report — implementation awaiting exact-head CI
+# T0112 execution report — accepted
 
 - **Task:** map Busy, UnsupportedModel, InvalidRequest and InternalError outcomes to protocol contracts.
-- **Attempt:** `T0112-A001` (partial; CI pending).
-- **Implementation commit intended:** `V 3.0.342`.
-- **Real output:** `src/Host.Windows/Networking/NetworkInferenceRequestResponseMapper.cs`.
-- **Mappings:** coordinator Busy and host-not-ready/inactive-participation -> `HostBusy`; model mismatch -> `UnsupportedModel`; invalid deadline/validation -> `ProtocolError` / `INVALID_MESSAGE`; unsupported protocol version -> `UNSUPPORTED_VERSION`; expired deadline -> `REQUEST_EXPIRED`; capacity unknown/insufficient -> `RESOURCE_LIMIT`; unexpected failure -> sanitized `INTERNAL`.
-- **Safety:** messages are generic and do not copy exception/admission text or untrusted request content into the protocol response. Automatic retries are not asserted as safe. The mapper returns a typed Protobuf message and does not claim to write/deliver a network response frame.
-- **Incoming dependencies reviewed:** `T0111 → T0112` as `contract_or_interface_dependency` based on validation/error-code contract; `T0107 → T0112` as `contract_or_interface_dependency` based on direct use of `HostRequestOutcome`, `HostRequestStatus` and `HostRequestAdmissionFailure`. Both retain the original `blocks` type and now include source evidence.
-- **Tests:** new acceptance class tests the response mappings and is registered in HostLifecycle; exact-head results pending.
-- **Still open:** outgoing `T0112 → T0113` remains unreviewed; typed mapping does not itself serialize or deliver network responses.
-- **Current status:** `in_progress`; acceptance is not declared complete until CI passes.
+- **Implementation commit:** `V 3.0.342` — [`9a7c7b726282348efa1c9706590d47a4fe2f3e8d`](https://github.com/artinrahimii/project/commit/9a7c7b726282348efa1c9706590d47a4fe2f3e8d).
+- **Implementation:** `src/Host.Windows/Networking/NetworkInferenceRequestResponseMapper.cs` returns typed Protobuf `HostBusy`, `UnsupportedModel`, and `ProtocolError` messages. Messages use fixed sanitized text, preserve available request/model/host identifiers, map expired deadlines and unsupported versions to their typed codes, and avoid marking unverified retries safe.
+- **Boundary:** the mapper only builds typed messages. It does not serialize a TCP response frame or claim a response was delivered to a peer.
+- **Acceptance evidence on the exact implementation commit:**
+  - HostLifecycle unit/integration test job **PASS**: https://github.com/artinrahimii/project/actions/runs/40415172993/job/121895559735
+  - Windows WPF Release build, formatting, generated Protobuf check, startup smoke and host policy checks **PASS**: https://github.com/artinrahimii/project/actions/runs/40415172993/job/121895560020
+  - Android lint, debug APK build, Protobuf round-trip tests, generated Java/Kotlin checks and artifact upload **PASS**: https://github.com/artinrahimii/project/actions/runs/40415172993/job/121895560019
+  - Step Three quality gate **PASS**: https://github.com/artinrahimii/project/actions/runs/40415173085
+  - Real local llama.cpp/GGUF inference integration **PASS**: https://github.com/artinrahimii/project/actions/runs/40415173088
+- **Dependency review:** `T0111 → T0112` and `T0107 → T0112` remain `contract_or_interface_dependency`, with the original `blocks` edge types and recorded evidence.
+- **Result:** all declared acceptance tests succeeded on the exact V3.0.342 commit. `T0112` is marked `done`.
+- **Next:** `T0113` — prevent request/response text from entering ordinary logs. Both incoming edges were reviewed before implementation; each remains `blocks` and is classified as `sequencing_only`.

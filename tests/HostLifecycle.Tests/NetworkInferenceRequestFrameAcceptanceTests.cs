@@ -14,6 +14,7 @@ internal static class NetworkInferenceRequestFrameAcceptanceTests
         await ValidLengthPrefixedRequestReachesTheSharedParserAsync().ConfigureAwait(false);
         await InvalidFramesAreRejectedAsync().ConfigureAwait(false);
         await ParticipationInactiveAtDispatchDoesNotInvokeCallbackAsync().ConfigureAwait(false);
+        await RequestPromptIsNotWrittenToNormalConsoleLogsAsync().ConfigureAwait(false);
         await ShutdownCancelsAClientWaitingForItsFrameAsync().ConfigureAwait(false);
         Console.WriteLine("PASS: bounded TCP frames reach the shared Protobuf parser; malformed, truncated, oversized and interrupted frames are rejected.");
     }
@@ -79,6 +80,45 @@ internal static class NetworkInferenceRequestFrameAcceptanceTests
         await client.GetStream().WriteAsync(EncodeFrame(ValidRequest().ToByteArray()).AsMemory()).ConfigureAwait(false);
         await AssertPeerClosedAsync(client).ConfigureAwait(false);
         Assert(!callbackInvoked, "The listener must recheck local participation before dispatching an accepted request.");
+    }
+
+    private static async Task RequestPromptIsNotWrittenToNormalConsoleLogsAsync()
+    {
+        const string privatePrompt = "NETWORK_PROMPT_PRIVATE_MARKER_7C2D0E21";
+        var received = new TaskCompletionSource<InferenceRequest>(TaskCreationOptions.RunContinuationsAsynchronously);
+        await using var listener = new ParticipationGatedNetworkListener(
+            () => true,
+            IPAddress.Loopback,
+            0,
+            (request, _) =>
+            {
+                received.TrySetResult(request);
+                return Task.CompletedTask;
+            });
+        await listener.StartAsync().WaitAsync(TimeSpan.FromSeconds(5)).ConfigureAwait(false);
+        var endpoint = listener.LocalEndpoint ?? throw new InvalidOperationException("Listener endpoint missing.");
+        var request = ValidRequest();
+        request.Prompt = privatePrompt;
+
+        var originalConsole = Console.Out;
+        using var capturedOutput = new StringWriter();
+        try
+        {
+            Console.SetOut(capturedOutput);
+            using var client = new TcpClient();
+            await client.ConnectAsync(endpoint.Address, endpoint.Port).WaitAsync(TimeSpan.FromSeconds(5)).ConfigureAwait(false);
+            await client.GetStream().WriteAsync(EncodeFrame(request.ToByteArray()).AsMemory()).ConfigureAwait(false);
+            var parsed = await received.Task.WaitAsync(TimeSpan.FromSeconds(5)).ConfigureAwait(false);
+            Assert(parsed.Prompt == privatePrompt, "The privacy fixture must travel through the real parser/callback path.");
+            await AssertPeerClosedAsync(client).ConfigureAwait(false);
+        }
+        finally
+        {
+            Console.SetOut(originalConsole);
+        }
+
+        Assert(!capturedOutput.ToString().Contains(privatePrompt, StringComparison.Ordinal),
+            "Request prompt text must not appear in normal console output.");
     }
 
     private static async Task ShutdownCancelsAClientWaitingForItsFrameAsync()

@@ -20223,8 +20223,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0111 و T0107 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "تکمیل‌شده",
       "actual_output_paths": [
         "src/Host.Windows/Networking/NetworkInferenceRequestResponseMapper.cs",
         "tests/HostLifecycle.Tests/NetworkInferenceRequestResponseMapperAcceptanceTests.cs",
@@ -20248,7 +20248,7 @@
         "attempt_count": 1,
         "failed_attempt_count": 0,
         "last_attempt_id": "T0112-A001",
-        "last_attempt_result": "partial",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Host.Windows/Networking/NetworkInferenceRequestResponseMapper.cs",
           "tests/HostLifecycle.Tests/NetworkInferenceRequestResponseMapperAcceptanceTests.cs",
@@ -20259,13 +20259,21 @@
           "step three/T0112/evidence/verification.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
+        "related_commits": [
+          "9a7c7b726282348efa1c9706590d47a4fe2f3e8d"
+        ],
+        "tests_passed": [
+          "HostLifecycle unit/integration job PASS on V 3.0.342: https://github.com/artinrahimii/project/actions/runs/40415172993/job/121895559735",
+          "Windows WPF Release build, formatting, generated Protobuf source check, smoke test and host policy checks PASS on V 3.0.342: https://github.com/artinrahimii/project/actions/runs/40415172993/job/121895560020",
+          "Android lint, APK build, Protobuf round-trip, generated Java/Kotlin source checks and artifact upload PASS on V 3.0.342: https://github.com/artinrahimii/project/actions/runs/40415172993/job/121895560019",
+          "Step Three quality gate PASS on V 3.0.342: https://github.com/artinrahimii/project/actions/runs/40415173085",
+          "Real local llama.cpp/GGUF inference integration PASS on V 3.0.342: https://github.com/artinrahimii/project/actions/runs/40415173088"
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "required",
+          "state": "passed",
           "triggering_contracts": [
             "shared HostRequestOutcome/admission contract",
             "ProtocolError/HostBusy/UnsupportedModel Protobuf contracts"
@@ -20332,6 +20340,50 @@
             }
           ],
           "follow_up": "Run exact-head HostLifecycle, Step Three quality, Windows build and Android build. Only mark T0112 done if those checks pass."
+        },
+        {
+          "attempt_id": "T0112-A001-verification",
+          "started_at": "2026-10-26T22:46:28.472Z",
+          "ended_at": "2026-10-26T22:49:48Z",
+          "result": "succeeded",
+          "summary": "Validated T0112's typed failure-response mapper against the exact V3.0.342 commit. HostLifecycle, Step Three quality gate, Windows WPF build and policy checks, Android APK/Protobuf round-trip, and real llama.cpp/GGUF inference all passed. The mapper returns typed Protobuf messages with fixed sanitized text; it does not itself serialize or deliver a TCP response.",
+          "changed_files": [
+            "src/Host.Windows/Networking/NetworkInferenceRequestResponseMapper.cs",
+            "tests/HostLifecycle.Tests/NetworkInferenceRequestResponseMapperAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "docs/decisions/ADR-0003-tcp-request-framing.md",
+            "step three/T0112/execution-report.md",
+            "step three/T0112/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": "9a7c7b726282348efa1c9706590d47a4fe2f3e8d",
+          "tests": [
+            {
+              "result": "passed",
+              "summary": "HostLifecycle unit/integration job PASS on V 3.0.342: https://github.com/artinrahimii/project/actions/runs/40415172993/job/121895559735"
+            },
+            {
+              "result": "passed",
+              "summary": "Windows WPF Release build, formatting, generated Protobuf source check, smoke test and host policy checks PASS on V 3.0.342: https://github.com/artinrahimii/project/actions/runs/40415172993/job/121895560020"
+            },
+            {
+              "result": "passed",
+              "summary": "Android lint, APK build, Protobuf round-trip, generated Java/Kotlin source checks and artifact upload PASS on V 3.0.342: https://github.com/artinrahimii/project/actions/runs/40415172993/job/121895560019"
+            },
+            {
+              "result": "passed",
+              "summary": "Step Three quality gate PASS on V 3.0.342: https://github.com/artinrahimii/project/actions/runs/40415173085"
+            },
+            {
+              "result": "passed",
+              "summary": "Real local llama.cpp/GGUF inference integration PASS on V 3.0.342: https://github.com/artinrahimii/project/actions/runs/40415173088"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "follow_up": "T0113 is next. The T0112→T0113 and T0107→T0113 edges must be reviewed from source before any T0113 change."
         }
       ]
     },
@@ -20352,33 +20404,98 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0112 و T0107 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs",
+        "src/Host.Windows/Networking/NetworkInferenceRequestResponseMapper.cs",
+        "tests/HostLifecycle.Tests/NetworkInferenceRequestFrameAcceptanceTests.cs",
+        "tests/test_network_payload_logging.py"
+      ],
       "expected_output_paths": [
         "src/Host.Windows/Networking/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs",
+        "src/Host.Windows/Networking/NetworkInferenceRequestResponseMapper.cs",
+        "tests/HostLifecycle.Tests/NetworkInferenceRequestFrameAcceptanceTests.cs",
+        "tests/test_network_payload_logging.py",
+        "step three/T0113/execution-report.md",
+        "step three/T0113/evidence/verification.md"
+      ],
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nAudited the current production request path and found no ordinary logging sink in the TCP listener, protocol mapper or adjacent host/network application layers. Added a static regression guard over production C# source plus a real loopback acceptance test proving a marker prompt reaches the typed callback without appearing in Console.Out. This does not claim encrypted peer identity or network response delivery.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0113-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs",
+          "src/Host.Windows/Networking/NetworkInferenceRequestResponseMapper.cs",
+          "tests/HostLifecycle.Tests/NetworkInferenceRequestFrameAcceptanceTests.cs",
+          "tests/test_network_payload_logging.py",
+          "step three/T0113/execution-report.md",
+          "step three/T0113/evidence/verification.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
-          "affected_by_contract_changes": [],
-          "review_evidence": []
+          "state": "required",
+          "triggering_contracts": [
+            "NetworkInferenceRequestResponseMapper sanitized fixed messages",
+            "TCP request parser and callback boundary"
+          ],
+          "affected_by_contract_changes": [
+            "T0114",
+            "T0115"
+          ],
+          "review_evidence": [
+            "src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs",
+            "src/Host.Windows/Networking/NetworkInferenceRequestResponseMapper.cs",
+            "tests/HostLifecycle.Tests/NetworkInferenceRequestFrameAcceptanceTests.cs"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0113-A001",
+          "started_at": "2026-10-26T22:52:21.242Z",
+          "ended_at": "2026-10-26T22:52:21.242Z",
+          "result": "partial",
+          "summary": "Reviewed production network/application paths; no ordinary logging sink existed. Added an explicit privacy invariant comment to the listener, documented sanitized/fixed text in the failure mapper, added a loopback runtime test that sends a unique sensitive prompt marker and verifies it is not written to Console.Out, and added static guards against future logging of prompt/context/response fields. Exact-head CI pending.",
+          "changed_files": [
+            "src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs",
+            "src/Host.Windows/Networking/NetworkInferenceRequestResponseMapper.cs",
+            "tests/HostLifecycle.Tests/NetworkInferenceRequestFrameAcceptanceTests.cs",
+            "tests/test_network_payload_logging.py",
+            "step three/T0113/execution-report.md",
+            "step three/T0113/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "NetworkPayloadLoggingTests",
+              "result": "pending",
+              "summary": "Exact-head Step Three quality gate will execute tests/test_network_payload_logging.py."
+            },
+            {
+              "name": "RequestPromptIsNotWrittenToNormalConsoleLogsAsync",
+              "result": "pending",
+              "summary": "Exact-head HostLifecycle job will run the loopback privacy acceptance case."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Check exact-head Python quality and HostLifecycle/Windows build. Only then mark T0113 done."
+        }
+      ]
     },
     {
       "id": "T0114",
@@ -28349,19 +28466,30 @@
       "from": "T0112",
       "to": "T0113",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "The mapper emits fixed, sanitized ProtocolError/HostBusy/UnsupportedModel strings, but T0113 does not consume a new mapper API or payload artifact. Preserve blocks as conservative sequence; source inspection confirms the mapper itself has no logging sink and its public messages do not echo outcome.Message.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/Networking/NetworkInferenceRequestResponseMapper.cs",
+        "tests/HostLifecycle.Tests/NetworkInferenceRequestResponseMapperAcceptanceTests.cs",
+        "step three/T0112/execution-report.md",
+        "step three/T0112/evidence/verification.md"
+      ]
     },
     {
       "from": "T0107",
       "to": "T0113",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0107's coordinator provides admission/failure states, but T0113's logging invariant is enforced at network/application log sinks and does not consume a new coordinator interface. Keep blocks as conservative order rather than claim a hard technical dependency.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/Requests/HostRequestCoordinator.cs",
+        "src/Host.Windows/Requests/HostRequestAdmissionPolicy.cs",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorFailureAcceptanceTests.cs",
+        "src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs",
+        "step three/T0107/evidence/verification.md"
+      ]
     },
     {
       "from": "T0113",
@@ -32524,8 +32652,43 @@
         "tests/HostLifecycle.Tests/HostRequestResponseDeliveryTests.cs"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-26T22:52:21.242Z",
+      "edge_from": "T0112",
+      "edge_to": "T0113",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "old_validation_status": "unreviewed",
+      "new_validation_status": "validated",
+      "reason": "Reviewed mapper and regression guard. T0113 does not consume a new mapper-specific API; retain blocks as conservative sequence only.",
+      "evidence": [
+        "src/Host.Windows/Networking/NetworkInferenceRequestResponseMapper.cs",
+        "tests/HostLifecycle.Tests/NetworkInferenceRequestResponseMapperAcceptanceTests.cs",
+        "step three/T0112/execution-report.md",
+        "step three/T0112/evidence/verification.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-26T22:52:21.242Z",
+      "edge_from": "T0107",
+      "edge_to": "T0113",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "old_validation_status": "unreviewed",
+      "new_validation_status": "validated",
+      "reason": "Reviewed coordinator/admission and network path. The no-payload-log invariant is at logging sinks, not a direct dependency on T0107 output; retain blocks as conservative sequence.",
+      "evidence": [
+        "src/Host.Windows/Requests/HostRequestCoordinator.cs",
+        "src/Host.Windows/Requests/HostRequestAdmissionPolicy.cs",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorFailureAcceptanceTests.cs",
+        "src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs",
+        "step three/T0107/evidence/verification.md"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-26T22:46:28.472Z"
+  "updated_at": "2026-10-26T22:52:21.242Z"
 }
 ```

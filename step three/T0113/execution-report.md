@@ -1,0 +1,10 @@
+# T0113 execution report — in progress, awaiting exact-head CI
+
+- **Task:** do not log request or response text in ordinary logs.
+- **Attempt:** `T0113-A001`.
+- **Baseline:** `main` at `9a7c7b726282348efa1c9706590d47a4fe2f3e8d` (`V 3.0.342`); graph Blob `06bbcd9d29dc1824a6bdfc2fd90f59b02d7ecdeb` from that commit parsed to 229 tasks / 426 edges and matched the Git Blob SHA-1.
+- **Audit finding:** the checked-in TCP listener and response mapper contain no ordinary logging sink. The listener passes the typed request to an optional callback and drops the client after one frame; the mapper returns fixed sanitized Protobuf messages and does not echo `outcome.Message`.
+- **Changes in this attempt:** added an explicit privacy invariant in `ParticipationGatedNetworkListener.cs`; clarified the mapper's fixed sanitized-text/no-ordinary-log rule; extended loopback TCP acceptance to send a unique sensitive prompt marker through the real parser/callback and assert it never appears in `Console.Out`; added `tests/test_network_payload_logging.py` to check production logging statements for prompt/context/response field leakage and to guard the mapper against raw failure details.
+- **Dependency review:** `T0112 → T0113` and `T0107 → T0113` both validated as `sequencing_only`: the existing `blocks` ordering is preserved; no new mapper/coordinator interface is consumed by the logging invariant. Evidence and rationale are recorded in the graph.
+- **Security boundary:** this is a no-payload-logging regression guard, not an authentication or encryption feature. The current listener does not send network inference responses; response-frame serialization/delivery is still out of scope.
+- **Tests:** exact-head CI is pending for this attempt. The task remains `in_progress` until the new Python guard and HostLifecycle loopback privacy test pass on the commit.

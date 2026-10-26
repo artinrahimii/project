@@ -7,6 +7,8 @@ using WhiteP.Shared.Contracts.V1;
 
 namespace WhiteP.Host.Windows.Networking;
 
+// Privacy invariant: this boundary intentionally never logs frame bytes, prompt text,
+// context-capsule data or inference response text.
 public sealed class ParticipationGatedNetworkListener : IAsyncDisposable
 {
     private static readonly TimeSpan FrameReadTimeout = TimeSpan.FromSeconds(5);

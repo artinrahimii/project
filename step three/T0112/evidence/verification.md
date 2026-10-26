@@ -1,18 +1,27 @@
-# T0112 verification evidence — pending CI
+# T0112 verification evidence — accepted
 
-## Baseline and edge review
-- Repository: `artinrahimii/project`; branch `main`; base `9f5441d3b4617ab936cecb058018f44bda96b75a`.
-- `T0111 → T0112`: validated as `contract_or_interface_dependency`; mapper translates the T0111 parser/validator error codes into concrete protocol response enums.
-- `T0107 → T0112`: validated as `contract_or_interface_dependency`; mapper directly consumes `HostRequestOutcome<T>`, `HostRequestStatus` and `HostRequestAdmissionFailure`.
-- Both edge types remain `blocks`; the outgoing `T0112 → T0113` edge is unchanged and unreviewed.
+## Exact implementation commit
+- Repository: `artinrahimii/project`, branch `main`.
+- Commit: `V 3.0.342`, SHA `9a7c7b726282348efa1c9706590d47a4fe2f3e8d`.
+- Output: `src/Host.Windows/Networking/NetworkInferenceRequestResponseMapper.cs`.
+- Acceptance tests: `tests/HostLifecycle.Tests/NetworkInferenceRequestResponseMapperAcceptanceTests.cs`, registered by `tests/HostLifecycle.Tests/Program.cs`.
 
-## Implementation
-- `src/Host.Windows/Networking/NetworkInferenceRequestResponseMapper.cs`: centralizes protocol failure mapping, generates future retry time for HostBusy, preserves request/model/host IDs where the contract has them, and uses fixed safe public messages.
-- `tests/HostLifecycle.Tests/NetworkInferenceRequestResponseMapperAcceptanceTests.cs`: covers Busy, not-ready, unsupported model, invalid request, unsupported version, expired deadline, capacity limits, and internal-error sanitization.
-- `tests/HostLifecycle.Tests/Program.cs` registers the acceptance suite.
-- `tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj` compiles the same production mapper source into the cross-platform lifecycle harness.
-- ADR-0003 explicitly distinguishes typed mapping from actual TCP response serialization/delivery.
+## Verified mappings
+- Busy / host not ready / inactive participation → `HostBusy`.
+- Requested model mismatch → `UnsupportedModel`.
+- Invalid request → `ProtocolError/INVALID_MESSAGE`.
+- Unsupported version → `ProtocolError/UNSUPPORTED_VERSION`.
+- Expired deadline → `ProtocolError/REQUEST_EXPIRED`.
+- Unknown/insufficient capacity → `ProtocolError/RESOURCE_LIMIT`.
+- Unexpected processing failure → sanitized `ProtocolError/INTERNAL`.
+- The acceptance class checks fixed messages and ensures internal admission/validation text is not exposed.
 
-## Verification
-- HostLifecycle, quality gate, Windows build and Android build: **pending exact-head CI**.
-- The task must remain partial until the acceptance suite and relevant CI jobs succeed.
+## CI results on the same SHA
+- HostLifecycle: PASS — https://github.com/artinrahimii/project/actions/runs/40415172993/job/121895559735
+- Windows WPF product job: PASS — https://github.com/artinrahimii/project/actions/runs/40415172993/job/121895560020
+- Android product job: PASS — https://github.com/artinrahimii/project/actions/runs/40415172993/job/121895560019
+- Step Three quality gate: PASS — https://github.com/artinrahimii/project/actions/runs/40415173085
+- Real inference: PASS — https://github.com/artinrahimii/project/actions/runs/40415173088
+
+## Contract boundary
+Typed response objects are created, but TCP serialization and delivery remain separate work. No claim of a complete response channel is made.
