@@ -16512,9 +16512,9 @@
       ],
       "notes": "T0095 implementation attempt added a shell-free child-worker boundary, a strict bounded protocol, worker-side allowlist/argument validation, sanitized inherited environment, a timeout, and process-tree termination. On Windows the worker also must join a Job Object with one-process maximum and kill-on-close. No tool is registered by default. This is not an AppContainer/restricted-token sandbox; the worker retains the same user security context. Exact-commit CI must pass before completion.",
       "execution_summary": {
-        "attempt_count": 1,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "T0095-2026-10-26-01",
+        "attempt_count": 3,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "T0095-2026-10-26-03",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Host.Windows/Tools/IAgentToolProcessExecutor.cs",
@@ -16530,9 +16530,15 @@
           "step three/T0095/execution-report.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
-        "tests_failed": [],
+        "related_commits": [
+          "17e7f7ede0f3f2357fb95ae484466f1aa02f45da"
+        ],
+        "tests_passed": [
+          "Step Three quality gate passed on V 3.0.295: https://github.com/artinrahimii/project/actions/runs/40280156875"
+        ],
+        "tests_failed": [
+          "HostLifecycle job failed to compile the committed AgentToolProcessExecutor.cs with CS1022 at line 393: https://github.com/artinrahimii/project/actions/runs/40280156905"
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -16588,6 +16594,55 @@
             "AgentToolExecutionCoordinator now requires IAgentToolProcessExecutor and never invokes IAgentTool.ExecuteAsync in the host process."
           ],
           "follow_up": "Inspect exact-commit quality and product workflow results; fix any compile/test failures and rerun before marking T0095 done."
+        },
+        {
+          "attempt_id": "T0095-2026-10-26-02",
+          "started_at": "2026-10-26T06:29:58Z",
+          "ended_at": "2026-10-26T06:30:18Z",
+          "result": "failed",
+          "summary": "Exact-commit HostLifecycle validation stopped at compilation. CS1022 at line 393 of AgentToolProcessExecutor.cs because WindowsWorkerJob was outside the executor class.",
+          "changed_files": [],
+          "related_commits": [
+            "17e7f7ede0f3f2357fb95ae484466f1aa02f45da"
+          ],
+          "tests": [
+            {
+              "name": "HostLifecycle.Tests",
+              "result": "failed",
+              "summary": "dotnet run --project tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj --configuration Release failed during compilation with CS1022 at AgentToolProcessExecutor.cs(393,1).",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40280156905"
+            }
+          ],
+          "failure_details": "CS1022: Type or namespace definition, or end-of-file expected at AgentToolProcessExecutor.cs(393,1).",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Move the WindowsWorkerJob helper inside AgentToolProcessExecutor and rerun all exact-commit CI."
+        },
+        {
+          "attempt_id": "T0095-2026-10-26-03",
+          "started_at": "2026-10-26T06:31:38.721Z",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Moved the Windows Job Object helper into AgentToolProcessExecutor, correcting the CS1022 source-structure error without changing the process/time/resource policy.",
+          "changed_files": [
+            "src/Host.Windows/Tools/AgentToolProcessExecutor.cs",
+            "step three/T0095/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "related_commits": [],
+          "tests": [
+            {
+              "name": "Exact-commit quality and product CI",
+              "result": "not_run",
+              "summary": "The correction is committed in V 3.0.296; inspect its workflow runs before completion."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect exact-commit quality, HostLifecycle, Windows build/Job Object assignment, Android build, and local inference workflow runs."
         }
       ]
     },
@@ -28847,6 +28902,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-26T06:29:23.677Z"
+  "updated_at": "2026-10-26T06:31:38.722Z"
 }
 ```

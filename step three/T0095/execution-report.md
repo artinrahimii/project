@@ -37,3 +37,15 @@
 - Run the exact-commit Step Three quality gate, HostLifecycle tests, Windows Release build/format/startup smoke, and Android build/tests.
 - If worker tests or product build fail, preserve the failed run in the graph/history, repair the implementation, and rerun CI before marking T0095 done.
 - The test worker uses a fixed test-only registry in the lifecycle harness. Production remains empty-by-default until a shared, explicit trusted tool registration is added; any future side-effecting tool must continue requiring parent approval and worker-side allowlisting.
+
+
+## Exact-commit validation — attempt A002 (failed)
+
+- Tested commit: `17e7f7ede0f3f2357fb95ae484466f1aa02f45da` (`V 3.0.295`). The Step Three quality gate passed: https://github.com/artinrahimii/project/actions/runs/40280156875.
+- The HostLifecycle job did not reach test execution because compilation failed in `src/Host.Windows/Tools/AgentToolProcessExecutor.cs` with compiler error `CS1022: Type or namespace definition, or end-of-file expected` at line 393. The recorded job is https://github.com/artinrahimii/project/actions/runs/40280156905.
+- Cause found by inspecting the exact committed file: the nested Windows Job Object helper had been inserted after the enclosing executor class's closing brace. No passing product-test claim is made for this commit.
+
+## Corrective attempt A003 — source structure fix
+
+- Moved `WindowsWorkerJob` inside `AgentToolProcessExecutor`, retaining the one-process Job Object limit and kill-on-close flags.
+- The correction is committed separately as `V 3.0.296`; exact-commit quality, Linux HostLifecycle tests, Windows WPF build/startup (including native Job Object assignment), Android build, and local-inference workflow must be checked before T0095 can be marked done.

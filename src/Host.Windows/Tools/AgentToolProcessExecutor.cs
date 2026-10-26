@@ -295,7 +295,6 @@ public sealed class AgentToolProcessExecutor : IAgentToolProcessExecutor
             // The process was never started or has already been disposed by the OS.
         }
     }
-}
 
     private sealed class WindowsWorkerJob : IDisposable
     {
