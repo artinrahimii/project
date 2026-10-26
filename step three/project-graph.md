@@ -19479,20 +19479,43 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0108 و T0107 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "src/Host.Windows/Networking/ParticipationNetworkListenerLifecycle.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "src/Host.Windows/MainWindow.xaml",
+        "tests/HostLifecycle.Tests/ParticipationNetworkListenerLifecycleTests.cs",
+        "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0109/execution-report.md",
+        "step three/T0109/evidence/verification.md",
+        "step three/project-graph.md"
+      ],
       "expected_output_paths": [
         "src/Host.Windows/Networking/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "tests/HostLifecycle.Tests/ParticipationNetworkListenerLifecycleTests.cs",
+        "step three/T0109/evidence/verification.md"
+      ],
+      "notes": "Attempt T0109-2026-10-26-01 adds a serialized lifecycle owner for participation activation/deactivation, integrates an opt-in loopback-only checkbox into the WPF host, and waits for listener disposal before the window closes. Incoming connections remain unparsed/closed until T0110. Exact-head CI is pending.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0109-2026-10-26-01",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Host.Windows/Networking/ParticipationNetworkListenerLifecycle.cs",
+          "src/Host.Windows/MainWindow.xaml.cs",
+          "src/Host.Windows/MainWindow.xaml",
+          "tests/HostLifecycle.Tests/ParticipationNetworkListenerLifecycleTests.cs",
+          "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+          "tests/HostLifecycle.Tests/Program.cs",
+          "step three/T0109/execution-report.md",
+          "step three/T0109/evidence/verification.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
@@ -19505,7 +19528,40 @@
           "review_evidence": []
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0109-2026-10-26-01",
+          "started_at": "2026-10-26T16:01:49.711Z",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Reviewed T0108 -> T0109 as a hard listener API dependency and T0107 -> T0109 as sequencing-only. Added lifecycle controller/tests, a WPF participation toggle and awaited window-close cleanup. Exact-head CI is pending.",
+          "changed_files": [
+            "src/Host.Windows/Networking/ParticipationNetworkListenerLifecycle.cs",
+            "src/Host.Windows/MainWindow.xaml.cs",
+            "src/Host.Windows/MainWindow.xaml",
+            "tests/HostLifecycle.Tests/ParticipationNetworkListenerLifecycleTests.cs",
+            "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "step three/T0109/execution-report.md",
+            "step three/T0109/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "related_commits": [],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "ParticipationNetworkListenerLifecycleTests",
+              "result": "pending",
+              "summary": "Added activation/deactivation, socket release/restart, dispose while active, and no-reuse-after-disposal cases; exact-head CI pending."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Run exact-head HostLifecycle test harness, Step Three quality gate, and Windows/Android product build. Fix any reported failures before marking T0109 done."
+        }
+      ]
     },
     {
       "id": "T0110",
@@ -27540,19 +27596,29 @@
       "from": "T0108",
       "to": "T0109",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "hard_dependency",
+      "rationale": "T0109 consumes the concrete listener lifecycle introduced by T0108: it calls StopAsync/DisposeAsync and relies on IsListening/LocalEndpoint to close the active socket and clear endpoint state. This is a demonstrated API-level dependency, not inferred from type=blocks alone.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs",
+        "tests/HostLifecycle.Tests/HostNetworkListenerParticipationTests.cs",
+        "step three/T0108/execution-report.md",
+        "step three/T0108/evidence/verification.md"
+      ]
     },
     {
       "from": "T0107",
       "to": "T0109",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0107 tests the in-process inference coordinator's busy/deadline/cancellation/exception behavior. T0109 owns TCP listener activation/deactivation and app shutdown and consumes no T0107-specific API or data output. Preserve type=blocks as conservative task order.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/Requests/HostRequestCoordinator.cs",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorFailureAcceptanceTests.cs",
+        "step three/T0107/evidence/verification.md",
+        "src/Host.Windows/Networking/ParticipationNetworkListenerLifecycle.cs"
+      ]
     },
     {
       "from": "T0109",
@@ -31647,8 +31713,42 @@
         "step three/T0107/evidence/verification.md"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-26T16:01:49.711Z",
+      "edge_from": "T0108",
+      "edge_to": "T0109",
+      "old_classification": "unreviewed",
+      "new_classification": "hard_dependency",
+      "old_validation_status": "unreviewed",
+      "new_validation_status": "validated",
+      "reason": "T0109 consumes the concrete listener lifecycle introduced by T0108: it calls StopAsync/DisposeAsync and relies on IsListening/LocalEndpoint to close the active socket and clear endpoint state. This is a demonstrated API-level dependency, not inferred from type=blocks alone.",
+      "evidence": [
+        "src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs",
+        "tests/HostLifecycle.Tests/HostNetworkListenerParticipationTests.cs",
+        "step three/T0108/execution-report.md",
+        "step three/T0108/evidence/verification.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-26T16:01:49.711Z",
+      "edge_from": "T0107",
+      "edge_to": "T0109",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "old_validation_status": "unreviewed",
+      "new_validation_status": "validated",
+      "reason": "T0107 tests the in-process inference coordinator's busy/deadline/cancellation/exception behavior. T0109 owns TCP listener activation/deactivation and app shutdown and consumes no T0107-specific API or data output. Preserve type=blocks as conservative task order.",
+      "evidence": [
+        "src/Host.Windows/Requests/HostRequestCoordinator.cs",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorFailureAcceptanceTests.cs",
+        "step three/T0107/evidence/verification.md",
+        "src/Host.Windows/Networking/ParticipationNetworkListenerLifecycle.cs"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-26T14:39:12.925Z"
+  "updated_at": "2026-10-26T16:01:49.711Z"
 }
 ```

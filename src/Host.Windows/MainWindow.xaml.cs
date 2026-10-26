@@ -1,5 +1,6 @@
 using System.IO;
 using System.Globalization;
+using System.Net;
 using System.Windows;
 using Microsoft.Win32;
 using System.Linq;
@@ -10,6 +11,7 @@ using WhiteP.Host.Domain;
 using WhiteP.Host.Infrastructure;
 using WhiteP.Host.Windows.Inference;
 using WhiteP.Host.Windows.Models;
+using WhiteP.Host.Windows.Networking;
 
 namespace WhiteP.Host.Windows;
 
@@ -20,12 +22,18 @@ public partial class MainWindow : Window
     private LocalHostSettings _settings = LocalHostSettings.Defaults;
     private readonly HostInferenceSession _session;
     private readonly ChatConversation _conversation = new();
+    private readonly ParticipationNetworkListenerLifecycle _networkParticipationLifecycle =
+        new(IPAddress.Loopback, 0);
     private string? _requestedModelMemoryRequirementText;
     private string? _requestedMinimumFreeDiskRequirementText;
     private CancellationTokenSource? _operationCancellation;
     private CancellationTokenSource? _modelUpdateCancellation;
     private bool _capacityReady;
     private bool _clearSessionRequested;
+    private bool _suppressParticipationToggleChanged;
+    private bool _windowCloseCleanupStarted;
+    private bool _allowWindowClose;
+    private bool _windowClosing;
 
     public MainWindow()
     {
@@ -52,6 +60,7 @@ public partial class MainWindow : Window
         RenderDisplayAdapters();
         BackendCapabilityStatus.Text = "Backend: not checked; Connect will test the configured local llama.cpp endpoint.";
         LocalProcessStatus.Text = "Local engine process: not started by this app.";
+        ParticipationNetworkStatus.Text = "Network participation is disabled; no listener is open.";
         if (settingsLoadFailed)
         {
             LifecycleState.Text = "Error — local settings are invalid; correct the settings file before reconnecting.";
@@ -752,6 +761,101 @@ public partial class MainWindow : Window
         catch (Exception)
         {
             ModelCompatibilityStatus.Text = "Compatibility estimate unavailable: Windows could not report current hardware memory.";
+        }
+    }
+
+    private async void NetworkParticipationToggle_Changed(object sender, RoutedEventArgs e)
+    {
+        if (_suppressParticipationToggleChanged || _windowClosing)
+        {
+            return;
+        }
+
+        var active = NetworkParticipationToggle.IsChecked == true;
+        NetworkParticipationToggle.IsEnabled = false;
+        try
+        {
+            await _networkParticipationLifecycle.SetParticipationActiveAsync(active);
+            if (_windowClosing)
+            {
+                return;
+            }
+
+            if (active && _networkParticipationLifecycle.LocalEndpoint is { } endpoint)
+            {
+                ParticipationNetworkStatus.Text =
+                    $"Loopback-only listener active at {endpoint.Address}:{endpoint.Port}. " +
+                    "Inbound requests are closed until protocol handling is implemented.";
+            }
+            else
+            {
+                ParticipationNetworkStatus.Text = "Network participation is disabled; no listener is open.";
+            }
+        }
+        catch (Exception exception)
+        {
+            _suppressParticipationToggleChanged = true;
+            NetworkParticipationToggle.IsChecked = false;
+            _suppressParticipationToggleChanged = false;
+            try
+            {
+                await _networkParticipationLifecycle.SetParticipationActiveAsync(false);
+            }
+            catch (ObjectDisposedException)
+            {
+                // Window shutdown already owns final disposal.
+            }
+
+            if (!_windowClosing)
+            {
+                ParticipationNetworkStatus.Text =
+                    $"Could not activate network participation: {HostErrorPresentation.ToUserMessage(exception)}";
+            }
+        }
+        finally
+        {
+            if (!_windowClosing)
+            {
+                NetworkParticipationToggle.IsEnabled = true;
+            }
+        }
+    }
+
+    private async void MainWindow_Closing(object? sender, System.ComponentModel.CancelEventArgs e)
+    {
+        if (_allowWindowClose)
+        {
+            return;
+        }
+
+        e.Cancel = true;
+        if (_windowCloseCleanupStarted)
+        {
+            return;
+        }
+
+        _windowCloseCleanupStarted = true;
+        _windowClosing = true;
+        IsEnabled = false;
+        NetworkParticipationToggle.IsEnabled = false;
+
+        try
+        {
+            await _networkParticipationLifecycle.DisposeAsync();
+        }
+        catch (Exception exception)
+        {
+            MessageBox.Show(
+                this,
+                $"Network listener shutdown reported an error. The listener stop was requested. {HostErrorPresentation.ToUserMessage(exception)}",
+                "Network shutdown warning",
+                MessageBoxButton.OK,
+                MessageBoxImage.Warning);
+        }
+        finally
+        {
+            _allowWindowClose = true;
+            Close();
         }
     }
 
