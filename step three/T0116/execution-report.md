@@ -1,0 +1,11 @@
+# T0116 execution report — in progress, awaiting exact-head CI
+
+- **Task:** create the `IPeerTransport` abstraction for secure connection, message send/receive and disconnect.
+- **Attempt:** `T0116-A001`.
+- **Baseline:** `main` at `73a0f05bfb053fea74846ab161b599c575a2931a` (`V 3.0.348`); graph Blob `afcd1c36d2738e8ca5f257211339a0a3b19d16a0` was retrieved via Git Blob API, measured 1,793,141 bytes, SHA-1 matched the exact tree entry, and the complete JSON parsed to 229 tasks / 426 edges.
+- **Implementation:** added `src/Host.Windows/Networking/IPeerTransport.cs` and `PeerTransportEndpoint.cs`. The interface exposes secure connect, whole-message send/receive, disconnect, connection state, verified remote identity and asynchronous disposal. The endpoint requires both a transport-neutral address and expected peer identity; blank, padded and control-character inputs are rejected.
+- **Security contract:** XML documentation requires encryption and peer-identity verification before `ConnectSecureAsync` succeeds, requires the verified identity to match the endpoint, and forbids plaintext downgrade. This is a contract requirement only; no concrete encrypted transport or peer authentication implementation is claimed in T0116.
+- **Acceptance coverage:** added `PeerTransportContractAcceptanceTests.cs`, linked the contract files into the existing HostLifecycle test project and registered the suite in `Program.cs`. Checks cover interface/method signatures, asynchronous disposal and endpoint validation.
+- **Dependency review:** `T0115 → T0116` was validated as `sequencing_only`; `T0116 → T0117` as `contract_or_interface_dependency`. Both original `blocks` edge types remain unchanged, with evidence and rationale in the graph.
+- **Boundary:** ADR-0002 reserves transport-library selection and wire-level authentication/encryption implementation for later work. `T0117` remains responsible for implementing the selected library.
+- **Tests:** exact-head CI pending; `T0116` remains `in_progress`.
