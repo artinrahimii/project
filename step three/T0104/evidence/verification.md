@@ -3,27 +3,32 @@
 ## Exact source and graph validation
 
 - Repository/branch: `artinrahimii/project`, `main`.
-- Base commit: `3696e6179aede840fd69112ffaaabdb2ceb5be0f` (`V 3.0.320`); exact tree SHA: `009c15ade3b100af3b6f41331ee89feeeaaa4663`.
-- Graph path: `step three/project-graph.md`, Blob `5e88d1c00c0b8d2501d798eaa5b12e24976095c6`.
-- Graph Blob content received as UTF-8: 1,660,798 bytes / 1,538,553 Unicode characters. The computed Git Blob SHA-1 (including the Git `blob <length>\0` header) matched the tree Blob: `5e88d1c00c0b8d2501d798eaa5b12e24976095c6`.
-- Full enclosed JSON parsed successfully: 229 unique task IDs, 426 edges, and zero unresolved edge endpoints. Before this attempt statuses were 102 done, 1 in_progress, and 126 not_started.
-- Existing CI on V 3.0.320: product build and quality gate were inspected and both report success (product run 40320084003; quality run 40320084041).
+- Implementation base commit: `57ff550b7441fa3c65b30777e69fa1b4e433cf10` (`V 3.0.321`); exact tree SHA: `de3eb7c8f5ec20c7d6beb5901f9e9fd4f5bdb43a`.
+- Graph path: `step three/project-graph.md`, Blob `1795d88270610e3024776c5dc1976af58536c2ba`; received content was 1,667,050 bytes and its enclosed JSON parsed successfully.
+- The prior base graph contained 229 unique task IDs and 426 edges with zero unresolved endpoints. T0104 was `in_progress` at the start of the evidence review.
+- The graph's prior execution attempt record was preserved as `partial`; a second `succeeded` evidence-verification attempt has been appended rather than deleting the earlier history.
 
 ## Dependency review
 
-- `T0103 -> T0104` remains `type=blocks` but is now `dependency_classification=sequencing_only`, `validation_status=validated`. Rationale and source evidence are recorded in `project-graph.md`.
+- `T0103 -> T0104` remains `type=blocks`, with `dependency_classification=sequencing_only`, `validation_status=validated`. The reason and edge-change history were recorded in the graph.
 - `T0104 -> T0105` remains unreviewed.
+
+## Exact implementation-commit CI
+
+- [HostLifecycle job](https://github.com/artinrahimii/project/actions/runs/40322348243/job/121570175683): passed; contains the response-gate PASS line and runs the newly registered production-source acceptance suite.
+- [Windows WPF job](https://github.com/artinrahimii/project/actions/runs/40322348243/job/121570175570): passed C# formatting, host build, generated protobuf verification, WPF startup smoke, and agent-tool checks.
+- [Android job](https://github.com/artinrahimii/project/actions/runs/40322348243/job/121570175898): passed Kotlin format/lint, debug APK build, Protobuf round-trip tests, generated source verification, and artifact upload.
+- [White-P product build](https://github.com/artinrahimii/project/actions/runs/40322348243): all three jobs passed.
+- [Step Three quality gate](https://github.com/artinrahimii/project/actions/runs/40322348238): passed.
+- [Real local inference integration](https://github.com/artinrahimii/project/actions/runs/40322348236): passed live llama.cpp/GGUF inference and active generation cancellation.
 
 ## Acceptance implementation
 
-- `src/Host.Windows/Requests/HostRequestResponseDeliveryGate.cs`: atomic one-shot claim before invoking the callback; gate is not reopened after callback failure.
+- `src/Host.Windows/Requests/HostRequestResponseDeliveryGate.cs`: atomic one-shot claim before callback invocation; gate is not reopened after a callback failure.
 - `tests/HostLifecycle.Tests/HostRequestResponseDeliveryTests.cs`: sequential and concurrent duplicate suppression, ambiguous callback failure, pre-cancelled handoff, and invalid request ID checks.
-- `tests/HostLifecycle.Tests/Program.cs` registers the suite.
-- `tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj` compiles the actual production gate source into the portable harness.
-- CI is pending at this attempt; no pass is claimed yet.
+- `tests/HostLifecycle.Tests/Program.cs` registers the suite; `HostLifecycle.Tests.csproj` compiles the actual production source into the harness.
+- No protobuf field or wire-number change.
 
-## Boundary and limitations
+## Boundary and limitation
 
-- This proves only that a shared gate instance invokes its supplied callback at most once in-process.
-- There is no production P2P ingress/response sender in the inspected code, and this task does not claim wire delivery or cross-restart replay protection.
-- Local .NET SDK execution is unavailable in this environment; rely on the exact-head CI results before updating status to done.
+The evidence proves at-most-once invocation through one shared gate instance in-process, not network-level exactly-once delivery or cross-process replay protection. The production P2P ingress/response-sender path does not exist in the inspected repository and is not claimed as completed.

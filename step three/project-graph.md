@@ -18723,8 +18723,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0103 و T0097 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "src/Host.Windows/Requests/HostRequestResponseDeliveryGate.cs",
         "tests/HostLifecycle.Tests/HostRequestResponseDeliveryTests.cs",
@@ -18738,23 +18738,22 @@
         "src/Host.Windows/Requests/ + tests/"
       ],
       "evidence": [
-        "src/Host.Windows/Requests/HostRequestCoordinator.cs",
         "src/Host.Windows/Requests/HostRequestResponseDeliveryGate.cs",
-        "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
         "tests/HostLifecycle.Tests/HostRequestResponseDeliveryTests.cs",
         "tests/HostLifecycle.Tests/Program.cs",
         "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
-        "step three/T0103/execution-report.md",
-        "step three/T0103/evidence/verification.md",
+        "src/Host.Windows/Requests/HostRequestCoordinator.cs",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
+        "protocol/whitep/v1/messages.proto",
         "step three/T0104/execution-report.md",
         "step three/T0104/evidence/verification.md"
       ],
-      "notes": "Implemented a request-scoped atomic one-shot gate for the response callback, with sequential/concurrent duplicate suppression and fail-closed behavior after an ambiguous callback exception. Exact-head CI is pending. The guard only guarantees one invocation through a shared gate instance in-process; no production P2P ingress/response sender or cross-process replay cache exists, so network-level delivery is not claimed.",
+      "notes": "T0104 implemented and acceptance-verified on V 3.0.321: the request-scoped atomic gate suppresses sequential and concurrent duplicate callback invocations, does not reopen after an ambiguous callback failure, and allows a pre-cancelled no-op attempt to leave the gate unclaimed. Scope is limited to a shared in-process gate instance; there is still no production P2P ingress/response sender and no network-level exactly-once or cross-process replay guarantee.",
       "execution_summary": {
-        "attempt_count": 1,
+        "attempt_count": 2,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0104-2026-10-26-01",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "T0104-2026-10-26-02",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Host.Windows/Requests/HostRequestResponseDeliveryGate.cs",
           "tests/HostLifecycle.Tests/HostRequestResponseDeliveryTests.cs",
@@ -18764,20 +18763,27 @@
           "step three/T0104/evidence/verification.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
+        "related_commits": [
+          "57ff550b7441fa3c65b30777e69fa1b4e433cf10"
+        ],
+        "tests_passed": [
+          "HostRequestResponseDeliveryGate response path acceptance — PASS; HostLifecycle log confirms the gate test completed successfully. (https://github.com/artinrahimii/project/actions/runs/40322348243/job/121570175683)",
+          "White-P product build on V 3.0.321 — PASS: HostLifecycle tests, Windows WPF format/build/startup smoke and agent-tool checks, Android format/lint/APK/Protobuf tests all passed. (https://github.com/artinrahimii/project/actions/runs/40322348243)",
+          "Step Three quality gate on V 3.0.321 — PASS. (https://github.com/artinrahimii/project/actions/runs/40322348238)",
+          "Real local llama.cpp inference on V 3.0.321 — PASS; live generation and active cancellation completed. (https://github.com/artinrahimii/project/actions/runs/40322348236)"
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
           "state": "passed",
           "triggering_contracts": [
-            "Request cancellation and single terminal result handling in HostRequestCoordinator",
+            "Request cancellation and terminal outcome handling in HostRequestCoordinator",
             "Response callback must be claimed at most once per request lifecycle"
           ],
           "affected_by_contract_changes": [
-            "Added a request-scoped one-shot callback gate in Host.Windows/Requests; protobuf fields and wire numbers are unchanged.",
-            "The gate is process-local and must be shared by the request's terminal response paths; it is not a transport-level guarantee."
+            "Added a request-scoped in-process response callback guard; no protobuf fields or wire numbers changed.",
+            "The guard must be shared across all terminal paths for a request and does not imply delivery exactly once across a network or process restart."
           ],
           "review_evidence": [
             "src/Host.Windows/Requests/HostRequestCoordinator.cs",
@@ -18845,6 +18851,55 @@
             "Added a per-request one-shot response callback gate; no protobuf wire-contract change."
           ],
           "follow_up": "Inspect exact-head HostLifecycle acceptance logs, quality gate, Windows formatting/build/smoke, Android build/tests and real local inference workflow before marking T0104 done. Keep the no-P2P-transport limitation explicit."
+        },
+        {
+          "attempt_id": "T0104-2026-10-26-02",
+          "started_at": "2026-10-26T12:25:05Z",
+          "ended_at": "2026-10-26T12:26:24Z",
+          "result": "succeeded",
+          "summary": "Exact implementation-commit CI passed: the new response-gate acceptance, all HostLifecycle tests, Windows format/build/WPF startup and agent-tool checks, Android format/lint/APK/Protobuf tests, the quality gate, and real local llama.cpp inference/cancellation.",
+          "changed_files": [
+            "step three/T0104/execution-report.md",
+            "step three/T0104/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "related_commits": [
+            "57ff550b7441fa3c65b30777e69fa1b4e433cf10"
+          ],
+          "commit_sha": "57ff550b7441fa3c65b30777e69fa1b4e433cf10",
+          "tests": [
+            {
+              "name": "HostRequestResponseDeliveryGate acceptance",
+              "result": "passed",
+              "summary": "Sequential duplicate, 64-way concurrent race, ambiguous callback failure, pre-cancelled handoff, and invalid request ID tests passed in HostLifecycle.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40322348243/job/121570175683"
+            },
+            {
+              "name": "White-P product build",
+              "result": "passed",
+              "summary": "HostLifecycle, Windows WPF formatting/build/startup smoke, agent-tool checks, Android lint/APK/Protobuf tests and artifact upload succeeded.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40322348243"
+            },
+            {
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "summary": "Graph structure and recorded outputs/evidence validation succeeded on the implementation commit.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40322348238"
+            },
+            {
+              "name": "Real local inference integration",
+              "result": "passed",
+              "summary": "Pinned llama.cpp executable/model inference and active generation cancellation passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40322348236"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "Added a per-request one-shot response callback gate; no protobuf contract change."
+          ],
+          "follow_up": "Before T0105, review edge T0104 -> T0105. A future production P2P ingress/response sender must create one gate at request admission and share it across all terminal response paths; do not treat this in-process guard as network-level exactly-once delivery."
         }
       ]
     },
@@ -31096,8 +31151,26 @@
         "src/Host.Infrastructure/LlamaCppServerBackend.cs"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-26T12:28:28.052Z",
+      "edge_from": "T0103",
+      "edge_to": "T0104",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "reason": "T0103 adds cancellation signalling and post-callback cancellation checks to HostRequestCoordinator. T0104 adds a request-scoped one-shot response callback gate and does not consume a T0103 API/output as a data dependency. Keep type=blocks as conservative sequence, not as evidence of a hard technical dependency.",
+      "evidence": [
+        "src/Host.Windows/Requests/HostRequestCoordinator.cs",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
+        "tests/HostLifecycle.Tests/LlamaCppInferenceEngineCancellationTests.cs",
+        "src/Host.Windows/Requests/HostRequestResponseDeliveryGate.cs",
+        "tests/HostLifecycle.Tests/HostRequestResponseDeliveryTests.cs",
+        "step three/T0103/execution-report.md",
+        "step three/T0103/evidence/verification.md"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-26T12:24:20.258Z"
+  "updated_at": "2026-10-26T12:28:28.052Z"
 }
 ```
