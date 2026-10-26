@@ -16495,6 +16495,7 @@
         "tests/HostLifecycle.Tests/Program.cs",
         "tests/HostLifecycle.Tests/AgentToolExecutionAcceptanceTests.cs",
         "tests/HostLifecycle.Tests/AgentToolProcessExecutorTests.cs",
+        ".github/workflows/product-build.yml",
         "step three/T0095/execution-report.md",
         "step three/project-graph.md"
       ],
@@ -16510,11 +16511,11 @@
         "tests/HostLifecycle.Tests/AgentToolProcessExecutorTests.cs",
         "step three/T0095/execution-report.md"
       ],
-      "notes": "Process-worker boundary and timeout tests pass in Linux HostLifecycle CI. A Windows build exposed missing explicit System.IO imports after an earlier CS1022 structure error; the imports have now been added. T0095 remains in progress pending exact-commit CI including Windows Job Object assignment and WPF startup. The child still uses the same OS identity; this is not an AppContainer/restricted-token sandbox.",
+      "notes": "Linux HostLifecycle and Windows WPF compilation/startup smoke passed on V 3.0.297. A targeted Windows CI test is now wired to execute the native Job Object path, because Linux tests skip Windows-only Job Object APIs. T0095 remains in progress pending exact-commit CI for that native test and all other product jobs. The worker remains same-user and is not an AppContainer/restricted-token sandbox.",
       "execution_summary": {
-        "attempt_count": 5,
+        "attempt_count": 6,
         "failed_attempt_count": 2,
-        "last_attempt_id": "T0095-2026-10-26-05",
+        "last_attempt_id": "T0095-2026-10-26-06",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Host.Windows/Tools/IAgentToolProcessExecutor.cs",
@@ -16527,16 +16528,19 @@
           "tests/HostLifecycle.Tests/Program.cs",
           "tests/HostLifecycle.Tests/AgentToolExecutionAcceptanceTests.cs",
           "tests/HostLifecycle.Tests/AgentToolProcessExecutorTests.cs",
+          ".github/workflows/product-build.yml",
           "step three/T0095/execution-report.md",
           "step three/project-graph.md"
         ],
         "related_commits": [
           "17e7f7ede0f3f2357fb95ae484466f1aa02f45da",
-          "44be76a3f02ea579789cae6bae942c44c2f7f0cd"
+          "44be76a3f02ea579789cae6bae942c44c2f7f0cd",
+          "1aa5f1985db78f48ae602722c0f77761f473c10d"
         ],
         "tests_passed": [
-          "Step Three quality gate passed on V 3.0.296: https://github.com/artinrahimii/project/actions/runs/40280367686",
-          "HostLifecycle tests, including agent-tool process execution, passed on V 3.0.296: https://github.com/artinrahimii/project/actions/runs/40280367697/job/121432103236"
+          "Step Three quality gate passed on V 3.0.297: https://github.com/artinrahimii/project/actions/runs/40280625154",
+          "HostLifecycle tests on Linux, including process boundary, sanitizer and timeout tests, passed on V 3.0.297: https://github.com/artinrahimii/project/actions/runs/40280625252/job/121432889672",
+          "Windows WPF Release build, Protobuf source verification, startup smoke and artifact upload steps passed on V 3.0.297; full product run pending: https://github.com/artinrahimii/project/actions/runs/40280625252/job/121432889892"
         ],
         "tests_failed": [
           "HostLifecycle compilation failed on V 3.0.295 with CS1022: https://github.com/artinrahimii/project/actions/runs/40280156905",
@@ -16702,6 +16706,32 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Verify exact-commit Windows build and worker-mode startup, Linux lifecycle tests, Android build/tests, and quality gate."
+        },
+        {
+          "attempt_id": "T0095-2026-10-26-06",
+          "started_at": "2026-10-26T06:36:43.171Z",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Added a dedicated command-line entrypoint and Windows CI step to run the focused agent-tool process executor acceptance suite on windows-latest, exercising native Job Object creation and assignment.",
+          "changed_files": [
+            "tests/HostLifecycle.Tests/Program.cs",
+            ".github/workflows/product-build.yml",
+            "step three/T0095/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "related_commits": [],
+          "tests": [
+            {
+              "name": "Exact-commit product build including Windows process restriction test",
+              "result": "not_run",
+              "summary": "V 3.0.298 workflows will run the focused executor tests on Windows and all existing product checks."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Verify Windows Job Object assignment and timeout tests, HostLifecycle suite on Linux, Windows startup smoke, Android build/tests and Step Three quality gate on the exact commit."
         }
       ]
     },
@@ -28961,6 +28991,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-26T06:34:08.299Z"
+  "updated_at": "2026-10-26T06:36:43.171Z"
 }
 ```

@@ -12,6 +12,12 @@ using WhiteP.Host.Windows.Inference;
 using WhiteP.Host.Windows.Models.Catalog;
 using WhiteP.Shared.Contracts;
 
+if (args.Contains("--test-agent-tool-process-executor", StringComparer.Ordinal))
+{
+    await AgentToolProcessExecutorTests.RunAsync();
+    return;
+}
+
 if (args.Contains("--agent-tool-worker", StringComparer.Ordinal))
 {
     Environment.ExitCode = args.Contains("--test-agent-tool-worker", StringComparer.Ordinal)

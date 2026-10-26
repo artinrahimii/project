@@ -47,6 +47,8 @@ jobs:
             throw "WPF startup smoke test failed with exit code $($process.ExitCode)."
           }
           Write-Host "PASS: WPF entry point displayed MainWindow, validated required controls, and shut down cleanly."
+      - name: Verify agent-tool process restrictions on Windows
+        run: dotnet run --project tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj --configuration Release -- --test-agent-tool-process-executor
       - name: Upload Windows host build artifacts
         uses: actions/upload-artifact@v4
         with:

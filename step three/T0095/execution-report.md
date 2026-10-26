@@ -29,6 +29,7 @@
 - `tests/HostLifecycle.Tests/Program.cs`
 - `tests/HostLifecycle.Tests/AgentToolExecutionAcceptanceTests.cs`
 - `tests/HostLifecycle.Tests/AgentToolProcessExecutorTests.cs`
+- `.github/workflows/product-build.yml`
 - `step three/T0095/execution-report.md`
 - `step three/project-graph.md`
 
@@ -61,3 +62,10 @@
 
 - Added explicit `using System.IO;` directives to both affected production files. This directly addresses the exact compiler errors; all other policy and worker behavior is unchanged.
 - The correction is committed separately as `V 3.0.297`. The Windows WPF Release build, smoke test (including worker-mode startup), Linux process tests, Android build/tests, and quality gate must pass on that exact commit before T0095 can be marked done.
+
+
+## Corrective attempt A006 — exercise native Windows process restrictions
+
+- Added the `--test-agent-tool-process-executor` entrypoint so the focused process-boundary suite can run without executing unrelated lifecycle tests.
+- Added a step to the `windows-latest` product workflow that executes this focused suite. On Windows the normal executor path must create and attach the worker to a Job Object with a one-process maximum and kill-on-job-close; assignment failures fail closed. This validates the native path instead of relying only on Linux tests and Windows compilation.
+- The new targeted Windows test step is part of `V 3.0.298`; its exact-commit CI result is pending.
