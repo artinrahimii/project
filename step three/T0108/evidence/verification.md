@@ -25,3 +25,11 @@
 - **Live local inference integration: PASS** — [run](https://github.com/artinrahimii/project/actions/runs/40340806731).
 - All four runs were associated with implementation commit `42efe64069939558deb18414de1c233c739885fd`. The local environment lacked .NET SDK; test results are from the named CI jobs, not local execution.
 - Scope boundary: the listener currently accepts and closes TCP connections without parsing them. T0109 owns app-level shutdown/disable integration; T0110 owns Protobuf parsing. No full P2P transport or encryption claim is made.
+
+
+# T0108 evidence — T0110 contract revalidation
+
+- Task-specific acceptance ran on V338 commit `86267255efa01fe899a26d58f5e5beec4f860c75`: [HostLifecycle job](`https://github.com/artinrahimii/project/actions/runs/40406054183/job/121863964765`). The existing T0108 test printed PASS after sending a zero-length framed message and confirming fail-closed rejection.
+- The new T0110 framing acceptance also passed on the same job. The Step Three quality gate passed: [workflow](https://github.com/artinrahimii/project/actions/runs/40406054261). The complete Windows/Android product workflow passed: [workflow](https://github.com/artinrahimii/project/actions/runs/40406054183).
+- This revalidation resolves the temporary contract-review status introduced when T0110 changed incoming connection handling. T0108 is restored to `done`.
+- Scope remains loopback-only; transport interoperability, inference dispatch over peer transport, responses, and encryption are not proven by this task.

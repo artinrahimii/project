@@ -33,3 +33,13 @@
 - **Android lint, APK build, Protobuf tests and generated-source checks:** [PASS](https://github.com/artinrahimii/project/actions/runs/40357312422/job/121693129952).
 - **Complete White-P product build:** [PASS](https://github.com/artinrahimii/project/actions/runs/40357312422).
 - The local environment has no .NET SDK; these results came from the linked GitHub Actions jobs, not from a claimed local run.
+
+
+# T0109 execution report — final contract revalidation
+
+- **Status:** Done; lifecycle was revalidated on `V 3.0.338` (`86267255efa01fe899a26d58f5e5beec4f860c75`) after T0110 introduced framed reads and active connection tasks.
+- The successful implementation and retry history remains preserved; see prior sections for the two failed attempts and the successful V335 fix.
+- **Lifecycle revalidation:** `ParticipationNetworkListenerLifecycleTests` and the new test that stops the listener while a TCP client waits for an incomplete frame passed on the exact V338 HostLifecycle job: [job](https://github.com/artinrahimii/project/actions/runs/40406054183/job/121863964765).
+- The test confirms disable/shutdown cancels the frame read, closes the active client socket, clears the endpoint, and releases tracked connection tasks.
+- Step Three quality gate passed [here](https://github.com/artinrahimii/project/actions/runs/40406054261); the full Windows/Android product build passed [here](https://github.com/artinrahimii/project/actions/runs/40406054183).
+- **Scope boundary:** this is lifecycle/shutdown acceptance, not a claim of complete P2P request/response or encryption. The listener remains loopback-only.

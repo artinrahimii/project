@@ -1,20 +1,12 @@
-# T0110 execution report
+# T0110 execution report — accepted
 
-- **Task:** Connect the TCP network input parser to the shared Protobuf contract.
-- **Status:** In progress; attempt 01 failed in the new test helper. Corrective attempt 02 is underway.
-- **Implementation commit:** [V 3.0.337](https://github.com/artinrahimii/project/commit/f090bee81a85dbdc6cac93dc6d08b36dd7e422b0) — `f090bee81a85dbdc6cac93dc6d08b36dd7e422b0`.
-- **Attempt 01 failure:** Existing T0108/T0109 listener tests printed PASS, but the HostLifecycle harness then failed in `NetworkInferenceRequestFrameAcceptanceTests.AssertPeerClosedAsync`. The server had already rejected/closed a malformed frame; `TcpClient.GetStream()` consequently raised `InvalidOperationException: The operation is not allowed on non-connected sockets`.
-- **Attempt 02 correction:** Catch that exception only while acquiring a stream. The subsequent read check remains outside the catch; if it returns a byte instead of EOF, the test still fails. No production parser/listener logic is changed for this correction.
-- **Step Three quality gate:** PASS on V 3.0.337 — https://github.com/artinrahimii/project/actions/runs/40405428005.
-- **Windows Release build/startup smoke:** PASS; HostLifecycle fails after build — https://github.com/artinrahimii/project/actions/runs/40405428011.
-- **Android lint/APK/Protobuf:** PASS despite the overall product run failing due to HostLifecycle — https://github.com/artinrahimii/project/actions/runs/40405428011.
-- **HostLifecycle harness:** FAIL due to the helper exception — https://github.com/artinrahimii/project/actions/runs/40405428011/job/121861832953.
-- **Real local inference workflow:** FAIL before opt-in inference acceptance because the default HostLifecycle harness hit the same exception — https://github.com/artinrahimii/project/actions/runs/40405427961.
-
-## Graph integrity
-
-The original baseline graph Blob `3167748c930cc9cbf1b722db525631ff8a12f21c` was fetched via Git Blob API and validated against its original bytes: **1,728,402 UTF-8 bytes**, **1,606,772 Unicode characters**, recomputed Git Blob SHA-1 matched. Complete fenced JSON parsed to 229 tasks and 426 edges.
-
-## Scope and follow-up
-
-The production implementation remains a 4-byte unsigned big-endian length prefix, 16-KiB ceiling checked before allocation, exact frame read, and call to the shared `ProtocolMessageParser`. T0108 and T0109 remain in review until the full suite passes. Attempt 02 must pass exact-head HostLifecycle and product workflows before T0110 is accepted.
+- **Status:** Done on `V 3.0.338` — [commit](https://github.com/artinrahimii/project/commit/86267255efa01fe899a26d58f5e5beec4f860c75).
+- **Attempt 01:** Failed only after the new framing test reached `AssertPeerClosedAsync`: an already disconnected `TcpClient.GetStream()` threw `InvalidOperationException`. Historical failure remains preserved in the graph.
+- **Attempt 02:** Fixed the helper to accept an already disconnected socket during stream acquisition but keep the `read == 0` assertion outside that catch. The full exact-head suite then passed.
+- **HostLifecycle and framing acceptance:** [PASS](https://github.com/artinrahimii/project/actions/runs/40406054183/job/121863964765). Explicit log line: `PASS: bounded TCP frames reach the shared Protobuf parser; malformed, truncated, oversized and interrupted frames are rejected.`
+- **Step Three quality gate:** [PASS](https://github.com/artinrahimii/project/actions/runs/40406054261).
+- **Windows Release build/startup smoke and Android lint/APK/Protobuf/artifact steps:** [PASS](https://github.com/artinrahimii/project/actions/runs/40406054183).
+- **Real local llama.cpp/GGUF inference acceptance:** [PASS](https://github.com/artinrahimii/project/actions/runs/40406054061).
+- The original graph Blob at V336 was `355f2972c2e9ad3acd4c022644440d55feb17748`, measured 1,718,063 UTF-8 bytes / 1,596,320 Unicode characters; its recomputed Git Blob SHA-1 matched. The V338 graph Blob before this final status update was `2bfd0becbf7f7f813f0a4efb4a1ec2f339e2c8ed`, measured 1,732,522 UTF-8 bytes / 1,610,882 Unicode characters; its recomputed SHA-1 also matched. Both complete fenced JSON versions parsed successfully.
+- **Implementation boundary:** the frame is one serialized Protobuf `InferenceRequest` per TCP connection, with 4-byte unsigned big-endian payload length and 16,384-byte maximum checked before allocation. Valid requests reach an optional callback; no callback is wired to model inference and no network response is claimed. Android/peer transport must honor the same framing or document a reviewed protocol change.
+- **Next:** review `T0110 -> T0111` before starting T0111; it remains `unreviewed`.

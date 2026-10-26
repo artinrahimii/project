@@ -19356,8 +19356,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0107 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs",
         "tests/HostLifecycle.Tests/HostNetworkListenerParticipationTests.cs",
@@ -19379,7 +19379,7 @@
         "attempt_count": 2,
         "failed_attempt_count": 0,
         "last_attempt_id": "T0108-2026-10-27-01",
-        "last_attempt_result": "partial",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs",
           "tests/HostLifecycle.Tests/HostNetworkListenerParticipationTests.cs",
@@ -19392,24 +19392,32 @@
           "tests/HostLifecycle.Tests/NetworkInferenceRequestFrameAcceptanceTests.cs"
         ],
         "related_commits": [
-          "42efe64069939558deb18414de1c233c739885fd"
+          "42efe64069939558deb18414de1c233c739885fd",
+          "86267255efa01fe899a26d58f5e5beec4f860c75"
         ],
-        "tests_passed": [],
+        "tests_passed": [
+          "Task-specific acceptance revalidation — PASS on 86267255efa01fe899a26d58f5e5beec4f860c75. https://github.com/artinrahimii/project/actions/runs/40406054183/job/121863964765",
+          "Step Three quality gate — PASS on 86267255efa01fe899a26d58f5e5beec4f860c75. https://github.com/artinrahimii/project/actions/runs/40406054261",
+          "Complete product build — PASS on 86267255efa01fe899a26d58f5e5beec4f860c75. https://github.com/artinrahimii/project/actions/runs/40406054183"
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "in_review",
+          "state": "passed",
           "triggering_contracts": [
-            "T0110 changes TCP accepted-connection behavior to bounded frame reading and Protobuf validation."
+            "T0110 introduced bounded TCP framing and a shared-Protobuf parse path; the affected listener acceptance contract was rerun."
           ],
           "affected_by_contract_changes": [
             "src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs",
-            "tests/HostLifecycle.Tests/HostNetworkListenerParticipationTests.cs"
+            "tests/HostLifecycle.Tests/HostNetworkListenerParticipationTests.cs",
+            "tests/HostLifecycle.Tests/NetworkInferenceRequestFrameAcceptanceTests.cs"
           ],
           "review_evidence": [
+            "tests/HostLifecycle.Tests/HostNetworkListenerParticipationTests.cs",
+            "tests/HostLifecycle.Tests/ParticipationNetworkListenerLifecycleTests.cs",
             "tests/HostLifecycle.Tests/NetworkInferenceRequestFrameAcceptanceTests.cs",
-            "docs/decisions/ADR-0003-tcp-request-framing.md"
+            "https://github.com/artinrahimii/project/actions/runs/40406054183/job/121863964765"
           ]
         }
       },
@@ -19468,34 +19476,49 @@
         {
           "attempt_id": "T0108-2026-10-27-01",
           "started_at": "2026-10-26T21:33:15.366Z",
-          "ended_at": null,
-          "result": "partial",
-          "summary": "Reopened for acceptance revalidation because T0110 changes accepted TCP connections from immediate close to bounded frame reading and Protobuf validation.",
+          "ended_at": "2026-10-26T21:42:59.945Z",
+          "result": "succeeded",
+          "summary": "Revalidated the participation-gated TCP listener against the T0110 framed-input behavior. The existing fail-closed participation acceptance passed on V3.0.338.",
           "changed_files": [
             "src/Host.Windows/Networking/NetworkInferenceRequestFrameReader.cs",
             "src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs",
             "tests/HostLifecycle.Tests/NetworkInferenceRequestFrameAcceptanceTests.cs",
             "tests/HostLifecycle.Tests/HostNetworkListenerParticipationTests.cs"
           ],
-          "related_commits": [],
-          "commit_sha": null,
+          "related_commits": [
+            "86267255efa01fe899a26d58f5e5beec4f860c75"
+          ],
+          "commit_sha": "86267255efa01fe899a26d58f5e5beec4f860c75",
           "tests": [
             {
-              "name": "HostNetworkListenerParticipationTests",
+              "name": "Task-specific acceptance revalidation",
               "result": "passed",
-              "summary": "The prior T0108 participation test printed PASS on V3.0.337; the later failure occurred in the new T0110 close assertion."
+              "summary": "Revalidated the participation-gated TCP listener against the T0110 framed-input behavior. The existing fail-closed participation acceptance passed on V3.0.338.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40406054183/job/121863964765"
+            },
+            {
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "summary": "Repository-backed graph/Python quality checks passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40406054261"
+            },
+            {
+              "name": "Complete product build",
+              "result": "passed",
+              "summary": "Windows, Android and HostLifecycle jobs all completed successfully.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40406054183"
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
-          "reopened_reason": "Reopened for acceptance revalidation because T0110 changes accepted TCP connections from immediate close to bounded frame reading and Protobuf validation.",
+          "reopened_reason": null,
           "contract_changes": [
             "TCP accepted connections now read one bounded length-prefixed Protobuf InferenceRequest."
           ],
           "follow_up": "Restore done only after exact-head relevant CI succeeds."
         }
       ],
-      "reopened_reason": "Reopened for acceptance revalidation because T0110 changes accepted TCP connections from immediate close to bounded frame reading and Protobuf validation."
+      "reopened_reason": null
     },
     {
       "id": "T0109",
@@ -19514,8 +19537,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0108 و T0107 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "src/Host.Windows/Networking/ParticipationNetworkListenerLifecycle.cs",
         "src/Host.Windows/MainWindow.xaml.cs",
@@ -19543,7 +19566,7 @@
         "attempt_count": 4,
         "failed_attempt_count": 2,
         "last_attempt_id": "T0109-2026-10-27-01",
-        "last_attempt_result": "partial",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Host.Windows/Networking/ParticipationNetworkListenerLifecycle.cs",
           "src/Host.Windows/MainWindow.xaml.cs",
@@ -19565,24 +19588,32 @@
         "related_commits": [
           "f8b08f814f28c604fa5f8141ff3b2bd3d137e86b",
           "3bc81b6feab2fa3d5b927c9b4ef13ea1f7f626cc",
-          "b82ce66b585c93057730225826896097845ee74f"
+          "b82ce66b585c93057730225826896097845ee74f",
+          "86267255efa01fe899a26d58f5e5beec4f860c75"
         ],
-        "tests_passed": [],
+        "tests_passed": [
+          "Task-specific acceptance revalidation — PASS on 86267255efa01fe899a26d58f5e5beec4f860c75. https://github.com/artinrahimii/project/actions/runs/40406054183/job/121863964765",
+          "Step Three quality gate — PASS on 86267255efa01fe899a26d58f5e5beec4f860c75. https://github.com/artinrahimii/project/actions/runs/40406054261",
+          "Complete product build — PASS on 86267255efa01fe899a26d58f5e5beec4f860c75. https://github.com/artinrahimii/project/actions/runs/40406054183"
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "in_review",
+          "state": "passed",
           "triggering_contracts": [
-            "T0110 changes TCP accepted-connection behavior to bounded frame reading and Protobuf validation."
+            "T0110 introduced bounded TCP framing and a shared-Protobuf parse path; the affected listener acceptance contract was rerun."
           ],
           "affected_by_contract_changes": [
             "src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs",
-            "tests/HostLifecycle.Tests/HostNetworkListenerParticipationTests.cs"
+            "tests/HostLifecycle.Tests/HostNetworkListenerParticipationTests.cs",
+            "tests/HostLifecycle.Tests/NetworkInferenceRequestFrameAcceptanceTests.cs"
           ],
           "review_evidence": [
+            "tests/HostLifecycle.Tests/HostNetworkListenerParticipationTests.cs",
+            "tests/HostLifecycle.Tests/ParticipationNetworkListenerLifecycleTests.cs",
             "tests/HostLifecycle.Tests/NetworkInferenceRequestFrameAcceptanceTests.cs",
-            "docs/decisions/ADR-0003-tcp-request-framing.md"
+            "https://github.com/artinrahimii/project/actions/runs/40406054183/job/121863964765"
           ]
         }
       },
@@ -19735,34 +19766,49 @@
         {
           "attempt_id": "T0109-2026-10-27-01",
           "started_at": "2026-10-26T21:33:15.366Z",
-          "ended_at": null,
-          "result": "partial",
-          "summary": "Reopened for lifecycle contract revalidation because T0110 introduces active frame reads that StopAsync must cancel, close and await.",
+          "ended_at": "2026-10-26T21:42:59.945Z",
+          "result": "succeeded",
+          "summary": "Revalidated disable/shutdown lifecycle against T0110's active frame reads. The lifecycle acceptance confirmed StopAsync/DisposeAsync releases the active listener and blocked client connection on V3.0.338.",
           "changed_files": [
             "src/Host.Windows/Networking/NetworkInferenceRequestFrameReader.cs",
             "src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs",
             "tests/HostLifecycle.Tests/NetworkInferenceRequestFrameAcceptanceTests.cs",
             "tests/HostLifecycle.Tests/HostNetworkListenerParticipationTests.cs"
           ],
-          "related_commits": [],
-          "commit_sha": null,
+          "related_commits": [
+            "86267255efa01fe899a26d58f5e5beec4f860c75"
+          ],
+          "commit_sha": "86267255efa01fe899a26d58f5e5beec4f860c75",
           "tests": [
             {
-              "name": "ParticipationNetworkListenerLifecycleTests",
+              "name": "Task-specific acceptance revalidation",
               "result": "passed",
-              "summary": "The T0109 lifecycle test printed PASS on V3.0.337; the later failure occurred in the new T0110 close assertion."
+              "summary": "Revalidated disable/shutdown lifecycle against T0110's active frame reads. The lifecycle acceptance confirmed StopAsync/DisposeAsync releases the active listener and blocked client connection on V3.0.338.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40406054183/job/121863964765"
+            },
+            {
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "summary": "Repository-backed graph/Python quality checks passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40406054261"
+            },
+            {
+              "name": "Complete product build",
+              "result": "passed",
+              "summary": "Windows, Android and HostLifecycle jobs all completed successfully.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40406054183"
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
-          "reopened_reason": "Reopened for lifecycle contract revalidation because T0110 introduces active frame reads that StopAsync must cancel, close and await.",
+          "reopened_reason": null,
           "contract_changes": [
             "TCP accepted connections now read one bounded length-prefixed Protobuf InferenceRequest."
           ],
           "follow_up": "Restore done only after exact-head relevant CI succeeds."
         }
       ],
-      "reopened_reason": "Reopened for lifecycle contract revalidation because T0110 introduces active frame reads that StopAsync must cancel, close and await."
+      "reopened_reason": null
     },
     {
       "id": "T0110",
@@ -19781,8 +19827,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0109 و T0107 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "src/Host.Windows/Networking/NetworkInferenceRequestFrameReader.cs",
         "src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs",
@@ -19803,12 +19849,12 @@
         "docs/decisions/ADR-0003-tcp-request-framing.md",
         "step three/T0110/evidence/verification.md"
       ],
-      "notes": "T0110 implementation committed in V3.0.337. Exact-head CI found a test helper issue: TcpClient.GetStream can throw InvalidOperationException after a rejected peer socket is already disconnected. Attempt 02 fixes the assertion only; parser/listener logic is unchanged. T0108/T0109 stay in review until the full suite passes.",
+      "notes": "T0110 completed on V3.0.338. The frame reader validates a 4-byte unsigned big-endian length against the 16-KiB limit before allocation, reads one frame per TCP connection, and calls the existing shared ProtocolMessageParser. Valid typed requests reach an optional callback; no callback is wired to inference and no network response is claimed. Exact-head HostLifecycle, quality gate, Windows/Android build and live local inference all passed. T0111 still needs its dependency edge reviewed before it starts.",
       "execution_summary": {
         "attempt_count": 2,
         "failed_attempt_count": 1,
         "last_attempt_id": "T0110-2026-10-27-02",
-        "last_attempt_result": "partial",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Host.Windows/Networking/NetworkInferenceRequestFrameReader.cs",
           "src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs",
@@ -19822,17 +19868,17 @@
           "step three/project-graph.md"
         ],
         "related_commits": [
-          "f090bee81a85dbdc6cac93dc6d08b36dd7e422b0"
+          "f090bee81a85dbdc6cac93dc6d08b36dd7e422b0",
+          "86267255efa01fe899a26d58f5e5beec4f860c75"
         ],
         "tests_passed": [
-          "Step Three quality gate — PASS on V 3.0.337: https://github.com/artinrahimii/project/actions/runs/40405428005",
-          "Windows Release build/startup smoke — PASS on V 3.0.337: https://github.com/artinrahimii/project/actions/runs/40405428011",
-          "Android lint/APK/Protobuf checks — PASS on V 3.0.337: https://github.com/artinrahimii/project/actions/runs/40405428011"
+          "HostLifecycle — PASS on 86267255efa01fe899a26d58f5e5beec4f860c75; includes the prior listener participation test, lifecycle stop/dispose test, and new framed-request acceptance suite. https://github.com/artinrahimii/project/actions/runs/40406054183/job/121863964765",
+          "Step Three quality gate — PASS on 86267255efa01fe899a26d58f5e5beec4f860c75. https://github.com/artinrahimii/project/actions/runs/40406054261",
+          "Windows Release build and startup smoke — PASS on 86267255efa01fe899a26d58f5e5beec4f860c75. https://github.com/artinrahimii/project/actions/runs/40406054183",
+          "Android lint, debug APK build, Protobuf tests, generated-source validation and artifact upload — PASS on 86267255efa01fe899a26d58f5e5beec4f860c75. https://github.com/artinrahimii/project/actions/runs/40406054183",
+          "Real local llama.cpp/GGUF inference acceptance — PASS on 86267255efa01fe899a26d58f5e5beec4f860c75. https://github.com/artinrahimii/project/actions/runs/40406054061"
         ],
-        "tests_failed": [
-          "HostLifecycle harness — FAIL on V 3.0.337 in NetworkInferenceRequestFrameAcceptanceTests.AssertPeerClosedAsync: GetStream threw InvalidOperationException after the peer socket was already disconnected. https://github.com/artinrahimii/project/actions/runs/40405428011/job/121861832953",
-          "Real local inference workflow — FAIL before the opt-in inference acceptance ran because the same default harness assertion failed. https://github.com/artinrahimii/project/actions/runs/40405427961"
-        ],
+        "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -19919,22 +19965,55 @@
         {
           "attempt_id": "T0110-2026-10-27-02",
           "started_at": "2026-10-26T21:37:45.945Z",
-          "ended_at": null,
-          "result": "partial",
-          "summary": "Fix the peer-close assertion to accept a socket already disconnected at GetStream acquisition, while still failing if a connected stream returns nonzero bytes.",
+          "ended_at": "2026-10-26T21:42:59.945Z",
+          "result": "succeeded",
+          "summary": "Fixed the peer-close test helper to accept an already disconnected socket at GetStream acquisition while preserving the EOF assertion for connected streams. Exact-head HostLifecycle, quality gate, Windows/Android product build and real local inference all passed on V3.0.338.",
           "changed_files": [
             "tests/HostLifecycle.Tests/NetworkInferenceRequestFrameAcceptanceTests.cs",
             "step three/T0110/execution-report.md",
             "step three/T0110/evidence/verification.md",
             "step three/project-graph.md"
           ],
-          "related_commits": [],
-          "commit_sha": null,
+          "related_commits": [
+            "86267255efa01fe899a26d58f5e5beec4f860c75"
+          ],
+          "commit_sha": "86267255efa01fe899a26d58f5e5beec4f860c75",
           "tests": [
             {
-              "name": "NetworkInferenceRequestFrameAcceptanceTests",
-              "result": "pending",
-              "summary": "The test helper catches InvalidOperationException only when obtaining the stream; the read==0 assertion is outside that catch."
+              "name": "NetworkInferenceRequestFrameAcceptanceTests / HostLifecycle",
+              "result": "passed",
+              "summary": "The actual TCP framing suite passed; logs include the explicit PASS line for valid Protobuf delivery and rejection of malformed/truncated/oversized/interrupted frames.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40406054183/job/121863964765"
+            },
+            {
+              "name": "T0108 listener participation and T0109 lifecycle revalidation",
+              "result": "passed",
+              "summary": "Both existing tests emitted PASS on the same HostLifecycle run.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40406054183/job/121863964765"
+            },
+            {
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "summary": "All repository-backed graph and Python quality checks passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40406054261"
+            },
+            {
+              "name": "Windows Release build and startup smoke",
+              "result": "passed",
+              "summary": "Windows product job completed successfully.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40406054183"
+            },
+            {
+              "name": "Android product build",
+              "result": "passed",
+              "summary": "Kotlin lint, debug APK, Protobuf tests, generated sources and artifact upload completed successfully.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40406054183"
+            },
+            {
+              "name": "Real local inference integration",
+              "result": "passed",
+              "summary": "Pinned GGUF validation and live llama.cpp inference acceptance completed successfully.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40406054061"
             }
           ],
           "failure_details": null,
@@ -32132,6 +32211,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-26T21:37:45.945Z"
+  "updated_at": "2026-10-26T21:42:59.945Z"
 }
 ```

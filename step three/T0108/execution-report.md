@@ -28,3 +28,13 @@
 - **Real local inference integration:** [workflow](https://github.com/artinrahimii/project/actions/runs/40340806731) — success; pinned GGUF validation and live llama.cpp inference passed.
 - The local execution environment had no .NET SDK, so no local .NET run is claimed; the linked CI jobs executed the tests and builds on the exact implementation commit.
 - **Next:** T0109 — review the outgoing dependency edge(s), then integrate a full stop when participation is disabled or the app exits. T0110 must add protocol parsing before request processing.
+
+
+# T0108 execution report — final contract revalidation
+
+- **Status:** Done; the T0110 listener contract change was revalidated on `V 3.0.338` (`86267255efa01fe899a26d58f5e5beec4f860c75`).
+- The original T0108 implementation is in [V 3.0.331](https://github.com/artinrahimii/project/commit/42efe64069939558deb18414de1c233c739885fd). Historical implementation and acceptance evidence are retained above.
+- **Revalidation:** the existing `HostNetworkListenerParticipationTests` passed on the exact V338 HostLifecycle job: [job](`https://github.com/artinrahimii/project/actions/runs/40406054183/job/121863964765`). Its zero-length framed input is rejected and the connection closes; the participation listener remains fail-closed when participation is inactive.
+- **Cross-feature check:** the new T0110 frame acceptance suite also passed on the same job; Step Three quality gate passed [here](https://github.com/artinrahimii/project/actions/runs/40406054261), and full Windows/Android product build passed [here](https://github.com/artinrahimii/project/actions/runs/40406054183).
+- Listener behavior now reads only a bounded 4-byte big-endian length-prefixed frame and routes the payload through the shared parser. Invalid frames are rejected without logging payload content.
+- **Scope boundary:** the listener binds to loopback only. A valid typed request can reach the optional callback; no production callback is wired to inference, no network response is implemented, and full P2P/encryption are not claimed.

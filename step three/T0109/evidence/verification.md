@@ -33,3 +33,12 @@ All items below correspond to implementation commit `b82ce66b585c930577302258268
 ## Scope boundary
 
 The implemented listener lifecycle is loopback-only. Accepted connections still close before payload bytes are read. T0110 must add a bounded Protobuf parser before request processing; P2P request/response transfer and encryption remain unimplemented/unverified.
+
+
+# T0109 evidence — T0110 contract revalidation
+
+- Exact test commit: `86267255efa01fe899a26d58f5e5beec4f860c75` (V338).
+- `ParticipationNetworkListenerLifecycleTests` passed with initial inactive state, activation, disable/stop, port release/restart, disposal during active participation, endpoint clearing, and rejecting reuse after disposal: [HostLifecycle job](https://github.com/artinrahimii/project/actions/runs/40406054183/job/121863964765).
+- The new T0110 test for shutdown while a peer waits for a frame also passed on that job; it confirms the active connection is released as part of listener stop.
+- Step Three quality gate: [PASS](https://github.com/artinrahimii/project/actions/runs/40406054261). Full Windows/Android product build: [PASS](https://github.com/artinrahimii/project/actions/runs/40406054183).
+- T0109's temporary revalidation status is closed and the task is `done`; P2P payload transport and encryption remain outside this task's acceptance.
