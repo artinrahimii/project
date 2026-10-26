@@ -32,6 +32,7 @@
     <Compile Include="../../src/Host.Windows/Tools/IAgentToolProcessExecutor.cs" Link="Tools/IAgentToolProcessExecutor.cs" />
     <Compile Include="../../src/Host.Windows/Tools/AgentToolProcessExecutor.cs" Link="Tools/AgentToolProcessExecutor.cs" />
     <Compile Include="../../src/Host.Windows/Tools/AgentToolWorkerHost.cs" Link="Tools/AgentToolWorkerHost.cs" />
+    <Compile Include="../../src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs" Link="Networking/ParticipationGatedNetworkListener.cs" />
     <Compile Include="../../src/Host.Windows/Requests/HostRequestCoordinator.cs" Link="Requests/HostRequestCoordinator.cs" />
     <Compile Include="../../src/Host.Windows/Requests/HostRequestResponseDeliveryGate.cs" Link="Requests/HostRequestResponseDeliveryGate.cs" />
     <Compile Include="../../src/Host.Windows/Requests/SecureRequestIdGenerator.cs" Link="Requests/SecureRequestIdGenerator.cs" />

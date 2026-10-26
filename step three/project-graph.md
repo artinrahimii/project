@@ -19356,20 +19356,39 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0107 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs",
+        "tests/HostLifecycle.Tests/HostNetworkListenerParticipationTests.cs",
+        "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0108/execution-report.md",
+        "step three/T0108/evidence/verification.md",
+        "step three/project-graph.md"
+      ],
       "expected_output_paths": [
         "src/Host.Windows/Networking/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "tests/HostLifecycle.Tests/HostNetworkListenerParticipationTests.cs",
+        "step three/T0108/evidence/verification.md"
+      ],
+      "notes": "T0108 attempt T0108-2026-10-26-01 adds a TCP listener with a live participation predicate checked before binding and explicit bind address/port. Accepted sockets are closed without reading/logging payloads until T0110 provides the Protobuf parser. App-level stop on participation disable/shutdown is T0109; this task does not claim end-to-end P2P.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0108-2026-10-26-01",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs",
+          "tests/HostLifecycle.Tests/HostNetworkListenerParticipationTests.cs",
+          "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+          "tests/HostLifecycle.Tests/Program.cs",
+          "step three/T0108/execution-report.md",
+          "step three/T0108/evidence/verification.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
@@ -19382,7 +19401,38 @@
           "review_evidence": []
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0108-2026-10-26-01",
+          "started_at": "2026-10-26T14:33:45.807Z",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Reviewed T0107 -> T0108 as sequencing-only, implemented a TCP listener whose bind is gated by the current participation predicate, and added local-socket acceptance tests. Exact-head CI is pending.",
+          "changed_files": [
+            "src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs",
+            "tests/HostLifecycle.Tests/HostNetworkListenerParticipationTests.cs",
+            "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "step three/T0108/execution-report.md",
+            "step three/T0108/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "related_commits": [],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "HostNetworkListenerParticipationTests",
+              "result": "pending",
+              "summary": "Added inactive no-bind, active bind/connection, repeat-start and stop checks; awaiting exact-head execution."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Verify HostLifecycle tests, Step Three quality gate, Windows host build and Android build against the implementation commit before marking T0108 done."
+        }
+      ]
     },
     {
       "id": "T0109",
@@ -27448,10 +27498,15 @@
       "from": "T0107",
       "to": "T0108",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0107 adds acceptance coverage for in-process request-coordinator fault paths. T0108 binds a TCP listener behind an independently supplied participation predicate and consumes no T0107-specific API or data output. Preserve type=blocks as conservative sequencing, not a hard technical dependency.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/Requests/HostRequestCoordinator.cs",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorFailureAcceptanceTests.cs",
+        "step three/T0107/execution-report.md",
+        "step three/T0107/evidence/verification.md"
+      ]
     },
     {
       "from": "T0108",
@@ -31547,8 +31602,25 @@
         "step three/T0106/evidence/verification.md"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-26T14:33:45.807Z",
+      "edge_from": "T0107",
+      "edge_to": "T0108",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "old_validation_status": "unreviewed",
+      "new_validation_status": "validated",
+      "reason": "T0107 adds acceptance coverage for in-process request-coordinator fault paths. T0108 binds a TCP listener behind an independently supplied participation predicate and consumes no T0107-specific API or data output. Preserve type=blocks as conservative sequencing, not a hard technical dependency.",
+      "evidence": [
+        "src/Host.Windows/Requests/HostRequestCoordinator.cs",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorFailureAcceptanceTests.cs",
+        "step three/T0107/execution-report.md",
+        "step three/T0107/evidence/verification.md"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-26T14:11:31.132Z"
+  "updated_at": "2026-10-26T14:33:45.807Z"
 }
 ```
