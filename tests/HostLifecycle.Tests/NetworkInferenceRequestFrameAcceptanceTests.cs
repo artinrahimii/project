@@ -13,6 +13,9 @@ internal static class NetworkInferenceRequestFrameAcceptanceTests
     {
         await ValidLengthPrefixedRequestReachesTheSharedParserAsync().ConfigureAwait(false);
         await InvalidFramesAreRejectedAsync().ConfigureAwait(false);
+        await DisconnectedClientDoesNotPreventSubsequentValidRequestAsync().ConfigureAwait(false);
+        await SemanticallyInvalidRequestIsRejectedAsync().ConfigureAwait(false);
+        await SequentialConnectionsAreHandledIndependentlyAsync().ConfigureAwait(false);
         await ParticipationInactiveAtDispatchDoesNotInvokeCallbackAsync().ConfigureAwait(false);
         await RequestPromptIsNotWrittenToNormalConsoleLogsAsync().ConfigureAwait(false);
         await ShutdownCancelsAClientWaitingForItsFrameAsync().ConfigureAwait(false);
@@ -57,6 +60,89 @@ internal static class NetworkInferenceRequestFrameAcceptanceTests
             await AssertPeerClosedAsync(client).ConfigureAwait(false);
         }
     }
+    private static async Task DisconnectedClientDoesNotPreventSubsequentValidRequestAsync()
+    {
+        var parsed = new TaskCompletionSource<InferenceRequest>(TaskCreationOptions.RunContinuationsAsynchronously);
+        await using var listener = new ParticipationGatedNetworkListener(
+            () => true,
+            IPAddress.Loopback,
+            0,
+            (request, _) =>
+            {
+                parsed.TrySetResult(request);
+                return Task.CompletedTask;
+            });
+        await listener.StartAsync().WaitAsync(TimeSpan.FromSeconds(5)).ConfigureAwait(false);
+        var endpoint = listener.LocalEndpoint ?? throw new InvalidOperationException("Listener endpoint missing.");
+
+        using (var abandoned = await ConnectAsync(endpoint).ConfigureAwait(false))
+        {
+            await WaitUntilAsync(() => listener.ActiveConnectionCount == 1, TimeSpan.FromSeconds(5)).ConfigureAwait(false);
+            // Close before sending a frame; the listener must release this client and keep accepting.
+        }
+
+        await WaitUntilAsync(() => listener.ActiveConnectionCount == 0, TimeSpan.FromSeconds(5)).ConfigureAwait(false);
+        using var nextClient = await ConnectAsync(endpoint).ConfigureAwait(false);
+        var valid = ValidRequest();
+        valid.RequestId = "after-disconnect";
+        valid.AttemptId = "after-disconnect-attempt";
+        await nextClient.GetStream().WriteAsync(EncodeFrame(valid.ToByteArray()).AsMemory()).ConfigureAwait(false);
+        var received = await parsed.Task.WaitAsync(TimeSpan.FromSeconds(5)).ConfigureAwait(false);
+        Assert(received.RequestId == "after-disconnect", "An abandoned client must not prevent the next valid connection from being served.");
+        await AssertPeerClosedAsync(nextClient).ConfigureAwait(false);
+    }
+
+    private static async Task SemanticallyInvalidRequestIsRejectedAsync()
+    {
+        var callbackCount = 0;
+        await using var listener = new ParticipationGatedNetworkListener(
+            () => true,
+            IPAddress.Loopback,
+            0,
+            (_, _) =>
+            {
+                Interlocked.Increment(ref callbackCount);
+                return Task.CompletedTask;
+            });
+        await listener.StartAsync().WaitAsync(TimeSpan.FromSeconds(5)).ConfigureAwait(false);
+        var endpoint = listener.LocalEndpoint ?? throw new InvalidOperationException("Listener endpoint missing.");
+        var malicious = ValidRequest();
+        malicious.RequestId = "bad/request";
+        await SendAndExpectCloseAsync(endpoint, EncodeFrame(malicious.ToByteArray())).ConfigureAwait(false);
+        Assert(Volatile.Read(ref callbackCount) == 0, "A semantically invalid request must be rejected before callback dispatch.");
+    }
+
+    private static async Task SequentialConnectionsAreHandledIndependentlyAsync()
+    {
+        var acceptedCount = 0;
+        await using var listener = new ParticipationGatedNetworkListener(
+            () => true,
+            IPAddress.Loopback,
+            0,
+            (_, _) =>
+            {
+                Interlocked.Increment(ref acceptedCount);
+                return Task.CompletedTask;
+            });
+        await listener.StartAsync().WaitAsync(TimeSpan.FromSeconds(5)).ConfigureAwait(false);
+        var endpoint = listener.LocalEndpoint ?? throw new InvalidOperationException("Listener endpoint missing.");
+
+        for (var index = 1; index <= 2; index++)
+        {
+            using var client = await ConnectAsync(endpoint).ConfigureAwait(false);
+            var request = ValidRequest();
+            request.RequestId = $"repeat-{index}";
+            request.AttemptId = $"repeat-attempt-{index}";
+            await client.GetStream().WriteAsync(EncodeFrame(request.ToByteArray()).AsMemory()).ConfigureAwait(false);
+            var expectedCount = index;
+            await WaitUntilAsync(() => Volatile.Read(ref acceptedCount) >= expectedCount, TimeSpan.FromSeconds(5)).ConfigureAwait(false);
+            await AssertPeerClosedAsync(client).ConfigureAwait(false);
+            Assert(listener.IsListening, "The listener must remain active after the per-request connection is closed.");
+        }
+
+        Assert(Volatile.Read(ref acceptedCount) == 2, "Two sequential valid connections must each be admitted exactly once.");
+    }
+
     private static async Task ParticipationInactiveAtDispatchDoesNotInvokeCallbackAsync()
     {
         var participationActive = true;

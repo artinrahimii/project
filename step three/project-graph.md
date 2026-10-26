@@ -20576,8 +20576,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0113 و T0107 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "تکمیل‌شده",
       "actual_output_paths": [
         "src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs",
         "tests/HostLifecycle.Tests/HostNetworkListenerParticipationTests.cs",
@@ -20597,10 +20597,10 @@
       ],
       "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nThe V 3.0.345 Step Three quality gate failed only on a metadata mismatch in T0113.failed_attempt_count; Python tests and compileall passed. Corrected metadata is being committed in V 3.0.346; T0114 acceptance still awaits exact-head HostLifecycle and product workflow.",
       "execution_summary": {
-        "attempt_count": 1,
+        "attempt_count": 2,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0114-A001",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "T0114-A001-verification",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs",
           "tests/HostLifecycle.Tests/HostNetworkListenerParticipationTests.cs",
@@ -20610,17 +20610,21 @@
           "step three/T0114/evidence/verification.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
+        "related_commits": [
+          "9f846da49e275e1ef6de621f32f27286ae0b1500",
+          "e05efbcc6881599a7ccec40975ea72624a921111"
+        ],
         "tests_passed": [
-          "Python test suite and syntax validation passed on V 3.0.345; NetworkListenerExposureTests is included in the suite."
+          "HostLifecycle listener bind-policy tests passed on V 3.0.346, including rejection of IPv4 wildcard, IPv6 wildcard and non-loopback address: https://github.com/artinrahimii/project/actions/runs/40416731544",
+          "Step Three quality gate passed on V 3.0.346, including NetworkListenerExposureTests, graph and recorded-evidence validation: https://github.com/artinrahimii/project/actions/runs/40416731457",
+          "Windows WPF Release build, formatting, generated C# Protobuf source check, application startup smoke and policy gates passed on V 3.0.346: https://github.com/artinrahimii/project/actions/runs/40416731544",
+          "Android lint, debug APK, Protobuf round-trip, generated-source checks and artifact upload passed on V 3.0.346: https://github.com/artinrahimii/project/actions/runs/40416731544"
         ],
-        "tests_failed": [
-          "Step Three graph guard on V 3.0.345 failed with FAILED_ATTEMPT_COUNT_MISMATCH for T0113 metadata; unrelated to T0114 source/test behavior. The source-quality gate is being corrected in V 3.0.346."
-        ],
+        "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "required",
+          "state": "passed",
           "triggering_contracts": [
             "listener bind-address policy",
             "WPF participation endpoint status"
@@ -20686,6 +20690,49 @@
             }
           ],
           "follow_up": "Run exact-head Step Three quality and product build. Mark done only when C# and Python acceptance pass."
+        },
+        {
+          "attempt_id": "T0114-A001-verification",
+          "started_at": "2026-10-26T23:00:00Z",
+          "ended_at": "2026-10-26T23:02:43Z",
+          "result": "succeeded",
+          "summary": "The V3.0.346 exact-head quality gate and product build passed. HostLifecycle rejected wildcard/non-loopback listener addresses, NetworkListenerExposureTests confirmed loopback binding and user-facing actual port/status, Windows WPF build/smoke passed, and Android product checks passed. An earlier V3.0.345 graph-guard failure was a T0113 metadata counter mismatch and was corrected before V3.0.346.",
+          "changed_files": [
+            "src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs",
+            "tests/HostLifecycle.Tests/HostNetworkListenerParticipationTests.cs",
+            "tests/test_network_listener_exposure.py",
+            "docs/decisions/ADR-0003-tcp-request-framing.md",
+            "step three/T0114/execution-report.md",
+            "step three/T0114/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": "9f846da49e275e1ef6de621f32f27286ae0b1500",
+          "tests": [
+            {
+              "name": "HostLifecycle",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40416731544"
+            },
+            {
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40416731457"
+            },
+            {
+              "name": "Windows WPF product checks",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40416731544"
+            },
+            {
+              "name": "Android product checks",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40416731544"
+            }
+          ],
+          "failure_details": "V3.0.345 graph guard failure related to T0113 summary metadata, corrected in V3.0.346; no T0114 application tests failed.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "follow_up": "T0115 tests disconnected peers, semantically malicious message, repeated connections and shutdown; review edges before execution."
         }
       ]
     },
@@ -20706,33 +20753,96 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0114 و T0107 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "tests/HostLifecycle.Tests/NetworkInferenceRequestFrameAcceptanceTests.cs"
+      ],
       "expected_output_paths": [
         "src/Host.Windows/Networking/"
       ],
-      "evidence": [],
+      "evidence": [
+        "tests/HostLifecycle.Tests/NetworkInferenceRequestFrameAcceptanceTests.cs",
+        "step three/T0115/execution-report.md",
+        "step three/T0115/evidence/verification.md"
+      ],
       "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0115-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "tests/HostLifecycle.Tests/NetworkInferenceRequestFrameAcceptanceTests.cs",
+          "step three/T0115/execution-report.md",
+          "step three/T0115/evidence/verification.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
-          "affected_by_contract_changes": [],
-          "review_evidence": []
+          "state": "required",
+          "triggering_contracts": [
+            "NetworkInferenceRequestFrameReader framing contract",
+            "ParticipationGatedNetworkListener lifecycle and callback contract"
+          ],
+          "affected_by_contract_changes": [
+            "T0116",
+            "T0117"
+          ],
+          "review_evidence": [
+            "src/Host.Windows/Networking/NetworkInferenceRequestFrameReader.cs",
+            "src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs",
+            "tests/HostLifecycle.Tests/NetworkInferenceRequestFrameAcceptanceTests.cs"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0115-A001",
+          "started_at": "2026-10-26T23:04:32.841Z",
+          "ended_at": "2026-10-26T23:04:32.841Z",
+          "result": "partial",
+          "summary": "Added real loopback TCP acceptance cases for peer disconnect before frame, rejection of semantically invalid Protobuf requests before callback, and two sequential valid connections handled independently. Existing malformed/truncated/oversized and shutdown tests remain in the same suite. Exact-head CI pending.",
+          "changed_files": [
+            "tests/HostLifecycle.Tests/NetworkInferenceRequestFrameAcceptanceTests.cs",
+            "step three/T0115/execution-report.md",
+            "step three/T0115/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "DisconnectedClientDoesNotPreventSubsequentValidRequestAsync",
+              "result": "pending",
+              "summary": "Must prove listener releases an abandoned client slot and handles next valid frame."
+            },
+            {
+              "name": "SemanticallyInvalidRequestIsRejectedAsync",
+              "result": "pending",
+              "summary": "Must prove an unsafe identifier is rejected before callback."
+            },
+            {
+              "name": "SequentialConnectionsAreHandledIndependentlyAsync",
+              "result": "pending",
+              "summary": "Must prove two sequential clients are handled exactly once without stopping the listener."
+            },
+            {
+              "name": "Existing malformed/truncated/oversized/shutdown acceptance",
+              "result": "pending",
+              "summary": "Existing cases must remain green."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Run exact-head HostLifecycle and Step Three quality checks. Fix any behavioral failure before marking done."
+        }
+      ]
     },
     {
       "id": "T0116",
@@ -28670,19 +28780,29 @@
       "from": "T0114",
       "to": "T0115",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0115 adds acceptance coverage around the existing listener behavior; it consumes no new T0114-specific API or artifact. Keep blocks as conservative execution order only.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs",
+        "tests/HostLifecycle.Tests/HostNetworkListenerParticipationTests.cs",
+        "tests/HostLifecycle.Tests/NetworkInferenceRequestFrameAcceptanceTests.cs",
+        "step three/T0114/evidence/verification.md"
+      ]
     },
     {
       "from": "T0107",
       "to": "T0115",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0107's in-process request coordinator output is not consumed by these TCP framing/lifecycle acceptance cases. Preserve blocks as conservative task order rather than claim a hard dependency.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/Requests/HostRequestCoordinator.cs",
+        "src/Host.Windows/Requests/HostRequestAdmissionPolicy.cs",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorFailureAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/NetworkInferenceRequestFrameAcceptanceTests.cs"
+      ]
     },
     {
       "from": "T0115",
@@ -32878,8 +32998,42 @@
         "tests/HostLifecycle.Tests/HostRequestCoordinatorFailureAcceptanceTests.cs"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-26T23:04:32.841Z",
+      "edge_from": "T0114",
+      "edge_to": "T0115",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "old_validation_status": "unreviewed",
+      "new_validation_status": "validated",
+      "reason": "Reviewed dependency; tests exercise the existing listener but consume no T0114-specific API. Retain blocks as sequence only.",
+      "evidence": [
+        "src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs",
+        "tests/HostLifecycle.Tests/HostNetworkListenerParticipationTests.cs",
+        "tests/HostLifecycle.Tests/NetworkInferenceRequestFrameAcceptanceTests.cs",
+        "step three/T0114/evidence/verification.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-26T23:04:32.841Z",
+      "edge_from": "T0107",
+      "edge_to": "T0115",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "old_validation_status": "unreviewed",
+      "new_validation_status": "validated",
+      "reason": "Reviewed dependency; test cases operate at TCP listener framing/lifecycle, not the in-process request coordinator contract. Retain blocks as sequence only.",
+      "evidence": [
+        "src/Host.Windows/Requests/HostRequestCoordinator.cs",
+        "src/Host.Windows/Requests/HostRequestAdmissionPolicy.cs",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorFailureAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/NetworkInferenceRequestFrameAcceptanceTests.cs"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-26T23:00:10.524Z"
+  "updated_at": "2026-10-26T23:04:32.841Z"
 }
 ```
