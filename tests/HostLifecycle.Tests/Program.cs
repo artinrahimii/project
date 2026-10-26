@@ -11,6 +11,15 @@ using WhiteP.Host.Infrastructure;
 using WhiteP.Host.Windows.Inference;
 using WhiteP.Host.Windows.Models.Catalog;
 using WhiteP.Shared.Contracts;
+
+if (args.Contains("--agent-tool-worker", StringComparer.Ordinal))
+{
+    Environment.ExitCode = args.Contains("--test-agent-tool-worker", StringComparer.Ordinal)
+        ? await AgentToolExecutionAcceptanceTests.RunWorkerAsync()
+        : 2;
+    return;
+}
+
 static void Assert(bool ok,string message){if(!ok)throw new Exception(message);}
 static void ExpectInvalid(Action action){try{action();}catch(InvalidOperationException){return;}throw new Exception("Invalid transition accepted.");}
 static Task<HostReadinessResult> ReadyHostReadiness(CancellationToken _) =>
@@ -58,6 +67,7 @@ Console.WriteLine("PASS: HostCapabilities keeps incomplete/invalid measurements 
 ChatConversationAcceptanceTests.Run();
 AgentToolRegistryAcceptanceTests.Run();
 await AgentToolExecutionAcceptanceTests.RunAsync();
+await AgentToolProcessExecutorTests.RunAsync();
 HostCapacityAcceptanceTests.Run();
 InferenceEngineContractTests.Run();
 ModelCatalogParserAcceptanceTests.Run();

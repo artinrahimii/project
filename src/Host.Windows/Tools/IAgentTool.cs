@@ -6,8 +6,9 @@ namespace WhiteP.Host.Windows.Tools;
 /// <summary>
 /// Contract implemented only by trusted, host-owned tools. Implementations must
 /// validate the complete argument object and must not perform work in
-/// ValidateArguments. Execution and side-effect confirmation are handled by
-/// later policy components, not by the model.
+/// ValidateArguments. ExecuteAsync is invoked by the isolated worker process only;
+/// the host-side coordinator dispatches through IAgentToolProcessExecutor after policy
+/// validation and any required user confirmation.
 /// </summary>
 public interface IAgentTool
 {

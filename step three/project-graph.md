@@ -16482,33 +16482,114 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0094 و T0087 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال انجام",
+      "actual_output_paths": [
+        "src/Host.Windows/Tools/IAgentToolProcessExecutor.cs",
+        "src/Host.Windows/Tools/AgentToolProcessExecutor.cs",
+        "src/Host.Windows/Tools/AgentToolWorkerHost.cs",
+        "src/Host.Windows/Tools/AgentToolExecutionCoordinator.cs",
+        "src/Host.Windows/Tools/IAgentTool.cs",
+        "src/Host.Windows/App.xaml.cs",
+        "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "tests/HostLifecycle.Tests/AgentToolExecutionAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/AgentToolProcessExecutorTests.cs",
+        "step three/T0095/execution-report.md",
+        "step three/project-graph.md"
+      ],
       "expected_output_paths": [
         "src/Host.Windows/Chat/ و src/Host.Windows/Tools/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "src/Host.Windows/Tools/AgentToolProcessExecutor.cs",
+        "src/Host.Windows/Tools/AgentToolWorkerHost.cs",
+        "src/Host.Windows/Tools/AgentToolExecutionCoordinator.cs",
+        "src/Host.Windows/App.xaml.cs",
+        "tests/HostLifecycle.Tests/AgentToolExecutionAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/AgentToolProcessExecutorTests.cs",
+        "step three/T0095/execution-report.md"
+      ],
+      "notes": "T0095 implementation attempt added a shell-free child-worker boundary, a strict bounded protocol, worker-side allowlist/argument validation, sanitized inherited environment, a timeout, and process-tree termination. On Windows the worker also must join a Job Object with one-process maximum and kill-on-close. No tool is registered by default. This is not an AppContainer/restricted-token sandbox; the worker retains the same user security context. Exact-commit CI must pass before completion.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0095-2026-10-26-01",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Host.Windows/Tools/IAgentToolProcessExecutor.cs",
+          "src/Host.Windows/Tools/AgentToolProcessExecutor.cs",
+          "src/Host.Windows/Tools/AgentToolWorkerHost.cs",
+          "src/Host.Windows/Tools/AgentToolExecutionCoordinator.cs",
+          "src/Host.Windows/Tools/IAgentTool.cs",
+          "src/Host.Windows/App.xaml.cs",
+          "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+          "tests/HostLifecycle.Tests/Program.cs",
+          "tests/HostLifecycle.Tests/AgentToolExecutionAcceptanceTests.cs",
+          "tests/HostLifecycle.Tests/AgentToolProcessExecutorTests.cs",
+          "step three/T0095/execution-report.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
-          "affected_by_contract_changes": [],
-          "review_evidence": []
+          "state": "passed",
+          "triggering_contracts": [
+            "T0094 approval-aware execution contract",
+            "T0087 model-license catalog contract review"
+          ],
+          "affected_by_contract_changes": [
+            "Agent-tool execution is now delegated to a separately launched worker that independently enforces its allowlist; approval remains in the host coordinator before dispatch."
+          ],
+          "review_evidence": [
+            "src/Host.Windows/Tools/AgentToolExecutionCoordinator.cs",
+            "src/Host.Windows/Tools/AgentToolRegistry.cs",
+            "src/Host.Windows/Tools/IAgentToolConfirmationService.cs",
+            "step three/T0087/execution-report.md"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0095-2026-10-26-01",
+          "started_at": "2026-10-26T09:40:00+03:30",
+          "ended_at": "2026-10-26T06:24:56.185Z",
+          "result": "partial",
+          "summary": "Implemented a required process-executor boundary and worker protocol with shell-free launch, sanitized environment, strict worker-side allowlist/argument revalidation, input/output caps, timeout, and process-tree kill. Added executable acceptance tests; exact-commit CI is pending.",
+          "changed_files": [
+            "src/Host.Windows/Tools/IAgentToolProcessExecutor.cs",
+            "src/Host.Windows/Tools/AgentToolProcessExecutor.cs",
+            "src/Host.Windows/Tools/AgentToolWorkerHost.cs",
+            "src/Host.Windows/Tools/AgentToolExecutionCoordinator.cs",
+            "src/Host.Windows/Tools/IAgentTool.cs",
+            "src/Host.Windows/App.xaml.cs",
+            "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "tests/HostLifecycle.Tests/AgentToolExecutionAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/AgentToolProcessExecutorTests.cs",
+            "step three/T0095/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "related_commits": [],
+          "tests": [
+            {
+              "name": "AgentToolProcessExecutorTests.RunAsync and updated AgentToolExecutionAcceptanceTests.RunAsync",
+              "result": "not_run",
+              "summary": "Test code has been added but has not been executed in this environment; verify the exact commit with GitHub Actions."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "AgentToolExecutionCoordinator now requires IAgentToolProcessExecutor and never invokes IAgentTool.ExecuteAsync in the host process."
+          ],
+          "follow_up": "Inspect exact-commit quality and product workflow results; fix any compile/test failures and rerun before marking T0095 done."
+        }
+      ]
     },
     {
       "id": "T0096",
@@ -24806,10 +24887,14 @@
       "from": "T0087",
       "to": "T0095",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0087 adds model-catalog license classification and disclosure. T0095's worker-process and timeout contract consumes T0094's approval-aware execution seam and does not use T0087's license fields or model-catalog interface. Preserve the original blocks edge as conservative ordering, but classify it as sequencing rather than a technical prerequisite.",
+      "validation_status": "validated",
+      "evidence": [
+        "step three/T0087/execution-report.md",
+        "src/Host.Windows/Models/Catalog/ModelCatalogModels.cs",
+        "src/Host.Windows/Tools/AgentToolExecutionCoordinator.cs"
+      ]
     },
     {
       "from": "T0095",
@@ -28762,6 +28847,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-26T04:28:54.287Z"
+  "updated_at": "2026-10-26T06:29:23.677Z"
 }
 ```

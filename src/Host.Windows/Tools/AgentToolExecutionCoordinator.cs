@@ -30,21 +30,25 @@ public sealed record AgentToolExecutionOutcome(
 /// The single policy-aware dispatch path for trusted agent tools. It validates the
 /// allowlist entry and arguments before prompting, and never invokes a tool that
 /// requires confirmation unless the confirmation service explicitly approves it.
-/// Process isolation and execution time limits are supplied by the subsequent tool
-/// execution boundary and are intentionally not implemented by this coordinator.
+/// Execution is delegated to a required process executor after policy validation and any
+/// user confirmation. This coordinator never invokes tool code in the host process.
 /// </summary>
 public sealed class AgentToolExecutionCoordinator
 {
     private readonly AgentToolRegistry _registry;
     private readonly IAgentToolConfirmationService _confirmationService;
+    private readonly IAgentToolProcessExecutor _processExecutor;
 
     public AgentToolExecutionCoordinator(
         AgentToolRegistry registry,
-        IAgentToolConfirmationService confirmationService)
+        IAgentToolConfirmationService confirmationService,
+        IAgentToolProcessExecutor processExecutor)
     {
         _registry = registry ?? throw new ArgumentNullException(nameof(registry));
         _confirmationService = confirmationService
             ?? throw new ArgumentNullException(nameof(confirmationService));
+        _processExecutor = processExecutor
+            ?? throw new ArgumentNullException(nameof(processExecutor));
     }
 
     public async Task<AgentToolExecutionOutcome> ExecuteAsync(
@@ -55,7 +59,7 @@ public sealed class AgentToolExecutionCoordinator
         cancellationToken.ThrowIfCancellationRequested();
 
         // Resolve the explicit allowlist and validate arguments before showing any prompt.
-        var tool = _registry.ResolveValidated(call);
+        _registry.ResolveValidated(call);
         var definition = _registry.GetDefinition(call.Name);
 
         if (definition.RequiresUserConfirmation)
@@ -73,7 +77,7 @@ public sealed class AgentToolExecutionCoordinator
         // A cancellation that races with a positive click must still prevent invocation.
         cancellationToken.ThrowIfCancellationRequested();
 
-        var result = await tool.ExecuteAsync(call.Arguments.Clone(), cancellationToken)
+        var result = await _processExecutor.ExecuteAsync(call, cancellationToken)
             .ConfigureAwait(false);
 
         return AgentToolExecutionOutcome.Completed(result);

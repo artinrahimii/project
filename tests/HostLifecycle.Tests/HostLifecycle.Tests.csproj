@@ -27,5 +27,8 @@
     <Compile Include="../../src/Host.Windows/Tools/AgentToolRegistry.cs" Link="Tools/AgentToolRegistry.cs" />
     <Compile Include="../../src/Host.Windows/Tools/IAgentToolConfirmationService.cs" Link="Tools/IAgentToolConfirmationService.cs" />
     <Compile Include="../../src/Host.Windows/Tools/AgentToolExecutionCoordinator.cs" Link="Tools/AgentToolExecutionCoordinator.cs" />
+    <Compile Include="../../src/Host.Windows/Tools/IAgentToolProcessExecutor.cs" Link="Tools/IAgentToolProcessExecutor.cs" />
+    <Compile Include="../../src/Host.Windows/Tools/AgentToolProcessExecutor.cs" Link="Tools/AgentToolProcessExecutor.cs" />
+    <Compile Include="../../src/Host.Windows/Tools/AgentToolWorkerHost.cs" Link="Tools/AgentToolWorkerHost.cs" />
   </ItemGroup>
 </Project>

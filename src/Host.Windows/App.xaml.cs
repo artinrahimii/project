@@ -2,6 +2,7 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
+using WhiteP.Host.Windows.Tools;
 
 namespace WhiteP.Host.Windows;
 
@@ -9,6 +10,25 @@ public partial class App : System.Windows.Application
 {
     protected override void OnStartup(StartupEventArgs e)
     {
+        var workerMode = Array.Exists(
+            e.Args,
+            argument => string.Equals(argument, "--agent-tool-worker", StringComparison.Ordinal));
+
+        if (workerMode)
+        {
+            // Do not open the WPF window in worker mode. No tools are registered by default.
+            StartupUri = null!;
+            ShutdownMode = ShutdownMode.OnExplicitShutdown;
+            base.OnStartup(e);
+
+            var exitCode = AgentToolWorkerHost.RunAsync(
+                Console.OpenStandardInput(),
+                Console.OpenStandardOutput(),
+                new AgentToolRegistry()).GetAwaiter().GetResult();
+            Shutdown(exitCode);
+            return;
+        }
+
         var smokeTest = Array.Exists(
             e.Args,
             argument => string.Equals(argument, "--smoke-test", StringComparison.Ordinal));
