@@ -16302,33 +16302,103 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0093 و T0087 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "src/Host.Windows/Tools/IAgentToolConfirmationService.cs",
+        "src/Host.Windows/Tools/AgentToolExecutionCoordinator.cs",
+        "src/Host.Windows/Tools/WpfAgentToolConfirmationService.cs",
+        "tests/HostLifecycle.Tests/AgentToolExecutionAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0094/execution-report.md",
+        "step three/project-graph.md"
+      ],
       "expected_output_paths": [
         "src/Host.Windows/Chat/ و src/Host.Windows/Tools/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "src/Host.Windows/Tools/AgentToolExecutionCoordinator.cs",
+        "src/Host.Windows/Tools/IAgentToolConfirmationService.cs",
+        "src/Host.Windows/Tools/WpfAgentToolConfirmationService.cs",
+        "tests/HostLifecycle.Tests/AgentToolExecutionAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0094/execution-report.md"
+      ],
+      "notes": "The production execution coordinator now validates and resolves the explicit allowlist before prompting; side-effecting calls require positive injected confirmation, and cancellation/decline fail closed. Exact-commit CI is pending. Process isolation and timeout are intentionally deferred to T0095; no default tools or arbitrary-command execution were added.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0094-2026-10-26-01",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Host.Windows/Tools/IAgentToolConfirmationService.cs",
+          "src/Host.Windows/Tools/AgentToolExecutionCoordinator.cs",
+          "src/Host.Windows/Tools/WpfAgentToolConfirmationService.cs",
+          "tests/HostLifecycle.Tests/AgentToolExecutionAcceptanceTests.cs",
+          "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+          "tests/HostLifecycle.Tests/Program.cs",
+          "step three/T0094/execution-report.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
-          "affected_by_contract_changes": [],
-          "review_evidence": []
+          "state": "in_progress",
+          "triggering_contracts": [
+            "T0093 trusted tool registry/confirmation metadata",
+            "T0087 model-catalog sequencing prerequisite"
+          ],
+          "affected_by_contract_changes": [
+            "Introduced IAgentToolConfirmationService and AgentToolExecutionCoordinator as the approval-aware execution seam for T0095."
+          ],
+          "review_evidence": [
+            "src/Host.Windows/Tools/IAgentTool.cs",
+            "src/Host.Windows/Tools/AgentToolRegistry.cs",
+            "src/Host.Windows/Tools/AgentToolExecutionCoordinator.cs",
+            "src/Host.Windows/Tools/IAgentToolConfirmationService.cs",
+            "step three/T0087/execution-report.md"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0094-2026-10-26-01",
+          "started_at": "2026-10-26T04:05:00Z",
+          "ended_at": "2026-10-26T04:05:00Z",
+          "result": "partial",
+          "summary": "Implemented an approval-aware tool execution coordinator and owned WPF confirmation UI. Tests cover approval, decline, invalid/unknown calls, cancellation and fail-closed confirmation failure; exact-commit CI has not yet run.",
+          "changed_files": [
+            "src/Host.Windows/Tools/IAgentToolConfirmationService.cs",
+            "src/Host.Windows/Tools/AgentToolExecutionCoordinator.cs",
+            "src/Host.Windows/Tools/WpfAgentToolConfirmationService.cs",
+            "tests/HostLifecycle.Tests/AgentToolExecutionAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "step three/T0094/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "related_commits": [],
+          "tests": [
+            {
+              "name": "AgentToolExecutionAcceptanceTests.RunAsync",
+              "result": "not_run",
+              "summary": "Added to HostLifecycle.Tests; authoritative execution pending the exact-commit product workflow."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "Added injected IAgentToolConfirmationService and AgentToolExecutionCoordinator.",
+            "WPF confirmation displays the complete JSON arguments and defaults to No; oversized argument payloads are denied."
+          ],
+          "follow_up": "Inspect exact-commit quality and product workflow results for V 3.0.292 before marking the task done."
+        }
+      ]
     },
     {
       "id": "T0095",
@@ -24644,19 +24714,28 @@
       "from": "T0087",
       "to": "T0094",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0087 adds model-catalog license classification and disclosure; T0094 consumes the trusted agent-tool registry and confirmation metadata, not the model-license contract. Keep the existing edge as conservative execution order only; no technical prerequisite is established.",
+      "validation_status": "validated",
+      "evidence": [
+        "step three/T0087/execution-report.md",
+        "src/Host.Windows/Models/Catalog/ModelCatalogModels.cs",
+        "src/Host.Windows/Tools/AgentToolExecutionCoordinator.cs"
+      ]
     },
     {
       "from": "T0094",
       "to": "T0095",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0094 defines the policy-aware execution seam that validates a tool, requires explicit user approval for side-effecting calls, and invokes the registered implementation. T0095 must enforce process isolation and timeouts around this invocation seam while preserving the approval-before-execution ordering; the edge remains a prerequisite, not permission to execute arbitrary commands.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/Tools/AgentToolExecutionCoordinator.cs",
+        "src/Host.Windows/Tools/IAgentToolConfirmationService.cs",
+        "src/Host.Windows/Tools/WpfAgentToolConfirmationService.cs",
+        "tests/HostLifecycle.Tests/AgentToolExecutionAcceptanceTests.cs"
+      ]
     },
     {
       "from": "T0087",
@@ -28587,8 +28666,37 @@
         "tests/HostLifecycle.Tests/AgentToolRegistryAcceptanceTests.cs"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-26T04:05:00Z",
+      "edge_from": "T0087",
+      "edge_to": "T0094",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "reason": "T0087 adds model-catalog license classification and disclosure; T0094 consumes the trusted agent-tool registry and confirmation metadata, not the model-license contract. Keep the existing edge as conservative execution order only; no technical prerequisite is established.",
+      "evidence": [
+        "step three/T0087/execution-report.md",
+        "src/Host.Windows/Models/Catalog/ModelCatalogModels.cs",
+        "src/Host.Windows/Tools/AgentToolExecutionCoordinator.cs"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-26T04:05:00Z",
+      "edge_from": "T0094",
+      "edge_to": "T0095",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "reason": "T0094 defines the policy-aware execution seam that validates a tool, requires explicit user approval for side-effecting calls, and invokes the registered implementation. T0095 must enforce process isolation and timeouts around this invocation seam while preserving the approval-before-execution ordering; the edge remains a prerequisite, not permission to execute arbitrary commands.",
+      "evidence": [
+        "src/Host.Windows/Tools/AgentToolExecutionCoordinator.cs",
+        "src/Host.Windows/Tools/IAgentToolConfirmationService.cs",
+        "src/Host.Windows/Tools/WpfAgentToolConfirmationService.cs",
+        "tests/HostLifecycle.Tests/AgentToolExecutionAcceptanceTests.cs"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-26T03:45:45.215Z"
+  "updated_at": "2026-10-26T04:05:00Z"
 }
 ```

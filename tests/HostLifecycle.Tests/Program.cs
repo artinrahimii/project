@@ -57,6 +57,7 @@ Assert(BuildDomainHostCapabilities(availableDiskBytes: 600L * 1024L * 1024L * 10
 Console.WriteLine("PASS: HostCapabilities keeps incomplete/invalid measurements Unknown and blocks inference for failed capacity checks.");
 ChatConversationAcceptanceTests.Run();
 AgentToolRegistryAcceptanceTests.Run();
+await AgentToolExecutionAcceptanceTests.RunAsync();
 HostCapacityAcceptanceTests.Run();
 InferenceEngineContractTests.Run();
 ModelCatalogParserAcceptanceTests.Run();
