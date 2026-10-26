@@ -1,3 +1,4 @@
+using System;
 using Google.Protobuf;
 using System.Linq;
 using WhiteP.Shared.Contracts;
@@ -19,7 +20,7 @@ public readonly record struct ProtocolMessageParseResult<T>(
 /// </summary>
 public static class ProtocolMessageParser
 {
-    public static ProtocolMessageParseResult<InferenceRequest> ParseInferenceRequest(byte[]? wireBytes)
+    public static ProtocolMessageParseResult<InferenceRequest> ParseInferenceRequest(byte[]? wireBytes, DateTimeOffset? nowUtc = null)
     {
         if (wireBytes is null)
         {
@@ -38,6 +39,7 @@ public static class ProtocolMessageParser
         {
             var request = InferenceRequest.Parser.ParseFrom(wireBytes);
             var validation = ProtocolMessageValidator.ValidateInferenceRequest(
+                request.ProtocolVersion,
                 request.RequestId,
                 request.AttemptId,
                 request.ModelId,
@@ -45,7 +47,8 @@ public static class ProtocolMessageParser
                 request.DeadlineUnixMs,
                 request.MaxOutputTokens,
                 request.ContextCapsule.Length,
-                request.CalculateSize());
+                request.CalculateSize(),
+                nowUtc);
 
             return validation.IsValid
                 ? new ProtocolMessageParseResult<InferenceRequest>(request, validation)

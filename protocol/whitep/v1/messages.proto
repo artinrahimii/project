@@ -71,6 +71,8 @@ message InferenceRequest {
   uint32 max_output_tokens = 6;
   // Maximum 4,096 bytes; a transport must enforce the smaller of this ceiling and negotiated limit.
   bytes context_capsule = 7;
+  // Required exact protocol version; incompatible request versions are rejected.
+  string protocol_version = 8;
 }
 
 message InferenceResponse {

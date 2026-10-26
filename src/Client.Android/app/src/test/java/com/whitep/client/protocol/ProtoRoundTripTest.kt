@@ -80,11 +80,12 @@ class ProtoRoundTripTest {
 
         val request =
             inferenceRequest {
+                protocolVersion = "1.0.0"
                 requestId = "request-001"
                 attemptId = "attempt-001"
                 modelId = "local/model-1"
                 prompt = "Hello, 世界"
-                deadlineUnixMs = 1770000000999L
+                deadlineUnixMs = 4102444800000L
                 maxOutputTokens = 128
                 contextCapsule = ByteString.copyFrom(byteArrayOf(0, 1, 2, 255.toByte()))
             }

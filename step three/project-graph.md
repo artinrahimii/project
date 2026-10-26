@@ -20041,33 +20041,152 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0110 و T0107 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "protocol/whitep/v1/messages.proto",
+        "src/Shared.Contracts/ProtocolMessageValidator.cs",
+        "src/Host.Infrastructure/ProtocolMessageParser.cs",
+        "src/Host.Application/HostInferenceSession.cs",
+        "src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "tests/HostLifecycle.Tests/NetworkInferenceRequestFrameAcceptanceTests.cs",
+        "src/Client.Android/app/src/test/java/com/whitep/client/protocol/ProtoRoundTripTest.kt",
+        "tests/test_proto_contract.py",
+        "tests/test_message_validation.py",
+        "docs/decisions/ADR-0003-tcp-request-framing.md"
+      ],
       "expected_output_paths": [
         "src/Host.Windows/Networking/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "tests/HostLifecycle.Tests/Program.cs",
+        "tests/HostLifecycle.Tests/NetworkInferenceRequestFrameAcceptanceTests.cs",
+        "src/Client.Android/app/src/test/java/com/whitep/client/protocol/ProtoRoundTripTest.kt",
+        "tests/test_proto_contract.py",
+        "tests/test_message_validation.py",
+        "step three/T0111/execution-report.md",
+        "step three/T0111/evidence/verification.md"
+      ],
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0111-A001 adds request protocol_version field 8, supported-version validation, bounded ASCII request/attempt identifiers, future-deadline validation with a typed REQUEST_EXPIRED result, and a listener-side local-participation recheck before callback dispatch. Reviewed incoming edges T0110→T0111 as contract_or_interface_dependency and T0107→T0111 as sequencing_only; both retain type=blocks and carry evidence. This is a local participation gate only; it does not cryptographically authenticate the remote peer. Exact-head CI pending.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0111-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "protocol/whitep/v1/messages.proto",
+          "src/Shared.Contracts/ProtocolMessageValidator.cs",
+          "src/Host.Infrastructure/ProtocolMessageParser.cs",
+          "src/Host.Application/HostInferenceSession.cs",
+          "src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs",
+          "tests/HostLifecycle.Tests/Program.cs",
+          "tests/HostLifecycle.Tests/NetworkInferenceRequestFrameAcceptanceTests.cs",
+          "src/Client.Android/app/src/test/java/com/whitep/client/protocol/ProtoRoundTripTest.kt",
+          "tests/test_proto_contract.py",
+          "tests/test_message_validation.py",
+          "docs/decisions/ADR-0003-tcp-request-framing.md",
+          "step three/T0111/execution-report.md",
+          "step three/T0111/evidence/verification.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
-          "affected_by_contract_changes": [],
-          "review_evidence": []
+          "state": "required",
+          "triggering_contracts": [
+            "InferenceRequest wire contract field 8",
+            "shared typed request validator",
+            "TCP listener dispatch gate"
+          ],
+          "affected_by_contract_changes": [
+            "T0110",
+            "T0112",
+            "T0115",
+            "T0116",
+            "T0117"
+          ],
+          "review_evidence": [
+            "protocol/whitep/v1/messages.proto",
+            "src/Host.Infrastructure/ProtocolMessageParser.cs",
+            "src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0111-A001",
+          "started_at": "2026-10-26T22:39:18.757Z",
+          "ended_at": "2026-10-26T22:39:18.757Z",
+          "result": "partial",
+          "summary": "Implemented protocol/version/identifier/deadline validation at the shared InferenceRequest parser boundary and rechecked local participation before dispatching an accepted network request. Added C# and Kotlin contract tests, Python schema/validator guards, and updated the framing decision. Exact-head GitHub Actions verification is pending.",
+          "changed_files": [
+            "protocol/whitep/v1/messages.proto",
+            "src/Shared.Contracts/ProtocolMessageValidator.cs",
+            "src/Host.Infrastructure/ProtocolMessageParser.cs",
+            "src/Host.Application/HostInferenceSession.cs",
+            "src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "tests/HostLifecycle.Tests/NetworkInferenceRequestFrameAcceptanceTests.cs",
+            "src/Client.Android/app/src/test/java/com/whitep/client/protocol/ProtoRoundTripTest.kt",
+            "tests/test_proto_contract.py",
+            "tests/test_message_validation.py",
+            "docs/decisions/ADR-0003-tcp-request-framing.md",
+            "step three/T0111/execution-report.md",
+            "step three/T0111/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "command": "python -m unittest discover -s tests -v",
+              "result": "pending",
+              "summary": "Awaiting exact-commit Step Three quality gate."
+            },
+            {
+              "command": "dotnet run --project tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj --configuration Release",
+              "result": "pending",
+              "summary": "Awaiting exact-commit HostLifecycle job."
+            },
+            {
+              "command": "dotnet format whitespace WhiteP.sln --verify-no-changes",
+              "result": "pending",
+              "summary": "Awaiting exact-commit Windows host job."
+            },
+            {
+              "command": "dotnet build WhiteP.sln --configuration Release",
+              "result": "pending",
+              "summary": "Awaiting exact-commit Windows host job."
+            },
+            {
+              "command": "gradle --no-daemon testDebugUnitTest",
+              "result": "pending",
+              "summary": "Awaiting exact-commit Android job."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            {
+              "path": "protocol/whitep/v1/messages.proto",
+              "detail": "Added InferenceRequest.protocol_version as field 8 without renumbering existing wire fields."
+            },
+            {
+              "path": "src/Shared.Contracts/ProtocolMessageValidator.cs",
+              "detail": "Rejects unsupported/malformed versions, unsafe bounded identifiers and invalid/expired deadlines with RequestExpired classification."
+            },
+            {
+              "path": "src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs",
+              "detail": "Rechecks local participation after parsing and before handler dispatch."
+            }
+          ],
+          "follow_up": "Inspect exact-head quality, Windows host build/lifecycle, Android round-trip tests and real local inference workflows. If relevant jobs pass, finalize T0111 with recorded commit SHA and results; otherwise repair failures or keep the task in progress."
+        }
+      ]
     },
     {
       "id": "T0112",
@@ -28069,19 +28188,31 @@
       "from": "T0110",
       "to": "T0111",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0111 consumes the concrete framed InferenceRequest and shared parser contract produced by T0110; protocol/version/identifier/deadline validation is applied at the parser boundary before listener dispatch. The API/data flow is directly evidenced; the original blocks edge is retained.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/Networking/NetworkInferenceRequestFrameReader.cs",
+        "src/Host.Infrastructure/ProtocolMessageParser.cs",
+        "tests/HostLifecycle.Tests/NetworkInferenceRequestFrameAcceptanceTests.cs",
+        "step three/T0110/execution-report.md",
+        "step three/T0110/evidence/verification.md"
+      ]
     },
     {
       "from": "T0107",
       "to": "T0111",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0107 validates the in-process coordinator's busy/deadline/cancellation/fault paths, but T0111's transport parser consumes no T0107-specific API or artifact. Keep the existing blocks edge as conservative sequence only.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/Requests/HostRequestAdmissionPolicy.cs",
+        "tests/HostLifecycle.Tests/HostRequestAdmissionTests.cs",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorFailureAcceptanceTests.cs",
+        "step three/T0107/execution-report.md",
+        "step three/T0107/evidence/verification.md"
+      ]
     },
     {
       "from": "T0111",
@@ -32209,8 +32340,44 @@
         "step three/T0107/evidence/verification.md"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-26T22:39:18.757Z",
+      "edge_from": "T0110",
+      "edge_to": "T0111",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "old_validation_status": "unreviewed",
+      "new_validation_status": "validated",
+      "reason": "T0111 extends T0110's parser/frame-reader boundary and consumes the InferenceRequest contract before callback dispatch. This follows observed data/API flow, not the blocks label.",
+      "evidence": [
+        "src/Host.Windows/Networking/NetworkInferenceRequestFrameReader.cs",
+        "src/Host.Infrastructure/ProtocolMessageParser.cs",
+        "tests/HostLifecycle.Tests/NetworkInferenceRequestFrameAcceptanceTests.cs",
+        "step three/T0110/execution-report.md",
+        "step three/T0110/evidence/verification.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-26T22:39:18.757Z",
+      "edge_from": "T0107",
+      "edge_to": "T0111",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "old_validation_status": "unreviewed",
+      "new_validation_status": "validated",
+      "reason": "T0107 provides a separate in-process coordinator acceptance suite, but T0111 consumes no T0107-specific API or artifact. Preserve the blocks edge as conservative ordering only.",
+      "evidence": [
+        "src/Host.Windows/Requests/HostRequestAdmissionPolicy.cs",
+        "tests/HostLifecycle.Tests/HostRequestAdmissionTests.cs",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorFailureAcceptanceTests.cs",
+        "step three/T0107/execution-report.md",
+        "step three/T0107/evidence/verification.md"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-26T21:42:59.945Z"
+  "updated_at": "2026-10-26T22:39:18.757Z"
 }
 ```

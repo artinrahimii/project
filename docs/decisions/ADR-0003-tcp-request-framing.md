@@ -9,10 +9,12 @@
 
 1. The current Windows listener accepts exactly one inference request frame per TCP connection.
 2. The frame begins with a 4-byte unsigned big-endian payload length followed by exactly that many serialized Protobuf `InferenceRequest` bytes.
-3. Zero length, truncated prefix/payload, malformed Protobuf, semantically invalid requests, and payload length above `ProtocolMessageLimits.MaximumRequestMessageBytes` are rejected and the connection is closed.
-4. Raw length is checked before allocating the payload buffer. Incomplete frame reads have a short deadline and are cancelled when participation is disabled or the listener shuts down.
-5. Payloads are not logged. A valid typed request reaches an optional in-process callback; with no callback, the connection closes after validation. This does not yet invoke inference or return a network response.
-6. The later Android/peer transport task must implement this framing or record a reviewed contract revision before claiming interoperability.
+3. Zero length, truncated prefix/payload, malformed Protobuf, unsupported/malformed request protocol versions, unsafe request/attempt identifiers, missing/invalid/expired deadlines, invalid semantic fields, and payload length above `ProtocolMessageLimits.MaximumRequestMessageBytes` are rejected and the connection is closed.
+4. Every `InferenceRequest` carries `protocol_version = 1.0.0` in field 8. The parser validates the supported version and uses the existing typed error codes for unsupported versions, malformed messages, and expired deadlines.
+5. Request and attempt identifiers must be ASCII alphanumeric strings with optional `_`, `-`, `.`, or `:` after the first character, up to 128 characters. The absolute Unix-millisecond deadline must be valid and in the future at parsing time.
+6. Raw length is checked before allocating the payload buffer. Incomplete frame reads have a short deadline and are cancelled when participation is disabled or the listener shuts down. Participation is rechecked after parsing and before calling the request handler, so a request is dropped if local participation was revoked during the read.
+7. Payloads are not logged. A valid typed request reaches an optional in-process callback; with no callback, the connection closes after validation. This does not yet invoke inference or return a network response.
+8. The participation check is a local host-side gate, not cryptographic peer authentication or proof of sender identity. The later Android/peer transport task must implement the same framing and compatible validation or record a reviewed contract revision before claiming interoperability.
 
 ## Verification boundary
 

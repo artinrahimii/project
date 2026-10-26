@@ -105,6 +105,8 @@ public sealed class ParticipationGatedNetworkListener : IAsyncDisposable
             readTimeout.CancelAfter(FrameReadTimeout);
             var frame = await NetworkInferenceRequestFrameReader.ReadAsync(client.GetStream(), readTimeout.Token).ConfigureAwait(false);
             if (!frame.IsAccepted || frame.Request is null) return;
+            // Participation may have been revoked after accept/read started; fail closed before dispatch.
+            if (!_isParticipationActive()) return;
             if (_onValidInferenceRequest is not null) await _onValidInferenceRequest(frame.Request, shutdownToken).ConfigureAwait(false);
         }
         catch (OperationCanceledException) { }

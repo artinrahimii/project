@@ -142,6 +142,7 @@ public sealed class HostInferenceSession : IDisposable
         ArgumentNullException.ThrowIfNull(request);
 
         var validation = ProtocolMessageValidator.ValidateInferenceRequest(
+            request.ProtocolVersion,
             request.RequestId,
             request.AttemptId,
             request.ModelId,

@@ -52,6 +52,7 @@ class ProtoContractTests(unittest.TestCase):
             r"uint64\s+deadline_unix_ms\s*=\s*5\s*;",
             r"uint32\s+max_output_tokens\s*=\s*6\s*;",
             r"bytes\s+context_capsule\s*=\s*7\s*;",
+            r"string\s+protocol_version\s*=\s*8\s*;",
         ):
             with self.subTest(field=declaration):
                 self.assertRegex(body, declaration)

@@ -13,6 +13,7 @@ internal static class NetworkInferenceRequestFrameAcceptanceTests
     {
         await ValidLengthPrefixedRequestReachesTheSharedParserAsync().ConfigureAwait(false);
         await InvalidFramesAreRejectedAsync().ConfigureAwait(false);
+        await ParticipationInactiveAtDispatchDoesNotInvokeCallbackAsync().ConfigureAwait(false);
         await ShutdownCancelsAClientWaitingForItsFrameAsync().ConfigureAwait(false);
         Console.WriteLine("PASS: bounded TCP frames reach the shared Protobuf parser; malformed, truncated, oversized and interrupted frames are rejected.");
     }
@@ -55,6 +56,31 @@ internal static class NetworkInferenceRequestFrameAcceptanceTests
             await AssertPeerClosedAsync(client).ConfigureAwait(false);
         }
     }
+    private static async Task ParticipationInactiveAtDispatchDoesNotInvokeCallbackAsync()
+    {
+        var participationActive = true;
+        var callbackInvoked = false;
+        await using var listener = new ParticipationGatedNetworkListener(
+            () => participationActive,
+            IPAddress.Loopback,
+            0,
+            (_, _) =>
+            {
+                callbackInvoked = true;
+                return Task.CompletedTask;
+            });
+        await listener.StartAsync().WaitAsync(TimeSpan.FromSeconds(5)).ConfigureAwait(false);
+        var endpoint = listener.LocalEndpoint ?? throw new InvalidOperationException("Listener endpoint missing.");
+
+        // Simulate revocation while the listener is already bound.
+        participationActive = false;
+        using var client = new TcpClient();
+        await client.ConnectAsync(endpoint.Address, endpoint.Port).WaitAsync(TimeSpan.FromSeconds(5)).ConfigureAwait(false);
+        await client.GetStream().WriteAsync(EncodeFrame(ValidRequest().ToByteArray()).AsMemory()).ConfigureAwait(false);
+        await AssertPeerClosedAsync(client).ConfigureAwait(false);
+        Assert(!callbackInvoked, "The listener must recheck local participation before dispatching an accepted request.");
+    }
+
     private static async Task ShutdownCancelsAClientWaitingForItsFrameAsync()
     {
         var listener = new ParticipationGatedNetworkListener(() => true, IPAddress.Loopback, 0);
@@ -68,7 +94,7 @@ internal static class NetworkInferenceRequestFrameAcceptanceTests
         await AssertPeerClosedAsync(client).ConfigureAwait(false);
         await listener.DisposeAsync().ConfigureAwait(false);
     }
-    private static InferenceRequest ValidRequest() => new() { RequestId = "network-request", AttemptId = "network-attempt", ModelId = "fixture-model", Prompt = "framed prompt", DeadlineUnixMs = 1_770_000_000_999, MaxOutputTokens = 64 };
+    private static InferenceRequest ValidRequest() => new() { ProtocolVersion = ProtocolVersionPolicy.CurrentVersion, RequestId = "network-request", AttemptId = "network-attempt", ModelId = "fixture-model", Prompt = "framed prompt", DeadlineUnixMs = 4_102_444_800_000UL, MaxOutputTokens = 64 };
     private static byte[] EncodeFrame(byte[] payload)
     {
         var frame = new byte[NetworkInferenceRequestFrameReader.LengthPrefixBytes + payload.Length];

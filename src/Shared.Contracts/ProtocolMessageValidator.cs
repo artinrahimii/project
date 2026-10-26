@@ -9,7 +9,8 @@ public enum ProtocolMessageValidationKind
     Valid = 0,
     InvalidMessage = 1,
     UnsupportedVersion = 2,
-    ResourceLimit = 3
+    ResourceLimit = 3,
+    RequestExpired = 4
 }
 
 public readonly record struct ProtocolMessageValidationResult(
@@ -32,7 +33,10 @@ public readonly record struct ModelCapabilityValidationInput(
 /// </summary>
 public static class ProtocolMessageValidator
 {
+    public const string RequestExpiredErrorCode = "PROTOCOL_ERROR_CODE_REQUEST_EXPIRED";
+    private const int MaximumRequestIdentifierLength = 128;
     public static ProtocolMessageValidationResult ValidateInferenceRequest(
+        string? protocolVersion,
         string? requestId,
         string? attemptId,
         string? modelId,
@@ -40,19 +44,43 @@ public static class ProtocolMessageValidator
         ulong deadlineUnixMs,
         uint maxOutputTokens,
         long contextCapsuleBytes,
-        long serializedMessageBytes)
+        long serializedMessageBytes,
+        DateTimeOffset? nowUtc = null)
     {
-        if (string.IsNullOrWhiteSpace(requestId) ||
-            string.IsNullOrWhiteSpace(attemptId) ||
+        if (!IsValidRequestIdentifier(requestId) ||
+            !IsValidRequestIdentifier(attemptId) ||
             string.IsNullOrWhiteSpace(modelId) ||
             string.IsNullOrWhiteSpace(prompt))
         {
-            return InvalidMessage("InferenceRequest is missing a required identifier, model, or prompt.");
+            return InvalidMessage("InferenceRequest is missing or has an invalid request/attempt identifier, model, or prompt.");
         }
 
-        if (deadlineUnixMs == 0)
+        if (string.IsNullOrWhiteSpace(protocolVersion))
         {
-            return InvalidMessage("InferenceRequest must include a non-zero deadline.");
+            return InvalidMessage("InferenceRequest must include protocol_version.");
+        }
+
+        var versionResult = FromVersionResult(ProtocolVersionPolicy.Evaluate(protocolVersion));
+        if (!versionResult.IsValid)
+        {
+            return versionResult;
+        }
+
+        var nowUnixMs = (nowUtc ?? DateTimeOffset.UtcNow).ToUnixTimeMilliseconds();
+        var maximumDeadlineUnixMs = (ulong)DateTimeOffset.MaxValue.ToUnixTimeMilliseconds();
+        if (deadlineUnixMs == 0 ||
+            deadlineUnixMs > maximumDeadlineUnixMs ||
+            nowUnixMs < 0)
+        {
+            return InvalidMessage("InferenceRequest must include a valid Unix-millisecond deadline.");
+        }
+
+        if (deadlineUnixMs <= (ulong)nowUnixMs)
+        {
+            return new ProtocolMessageValidationResult(
+                ProtocolMessageValidationKind.RequestExpired,
+                RequestExpiredErrorCode,
+                "InferenceRequest deadline has expired.");
         }
 
         if (maxOutputTokens == 0)
@@ -66,6 +94,38 @@ public static class ProtocolMessageValidator
             serializedMessageBytes,
             maxOutputTokens));
     }
+
+    private static bool IsValidRequestIdentifier(string? value)
+    {
+        if (string.IsNullOrEmpty(value) || value.Length > MaximumRequestIdentifierLength)
+        {
+            return false;
+        }
+
+        if (!IsAsciiAlphaNumeric(value[0]))
+        {
+            return false;
+        }
+
+        foreach (var character in value)
+        {
+            if (!IsAsciiAlphaNumeric(character) &&
+                character != '_' &&
+                character != '-' &&
+                character != '.' &&
+                character != ':')
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static bool IsAsciiAlphaNumeric(char value) =>
+        (value >= 'a' && value <= 'z') ||
+        (value >= 'A' && value <= 'Z') ||
+        (value >= '0' && value <= '9');
 
     public static ProtocolMessageValidationResult ValidateHostAnnouncement(
         string? ephemeralHostId,

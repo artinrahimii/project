@@ -184,11 +184,12 @@ foreach (var unsupportedVersion in new[] { "1.0.1", "1.1.0", "2.0.0" })
 
 var validParserRequest = new InferenceRequest
 {
+    ProtocolVersion = ProtocolVersionPolicy.CurrentVersion,
     RequestId = "parser-request",
     AttemptId = "parser-attempt",
     ModelId = "fixture-model",
     Prompt = "valid prompt",
-    DeadlineUnixMs = 1770000000999,
+    DeadlineUnixMs = 4_102_444_800_000UL,
     MaxOutputTokens = 64
 };
 var validParsedRequest = ProtocolMessageParser.ParseInferenceRequest(validParserRequest.ToByteArray());
@@ -197,10 +198,11 @@ Assert(validParsedRequest.Message!.RequestId == "parser-request", "The parser mu
 
 var missingFieldRequest = new InferenceRequest
 {
+    ProtocolVersion = ProtocolVersionPolicy.CurrentVersion,
     RequestId = "incomplete-request",
     ModelId = "fixture-model",
     Prompt = "valid prompt",
-    DeadlineUnixMs = 1770000000999,
+    DeadlineUnixMs = 4_102_444_800_000UL,
     MaxOutputTokens = 64
 };
 var missingFieldResult = ProtocolMessageParser.ParseInferenceRequest(missingFieldRequest.ToByteArray());
@@ -217,6 +219,32 @@ var missingDeadlineRequest = validParserRequest.Clone();
 missingDeadlineRequest.DeadlineUnixMs = 0;
 var missingDeadlineResult = ProtocolMessageParser.ParseInferenceRequest(missingDeadlineRequest.ToByteArray());
 Assert(!missingDeadlineResult.IsValid, "A request with no deadline must be rejected.");
+
+var unsupportedRequestVersion = validParserRequest.Clone();
+unsupportedRequestVersion.ProtocolVersion = "2.0.0";
+var unsupportedRequestVersionResult = ProtocolMessageParser.ParseInferenceRequest(unsupportedRequestVersion.ToByteArray());
+Assert(!unsupportedRequestVersionResult.IsValid, "A request with an unsupported protocol version must be rejected.");
+Assert(unsupportedRequestVersionResult.Validation.Kind == ProtocolMessageValidationKind.UnsupportedVersion, "Unsupported request protocol versions must preserve their typed classification.");
+Assert(unsupportedRequestVersionResult.Validation.ErrorCodeName == ProtocolVersionPolicy.UnsupportedVersionErrorCode, "Unsupported request protocol versions must map to UnsupportedVersion.");
+
+var malformedRequestVersion = validParserRequest.Clone();
+malformedRequestVersion.ProtocolVersion = "v1.0.0";
+var malformedRequestVersionResult = ProtocolMessageParser.ParseInferenceRequest(malformedRequestVersion.ToByteArray());
+Assert(!malformedRequestVersionResult.IsValid, "A request with a malformed protocol version must be rejected.");
+Assert(malformedRequestVersionResult.Validation.ErrorCodeName == ProtocolVersionPolicy.InvalidMessageErrorCode, "Malformed request versions must map to InvalidMessage.");
+
+var unsafeRequestId = validParserRequest.Clone();
+unsafeRequestId.RequestId = "bad/request";
+var unsafeRequestIdResult = ProtocolMessageParser.ParseInferenceRequest(unsafeRequestId.ToByteArray());
+Assert(!unsafeRequestIdResult.IsValid, "A request with an unsafe request identifier must be rejected.");
+
+var expiredRequest = validParserRequest.Clone();
+var expiredRequestResult = ProtocolMessageParser.ParseInferenceRequest(
+    expiredRequest.ToByteArray(),
+    DateTimeOffset.FromUnixTimeMilliseconds((long)expiredRequest.DeadlineUnixMs));
+Assert(!expiredRequestResult.IsValid, "An expired request deadline must be rejected before inference.");
+Assert(expiredRequestResult.Validation.Kind == ProtocolMessageValidationKind.RequestExpired, "Expired deadlines must preserve the RequestExpired classification.");
+Assert(expiredRequestResult.Validation.ErrorCodeName == ProtocolMessageValidator.RequestExpiredErrorCode, "An expired request deadline must map to REQUEST_EXPIRED.");
 
 var oversizedWireRequest = new byte[ProtocolMessageLimits.MaximumRequestMessageBytes + 1];
 var oversizedWireResult = ProtocolMessageParser.ParseInferenceRequest(oversizedWireRequest);
@@ -404,11 +432,12 @@ AssertProtoRoundTrip("HostAnnouncement", protoHostAnnouncement, bytes => HostAnn
 
 var protoInferenceRequest = new InferenceRequest
 {
+    ProtocolVersion = ProtocolVersionPolicy.CurrentVersion,
     RequestId = "request-001",
     AttemptId = "attempt-001",
     ModelId = "local/model-1",
     Prompt = "Hello, 世界",
-    DeadlineUnixMs = 1770000000999,
+    DeadlineUnixMs = 4_102_444_800_000UL,
     MaxOutputTokens = 128,
     ContextCapsule = ByteString.CopyFrom(new byte[] { 0, 1, 2, 255 })
 };
@@ -871,11 +900,12 @@ using (var limitedSession = new HostInferenceSession(backend: limitedSessionBack
 
     var oversizedCapsuleRequest = new InferenceRequest
     {
+        ProtocolVersion = ProtocolVersionPolicy.CurrentVersion,
         RequestId = "bounded-request",
         AttemptId = "bounded-attempt",
         ModelId = "fixture-model",
         Prompt = "short prompt",
-        DeadlineUnixMs = 1770000000999,
+        DeadlineUnixMs = 4_102_444_800_000UL,
         MaxOutputTokens = 32,
         ContextCapsule = ByteString.CopyFrom(new byte[ProtocolMessageLimits.MaximumContextCapsuleBytes + 1])
     };
@@ -892,11 +922,12 @@ using (var limitedSession = new HostInferenceSession(backend: limitedSessionBack
 
     var oversizedMessageRequest = new InferenceRequest
     {
+        ProtocolVersion = ProtocolVersionPolicy.CurrentVersion,
         RequestId = new string('i', ProtocolMessageLimits.MaximumRequestMessageBytes + 1),
         AttemptId = "bounded-attempt",
         ModelId = "fixture-model",
         Prompt = "short prompt",
-        DeadlineUnixMs = 1770000000999,
+        DeadlineUnixMs = 4_102_444_800_000UL,
         MaxOutputTokens = 32
     };
     var messageRejected = false;
@@ -914,11 +945,12 @@ using (var limitedSession = new HostInferenceSession(backend: limitedSessionBack
 
     var validRequest = new InferenceRequest
     {
+        ProtocolVersion = ProtocolVersionPolicy.CurrentVersion,
         RequestId = "valid-request",
         AttemptId = "valid-attempt",
         ModelId = "fixture-model",
         Prompt = "short prompt",
-        DeadlineUnixMs = 1770000000999,
+        DeadlineUnixMs = 4_102_444_800_000UL,
         MaxOutputTokens = 32,
         ContextCapsule = ByteString.CopyFrom(new byte[] { 1, 2, 3 })
     };

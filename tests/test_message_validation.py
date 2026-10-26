@@ -49,6 +49,10 @@ class InvalidMessageContractTests(unittest.TestCase):
             "ValidateInferenceResponse(",
             "ProtocolVersionPolicy.Evaluate",
             "deadlineUnixMs == 0",
+            "ProtocolVersionPolicy.Evaluate(protocolVersion)",
+            "RequestExpiredErrorCode",
+            "IsValidRequestIdentifier(requestId)",
+            "deadlineUnixMs <= (ulong)nowUnixMs",
             "maxOutputTokens == 0",
             "outcomeValue < 1 || outcomeValue > 5",
         ):
@@ -62,6 +66,10 @@ class InvalidMessageContractTests(unittest.TestCase):
     def test_csharp_harness_exercises_malformed_oversized_version_and_value_rejection(self):
         for assertion in (
             "A request missing attempt_id must be rejected",
+            "A request with an unsupported protocol version must be rejected",
+            "A request with a malformed protocol version must be rejected",
+            "A request with an unsafe request identifier must be rejected",
+            "An expired request deadline must be rejected before inference",
             "An oversized raw request must be rejected before Protobuf parsing",
             "An announcement with an incompatible protocol version must be rejected",
             "A malformed version string must be rejected",
