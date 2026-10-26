@@ -101,6 +101,7 @@ await HostRequestCoordinatorTests.RunAsync();
 await HostRequestResponseDeliveryTests.RunAsync();
 await LlamaCppInferenceEngineCancellationTests.RunAsync();
 await HostRequestCoordinatorBusyTests.RunAsync();
+await HostRequestCoordinatorConcurrencyTests.RunAsync();
 SecureRequestIdGeneratorTests.Run();
 await HostRequestAdmissionTests.RunAsync();
 await HostInferenceSessionConcurrencyTests.RunAsync();

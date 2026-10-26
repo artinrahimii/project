@@ -19072,20 +19072,38 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0105 و T0097 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorConcurrencyTests.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0106/execution-report.md",
+        "step three/T0106/evidence/verification.md"
+      ],
       "expected_output_paths": [
         "src/Host.Windows/Requests/ + tests/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "src/Host.Windows/Requests/HostRequestCoordinator.cs",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorConcurrencyTests.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0106/execution-report.md",
+        "step three/T0106/evidence/verification.md"
+      ],
+      "notes": "The existing coordinator uses a one-slot SemaphoreSlim and existing tests cover a single held request and sequential Busy results. This task adds a distinct 64-contender simultaneous race regression that asserts exactly one operation is invoked, 63 requests return Busy, and observed maximum active inference is one. Await exact-head GitHub Actions before marking done.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0106-2026-10-26-01",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "tests/HostLifecycle.Tests/HostRequestCoordinatorConcurrencyTests.cs",
+          "tests/HostLifecycle.Tests/Program.cs",
+          "step three/T0106/execution-report.md",
+          "step three/T0106/evidence/verification.md",
+          "step three/project-graph.md",
+          "step three/T0106/.gitkeep"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
@@ -27191,10 +27209,17 @@
       "from": "T0105",
       "to": "T0106",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0105's focused acceptance verifies that the coordinator clears temporary request state and releases its semaphore after an inference exception. T0106 tests the same production coordinator's one-active-inference admission rule under simultaneous contention, and does not consume a new API or data artifact produced by T0105. Preserve type=blocks as conservative execution order rather than claiming a hard technical dependency.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/Requests/HostRequestCoordinator.cs",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorBusyTests.cs",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorConcurrencyTests.cs",
+        "step three/T0105/execution-report.md",
+        "step three/T0105/evidence/verification.md"
+      ]
     },
     {
       "from": "T0097",
@@ -31298,6 +31323,23 @@
         "tests/HostLifecycle.Tests/HostRequestResponseDeliveryTests.cs",
         "step three/T0104/execution-report.md",
         "step three/T0104/evidence/verification.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-26T13:31:44.992Z",
+      "edge_from": "T0105",
+      "edge_to": "T0106",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "reason": "T0105 proves exception-path cleanup of a shared coordinator; T0106 exercises concurrency admission via the same already-existing coordinator. T0106 does not consume a T0105-specific API/data artifact. Keep type=blocks as conservative sequence, not hard technical dependence.",
+      "evidence": [
+        "src/Host.Windows/Requests/HostRequestCoordinator.cs",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorBusyTests.cs",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorConcurrencyTests.cs",
+        "step three/T0105/execution-report.md",
+        "step three/T0105/evidence/verification.md"
       ],
       "reviewed_by": "Step Three execution review"
     }
