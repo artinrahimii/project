@@ -27,3 +27,8 @@
 - Windows C# formatting, Release build, generated Protobuf source validation and WPF startup smoke: passed in [run 40308296192](https://github.com/artinrahimii/project/actions/runs/40308296192). The dedicated Windows capability-policy test step had not yet completed when recorded and is not part of T0098 acceptance.
 - Live local llama.cpp/GGUF integration: passed, [run 40308296058](https://github.com/artinrahimii/project/actions/runs/40308296058).
 - The first CI attempt on V 3.0.306 remains recorded as failed due to `NETSDK1022`; V 3.0.307 removed the redundant test Compile item, and the corrected test suite passed.
+
+
+## Contract revalidation — succeeded
+
+After T0099 changed the coordinator to fail-fast Busy admission, the existing T0098 contract was reopened and retested on `4cf8c8515b42479549c7b3a1e740e6112cfd72f9` (`V 3.0.309`). [HostLifecycle CI](https://github.com/artinrahimii/project/actions/runs/40309351792) explicitly reported passing results for single-active-operation, Busy rejection without queueing, and semaphore release after success or failure. The [Step Three quality gate](https://github.com/artinrahimii/project/actions/runs/40309351849) and Windows C# formatting, Release build, Protobuf checks, startup smoke and agent-tool checks also passed. T0098 is restored to `done`; its earlier reopening and failed test-project configuration attempt remain preserved in the append-only history.

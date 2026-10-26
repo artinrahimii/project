@@ -61,3 +61,8 @@ The corrected commit `95a78fe6cacb8d095a82b99d69efb64b5dc0092a` (`V 3.0.307`) pa
 - [Real local inference integration](https://github.com/artinrahimii/project/actions/runs/40308296058) — succeeded as supplementary product evidence.
 
 T0098 is marked `done` because its focused acceptance test ran successfully on the exact correction commit, verified capacity-one serialization and semaphore recovery after an exception, and is backed by the successful quality gate. The previous failed attempt is retained in the graph's append-only history. Next task: T0099, which must implement fail-fast Busy rejection rather than silent queuing.
+
+
+## Contract revalidation — succeeded
+
+After T0099 changed the coordinator to fail-fast Busy admission, the existing T0098 contract was reopened and retested on `4cf8c8515b42479549c7b3a1e740e6112cfd72f9` (`V 3.0.309`). [HostLifecycle CI](https://github.com/artinrahimii/project/actions/runs/40309351792) explicitly reported passing results for single-active-operation, Busy rejection without queueing, and semaphore release after success or failure. The [Step Three quality gate](https://github.com/artinrahimii/project/actions/runs/40309351849) and Windows C# formatting, Release build, Protobuf checks, startup smoke and agent-tool checks also passed. T0098 is restored to `done`; its earlier reopening and failed test-project configuration attempt remain preserved in the append-only history.

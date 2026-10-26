@@ -17297,15 +17297,16 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0097 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "src/Host.Windows/Requests/HostRequestCoordinator.cs",
         "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
         "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
         "tests/HostLifecycle.Tests/Program.cs",
         "step three/T0098/execution-report.md",
-        "step three/T0098/evidence/verification.md"
+        "step three/T0098/evidence/verification.md",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorBusyTests.cs"
       ],
       "expected_output_paths": [
         "src/Host.Windows/Requests/ + tests/"
@@ -17313,44 +17314,48 @@
       "evidence": [
         "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
         "step three/T0098/execution-report.md",
-        "step three/T0098/evidence/verification.md"
+        "step three/T0098/evidence/verification.md",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorBusyTests.cs"
       ],
-      "notes": "T0098 پیاده‌سازی و اعتبارسنجی شد: HostRequestCoordinator با SemaphoreSlim تک‌ظرفیتی، لغو هنگام انتظار و آزادسازی در finally. آزمون پذیرش در GitHub Actions موفق شد و هم‌زمانی بیشینهٔ یک عملیات و بازیابی semaphore پس از exception را تأیید کرد. پیکربندی Compile تکراری که در V 3.0.306 شکست داشت در V 3.0.307 اصلاح شد. مرحلهٔ بعدی T0099 است؛ رد فوری با Busy هنوز در آن وظیفه پیاده‌سازی نشده است. قرارداد coordinator برای T0099 از صف‌شدن به رد فوری Busy تغییر کرده است؛ آزمون اصلی T0098 به رفتار جدید بازنویسی شد و برای اعتبارسنجی مجدد روی commit جدید بازگشایی شده است.",
+      "notes": "T0098 اجرا و مجدداً اعتبارسنجی شد: HostRequestCoordinator از ظرفیت یک عملیات استفاده می‌کند؛ پس از تغییر قرارداد برای رد فوری Busy، آزمون هم‌زمانی/آزادسازی آن دوباره در CI گذشت. گزارش و شواهد در پوشهٔ T0098 ثبت شده است.",
       "execution_summary": {
-        "attempt_count": 5,
+        "attempt_count": 6,
         "failed_attempt_count": 1,
-        "last_attempt_id": "T0098-2026-10-26-05",
-        "last_attempt_result": "reopened",
+        "last_attempt_id": "T0098-2026-10-26-06",
+        "last_attempt_result": "succeeded",
         "changed_files": [
-          "src/Host.Windows/Requests/HostRequestCoordinator.cs",
-          "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
-          "tests/HostLifecycle.Tests/Program.cs",
-          "tests/HostLifecycle.Tests/HostRequestCoordinatorBusyTests.cs",
+          "step three/T0098/execution-report.md",
+          "step three/T0098/evidence/verification.md",
           "step three/project-graph.md"
         ],
         "related_commits": [
           "451980f2ec009f7915c10fa705a53789a6ea33b9",
           "95a78fe6cacb8d095a82b99d69efb64b5dc0092a",
-          "712243254c86aee70f1510b560f3c5e6f0d5fc4c"
+          "712243254c86aee70f1510b560f3c5e6f0d5fc4c",
+          "4cf8c8515b42479549c7b3a1e740e6112cfd72f9"
         ],
         "tests_passed": [
           "HostRequestCoordinator test passed in HostLifecycle CI run 40308296192; explicit PASS message confirms one active operation and semaphore release after success/failure.",
           "Step Three quality gate passed in run 40308296166.",
           "Windows C# formatting, Release build, generated Protobuf verification, and WPF startup smoke passed in run 40308296192.",
-          "Real local llama.cpp/GGUF inference acceptance passed in run 40308296058."
+          "Real local llama.cpp/GGUF inference acceptance passed in run 40308296058.",
+          "HostRequestCoordinator regression test passed after Busy-contract change in run 40309351792; log confirms Busy rejection without queueing and semaphore release.",
+          "HostRequestCoordinatorBusyTests passed: fail-fast Busy outcome, no execution of rejected operations, cancellation preservation and reopening after release (run 40309351792).",
+          "Step Three quality gate passed on V 3.0.309 (run 40309351849).",
+          "Windows C# formatting, Release build, generated Protobuf verification and WPF startup smoke passed (run 40309351792)."
         ],
         "tests_failed": [
           "HostLifecycle job on V 3.0.306 failed before tests due to NETSDK1022 duplicate Compile item HostRequestCoordinatorTests.cs (run 40306970928); corrected in V 3.0.307."
         ],
         "blocked_reason": null,
-        "reopened_reason": "Shared HostRequestCoordinator admission contract changed from queue/wait to fail-fast Busy; revalidate the existing capacity-one/non-overlap acceptance test against the new behavior.",
+        "reopened_reason": null,
         "contract_revalidation": {
-          "state": "required",
+          "state": "passed",
           "triggering_contracts": [
             "HostRequestCoordinator admission semantics"
           ],
           "affected_by_contract_changes": [
-            "T0099 fail-fast Busy behavior changes second-request admission; T0098 serialization/release guarantees still must be preserved."
+            "T0099 fail-fast Busy admission; T0098 serialization and semaphore release"
           ],
           "review_evidence": [
             "src/Host.Windows/Requests/HostRequestCoordinator.cs",
@@ -17527,6 +17532,59 @@
             "ExecuteAsync delegates to TryExecuteAsync and throws HostRequestBusyException if already busy; TryExecuteAsync returns HostRequestOutcome<T> with Status=Busy without invoking the rejected operation."
           ],
           "follow_up": "Re-run HostRequestCoordinatorTests and HostRequestCoordinatorBusyTests in exact-commit CI. Re-mark done only after both pass."
+        },
+        {
+          "attempt_id": "T0098-2026-10-26-06",
+          "started_at": "2026-10-26T10:41:10Z",
+          "ended_at": "2026-10-26T10:41:54Z",
+          "result": "succeeded",
+          "summary": "Revalidated T0098 after T0099 changed admission semantics. The updated HostRequestCoordinator test passed on exact commit 4cf8c8515b42479549c7b3a1e740e6112cfd72f9: one active operation, Busy rejection without queueing, and gate release after completion or exception. Step Three quality and Windows formatting/build/startup checks also passed.",
+          "changed_files": [
+            "src/Host.Windows/Requests/HostRequestCoordinator.cs",
+            "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
+            "tests/HostLifecycle.Tests/HostRequestCoordinatorBusyTests.cs",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "step three/T0098/execution-report.md",
+            "step three/T0098/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "related_commits": [
+            "4cf8c8515b42479549c7b3a1e740e6112cfd72f9"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "HostLifecycle unit/integration and T0098/T0099 coordinator tests",
+              "result": "passed",
+              "summary": "Run 40309351792; log explicitly reports PASS for single-active-operation/Busy rejection/release after success or failure, and PASS for fail-fast admission without queueing 32 requests, cancellation preservation and resumption after release.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40309351792"
+            },
+            {
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "summary": "Run 40309351849; graph structure, Python tests/syntax and evidence/output validation succeeded.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40309351849"
+            },
+            {
+              "name": "Windows WPF formatting, Release build, generated Protobuf, startup smoke and agent-tool checks",
+              "result": "passed",
+              "summary": "All inspected Windows steps completed successfully in product workflow run 40309351792.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40309351792"
+            },
+            {
+              "name": "Real local llama.cpp/GGUF inference",
+              "result": "passed",
+              "summary": "Live local-model integration workflow succeeded; supplementary product evidence, not a substitute for coordinator tests.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40309351863"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "Validated T0098's single-capacity/non-overlap/release contract after changing second-request admission to fail-fast Busy."
+          ],
+          "follow_up": "T0098 contract revalidation is complete. T0099 is the next task after this status commit."
         }
       ]
     },
@@ -17547,8 +17605,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0098 و T0097 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "src/Host.Windows/Requests/HostRequestCoordinator.cs",
         "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
@@ -17566,35 +17624,37 @@
         "step three/T0099/execution-report.md",
         "step three/T0099/evidence/verification.md"
       ],
-      "notes": "Fail-fast admission با TryExecuteAsync و نتیجهٔ صریح Busy اضافه شده است. آزمون‌ها در انتظار CI هستند؛ تا تأیید اجرای واقعی، وضعیت در حال اجرا باقی می‌ماند.",
+      "notes": "T0099 تکمیل و در CI اعتبارسنجی شد. درخواست دوم بلافاصله وضعیت Busy می‌گیرد و پشت semaphore صف نمی‌شود؛ تست ۳۲ درخواست موازی، عدم اجرای عملیات ردشده، حفظ cancellation، اجرای مجدد بعد از آزادسازی و آزادسازی پس از exception را تأیید کرد.",
       "execution_summary": {
-        "attempt_count": 1,
+        "attempt_count": 2,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0099-2026-10-26-01",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "T0099-2026-10-26-02",
+        "last_attempt_result": "succeeded",
         "changed_files": [
-          "src/Host.Windows/Requests/HostRequestCoordinator.cs",
-          "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
-          "tests/HostLifecycle.Tests/HostRequestCoordinatorBusyTests.cs",
-          "tests/HostLifecycle.Tests/Program.cs",
           "step three/T0099/execution-report.md",
           "step three/T0099/evidence/verification.md",
           "step three/project-graph.md"
         ],
         "related_commits": [
-          "712243254c86aee70f1510b560f3c5e6f0d5fc4c"
+          "712243254c86aee70f1510b560f3c5e6f0d5fc4c",
+          "4cf8c8515b42479549c7b3a1e740e6112cfd72f9"
         ],
-        "tests_passed": [],
+        "tests_passed": [
+          "HostLifecycle unit/integration and T0098/T0099 coordinator tests: passed; Run 40309351792; log explicitly reports PASS for single-active-operation/Busy rejection/release after success or failure, and PASS for fail-fast admission without queueing 32 requests, cancellation preservation and resumption after release. https://github.com/artinrahimii/project/actions/runs/40309351792",
+          "Step Three quality gate: passed; Run 40309351849; graph structure, Python tests/syntax and evidence/output validation succeeded. https://github.com/artinrahimii/project/actions/runs/40309351849",
+          "Windows WPF formatting, Release build, generated Protobuf, startup smoke and agent-tool checks: passed; All inspected Windows steps completed successfully in product workflow run 40309351792. https://github.com/artinrahimii/project/actions/runs/40309351792",
+          "Real local llama.cpp/GGUF inference: passed; Live local-model integration workflow succeeded; supplementary product evidence, not a substitute for coordinator tests. https://github.com/artinrahimii/project/actions/runs/40309351863"
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "in_review",
+          "state": "passed",
           "triggering_contracts": [
-            "HostRequestCoordinator admission changed from waiting to fail-fast Busy"
+            "HostRequestCoordinator fail-fast Busy contract"
           ],
           "affected_by_contract_changes": [
-            "T0098 single-capacity serialization test and T0099 Busy response contract"
+            "Coordinator admission result/status and exception mapping"
           ],
           "review_evidence": [
             "src/Host.Windows/Requests/HostRequestCoordinator.cs",
@@ -17642,6 +17702,53 @@
             "Added HostRequestStatus and HostRequestOutcome<T>; ExecuteAsync now throws HostRequestBusyException when admission fails; TryExecuteAsync returns Busy immediately without queueing."
           ],
           "follow_up": "Run exact-commit HostLifecycle tests and Windows build; restore T0098 to done only after its revised test passes."
+        },
+        {
+          "attempt_id": "T0099-2026-10-26-02",
+          "started_at": "2026-10-26T10:41:10Z",
+          "ended_at": "2026-10-26T10:41:54Z",
+          "result": "succeeded",
+          "summary": "The exact implementation commit V 3.0.309 passed HostLifecycle CI. The logs confirm fail-fast Busy behavior, rejection of 32 concurrent requests without queueing, cancellation preservation, successful admission after release, and gate release after failure. Step Three quality and Windows Release build/formatting/startup checks passed.",
+          "changed_files": [
+            "step three/T0099/execution-report.md",
+            "step three/T0099/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "related_commits": [
+            "4cf8c8515b42479549c7b3a1e740e6112cfd72f9"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "HostLifecycle unit/integration and T0098/T0099 coordinator tests",
+              "result": "passed",
+              "summary": "Run 40309351792; log explicitly reports PASS for single-active-operation/Busy rejection/release after success or failure, and PASS for fail-fast admission without queueing 32 requests, cancellation preservation and resumption after release.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40309351792"
+            },
+            {
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "summary": "Run 40309351849; graph structure, Python tests/syntax and evidence/output validation succeeded.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40309351849"
+            },
+            {
+              "name": "Windows WPF formatting, Release build, generated Protobuf, startup smoke and agent-tool checks",
+              "result": "passed",
+              "summary": "All inspected Windows steps completed successfully in product workflow run 40309351792.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40309351792"
+            },
+            {
+              "name": "Real local llama.cpp/GGUF inference",
+              "result": "passed",
+              "summary": "Live local-model integration workflow succeeded; supplementary product evidence, not a substitute for coordinator tests.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40309351863"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Proceed to T0100 only after verifying its incoming dependencies and the request admission/capacity interfaces; preserve explicit Busy rejection."
         }
       ]
     },
@@ -30016,6 +30123,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-26T10:40:40.372Z"
+  "updated_at": "2026-10-26T10:44:09.218Z"
 }
 ```
