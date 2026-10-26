@@ -1,21 +1,30 @@
 # T0105 verification evidence
 
-## Exact source snapshot
+## Source snapshot and graph integrity
 
-- Repository/branch: `artinrahimii/project`, `main`.
-- Base commit: `165456c176a1f90675e080f7652c010255477e3d` (`V 3.0.322`); tree SHA: `66c539860c1b8c93cfb5400bc68c953dd1efeade`.
-- Graph path: `step three/project-graph.md`; expected Blob SHA: `1dc49ef40acd0c64b49928c641d8474ec7efb16f`.
-- The ordinary file fetch returned empty text despite a matching reported Blob SHA. The fallback Git Blob fetch was used; the complete UTF-8 content measured **1,671,793 bytes**, matching the tree entry, parsed as the full fenced JSON, and its calculated Git Blob SHA matched `1dc49ef40acd0c64b49928c641d8474ec7efb16f`.
-- The validated graph contains 229 unique task nodes and 426 edges. Before this attempt, T0105 was `not_started`; T0104 was `done` with exact-head CI evidence and T0097 was `done`.
+- Repository: `artinrahimii/project`; target branch: `main`.
+- Implementation commit: `063adef050c946694299427503e80aab4bbd3da1` (`V 3.0.323`), parent `165456c176a1f90675e080f7652c010255477e3d`.
+- At the implementation commit, the graph tree entry for `step three/project-graph.md` identified Blob `01d0a89ac3d7bae6b77471d1b625bf86f1256a7d`; content size was **1676254 bytes** and matched the tree's declared size. The calculated Git Blob SHA-1 matched the same Blob ID. The UTF-8 content parsed as a complete fenced JSON object.
+- The graph contained 229 task nodes and 426 edges. At the start of this task, T0105 was `not_started`; T0097 and T0104 were `done` with recorded evidence.
 
-## Reviewed edge
+## Dependency review
 
-- `T0104 -> T0105`: `type=blocks` preserved; classification changed from `unreviewed` to `sequencing_only`; validation changed to `validated`.
+- `T0104 -> T0105`: `type=blocks` preserved; `dependency_classification=sequencing_only`; `validation_status=validated`.
 - Evidence inspected: `src/Host.Windows/Requests/HostRequestCoordinator.cs`, `tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs`, `src/Host.Windows/Requests/HostRequestResponseDeliveryGate.cs`, `tests/HostLifecycle.Tests/HostRequestResponseDeliveryTests.cs`, and T0104's execution/evidence reports.
-- Rationale: the response-callback guard and temporary active-request cleanup do not exchange a required API/output. The edge remains only as conservative sequencing.
+- Rationale: T0104's response callback guard is independent from the coordinator's active cancellation source and semaphore cleanup checked by T0105. `T0105 -> T0106` remains unreviewed.
 
-## Test added
+## Acceptance test
 
-- `tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs`: controlled operation failure with assertions for exception propagation, clearing of the active cancellation reference, release of the single-request semaphore, and acceptance of the next request.
-- The test project already compiles the production `HostRequestCoordinator.cs`; `Program.cs` already calls `HostRequestCoordinatorTests.RunAsync()`.
-- Local execution was not available because the .NET SDK is missing. Exact-commit CI has not yet run at the time of this record.
+- Added to `tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs`; the existing test harness already compiles the production coordinator and calls `HostRequestCoordinatorTests.RunAsync()`.
+- The test held the operation active before triggering a controlled inference exception and asserted that the exception propagated, `CancelActiveRequest()` returned false afterward, `IsBusy` became false, and the next request succeeded.
+
+## Exact-head CI evidence
+
+All of the following ran against `063adef050c946694299427503e80aab4bbd3da1` and completed with conclusion `success`:
+
+- HostLifecycle test job: https://github.com/artinrahimii/project/actions/runs/40325818268/job/121582097682
+- Full White-P product build (Windows WPF, Android and HostLifecycle): https://github.com/artinrahimii/project/actions/runs/40325818268
+- Step Three quality gate: https://github.com/artinrahimii/project/actions/runs/40325818219
+- Real local inference integration: https://github.com/artinrahimii/project/actions/runs/40325818201
+
+No local .NET execution is claimed because the .NET SDK was unavailable in this tool environment. The task is marked done based on the exact implementation-commit CI evidence above.

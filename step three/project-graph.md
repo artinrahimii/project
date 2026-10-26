@@ -18920,8 +18920,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0104 و T0097 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "src/Host.Windows/Requests/HostRequestCoordinator.cs",
         "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
@@ -18937,21 +18937,26 @@
         "step three/T0105/execution-report.md",
         "step three/T0105/evidence/verification.md"
       ],
-      "notes": "The production coordinator already clears the active cancellation reference, disposes the linked CancellationTokenSource, and releases the inference semaphore in finally. This attempt adds a deterministic exception-path regression test; status stays in_progress until exact-head CI confirms it.",
+      "notes": "T0105 verified on implementation commit 063adef050c946694299427503e80aab4bbd3da1. The production coordinator already cleared the active cancellation reference and released the semaphore in finally; the new controlled-exception regression test passed on exact-head CI. No protobuf or public API contract changed. Scope remains in-process coordinator cleanup.",
       "execution_summary": {
-        "attempt_count": 1,
+        "attempt_count": 2,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0105-2026-10-26-01",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "T0105-2026-10-26-02",
+        "last_attempt_result": "succeeded",
         "changed_files": [
-          "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
           "step three/T0105/execution-report.md",
           "step three/T0105/evidence/verification.md",
-          "step three/project-graph.md",
-          "step three/T0105/.gitkeep"
+          "step three/project-graph.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
+        "related_commits": [
+          "063adef050c946694299427503e80aab4bbd3da1"
+        ],
+        "tests_passed": [
+          "HostRequestCoordinator exception-path cleanup regression — PASS on exact implementation commit 063adef050c946694299427503e80aab4bbd3da1; HostLifecycle job succeeded. (https://github.com/artinrahimii/project/actions/runs/40325818268/job/121582097682)",
+          "White-P product build — PASS on 063adef050c946694299427503e80aab4bbd3da1; HostLifecycle, Windows WPF, and Android jobs all succeeded. (https://github.com/artinrahimii/project/actions/runs/40325818268)",
+          "Step Three quality gate — PASS on 063adef050c946694299427503e80aab4bbd3da1; graph structure and recorded outputs/evidence checks succeeded. (https://github.com/artinrahimii/project/actions/runs/40325818219)",
+          "Real local inference integration — PASS on 063adef050c946694299427503e80aab4bbd3da1; pinned llama.cpp/GGUF integration and cancellation check succeeded. (https://github.com/artinrahimii/project/actions/runs/40325818201)"
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -18977,7 +18982,7 @@
             "step three/T0105/.gitkeep"
           ],
           "related_commits": [],
-          "commit_sha": null,
+          "commit_sha": "063adef050c946694299427503e80aab4bbd3da1",
           "tests": [
             {
               "command": "dotnet run --project tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj --configuration Release",
@@ -19000,6 +19005,53 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Check exact-head HostLifecycle, Windows build/format, Android build/tests, and Step Three quality workflow results. Mark done only after success; otherwise inspect logs and correct the implementation."
+        },
+        {
+          "attempt_id": "T0105-2026-10-26-02",
+          "started_at": "2026-10-26T12:56:07.532Z",
+          "ended_at": "2026-10-26T12:56:07.532Z",
+          "result": "succeeded",
+          "summary": "Exact-head CI passed the exception-path regression, all HostLifecycle tests, the Step Three quality gate, the complete Windows and Android product build, and real local llama.cpp inference/cancellation.",
+          "changed_files": [
+            "step three/T0105/execution-report.md",
+            "step three/T0105/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "related_commits": [
+            "063adef050c946694299427503e80aab4bbd3da1"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "HostRequestCoordinator exception-path cleanup regression",
+              "result": "passed",
+              "summary": "Host lifecycle unit/integration job completed successfully on the exact implementation commit.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40325818268/job/121582097682"
+            },
+            {
+              "name": "White-P product build",
+              "result": "passed",
+              "summary": "All three jobs passed: HostLifecycle; Windows C# formatting/build/WPF startup/agent-tool checks; Android format/lint/APK/Protobuf tests and artifact upload.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40325818268"
+            },
+            {
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "summary": "Automated tests, Python syntax, graph structure, and recorded outputs/evidence validation passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40325818219"
+            },
+            {
+              "name": "Real local inference integration",
+              "result": "passed",
+              "summary": "Pinned llama.cpp binary/model inference and active generation cancellation passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40325818201"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Before T0106 starts, review T0105 -> T0106; it remains unreviewed."
         }
       ]
     },
