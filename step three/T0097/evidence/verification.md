@@ -7,3 +7,16 @@
 - T0098–T0107 output a separate `Host.Windows/Requests/` request coordinator; their blocking relations remain in place as conservative sequencing.
 - Added tests: missing provider, provider failure, unknown/unsupported/stale/empty-evidence report, actual text-only adapter report, gated advertisement, and dispatch denial before confirmation/worker launch. Tests run through HostLifecycle and a dedicated Windows workflow step.
 - **CI pending:** these are source-review findings and test additions, not passed-test evidence. Local .NET execution was unavailable because the SDK is not installed. T0097 remains `in_progress`.
+
+
+## Exact-commit CI outcome
+
+The implementation commit `7ffc616b3acd1fcaa39f698a45a088d3103c2705` was verified by:
+
+- Step Three quality gate: **succeeded** — https://github.com/artinrahimii/project/actions/runs/40295245131
+- HostLifecycle tests including the T0097 capability policy: **succeeded** — https://github.com/artinrahimii/project/actions/runs/40295245106/job/121479611012
+- Windows Release build, startup smoke, agent-tool restriction/policy and capability tests: **succeeded** — https://github.com/artinrahimii/project/actions/runs/40295245106/job/121479611396
+- Android debug APK, lint, Protobuf and generated-source checks: **succeeded** — https://github.com/artinrahimii/project/actions/runs/40295245106/job/121479611344
+- Real local-inference integration: **succeeded** — https://github.com/artinrahimii/project/actions/runs/40295245121
+
+T0097 acceptance is met: the capability contract is present and the focused policy test passed on Linux and Windows. Do not interpret this as enabling tool calls on the current text-only llama.cpp adapter.

@@ -47,3 +47,16 @@
 ## Follow-up
 
 Inspect the exact commit's quality gate, HostLifecycle, Windows WPF and Android results. If they pass, append a distinct successful validation attempt, mark T0097 done with workflow evidence, and commit that status using the next non-repeating version. Preserve this partial attempt if any check fails.
+
+
+## Validation attempt 2 — succeeded
+
+The exact implementation commit `7ffc616b3acd1fcaa39f698a45a088d3103c2705` (`V 3.0.304`) was tested in GitHub Actions. All workflows relevant to this task passed:
+
+- [Step Three quality gate](https://github.com/artinrahimii/project/actions/runs/40295245131) — passed.
+- [HostLifecycle suite](https://github.com/artinrahimii/project/actions/runs/40295245106/job/121479611012) — passed; log explicitly confirms: `PASS: agent tool exposure/execution fail closed without fresh backend, model and structured-protocol support.`
+- [Windows WPF build and startup / tool-policy tests](https://github.com/artinrahimii/project/actions/runs/40295245106/job/121479611396) — formatting, Release build, generated Protobuf verification, UI startup smoke, process restrictions, rejection tests, and the dedicated T0097 capability step all passed.
+- [Android APK and protocol tests](https://github.com/artinrahimii/project/actions/runs/40295245106/job/121479611344) — Kotlin formatting/lint, debug APK, Protobuf round-trip and generated-source checks passed.
+- [Real local inference integration](https://github.com/artinrahimii/project/actions/runs/40295245121) — passed; supplementary evidence only, and it does not claim agent-tool support.
+
+The graph records a second, successful validation attempt (`T0097-2026-10-26-02`) and marks T0097 `done`. This means the *capability gate* is implemented and tested; it does **not** mean that the current llama.cpp adapter can invoke tools. That adapter remains fail-closed because structured tool-call requests/responses are not implemented and selected-model/backend support is not verified.

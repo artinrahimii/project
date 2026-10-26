@@ -17093,8 +17093,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0096 و T0087 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "src/Host.Application/IAgentToolCapabilityProvider.cs",
         "src/Host.Infrastructure/LlamaCppServerBackend.cs",
@@ -17127,36 +17127,32 @@
         "step three/T0097/evidence/verification.md",
         "step three/T0097/execution-report.md"
       ],
-      "notes": "T0097-A001 adds fail-closed backend/model/structured-protocol checks. The current llama.cpp adapter is text-only, so structured tool calling remains disabled. Registry advertisement and execution require a fresh report with backend, selected model, and protocol all Supported. Tests are wired into HostLifecycle and a focused Windows CI step. Exact-commit CI is pending; do not mark done before actual results pass.",
+      "notes": "T0097 is implemented and acceptance-verified. Exact implementation commit V 3.0.304 passed graph quality, HostLifecycle, Windows WPF build/startup and the dedicated capability gate, Android build/tests, and real local-inference CI. The current llama.cpp adapter remains deliberately ineligible for agent tools because its protocol is text-only and model/backend support is unverified; capability gating is complete, not an assertion that this adapter can perform tool calls.",
       "execution_summary": {
-        "attempt_count": 1,
+        "attempt_count": 2,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0097-2026-10-26-01",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "T0097-2026-10-26-02",
+        "last_attempt_result": "succeeded",
         "changed_files": [
-          "src/Host.Application/IAgentToolCapabilityProvider.cs",
-          "src/Host.Infrastructure/LlamaCppServerBackend.cs",
-          "src/Host.Windows/Chat/AgentToolCapabilities.cs",
-          "src/Host.Windows/Tools/AgentToolRegistry.cs",
-          "src/Host.Windows/Tools/AgentToolExecutionCoordinator.cs",
-          "tests/HostLifecycle.Tests/AgentToolCapabilityAcceptanceTests.cs",
-          "tests/HostLifecycle.Tests/AgentToolRegistryAcceptanceTests.cs",
-          "tests/HostLifecycle.Tests/AgentToolExecutionAcceptanceTests.cs",
-          "tests/HostLifecycle.Tests/AgentToolPolicyRejectionAcceptanceTests.cs",
-          "tests/HostLifecycle.Tests/Program.cs",
-          "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
-          ".github/workflows/product-build.yml",
           "step three/T0097/execution-report.md",
           "step three/T0097/evidence/verification.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
+        "related_commits": [
+          "7ffc616b3acd1fcaa39f698a45a088d3103c2705"
+        ],
+        "tests_passed": [
+          "Step Three quality gate (graph guard, source/evidence checks): https://github.com/artinrahimii/project/actions/runs/40295245131",
+          "HostLifecycle unit/integration suite including T0097 capability acceptance: https://github.com/artinrahimii/project/actions/runs/40295245106/job/121479611012 — The log emitted: PASS: agent tool exposure/execution fail closed without fresh backend, model and structured-protocol support.",
+          "Windows WPF formatting, Release build, generated Protobuf, startup smoke, agent-tool restrictions, policy rejection, and T0097 capability gate: https://github.com/artinrahimii/project/actions/runs/40295245106/job/121479611396 — All Windows steps passed; the dedicated capability step emitted the expected PASS line.",
+          "Android Kotlin format/lint, debug APK build, Protobuf round-trip and generated-source checks: https://github.com/artinrahimii/project/actions/runs/40295245106/job/121479611344",
+          "Real local llama.cpp/GGUF inference integration: https://github.com/artinrahimii/project/actions/runs/40295245121 — Supplemental product evidence; this test does not call agent tools."
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "in_review",
+          "state": "passed",
           "triggering_contracts": [
             "IAgentToolCapabilityProvider report contract",
             "AgentToolCapabilityPolicy freshness/fail-closed rules",
@@ -17164,9 +17160,9 @@
             "AgentToolExecutionCoordinator pre-dispatch gate"
           ],
           "affected_by_contract_changes": [
-            "Registry definitions no longer exposed for advertisement without checking capability.",
-            "Coordinator requires IInferenceBackend and denies dispatch unless backend/model/protocol are freshly verified.",
-            "Current llama.cpp adapter reports structured protocol Unsupported and backend/model support Unknown."
+            "Registry only exposes model-advertisable definitions after capability checks.",
+            "Coordinator denies tool execution before confirmation/worker dispatch unless a fresh report supports backend, selected model and structured protocol.",
+            "Current llama.cpp adapter is verified text-only at the adapter protocol layer; model/backend tool support remains Unknown."
           ],
           "review_evidence": [
             "src/Host.Application/IAgentToolCapabilityProvider.cs",
@@ -17174,7 +17170,9 @@
             "src/Host.Windows/Chat/AgentToolCapabilities.cs",
             "src/Host.Windows/Tools/AgentToolRegistry.cs",
             "src/Host.Windows/Tools/AgentToolExecutionCoordinator.cs",
-            "tests/HostLifecycle.Tests/AgentToolCapabilityAcceptanceTests.cs"
+            "tests/HostLifecycle.Tests/AgentToolCapabilityAcceptanceTests.cs",
+            "step three/T0097/execution-report.md",
+            "step three/T0097/evidence/verification.md"
           ]
         }
       },
@@ -17230,6 +17228,56 @@
             "Current llama.cpp adapter reports backend/model Unknown and structured protocol Unsupported."
           ],
           "follow_up": "Fetch exact implementation commit's quality-gate, HostLifecycle, Windows WPF and Android workflow results; mark done only on verified acceptance."
+        },
+        {
+          "attempt_id": "T0097-2026-10-26-02",
+          "started_at": "2026-10-26T08:51:55Z",
+          "ended_at": "2026-10-26T08:53:53Z",
+          "result": "succeeded",
+          "summary": "The exact implementation commit V 3.0.304 passed all relevant CI checks: graph quality gate, HostLifecycle including the new capability acceptance suite, Windows formatting/Release build/startup smoke and dedicated capability gate, Android APK/Protobuf validation, and the real local-inference workflow. The capability test passed; current llama.cpp agent tools remain disabled because structured tool calls are unsupported by its adapter.",
+          "changed_files": [
+            "step three/T0097/execution-report.md",
+            "step three/T0097/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "related_commits": [
+            "7ffc616b3acd1fcaa39f698a45a088d3103c2705"
+          ],
+          "tests": [
+            {
+              "name": "Step Three quality gate (graph guard, source/evidence checks)",
+              "result": "succeeded",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40295245131"
+            },
+            {
+              "name": "HostLifecycle unit/integration suite including T0097 capability acceptance",
+              "result": "succeeded",
+              "summary": "The log emitted: PASS: agent tool exposure/execution fail closed without fresh backend, model and structured-protocol support.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40295245106/job/121479611012"
+            },
+            {
+              "name": "Windows WPF formatting, Release build, generated Protobuf, startup smoke, agent-tool restrictions, policy rejection, and T0097 capability gate",
+              "result": "succeeded",
+              "summary": "All Windows steps passed; the dedicated capability step emitted the expected PASS line.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40295245106/job/121479611396"
+            },
+            {
+              "name": "Android Kotlin format/lint, debug APK build, Protobuf round-trip and generated-source checks",
+              "result": "succeeded",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40295245106/job/121479611344"
+            },
+            {
+              "name": "Real local llama.cpp/GGUF inference integration",
+              "result": "succeeded",
+              "summary": "Supplemental product evidence; this test does not call agent tools.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40295245121"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Proceed to T0098 only after reviewing its incoming edge and validating the request-coordination interface; preserve the current fail-closed agent-tool capability gate."
         }
       ]
     },
@@ -29675,6 +29723,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-26T08:50:41Z"
+  "updated_at": "2026-10-26T08:54:00Z"
 }
 ```
