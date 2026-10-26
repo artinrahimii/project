@@ -16510,11 +16510,11 @@
         "tests/HostLifecycle.Tests/AgentToolProcessExecutorTests.cs",
         "step three/T0095/execution-report.md"
       ],
-      "notes": "T0095 implementation attempt added a shell-free child-worker boundary, a strict bounded protocol, worker-side allowlist/argument validation, sanitized inherited environment, a timeout, and process-tree termination. On Windows the worker also must join a Job Object with one-process maximum and kill-on-close. No tool is registered by default. This is not an AppContainer/restricted-token sandbox; the worker retains the same user security context. Exact-commit CI must pass before completion.",
+      "notes": "Process-worker boundary and timeout tests pass in Linux HostLifecycle CI. A Windows build exposed missing explicit System.IO imports after an earlier CS1022 structure error; the imports have now been added. T0095 remains in progress pending exact-commit CI including Windows Job Object assignment and WPF startup. The child still uses the same OS identity; this is not an AppContainer/restricted-token sandbox.",
       "execution_summary": {
-        "attempt_count": 3,
-        "failed_attempt_count": 1,
-        "last_attempt_id": "T0095-2026-10-26-03",
+        "attempt_count": 5,
+        "failed_attempt_count": 2,
+        "last_attempt_id": "T0095-2026-10-26-05",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Host.Windows/Tools/IAgentToolProcessExecutor.cs",
@@ -16531,13 +16531,16 @@
           "step three/project-graph.md"
         ],
         "related_commits": [
-          "17e7f7ede0f3f2357fb95ae484466f1aa02f45da"
+          "17e7f7ede0f3f2357fb95ae484466f1aa02f45da",
+          "44be76a3f02ea579789cae6bae942c44c2f7f0cd"
         ],
         "tests_passed": [
-          "Step Three quality gate passed on V 3.0.295: https://github.com/artinrahimii/project/actions/runs/40280156875"
+          "Step Three quality gate passed on V 3.0.296: https://github.com/artinrahimii/project/actions/runs/40280367686",
+          "HostLifecycle tests, including agent-tool process execution, passed on V 3.0.296: https://github.com/artinrahimii/project/actions/runs/40280367697/job/121432103236"
         ],
         "tests_failed": [
-          "HostLifecycle job failed to compile the committed AgentToolProcessExecutor.cs with CS1022 at line 393: https://github.com/artinrahimii/project/actions/runs/40280156905"
+          "HostLifecycle compilation failed on V 3.0.295 with CS1022: https://github.com/artinrahimii/project/actions/runs/40280156905",
+          "Windows WPF compilation failed on V 3.0.296 with CS0246 for Stream and StreamReader: https://github.com/artinrahimii/project/actions/runs/40280367697"
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -16643,6 +16646,62 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Inspect exact-commit quality, HostLifecycle, Windows build/Job Object assignment, Android build, and local inference workflow runs."
+        },
+        {
+          "attempt_id": "T0095-2026-10-26-04",
+          "started_at": "2026-10-26T06:32:42Z",
+          "ended_at": "2026-10-26T06:32:55Z",
+          "result": "failed",
+          "summary": "Exact-commit Windows WPF Release build failed on missing System.IO types although the Linux HostLifecycle project compiled and passed.",
+          "changed_files": [],
+          "related_commits": [
+            "44be76a3f02ea579789cae6bae942c44c2f7f0cd"
+          ],
+          "tests": [
+            {
+              "name": "Windows WPF Release build",
+              "result": "failed",
+              "summary": "CS0246: StreamReader not found in AgentToolProcessExecutor.cs and Stream not found in AgentToolWorkerHost.cs.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40280367697"
+            },
+            {
+              "name": "HostLifecycle.Tests on Linux",
+              "result": "succeeded",
+              "summary": "All lifecycle and worker-process tests passed, including timeout and environment-sanitization assertions.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40280367697/job/121432103236"
+            }
+          ],
+          "failure_details": "CS0246: missing explicit System.IO namespace imports for Stream and StreamReader in the Windows target project.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Add explicit System.IO using directives and rerun the complete Windows and Linux validation on the resulting commit."
+        },
+        {
+          "attempt_id": "T0095-2026-10-26-05",
+          "started_at": "2026-10-26T06:34:08.299Z",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Added explicit System.IO imports to the two production source files named in the Windows compiler output.",
+          "changed_files": [
+            "src/Host.Windows/Tools/AgentToolProcessExecutor.cs",
+            "src/Host.Windows/Tools/AgentToolWorkerHost.cs",
+            "step three/T0095/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "related_commits": [],
+          "tests": [
+            {
+              "name": "Exact-commit CI",
+              "result": "not_run",
+              "summary": "The corrective commit V 3.0.297 will trigger the quality and product workflows."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Verify exact-commit Windows build and worker-mode startup, Linux lifecycle tests, Android build/tests, and quality gate."
         }
       ]
     },
@@ -28902,6 +28961,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-26T06:31:38.722Z"
+  "updated_at": "2026-10-26T06:34:08.299Z"
 }
 ```

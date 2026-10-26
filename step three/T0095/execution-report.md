@@ -49,3 +49,15 @@
 
 - Moved `WindowsWorkerJob` inside `AgentToolProcessExecutor`, retaining the one-process Job Object limit and kill-on-close flags.
 - The correction is committed separately as `V 3.0.296`; exact-commit quality, Linux HostLifecycle tests, Windows WPF build/startup (including native Job Object assignment), Android build, and local-inference workflow must be checked before T0095 can be marked done.
+
+
+## Exact-commit validation — attempt A004 (failed)
+
+- Tested commit: `44be76a3f02ea579789cae6bae942c44c2f7f0cd` (`V 3.0.296`). The Step Three quality gate passed: https://github.com/artinrahimii/project/actions/runs/40280367686.
+- The Linux HostLifecycle job passed, including the new process-boundary tests and their explicit PASS line: https://github.com/artinrahimii/project/actions/runs/40280367697/job/121432103236.
+- The Windows WPF Release build failed because `StreamReader` in `AgentToolProcessExecutor.cs` and `Stream` in `AgentToolWorkerHost.cs` were unresolved (`CS0246`). The failing workflow is https://github.com/artinrahimii/project/actions/runs/40280367697. The Linux lifecycle project had implicit `System.IO` imports, so it did not reveal this target-project compile difference.
+
+## Corrective attempt A005 — explicit IO namespace imports
+
+- Added explicit `using System.IO;` directives to both affected production files. This directly addresses the exact compiler errors; all other policy and worker behavior is unchanged.
+- The correction is committed separately as `V 3.0.297`. The Windows WPF Release build, smoke test (including worker-mode startup), Linux process tests, Android build/tests, and quality gate must pass on that exact commit before T0095 can be marked done.
