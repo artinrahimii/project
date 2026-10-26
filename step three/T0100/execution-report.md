@@ -31,3 +31,10 @@ The repository does not yet expose a live P2P request-ingress path that independ
 - `step three/T0099/execution-report.md`, `step three/T0099/evidence/verification.md`
 - `step three/T0100/execution-report.md`, `step three/T0100/evidence/verification.md`
 - `step three/project-graph.md`
+
+
+## CI attempt 2 — failed; formatting correction committed
+
+On V 3.0.311, [Step Three quality](https://github.com/artinrahimii/project/actions/runs/40312054446), [HostLifecycle/Android job](https://github.com/artinrahimii/project/actions/runs/40312054522), and [live local inference](https://github.com/artinrahimii/project/actions/runs/40312054442) passed. The Windows product job failed at `dotnet format whitespace --verify-no-changes` with 97 diagnostics confined to `HostRequestAdmissionPolicy.cs` and `HostRequestCoordinator.cs`; Windows build and smoke steps were skipped.
+
+Both files were reformatted in V 3.0.313 (`202cd267e014faf5681ccc35b30eca1a3f139543`). Exact-commit Windows CI is pending, so T0100 remains `in_progress`.
