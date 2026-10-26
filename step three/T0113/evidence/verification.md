@@ -1,17 +1,20 @@
-# T0113 verification evidence — pending exact-head CI
+# T0113 verification evidence — accepted
 
-## Baseline and dependency review
-- Repository `artinrahimii/project`, branch `main`, baseline `9a7c7b726282348efa1c9706590d47a4fe2f3e8d`.
-- Graph Blob `06bbcd9d29dc1824a6bdfc2fd90f59b02d7ecdeb` fetched via Git Blob API after normal file fetch had been previously observed to return an empty result; SHA-1 and complete JSON parse were verified at the baseline.
-- `T0112 → T0113`: reviewed as `sequencing_only`. The failure mapper's output strings are fixed and sanitized, but T0113 consumes no new mapper API. Existing `blocks` order is retained.
-- `T0107 → T0113`: reviewed as `sequencing_only`. The no-payload-log invariant is enforced at application/network logging sinks rather than consuming a T0107-specific coordinator interface. Existing `blocks` order is retained.
+## Implementation and acceptance
+- Implementation SHA: `738fc441bd984c4ed50fc0f7ada4adcd4fd0a15a` (`V 3.0.343`).
+- Exact final graph/quality verification SHA: `6c246d0485c36f970c5fcd1ae7a0881b3a98f091` (`V 3.0.344`).
+- Runtime case: `NetworkInferenceRequestFrameAcceptanceTests.RequestPromptIsNotWrittenToNormalConsoleLogsAsync` sends `NETWORK_PROMPT_PRIVATE_MARKER_7C2D0E21` via real loopback TCP and confirms it is not written to normal console output.
+- Static regression guard: `tests/test_network_payload_logging.py` checks logging sinks and prevents exposing prompt/context/output/error fields in ordinary logs.
+- The response mapper uses fixed sanitized strings and does not echo `outcome.Message` or raw exception details.
 
-## Implemented guard
-- `src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs` declares that frame bytes, prompt text, context capsule and response text are not ordinary log fields.
-- `src/Host.Windows/Networking/NetworkInferenceRequestResponseMapper.cs` documents and retains fixed sanitized response text.
-- `tests/HostLifecycle.Tests/NetworkInferenceRequestFrameAcceptanceTests.cs` sends `NETWORK_PROMPT_PRIVATE_MARKER_7C2D0E21` via real loopback TCP through parsing and callback, then asserts the marker is absent from normal console output.
-- `tests/test_network_payload_logging.py` scans production network/application sources for logging sinks whose surrounding statement references prompt, context, output or raw error details.
+## Exact-SHA CI
+- Step Three quality gate: **PASS** — https://github.com/artinrahimii/project/actions/runs/40416027597
+- HostLifecycle acceptance within product build: **PASS** — https://github.com/artinrahimii/project/actions/runs/40416027625
+- Windows WPF build/smoke/policy checks: **PASS** — https://github.com/artinrahimii/project/actions/runs/40416027625
+- Android lint/APK/Protobuf round-trip/generated-source checks/artifact upload: **PASS** — https://github.com/artinrahimii/project/actions/runs/40416027625
 
-## Verification
-- V 3.0.343: the Python test suite (153 tests), Python compileall and HostLifecycle job passed. The graph validation step failed with `ATTEMPT_COUNT_MISMATCH` on T0112 only; the history contains two entries but the summary said one. The graph metadata is corrected for the next commit, and exact-head quality CI must pass before T0113 completion.
-- No claim is made that request/response frame delivery exists; the response mapper currently creates typed messages only.
+## Historical issue
+V 3.0.343 quality gate detected a graph metadata mismatch (T0112 attempt_count 1 vs 2 execution-history entries). This was explicitly preserved as a failed verification event and corrected in V 3.0.344; graph structure and recorded evidence checks then passed. Application behavior tests did not fail.
+
+## Scope boundary
+The guard does not imply encryption, cryptographic peer identity, or a completed network response channel.

@@ -27,6 +27,13 @@ public sealed class ParticipationGatedNetworkListener : IAsyncDisposable
     {
         ArgumentNullException.ThrowIfNull(isParticipationActive);
         ArgumentNullException.ThrowIfNull(bindAddress);
+        if (!IPAddress.IsLoopback(bindAddress))
+        {
+            throw new ArgumentException(
+                "The initial host listener is restricted to loopback addresses.",
+                nameof(bindAddress));
+        }
+
         if (port is < 0 or > IPEndPoint.MaxPort) throw new ArgumentOutOfRangeException(nameof(port));
         _isParticipationActive = isParticipationActive;
         _requestedEndpoint = new IPEndPoint(bindAddress, port);

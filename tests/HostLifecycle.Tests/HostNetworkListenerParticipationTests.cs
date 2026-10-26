@@ -6,11 +6,30 @@ internal static class HostNetworkListenerParticipationTests
 {
     public static async Task RunAsync()
     {
+        NonLoopbackBindingIsRejected();
         await InactiveParticipationDoesNotBindAsync().ConfigureAwait(false);
         await ActiveParticipationStartsAndAcceptsTcpAsync().ConfigureAwait(false);
 
         Console.WriteLine(
             "PASS: the host TCP listener fails closed while participation is inactive and binds only after activation.");
+    }
+
+    private static void NonLoopbackBindingIsRejected()
+    {
+        foreach (var address in new[] { IPAddress.Any, IPAddress.IPv6Any, IPAddress.Parse("192.0.2.15") })
+        {
+            var rejected = false;
+            try
+            {
+                _ = new ParticipationGatedNetworkListener(() => true, address, 0);
+            }
+            catch (ArgumentException)
+            {
+                rejected = true;
+            }
+
+            Assert(rejected, $"A non-loopback bind address must be rejected: {address}.");
+        }
     }
 
     private static async Task InactiveParticipationDoesNotBindAsync()

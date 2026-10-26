@@ -7,7 +7,7 @@
 
 ## Decision
 
-1. The current Windows listener accepts exactly one inference request frame per TCP connection.
+1. The current Windows listener accepts exactly one inference request frame per TCP connection. The constructor rejects every bind address that is not a loopback address, including IPv4/IPv6 wildcard addresses; the UI displays the actual bound loopback address and port only while participation is active, and shows that no listener is open after deactivation.
 2. The frame begins with a 4-byte unsigned big-endian payload length followed by exactly that many serialized Protobuf `InferenceRequest` bytes.
 3. Zero length, truncated prefix/payload, malformed Protobuf, unsupported/malformed request protocol versions, unsafe request/attempt identifiers, missing/invalid/expired deadlines, invalid semantic fields, and payload length above `ProtocolMessageLimits.MaximumRequestMessageBytes` are rejected and the connection is closed.
 4. Every `InferenceRequest` carries `protocol_version = 1.0.0` in field 8. The parser validates the supported version and uses the existing typed error codes for unsupported versions, malformed messages, and expired deadlines.
