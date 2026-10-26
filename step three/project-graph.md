@@ -16110,8 +16110,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0092 و T0087 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال انجام",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "src/Host.Windows/Chat/AgentToolCall.cs",
         "src/Host.Windows/Tools/IAgentTool.cs",
@@ -16132,12 +16132,12 @@
         "tests/HostLifecycle.Tests/AgentToolRegistryAcceptanceTests.cs",
         "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj"
       ],
-      "notes": "Implemented explicit trusted-tool contract and an empty-by-default allowlist. Only explicitly registered implementations can be resolved; model-proposed unknown names are rejected, tool argument objects are delegated to the implementation validator before resolution for execution, duplicate/invalid definitions and open JSON object schemas are rejected, and command-execution names are reserved. No tool is executable through this registry alone; confirmation and sandboxed execution are downstream tasks T0094-T0095. Await exact-commit CI.",
+      "notes": "Implemented and validated an empty-by-default allowlist. Explicitly registered tool definitions have closed JSON object schemas and tool-specific argument validation; unknown tools, duplicate/unsafe definitions, reserved command names, and invalid arguments are rejected. No agent tool execution is active in this commit. T0094 must implement user confirmation before side-effect execution; T0095 must handle process isolation/timeouts and keep arbitrary system command execution disabled.",
       "execution_summary": {
-        "attempt_count": 1,
+        "attempt_count": 2,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0093-2026-10-26-01",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "T0093-2026-10-26-02",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Host.Windows/Chat/AgentToolCall.cs",
           "src/Host.Windows/Tools/IAgentTool.cs",
@@ -16149,29 +16149,37 @@
           "step three/project-graph.md"
         ],
         "related_commits": [
-          "45a5dcb706e3689439dff173530a4435b71bbd73"
+          "45a5dcb706e3689439dff173530a4435b71bbd73",
+          "88ef47e71ebc96f1e06a2f46d0522c177453cab9"
         ],
-        "tests_passed": [],
+        "tests_passed": [
+          "AgentToolRegistryAcceptanceTests.Run: passed — The real HostLifecycle harness executed the test and logged: PASS: agent tool definitions are explicit, closed-schema allowlisted, and disabled by default. (https://github.com/artinrahimii/project/actions/runs/40265372672)",
+          "Step Three quality gate: passed — Python tests, syntax compilation, graph structure validation, and repository-backed output/evidence validation passed on the exact code commit. (https://github.com/artinrahimii/project/actions/runs/40265372681)",
+          "Host lifecycle unit and integration tests: passed — The product workflow completed the HostLifecycle harness successfully, including AgentToolRegistryAcceptanceTests.Run. (https://github.com/artinrahimii/project/actions/runs/40265372672)",
+          "Windows WPF formatting, Release build, generated Protobuf verification and startup smoke: passed — All Windows host job steps completed successfully. (https://github.com/artinrahimii/project/actions/runs/40265372672)",
+          "Android lint, debug APK, Protobuf unit tests, generated-source validation and artifact upload: passed — All Android job steps completed successfully. (https://github.com/artinrahimii/project/actions/runs/40265372672)",
+          "Real local inference integration: passed — The exact code commit also passed the separate pinned llama.cpp process, Apache-2.0 GGUF validation, and live local-model inference workflow; this is supplemental product baseline evidence, not a tool execution test. (https://github.com/artinrahimii/project/actions/runs/40265372754)"
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
           "state": "passed",
           "triggering_contracts": [
-            "T0092 error presentation contract",
-            "T0087 catalog/license metadata contract",
-            "T0094 downstream tool execution/confirmation contract"
+            "T0092 completed error presentation",
+            "T0087 model catalog/license metadata",
+            "T0094 downstream side-effect confirmation executor"
           ],
           "affected_by_contract_changes": [
-            "New host-owned IAgentTool contract and explicit allowlist registry; no active tool implementations registered by default."
+            "Added explicit host-owned IAgentTool interface and empty-by-default AgentToolRegistry. Metadata carries RequiresUserConfirmation; this task does not execute tools."
           ],
           "review_evidence": [
-            "src/Host.Windows/MainWindow.xaml.cs",
-            "src/Host.Application/HostErrorPresentation.cs",
-            "src/Host.Windows/Models/Catalog/ModelCatalogModels.cs",
             "src/Host.Windows/Chat/AgentToolCall.cs",
             "src/Host.Windows/Tools/IAgentTool.cs",
-            "src/Host.Windows/Tools/AgentToolRegistry.cs"
+            "src/Host.Windows/Tools/AgentToolRegistry.cs",
+            "tests/HostLifecycle.Tests/AgentToolRegistryAcceptanceTests.cs",
+            "https://github.com/artinrahimii/project/actions/runs/40265372681",
+            "https://github.com/artinrahimii/project/actions/runs/40265372672"
           ]
         }
       },
@@ -16209,6 +16217,71 @@
             "Added AgentToolCall, AgentToolDefinition, AgentToolResult, IAgentTool, and AgentToolRegistry contracts; tool registry is empty by default."
           ],
           "follow_up": "Commit this implementation as an in-progress attempt, then inspect exact-commit quality and product workflow results. Do not mark T0093 done until the HostLifecycle tests and complete product CI pass."
+        },
+        {
+          "attempt_id": "T0093-2026-10-26-02",
+          "started_at": "2026-10-26T03:42:16Z",
+          "ended_at": "2026-10-26T03:45:45.215Z",
+          "result": "succeeded",
+          "summary": "Completed T0093 after exact-commit CI passed. The production interface and explicit allowlist registry compiled in both the HostLifecycle test project and Windows WPF project. The HostLifecycle log confirms AgentToolRegistryAcceptanceTests.Run passed; it checks zero tools by default, explicit allowlisting, unknown/case-mismatched names, invalid arguments, duplicate registrations, malformed/open JSON schemas, reserved command-execution names, confirmation metadata, and cloned JsonElement lifetime. Step Three quality, Windows build/startup, HostLifecycle, Android APK/Protobuf, and separate real local-inference workflows all passed. This task defines and validates the tool boundary; confirmation-gated execution and sandbox/process restrictions remain for T0094/T0095.",
+          "changed_files": [
+            "src/Host.Windows/Chat/AgentToolCall.cs",
+            "src/Host.Windows/Tools/IAgentTool.cs",
+            "src/Host.Windows/Tools/AgentToolRegistry.cs",
+            "tests/HostLifecycle.Tests/AgentToolRegistryAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "step three/T0093/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "related_commits": [
+            "88ef47e71ebc96f1e06a2f46d0522c177453cab9"
+          ],
+          "tests": [
+            {
+              "name": "AgentToolRegistryAcceptanceTests.Run",
+              "result": "passed",
+              "summary": "The real HostLifecycle harness executed the test and logged: PASS: agent tool definitions are explicit, closed-schema allowlisted, and disabled by default.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40265372672"
+            },
+            {
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "summary": "Python tests, syntax compilation, graph structure validation, and repository-backed output/evidence validation passed on the exact code commit.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40265372681"
+            },
+            {
+              "name": "Host lifecycle unit and integration tests",
+              "result": "passed",
+              "summary": "The product workflow completed the HostLifecycle harness successfully, including AgentToolRegistryAcceptanceTests.Run.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40265372672"
+            },
+            {
+              "name": "Windows WPF formatting, Release build, generated Protobuf verification and startup smoke",
+              "result": "passed",
+              "summary": "All Windows host job steps completed successfully.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40265372672"
+            },
+            {
+              "name": "Android lint, debug APK, Protobuf unit tests, generated-source validation and artifact upload",
+              "result": "passed",
+              "summary": "All Android job steps completed successfully.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40265372672"
+            },
+            {
+              "name": "Real local inference integration",
+              "result": "passed",
+              "summary": "The exact code commit also passed the separate pinned llama.cpp process, Apache-2.0 GGUF validation, and live local-model inference workflow; this is supplemental product baseline evidence, not a tool execution test.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40265372754"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "Introduced IAgentTool, AgentToolDefinition.RequiresUserConfirmation, AgentToolCall, AgentToolResult and AgentToolRegistry; no default tool is active and no process/shell execution is implemented."
+          ],
+          "follow_up": "Next task T0094 must enforce explicit user confirmation before executing tools marked RequiresUserConfirmation. Before beginning it, validate both incoming edges T0093 -> T0094 and T0087 -> T0094 against source and evidence; leave T0094 -> T0095 unreviewed until checking the executor/process boundary."
         }
       ]
     },
@@ -28516,6 +28589,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-26T03:40:00Z"
+  "updated_at": "2026-10-26T03:45:45.215Z"
 }
 ```
