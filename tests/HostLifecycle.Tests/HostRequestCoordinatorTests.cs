@@ -7,7 +7,7 @@ internal static class HostRequestCoordinatorTests
         var coordinator = new HostRequestCoordinator();
         var firstStarted = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
         var releaseFirst = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
-        var secondStarted = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var busyOperationInvoked = false;
         var activeCount = 0;
         var maximumActiveCount = 0;
 
@@ -29,27 +29,43 @@ internal static class HostRequestCoordinatorTests
         await firstStarted.Task.WaitAsync(TimeSpan.FromSeconds(5)).ConfigureAwait(false);
         Assert(coordinator.IsBusy, "The coordinator must report busy while one inference owns the gate.");
 
-        var second = coordinator.ExecuteAsync(cancellationToken =>
+        var busyOutcome = await coordinator.TryExecuteAsync(cancellationToken =>
         {
+            busyOperationInvoked = true;
             TrackActiveOperation();
-            secondStarted.TrySetResult(true);
-            try
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-                return Task.FromResult("second");
-            }
-            finally
-            {
-                Interlocked.Decrement(ref activeCount);
-            }
-        });
+            return Task.FromResult("must-not-run");
+        }).WaitAsync(TimeSpan.FromSeconds(1)).ConfigureAwait(false);
 
-        Assert(!secondStarted.Task.IsCompleted, "The second inference must not start before the first releases the single-capacity gate.");
+        Assert(busyOutcome.Status == HostRequestStatus.Busy && busyOutcome.Result is null,
+            "A concurrent request must receive an explicit Busy outcome immediately.");
+        Assert(!busyOperationInvoked, "A rejected concurrent operation must not be invoked.");
+
+        var busyExceptionObserved = false;
+        try
+        {
+            await coordinator.ExecuteAsync(_ =>
+            {
+                busyOperationInvoked = true;
+                return Task.FromResult("must-not-run");
+            }).ConfigureAwait(false);
+        }
+        catch (HostRequestBusyException exception)
+        {
+            busyExceptionObserved = exception.Status == HostRequestStatus.Busy;
+        }
+
+        Assert(busyExceptionObserved, "ExecuteAsync must expose a typed Busy exception for a concurrent request.");
+        Assert(!busyOperationInvoked, "No rejected operation may execute.");
 
         releaseFirst.TrySetResult(true);
-        Assert(await first.WaitAsync(TimeSpan.FromSeconds(5)).ConfigureAwait(false) == "first", "The first inference result must be preserved.");
-        Assert(await second.WaitAsync(TimeSpan.FromSeconds(5)).ConfigureAwait(false) == "second", "The waiting inference must start after the first finishes.");
-        Assert(await secondStarted.Task.WaitAsync(TimeSpan.FromSeconds(5)).ConfigureAwait(false), "The second inference must eventually start.");
+        Assert(await first.WaitAsync(TimeSpan.FromSeconds(5)).ConfigureAwait(false) == "first",
+            "The first inference result must be preserved.");
+        var afterFirst = await coordinator.ExecuteAsync(cancellationToken =>
+        {
+            TrackActiveOperation();
+            return Task.FromResult("after-first");
+        }).ConfigureAwait(false);
+        Assert(afterFirst == "after-first", "A new request must be accepted after the active inference finishes.");
         Assert(maximumActiveCount == 1, "No two coordinator operations may overlap.");
         Assert(!coordinator.IsBusy, "The coordinator gate must be released after all work completes.");
 
@@ -58,7 +74,7 @@ internal static class HostRequestCoordinatorTests
         {
             await coordinator.ExecuteAsync<string>(_ => Task.FromException<string>(new InvalidOperationException("Expected test failure."))).ConfigureAwait(false);
         }
-        catch (InvalidOperationException)
+        catch (InvalidOperationException exception) when (exception is not HostRequestBusyException)
         {
             exceptionObserved = true;
         }
@@ -67,7 +83,7 @@ internal static class HostRequestCoordinatorTests
         var afterFailure = await coordinator.ExecuteAsync(_ => Task.FromResult("released")).ConfigureAwait(false);
         Assert(afterFailure == "released", "The semaphore must be released after an operation throws.");
 
-        Console.WriteLine("PASS: HostRequestCoordinator limits active operations to one and releases its semaphore after success or failure.");
+        Console.WriteLine("PASS: HostRequestCoordinator serializes active inference, rejects concurrent work as Busy without queuing, and releases its semaphore after success or failure.");
 
         void TrackActiveOperation()
         {

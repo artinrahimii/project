@@ -17297,8 +17297,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0097 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "done",
-      "status_fa": "انجام‌شده",
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
       "actual_output_paths": [
         "src/Host.Windows/Requests/HostRequestCoordinator.cs",
         "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
@@ -17315,20 +17315,23 @@
         "step three/T0098/execution-report.md",
         "step three/T0098/evidence/verification.md"
       ],
-      "notes": "T0098 پیاده‌سازی و اعتبارسنجی شد: HostRequestCoordinator با SemaphoreSlim تک‌ظرفیتی، لغو هنگام انتظار و آزادسازی در finally. آزمون پذیرش در GitHub Actions موفق شد و هم‌زمانی بیشینهٔ یک عملیات و بازیابی semaphore پس از exception را تأیید کرد. پیکربندی Compile تکراری که در V 3.0.306 شکست داشت در V 3.0.307 اصلاح شد. مرحلهٔ بعدی T0099 است؛ رد فوری با Busy هنوز در آن وظیفه پیاده‌سازی نشده است.",
+      "notes": "T0098 پیاده‌سازی و اعتبارسنجی شد: HostRequestCoordinator با SemaphoreSlim تک‌ظرفیتی، لغو هنگام انتظار و آزادسازی در finally. آزمون پذیرش در GitHub Actions موفق شد و هم‌زمانی بیشینهٔ یک عملیات و بازیابی semaphore پس از exception را تأیید کرد. پیکربندی Compile تکراری که در V 3.0.306 شکست داشت در V 3.0.307 اصلاح شد. مرحلهٔ بعدی T0099 است؛ رد فوری با Busy هنوز در آن وظیفه پیاده‌سازی نشده است. قرارداد coordinator برای T0099 از صف‌شدن به رد فوری Busy تغییر کرده است؛ آزمون اصلی T0098 به رفتار جدید بازنویسی شد و برای اعتبارسنجی مجدد روی commit جدید بازگشایی شده است.",
       "execution_summary": {
-        "attempt_count": 4,
+        "attempt_count": 5,
         "failed_attempt_count": 1,
-        "last_attempt_id": "T0098-2026-10-26-04",
-        "last_attempt_result": "succeeded",
+        "last_attempt_id": "T0098-2026-10-26-05",
+        "last_attempt_result": "reopened",
         "changed_files": [
-          "step three/T0098/execution-report.md",
-          "step three/T0098/evidence/verification.md",
+          "src/Host.Windows/Requests/HostRequestCoordinator.cs",
+          "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
+          "tests/HostLifecycle.Tests/Program.cs",
+          "tests/HostLifecycle.Tests/HostRequestCoordinatorBusyTests.cs",
           "step three/project-graph.md"
         ],
         "related_commits": [
           "451980f2ec009f7915c10fa705a53789a6ea33b9",
-          "95a78fe6cacb8d095a82b99d69efb64b5dc0092a"
+          "95a78fe6cacb8d095a82b99d69efb64b5dc0092a",
+          "712243254c86aee70f1510b560f3c5e6f0d5fc4c"
         ],
         "tests_passed": [
           "HostRequestCoordinator test passed in HostLifecycle CI run 40308296192; explicit PASS message confirms one active operation and semaphore release after success/failure.",
@@ -17340,19 +17343,19 @@
           "HostLifecycle job on V 3.0.306 failed before tests due to NETSDK1022 duplicate Compile item HostRequestCoordinatorTests.cs (run 40306970928); corrected in V 3.0.307."
         ],
         "blocked_reason": null,
-        "reopened_reason": null,
+        "reopened_reason": "Shared HostRequestCoordinator admission contract changed from queue/wait to fail-fast Busy; revalidate the existing capacity-one/non-overlap acceptance test against the new behavior.",
         "contract_revalidation": {
-          "state": "passed",
+          "state": "required",
           "triggering_contracts": [
-            "HostRequestCoordinator single-capacity operation gate"
+            "HostRequestCoordinator admission semantics"
           ],
           "affected_by_contract_changes": [
-            "T0099 will add fail-fast Busy admission to the coordinator created here."
+            "T0099 fail-fast Busy behavior changes second-request admission; T0098 serialization/release guarantees still must be preserved."
           ],
           "review_evidence": [
             "src/Host.Windows/Requests/HostRequestCoordinator.cs",
             "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
-            "docs/requirements.md"
+            "tests/HostLifecycle.Tests/HostRequestCoordinatorBusyTests.cs"
           ]
         }
       },
@@ -17492,6 +17495,38 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Continue with T0099, preserving the validated single-capacity gate; T0099 must add fail-fast Busy rejection rather than silently queueing a second request."
+        },
+        {
+          "attempt_id": "T0098-2026-10-26-05",
+          "started_at": "2026-10-26T10:40:40.372Z",
+          "ended_at": "2026-10-26T10:40:40.372Z",
+          "result": "reopened",
+          "summary": "Reopened for contract revalidation because T0099 changes the same coordinator from waiting behind the semaphore to fail-fast Busy admission. The T0098 serialization/release acceptance test was updated and must pass on the T0099 implementation commit before T0098 is marked done again.",
+          "changed_files": [
+            "src/Host.Windows/Requests/HostRequestCoordinator.cs",
+            "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "tests/HostLifecycle.Tests/HostRequestCoordinatorBusyTests.cs",
+            "step three/project-graph.md"
+          ],
+          "related_commits": [
+            "712243254c86aee70f1510b560f3c5e6f0d5fc4c"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "T0098 HostRequestCoordinator serialization/release regression test",
+              "result": "pending",
+              "summary": "Updated to non-queueing contract; must pass on the current implementation commit."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": "Shared HostRequestCoordinator admission contract changed from queue/wait to fail-fast Busy; revalidate the existing capacity-one/non-overlap acceptance test against the new behavior.",
+          "contract_changes": [
+            "ExecuteAsync delegates to TryExecuteAsync and throws HostRequestBusyException if already busy; TryExecuteAsync returns HostRequestOutcome<T> with Status=Busy without invoking the rejected operation."
+          ],
+          "follow_up": "Re-run HostRequestCoordinatorTests and HostRequestCoordinatorBusyTests in exact-commit CI. Re-mark done only after both pass."
         }
       ]
     },
@@ -17512,33 +17547,103 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0098 و T0097 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "src/Host.Windows/Requests/HostRequestCoordinator.cs",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorBusyTests.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0099/execution-report.md",
+        "step three/T0099/evidence/verification.md"
+      ],
       "expected_output_paths": [
         "src/Host.Windows/Requests/ + tests/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorBusyTests.cs",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
+        "step three/T0099/execution-report.md",
+        "step three/T0099/evidence/verification.md"
+      ],
+      "notes": "Fail-fast admission با TryExecuteAsync و نتیجهٔ صریح Busy اضافه شده است. آزمون‌ها در انتظار CI هستند؛ تا تأیید اجرای واقعی، وضعیت در حال اجرا باقی می‌ماند.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
-        "related_commits": [],
+        "last_attempt_id": "T0099-2026-10-26-01",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Host.Windows/Requests/HostRequestCoordinator.cs",
+          "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
+          "tests/HostLifecycle.Tests/HostRequestCoordinatorBusyTests.cs",
+          "tests/HostLifecycle.Tests/Program.cs",
+          "step three/T0099/execution-report.md",
+          "step three/T0099/evidence/verification.md",
+          "step three/project-graph.md"
+        ],
+        "related_commits": [
+          "712243254c86aee70f1510b560f3c5e6f0d5fc4c"
+        ],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
-          "affected_by_contract_changes": [],
-          "review_evidence": []
+          "state": "in_review",
+          "triggering_contracts": [
+            "HostRequestCoordinator admission changed from waiting to fail-fast Busy"
+          ],
+          "affected_by_contract_changes": [
+            "T0098 single-capacity serialization test and T0099 Busy response contract"
+          ],
+          "review_evidence": [
+            "src/Host.Windows/Requests/HostRequestCoordinator.cs",
+            "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
+            "tests/HostLifecycle.Tests/HostRequestCoordinatorBusyTests.cs"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0099-2026-10-26-01",
+          "started_at": "2026-10-26T10:40:40.372Z",
+          "ended_at": "2026-10-26T10:40:40.372Z",
+          "result": "partial",
+          "summary": "Added fail-fast zero-timeout admission, explicit Busy outcome and typed Busy exception; updated serialization test and added deterministic tests for 32 concurrent admissions, no operation dispatch on Busy, cancellation, and resumption after release. Awaiting exact-commit CI.",
+          "changed_files": [
+            "src/Host.Windows/Requests/HostRequestCoordinator.cs",
+            "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
+            "tests/HostLifecycle.Tests/HostRequestCoordinatorBusyTests.cs",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "step three/T0099/execution-report.md",
+            "step three/T0099/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "related_commits": [
+            "712243254c86aee70f1510b560f3c5e6f0d5fc4c"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "HostRequestCoordinatorBusyTests",
+              "result": "pending",
+              "summary": "Registered in HostLifecycle harness; exact-commit GitHub Actions has not run yet."
+            },
+            {
+              "name": "HostRequestCoordinatorTests after API change",
+              "result": "pending",
+              "summary": "Updated to verify serialization without queueing; exact-commit GitHub Actions has not run yet."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "Added HostRequestStatus and HostRequestOutcome<T>; ExecuteAsync now throws HostRequestBusyException when admission fails; TryExecuteAsync returns Busy immediately without queueing."
+          ],
+          "follow_up": "Run exact-commit HostLifecycle tests and Windows build; restore T0098 to done only after its revised test passes."
+        }
+      ]
     },
     {
       "id": "T0100",
@@ -29911,6 +30016,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-26T10:35:40.093Z"
+  "updated_at": "2026-10-26T10:40:40.372Z"
 }
 ```
