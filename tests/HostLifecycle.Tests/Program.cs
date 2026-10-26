@@ -97,6 +97,7 @@ ModelDownloadCancellationAcceptanceTests.Run();
 UpdateModelSafetyAcceptanceTests.Run();
 LocalInferenceProcessLauncherTests.Run();
 LocalHostSettingsPersistenceTests.Run();
+await HostRequestCoordinatorTests.RunAsync();
 await HostInferenceSessionConcurrencyTests.RunAsync();
 await HostInferenceSessionConcurrencyTests.DisconnectReleasesBackendAsync();
 await HostInferenceSessionConcurrencyTests.DisconnectWaitsForGenerationBeforeDisposalAsync();

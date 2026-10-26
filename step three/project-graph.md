@@ -17297,33 +17297,92 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0097 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "src/Host.Windows/Requests/HostRequestCoordinator.cs",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
+        "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0098/execution-report.md",
+        "step three/T0098/evidence/verification.md"
+      ],
       "expected_output_paths": [
         "src/Host.Windows/Requests/ + tests/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
+        "step three/T0098/execution-report.md",
+        "step three/T0098/evidence/verification.md"
+      ],
+      "notes": "پیاده‌سازی پایهٔ HostRequestCoordinator با semaphore تک‌ظرفیتی و آزمون پذیرش قطعی افزوده شده است. آزمون C# محلی اجرا نشد، چون .NET SDK در محیط حاضر موجود نیست؛ نتیجهٔ CI همان commit پیش‌شرط تکمیل است. درخواست دوم فعلاً با semaphore سریال می‌شود؛ رفتار رد فوری با Busy متعلق به T0099 است.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0098-2026-10-26-01",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Host.Windows/Requests/HostRequestCoordinator.cs",
+          "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
+          "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+          "tests/HostLifecycle.Tests/Program.cs",
+          "step three/T0098/execution-report.md",
+          "step three/T0098/evidence/verification.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
-          "affected_by_contract_changes": [],
-          "review_evidence": []
+          "state": "in_review",
+          "triggering_contracts": [
+            "HostRequestCoordinator single-capacity operation gate"
+          ],
+          "affected_by_contract_changes": [
+            "T0099 will add fail-fast Busy admission to the coordinator created here."
+          ],
+          "review_evidence": [
+            "src/Host.Windows/Requests/HostRequestCoordinator.cs",
+            "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
+            "docs/requirements.md"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0098-2026-10-26-01",
+          "started_at": "2026-10-26T10:22:38.195Z",
+          "ended_at": "2026-10-26T10:22:38.195Z",
+          "result": "partial",
+          "summary": "Added a real capacity-one HostRequestCoordinator plus deterministic test coverage for non-overlap, single active execution, release after success, and gate reuse after an exception. The local environment has no .NET SDK; exact-commit CI is pending.",
+          "changed_files": [
+            "src/Host.Windows/Requests/HostRequestCoordinator.cs",
+            "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
+            "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "step three/T0098/execution-report.md",
+            "step three/T0098/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "HostRequestCoordinator acceptance test",
+              "result": "pending",
+              "summary": "Added to HostLifecycle test harness; not run locally because dotnet is unavailable. Exact-commit GitHub Actions must confirm."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "Introduced HostRequestCoordinator.ExecuteAsync<T> with capacity-one semaphore and cancellation-aware acquisition; T0099 will add fail-fast Busy behavior."
+          ],
+          "follow_up": "Check exact-commit quality, HostLifecycle and Windows build workflows before marking T0098 done."
+        }
+      ]
     },
     {
       "id": "T0099",
@@ -25568,10 +25627,14 @@
       "from": "T0098",
       "to": "T0099",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "hard_dependency",
+      "rationale": "T0098 creates the concrete HostRequestCoordinator and its capacity-one semaphore; T0099 adds fail-fast Busy rejection to this same coordinator. This is a dependency on the actual component created by T0098, supported by the task contracts, source/test paths, and REQ-005 rather than inferred from type=blocks alone.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/Requests/HostRequestCoordinator.cs",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
+        "docs/requirements.md"
+      ]
     },
     {
       "from": "T0097",
@@ -29721,8 +29784,22 @@
         "docs/requirements.md"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-26T10:22:38.195Z",
+      "edge_from": "T0098",
+      "edge_to": "T0099",
+      "old_classification": "unreviewed",
+      "new_classification": "hard_dependency",
+      "reason": "T0098 creates the concrete HostRequestCoordinator and its capacity-one semaphore; T0099 adds fail-fast Busy rejection to this same coordinator. This is a dependency on the actual component created by T0098, supported by the task contracts, source/test paths, and REQ-005 rather than inferred from type=blocks alone.",
+      "evidence": [
+        "src/Host.Windows/Requests/HostRequestCoordinator.cs",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
+        "docs/requirements.md"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-26T08:54:00Z"
+  "updated_at": "2026-10-26T10:22:38.195Z"
 }
 ```
