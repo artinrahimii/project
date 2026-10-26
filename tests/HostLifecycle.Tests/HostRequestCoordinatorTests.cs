@@ -83,6 +83,7 @@ internal static class HostRequestCoordinatorTests
         var afterFailure = await coordinator.ExecuteAsync(ValidAdmission(), _ => Task.FromResult("released")).ConfigureAwait(false);
         Assert(afterFailure == "released", "The semaphore must be released after an operation throws.");
 
+        await DeadlineIsCheckedBeforeInferenceAndResultDeliveryAsync().ConfigureAwait(false);
         Console.WriteLine("PASS: HostRequestCoordinator serializes active inference, rejects concurrent work as Busy without queuing, and releases its semaphore after success or failure.");
 
         void TrackActiveOperation()
@@ -99,6 +100,57 @@ internal static class HostRequestCoordinatorTests
             }
         }
     }
+
+    private static async Task DeadlineIsCheckedBeforeInferenceAndResultDeliveryAsync()
+    {
+        var receivedAt = DateTimeOffset.FromUnixTimeMilliseconds(1_800_000_000_000);
+        var deadline = receivedAt.AddSeconds(1);
+        var clockReads = 0;
+        var beforeInferenceCoordinator = new HostRequestCoordinator(() =>
+            Interlocked.Increment(ref clockReads) == 1 ? receivedAt : receivedAt.AddSeconds(2));
+        var beforeInferenceInvoked = false;
+        var beforeInference = await beforeInferenceCoordinator.TryExecuteAsync(
+            AdmissionWithDeadline(deadline),
+            _ =>
+            {
+                beforeInferenceInvoked = true;
+                return Task.FromResult("must-not-run");
+            }).ConfigureAwait(false);
+
+        Assert(
+            beforeInference.Status == HostRequestStatus.Rejected &&
+            beforeInference.AdmissionFailure == HostRequestAdmissionFailure.DeadlineExpired &&
+            !beforeInferenceInvoked,
+            "An expired deadline immediately before inference must reject without invoking the operation.");
+
+        var currentTime = receivedAt;
+        var afterInferenceCoordinator = new HostRequestCoordinator(() => currentTime);
+        var afterInference = await afterInferenceCoordinator.TryExecuteAsync(
+            AdmissionWithDeadline(deadline),
+            _ =>
+            {
+                currentTime = receivedAt.AddSeconds(2);
+                return Task.FromResult("late-result");
+            }).ConfigureAwait(false);
+
+        Assert(
+            afterInference.Status == HostRequestStatus.Rejected &&
+            afterInference.AdmissionFailure == HostRequestAdmissionFailure.DeadlineExpired &&
+            afterInference.Result is null,
+            "A result completed after its deadline must be withheld from the response caller.");
+        Assert(!afterInferenceCoordinator.IsBusy, "The request gate must be released when a late result is withheld.");
+
+        Console.WriteLine("PASS: T0102 captures the request deadline and rejects expiry before inference and withholds late results after inference.");
+    }
+
+    private static HostRequestAdmissionContext AdmissionWithDeadline(DateTimeOffset deadline) =>
+        new(
+            true,
+            WhiteP.Host.Domain.HostState.Ready,
+            "fixture/ready-model",
+            "fixture/ready-model",
+            WhiteP.Host.Domain.HostCapacityState.Ready,
+            (ulong)deadline.ToUnixTimeMilliseconds());
 
     private static HostRequestAdmissionContext ValidAdmission() => new(true, WhiteP.Host.Domain.HostState.Ready, "fixture/ready-model", "fixture/ready-model", WhiteP.Host.Domain.HostCapacityState.Ready, (ulong)DateTimeOffset.UtcNow.AddMinutes(2).ToUnixTimeMilliseconds());
 

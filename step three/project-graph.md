@@ -18213,8 +18213,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0100 و T0097 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "src/Host.Windows/Requests/SecureRequestIdGenerator.cs",
         "tests/HostLifecycle.Tests/SecureRequestIdGeneratorTests.cs",
@@ -18229,33 +18229,36 @@
         "tests/HostLifecycle.Tests/Program.cs",
         "protocol/whitep/v1/messages.proto"
       ],
-      "notes": "مولد شناسهٔ موقت با RandomNumberGenerator و ۱۲۸ بیت تصادفی پیاده‌سازی شده است؛ شناسه با پیشوند req_ و ۳۲ رقم هگزادسیمال کوچک تولید می‌شود. آزمون CI هنوز اجرا نشده است.",
+      "notes": "T0101 تکمیل و با CI همان commit تأیید شد: تولید ۴٬۰۹۶ شناسه با RandomNumberGenerator، بررسی قالب و عدم تکرار نمونه با موفقیت گذشت. این نتیجه مولد را اعتبارسنجی می‌کند، نه اتصال end-to-end به ورودی P2P.",
       "execution_summary": {
-        "attempt_count": 1,
+        "attempt_count": 2,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0101-2026-10-26-01",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "T0101-2026-10-26-02",
+        "last_attempt_result": "succeeded",
         "changed_files": [
-          "src/Host.Windows/Requests/SecureRequestIdGenerator.cs",
-          "tests/HostLifecycle.Tests/SecureRequestIdGeneratorTests.cs",
-          "tests/HostLifecycle.Tests/Program.cs",
-          "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+          "step three/T0101/execution-report.md",
+          "step three/T0101/evidence/verification.md",
           "step three/project-graph.md"
         ],
         "related_commits": [
-          "e3ba53ba52f4dbef73414e60eab9c95f182914c7"
+          "7bc81d758e6a75a903335be0dafd078b5354016d"
         ],
-        "tests_passed": [],
+        "tests_passed": [
+          "SecureRequestIdGeneratorTests: 4,096 IDs passed format and sample uniqueness checks in exact-head HostLifecycle logs (https://github.com/artinrahimii/project/actions/runs/40314159555/job/121542435171).",
+          "Step Three quality gate passed for V 3.0.316 (https://github.com/artinrahimii/project/actions/runs/40314159537).",
+          "White-P product build passed all HostLifecycle, Windows WPF and Android jobs for V 3.0.316 (https://github.com/artinrahimii/project/actions/runs/40314159555).",
+          "Real local llama.cpp/GGUF integration passed for V 3.0.316 (https://github.com/artinrahimii/project/actions/runs/40314159559)."
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "in_review",
+          "state": "passed",
           "triggering_contracts": [
             "InferenceRequest.request_id is a required non-empty string"
           ],
           "affected_by_contract_changes": [
-            "Future request construction can call SecureRequestIdGenerator; existing wire schema stays unchanged."
+            "The wire schema was not changed; generator produces the required temporary ID, but end-to-end request-ingress wiring is outside T0101's verified scope."
           ],
           "review_evidence": [
             "protocol/whitep/v1/messages.proto",
@@ -18297,6 +18300,53 @@
             "Added a helper for creating temporary 128-bit random request IDs; the existing protobuf wire schema is unchanged."
           ],
           "follow_up": "Run exact-commit Step Three quality gate, HostLifecycle tests, Windows formatting/build, and Android product checks before marking T0101 done."
+        },
+        {
+          "attempt_id": "T0101-2026-10-26-02",
+          "started_at": "2026-10-26T11:19:07Z",
+          "ended_at": "2026-10-26T11:20:29Z",
+          "result": "succeeded",
+          "summary": "Exact-head V 3.0.316 CI passed. HostLifecycle log confirms the secure-ID acceptance test generated 4,096 identifiers and passed format/uniqueness checks; quality gate, product build and real local inference workflow all passed.",
+          "changed_files": [
+            "step three/T0101/execution-report.md",
+            "step three/T0101/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "related_commits": [
+            "7bc81d758e6a75a903335be0dafd078b5354016d"
+          ],
+          "commit_sha": "7bc81d758e6a75a903335be0dafd078b5354016d",
+          "tests": [
+            {
+              "name": "SecureRequestIdGeneratorTests",
+              "result": "passed",
+              "summary": "Generated 4,096 IDs; required format and sample uniqueness checks passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40314159555/job/121542435171"
+            },
+            {
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "summary": "Exact-head graph/Python quality job succeeded.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40314159537"
+            },
+            {
+              "name": "White-P product build",
+              "result": "passed",
+              "summary": "HostLifecycle, Windows WPF and Android jobs succeeded.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40314159555"
+            },
+            {
+              "name": "Real local inference integration",
+              "result": "passed",
+              "summary": "The real local process/model integration succeeded on the same exact head.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40314159559"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "T0102 is next: deadline checks at receipt, before inference and before result delivery; do not claim P2P response transport."
         }
       ]
     },
@@ -18317,33 +18367,99 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0101 و T0097 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "src/Host.Windows/Requests/HostRequestCoordinator.cs",
+        "src/Host.Windows/Requests/HostRequestAdmissionPolicy.cs",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
+        "step three/T0102/execution-report.md",
+        "step three/T0102/evidence/verification.md"
+      ],
       "expected_output_paths": [
         "src/Host.Windows/Requests/ + tests/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "src/Host.Windows/Requests/HostRequestCoordinator.cs",
+        "src/Host.Windows/Requests/HostRequestAdmissionPolicy.cs",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
+        "step three/T0102/execution-report.md",
+        "step three/T0102/evidence/verification.md",
+        "protocol/whitep/v1/messages.proto"
+      ],
+      "notes": "Deadline در مرز HostRequestCoordinator snapshot می‌شود؛ پیش از inference و پس از اتمام برای جلوگیری از تحویل نتیجهٔ دیرهنگام بازبینی می‌شود. آزمون‌های کنترل‌شده با ساعت به harness افزوده شده‌اند؛ تا زمان گذر CI دقیق همین commit وظیفه در حال اجرا باقی می‌ماند. ارسال پاسخ از طریق P2P ادعا نمی‌شود.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
-        "related_commits": [],
+        "last_attempt_id": "T0102-2026-10-26-01",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Host.Windows/Requests/HostRequestCoordinator.cs",
+          "src/Host.Windows/Requests/HostRequestAdmissionPolicy.cs",
+          "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
+          "step three/T0102/execution-report.md",
+          "step three/T0102/evidence/verification.md",
+          "step three/project-graph.md"
+        ],
+        "related_commits": [
+          "7bc81d758e6a75a903335be0dafd078b5354016d"
+        ],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
-          "affected_by_contract_changes": [],
-          "review_evidence": []
+          "state": "in_review",
+          "triggering_contracts": [
+            "HostRequestAdmissionContext.DeadlineUnixMs",
+            "InferenceRequest.deadline_unix_ms"
+          ],
+          "affected_by_contract_changes": [
+            "Snapshot the existing absolute deadline and reject late completion before returning a successful result; protobuf wire fields/numbers remain unchanged."
+          ],
+          "review_evidence": [
+            "src/Host.Windows/Requests/HostRequestCoordinator.cs",
+            "src/Host.Windows/Requests/HostRequestAdmissionPolicy.cs",
+            "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
+            "protocol/whitep/v1/messages.proto"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0102-2026-10-26-01",
+          "started_at": "2026-10-26T11:40:03.884Z",
+          "ended_at": "2026-10-26T11:40:03.884Z",
+          "result": "partial",
+          "summary": "Added an immutable deadline snapshot at coordinator entry, recheck before invoking inference, and post-inference expiry rejection that withholds late results. Added controlled-clock acceptance tests for expiry before inference and expiry during inference. Exact-head CI remains pending.",
+          "changed_files": [
+            "src/Host.Windows/Requests/HostRequestCoordinator.cs",
+            "src/Host.Windows/Requests/HostRequestAdmissionPolicy.cs",
+            "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
+            "step three/T0102/execution-report.md",
+            "step three/T0102/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "related_commits": [
+            "7bc81d758e6a75a903335be0dafd078b5354016d"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "DeadlineIsCheckedBeforeInferenceAndResultDeliveryAsync",
+              "result": "pending",
+              "summary": "Verifies pre-inference expiry rejection, late-result suppression, and semaphore release; exact-head CI pending."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "Added coordinator-boundary deadline snapshot and late-result suppression; no protobuf wire contract change."
+          ],
+          "follow_up": "Inspect the V 3.0.317 exact-head quality gate, HostLifecycle log, Windows build/format and Android results. Keep T0102 in_progress unless the new assertions and relevant required jobs pass."
+        }
+      ]
     },
     {
       "id": "T0103",
@@ -26493,10 +26609,18 @@
       "from": "T0101",
       "to": "T0102",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "The request-ID generator emits an opaque string, while T0102 consumes the absolute deadline timestamp in HostRequestAdmissionContext. The source and tests show no shared interface/runtime output between these tasks. Preserve type=blocks as conservative pipeline order, not as a claimed technical dependency.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/Requests/SecureRequestIdGenerator.cs",
+        "tests/HostLifecycle.Tests/SecureRequestIdGeneratorTests.cs",
+        "src/Host.Windows/Requests/HostRequestAdmissionPolicy.cs",
+        "src/Host.Windows/Requests/HostRequestCoordinator.cs",
+        "tests/HostLifecycle.Tests/HostRequestAdmissionTests.cs",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
+        "protocol/whitep/v1/messages.proto"
+      ]
     },
     {
       "from": "T0097",
@@ -30623,8 +30747,26 @@
         "protocol/whitep/v1/messages.proto"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-26T11:40:03.884Z",
+      "edge_from": "T0101",
+      "edge_to": "T0102",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "reason": "The request-ID generator emits an opaque string, while T0102 consumes the absolute deadline timestamp in HostRequestAdmissionContext. The source and tests show no shared interface/runtime output between these tasks. Preserve type=blocks as conservative pipeline order, not as a claimed technical dependency.",
+      "evidence": [
+        "src/Host.Windows/Requests/SecureRequestIdGenerator.cs",
+        "tests/HostLifecycle.Tests/SecureRequestIdGeneratorTests.cs",
+        "src/Host.Windows/Requests/HostRequestAdmissionPolicy.cs",
+        "src/Host.Windows/Requests/HostRequestCoordinator.cs",
+        "tests/HostLifecycle.Tests/HostRequestAdmissionTests.cs",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
+        "protocol/whitep/v1/messages.proto"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-26T11:18:17.281Z"
+  "updated_at": "2026-10-26T11:40:03.884Z"
 }
 ```

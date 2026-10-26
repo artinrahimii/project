@@ -33,3 +33,14 @@
 - `step three/T0101/execution-report.md`
 - `step three/T0101/evidence/verification.md`
 - `step three/project-graph.md`
+
+
+## Attempt T0101-2026-10-26-02 — exact-head acceptance succeeded
+
+- Tested implementation commit: `7bc81d758e6a75a903335be0dafd078b5354016d` (`V 3.0.316`).
+- The exact-commit [Step Three quality gate](https://github.com/artinrahimii/project/actions/runs/40314159537) passed.
+- The exact-commit [White-P product build](https://github.com/artinrahimii/project/actions/runs/40314159555) passed all jobs: HostLifecycle tests, Windows WPF formatting/build/startup checks, and Android lint/build/unit tests.
+- The exact-commit [real local inference integration](https://github.com/artinrahimii/project/actions/runs/40314159559) passed.
+- HostLifecycle job log [121542435171](https://github.com/artinrahimii/project/actions/runs/40314159555/job/121542435171) explicitly reports: `PASS: generated 4096 temporary request IDs using a cryptographic RNG; format and sample uniqueness checks passed.`
+- **Outcome:** T0101 acceptance is confirmed and may be marked `done`.
+- **Scope limitation:** this proves the ID generator and its acceptance test, not an end-to-end P2P ingress or actual transport call site. The existing wire contract is unchanged.

@@ -86,10 +86,17 @@ public static class HostRequestAdmissionPolicy
                 "Request rejected: verified host capacity is insufficient.");
         }
 
+        return EvaluateDeadline(context.DeadlineUnixMs, nowUtc);
+    }
+
+    public static HostRequestAdmissionDecision EvaluateDeadline(
+        ulong deadlineUnixMs,
+        DateTimeOffset nowUtc)
+    {
         var nowUnixMs = nowUtc.ToUnixTimeMilliseconds();
         var maximumDeadlineUnixMs = (ulong)DateTimeOffset.MaxValue.ToUnixTimeMilliseconds();
-        if (context.DeadlineUnixMs == 0 ||
-            context.DeadlineUnixMs > maximumDeadlineUnixMs ||
+        if (deadlineUnixMs == 0 ||
+            deadlineUnixMs > maximumDeadlineUnixMs ||
             nowUnixMs < 0)
         {
             return HostRequestAdmissionDecision.Rejected(
@@ -97,7 +104,7 @@ public static class HostRequestAdmissionPolicy
                 "Request rejected: deadline is missing or invalid.");
         }
 
-        if (context.DeadlineUnixMs <= (ulong)nowUnixMs)
+        if (deadlineUnixMs <= (ulong)nowUnixMs)
         {
             return HostRequestAdmissionDecision.Rejected(
                 HostRequestAdmissionFailure.DeadlineExpired,

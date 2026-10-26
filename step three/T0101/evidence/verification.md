@@ -7,3 +7,14 @@
 - **Automated acceptance source:** `SecureRequestIdGeneratorTests` samples 4,096 IDs, validates format and verifies no repetition in the sample. It is registered in the existing HostLifecycle test harness.
 - **Dependency:** `T0100 -> T0101` validated as sequencing-only: request admission and ID generation have no shared type/runtime output, but the existing task order is preserved. `T0101 -> T0102` remains unreviewed.
 - **Execution state:** code/tests registered and committed; exact-commit CI is pending. This is a request ID generator component, not a claim that the not-yet-present P2P ingress is end-to-end wired.
+
+
+## Exact-head verification — T0101-2026-10-26-02
+
+- Tested commit: `7bc81d758e6a75a903335be0dafd078b5354016d` (`V 3.0.316`), branch `main`.
+- Secure ID generator acceptance passed in HostLifecycle job `121542435171`: 4,096 IDs generated; required lowercase-hex format and sample uniqueness checks passed.
+- Step Three quality gate passed: workflow run `40314159537`.
+- Product build passed, including HostLifecycle, Windows WPF, and Android checks: workflow run `40314159555`.
+- Real local inference integration passed: workflow run `40314159559`.
+- Local .NET tests were not run in this environment because the .NET SDK is unavailable; the claims above refer to the directly inspected GitHub Actions runs/logs.
+- Completion scope remains the secure ID generator component. An end-to-end P2P ingress integration is not claimed.

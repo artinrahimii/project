@@ -55,6 +55,12 @@ public sealed class HostRequestAdmissionException : InvalidOperationException
 public sealed class HostRequestCoordinator
 {
     private readonly SemaphoreSlim _inferenceSemaphore = new(1, 1);
+    private readonly Func<DateTimeOffset> _utcNow;
+
+    public HostRequestCoordinator(Func<DateTimeOffset>? utcNow = null)
+    {
+        _utcNow = utcNow ?? (() => DateTimeOffset.UtcNow);
+    }
 
     public bool IsBusy => _inferenceSemaphore.CurrentCount == 0;
 
@@ -88,7 +94,11 @@ public sealed class HostRequestCoordinator
         ArgumentNullException.ThrowIfNull(operation);
         cancellationToken.ThrowIfCancellationRequested();
 
-        var decision = HostRequestAdmissionPolicy.Evaluate(admission, DateTimeOffset.UtcNow);
+        // Snapshot the absolute deadline at the coordinator boundary; do not allow later mutation to extend it.
+        var receivedAtUtc = _utcNow();
+        var receivedDeadlineUnixMs = admission.DeadlineUnixMs;
+        var receivedAdmission = admission with { DeadlineUnixMs = receivedDeadlineUnixMs };
+        var decision = HostRequestAdmissionPolicy.Evaluate(receivedAdmission, receivedAtUtc);
         if (!decision.IsAdmitted)
         {
             return HostRequestOutcome<T>.Rejected(decision.Failure, decision.Message);
@@ -104,13 +114,23 @@ public sealed class HostRequestCoordinator
             cancellationToken.ThrowIfCancellationRequested();
 
             // Recheck readiness/deadline immediately before inference is invoked.
-            var finalDecision = HostRequestAdmissionPolicy.Evaluate(admission, DateTimeOffset.UtcNow);
+            var finalDecision = HostRequestAdmissionPolicy.Evaluate(receivedAdmission, _utcNow());
             if (!finalDecision.IsAdmitted)
             {
                 return HostRequestOutcome<T>.Rejected(finalDecision.Failure, finalDecision.Message);
             }
 
             var result = await operation(cancellationToken).ConfigureAwait(false);
+
+            // Do not deliver a result when inference finished after the request deadline.
+            var responseDeadline = HostRequestAdmissionPolicy.EvaluateDeadline(receivedDeadlineUnixMs, _utcNow());
+            if (!responseDeadline.IsAdmitted)
+            {
+                return HostRequestOutcome<T>.Rejected(
+                    responseDeadline.Failure,
+                    "Request deadline expired before result delivery; the late result was withheld.");
+            }
+
             return HostRequestOutcome<T>.Completed(result);
         }
         finally
