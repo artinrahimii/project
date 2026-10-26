@@ -85,6 +85,7 @@ internal static class HostRequestCoordinatorTests
 
         await DeadlineIsCheckedBeforeInferenceAndResultDeliveryAsync().ConfigureAwait(false);
         await ActiveCancellationCancelsOperationAndReleasesGateAsync().ConfigureAwait(false);
+        await TemporaryRequestStateIsClearedAfterOperationFailureAsync().ConfigureAwait(false);
         Console.WriteLine("PASS: HostRequestCoordinator serializes active inference, rejects concurrent work as Busy without queuing, and releases its semaphore after success or failure.");
 
         void TrackActiveOperation()
@@ -100,6 +101,46 @@ internal static class HostRequestCoordinatorTests
                 }
             }
         }
+    }
+
+    private static async Task TemporaryRequestStateIsClearedAfterOperationFailureAsync()
+    {
+        var coordinator = new HostRequestCoordinator();
+        var operationStarted = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var allowFailure = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        var failingRequest = coordinator.ExecuteAsync<string>(ValidAdmission(), async _ =>
+        {
+            operationStarted.TrySetResult(true);
+            await allowFailure.Task.ConfigureAwait(false);
+            throw new InvalidOperationException("Expected controlled inference failure.");
+        });
+
+        await operationStarted.Task.WaitAsync(TimeSpan.FromSeconds(5)).ConfigureAwait(false);
+        Assert(coordinator.IsBusy, "The request gate must remain owned while the failing operation is active.");
+
+        allowFailure.TrySetResult(true);
+        var exceptionObserved = false;
+        try
+        {
+            _ = await failingRequest.WaitAsync(TimeSpan.FromSeconds(5)).ConfigureAwait(false);
+        }
+        catch (InvalidOperationException exception) when (exception is not HostRequestBusyException)
+        {
+            exceptionObserved = true;
+        }
+
+        Assert(exceptionObserved, "The controlled inference exception must propagate to the caller.");
+        Assert(!coordinator.CancelActiveRequest(),
+            "The active-request cancellation reference must be cleared after inference throws.");
+        Assert(!coordinator.IsBusy, "The request semaphore must be released after inference throws.");
+
+        var nextResult = await coordinator.ExecuteAsync(
+            ValidAdmission(),
+            _ => Task.FromResult("after-exception")).WaitAsync(TimeSpan.FromSeconds(5)).ConfigureAwait(false);
+        Assert(nextResult == "after-exception", "A new request must be accepted after exception cleanup.");
+
+        Console.WriteLine("PASS: HostRequestCoordinator clears temporary active-request state and releases the request gate after inference throws.");
     }
 
     private static async Task DeadlineIsCheckedBeforeInferenceAndResultDeliveryAsync()

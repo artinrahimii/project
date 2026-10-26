@@ -18920,20 +18920,36 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0104 و T0097 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "src/Host.Windows/Requests/HostRequestCoordinator.cs",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
+        "step three/T0105/execution-report.md",
+        "step three/T0105/evidence/verification.md"
+      ],
       "expected_output_paths": [
         "src/Host.Windows/Requests/ + tests/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "src/Host.Windows/Requests/HostRequestCoordinator.cs",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
+        "step three/T0105/execution-report.md",
+        "step three/T0105/evidence/verification.md"
+      ],
+      "notes": "The production coordinator already clears the active cancellation reference, disposes the linked CancellationTokenSource, and releases the inference semaphore in finally. This attempt adds a deterministic exception-path regression test; status stays in_progress until exact-head CI confirms it.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0105-2026-10-26-01",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
+          "step three/T0105/execution-report.md",
+          "step three/T0105/evidence/verification.md",
+          "step three/project-graph.md",
+          "step three/T0105/.gitkeep"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
@@ -18946,7 +18962,46 @@
           "review_evidence": []
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0105-2026-10-26-01",
+          "started_at": "2026-10-26T12:51:28.658Z",
+          "ended_at": "2026-10-26T12:51:28.658Z",
+          "result": "partial",
+          "summary": "Reviewed T0104 -> T0105 as sequencing-only and added deterministic regression coverage for finally cleanup after an inference exception. Exact-head CI is pending; local .NET execution was unavailable.",
+          "changed_files": [
+            "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
+            "step three/T0105/execution-report.md",
+            "step three/T0105/evidence/verification.md",
+            "step three/project-graph.md",
+            "step three/T0105/.gitkeep"
+          ],
+          "related_commits": [],
+          "commit_sha": null,
+          "tests": [
+            {
+              "command": "dotnet run --project tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj --configuration Release",
+              "result": "not_run",
+              "summary": "Not run locally because the .NET SDK is unavailable in this environment."
+            },
+            {
+              "command": "GitHub Actions White-P product build",
+              "result": "pending",
+              "summary": "Must pass on the exact implementation commit before T0105 can be marked done."
+            },
+            {
+              "command": "GitHub Actions Step Three quality gate",
+              "result": "pending",
+              "summary": "Graph integrity and recorded-output/evidence validation must pass on the exact implementation commit."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Check exact-head HostLifecycle, Windows build/format, Android build/tests, and Step Three quality workflow results. Mark done only after success; otherwise inspect logs and correct the implementation."
+        }
+      ]
     },
     {
       "id": "T0106",
@@ -27054,10 +27109,17 @@
       "from": "T0104",
       "to": "T0105",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0104 adds a request-scoped response-callback gate; T0105 validates cleanup of HostRequestCoordinator's active cancellation source and inference semaphore. T0105 does not consume the response gate API or output as a data dependency. Keep type=blocks as conservative sequencing rather than claiming a hard technical dependency.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/Requests/HostRequestCoordinator.cs",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
+        "src/Host.Windows/Requests/HostRequestResponseDeliveryGate.cs",
+        "tests/HostLifecycle.Tests/HostRequestResponseDeliveryTests.cs",
+        "step three/T0104/execution-report.md",
+        "step three/T0104/evidence/verification.md"
+      ]
     },
     {
       "from": "T0097",
@@ -31169,8 +31231,25 @@
         "step three/T0103/evidence/verification.md"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-26T12:51:28.658Z",
+      "edge_from": "T0104",
+      "edge_to": "T0105",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "reason": "The response callback guard in T0104 is independent of the active-request cancellation state and semaphore cleanup checked by T0105. No API/data artifact from T0104 is consumed by T0105; keep type=blocks only as conservative order.",
+      "evidence": [
+        "src/Host.Windows/Requests/HostRequestCoordinator.cs",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
+        "src/Host.Windows/Requests/HostRequestResponseDeliveryGate.cs",
+        "tests/HostLifecycle.Tests/HostRequestResponseDeliveryTests.cs",
+        "step three/T0104/execution-report.md",
+        "step three/T0104/evidence/verification.md"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-26T12:28:28.052Z"
+  "updated_at": "2026-10-26T12:51:28.658Z"
 }
 ```
