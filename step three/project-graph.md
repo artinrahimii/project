@@ -19008,8 +19008,8 @@
         },
         {
           "attempt_id": "T0105-2026-10-26-02",
-          "started_at": "2026-10-26T12:56:07.532Z",
-          "ended_at": "2026-10-26T12:56:07.532Z",
+          "started_at": "2026-10-26T12:51:53Z",
+          "ended_at": "2026-10-26T12:53:49Z",
           "result": "succeeded",
           "summary": "Exact-head CI passed the exception-path regression, all HostLifecycle tests, the Step Three quality gate, the complete Windows and Android product build, and real local llama.cpp inference/cancellation.",
           "changed_files": [
@@ -31302,6 +31302,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-26T12:51:28.658Z"
+  "updated_at": "2026-10-26T13:00:11.057Z"
 }
 ```
