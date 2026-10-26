@@ -16302,8 +16302,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0093 و T0087 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "src/Host.Windows/Tools/IAgentToolConfirmationService.cs",
         "src/Host.Windows/Tools/AgentToolExecutionCoordinator.cs",
@@ -16323,14 +16323,17 @@
         "src/Host.Windows/Tools/WpfAgentToolConfirmationService.cs",
         "tests/HostLifecycle.Tests/AgentToolExecutionAcceptanceTests.cs",
         "tests/HostLifecycle.Tests/Program.cs",
-        "step three/T0094/execution-report.md"
+        "step three/T0094/execution-report.md",
+        "https://github.com/artinrahimii/project/actions/runs/40268843489",
+        "https://github.com/artinrahimii/project/actions/runs/40268843248",
+        "https://github.com/artinrahimii/project/actions/runs/40268843195"
       ],
-      "notes": "The production execution coordinator now validates and resolves the explicit allowlist before prompting; side-effecting calls require positive injected confirmation, and cancellation/decline fail closed. Exact-commit CI is pending. Process isolation and timeout are intentionally deferred to T0095; no default tools or arbitrary-command execution were added.",
+      "notes": "Exact-commit quality and product workflows passed. Side-effecting calls require positive injected confirmation; denial, invalid/unknown calls, cancellation and confirmation-service failures do not invoke the tool. No tools are registered by default. WPF modal click-through was not automated; the Windows WPF build/format/startup smoke passed. Process isolation/timeout remains T0095.",
       "execution_summary": {
-        "attempt_count": 1,
+        "attempt_count": 2,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0094-2026-10-26-01",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "T0094-2026-10-26-02",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Host.Windows/Tools/IAgentToolConfirmationService.cs",
           "src/Host.Windows/Tools/AgentToolExecutionCoordinator.cs",
@@ -16341,25 +16344,36 @@
           "step three/T0094/execution-report.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
+        "related_commits": [
+          "1d1eddfdde3b4bfcdd8eb82e0e1898e5183662ab"
+        ],
+        "tests_passed": [
+          "Step Three quality gate passed on exact implementation commit V 3.0.292: https://github.com/artinrahimii/project/actions/runs/40268843489. All 150 Python tests passed; graph guard reported 0 errors and 1 pre-existing T0001 unmapped-dependency metadata warning.",
+          "HostLifecycle unit/integration tests passed on exact implementation commit; log explicitly reports: PASS: side-effecting agent tools require explicit confirmation; decline, invalid calls and cancellation never execute. https://github.com/artinrahimii/project/actions/runs/40268843248/job/121397058279",
+          "Windows WPF formatting, Release build, generated Protobuf source checks, startup smoke test, and artifact upload passed: https://github.com/artinrahimii/project/actions/runs/40268843248/job/121397058667",
+          "Android Kotlin format/lint, debug APK build, Protobuf round-trip tests, generated source checks, and artifact upload passed: https://github.com/artinrahimii/project/actions/runs/40268843248/job/121397058687",
+          "Real local llama.cpp/GGUF inference workflow passed on the same exact implementation commit: https://github.com/artinrahimii/project/actions/runs/40268843195 (supplemental evidence only; no agent tool was invoked by this inference test)."
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "in_progress",
+          "state": "passed",
           "triggering_contracts": [
-            "T0093 trusted tool registry/confirmation metadata",
-            "T0087 model-catalog sequencing prerequisite"
+            "T0093 explicit trusted tool allowlist and RequiresUserConfirmation metadata",
+            "T0087 model-license disclosure reviewed as sequencing only",
+            "T0095 process-isolation/timeout execution seam review"
           ],
           "affected_by_contract_changes": [
-            "Introduced IAgentToolConfirmationService and AgentToolExecutionCoordinator as the approval-aware execution seam for T0095."
+            "Introduced an approval-aware execution coordinator and an injected WPF confirmation boundary; T0095 must preserve confirmation-before-execution when introducing isolation/timeouts."
           ],
           "review_evidence": [
             "src/Host.Windows/Tools/IAgentTool.cs",
             "src/Host.Windows/Tools/AgentToolRegistry.cs",
             "src/Host.Windows/Tools/AgentToolExecutionCoordinator.cs",
             "src/Host.Windows/Tools/IAgentToolConfirmationService.cs",
+            "src/Host.Windows/Tools/WpfAgentToolConfirmationService.cs",
+            "tests/HostLifecycle.Tests/AgentToolExecutionAcceptanceTests.cs",
             "step three/T0087/execution-report.md"
           ]
         }
@@ -16397,6 +16411,60 @@
             "WPF confirmation displays the complete JSON arguments and defaults to No; oversized argument payloads are denied."
           ],
           "follow_up": "Inspect exact-commit quality and product workflow results for V 3.0.292 before marking the task done."
+        },
+        {
+          "attempt_id": "T0094-2026-10-26-02",
+          "started_at": "2026-10-26T04:23:40Z",
+          "ended_at": "2026-10-26T04:25:42Z",
+          "result": "succeeded",
+          "summary": "The exact implementation commit passed quality, full product, and real local-inference workflows. AgentToolExecutionAcceptanceTests emitted its explicit PASS line. WPF format/Release build/startup smoke and Android build/lint/Protobuf checks all passed.",
+          "changed_files": [
+            "src/Host.Windows/Tools/IAgentToolConfirmationService.cs",
+            "src/Host.Windows/Tools/AgentToolExecutionCoordinator.cs",
+            "src/Host.Windows/Tools/WpfAgentToolConfirmationService.cs",
+            "tests/HostLifecycle.Tests/AgentToolExecutionAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "step three/T0094/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "related_commits": [
+            "1d1eddfdde3b4bfcdd8eb82e0e1898e5183662ab"
+          ],
+          "tests": [
+            {
+              "name": "Step Three quality gate (150 Python tests, graph guard, syntax)",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40268843489"
+            },
+            {
+              "name": "AgentToolExecutionAcceptanceTests and HostLifecycle suite",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40268843248/job/121397058279"
+            },
+            {
+              "name": "Windows WPF formatting/build/generated Protobuf/startup smoke",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40268843248/job/121397058667"
+            },
+            {
+              "name": "Android lint/debug APK/Protobuf/generated-source checks",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40268843248/job/121397058687"
+            },
+            {
+              "name": "Real local inference integration",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40268843195"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "T0094 confirmation execution path and WPF confirmation implementation are now validated by exact-commit CI."
+          ],
+          "follow_up": "Proceed to T0095 only after inspecting its incoming edge contracts; retain confirmation-before-execution and keep arbitrary commands disabled by default."
         }
       ]
     },
@@ -28697,6 +28765,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-26T04:05:00Z"
+  "updated_at": "2026-10-26T04:27:15.713Z"
 }
 ```

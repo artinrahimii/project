@@ -1,19 +1,23 @@
 # T0094 — execution report
 
-## Attempt T0094-2026-10-26-01 — implementation pushed for exact-commit validation
+## Attempt T0094-2026-10-26-01 — implementation
 
-- Base branch reviewed: `main`, commit `beb07be74cf1c6cbd31d61bd130beeab2c5f8e38` (`V 3.0.291`). Version history was checked; the next version selected for this implementation is `V 3.0.292`.
-- Graph source: `step three/project-graph.md` from the base commit. It was fetched through Git Blob API by tree-derived Blob `3a3b9d57a1594597349b13161b57f5b43ea92db3`. UTF-8 content size was 1,514,521 bytes; SHA-1 over the Git object preimage matched the Blob ID; the complete fenced JSON parsed to 229 unique task IDs and 426 validly shaped edges.
-- Prerequisite review:
-  - `T0093 -> T0094`: validated as `contract_or_interface_dependency`; `IAgentTool`, `AgentToolDefinition.RequiresUserConfirmation`, `AgentToolCall` and `AgentToolRegistry.ResolveValidated` are consumed directly by this implementation.
-  - `T0087 -> T0094`: validated as `sequencing_only`. Its model-license metadata/UI work does not define or feed the tool executor; retain the existing conservative order without asserting a technical dependency.
-  - `T0094 -> T0095`: validated as `contract_or_interface_dependency`. The process-isolation/timeout layer must wrap or replace the execution seam created here and preserve the validated, user-approved invocation order. The edge relation remains `blocks`.
-- Production implementation:
-  - `src/Host.Windows/Tools/AgentToolExecutionCoordinator.cs` validates the registered tool and its arguments before any prompt, invokes the confirmation service only when `RequiresUserConfirmation` is true, returns a declined outcome without invoking the tool, checks cancellation both before prompting and after approval, and executes only after approval.
-  - `src/Host.Windows/Tools/IAgentToolConfirmationService.cs` defines the injected confirmation boundary.
-  - `src/Host.Windows/Tools/WpfAgentToolConfirmationService.cs` supplies an owner-bound WPF Yes/No prompt with No as the default, displays the exact JSON arguments, marshals the prompt to the owner Dispatcher, and fails closed if arguments exceed the visible display limit.
-  - No tools were registered by default and no shell, process, or arbitrary-command tool was added. Process isolation and timeout remain T0095; this implementation does not claim to complete that requirement.
-- Acceptance coverage added in `tests/HostLifecycle.Tests/AgentToolExecutionAcceptanceTests.cs`: read-only execution without a prompt; explicit approval executes once; decline does not execute; invalid arguments and unknown tools are rejected before confirmation; cancellation before the prompt and cancellation racing with approval prevent execution; a confirmation-service failure fails closed. The test is wired into `HostLifecycle.Tests`.
-- Execution limitation: this environment does not provide a local .NET runtime/Windows WPF execution session. Source-level test execution is therefore not claimed here; exact-commit GitHub Actions quality and product workflows must pass before the graph may mark T0094 done.
-- Current status: implementation and tests are committed, but T0094 remains `in_progress` until exact-commit CI validates the test harness, WPF compilation, and product workflows.
-- Follow-up: inspect quality and product workflow conclusions for `V 3.0.292`. If they pass, record the evidence, mark T0094 done, and commit the result in the next unique version without rewriting history.
+- Base was `main` at `V 3.0.291`. The complete graph Blob was verified before implementation.
+- Reviewed and recorded the related dependency edges: `T0093 -> T0094` consumes the trusted tool interface/allowlist contract; `T0087 -> T0094` is conservative sequencing only; `T0094 -> T0095` is a contract/interface dependency because process isolation and timeouts must wrap this approved execution seam.
+- Implemented `AgentToolExecutionCoordinator`, `IAgentToolConfirmationService`, and the owner-bound `WpfAgentToolConfirmationService`. The coordinator resolves the explicit allowlist and validates arguments before prompting; a tool marked `RequiresUserConfirmation` is invoked only after a positive confirmation result. Declines, invalid/unknown calls, confirmation-service failures, and cancellations fail closed. The WPF prompt defaults to No and displays the exact JSON argument payload; payloads over the visible limit are denied rather than partly displayed.
+- Added `AgentToolExecutionAcceptanceTests` and wired it into `HostLifecycle.Tests`. The initial version commit is `1d1eddfdde3b4bfcdd8eb82e0e1898e5183662ab` (`V 3.0.292`).
+- The task remained in progress while exact-commit CI was pending.
+
+## Attempt T0094-2026-10-26-02 — exact-commit validation
+
+- Tested implementation commit: `1d1eddfdde3b4bfcdd8eb82e0e1898e5183662ab` (`V 3.0.292`).
+- Step Three quality gate passed on exact implementation commit V 3.0.292: https://github.com/artinrahimii/project/actions/runs/40268843489. All 150 Python tests passed; graph guard reported 0 errors and 1 pre-existing T0001 unmapped-dependency metadata warning.
+- HostLifecycle unit/integration tests passed on exact implementation commit; log explicitly reports: PASS: side-effecting agent tools require explicit confirmation; decline, invalid calls and cancellation never execute. https://github.com/artinrahimii/project/actions/runs/40268843248/job/121397058279
+- Windows WPF formatting, Release build, generated Protobuf source checks, startup smoke test, and artifact upload passed: https://github.com/artinrahimii/project/actions/runs/40268843248/job/121397058667
+- Android Kotlin format/lint, debug APK build, Protobuf round-trip tests, generated source checks, and artifact upload passed: https://github.com/artinrahimii/project/actions/runs/40268843248/job/121397058687
+- Real local llama.cpp/GGUF inference workflow passed on the same exact implementation commit: https://github.com/artinrahimii/project/actions/runs/40268843195 (supplemental evidence only; no agent tool was invoked by this inference test).
+- Acceptance behavior verified by the HostLifecycle harness: read-only tools do not prompt; approved side-effecting calls execute once; declined calls do not execute; unknown tools and invalid arguments are rejected before prompting; cancellation before or racing with approval prevents invocation; confirmation-service errors do not execute the tool.
+- Limitations retained explicitly: no tool is registered by default; no shell/command/process tool was added. This task does not provide process isolation or execution timeouts (T0095). The automated tests exercise the policy coordinator through an injected confirmation service; a human click-through of the modal WPF dialog was not automated, although the WPF project compiled, formatting passed, and app startup smoke passed. No agent tool or external side effect was executed by the CI.
+- The quality gate reported 0 errors and one existing warning: T0001 contains a descriptive non-task dependency string preserved as metadata. This warning is unrelated to T0094 and was not silently rewritten.
+- Outcome: **T0094 done** on exact-commit test and product evidence. The earlier partial attempt is preserved in execution history; no failed attempt is recorded because no executed test attempt failed.
+- Next: T0095 — implement process isolation and execution timeouts while keeping arbitrary system-command execution disabled by default. Re-review its incoming edges before implementation.
