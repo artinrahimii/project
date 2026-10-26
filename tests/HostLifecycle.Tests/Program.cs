@@ -12,6 +12,12 @@ using WhiteP.Host.Windows.Inference;
 using WhiteP.Host.Windows.Models.Catalog;
 using WhiteP.Shared.Contracts;
 
+if (args.Contains("--test-agent-tool-capability", StringComparer.Ordinal))
+{
+    await AgentToolCapabilityAcceptanceTests.RunAsync();
+    return;
+}
+
 if (args.Contains("--test-agent-tool-process-executor", StringComparer.Ordinal))
 {
     await AgentToolProcessExecutorTests.RunAsync();
@@ -76,10 +82,11 @@ Assert(BuildDomainHostCapabilities(availableMemoryBytes: 20UL * 1024UL * 1024UL 
 Assert(BuildDomainHostCapabilities(availableDiskBytes: 600L * 1024L * 1024L * 1024L).CapacityState == HostCapacityState.Unknown, "Inconsistent disk measurements must not produce Ready.");
 Console.WriteLine("PASS: HostCapabilities keeps incomplete/invalid measurements Unknown and blocks inference for failed capacity checks.");
 ChatConversationAcceptanceTests.Run();
-AgentToolRegistryAcceptanceTests.Run();
+await AgentToolRegistryAcceptanceTests.RunAsync();
 await AgentToolExecutionAcceptanceTests.RunAsync();
 await AgentToolProcessExecutorTests.RunAsync();
 await AgentToolPolicyRejectionAcceptanceTests.RunAsync();
+await AgentToolCapabilityAcceptanceTests.RunAsync();
 HostCapacityAcceptanceTests.Run();
 InferenceEngineContractTests.Run();
 ModelCatalogParserAcceptanceTests.Run();

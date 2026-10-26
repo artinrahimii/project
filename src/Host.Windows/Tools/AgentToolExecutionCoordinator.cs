@@ -1,3 +1,4 @@
+using WhiteP.Host.Application;
 using WhiteP.Host.Windows.Chat;
 
 namespace WhiteP.Host.Windows.Tools;
@@ -38,17 +39,20 @@ public sealed class AgentToolExecutionCoordinator
     private readonly AgentToolRegistry _registry;
     private readonly IAgentToolConfirmationService _confirmationService;
     private readonly IAgentToolProcessExecutor _processExecutor;
+    private readonly IInferenceBackend _backend;
 
     public AgentToolExecutionCoordinator(
         AgentToolRegistry registry,
         IAgentToolConfirmationService confirmationService,
-        IAgentToolProcessExecutor processExecutor)
+        IAgentToolProcessExecutor processExecutor,
+        IInferenceBackend backend)
     {
         _registry = registry ?? throw new ArgumentNullException(nameof(registry));
         _confirmationService = confirmationService
             ?? throw new ArgumentNullException(nameof(confirmationService));
         _processExecutor = processExecutor
             ?? throw new ArgumentNullException(nameof(processExecutor));
+        _backend = backend ?? throw new ArgumentNullException(nameof(backend));
     }
 
     public async Task<AgentToolExecutionOutcome> ExecuteAsync(
@@ -57,6 +61,10 @@ public sealed class AgentToolExecutionCoordinator
     {
         ArgumentNullException.ThrowIfNull(call);
         cancellationToken.ThrowIfCancellationRequested();
+
+        // Fail closed before confirmation or worker dispatch unless this backend/model has fresh structured tool-call evidence.
+        var capability = await AgentToolCapabilityPolicy.EvaluateAsync(_backend, cancellationToken).ConfigureAwait(false);
+        if (!capability.IsSupported) throw new AgentToolCapabilityUnavailableException(capability.Reason);
 
         // Resolve the explicit allowlist and validate arguments before showing any prompt.
         _registry.ResolveValidated(call);

@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Text.Json;
+using WhiteP.Host.Application;
 using WhiteP.Host.Windows.Chat;
 
 namespace WhiteP.Host.Windows.Tools;
@@ -64,11 +65,12 @@ public sealed class AgentToolRegistry
                 .ToArray());
     }
 
-    /// <summary>
-    /// Returns immutable metadata snapshots for the explicitly allowlisted tools.
-    /// An empty list means no tool should be advertised as available.
-    /// </summary>
-    public IReadOnlyList<AgentToolDefinition> Definitions => _definitions;
+    /// <summary>Returns model-advertisable definitions only after fresh backend/model/protocol capability is verified.</summary>
+    public async Task<IReadOnlyList<AgentToolDefinition>> GetModelAdvertisableDefinitionsAsync(IInferenceBackend backend, CancellationToken cancellationToken = default)
+    {
+        var capability = await AgentToolCapabilityPolicy.EvaluateAsync(backend, cancellationToken).ConfigureAwait(false);
+        return capability.IsSupported ? _definitions : Array.Empty<AgentToolDefinition>();
+    }
 
     public bool IsAllowlisted(string name) =>
         name is not null && _registered.ContainsKey(name);

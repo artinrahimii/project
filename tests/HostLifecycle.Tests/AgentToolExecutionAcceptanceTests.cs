@@ -21,7 +21,7 @@ internal static class AgentToolExecutionAcceptanceTests
         var readOnlyExecutor = new AgentToolExecutionCoordinator(
             new AgentToolRegistry(new[] { readOnlyTool }),
             readOnlyConfirmation,
-            readOnlyProcessExecutor);
+            readOnlyProcessExecutor, new SupportedAgentToolCallingBackend());
         var readOnlyOutcome = await readOnlyExecutor.ExecuteAsync(CreateCall("get_host_status", "{}"));
         Assert(readOnlyOutcome.Status == AgentToolExecutionStatus.Executed &&
             readOnlyOutcome.Result?.Content == "Executed get_host_status.",
@@ -37,7 +37,7 @@ internal static class AgentToolExecutionAcceptanceTests
         var approveExecutor = new AgentToolExecutionCoordinator(
             new AgentToolRegistry(new[] { sideEffectTool }),
             approveConfirmation,
-            approveProcessExecutor);
+            approveProcessExecutor, new SupportedAgentToolCallingBackend());
         var approved = await approveExecutor.ExecuteAsync(CreateCall("delete_model", "{}"));
         Assert(approved.Status == AgentToolExecutionStatus.Executed,
             "An explicitly approved side-effecting tool must execute.");
@@ -51,7 +51,7 @@ internal static class AgentToolExecutionAcceptanceTests
         var denyExecutor = new AgentToolExecutionCoordinator(
             new AgentToolRegistry(new[] { deniedTool }),
             denyConfirmation,
-            denyProcessExecutor);
+            denyProcessExecutor, new SupportedAgentToolCallingBackend());
         var denied = await denyExecutor.ExecuteAsync(CreateCall("delete_model", "{}"));
         Assert(denied.Status == AgentToolExecutionStatus.Declined && denied.Result is null,
             "A denied request must return a declined outcome without a result.");
@@ -65,7 +65,7 @@ internal static class AgentToolExecutionAcceptanceTests
         var invalidExecutor = new AgentToolExecutionCoordinator(
             new AgentToolRegistry(new[] { invalidTool }),
             invalidConfirmation,
-            invalidProcessExecutor);
+            invalidProcessExecutor, new SupportedAgentToolCallingBackend());
         await ExpectThrowsAsync<AgentToolArgumentsRejectedException>(
             () => invalidExecutor.ExecuteAsync(CreateCall("delete_model", """{"unexpected":true}""")));
         Assert(invalidConfirmation.RequestCount == 0 && invalidTool.ExecutionCount == 0 &&
@@ -75,7 +75,7 @@ internal static class AgentToolExecutionAcceptanceTests
         var unknownConfirmation = new FakeConfirmationService((_, _, _) => Task.FromResult(true));
         var unknownProcessExecutor = CreateCountingProcessExecutor();
         var unknownExecutor = new AgentToolExecutionCoordinator(
-            new AgentToolRegistry(), unknownConfirmation, unknownProcessExecutor);
+            new AgentToolRegistry(), unknownConfirmation, unknownProcessExecutor, new SupportedAgentToolCallingBackend());
         await ExpectThrowsAsync<AgentToolNotAllowedException>(
             () => unknownExecutor.ExecuteAsync(CreateCall("delete_model", "{}")));
         Assert(unknownConfirmation.RequestCount == 0 && unknownProcessExecutor.InvocationCount == 0,
@@ -89,7 +89,7 @@ internal static class AgentToolExecutionAcceptanceTests
         var preCancelledExecutor = new AgentToolExecutionCoordinator(
             new AgentToolRegistry(new[] { preCancelledTool }),
             preCancelledConfirmation,
-            preCancelledProcessExecutor);
+            preCancelledProcessExecutor, new SupportedAgentToolCallingBackend());
         await ExpectThrowsAsync<OperationCanceledException>(
             () => preCancelledExecutor.ExecuteAsync(CreateCall("delete_model", "{}"), preCancelled.Token));
         Assert(preCancelledConfirmation.RequestCount == 0 && preCancelledTool.ExecutionCount == 0 &&
@@ -107,7 +107,7 @@ internal static class AgentToolExecutionAcceptanceTests
         var racingExecutor = new AgentToolExecutionCoordinator(
             new AgentToolRegistry(new[] { racingTool }),
             racingConfirmation,
-            racingProcessExecutor);
+            racingProcessExecutor, new SupportedAgentToolCallingBackend());
         await ExpectThrowsAsync<OperationCanceledException>(
             () => racingExecutor.ExecuteAsync(CreateCall("delete_model", "{}"), cancelledAfterApproval.Token));
         Assert(racingConfirmation.RequestCount == 1 && racingTool.ExecutionCount == 0 &&
@@ -121,7 +121,7 @@ internal static class AgentToolExecutionAcceptanceTests
         var failedExecutor = new AgentToolExecutionCoordinator(
             new AgentToolRegistry(new[] { confirmationFailureTool }),
             failedConfirmation,
-            failedProcessExecutor);
+            failedProcessExecutor, new SupportedAgentToolCallingBackend());
         await ExpectThrowsAsync<InvalidOperationException>(
             () => failedExecutor.ExecuteAsync(CreateCall("delete_model", "{}")));
         Assert(confirmationFailureTool.ExecutionCount == 0 && failedProcessExecutor.InvocationCount == 0,

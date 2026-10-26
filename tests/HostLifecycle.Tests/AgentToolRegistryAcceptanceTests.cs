@@ -13,11 +13,12 @@ internal static class AgentToolRegistryAcceptanceTests
         }
         """;
 
-    public static void Run()
+    public static async Task RunAsync()
     {
         var disabledByDefault = new AgentToolRegistry();
-        Assert(disabledByDefault.Definitions.Count == 0,
-            "No agent tool may be available before an explicit allowlist is configured.");
+        var defaultAdvertisement = await disabledByDefault.GetModelAdvertisableDefinitionsAsync(new TextOnlyCapabilityTestBackend());
+        Assert(defaultAdvertisement.Count == 0,
+            "No tool may be advertised before registration and verified capability.");
         Assert(!disabledByDefault.IsAllowlisted("run_command"),
             "Arbitrary system command tools must not be enabled by default.");
         ExpectNotAllowed(() => disabledByDefault.Resolve("run_command"));
@@ -25,8 +26,12 @@ internal static class AgentToolRegistryAcceptanceTests
 
         var readOnlyTool = new TestAgentTool("get_host_status", requiresConfirmation: false);
         var registry = new AgentToolRegistry(new[] { readOnlyTool });
-        Assert(registry.Definitions.Count == 1 && registry.Definitions[0].Name == "get_host_status",
-            "Only explicitly allowlisted tool metadata may be advertised.");
+        var supportedAdvertisement = await registry.GetModelAdvertisableDefinitionsAsync(new SupportedAgentToolCallingBackend());
+        Assert(supportedAdvertisement.Count == 1 && supportedAdvertisement[0].Name == "get_host_status",
+            "Only allowlisted metadata may be advertised after capability verification.");
+        var unverifiedAdvertisement = await registry.GetModelAdvertisableDefinitionsAsync(new TextOnlyCapabilityTestBackend());
+        Assert(unverifiedAdvertisement.Count == 0,
+            "An allowlist alone must not expose definitions to an unverified backend.");
         Assert(registry.IsAllowlisted("get_host_status"),
             "The explicit allowlist must expose its registered tool.");
         Assert(ReferenceEquals(registry.Resolve("get_host_status"), readOnlyTool),

@@ -23,6 +23,7 @@
     <Compile Include="../../src/Host.Windows/Models/ModelStreamingDownloader.cs" Link="ModelStreamingDownloader.cs" />
     <Compile Include="../../src/Host.Windows/Models/VerifiedModelInstaller.cs" Link="VerifiedModelInstaller.cs" />
     <Compile Include="../../src/Host.Windows/Chat/AgentToolCall.cs" Link="Chat/AgentToolCall.cs" />
+    <Compile Include="../../src/Host.Windows/Chat/AgentToolCapabilities.cs" Link="Chat/AgentToolCapabilities.cs" />
     <Compile Include="../../src/Host.Windows/Tools/IAgentTool.cs" Link="Tools/IAgentTool.cs" />
     <Compile Include="../../src/Host.Windows/Tools/AgentToolRegistry.cs" Link="Tools/AgentToolRegistry.cs" />
     <Compile Include="../../src/Host.Windows/Tools/IAgentToolConfirmationService.cs" Link="Tools/IAgentToolConfirmationService.cs" />

@@ -50,7 +50,7 @@ internal static class AgentToolPolicyRejectionAcceptanceTests
         var deniedCoordinator = new AgentToolExecutionCoordinator(
             new AgentToolRegistry(new[] { deniedTool }),
             deniedConfirmation,
-            deniedProcess);
+            deniedProcess, new SupportedAgentToolCallingBackend());
         var denied = await deniedCoordinator.ExecuteAsync(CreateCall("delete_model", "{}"));
         Assert(denied.Status == AgentToolExecutionStatus.Declined && denied.Result is null,
             "A side-effecting operation without positive confirmation must return a declined result.");
@@ -66,7 +66,7 @@ internal static class AgentToolPolicyRejectionAcceptanceTests
         var approvedCoordinator = new AgentToolExecutionCoordinator(
             new AgentToolRegistry(new[] { approvedTool }),
             approvedConfirmation,
-            approvedProcess);
+            approvedProcess, new SupportedAgentToolCallingBackend());
         var approved = await approvedCoordinator.ExecuteAsync(CreateCall("delete_model", "{}"));
         Assert(approved.Status == AgentToolExecutionStatus.Executed &&
             approved.Result?.Content == "Executed delete_model.",

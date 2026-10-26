@@ -12,7 +12,7 @@ namespace WhiteP.Host.Infrastructure;
 
 /// <summary>A real HTTP client for a llama.cpp server running on the same host.</summary>
 /// <remarks>The server/model must be installed and started separately. This class never logs prompt or response content.</remarks>
-public sealed class LlamaCppServerBackend : IInferenceBackend, IDisposable
+public sealed class LlamaCppServerBackend : IInferenceBackend, IAgentToolCapabilityProvider, IDisposable
 {
     private readonly HttpClient _http;
     private readonly bool _ownsClient;
@@ -38,6 +38,19 @@ public sealed class LlamaCppServerBackend : IInferenceBackend, IDisposable
 
     public bool IsAvailable { get; private set; }
     public string UnavailableReason => _unavailableReason;
+
+    public Task<AgentToolCallingCapabilityReport> CheckAgentToolCallingCapabilitiesAsync(CancellationToken cancellationToken = default)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        // This adapter sends user text and reads choices[0].message.content; it does not send tool schemas or parse tool_calls.
+        return Task.FromResult(new AgentToolCallingCapabilityReport(
+            BackendId: "llama.cpp", ModelId: _model,
+            BackendSupport: AgentToolCapabilitySupport.Unknown,
+            ModelSupport: AgentToolCapabilitySupport.Unknown,
+            StructuredProtocolSupport: AgentToolCapabilitySupport.Unsupported,
+            CheckedAtUtc: DateTimeOffset.UtcNow,
+            Evidence: "The current adapter sends user text and parses choices[0].message.content only. It neither sends tool definitions nor parses structured tool_calls; backend/model support remains unverified."));
+    }
 
     public async Task<bool> CheckHealthAsync(CancellationToken cancellationToken = default)
     {

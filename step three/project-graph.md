@@ -17093,33 +17093,145 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0096 و T0087 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "src/Host.Application/IAgentToolCapabilityProvider.cs",
+        "src/Host.Infrastructure/LlamaCppServerBackend.cs",
+        "src/Host.Windows/Chat/AgentToolCapabilities.cs",
+        "src/Host.Windows/Tools/AgentToolRegistry.cs",
+        "src/Host.Windows/Tools/AgentToolExecutionCoordinator.cs",
+        "tests/HostLifecycle.Tests/AgentToolCapabilityAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/AgentToolRegistryAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/AgentToolExecutionAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/AgentToolPolicyRejectionAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+        ".github/workflows/product-build.yml",
+        "step three/T0097/execution-report.md",
+        "step three/T0097/evidence/verification.md"
+      ],
       "expected_output_paths": [
         "src/Host.Windows/Chat/ و src/Host.Windows/Tools/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "src/Host.Application/IAgentToolCapabilityProvider.cs",
+        "src/Host.Infrastructure/LlamaCppServerBackend.cs",
+        "src/Host.Windows/Chat/AgentToolCapabilities.cs",
+        "src/Host.Windows/Tools/AgentToolRegistry.cs",
+        "src/Host.Windows/Tools/AgentToolExecutionCoordinator.cs",
+        "tests/HostLifecycle.Tests/AgentToolCapabilityAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/AgentToolRegistryAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/AgentToolExecutionAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/AgentToolPolicyRejectionAcceptanceTests.cs",
+        "step three/T0097/evidence/verification.md",
+        "step three/T0097/execution-report.md"
+      ],
+      "notes": "T0097-A001 adds fail-closed backend/model/structured-protocol checks. The current llama.cpp adapter is text-only, so structured tool calling remains disabled. Registry advertisement and execution require a fresh report with backend, selected model, and protocol all Supported. Tests are wired into HostLifecycle and a focused Windows CI step. Exact-commit CI is pending; do not mark done before actual results pass.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0097-2026-10-26-01",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Host.Application/IAgentToolCapabilityProvider.cs",
+          "src/Host.Infrastructure/LlamaCppServerBackend.cs",
+          "src/Host.Windows/Chat/AgentToolCapabilities.cs",
+          "src/Host.Windows/Tools/AgentToolRegistry.cs",
+          "src/Host.Windows/Tools/AgentToolExecutionCoordinator.cs",
+          "tests/HostLifecycle.Tests/AgentToolCapabilityAcceptanceTests.cs",
+          "tests/HostLifecycle.Tests/AgentToolRegistryAcceptanceTests.cs",
+          "tests/HostLifecycle.Tests/AgentToolExecutionAcceptanceTests.cs",
+          "tests/HostLifecycle.Tests/AgentToolPolicyRejectionAcceptanceTests.cs",
+          "tests/HostLifecycle.Tests/Program.cs",
+          "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+          ".github/workflows/product-build.yml",
+          "step three/T0097/execution-report.md",
+          "step three/T0097/evidence/verification.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
-          "affected_by_contract_changes": [],
-          "review_evidence": []
+          "state": "in_review",
+          "triggering_contracts": [
+            "IAgentToolCapabilityProvider report contract",
+            "AgentToolCapabilityPolicy freshness/fail-closed rules",
+            "AgentToolRegistry advertisement gate",
+            "AgentToolExecutionCoordinator pre-dispatch gate"
+          ],
+          "affected_by_contract_changes": [
+            "Registry definitions no longer exposed for advertisement without checking capability.",
+            "Coordinator requires IInferenceBackend and denies dispatch unless backend/model/protocol are freshly verified.",
+            "Current llama.cpp adapter reports structured protocol Unsupported and backend/model support Unknown."
+          ],
+          "review_evidence": [
+            "src/Host.Application/IAgentToolCapabilityProvider.cs",
+            "src/Host.Infrastructure/LlamaCppServerBackend.cs",
+            "src/Host.Windows/Chat/AgentToolCapabilities.cs",
+            "src/Host.Windows/Tools/AgentToolRegistry.cs",
+            "src/Host.Windows/Tools/AgentToolExecutionCoordinator.cs",
+            "tests/HostLifecycle.Tests/AgentToolCapabilityAcceptanceTests.cs"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0097-2026-10-26-01",
+          "started_at": "2026-10-26T08:41:32Z",
+          "ended_at": "2026-10-26T08:50:41Z",
+          "result": "partial",
+          "summary": "Inspected exact main commit and full graph Blob; added a fail-closed backend/model/protocol capability contract, gated tool advertisement and execution, documented the current text-only llama.cpp adapter, and added tests plus a Windows CI step. Exact-commit CI results are pending.",
+          "changed_files": [
+            "src/Host.Application/IAgentToolCapabilityProvider.cs",
+            "src/Host.Infrastructure/LlamaCppServerBackend.cs",
+            "src/Host.Windows/Chat/AgentToolCapabilities.cs",
+            "src/Host.Windows/Tools/AgentToolRegistry.cs",
+            "src/Host.Windows/Tools/AgentToolExecutionCoordinator.cs",
+            "tests/HostLifecycle.Tests/AgentToolCapabilityAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/AgentToolRegistryAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/AgentToolExecutionAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/AgentToolPolicyRejectionAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+            ".github/workflows/product-build.yml",
+            "step three/T0097/execution-report.md",
+            "step three/T0097/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "related_commits": [],
+          "tests": [
+            {
+              "name": "Graph Blob integrity and JSON validation",
+              "result": "succeeded",
+              "summary": "1,562,437 UTF-8 bytes; calculated Git Blob SHA-1 matches 4d5b78bccec56c93f0d9d07c3823d91ae46214e1; JSON parsed with 229 unique tasks and 426 edges."
+            },
+            {
+              "name": "Local .NET test execution",
+              "result": "not_run",
+              "summary": "No .NET SDK installed in the execution environment (dotnet: command not found)."
+            },
+            {
+              "name": "Exact-commit quality gate and product workflow",
+              "result": "not_run",
+              "summary": "Must be inspected after commit; no passing result claimed."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "Added provider report with separate backend/model/structured-protocol support states.",
+            "Added freshness/evidence checks and default-deny behavior.",
+            "Gated registry advertisement and coordinator dispatch.",
+            "Current llama.cpp adapter reports backend/model Unknown and structured protocol Unsupported."
+          ],
+          "follow_up": "Fetch exact implementation commit's quality-gate, HostLifecycle, Windows WPF and Android workflow results; mark done only on verified acceptance."
+        }
+      ]
     },
     {
       "id": "T0098",
@@ -25394,10 +25506,15 @@
       "from": "T0097",
       "to": "T0098",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0098–T0107 produce a distinct Host.Windows/Requests request-coordination and concurrency/deadline/cancellation path. Their declared outputs do not consume the new capability-report contract; retain type=blocks as conservative order, not a claimed technical interface dependency.",
+      "validation_status": "validated",
+      "evidence": [
+        "step three/T0097/evidence/verification.md",
+        "src/Host.Application/HostInferenceSession.cs",
+        "src/Host.Windows/Tools/AgentToolExecutionCoordinator.cs",
+        "docs/requirements.md"
+      ]
     },
     {
       "from": "T0098",
@@ -25412,10 +25529,15 @@
       "from": "T0097",
       "to": "T0099",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0098–T0107 produce a distinct Host.Windows/Requests request-coordination and concurrency/deadline/cancellation path. Their declared outputs do not consume the new capability-report contract; retain type=blocks as conservative order, not a claimed technical interface dependency.",
+      "validation_status": "validated",
+      "evidence": [
+        "step three/T0097/evidence/verification.md",
+        "src/Host.Application/HostInferenceSession.cs",
+        "src/Host.Windows/Tools/AgentToolExecutionCoordinator.cs",
+        "docs/requirements.md"
+      ]
     },
     {
       "from": "T0099",
@@ -25430,10 +25552,15 @@
       "from": "T0097",
       "to": "T0100",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0098–T0107 produce a distinct Host.Windows/Requests request-coordination and concurrency/deadline/cancellation path. Their declared outputs do not consume the new capability-report contract; retain type=blocks as conservative order, not a claimed technical interface dependency.",
+      "validation_status": "validated",
+      "evidence": [
+        "step three/T0097/evidence/verification.md",
+        "src/Host.Application/HostInferenceSession.cs",
+        "src/Host.Windows/Tools/AgentToolExecutionCoordinator.cs",
+        "docs/requirements.md"
+      ]
     },
     {
       "from": "T0100",
@@ -25448,10 +25575,15 @@
       "from": "T0097",
       "to": "T0101",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0098–T0107 produce a distinct Host.Windows/Requests request-coordination and concurrency/deadline/cancellation path. Their declared outputs do not consume the new capability-report contract; retain type=blocks as conservative order, not a claimed technical interface dependency.",
+      "validation_status": "validated",
+      "evidence": [
+        "step three/T0097/evidence/verification.md",
+        "src/Host.Application/HostInferenceSession.cs",
+        "src/Host.Windows/Tools/AgentToolExecutionCoordinator.cs",
+        "docs/requirements.md"
+      ]
     },
     {
       "from": "T0101",
@@ -25466,10 +25598,15 @@
       "from": "T0097",
       "to": "T0102",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0098–T0107 produce a distinct Host.Windows/Requests request-coordination and concurrency/deadline/cancellation path. Their declared outputs do not consume the new capability-report contract; retain type=blocks as conservative order, not a claimed technical interface dependency.",
+      "validation_status": "validated",
+      "evidence": [
+        "step three/T0097/evidence/verification.md",
+        "src/Host.Application/HostInferenceSession.cs",
+        "src/Host.Windows/Tools/AgentToolExecutionCoordinator.cs",
+        "docs/requirements.md"
+      ]
     },
     {
       "from": "T0102",
@@ -25484,10 +25621,15 @@
       "from": "T0097",
       "to": "T0103",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0098–T0107 produce a distinct Host.Windows/Requests request-coordination and concurrency/deadline/cancellation path. Their declared outputs do not consume the new capability-report contract; retain type=blocks as conservative order, not a claimed technical interface dependency.",
+      "validation_status": "validated",
+      "evidence": [
+        "step three/T0097/evidence/verification.md",
+        "src/Host.Application/HostInferenceSession.cs",
+        "src/Host.Windows/Tools/AgentToolExecutionCoordinator.cs",
+        "docs/requirements.md"
+      ]
     },
     {
       "from": "T0103",
@@ -25502,10 +25644,15 @@
       "from": "T0097",
       "to": "T0104",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0098–T0107 produce a distinct Host.Windows/Requests request-coordination and concurrency/deadline/cancellation path. Their declared outputs do not consume the new capability-report contract; retain type=blocks as conservative order, not a claimed technical interface dependency.",
+      "validation_status": "validated",
+      "evidence": [
+        "step three/T0097/evidence/verification.md",
+        "src/Host.Application/HostInferenceSession.cs",
+        "src/Host.Windows/Tools/AgentToolExecutionCoordinator.cs",
+        "docs/requirements.md"
+      ]
     },
     {
       "from": "T0104",
@@ -25520,10 +25667,15 @@
       "from": "T0097",
       "to": "T0105",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0098–T0107 produce a distinct Host.Windows/Requests request-coordination and concurrency/deadline/cancellation path. Their declared outputs do not consume the new capability-report contract; retain type=blocks as conservative order, not a claimed technical interface dependency.",
+      "validation_status": "validated",
+      "evidence": [
+        "step three/T0097/evidence/verification.md",
+        "src/Host.Application/HostInferenceSession.cs",
+        "src/Host.Windows/Tools/AgentToolExecutionCoordinator.cs",
+        "docs/requirements.md"
+      ]
     },
     {
       "from": "T0105",
@@ -25538,10 +25690,15 @@
       "from": "T0097",
       "to": "T0106",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0098–T0107 produce a distinct Host.Windows/Requests request-coordination and concurrency/deadline/cancellation path. Their declared outputs do not consume the new capability-report contract; retain type=blocks as conservative order, not a claimed technical interface dependency.",
+      "validation_status": "validated",
+      "evidence": [
+        "step three/T0097/evidence/verification.md",
+        "src/Host.Application/HostInferenceSession.cs",
+        "src/Host.Windows/Tools/AgentToolExecutionCoordinator.cs",
+        "docs/requirements.md"
+      ]
     },
     {
       "from": "T0106",
@@ -25556,10 +25713,15 @@
       "from": "T0097",
       "to": "T0107",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0098–T0107 produce a distinct Host.Windows/Requests request-coordination and concurrency/deadline/cancellation path. Their declared outputs do not consume the new capability-report contract; retain type=blocks as conservative order, not a claimed technical interface dependency.",
+      "validation_status": "validated",
+      "evidence": [
+        "step three/T0097/evidence/verification.md",
+        "src/Host.Application/HostInferenceSession.cs",
+        "src/Host.Windows/Tools/AgentToolExecutionCoordinator.cs",
+        "docs/requirements.md"
+      ]
     },
     {
       "from": "T0107",
@@ -29361,8 +29523,158 @@
         "src/Host.Windows/Inference/LocalInferenceBackendFactory.cs"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-26T08:50:41Z",
+      "edge_from": "T0097",
+      "edge_to": "T0098",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "reason": "T0098–T0107 produce a distinct Host.Windows/Requests request-coordination and concurrency/deadline/cancellation path. Their declared outputs do not consume the new capability-report contract; retain type=blocks as conservative order, not a claimed technical interface dependency.",
+      "evidence": [
+        "step three/T0097/evidence/verification.md",
+        "src/Host.Application/HostInferenceSession.cs",
+        "src/Host.Windows/Tools/AgentToolExecutionCoordinator.cs",
+        "docs/requirements.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-26T08:50:41Z",
+      "edge_from": "T0097",
+      "edge_to": "T0099",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "reason": "T0098–T0107 produce a distinct Host.Windows/Requests request-coordination and concurrency/deadline/cancellation path. Their declared outputs do not consume the new capability-report contract; retain type=blocks as conservative order, not a claimed technical interface dependency.",
+      "evidence": [
+        "step three/T0097/evidence/verification.md",
+        "src/Host.Application/HostInferenceSession.cs",
+        "src/Host.Windows/Tools/AgentToolExecutionCoordinator.cs",
+        "docs/requirements.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-26T08:50:41Z",
+      "edge_from": "T0097",
+      "edge_to": "T0100",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "reason": "T0098–T0107 produce a distinct Host.Windows/Requests request-coordination and concurrency/deadline/cancellation path. Their declared outputs do not consume the new capability-report contract; retain type=blocks as conservative order, not a claimed technical interface dependency.",
+      "evidence": [
+        "step three/T0097/evidence/verification.md",
+        "src/Host.Application/HostInferenceSession.cs",
+        "src/Host.Windows/Tools/AgentToolExecutionCoordinator.cs",
+        "docs/requirements.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-26T08:50:41Z",
+      "edge_from": "T0097",
+      "edge_to": "T0101",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "reason": "T0098–T0107 produce a distinct Host.Windows/Requests request-coordination and concurrency/deadline/cancellation path. Their declared outputs do not consume the new capability-report contract; retain type=blocks as conservative order, not a claimed technical interface dependency.",
+      "evidence": [
+        "step three/T0097/evidence/verification.md",
+        "src/Host.Application/HostInferenceSession.cs",
+        "src/Host.Windows/Tools/AgentToolExecutionCoordinator.cs",
+        "docs/requirements.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-26T08:50:41Z",
+      "edge_from": "T0097",
+      "edge_to": "T0102",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "reason": "T0098–T0107 produce a distinct Host.Windows/Requests request-coordination and concurrency/deadline/cancellation path. Their declared outputs do not consume the new capability-report contract; retain type=blocks as conservative order, not a claimed technical interface dependency.",
+      "evidence": [
+        "step three/T0097/evidence/verification.md",
+        "src/Host.Application/HostInferenceSession.cs",
+        "src/Host.Windows/Tools/AgentToolExecutionCoordinator.cs",
+        "docs/requirements.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-26T08:50:41Z",
+      "edge_from": "T0097",
+      "edge_to": "T0103",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "reason": "T0098–T0107 produce a distinct Host.Windows/Requests request-coordination and concurrency/deadline/cancellation path. Their declared outputs do not consume the new capability-report contract; retain type=blocks as conservative order, not a claimed technical interface dependency.",
+      "evidence": [
+        "step three/T0097/evidence/verification.md",
+        "src/Host.Application/HostInferenceSession.cs",
+        "src/Host.Windows/Tools/AgentToolExecutionCoordinator.cs",
+        "docs/requirements.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-26T08:50:41Z",
+      "edge_from": "T0097",
+      "edge_to": "T0104",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "reason": "T0098–T0107 produce a distinct Host.Windows/Requests request-coordination and concurrency/deadline/cancellation path. Their declared outputs do not consume the new capability-report contract; retain type=blocks as conservative order, not a claimed technical interface dependency.",
+      "evidence": [
+        "step three/T0097/evidence/verification.md",
+        "src/Host.Application/HostInferenceSession.cs",
+        "src/Host.Windows/Tools/AgentToolExecutionCoordinator.cs",
+        "docs/requirements.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-26T08:50:41Z",
+      "edge_from": "T0097",
+      "edge_to": "T0105",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "reason": "T0098–T0107 produce a distinct Host.Windows/Requests request-coordination and concurrency/deadline/cancellation path. Their declared outputs do not consume the new capability-report contract; retain type=blocks as conservative order, not a claimed technical interface dependency.",
+      "evidence": [
+        "step three/T0097/evidence/verification.md",
+        "src/Host.Application/HostInferenceSession.cs",
+        "src/Host.Windows/Tools/AgentToolExecutionCoordinator.cs",
+        "docs/requirements.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-26T08:50:41Z",
+      "edge_from": "T0097",
+      "edge_to": "T0106",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "reason": "T0098–T0107 produce a distinct Host.Windows/Requests request-coordination and concurrency/deadline/cancellation path. Their declared outputs do not consume the new capability-report contract; retain type=blocks as conservative order, not a claimed technical interface dependency.",
+      "evidence": [
+        "step three/T0097/evidence/verification.md",
+        "src/Host.Application/HostInferenceSession.cs",
+        "src/Host.Windows/Tools/AgentToolExecutionCoordinator.cs",
+        "docs/requirements.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-26T08:50:41Z",
+      "edge_from": "T0097",
+      "edge_to": "T0107",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "reason": "T0098–T0107 produce a distinct Host.Windows/Requests request-coordination and concurrency/deadline/cancellation path. Their declared outputs do not consume the new capability-report contract; retain type=blocks as conservative order, not a claimed technical interface dependency.",
+      "evidence": [
+        "step three/T0097/evidence/verification.md",
+        "src/Host.Application/HostInferenceSession.cs",
+        "src/Host.Windows/Tools/AgentToolExecutionCoordinator.cs",
+        "docs/requirements.md"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-26T08:20:20.269Z"
+  "updated_at": "2026-10-26T08:50:41Z"
 }
 ```
