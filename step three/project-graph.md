@@ -18367,8 +18367,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0101 و T0097 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "src/Host.Windows/Requests/HostRequestCoordinator.cs",
         "src/Host.Windows/Requests/HostRequestAdmissionPolicy.cs",
@@ -18387,35 +18387,37 @@
         "step three/T0102/evidence/verification.md",
         "protocol/whitep/v1/messages.proto"
       ],
-      "notes": "Deadline در مرز HostRequestCoordinator snapshot می‌شود؛ پیش از inference و پس از اتمام برای جلوگیری از تحویل نتیجهٔ دیرهنگام بازبینی می‌شود. آزمون‌های کنترل‌شده با ساعت به harness افزوده شده‌اند؛ تا زمان گذر CI دقیق همین commit وظیفه در حال اجرا باقی می‌ماند. ارسال پاسخ از طریق P2P ادعا نمی‌شود.",
+      "notes": "در مرز HostRequestCoordinator deadline مطلق ثبت و پیش از inference و پس از اتمام بررسی می‌شود؛ نتیجهٔ دیرهنگام به‌صورت موفق تحویل نمی‌شود. آزمون دقیق V 3.0.317 و workflowهای لازم موفق شدند. تکمیل این وظیفه به مرز هماهنگ‌کننده محدود است؛ مسیر واقعی P2P/ارسال شبکه‌ای پاسخ هنوز پیاده‌سازی نشده است.",
       "execution_summary": {
-        "attempt_count": 1,
+        "attempt_count": 2,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0102-2026-10-26-01",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "T0102-2026-10-26-02",
+        "last_attempt_result": "succeeded",
         "changed_files": [
-          "src/Host.Windows/Requests/HostRequestCoordinator.cs",
-          "src/Host.Windows/Requests/HostRequestAdmissionPolicy.cs",
-          "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
           "step three/T0102/execution-report.md",
           "step three/T0102/evidence/verification.md",
           "step three/project-graph.md"
         ],
         "related_commits": [
-          "7bc81d758e6a75a903335be0dafd078b5354016d"
+          "5c0aa7f5e1a6725b65d97d3dd1f5d0b1e3799b61"
         ],
-        "tests_passed": [],
+        "tests_passed": [
+          "T0102 deadline acceptance: PASS — expiry before inference and late-result withholding verified in exact-head HostLifecycle job (https://github.com/artinrahimii/project/actions/runs/40316801329/job/121551321329).",
+          "Step Three quality gate passed on V 3.0.317 (https://github.com/artinrahimii/project/actions/runs/40316801480).",
+          "White-P product build passed all three jobs: HostLifecycle, Windows WPF, Android APK/tests (https://github.com/artinrahimii/project/actions/runs/40316801329).",
+          "Real local inference integration passed on V 3.0.317 (https://github.com/artinrahimii/project/actions/runs/40316801418)."
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "in_review",
+          "state": "passed",
           "triggering_contracts": [
             "HostRequestAdmissionContext.DeadlineUnixMs",
             "InferenceRequest.deadline_unix_ms"
           ],
           "affected_by_contract_changes": [
-            "Snapshot the existing absolute deadline and reject late completion before returning a successful result; protobuf wire fields/numbers remain unchanged."
+            "The absolute deadline is snapshotted and validated at coordinator entry, checked again before inference and before returning the result; late results become Rejected with no result value. Protobuf wire fields/numbers were not changed. Actual P2P transport enforcement remains unimplemented."
           ],
           "review_evidence": [
             "src/Host.Windows/Requests/HostRequestCoordinator.cs",
@@ -18458,6 +18460,53 @@
             "Added coordinator-boundary deadline snapshot and late-result suppression; no protobuf wire contract change."
           ],
           "follow_up": "Inspect the V 3.0.317 exact-head quality gate, HostLifecycle log, Windows build/format and Android results. Keep T0102 in_progress unless the new assertions and relevant required jobs pass."
+        },
+        {
+          "attempt_id": "T0102-2026-10-26-02",
+          "started_at": "2026-10-26T11:40:28Z",
+          "ended_at": "2026-10-26T11:42:27Z",
+          "result": "succeeded",
+          "summary": "Exact-head V 3.0.317 acceptance passed: deadline expiry before inference is rejected without invoking the callback; a result that finishes after deadline is withheld and the semaphore is released. Step Three quality gate, full product build (HostLifecycle/Windows/Android), and real local inference workflow all passed.",
+          "changed_files": [
+            "step three/T0102/execution-report.md",
+            "step three/T0102/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "related_commits": [
+            "5c0aa7f5e1a6725b65d97d3dd1f5d0b1e3799b61"
+          ],
+          "commit_sha": "5c0aa7f5e1a6725b65d97d3dd1f5d0b1e3799b61",
+          "tests": [
+            {
+              "name": "DeadlineIsCheckedBeforeInferenceAndResultDeliveryAsync",
+              "result": "passed",
+              "summary": "HostLifecycle log confirms deadline capture/recheck before inference, late-result withholding and gate release.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40316801329/job/121551321329"
+            },
+            {
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "summary": "Graph/Python quality and recorded-output/evidence checks passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40316801480"
+            },
+            {
+              "name": "White-P product build",
+              "result": "passed",
+              "summary": "HostLifecycle, Windows WPF and Android build/test jobs passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40316801329"
+            },
+            {
+              "name": "Real local inference integration",
+              "result": "passed",
+              "summary": "Pinned local inference process/model workflow completed successfully.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40316801418"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "T0103 is next after reviewing all incoming edges, especially the currently unreviewed T0102 -> T0103 relation. Do not infer a production P2P response sender from this coordinator-boundary result."
         }
       ]
     },
@@ -30767,6 +30816,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-26T11:40:03.884Z"
+  "updated_at": "2026-10-26T11:43:27.036Z"
 }
 ```

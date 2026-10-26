@@ -32,3 +32,16 @@
 - `step three/T0102/execution-report.md`
 - `step three/T0102/evidence/verification.md`
 - `step three/project-graph.md`
+
+
+## Attempt T0102-2026-10-26-02 — exact-head acceptance succeeded
+
+- Tested implementation commit: `5c0aa7f5e1a6725b65d97d3dd1f5d0b1e3799b61` (`V 3.0.317`), branch `main`.
+- The exact-commit [Step Three quality gate](https://github.com/artinrahimii/project/actions/runs/40316801480) passed, including graph structure and recorded-output/evidence validation.
+- The exact-commit [HostLifecycle job](https://github.com/artinrahimii/project/actions/runs/40316801329/job/121551321329) passed. Its log explicitly reports: `PASS: T0102 captures the request deadline and rejects expiry before inference and withholds late results after inference.`
+- The exact-commit [Windows WPF build job](https://github.com/artinrahimii/project/actions/runs/40316801329/job/121551320968) passed formatting, Release build, generated Protobuf checks, startup smoke and agent-tool checks.
+- The exact-commit [Android build job](https://github.com/artinrahimii/project/actions/runs/40316801329/job/121551321268) passed Kotlin lint/formatting, APK build, Protobuf unit tests, generated-source checks and artifact upload.
+- The exact-commit [real local inference integration](https://github.com/artinrahimii/project/actions/runs/40316801418) passed.
+- **Outcome:** T0102 is complete for the implemented request-coordinator boundary: the deadline is snapshotted and checked before inference and after inference, and a late result is not returned as successful.
+- **Scope limitation:** the repository does not yet provide a production P2P ingress/response-sender call site. This acceptance verifies result withholding at the coordinator return boundary and does not claim transport-level delivery enforcement or end-to-end P2P implementation. Protobuf fields/numbers remain unchanged.
+- Local .NET execution was unavailable in this environment; successful test/build claims above are based on directly inspected exact-head GitHub Actions results and logs.
