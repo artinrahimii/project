@@ -8,6 +8,24 @@ namespace WhiteP.Host.Windows;
 
 public partial class App : System.Windows.Application
 {
+    private void ExitAfterWindowCleanup(Window? window, int exitCode)
+    {
+        if (window is null)
+        {
+            Shutdown(exitCode);
+            return;
+        }
+
+        EventHandler closedHandler = null!;
+        closedHandler = (_, _) =>
+        {
+            window.Closed -= closedHandler;
+            Shutdown(exitCode);
+        };
+        window.Closed += closedHandler;
+        window.Close();
+    }
+
     protected override void OnStartup(StartupEventArgs e)
     {
         var workerMode = Array.Exists(
@@ -74,14 +92,14 @@ public partial class App : System.Windows.Application
                     window.FindName("StartLocalEngineButton") is not Button ||
                     window.FindName("LocalProcessStatus") is not TextBlock)
                 {
-                    Shutdown(2);
+                    ExitAfterWindowCleanup(window, 2);
                     return;
                 }
 
                 var displayAdapters = WindowsHostHardwareDiscovery.DiscoverDisplayAdapters();
                 if (displayAdapters.Any(adapter => string.IsNullOrWhiteSpace(adapter.DeviceName) || string.IsNullOrWhiteSpace(adapter.Description)))
                 {
-                    Shutdown(4);
+                    ExitAfterWindowCleanup(window, 4);
                     return;
                 }
 
@@ -98,17 +116,16 @@ public partial class App : System.Windows.Application
                     hardware.SystemDriveAvailableBytes < 0 ||
                     hardware.SystemDriveAvailableBytes > hardware.SystemDriveTotalBytes)
                 {
-                    Shutdown(3);
+                    ExitAfterWindowCleanup(window, 3);
                     return;
                 }
 
-                window.Close();
-                Shutdown(0);
+                ExitAfterWindowCleanup(window, 0);
             }
             catch
             {
                 // CI consumes the non-zero exit code; exceptions must never be treated as success.
-                Shutdown(1);
+                ExitAfterWindowCleanup(MainWindow, 1);
             }
         }));
     }

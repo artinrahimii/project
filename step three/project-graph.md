@@ -19499,11 +19499,11 @@
         "tests/HostLifecycle.Tests/ParticipationNetworkListenerLifecycleTests.cs",
         "step three/T0109/evidence/verification.md"
       ],
-      "notes": "Attempt T0109-2026-10-26-01 adds a serialized lifecycle owner for participation activation/deactivation, integrates an opt-in loopback-only checkbox into the WPF host, and waits for listener disposal before the window closes. Incoming connections remain unparsed/closed until T0110. Exact-head CI is pending.",
+      "notes": "T0109 attempt 01 passed lifecycle tests and the quality gate but failed the Windows startup smoke because App.xaml.cs called Shutdown(0) while MainWindow_Closing was still awaiting listener disposal. Attempt 02 updates smoke exit paths to wait for Closed before shutdown; exact-head CI is pending. Incoming network connections remain closed/unparsed until T0110.",
       "execution_summary": {
-        "attempt_count": 1,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "T0109-2026-10-26-01",
+        "attempt_count": 2,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "T0109-2026-10-26-02",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Host.Windows/Networking/ParticipationNetworkListenerLifecycle.cs",
@@ -19514,7 +19514,8 @@
           "tests/HostLifecycle.Tests/Program.cs",
           "step three/T0109/execution-report.md",
           "step three/T0109/evidence/verification.md",
-          "step three/project-graph.md"
+          "step three/project-graph.md",
+          "src/Host.Windows/App.xaml.cs"
         ],
         "related_commits": [],
         "tests_passed": [],
@@ -19532,9 +19533,9 @@
         {
           "attempt_id": "T0109-2026-10-26-01",
           "started_at": "2026-10-26T16:01:49.711Z",
-          "ended_at": null,
-          "result": "partial",
-          "summary": "Reviewed T0108 -> T0109 as a hard listener API dependency and T0107 -> T0109 as sequencing-only. Added lifecycle controller/tests, a WPF participation toggle and awaited window-close cleanup. Exact-head CI is pending.",
+          "ended_at": "2026-10-26T16:07:04.752Z",
+          "result": "failed",
+          "summary": "The new lifecycle controller tests and Step Three quality gate passed, but the exact-head Windows smoke test failed because App.xaml.cs called Shutdown(0) immediately after Window.Close while MainWindow_Closing defers close until listener disposal. Recorded as a failed implementation attempt; fix is being applied to wait for Closed before shutdown.",
           "changed_files": [
             "src/Host.Windows/Networking/ParticipationNetworkListenerLifecycle.cs",
             "src/Host.Windows/MainWindow.xaml.cs",
@@ -19544,22 +19545,63 @@
             "tests/HostLifecycle.Tests/Program.cs",
             "step three/T0109/execution-report.md",
             "step three/T0109/evidence/verification.md",
+            "step three/project-graph.md",
+            "src/Host.Windows/App.xaml.cs"
+          ],
+          "related_commits": [],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "ParticipationNetworkListenerLifecycleTests / HostLifecycle harness",
+              "result": "passed",
+              "summary": "The exact-head HostLifecycle job passed and logged: disabling participation and disposing the lifecycle stop/release the listener.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40355264305/job/121685894262"
+            },
+            {
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "summary": "Graph structure and Python quality checks passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40355264399"
+            },
+            {
+              "name": "Windows WPF startup smoke test",
+              "result": "failed",
+              "summary": "Windows Release build succeeded, but the smoke test exited with CLR code -532462766. App.xaml.cs called Shutdown(0) immediately after Window.Close, racing the newly async Closing cleanup.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40355264305/job/121685895265"
+            }
+          ],
+          "failure_details": "Windows startup smoke test failed with exit code -532462766 after calling Window.Close followed immediately by Application.Shutdown(0). T0109's Closing handler cancels the first close and asynchronously disposes the listener; the smoke runner must wait for the actual Closed event before shutting down the Application.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Fix App.xaml.cs to invoke application Shutdown only after the main window has completed its async Closing cleanup, then rerun the exact-head product build and all required gates."
+        },
+        {
+          "attempt_id": "T0109-2026-10-26-02",
+          "started_at": "2026-10-26T16:07:01.777Z",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Fixed the WPF smoke-test shutdown sequence to wait for the real Closed event before Application.Shutdown, ensuring listener disposal completes before CI exits. Exact-head CI is pending.",
+          "changed_files": [
+            "src/Host.Windows/App.xaml.cs",
+            "step three/T0109/execution-report.md",
+            "step three/T0109/evidence/verification.md",
             "step three/project-graph.md"
           ],
           "related_commits": [],
           "commit_sha": null,
           "tests": [
             {
-              "name": "ParticipationNetworkListenerLifecycleTests",
+              "name": "WPF startup smoke test",
               "result": "pending",
-              "summary": "Added activation/deactivation, socket release/restart, dispose while active, and no-reuse-after-disposal cases; exact-head CI pending."
+              "summary": "The shutdown sequence now waits for Closed after async listener disposal; exact-head Windows CI pending."
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Run exact-head HostLifecycle test harness, Step Three quality gate, and Windows/Android product build. Fix any reported failures before marking T0109 done."
+          "follow_up": "Run HostLifecycle, Step Three quality gate, WPF startup smoke, Windows build, Android build and real inference integration on the fix commit before marking T0109 done."
         }
       ]
     },
@@ -31749,6 +31791,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-26T16:01:49.711Z"
+  "updated_at": "2026-10-26T16:07:01.777Z"
 }
 ```
