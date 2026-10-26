@@ -19072,8 +19072,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0105 و T0097 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "tests/HostLifecycle.Tests/HostRequestCoordinatorConcurrencyTests.cs",
         "tests/HostLifecycle.Tests/Program.cs",
@@ -19090,12 +19090,12 @@
         "step three/T0106/execution-report.md",
         "step three/T0106/evidence/verification.md"
       ],
-      "notes": "The existing coordinator uses a one-slot SemaphoreSlim and existing tests cover a single held request and sequential Busy results. This task adds a distinct 64-contender simultaneous race regression that asserts exactly one operation is invoked, 63 requests return Busy, and observed maximum active inference is one. Await exact-head GitHub Actions before marking done.",
+      "notes": "T0106 passed exact-head CI after the first partial attempt's graph metadata discrepancy was recorded and corrected. The dedicated 64-contender race test runs against the production HostRequestCoordinator and verifies one active inference, 63 Busy outcomes, and gate release. No production coordinator code or public interface was changed. T0106 -> T0107 remains unreviewed.",
       "execution_summary": {
-        "attempt_count": 1,
+        "attempt_count": 2,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0106-2026-10-26-01",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "T0106-2026-10-26-02",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "tests/HostLifecycle.Tests/HostRequestCoordinatorConcurrencyTests.cs",
           "tests/HostLifecycle.Tests/Program.cs",
@@ -19104,15 +19104,17 @@
           "step three/project-graph.md"
         ],
         "related_commits": [
-          "d83cf79f79e9852ad6b065f522208f6022abec74"
+          "d83cf79f79e9852ad6b065f522208f6022abec74",
+          "126168388f54d075949d4a46b87ce926a266eb9b"
         ],
         "tests_passed": [
-          "HostRequestCoordinatorConcurrencyTests — PASS on implementation commit d83cf79f79e9852ad6b065f522208f6022abec74; HostLifecycle job succeeded. (https://github.com/artinrahimii/project/actions/runs/40331494036)",
-          "White-P product build — PASS on implementation commit d83cf79f79e9852ad6b065f522208f6022abec74; Windows, Android and HostLifecycle jobs all succeeded. (https://github.com/artinrahimii/project/actions/runs/40331494036)",
+          "HostRequestCoordinatorConcurrencyTests — PASS on implementation commit d83cf79f79e9852ad6b065f522208f6022abec74; complete product build later passed again on V 3.0.327. (https://github.com/artinrahimii/project/actions/runs/40332219205/job/121604292418)",
+          "White-P product build — PASS on corrected exact-head commit 126168388f54d075949d4a46b87ce926a266eb9b; Windows, Android and HostLifecycle jobs all succeeded. (https://github.com/artinrahimii/project/actions/runs/40332219205)",
+          "Step Three quality gate — PASS on corrected exact-head commit 126168388f54d075949d4a46b87ce926a266eb9b. (https://github.com/artinrahimii/project/actions/runs/40332219306)",
           "Real local inference integration — PASS on implementation commit d83cf79f79e9852ad6b065f522208f6022abec74. (https://github.com/artinrahimii/project/actions/runs/40331493535)"
         ],
         "tests_failed": [
-          "Step Three quality gate run 40331493667 — first attempt FAILED at Validate graph structure. Automated tests and Python syntax passed; graph validation detected execution_summary.attempt_count=1 while execution_history contained 0 entries. This was a graph bookkeeping defect, not a failure of the concurrency test. (https://github.com/artinrahimii/project/actions/runs/40331493667)"
+          "First Step Three quality gate on d83cf79f79e9852ad6b065f522208f6022abec74 failed only at graph structure validation because attempt_count=1 and execution_history=0; Python tests and syntax had passed. The missing attempt record was added in 126168388f54d075949d4a46b87ce926a266eb9b, and the corrected exact-head gate passed. (https://github.com/artinrahimii/project/actions/runs/40331493667)"
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -19172,6 +19174,48 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Record this partial implementation attempt with matching execution_history, rerun the exact-head quality gate and product workflow, then mark T0106 done only after those checks succeed."
+        },
+        {
+          "attempt_id": "T0106-2026-10-26-02",
+          "started_at": "2026-10-26T13:37:31Z",
+          "ended_at": "2026-10-26T13:39:33Z",
+          "result": "succeeded",
+          "summary": "After the partial first attempt and its graph-history mismatch were recorded, the corrected exact-head quality gate and product build both passed. The 64-contender concurrency acceptance and complete Windows/Android/HostLifecycle build passed.",
+          "changed_files": [
+            "step three/T0106/execution-report.md",
+            "step three/T0106/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "related_commits": [
+            "d83cf79f79e9852ad6b065f522208f6022abec74",
+            "126168388f54d075949d4a46b87ce926a266eb9b"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "HostRequestCoordinator concurrency acceptance",
+              "result": "passed",
+              "summary": "A 64-contender launch-barrier race against the production HostRequestCoordinator proved exactly one operation invocation, one completed request, 63 Busy outcomes, maximum active inference count 1, and coordinator gate release.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40332219205/job/121604292418"
+            },
+            {
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "summary": "Automated tests, Python syntax, graph structure, and repository-backed output/evidence validation passed on V 3.0.327.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40332219306"
+            },
+            {
+              "name": "White-P product build",
+              "result": "passed",
+              "summary": "Windows WPF, Android APK, and HostLifecycle jobs all succeeded; Android Protobuf round-trip tests and generated-source checks passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40332219205"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Before T0107 starts, review T0106 -> T0107; it remains unreviewed."
         }
       ]
     },
@@ -31401,6 +31445,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-26T13:36:49.588Z"
+  "updated_at": "2026-10-26T13:49:53.368Z"
 }
 ```

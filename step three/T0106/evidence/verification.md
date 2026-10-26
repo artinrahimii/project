@@ -1,26 +1,30 @@
 # T0106 verification evidence
 
-## Source snapshot and graph integrity
+## Exact source snapshot and graph integrity
 
-- Repository/branch: `artinrahimii/project`, `main`.
-- Implementation commit: `d83cf79f79e9852ad6b065f522208f6022abec74` (`V 3.0.326`); parent `684b47473e6d06d519bbe92ae3f2de5515f2754c`.
-- Graph Blob at implementation commit: `530611955da6ff3c43dfa57504f90e3ec564341f`; received **1682483 UTF-8 bytes** matched the tree's declared size. Calculated Git Blob SHA-1 matched the Blob ID; the full fenced JSON parsed and contained 229 unique task IDs and 426 edges.
-- T0105 and T0097 were done before starting T0106.
+- Repository: `artinrahimii/project`; branch: `main`.
+- Implementation commit: `d83cf79f79e9852ad6b065f522208f6022abec74` (`V 3.0.326`).
+- Corrected validation commit: `126168388f54d075949d4a46b87ce926a266eb9b` (`V 3.0.327`).
+- Graph at the validation commit: Blob `3ceed69a3fb4c5ff8e47632a3ceba0e1be36f331`, **1686704 UTF-8 bytes**. The received byte size matched the Git tree entry, calculated Git Blob SHA-1 matched, and the complete fenced JSON parsed successfully.
+- The graph has 229 tasks and 426 edges. T0105 and T0097 were done before T0106 began.
 
-## Reviewed edge
+## Dependency review
 
-- `T0105 -> T0106`: `type=blocks` preserved; class `unreviewed -> sequencing_only`; status `unreviewed -> validated`.
-- Evidence inspected: production `HostRequestCoordinator.cs`, existing coordinator and busy tests, and T0105 execution/evidence reports.
-- Rationale: T0105 checks exception-path cleanup; T0106 exercises the existing one-slot admission rule under simultaneous contention. No new API/data artifact is consumed from T0105. `T0106 -> T0107` remains unreviewed.
+- `T0105 -> T0106`: `type=blocks` preserved; classification `sequencing_only`; validation `validated`.
+- Inspected the production `HostRequestCoordinator.cs`, existing coordinator/busy tests, and T0105 execution and verification reports.
+- Rationale: T0105 verifies exception-path cleanup; T0106 independently validates the existing one-slot admission mechanism under simultaneous contention. T0106 consumes no new API/data artifact from T0105.
+- `T0106 -> T0107` remains unreviewed.
 
-## Acceptance test
+## Acceptance test and results
 
 - Added `tests/HostLifecycle.Tests/HostRequestCoordinatorConcurrencyTests.cs` and registered it in `tests/HostLifecycle.Tests/Program.cs`.
-- The test releases 64 requests from a common barrier against the production coordinator, holds the winning operation active, and asserts exactly one invocation, one completed result, 63 Busy results, maximum active inference count one, and gate release.
-- HostLifecycle, product build, and real local-inference workflows passed on `d83cf79f79e9852ad6b065f522208f6022abec74`.
+- 64 contenders start from a common barrier against the production coordinator. A winning operation is held open while all competing requests attempt admission.
+- The passing test asserts exactly one operation invocation, one completed result, 63 Busy results, a maximum active inference count of one, and release of all active work.
+- HostLifecycle job, full Windows/Android product build and Step Three quality gate passed on corrected exact head `126168388f54d075949d4a46b87ce926a266eb9b`: [product](https://github.com/artinrahimii/project/actions/runs/40332219205), [quality](https://github.com/artinrahimii/project/actions/runs/40332219306).
+- Real local inference integration passed on implementation commit `d83cf79f79e9852ad6b065f522208f6022abec74`: [workflow](https://github.com/artinrahimii/project/actions/runs/40331493535).
 
-## Quality-gate discrepancy and remediation
+## First-run audit trail
 
-The first Step Three quality run [40331493667](https://github.com/artinrahimii/project/actions/runs/40331493667) passed automated tests and Python syntax, then failed graph structure validation because the task summary claimed one attempt while its execution history was empty. This attempt is now preserved as `partial` in the graph, matching the declared attempt count. The quality gate must be rerun on the correction commit; T0106 remains in progress until the corrected exact-head result passes.
+The first quality gate [https://github.com/artinrahimii/project/actions/runs/40331493667] failed at graph structure validation because `execution_summary.attempt_count=1` while `execution_history` was empty. Automated tests and Python syntax passed. The attempt is retained as partial and the missing history entry was recorded in `V 3.0.327`; the corrected exact-head quality gate and product build passed. No failure evidence was deleted.
 
-The hosted product build [40331494036](https://github.com/artinrahimii/project/actions/runs/40331494036) passed all three jobs. The live inference workflow [40331493535](https://github.com/artinrahimii/project/actions/runs/40331493535) also passed. No local .NET execution is claimed.
+No local .NET run is claimed because the SDK was unavailable in this tool environment.
