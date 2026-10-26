@@ -13,5 +13,5 @@
 - `tests/test_network_payload_logging.py` scans production network/application sources for logging sinks whose surrounding statement references prompt, context, output or raw error details.
 
 ## Verification
-- Step Three quality gate and HostLifecycle jobs for the new T0113 commit: **pending**.
+- V 3.0.343: the Python test suite (153 tests), Python compileall and HostLifecycle job passed. The graph validation step failed with `ATTEMPT_COUNT_MISMATCH` on T0112 only; the history contains two entries but the summary said one. The graph metadata is corrected for the next commit, and exact-head quality CI must pass before T0113 completion.
 - No claim is made that request/response frame delivery exists; the response mapper currently creates typed messages only.

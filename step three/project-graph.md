@@ -20245,9 +20245,9 @@
       ],
       "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0112-A001 adds a typed response mapper for Busy, UnsupportedModel, invalid/expired/version/resource-limit requests and sanitized Internal errors. The mapper returns Protobuf message types; network serialization/send remains a separate follow-on concern. Incoming T0111 and T0107 edges have been reviewed as contract_or_interface_dependency, both validated; outgoing T0112→T0113 remains unreviewed. CI pending.",
       "execution_summary": {
-        "attempt_count": 1,
+        "attempt_count": 2,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0112-A001",
+        "last_attempt_id": "T0112-A001-verification",
         "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Host.Windows/Networking/NetworkInferenceRequestResponseMapper.cs",
@@ -20423,7 +20423,7 @@
         "step three/T0113/execution-report.md",
         "step three/T0113/evidence/verification.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nAudited the current production request path and found no ordinary logging sink in the TCP listener, protocol mapper or adjacent host/network application layers. Added a static regression guard over production C# source plus a real loopback acceptance test proving a marker prompt reaches the typed callback without appearing in Console.Out. This does not claim encrypted peer identity or network response delivery.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nAudited the current production request path and found no ordinary logging sink in the TCP listener, protocol mapper or adjacent host/network application layers. Added a static regression guard over production C# source plus a real loopback acceptance test proving a marker prompt reaches the typed callback without appearing in Console.Out. This does not claim encrypted peer identity or network response delivery.\nV 3.0.343 Step Three graph guard found a metadata-only ATTEMPT_COUNT_MISMATCH on T0112 (summary count 1 vs 2 history records); the Python suite (153 tests), compileall and HostLifecycle job passed. The mismatch is being corrected in V 3.0.344; T0113 stays in progress until the exact-head quality gate also passes.",
       "execution_summary": {
         "attempt_count": 1,
         "failed_attempt_count": 0,
@@ -20439,8 +20439,12 @@
           "step three/project-graph.md"
         ],
         "related_commits": [],
-        "tests_passed": [],
-        "tests_failed": [],
+        "tests_passed": [
+          "Python unit tests — 153 tests passed on V 3.0.343 before graph guard validation; the new network payload logging guard is included in this suite."
+        ],
+        "tests_failed": [
+          "Step Three graph validation on V 3.0.343 — failed with ATTEMPT_COUNT_MISMATCH for T0112 (execution_summary.attempt_count=1, execution_history length=2). This is graph metadata consistency, not an application test failure; correction is being committed."
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -20479,14 +20483,24 @@
           "commit_sha": null,
           "tests": [
             {
-              "name": "NetworkPayloadLoggingTests",
-              "result": "pending",
-              "summary": "Exact-head Step Three quality gate will execute tests/test_network_payload_logging.py."
+              "name": "NetworkPayloadLoggingTests/Python unittest suite",
+              "result": "passed",
+              "summary": "The quality job ran 153 tests successfully on V 3.0.343."
             },
             {
-              "name": "RequestPromptIsNotWrittenToNormalConsoleLogsAsync",
-              "result": "pending",
-              "summary": "Exact-head HostLifecycle job will run the loopback privacy acceptance case."
+              "name": "Python compileall",
+              "result": "passed",
+              "summary": "python -m compileall -q tools tests succeeded on V 3.0.343."
+            },
+            {
+              "name": "graph_guard.py -- structure",
+              "result": "failed",
+              "summary": "The graph guard identified T0112's execution summary count (1) did not match its two history records. Corrected by incrementing attempt_count to 2 and aligning last_attempt_id."
+            },
+            {
+              "name": "HostLifecycle privacy acceptance",
+              "result": "passed",
+              "summary": "Exact-head HostLifecycle job completed successfully on V 3.0.343, including the new real loopback prompt privacy case."
             }
           ],
           "failure_details": null,
@@ -32689,6 +32703,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-26T22:52:21.242Z"
+  "updated_at": "2026-10-26T22:54:28.082Z"
 }
 ```
