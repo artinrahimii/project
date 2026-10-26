@@ -20909,8 +20909,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0115 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "تکمیل‌شده",
       "actual_output_paths": [
         "src/Host.Windows/Networking/IPeerTransport.cs",
         "src/Host.Windows/Networking/PeerTransportEndpoint.cs",
@@ -20930,12 +20930,12 @@
         "step three/T0116/execution-report.md",
         "step three/T0116/evidence/verification.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0116 contract acceptance passed on V3.0.349. Exact HostLifecycle log shows the IPeerTransport contract suite PASS; Step Three quality, Windows, Android and real inference workflows all succeeded. The interface is contract-only; secure P2P transport implementation remains T0117.",
       "execution_summary": {
-        "attempt_count": 1,
+        "attempt_count": 2,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0116-A001",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "T0116-A001-verification",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Host.Windows/Networking/IPeerTransport.cs",
           "src/Host.Windows/Networking/PeerTransportEndpoint.cs",
@@ -20946,13 +20946,21 @@
           "step three/T0116/evidence/verification.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
+        "related_commits": [
+          "7680a88390104bd4d7c18d97b589276812482ff9"
+        ],
+        "tests_passed": [
+          "HostLifecycle acceptance including PeerTransportContractAcceptanceTests — PASS on V 3.0.349; log line confirmed: PASS: IPeerTransport exposes a secure-connect/message-send/message-receive/disconnect contract and validates its expected peer endpoint. https://github.com/artinrahimii/project/actions/runs/40418563430/job/121906903155",
+          "Step Three quality gate (Python suite, syntax, graph and output/evidence guards) — PASS on V 3.0.349: https://github.com/artinrahimii/project/actions/runs/40418563506",
+          "Windows WPF Release build/formatting/generated-Protobuf/startup-smoke/host-policy gates — PASS on V 3.0.349: https://github.com/artinrahimii/project/actions/runs/40418563430/job/121906903608",
+          "Android lint, debug APK, Protobuf round-trip, generated source checks and artifact upload — PASS on V 3.0.349: https://github.com/artinrahimii/project/actions/runs/40418563430/job/121906903612",
+          "Real local llama.cpp/GGUF integration — PASS on V 3.0.349: https://github.com/artinrahimii/project/actions/runs/40418563443"
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "required",
+          "state": "passed",
           "triggering_contracts": [
             "direct P2P data-path requirement",
             "listener framing/message contract",
@@ -20962,10 +20970,10 @@
             "T0117"
           ],
           "review_evidence": [
-            "docs/decisions/ADR-0002-direct-p2p-data-path.md",
-            "docs/requirements.md",
-            "src/Host.Windows/Networking/NetworkInferenceRequestFrameReader.cs",
-            "src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs"
+            "src/Host.Windows/Networking/IPeerTransport.cs",
+            "src/Host.Windows/Networking/PeerTransportEndpoint.cs",
+            "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs",
+            "https://github.com/artinrahimii/project/actions/runs/40418563430/job/121906903155"
           ]
         }
       },
@@ -21018,6 +21026,50 @@
             }
           ],
           "follow_up": "Run exact-head quality/product CI; if green, finalize T0116 with commit SHA and test results. Then continue to T0117."
+        },
+        {
+          "attempt_id": "T0116-A001-verification",
+          "started_at": "2026-10-26T23:16:20Z",
+          "ended_at": "2026-10-26T23:17:51Z",
+          "result": "succeeded",
+          "summary": "Exact V3.0.349 CI passed the new contract test and completed the full product checks. HostLifecycle log explicitly reports PASS for IPeerTransport method/signature and endpoint validation; Step Three quality, Windows WPF build/startup/policy gates, Android APK/Protobuf checks and real local inference also passed. This acceptance validates the contract abstraction only; no concrete secure transport has been implemented or claimed.",
+          "changed_files": [
+            "src/Host.Windows/Networking/IPeerTransport.cs",
+            "src/Host.Windows/Networking/PeerTransportEndpoint.cs",
+            "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "step three/T0116/execution-report.md",
+            "step three/T0116/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": "7680a88390104bd4d7c18d97b589276812482ff9",
+          "tests": [
+            {
+              "result": "passed",
+              "summary": "HostLifecycle acceptance including PeerTransportContractAcceptanceTests — PASS on V 3.0.349; log line confirmed: PASS: IPeerTransport exposes a secure-connect/message-send/message-receive/disconnect contract and validates its expected peer endpoint. https://github.com/artinrahimii/project/actions/runs/40418563430/job/121906903155"
+            },
+            {
+              "result": "passed",
+              "summary": "Step Three quality gate (Python suite, syntax, graph and output/evidence guards) — PASS on V 3.0.349: https://github.com/artinrahimii/project/actions/runs/40418563506"
+            },
+            {
+              "result": "passed",
+              "summary": "Windows WPF Release build/formatting/generated-Protobuf/startup-smoke/host-policy gates — PASS on V 3.0.349: https://github.com/artinrahimii/project/actions/runs/40418563430/job/121906903608"
+            },
+            {
+              "result": "passed",
+              "summary": "Android lint, debug APK, Protobuf round-trip, generated source checks and artifact upload — PASS on V 3.0.349: https://github.com/artinrahimii/project/actions/runs/40418563430/job/121906903612"
+            },
+            {
+              "result": "passed",
+              "summary": "Real local llama.cpp/GGUF integration — PASS on V 3.0.349: https://github.com/artinrahimii/project/actions/runs/40418563443"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "follow_up": "T0117 is next: select a compatible open-source P2P transport and implement IPeerTransport with authenticated encryption, bounded message framing, and actual send/receive/disconnect semantics. The chosen library license and runtime compatibility must be checked before adding it."
         }
       ]
     },
@@ -33215,6 +33267,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-26T23:15:20.757Z"
+  "updated_at": "2026-10-26T23:19:06.976Z"
 }
 ```
