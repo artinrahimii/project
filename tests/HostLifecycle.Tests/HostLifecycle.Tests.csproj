@@ -22,5 +22,8 @@
     <Compile Include="../../src/Host.Windows/Models/Catalog/ModelCatalogParser.cs" Link="ModelCatalogParser.cs" />
     <Compile Include="../../src/Host.Windows/Models/ModelStreamingDownloader.cs" Link="ModelStreamingDownloader.cs" />
     <Compile Include="../../src/Host.Windows/Models/VerifiedModelInstaller.cs" Link="VerifiedModelInstaller.cs" />
+    <Compile Include="../../src/Host.Windows/Chat/AgentToolCall.cs" Link="Chat/AgentToolCall.cs" />
+    <Compile Include="../../src/Host.Windows/Tools/IAgentTool.cs" Link="Tools/IAgentTool.cs" />
+    <Compile Include="../../src/Host.Windows/Tools/AgentToolRegistry.cs" Link="Tools/AgentToolRegistry.cs" />
   </ItemGroup>
 </Project>

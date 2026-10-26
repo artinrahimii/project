@@ -16110,33 +16110,107 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0092 و T0087 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال انجام",
+      "actual_output_paths": [
+        "src/Host.Windows/Chat/AgentToolCall.cs",
+        "src/Host.Windows/Tools/IAgentTool.cs",
+        "src/Host.Windows/Tools/AgentToolRegistry.cs",
+        "tests/HostLifecycle.Tests/AgentToolRegistryAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0093/execution-report.md",
+        "step three/project-graph.md"
+      ],
       "expected_output_paths": [
         "src/Host.Windows/Chat/ و src/Host.Windows/Tools/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "src/Host.Windows/Chat/AgentToolCall.cs",
+        "src/Host.Windows/Tools/IAgentTool.cs",
+        "src/Host.Windows/Tools/AgentToolRegistry.cs",
+        "tests/HostLifecycle.Tests/AgentToolRegistryAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj"
+      ],
+      "notes": "Implemented explicit trusted-tool contract and an empty-by-default allowlist. Only explicitly registered implementations can be resolved; model-proposed unknown names are rejected, tool argument objects are delegated to the implementation validator before resolution for execution, duplicate/invalid definitions and open JSON object schemas are rejected, and command-execution names are reserved. No tool is executable through this registry alone; confirmation and sandboxed execution are downstream tasks T0094-T0095. Await exact-commit CI.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
-        "related_commits": [],
+        "last_attempt_id": "T0093-2026-10-26-01",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Host.Windows/Chat/AgentToolCall.cs",
+          "src/Host.Windows/Tools/IAgentTool.cs",
+          "src/Host.Windows/Tools/AgentToolRegistry.cs",
+          "tests/HostLifecycle.Tests/AgentToolRegistryAcceptanceTests.cs",
+          "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+          "tests/HostLifecycle.Tests/Program.cs",
+          "step three/T0093/execution-report.md",
+          "step three/project-graph.md"
+        ],
+        "related_commits": [
+          "45a5dcb706e3689439dff173530a4435b71bbd73"
+        ],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
-          "affected_by_contract_changes": [],
-          "review_evidence": []
+          "state": "passed",
+          "triggering_contracts": [
+            "T0092 error presentation contract",
+            "T0087 catalog/license metadata contract",
+            "T0094 downstream tool execution/confirmation contract"
+          ],
+          "affected_by_contract_changes": [
+            "New host-owned IAgentTool contract and explicit allowlist registry; no active tool implementations registered by default."
+          ],
+          "review_evidence": [
+            "src/Host.Windows/MainWindow.xaml.cs",
+            "src/Host.Application/HostErrorPresentation.cs",
+            "src/Host.Windows/Models/Catalog/ModelCatalogModels.cs",
+            "src/Host.Windows/Chat/AgentToolCall.cs",
+            "src/Host.Windows/Tools/IAgentTool.cs",
+            "src/Host.Windows/Tools/AgentToolRegistry.cs"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0093-2026-10-26-01",
+          "started_at": "2026-10-26T03:40:00Z",
+          "ended_at": "2026-10-26T03:40:00Z",
+          "result": "partial",
+          "summary": "Implemented the agent-tool interface and explicit allowlist registry in the expected Chat/Tools source directories, linked the new sources into the lifecycle harness, and added executable acceptance tests for empty-by-default policy, explicit registration, unknown/case-mismatched tool rejection, invalid argument rejection, duplicate registration, strict object-schema configuration, reserved arbitrary-command names, confirmation metadata, and JsonElement lifetime safety. Reviewed incoming edges from T0092/T0087 as sequencing-only and outgoing T0093 -> T0094 as a contract/interface dependency based on source and follow-on acceptance needs. Test/build results for this exact code revision are pending CI.",
+          "changed_files": [
+            "src/Host.Windows/Chat/AgentToolCall.cs",
+            "src/Host.Windows/Tools/IAgentTool.cs",
+            "src/Host.Windows/Tools/AgentToolRegistry.cs",
+            "tests/HostLifecycle.Tests/AgentToolRegistryAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "step three/T0093/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "related_commits": [
+            "45a5dcb706e3689439dff173530a4435b71bbd73"
+          ],
+          "tests": [
+            {
+              "name": "AgentToolRegistryAcceptanceTests.Run",
+              "result": "not_run",
+              "summary": "Implemented in the HostLifecycle harness; must run after committing the source changes."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "Added AgentToolCall, AgentToolDefinition, AgentToolResult, IAgentTool, and AgentToolRegistry contracts; tool registry is empty by default."
+          ],
+          "follow_up": "Commit this implementation as an in-progress attempt, then inspect exact-commit quality and product workflow results. Do not mark T0093 done until the HostLifecycle tests and complete product CI pass."
+        }
+      ]
     },
     {
       "id": "T0094",
@@ -24455,28 +24529,43 @@
       "from": "T0092",
       "to": "T0093",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0092's error-to-System-message behavior is already complete and does not provide a type consumed by the new agent-tool contract. Keep the graph's conservative order, but record no technical prerequisite between the error presentation path and allowlist type definitions.",
+      "validation_status": "validated",
+      "evidence": [
+        "step three/T0092/execution-report.md",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "src/Host.Application/HostErrorPresentation.cs",
+        "src/Host.Windows/Chat/AgentToolCall.cs"
+      ]
     },
     {
       "from": "T0087",
       "to": "T0093",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0087 adds model catalog license classification and disclosure; T0093 defines trusted tool metadata and allowlist lookup and consumes no catalog license model. The later T0097 task gates agent capability on actual backend/model support, so this dependency is ordering rather than a tool-interface contract.",
+      "validation_status": "validated",
+      "evidence": [
+        "step three/T0087/execution-report.md",
+        "src/Host.Windows/Models/Catalog/ModelCatalogModels.cs",
+        "src/Host.Windows/Tools/IAgentTool.cs",
+        "src/Host.Windows/Tools/AgentToolRegistry.cs"
+      ]
     },
     {
       "from": "T0093",
       "to": "T0094",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0094 must enforce user confirmation before executing side-effecting tools. T0093 defines IAgentTool, AgentToolDefinition.RequiresUserConfirmation, AgentToolCall, and a registry that resolves and validates only explicitly registered implementations; these are the concrete contract consumed by the execution/confirmation layer.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/Chat/AgentToolCall.cs",
+        "src/Host.Windows/Tools/IAgentTool.cs",
+        "src/Host.Windows/Tools/AgentToolRegistry.cs",
+        "tests/HostLifecycle.Tests/AgentToolRegistryAcceptanceTests.cs"
+      ]
     },
     {
       "from": "T0087",
@@ -28380,8 +28469,53 @@
         "src/Host.Application/HostErrorPresentation.cs"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-26T03:40:00Z",
+      "edge_from": "T0092",
+      "edge_to": "T0093",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "reason": "T0092's error-to-System-message behavior is already complete and does not provide a type consumed by the new agent-tool contract. Keep the graph's conservative order, but record no technical prerequisite between the error presentation path and allowlist type definitions.",
+      "evidence": [
+        "step three/T0092/execution-report.md",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "src/Host.Application/HostErrorPresentation.cs",
+        "src/Host.Windows/Chat/AgentToolCall.cs"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-26T03:40:00Z",
+      "edge_from": "T0087",
+      "edge_to": "T0093",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "reason": "T0087 adds model catalog license classification and disclosure; T0093 defines trusted tool metadata and allowlist lookup and consumes no catalog license model. The later T0097 task gates agent capability on actual backend/model support, so this dependency is ordering rather than a tool-interface contract.",
+      "evidence": [
+        "step three/T0087/execution-report.md",
+        "src/Host.Windows/Models/Catalog/ModelCatalogModels.cs",
+        "src/Host.Windows/Tools/IAgentTool.cs",
+        "src/Host.Windows/Tools/AgentToolRegistry.cs"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-26T03:40:00Z",
+      "edge_from": "T0093",
+      "edge_to": "T0094",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "reason": "T0094 must enforce user confirmation before executing side-effecting tools. T0093 defines IAgentTool, AgentToolDefinition.RequiresUserConfirmation, AgentToolCall, and a registry that resolves and validates only explicitly registered implementations; these are the concrete contract consumed by the execution/confirmation layer.",
+      "evidence": [
+        "src/Host.Windows/Chat/AgentToolCall.cs",
+        "src/Host.Windows/Tools/IAgentTool.cs",
+        "src/Host.Windows/Tools/AgentToolRegistry.cs",
+        "tests/HostLifecycle.Tests/AgentToolRegistryAcceptanceTests.cs"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-25T20:51:35Z"
+  "updated_at": "2026-10-26T03:40:00Z"
 }
 ```

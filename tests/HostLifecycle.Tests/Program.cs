@@ -56,6 +56,7 @@ Assert(BuildDomainHostCapabilities(availableMemoryBytes: 20UL * 1024UL * 1024UL 
 Assert(BuildDomainHostCapabilities(availableDiskBytes: 600L * 1024L * 1024L * 1024L).CapacityState == HostCapacityState.Unknown, "Inconsistent disk measurements must not produce Ready.");
 Console.WriteLine("PASS: HostCapabilities keeps incomplete/invalid measurements Unknown and blocks inference for failed capacity checks.");
 ChatConversationAcceptanceTests.Run();
+AgentToolRegistryAcceptanceTests.Run();
 HostCapacityAcceptanceTests.Run();
 InferenceEngineContractTests.Run();
 ModelCatalogParserAcceptanceTests.Run();
