@@ -19236,8 +19236,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0106 و T0097 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "tests/HostLifecycle.Tests/HostRequestCoordinatorFailureAcceptanceTests.cs",
         "tests/HostLifecycle.Tests/Program.cs",
@@ -19255,22 +19255,28 @@
         "step three/T0107/execution-report.md",
         "step three/T0107/evidence/verification.md"
       ],
-      "notes": "Added one focused acceptance suite covering the same admission context repeated during an active request, expired deadline rejected before inference, cancellation during inference even if the engine later returns a value, and engine exception cleanup/recovery. Existing unit suites covered related subcases, but this task adds a single explicit mapped acceptance suite. Await exact-head CI before marking done.",
+      "notes": "T0107 passed exact-head CI on V 3.0.329. The new suite covers a repeated identical admission context while the original request is active (Busy/no second invocation), expired deadline before inference, cancellation during active inference preventing late success, and engine exception cleanup/recovery. HostRequestAdmissionContext has no request ID, so this does not claim request-ID replay/idempotency protection. T0107 -> T0108 and the other outgoing edges remain unreviewed.",
       "execution_summary": {
         "attempt_count": 1,
         "failed_attempt_count": 0,
         "last_attempt_id": "T0107-2026-10-26-01",
-        "last_attempt_result": "partial",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "tests/HostLifecycle.Tests/HostRequestCoordinatorFailureAcceptanceTests.cs",
           "tests/HostLifecycle.Tests/Program.cs",
           "step three/T0107/execution-report.md",
           "step three/T0107/evidence/verification.md",
-          "step three/project-graph.md",
-          "step three/T0107/.gitkeep"
+          "step three/project-graph.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
+        "related_commits": [
+          "b034e7df70e8ab37bf0c9aac4314d4cd32c52051"
+        ],
+        "tests_passed": [
+          "HostRequestCoordinatorFailureAcceptanceTests — PASS; HostLifecycle job on b034e7df70e8ab37bf0c9aac4314d4cd32c52051. (https://github.com/artinrahimii/project/actions/runs/40336520459/job/121619458211)",
+          "Step Three quality gate — PASS on b034e7df70e8ab37bf0c9aac4314d4cd32c52051. (https://github.com/artinrahimii/project/actions/runs/40336520434)",
+          "White-P product build — PASS on b034e7df70e8ab37bf0c9aac4314d4cd32c52051; Windows, Android, and HostLifecycle jobs all succeeded. (https://github.com/artinrahimii/project/actions/runs/40336520459)",
+          "Real local inference integration — PASS on b034e7df70e8ab37bf0c9aac4314d4cd32c52051. (https://github.com/artinrahimii/project/actions/runs/40336520612)"
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -19285,9 +19291,9 @@
         {
           "attempt_id": "T0107-2026-10-26-01",
           "started_at": "2026-10-26T14:05:32.045Z",
-          "ended_at": "2026-10-26T14:05:32.045Z",
-          "result": "partial",
-          "summary": "Reviewed T0106 -> T0107 as sequencing-only and added a focused acceptance suite for repeated admission, expired deadline, cancellation during active inference, and inference exception recovery. Exact-head CI is pending.",
+          "ended_at": "2026-10-26T14:07:56Z",
+          "result": "succeeded",
+          "summary": "The focused acceptance suite was executed by the exact-head GitHub Actions HostLifecycle job. Step Three quality gate, complete Windows/Android product build, and live llama.cpp inference integration all passed on the implementation commit.",
           "changed_files": [
             "tests/HostLifecycle.Tests/HostRequestCoordinatorFailureAcceptanceTests.cs",
             "tests/HostLifecycle.Tests/Program.cs",
@@ -19296,20 +19302,41 @@
             "step three/project-graph.md",
             "step three/T0107/.gitkeep"
           ],
-          "related_commits": [],
-          "commit_sha": null,
+          "related_commits": [
+            "b034e7df70e8ab37bf0c9aac4314d4cd32c52051"
+          ],
+          "commit_sha": "b034e7df70e8ab37bf0c9aac4314d4cd32c52051",
           "tests": [
             {
               "name": "HostRequestCoordinatorFailureAcceptanceTests",
-              "result": "pending",
-              "summary": "New acceptance suite registered in HostLifecycle harness; exact-head CI has not completed yet."
+              "result": "passed",
+              "summary": "The new suite was registered in the HostLifecycle harness and executed successfully: repeated active admission returned Busy without second invocation; expired deadline rejected before inference; cancellation prevented late result delivery; engine exception propagated and coordinator recovered.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40336520459/job/121619458211"
+            },
+            {
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "summary": "Automated tests, Python syntax, graph structure and repository-backed output/evidence validation succeeded.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40336520434"
+            },
+            {
+              "name": "White-P product build",
+              "result": "passed",
+              "summary": "HostLifecycle tests, Windows WPF Release build/startup/policy checks, Android lint/APK/Protobuf tests, generated-source checks and artifact uploads all succeeded.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40336520459"
+            },
+            {
+              "name": "Real local inference integration",
+              "result": "passed",
+              "summary": "Pinned llama.cpp/GGUF inference and active cancellation succeeded on the exact implementation commit.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40336520612"
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Run Step Three quality gate and full White-P product build on exact implementation commit. If all pass, record the successful attempt and mark T0107 done; otherwise correct any evidenced failure."
+          "follow_up": "Review the still-unreviewed outgoing edge T0107 -> T0108 and the other T0107 outgoing edges before starting affected tasks."
         }
       ]
     },
@@ -31522,6 +31549,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-26T13:49:53.368Z"
+  "updated_at": "2026-10-26T14:11:31.132Z"
 }
 ```
