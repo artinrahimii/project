@@ -37,3 +37,8 @@ After T0099 changed the coordinator to fail-fast Busy admission, the existing T0
 ## Contract revalidation — pending on T0100 API
 
 Commit `9a8763e813059f484eb8da10792b30827fce35f8` makes `HostRequestAdmissionContext` mandatory before coordinator admission. The existing capacity-one/no-overlap/release test was adapted to pass a valid participation/model/capacity/deadline snapshot. T0098 remains reopened until this test passes on exact-commit CI.
+
+
+## Contract revalidation — passed on V 3.0.313
+
+The exact implementation commit `202cd267e014faf5681ccc35b30eca1a3f139543` passed the updated HostLifecycle tests. Logs explicitly report the coordinator serialization/release test passed, Busy/no-queue coverage passed, and the Windows C# formatting/Release build/WPF smoke and Step Three quality gate passed. T0098 is restored to `done`; the earlier failed formatting attempt is preserved in the T0100 graph history.

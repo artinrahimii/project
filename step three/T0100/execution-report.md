@@ -38,3 +38,14 @@ The repository does not yet expose a live P2P request-ingress path that independ
 On V 3.0.311, [Step Three quality](https://github.com/artinrahimii/project/actions/runs/40312054446), [HostLifecycle/Android job](https://github.com/artinrahimii/project/actions/runs/40312054522), and [live local inference](https://github.com/artinrahimii/project/actions/runs/40312054442) passed. The Windows product job failed at `dotnet format whitespace --verify-no-changes` with 97 diagnostics confined to `HostRequestAdmissionPolicy.cs` and `HostRequestCoordinator.cs`; Windows build and smoke steps were skipped.
 
 Both files were reformatted in V 3.0.313 (`202cd267e014faf5681ccc35b30eca1a3f139543`). Exact-commit Windows CI is pending, so T0100 remains `in_progress`.
+
+
+## Validation attempt 4 — succeeded
+
+Exact implementation commit V 3.0.313 (`202cd267e014faf5681ccc35b30eca1a3f139543`) passed:
+- [Step Three quality gate](https://github.com/artinrahimii/project/actions/runs/40312672850).
+- [HostLifecycle tests](https://github.com/artinrahimii/project/actions/runs/40312672878), including T0098 serialization/release, T0099 Busy/no-queue, and T0100 admission rejection tests. Logs explicitly confirm all three pass messages.
+- Windows C# formatting, Release build, generated Protobuf verification, WPF startup smoke and agent-tool checks in [product workflow 40312672878](https://github.com/artinrahimii/project/actions/runs/40312672878).
+- Android format/lint, APK build and protocol tests in the same product workflow.
+
+T0100 is marked `done`. The failed V 3.0.311 formatting attempt remains in append-only history; the two source files were reformatted and all inspected required CI jobs passed on V 3.0.313.

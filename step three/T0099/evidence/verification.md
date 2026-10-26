@@ -22,3 +22,8 @@ The Android APK workflow had not yet completed when this entry was prepared; no 
 ## Contract revalidation — pending on T0100 API
 
 Commit `9a8763e813059f484eb8da10792b30827fce35f8` now runs the admission policy before returning Busy. The Busy/no-queue tests were adapted to provide a valid context, so they test Busy rather than an earlier admission rejection. T0099 remains reopened until exact-commit CI passes.
+
+
+## Contract revalidation — passed on V 3.0.313
+
+The exact implementation commit `202cd267e014faf5681ccc35b30eca1a3f139543` passed the updated HostLifecycle tests. The Busy suite explicitly reports fail-fast behavior, no queue for 32 concurrent requests, cancellation preservation and resumption after release. T0099 is restored to `done`.

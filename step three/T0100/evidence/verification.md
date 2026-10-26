@@ -13,3 +13,14 @@
 - V 3.0.311: Step Three quality, HostLifecycle tests (including admission and updated coordinator suites), Android build/tests, and live local inference passed in runs [40312054446](https://github.com/artinrahimii/project/actions/runs/40312054446), [40312054522](https://github.com/artinrahimii/project/actions/runs/40312054522), and [40312054442](https://github.com/artinrahimii/project/actions/runs/40312054442).
 - Windows format verification failed with 97 whitespace diagnostics in only `src/Host.Windows/Requests/HostRequestAdmissionPolicy.cs` and `src/Host.Windows/Requests/HostRequestCoordinator.cs`; later Windows steps were skipped.
 - Those files were reformatted in V 3.0.313 (`202cd267e014faf5681ccc35b30eca1a3f139543`). Exact-commit formatting/build status is pending and is not claimed successful yet.
+
+
+## Validation attempt 4 — succeeded
+
+Exact implementation commit V 3.0.313 (`202cd267e014faf5681ccc35b30eca1a3f139543`) passed:
+- [Step Three quality gate](https://github.com/artinrahimii/project/actions/runs/40312672850).
+- [HostLifecycle tests](https://github.com/artinrahimii/project/actions/runs/40312672878), including T0098 serialization/release, T0099 Busy/no-queue, and T0100 admission rejection tests. Logs explicitly confirm all three pass messages.
+- Windows C# formatting, Release build, generated Protobuf verification, WPF startup smoke and agent-tool checks in [product workflow 40312672878](https://github.com/artinrahimii/project/actions/runs/40312672878).
+- Android format/lint, APK build and protocol tests in the same product workflow.
+
+T0100 is marked `done`. The failed V 3.0.311 formatting attempt remains in append-only history; the two source files were reformatted and all inspected required CI jobs passed on V 3.0.313.
