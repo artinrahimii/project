@@ -62,6 +62,7 @@ internal static class HostNetworkListenerParticipationTests
                 .WaitAsync(TimeSpan.FromSeconds(5))
                 .ConfigureAwait(false);
 
+            await client.GetStream().WriteAsync(new byte[] { 0, 0, 0, 0 }.AsMemory()).ConfigureAwait(false);
             var buffer = new byte[1];
             var bytesRead = await client.GetStream().ReadAsync(buffer.AsMemory())
                 .AsTask()

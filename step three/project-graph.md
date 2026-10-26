@@ -19356,8 +19356,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0107 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "done",
-      "status_fa": "انجام‌شده",
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
       "actual_output_paths": [
         "src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs",
         "tests/HostLifecycle.Tests/HostNetworkListenerParticipationTests.cs",
@@ -19376,10 +19376,10 @@
       ],
       "notes": "T0108 implementation on V 3.0.331 passed exact-head CI: the listener fails closed while participation is inactive, binds on explicit activation, accepts loopback TCP, is idempotent on repeated start and releases the endpoint on StopAsync. Exact-head HostLifecycle, Step Three quality gate, Windows/Android product build and real local inference integration all passed. Scope remains a gated TCP listener: accepted connections are closed without reading payloads until T0110 adds the Protobuf parser. T0109 must integrate stop on participation disable/app shutdown; no full P2P, encryption, or payload processing is claimed.",
       "execution_summary": {
-        "attempt_count": 1,
+        "attempt_count": 2,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0108-2026-10-26-01",
-        "last_attempt_result": "succeeded",
+        "last_attempt_id": "T0108-2026-10-27-01",
+        "last_attempt_result": "partial",
         "changed_files": [
           "src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs",
           "tests/HostLifecycle.Tests/HostNetworkListenerParticipationTests.cs",
@@ -19387,25 +19387,30 @@
           "tests/HostLifecycle.Tests/Program.cs",
           "step three/T0108/execution-report.md",
           "step three/T0108/evidence/verification.md",
-          "step three/project-graph.md"
+          "step three/project-graph.md",
+          "src/Host.Windows/Networking/NetworkInferenceRequestFrameReader.cs",
+          "tests/HostLifecycle.Tests/NetworkInferenceRequestFrameAcceptanceTests.cs"
         ],
         "related_commits": [
           "42efe64069939558deb18414de1c233c739885fd"
         ],
-        "tests_passed": [
-          "HostNetworkListenerParticipationTests / HostLifecycle harness — PASS on 42efe64069939558deb18414de1c233c739885fd. https://github.com/artinrahimii/project/actions/runs/40340804518/job/121634661524",
-          "Step Three quality gate — PASS on 42efe64069939558deb18414de1c233c739885fd. https://github.com/artinrahimii/project/actions/runs/40340804805",
-          "Windows WPF / Android product build — PASS on 42efe64069939558deb18414de1c233c739885fd. https://github.com/artinrahimii/project/actions/runs/40340804518",
-          "Real local inference integration — PASS on 42efe64069939558deb18414de1c233c739885fd. https://github.com/artinrahimii/project/actions/runs/40340806731"
-        ],
+        "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
-          "affected_by_contract_changes": [],
-          "review_evidence": []
+          "state": "in_review",
+          "triggering_contracts": [
+            "T0110 changes TCP accepted-connection behavior to bounded frame reading and Protobuf validation."
+          ],
+          "affected_by_contract_changes": [
+            "src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs",
+            "tests/HostLifecycle.Tests/HostNetworkListenerParticipationTests.cs"
+          ],
+          "review_evidence": [
+            "tests/HostLifecycle.Tests/NetworkInferenceRequestFrameAcceptanceTests.cs",
+            "docs/decisions/ADR-0003-tcp-request-framing.md"
+          ]
         }
       },
       "execution_history": [
@@ -19459,8 +19464,38 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Review the T0108 -> T0109 and other relevant outgoing edges before implementing stop-on-disable/application shutdown. T0110 must add bounded Protobuf parsing before any accepted request is processed."
+        },
+        {
+          "attempt_id": "T0108-2026-10-27-01",
+          "started_at": "2026-10-26T21:33:15.366Z",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Reopened for acceptance revalidation because T0110 changes accepted TCP connections from immediate close to bounded frame reading and Protobuf validation.",
+          "changed_files": [
+            "src/Host.Windows/Networking/NetworkInferenceRequestFrameReader.cs",
+            "src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs",
+            "tests/HostLifecycle.Tests/NetworkInferenceRequestFrameAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/HostNetworkListenerParticipationTests.cs"
+          ],
+          "related_commits": [],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "TCP framed-input contract revalidation",
+              "result": "pending",
+              "summary": "Prior completion evidence remains preserved; rerun affected acceptance tests on the exact T0110 implementation commit before restoring done."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": "Reopened for acceptance revalidation because T0110 changes accepted TCP connections from immediate close to bounded frame reading and Protobuf validation.",
+          "contract_changes": [
+            "TCP accepted connections now read one bounded length-prefixed Protobuf InferenceRequest."
+          ],
+          "follow_up": "Restore done only after exact-head relevant CI succeeds."
         }
-      ]
+      ],
+      "reopened_reason": "Reopened for acceptance revalidation because T0110 changes accepted TCP connections from immediate close to bounded frame reading and Protobuf validation."
     },
     {
       "id": "T0109",
@@ -19479,8 +19514,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0108 و T0107 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "done",
-      "status_fa": "انجام‌شده",
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
       "actual_output_paths": [
         "src/Host.Windows/Networking/ParticipationNetworkListenerLifecycle.cs",
         "src/Host.Windows/MainWindow.xaml.cs",
@@ -19505,10 +19540,10 @@
       ],
       "notes": "T0109 passed exact-head acceptance and product CI on V 3.0.335. Participation is disabled by default; explicit enable binds localhost only. Disabling participation and awaited window shutdown stop/dispose the listener. The WPF smoke runner waits for the real Closed event and the final Close is dispatched after the original Closing handler unwinds. Two earlier failed attempts and their failures remain in execution_history. Accepted TCP sockets are still closed without payload parsing until T0110.",
       "execution_summary": {
-        "attempt_count": 3,
+        "attempt_count": 4,
         "failed_attempt_count": 2,
-        "last_attempt_id": "T0109-2026-10-26-03",
-        "last_attempt_result": "succeeded",
+        "last_attempt_id": "T0109-2026-10-27-01",
+        "last_attempt_result": "partial",
         "changed_files": [
           "src/Host.Windows/Networking/ParticipationNetworkListenerLifecycle.cs",
           "src/Host.Windows/MainWindow.xaml.cs",
@@ -19521,28 +19556,34 @@
           "step three/project-graph.md",
           "src/Host.Windows/App.xaml.cs",
           "tests/test_windows_hardware_discovery.py",
-          "tests/test_wpf_entrypoint.py"
+          "tests/test_wpf_entrypoint.py",
+          "src/Host.Windows/Networking/NetworkInferenceRequestFrameReader.cs",
+          "src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs",
+          "tests/HostLifecycle.Tests/NetworkInferenceRequestFrameAcceptanceTests.cs",
+          "tests/HostLifecycle.Tests/HostNetworkListenerParticipationTests.cs"
         ],
         "related_commits": [
           "f8b08f814f28c604fa5f8141ff3b2bd3d137e86b",
           "3bc81b6feab2fa3d5b927c9b4ef13ea1f7f626cc",
           "b82ce66b585c93057730225826896097845ee74f"
         ],
-        "tests_passed": [
-          "HostNetworkListenerParticipationTests and ParticipationNetworkListenerLifecycleTests / HostLifecycle — PASS on b82ce66b585c93057730225826896097845ee74f. https://github.com/artinrahimii/project/actions/runs/40357312422/job/121693129382",
-          "Step Three quality gate — PASS on b82ce66b585c93057730225826896097845ee74f. https://github.com/artinrahimii/project/actions/runs/40357312350",
-          "Windows Release build and startup smoke — PASS on b82ce66b585c93057730225826896097845ee74f. https://github.com/artinrahimii/project/actions/runs/40357312422/job/121693130018",
-          "Android build and Protobuf acceptance — PASS on b82ce66b585c93057730225826896097845ee74f. https://github.com/artinrahimii/project/actions/runs/40357312422/job/121693129952",
-          "White-P product build — PASS on b82ce66b585c93057730225826896097845ee74f. https://github.com/artinrahimii/project/actions/runs/40357312422"
-        ],
+        "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
-          "affected_by_contract_changes": [],
-          "review_evidence": []
+          "state": "in_review",
+          "triggering_contracts": [
+            "T0110 changes TCP accepted-connection behavior to bounded frame reading and Protobuf validation."
+          ],
+          "affected_by_contract_changes": [
+            "src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs",
+            "tests/HostLifecycle.Tests/HostNetworkListenerParticipationTests.cs"
+          ],
+          "review_evidence": [
+            "tests/HostLifecycle.Tests/NetworkInferenceRequestFrameAcceptanceTests.cs",
+            "docs/decisions/ADR-0003-tcp-request-framing.md"
+          ]
         }
       },
       "execution_history": [
@@ -19690,8 +19731,38 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "T0109 is accepted. Before starting T0110, review the still-unreviewed T0109 -> T0110 edge and implement the bounded Protobuf parser without processing oversized/malformed payloads."
+        },
+        {
+          "attempt_id": "T0109-2026-10-27-01",
+          "started_at": "2026-10-26T21:33:15.366Z",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Reopened for lifecycle contract revalidation because T0110 introduces active frame reads that StopAsync must cancel, close and await.",
+          "changed_files": [
+            "src/Host.Windows/Networking/NetworkInferenceRequestFrameReader.cs",
+            "src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs",
+            "tests/HostLifecycle.Tests/NetworkInferenceRequestFrameAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/HostNetworkListenerParticipationTests.cs"
+          ],
+          "related_commits": [],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "TCP framed-input contract revalidation",
+              "result": "pending",
+              "summary": "Prior completion evidence remains preserved; rerun affected acceptance tests on the exact T0110 implementation commit before restoring done."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": "Reopened for lifecycle contract revalidation because T0110 introduces active frame reads that StopAsync must cancel, close and await.",
+          "contract_changes": [
+            "TCP accepted connections now read one bounded length-prefixed Protobuf InferenceRequest."
+          ],
+          "follow_up": "Restore done only after exact-head relevant CI succeeds."
         }
-      ]
+      ],
+      "reopened_reason": "Reopened for lifecycle contract revalidation because T0110 introduces active frame reads that StopAsync must cancel, close and await."
     },
     {
       "id": "T0110",
@@ -19710,20 +19781,46 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0109 و T0107 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "src/Host.Windows/Networking/NetworkInferenceRequestFrameReader.cs",
+        "src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs",
+        "tests/HostLifecycle.Tests/NetworkInferenceRequestFrameAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/HostNetworkListenerParticipationTests.cs",
+        "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "docs/decisions/ADR-0003-tcp-request-framing.md",
+        "step three/T0110/execution-report.md",
+        "step three/T0110/evidence/verification.md",
+        "step three/project-graph.md"
+      ],
       "expected_output_paths": [
         "src/Host.Windows/Networking/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "tests/HostLifecycle.Tests/NetworkInferenceRequestFrameAcceptanceTests.cs",
+        "docs/decisions/ADR-0003-tcp-request-framing.md",
+        "step three/T0110/evidence/verification.md"
+      ],
+      "notes": "T0110 adds 4-byte unsigned big-endian length framing, checks the size ceiling before allocation, reads exactly one frame with timeout/cancellation, then calls the existing shared ProtocolMessageParser. Valid requests reach an optional in-process callback; without one the connection closes after validation. T0108/T0109 are in review pending revalidation on this listener change.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0110-2026-10-27-01",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Host.Windows/Networking/NetworkInferenceRequestFrameReader.cs",
+          "src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs",
+          "tests/HostLifecycle.Tests/NetworkInferenceRequestFrameAcceptanceTests.cs",
+          "tests/HostLifecycle.Tests/HostNetworkListenerParticipationTests.cs",
+          "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+          "tests/HostLifecycle.Tests/Program.cs",
+          "docs/decisions/ADR-0003-tcp-request-framing.md",
+          "step three/T0110/execution-report.md",
+          "step three/T0110/evidence/verification.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
@@ -19736,7 +19833,54 @@
           "review_evidence": []
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0110-2026-10-27-01",
+          "started_at": "2026-10-26T21:33:15.366Z",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Reviewed T0109 -> T0110 as a contract/interface dependency and T0107 -> T0110 as sequencing-only; added bounded length-prefixed TCP framing and wired it to the existing Protobuf parser with live socket tests. CI pending.",
+          "changed_files": [
+            "src/Host.Windows/Networking/NetworkInferenceRequestFrameReader.cs",
+            "src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs",
+            "tests/HostLifecycle.Tests/NetworkInferenceRequestFrameAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/HostNetworkListenerParticipationTests.cs",
+            "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "docs/decisions/ADR-0003-tcp-request-framing.md",
+            "step three/T0110/execution-report.md",
+            "step three/T0110/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "related_commits": [],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "NetworkInferenceRequestFrameAcceptanceTests",
+              "result": "pending",
+              "summary": "Live loopback tests cover valid parsed request, zero/oversized length, malformed wire, truncated prefix/payload, and stop while a peer awaits a frame."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            {
+              "name": "Initial TCP request framing",
+              "details": "4-byte unsigned big-endian payload length followed by one serialized Protobuf InferenceRequest per connection; payload ceiling is ProtocolMessageLimits.MaximumRequestMessageBytes.",
+              "consumers": [
+                "T0108",
+                "T0109",
+                "T0111",
+                "T0115",
+                "T0116",
+                "T0117"
+              ]
+            }
+          ],
+          "follow_up": "Run exact-head HostLifecycle, Step Three quality gate, and Windows/Android product build. Revalidate T0108/T0109 before restoring done."
+        }
+      ]
     },
     {
       "id": "T0111",
@@ -27754,19 +27898,30 @@
       "from": "T0109",
       "to": "T0110",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "The framed-read path must preserve the T0109 stop/dispose behavior: StopAsync cancels accepts, closes active client sockets, awaits frame tasks and clears the endpoint. Acceptance coverage stops the listener while a client is waiting for a frame.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/Networking/ParticipationNetworkListenerLifecycle.cs",
+        "src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs",
+        "tests/HostLifecycle.Tests/ParticipationNetworkListenerLifecycleTests.cs",
+        "tests/HostLifecycle.Tests/NetworkInferenceRequestFrameAcceptanceTests.cs",
+        "step three/T0109/evidence/verification.md"
+      ]
     },
     {
       "from": "T0107",
       "to": "T0110",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0107 tests the in-process coordinator fault paths; T0110 uses the existing shared ProtocolMessageParser and does not consume a T0107-specific coordinator API/artifact. Keep type=blocks as the conservative execution order.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/Requests/HostRequestCoordinator.cs",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorFailureAcceptanceTests.cs",
+        "src/Host.Infrastructure/ProtocolMessageParser.cs",
+        "step three/T0107/evidence/verification.md"
+      ]
     },
     {
       "from": "T0110",
@@ -31877,8 +32032,43 @@
         "src/Host.Windows/Networking/ParticipationNetworkListenerLifecycle.cs"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-26T21:33:15.366Z",
+      "edge_from": "T0109",
+      "edge_to": "T0110",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "old_validation_status": "unreviewed",
+      "new_validation_status": "validated",
+      "reason": "The framed-read path must preserve the T0109 stop/dispose behavior: StopAsync cancels accepts, closes active client sockets, awaits frame tasks and clears the endpoint. Acceptance coverage stops the listener while a client is waiting for a frame.",
+      "evidence": [
+        "src/Host.Windows/Networking/ParticipationNetworkListenerLifecycle.cs",
+        "src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs",
+        "tests/HostLifecycle.Tests/ParticipationNetworkListenerLifecycleTests.cs",
+        "tests/HostLifecycle.Tests/NetworkInferenceRequestFrameAcceptanceTests.cs",
+        "step three/T0109/evidence/verification.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-26T21:33:15.366Z",
+      "edge_from": "T0107",
+      "edge_to": "T0110",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "old_validation_status": "unreviewed",
+      "new_validation_status": "validated",
+      "reason": "T0107 tests the in-process coordinator fault paths; T0110 uses the existing shared ProtocolMessageParser and does not consume a T0107-specific coordinator API/artifact. Keep type=blocks as the conservative execution order.",
+      "evidence": [
+        "src/Host.Windows/Requests/HostRequestCoordinator.cs",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorFailureAcceptanceTests.cs",
+        "src/Host.Infrastructure/ProtocolMessageParser.cs",
+        "step three/T0107/evidence/verification.md"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-26T16:23:50.291Z"
+  "updated_at": "2026-10-26T21:33:15.366Z"
 }
 ```
