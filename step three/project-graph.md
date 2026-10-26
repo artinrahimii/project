@@ -18213,33 +18213,92 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0100 و T0097 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "src/Host.Windows/Requests/SecureRequestIdGenerator.cs",
+        "tests/HostLifecycle.Tests/SecureRequestIdGeneratorTests.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj"
+      ],
       "expected_output_paths": [
         "src/Host.Windows/Requests/ + tests/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "tests/HostLifecycle.Tests/SecureRequestIdGeneratorTests.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "protocol/whitep/v1/messages.proto"
+      ],
+      "notes": "مولد شناسهٔ موقت با RandomNumberGenerator و ۱۲۸ بیت تصادفی پیاده‌سازی شده است؛ شناسه با پیشوند req_ و ۳۲ رقم هگزادسیمال کوچک تولید می‌شود. آزمون CI هنوز اجرا نشده است.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
-        "related_commits": [],
+        "last_attempt_id": "T0101-2026-10-26-01",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Host.Windows/Requests/SecureRequestIdGenerator.cs",
+          "tests/HostLifecycle.Tests/SecureRequestIdGeneratorTests.cs",
+          "tests/HostLifecycle.Tests/Program.cs",
+          "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+          "step three/project-graph.md"
+        ],
+        "related_commits": [
+          "e3ba53ba52f4dbef73414e60eab9c95f182914c7"
+        ],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
-          "affected_by_contract_changes": [],
-          "review_evidence": []
+          "state": "in_review",
+          "triggering_contracts": [
+            "InferenceRequest.request_id is a required non-empty string"
+          ],
+          "affected_by_contract_changes": [
+            "Future request construction can call SecureRequestIdGenerator; existing wire schema stays unchanged."
+          ],
+          "review_evidence": [
+            "protocol/whitep/v1/messages.proto",
+            "src/Shared.Contracts/ProtocolMessageValidator.cs",
+            "src/Host.Windows/Requests/SecureRequestIdGenerator.cs",
+            "tests/HostLifecycle.Tests/SecureRequestIdGeneratorTests.cs"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0101-2026-10-26-01",
+          "started_at": "2026-10-26T11:18:17.281Z",
+          "ended_at": "2026-10-26T11:18:17.281Z",
+          "result": "partial",
+          "summary": "Added a secure temporary request ID generator backed by System.Security.Cryptography.RandomNumberGenerator (128 random bits) and a HostLifecycle acceptance test that validates the ID format and 4,096-sample non-repetition. Registered generator in the existing test project; exact-commit CI pending.",
+          "changed_files": [
+            "src/Host.Windows/Requests/SecureRequestIdGenerator.cs",
+            "tests/HostLifecycle.Tests/SecureRequestIdGeneratorTests.cs",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+            "step three/project-graph.md"
+          ],
+          "related_commits": [
+            "e3ba53ba52f4dbef73414e60eab9c95f182914c7"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "SecureRequestIdGeneratorTests",
+              "result": "pending",
+              "summary": "Registered in HostLifecycle test harness; not yet run on this commit."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "Added a helper for creating temporary 128-bit random request IDs; the existing protobuf wire schema is unchanged."
+          ],
+          "follow_up": "Run exact-commit Step Three quality gate, HostLifecycle tests, Windows formatting/build, and Android product checks before marking T0101 done."
+        }
+      ]
     },
     {
       "id": "T0102",
@@ -26405,10 +26464,16 @@
       "from": "T0100",
       "to": "T0101",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "The admission policy and request-ID generation do not exchange a type or runtime output: T0100 validates active participation/model/capacity/deadline, while T0101 provides an independent cryptographic ID generator. Keep the existing blocks relation as conservative pipeline order; it is not a technical interface dependency.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/Requests/HostRequestAdmissionPolicy.cs",
+        "src/Host.Windows/Requests/SecureRequestIdGenerator.cs",
+        "tests/HostLifecycle.Tests/HostRequestAdmissionTests.cs",
+        "tests/HostLifecycle.Tests/SecureRequestIdGeneratorTests.cs",
+        "protocol/whitep/v1/messages.proto"
+      ]
     },
     {
       "from": "T0097",
@@ -30542,8 +30607,24 @@
         "docs/requirements.md"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-26T11:18:17.281Z",
+      "edge_from": "T0100",
+      "edge_to": "T0101",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "reason": "The admission policy and request-ID generation do not exchange a type or runtime output: T0100 validates active participation/model/capacity/deadline, while T0101 provides an independent cryptographic ID generator. Keep the existing blocks relation as conservative pipeline order; it is not a technical interface dependency.",
+      "evidence": [
+        "src/Host.Windows/Requests/HostRequestAdmissionPolicy.cs",
+        "src/Host.Windows/Requests/SecureRequestIdGenerator.cs",
+        "tests/HostLifecycle.Tests/HostRequestAdmissionTests.cs",
+        "tests/HostLifecycle.Tests/SecureRequestIdGeneratorTests.cs",
+        "protocol/whitep/v1/messages.proto"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-26T11:11:53.102Z"
+  "updated_at": "2026-10-26T11:18:17.281Z"
 }
 ```
