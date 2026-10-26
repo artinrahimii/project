@@ -19236,20 +19236,39 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0106 و T0097 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorFailureAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0107/execution-report.md",
+        "step three/T0107/evidence/verification.md"
+      ],
       "expected_output_paths": [
         "src/Host.Windows/Requests/ + tests/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "src/Host.Windows/Requests/HostRequestCoordinator.cs",
+        "src/Host.Windows/Requests/HostRequestAdmissionPolicy.cs",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorFailureAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0107/execution-report.md",
+        "step three/T0107/evidence/verification.md"
+      ],
+      "notes": "Added one focused acceptance suite covering the same admission context repeated during an active request, expired deadline rejected before inference, cancellation during inference even if the engine later returns a value, and engine exception cleanup/recovery. Existing unit suites covered related subcases, but this task adds a single explicit mapped acceptance suite. Await exact-head CI before marking done.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0107-2026-10-26-01",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "tests/HostLifecycle.Tests/HostRequestCoordinatorFailureAcceptanceTests.cs",
+          "tests/HostLifecycle.Tests/Program.cs",
+          "step three/T0107/execution-report.md",
+          "step three/T0107/evidence/verification.md",
+          "step three/project-graph.md",
+          "step three/T0107/.gitkeep"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
@@ -19262,7 +19281,37 @@
           "review_evidence": []
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0107-2026-10-26-01",
+          "started_at": "2026-10-26T14:05:32.045Z",
+          "ended_at": "2026-10-26T14:05:32.045Z",
+          "result": "partial",
+          "summary": "Reviewed T0106 -> T0107 as sequencing-only and added a focused acceptance suite for repeated admission, expired deadline, cancellation during active inference, and inference exception recovery. Exact-head CI is pending.",
+          "changed_files": [
+            "tests/HostLifecycle.Tests/HostRequestCoordinatorFailureAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "step three/T0107/execution-report.md",
+            "step three/T0107/evidence/verification.md",
+            "step three/project-graph.md",
+            "step three/T0107/.gitkeep"
+          ],
+          "related_commits": [],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "HostRequestCoordinatorFailureAcceptanceTests",
+              "result": "pending",
+              "summary": "New acceptance suite registered in HostLifecycle harness; exact-head CI has not completed yet."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Run Step Three quality gate and full White-P product build on exact implementation commit. If all pass, record the successful attempt and mark T0107 done; otherwise correct any evidenced failure."
+        }
+      ]
     },
     {
       "id": "T0108",
@@ -27340,10 +27389,19 @@
       "from": "T0106",
       "to": "T0107",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0106's new race test proves the existing coordinator admits only one active inference. T0107 adds focused fault-path coverage of the same existing admission/deadline/cancellation contract and does not consume a new API or data artifact from T0106. Keep type=blocks as conservative execution order rather than claim a hard technical dependency.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/Requests/HostRequestCoordinator.cs",
+        "src/Host.Windows/Requests/HostRequestAdmissionPolicy.cs",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorConcurrencyTests.cs",
+        "tests/HostLifecycle.Tests/HostRequestAdmissionTests.cs",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorBusyTests.cs",
+        "step three/T0106/execution-report.md",
+        "step three/T0106/evidence/verification.md"
+      ]
     },
     {
       "from": "T0097",
@@ -31441,6 +31499,25 @@
         "tests/HostLifecycle.Tests/HostRequestCoordinatorConcurrencyTests.cs",
         "step three/T0105/execution-report.md",
         "step three/T0105/evidence/verification.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-26T14:05:32.045Z",
+      "edge_from": "T0106",
+      "edge_to": "T0107",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "reason": "T0106 validates one-active-inference admission under contention; T0107 tests request fault cases through the same existing coordinator. T0107 consumes no new API/data artifact from T0106. Preserve blocks as conservative order, not a hard technical dependency.",
+      "evidence": [
+        "src/Host.Windows/Requests/HostRequestCoordinator.cs",
+        "src/Host.Windows/Requests/HostRequestAdmissionPolicy.cs",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorConcurrencyTests.cs",
+        "tests/HostLifecycle.Tests/HostRequestAdmissionTests.cs",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorBusyTests.cs",
+        "step three/T0106/execution-report.md",
+        "step three/T0106/evidence/verification.md"
       ],
       "reviewed_by": "Step Three execution review"
     }
