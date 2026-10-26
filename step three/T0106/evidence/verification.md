@@ -1,25 +1,26 @@
 # T0106 verification evidence
 
-## Exact source snapshot
+## Source snapshot and graph integrity
 
 - Repository/branch: `artinrahimii/project`, `main`.
-- Base commit: `684b47473e6d06d519bbe92ae3f2de5515f2754c` (`V 3.0.325`); base tree SHA: `19adad55a47c62182ca48b1451c35acc850ca955`.
-- Graph path: `step three/project-graph.md`; expected Blob SHA: `2faec3f1e93ecf503192b1054cae796fd14687dd`.
-- Graph received from Git Blob API was **1679657 UTF-8 bytes**, matching the tree entry; Git Blob SHA-1 computed from the original bytes matched the expected Blob ID. The fenced JSON parsed fully and contained 229 unique task nodes and 426 edges.
-- T0105 and T0097 were both `done` before T0106 began; T0106 was `not_started`.
+- Implementation commit: `d83cf79f79e9852ad6b065f522208f6022abec74` (`V 3.0.326`); parent `684b47473e6d06d519bbe92ae3f2de5515f2754c`.
+- Graph Blob at implementation commit: `530611955da6ff3c43dfa57504f90e3ec564341f`; received **1682483 UTF-8 bytes** matched the tree's declared size. Calculated Git Blob SHA-1 matched the Blob ID; the full fenced JSON parsed and contained 229 unique task IDs and 426 edges.
+- T0105 and T0097 were done before starting T0106.
 
 ## Reviewed edge
 
-- `T0105 -> T0106`: `type=blocks` preserved; classification `unreviewed -> sequencing_only`; validation `unreviewed -> validated`.
-- Inspected: production `HostRequestCoordinator.cs`, existing `HostRequestCoordinatorTests.cs`, `HostRequestCoordinatorBusyTests.cs`, and T0105 execution/verification records.
-- Rationale: T0105 checks cleanup after an exception; T0106 independently exercises the already-existing one-slot admission mechanism under simultaneous contention. The edge remains as conservative ordering only.
+- `T0105 -> T0106`: `type=blocks` preserved; class `unreviewed -> sequencing_only`; status `unreviewed -> validated`.
+- Evidence inspected: production `HostRequestCoordinator.cs`, existing coordinator and busy tests, and T0105 execution/evidence reports.
+- Rationale: T0105 checks exception-path cleanup; T0106 exercises the existing one-slot admission rule under simultaneous contention. No new API/data artifact is consumed from T0105. `T0106 -> T0107` remains unreviewed.
 
-## Acceptance test added
+## Acceptance test
 
-- `tests/HostLifecycle.Tests/HostRequestCoordinatorConcurrencyTests.cs`: 64 contenders, a shared launch barrier, and a held winning inference allow the test to measure concurrent active operations rather than infer concurrency from source alone.
-- Assertions: exactly one operation invoked; maximum active inference count equals one; exactly one completed outcome and 63 Busy outcomes; all work exits and the coordinator no longer reports Busy.
-- `tests/HostLifecycle.Tests/Program.cs` registers the new test in the real lifecycle harness. The test project includes `HostRequestCoordinator.cs` from production source.
+- Added `tests/HostLifecycle.Tests/HostRequestCoordinatorConcurrencyTests.cs` and registered it in `tests/HostLifecycle.Tests/Program.cs`.
+- The test releases 64 requests from a common barrier against the production coordinator, holds the winning operation active, and asserts exactly one invocation, one completed result, 63 Busy results, maximum active inference count one, and gate release.
+- HostLifecycle, product build, and real local-inference workflows passed on `d83cf79f79e9852ad6b065f522208f6022abec74`.
 
-## Result pending
+## Quality-gate discrepancy and remediation
 
-The .NET SDK is unavailable in this environment, so local execution was not performed. The implementation commit's exact-head CI results must pass before this task can be marked done.
+The first Step Three quality run [40331493667](https://github.com/artinrahimii/project/actions/runs/40331493667) passed automated tests and Python syntax, then failed graph structure validation because the task summary claimed one attempt while its execution history was empty. This attempt is now preserved as `partial` in the graph, matching the declared attempt count. The quality gate must be rerun on the correction commit; T0106 remains in progress until the corrected exact-head result passes.
+
+The hosted product build [40331494036](https://github.com/artinrahimii/project/actions/runs/40331494036) passed all three jobs. The live inference workflow [40331493535](https://github.com/artinrahimii/project/actions/runs/40331493535) also passed. No local .NET execution is claimed.
