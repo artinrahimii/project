@@ -16482,8 +16482,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0094 و T0087 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال انجام",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "src/Host.Windows/Tools/IAgentToolProcessExecutor.cs",
         "src/Host.Windows/Tools/AgentToolProcessExecutor.cs",
@@ -16506,17 +16506,18 @@
         "src/Host.Windows/Tools/AgentToolProcessExecutor.cs",
         "src/Host.Windows/Tools/AgentToolWorkerHost.cs",
         "src/Host.Windows/Tools/AgentToolExecutionCoordinator.cs",
-        "src/Host.Windows/App.xaml.cs",
-        "tests/HostLifecycle.Tests/AgentToolExecutionAcceptanceTests.cs",
         "tests/HostLifecycle.Tests/AgentToolProcessExecutorTests.cs",
+        "tests/HostLifecycle.Tests/AgentToolExecutionAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        ".github/workflows/product-build.yml",
         "step three/T0095/execution-report.md"
       ],
-      "notes": "T0095 remains in_progress. V 3.0.299 passed Linux lifecycle tests, Android validation, Windows compilation/startup and quality checks, but the focused Windows test failed with Win32 error 87 because JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE was passed using JOBOBJECT_BASIC_LIMIT_INFORMATION. V 3.0.300 corrects the native contract to JOBOBJECT_EXTENDED_LIMIT_INFORMATION/class 9; do not mark done until exact-commit Windows Job Object and full product CI pass. The worker is not an AppContainer/restricted-token sandbox and still runs as the same OS user.",
+      "notes": "Exact-commit quality gate and full product workflow passed on V 3.0.300, including the focused Windows Job Object/process restriction test after switching to JOBOBJECT_EXTENDED_LIMIT_INFORMATION (class 9). Worker execution uses a shell-free child process, sanitized environment, bounded request/response, timeout/process-tree kill, and a one-active-process Job Object with kill-on-close. No arbitrary command tool is registered by default. Security limitation: this is not a full Windows AppContainer/restricted-token sandbox; the worker runs as the same OS user.",
       "execution_summary": {
-        "attempt_count": 10,
+        "attempt_count": 11,
         "failed_attempt_count": 4,
-        "last_attempt_id": "T0095-2026-10-26-10",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "T0095-2026-10-26-11",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Host.Windows/Tools/IAgentToolProcessExecutor.cs",
           "src/Host.Windows/Tools/AgentToolProcessExecutor.cs",
@@ -16537,13 +16538,18 @@
           "44be76a3f02ea579789cae6bae942c44c2f7f0cd",
           "1aa5f1985db78f48ae602722c0f77761f473c10d",
           "9b2540a70fd874da1cd5bddb5a769f12163ef295",
-          "47856531a90a63ff736fe9ed067504913c4cf5a8"
+          "47856531a90a63ff736fe9ed067504913c4cf5a8",
+          "9919703702203fe04250f0056c93641f0ea1767f"
         ],
         "tests_passed": [
           "Step Three quality gate passed on V 3.0.297: https://github.com/artinrahimii/project/actions/runs/40280625154",
           "HostLifecycle tests on Linux, including process boundary, sanitizer and timeout tests, passed on V 3.0.297: https://github.com/artinrahimii/project/actions/runs/40280625252/job/121432889672",
           "Windows WPF Release build, Protobuf source verification, startup smoke and artifact upload steps passed on V 3.0.297; full product run pending: https://github.com/artinrahimii/project/actions/runs/40280625252/job/121432889892",
-          "Step Three quality gate passed on V 3.0.298: https://github.com/artinrahimii/project/actions/runs/40280875882"
+          "Step Three quality gate passed on V 3.0.298: https://github.com/artinrahimii/project/actions/runs/40280875882",
+          "Step Three quality gate passed on exact implementation commit V 3.0.300 (150 Python tests, graph guard, source evidence validation): https://github.com/artinrahimii/project/actions/runs/40289723803",
+          "HostLifecycle unit/integration tests passed on exact implementation commit V 3.0.300: https://github.com/artinrahimii/project/actions/runs/40289723754/job/121461675360",
+          "Windows WPF formatting, Release build, generated Protobuf verification, startup smoke, focused Job Object/process restriction tests, and artifact upload passed on exact implementation commit V 3.0.300; focused log printed PASS for bounded child process, sanitized environment, shell-free launch and timeout: https://github.com/artinrahimii/project/actions/runs/40289723754/job/121461674936",
+          "Android Kotlin format/lint, debug APK build, Protobuf round-trip tests, generated-source checks and artifact upload passed on exact implementation commit V 3.0.300: https://github.com/artinrahimii/project/actions/runs/40289723754/job/121461675348"
         ],
         "tests_failed": [
           "HostLifecycle compilation failed on V 3.0.295 with CS1022: https://github.com/artinrahimii/project/actions/runs/40280156905",
@@ -16554,20 +16560,21 @@
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "in_progress",
+          "state": "passed",
           "triggering_contracts": [
-            "T0094 approval-before-execution coordinator",
-            "T0087 model-license catalog contract reviewed as sequencing only",
+            "T0094 approval-before-execution contract",
+            "T0087 license metadata reviewed as sequencing-only",
             "Windows Job Object native API contract"
           ],
           "affected_by_contract_changes": [
-            "Corrected SetInformationJobObject to use JOBOBJECT_EXTENDED_LIMIT_INFORMATION (class 9), required for JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE."
+            "SetInformationJobObject now uses JOBOBJECT_EXTENDED_LIMIT_INFORMATION (class 9), correctly applying kill-on-job-close and one-active-process limits."
           ],
           "review_evidence": [
             "src/Host.Windows/Tools/AgentToolExecutionCoordinator.cs",
             "src/Host.Windows/Tools/AgentToolProcessExecutor.cs",
             "src/Host.Windows/Tools/AgentToolWorkerHost.cs",
-            "tests/HostLifecycle.Tests/AgentToolProcessExecutorTests.cs"
+            "tests/HostLifecycle.Tests/AgentToolProcessExecutorTests.cs",
+            "tests/HostLifecycle.Tests/AgentToolExecutionAcceptanceTests.cs"
           ]
         }
       },
@@ -16858,6 +16865,49 @@
             "SetInformationJobObject now receives the extended limit structure required by JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE."
           ],
           "follow_up": "Inspect exact-commit workflow results for V 3.0.300; keep T0095 in_progress unless Windows restrictions and full product CI pass."
+        },
+        {
+          "attempt_id": "T0095-2026-10-26-11",
+          "started_at": "2026-10-26T08:04:06Z",
+          "ended_at": "2026-10-26T08:05:35Z",
+          "result": "succeeded",
+          "summary": "The exact corrective commit V 3.0.300 passed Step Three quality and the full product workflow. The targeted Windows test successfully configured/attached the Job Object and exercised the child worker, timeout and process boundary; Linux HostLifecycle and Android validations also passed.",
+          "changed_files": [
+            "src/Host.Windows/Tools/AgentToolProcessExecutor.cs",
+            "step three/T0095/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "related_commits": [
+            "9919703702203fe04250f0056c93641f0ea1767f"
+          ],
+          "tests": [
+            {
+              "name": "Step Three quality gate",
+              "result": "succeeded",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40289723803"
+            },
+            {
+              "name": "HostLifecycle unit/integration tests",
+              "result": "succeeded",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40289723754/job/121461675360"
+            },
+            {
+              "name": "Windows WPF build and process restriction suite",
+              "result": "succeeded",
+              "summary": "Release build, generated Protobuf check, startup smoke and focused Job Object/process executor test passed; the log emitted the expected PASS line.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40289723754/job/121461674936"
+            },
+            {
+              "name": "Android client build and tests",
+              "result": "succeeded",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40289723754/job/121461675348"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "T0096 is the next conservative task. Its incoming edges were reviewed in this status update; retain T0096 -> T0097 as unreviewed until that downstream contract is inspected."
         }
       ]
     },
@@ -25170,19 +25220,28 @@
       "from": "T0095",
       "to": "T0096",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0096 exercises the worker/executor path and must verify its real boundary for unknown names, invalid arguments and confirmation policy. T0095 provides the concrete IAgentToolProcessExecutor implementation and strict worker protocol that the acceptance tests need to drive; this is a technical interface dependency.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/Tools/AgentToolProcessExecutor.cs",
+        "src/Host.Windows/Tools/AgentToolWorkerHost.cs",
+        "tests/HostLifecycle.Tests/AgentToolProcessExecutorTests.cs",
+        "tests/HostLifecycle.Tests/AgentToolExecutionAcceptanceTests.cs"
+      ]
     },
     {
       "from": "T0087",
       "to": "T0096",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0087 classifies and discloses model-license metadata; T0096 tests tool allowlisting, argument rejection and user-confirmation behavior and consumes no license catalog contract. Preserve the existing edge as conservative order only, not as a technical prerequisite.",
+      "validation_status": "validated",
+      "evidence": [
+        "step three/T0087/execution-report.md",
+        "src/Host.Windows/Models/Catalog/ModelCatalogModels.cs",
+        "tests/HostLifecycle.Tests/AgentToolExecutionAcceptanceTests.cs"
+      ]
     },
     {
       "from": "T0096",
@@ -29115,8 +29174,37 @@
         "tests/HostLifecycle.Tests/AgentToolExecutionAcceptanceTests.cs"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-26T08:07:49.256Z",
+      "edge_from": "T0095",
+      "edge_to": "T0096",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "reason": "T0096 exercises the worker/executor path and must verify its real boundary for unknown names, invalid arguments and confirmation policy. T0095 provides the concrete IAgentToolProcessExecutor implementation and strict worker protocol that the acceptance tests need to drive; this is a technical interface dependency.",
+      "evidence": [
+        "src/Host.Windows/Tools/AgentToolProcessExecutor.cs",
+        "src/Host.Windows/Tools/AgentToolWorkerHost.cs",
+        "tests/HostLifecycle.Tests/AgentToolProcessExecutorTests.cs",
+        "tests/HostLifecycle.Tests/AgentToolExecutionAcceptanceTests.cs"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-26T08:07:49.256Z",
+      "edge_from": "T0087",
+      "edge_to": "T0096",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "reason": "T0087 classifies and discloses model-license metadata; T0096 tests tool allowlisting, argument rejection and user-confirmation behavior and consumes no license catalog contract. Preserve the existing edge as conservative order only, not as a technical prerequisite.",
+      "evidence": [
+        "step three/T0087/execution-report.md",
+        "src/Host.Windows/Models/Catalog/ModelCatalogModels.cs",
+        "tests/HostLifecycle.Tests/AgentToolExecutionAcceptanceTests.cs"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-26T08:03:36.523Z"
+  "updated_at": "2026-10-26T08:07:49.256Z"
 }
 ```

@@ -98,3 +98,21 @@
 - API reference used to diagnose the mismatch: https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-jobobject_basic_limit_information and https://learn.microsoft.com/en-us/windows/win32/api/jobapi2/nf-jobapi2-setinformationjobobject.
 - Base graph read from commit `47856531a90a63ff736fe9ed067504913c4cf5a8`, path `step three/project-graph.md`, Blob `ce50976115b51c7584e48e3d8e4e51b3f993bc97`; the original UTF-8 size was 1,542,009 bytes and its recomputed Git SHA-1 matched the tree Blob. The complete fenced JSON parsed as 229 unique tasks and 426 edges.
 - This commit records the repair as an implementation attempt only. Exact-commit Windows Job Object test, product workflow, Step Three quality gate and other applicable workflows remain pending; T0095 stays `in_progress` until the Windows native check and full product validation pass.
+
+
+
+## Exact-commit validation — attempt A010 passed (V 3.0.300)
+
+- Corrective code commit: `9919703702203fe04250f0056c93641f0ea1767f` (`V 3.0.300`).
+- [Step Three quality gate](https://github.com/artinrahimii/project/actions/runs/40289723803) passed, including graph structure and evidence checks.
+- [Full product workflow](https://github.com/artinrahimii/project/actions/runs/40289723754) completed with `success`; all three jobs passed.
+- [Windows WPF and native process restrictions job](https://github.com/artinrahimii/project/actions/runs/40289723754/job/121461674936) passed Release build, generated Protobuf checks, startup smoke, and the focused `--test-agent-tool-process-executor` run. The log explicitly reports: `PASS: agent tools execute in a bounded child process with a sanitized environment, strict protocol limits, shell-free launch and enforced timeout.` Most importantly, the call to configure and attach the Windows Job Object succeeded on this exact commit after the extended-limit structure fix.
+- [HostLifecycle tests](https://github.com/artinrahimii/project/actions/runs/40289723754/job/121461675360) passed; [Android build and tests](https://github.com/artinrahimii/project/actions/runs/40289723754/job/121461675348) also passed.
+- The previous native failure in A009 is retained in the test-failure history; this successful corrective attempt does not erase the earlier attempts.
+- Outcome: **T0095 done** on exact-commit evidence. Explicit limitation remains: this is a process/Job Object boundary, not a full AppContainer or restricted-token sandbox; the child worker has the same OS user identity and should not be represented as an OS-level privilege sandbox.
+
+## Dependency review before T0096
+
+- `T0095 -> T0096`: validated as `contract_or_interface_dependency`. The next task's tests must exercise the real worker/executor interface introduced here, including its request protocol and rejection behavior. Evidence: `src/Host.Windows/Tools/AgentToolProcessExecutor.cs`, `src/Host.Windows/Tools/AgentToolWorkerHost.cs`, `tests/HostLifecycle.Tests/AgentToolProcessExecutorTests.cs`, and `tests/HostLifecycle.Tests/AgentToolExecutionAcceptanceTests.cs`.
+- `T0087 -> T0096`: validated as `sequencing_only`. Model-license catalog metadata is not consumed by unknown-tool/argument/confirmation tests; the existing ordering constraint is retained.
+- The `T0096 -> T0097` edge remains `unreviewed`; it was not changed before inspecting the downstream task.
