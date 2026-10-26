@@ -19479,8 +19479,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0108 و T0107 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "src/Host.Windows/Networking/ParticipationNetworkListenerLifecycle.cs",
         "src/Host.Windows/MainWindow.xaml.cs",
@@ -19499,14 +19499,16 @@
       ],
       "evidence": [
         "tests/HostLifecycle.Tests/ParticipationNetworkListenerLifecycleTests.cs",
+        "tests/test_windows_hardware_discovery.py",
+        "tests/test_wpf_entrypoint.py",
         "step three/T0109/evidence/verification.md"
       ],
-      "notes": "Attempt 01 passed lifecycle tests but failed Windows smoke; attempt 02 added exit-after-Closed helper but smoke still failed and source-contract tests expected old direct Shutdown literals. Attempt 03 defers the final Close through Dispatcher.BeginInvoke to avoid re-entry when cleanup completes synchronously and updates the two static contract tests. Exact-head CI pending.",
+      "notes": "T0109 passed exact-head acceptance and product CI on V 3.0.335. Participation is disabled by default; explicit enable binds localhost only. Disabling participation and awaited window shutdown stop/dispose the listener. The WPF smoke runner waits for the real Closed event and the final Close is dispatched after the original Closing handler unwinds. Two earlier failed attempts and their failures remain in execution_history. Accepted TCP sockets are still closed without payload parsing until T0110.",
       "execution_summary": {
         "attempt_count": 3,
         "failed_attempt_count": 2,
         "last_attempt_id": "T0109-2026-10-26-03",
-        "last_attempt_result": "partial",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Host.Windows/Networking/ParticipationNetworkListenerLifecycle.cs",
           "src/Host.Windows/MainWindow.xaml.cs",
@@ -19523,9 +19525,16 @@
         ],
         "related_commits": [
           "f8b08f814f28c604fa5f8141ff3b2bd3d137e86b",
-          "3bc81b6feab2fa3d5b927c9b4ef13ea1f7f626cc"
+          "3bc81b6feab2fa3d5b927c9b4ef13ea1f7f626cc",
+          "b82ce66b585c93057730225826896097845ee74f"
         ],
-        "tests_passed": [],
+        "tests_passed": [
+          "HostNetworkListenerParticipationTests and ParticipationNetworkListenerLifecycleTests / HostLifecycle — PASS on b82ce66b585c93057730225826896097845ee74f. https://github.com/artinrahimii/project/actions/runs/40357312422/job/121693129382",
+          "Step Three quality gate — PASS on b82ce66b585c93057730225826896097845ee74f. https://github.com/artinrahimii/project/actions/runs/40357312350",
+          "Windows Release build and startup smoke — PASS on b82ce66b585c93057730225826896097845ee74f. https://github.com/artinrahimii/project/actions/runs/40357312422/job/121693130018",
+          "Android build and Protobuf acceptance — PASS on b82ce66b585c93057730225826896097845ee74f. https://github.com/artinrahimii/project/actions/runs/40357312422/job/121693129952",
+          "White-P product build — PASS on b82ce66b585c93057730225826896097845ee74f. https://github.com/artinrahimii/project/actions/runs/40357312422"
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -19552,11 +19561,12 @@
             "tests/HostLifecycle.Tests/Program.cs",
             "step three/T0109/execution-report.md",
             "step three/T0109/evidence/verification.md",
-            "step three/project-graph.md",
-            "src/Host.Windows/App.xaml.cs"
+            "step three/project-graph.md"
           ],
-          "related_commits": [],
-          "commit_sha": null,
+          "related_commits": [
+            "f8b08f814f28c604fa5f8141ff3b2bd3d137e86b"
+          ],
+          "commit_sha": "f8b08f814f28c604fa5f8141ff3b2bd3d137e86b",
           "tests": [
             {
               "name": "ParticipationNetworkListenerLifecycleTests / HostLifecycle harness",
@@ -19586,19 +19596,19 @@
         {
           "attempt_id": "T0109-2026-10-26-02",
           "started_at": "2026-10-26T16:07:01.777Z",
-          "ended_at": "2026-10-26T16:14:33.859Z",
+          "ended_at": "2026-10-26T16:10:00Z",
           "result": "failed",
           "summary": "The App.xaml.cs shutdown helper changed direct shutdown to wait for the Closed event, but exact-head Windows smoke still exited with CLR code -532462766; Step Three Python source-contract tests also failed because they expected literal Shutdown(0/1/3) call sites.",
           "changed_files": [
             "src/Host.Windows/App.xaml.cs",
             "step three/T0109/execution-report.md",
             "step three/T0109/evidence/verification.md",
-            "step three/project-graph.md",
-            "tests/test_windows_hardware_discovery.py",
-            "tests/test_wpf_entrypoint.py"
+            "step three/project-graph.md"
           ],
-          "related_commits": [],
-          "commit_sha": null,
+          "related_commits": [
+            "3bc81b6feab2fa3d5b927c9b4ef13ea1f7f626cc"
+          ],
+          "commit_sha": "3bc81b6feab2fa3d5b927c9b4ef13ea1f7f626cc",
           "tests": [
             {
               "name": "HostLifecycle lifecycle acceptance",
@@ -19619,7 +19629,7 @@
               "url": "https://github.com/artinrahimii/project/actions/runs/40356065945"
             }
           ],
-          "failure_details": "Step Three quality gate: three static source contract assertions failed because they expected literal Shutdown(0/1/3) statements. Windows startup smoke remained failed with -532462766. Attempt 03 dispatches the final Close after the current Closing event unwinds and updates the static contract tests.",
+          "failure_details": "Step Three quality gate: three static source contract assertions failed because they expected literal Shutdown(0/1/3) statements. Windows startup smoke remained failed with -532462766. Attempt 03 dispatches the final Close after the current Closing event unwinds and updates the static contract tests. Ledger correction during attempt 03: the Python source-contract files were changed in attempt 03, not attempt 02, and have been removed from attempt 02 changed_files. Attempt 02 is associated with the V 3.0.334 commit.",
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
@@ -19628,9 +19638,9 @@
         {
           "attempt_id": "T0109-2026-10-26-03",
           "started_at": "2026-10-26T16:14:28.542Z",
-          "ended_at": null,
-          "result": "partial",
-          "summary": "Deferred the final WPF Close until the original Closing handler has unwound and updated source-contract tests to verify orderly shutdown after Closed. Exact-head CI pending.",
+          "ended_at": "2026-10-26T16:23:50.291Z",
+          "result": "succeeded",
+          "summary": "The corrected listener shutdown passed the exact-head Step Three quality gate, HostLifecycle tests, Windows WPF startup smoke/build, Android APK/Protobuf checks and all product-build jobs.",
           "changed_files": [
             "src/Host.Windows/MainWindow.xaml.cs",
             "tests/test_windows_hardware_discovery.py",
@@ -19639,30 +19649,47 @@
             "step three/T0109/evidence/verification.md",
             "step three/project-graph.md"
           ],
-          "related_commits": [],
-          "commit_sha": null,
+          "related_commits": [
+            "b82ce66b585c93057730225826896097845ee74f"
+          ],
+          "commit_sha": "b82ce66b585c93057730225826896097845ee74f",
           "tests": [
             {
-              "name": "test_windows_hardware_discovery.py",
-              "result": "pending",
-              "summary": "Checks ExitAfterWindowCleanup(window, 3) for invalid hardware and the real exit-after-Closed helper."
+              "name": "HostNetworkListenerParticipationTests and ParticipationNetworkListenerLifecycleTests / HostLifecycle",
+              "result": "passed",
+              "summary": "The exact-head HostLifecycle job succeeded; the gated listener and new lifecycle tests ran in the default harness.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40357312422/job/121693129382"
             },
             {
-              "name": "test_wpf_entrypoint.py",
-              "result": "pending",
-              "summary": "Checks smoke exits through ExitAfterWindowCleanup and application shutdown follows the actual Closed event."
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "summary": "All repository-backed graph and Python quality checks passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40357312350"
             },
             {
-              "name": "WPF startup smoke",
-              "result": "pending",
-              "summary": "Final Close is dispatched after the original Closing event unwinds, including when cleanup completes synchronously."
+              "name": "Windows Release build and startup smoke",
+              "result": "passed",
+              "summary": "C# format, Release build, Protobuf generated-source check, WPF startup smoke, Windows agent-tool checks, and artifact upload all succeeded.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40357312422/job/121693130018"
+            },
+            {
+              "name": "Android build and Protobuf acceptance",
+              "result": "passed",
+              "summary": "Kotlin lint, debug APK build, Android Protobuf tests, generated Java/Kotlin source checks, and APK artifact upload all succeeded.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40357312422/job/121693129952"
+            },
+            {
+              "name": "White-P product build",
+              "result": "passed",
+              "summary": "Windows, Android and HostLifecycle jobs all completed successfully on the implementation commit.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40357312422"
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Run exact-head Step Three quality gate, HostLifecycle, Windows WPF build and startup smoke, Android build, and real inference integration; only then finalize T0109."
+          "follow_up": "T0109 is accepted. Before starting T0110, review the still-unreviewed T0109 -> T0110 edge and implement the bounded Protobuf parser without processing oversized/malformed payloads."
         }
       ]
     },
@@ -31852,6 +31879,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-26T16:14:28.542Z"
+  "updated_at": "2026-10-26T16:23:50.291Z"
 }
 ```
