@@ -20041,8 +20041,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0110 و T0107 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "تکمیل‌شده",
       "actual_output_paths": [
         "protocol/whitep/v1/messages.proto",
         "src/Shared.Contracts/ProtocolMessageValidator.cs",
@@ -20068,12 +20068,12 @@
         "step three/T0111/execution-report.md",
         "step three/T0111/evidence/verification.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0111-A001 adds request protocol_version field 8, supported-version validation, bounded ASCII request/attempt identifiers, future-deadline validation with a typed REQUEST_EXPIRED result, and a listener-side local-participation recheck before callback dispatch. Reviewed incoming edges T0110→T0111 as contract_or_interface_dependency and T0107→T0111 as sequencing_only; both retain type=blocks and carry evidence. This is a local participation gate only; it does not cryptographically authenticate the remote peer. Exact-head CI pending.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0111-A001 adds request protocol_version field 8, supported-version validation, bounded ASCII request/attempt identifiers, future-deadline validation with a typed REQUEST_EXPIRED result, and a listener-side local-participation recheck before callback dispatch. Reviewed incoming edges T0110→T0111 as contract_or_interface_dependency and T0107→T0111 as sequencing_only; both retain type=blocks and carry evidence. This is a local participation gate only; it does not cryptographically authenticate the remote peer. Exact-head CI pending. Exact-head verification completed successfully on implementation commit 2b11ab4f697760556c1a4f0d4cc4542f89e14961. Peer identity authentication remains outside this task: the implemented permission gate checks local participation immediately before dispatch.",
       "execution_summary": {
         "attempt_count": 1,
         "failed_attempt_count": 0,
         "last_attempt_id": "T0111-A001",
-        "last_attempt_result": "partial",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "protocol/whitep/v1/messages.proto",
           "src/Shared.Contracts/ProtocolMessageValidator.cs",
@@ -20090,20 +20090,28 @@
           "step three/T0111/evidence/verification.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
+        "related_commits": [
+          "2b11ab4f697760556c1a4f0d4cc4542f89e14961"
+        ],
+        "tests_passed": [
+          "Step Three quality gate — PASS on 2b11ab4f697760556c1a4f0d4cc4542f89e14961; Python tests, Python syntax, graph structure and recorded evidence checks succeeded. https://github.com/artinrahimii/project/actions/runs/40414166283",
+          "HostLifecycle unit/integration harness — PASS on 2b11ab4f697760556c1a4f0d4cc4542f89e14961. https://github.com/artinrahimii/project/actions/runs/40414166219/job/121892143191",
+          "Windows WPF Release build, formatting, generated Protobuf C# source validation, startup smoke and agent-tool policy/capability checks — PASS on 2b11ab4f697760556c1a4f0d4cc4542f89e14961. https://github.com/artinrahimii/project/actions/runs/40414166219/job/121892143042",
+          "Android Kotlin lint, debug APK build, Protobuf round-trip tests, generated Java/Kotlin source validation and artifact upload — PASS on 2b11ab4f697760556c1a4f0d4cc4542f89e14961. https://github.com/artinrahimii/project/actions/runs/40414166219/job/121892143197",
+          "Real local llama.cpp/GGUF inference acceptance — PASS on 2b11ab4f697760556c1a4f0d4cc4542f89e14961; pinned binary/model checks and live inference completed. https://github.com/artinrahimii/project/actions/runs/40414166184"
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
           "state": "required",
           "triggering_contracts": [
-            "InferenceRequest wire contract field 8",
-            "shared typed request validator",
-            "TCP listener dispatch gate"
+            "InferenceRequest.protocol_version field 8",
+            "supported-version and deadline validation",
+            "bounded request/attempt identifiers",
+            "local-participation recheck before dispatch"
           ],
           "affected_by_contract_changes": [
-            "T0110",
             "T0112",
             "T0115",
             "T0116",
@@ -20111,8 +20119,10 @@
           ],
           "review_evidence": [
             "protocol/whitep/v1/messages.proto",
+            "src/Shared.Contracts/ProtocolMessageValidator.cs",
             "src/Host.Infrastructure/ProtocolMessageParser.cs",
-            "src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs"
+            "src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs",
+            "tests/HostLifecycle.Tests/Program.cs"
           ]
         }
       },
@@ -20120,8 +20130,8 @@
         {
           "attempt_id": "T0111-A001",
           "started_at": "2026-10-26T22:39:18.757Z",
-          "ended_at": "2026-10-26T22:39:18.757Z",
-          "result": "partial",
+          "ended_at": "2026-10-26T22:42:56.344Z",
+          "result": "succeeded",
           "summary": "Implemented protocol/version/identifier/deadline validation at the shared InferenceRequest parser boundary and rechecked local participation before dispatching an accepted network request. Added C# and Kotlin contract tests, Python schema/validator guards, and updated the framing decision. Exact-head GitHub Actions verification is pending.",
           "changed_files": [
             "protocol/whitep/v1/messages.proto",
@@ -20139,32 +20149,37 @@
             "step three/T0111/evidence/verification.md",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "2b11ab4f697760556c1a4f0d4cc4542f89e14961",
           "tests": [
             {
-              "command": "python -m unittest discover -s tests -v",
-              "result": "pending",
-              "summary": "Awaiting exact-commit Step Three quality gate."
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "summary": "Python unit tests, syntax checks, graph structure and output/evidence checks passed on the implementation SHA.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40414166283"
             },
             {
-              "command": "dotnet run --project tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj --configuration Release",
-              "result": "pending",
-              "summary": "Awaiting exact-commit HostLifecycle job."
+              "name": "HostLifecycle unit and integration tests",
+              "result": "passed",
+              "summary": "The executable host lifecycle harness, including new protocol rejection and participation dispatch cases, passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40414166219/job/121892143191"
             },
             {
-              "command": "dotnet format whitespace WhiteP.sln --verify-no-changes",
-              "result": "pending",
-              "summary": "Awaiting exact-commit Windows host job."
+              "name": "Windows WPF product checks",
+              "result": "passed",
+              "summary": "C# format, Release host build, generated Protobuf check, WPF startup and agent-tool restrictions/model capability gates passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40414166219/job/121892143042"
             },
             {
-              "command": "dotnet build WhiteP.sln --configuration Release",
-              "result": "pending",
-              "summary": "Awaiting exact-commit Windows host job."
+              "name": "Android product build and protocol round-trip",
+              "result": "passed",
+              "summary": "Kotlin formatting/lint, debug APK, Protobuf round-trip, generated source verification and artifact upload passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40414166219/job/121892143197"
             },
             {
-              "command": "gradle --no-daemon testDebugUnitTest",
-              "result": "pending",
-              "summary": "Awaiting exact-commit Android job."
+              "name": "Real local inference integration",
+              "result": "passed",
+              "summary": "Pinned llama.cpp CPU binary and GGUF model verification plus live generated response acceptance passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40414166184"
             }
           ],
           "failure_details": null,
@@ -20184,7 +20199,10 @@
               "detail": "Rechecks local participation after parsing and before handler dispatch."
             }
           ],
-          "follow_up": "Inspect exact-head quality, Windows host build/lifecycle, Android round-trip tests and real local inference workflows. If relevant jobs pass, finalize T0111 with recorded commit SHA and results; otherwise repair failures or keep the task in progress."
+          "follow_up": "Before starting T0112, review the outgoing T0111 -> T0112 edge and its evidence; the peer transport still needs to implement compatible framing/version checks. Cryptographic peer identity is not claimed by T0111.",
+          "related_commits": [
+            "2b11ab4f697760556c1a4f0d4cc4542f89e14961"
+          ]
         }
       ]
     },
@@ -32378,6 +32396,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-26T22:39:18.757Z"
+  "updated_at": "2026-10-26T22:42:56.344Z"
 }
 ```
