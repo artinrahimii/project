@@ -48,3 +48,8 @@ The exact implementation commit `4cf8c8515b42479549c7b3a1e740e6112cfd72f9` (`V 3
 - [Real local llama.cpp/GGUF inference integration](https://github.com/artinrahimii/project/actions/runs/40309351863).
 
 The Android APK workflow had not yet completed when this entry was prepared; no overall product-build success is inferred from its pending state. T0099 is marked `done` because its own deterministic Busy/non-queueing acceptance tests passed on the exact implementation commit.
+
+
+## Contract revalidation — pending on T0100 API
+
+Commit `9a8763e813059f484eb8da10792b30827fce35f8` now runs the admission policy before returning Busy. The Busy/no-queue tests were adapted to provide a valid context, so they test Busy rather than an earlier admission rejection. T0099 remains reopened until exact-commit CI passes.

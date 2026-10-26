@@ -17297,8 +17297,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0097 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "done",
-      "status_fa": "انجام‌شده",
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
       "actual_output_paths": [
         "src/Host.Windows/Requests/HostRequestCoordinator.cs",
         "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
@@ -17317,22 +17317,24 @@
         "step three/T0098/evidence/verification.md",
         "tests/HostLifecycle.Tests/HostRequestCoordinatorBusyTests.cs"
       ],
-      "notes": "T0098 اجرا و مجدداً اعتبارسنجی شد: HostRequestCoordinator از ظرفیت یک عملیات استفاده می‌کند؛ پس از تغییر قرارداد برای رد فوری Busy، آزمون هم‌زمانی/آزادسازی آن دوباره در CI گذشت. گزارش و شواهد در پوشهٔ T0098 ثبت شده است.",
+      "notes": "T0098 اجرا و مجدداً اعتبارسنجی شد: HostRequestCoordinator از ظرفیت یک عملیات استفاده می‌کند؛ پس از تغییر قرارداد برای رد فوری Busy، آزمون هم‌زمانی/آزادسازی آن دوباره در CI گذشت. گزارش و شواهد در پوشهٔ T0098 ثبت شده است. بازگشایی برای اعتبارسنجی مجدد پس از اجباری‌شدن HostRequestAdmissionContext؛ آزمون‌های موجود با context معتبر به‌روزرسانی شدند.",
       "execution_summary": {
-        "attempt_count": 6,
+        "attempt_count": 7,
         "failed_attempt_count": 1,
-        "last_attempt_id": "T0098-2026-10-26-06",
-        "last_attempt_result": "succeeded",
+        "last_attempt_id": "T0098-2026-10-26-07",
+        "last_attempt_result": "reopened",
         "changed_files": [
-          "step three/T0098/execution-report.md",
-          "step three/T0098/evidence/verification.md",
-          "step three/project-graph.md"
+          "src/Host.Windows/Requests/HostRequestCoordinator.cs",
+          "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
+          "tests/HostLifecycle.Tests/HostRequestCoordinatorBusyTests.cs",
+          "tests/HostLifecycle.Tests/HostRequestAdmissionTests.cs"
         ],
         "related_commits": [
           "451980f2ec009f7915c10fa705a53789a6ea33b9",
           "95a78fe6cacb8d095a82b99d69efb64b5dc0092a",
           "712243254c86aee70f1510b560f3c5e6f0d5fc4c",
-          "4cf8c8515b42479549c7b3a1e740e6112cfd72f9"
+          "4cf8c8515b42479549c7b3a1e740e6112cfd72f9",
+          "9a8763e813059f484eb8da10792b30827fce35f8"
         ],
         "tests_passed": [
           "HostRequestCoordinator test passed in HostLifecycle CI run 40308296192; explicit PASS message confirms one active operation and semaphore release after success/failure.",
@@ -17348,19 +17350,19 @@
           "HostLifecycle job on V 3.0.306 failed before tests due to NETSDK1022 duplicate Compile item HostRequestCoordinatorTests.cs (run 40306970928); corrected in V 3.0.307."
         ],
         "blocked_reason": null,
-        "reopened_reason": null,
+        "reopened_reason": "Coordinator API requires admission state; revalidate capacity-one/release guarantees.",
         "contract_revalidation": {
-          "state": "passed",
+          "state": "required",
           "triggering_contracts": [
-            "HostRequestCoordinator admission semantics"
+            "HostRequestCoordinator requires HostRequestAdmissionContext"
           ],
           "affected_by_contract_changes": [
-            "T0099 fail-fast Busy admission; T0098 serialization and semaphore release"
+            "T0098 single-active-operation/release acceptance"
           ],
           "review_evidence": [
             "src/Host.Windows/Requests/HostRequestCoordinator.cs",
             "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
-            "tests/HostLifecycle.Tests/HostRequestCoordinatorBusyTests.cs"
+            "tests/HostLifecycle.Tests/HostRequestAdmissionTests.cs"
           ]
         }
       },
@@ -17585,6 +17587,36 @@
             "Validated T0098's single-capacity/non-overlap/release contract after changing second-request admission to fail-fast Busy."
           ],
           "follow_up": "T0098 contract revalidation is complete. T0099 is the next task after this status commit."
+        },
+        {
+          "attempt_id": "T0098-2026-10-26-07",
+          "started_at": "2026-10-26T11:04:40.028Z",
+          "ended_at": "2026-10-26T11:04:40.028Z",
+          "result": "reopened",
+          "summary": "Reopened because T0100 makes HostRequestAdmissionContext mandatory on coordinator calls. Existing concurrency/release test adapted to valid context; exact-commit CI pending.",
+          "changed_files": [
+            "src/Host.Windows/Requests/HostRequestCoordinator.cs",
+            "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
+            "tests/HostLifecycle.Tests/HostRequestCoordinatorBusyTests.cs",
+            "tests/HostLifecycle.Tests/HostRequestAdmissionTests.cs"
+          ],
+          "related_commits": [
+            "9a8763e813059f484eb8da10792b30827fce35f8"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "HostRequestCoordinatorTests after admission API change",
+              "result": "pending"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": "Coordinator API requires admission state; revalidate capacity-one and release guarantees.",
+          "contract_changes": [
+            "Required HostRequestAdmissionContext on ExecuteAsync/TryExecuteAsync."
+          ],
+          "follow_up": "Run HostLifecycle tests on the exact implementation commit before restoring done."
         }
       ]
     },
@@ -17605,8 +17637,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0098 و T0097 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "done",
-      "status_fa": "انجام‌شده",
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
       "actual_output_paths": [
         "src/Host.Windows/Requests/HostRequestCoordinator.cs",
         "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
@@ -17624,20 +17656,21 @@
         "step three/T0099/execution-report.md",
         "step three/T0099/evidence/verification.md"
       ],
-      "notes": "T0099 تکمیل و در CI اعتبارسنجی شد. درخواست دوم بلافاصله وضعیت Busy می‌گیرد و پشت semaphore صف نمی‌شود؛ تست ۳۲ درخواست موازی، عدم اجرای عملیات ردشده، حفظ cancellation، اجرای مجدد بعد از آزادسازی و آزادسازی پس از exception را تأیید کرد.",
+      "notes": "T0099 تکمیل و در CI اعتبارسنجی شد. درخواست دوم بلافاصله وضعیت Busy می‌گیرد و پشت semaphore صف نمی‌شود؛ تست ۳۲ درخواست موازی، عدم اجرای عملیات ردشده، حفظ cancellation، اجرای مجدد بعد از آزادسازی و آزادسازی پس از exception را تأیید کرد. بازگشایی برای اعتبارسنجی مجدد API پس از اجباری‌شدن HostRequestAdmissionContext؛ آزمون Busy با context معتبر به‌روزرسانی شد.",
       "execution_summary": {
-        "attempt_count": 2,
+        "attempt_count": 3,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0099-2026-10-26-02",
-        "last_attempt_result": "succeeded",
+        "last_attempt_id": "T0099-2026-10-26-03",
+        "last_attempt_result": "reopened",
         "changed_files": [
-          "step three/T0099/execution-report.md",
-          "step three/T0099/evidence/verification.md",
-          "step three/project-graph.md"
+          "src/Host.Windows/Requests/HostRequestCoordinator.cs",
+          "tests/HostLifecycle.Tests/HostRequestCoordinatorBusyTests.cs",
+          "tests/HostLifecycle.Tests/HostRequestAdmissionTests.cs"
         ],
         "related_commits": [
           "712243254c86aee70f1510b560f3c5e6f0d5fc4c",
-          "4cf8c8515b42479549c7b3a1e740e6112cfd72f9"
+          "4cf8c8515b42479549c7b3a1e740e6112cfd72f9",
+          "9a8763e813059f484eb8da10792b30827fce35f8"
         ],
         "tests_passed": [
           "HostLifecycle unit/integration and T0098/T0099 coordinator tests: passed; Run 40309351792; log explicitly reports PASS for single-active-operation/Busy rejection/release after success or failure, and PASS for fail-fast admission without queueing 32 requests, cancellation preservation and resumption after release. https://github.com/artinrahimii/project/actions/runs/40309351792",
@@ -17647,19 +17680,19 @@
         ],
         "tests_failed": [],
         "blocked_reason": null,
-        "reopened_reason": null,
+        "reopened_reason": "Coordinator now applies admission validation before Busy; revalidate no-queue behavior.",
         "contract_revalidation": {
-          "state": "passed",
+          "state": "required",
           "triggering_contracts": [
-            "HostRequestCoordinator fail-fast Busy contract"
+            "HostRequestCoordinator requires HostRequestAdmissionContext"
           ],
           "affected_by_contract_changes": [
-            "Coordinator admission result/status and exception mapping"
+            "T0099 fail-fast Busy/no-queue acceptance"
           ],
           "review_evidence": [
             "src/Host.Windows/Requests/HostRequestCoordinator.cs",
-            "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
-            "tests/HostLifecycle.Tests/HostRequestCoordinatorBusyTests.cs"
+            "tests/HostLifecycle.Tests/HostRequestCoordinatorBusyTests.cs",
+            "tests/HostLifecycle.Tests/HostRequestAdmissionTests.cs"
           ]
         }
       },
@@ -17749,6 +17782,35 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Proceed to T0100 only after verifying its incoming dependencies and the request admission/capacity interfaces; preserve explicit Busy rejection."
+        },
+        {
+          "attempt_id": "T0099-2026-10-26-03",
+          "started_at": "2026-10-26T11:04:40.028Z",
+          "ended_at": "2026-10-26T11:04:40.028Z",
+          "result": "reopened",
+          "summary": "Reopened because T0100 applies admission checks before Busy admission. Busy/no-queue tests now supply valid context; exact-commit CI pending.",
+          "changed_files": [
+            "src/Host.Windows/Requests/HostRequestCoordinator.cs",
+            "tests/HostLifecycle.Tests/HostRequestCoordinatorBusyTests.cs",
+            "tests/HostLifecycle.Tests/HostRequestAdmissionTests.cs"
+          ],
+          "related_commits": [
+            "9a8763e813059f484eb8da10792b30827fce35f8"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "HostRequestCoordinatorBusyTests after mandatory admission",
+              "result": "pending"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": "Coordinator now applies admission validation before Busy; revalidate no-queue behavior.",
+          "contract_changes": [
+            "Required HostRequestAdmissionContext; invalid admission precedes Busy."
+          ],
+          "follow_up": "Run Busy/admission tests on exact implementation commit before restoring done."
         }
       ]
     },
@@ -17769,33 +17831,110 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0099 و T0097 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "src/Host.Windows/Requests/HostRequestAdmissionPolicy.cs",
+        "tests/HostLifecycle.Tests/HostRequestAdmissionTests.cs",
+        "src/Host.Windows/Requests/HostRequestCoordinator.cs",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorBusyTests.cs",
+        "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0100/execution-report.md",
+        "step three/T0100/evidence/verification.md"
+      ],
       "expected_output_paths": [
         "src/Host.Windows/Requests/ + tests/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "tests/HostLifecycle.Tests/HostRequestAdmissionTests.cs",
+        "step three/T0100/execution-report.md",
+        "step three/T0100/evidence/verification.md"
+      ],
+      "notes": "سیاست پذیرش fail-closed پیاده‌سازی و در API coordinator اجباری شده است. مشارکت، Ready بودن میزبان/مدل، تطبیق مدل، ظرفیت و deadline بررسی می‌شوند؛ آزمون‌های CI هنوز در انتظارند.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
-        "related_commits": [],
+        "last_attempt_id": "T0100-2026-10-26-01",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Host.Windows/Requests/HostRequestAdmissionPolicy.cs",
+          "tests/HostLifecycle.Tests/HostRequestAdmissionTests.cs",
+          "src/Host.Windows/Requests/HostRequestCoordinator.cs",
+          "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
+          "tests/HostLifecycle.Tests/HostRequestCoordinatorBusyTests.cs",
+          "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+          "tests/HostLifecycle.Tests/Program.cs",
+          "step three/T0100/execution-report.md",
+          "step three/T0100/evidence/verification.md",
+          "step three/project-graph.md"
+        ],
+        "related_commits": [
+          "9a8763e813059f484eb8da10792b30827fce35f8"
+        ],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
-          "affected_by_contract_changes": [],
-          "review_evidence": []
+          "state": "in_review",
+          "triggering_contracts": [
+            "HostRequestCoordinator admission API"
+          ],
+          "affected_by_contract_changes": [
+            "T0098/T0099 must supply context and preserve Busy/semaphore behavior"
+          ],
+          "review_evidence": [
+            "src/Host.Windows/Requests/HostRequestAdmissionPolicy.cs",
+            "tests/HostLifecycle.Tests/HostRequestAdmissionTests.cs",
+            "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
+            "tests/HostLifecycle.Tests/HostRequestCoordinatorBusyTests.cs"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0100-2026-10-26-01",
+          "started_at": "2026-10-26T11:04:40.028Z",
+          "ended_at": "2026-10-26T11:04:40.028Z",
+          "result": "partial",
+          "summary": "Implemented mandatory fail-closed admission checks for participation, host/model readiness, model matching, capacity and deadline; coordinator rechecks admission before invocation. Added deterministic tests and adapted prior coordinator tests. Exact-commit CI pending.",
+          "changed_files": [
+            "src/Host.Windows/Requests/HostRequestAdmissionPolicy.cs",
+            "tests/HostLifecycle.Tests/HostRequestAdmissionTests.cs",
+            "src/Host.Windows/Requests/HostRequestCoordinator.cs",
+            "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
+            "tests/HostLifecycle.Tests/HostRequestCoordinatorBusyTests.cs",
+            "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "step three/T0100/execution-report.md",
+            "step three/T0100/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "related_commits": [
+            "9a8763e813059f484eb8da10792b30827fce35f8"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "HostRequestAdmissionTests",
+              "result": "pending"
+            },
+            {
+              "name": "T0098/T0099 coordinator contract revalidation",
+              "result": "pending"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "Required HostRequestAdmissionContext and typed admission outcomes added."
+          ],
+          "follow_up": "Run HostLifecycle, quality gate and Windows build; finalize only after exact commit passes."
+        }
+      ]
     },
     {
       "id": "T0101",
@@ -25977,10 +26116,16 @@
       "from": "T0099",
       "to": "T0100",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "hard_dependency",
+      "rationale": "T0100 requires HostRequestAdmissionContext and HostRequestAdmissionPolicy at the coordinator admission API introduced by T0099. Source/tests show this shared interface dependency; classification is not inferred from type=blocks alone.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/Requests/HostRequestCoordinator.cs",
+        "src/Host.Windows/Requests/HostRequestAdmissionPolicy.cs",
+        "tests/HostLifecycle.Tests/HostRequestAdmissionTests.cs",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorBusyTests.cs",
+        "docs/requirements.md"
+      ]
     },
     {
       "from": "T0097",
@@ -30121,8 +30266,24 @@
         "docs/requirements.md"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-26T11:04:40.028Z",
+      "edge_from": "T0099",
+      "edge_to": "T0100",
+      "old_classification": "unreviewed",
+      "new_classification": "hard_dependency",
+      "reason": "T0100 requires HostRequestAdmissionContext and HostRequestAdmissionPolicy at the coordinator admission API introduced by T0099. Source/tests show this shared interface dependency; classification is not inferred from type=blocks alone.",
+      "evidence": [
+        "src/Host.Windows/Requests/HostRequestCoordinator.cs",
+        "src/Host.Windows/Requests/HostRequestAdmissionPolicy.cs",
+        "tests/HostLifecycle.Tests/HostRequestAdmissionTests.cs",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorBusyTests.cs",
+        "docs/requirements.md"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-26T10:44:09.218Z"
+  "updated_at": "2026-10-26T11:04:40.028Z"
 }
 ```

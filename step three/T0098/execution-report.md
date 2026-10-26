@@ -66,3 +66,8 @@ T0098 is marked `done` because its focused acceptance test ran successfully on t
 ## Contract revalidation — succeeded
 
 After T0099 changed the coordinator to fail-fast Busy admission, the existing T0098 contract was reopened and retested on `4cf8c8515b42479549c7b3a1e740e6112cfd72f9` (`V 3.0.309`). [HostLifecycle CI](https://github.com/artinrahimii/project/actions/runs/40309351792) explicitly reported passing results for single-active-operation, Busy rejection without queueing, and semaphore release after success or failure. The [Step Three quality gate](https://github.com/artinrahimii/project/actions/runs/40309351849) and Windows C# formatting, Release build, Protobuf checks, startup smoke and agent-tool checks also passed. T0098 is restored to `done`; its earlier reopening and failed test-project configuration attempt remain preserved in the append-only history.
+
+
+## Contract revalidation — pending on T0100 API
+
+Commit `9a8763e813059f484eb8da10792b30827fce35f8` makes `HostRequestAdmissionContext` mandatory before coordinator admission. The existing capacity-one/no-overlap/release test was adapted to pass a valid participation/model/capacity/deadline snapshot. T0098 remains reopened until this test passes on exact-commit CI.
