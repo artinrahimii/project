@@ -99,6 +99,7 @@ LocalInferenceProcessLauncherTests.Run();
 LocalHostSettingsPersistenceTests.Run();
 await HostRequestCoordinatorTests.RunAsync();
 await HostRequestCoordinatorBusyTests.RunAsync();
+await HostRequestAdmissionTests.RunAsync();
 await HostInferenceSessionConcurrencyTests.RunAsync();
 await HostInferenceSessionConcurrencyTests.DisconnectReleasesBackendAsync();
 await HostInferenceSessionConcurrencyTests.DisconnectWaitsForGenerationBeforeDisposalAsync();

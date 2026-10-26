@@ -32,5 +32,6 @@
     <Compile Include="../../src/Host.Windows/Tools/AgentToolProcessExecutor.cs" Link="Tools/AgentToolProcessExecutor.cs" />
     <Compile Include="../../src/Host.Windows/Tools/AgentToolWorkerHost.cs" Link="Tools/AgentToolWorkerHost.cs" />
     <Compile Include="../../src/Host.Windows/Requests/HostRequestCoordinator.cs" Link="Requests/HostRequestCoordinator.cs" />
+    <Compile Include="../../src/Host.Windows/Requests/HostRequestAdmissionPolicy.cs" Link="Requests/HostRequestAdmissionPolicy.cs" />
   </ItemGroup>
 </Project>

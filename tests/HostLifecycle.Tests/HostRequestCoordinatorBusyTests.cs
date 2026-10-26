@@ -9,7 +9,7 @@ internal static class HostRequestCoordinatorBusyTests
         var release = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
         var invocationCount = 0;
 
-        var first = coordinator.ExecuteAsync(async cancellationToken =>
+        var first = coordinator.ExecuteAsync(ValidAdmission(), async cancellationToken =>
         {
             Interlocked.Increment(ref invocationCount);
             started.TrySetResult(true);
@@ -21,7 +21,7 @@ internal static class HostRequestCoordinatorBusyTests
         var rejected = new List<HostRequestOutcome<string>>();
         for (var index = 0; index < 32; index++)
         {
-            rejected.Add(await coordinator.TryExecuteAsync(_ =>
+            rejected.Add(await coordinator.TryExecuteAsync(ValidAdmission(), _ =>
             {
                 Interlocked.Increment(ref invocationCount);
                 return Task.FromResult("unexpected");
@@ -38,7 +38,7 @@ internal static class HostRequestCoordinatorBusyTests
         var cancellationObserved = false;
         try
         {
-            await coordinator.TryExecuteAsync(_ => Task.FromResult("unexpected"), cancelled.Token).ConfigureAwait(false);
+            await coordinator.TryExecuteAsync(ValidAdmission(), _ => Task.FromResult("unexpected"), cancelled.Token).ConfigureAwait(false);
         }
         catch (OperationCanceledException)
         {
@@ -49,11 +49,13 @@ internal static class HostRequestCoordinatorBusyTests
         release.TrySetResult(true);
         Assert(await first.WaitAsync(TimeSpan.FromSeconds(5)).ConfigureAwait(false) == "first",
             "The first request must complete normally.");
-        Assert(await coordinator.ExecuteAsync(_ => Task.FromResult("next")).ConfigureAwait(false) == "next",
+        Assert(await coordinator.ExecuteAsync(ValidAdmission(), _ => Task.FromResult("next")).ConfigureAwait(false) == "next",
             "A new request must be accepted after the current inference releases the gate.");
 
         Console.WriteLine("PASS: busy admission is fail-fast, does not queue 32 requests, preserves cancellation, and resumes after release.");
     }
+
+    private static HostRequestAdmissionContext ValidAdmission() => new(true, WhiteP.Host.Domain.HostState.Ready, "fixture/ready-model", "fixture/ready-model", WhiteP.Host.Domain.HostCapacityState.Ready, (ulong)DateTimeOffset.UtcNow.AddMinutes(2).ToUnixTimeMilliseconds());
 
     private static void Assert(bool condition, string message)
     {

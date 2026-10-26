@@ -11,7 +11,7 @@ internal static class HostRequestCoordinatorTests
         var activeCount = 0;
         var maximumActiveCount = 0;
 
-        var first = coordinator.ExecuteAsync(async cancellationToken =>
+        var first = coordinator.ExecuteAsync(ValidAdmission(), async cancellationToken =>
         {
             TrackActiveOperation();
             firstStarted.TrySetResult(true);
@@ -29,7 +29,7 @@ internal static class HostRequestCoordinatorTests
         await firstStarted.Task.WaitAsync(TimeSpan.FromSeconds(5)).ConfigureAwait(false);
         Assert(coordinator.IsBusy, "The coordinator must report busy while one inference owns the gate.");
 
-        var busyOutcome = await coordinator.TryExecuteAsync(cancellationToken =>
+        var busyOutcome = await coordinator.TryExecuteAsync(ValidAdmission(), cancellationToken =>
         {
             busyOperationInvoked = true;
             TrackActiveOperation();
@@ -43,7 +43,7 @@ internal static class HostRequestCoordinatorTests
         var busyExceptionObserved = false;
         try
         {
-            await coordinator.ExecuteAsync(_ =>
+            await coordinator.ExecuteAsync(ValidAdmission(), _ =>
             {
                 busyOperationInvoked = true;
                 return Task.FromResult("must-not-run");
@@ -60,7 +60,7 @@ internal static class HostRequestCoordinatorTests
         releaseFirst.TrySetResult(true);
         Assert(await first.WaitAsync(TimeSpan.FromSeconds(5)).ConfigureAwait(false) == "first",
             "The first inference result must be preserved.");
-        var afterFirst = await coordinator.ExecuteAsync(cancellationToken =>
+        var afterFirst = await coordinator.ExecuteAsync(ValidAdmission(), cancellationToken =>
         {
             TrackActiveOperation();
             return Task.FromResult("after-first");
@@ -72,7 +72,7 @@ internal static class HostRequestCoordinatorTests
         var exceptionObserved = false;
         try
         {
-            await coordinator.ExecuteAsync<string>(_ => Task.FromException<string>(new InvalidOperationException("Expected test failure."))).ConfigureAwait(false);
+            await coordinator.ExecuteAsync<string>(ValidAdmission(), _ => Task.FromException<string>(new InvalidOperationException("Expected test failure."))).ConfigureAwait(false);
         }
         catch (InvalidOperationException exception) when (exception is not HostRequestBusyException)
         {
@@ -80,7 +80,7 @@ internal static class HostRequestCoordinatorTests
         }
 
         Assert(exceptionObserved, "The coordinator must propagate an operation failure.");
-        var afterFailure = await coordinator.ExecuteAsync(_ => Task.FromResult("released")).ConfigureAwait(false);
+        var afterFailure = await coordinator.ExecuteAsync(ValidAdmission(), _ => Task.FromResult("released")).ConfigureAwait(false);
         Assert(afterFailure == "released", "The semaphore must be released after an operation throws.");
 
         Console.WriteLine("PASS: HostRequestCoordinator serializes active inference, rejects concurrent work as Busy without queuing, and releases its semaphore after success or failure.");
@@ -99,6 +99,8 @@ internal static class HostRequestCoordinatorTests
             }
         }
     }
+
+    private static HostRequestAdmissionContext ValidAdmission() => new(true, WhiteP.Host.Domain.HostState.Ready, "fixture/ready-model", "fixture/ready-model", WhiteP.Host.Domain.HostCapacityState.Ready, (ulong)DateTimeOffset.UtcNow.AddMinutes(2).ToUnixTimeMilliseconds());
 
     private static void Assert(bool condition, string message)
     {
