@@ -21,3 +21,9 @@
 - The quality gate reported 0 errors and one existing warning: T0001 contains a descriptive non-task dependency string preserved as metadata. This warning is unrelated to T0094 and was not silently rewritten.
 - Outcome: **T0094 done** on exact-commit test and product evidence. The earlier partial attempt is preserved in execution history; no failed attempt is recorded because no executed test attempt failed.
 - Next: T0095 — implement process isolation and execution timeouts while keeping arbitrary system-command execution disabled by default. Re-review its incoming edges before implementation.
+
+## Graph evidence-field correction
+
+- The quality workflow for the status commit `V 3.0.293` ran all 150 Python tests successfully, and its first graph check had 0 errors. The repository-root graph guard then failed with three `MISSING_EVIDENCE_FILE` errors because workflow URLs had been placed in the file-oriented `evidence` array.
+- Corrected only the graph evidence representation: `evidence` now lists repository file paths; workflow URLs remain in `execution_summary.tests_passed` and the successful attempt's test records. The implementation, its passing CI results, task status, and dependency classifications were not changed by this metadata correction.
+- This was a traceability/schema issue in the status commit, not a failed acceptance test for the implementation. The next quality gate must validate this correction.

@@ -16323,12 +16323,9 @@
         "src/Host.Windows/Tools/WpfAgentToolConfirmationService.cs",
         "tests/HostLifecycle.Tests/AgentToolExecutionAcceptanceTests.cs",
         "tests/HostLifecycle.Tests/Program.cs",
-        "step three/T0094/execution-report.md",
-        "https://github.com/artinrahimii/project/actions/runs/40268843489",
-        "https://github.com/artinrahimii/project/actions/runs/40268843248",
-        "https://github.com/artinrahimii/project/actions/runs/40268843195"
+        "step three/T0094/execution-report.md"
       ],
-      "notes": "Exact-commit quality and product workflows passed. Side-effecting calls require positive injected confirmation; denial, invalid/unknown calls, cancellation and confirmation-service failures do not invoke the tool. No tools are registered by default. WPF modal click-through was not automated; the Windows WPF build/format/startup smoke passed. Process isolation/timeout remains T0095.",
+      "notes": "Exact-commit quality and product workflows passed. Side-effecting calls require positive injected confirmation; denial, invalid/unknown calls, cancellation and confirmation-service failures do not invoke the tool. No tools are registered by default. WPF modal click-through was not automated; the Windows WPF build/format/startup smoke passed. Process isolation/timeout remains T0095. Graph validation follow-up: V 3.0.293 quality gate exposed that workflow URLs in evidence were interpreted as repository file paths. URLs remain in tests_passed/history; evidence now contains repository paths only.",
       "execution_summary": {
         "attempt_count": 2,
         "failed_attempt_count": 0,
@@ -28765,6 +28762,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-26T04:27:15.713Z"
+  "updated_at": "2026-10-26T04:28:54.287Z"
 }
 ```
