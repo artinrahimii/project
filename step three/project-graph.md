@@ -17297,8 +17297,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0097 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "src/Host.Windows/Requests/HostRequestCoordinator.cs",
         "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
@@ -17315,31 +17315,34 @@
         "step three/T0098/execution-report.md",
         "step three/T0098/evidence/verification.md"
       ],
-      "notes": "پیاده‌سازی پایه و آزمون افزوده شدند. CI روی V 3.0.306 خطای پیکربندی NETSDK1022 را به علت Compile تکراری در csproj نشان داد؛ ورودی صریح تکراری حذف شد. آزمون C# هنوز در commit اصلاحی اجرا و تأیید نشده است، بنابراین وضعیت در حال اجرا باقی می‌ماند.",
+      "notes": "T0098 پیاده‌سازی و اعتبارسنجی شد: HostRequestCoordinator با SemaphoreSlim تک‌ظرفیتی، لغو هنگام انتظار و آزادسازی در finally. آزمون پذیرش در GitHub Actions موفق شد و هم‌زمانی بیشینهٔ یک عملیات و بازیابی semaphore پس از exception را تأیید کرد. پیکربندی Compile تکراری که در V 3.0.306 شکست داشت در V 3.0.307 اصلاح شد. مرحلهٔ بعدی T0099 است؛ رد فوری با Busy هنوز در آن وظیفه پیاده‌سازی نشده است.",
       "execution_summary": {
-        "attempt_count": 3,
+        "attempt_count": 4,
         "failed_attempt_count": 1,
-        "last_attempt_id": "T0098-2026-10-26-03",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "T0098-2026-10-26-04",
+        "last_attempt_result": "succeeded",
         "changed_files": [
-          "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
           "step three/T0098/execution-report.md",
           "step three/T0098/evidence/verification.md",
           "step three/project-graph.md"
         ],
         "related_commits": [
-          "451980f2ec009f7915c10fa705a53789a6ea33b9"
+          "451980f2ec009f7915c10fa705a53789a6ea33b9",
+          "95a78fe6cacb8d095a82b99d69efb64b5dc0092a"
         ],
         "tests_passed": [
-          "Step Three quality gate on implementation commit 451980f2ec009f7915c10fa705a53789a6ea33b9 succeeded (run 40306971116)."
+          "HostRequestCoordinator test passed in HostLifecycle CI run 40308296192; explicit PASS message confirms one active operation and semaphore release after success/failure.",
+          "Step Three quality gate passed in run 40308296166.",
+          "Windows C# formatting, Release build, generated Protobuf verification, and WPF startup smoke passed in run 40308296192.",
+          "Real local llama.cpp/GGUF inference acceptance passed in run 40308296058."
         ],
         "tests_failed": [
-          "HostLifecycle job on implementation commit 451980f2ec009f7915c10fa705a53789a6ea33b9 failed before tests due to NETSDK1022 duplicate Compile item (run 40306970928)."
+          "HostLifecycle job on V 3.0.306 failed before tests due to NETSDK1022 duplicate Compile item HostRequestCoordinatorTests.cs (run 40306970928); corrected in V 3.0.307."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "in_review",
+          "state": "passed",
           "triggering_contracts": [
             "HostRequestCoordinator single-capacity operation gate"
           ],
@@ -17441,6 +17444,54 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Inspect CI on the correction commit; if tests and Windows build pass, append successful evidence and mark T0098 done."
+        },
+        {
+          "attempt_id": "T0098-2026-10-26-04",
+          "started_at": "2026-10-26T10:32:58Z",
+          "ended_at": "2026-10-26T10:33:37Z",
+          "result": "succeeded",
+          "summary": "The corrected exact commit V 3.0.307 passed the HostLifecycle unit/integration job. The log explicitly records PASS for HostRequestCoordinator's single-active-operation and semaphore-release test. The Step Three graph/test quality gate passed. The Windows WPF Release build, C# formatting, generated Protobuf check and startup smoke test passed; the live local llama.cpp/GGUF inference integration passed. Unrelated Windows agent-capability and Android workflow steps were still running at the time this record was prepared and are not claimed here.",
+          "changed_files": [
+            "step three/T0098/execution-report.md",
+            "step three/T0098/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "related_commits": [
+            "451980f2ec009f7915c10fa705a53789a6ea33b9",
+            "95a78fe6cacb8d095a82b99d69efb64b5dc0092a"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "HostRequestCoordinator / HostLifecycle unit and integration tests",
+              "result": "passed",
+              "summary": "GitHub Actions job 121522805298; log: PASS: HostRequestCoordinator limits active operations to one and releases its semaphore after success or failure.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40308296192"
+            },
+            {
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "summary": "Graph structure, Python unit tests, Python syntax, recorded outputs and evidence validated.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40308296166"
+            },
+            {
+              "name": "Windows C# formatting, Release build, generated Protobuf and WPF startup smoke",
+              "result": "passed",
+              "summary": "These Windows steps completed successfully on V 3.0.307. Later agent capability step was still running at the time of this record.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40308296192"
+            },
+            {
+              "name": "Real local llama.cpp/GGUF inference integration",
+              "result": "passed",
+              "summary": "Live local-model inference acceptance job succeeded; supplementary evidence only, not the T0098-specific acceptance test.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40308296058"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Continue with T0099, preserving the validated single-capacity gate; T0099 must add fail-fast Busy rejection rather than silently queueing a second request."
         }
       ]
     },
@@ -29860,6 +29911,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-26T10:32:42.707Z"
+  "updated_at": "2026-10-26T10:35:40.093Z"
 }
 ```

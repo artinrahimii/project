@@ -49,3 +49,15 @@ The exact implementation commit `451980f2ec009f7915c10fa705a53789a6ea33b9` was c
 ## Correction attempt 3 — pending validation
 
 Removed the redundant `<Compile Include="HostRequestCoordinatorTests.cs" />` entry. The SDK default compile inclusion still discovers the test class; the explicit linked compile item for `src/Host.Windows/Requests/HostRequestCoordinator.cs` remains necessary because that source is outside the test project's directory. Re-run exact-commit CI before completing T0098.
+
+
+## Validation attempt 4 — succeeded
+
+The corrected commit `95a78fe6cacb8d095a82b99d69efb64b5dc0092a` (`V 3.0.307`) passed the task-specific acceptance checks:
+
+- [HostLifecycle unit and integration tests](https://github.com/artinrahimii/project/actions/runs/40308296192) — succeeded. The log explicitly reports: `PASS: HostRequestCoordinator limits active operations to one and releases its semaphore after success or failure.`
+- [Step Three quality gate](https://github.com/artinrahimii/project/actions/runs/40308296166) — succeeded; graph structure, Python tests/syntax, and recorded outputs/evidence were checked.
+- [Windows product build](https://github.com/artinrahimii/project/actions/runs/40308296192) — C# formatting, Release build, generated Protobuf verification and WPF startup smoke passed. The separate Windows agent-capability step was still running when this report was updated; it is not claimed as a pass here.
+- [Real local inference integration](https://github.com/artinrahimii/project/actions/runs/40308296058) — succeeded as supplementary product evidence.
+
+T0098 is marked `done` because its focused acceptance test ran successfully on the exact correction commit, verified capacity-one serialization and semaphore recovery after an exception, and is backed by the successful quality gate. The previous failed attempt is retained in the graph's append-only history. Next task: T0099, which must implement fail-fast Busy rejection rather than silent queuing.

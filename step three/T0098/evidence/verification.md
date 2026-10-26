@@ -17,3 +17,13 @@
 - HostLifecycle job: failed during project evaluation with `NETSDK1022`, because `HostRequestCoordinatorTests.cs` was explicitly added even though SDK default Compile items already included it; the C# tests themselves had not started running.
 - Fix: removed only the duplicate test-file Compile element from `tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj`; kept the explicit linked compile for the source under `src/Host.Windows`.
 - Validation after fix: pending a new commit's GitHub Actions. T0098 remains `in_progress` until it succeeds.
+
+
+## Exact correction-commit validation
+
+- Corrected implementation commit: `95a78fe6cacb8d095a82b99d69efb64b5dc0092a` (`V 3.0.307`).
+- HostLifecycle acceptance job: passed; log states `PASS: HostRequestCoordinator limits active operations to one and releases its semaphore after success or failure.` See [run 40308296192](https://github.com/artinrahimii/project/actions/runs/40308296192).
+- Step Three quality gate: passed, [run 40308296166](https://github.com/artinrahimii/project/actions/runs/40308296166).
+- Windows C# formatting, Release build, generated Protobuf source validation and WPF startup smoke: passed in [run 40308296192](https://github.com/artinrahimii/project/actions/runs/40308296192). The dedicated Windows capability-policy test step had not yet completed when recorded and is not part of T0098 acceptance.
+- Live local llama.cpp/GGUF integration: passed, [run 40308296058](https://github.com/artinrahimii/project/actions/runs/40308296058).
+- The first CI attempt on V 3.0.306 remains recorded as failed due to `NETSDK1022`; V 3.0.307 removed the redundant test Compile item, and the corrected test suite passed.
