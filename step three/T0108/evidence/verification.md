@@ -1,23 +1,27 @@
 # T0108 verification evidence
 
-## Source snapshot and graph integrity
+## Exact source snapshot and graph integrity
 
 - Repository: `artinrahimii/project`, branch `main`.
-- Base commit: `de7ffa55058dfab624a1787d18073db0cb98fa26` (`V 3.0.330`); commit tree: `5658d5e2a3cfbb7aa50771e0a9cf0538c688d406`.
-- Graph path: `step three/project-graph.md`; exact blob ID: `b2bb05b1a85a957696007be4be4ca9eee1119c6b`.
-- Blob API content included the original Markdown fence and measured **1,696,227 UTF-8 bytes** / **1,574,318 Unicode characters**. The recalculated Git blob SHA-1 matched the expected blob ID. The complete fenced JSON parsed successfully and contains 229 task nodes, 426 edges, and 22 sections.
-- T0107 was `done` in this exact graph snapshot. Its report links the successful HostLifecycle job, Step Three quality gate, Windows/Android product build, and real local inference integration on implementation commit `b034e7df70e8ab37bf0c9aac4314d4cd32c52051`.
+- Implementation commit tested by CI: `42efe64069939558deb18414de1c233c739885fd` (`V 3.0.331`), parent `de7ffa55058dfab624a1787d18073db0cb98fa26`.
+- Original graph snapshot: commit `de7ffa55058dfab624a1787d18073db0cb98fa26`, tree `5658d5e2a3cfbb7aa50771e0a9cf0538c688d406`, graph path `step three/project-graph.md`, Blob ID `b2bb05b1a85a957696007be4be4ca9eee1119c6b`.
+- The original graph Blob API response included its Markdown fence and measured **1,696,227 UTF-8 bytes** / **1,574,318 Unicode characters**. A Git blob SHA-1 recomputed from the original full bytes exactly matched the tree-derived Blob ID. The complete fenced JSON parsed and contained 229 nodes, 426 edges, and 22 sections.
+- Current graph Blob at the implementation commit: `2dafac3b81e8068c5503f3ceaa42339d71386d4c`; counts remained 229 tasks and 426 edges.
 
-## Dependency edge review
+## Dependency review
 
-- `T0107 -> T0108`: preserved `type=blocks`; changed classification from `unreviewed` to `sequencing_only`; validation from `unreviewed` to `validated`.
+- `T0107 -> T0108`: type `blocks` preserved; classification changed from `unreviewed` to `sequencing_only`; validation changed from `unreviewed` to `validated`.
 - Evidence inspected: `src/Host.Windows/Requests/HostRequestCoordinator.cs`, `tests/HostLifecycle.Tests/HostRequestCoordinatorFailureAcceptanceTests.cs`, and `step three/T0107/evidence/verification.md`.
-- Rationale: T0107's deliverable tests coordinator fault paths; the new listener gate uses .NET TCP APIs and an independently injected participation predicate. There is no T0107-specific API/data artifact consumed by T0108.
-- `T0108 -> T0109` and later outgoing edges remain unreviewed and will be reviewed before those tasks begin.
+- Rationale: T0107 provides coordinator fault-path acceptance coverage, while T0108 introduces a separately gated TCP listener and consumes no T0107-specific output/API. The existing edge is retained as conservative execution order.
+- `T0108 -> T0109` and other outgoing edges remain unreviewed.
 
-## Implementation and pending checks
+## Executable outputs and exact-head test evidence
 
-- Production source: `src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs`.
-- Acceptance source: `tests/HostLifecycle.Tests/HostNetworkListenerParticipationTests.cs`, registered in `tests/HostLifecycle.Tests/Program.cs` and linked into `tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj`.
-- Exact-head build and test outcomes: **pending**. No test result is claimed before GitHub Actions reports it.
-- Scope boundary: the listener is a bind/accept gate only; accepted connections are closed before parsing. No inbound request processing, LAN exposure policy, encryption, or completed P2P transport is claimed. T0109 owns app-level stop-on-disable/shutdown integration; T0110 owns Protobuf request parsing.
+- Production listener: `src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs`.
+- Acceptance test: `tests/HostLifecycle.Tests/HostNetworkListenerParticipationTests.cs`, registered in `tests/HostLifecycle.Tests/Program.cs` and linked by `tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj`.
+- **HostLifecycle acceptance: PASS** — [job](https://github.com/artinrahimii/project/actions/runs/40340804518/job/121634661524). The job log explicitly confirms inactive fail-closed startup and successful binding after activation.
+- **Step Three quality gate: PASS** — [run](https://github.com/artinrahimii/project/actions/runs/40340804805).
+- **Windows and Android product build: PASS** — [run](https://github.com/artinrahimii/project/actions/runs/40340804518), including WPF build/startup and Android APK/Protobuf tests.
+- **Live local inference integration: PASS** — [run](https://github.com/artinrahimii/project/actions/runs/40340806731).
+- All four runs were associated with implementation commit `42efe64069939558deb18414de1c233c739885fd`. The local environment lacked .NET SDK; test results are from the named CI jobs, not local execution.
+- Scope boundary: the listener currently accepts and closes TCP connections without parsing them. T0109 owns app-level shutdown/disable integration; T0110 owns Protobuf parsing. No full P2P transport or encryption claim is made.

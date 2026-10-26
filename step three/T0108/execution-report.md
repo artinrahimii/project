@@ -1,12 +1,30 @@
 # T0108 execution report
 
-- **Task:** Start the Windows host TCP listener only when participation is active.
-- **Attempt:** `T0108-2026-10-26-01`.
+- **Task:** Start the Windows host network listener only when participation is active.
+- **Status:** Done, based on exact-head GitHub Actions.
+- **Implementation commit:** [V 3.0.331] (https://github.com/artinrahimii/project/commit/42efe64069939558deb18414de1c233c739885fd) — `42efe64069939558deb18414de1c233c739885fd`.
+- **Finalization commit:** pending this graph/report update; expected version `V 3.0.332`.
+- **Attempt:** `T0108-2026-10-26-01`; started during the `V 3.0.331` implementation pass and completed after exact-head CI results were checked.
 - **Base:** `main` at `de7ffa55058dfab624a1787d18073db0cb98fa26` (`V 3.0.330`).
-- **Status:** In progress pending exact-head CI.
-- **Dependency review:** `T0107 -> T0108` remains `type=blocks`, but is now classified as `sequencing_only` and `validated`. T0107 adds tests around the in-process inference coordinator; T0108 does not consume a T0107-produced API or data artifact. The edge is retained as conservative order, not asserted to be a hard technical dependency.
-- **Implementation:** Added `src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs`. It evaluates the injected live-participation predicate immediately before binding, refuses startup when inactive, reports the actual bound endpoint, and prevents a repeated start from binding again. The bind address and port are explicit constructor inputs; there is no implicit public-interface binding.
-- **Connection behavior at this stage:** TCP connections are accepted and closed without reading or logging payload bytes because the shared Protobuf parser belongs to T0110. This commit does not claim that request/response transport or end-to-end P2P is implemented.
-- **Tests:** Added `HostNetworkListenerParticipationTests`, linked the production listener source into the cross-platform HostLifecycle harness, and registered the tests in the default harness. The cases cover inactive rejection/no bind, successful loopback bind when active, actual TCP connection acceptance/close, repeat-start behavior, and endpoint release.
-- **Local execution:** The current execution environment has no `.NET SDK` and cannot clone the repository directly; tests are pending the exact-commit GitHub Actions run.
-- **Next:** Verify the HostLifecycle job, Step Three quality gate, and Windows host build on the implementation commit. Integrating participation disable/shutdown into the app lifecycle is T0109; request parsing remains T0110.
+
+## Dependency review
+
+- `T0107 -> T0108`: preserved `type=blocks`; validated as `sequencing_only`. T0107 tests request-coordinator fault paths; the listener uses a distinct injected participation predicate and TCP APIs and does not consume a T0107-specific output/API. The edge is conservative ordering, not a claimed hard technical dependency.
+- `T0108 -> T0109` and other outgoing edges remain unreviewed; review each relevant edge before starting its dependent task.
+
+## Implementation
+
+- Added `src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs`.
+- Startup checks the current participation predicate immediately before binding; inactive participation returns an explicit refusal and does not bind a socket.
+- Bind address and port are explicit constructor inputs; successful startup exposes the actual bound endpoint. Repeated start is idempotent; `StopAsync` cancels accept and releases the listener.
+- Added `tests/HostLifecycle.Tests/HostNetworkListenerParticipationTests.cs` and linked the production source into `tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj`; the suite is called by the default `Program.cs` harness.
+- The accepted TCP connection is deliberately closed without reading or logging payload bytes until T0110 adds bounded Protobuf parsing. This task does not claim end-to-end P2P transport, encryption, or request processing.
+
+## Verification — all PASS on the implementation commit
+
+- **HostLifecycle suite**, including the new listener acceptance test: [job log](https://github.com/artinrahimii/project/actions/runs/40340804518/job/121634661524). The log records: `PASS: the host TCP listener fails closed while participation is inactive and binds only after activation.`
+- **Step Three quality gate:** [workflow](https://github.com/artinrahimii/project/actions/runs/40340804805) — success.
+- **Windows WPF and Android product build:** [workflow](https://github.com/artinrahimii/project/actions/runs/40340804518) — success. C# formatting, Windows Release build, Protobuf generated-source check, WPF startup smoke, Android lint, debug APK build and Android Protobuf tests passed.
+- **Real local inference integration:** [workflow](https://github.com/artinrahimii/project/actions/runs/40340806731) — success; pinned GGUF validation and live llama.cpp inference passed.
+- The local execution environment had no .NET SDK, so no local .NET run is claimed; the linked CI jobs executed the tests and builds on the exact implementation commit.
+- **Next:** T0109 — review the outgoing dependency edge(s), then integrate a full stop when participation is disabled or the app exits. T0110 must add protocol parsing before request processing.

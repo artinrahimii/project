@@ -19356,8 +19356,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0107 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs",
         "tests/HostLifecycle.Tests/HostNetworkListenerParticipationTests.cs",
@@ -19374,12 +19374,12 @@
         "tests/HostLifecycle.Tests/HostNetworkListenerParticipationTests.cs",
         "step three/T0108/evidence/verification.md"
       ],
-      "notes": "T0108 attempt T0108-2026-10-26-01 adds a TCP listener with a live participation predicate checked before binding and explicit bind address/port. Accepted sockets are closed without reading/logging payloads until T0110 provides the Protobuf parser. App-level stop on participation disable/shutdown is T0109; this task does not claim end-to-end P2P.",
+      "notes": "T0108 implementation on V 3.0.331 passed exact-head CI: the listener fails closed while participation is inactive, binds on explicit activation, accepts loopback TCP, is idempotent on repeated start and releases the endpoint on StopAsync. Exact-head HostLifecycle, Step Three quality gate, Windows/Android product build and real local inference integration all passed. Scope remains a gated TCP listener: accepted connections are closed without reading payloads until T0110 adds the Protobuf parser. T0109 must integrate stop on participation disable/app shutdown; no full P2P, encryption, or payload processing is claimed.",
       "execution_summary": {
         "attempt_count": 1,
         "failed_attempt_count": 0,
         "last_attempt_id": "T0108-2026-10-26-01",
-        "last_attempt_result": "partial",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs",
           "tests/HostLifecycle.Tests/HostNetworkListenerParticipationTests.cs",
@@ -19389,8 +19389,15 @@
           "step three/T0108/evidence/verification.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
+        "related_commits": [
+          "42efe64069939558deb18414de1c233c739885fd"
+        ],
+        "tests_passed": [
+          "HostNetworkListenerParticipationTests / HostLifecycle harness — PASS on 42efe64069939558deb18414de1c233c739885fd. https://github.com/artinrahimii/project/actions/runs/40340804518/job/121634661524",
+          "Step Three quality gate — PASS on 42efe64069939558deb18414de1c233c739885fd. https://github.com/artinrahimii/project/actions/runs/40340804805",
+          "Windows WPF / Android product build — PASS on 42efe64069939558deb18414de1c233c739885fd. https://github.com/artinrahimii/project/actions/runs/40340804518",
+          "Real local inference integration — PASS on 42efe64069939558deb18414de1c233c739885fd. https://github.com/artinrahimii/project/actions/runs/40340806731"
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -19405,9 +19412,9 @@
         {
           "attempt_id": "T0108-2026-10-26-01",
           "started_at": "2026-10-26T14:33:45.807Z",
-          "ended_at": null,
-          "result": "partial",
-          "summary": "Reviewed T0107 -> T0108 as sequencing-only, implemented a TCP listener whose bind is gated by the current participation predicate, and added local-socket acceptance tests. Exact-head CI is pending.",
+          "ended_at": "2026-10-26T14:39:12.925Z",
+          "result": "succeeded",
+          "summary": "The participation-gated TCP listener and acceptance suite passed exact-head GitHub Actions. Step Three quality gate, full Windows/Android product build, and real local inference integration all completed successfully on the implementation commit.",
           "changed_files": [
             "src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs",
             "tests/HostLifecycle.Tests/HostNetworkListenerParticipationTests.cs",
@@ -19417,20 +19424,41 @@
             "step three/T0108/evidence/verification.md",
             "step three/project-graph.md"
           ],
-          "related_commits": [],
-          "commit_sha": null,
+          "related_commits": [
+            "42efe64069939558deb18414de1c233c739885fd"
+          ],
+          "commit_sha": "42efe64069939558deb18414de1c233c739885fd",
           "tests": [
             {
-              "name": "HostNetworkListenerParticipationTests",
-              "result": "pending",
-              "summary": "Added inactive no-bind, active bind/connection, repeat-start and stop checks; awaiting exact-head execution."
+              "name": "HostNetworkListenerParticipationTests / HostLifecycle harness",
+              "result": "passed",
+              "summary": "Exact-head HostLifecycle job completed successfully. Log included: PASS: the host TCP listener fails closed while participation is inactive and binds only after activation.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40340804518/job/121634661524"
+            },
+            {
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "summary": "Repository-backed graph and Python quality checks completed successfully against the implementation commit.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40340804805"
+            },
+            {
+              "name": "Windows WPF / Android product build",
+              "result": "passed",
+              "summary": "Exact-head product workflow completed successfully: C# formatting, Windows Release build, Protobuf source generation, WPF startup smoke, Android lint, debug APK build and Android Protobuf unit tests all passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40340804518"
+            },
+            {
+              "name": "Real local inference integration",
+              "result": "passed",
+              "summary": "Pinned GGUF model validation and live llama.cpp process/inference acceptance completed successfully on the same implementation commit.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40340806731"
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Verify HostLifecycle tests, Step Three quality gate, Windows host build and Android build against the implementation commit before marking T0108 done."
+          "follow_up": "Review the T0108 -> T0109 and other relevant outgoing edges before implementing stop-on-disable/application shutdown. T0110 must add bounded Protobuf parsing before any accepted request is processed."
         }
       ]
     },
@@ -31621,6 +31649,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-26T14:33:45.807Z"
+  "updated_at": "2026-10-26T14:39:12.925Z"
 }
 ```
