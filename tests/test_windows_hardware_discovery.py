@@ -66,7 +66,7 @@ class WindowsHardwareDiscoveryTests(unittest.TestCase):
             "hardware.SystemDriveName",
             "hardware.SystemDriveTotalBytes",
             "hardware.SystemDriveAvailableBytes",
-            "Shutdown(3);",
+            "ExitAfterWindowCleanup(window, 3);",
         ):
             with self.subTest(marker=marker):
                 self.assertIn(marker, APP_CODE)

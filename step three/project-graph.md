@@ -19490,7 +19490,9 @@
         "tests/HostLifecycle.Tests/Program.cs",
         "step three/T0109/execution-report.md",
         "step three/T0109/evidence/verification.md",
-        "step three/project-graph.md"
+        "step three/project-graph.md",
+        "tests/test_windows_hardware_discovery.py",
+        "tests/test_wpf_entrypoint.py"
       ],
       "expected_output_paths": [
         "src/Host.Windows/Networking/"
@@ -19499,11 +19501,11 @@
         "tests/HostLifecycle.Tests/ParticipationNetworkListenerLifecycleTests.cs",
         "step three/T0109/evidence/verification.md"
       ],
-      "notes": "T0109 attempt 01 passed lifecycle tests and the quality gate but failed the Windows startup smoke because App.xaml.cs called Shutdown(0) while MainWindow_Closing was still awaiting listener disposal. Attempt 02 updates smoke exit paths to wait for Closed before shutdown; exact-head CI is pending. Incoming network connections remain closed/unparsed until T0110.",
+      "notes": "Attempt 01 passed lifecycle tests but failed Windows smoke; attempt 02 added exit-after-Closed helper but smoke still failed and source-contract tests expected old direct Shutdown literals. Attempt 03 defers the final Close through Dispatcher.BeginInvoke to avoid re-entry when cleanup completes synchronously and updates the two static contract tests. Exact-head CI pending.",
       "execution_summary": {
-        "attempt_count": 2,
-        "failed_attempt_count": 1,
-        "last_attempt_id": "T0109-2026-10-26-02",
+        "attempt_count": 3,
+        "failed_attempt_count": 2,
+        "last_attempt_id": "T0109-2026-10-26-03",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Host.Windows/Networking/ParticipationNetworkListenerLifecycle.cs",
@@ -19515,9 +19517,14 @@
           "step three/T0109/execution-report.md",
           "step three/T0109/evidence/verification.md",
           "step three/project-graph.md",
-          "src/Host.Windows/App.xaml.cs"
+          "src/Host.Windows/App.xaml.cs",
+          "tests/test_windows_hardware_discovery.py",
+          "tests/test_wpf_entrypoint.py"
         ],
-        "related_commits": [],
+        "related_commits": [
+          "f8b08f814f28c604fa5f8141ff3b2bd3d137e86b",
+          "3bc81b6feab2fa3d5b927c9b4ef13ea1f7f626cc"
+        ],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
@@ -19579,11 +19586,55 @@
         {
           "attempt_id": "T0109-2026-10-26-02",
           "started_at": "2026-10-26T16:07:01.777Z",
-          "ended_at": null,
-          "result": "partial",
-          "summary": "Fixed the WPF smoke-test shutdown sequence to wait for the real Closed event before Application.Shutdown, ensuring listener disposal completes before CI exits. Exact-head CI is pending.",
+          "ended_at": "2026-10-26T16:14:33.859Z",
+          "result": "failed",
+          "summary": "The App.xaml.cs shutdown helper changed direct shutdown to wait for the Closed event, but exact-head Windows smoke still exited with CLR code -532462766; Step Three Python source-contract tests also failed because they expected literal Shutdown(0/1/3) call sites.",
           "changed_files": [
             "src/Host.Windows/App.xaml.cs",
+            "step three/T0109/execution-report.md",
+            "step three/T0109/evidence/verification.md",
+            "step three/project-graph.md",
+            "tests/test_windows_hardware_discovery.py",
+            "tests/test_wpf_entrypoint.py"
+          ],
+          "related_commits": [],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "HostLifecycle lifecycle acceptance",
+              "result": "passed",
+              "summary": "The listener lifecycle tests passed on the implementation commit.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40356065945"
+            },
+            {
+              "name": "Step Three quality gate",
+              "result": "failed",
+              "summary": "Three source-contract assertions expected old literal Shutdown(0/1/3) statements; tests updated for orderly close-after-Closed behavior.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40356065948"
+            },
+            {
+              "name": "Windows WPF startup smoke",
+              "result": "failed",
+              "summary": "The executable still exited with CLR code -532462766. The final Close is now deferred through Dispatcher so synchronous listener disposal cannot cause a re-entrant Window.Close call.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40356065945"
+            }
+          ],
+          "failure_details": "Step Three quality gate: three static source contract assertions failed because they expected literal Shutdown(0/1/3) statements. Windows startup smoke remained failed with -532462766. Attempt 03 dispatches the final Close after the current Closing event unwinds and updates the static contract tests.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Run Step Three quality gate and full Windows/Android build on the corrective commit; only accept T0109 after the Windows smoke and lifecycle tests pass."
+        },
+        {
+          "attempt_id": "T0109-2026-10-26-03",
+          "started_at": "2026-10-26T16:14:28.542Z",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Deferred the final WPF Close until the original Closing handler has unwound and updated source-contract tests to verify orderly shutdown after Closed. Exact-head CI pending.",
+          "changed_files": [
+            "src/Host.Windows/MainWindow.xaml.cs",
+            "tests/test_windows_hardware_discovery.py",
+            "tests/test_wpf_entrypoint.py",
             "step three/T0109/execution-report.md",
             "step three/T0109/evidence/verification.md",
             "step three/project-graph.md"
@@ -19592,16 +19643,26 @@
           "commit_sha": null,
           "tests": [
             {
-              "name": "WPF startup smoke test",
+              "name": "test_windows_hardware_discovery.py",
               "result": "pending",
-              "summary": "The shutdown sequence now waits for Closed after async listener disposal; exact-head Windows CI pending."
+              "summary": "Checks ExitAfterWindowCleanup(window, 3) for invalid hardware and the real exit-after-Closed helper."
+            },
+            {
+              "name": "test_wpf_entrypoint.py",
+              "result": "pending",
+              "summary": "Checks smoke exits through ExitAfterWindowCleanup and application shutdown follows the actual Closed event."
+            },
+            {
+              "name": "WPF startup smoke",
+              "result": "pending",
+              "summary": "Final Close is dispatched after the original Closing event unwinds, including when cleanup completes synchronously."
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Run HostLifecycle, Step Three quality gate, WPF startup smoke, Windows build, Android build and real inference integration on the fix commit before marking T0109 done."
+          "follow_up": "Run exact-head Step Three quality gate, HostLifecycle, Windows WPF build and startup smoke, Android build, and real inference integration; only then finalize T0109."
         }
       ]
     },
@@ -31791,6 +31852,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-26T16:07:01.777Z"
+  "updated_at": "2026-10-26T16:14:28.542Z"
 }
 ```

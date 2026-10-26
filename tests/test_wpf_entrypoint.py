@@ -43,8 +43,12 @@ class WpfEntryPointTests(unittest.TestCase):
             "window.IsVisible",
             "ShutdownMode.OnExplicitShutdown",
             "window.Close();",
-            "Shutdown(0);",
-            "Shutdown(1);",
+            "ExitAfterWindowCleanup(window, 0);",
+            "ExitAfterWindowCleanup(MainWindow, 1);",
+            "window.Closed += closedHandler;",
+            "window.Closed -= closedHandler;",
+            "Shutdown(exitCode);",
+            "Dispatcher.BeginInvoke(",
         ):
             with self.subTest(marker=marker):
                 self.assertIn(marker, APP_CODE)
