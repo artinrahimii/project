@@ -8,3 +8,12 @@
 - **Implementation:** `src/Host.Windows/Requests/HostRequestCoordinator.cs` uses a capacity-one `SemaphoreSlim`; `finally` releases the gate on success, cancellation, or exception.
 - **Automated acceptance source:** `tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs` checks that two operations do not overlap and the semaphore is reusable after a failure. The existing CI harness invocation in `.github/workflows/product-build.yml` covers this test after it is registered in `Program.cs`.
 - **Execution status:** code and test source are committed by the implementation attempt; the local runner has no .NET SDK, so C# tests were not run locally. Exact-commit GitHub Actions remains the completion gate.
+
+
+## CI failure and correction
+
+- Implementation commit tested: `451980f2ec009f7915c10fa705a53789a6ea33b9` (`V 3.0.306`).
+- Step Three quality gate: passed, run [40306971116](https://github.com/artinrahimii/project/actions/runs/40306971116).
+- HostLifecycle job: failed during project evaluation with `NETSDK1022`, because `HostRequestCoordinatorTests.cs` was explicitly added even though SDK default Compile items already included it; the C# tests themselves had not started running.
+- Fix: removed only the duplicate test-file Compile element from `tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj`; kept the explicit linked compile for the source under `src/Host.Windows`.
+- Validation after fix: pending a new commit's GitHub Actions. T0098 remains `in_progress` until it succeeds.

@@ -36,3 +36,16 @@
 ## Follow-up
 
 Inspect exact-commit GitHub Actions results. If the related jobs pass, append a distinct successful validation attempt, record the implementation commit SHA, and mark T0098 done in a follow-up versioned commit. If a check fails, fix the cause and rerun it; do not mark acceptance satisfied while CI is failing or pending.
+
+
+## Validation attempt 2 — failed
+
+The exact implementation commit `451980f2ec009f7915c10fa705a53789a6ea33b9` was checked by GitHub Actions:
+
+- [Step Three quality gate](https://github.com/artinrahimii/project/actions/runs/40306971116) — succeeded.
+- [HostLifecycle unit and integration tests](https://github.com/artinrahimii/project/actions/runs/40306970928) — failed before test execution with `NETSDK1022`: `HostRequestCoordinatorTests.cs` was included twice because the test project already includes local `.cs` files by default.
+- The Windows build job had not yet reached formatting/build steps when this failure was inspected; no pass/fail result is claimed for the Windows build in that attempt.
+
+## Correction attempt 3 — pending validation
+
+Removed the redundant `<Compile Include="HostRequestCoordinatorTests.cs" />` entry. The SDK default compile inclusion still discovers the test class; the explicit linked compile item for `src/Host.Windows/Requests/HostRequestCoordinator.cs` remains necessary because that source is outside the test project's directory. Re-run exact-commit CI before completing T0098.

@@ -17315,24 +17315,27 @@
         "step three/T0098/execution-report.md",
         "step three/T0098/evidence/verification.md"
       ],
-      "notes": "پیاده‌سازی پایهٔ HostRequestCoordinator با semaphore تک‌ظرفیتی و آزمون پذیرش قطعی افزوده شده است. آزمون C# محلی اجرا نشد، چون .NET SDK در محیط حاضر موجود نیست؛ نتیجهٔ CI همان commit پیش‌شرط تکمیل است. درخواست دوم فعلاً با semaphore سریال می‌شود؛ رفتار رد فوری با Busy متعلق به T0099 است.",
+      "notes": "پیاده‌سازی پایه و آزمون افزوده شدند. CI روی V 3.0.306 خطای پیکربندی NETSDK1022 را به علت Compile تکراری در csproj نشان داد؛ ورودی صریح تکراری حذف شد. آزمون C# هنوز در commit اصلاحی اجرا و تأیید نشده است، بنابراین وضعیت در حال اجرا باقی می‌ماند.",
       "execution_summary": {
-        "attempt_count": 1,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "T0098-2026-10-26-01",
+        "attempt_count": 3,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "T0098-2026-10-26-03",
         "last_attempt_result": "partial",
         "changed_files": [
-          "src/Host.Windows/Requests/HostRequestCoordinator.cs",
-          "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
           "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
-          "tests/HostLifecycle.Tests/Program.cs",
           "step three/T0098/execution-report.md",
           "step three/T0098/evidence/verification.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
-        "tests_failed": [],
+        "related_commits": [
+          "451980f2ec009f7915c10fa705a53789a6ea33b9"
+        ],
+        "tests_passed": [
+          "Step Three quality gate on implementation commit 451980f2ec009f7915c10fa705a53789a6ea33b9 succeeded (run 40306971116)."
+        ],
+        "tests_failed": [
+          "HostLifecycle job on implementation commit 451980f2ec009f7915c10fa705a53789a6ea33b9 failed before tests due to NETSDK1022 duplicate Compile item (run 40306970928)."
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -17381,6 +17384,63 @@
             "Introduced HostRequestCoordinator.ExecuteAsync<T> with capacity-one semaphore and cancellation-aware acquisition; T0099 will add fail-fast Busy behavior."
           ],
           "follow_up": "Check exact-commit quality, HostLifecycle and Windows build workflows before marking T0098 done."
+        },
+        {
+          "attempt_id": "T0098-2026-10-26-02",
+          "started_at": "2026-10-26T10:23:02.786Z",
+          "ended_at": "2026-10-26T10:23:16.748Z",
+          "result": "failed",
+          "summary": "Exact-commit HostLifecycle job failed before test execution with NETSDK1022 because HostRequestCoordinatorTests.cs was explicitly included despite SDK default Compile inclusion. Step Three quality gate passed.",
+          "changed_files": [],
+          "related_commits": [
+            "451980f2ec009f7915c10fa705a53789a6ea33b9"
+          ],
+          "tests": [
+            {
+              "name": "Step Three quality gate",
+              "result": "succeeded",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40306971116"
+            },
+            {
+              "name": "HostLifecycle unit and integration tests",
+              "result": "failed",
+              "summary": "NETSDK1022 duplicate Compile item HostRequestCoordinatorTests.cs; test code did not execute.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40306970928"
+            }
+          ],
+          "failure_details": "The explicit Compile Include for HostRequestCoordinatorTests.cs duplicated the SDK's default Compile item. Remove the explicit entry; retain the linked compile item for HostRequestCoordinator.cs under src/Host.Windows.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Remove duplicate Compile include and rerun exact-commit C# tests, formatting, and Windows Release build."
+        },
+        {
+          "attempt_id": "T0098-2026-10-26-03",
+          "started_at": "2026-10-26T10:32:42.707Z",
+          "ended_at": "2026-10-26T10:32:42.707Z",
+          "result": "partial",
+          "summary": "Removed the redundant Compile item for the test source; the SDK default inclusion remains active and the external coordinator source remains explicitly linked. Awaiting fresh CI.",
+          "changed_files": [
+            "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+            "step three/T0098/execution-report.md",
+            "step three/T0098/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "related_commits": [
+            "451980f2ec009f7915c10fa705a53789a6ea33b9"
+          ],
+          "tests": [
+            {
+              "name": "HostLifecycle build and tests on corrected project configuration",
+              "result": "pending",
+              "summary": "Not runnable locally; confirm on the next main commit's GitHub Actions."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect CI on the correction commit; if tests and Windows build pass, append successful evidence and mark T0098 done."
         }
       ]
     },
@@ -29800,6 +29860,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-26T10:22:38.195Z"
+  "updated_at": "2026-10-26T10:32:42.707Z"
 }
 ```
