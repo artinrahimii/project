@@ -1,8 +1,18 @@
-# T0115 execution report — in progress, awaiting exact-head CI
+# T0115 execution report — accepted
 
 - **Task:** add acceptance tests for a disconnected connection, malicious request, repeated connections and shutdown.
-- **Attempt:** `T0115-A001`.
-- **Baseline:** `main` at `e05efbcc6881599a7ccec40975ea72624a921111` (`V 3.0.346`); graph contains 229 tasks and 426 edges.
-- **Incoming dependency review:** `T0114 → T0115` and `T0107 → T0115` were reviewed as `sequencing_only`. T0115 exercises the existing listener lifecycle and coordinator-adjacent boundary but does not consume a new API from either task; both `blocks` edge types are preserved with evidence and rationale.
-- **Tests added:** a client that disconnects before sending its frame must release its slot and not prevent a later valid request; a semantically invalid framed Protobuf request must be rejected before callback; two sequential valid connections must each be processed once while the listener remains active. Existing tests continue to cover malformed/oversized/truncated frames, permission revocation and shutdown while a client waits for a frame.
-- **Tests:** exact-head CI pending. `T0115` remains `in_progress` until HostLifecycle and quality gates pass on the implementation commit.
+- **Implementation commit:** `V 3.0.347` — [`cb3da47b85050450da7957bf46ff2bb5c842bb46`](https://github.com/artinrahimii/project/commit/cb3da47b85050450da7957bf46ff2bb5c842bb46).
+- **Acceptance tests added** in `tests/HostLifecycle.Tests/NetworkInferenceRequestFrameAcceptanceTests.cs`:
+  - `DisconnectedClientDoesNotPreventSubsequentValidRequestAsync`: closes a loopback client before it sends a frame, waits for active connection cleanup, then verifies a later valid request is accepted.
+  - `SemanticallyInvalidRequestIsRejectedAsync`: sends a length-framed Protobuf message with an unsafe request ID and verifies the callback is not invoked.
+  - `SequentialConnectionsAreHandledIndependentlyAsync`: verifies two independent, sequential valid connections each reach the callback once and leave the listener active.
+- **Existing coverage retained:** malformed/oversized payloads, truncated length prefix and payload, participation revoked during request handling, no prompt text in ordinary console output, and shutdown while a client is waiting for a frame.
+- **Exact-SHA verification on V 3.0.347:**
+  - HostLifecycle suite — **PASS**: https://github.com/artinrahimii/project/actions/runs/40417341967/job/121902844412
+  - Step Three quality/graph/evidence gate — **PASS**: https://github.com/artinrahimii/project/actions/runs/40417341972
+  - Windows WPF Release build/startup smoke and host policy checks — **PASS**: https://github.com/artinrahimii/project/actions/runs/40417341967/job/121902844535
+  - Android lint, APK, Protobuf round-trip, generated-source checks and artifact upload — **PASS**: https://github.com/artinrahimii/project/actions/runs/40417341967/job/121902844191
+  - Real local llama.cpp/GGUF inference integration — **PASS**: https://github.com/artinrahimii/project/actions/runs/40417342040
+- **Dependencies:** `T0114 → T0115` and `T0107 → T0115` were reviewed as `sequencing_only`; the original `blocks` edge types were preserved with evidence and rationale.
+- **Result:** the new tests and all existing lifecycle acceptance tests passed on the exact implementation SHA. `T0115` is marked `done`.
+- **Next:** review `T0116` dependency edges and its transport-interface acceptance criteria before implementation.

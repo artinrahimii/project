@@ -1,17 +1,22 @@
-# T0115 verification evidence — pending exact-head CI
+# T0115 verification evidence — accepted
 
-## Baseline and edge review
-- Repository `artinrahimii/project`, branch `main`, base `e05efbcc6881599a7ccec40975ea72624a921111`.
-- Graph Blob `f33f7e9672b1721963c2bec64a7fcc729911d761` parsed to 229 tasks / 426 edges.
-- `T0114 → T0115`: reviewed as `sequencing_only`; the tests exercise the existing listener's behavior but consume no new T0114-specific API. `blocks` retained.
-- `T0107 → T0115`: reviewed as `sequencing_only`; the tests are in the TCP listener acceptance boundary and consume no new request coordinator artifact. `blocks` retained.
+## Baseline and graph integrity
+- Repository: `artinrahimii/project`, branch `main`.
+- Implementation commit: `cb3da47b85050450da7957bf46ff2bb5c842bb46` (`V 3.0.347`).
+- Graph path: `step three/project-graph.md`; Blob at the implementation SHA: `3c4f2d1c9407e3a520fe27365efa0e5381a5bb6e`, size 1,788,621 bytes. Full original UTF-8 content was read via Git Blob API, SHA-1 was recomputed over the original bytes in Git blob format and matched, and the complete fenced JSON parsed to 229 tasks and 426 edges.
 
-## Acceptance coverage
-- `DisconnectedClientDoesNotPreventSubsequentValidRequestAsync`: closes a real loopback TCP client before it sends a frame, waits for active client count to return to zero, and then verifies a later valid request is still delivered.
-- `SemanticallyInvalidRequestIsRejectedAsync`: sends a properly framed Protobuf request with an unsafe request ID and asserts the handler callback is never called.
-- `SequentialConnectionsAreHandledIndependentlyAsync`: verifies two valid one-frame connections are processed once each and the listener remains active after each client is closed.
-- Existing acceptance methods continue to cover malformed and oversized frames, truncated prefix/payload, participation revocation, privacy and shutdown of a client blocked waiting for its frame.
+## New runtime acceptance
+- `DisconnectedClientDoesNotPreventSubsequentValidRequestAsync`: real TCP peer disconnects before sending a frame; listener cleans up the active client slot and serves a later valid frame.
+- `SemanticallyInvalidRequestIsRejectedAsync`: a syntactically framed Protobuf request with unsafe request ID is closed before callback dispatch.
+- `SequentialConnectionsAreHandledIndependentlyAsync`: two valid one-frame TCP connections are handled once each while the listener remains active.
+- All were registered in the executable `NetworkInferenceRequestFrameAcceptanceTests.RunAsync`; a throw/failure would fail the HostLifecycle job.
 
-## Verification
-- Exact-head HostLifecycle and Step Three quality jobs: **pending**.
-- Do not mark `T0115` done until these test results pass on the new commit.
+## Exact-SHA CI results
+- HostLifecycle runtime acceptance — **PASS**: https://github.com/artinrahimii/project/actions/runs/40417341967/job/121902844412
+- Step Three quality gate including graph and evidence checks — **PASS**: https://github.com/artinrahimii/project/actions/runs/40417341972
+- Windows WPF Release build, startup smoke and policy checks — **PASS**: https://github.com/artinrahimii/project/actions/runs/40417341967/job/121902844535
+- Android lint/APK/Protobuf round-trip/generated-source/artifact checks — **PASS**: https://github.com/artinrahimii/project/actions/runs/40417341967/job/121902844191
+- Real local inference integration — **PASS**: https://github.com/artinrahimii/project/actions/runs/40417342040
+
+## Contract boundary
+These tests verify the current one-request-per-TCP-connection listener behavior. They do not claim peer authentication, encryption, or a completed TCP response delivery path.

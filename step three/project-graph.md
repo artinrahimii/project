@@ -20753,8 +20753,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0114 و T0107 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "تکمیل‌شده",
       "actual_output_paths": [
         "tests/HostLifecycle.Tests/NetworkInferenceRequestFrameAcceptanceTests.cs"
       ],
@@ -20766,25 +20766,33 @@
         "step three/T0115/execution-report.md",
         "step three/T0115/evidence/verification.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0115 exact-head acceptance passed on V 3.0.347: real loopback TCP tests confirmed disconnect cleanup/recovery, fail-closed rejection of unsafe request ID before callback, and two sequential valid connections handled once each. Existing malformed/truncated/oversized, participation revocation, privacy and shutdown tests remained green. Quality, Windows, Android and real inference jobs also passed.",
       "execution_summary": {
-        "attempt_count": 1,
+        "attempt_count": 2,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0115-A001",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "T0115-A001-verification",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "tests/HostLifecycle.Tests/NetworkInferenceRequestFrameAcceptanceTests.cs",
           "step three/T0115/execution-report.md",
           "step three/T0115/evidence/verification.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
+        "related_commits": [
+          "cb3da47b85050450da7957bf46ff2bb5c842bb46"
+        ],
+        "tests_passed": [
+          "HostLifecycle runtime acceptance (including disconnected client recovery, semantic rejection before callback, sequential connections, malformed/truncated/oversized frames, participation revocation and shutdown) — PASS on V 3.0.347: https://github.com/artinrahimii/project/actions/runs/40417341967/job/121902844412",
+          "Step Three quality gate (Python tests, syntax, graph and evidence guard) — PASS on V 3.0.347: https://github.com/artinrahimii/project/actions/runs/40417341972",
+          "Windows WPF Release build, C# formatting, generated Protobuf validation, WPF startup smoke and agent-tool policy/capability gates — PASS on V 3.0.347: https://github.com/artinrahimii/project/actions/runs/40417341967/job/121902844535",
+          "Android Kotlin lint, debug APK, Protobuf round-trip, generated Java/Kotlin source checks and artifact upload — PASS on V 3.0.347: https://github.com/artinrahimii/project/actions/runs/40417341967/job/121902844191",
+          "Real local llama.cpp/GGUF inference integration — PASS on V 3.0.347: https://github.com/artinrahimii/project/actions/runs/40417342040"
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "required",
+          "state": "passed",
           "triggering_contracts": [
             "NetworkInferenceRequestFrameReader framing contract",
             "ParticipationGatedNetworkListener lifecycle and callback contract"
@@ -20841,6 +20849,47 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Run exact-head HostLifecycle and Step Three quality checks. Fix any behavioral failure before marking done."
+        },
+        {
+          "attempt_id": "T0115-A001-verification",
+          "started_at": "2026-10-26T23:05:55Z",
+          "ended_at": "2026-10-26T23:07:31Z",
+          "result": "succeeded",
+          "summary": "The exact V3.0.347 HostLifecycle job passed with the newly added loopback acceptance cases: a client disconnecting before sending data is cleaned up and a later request succeeds; an unsafe request identifier is rejected before callback dispatch; two sequential valid connections are independently admitted once each. The same SHA passed Step Three graph/quality validation, Windows WPF build/startup/policy checks, Android APK and Protobuf round-trip checks, and real local llama.cpp/GGUF inference.",
+          "changed_files": [
+            "tests/HostLifecycle.Tests/NetworkInferenceRequestFrameAcceptanceTests.cs",
+            "step three/T0115/execution-report.md",
+            "step three/T0115/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": "cb3da47b85050450da7957bf46ff2bb5c842bb46",
+          "tests": [
+            {
+              "result": "passed",
+              "summary": "HostLifecycle runtime acceptance (including disconnected client recovery, semantic rejection before callback, sequential connections, malformed/truncated/oversized frames, participation revocation and shutdown) — PASS on V 3.0.347: https://github.com/artinrahimii/project/actions/runs/40417341967/job/121902844412"
+            },
+            {
+              "result": "passed",
+              "summary": "Step Three quality gate (Python tests, syntax, graph and evidence guard) — PASS on V 3.0.347: https://github.com/artinrahimii/project/actions/runs/40417341972"
+            },
+            {
+              "result": "passed",
+              "summary": "Windows WPF Release build, C# formatting, generated Protobuf validation, WPF startup smoke and agent-tool policy/capability gates — PASS on V 3.0.347: https://github.com/artinrahimii/project/actions/runs/40417341967/job/121902844535"
+            },
+            {
+              "result": "passed",
+              "summary": "Android Kotlin lint, debug APK, Protobuf round-trip, generated Java/Kotlin source checks and artifact upload — PASS on V 3.0.347: https://github.com/artinrahimii/project/actions/runs/40417341967/job/121902844191"
+            },
+            {
+              "result": "passed",
+              "summary": "Real local llama.cpp/GGUF inference integration — PASS on V 3.0.347: https://github.com/artinrahimii/project/actions/runs/40417342040"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "T0116 is next: introduce the peer transport interface. Before starting it, review T0115 outgoing edges and every incoming edge of T0116."
         }
       ]
     },
@@ -33034,6 +33083,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-26T23:04:32.841Z"
+  "updated_at": "2026-10-26T23:09:11.405Z"
 }
 ```
