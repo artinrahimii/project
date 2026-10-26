@@ -106,6 +106,7 @@ await HostRequestCoordinatorFailureAcceptanceTests.RunAsync();
 await HostNetworkListenerParticipationTests.RunAsync();
 await ParticipationNetworkListenerLifecycleTests.RunAsync();
 await NetworkInferenceRequestFrameAcceptanceTests.RunAsync();
+await NetworkInferenceRequestResponseMapperAcceptanceTests.RunAsync();
 SecureRequestIdGeneratorTests.Run();
 await HostRequestAdmissionTests.RunAsync();
 await HostInferenceSessionConcurrencyTests.RunAsync();

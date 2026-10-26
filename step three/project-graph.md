@@ -20223,33 +20223,117 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0111 و T0107 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "src/Host.Windows/Networking/NetworkInferenceRequestResponseMapper.cs",
+        "tests/HostLifecycle.Tests/NetworkInferenceRequestResponseMapperAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "docs/decisions/ADR-0003-tcp-request-framing.md"
+      ],
       "expected_output_paths": [
         "src/Host.Windows/Networking/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "tests/HostLifecycle.Tests/NetworkInferenceRequestResponseMapperAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "src/Host.Windows/Networking/NetworkInferenceRequestResponseMapper.cs",
+        "step three/T0112/execution-report.md",
+        "step three/T0112/evidence/verification.md"
+      ],
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0112-A001 adds a typed response mapper for Busy, UnsupportedModel, invalid/expired/version/resource-limit requests and sanitized Internal errors. The mapper returns Protobuf message types; network serialization/send remains a separate follow-on concern. Incoming T0111 and T0107 edges have been reviewed as contract_or_interface_dependency, both validated; outgoing T0112→T0113 remains unreviewed. CI pending.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0112-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Host.Windows/Networking/NetworkInferenceRequestResponseMapper.cs",
+          "tests/HostLifecycle.Tests/NetworkInferenceRequestResponseMapperAcceptanceTests.cs",
+          "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+          "tests/HostLifecycle.Tests/Program.cs",
+          "docs/decisions/ADR-0003-tcp-request-framing.md",
+          "step three/T0112/execution-report.md",
+          "step three/T0112/evidence/verification.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
-          "affected_by_contract_changes": [],
-          "review_evidence": []
+          "state": "required",
+          "triggering_contracts": [
+            "shared HostRequestOutcome/admission contract",
+            "ProtocolError/HostBusy/UnsupportedModel Protobuf contracts"
+          ],
+          "affected_by_contract_changes": [
+            "T0113",
+            "T0114",
+            "T0115"
+          ],
+          "review_evidence": [
+            "src/Host.Windows/Requests/HostRequestCoordinator.cs",
+            "protocol/whitep/v1/messages.proto",
+            "src/Host.Windows/Networking/NetworkInferenceRequestResponseMapper.cs"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0112-A001",
+          "started_at": "2026-10-26T22:46:28.472Z",
+          "ended_at": "2026-10-26T22:46:28.472Z",
+          "result": "partial",
+          "summary": "Implemented a failure-response mapper from host admission/validation outcomes to the typed Protobuf HostBusy, UnsupportedModel and ProtocolError contracts; added acceptance cases for busy, not-ready, model mismatch, invalid/unsupported/expired validation, capacity and sanitized internal errors. Exact-head CI pending.",
+          "changed_files": [
+            "src/Host.Windows/Networking/NetworkInferenceRequestResponseMapper.cs",
+            "tests/HostLifecycle.Tests/NetworkInferenceRequestResponseMapperAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "docs/decisions/ADR-0003-tcp-request-framing.md",
+            "step three/T0112/execution-report.md",
+            "step three/T0112/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "related_commits": [],
+          "tests": [
+            {
+              "name": "NetworkInferenceRequestResponseMapperAcceptanceTests",
+              "result": "pending",
+              "summary": "Will be confirmed by exact-head HostLifecycle job."
+            },
+            {
+              "name": "Step Three quality gate",
+              "result": "pending",
+              "summary": "Will be confirmed against the graph/report commit."
+            },
+            {
+              "name": "Windows/Android product checks",
+              "result": "pending",
+              "summary": "Will be confirmed against the implementation commit."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            {
+              "path": "src/Host.Windows/Networking/NetworkInferenceRequestResponseMapper.cs",
+              "detail": "Maps coordinator admission outcomes and shared validation results to typed Protobuf failure messages with generic, sanitized text."
+            },
+            {
+              "path": "tests/HostLifecycle.Tests/NetworkInferenceRequestResponseMapperAcceptanceTests.cs",
+              "detail": "Adds positive acceptance checks for Busy, UnsupportedModel, invalid/unsupported/expired requests, capacity failure and internal-error sanitization."
+            }
+          ],
+          "follow_up": "Run exact-head HostLifecycle, Step Three quality, Windows build and Android build. Only mark T0112 done if those checks pass."
+        }
+      ]
     },
     {
       "id": "T0113",
@@ -28236,19 +28320,30 @@
       "from": "T0111",
       "to": "T0112",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0112 maps the validation result and protocol error codes created/standardized by T0111 into the response contract; this is a direct shared wire-contract dependency.",
+      "validation_status": "validated",
+      "evidence": [
+        "protocol/whitep/v1/messages.proto",
+        "src/Shared.Contracts/ProtocolMessageValidator.cs",
+        "src/Host.Infrastructure/ProtocolMessageParser.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0111/execution-report.md"
+      ]
     },
     {
       "from": "T0107",
       "to": "T0112",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0112 directly consumes HostRequestOutcome, HostRequestStatus and HostRequestAdmissionFailure from T0107's coordinator/admission contract and maps those outcomes to HostBusy, UnsupportedModel or ProtocolError.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/Requests/HostRequestCoordinator.cs",
+        "src/Host.Windows/Requests/HostRequestAdmissionPolicy.cs",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorFailureAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/HostRequestResponseDeliveryTests.cs"
+      ]
     },
     {
       "from": "T0112",
@@ -32394,8 +32489,43 @@
         "step three/T0107/evidence/verification.md"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-26T22:46:28.472Z",
+      "edge_from": "T0111",
+      "edge_to": "T0112",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "old_validation_status": "unreviewed",
+      "new_validation_status": "validated",
+      "reason": "T0112 maps the validation result and protocol error codes created/standardized by T0111 into the response contract; this is a direct shared wire-contract dependency.",
+      "evidence": [
+        "protocol/whitep/v1/messages.proto",
+        "src/Shared.Contracts/ProtocolMessageValidator.cs",
+        "src/Host.Infrastructure/ProtocolMessageParser.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0111/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-26T22:46:28.472Z",
+      "edge_from": "T0107",
+      "edge_to": "T0112",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "old_validation_status": "unreviewed",
+      "new_validation_status": "validated",
+      "reason": "T0112 directly consumes HostRequestOutcome, HostRequestStatus and HostRequestAdmissionFailure from T0107's coordinator/admission contract and maps those outcomes to HostBusy, UnsupportedModel or ProtocolError.",
+      "evidence": [
+        "src/Host.Windows/Requests/HostRequestCoordinator.cs",
+        "src/Host.Windows/Requests/HostRequestAdmissionPolicy.cs",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorFailureAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/HostRequestResponseDeliveryTests.cs"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-26T22:42:56.344Z"
+  "updated_at": "2026-10-26T22:46:28.472Z"
 }
 ```

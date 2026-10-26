@@ -34,6 +34,7 @@
     <Compile Include="../../src/Host.Windows/Tools/AgentToolWorkerHost.cs" Link="Tools/AgentToolWorkerHost.cs" />
     <Compile Include="../../src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs" Link="Networking/ParticipationGatedNetworkListener.cs" />
     <Compile Include="../../src/Host.Windows/Networking/NetworkInferenceRequestFrameReader.cs" Link="Networking/NetworkInferenceRequestFrameReader.cs" />
+    <Compile Include="../../src/Host.Windows/Networking/NetworkInferenceRequestResponseMapper.cs" Link="Networking/NetworkInferenceRequestResponseMapper.cs" />
     <Compile Include="../../src/Host.Windows/Networking/ParticipationNetworkListenerLifecycle.cs" Link="Networking/ParticipationNetworkListenerLifecycle.cs" />
     <Compile Include="../../src/Host.Windows/Requests/HostRequestCoordinator.cs" Link="Requests/HostRequestCoordinator.cs" />
     <Compile Include="../../src/Host.Windows/Requests/HostRequestResponseDeliveryGate.cs" Link="Requests/HostRequestResponseDeliveryGate.cs" />

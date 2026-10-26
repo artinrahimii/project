@@ -19,3 +19,8 @@
 ## Verification boundary
 
 HostLifecycle acceptance tests send framed Protobuf bytes over real loopback TCP, confirm the typed request reaches the shared parser, and check fail-closed handling for malformed/oversized/truncated frames and shutdown while a peer waits for a frame.
+
+
+## Response failure contract mapping
+
+`NetworkInferenceRequestResponseMapper` maps a busy or not-ready host to the `HostBusy` message, a requested/ready-model mismatch to `UnsupportedModel`, validation failures to `ProtocolError` with the specific invalid-message, unsupported-version, request-expired or resource-limit code, and unexpected processing failures to a sanitized `INTERNAL` error. The mapping returns typed Protobuf messages only; it does not claim that a response frame has been serialized or delivered over TCP. Inactive participation and unavailable model state fail closed as busy; insufficient/unknown capacity fails closed as a resource-limit error.
