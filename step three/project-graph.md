@@ -18527,8 +18527,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0102 و T0097 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "src/Host.Windows/Requests/HostRequestCoordinator.cs",
         "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
@@ -18553,38 +18553,40 @@
         "step three/T0103/execution-report.md",
         "step three/T0103/evidence/verification.md"
       ],
-      "notes": "Coordinator لغو صریح درخواست فعال دارد و cancellation token پیوندی را به callback می‌دهد؛ آزمون یکپارچه مسیر coordinator→LlamaCppInferenceEngine→HttpClient و API لغو engine را بررسی می‌کند. تا گذر CI همین commit وظیفه در حال اجراست. لغو HTTP تضمین نمی‌کند محاسبهٔ سمت llama.cpp فوراً متوقف شود؛ مسیر تولیدی P2P ادعا نشده است.",
+      "notes": "آزمون‌های CI دقیق V 3.0.319 تأیید کردند که لغو صریح coordinator به token عملیات، LlamaCppInferenceEngine و HTTP request می‌رسد؛ API لغو خود engine نیز تأیید شد و gate پس از لغو آزاد می‌شود. این نتیجه مسیر HTTP کلاینت را ثابت می‌کند، نه توقف فوری محاسبهٔ سمت سرور یا وجود transport تولیدی P2P.",
       "execution_summary": {
-        "attempt_count": 1,
+        "attempt_count": 2,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0103-2026-10-26-01",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "T0103-2026-10-26-02",
+        "last_attempt_result": "succeeded",
         "changed_files": [
-          "src/Host.Windows/Requests/HostRequestCoordinator.cs",
-          "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
-          "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
-          "tests/HostLifecycle.Tests/Program.cs",
-          "tests/HostLifecycle.Tests/LlamaCppInferenceEngineCancellationTests.cs",
           "step three/T0103/execution-report.md",
           "step three/T0103/evidence/verification.md",
           "step three/project-graph.md"
         ],
         "related_commits": [
-          "39d793913731f22aeef6ed2eff15f3878b0b8239"
+          "e6022b14b1bbf4cb00fe23da406c4c65d965047e"
         ],
-        "tests_passed": [],
+        "tests_passed": [
+          "ActiveCancellationCancelsOperationAndReleasesGateAsync — PASS: coordinator signalled the active token and released the gate (HostLifecycle job 121560350510).",
+          "CoordinatorCancellationReachesInferenceEngineAndHttpAsync — PASS: cancellation propagated from coordinator through LlamaCppInferenceEngine to HttpClient.SendAsync (HostLifecycle job 121560350510).",
+          "EngineCancelApiReachesHttpAsync — PASS: IInferenceEngine.CancelAsync cancelled active generation and the HTTP request token (HostLifecycle job 121560350510).",
+          "Step Three quality gate passed for V 3.0.319 (https://github.com/artinrahimii/project/actions/runs/40319456864).",
+          "White-P product build passed all jobs on V 3.0.319 (https://github.com/artinrahimii/project/actions/runs/40319456776).",
+          "Real local inference integration passed on V 3.0.319 (https://github.com/artinrahimii/project/actions/runs/40319456842)."
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "in_review",
+          "state": "passed",
           "triggering_contracts": [
             "HostRequestCoordinator operation CancellationToken",
             "IInferenceEngine.GenerateAsync/CancelAsync cancellation contract",
             "LlamaCppServerBackend HTTP request cancellation"
           ],
           "affected_by_contract_changes": [
-            "The coordinator now owns a linked cancellable token for the active operation and exposes CancelActiveRequest(); engine and HTTP cancellation are exercised through that token. The deadline contract and protobuf wire schema remain unchanged."
+            "The active coordinator operation has a linked cancellation token; CancelActiveRequest cancels it. Exact-head tests show propagation through the inference engine to the HTTP request, and the coordinator gate is released. No protobuf schema change was made. No P2P request/response transport is claimed."
           ],
           "review_evidence": [
             "src/Host.Windows/Requests/HostRequestCoordinator.cs",
@@ -18592,7 +18594,9 @@
             "tests/HostLifecycle.Tests/LlamaCppInferenceEngineCancellationTests.cs",
             "src/Host.Application/Inference/IInferenceEngine.cs",
             "src/Host.Windows/Inference/LlamaCppInferenceEngine.cs",
-            "src/Host.Infrastructure/LlamaCppServerBackend.cs"
+            "src/Host.Infrastructure/LlamaCppServerBackend.cs",
+            "step three/T0103/execution-report.md",
+            "step three/T0103/evidence/verification.md"
           ]
         }
       },
@@ -18641,6 +18645,64 @@
             "Added public CancelActiveRequest API and linked per-request token; no protobuf schema change."
           ],
           "follow_up": "Inspect exact-head quality, HostLifecycle cancellation logs, Windows formatting/build and Android product checks; retain in_progress until required exact-head CI passes. Review T0103 -> T0104 before starting T0104."
+        },
+        {
+          "attempt_id": "T0103-2026-10-26-02",
+          "started_at": "2026-10-26T12:02:10Z",
+          "ended_at": "2026-10-26T12:04:18Z",
+          "result": "succeeded",
+          "summary": "Exact-head V 3.0.319 CI passed. HostLifecycle logs explicitly confirmed coordinator cancellation, cancellation propagation through LlamaCppInferenceEngine to HttpClient, and engine CancelAsync; quality gate, Windows WPF build/startup, Android build/tests/artifact upload, and real local inference workflow all succeeded.",
+          "changed_files": [
+            "step three/T0103/execution-report.md",
+            "step three/T0103/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "related_commits": [
+            "e6022b14b1bbf4cb00fe23da406c4c65d965047e"
+          ],
+          "commit_sha": "e6022b14b1bbf4cb00fe23da406c4c65d965047e",
+          "tests": [
+            {
+              "name": "ActiveCancellationCancelsOperationAndReleasesGateAsync",
+              "result": "passed",
+              "summary": "Coordinator signals the active operation token; task cancels and the single-operation gate is released.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40319456776/job/121560350510"
+            },
+            {
+              "name": "CoordinatorCancellationReachesInferenceEngineAndHttpAsync",
+              "result": "passed",
+              "summary": "Cancellation flows from coordinator through LlamaCppInferenceEngine to the active HTTP request token.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40319456776/job/121560350510"
+            },
+            {
+              "name": "EngineCancelApiReachesHttpAsync",
+              "result": "passed",
+              "summary": "IInferenceEngine.CancelAsync cancels the active generation and HTTP request token.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40319456776/job/121560350510"
+            },
+            {
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40319456864"
+            },
+            {
+              "name": "White-P product build",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40319456776"
+            },
+            {
+              "name": "Real local inference integration",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40319456842"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "Explicit coordinator cancellation API and linked per-request cancellation token; no protobuf wire schema change."
+          ],
+          "follow_up": "T0104 is next by task order. Before starting it, inspect and validate the currently unreviewed edge T0103 -> T0104; do not assume its relation from type=blocks alone."
         }
       ]
     },
@@ -30931,6 +30993,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-26T12:00:46.673Z"
+  "updated_at": "2026-10-26T12:06:36.563Z"
 }
 ```

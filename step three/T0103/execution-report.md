@@ -34,3 +34,19 @@
 - `tests/HostLifecycle.Tests/Program.cs`
 - `step three/T0103/execution-report.md`
 - `step three/T0103/evidence/verification.md`
+
+
+## Attempt T0103-2026-10-26-02 — exact-head CI acceptance succeeded
+
+- Tested implementation commit: `e6022b14b1bbf4cb00fe23da406c4c65d965047e` (`V 3.0.319`), branch `main`.
+- The exact-head [Step Three quality gate](https://github.com/artinrahimii/project/actions/runs/40319456864) passed, including graph structure, syntax and recorded-output/evidence checks.
+- The exact-head [HostLifecycle job](https://github.com/artinrahimii/project/actions/runs/40319456776/job/121560350510) passed. Its log explicitly reports:
+  - `PASS: HostRequestCoordinator explicitly cancels the active operation token and releases the gate.`
+  - `PASS: coordinator cancellation flows through LlamaCppInferenceEngine to the active HTTP request.`
+  - `PASS: IInferenceEngine.CancelAsync cancels active generation and its HTTP request token.`
+- The exact-head [Windows WPF job](https://github.com/artinrahimii/project/actions/runs/40319456776/job/121560350429) passed C# formatting, Release build, generated Protobuf checks, application startup smoke test and agent-tool acceptance steps.
+- The exact-head [Android job](https://github.com/artinrahimii/project/actions/runs/40319456776/job/121560350171) passed Kotlin formatting/lint, debug APK build, Protobuf unit tests, generated-source checks and artifact upload.
+- The exact-head [real local inference workflow](https://github.com/artinrahimii/project/actions/runs/40319456842) also passed.
+- **Outcome:** T0103 acceptance is verified for the coordinator → inference-engine cancellation-token → HTTP request path and the engine's explicit `CancelAsync` path. Request-cancellation cleanup releases the single-request gate. The existing deadline behavior remains covered by the same HostLifecycle suite.
+- **Scope limitation:** cancellation of the client's HTTP operation is not a guarantee that llama.cpp's server-side computation stops immediately. This does not implement or claim the missing production P2P ingress/response transport.
+- Local .NET execution remains unavailable in this environment; all test/build claims above are based on exact-head GitHub Actions results and inspected logs.

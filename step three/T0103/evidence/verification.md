@@ -7,3 +7,14 @@
 - **Automated acceptance sources:** `HostRequestCoordinatorTests` and new `LlamaCppInferenceEngineCancellationTests` cover coordinator cancellation, cancellation of the operation token, propagation to the HTTP call, engine-level `CancelAsync`, and gate release. Exact-head CI results remain pending at report creation.
 - **Protocol:** no Protobuf field or field number changed.
 - **Limitations:** no local .NET SDK is available; no local C# test/build is claimed. HTTP cancellation reaching the client transport is not a guarantee that remote model computation stops immediately. No production P2P request ingress/response sender is claimed.
+
+
+## Exact-head verification — T0103-2026-10-26-02
+
+- Tested commit: `e6022b14b1bbf4cb00fe23da406c4c65d965047e` (`V 3.0.319`) on `main`.
+- HostLifecycle cancellation acceptance passed in job `121560350510`: coordinator API cancels the active token, cancellation reaches the HTTP request through `LlamaCppInferenceEngine`, and `IInferenceEngine.CancelAsync` cancels active generation.
+- Step Three quality gate passed: https://github.com/artinrahimii/project/actions/runs/40319456864
+- Windows C# formatting, Release build, Protobuf generation, startup smoke and other Windows gates passed: https://github.com/artinrahimii/project/actions/runs/40319456776/job/121560350429
+- Android lint/formatting, debug APK, Protobuf round-trip tests, generated-source checks and artifact upload passed: https://github.com/artinrahimii/project/actions/runs/40319456776/job/121560350171
+- Real local inference workflow passed on the same implementation commit: https://github.com/artinrahimii/project/actions/runs/40319456842
+- No protobuf fields/numbers changed. No production P2P ingress or response sender is claimed.
