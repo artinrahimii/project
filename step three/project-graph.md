@@ -16928,33 +16928,94 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0095 و T0087 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "tests/HostLifecycle.Tests/AgentToolPolicyRejectionAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        ".github/workflows/product-build.yml",
+        "step three/T0096/execution-report.md",
+        "step three/project-graph.md"
+      ],
       "expected_output_paths": [
         "src/Host.Windows/Chat/ و src/Host.Windows/Tools/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "tests/HostLifecycle.Tests/AgentToolPolicyRejectionAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/AgentToolExecutionAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/AgentToolProcessExecutorTests.cs",
+        "src/Host.Windows/Tools/AgentToolWorkerHost.cs",
+        "src/Host.Windows/Tools/AgentToolExecutionCoordinator.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        ".github/workflows/product-build.yml"
+      ],
+      "notes": "Dedicated regression suite added for worker-side unknown-tool and invalid-argument rejection, malformed worker protocol input, and confirmation-before-process-dispatch. Tests are wired into the regular HostLifecycle run and a focused Windows product-workflow step. Exact-commit CI is pending; do not mark done until those checks pass.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0096-2026-10-26-01",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "tests/HostLifecycle.Tests/AgentToolPolicyRejectionAcceptanceTests.cs",
+          "tests/HostLifecycle.Tests/Program.cs",
+          ".github/workflows/product-build.yml",
+          "step three/T0096/execution-report.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
+          "state": "passed",
+          "triggering_contracts": [
+            "T0095 worker/process executor protocol",
+            "T0094 approval-before-execution coordinator"
+          ],
           "affected_by_contract_changes": [],
-          "review_evidence": []
+          "review_evidence": [
+            "src/Host.Windows/Tools/AgentToolProcessExecutor.cs",
+            "src/Host.Windows/Tools/AgentToolWorkerHost.cs",
+            "src/Host.Windows/Tools/AgentToolExecutionCoordinator.cs",
+            "tests/HostLifecycle.Tests/AgentToolExecutionAcceptanceTests.cs"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0096-2026-10-26-01",
+          "started_at": "2026-10-26T08:14:12.974Z",
+          "ended_at": "2026-10-26T08:14:12.974Z",
+          "result": "partial",
+          "summary": "Added dedicated acceptance coverage that drives the real test worker to reject unknown tool names and invalid arguments, checks malformed protocol rejection, and ensures side-effecting actions never launch the worker without explicit positive confirmation. Wired into Linux HostLifecycle and a focused Windows product workflow step.",
+          "changed_files": [
+            "tests/HostLifecycle.Tests/AgentToolPolicyRejectionAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/Program.cs",
+            ".github/workflows/product-build.yml",
+            "step three/T0096/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "related_commits": [],
+          "tests": [
+            {
+              "name": "AgentToolPolicyRejectionAcceptanceTests.RunAsync",
+              "result": "not_run",
+              "summary": "Added; exact-commit GitHub Actions run pending."
+            },
+            {
+              "name": "Windows agent-tool policy rejection step",
+              "result": "not_run",
+              "summary": "New windows-latest step will run in the exact implementation workflow."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect exact-commit quality gate, HostLifecycle tests and new Windows product step; then record results in a follow-up version commit."
+        }
+      ]
     },
     {
       "id": "T0097",
@@ -29205,6 +29266,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-26T08:07:49.256Z"
+  "updated_at": "2026-10-26T08:14:12.974Z"
 }
 ```

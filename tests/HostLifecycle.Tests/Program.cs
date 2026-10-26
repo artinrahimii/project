@@ -17,6 +17,11 @@ if (args.Contains("--test-agent-tool-process-executor", StringComparer.Ordinal))
     await AgentToolProcessExecutorTests.RunAsync();
     return;
 }
+if (args.Contains("--test-agent-tool-policy-rejections", StringComparer.Ordinal))
+{
+    await AgentToolPolicyRejectionAcceptanceTests.RunAsync();
+    return;
+}
 
 if (args.Contains("--agent-tool-worker", StringComparer.Ordinal))
 {
@@ -74,6 +79,7 @@ ChatConversationAcceptanceTests.Run();
 AgentToolRegistryAcceptanceTests.Run();
 await AgentToolExecutionAcceptanceTests.RunAsync();
 await AgentToolProcessExecutorTests.RunAsync();
+await AgentToolPolicyRejectionAcceptanceTests.RunAsync();
 HostCapacityAcceptanceTests.Run();
 InferenceEngineContractTests.Run();
 ModelCatalogParserAcceptanceTests.Run();
