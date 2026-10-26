@@ -82,3 +82,19 @@
 - Changed `SetInformationJobObject` to accept an explicit native `IntPtr` to a separately allocated `JOBOBJECT_BASIC_LIMIT_INFORMATION` structure, populated via `Marshal.StructureToPtr` and freed deterministically. This matches the native API's `LPVOID` contract.
 - If Windows refuses the requested limits, the exception now preserves the exact Win32 error code so the next native CI result is diagnostic rather than opaque. The executor continues to fail closed if the restrictions cannot be applied.
 - This correction is committed as `V 3.0.299`; do not mark T0095 done until the focused Windows Job Object test and the whole product CI pass on that commit.
+
+
+
+## Exact-commit validation — attempt A009 (failed on V 3.0.299)
+
+- Tested commit: `47856531a90a63ff736fe9ed067504913c4cf5a8` (`V 3.0.299`). The Step Three quality gate passed: https://github.com/artinrahimii/project/actions/runs/40281428816.
+- The HostLifecycle tests on Linux passed on the exact commit: https://github.com/artinrahimii/project/actions/runs/40281428741/job/121435372882. The Android APK/lint/Protobuf checks also passed in that workflow.
+- The Windows WPF Release build, generated Protobuf check and startup smoke test passed; the dedicated Windows process-restriction test failed at `SetInformationJobObject` with Win32 error 87 (`ERROR_INVALID_PARAMETER`): https://github.com/artinrahimii/project/actions/runs/40281428741.
+- Root cause found against the native API contract: the implementation set `JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE` while passing `JOBOBJECT_BASIC_LIMIT_INFORMATION`. Microsoft documents that this flag requires `JOBOBJECT_EXTENDED_LIMIT_INFORMATION`; successful C# compilation was not sufficient evidence of native configuration success. No claim is made that V 3.0.299 passed the Windows restriction test.
+
+## Corrective attempt A010 — use the required extended Job Object structure
+
+- Change: `WindowsWorkerJob.CreateIfSupported` now populates `JOBOBJECT_EXTENDED_LIMIT_INFORMATION` (including the nested basic limits and native `IO_COUNTERS`) and passes information class 9 (`JobObjectExtendedLimitInformation`) to `SetInformationJobObject`. The active-process limit of one and kill-on-job-close policy remain enabled; configuration/assignment still fails closed.
+- API reference used to diagnose the mismatch: https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-jobobject_basic_limit_information and https://learn.microsoft.com/en-us/windows/win32/api/jobapi2/nf-jobapi2-setinformationjobobject.
+- Base graph read from commit `47856531a90a63ff736fe9ed067504913c4cf5a8`, path `step three/project-graph.md`, Blob `ce50976115b51c7584e48e3d8e4e51b3f993bc97`; the original UTF-8 size was 1,542,009 bytes and its recomputed Git SHA-1 matched the tree Blob. The complete fenced JSON parsed as 229 unique tasks and 426 edges.
+- This commit records the repair as an implementation attempt only. Exact-commit Windows Job Object test, product workflow, Step Three quality gate and other applicable workflows remain pending; T0095 stays `in_progress` until the Windows native check and full product validation pass.

@@ -16511,11 +16511,11 @@
         "tests/HostLifecycle.Tests/AgentToolProcessExecutorTests.cs",
         "step three/T0095/execution-report.md"
       ],
-      "notes": "Linux worker process/timeout/environment tests pass, Windows WPF build and startup smoke pass, but the dedicated Windows Job Object test exposed SetInformationJobObject failure on V 3.0.298. Native marshaling now uses an explicit unmanaged pointer and retains Win32 error code. Keep T0095 in_progress until the corrected Windows native test and all product CI pass.",
+      "notes": "T0095 remains in_progress. V 3.0.299 passed Linux lifecycle tests, Android validation, Windows compilation/startup and quality checks, but the focused Windows test failed with Win32 error 87 because JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE was passed using JOBOBJECT_BASIC_LIMIT_INFORMATION. V 3.0.300 corrects the native contract to JOBOBJECT_EXTENDED_LIMIT_INFORMATION/class 9; do not mark done until exact-commit Windows Job Object and full product CI pass. The worker is not an AppContainer/restricted-token sandbox and still runs as the same OS user.",
       "execution_summary": {
-        "attempt_count": 8,
-        "failed_attempt_count": 3,
-        "last_attempt_id": "T0095-2026-10-26-08",
+        "attempt_count": 10,
+        "failed_attempt_count": 4,
+        "last_attempt_id": "T0095-2026-10-26-10",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Host.Windows/Tools/IAgentToolProcessExecutor.cs",
@@ -16536,7 +16536,8 @@
           "17e7f7ede0f3f2357fb95ae484466f1aa02f45da",
           "44be76a3f02ea579789cae6bae942c44c2f7f0cd",
           "1aa5f1985db78f48ae602722c0f77761f473c10d",
-          "9b2540a70fd874da1cd5bddb5a769f12163ef295"
+          "9b2540a70fd874da1cd5bddb5a769f12163ef295",
+          "47856531a90a63ff736fe9ed067504913c4cf5a8"
         ],
         "tests_passed": [
           "Step Three quality gate passed on V 3.0.297: https://github.com/artinrahimii/project/actions/runs/40280625154",
@@ -16547,24 +16548,26 @@
         "tests_failed": [
           "HostLifecycle compilation failed on V 3.0.295 with CS1022: https://github.com/artinrahimii/project/actions/runs/40280156905",
           "Windows WPF compilation failed on V 3.0.296 with CS0246 for Stream and StreamReader: https://github.com/artinrahimii/project/actions/runs/40280367697",
-          "Windows Job Object configuration failed on V 3.0.298; SetInformationJobObject returned false in the focused Windows test: https://github.com/artinrahimii/project/actions/runs/40280875990/job/121433660749"
+          "Windows Job Object configuration failed on V 3.0.298; SetInformationJobObject returned false in the focused Windows test: https://github.com/artinrahimii/project/actions/runs/40280875990/job/121433660749",
+          "Windows Job Object configuration failed on exact commit V 3.0.299: SetInformationJobObject returned ERROR_INVALID_PARAMETER (87); https://github.com/artinrahimii/project/actions/runs/40281428741"
         ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "passed",
+          "state": "in_progress",
           "triggering_contracts": [
-            "T0094 approval-aware execution contract",
-            "T0087 model-license catalog contract review"
+            "T0094 approval-before-execution coordinator",
+            "T0087 model-license catalog contract reviewed as sequencing only",
+            "Windows Job Object native API contract"
           ],
           "affected_by_contract_changes": [
-            "Agent-tool execution is now delegated to a separately launched worker that independently enforces its allowlist; approval remains in the host coordinator before dispatch."
+            "Corrected SetInformationJobObject to use JOBOBJECT_EXTENDED_LIMIT_INFORMATION (class 9), required for JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE."
           ],
           "review_evidence": [
             "src/Host.Windows/Tools/AgentToolExecutionCoordinator.cs",
-            "src/Host.Windows/Tools/AgentToolRegistry.cs",
-            "src/Host.Windows/Tools/IAgentToolConfirmationService.cs",
-            "step three/T0087/execution-report.md"
+            "src/Host.Windows/Tools/AgentToolProcessExecutor.cs",
+            "src/Host.Windows/Tools/AgentToolWorkerHost.cs",
+            "tests/HostLifecycle.Tests/AgentToolProcessExecutorTests.cs"
           ]
         }
       },
@@ -16784,6 +16787,77 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Inspect the native error if Job Object configuration still fails; otherwise proceed through all remaining exact-commit CI and mark T0095 done only on acceptance evidence."
+        },
+        {
+          "attempt_id": "T0095-2026-10-26-09",
+          "started_at": "2026-10-26T06:42:41Z",
+          "ended_at": "2026-10-26T06:44:35Z",
+          "result": "failed",
+          "summary": "Exact-commit product workflow for V 3.0.299 failed the focused Windows native process-restriction test. SetInformationJobObject returned Win32 error 87 because the kill-on-job-close flag was configured using the basic rather than extended limit information structure.",
+          "changed_files": [],
+          "related_commits": [
+            "47856531a90a63ff736fe9ed067504913c4cf5a8"
+          ],
+          "tests": [
+            {
+              "name": "Step Three quality gate",
+              "result": "succeeded",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40281428816"
+            },
+            {
+              "name": "Linux HostLifecycle tests",
+              "result": "succeeded",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40281428741/job/121435372882"
+            },
+            {
+              "name": "Windows WPF build and startup smoke",
+              "result": "succeeded",
+              "summary": "Compilation and startup smoke passed before the focused native Job Object test failed."
+            },
+            {
+              "name": "Windows Job Object configuration",
+              "result": "failed",
+              "summary": "SetInformationJobObject returned ERROR_INVALID_PARAMETER (87).",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40281428741"
+            }
+          ],
+          "failure_details": "The Windows API requires JOBOBJECT_EXTENDED_LIMIT_INFORMATION for JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE; V 3.0.299 passed JOBOBJECT_BASIC_LIMIT_INFORMATION.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Use the extended Job Object limit structure and class 9, then rerun the exact Windows process restriction test and the complete product workflow."
+        },
+        {
+          "attempt_id": "T0095-2026-10-26-10",
+          "started_at": "2026-10-26T08:03:36.523Z",
+          "ended_at": "2026-10-26T08:03:36.523Z",
+          "result": "partial",
+          "summary": "Repaired the native Job Object configuration to pass JOBOBJECT_EXTENDED_LIMIT_INFORMATION using JobObjectExtendedLimitInformation class 9, retaining a one-process active-process limit and kill-on-close behavior. Exact-commit CI is pending.",
+          "changed_files": [
+            "src/Host.Windows/Tools/AgentToolProcessExecutor.cs",
+            "step three/T0095/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "related_commits": [],
+          "tests": [
+            {
+              "name": "Focused Windows Job Object restriction test",
+              "result": "not_run",
+              "summary": "Expected to run via the windows-latest product workflow on the corrective commit."
+            },
+            {
+              "name": "Step Three quality gate and full product CI",
+              "result": "not_run",
+              "summary": "Must pass on the exact corrective commit before task completion."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "SetInformationJobObject now receives the extended limit structure required by JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE."
+          ],
+          "follow_up": "Inspect exact-commit workflow results for V 3.0.300; keep T0095 in_progress unless Windows restrictions and full product CI pass."
         }
       ]
     },
@@ -29043,6 +29117,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-26T06:42:24.069Z"
+  "updated_at": "2026-10-26T08:03:36.523Z"
 }
 ```

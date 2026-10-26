@@ -299,7 +299,7 @@ public sealed class AgentToolProcessExecutor : IAgentToolProcessExecutor
 
     private sealed class WindowsWorkerJob : IDisposable
     {
-        private const int JobObjectBasicLimitInformationClass = 2;
+        private const int JobObjectExtendedLimitInformationClass = 9;
         private const uint JobObjectLimitActiveProcess = 0x00000008;
         private const uint JobObjectLimitKillOnJobClose = 0x00002000;
         private IntPtr _handle;
@@ -319,13 +319,16 @@ public sealed class AgentToolProcessExecutor : IAgentToolProcessExecutor
                 throw new AgentToolWorkerFailedException();
             }
 
-            var limits = new JobObjectBasicLimitInformation
+            var limits = new JobObjectExtendedLimitInformation
             {
-                LimitFlags = JobObjectLimitActiveProcess | JobObjectLimitKillOnJobClose,
-                ActiveProcessLimit = 1
+                BasicLimitInformation = new JobObjectBasicLimitInformation
+                {
+                    LimitFlags = JobObjectLimitActiveProcess | JobObjectLimitKillOnJobClose,
+                    ActiveProcessLimit = 1
+                }
             };
 
-            var informationLength = Marshal.SizeOf<JobObjectBasicLimitInformation>();
+            var informationLength = Marshal.SizeOf<JobObjectExtendedLimitInformation>();
             var information = Marshal.AllocHGlobal(informationLength);
             try
             {
@@ -334,7 +337,7 @@ public sealed class AgentToolProcessExecutor : IAgentToolProcessExecutor
                 Marshal.StructureToPtr(limits, information, fDeleteOld: false);
                 if (!SetInformationJobObject(
                     handle,
-                    JobObjectBasicLimitInformationClass,
+                    JobObjectExtendedLimitInformationClass,
                     information,
                     (uint)informationLength))
                 {
@@ -385,6 +388,28 @@ public sealed class AgentToolProcessExecutor : IAgentToolProcessExecutor
             public UIntPtr Affinity;
             public uint PriorityClass;
             public uint SchedulingClass;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct IoCounters
+        {
+            public ulong ReadOperationCount;
+            public ulong WriteOperationCount;
+            public ulong OtherOperationCount;
+            public ulong ReadTransferCount;
+            public ulong WriteTransferCount;
+            public ulong OtherTransferCount;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct JobObjectExtendedLimitInformation
+        {
+            public JobObjectBasicLimitInformation BasicLimitInformation;
+            public IoCounters IoInfo;
+            public UIntPtr ProcessMemoryLimit;
+            public UIntPtr JobMemoryLimit;
+            public UIntPtr PeakProcessMemoryUsed;
+            public UIntPtr PeakJobMemoryUsed;
         }
 
         [DllImport("kernel32.dll", EntryPoint = "CreateJobObjectW", CharSet = CharSet.Unicode, SetLastError = true)]
