@@ -18723,33 +18723,130 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0103 و T0097 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "src/Host.Windows/Requests/HostRequestResponseDeliveryGate.cs",
+        "tests/HostLifecycle.Tests/HostRequestResponseDeliveryTests.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+        "step three/T0104/execution-report.md",
+        "step three/T0104/evidence/verification.md",
+        "step three/project-graph.md"
+      ],
       "expected_output_paths": [
         "src/Host.Windows/Requests/ + tests/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "src/Host.Windows/Requests/HostRequestCoordinator.cs",
+        "src/Host.Windows/Requests/HostRequestResponseDeliveryGate.cs",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
+        "tests/HostLifecycle.Tests/HostRequestResponseDeliveryTests.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+        "step three/T0103/execution-report.md",
+        "step three/T0103/evidence/verification.md",
+        "step three/T0104/execution-report.md",
+        "step three/T0104/evidence/verification.md"
+      ],
+      "notes": "Implemented a request-scoped atomic one-shot gate for the response callback, with sequential/concurrent duplicate suppression and fail-closed behavior after an ambiguous callback exception. Exact-head CI is pending. The guard only guarantees one invocation through a shared gate instance in-process; no production P2P ingress/response sender or cross-process replay cache exists, so network-level delivery is not claimed.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0104-2026-10-26-01",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Host.Windows/Requests/HostRequestResponseDeliveryGate.cs",
+          "tests/HostLifecycle.Tests/HostRequestResponseDeliveryTests.cs",
+          "tests/HostLifecycle.Tests/Program.cs",
+          "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+          "step three/T0104/execution-report.md",
+          "step three/T0104/evidence/verification.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
-          "affected_by_contract_changes": [],
-          "review_evidence": []
+          "state": "passed",
+          "triggering_contracts": [
+            "Request cancellation and single terminal result handling in HostRequestCoordinator",
+            "Response callback must be claimed at most once per request lifecycle"
+          ],
+          "affected_by_contract_changes": [
+            "Added a request-scoped one-shot callback gate in Host.Windows/Requests; protobuf fields and wire numbers are unchanged.",
+            "The gate is process-local and must be shared by the request's terminal response paths; it is not a transport-level guarantee."
+          ],
+          "review_evidence": [
+            "src/Host.Windows/Requests/HostRequestCoordinator.cs",
+            "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
+            "src/Host.Windows/Requests/HostRequestResponseDeliveryGate.cs",
+            "tests/HostLifecycle.Tests/HostRequestResponseDeliveryTests.cs",
+            "protocol/whitep/v1/messages.proto"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0104-2026-10-26-01",
+          "started_at": "2026-10-26T12:24:20.258Z",
+          "ended_at": "2026-10-26T12:24:20.258Z",
+          "result": "partial",
+          "summary": "Added a request-scoped atomic response-delivery gate and registered sequential, concurrent-race, ambiguous-failure and pre-cancelled handoff tests. The outgoing edge T0103 -> T0104 was reviewed and classified sequencing_only. Exact-head CI is pending.",
+          "changed_files": [
+            "src/Host.Windows/Requests/HostRequestResponseDeliveryGate.cs",
+            "tests/HostLifecycle.Tests/HostRequestResponseDeliveryTests.cs",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+            "step three/T0104/execution-report.md",
+            "step three/T0104/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "related_commits": [],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "SequentialDuplicateDeliveryIsSuppressedAsync",
+              "result": "pending",
+              "summary": "Second handoff through the same gate is rejected and callback count remains one."
+            },
+            {
+              "name": "ConcurrentDeliveryRaceInvokesCallbackOnceAsync",
+              "result": "pending",
+              "summary": "64 racing handoffs yield exactly one gate winner and one response callback."
+            },
+            {
+              "name": "AmbiguousFailureIsNotRetriedAsync",
+              "result": "pending",
+              "summary": "A callback that throws remains claimed, preventing an unsafe duplicate retry."
+            },
+            {
+              "name": "PreCancelledCallDoesNotClaimTheGateAsync",
+              "result": "pending",
+              "summary": "A pre-cancelled attempt throws before claiming, allowing a later valid handoff."
+            },
+            {
+              "name": "Step Three quality gate",
+              "result": "pending",
+              "summary": "Exact-head graph and recorded-output checks."
+            },
+            {
+              "name": "White-P product build",
+              "result": "pending",
+              "summary": "HostLifecycle, Windows WPF and Android checks."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "Added a per-request one-shot response callback gate; no protobuf wire-contract change."
+          ],
+          "follow_up": "Inspect exact-head HostLifecycle acceptance logs, quality gate, Windows formatting/build/smoke, Android build/tests and real local inference workflow before marking T0104 done. Keep the no-P2P-transport limitation explicit."
+        }
+      ]
     },
     {
       "id": "T0105",
@@ -26871,10 +26968,18 @@
       "from": "T0103",
       "to": "T0104",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0103 adds cancellation signalling and post-callback cancellation checks to HostRequestCoordinator. T0104 adds a request-scoped one-shot response-path callback gate and does not consume a T0103 API or output as a data dependency. Keep type=blocks as conservative sequence, not proof of a hard technical dependency. The gate must be shared across all terminal paths of one request; the repository still has no production P2P response sender.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/Requests/HostRequestCoordinator.cs",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
+        "tests/HostLifecycle.Tests/LlamaCppInferenceEngineCancellationTests.cs",
+        "src/Host.Windows/Requests/HostRequestResponseDeliveryGate.cs",
+        "tests/HostLifecycle.Tests/HostRequestResponseDeliveryTests.cs",
+        "step three/T0103/execution-report.md",
+        "step three/T0103/evidence/verification.md"
+      ]
     },
     {
       "from": "T0097",
@@ -30993,6 +31098,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-26T12:06:36.563Z"
+  "updated_at": "2026-10-26T12:24:20.258Z"
 }
 ```

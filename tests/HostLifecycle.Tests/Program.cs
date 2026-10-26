@@ -98,6 +98,7 @@ UpdateModelSafetyAcceptanceTests.Run();
 LocalInferenceProcessLauncherTests.Run();
 LocalHostSettingsPersistenceTests.Run();
 await HostRequestCoordinatorTests.RunAsync();
+await HostRequestResponseDeliveryTests.RunAsync();
 await LlamaCppInferenceEngineCancellationTests.RunAsync();
 await HostRequestCoordinatorBusyTests.RunAsync();
 SecureRequestIdGeneratorTests.Run();
