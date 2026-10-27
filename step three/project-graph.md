@@ -24683,7 +24683,7 @@
         "tests_failed": [
           "V 3.0.367 CI: Host lifecycle tests failed to compile because the new test passed HttpClient where PeerAnnouncementClient is required (CS1503)."
         ],
-        "blocked_reason": "The renewable publisher and loopback TTL tests exist, but the publisher is not wired to WPF participation. Inbound request handling remains fail-closed; no validated HTTPS rendezvous endpoint or verified peer-reachable advertised address is configured. T0130 identity storage is now scheduled earlier, but its provider must be integrated with a real authenticated listener before T0121 can be reopened.",
+        "blocked_reason": "The renewable publisher and loopback TTL tests exist, and T0130 stable host identity/private-key persistence is now verified. However, the publisher is still not wired to the WPF participation lifecycle; inbound request handling remains fail-closed; no validated HTTPS rendezvous endpoint or verified peer-reachable advertised address is configured. A stable persisted identity alone does not make the host remotely reachable.",
         "reopened_reason": null,
         "contract_revalidation": {
           "state": "not_required",
@@ -24695,7 +24695,7 @@
             "src/Rendezvous.Service/PeerAnnouncementDirectory.cs"
           ]
         },
-        "follow_up": "Integrate T0130 DPAPI-backed identity with production peer transport only after authenticated inbound handling, validated HTTPS rendezvous and a verified reachable advertised address exist. Add host lifecycle tests for announce/renew/stop/shutdown/expiry. Keep T0121 blocked and T0122 not_started until demonstrated."
+        "follow_up": "Wire the verified T0130 identity provider into a real authenticated peer-reachable listener only after inbound protocol handling, HTTPS rendezvous configuration, and a verified advertised address exist; then add exact host lifecycle tests for announce/renew/stop/shutdown/expiry. Keep T0121 blocked and T0122 not_started until demonstrated."
       },
       "execution_history": [
         {
@@ -25407,8 +25407,8 @@
       ],
       "start_condition": "T0129 is done. The reviewed T0128 → T0130 edge is sequencing_only: the independent-node end-to-end acceptance consumes no persistent key-store artifact and can follow stable host identity setup. Preserve T0128 and its pending acceptance.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال انجام",
+      "status": "done",
+      "status_fa": "تکمیل‌شده",
       "actual_output_paths": [
         "src/Shared.Security/HostIdentityStore.cs",
         "src/Host.Windows/Security/WindowsDpapiSecretProtector.cs",
@@ -25441,46 +25441,64 @@
         "tests/test_host_identity_store.py",
         "docs/decisions/ADR-0017-windows-user-scoped-host-identity-storage.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0130-A001 (2026-10-27): reviewed T0129 → T0130 as contract_or_interface_dependency and T0128 → T0130 as sequencing_only using actual project/source/test contracts; both original blocks edges remain. Implemented protected persistent host identity and portable/Windows acceptance tests; exact-commit CI pending. Status remains in_progress until tests and product/quality workflows pass.\n\nT0130-A001 CI outcome (2026-10-27): Step Three quality passed; Windows WPF build/startup and explicit Windows DPAPI stability/at-rest/tamper acceptance passed; Android build/tests and real inference passed. HostLifecycle failed at concurrent first-run creation: separate store instances returned different PeerIds. T0130-A002 adds a path-scoped named mutex to serialize creation across instances/processes. Status remains in_progress pending rerun.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0130-A001 (2026-10-27): reviewed T0129 → T0130 as contract_or_interface_dependency and T0128 → T0130 as sequencing_only using actual project/source/test contracts; both original blocks edges remain. Implemented protected persistent host identity and portable/Windows acceptance tests; exact-commit CI pending. Status remains in_progress until tests and product/quality workflows pass.\n\nT0130-A001 CI outcome (2026-10-27): Step Three quality passed; Windows WPF build/startup and explicit Windows DPAPI stability/at-rest/tamper acceptance passed; Android build/tests and real inference passed. HostLifecycle failed at concurrent first-run creation: separate store instances returned different PeerIds. T0130-A002 adds a path-scoped named mutex to serialize creation across instances/processes. Status remains in_progress pending rerun.\n\nT0130-A002 verified on exact V 3.0.437 (2026-10-27): Step Three quality passed; HostLifecycle passed including concurrent first-run callers converging on one PeerId; Windows WPF and dedicated DPAPI stability/at-rest/tamper acceptance passed; Android APK/lint/Protobuf passed. Task complete within stable identity and protected persistence scope only. T0121 remains blocked; AC-P2P-01 remains NOT RUN.",
       "execution_summary": {
         "attempt_count": 2,
         "failed_attempt_count": 1,
         "last_attempt_id": "T0130-A002",
-        "last_attempt_result": "partial",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Shared.Security/HostIdentityStore.cs",
-          "step three/project-graph.md",
+          "src/Host.Windows/Security/WindowsDpapiSecretProtector.cs",
+          "src/Host.Windows/Security/WindowsHostIdentityProvider.cs",
+          "tests/HostLifecycle.Tests/HostIdentityStoreAcceptanceTests.cs",
+          "tests/HostLifecycle.Tests/WindowsHostIdentityStoreAcceptanceTests.cs",
+          "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+          "tests/HostLifecycle.Tests/Program.cs",
+          ".github/workflows/product-build.yml",
+          "tests/test_host_identity_store.py",
+          "docs/decisions/ADR-0017-windows-user-scoped-host-identity-storage.md",
+          "docs/decisions/README.md",
+          "step three/T0121/execution-report.md",
           "step three/T0130/execution-report.md",
-          "step three/T0130/evidence/verification.md"
+          "step three/T0130/evidence/verification.md",
+          "step three/project-graph.md"
         ],
         "related_commits": [
-          "39194a329b751e32278f4f63574a9a923e40d18f"
+          "39194a329b751e32278f4f63574a9a923e40d18f",
+          "f2fb7dffa734204af5fff05e5f3943f4a98b3766"
         ],
         "tests_passed": [
-          "V 3.0.436 Step Three quality gate — PASS: https://github.com/artinrahimii/project/actions/runs/40577737262",
-          "V 3.0.436 Windows WPF Release build/startup — PASS; dedicated DPAPI identity acceptance emitted explicit PASS; Android APK/lint/Protobuf passed (run 40577737280).",
-          "V 3.0.436 real llama.cpp/GGUF inference integration — PASS: https://github.com/artinrahimii/project/actions/runs/40577737171"
+          "V 3.0.436 Step Three quality gate passed (run 40577737262); Windows WPF build/startup plus DPAPI acceptance, Android APK/lint/Protobuf and real inference also passed, but HostLifecycle initially failed in cross-instance first-run concurrency.",
+          "V 3.0.437 Step Three quality gate — PASS: https://github.com/artinrahimii/project/actions/runs/40578402636",
+          "V 3.0.437 HostLifecycle unit/integration — PASS: https://github.com/artinrahimii/project/actions/runs/40578402808 (job 122450934049); log confirms concurrent host identity creation converges on one PeerId.",
+          "V 3.0.437 Windows WPF build/startup and dedicated Windows DPAPI identity stability/at-rest/tamper acceptance — PASS: https://github.com/artinrahimii/project/actions/runs/40578402808 (job 122450934039).",
+          "V 3.0.437 Android APK/lint/Protobuf — PASS: https://github.com/artinrahimii/project/actions/runs/40578402808 (job 122450933657)."
         ],
         "tests_failed": [
-          "V 3.0.436 HostLifecycle tests — FAIL: concurrent first-run calls on separate HostIdentityStore instances returned different PeerIds (run 40577737280, job 122448561285)."
+          "V 3.0.436 HostLifecycle suite initially failed because separate HostIdentityStore instances could race during first-run creation. Repaired with a path-scoped named mutex; the exact V 3.0.437 HostLifecycle rerun passed."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "required",
+          "state": "passed",
           "triggering_contracts": [
-            "HostIdentityStore first-run cross-instance coordination"
+            "Cross-instance host identity first-run synchronization",
+            "Windows DPAPI CurrentUser protection and reload contract"
           ],
           "affected_by_contract_changes": [
             "T0130",
             "T0131"
           ],
           "review_evidence": [
+            "src/Shared.Security/HostIdentityStore.cs",
             "tests/HostLifecycle.Tests/HostIdentityStoreAcceptanceTests.cs",
-            "src/Shared.Security/HostIdentityStore.cs"
+            "tests/HostLifecycle.Tests/WindowsHostIdentityStoreAcceptanceTests.cs",
+            "https://github.com/artinrahimii/project/actions/runs/40578402808",
+            "https://github.com/artinrahimii/project/actions/runs/40578402636"
           ]
         },
-        "follow_up": "Rerun exact-commit Step Three quality, HostLifecycle and product workflows after the path-scoped named-mutex fix. Keep T0130 in_progress unless every required acceptance job passes."
+        "follow_up": "Proceed to the next task only after reviewing its own dependency edges. T0121 is still blocked by missing production wiring, inbound authenticated request handling, validated HTTPS rendezvous and a verified peer-reachable address. T0128 and dependent peer-enrollment/transport acceptance remain incomplete."
       },
       "execution_history": [
         {
@@ -25554,48 +25572,52 @@
         {
           "attempt_id": "T0130-A002",
           "started_at": "2026-10-27T20:28:12.763Z",
-          "ended_at": "2026-10-27T20:28:12.763Z",
-          "result": "partial",
-          "summary": "Fixed the A001 concurrency failure by serializing LoadOrCreate with an OS named mutex derived from the normalized file path. This coordinates independent store instances and cooperating processes while retaining fail-closed handling and the existing atomic no-overwrite write. Exact-commit tests are pending.",
+          "ended_at": "2026-10-27T20:32:39.502Z",
+          "result": "succeeded",
+          "summary": "Exact V 3.0.437 CI passed after adding path-scoped named-mutex coordination: the full HostLifecycle suite explicitly passed concurrent first-run creation, reload stability and fail-closed invalid/unreadable file handling. Step Three quality gate passed; Windows WPF build/startup and dedicated DPAPI identity stability/at-rest/tamper tests passed; Android build, lint and Protobuf checks passed. T0130 is complete within the stable identity/persisted-private-key scope; host participation integration and independent-node E2E remain separate.",
           "changed_files": [
             "src/Shared.Security/HostIdentityStore.cs",
             "step three/T0130/execution-report.md",
             "step three/T0130/evidence/verification.md",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "f2fb7dffa734204af5fff05e5f3943f4a98b3766",
           "tests": [
             {
-              "name": "Portable HostIdentityStore concurrency acceptance",
-              "result": "pending",
-              "summary": "Must prove six separate store instances converge on one persisted PeerId."
+              "name": "Portable HostIdentityStore acceptance / HostLifecycle suite",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40578402808",
+              "summary": "PASS log: host identity store serializes concurrent creation, preserves PeerId on reload and fails closed on invalid or unreadable files (job 122450934049)."
             },
             {
               "name": "Windows DPAPI host identity acceptance",
-              "result": "pending",
-              "summary": "Must be rerun against the updated source."
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40578402808",
+              "summary": "Windows job 122450934039 passed; dedicated step verifies stable PeerId, no plaintext private key at rest, and tamper rejection."
             },
             {
               "name": "Step Three quality gate",
-              "result": "pending",
-              "summary": "Must pass on the updated exact commit."
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40578402636",
+              "summary": "Task graph/Python quality checks passed on exact V 3.0.437."
             },
             {
-              "name": "Product build",
-              "result": "pending",
-              "summary": "HostLifecycle, Windows WPF/DPAPI, and Android jobs must pass."
+              "name": "Product build (Windows WPF and Android APK)",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40578402808",
+              "summary": "All three jobs passed: Windows WPF build/startup/DPAPI, Android APK/lint/Protobuf, and HostLifecycle integration."
             },
             {
-              "name": "Real inference integration",
-              "result": "pending",
-              "summary": "Must be rerun on the updated exact commit."
+              "name": "Real local inference integration",
+              "result": "not_run",
+              "summary": "The real-inference workflow was not triggered for V 3.0.437; that separate workflow is not an acceptance criterion for T0130. Its prior V 3.0.436 run passed, but is not claimed as a V 3.0.437 result."
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect exact V 3.0.437 workflow results. If the named-mutex acceptance passes consistently, record actual results and then review T0130 completion criteria. T0121 remains blocked independently."
+          "follow_up": "T0130 completed for stable host identity and OS-protected persistence. T0121 remains blocked until the identity provider is wired into a peer-reachable authenticated host/listener lifecycle with validated HTTPS rendezvous and a verified address. Do not mark AC-P2P-01 passed."
         }
       ]
     },

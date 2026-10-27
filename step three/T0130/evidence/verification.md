@@ -20,3 +20,14 @@
 ## Attempt A002
 
 The named-mutex repair is now committed for rerun. Its tests are pending; this record must be updated from exact commit CI before T0130 can be marked done.
+
+
+## Attempt A002 — exact V 3.0.437 results
+
+- **Graph integrity:** the graph content in this commit lineage remains structurally parseable; the next ledger commit records A002's code commit SHA.
+- **Step Three quality gate:** PASS ([run 40578402636](https://github.com/artinrahimii/project/actions/runs/40578402636)).
+- **HostLifecycle suite:** PASS (product run 40578402808, job 122450934049). Explicit result: “PASS: host identity store serializes concurrent creation, preserves PeerId on reload and fails closed on invalid or unreadable files.”
+- **Windows product/DPAPI job:** PASS (product run 40578402808, job 122450934039); Windows WPF build/startup and the dedicated DPAPI stability, at-rest privacy and tamper-rejection test succeeded.
+- **Android job:** PASS (product run 40578402808, job 122450933657); APK, Kotlin lint and Protobuf checks succeeded.
+- **A001 failure:** preserved in execution history; the cross-instance race was repaired by a named mutex scoped to the normalized identity-file path and the failing test passed on A002.
+- **Boundary:** the successful tests establish the T0130 local host identity/store behavior, not production inbound reachability, peer enrollment, Android-to-Windows E2E or an independent cryptographic audit. T0121 remains blocked; AC-P2P-01 remains NOT RUN.

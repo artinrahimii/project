@@ -22,3 +22,14 @@
 
 - Added a path-scoped named mutex around LoadOrCreate so multiple store instances and cooperating processes serialize first-run creation and subsequent loading of the winning identity. Timeout and abandoned-mutex behavior are handled explicitly; private-key serialization, DPAPI protection, atomic write and fail-closed checks remain.
 - The fix is committed for exact-commit CI rerun. No result is claimed for A002 until the workflows complete.
+
+
+## T0130-A002 — exact V 3.0.437 verification
+
+- **Result:** succeeded for the stable host identity and protected private-key persistence scope.
+- **Step Three quality:** PASS — [run 40578402636](https://github.com/artinrahimii/project/actions/runs/40578402636).
+- **Host lifecycle tests:** PASS — [product run 40578402808](https://github.com/artinrahimii/project/actions/runs/40578402808), job 122450934049. The log explicitly states: “PASS: host identity store serializes concurrent creation, preserves PeerId on reload and fails closed on invalid or unreadable files.”
+- **Windows DPAPI acceptance:** PASS — product run 40578402808, job 122450934039; verifies stable PeerId, absence of serialized private-key bytes in plaintext at rest, and rejection of tampered DPAPI data.
+- **Windows WPF and Android:** PASS — product run 40578402808; all three jobs completed successfully, including Android APK/lint/Protobuf.
+- **A001 failure preserved:** V 3.0.436 exposed a race between independent store instances. A002 adds a path-scoped named mutex and the exact V 3.0.437 test passes. The earlier failure remains in execution history.
+- **Acceptance boundary:** T0130 is done only for stable host identity and protected private-key persistence. The provider is not yet wired into production peer participation. T0121 remains blocked and AC-P2P-01 remains NOT RUN.
