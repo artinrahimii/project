@@ -477,3 +477,28 @@
 - **V 3.0.400 product workflow: PASS** — [run 40512175062](https://github.com/artinrahimii/project/actions/runs/40512175062). HostLifecycle [job 122216633744](https://github.com/artinrahimii/project/actions/runs/40512175062), Windows WPF [job 122216633803](https://github.com/artinrahimii/project/actions/runs/40512175062), and Android APK [job 122216633464](https://github.com/artinrahimii/project/actions/runs/40512175062) all succeeded.
 - **Result boundary:** the corrected ADR-0006 traceability regression is verified by the exact V 3.0.399/V 3.0.400 CI runs. The historical V 3.0.397 and V 3.0.398 assertion failures remain preserved. T0007 remains `in_progress` because broad decision-to-code/config/test traceability is not complete; T0121 remains `in_progress`; AC-P2P-01 remains **NOT RUN**.
 - **Next step:** continue T0007 with additional uncovered decisions and inspect their actual source, config, and executable tests. Do not complete T0007 or claim product-level P2P acceptance from these bounded checks.
+
+
+## Attempt T0007-A045 — single-active-inference decision traceability
+
+- **Started:** 2026-10-27T13:45:09.446Z; **baseline:** `V 3.0.401` — `f97911baade1d6dfdd7b92ecb50eb0a578e7abea`, online `main`.
+- **Dependency and source review:** `T0006 → T0007` remains `validated / contract_or_interface_dependency`, based on the existing lifecycle domain and HostLifecycle harness evidence. `T0007 → T0008` remains `validated / sequencing_only`. No edge was changed.
+- **Gap identified:** the current technology decision register recorded local inference, TCP framing, authenticated peer fallback, and announcement leases, but did not have a standalone entry for the already implemented single-active-inference/admission contract mapped to `REQ-005`, `REQ-015`, and `REQ-016`.
+- **Changes on working branch:** added `docs/decisions/ADR-0007-single-active-inference.md`; added the ADR to `docs/decisions/README.md`; added `test_single_active_inference_decision_maps_to_admission_coordinator_and_protocol_tests` to `tests/test_decision_traceability.py`. The regression ties the decision to the actual admission policy, coordinator, response mapper, HostLifecycle acceptance suites and executable test harness.
+- **Runtime scope:** no product runtime code or protocol contract was changed. The ADR describes existing source behavior; it does not claim that Android-to-Windows routing is complete. `AC-P2P-01` remains **NOT RUN**, and broad T0007 traceability remains incomplete.
+- **Local verification:** not run in this environment; there is no repository checkout / project toolchain exposed to this session. Exact-commit GitHub Actions is required. The new traceability test is not claimed passed before that run.
+- **Graph integrity:** baseline graph retrieved via Git Blob after the normal file endpoint returned empty content. The full original UTF-8 content was 1,995,434 bytes (1,873,494 characters); recomputed Git SHA-1 Blob ID matched `365c43b68fd4c13307ad8019b148b9a1df69a894`. The fenced JSON parsed as 229 unique task IDs and 426 edges. The source graph's existing JSON formatting is preserved except for the target T0007 tracking fields.
+- **Result:** partial, pending exact-commit quality/product CI. Do not promote T0007 to done from an ADR or static source-contract test alone.
+- **Follow-up:** inspect the exact candidate commit's Step Three quality gate and product workflow; retain any CI failure in history and continue T0007 only after verified results.
+
+
+## Attempt T0007-A046 — exact candidate CI verification for A045
+
+- **Verified at:** 2026-10-27T13:50:45.119Z.
+- **Exact tested PR candidate:** `V 3.0.401` baseline `f97911baade1d6dfdd7b92ecb50eb0a578e7abea`; candidate head before this verification record was appended: `0ce0d7013c9b94302d9ddec6dbe10bd2626032c0` on `execution/t0007-a045-2026-10-27`, PR [#1](https://github.com/artinrahimii/project/pull/1).
+- **Step Three quality gate: PASS** — [run 40515254924](https://github.com/artinrahimii/project/actions/runs/40515254924). The exact candidate completed 169 Python tests; Python syntax, graph structure, and repository-backed output/evidence validation passed. Graph guard reported 0 errors and one preserved warning.
+- **HostLifecycle unit/integration: PASS** — [job 122227428752](https://github.com/artinrahimii/project/actions/runs/40515255239/job/122227428752).
+- **Windows WPF: PASS** — [job 122227429151](https://github.com/artinrahimii/project/actions/runs/40515255239/job/122227429151), including formatting, Release build, generated Protobuf validation, startup smoke, and the three agent-tool policy/capability gates.
+- **Android APK: PASS** — [job 122227428100](https://github.com/artinrahimii/project/actions/runs/40515255239/job/122227428100), including Kotlin lint, debug APK assembly, Protobuf round-trip tests, generated-source validation, and artifact upload.
+- **Result boundary:** this proves the bounded ADR-0007 traceability regression and current platform CI on the tested candidate. No runtime application code changed; these checks do not prove Android-to-Windows end-to-end routing. `AC-P2P-01` remains **NOT RUN** and T0007 remains `in_progress`.
+- **Follow-up:** re-check the PR head after this report/graph update, ensure final-head quality/product checks pass, then squash-merge only if the main head and PR candidate are still consistent.
