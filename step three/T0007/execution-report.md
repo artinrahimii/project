@@ -28,3 +28,11 @@
 - Corrected the assertion to check the actual `**Status:** `in_progress`` line and added negative assertions against the stale T0121-A003/A004/A005 headings that caused the report ownership regression.
 - No production source, protocol, dependency edge, or task completion status changed.
 - Exact-commit CI for V 3.0.430 is pending. T0007 remains `in_progress`; T0121 remains `in_progress`; `AC-P2P-01` remains **NOT RUN**.
+
+
+## Verification result for T0007-A076 — exact V 3.0.430
+
+- **Verified commit:** `a65de198d2b38fd2b8e68821f297e8d04df80f45` ([V 3.0.430](https://github.com/artinrahimii/project/commit/a65de198d2b38fd2b8e68821f297e8d04df80f45)).
+- **Step Three quality gate:** passed on that exact SHA ([run 40562932939](https://github.com/artinrahimii/project/actions/runs/40562932939)); all 181 Python tests passed, including the T0007 report-identity guard, and Python syntax, graph structure, recorded outputs/evidence checks all passed.
+- **Product build:** passed on that exact SHA ([run 40562933024]). The HostLifecycle unit/integration job passed; Windows WPF Release build, generated Protobuf checks, startup smoke, and agent-tool policy guards passed; Android Kotlin formatting/lint, debug APK, Protobuf round-trip, generated-source validation, and artifact upload passed.
+- **Scope boundary:** this verifies the report-ownership regression correction only. It does not complete broad T0007 technical-decision traceability, connect or expose the incomplete peer-announcement lifecycle, or establish Android-to-Windows P2P acceptance. T0007 and T0121 remain `in_progress`; `AC-P2P-01` remains **NOT RUN**. The failed V 3.0.429 quality attempt remains preserved as T0007-A075.
