@@ -22,6 +22,7 @@ ADR6_LEASE = (ROOT / "docs/decisions/ADR-0006-peer-announcement-leases.md").read
 ADR7_SINGLE_ACTIVE = (ROOT / "docs/decisions/ADR-0007-single-active-inference.md").read_text(encoding="utf-8")
 ADR8_PROCESS_LAUNCH = (ROOT / "docs/decisions/ADR-0008-local-engine-process-ownership.md").read_text(encoding="utf-8")
 ADR9_AGENT_TOOLS = (ROOT / "docs/decisions/ADR-0009-agent-tool-execution-boundary.md").read_text(encoding="utf-8")
+ADR10_MODEL_INSTALLATION = (ROOT / "docs/decisions/ADR-0010-verified-model-installation.md").read_text(encoding="utf-8")
 
 
 class DecisionTraceabilityTests(unittest.TestCase):
@@ -375,6 +376,77 @@ class DecisionTraceabilityTests(unittest.TestCase):
         self.assertIn("AgentToolCapabilityAcceptanceTests.RunAsync();", harness)
         self.assertIn("AgentToolRegistryAcceptanceTests.RunAsync();", harness)
         self.assertIn("ADR-0009-agent-tool-execution-boundary.md", REGISTER)
+
+
+    def test_verified_model_install_decision_maps_to_streaming_integrity_and_atomic_activation(self):
+        paths = (
+            "docs/requirements.md",
+            "src/Host.Windows/Models/Catalog/model-catalog-v1.schema.json",
+            "src/Host.Windows/Models/Catalog/ModelCatalogParser.cs",
+            "src/Host.Windows/Models/Catalog/ModelCatalogFileLoader.cs",
+            "src/Host.Windows/Models/Catalog/OfflineModelCatalogStore.cs",
+            "src/Host.Windows/Models/ModelStreamingDownloader.cs",
+            "src/Host.Windows/Models/VerifiedModelInstaller.cs",
+            "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/ModelStreamingDownloaderAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/VerifiedModelInstallerAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/IncompleteModelDownloadAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/ModelDownloadCancellationAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/UpdateModelSafetyAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+            "tests/test_model_catalog_schema.py",
+            "tests/test_model_catalog_parser.py",
+            ".github/workflows/product-build.yml",
+        )
+        self.assertTrue((ROOT / "docs/decisions/ADR-0010-verified-model-installation.md").is_file())
+        for relative_path in paths:
+            with self.subTest(path=relative_path):
+                self.assertTrue((ROOT / relative_path).is_file(), relative_path)
+                self.assertIn(relative_path, ADR10_MODEL_INSTALLATION)
+
+        requirements = (ROOT / "docs/requirements.md").read_text(encoding="utf-8")
+        parser = (ROOT / "src/Host.Windows/Models/Catalog/ModelCatalogParser.cs").read_text(encoding="utf-8")
+        downloader = (ROOT / "src/Host.Windows/Models/ModelStreamingDownloader.cs").read_text(encoding="utf-8")
+        installer = (ROOT / "src/Host.Windows/Models/VerifiedModelInstaller.cs").read_text(encoding="utf-8")
+        catalog_tests = (ROOT / "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs").read_text(encoding="utf-8")
+        download_tests = (ROOT / "tests/HostLifecycle.Tests/ModelStreamingDownloaderAcceptanceTests.cs").read_text(encoding="utf-8")
+        install_tests = (ROOT / "tests/HostLifecycle.Tests/VerifiedModelInstallerAcceptanceTests.cs").read_text(encoding="utf-8")
+        update_tests = (ROOT / "tests/HostLifecycle.Tests/UpdateModelSafetyAcceptanceTests.cs").read_text(encoding="utf-8")
+        harness = (ROOT / "tests/HostLifecycle.Tests/Program.cs").read_text(encoding="utf-8")
+
+        self.assertIn("REQ-007", requirements)
+        self.assertIn("REQ-008", requirements)
+        self.assertIn("MaximumCatalogBytes = 2 * 1024 * 1024", parser)
+        self.assertIn("MaximumCatalogModels = 10_000", parser)
+        self.assertIn("ParseAllowlistedHttpsUrl", parser)
+        self.assertIn("MaximumRedirects = 5", downloader)
+        self.assertIn("Content-Length does not match validated catalog metadata", downloader)
+        self.assertIn("The model response exceeded its validated size", downloader)
+        self.assertIn("The model response ended before its validated size", downloader)
+        self.assertIn("ValidateSourceUrl(currentUri)", downloader)
+        self.assertIn("SHA256.HashDataAsync", installer)
+        self.assertIn("CryptographicOperations.FixedTimeEquals(actualHash, expectedHash)", installer)
+        self.assertIn("ValidateModelFileFormatAsync", installer)
+        self.assertIn("File.Replace(temporaryPath, fullDestinationPath, backupPath, ignoreMetadataErrors: true)", installer)
+        self.assertIn("File.Move(temporaryPath, fullDestinationPath)", installer)
+        self.assertIn("InstallsOnlyAfterSha256Matches();", install_tests)
+        self.assertIn("RejectsChecksumMismatchAndDeletesStagingFile();", install_tests)
+        self.assertIn("UpdatesExistingModelAtomicallyAfterValidation();", install_tests)
+        self.assertIn("RejectsFailedUpdateAndPreservesPreviousModel();", install_tests)
+        self.assertIn("RejectsUnapprovedSourceAndRedirectHosts();", download_tests)
+        self.assertIn("RejectsTruncatedPayloadAndRemovesPartialFile();", download_tests)
+        self.assertIn("OfflineCatalogStoreRejectsInvalidCache();", catalog_tests)
+        self.assertIn("CancellationDuringUpdatePreservesExistingModel();", update_tests)
+        self.assertIn("ModelCatalogParserAcceptanceTests.Run();", harness)
+        self.assertIn("ModelStreamingDownloaderAcceptanceTests.Run();", harness)
+        self.assertIn("VerifiedModelInstallerAcceptanceTests.Run();", harness)
+        self.assertIn("IncompleteModelDownloadAcceptanceTests.Run();", harness)
+        self.assertIn("ModelDownloadCancellationAcceptanceTests.Run();", harness)
+        self.assertIn("UpdateModelSafetyAcceptanceTests.Run();", harness)
+        self.assertIn("Catalog metadata", ADR10_MODEL_INSTALLATION)
+        self.assertIn("not independent proof of publisher identity", ADR10_MODEL_INSTALLATION)
+        self.assertIn("ADR-0010-verified-model-installation.md", REGISTER)
 
 
     def test_every_registered_decision_links_to_existing_sources_and_verification(self):

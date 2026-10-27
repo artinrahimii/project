@@ -647,3 +647,16 @@
 - Remaining CI item: HostLifecycle job 122316825925 is still running at **Install MsQuic runtime for QUIC fallback integration**; its lifecycle tests have not yet started. This is pending, not a pass or failure.
 - This evidence-only update does not change runtime code or dependency edges. It verifies the bounded traceability increment, not completion of T0007; `T0007` remains `in_progress`, and `AC-P2P-01` remains **NOT RUN**.
 - Follow-up: inspect the outstanding HostLifecycle job and continue tracing the remaining technical decisions. Do not close T0007 from this increment alone.
+
+
+## Attempt T0007-A058 — verified model-installation decision traceability
+- Started: 2026-10-27T16:34:29.646Z
+- Result: partial at commit creation; exact-commit CI verification pending.
+- Base: 09afb2774b633d6c56bd665a95939e2776eb7add (V 3.0.414).
+- Prior-run reconciliation: A057 accurately recorded the V 3.0.413 product workflow as pending at the time. The later report-only commit V 3.0.414 now has complete, successful Step Three quality and product workflow runs; the product run passed Windows WPF, HostLifecycle (including lifecycle tests after MsQuic setup), and Android APK jobs. See [quality run 40541085274](https://github.com/artinrahimii/project/actions/runs/40541085274) and [product run 40541085382](https://github.com/artinrahimii/project/actions/runs/40541085382). The historical A057 entry is preserved rather than rewritten.
+- New decision: added `docs/decisions/ADR-0010-verified-model-installation.md` for the existing REQ-007/REQ-008 model-catalog, streamed-download, checksum, GGUF validation, staging and atomic-update boundary; registered its links in `docs/decisions/README.md`; added `test_verified_model_install_decision_maps_to_streaming_integrity_and_atomic_activation` to `tests/test_decision_traceability.py`.
+- Source review: traced `ModelCatalogParser`, bounded catalog file loading, offline validated cache, allowlisted HTTPS streaming, fixed-chunk size checks, SHA-256 fixed-time comparison, GGUF validation, atomic replacement and the registered HostLifecycle acceptance suites. No runtime implementation or graph dependency edge was changed.
+- Security boundary: checksum comparison proves agreement with parsed catalog metadata, not independent catalog publisher identity or checksum provenance. The ADR explicitly records this limitation.
+- Tests at commit creation: existing source and registered acceptance tests inspected; no local execution command was run. The new Python source-contract regression and product build await exact-commit CI.
+- Result boundary: T0007 stays `in_progress`; `AC-P2P-01` stays **NOT RUN**. This is a bounded traceability increment, not completion of T0007 or the product.
+- Follow-up: inspect exact-main V 3.0.415 Step Three and product-build workflows. Preserve failures and append a separate verification attempt only after reviewing exact-commit results.
