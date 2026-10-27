@@ -25441,69 +25441,54 @@
         "tests/test_host_identity_store.py",
         "docs/decisions/ADR-0017-windows-user-scoped-host-identity-storage.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0130-A001 (2026-10-27): reviewed T0129 → T0130 as contract_or_interface_dependency and T0128 → T0130 as sequencing_only using actual project/source/test contracts; both original blocks edges remain. Implemented protected persistent host identity and portable/Windows acceptance tests; exact-commit CI pending. Status remains in_progress until tests and product/quality workflows pass.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0130-A001 (2026-10-27): reviewed T0129 → T0130 as contract_or_interface_dependency and T0128 → T0130 as sequencing_only using actual project/source/test contracts; both original blocks edges remain. Implemented protected persistent host identity and portable/Windows acceptance tests; exact-commit CI pending. Status remains in_progress until tests and product/quality workflows pass.\n\nT0130-A001 CI outcome (2026-10-27): Step Three quality passed; Windows WPF build/startup and explicit Windows DPAPI stability/at-rest/tamper acceptance passed; Android build/tests and real inference passed. HostLifecycle failed at concurrent first-run creation: separate store instances returned different PeerIds. T0130-A002 adds a path-scoped named mutex to serialize creation across instances/processes. Status remains in_progress pending rerun.",
       "execution_summary": {
-        "attempt_count": 1,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "T0130-A001",
+        "attempt_count": 2,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "T0130-A002",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Shared.Security/HostIdentityStore.cs",
-          "src/Host.Windows/Security/WindowsDpapiSecretProtector.cs",
-          "src/Host.Windows/Security/WindowsHostIdentityProvider.cs",
-          "tests/HostLifecycle.Tests/HostIdentityStoreAcceptanceTests.cs",
-          "tests/HostLifecycle.Tests/WindowsHostIdentityStoreAcceptanceTests.cs",
-          "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
-          "tests/HostLifecycle.Tests/Program.cs",
-          ".github/workflows/product-build.yml",
-          "tests/test_host_identity_store.py",
-          "docs/decisions/ADR-0017-windows-user-scoped-host-identity-storage.md",
-          "docs/decisions/README.md",
-          "step three/T0121/execution-report.md",
+          "step three/project-graph.md",
           "step three/T0130/execution-report.md",
-          "step three/T0130/evidence/verification.md",
-          "step three/project-graph.md"
+          "step three/T0130/evidence/verification.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
-        "tests_failed": [],
+        "related_commits": [
+          "39194a329b751e32278f4f63574a9a923e40d18f"
+        ],
+        "tests_passed": [
+          "V 3.0.436 Step Three quality gate — PASS: https://github.com/artinrahimii/project/actions/runs/40577737262",
+          "V 3.0.436 Windows WPF Release build/startup — PASS; dedicated DPAPI identity acceptance emitted explicit PASS; Android APK/lint/Protobuf passed (run 40577737280).",
+          "V 3.0.436 real llama.cpp/GGUF inference integration — PASS: https://github.com/artinrahimii/project/actions/runs/40577737171"
+        ],
+        "tests_failed": [
+          "V 3.0.436 HostLifecycle tests — FAIL: concurrent first-run calls on separate HostIdentityStore instances returned different PeerIds (run 40577737280, job 122448561285)."
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "passed",
+          "state": "required",
           "triggering_contracts": [
-            "Nethermind.Libp2p.Core Identity/PrivateKey serialization contract",
-            "Windows DPAPI CurrentUser protect/unprotect contract",
-            "T0128 independent-node acceptance input contract"
+            "HostIdentityStore first-run cross-instance coordination"
           ],
           "affected_by_contract_changes": [
-            "T0121",
-            "T0128",
-            "T0131",
-            "T0132"
+            "T0130",
+            "T0131"
           ],
           "review_evidence": [
-            "src/Shared.Security/WhiteP.Shared.Security.csproj",
-            "src/Shared.Security/PeerSecurityPolicy.cs",
-            "docs/decisions/ADR-0016-maintained-libp2p-cryptographic-transport.md",
-            "tests/HostLifecycle.Tests/PeerSecurityPolicyAcceptanceTests.cs",
-            "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
-            "src/Host.Windows/Networking/Libp2pPeerMessageProtocol.cs",
-            "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs",
-            "docs/decisions/ADR-0002-direct-p2p-data-path.md",
-            "src/Host.Windows/Networking/PeerAnnouncementLeasePublisher.cs",
-            "src/Rendezvous.Service/PeerAnnouncementDirectory.cs"
+            "tests/HostLifecycle.Tests/HostIdentityStoreAcceptanceTests.cs",
+            "src/Shared.Security/HostIdentityStore.cs"
           ]
         },
-        "follow_up": "Inspect exact-commit Step Three quality, HostLifecycle, Windows WPF/DPAPI, and Android jobs. Keep T0130 in_progress until portable store and real Windows DPAPI acceptance tests pass; T0121 remains blocked pending actual peer-reachable host integration."
+        "follow_up": "Rerun exact-commit Step Three quality, HostLifecycle and product workflows after the path-scoped named-mutex fix. Keep T0130 in_progress unless every required acceptance job passes."
       },
       "execution_history": [
         {
           "attempt_id": "T0130-A001",
           "started_at": "2026-10-27T20:22:14.101Z",
-          "ended_at": "2026-10-27T20:22:14.101Z",
-          "result": "partial",
-          "summary": "Implemented a bounded, versioned libp2p host-identity store with atomic no-overwrite creation, Windows DPAPI CurrentUser protection, fail-closed loading, portable/Windows acceptance tests, and CI registration. Reviewed both incoming dependency edges. Exact-commit CI has not yet run; no tests are claimed passed.",
+          "ended_at": "2026-10-27T20:26:28Z",
+          "result": "failed",
+          "summary": "The bounded/versioned host identity store, DPAPI provider and acceptance coverage were added, and the Step Three quality gate passed. Windows host build/startup and the dedicated DPAPI acceptance passed; Android APK and live inference passed. However, the HostLifecycle test suite failed: six concurrent first-run calls using separate HostIdentityStore instances returned more than one PeerId. This exposed that the per-instance lock did not serialize cross-instance creation. A follow-up implementation adds a path-scoped named mutex; task remains in_progress pending rerun.",
           "changed_files": [
             "src/Shared.Security/HostIdentityStore.cs",
             "src/Host.Windows/Security/WindowsDpapiSecretProtector.cs",
@@ -25521,39 +25506,96 @@
             "step three/T0130/evidence/verification.md",
             "step three/project-graph.md"
           ],
+          "commit_sha": "39194a329b751e32278f4f63574a9a923e40d18f",
+          "tests": [
+            {
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40577737262",
+              "summary": "Task graph and Python quality checks succeeded."
+            },
+            {
+              "name": "HostLifecycle unit/integration",
+              "result": "failed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40577737280",
+              "summary": "Concurrent first-run calls using separate HostIdentityStore instances did not converge on one persisted PeerId."
+            },
+            {
+              "name": "Windows WPF build and startup",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40577737280",
+              "summary": "Windows WPF Release build, Protobuf check and startup smoke passed."
+            },
+            {
+              "name": "Windows DPAPI host identity acceptance",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40577737280",
+              "summary": "Explicit PASS: host PeerId stable across provider instances; stored private key not in plaintext; tampered storage rejected."
+            },
+            {
+              "name": "Android client APK",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40577737280",
+              "summary": "Android build, lint and Protobuf checks passed."
+            },
+            {
+              "name": "Real local inference integration",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40577737171",
+              "summary": "Real llama.cpp/GGUF inference integration succeeded."
+            }
+          ],
+          "failure_details": "GitHub Actions HostLifecycle job 122448561285 failed in run 40577737280 at HostIdentityStoreAcceptanceTests.Run(): 'Concurrent first-run callers must observe a single persisted PeerId.' The existing object lock only serialized calls on one object and did not coordinate separate store instances.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect exact-commit GitHub Actions and append actual results and the commit SHA in the next execution-ledger update."
+        },
+        {
+          "attempt_id": "T0130-A002",
+          "started_at": "2026-10-27T20:28:12.763Z",
+          "ended_at": "2026-10-27T20:28:12.763Z",
+          "result": "partial",
+          "summary": "Fixed the A001 concurrency failure by serializing LoadOrCreate with an OS named mutex derived from the normalized file path. This coordinates independent store instances and cooperating processes while retaining fail-closed handling and the existing atomic no-overwrite write. Exact-commit tests are pending.",
+          "changed_files": [
+            "src/Shared.Security/HostIdentityStore.cs",
+            "step three/T0130/execution-report.md",
+            "step three/T0130/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
           "commit_sha": null,
           "tests": [
             {
-              "name": "Portable HostIdentityStore acceptance tests",
+              "name": "Portable HostIdentityStore concurrency acceptance",
               "result": "pending",
-              "summary": "Concurrent first-run, reload stability, corrupt-envelope rejection and failed-unprotect handling."
+              "summary": "Must prove six separate store instances converge on one persisted PeerId."
             },
             {
-              "name": "Windows DPAPI acceptance test",
+              "name": "Windows DPAPI host identity acceptance",
               "result": "pending",
-              "summary": "Stable PeerId across provider instances, at-rest non-plaintext check and tamper rejection."
-            },
-            {
-              "name": "Python source/CI policy tests",
-              "result": "pending",
-              "summary": "Source guards for store, DPAPI provider and Windows workflow invocation."
+              "summary": "Must be rerun against the updated source."
             },
             {
               "name": "Step Three quality gate",
               "result": "pending",
-              "summary": "Exact-commit tests, syntax, graph structure and output/evidence validation."
+              "summary": "Must pass on the updated exact commit."
             },
             {
               "name": "Product build",
               "result": "pending",
-              "summary": "HostLifecycle, Windows WPF/DPAPI and Android build/test jobs."
+              "summary": "HostLifecycle, Windows WPF/DPAPI, and Android jobs must pass."
+            },
+            {
+              "name": "Real inference integration",
+              "result": "pending",
+              "summary": "Must be rerun on the updated exact commit."
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect exact-commit GitHub Actions and append actual results and the commit SHA in the next execution-ledger update."
+          "follow_up": "Inspect exact V 3.0.437 workflow results. If the named-mutex acceptance passes consistently, record actual results and then review T0130 completion criteria. T0121 remains blocked independently."
         }
       ]
     },

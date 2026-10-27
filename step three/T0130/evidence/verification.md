@@ -7,3 +7,16 @@
 - **Tests:** not yet run locally in this tool environment. Exact-commit GitHub Actions runs are pending after push. Do not claim DPAPI verification until Windows CI emits the explicit pass line and the quality/product jobs succeed.
 - **Failure policy:** malformed, unreadable or unprotectable existing identity must fail closed and must not be replaced. Concurrent first-run callers must reload the identity that wins the atomic no-overwrite operation.
 - **Security boundary:** the portable test protector is reversible and test-only; it provides no confidentiality. DPAPI CurrentUser does not protect against malicious code already running as the same user. AC-P2P-01 remains NOT RUN.
+
+
+## Exact V 3.0.436 result — 2026-10-27
+
+- Step Three quality gate: PASS ([run 40577737262](https://github.com/artinrahimii/project/actions/runs/40577737262)).
+- Windows WPF build/startup plus DPAPI at-rest, stability and tamper acceptance: PASS (run 40577737280; Windows job 122448561129). The explicit log line states: “PASS: Windows current-user DPAPI preserves the host PeerId, protects key bytes at rest and rejects tampered storage.”
+- Android APK/lint/Protobuf: PASS (run 40577737280).
+- Real local inference integration: PASS ([run 40577737171](https://github.com/artinrahimii/project/actions/runs/40577737171)).
+- HostLifecycle: FAIL (run 40577737280, job 122448561285): concurrent first-run callers on separate store instances returned different PeerIds. The feature is not accepted; implementation corrected with path-scoped named-mutex synchronization in A002.
+
+## Attempt A002
+
+The named-mutex repair is now committed for rerun. Its tests are pending; this record must be updated from exact commit CI before T0130 can be marked done.

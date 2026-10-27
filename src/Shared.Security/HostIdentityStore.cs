@@ -1,6 +1,8 @@
 using System;
 using System.IO;
 using System.Security.Cryptography;
+using System.Text;
+using System.Threading;
 using Google.Protobuf;
 using Nethermind.Libp2p.Core;
 using Nethermind.Libp2p.Core.Dto;
@@ -21,6 +23,7 @@ public sealed class HostIdentityStore
 
     private readonly string _filePath;
     private readonly IUserSecretProtector _protector;
+    private readonly string _mutexName;
     private readonly object _gate = new();
 
     public HostIdentityStore(string filePath, IUserSecretProtector protector)
@@ -30,6 +33,8 @@ public sealed class HostIdentityStore
         ArgumentNullException.ThrowIfNull(protector);
         _filePath = Path.GetFullPath(filePath);
         _protector = protector;
+        string mutexIdentity = OperatingSystem.IsWindows() ? _filePath.ToUpperInvariant() : _filePath;
+        _mutexName = "WhiteP.HostIdentityStore." + Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(mutexIdentity)));
     }
 
     /// <summary>
@@ -38,49 +43,73 @@ public sealed class HostIdentityStore
     /// </summary>
     public Identity LoadOrCreate()
     {
-        lock (_gate)
+        // The in-process gate does not coordinate independent HostIdentityStore instances.
+        // Serialize first-run creation across processes that use the same normalized path.
+        using var mutex = new Mutex(initiallyOwned: false, name: _mutexName);
+        bool ownsMutex = false;
+        try
         {
-            if (File.Exists(_filePath))
-                return LoadExisting();
-
-            string? directory = Path.GetDirectoryName(_filePath);
-            if (string.IsNullOrEmpty(directory))
-                throw new InvalidOperationException("The host identity path must have a parent directory.");
-
-            Directory.CreateDirectory(directory);
-            if (File.Exists(_filePath))
-                return LoadExisting();
-
-            Identity candidate = new(keyType: KeyType.Ed25519);
-            PrivateKey privateKey = candidate.PrivateKey
-                ?? throw new InvalidOperationException("The libp2p identity generator did not produce a private key.");
-            ValidatePrivateKey(privateKey);
-
-            byte[] serializedPrivateKey = privateKey.ToByteArray();
-            byte[] protectedPayload = Array.Empty<byte>();
-            byte[] envelope = Array.Empty<byte>();
             try
             {
-                if (serializedPrivateKey.Length is 0 or > MaximumPrivateKeyPayloadBytes)
-                    throw new InvalidDataException("Generated host identity payload is outside the permitted size.");
-
-                protectedPayload = _protector.Protect(serializedPrivateKey);
-                ValidateProtectedPayload(protectedPayload);
-                envelope = BuildEnvelope(protectedPayload);
-
-                if (WriteNewFileWithoutOverwrite(envelope))
-                    return candidate;
-
-                // Another process may have won first-run creation. Reuse its identity rather
-                // than overwriting it with a different PeerId.
-                return LoadExisting();
+                ownsMutex = mutex.WaitOne(TimeSpan.FromSeconds(30));
             }
-            finally
+            catch (AbandonedMutexException)
             {
-                CryptographicOperations.ZeroMemory(serializedPrivateKey);
-                CryptographicOperations.ZeroMemory(protectedPayload);
-                CryptographicOperations.ZeroMemory(envelope);
+                // An earlier owner exited unexpectedly; this thread now owns the mutex.
+                ownsMutex = true;
             }
+
+            if (!ownsMutex)
+                throw new TimeoutException("Timed out waiting to access the persisted host identity.");
+
+            lock (_gate)
+            {
+                if (File.Exists(_filePath))
+                    return LoadExisting();
+
+                string? directory = Path.GetDirectoryName(_filePath);
+                if (string.IsNullOrEmpty(directory))
+                    throw new InvalidOperationException("The host identity path must have a parent directory.");
+
+                Directory.CreateDirectory(directory);
+                if (File.Exists(_filePath))
+                    return LoadExisting();
+
+                Identity candidate = new(keyType: KeyType.Ed25519);
+                PrivateKey privateKey = candidate.PrivateKey
+                    ?? throw new InvalidOperationException("The libp2p identity generator did not produce a private key.");
+                ValidatePrivateKey(privateKey);
+
+                byte[] serializedPrivateKey = privateKey.ToByteArray();
+                byte[] protectedPayload = Array.Empty<byte>();
+                byte[] envelope = Array.Empty<byte>();
+                try
+                {
+                    if (serializedPrivateKey.Length is 0 or > MaximumPrivateKeyPayloadBytes)
+                        throw new InvalidDataException("Generated host identity payload is outside the permitted size.");
+
+                    protectedPayload = _protector.Protect(serializedPrivateKey);
+                    ValidateProtectedPayload(protectedPayload);
+                    envelope = BuildEnvelope(protectedPayload);
+
+                    if (WriteNewFileWithoutOverwrite(envelope))
+                        return candidate;
+
+                    // A non-cooperating writer may have won; reload rather than returning a different identity.
+                    return LoadExisting();
+                }
+                finally
+                {
+                    CryptographicOperations.ZeroMemory(serializedPrivateKey);
+                    CryptographicOperations.ZeroMemory(protectedPayload);
+                    CryptographicOperations.ZeroMemory(envelope);
+                }
+            }
+        }
+        finally
+        {
+            if (ownsMutex)
+                mutex.ReleaseMutex();
         }
     }
 
