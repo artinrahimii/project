@@ -458,3 +458,13 @@
 - **Preserved scope:** no production code, test semantics, or graph edges were changed. T0007 remains `in_progress`; T0121 remains `in_progress`; AC-P2P-01 remains **NOT RUN**.
 - **Verification state:** the failing result is recorded in `execution_history` and `tests_failed`. The exact V 3.0.399 quality and product results are pending.
 - **Follow-up:** inspect both V 3.0.399 workflows; append a separate verification attempt only after checking their exact SHA and conclusions.
+
+
+## Attempt T0007-A043 — exact V 3.0.399 traceability regression verified
+
+- **Verified commit:** `V 3.0.399` — `7d13362c6d1bd43ee615b2588875e013216cb693`.
+- **Step Three quality gate: PASS** — [run 40511618645](https://github.com/artinrahimii/project/actions/runs/40511618645). The new peer-announcement lease traceability regression passed; the run completed 168 Python tests, Python syntax checks, graph validation (229 nodes / 426 edges), and repository-backed output/evidence validation with 0 errors and one preserved warning.
+- **HostLifecycle job: PASS** — [job 122214725720 in run 40511618719](https://github.com/artinrahimii/project/actions/runs/40511618719).
+- **Product workflow boundary:** run 40511618719 was still in progress when this record was written; the Windows WPF build and Android APK jobs had not finalized. No aggregate Windows/Android product-build success is claimed here.
+- **Failure history:** the V 3.0.397 and V 3.0.398 traceability assertion failures remain recorded under A041/A042 and in `tests_failed`; the corrected test passes on V 3.0.399.
+- **Task status:** this bounded source-to-test traceability increment is verified. T0007 stays `in_progress` because its broad criterion—tracing every relevant technical decision—is not proven complete; T0121 remains `in_progress`; AC-P2P-01 remains **NOT RUN**.
