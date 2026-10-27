@@ -59,3 +59,7 @@
 - **Tests:** no new tests were run in this blocker-status attempt. Previous loopback TTL renewal/expiry and CI results remain preserved under T0121-A005; they do not establish WPF integration or remote reachability.
 - **Unblock condition:** implement an authenticated peer-reachable inbound request path, stable verified host identity, validated HTTPS rendezvous plus verified advertised address, then wire publisher renewal/stop to participation enable/disable and application shutdown with exact-host-lifecycle acceptance tests.
 - **No capability overclaim:** no public address is fabricated or advertised, and no Android-to-Windows P2P success is claimed. `AC-P2P-01` remains **NOT RUN**. `T0122` remains `not_started` because `T0121` is a validated contract/interface prerequisite.
+
+## T0130 dependency review after baseline reset
+
+The current V 3.0.435 graph was re-read before T0130 work. Repository transport contracts show that the independent-node acceptance in T0128 consumes no persistent-key-store API; a stable host identity is instead useful input for that eventual test. The T0128 → T0130 edge is retained but reclassified to sequencing_only with source/test evidence, while T0129 → T0130 is validated as contract_or_interface_dependency. T0121 remains blocked: the current WPF path binds to loopback and lacks a configured peer-reachable address and wired announcement lifecycle.

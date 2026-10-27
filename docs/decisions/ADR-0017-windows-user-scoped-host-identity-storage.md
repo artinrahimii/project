@@ -1,0 +1,10 @@
+# ADR-0017: User-scoped host identity storage
+
+- **Status:** Accepted for Windows host-key persistence; participation-lifecycle integration remains separate.
+- **Date:** 2026-10-27
+- **Related task:** T0130.
+- **Implementation:** `HostIdentityStore` serializes the libp2p `PrivateKey` protobuf only in memory and sends it to an injected OS secret protector before writing any file bytes. The Windows adapter uses `ProtectedData.Protect/Unprotect` with `DataProtectionScope.CurrentUser` and application-specific additional entropy. The protected envelope has a magic header and schema version, is size-bounded, and is committed with a same-directory temporary file plus atomic no-overwrite rename. Existing malformed, unprotectable or tampered data fails closed instead of silently generating a replacement identity.
+- **Key type:** the first implementation persists Ed25519 host identity using the maintained `Nethermind.Libp2p.Core.Identity` implementation. It does not implement cryptographic algorithms.
+- **Storage:** default path is under the current user's `LocalApplicationData/WhiteP/security` directory. Windows CI tests repeated-load identity stability, at-rest protection and tamper rejection. The Microsoft package `System.Security.Cryptography.ProtectedData` is pinned to 10.0.14.
+- **Security boundary:** CurrentUser DPAPI helps prevent another Windows account from decrypting the file; it is not a sandbox against malicious code already running as the same user, nor an independent cryptographic audit. The provider is an on-demand component and is not yet wired into the incomplete WPF network participation/announcement lifecycle. `AC-P2P-01` remains **NOT RUN**.
+- **Traceability:** `src/Shared.Security/HostIdentityStore.cs`, `src/Host.Windows/Security/WindowsDpapiSecretProtector.cs`, `src/Host.Windows/Security/WindowsHostIdentityProvider.cs`, `tests/HostLifecycle.Tests/WindowsHostIdentityStoreAcceptanceTests.cs`, and `tests/test_host_identity_store.py`.

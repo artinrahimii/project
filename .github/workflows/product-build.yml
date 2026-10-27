@@ -53,6 +53,8 @@ jobs:
         run: dotnet run --project tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj --configuration Release -- --test-agent-tool-policy-rejections
       - name: Verify agent-tool backend/model capability gate on Windows
         run: dotnet run --project tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj --configuration Release -- --test-agent-tool-capability
+      - name: Verify user-scoped DPAPI host identity storage on Windows
+        run: dotnet run --project tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj --configuration Release -- --test-host-identity-store
       - name: Upload Windows host build artifacts
         uses: actions/upload-artifact@v4
         with:

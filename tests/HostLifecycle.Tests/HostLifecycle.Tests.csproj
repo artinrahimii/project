@@ -8,6 +8,7 @@
   <ItemGroup>
     <PackageReference Include="Google.Protobuf" Version="3.36.2" />
     <PackageReference Include="Nethermind.Libp2p" Version="1.1.0" />
+    <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="10.0.14" />
     <ProjectReference Include="../../src/Host.Domain/WhiteP.Host.Domain.csproj" />
     <ProjectReference Include="../../src/Host.Application/WhiteP.Host.Application.csproj" />
     <ProjectReference Include="../../src/Host.Infrastructure/WhiteP.Host.Infrastructure.csproj" />
@@ -36,6 +37,8 @@
     <Compile Include="../../src/Host.Windows/Tools/IAgentToolProcessExecutor.cs" Link="Tools/IAgentToolProcessExecutor.cs" />
     <Compile Include="../../src/Host.Windows/Tools/AgentToolProcessExecutor.cs" Link="Tools/AgentToolProcessExecutor.cs" />
     <Compile Include="../../src/Host.Windows/Tools/AgentToolWorkerHost.cs" Link="Tools/AgentToolWorkerHost.cs" />
+    <Compile Include="../../src/Host.Windows/Security/WindowsDpapiSecretProtector.cs" Link="Security/WindowsDpapiSecretProtector.cs" />
+    <Compile Include="../../src/Host.Windows/Security/WindowsHostIdentityProvider.cs" Link="Security/WindowsHostIdentityProvider.cs" />
     <Compile Include="../../src/Host.Windows/Networking/IPeerTransport.cs" Link="Networking/IPeerTransport.cs" />
     <Compile Include="../../src/Host.Windows/Networking/Libp2pPeerTransport.cs" Link="Networking/Libp2pPeerTransport.cs" />
     <Compile Include="../../src/Host.Windows/Networking/PeerTransportFallbackConnector.cs" Link="Networking/PeerTransportFallbackConnector.cs" />

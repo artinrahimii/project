@@ -24649,7 +24649,7 @@
         "src/Rendezvous.Service/PeerAnnouncementDirectory.cs",
         "step three/T0121/evidence/verification.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0121-A005 verification update (2026-10-27): all exact-commit GitHub Actions workflows for V 3.0.368 passed, including the HostLifecycle acceptance suite. This validates the correction to the tests, but does not complete runtime lifecycle integration: the publisher is not yet wired to the WPF participation toggle and safe reachable rendezvous/advertised-address configuration remains unavailable. Task status remains in_progress.\n\nT0121-A006 (2026-10-27): status changed from in_progress to blocked after source- and graph-backed review. The lease publisher/loopback tests exist, but the real WPF host listener remains loopback-only and explicitly closes inbound requests until protocol handling is implemented; no verified advertised address, rendezvous HTTPS setting or wired stable host identity exists. T0130 identity work sits downstream of T0128, which itself depends on T0121/T0122; do not add a new identity edge without resolving this potential cycle. Unblock only after authenticated peer-reachable host request handling, verified identity/address/HTTPS settings and WPF lifecycle integration pass exact-host tests. T0122 remains not_started.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0121-A005 verification update (2026-10-27): all exact-commit GitHub Actions workflows for V 3.0.368 passed, including the HostLifecycle acceptance suite. This validates the correction to the tests, but does not complete runtime lifecycle integration: the publisher is not yet wired to the WPF participation toggle and safe reachable rendezvous/advertised-address configuration remains unavailable. Task status remains in_progress.\n\nT0121-A006 (2026-10-27): status changed from in_progress to blocked after source- and graph-backed review. The lease publisher/loopback tests exist, but the real WPF host listener remains loopback-only and explicitly closes inbound requests until protocol handling is implemented; no verified advertised address, rendezvous HTTPS setting or wired stable host identity exists. T0130 identity work sits downstream of T0128, which itself depends on T0121/T0122; do not add a new identity edge without resolving this potential cycle. Unblock only after authenticated peer-reachable host request handling, verified identity/address/HTTPS settings and WPF lifecycle integration pass exact-host tests. T0122 remains not_started.\n\nT0130 ordering update: identity-store work is scheduled before the blocked announcement chain after validating T0128 → T0130 as sequencing_only. This resolves the ordering-cycle concern only; it does not unblock T0121 because production identity wiring, authenticated reachable inbound handling, HTTPS rendezvous and a verified advertised address remain missing.",
       "execution_summary": {
         "attempt_count": 6,
         "failed_attempt_count": 1,
@@ -24683,7 +24683,7 @@
         "tests_failed": [
           "V 3.0.367 CI: Host lifecycle tests failed to compile because the new test passed HttpClient where PeerAnnouncementClient is required (CS1503)."
         ],
-        "blocked_reason": "The renewable publisher exists and loopback TTL tests passed, but safe production integration cannot proceed: the WPF participation listener is explicitly loopback-only, MainWindow reports inbound requests remain closed until protocol handling exists, no verified peer-reachable advertised address or validated rendezvous HTTPS setting is configured, and the production host has no wired stable peer identity. T0130 (host identity/private-key storage) is currently downstream of T0128, whose graph path passes through T0121/T0122; adding a new T0130 -> T0121 edge without resolving that order would create a dependency cycle. Do not advertise an unreachable host.",
+        "blocked_reason": "The renewable publisher and loopback TTL tests exist, but the publisher is not wired to WPF participation. Inbound request handling remains fail-closed; no validated HTTPS rendezvous endpoint or verified peer-reachable advertised address is configured. T0130 identity storage is now scheduled earlier, but its provider must be integrated with a real authenticated listener before T0121 can be reopened.",
         "reopened_reason": null,
         "contract_revalidation": {
           "state": "not_required",
@@ -24695,7 +24695,7 @@
             "src/Rendezvous.Service/PeerAnnouncementDirectory.cs"
           ]
         },
-        "follow_up": "Unblock only after the host has an authenticated peer-reachable inbound request path with a stable verified peer identity, validated HTTPS rendezvous configuration and a verified advertised address; wire the lease publisher start/stop into the WPF participation toggle and shutdown; add exact-host-lifecycle tests proving safe renew/revoke/expiry behavior. Resolve the identity task ordering/cycle before introducing any new dependency edge. Keep T0122 not_started until T0121 acceptance is actually met."
+        "follow_up": "Integrate T0130 DPAPI-backed identity with production peer transport only after authenticated inbound handling, validated HTTPS rendezvous and a verified reachable advertised address exist. Add host lifecycle tests for announce/renew/stop/shutdown/expiry. Keep T0121 blocked and T0122 not_started until demonstrated."
       },
       "execution_history": [
         {
@@ -25396,8 +25396,7 @@
       "title": "هویت کلید میزبان را بساز و کلید خصوصی را در ذخیره‌سازی امن سیستم نگه دار.",
       "section": "13. هویت ارتباطی و رمزنگاری",
       "depends_on": [
-        "T0129",
-        "T0128"
+        "T0129"
       ],
       "inputs": [
         "خروجی تأییدشدهٔ پیش‌نیازها",
@@ -25406,35 +25405,157 @@
       "outputs": [
         "خروجی قابل بررسی مربوط به «هویت کلید میزبان را بساز و کلید خصوصی را در ذخیره‌سازی امن سیستم نگه دار.» در مسیر src/Shared.Security/ + tests/security/؛ همراه با آزمون/شاهد پذیرش متناسب."
       ],
-      "start_condition": "همهٔ پیش‌نیازهای T0129 و T0128 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
+      "start_condition": "T0129 is done. The reviewed T0128 → T0130 edge is sequencing_only: the independent-node end-to-end acceptance consumes no persistent key-store artifact and can follow stable host identity setup. Preserve T0128 and its pending acceptance.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
-      "expected_output_paths": [
-        "src/Shared.Security/ + tests/security/"
+      "status": "in_progress",
+      "status_fa": "در حال انجام",
+      "actual_output_paths": [
+        "src/Shared.Security/HostIdentityStore.cs",
+        "src/Host.Windows/Security/WindowsDpapiSecretProtector.cs",
+        "src/Host.Windows/Security/WindowsHostIdentityProvider.cs",
+        "tests/HostLifecycle.Tests/HostIdentityStoreAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/WindowsHostIdentityStoreAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+        "tests/HostLifecycle.Tests/Program.cs",
+        ".github/workflows/product-build.yml",
+        "tests/test_host_identity_store.py",
+        "docs/decisions/ADR-0017-windows-user-scoped-host-identity-storage.md",
+        "docs/decisions/README.md",
+        "step three/T0121/execution-report.md",
+        "step three/T0130/execution-report.md",
+        "step three/T0130/evidence/verification.md"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "expected_output_paths": [
+        "src/Shared.Security/HostIdentityStore.cs",
+        "src/Host.Windows/Security/",
+        "tests/HostLifecycle.Tests/",
+        "step three/T0130/execution-report.md",
+        "step three/T0130/evidence/verification.md"
+      ],
+      "evidence": [
+        "src/Shared.Security/HostIdentityStore.cs",
+        "src/Host.Windows/Security/WindowsDpapiSecretProtector.cs",
+        "src/Host.Windows/Security/WindowsHostIdentityProvider.cs",
+        "tests/HostLifecycle.Tests/HostIdentityStoreAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/WindowsHostIdentityStoreAcceptanceTests.cs",
+        "tests/test_host_identity_store.py",
+        "docs/decisions/ADR-0017-windows-user-scoped-host-identity-storage.md"
+      ],
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0130-A001 (2026-10-27): reviewed T0129 → T0130 as contract_or_interface_dependency and T0128 → T0130 as sequencing_only using actual project/source/test contracts; both original blocks edges remain. Implemented protected persistent host identity and portable/Windows acceptance tests; exact-commit CI pending. Status remains in_progress until tests and product/quality workflows pass.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0130-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Shared.Security/HostIdentityStore.cs",
+          "src/Host.Windows/Security/WindowsDpapiSecretProtector.cs",
+          "src/Host.Windows/Security/WindowsHostIdentityProvider.cs",
+          "tests/HostLifecycle.Tests/HostIdentityStoreAcceptanceTests.cs",
+          "tests/HostLifecycle.Tests/WindowsHostIdentityStoreAcceptanceTests.cs",
+          "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+          "tests/HostLifecycle.Tests/Program.cs",
+          ".github/workflows/product-build.yml",
+          "tests/test_host_identity_store.py",
+          "docs/decisions/ADR-0017-windows-user-scoped-host-identity-storage.md",
+          "docs/decisions/README.md",
+          "step three/T0121/execution-report.md",
+          "step three/T0130/execution-report.md",
+          "step three/T0130/evidence/verification.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
-          "affected_by_contract_changes": [],
-          "review_evidence": []
-        }
+          "state": "passed",
+          "triggering_contracts": [
+            "Nethermind.Libp2p.Core Identity/PrivateKey serialization contract",
+            "Windows DPAPI CurrentUser protect/unprotect contract",
+            "T0128 independent-node acceptance input contract"
+          ],
+          "affected_by_contract_changes": [
+            "T0121",
+            "T0128",
+            "T0131",
+            "T0132"
+          ],
+          "review_evidence": [
+            "src/Shared.Security/WhiteP.Shared.Security.csproj",
+            "src/Shared.Security/PeerSecurityPolicy.cs",
+            "docs/decisions/ADR-0016-maintained-libp2p-cryptographic-transport.md",
+            "tests/HostLifecycle.Tests/PeerSecurityPolicyAcceptanceTests.cs",
+            "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+            "src/Host.Windows/Networking/Libp2pPeerMessageProtocol.cs",
+            "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs",
+            "docs/decisions/ADR-0002-direct-p2p-data-path.md",
+            "src/Host.Windows/Networking/PeerAnnouncementLeasePublisher.cs",
+            "src/Rendezvous.Service/PeerAnnouncementDirectory.cs"
+          ]
+        },
+        "follow_up": "Inspect exact-commit Step Three quality, HostLifecycle, Windows WPF/DPAPI, and Android jobs. Keep T0130 in_progress until portable store and real Windows DPAPI acceptance tests pass; T0121 remains blocked pending actual peer-reachable host integration."
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0130-A001",
+          "started_at": "2026-10-27T20:22:14.101Z",
+          "ended_at": "2026-10-27T20:22:14.101Z",
+          "result": "partial",
+          "summary": "Implemented a bounded, versioned libp2p host-identity store with atomic no-overwrite creation, Windows DPAPI CurrentUser protection, fail-closed loading, portable/Windows acceptance tests, and CI registration. Reviewed both incoming dependency edges. Exact-commit CI has not yet run; no tests are claimed passed.",
+          "changed_files": [
+            "src/Shared.Security/HostIdentityStore.cs",
+            "src/Host.Windows/Security/WindowsDpapiSecretProtector.cs",
+            "src/Host.Windows/Security/WindowsHostIdentityProvider.cs",
+            "tests/HostLifecycle.Tests/HostIdentityStoreAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/WindowsHostIdentityStoreAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+            "tests/HostLifecycle.Tests/Program.cs",
+            ".github/workflows/product-build.yml",
+            "tests/test_host_identity_store.py",
+            "docs/decisions/ADR-0017-windows-user-scoped-host-identity-storage.md",
+            "docs/decisions/README.md",
+            "step three/T0121/execution-report.md",
+            "step three/T0130/execution-report.md",
+            "step three/T0130/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Portable HostIdentityStore acceptance tests",
+              "result": "pending",
+              "summary": "Concurrent first-run, reload stability, corrupt-envelope rejection and failed-unprotect handling."
+            },
+            {
+              "name": "Windows DPAPI acceptance test",
+              "result": "pending",
+              "summary": "Stable PeerId across provider instances, at-rest non-plaintext check and tamper rejection."
+            },
+            {
+              "name": "Python source/CI policy tests",
+              "result": "pending",
+              "summary": "Source guards for store, DPAPI provider and Windows workflow invocation."
+            },
+            {
+              "name": "Step Three quality gate",
+              "result": "pending",
+              "summary": "Exact-commit tests, syntax, graph structure and output/evidence validation."
+            },
+            {
+              "name": "Product build",
+              "result": "pending",
+              "summary": "HostLifecycle, Windows WPF/DPAPI and Android build/test jobs."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect exact-commit GitHub Actions and append actual results and the commit SHA in the next execution-ledger update."
+        }
+      ]
     },
     {
       "id": "T0131",
@@ -33037,19 +33158,29 @@
       "from": "T0129",
       "to": "T0130",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0129 supplies the maintained Nethermind.Libp2p.Core identity/PeerId implementation and shared security project consumed by T0130's serialized PrivateKey and Identity types. This is a source/project contract, not an inference from type=blocks.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Shared.Security/WhiteP.Shared.Security.csproj",
+        "src/Shared.Security/PeerSecurityPolicy.cs",
+        "docs/decisions/ADR-0016-maintained-libp2p-cryptographic-transport.md",
+        "tests/HostLifecycle.Tests/PeerSecurityPolicyAcceptanceTests.cs"
+      ]
     },
     {
       "from": "T0128",
       "to": "T0130",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0128 is the final independent-node E2E acceptance task and does not consume persistent key-store output from T0130. A stable host identity is useful input for repeatable peer identity during that later acceptance. Retain the edge and type=blocks, but classify this relationship as sequencing_only to allow T0130 first.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+        "src/Host.Windows/Networking/Libp2pPeerMessageProtocol.cs",
+        "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs",
+        "docs/decisions/ADR-0002-direct-p2p-data-path.md"
+      ]
     },
     {
       "from": "T0130",
@@ -34883,6 +35014,8 @@
     "T0118",
     "T0119",
     "T0120",
+    "T0129",
+    "T0130",
     "T0121",
     "T0122",
     "T0123",
@@ -34891,8 +35024,6 @@
     "T0126",
     "T0127",
     "T0128",
-    "T0129",
-    "T0130",
     "T0131",
     "T0132",
     "T0133",
@@ -37271,8 +37402,68 @@
         "step three/T0128/execution-report.md"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-27T20:22:14.101Z",
+      "edge_from": "T0129",
+      "edge_to": "T0130",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "old_validation_status": "unreviewed",
+      "new_validation_status": "validated",
+      "reason": "T0129 supplies the maintained Nethermind.Libp2p.Core identity/PeerId implementation and shared security project consumed by T0130's serialized PrivateKey and Identity types. This is a source/project contract, not an inference from type=blocks.",
+      "evidence": [
+        "src/Shared.Security/WhiteP.Shared.Security.csproj",
+        "src/Shared.Security/PeerSecurityPolicy.cs",
+        "docs/decisions/ADR-0016-maintained-libp2p-cryptographic-transport.md",
+        "tests/HostLifecycle.Tests/PeerSecurityPolicyAcceptanceTests.cs"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-27T20:22:14.101Z",
+      "edge_from": "T0128",
+      "edge_to": "T0130",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "old_validation_status": "unreviewed",
+      "new_validation_status": "validated",
+      "reason": "T0128 is the final independent-node E2E acceptance task and does not consume persistent key-store output from T0130. A stable host identity is useful input for repeatable peer identity during that later acceptance. Retain the edge and type=blocks, but classify this relationship as sequencing_only to allow T0130 first.",
+      "evidence": [
+        "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+        "src/Host.Windows/Networking/Libp2pPeerMessageProtocol.cs",
+        "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs",
+        "docs/decisions/ADR-0002-direct-p2p-data-path.md"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-27"
+  "updated_at": "2026-10-27",
+  "execution_order_change_log": [
+    {
+      "changed_at": "2026-10-27T20:22:14.101Z",
+      "moved_tasks": [
+        "T0129",
+        "T0130"
+      ],
+      "old_positions": {
+        "T0129": 129,
+        "T0130": 130
+      },
+      "new_anchor": "Immediately after T0120 and before T0121/T0128",
+      "reason": "Validated T0128 → T0129 as sequencing_only in the baseline and reviewed T0128 → T0130 against its independent-node acceptance contract. Neither task consumes an output produced by T0128; the maintained crypto boundary and stable host identity can precede multi-node acceptance. Original blocks edges remain and the order change is recorded.",
+      "evidence": [
+        "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+        "src/Host.Windows/Networking/Libp2pPeerMessageProtocol.cs",
+        "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs",
+        "docs/decisions/ADR-0002-direct-p2p-data-path.md",
+        "src/Shared.Security/WhiteP.Shared.Security.csproj",
+        "src/Shared.Security/PeerSecurityPolicy.cs",
+        "docs/decisions/ADR-0016-maintained-libp2p-cryptographic-transport.md",
+        "tests/HostLifecycle.Tests/PeerSecurityPolicyAcceptanceTests.cs"
+      ],
+      "reviewed_by": "Step Three execution review"
+    }
+  ]
 }
 ```

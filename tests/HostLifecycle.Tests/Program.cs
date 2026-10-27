@@ -12,6 +12,12 @@ using WhiteP.Host.Windows.Inference;
 using WhiteP.Host.Windows.Models.Catalog;
 using WhiteP.Shared.Contracts;
 
+if (args.Contains("--test-host-identity-store", StringComparer.Ordinal))
+{
+    WindowsHostIdentityStoreAcceptanceTests.Run();
+    return;
+}
+
 if (args.Contains("--test-agent-tool-capability", StringComparer.Ordinal))
 {
     await AgentToolCapabilityAcceptanceTests.RunAsync();
@@ -110,6 +116,7 @@ await NetworkInferenceRequestFrameAcceptanceTests.RunAsync();
 await NetworkInferenceRequestResponseMapperAcceptanceTests.RunAsync();
 await PeerTransportContractAcceptanceTests.RunAsync().ConfigureAwait(false);
 PeerSecurityPolicyAcceptanceTests.Run();
+HostIdentityStoreAcceptanceTests.Run();
 await PeerAnnouncementClientAcceptanceTests.RunAsync().ConfigureAwait(false);
 SecureRequestIdGeneratorTests.Run();
 await HostRequestAdmissionTests.RunAsync();
