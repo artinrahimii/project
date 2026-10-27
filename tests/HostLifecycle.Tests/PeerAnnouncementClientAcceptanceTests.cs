@@ -19,11 +19,12 @@ internal static class PeerAnnouncementClientAcceptanceTests
     {
         VerifyContractSurfaceIsMetadataOnly();
         NonLoopbackPlainHttpIsRejected();
+        LeasePublisherConfigurationIsValidated();
         await RealAnnouncementAndCapabilityDiscoveryWorkOverLoopbackAsync().ConfigureAwait(false);
         await PeriodicLeaseRenewalRefreshesTtlAndStopsAsync().ConfigureAwait(false);
         await UnknownPromptFieldIsRejectedByTheControlPlaneAsync().ConfigureAwait(false);
         await OversizedControlMessagesAreRejectedAsync().ConfigureAwait(false);
-        Console.WriteLine("PASS: metadata-only discovery, periodic TTL renewal/expiry, unknown-field rejection and control-message bounds.");
+        Console.WriteLine("PASS: metadata-only discovery, lease configuration validation, periodic TTL renewal/expiry, unknown-field rejection and control-message bounds.");
     }
 
     private static void VerifyContractSurfaceIsMetadataOnly()
@@ -184,6 +185,41 @@ internal static class PeerAnnouncementClientAcceptanceTests
                 "An over-limit control message must be rejected by the raw request-body size limit.");
         }
         finally { await app.StopAsync().ConfigureAwait(false); }
+    }
+
+    private static void LeasePublisherConfigurationIsValidated()
+    {
+        using var client = new HttpClient();
+        string peerId = CreatePeerId();
+        var template = new PeerAnnouncement(
+            peerId,
+            [$"/ip4/127.0.0.1/tcp/43011/p2p/{peerId}"],
+            ["inference.v1"],
+            DateTimeOffset.UtcNow.AddMinutes(1));
+
+        Assert(PeerAnnouncementLeasePublisher.DefaultTimeToLive == TimeSpan.FromMinutes(5),
+            "The default announcement lease should have a five-minute TTL.");
+        Assert(PeerAnnouncementLeasePublisher.DefaultRenewalInterval == TimeSpan.FromMinutes(1),
+            "The default renewal interval should be one minute.");
+        Assert(PeerAnnouncementLeasePublisher.DefaultRenewalInterval < PeerAnnouncementLeasePublisher.DefaultTimeToLive,
+            "The default renewal interval must be shorter than its TTL.");
+
+        ExpectArgumentException(() => _ = new PeerAnnouncementLeasePublisher(null!, template),
+            "A null HTTP announcement client must be rejected.");
+        ExpectArgumentException(() => _ = new PeerAnnouncementLeasePublisher(client, null!),
+            "A null announcement template must be rejected.");
+        ExpectArgumentException(() => _ = new PeerAnnouncementLeasePublisher(
+                client, template, TimeSpan.Zero, TimeSpan.FromSeconds(1)),
+            "A zero TTL must be rejected.");
+        ExpectArgumentException(() => _ = new PeerAnnouncementLeasePublisher(
+                client, template, PeerAnnouncement.MaximumLifetime + TimeSpan.FromTicks(1), TimeSpan.FromHours(1)),
+            "A TTL beyond the shared announcement contract must be rejected.");
+        ExpectArgumentException(() => _ = new PeerAnnouncementLeasePublisher(
+                client, template, TimeSpan.FromSeconds(2), TimeSpan.Zero),
+            "A zero renewal interval must be rejected.");
+        ExpectArgumentException(() => _ = new PeerAnnouncementLeasePublisher(
+                client, template, TimeSpan.FromSeconds(2), TimeSpan.FromSeconds(2)),
+            "A renewal interval equal to the TTL must be rejected.");
     }
 
     private static void NonLoopbackPlainHttpIsRejected()

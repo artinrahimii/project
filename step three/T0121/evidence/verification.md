@@ -22,3 +22,13 @@
 
 ## Remaining acceptance gap
 The lease publisher is not yet wired into the WPF host participation lifecycle because the current app only binds its listener to loopback and lacks configured rendezvous/peer-reachable address settings. End-to-end host announcement/renewal lifecycle therefore remains incomplete; do not mark T0121 done.
+
+
+## T0121-A003 — cleanup/configuration regression coverage
+
+- **Base:** `071be6ccc613400cd649ce33f8fb478692ab8526` (`V 3.0.366`); `main` was re-read before preparing the change.
+- **Changed implementation:** `src/Host.Windows/Networking/PeerAnnouncementLeasePublisher.cs` now disposes the renewal cancellation source from `finally` during stop, including an unexpected renewal-task fault path.
+- **Changed acceptance tests:** `tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs` validates defaults, null dependencies, TTL lower/upper bounds, and the strict renewal-interval-before-TTL rule.
+- **Graph validation:** Blob `491422474a6ccceb3c687b14d052465150334e9e`, 1876796 UTF-8 bytes, 1755078 text characters; computed Git SHA-1 equals the tree Blob ID; fenced JSON parses to 229 nodes and 426 edges.
+- **New-commit CI:** pending. No new configuration test is marked passed until the workflow result for the resulting main commit is inspected.
+- **Acceptance gap unchanged:** host-UI/lifecycle wiring is not safe yet because reachable rendezvous/address configuration is absent and the current listener binds loopback only.

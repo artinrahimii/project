@@ -21983,9 +21983,9 @@
       ],
       "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
       "execution_summary": {
-        "attempt_count": 2,
+        "attempt_count": 3,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0121-A002",
+        "last_attempt_id": "T0121-A003",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Host.Windows/Networking/PeerAnnouncementLeasePublisher.cs",
@@ -22087,6 +22087,33 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Wire the lease publisher into actual host participation only after a configuration path for the rendezvous HTTPS endpoint and a verified peer-reachable advertised address exists; add UI/lifecycle acceptance for renew, revoke, app shutdown and expired-host removal."
+        },
+        {
+          "attempt_id": "T0121-A003",
+          "started_at": "2026-10-27T05:31:42.020Z",
+          "ended_at": "2026-10-27T05:31:42.020Z",
+          "result": "partial",
+          "summary": "Hardened cancellation-source cleanup in the lease publisher and added acceptance checks for configuration defaults and invalid TTL/renewal boundaries. The host UI/lifecycle integration remains intentionally incomplete until a reachable rendezvous URL and verified peer address can be configured. Exact-commit CI is pending.",
+          "changed_files": [
+            "src/Host.Windows/Networking/PeerAnnouncementLeasePublisher.cs",
+            "tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs",
+            "step three/T0121/execution-report.md",
+            "step three/T0121/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "command": "GitHub Actions product-build and Step Three quality workflows on V 3.0.367",
+              "result": "pending",
+              "summary": "New tests and production cleanup change await CI for the exact online commit; no local build/test result is asserted."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect CI for V 3.0.367. Then design and test safe host participation integration only with a configured HTTPS rendezvous endpoint and a verified non-loopback peer-reachable advertised address."
         }
       ]
     },
@@ -34259,6 +34286,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-27T05:26:56Z"
+  "updated_at": "2026-10-27T05:31:42.020Z"
 }
 ```

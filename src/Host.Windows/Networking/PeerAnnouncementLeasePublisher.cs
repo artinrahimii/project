@@ -145,20 +145,26 @@ public sealed class PeerAnnouncementLeasePublisher : IAsyncDisposable
             return;
         }
 
-        cancellation.Cancel();
-        if (renewal is not null)
+        try
         {
-            try
+            cancellation.Cancel();
+            if (renewal is not null)
             {
-                await renewal.ConfigureAwait(false);
-            }
-            catch (OperationCanceledException) when (cancellation.IsCancellationRequested)
-            {
-                // Expected when the periodic delay or HTTP request is cancelled during shutdown.
+                try
+                {
+                    await renewal.ConfigureAwait(false);
+                }
+                catch (OperationCanceledException) when (cancellation.IsCancellationRequested)
+                {
+                    // Expected when the periodic delay or HTTP request is cancelled during shutdown.
+                }
             }
         }
-
-        cancellation.Dispose();
+        finally
+        {
+            // Always release the cancellation source, including when an unexpected renewal fault propagates.
+            cancellation.Dispose();
+        }
     }
 
     public async ValueTask DisposeAsync()
