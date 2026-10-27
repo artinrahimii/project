@@ -22,6 +22,7 @@ public sealed class Libp2pPeerTransport : IPeerTransport
     private static readonly TimeSpan ProtocolStartupTimeout = TimeSpan.FromSeconds(15);
 
     private readonly ServiceProvider _services;
+    private readonly PeerTrustStore _peerTrustStore;
     private readonly ILocalPeer _peer;
     private readonly Libp2pPeerMessageProtocol _protocol;
     private readonly object _sessionGate = new();
@@ -37,11 +38,14 @@ public sealed class Libp2pPeerTransport : IPeerTransport
     private int _disposeStarted;
 
     public Libp2pPeerTransport(
+        PeerTrustStore peerTrustStore,
         string? expectedRemotePeerIdentity = null,
         Identity? localIdentity = null,
         int maximumMessageBytes = DefaultMaximumMessageBytes,
         int inboundQueueCapacity = DefaultInboundQueueCapacity)
     {
+        ArgumentNullException.ThrowIfNull(peerTrustStore);
+        _peerTrustStore = peerTrustStore;
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(maximumMessageBytes);
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(inboundQueueCapacity);
         if (expectedRemotePeerIdentity is not null)
@@ -95,6 +99,7 @@ public sealed class Libp2pPeerTransport : IPeerTransport
         {
             throw new InvalidOperationException("Listening requires an expected remote peer identity.");
         }
+        _peerTrustStore.EnsureTrusted(_expectedRemotePeerIdentity);
 
         if (IPAddress.Any.Equals(bindAddress) || IPAddress.IPv6Any.Equals(bindAddress))
         {
@@ -146,11 +151,6 @@ public sealed class Libp2pPeerTransport : IPeerTransport
     {
         ArgumentNullException.ThrowIfNull(endpoint);
         ObjectDisposedException.ThrowIf(Volatile.Read(ref _disposeStarted) != 0, this);
-        if (Interlocked.CompareExchange(ref _connectStarted, 1, 0) != 0)
-        {
-            throw new InvalidOperationException("This peer transport instance can connect to only one remote peer.");
-        }
-
         Multiaddress remoteAddress;
         try
         {
@@ -171,6 +171,12 @@ public sealed class Libp2pPeerTransport : IPeerTransport
         if (!string.Equals(addressPeerIdentity, endpoint.ExpectedPeerIdentity, StringComparison.Ordinal))
         {
             throw new AuthenticationException("The peer identity in the multiaddress does not match the expected peer identity.");
+        }
+        _peerTrustStore.EnsureTrusted(endpoint.ExpectedPeerIdentity);
+
+        if (Interlocked.CompareExchange(ref _connectStarted, 1, 0) != 0)
+        {
+            throw new InvalidOperationException("This peer transport instance can connect to only one remote peer.");
         }
 
         lock (_sessionGate)

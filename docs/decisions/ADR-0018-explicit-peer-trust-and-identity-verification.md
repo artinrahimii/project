@@ -1,0 +1,11 @@
+# ADR-0018: Explicit peer trust and identity verification
+
+- **Status:** Proposed pending exact-commit CI verification; peer-enrollment UI and full independent-node E2E remain separate.
+- **Date:** 2026-10-27
+- **Related task:** T0131.
+- **Decision:** Unknown libp2p PeerIds are not trusted automatically. A caller must explicitly confirm the exact canonical PeerId before adding it to a persistent trust registry. Reconnection is permitted only for a stored decision; a different PeerId remains unknown rather than replacing a prior identity.
+- **Persistence:** PeerTrustStore writes a bounded, versioned document protected by the injected IUserSecretProtector. Windows production callers use current-user DPAPI. Cross-instance access is serialized by a path-scoped named mutex; updates use same-directory atomic replacement. Corrupt, unsupported, unreadable, or unprotectable data fails closed and is not reset automatically.
+- **Transport gate:** Libp2pPeerTransport requires a PeerTrustStore. Listening requires the expected remote identity to be trusted. Dialing requires a canonical PeerId, the /p2p identity in the multiaddress to match the expected identity, and a persisted explicit trust decision before dialing. The maintained libp2p Noise/TLS implementation remains responsible for secure-channel cryptography and authenticated session identity; this project adds no cryptographic algorithms.
+- **Caller boundary:** TrustPeerAfterExplicitConfirmation accepts positive confirmation from its caller, but the WPF UI does not yet present a peer-enrollment prompt or discover peers. Callers must show the exact PeerId and obtain genuine user approval before passing explicitlyConfirmed=true; that UI integration is not claimed complete.
+- **Verification:** portable tests cover unknown-peer rejection, explicit approval, persisted reload, non-canonical IDs and corrupt-store fail-closed behavior. Windows CI additionally checks DPAPI persistence, absence of the trusted PeerId in plaintext and tamper rejection. Exact-commit CI is pending.
+- **Traceability:** src/Shared.Security/PeerTrustStore.cs, src/Host.Windows/Networking/Libp2pPeerTransport.cs, tests/HostLifecycle.Tests/PeerTrustStoreAcceptanceTests.cs, tests/HostLifecycle.Tests/WindowsPeerTrustStoreAcceptanceTests.cs, and tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs.

@@ -23,10 +23,14 @@ internal static class PeerTransportContractAcceptanceTests
 
     private static async Task VerifyDirectEncryptedPeerMessageExchangeAsync()
     {
-        await using var client = new Libp2pPeerTransport(maximumMessageBytes: 1024);
+        using var clientTrustFixture = new TestPeerTrustStoreFixture();
+        using var serverTrustFixture = new TestPeerTrustStoreFixture();
+        await using var client = new Libp2pPeerTransport(clientTrustFixture.Store, maximumMessageBytes: 1024);
         await using var server = new Libp2pPeerTransport(
+            serverTrustFixture.Store,
             expectedRemotePeerIdentity: client.LocalPeerIdentity,
             maximumMessageBytes: 1024);
+        serverTrustFixture.Store.TrustPeerAfterExplicitConfirmation(client.LocalPeerIdentity, explicitlyConfirmed: true);
 
         int port = ReserveTcpPort();
         await server.StartListeningAsync(IPAddress.Loopback, port).WaitAsync(TimeSpan.FromSeconds(10)).ConfigureAwait(false);
@@ -36,7 +40,24 @@ internal static class PeerTransportContractAcceptanceTests
         Assert(server.ListenAddresses.Any(address => address.Contains("/quic-v1", StringComparison.Ordinal)),
             "The listener must publish a QUIC/UDP alternative for the same authenticated peer.");
 
-        await using (var mismatchedIdentityClient = new Libp2pPeerTransport(maximumMessageBytes: 1024))
+        bool unknownPeerRejected = false;
+        try
+        {
+            await client.ConnectSecureAsync(
+                new PeerTransportEndpoint(serverAddress, server.LocalPeerIdentity),
+                new CancellationTokenSource(TimeSpan.FromSeconds(5)).Token).ConfigureAwait(false);
+        }
+        catch (AuthenticationException)
+        {
+            unknownPeerRejected = true;
+        }
+        Assert(unknownPeerRejected && !client.IsConnected,
+            "A syntactically valid but untrusted PeerId must be rejected before the transport dials.");
+
+        clientTrustFixture.Store.TrustPeerAfterExplicitConfirmation(server.LocalPeerIdentity, explicitlyConfirmed: true);
+
+        using var mismatchedTrustFixture = new TestPeerTrustStoreFixture();
+        await using (var mismatchedIdentityClient = new Libp2pPeerTransport(mismatchedTrustFixture.Store, maximumMessageBytes: 1024))
         {
             bool rejected = false;
             try
@@ -99,9 +120,14 @@ internal static class PeerTransportContractAcceptanceTests
     {
         var fallbackClientIdentity = new Identity();
         string fallbackClientPeerId = new PeerId(fallbackClientIdentity.PublicKey).ToString();
+        using var fallbackClientTrustFixture = new TestPeerTrustStoreFixture();
+        using var fallbackServerTrustFixture = new TestPeerTrustStoreFixture();
         await using var server = new Libp2pPeerTransport(
+            fallbackServerTrustFixture.Store,
             expectedRemotePeerIdentity: fallbackClientPeerId,
             maximumMessageBytes: 1024);
+        fallbackServerTrustFixture.Store.TrustPeerAfterExplicitConfirmation(fallbackClientPeerId, explicitlyConfirmed: true);
+        fallbackClientTrustFixture.Store.TrustPeerAfterExplicitConfirmation(server.LocalPeerIdentity, explicitlyConfirmed: true);
 
         using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(25));
         int listenPort = ReserveTcpPort();
@@ -122,7 +148,7 @@ internal static class PeerTransportContractAcceptanceTests
         await using PeerTransportConnectionResult connection = await PeerTransportFallbackConnector.ConnectAsync(
             candidates,
             server.LocalPeerIdentity,
-            () => new Libp2pPeerTransport(localIdentity: fallbackClientIdentity, maximumMessageBytes: 1024),
+            () => new Libp2pPeerTransport(fallbackClientTrustFixture.Store, localIdentity: fallbackClientIdentity, maximumMessageBytes: 1024),
             timeout.Token).WaitAsync(TimeSpan.FromSeconds(25), timeout.Token).ConfigureAwait(false);
 
         Assert(connection.FailedAttemptCount == 1,
@@ -165,7 +191,8 @@ internal static class PeerTransportContractAcceptanceTests
 
     private static async Task VerifyFallbackRejectsMixedPeerIdentitiesBeforeConnectingAsync()
     {
-        await using var expectedPeer = new Libp2pPeerTransport();
+        using var expectedPeerTrustFixture = new TestPeerTrustStoreFixture();
+        await using var expectedPeer = new Libp2pPeerTransport(expectedPeerTrustFixture.Store);
         int factoryCalls = 0;
         var candidates = new[]
         {
@@ -181,7 +208,7 @@ internal static class PeerTransportContractAcceptanceTests
                 () =>
                 {
                     factoryCalls++;
-                    return new Libp2pPeerTransport();
+                    return new Libp2pPeerTransport(expectedPeerTrustFixture.Store);
                 }).ConfigureAwait(false);
         }
         catch (ArgumentException)

@@ -15,6 +15,7 @@ using WhiteP.Shared.Contracts;
 if (args.Contains("--test-host-identity-store", StringComparer.Ordinal))
 {
     WindowsHostIdentityStoreAcceptanceTests.Run();
+    WindowsPeerTrustStoreAcceptanceTests.Run();
     return;
 }
 
@@ -116,6 +117,7 @@ await NetworkInferenceRequestFrameAcceptanceTests.RunAsync();
 await NetworkInferenceRequestResponseMapperAcceptanceTests.RunAsync();
 await PeerTransportContractAcceptanceTests.RunAsync().ConfigureAwait(false);
 PeerSecurityPolicyAcceptanceTests.Run();
+PeerTrustStoreAcceptanceTests.Run();
 HostIdentityStoreAcceptanceTests.Run();
 await PeerAnnouncementClientAcceptanceTests.RunAsync().ConfigureAwait(false);
 SecureRequestIdGeneratorTests.Run();

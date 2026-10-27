@@ -25166,7 +25166,8 @@
       "section": "12. معماری P2P و کشف میزبان",
       "depends_on": [
         "T0127",
-        "T0115"
+        "T0115",
+        "T0131"
       ],
       "inputs": [
         "خروجی تأییدشدهٔ پیش‌نیازها",
@@ -25175,7 +25176,7 @@
       "outputs": [
         "خروجی قابل بررسی مربوط به «آزمون end-to-end را روی دو رایانهٔ واقعی یا دو گرهٔ مستقل شبکه اجرا و نتیجه را ثبت کن.» در مسیر src/Shared.Networking/ یا src/Host.Windows/Networking/ + tests/؛ همراه با آزمون/شاهد پذیرش متناسب."
       ],
-      "start_condition": "همهٔ پیش‌نیازهای T0127 و T0115 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
+      "start_condition": "T0127, T0115 and T0131 must be done with passing acceptance evidence. T0131 provides the persistent explicit peer-trust gate used by the independent-node transport test.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
       "status": "not_started",
       "status_fa": "انجام‌نشده",
@@ -25184,7 +25185,7 @@
         "src/Shared.Networking/ یا src/Host.Windows/Networking/ + tests/"
       ],
       "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nDependency review (V 3.0.439): T0128 → T0131 is sequencing_only. Added T0131 → T0128 as a validated contract/interface dependency because the real transport requires PeerTrustStore and final E2E must approve/verify expected peer IDs.",
       "execution_summary": {
         "attempt_count": 0,
         "failed_attempt_count": 0,
@@ -25626,8 +25627,7 @@
       "title": "روش اعتماد اولیه و تأیید هویت همتا را پیاده‌سازی کن.",
       "section": "13. هویت ارتباطی و رمزنگاری",
       "depends_on": [
-        "T0130",
-        "T0128"
+        "T0130"
       ],
       "inputs": [
         "خروجی تأییدشدهٔ پیش‌نیازها",
@@ -25636,35 +25636,156 @@
       "outputs": [
         "خروجی قابل بررسی مربوط به «روش اعتماد اولیه و تأیید هویت همتا را پیاده‌سازی کن.» در مسیر src/Shared.Security/ + tests/security/؛ همراه با آزمون/شاهد پذیرش متناسب."
       ],
-      "start_condition": "همهٔ پیش‌نیازهای T0130 و T0128 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
+      "start_condition": "T0130 is done. The historical T0128 → T0131 edge is sequencing_only; the validated technical dependency runs T0131 → T0128 because the final independent-node acceptance consumes this task's trust API.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
-      "expected_output_paths": [
-        "src/Shared.Security/ + tests/security/"
+      "status": "in_progress",
+      "status_fa": "در حال انجام",
+      "actual_output_paths": [
+        "src/Shared.Security/PeerTrustStore.cs",
+        "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+        "tests/HostLifecycle.Tests/TestPeerTrustStoreFixture.cs",
+        "tests/HostLifecycle.Tests/PeerTrustStoreAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/WindowsPeerTrustStoreAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        ".github/workflows/product-build.yml",
+        "docs/decisions/ADR-0018-explicit-peer-trust-and-identity-verification.md",
+        "docs/decisions/README.md",
+        "step three/T0131/execution-report.md",
+        "step three/T0131/evidence/verification.md",
+        "step three/project-graph.md"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "expected_output_paths": [
+        "src/Shared.Security/PeerTrustStore.cs",
+        "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+        "tests/HostLifecycle.Tests/PeerTrustStoreAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/WindowsPeerTrustStoreAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs",
+        "step three/T0131/execution-report.md",
+        "step three/T0131/evidence/verification.md"
+      ],
+      "evidence": [
+        "src/Shared.Security/PeerTrustStore.cs",
+        "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+        "tests/HostLifecycle.Tests/PeerTrustStoreAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/WindowsPeerTrustStoreAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs",
+        "docs/decisions/ADR-0018-explicit-peer-trust-and-identity-verification.md"
+      ],
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0131-A001: reviewed T0130 → T0131 as contract_or_interface_dependency. T0128 → T0131 is sequencing_only; added missing actual dependency T0131 → T0128 because final E2E consumes the explicit trust API. The original edge type=blocks remains; rationale, evidence and order change are recorded.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0131-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Shared.Security/PeerTrustStore.cs",
+          "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+          "tests/HostLifecycle.Tests/TestPeerTrustStoreFixture.cs",
+          "tests/HostLifecycle.Tests/PeerTrustStoreAcceptanceTests.cs",
+          "tests/HostLifecycle.Tests/WindowsPeerTrustStoreAcceptanceTests.cs",
+          "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs",
+          "tests/HostLifecycle.Tests/Program.cs",
+          ".github/workflows/product-build.yml",
+          "docs/decisions/ADR-0018-explicit-peer-trust-and-identity-verification.md",
+          "docs/decisions/README.md",
+          "step three/T0131/execution-report.md",
+          "step three/T0131/evidence/verification.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
-          "affected_by_contract_changes": [],
-          "review_evidence": []
-        }
+          "state": "required",
+          "triggering_contracts": [
+            "Transport now requires PeerTrustStore before listening/dialing",
+            "T0128 consumes trust API"
+          ],
+          "affected_by_contract_changes": [
+            "T0128",
+            "T0132",
+            "T0133",
+            "T0134",
+            "T0137"
+          ],
+          "review_evidence": [
+            "src/Shared.Security/HostIdentityStore.cs",
+            "src/Host.Windows/Security/WindowsDpapiSecretProtector.cs",
+            "src/Host.Windows/Security/WindowsHostIdentityProvider.cs",
+            "src/Shared.Security/PeerSecurityPolicy.cs",
+            "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+            "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs",
+            "docs/decisions/ADR-0016-maintained-libp2p-cryptographic-transport.md",
+            "src/Shared.Security/PeerTrustStore.cs",
+            "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+            "tests/HostLifecycle.Tests/PeerTrustStoreAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs"
+          ]
+        },
+        "follow_up": "Inspect exact-commit Step Three quality, HostLifecycle, Windows DPAPI and Android jobs. Keep T0131 in_progress until CI passes; T0128 is explicitly dependent on T0131."
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0131-A001",
+          "started_at": "2026-10-27T20:52:43.631Z",
+          "ended_at": "2026-10-27T20:52:43.631Z",
+          "result": "partial",
+          "summary": "Added protected trust-on-first-use storage for canonical PeerIds and required a trust store in Libp2pPeerTransport. Unknown identities are rejected before listen/dial; explicit approval can be persisted and reloaded. Portable and Windows DPAPI tests plus transport trust-gate coverage added. Exact-commit CI pending.",
+          "changed_files": [
+            "src/Shared.Security/PeerTrustStore.cs",
+            "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+            "tests/HostLifecycle.Tests/TestPeerTrustStoreFixture.cs",
+            "tests/HostLifecycle.Tests/PeerTrustStoreAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/WindowsPeerTrustStoreAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/Program.cs",
+            ".github/workflows/product-build.yml",
+            "docs/decisions/ADR-0018-explicit-peer-trust-and-identity-verification.md",
+            "docs/decisions/README.md",
+            "step three/T0131/execution-report.md",
+            "step three/T0131/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "PeerTrustStore acceptance",
+              "result": "pending",
+              "summary": "Explicit approval, unknown rejection, persisted reload, canonical ID validation and corrupt-store fail-closed."
+            },
+            {
+              "name": "Peer transport trust gate",
+              "result": "pending",
+              "summary": "Unknown ID rejected before dial, approval allows retry, address identity mismatch rejected."
+            },
+            {
+              "name": "Windows DPAPI trust acceptance",
+              "result": "pending",
+              "summary": "At-rest privacy, reload and tamper rejection."
+            },
+            {
+              "name": "Step Three quality gate",
+              "result": "pending",
+              "summary": "Exact graph, Python and output/evidence validation."
+            },
+            {
+              "name": "Product build",
+              "result": "pending",
+              "summary": "HostLifecycle, Windows WPF/DPAPI and Android jobs."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "Libp2pPeerTransport now requires PeerTrustStore and checks trust before listener start and outbound dial."
+          ],
+          "follow_up": "Inspect exact-commit CI; preserve and fix any failures before completion."
+        }
+      ]
     },
     {
       "id": "T0132",
@@ -33250,19 +33371,28 @@
       "from": "T0130",
       "to": "T0131",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0131's persistent trust store reuses IUserSecretProtector and canonical PeerId validation supplied by the existing security boundary. Libp2pPeerTransport now requires this store before listening or dialing; this is a source/interface dependency.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Shared.Security/HostIdentityStore.cs",
+        "src/Host.Windows/Security/WindowsDpapiSecretProtector.cs",
+        "src/Host.Windows/Security/WindowsHostIdentityProvider.cs",
+        "src/Shared.Security/PeerSecurityPolicy.cs"
+      ]
     },
     {
       "from": "T0128",
       "to": "T0131",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0128's final independent-node acceptance does not produce a trust API consumed by T0131. The trust policy and component tests can be implemented independently, so retain this historical edge as sequencing_only and execute T0131 first.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+        "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs",
+        "docs/decisions/ADR-0016-maintained-libp2p-cryptographic-transport.md"
+      ]
     },
     {
       "from": "T0131",
@@ -34955,6 +35085,20 @@
       "rationale": "",
       "validation_status": "unreviewed",
       "evidence": []
+    },
+    {
+      "from": "T0131",
+      "to": "T0128",
+      "type": "blocks",
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "The independent-node acceptance must create transports with an explicit trust store and approve exact expected peer IDs. Libp2pPeerTransport now requires PeerTrustStore and checks it before dialing/listening; therefore T0131's API is an actual contract prerequisite for T0128.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Shared.Security/PeerTrustStore.cs",
+        "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+        "tests/HostLifecycle.Tests/PeerTrustStoreAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs"
+      ]
     }
   ],
   "execution_order": [
@@ -35080,6 +35224,7 @@
     "T0120",
     "T0129",
     "T0130",
+    "T0131",
     "T0121",
     "T0122",
     "T0123",
@@ -35088,7 +35233,6 @@
     "T0126",
     "T0127",
     "T0128",
-    "T0131",
     "T0132",
     "T0133",
     "T0134",
@@ -37500,6 +37644,56 @@
         "docs/decisions/ADR-0002-direct-p2p-data-path.md"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-27T20:52:43.631Z",
+      "edge_from": "T0130",
+      "edge_to": "T0131",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "old_validation_status": "unreviewed",
+      "new_validation_status": "validated",
+      "reason": "T0131's persistent trust store reuses IUserSecretProtector and canonical PeerId validation supplied by the existing security boundary. Libp2pPeerTransport now requires this store before listening or dialing; this is a source/interface dependency.",
+      "evidence": [
+        "src/Shared.Security/HostIdentityStore.cs",
+        "src/Host.Windows/Security/WindowsDpapiSecretProtector.cs",
+        "src/Host.Windows/Security/WindowsHostIdentityProvider.cs",
+        "src/Shared.Security/PeerSecurityPolicy.cs"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-27T20:52:43.631Z",
+      "edge_from": "T0128",
+      "edge_to": "T0131",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "old_validation_status": "unreviewed",
+      "new_validation_status": "validated",
+      "reason": "T0128's final independent-node acceptance does not produce a trust API consumed by T0131. The trust policy and component tests can be implemented independently, so retain this historical edge as sequencing_only and execute T0131 first.",
+      "evidence": [
+        "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+        "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs",
+        "docs/decisions/ADR-0016-maintained-libp2p-cryptographic-transport.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-27T20:52:43.631Z",
+      "edge_from": "T0131",
+      "edge_to": "T0128",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "old_validation_status": "unreviewed",
+      "new_validation_status": "validated",
+      "reason": "Added the missing interface dependency: the final multi-node acceptance uses the trust gate. The opposite historical edge is retained as sequencing_only, not a technical prerequisite.",
+      "evidence": [
+        "src/Shared.Security/PeerTrustStore.cs",
+        "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+        "tests/HostLifecycle.Tests/PeerTrustStoreAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
   "updated_at": "2026-10-27",
@@ -37525,6 +37719,27 @@
         "src/Shared.Security/PeerSecurityPolicy.cs",
         "docs/decisions/ADR-0016-maintained-libp2p-cryptographic-transport.md",
         "tests/HostLifecycle.Tests/PeerSecurityPolicyAcceptanceTests.cs"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-27T20:52:43.631Z",
+      "moved_tasks": [
+        "T0131"
+      ],
+      "old_positions": {
+        "T0131": 131
+      },
+      "new_anchor": "Immediately after T0130 and ahead of the blocked T0121/T0128 chain",
+      "reason": "T0128 → T0131 is sequencing_only; trust API can be built and tested before final E2E. Added validated T0131 → T0128 because the E2E consumes the trust API. Original edge remains.",
+      "evidence": [
+        "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+        "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs",
+        "docs/decisions/ADR-0016-maintained-libp2p-cryptographic-transport.md",
+        "src/Shared.Security/PeerTrustStore.cs",
+        "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+        "tests/HostLifecycle.Tests/PeerTrustStoreAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs"
       ],
       "reviewed_by": "Step Three execution review"
     }
