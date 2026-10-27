@@ -572,3 +572,13 @@
 - **Fix:** replaced the over-escaped regex extraction with explicit parsing of the `](...)` Markdown link in each ADR row. The regression continues to check that all actual `docs/decisions/ADR-*.md` files are registered exactly once.
 - **Verification:** the corrected exact-candidate quality and product workflows are pending. No local test result is claimed.
 - **Scope:** no runtime code or dependency edge changed. T0007 stays `in_progress`; `AC-P2P-01` remains **NOT RUN**.
+
+## T0007-A052 — exact CI verification of corrected ADR registration test (2026-10-27)
+
+- **Candidate:** `dc1ad9adf93b7d5620e01ae2eac82b88e38a4ab2` (`V 3.0.407`).
+- **Step Three quality gate: PASS** — [run 40528935126](https://github.com/artinrahimii/project/actions/runs/40528935126). All **172 Python tests** passed, including `test_every_adr_document_is_registered`; Python syntax, graph structure, and repository-backed output/evidence checks passed.
+- **HostLifecycle: PASS** — job [122276068960](https://github.com/artinrahimii/project/actions/runs/40528935196/job/122276068960).
+- **Android APK: PASS** — job [122276068858](https://github.com/artinrahimii/project/actions/runs/40528935196/job/122276068858).
+- **Windows WPF: PENDING at capture time** — job [122276068511](https://github.com/artinrahimii/project/actions/runs/40528935196/job/122276068511) was still running. Aggregate product success is not claimed.
+- **Scope:** the ADR-index regression is verified; broad T0007 remains `in_progress`; `AC-P2P-01` remains **NOT RUN**.
+- **Follow-up:** re-check the Windows WPF job before recording a final product-workflow conclusion.

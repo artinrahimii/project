@@ -1123,7 +1123,12 @@
           "HostLifecycle job 122263068318 passed on exact candidate 27b1f9123218702b2fcbefe3c721fe77ba9a69f9.",
           "White-P product workflow run 40525282904 was still in progress when this record was written; Windows and Android conclusions remain pending.",
           "The prior V 3.0.405 exact-commit Step Three quality gate passed 171 tests: https://github.com/artinrahimii/project/actions/runs/40526094427",
-          "The prior V 3.0.405 exact-commit White-P product workflow passed all three jobs: https://github.com/artinrahimii/project/actions/runs/40526094331"
+          "The prior V 3.0.405 exact-commit White-P product workflow passed all three jobs: https://github.com/artinrahimii/project/actions/runs/40526094331",
+          "Step Three quality gate run 40528935126 passed on exact V 3.0.407 commit dc1ad9adf93b7d5620e01ae2eac82b88e38a4ab2: 172 Python tests, syntax, graph structure, and output/evidence checks passed.",
+          "The corrected test test_every_adr_document_is_registered passed on exact commit dc1ad9adf93b7d5620e01ae2eac82b88e38a4ab2.",
+          "HostLifecycle job 122276068960 passed on exact V 3.0.407.",
+          "Android APK build/test job 122276068858 passed on exact V 3.0.407.",
+          "White-P product workflow run 40528935196 was still in progress at evidence capture because Windows WPF job 122276068511 had not completed."
         ],
         "tests_failed": [
           "V 3.0.386 HostLifecycle job 122107603086, run 40479993095 attempt 1 — failed at PeerTransportContractAcceptanceTests.VerifyQuicFallbackAfterUnreachableTcpAddressAsync assertion for listener authenticated identity; Windows/Android jobs passed.",
@@ -2959,9 +2964,9 @@
         {
           "attempt_id": "T0007-A052",
           "started_at": "2026-10-27T18:42:00+03:30",
-          "ended_at": null,
+          "ended_at": "2026-10-27T18:45:00+03:30",
           "result": "partial",
-          "summary": "Corrected test_every_adr_document_is_registered after the exact V 3.0.406 CI failure by parsing Markdown link delimiters directly rather than the over-escaped regular expression. Exact-commit verification is pending.",
+          "summary": "Exact V 3.0.407 CI verified the corrected ADR registration test and complete Step Three quality gate: 172 Python tests passed with syntax, graph, and evidence validation; HostLifecycle passed and Android APK passed. The Windows WPF job is still running, so the product workflow is not yet complete.",
           "changed_files": [
             "tests/test_decision_traceability.py",
             "step three/T0007/execution-report.md",
@@ -2970,16 +2975,40 @@
           "commit_sha": null,
           "tests": [
             {
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "summary": "Run 40528935126 on exact candidate dc1ad9adf93b7d5620e01ae2eac82b88e38a4ab2: 172 Python tests passed, plus Python syntax, graph structure, and repository output/evidence validation.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40528935126"
+            },
+            {
               "name": "test_every_adr_document_is_registered",
+              "result": "passed",
+              "summary": "The corrected test is explicitly reported ok in the exact-commit quality log."
+            },
+            {
+              "name": "HostLifecycle unit and integration tests",
+              "result": "passed",
+              "summary": "HostLifecycle job 122276068960 passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40528935196/job/122276068960"
+            },
+            {
+              "name": "Android APK build and tests",
+              "result": "passed",
+              "summary": "Android APK job 122276068858 succeeded.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40528935196/job/122276068858"
+            },
+            {
+              "name": "Windows WPF build",
               "result": "pending",
-              "summary": "The corrected method extracts Markdown links by explicit ]( and ) delimiters and checks completeness/uniqueness. Exact-candidate CI pending."
+              "summary": "Windows WPF job 122276068511 was still in progress at this evidence check; no final product-workflow success is claimed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40528935196/job/122276068511"
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect Step Three quality and product CI on V 3.0.407. Keep T0007 in_progress and AC-P2P-01 NOT RUN."
+          "follow_up": "Re-check Windows WPF job 122276068511 / product run 40528935196. Keep T0007 in_progress; do not claim this traceability increment closes broad technical-decision coverage."
         }
       ]
     },
