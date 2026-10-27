@@ -547,3 +547,14 @@
 - **Aggregate product build: PENDING** — run [40525282904](https://github.com/artinrahimii/project/actions/runs/40525282904) was still in progress when this record was written; the Windows WPF and Android APK jobs had not reached a final conclusion. No aggregate product pass is claimed.
 - **Scope:** the all-register traceability increment is verified, but broad T0007 remains `in_progress`; `AC-P2P-01` remains **NOT RUN**. No dependency edge or classification changed.
 - **Follow-up:** inspect the remaining Windows and Android job results before claiming whole-product CI success.
+
+## T0007-A051 — detect ADR documents omitted from the decision register (2026-10-27)
+
+- **Baseline:** online `main` at `2945a00b05572ccdab06495125580125ccba6583` (`V 3.0.405`); version history checked before writing.
+- **Graph and source review:** 229 unique task IDs and 426 valid-endpoint edges. The active predecessor `T0006 → T0007` remains `validated / contract_or_interface_dependency`; no dependency edge or classification changed. The source tree currently has 9 `docs/decisions/ADR-*.md` files and all 9 are registered.
+- **Gap found:** the existing all-register-row test verifies every ADR row, but does not catch a new ADR document that is never listed in `docs/decisions/README.md`.
+- **Implementation:** added `test_every_adr_document_is_registered` to `tests/test_decision_traceability.py`. It enumerates actual ADR files and requires each to appear exactly once in the decision register.
+- **Scope boundary:** this is an executable repository-maintenance guard. It does not prove runtime inference, P2P, encryption or storage behavior. T0007 remains `in_progress`; `AC-P2P-01` remains **NOT RUN**.
+- **Verification:** exact-candidate quality/product CI is pending; no local test run is claimed.
+- **Result:** partial pending exact-commit CI.
+- **Follow-up:** inspect CI on `V 3.0.406`, fix any failure, and append a separate verification attempt.

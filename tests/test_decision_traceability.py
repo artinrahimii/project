@@ -341,5 +341,30 @@ class DecisionTraceabilityTests(unittest.TestCase):
                         )
                 self.assertTrue(cells[4], f"{decision_doc.name} must state its evidence boundary.")
 
+
+    def test_every_adr_document_is_registered(self):
+        decision_dir = ROOT / "docs" / "decisions"
+        decision_files = sorted(path.name for path in decision_dir.glob("ADR-*.md"))
+        registered_files = [
+            Path(path).name
+            for path in re.findall(
+                r"^\\|\\s*\\[ADR-[^\\]]+\\]\\(([^)]+\\.md)\\)\\s*\\|",
+                REGISTER,
+                re.MULTILINE,
+            )
+        ]
+
+        self.assertTrue(decision_files, "At least one ADR document must exist.")
+        self.assertEqual(
+            len(registered_files),
+            len(set(registered_files)),
+            "Each ADR document should appear at most once in the decision register.",
+        )
+        self.assertEqual(
+            decision_files,
+            sorted(registered_files),
+            "Every docs/decisions/ADR-*.md file must have exactly one row in the decision register.",
+        )
+
 if __name__ == "__main__":
     unittest.main()
