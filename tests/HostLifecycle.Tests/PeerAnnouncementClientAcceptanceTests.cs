@@ -147,8 +147,8 @@ internal static class PeerAnnouncementClientAcceptanceTests
 
     private static void ExpectArgumentException(Action action, string message)
     {
-        try { action(); return; }
-        catch (ArgumentException) { }
+        try { action(); }
+        catch (ArgumentException) { return; }
         throw new InvalidOperationException(message);
     }
 

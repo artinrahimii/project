@@ -21731,11 +21731,11 @@
         "docs/decisions/ADR-0004-encrypted-relay-boundary.md",
         "step three/T0120/evidence/verification.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0120-A001 adds a typed metadata-only announcement contract, a client with only announcement/capability operations, and an ephemeral HTTP rendezvous service exposing only the announcement POST and capability GET. Strict JSON rejects unknown fields, the in-memory directory expires and replaces the latest announcement rather than storing history, and the 16 KiB limit is enforced. Real loopback tests are wired; exact-head CI pending.\nV 3.0.361 HostLifecycle failed before executing the loopback service tests because the capability-control test input did not unambiguously create a newline. T0120-A002 makes the control character explicit; the next exact-head CI will decide acceptance.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0120-A001 adds a typed metadata-only announcement contract, a client with only announcement/capability operations, and an ephemeral HTTP rendezvous service exposing only the announcement POST and capability GET. Strict JSON rejects unknown fields, the in-memory directory expires and replaces the latest announcement rather than storing history, and the 16 KiB limit is enforced. Real loopback tests are wired; exact-head CI pending.\nV 3.0.361 HostLifecycle failed before executing the loopback service tests because the capability-control test input did not unambiguously create a newline. T0120-A002 makes the control character explicit; the next exact-head CI will decide acceptance.\nV 3.0.362 then failed due an inverted ExpectArgumentException test helper: the contract correctly threw ArgumentException for the explicit newline, but the helper treated that expected exception as a failure. T0120-A003 fixes the helper; runtime integration remains pending.",
       "execution_summary": {
-        "attempt_count": 2,
-        "failed_attempt_count": 1,
-        "last_attempt_id": "T0120-A002",
+        "attempt_count": 3,
+        "failed_attempt_count": 2,
+        "last_attempt_id": "T0120-A003",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Shared.Contracts/Networking/PeerAnnouncement.cs",
@@ -21753,13 +21753,15 @@
           "step three/project-graph.md"
         ],
         "related_commits": [
-          "9985bb108c02226f1817b6d6cd2562467703e487"
+          "9985bb108c02226f1817b6d6cd2562467703e487",
+          "7d74171cec228e534f2700f0afc3c5085bf419e5"
         ],
         "tests_passed": [
-          "Step Three quality gate PASS on V 3.0.361: https://github.com/artinrahimii/project/actions/runs/40451885488 (structure/evidence test only; C# runtime acceptance did not pass in this attempt)."
+          "Step Three quality gate PASS on V 3.0.361 and V 3.0.362; these runs validate Python/graph/evidence checks but not C# runtime acceptance."
         ],
         "tests_failed": [
-          "V 3.0.361 HostLifecycle failed in VerifyContractSurfaceIsMetadataOnly before service integration because the capability control-character test input was not generated unambiguously: https://github.com/artinrahimii/project/actions/runs/40451885440"
+          "V 3.0.361 HostLifecycle: capability invalid-input assertion failed because first generated test string did not create the intended control character; loopback assertions not reached. https://github.com/artinrahimii/project/actions/runs/40451885440",
+          "V 3.0.362 HostLifecycle: explicit newline was rejected correctly but the test helper treated the expected ArgumentException as failure due an inverted try/catch return. Loopback assertions not reached. https://github.com/artinrahimii/project/actions/runs/40452192247"
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -21843,16 +21845,16 @@
         {
           "attempt_id": "T0120-A002",
           "started_at": "2026-10-27T04:52:12.840Z",
-          "ended_at": "2026-10-27T04:52:12.840Z",
-          "result": "partial",
-          "summary": "Corrected the capability validation test to construct the newline character explicitly using string.Concat(..., (char)10, ...). The real service tests will now proceed beyond the failing precondition; exact-head CI is pending.",
+          "ended_at": "2026-10-27T04:53:56Z",
+          "result": "failed",
+          "summary": "On V 3.0.362, the explicit newline was correctly rejected by the contract validator, but the test helper incorrectly placed return after action() instead of in the ArgumentException catch. The expected exception therefore fell through and was reported as an InvalidOperationException; the loopback service integration still had not started.",
           "changed_files": [
             "tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs",
             "step three/T0120/execution-report.md",
             "step three/T0120/evidence/verification.md",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "7d74171cec228e534f2700f0afc3c5085bf419e5",
           "tests": [
             {
               "name": "PeerAnnouncementClientAcceptanceTests",
@@ -21870,11 +21872,47 @@
               "summary": "Exact V 3.0.362 graph/evidence CI pending."
             }
           ],
+          "failure_details": "The test helper's try/catch was inverted. When action() threw the expected ArgumentException, the catch did not return and execution fell through to throw InvalidOperationException.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Move return into the ArgumentException catch so expected rejection passes; if the action returns normally, fail the assertion."
+        },
+        {
+          "attempt_id": "T0120-A003",
+          "started_at": "2026-10-27T04:55:24.031Z",
+          "ended_at": "2026-10-27T04:55:24.031Z",
+          "result": "partial",
+          "summary": "Corrected ExpectArgumentException so it returns only from the ArgumentException catch. If an invalid input is accepted without throwing, the helper now fails; expected validation exceptions are correctly treated as passing checks. Exact-head CI pending.",
+          "changed_files": [
+            "tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs",
+            "step three/T0120/execution-report.md",
+            "step three/T0120/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "PeerAnnouncementClientAcceptanceTests",
+              "result": "pending",
+              "summary": "The fixed assertion helper must pass the validation precondition and run real loopback announce/discover, replacement, no-inference-route, unknown-field, and oversize checks."
+            },
+            {
+              "name": "Product build",
+              "result": "pending",
+              "summary": "Exact V 3.0.363 Windows/Android builds and HostLifecycle execution pending."
+            },
+            {
+              "name": "Step Three quality gate",
+              "result": "pending",
+              "summary": "Exact V 3.0.363 graph/evidence validation pending."
+            }
+          ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Run exact V 3.0.362 CI. If runtime tests fail, inspect their precise failure; keep T0120 in_progress until runtime and product gates pass."
+          "follow_up": "Run exact V 3.0.363 CI. If loopback integration now runs, fix any actual service/runtime issue before accepting T0120."
         }
       ]
     },
@@ -34048,6 +34086,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-27T04:52:12.840Z"
+  "updated_at": "2026-10-27T04:55:24.031Z"
 }
 ```
