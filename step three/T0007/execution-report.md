@@ -322,3 +322,16 @@
 - Changed paths: tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs, docs/acceptance.md, step three/T0007/execution-report.md, step three/project-graph.md.
 - Dependency review: T0006 → T0007 remains validated contract_or_interface_dependency; T0007 → T0008 remains validated sequencing_only. No graph edge changed.
 - Follow-up: inspect the exact V 3.0.387 quality, Windows/Android product builds, HostLifecycle retry, and real local inference CI. Keep T0007 in_progress until the broad decision-traceability acceptance criterion is satisfied.
+## Attempt T0007-A030 — exact V 3.0.387 verification of backend ownership and QUIC test synchronization
+
+- Verification recorded: 2026-10-27T09:28:03.421Z.
+- Implementation commit: V 3.0.387, 3ed4ac9721713d82b4506d7945334f8ebdcf4bce (online main verified).
+- Step Three quality gate: PASS — run 40480619447, job 122109698276. 165 Python tests passed; Python syntax, graph structure and recorded-output/evidence validation passed with 0 errors and one preserved T0001 unmapped-dependency warning.
+- HostLifecycle: PASS — job 122109706848 in product run 40480619457. The log explicitly reports authenticated direct TCP-to-QUIC fallback passing, and `PASS: backend replacement fails closed and disposes an unadopted backend when old disposal throws.`
+- Windows WPF: PASS — job 122109707158. C# formatting, Release build, generated Protobuf verification, WPF startup smoke, agent-tool restrictions/policy/capability gates, and artifact upload passed; compiler output reported 0 warnings and 0 errors.
+- Android: PASS — job 122109707169. Kotlin formatting/lint, debug APK build, Protobuf round-trip unit tests, generated Java/Kotlin source validation, and artifact upload passed.
+- Aggregate product workflow: PASS — run 40480619457, all three jobs successful.
+- Real local inference: PASS — run 40480619730, job 122109699911. The log confirms the pinned llama.cpp/GGUF real inference, active-generation cancellation, and clean shutdown of the owned process; it also executes and passes the A028 backend replacement regression.
+- A029 result: the bounded listener-identity wait resolved the repeated V 3.0.386 QUIC assertion failure. Both prior failures remain recorded in the graph history; they were not deleted or relabelled as passes.
+- Result: this bounded verification attempt succeeded, but task T0007 stays `in_progress`; it is not the whole task's acceptance. The graph still contains 229 tasks and 426 edges; no task status was promoted to done and no edge changed.
+- Follow-up: continue T0007 by mapping further uncovered technical decisions to production source/configuration and executable tests, then re-run all applicable exact-commit acceptance gates.
