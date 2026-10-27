@@ -961,7 +961,8 @@
       "actual_output_paths": [
         "tests/HostLifecycle.Tests/Program.cs",
         "docs/acceptance.md",
-        "step three/T0007/execution-report.md"
+        "step three/T0007/execution-report.md",
+        "tests/test_inference_backend_abstraction.py"
       ],
       "expected_output_paths": [
         "docs/acceptance.md + tests/ (معیار و آزمون متناظر)"
@@ -971,17 +972,20 @@
         "src/Host.Domain/HostLifecycle.cs",
         "docs/acceptance.md",
         "step three/T0007/execution-report.md",
-        "src/Host.Application/HostInferenceSession.cs"
+        "src/Host.Application/HostInferenceSession.cs",
+        "tests/test_inference_backend_abstraction.py"
       ],
-      "notes": "T0007 remains a broad traceability task. A007's deterministic unavailable-backend fallback and exact-message regression assertion passed GitHub Actions on V 3.0.42. Revalidation of main commit 2b15191008128bdf98cda5a6eaacbf5796c964ed shows MainWindow explicitly injects LocalInferenceBackendFactory.Create, which returns LlamaCppServerBackend; UnconfiguredInferenceBackend is only the HostInferenceSession default fallback when no backend/factory is configured, not evidence by itself that the current UI has no production backend. Keep T0007 in_progress because the broad task-wide traceability criterion is not yet proven complete. Current-round CI retries failed before runner allocation, so no new tests were executed. The T0007 -> T0008 edge remains validated as sequencing_only. Latest exact-main commit 95addc4385000528d2f7e10cea646ad84da05e8a was revalidated: both current workflows failed on retry before runner allocation (runner_id=0, empty runner_name, steps=[]). The validation tool's compatibility with the documented result 'passed' and two graph counter mismatches were corrected in this round; this does not complete T0007 or prove product acceptance.",
+      "notes": "T0007 remains a broad traceability task. A007's deterministic unavailable-backend fallback and exact-message regression assertion passed GitHub Actions on V 3.0.42. Revalidation of main commit 2b15191008128bdf98cda5a6eaacbf5796c964ed shows MainWindow explicitly injects LocalInferenceBackendFactory.Create, which returns LlamaCppServerBackend; UnconfiguredInferenceBackend is only the HostInferenceSession default fallback when no backend/factory is configured, not evidence by itself that the current UI has no production backend. Keep T0007 in_progress because the broad task-wide traceability criterion is not yet proven complete. Current-round CI retries failed before runner allocation, so no new tests were executed. The T0007 -> T0008 edge remains validated as sequencing_only. Latest exact-main commit 95addc4385000528d2f7e10cea646ad84da05e8a was revalidated: both current workflows failed on retry before runner allocation (runner_id=0, empty runner_name, steps=[]). The validation tool's compatibility with the documented result 'passed' and two graph counter mismatches were corrected in this round; this does not complete T0007 or prove product acceptance.\n\nT0007-A013 added a source-level regression guard for WPF local-backend composition and loopback-only settings validation. This attempt is partial; broad task-wide decision traceability remains open. Exact-commit CI result is pending.",
       "execution_summary": {
-        "attempt_count": 12,
+        "attempt_count": 13,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0007-A012",
+        "last_attempt_id": "T0007-A013",
         "last_attempt_result": "partial",
         "changed_files": [
           "step three/T0007/execution-report.md",
-          "step three/project-graph.md"
+          "step three/project-graph.md",
+          "tests/test_inference_backend_abstraction.py",
+          "docs/acceptance.md"
         ],
         "related_commits": [
           "632c36d257ca079dd9bdee07f5415aa3c7c97cc3",
@@ -1342,6 +1346,32 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Continue the broader T0007 traceability review against the actual implementation and acceptance matrix. Do not mark this task done merely because this revision's validation workflows passed. Preserve all unreviewed edge classifications and validate relevant incoming edges before selecting the next task."
+        },
+        {
+          "attempt_id": "T0007-A013",
+          "started_at": "2026-10-27T05:57:49.139Z",
+          "ended_at": "2026-10-27T05:57:49.139Z",
+          "result": "partial",
+          "summary": "Added a Python source regression test covering the WPF Connect -> validated LocalHostSettingsStore -> HostInferenceSession configuration path. Updated acceptance documentation. Exact-commit CI has not yet been observed; broad T0007 remains incomplete.",
+          "changed_files": [
+            "tests/test_inference_backend_abstraction.py",
+            "docs/acceptance.md",
+            "step three/T0007/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "command": "python -m unittest discover -s tests -v",
+              "result": "pending",
+              "summary": "The new regression has not been marked passed; inspect the exact V 3.0.370 quality workflow after publishing."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect exact V 3.0.370 GitHub Actions quality and product workflows. If the new regression passes, record its CI evidence in a follow-up graph/report update. Continue task-wide traceability against real source/config/tests; do not mark T0007 done from this single regression."
         }
       ]
     },
@@ -34365,6 +34395,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-27T05:39:00Z"
+  "updated_at": "2026-10-27T05:57:49.139Z"
 }
 ```

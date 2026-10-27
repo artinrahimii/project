@@ -37,5 +37,22 @@ class InferenceBackendAbstractionTests(unittest.TestCase):
         self.assertIn("alternate backend response", lifecycle_test)
 
 
+    def test_wpf_connect_uses_validated_loopback_settings_before_backend_connect(self):
+        window = MAIN_WINDOW.read_text(encoding="utf-8")
+        settings_source = (ROOT / "src" / "Host.Infrastructure" / "LocalHostSettingsStore.cs").read_text(encoding="utf-8")
+        start = window.index("private async void ConnectButton_Click")
+        end = window.index("private void StartLocalEngineButton_Click", start)
+        connect_handler = window[start:end]
+
+        # The UI may parse user-entered text for validation, but the session must
+        # receive the normalized settings returned by the validated settings store.
+        self.assertIn("_settingsStore.Save(new LocalHostSettings(", connect_handler)
+        self.assertIn("new Uri(_settings.ServerUrl), _settings.ModelId", connect_handler)
+        self.assertNotIn("new Uri(ServerUrl.Text", connect_handler)
+        self.assertIn("var validated = LocalHostSettings.Validate(settings);", settings_source)
+        self.assertIn("!endpoint.IsLoopback", settings_source)
+        self.assertIn("The local inference URL must be an absolute HTTP(S) loopback URL", settings_source)
+
+
 if __name__ == "__main__":
     unittest.main()

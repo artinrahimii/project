@@ -118,3 +118,14 @@
 - No product source code changed in this validation attempt. These checks resolve the current CI-runner blocker for rerunning tests, but do not establish that every technical decision is fully reflected in implementation/configuration/tests.
 - Outcome: `partial`; T0007 remains `in_progress`. The earlier pre-runner failures remain in this report and graph history.
 - Next: continue task-wide traceability verification against the real source tree and acceptance matrix; validate relevant dependency edges before advancing.
+
+
+## Attempt T0007-A013 — local-backend composition regression (2026-10-27)
+
+- **Base commit:** `f2e848df0408f987abf474375dfef0d6e1127de3` (`V 3.0.369`), re-read from the online `main` head before changes.
+- **Source review:** the WPF `ConnectButton_Click` parses the entered URL/model, saves them through `LocalHostSettingsStore.Save`, and then calls `HostInferenceSession.ConnectAsync` with the normalized `_settings.ServerUrl` and `_settings.ModelId`. `LocalHostSettings.Validate` explicitly requires an absolute HTTP(S) loopback URL without credentials, query, or fragment. The existing test checked the factory/session abstraction but did not protect this UI-to-validated-settings boundary.
+- **Implementation:** extended `tests/test_inference_backend_abstraction.py` with a regression test that guards the actual WPF Connect path, prevents a future direct pass-through of the raw URL textbox to the session, and checks that the persistence path performs loopback validation.
+- **Documentation:** added a matching section to `docs/acceptance.md`, clearly limiting the claim to a source-level regression guard.
+- **Verification:** pending the exact `V 3.0.370` GitHub Actions quality workflow; this tool session has no local checkout from which to run Python/.NET tests independently. No test pass is claimed before the workflow result is observed.
+- **Scope limit:** this protects one concrete local-backend composition decision; it does not satisfy the broad T0007 task-wide traceability criterion and does not prove live host inference, network routing, P2P transport, encryption, or storage behavior.
+- **Result:** partial; T0007 remains `in_progress`. No dependency edge was changed.
