@@ -292,3 +292,10 @@ When activating network participation fails, the WPF `async void` event handler 
 Regression test: `tests/test_network_listener_exposure.py::NetworkListenerExposureTests.test_participation_activation_failure_contains_rollback_failure_safely` checks the primary-error/rollback sequence, the additional catch, safe error mapping, and the recovery warning.
 
 Acceptance for this increment: the regression passes in the exact-commit quality gate, and the Windows WPF build/startup smoke and HostLifecycle tests pass. This does not complete broad T0007 traceability or prove that every network listener failure can be recovered without restart.
+
+
+## T0007-A025 — exact V 3.0.382 verification for listener rollback handling
+
+The exact implementation commit [d7c39dec96034f8e28233b145b94cb2d7724f147 (V 3.0.382)](https://github.com/artinrahimii/project/commit/d7c39dec96034f8e28233b145b94cb2d7724f147) passed the [Step Three quality gate]( https://github.com/artinrahimii/project/actions/runs/40467751244 ) and [White-P product build]( https://github.com/artinrahimii/project/actions/runs/40467751261 ). The quality log shows 165 Python tests passed, including `test_participation_activation_failure_contains_rollback_failure_safely`; syntax checks and graph/output-evidence validation completed with 0 errors and one preserved T0001 unmapped-dependency warning. The product workflow passed the Windows WPF formatting/Release build/startup smoke, Android lint/debug APK/Protobuf checks, and HostLifecycle unit/integration tests.
+
+Scope limit: the new rollback regression is a source-level guard. CI did not inject a failing rollback into a live WPF UI session, so no interactive GUI failure-injection acceptance is claimed. This verifies the A024 change only; broad T0007 traceability remains incomplete and the task stays `in_progress`.

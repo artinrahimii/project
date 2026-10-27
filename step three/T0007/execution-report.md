@@ -260,3 +260,14 @@
 - Local execution: no local repository checkout, Python runtime, Windows/.NET runtime is available in this tool session; no local test run is claimed. Exact-commit CI is pending.
 - Result at creation: partial pending CI. T0007 remains `in_progress`; this fixes one async event-handler rollback boundary and does not complete broad technical-decision traceability.
 - Follow-up: inspect the exact commit's quality gate for the new Python regression and graph/evidence checks; verify Windows build/startup smoke and HostLifecycle jobs. Record results in a separate follow-up attempt after checking the actual logs.
+
+
+## Attempt T0007-A025 — exact-commit CI verification of listener rollback handling (2026-10-27)
+
+- Verified implementation commit: [`V 3.0.382` (`d7c39dec96034f8e28233b145b94cb2d7724f147`)](https://github.com/artinrahimii/project/commit/d7c39dec96034f8e28233b145b94cb2d7724f147).
+- Step Three quality gate: [run 40467751244]( https://github.com/artinrahimii/project/actions/runs/40467751244 ) passed. The job executed 165 Python tests; `test_participation_activation_failure_contains_rollback_failure_safely` reported `ok`. Python syntax, graph structure, and recorded-output/evidence checks passed. The guard reported 0 errors and one preserved `T0001` unmapped-dependency warning; that warning was not silently rewritten.
+- Product build: [run 40467751261]( https://github.com/artinrahimii/project/actions/runs/40467751261 ) passed. The Windows WPF Release build, C# formatting, generated Protobuf validation, startup smoke, agent-tool policy checks, Android lint/debug APK/Protobuf checks, and HostLifecycle unit/integration job all succeeded.
+- Test boundary: this revision's new regression uses source inspection; the Windows job proves compilation/startup smoke, not fault injection through a live WPF listener activation failure. No such interactive fault-injection test is claimed.
+- Dependency review: `T0006 → T0007` remains a validated `contract_or_interface_dependency`; `T0007 → T0008` remains a validated `sequencing_only` edge. Their type, classification, rationale, and evidence were not changed. Other edges, including the unreviewed `T0121 → T0122` edge, were left untouched.
+- Result: partial. Exact-head tests passed for the bounded A024 change, but the broad traceability criterion of T0007 remains incomplete. Node status remains `in_progress`; no task was promoted to `done`.
+- Follow-up: continue T0007 by tracing another uncovered production decision to real source/configuration and automated acceptance. Prefer a runtime test where an appropriate harness exists; keep the current GUI fault-injection limitation explicit.
