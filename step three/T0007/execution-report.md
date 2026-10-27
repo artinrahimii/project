@@ -164,3 +164,14 @@
 - Android: **PASS** — [job 122039987378](https://github.com/artinrahimii/project/actions/runs/40459341489/job/122039987378), including lint, APK and Protobuf checks.
 - Aggregate product workflow: **PASS** — [run 40459341489](https://github.com/artinrahimii/project/actions/runs/40459341489), completed successfully for the exact implementation commit.
 - Result: partial. These results verify this regression only; broad T0007 decision-to-code/configuration/test traceability remains incomplete. No dependency edges were changed and no task was promoted to `done`.
+
+
+## Attempt T0007-A017 — safe local-engine error presentation (2026-10-27)
+
+- Scope: guard the WPF process-start error boundary against exposing raw exception details or local paths to the user.
+- Implementation review: `MainWindow.xaml.cs` routes exceptions in `StartLocalEngineButton_Click` through `HostErrorPresentation.ToUserMessage`; the production mapper translates known errors and hides details for unexpected exceptions.
+- Regression test: added `test_local_engine_start_errors_use_safe_user_facing_mapping` in `tests/test_inference_backend_abstraction.py`. It checks the actual event-handler source for the safe mapper and rejects direct use of `exception.Message` or `exception.ToString()`.
+- Local execution: no repository checkout or compatible build environment is available in this execution environment; no local Python/.NET command is claimed.
+- Exact-commit CI: pending until the new commit's quality and product workflows are inspected.
+- Result: partial; this protects one concrete decision boundary but does not satisfy broad T0007 traceability. Keep T0007 `in_progress` and do not change dependency edges.
+- Follow-up: inspect exact-commit quality CI for the named regression and total Python/graph checks, plus the product workflow's HostLifecycle, Windows, and Android jobs; record only observed results.

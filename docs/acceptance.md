@@ -236,3 +236,10 @@ These are source-level regression checks for the shutdown ordering and cleanup c
 ## T0007-A016 — shutdown regression verification
 
 The two WPF shutdown regression tests added in A015 passed on exact commit [`V 3.0.372` (`1fd025faa94f60e70344a2c1717b10d6da460a43`)](https://github.com/artinrahimii/project/commit/1fd025faa94f60e70344a2c1717b10d6da460a43). [Step Three quality run 40459341616](https://github.com/artinrahimii/project/actions/runs/40459341616) passed 162 Python tests and graph/output-evidence checks (zero errors, one preserved warning). [The product build run 40459341489](https://github.com/artinrahimii/project/actions/runs/40459341489) completed successfully with HostLifecycle, Windows WPF and Android jobs passing. This is evidence for this specific regression, not completion of broad T0007.
+
+
+## T0007-A017 — safe WPF local-engine error presentation
+
+The Windows local-engine start handler must map process-launch failures through `HostErrorPresentation.ToUserMessage` instead of displaying `Exception.Message` or `Exception.ToString()`. The existing application mapper provides stable, actionable messages for known failures and a generic safe message for unexpected exceptions. The regression test `test_local_engine_start_errors_use_safe_user_facing_mapping` locks the WPF caller to that mapper and rejects direct exception-detail presentation.
+
+This is a source-level regression guard for the UI/error boundary. It does not prove that a real local engine starts successfully or cover every UI error path. Exact-commit CI is pending for this attempt; T0007 remains `in_progress`.

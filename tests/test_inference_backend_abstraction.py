@@ -54,5 +54,21 @@ class InferenceBackendAbstractionTests(unittest.TestCase):
         self.assertIn("The local inference URL must be an absolute HTTP(S) loopback URL", settings_source)
 
 
+    def test_local_engine_start_errors_use_safe_user_facing_mapping(self):
+        window = MAIN_WINDOW.read_text(encoding="utf-8")
+        start = window.index("private void StartLocalEngineButton_Click")
+        end = window.index("\n    private ", start + len("private void StartLocalEngineButton_Click"))
+        handler = window[start:end]
+
+        # Keep the production WPF boundary on the safe error mapper; never place
+        # raw exception details or local paths into the visible status text.
+        self.assertIn("HostErrorPresentation.ToUserMessage(exception)", handler)
+        self.assertIn(
+            'LocalProcessStatus.Text = "Local engine start failed: " + HostErrorPresentation.ToUserMessage(exception);',
+            handler,
+        )
+        self.assertNotIn("exception.Message", handler)
+        self.assertNotIn("exception.ToString()", handler)
+
 if __name__ == "__main__":
     unittest.main()
