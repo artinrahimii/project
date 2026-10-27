@@ -15,6 +15,7 @@ ADR1 = (ROOT / "docs/decisions/ADR-0001-platform-build-baselines.md").read_text(
 ADR2 = (ROOT / "docs/decisions/ADR-0002-direct-p2p-data-path.md").read_text(encoding="utf-8")
 ADR3 = (ROOT / "docs/decisions/ADR-0003-local-inference-backend.md").read_text(encoding="utf-8")
 ADR3_TCP = (ROOT / "docs/decisions/ADR-0003-tcp-request-framing.md").read_text(encoding="utf-8")
+ADR5_TRANSPORT = (ROOT / "docs/decisions/ADR-0005-authenticated-peer-transport-fallback.md").read_text(encoding="utf-8")
 
 
 class DecisionTraceabilityTests(unittest.TestCase):
@@ -24,6 +25,7 @@ class DecisionTraceabilityTests(unittest.TestCase):
             "docs/decisions/ADR-0002-direct-p2p-data-path.md",
             "docs/decisions/ADR-0003-local-inference-backend.md",
             "docs/decisions/ADR-0003-tcp-request-framing.md",
+            "docs/decisions/ADR-0005-authenticated-peer-transport-fallback.md",
             "protocol/whitep/v1/messages.proto",
             "src/Shared.Contracts/ProtocolMessageLimits.cs",
             "src/Host.Windows/Networking/NetworkInferenceRequestFrameReader.cs",
@@ -118,6 +120,29 @@ class DecisionTraceabilityTests(unittest.TestCase):
             with self.subTest(case=case):
                 self.assertIn(case, csharp_tests)
         self.assertIn("NetworkInferenceRequestFrameAcceptanceTests.RunAsync()", entrypoint)
+
+    def test_authenticated_peer_transport_fallback_decision_maps_to_connector_and_runtime_tests(self):
+        connector = (ROOT / "src/Host.Windows/Networking/PeerTransportFallbackConnector.cs").read_text(encoding="utf-8")
+        runtime_tests = (ROOT / "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs").read_text(encoding="utf-8")
+        entrypoint = (ROOT / "tests/HostLifecycle.Tests/Program.cs").read_text(encoding="utf-8")
+
+        self.assertIn("ADR-0005-authenticated-peer-transport-fallback.md", REGISTER)
+        self.assertIn("PeerTransportFallbackConnector.ConnectAsync", ADR5_TRANSPORT)
+        self.assertIn("src/Host.Windows/Networking/PeerTransportFallbackConnector.cs", ADR5_TRANSPORT)
+        self.assertIn("tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs", ADR5_TRANSPORT)
+        self.assertIn("candidate.ExpectedPeerIdentity", connector)
+        self.assertIn("!string.Equals(transport.RemotePeerIdentity, expectedPeerIdentity, StringComparison.Ordinal)", connector)
+        self.assertIn("await DisposeQuietlyAsync(transport).ConfigureAwait(false)", connector)
+        self.assertIn("new PeerTransportAttemptFailure(candidate.Address, exception.GetType().Name)", connector)
+        for case in (
+            "VerifyQuicFallbackAfterUnreachableTcpAddressAsync",
+            "VerifyFallbackRejectsMixedPeerIdentitiesBeforeConnectingAsync",
+        ):
+            with self.subTest(case=case):
+                self.assertIn(case, runtime_tests)
+        self.assertIn("PeerTransportContractAcceptanceTests.RunAsync()", entrypoint)
+        self.assertIn("AC-P2P-01", ADR5_TRANSPORT)
+        self.assertIn("NOT RUN", ACCEPTANCE)
 
 
 if __name__ == "__main__":

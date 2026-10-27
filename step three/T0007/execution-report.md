@@ -370,3 +370,24 @@
 - Product workflow [40507382070](https://github.com/artinrahimii/project/actions/runs/40507382070) was still running when this record was added; its final outcome is not claimed here.
 - Result: failed graph-validation attempt recorded; `T0007` remains `in_progress`.
 - Follow-up: validate the corrected graph on the new exact main commit and verify both quality and product workflows.
+
+## Attempt T0007-A034 — verified graph-counter correction on V 3.0.391
+
+- Verified at: 2026-10-27T16:30:00+03:30.
+- Exact baseline: `a327d69e5d1069b818303f0868b353049e4f1a87` (`V 3.0.391`) on online `main`.
+- Step Three quality gate: PASS — [run 40507611666](https://github.com/artinrahimii/project/actions/runs/40507611666), job 122200842154. Automated tests, Python syntax, graph structure, and recorded-output/evidence validation all passed; T0007's attempt counters now match the append-only history.
+- HostLifecycle: PASS — [job 122200842477](https://github.com/artinrahimii/project/actions/runs/40507611697/job/122200842477).
+- Windows WPF: PASS — [job 122200842923](https://github.com/artinrahimii/project/actions/runs/40507611697/job/122200842923), including format, Release build, generated Protobuf checks, startup smoke, policy/capability gates and artifact upload.
+- Android client: PASS — [job 122200842921](https://github.com/artinrahimii/project/actions/runs/40507611697/job/122200842921), including lint, debug APK, Protobuf tests, generated-source checks and artifact upload.
+- The V 3.0.390 product workflow later passed ([run 40507382070](https://github.com/artinrahimii/project/actions/runs/40507382070)); its separate Step Three graph validation failure remains preserved under A033 and was corrected in V 3.0.391.
+- Result: this bounded verification succeeded; `T0007` remains `in_progress` because broad task-wide decision traceability is incomplete.
+
+## Attempt T0007-A035 — authenticated peer transport fallback traceability
+
+- Started/recorded: 2026-10-27T16:30:00+03:30.
+- Review: the host connector accepts ordered direct TCP/QUIC candidates for one expected PeerId. Production code rejects mixed candidate identities before dialing, checks the connected remote identity before returning a transport, disposes failed candidates, and records only address plus exception type in retry diagnostics.
+- Changes: added `docs/decisions/ADR-0005-authenticated-peer-transport-fallback.md`; linked it from `docs/decisions/README.md`; added a Python source-contract regression that connects the ADR to the production connector and the runnable C# TCP-to-QUIC fallback and mixed-identity-rejection tests.
+- Runtime evidence boundary: the C# test exercises host-side direct connection fallback and binary request/response exchange. It does not prove Android-to-Windows app routing; `AC-P2P-01` remains **NOT RUN**.
+- Dependency review: `T0006 → T0007` remains `validated / contract_or_interface_dependency`; `T0007 → T0008` remains `validated / sequencing_only`. Both existing relationships remain unchanged.
+- Result: partial; the source/test traceability increment is implemented, but exact-commit CI is pending. Keep T0007 `in_progress` until its broader acceptance is met.
+- Follow-up: inspect exact-commit CI, repair any regression, and continue tracing uncovered implementation decisions without changing unreviewed edges.
