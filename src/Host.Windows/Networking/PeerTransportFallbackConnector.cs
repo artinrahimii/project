@@ -114,9 +114,24 @@ public static class PeerTransportFallbackConnector
         throw new PeerConnectionUnavailableException(failures);
     }
 
-    private static bool IsRetryableConnectionFailure(Exception exception) =>
-        exception is IOException or AuthenticationException or SocketException or TimeoutException
-            or OperationCanceledException or InvalidOperationException;
+    private static bool IsRetryableConnectionFailure(Exception exception)
+    {
+        if (exception is IOException or AuthenticationException or SocketException or TimeoutException
+            or OperationCanceledException or InvalidOperationException)
+        {
+            return true;
+        }
+
+        // libp2p wraps socket failures in PeerConnectionException; inspect nested causes so
+        // a refused first address does not prevent trying the next authenticated candidate.
+        if (exception is AggregateException aggregate)
+        {
+            return aggregate.InnerExceptions.Any(IsRetryableConnectionFailure);
+        }
+
+        return exception.InnerException is not null &&
+            IsRetryableConnectionFailure(exception.InnerException);
+    }
 
     private static async ValueTask DisposeQuietlyAsync(IPeerTransport? transport)
     {

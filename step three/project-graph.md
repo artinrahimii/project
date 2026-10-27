@@ -21404,11 +21404,11 @@
         "docs/decisions/ADR-0002-direct-p2p-data-path.md",
         "step three/T0118/evidence/verification.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0118-A001 adds ordered direct-address fallback between TCP and QUIC/UDP under the same expected PeerId. The connector receives only endpoint/identity metadata and never application payloads. It covers the case where TCP is unavailable but direct UDP/QUIC remains reachable; it does not claim to traverse NAT or a firewall that blocks both paths. Exact-head CI pending.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0118-A001 adds ordered direct-address fallback between TCP and QUIC/UDP under the same expected PeerId. The connector receives only endpoint/identity metadata and never application payloads. It covers the case where TCP is unavailable but direct UDP/QUIC remains reachable; it does not claim to traverse NAT or a firewall that blocks both paths. Exact-head CI pending.\nV 3.0.356 exact-head test failed before attempting QUIC because libp2p wraps socket refusal in PeerConnectionException. T0118-A002 updates retry detection to inspect nested exception causes; its exact-head result is pending.",
       "execution_summary": {
-        "attempt_count": 1,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "T0118-A001",
+        "attempt_count": 2,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "T0118-A002",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Host.Windows/Networking/PeerTransportFallbackConnector.cs",
@@ -21420,9 +21420,15 @@
           "step three/T0118/evidence/verification.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
-        "tests_failed": [],
+        "related_commits": [
+          "27099fc451a383811823e3232ac49fce02fb4b8a"
+        ],
+        "tests_passed": [
+          "Step Three quality gate PASS on V 3.0.356: https://github.com/artinrahimii/project/actions/runs/40448409838"
+        ],
+        "tests_failed": [
+          "V 3.0.356 HostLifecycle failed because the fallback retried only directly recognized exception types; libp2p wraps SocketException(Connection refused) in PeerConnectionException, so the QUIC candidate was not attempted. https://github.com/artinrahimii/project/actions/runs/40448409783/job/122005094326"
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -21449,9 +21455,9 @@
         {
           "attempt_id": "T0118-A001",
           "started_at": "2026-10-27T04:11:22.737Z",
-          "ended_at": "2026-10-27T04:11:22.737Z",
-          "result": "partial",
-          "summary": "Added TCP+QUIC direct listen addresses, a PeerId-pinned fallback connector and a real integration scenario that first refuses TCP and then connects via QUIC to the same expected peer. The connector receives only address and identity metadata. Exact-head CI pending; NAT hole punching and relay are not claimed.",
+          "ended_at": "2026-10-27T04:12:46Z",
+          "result": "failed",
+          "summary": "Exact V 3.0.356 HostLifecycle run installed libmsquic successfully and started the full test runner, but the new fallback aborted on the first refused TCP address. The library surfaced the socket refusal as Nethermind.Libp2p.Core.Exceptions.PeerConnectionException with an inner SocketException; the retry filter did not recognize the wrapper, so QUIC was never attempted.",
           "changed_files": [
             "src/Host.Windows/Networking/PeerTransportFallbackConnector.cs",
             "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
@@ -21462,25 +21468,22 @@
             "step three/T0118/evidence/verification.md",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "27099fc451a383811823e3232ac49fce02fb4b8a",
           "tests": [
             {
               "name": "HostLifecycle/P2P fallback integration",
-              "result": "pending",
-              "summary": "Verify a refused TCP endpoint falls back to QUIC on the same pinned PeerId and preserves binary bytes in both directions."
+              "result": "failed",
+              "summary": "V 3.0.356 run 40448409783, job 122005094326 failed at VerifyQuicFallbackAfterUnreachableTcpAddressAsync: PeerConnectionException wrapping SocketException(Connection refused) escaped after the first candidate; second QUIC candidate was not tried.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40448409783/job/122005094326"
             },
             {
-              "name": "HostLifecycle complete suite",
-              "result": "pending",
-              "summary": "Runs with the required Linux MsQuic native runtime installed."
-            },
-            {
-              "name": "Windows WPF, Android APK/Protobuf and Step Three quality gate",
-              "result": "pending",
-              "summary": "Exact-head regression workflows pending."
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "summary": "Exact V 3.0.356 Step Three quality gate passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40448409838"
             }
           ],
-          "failure_details": null,
+          "failure_details": "PeerConnectionException was not in the retryable-failure filter although its InnerException was SocketException(Connection refused). The fallback helper therefore rethrew instead of recording the attempt and trying QUIC.",
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [
@@ -21493,7 +21496,43 @@
               "detail": "Adds sequential direct-address retries, consistent expected PeerId validation, safe error summaries, failed-transport disposal and success ownership."
             }
           ],
-          "follow_up": "Run exact-head CI. Fix any observed issue, and keep T0118 in_progress until the real fallback passes. Do not claim hole punching or relay."
+          "follow_up": "Treat nested socket/transport failures as retryable, then rerun the exact-head fallback and product CI."
+        },
+        {
+          "attempt_id": "T0118-A002",
+          "started_at": "2026-10-27T04:14:16.615Z",
+          "ended_at": "2026-10-27T04:14:16.616Z",
+          "result": "partial",
+          "summary": "Updated retry classification to inspect nested exception causes (including PeerConnectionException -> SocketException) so ordinary connection refusal advances to the next candidate. Exact-head regression CI pending.",
+          "changed_files": [
+            "src/Host.Windows/Networking/PeerTransportFallbackConnector.cs",
+            "step three/T0118/execution-report.md",
+            "step three/T0118/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "HostLifecycle/P2P fallback integration",
+              "result": "pending",
+              "summary": "Confirm the refused TCP candidate is recorded and the QUIC candidate succeeds for the same pinned PeerId."
+            },
+            {
+              "name": "HostLifecycle complete suite",
+              "result": "pending",
+              "summary": "Must run to completion after fallback fix."
+            },
+            {
+              "name": "Windows WPF, Android APK/Protobuf and Step Three quality gate",
+              "result": "pending",
+              "summary": "Exact V 3.0.357 workflows pending."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Run exact-head CI; retain T0118 in_progress until fallback passes and preserve the stated NAT/relay boundary."
         }
       ]
     },
@@ -33713,6 +33752,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-27T04:11:22.737Z"
+  "updated_at": "2026-10-27T04:14:16.616Z"
 }
 ```
