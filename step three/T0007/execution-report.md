@@ -784,3 +784,14 @@
 - White-P product workflow: **PASS** — [run 40546396887](https://github.com/artinrahimii/project/actions/runs/40546396887) completed successfully on the same exact commit. HostLifecycle job 122338066845, Android APK job 122338067519, and Windows WPF job 122338068047 all passed. The HostLifecycle run completed after MsQuic setup; Android passed Kotlin lint, APK build, Protobuf round-trip and generated-source checks; Windows passed build, generated Protobuf, startup smoke and all agent-tool policy/capability checks.
 - The evidence validates ADR-0013's bounded source/test traceability. The 4,096-ID sample is not a mathematical global uniqueness proof; deployment log-retention audit remains separate. `T0007` remains `in_progress`; `AC-P2P-01` remains **NOT RUN**.
 - Follow-up: continue broad decision-to-code/configuration/test traceability, preserve all attempt history, and keep unsupported runtime claims separate from host-side tests.
+
+
+## Attempt T0007-A071 — cross-platform wire contract traceability
+- Started: 2026-10-27T17:06:33.743Z
+- Result: partial at commit creation; exact-commit CI verification pending.
+- Base: 570aaa02b76d01d94ac0e92aeeca4ab4ab098278 (V 3.0.423), confirmed as the online `main` head. The graph Blob `f5578c0b088e0a01151b7f37a1475a41bc46f872` was retrieved from the exact commit tree; its Git SHA-1 and UTF-8 byte size matched, and the complete JSON parsed as 229 tasks / 426 edges.
+- Source finding: REQ-013 is backed by a single canonical `messages.proto`, C# generation through the shared contracts project, Android Java/Kotlin Lite generation from the same protocol directory, protocol version policy, C# and Kotlin byte-preserving round-trip suites, shared wire fixtures and CI generation checks. The current TCP framing ADR focuses on the Windows listener boundary and does not register this full cross-language generation/fixture coverage.
+- Change: added `docs/decisions/ADR-0014-versioned-cross-platform-protocol.md`, registered it in `docs/decisions/README.md`, and added `test_versioned_cross_platform_protocol_decision_maps_to_canonical_schema_and_wire_checks` to `tests/test_decision_traceability.py`.
+- No production runtime code, wire schema, or dependency edge changed. The record explicitly distinguishes cross-language wire-level coverage from live Android-to-Windows transport; `AC-P2P-01` remains **NOT RUN**.
+- Test status at creation: existing source, round-trip suites, shared fixtures, schema guards and workflow paths were inspected at the exact base commit. No local repository test command was run; exact-main CI is pending.
+- Follow-up: inspect exact `V 3.0.424` quality and product workflows; preserve any failures before recording verification.

@@ -26,6 +26,7 @@ ADR10_MODEL_INSTALLATION = (ROOT / "docs/decisions/ADR-0010-verified-model-insta
 ADR11_HOST_CAPACITY = (ROOT / "docs/decisions/ADR-0011-host-capacity-readiness.md").read_text(encoding="utf-8")
 ADR12_LOCAL_SETTINGS = (ROOT / "docs/decisions/ADR-0012-local-settings-validation-and-persistence.md").read_text(encoding="utf-8")
 ADR13_TEMP_REQUEST_ID = (ROOT / "docs/decisions/ADR-0013-temporary-request-identifiers.md").read_text(encoding="utf-8")
+ADR14_CROSS_PLATFORM_PROTOCOL = (ROOT / "docs/decisions/ADR-0014-versioned-cross-platform-protocol.md").read_text(encoding="utf-8")
 
 
 class DecisionTraceabilityTests(unittest.TestCase):
@@ -596,6 +597,61 @@ class DecisionTraceabilityTests(unittest.TestCase):
         self.assertIn("SecureRequestIdGeneratorTests.Run();", harness)
         self.assertIn("collision probability", ADR13_TEMP_REQUEST_ID.lower())
         self.assertIn("AC-P2P-01", ADR13_TEMP_REQUEST_ID)
+
+
+
+    def test_versioned_cross_platform_protocol_decision_maps_to_canonical_schema_and_wire_checks(self):
+        paths = (
+            "docs/requirements.md",
+            "protocol/whitep/v1/messages.proto",
+            "src/Shared.Contracts/WhiteP.Shared.Contracts.csproj",
+            "src/Shared.Contracts/ProtocolVersionPolicy.cs",
+            "src/Client.Android/app/build.gradle.kts",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "src/Client.Android/app/src/test/java/com/whitep/client/protocol/ProtoRoundTripTest.kt",
+            "tests/contracts/protobuf-wire-fixtures.txt",
+            "tests/test_proto_contract.py",
+            "tests/contracts/test_contract_layout.py",
+            ".github/workflows/product-build.yml",
+        )
+        self.assertTrue((ROOT / "docs/decisions/ADR-0014-versioned-cross-platform-protocol.md").is_file())
+        for relative_path in paths:
+            with self.subTest(path=relative_path):
+                self.assertTrue((ROOT / relative_path).is_file(), relative_path)
+                self.assertIn(relative_path, ADR14_CROSS_PLATFORM_PROTOCOL)
+
+        requirements = (ROOT / "docs/requirements.md").read_text(encoding="utf-8")
+        schema = (ROOT / "protocol/whitep/v1/messages.proto").read_text(encoding="utf-8")
+        shared_project = (ROOT / "src/Shared.Contracts/WhiteP.Shared.Contracts.csproj").read_text(encoding="utf-8")
+        android_build = (ROOT / "src/Client.Android/app/build.gradle.kts").read_text(encoding="utf-8")
+        version_policy = (ROOT / "src/Shared.Contracts/ProtocolVersionPolicy.cs").read_text(encoding="utf-8")
+        csharp_round_trip = (ROOT / "tests/HostLifecycle.Tests/Program.cs").read_text(encoding="utf-8")
+        kotlin_round_trip = (ROOT / "src/Client.Android/app/src/test/java/com/whitep/client/protocol/ProtoRoundTripTest.kt").read_text(encoding="utf-8")
+        fixtures = (ROOT / "tests/contracts/protobuf-wire-fixtures.txt").read_text(encoding="utf-8")
+        proto_tests = (ROOT / "tests/test_proto_contract.py").read_text(encoding="utf-8")
+        layout_tests = (ROOT / "tests/contracts/test_contract_layout.py").read_text(encoding="utf-8")
+        workflow = (ROOT / ".github/workflows/product-build.yml").read_text(encoding="utf-8")
+
+        self.assertIn("REQ-013", requirements)
+        self.assertIn('package whitep.protocol.v1;', schema)
+        self.assertIn('Include="../../protocol/whitep/v1/messages.proto"', shared_project)
+        self.assertIn('ProtoRoot="../../protocol"', shared_project)
+        self.assertIn('srcDir("../../../protocol")', android_build)
+        self.assertIn('create("java") { option("lite") }', android_build)
+        self.assertIn('create("kotlin") { option("lite") }', android_build)
+        self.assertIn('implementation("com.google.protobuf:protobuf-kotlin-lite:4.36.2")', android_build)
+        self.assertIn('public const string CurrentVersion = "1.0.0";', version_policy)
+        self.assertIn('AssertProtoRoundTrip("InferenceRequest"', csharp_round_trip)
+        self.assertIn('assertRoundTrip("InferenceRequest"', kotlin_round_trip)
+        self.assertIn('findRepositoryFile("tests/contracts/protobuf-wire-fixtures.txt")', kotlin_round_trip)
+        self.assertIn("FindRepositoryFile", csharp_round_trip)
+        self.assertIn("protobuf-wire-fixtures.txt", fixtures)
+        self.assertIn("test_android_generates_java_and_kotlin_lite_from_the_same_repository_schema", proto_tests)
+        self.assertIn("test_canonical_schema_remains_the_only_source_proto", layout_tests)
+        self.assertIn("Verify generated Protobuf C# sources", workflow)
+        self.assertIn("Verify generated Protobuf Java and Kotlin sources", workflow)
+        self.assertIn("AC-P2P-01", ADR14_CROSS_PLATFORM_PROTOCOL)
+        self.assertIn("NOT RUN", ADR14_CROSS_PLATFORM_PROTOCOL)
 
 
     def test_every_registered_decision_links_to_existing_sources_and_verification(self):
