@@ -25209,9 +25209,7 @@
       "id": "T0129",
       "title": "از کتابخانهٔ رمزنگاری معتبر و نگهداری‌شده استفاده کن؛ الگوریتم رمزنگاری اختصاصی نساز.",
       "section": "13. هویت ارتباطی و رمزنگاری",
-      "depends_on": [
-        "T0128"
-      ],
+      "depends_on": [],
       "inputs": [
         "خروجی تأییدشدهٔ پیش‌نیازها",
         "نیازمندی مرتبط: از کتابخانهٔ رمزنگاری معتبر و نگهداری‌شده استفاده کن؛ الگوریتم رمزنگاری اختصاصی نساز."
@@ -25219,22 +25217,54 @@
       "outputs": [
         "خروجی قابل بررسی مربوط به «از کتابخانهٔ رمزنگاری معتبر و نگهداری‌شده استفاده کن؛ الگوریتم رمزنگاری اختصاصی نساز.» در مسیر src/Shared.Security/ + tests/security/؛ همراه با آزمون/شاهد پذیرش متناسب."
       ],
-      "start_condition": "همهٔ پیش‌نیازهای T0128 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
+      "start_condition": "The incoming T0128 -> T0129 edge has been validated as sequencing_only: the independent-node end-to-end acceptance test consumes no cryptography-library selection or PeerId-parser artifact. This task may precede T0128 to establish the maintained security-library boundary that the eventual end-to-end test must exercise. The T0128 edge remains in the graph and T0128 acceptance remains pending.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال انجام",
+      "actual_output_paths": [
+        "src/Shared.Security/WhiteP.Shared.Security.csproj",
+        "src/Shared.Security/PeerSecurityPolicy.cs",
+        "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+        "src/Host.Windows/WhiteP.Host.Windows.csproj",
+        "tests/HostLifecycle.Tests/PeerSecurityPolicyAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "tests/test_crypto_library_policy.py",
+        "docs/decisions/ADR-0016-maintained-libp2p-cryptographic-transport.md",
+        "docs/decisions/README.md",
+        "WhiteP.sln",
+        "step three/T0129/execution-report.md"
+      ],
       "expected_output_paths": [
         "src/Shared.Security/ + tests/security/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "src/Shared.Security/PeerSecurityPolicy.cs",
+        "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+        "tests/HostLifecycle.Tests/PeerSecurityPolicyAcceptanceTests.cs",
+        "tests/test_crypto_library_policy.py",
+        "docs/decisions/ADR-0016-maintained-libp2p-cryptographic-transport.md"
+      ],
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0129-A001 (2026-10-27): reviewed T0128 -> T0129 as sequencing_only based on actual source/test contracts; the original edge is retained. Added a shared PeerId input/parser policy backed by Nethermind.Libp2p.Core, wired it into the host transport, added C#/Python regression coverage and ADR-0016, and updated the pinned libp2p package to 1.1.0 for exact-CI validation. CI pending; T0129 remains in_progress.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0129-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Shared.Security/WhiteP.Shared.Security.csproj",
+          "src/Shared.Security/PeerSecurityPolicy.cs",
+          "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+          "src/Host.Windows/WhiteP.Host.Windows.csproj",
+          "tests/HostLifecycle.Tests/PeerSecurityPolicyAcceptanceTests.cs",
+          "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+          "tests/HostLifecycle.Tests/Program.cs",
+          "tests/test_crypto_library_policy.py",
+          "docs/decisions/ADR-0016-maintained-libp2p-cryptographic-transport.md",
+          "docs/decisions/README.md",
+          "WhiteP.sln",
+          "step three/T0129/execution-report.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
@@ -25247,7 +25277,58 @@
           "review_evidence": []
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0129-A001",
+          "started_at": "2026-10-27T19:06:14.364Z",
+          "ended_at": "2026-10-27T19:06:14.364Z",
+          "result": "partial",
+          "summary": "Validated T0128 -> T0129 as sequencing_only with source/test evidence. Added shared identity parsing through Nethermind.Libp2p.Core, wired the host transport to it, updated libp2p packages to 1.1.0, and added executable C#/Python regression coverage and ADR-0016. Exact-commit CI pending; no custom cryptographic algorithm added.",
+          "changed_files": [
+            "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+            "src/Host.Windows/WhiteP.Host.Windows.csproj",
+            "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "WhiteP.sln",
+            "docs/decisions/README.md",
+            "src/Shared.Security/WhiteP.Shared.Security.csproj",
+            "src/Shared.Security/PeerSecurityPolicy.cs",
+            "tests/HostLifecycle.Tests/PeerSecurityPolicyAcceptanceTests.cs",
+            "tests/test_crypto_library_policy.py",
+            "docs/decisions/ADR-0016-maintained-libp2p-cryptographic-transport.md",
+            "step three/T0129/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "C# peer identity acceptance tests",
+              "result": "pending",
+              "summary": "Added to HostLifecycle runner; must pass on exact commit."
+            },
+            {
+              "name": "Python crypto-library regression guard",
+              "result": "pending",
+              "summary": "Added; must pass on exact commit."
+            },
+            {
+              "name": "Step Three quality gate",
+              "result": "pending",
+              "summary": "Unit discovery, syntax, graph guard and evidence validation must pass."
+            },
+            {
+              "name": "Product build",
+              "result": "pending",
+              "summary": "HostLifecycle, Windows WPF Release, and Android APK/lint/Protobuf jobs must pass after package upgrade."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect exact V 3.0.434 CI. Preserve any failure and repair before marking T0129 done. T0128's multi-node E2E and blocked T0121 remain incomplete."
+        }
+      ]
     },
     {
       "id": "T0130",
@@ -32880,10 +32961,16 @@
       "from": "T0128",
       "to": "T0129",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "Reviewed T0128's independent-node end-to-end acceptance against T0129's output. T0128 verifies the assembled peer discovery/transport path but produces no cryptography-library selection or PeerId-parser artifact consumed by T0129. The repository already uses Nethermind.Libp2p and delegates secure-channel setup to its Noise/TLS stack; centralizing this maintained-library boundary should precede, not wait for, final multi-node acceptance. Preserve the original blocks edge as a sequencing-only relationship and run T0129 ahead of T0128 only with this recorded evidence.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+        "src/Host.Windows/Networking/Libp2pPeerMessageProtocol.cs",
+        "docs/decisions/ADR-0002-direct-p2p-data-path.md",
+        "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs",
+        "step three/T0128/execution-report.md"
+      ]
     },
     {
       "from": "T0129",
@@ -37103,6 +37190,24 @@
         "src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs",
         "src/Rendezvous.Service/PeerAnnouncementDirectory.cs",
         "step three/T0115/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-27T19:06:14.364Z",
+      "edge_from": "T0128",
+      "edge_to": "T0129",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "old_validation_status": "unreviewed",
+      "new_validation_status": "validated",
+      "reason": "Reviewed T0128's independent-node end-to-end acceptance against T0129's output. T0128 verifies the assembled peer discovery/transport path but produces no cryptography-library selection or PeerId-parser artifact consumed by T0129. The repository already uses Nethermind.Libp2p and delegates secure-channel setup to its Noise/TLS stack; centralizing this maintained-library boundary should precede, not wait for, final multi-node acceptance. Preserve the original blocks edge as a sequencing-only relationship and run T0129 ahead of T0128 only with this recorded evidence.",
+      "evidence": [
+        "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+        "src/Host.Windows/Networking/Libp2pPeerMessageProtocol.cs",
+        "docs/decisions/ADR-0002-direct-p2p-data-path.md",
+        "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs",
+        "step three/T0128/execution-report.md"
       ],
       "reviewed_by": "Step Three execution review"
     }

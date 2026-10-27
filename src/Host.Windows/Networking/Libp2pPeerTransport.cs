@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Multiformats.Address;
 using Nethermind.Libp2p;
 using Nethermind.Libp2p.Core;
+using WhiteP.Shared.Security;
 
 namespace WhiteP.Host.Windows.Networking;
 
@@ -384,21 +385,7 @@ public sealed class Libp2pPeerTransport : IPeerTransport
 
     private static void ValidatePeerIdentity(string identity)
     {
-        if (string.IsNullOrWhiteSpace(identity) ||
-            !string.Equals(identity, identity.Trim(), StringComparison.Ordinal) ||
-            identity.Any(char.IsControl))
-        {
-            throw new AuthenticationException("A valid, normalized peer identity is required.");
-        }
-
-        try
-        {
-            _ = new PeerId(identity);
-        }
-        catch (Exception exception) when (exception is ArgumentException or FormatException or IndexOutOfRangeException)
-        {
-            throw new AuthenticationException("The supplied peer identity is not a valid libp2p PeerId.", exception);
-        }
+        PeerSecurityPolicy.ValidatePeerIdentity(identity);
     }
 
     private static async Task DisconnectQuietlyAsync(ISession? session = null)

@@ -7,11 +7,12 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Google.Protobuf" Version="3.36.2" />
-    <PackageReference Include="Nethermind.Libp2p" Version="1.0.3" />
+    <PackageReference Include="Nethermind.Libp2p" Version="1.1.0" />
     <ProjectReference Include="../../src/Host.Domain/WhiteP.Host.Domain.csproj" />
     <ProjectReference Include="../../src/Host.Application/WhiteP.Host.Application.csproj" />
     <ProjectReference Include="../../src/Host.Infrastructure/WhiteP.Host.Infrastructure.csproj" />
     <ProjectReference Include="../../src/Shared.Contracts/WhiteP.Shared.Contracts.csproj" />
+    <ProjectReference Include="../../src/Shared.Security/WhiteP.Shared.Security.csproj" />
     <ProjectReference Include="../../src/Rendezvous.Service/WhiteP.Rendezvous.Service.csproj" />
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
