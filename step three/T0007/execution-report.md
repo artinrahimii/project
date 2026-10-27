@@ -359,3 +359,14 @@
 - Scope boundary: this verifies the A031 decision-register/test traceability increment and the exact-commit quality/product CI gates. These results do not prove Android-to-Windows end-to-end inference or live model inference on this commit, and they do not complete the broad task-wide decision-to-code/configuration/test traceability criterion.
 - Result: this verification attempt succeeded; `T0007` stays `in_progress`. No previous failed CI evidence was removed or reclassified.
 - Follow-up: trace the next uncovered implementation decision to production source/configuration and executable tests, then inspect exact-commit CI. Do not mark T0007 done until its broad acceptance criterion is met.
+
+## Attempt T0007-A033 — correct the V 3.0.390 graph-validation failure
+
+- Recorded at: 2026-10-27T12:55:03.509Z.
+- Failed validation commit: `6503736611b3c1ee8547d1de33e18420cfa99e9f` (`V 3.0.390`) on online `main`.
+- Exact failure: [Step Three quality gate run 40507382079](https://github.com/artinrahimii/project/actions/runs/40507382079), job 122200055854, failed at **Validate graph structure**. Automated tests and Python syntax steps passed; recorded-output/evidence validation was skipped after the graph validation failure.
+- Cause: the graph-editing update appended A032 to the history array and then used that same array's already-incremented length plus one for `execution_summary.attempt_count`, leaving `summary=33` while the history contained 32 entries. This was a graph bookkeeping defect, not a failing application test; it is preserved as a failed validation attempt rather than hidden.
+- Correction: reconcile the counter from the actual append-only history, then append this A033 failure record and recompute both `attempt_count` and `failed_attempt_count` from the resulting history. No task is marked done and no graph edge changes.
+- Product workflow [40507382070](https://github.com/artinrahimii/project/actions/runs/40507382070) was still running when this record was added; its final outcome is not claimed here.
+- Result: failed graph-validation attempt recorded; `T0007` remains `in_progress`.
+- Follow-up: validate the corrected graph on the new exact main commit and verify both quality and product workflows.
