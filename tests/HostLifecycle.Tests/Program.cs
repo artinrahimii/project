@@ -820,6 +820,30 @@ using (var alternateSession = new HostInferenceSession(
 }
 Console.WriteLine("PASS: HostInferenceSession supports an alternate IInferenceBackend through its factory without changing dialog/network logic.");
 
+var throwingPreviousBackend = new ThrowingDisposeTestBackend();
+var unadoptedReplacementBackend = new DisposableReplacementTestBackend();
+using (var guardedReplacementSession = new HostInferenceSession(
+    backend: throwingPreviousBackend,
+    backendFactory: (_, _) => unadoptedReplacementBackend,
+    readinessEvaluator: ReadyHostReadiness))
+{
+    var replacementFailure = await guardedReplacementSession.ConnectAsync(
+        new Uri("http://127.0.0.1:18081/"),
+        "replacement-model");
+
+    Assert(replacementFailure.State == HostState.Error,
+        "A previous backend disposal failure must leave the session in Error.");
+    Assert(!guardedReplacementSession.IsConnected,
+        "A failed backend replacement must not advertise a connected host.");
+    Assert(throwingPreviousBackend.DisposeCalls == 1,
+        "The previous backend must be retired only once after a failed replacement.");
+    Assert(unadoptedReplacementBackend.DisposeCalls == 1,
+        "An unadopted replacement must be disposed when retiring the previous backend fails.");
+    Assert(unadoptedReplacementBackend.HealthCheckCalls == 0,
+        "The replacement must not be health-checked after the previous backend failed to retire.");
+}
+Console.WriteLine("PASS: backend replacement fails closed and disposes an unadopted backend when old disposal throws.");
+
 // T0060: backend health is a required gate before the capacity evaluator and Ready state.
 var failedHealthOrder = new List<string>();
 using (var failedHealthSession = new HostInferenceSession(
@@ -1258,6 +1282,41 @@ sealed class AlternateFactoryTestBackend : IInferenceBackend
         cancellationToken.ThrowIfCancellationRequested();
         return Task.FromResult("alternate backend response");
     }
+}
+
+sealed class ThrowingDisposeTestBackend : IInferenceBackend, IDisposable
+{
+    public int DisposeCalls { get; private set; }
+    public bool IsAvailable => true;
+    public string UnavailableReason => string.Empty;
+
+    public void Dispose()
+    {
+        DisposeCalls++;
+        if (DisposeCalls == 1)
+        {
+            throw new IOException("private disposal detail");
+        }
+    }
+}
+
+sealed class DisposableReplacementTestBackend : IInferenceBackend, IDisposable
+{
+    public int DisposeCalls { get; private set; }
+    public int HealthCheckCalls { get; private set; }
+    public bool IsAvailable => true;
+    public string UnavailableReason => string.Empty;
+
+    public Task<bool> CheckHealthAsync(CancellationToken cancellationToken = default)
+    {
+        HealthCheckCalls++;
+        return Task.FromResult(true);
+    }
+
+    public Task<string> GenerateAsync(string prompt, uint maxOutputTokens, CancellationToken cancellationToken = default) =>
+        Task.FromResult("replacement response");
+
+    public void Dispose() => DisposeCalls++;
 }
 
 sealed class SessionTestBackend : IInferenceBackend

@@ -55,10 +55,25 @@ public sealed class HostInferenceSession : IDisposable
                 return _lifecycle.Transition(HostState.Error, "No local inference backend factory is configured.");
             }
 
+            IInferenceBackend replacement;
             try
             {
-                var replacement = _backendFactory(serverBaseAddress, model);
-                if (_backend is IDisposable oldBackend)
+                replacement = _backendFactory(serverBaseAddress, model);
+                if (replacement is null)
+                {
+                    throw new InvalidOperationException("Backend factory returned no backend.");
+                }
+            }
+            catch (Exception)
+            {
+                return _lifecycle.Transition(HostState.Error, "Local inference connection failed.");
+            }
+
+            var previousBackend = _backend;
+            _backend = new UnconfiguredInferenceBackend();
+            try
+            {
+                if (previousBackend is IDisposable oldBackend)
                 {
                     oldBackend.Dispose();
                 }
@@ -67,6 +82,18 @@ public sealed class HostInferenceSession : IDisposable
             }
             catch (Exception)
             {
+                if (replacement is IDisposable replacementBackend)
+                {
+                    try
+                    {
+                        replacementBackend.Dispose();
+                    }
+                    catch (Exception)
+                    {
+                        // Keep the session fail-closed if replacement cleanup also fails.
+                    }
+                }
+
                 return _lifecycle.Transition(HostState.Error, "Local inference connection failed.");
             }
 

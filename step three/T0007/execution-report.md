@@ -297,3 +297,16 @@
 - Dependency review: `T0006 → T0007` retains its validated `contract_or_interface_dependency` classification; `T0007 → T0008` retains its validated `sequencing_only` classification. No edge was changed.
 - Result: partial. The executable rollback contract and current product CI passed, but T0007's broad task-wide decision traceability remains incomplete. Keep node status `in_progress`; no task promoted to `done`.
 - Follow-up: continue with a separate uncovered production decision and its source/configuration/runtime test. Keep full product P2P and privacy release gates separate until their own evidence exists.
+
+
+## Attempt T0007-A028 — fail closed on backend replacement disposal failure
+
+- Started / recorded: 2026-10-27T09:19:50.639Z.
+- Result at creation: partial; exact-commit quality and product CI pending.
+- Finding: `HostInferenceSession.ConnectAsync` created a replacement backend before disposing the previous backend. If the previous backend's `Dispose()` threw, the replacement was left unadopted and undisposed, while the session kept the old backend reference.
+- Implementation: clear the session's active backend reference to `UnconfiguredInferenceBackend` before attempting to retire the prior instance; if retirement fails, best-effort dispose the unadopted replacement and return the stable generic connection-failure state. The replacement is not health-checked after this failure.
+- Behavioral regression: added a runnable HostLifecycle test with a prior backend whose disposal throws and an independent disposable replacement. The test asserts Error/non-connected status, one disposal attempt per old/new backend, and no replacement health probe.
+- Changed files: `src/Host.Application/HostInferenceSession.cs`, `tests/HostLifecycle.Tests/Program.cs`, `docs/acceptance.md`, `step three/T0007/execution-report.md`, and `step three/project-graph.md`.
+- Local execution: not run; this tool session has no checked-out repository and the container cannot resolve GitHub for a local clone. No local C# build or test pass is claimed.
+- Dependency review: preserve `T0006 → T0007` as validated `contract_or_interface_dependency` and `T0007 → T0008` as validated `sequencing_only`; no edge changes were needed.
+- Follow-up: inspect quality and product workflows on the exact implementation commit. Record actual CI output in a separate verification attempt; keep T0007 `in_progress` until broad technical-decision traceability is complete.
