@@ -264,3 +264,10 @@ Acceptance for this narrow change: the source regression passes; the exact-commi
 On exact implementation commit [`V 3.0.377`](https://github.com/artinrahimii/project/commit/4674853a748b8fb266255f7fc172d1376c590540), the enhanced `test_window_closing_waits_for_listener_disposal_before_closing_again` passed within the 163-test Python quality suite. Graph/evidence validation returned **0 errors and 1 preserved T0001 warning**. The product workflow completed successfully: HostLifecycle tests passed; the Windows WPF Release build, generated Protobuf checks and startup smoke passed; Android lint, debug APK assembly, unit tests and generated-source checks passed. The Windows compiler log reported **0 warnings and 0 errors**, and no CS4014 occurrence remained at the previously warned Dispatcher callsite.
 
 Evidence: [quality run 40463541745](https://github.com/artinrahimii/project/actions/runs/40463541745), [product run 40463541747](https://github.com/artinrahimii/project/actions/runs/40463541747). This verifies the incremental shutdown-warning fix, not the full broad T0007 criterion.
+
+
+## T0007-A021 — fail-safe handling for invalid persisted settings
+
+The WPF constructor now contains expected failures from loading local settings: malformed/future-version data, syntactically valid but semantically invalid fields (including non-loopback URLs or invalid timeouts), and file I/O/permission errors. The app retains its already-initialized safe defaults and displays generic repair guidance rather than allowing these expected failures to escape startup or exposing raw exception/file-path details. The runtime persistence harness writes a valid JSON document with a disallowed remote endpoint, verifies that validation fails, and verifies the original file is not overwritten; the Python source regression checks the WPF constructor maps the expected exceptions into the guarded startup state.
+
+Acceptance for this increment: the semantic-invalid-settings persistence test passes; the WPF startup source regression passes; exact-commit quality and product CI pass. This does not complete broad T0007 traceability or prove live inference readiness.

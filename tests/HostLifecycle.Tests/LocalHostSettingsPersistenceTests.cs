@@ -12,9 +12,10 @@ internal static class LocalHostSettingsPersistenceTests
             PersistsSelectionAndPreservesServerModel(directory);
             LoadsLegacySettingsWithoutSelection(directory);
             RejectsInvalidSelectionIds(directory);
+            RejectsSemanticallyInvalidPersistedSettings(directory);
         }
         finally { if (Directory.Exists(directory)) Directory.Delete(directory, recursive: true); }
-        Console.WriteLine("PASS: active catalog selection persists, legacy settings remain readable, and invalid IDs fail closed.");
+        Console.WriteLine("PASS: settings round-trip, legacy compatibility, semantic validation, invalid-selection rejection, and fail-closed persistence.");
     }
     private static void PersistsSelectionAndPreservesServerModel(string directory)
     {
@@ -40,10 +41,27 @@ internal static class LocalHostSettingsPersistenceTests
         ExpectArgumentException(() => store.Save(LocalHostSettings.Defaults with { ActiveCatalogModelId = new string('x', 129) }));
         ExpectArgumentException(() => store.Save(LocalHostSettings.Defaults with { ActiveCatalogModelId = "bad\nmodel" }));
     }
+    private static void RejectsSemanticallyInvalidPersistedSettings(string directory)
+    {
+        var path = Path.Combine(directory, "invalid-semantic.json");
+        var json = JsonSerializer.Serialize(new
+        {
+            schemaVersion = LocalHostSettings.CurrentSchemaVersion,
+            serverUrl = "https://example.com/",
+            modelId = "model",
+            requestTimeoutSeconds = 30,
+            engineExecutablePath = (string?)null,
+            modelFilePath = (string?)null,
+            activeCatalogModelId = (string?)null
+        });
+        File.WriteAllText(path, json);
+        ExpectArgumentException(() => new LocalHostSettingsStore(path).LoadOrDefault());
+        Assert(File.ReadAllText(path) == json, "Failed validation must not rewrite the user's invalid settings file.");
+    }
     private static void ExpectArgumentException(Action action)
     {
         try { action(); } catch (ArgumentException) { return; }
-        throw new InvalidOperationException("Invalid active catalog model ID was accepted.");
+        throw new InvalidOperationException("Invalid persisted settings or active catalog model ID were accepted.");
     }
     private static void Assert(bool condition, string message)
     {

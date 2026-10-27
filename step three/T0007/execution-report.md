@@ -212,3 +212,15 @@
 - Aggregate product workflow: **PASS** — [run 40463541747](https://github.com/artinrahimii/project/actions/runs/40463541747), all three jobs succeeded.
 - Result: partial. The warning fix and its regression are verified, but broad T0007 decision-to-code/configuration/test traceability remains incomplete; retain `in_progress`. No dependency edges or other task statuses changed.
 - Follow-up: continue the broader T0007 traceability matrix; preserve the now-verified deferred shutdown ordering. Do not promote T0007 to `done` based on this one increment.
+
+
+## Attempt T0007-A021 — contain invalid persisted settings during WPF startup (2026-10-27)
+
+- Base: [`V 3.0.378` (`9ad58f8ad1e099a4c58418117a114d24139019e1`)](https://github.com/artinrahimii/project/commit/9ad58f8ad1e099a4c58418117a114d24139019e1).
+- Source finding: `LocalHostSettingsStore.LoadOrDefault()` intentionally rejects semantic validation errors from `LocalHostSettings.Validate` with `ArgumentException` (including invalid URLs/timeouts), and can also throw file I/O/access errors. The WPF constructor previously caught only `InvalidDataException`, so those expected input/environment failures could escape construction before the main window was available.
+- Implementation: expanded the constructor's filtered catch to cover `InvalidDataException`, `ArgumentException`, `IOException`, and `UnauthorizedAccessException`. It leaves the initialized safe defaults in place, marks the settings-load failure, and shows a generic settings/permissions guidance message without exception detail.
+- Regression coverage: added a Python source regression for the WPF exception boundary and extended `LocalHostSettingsPersistenceTests` with a syntactically valid JSON settings file containing a disallowed remote URL. The C# test requires validation failure and asserts the file is not rewritten.
+- Dependency review: `T0006 → T0007` remains validated as `contract_or_interface_dependency`; `T0007 → T0008` remains validated as `sequencing_only`. No edge or unrelated task status was changed.
+- Local execution: this session has no local repository checkout/Windows/.NET runtime to execute the repository test commands directly. No local test pass is claimed; exact-commit CI is pending.
+- Result at creation: partial pending CI. T0007 remains `in_progress`; one startup failure boundary is covered, not the full broad decision-to-code/configuration/test criterion.
+- Follow-up: inspect the exact commit's quality CI for the new Python test and graph/evidence checks; inspect the HostLifecycle job for the semantic-settings C# test and Windows WPF job for a successful build/startup smoke. Record passing results only from actual logs.

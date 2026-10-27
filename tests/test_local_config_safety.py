@@ -38,6 +38,21 @@ class LocalConfigSafetyTests(unittest.TestCase):
         contents = (ROOT / ".env.example").read_text(encoding="utf-8")
         self.assertIn("not auto-loaded", contents)
 
+    def test_wpf_startup_contains_semantically_invalid_or_unreadable_settings(self):
+        source = (ROOT / "src" / "Host.Windows" / "MainWindow.xaml.cs").read_text(encoding="utf-8")
+        start = source.index("var settingsLoadFailed = false;")
+        end = source.index("ServerUrl.Text = _settings.ServerUrl;", start)
+        load_path = source[start:end]
+        self.assertIn("catch (Exception exception) when (", load_path)
+        for exception_type in ("InvalidDataException", "ArgumentException", "IOException", "UnauthorizedAccessException"):
+            with self.subTest(exception_type=exception_type):
+                self.assertIn(exception_type, load_path)
+        self.assertIn("settingsLoadFailed = true;", load_path)
+        self.assertNotIn("exception.Message", load_path)
+        self.assertNotIn("exception.ToString()", load_path)
+        self.assertIn("local settings could not be loaded or validated", source)
+        self.assertIn("check the settings file and permissions before reconnecting", source)
+
 
 if __name__ == "__main__":
     unittest.main()

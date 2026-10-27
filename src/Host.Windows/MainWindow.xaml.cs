@@ -46,8 +46,11 @@ public partial class MainWindow : Window
         {
             _settings = _settingsStore.LoadOrDefault();
         }
-        catch (InvalidDataException)
+        catch (Exception exception) when (
+            exception is InvalidDataException or ArgumentException or IOException or UnauthorizedAccessException)
         {
+            // Invalid persisted values and unreadable settings must not escape the WPF constructor.
+            // Keep initialized safe defaults in memory and avoid exposing file paths or exception details.
             settingsLoadFailed = true;
         }
 
@@ -63,7 +66,7 @@ public partial class MainWindow : Window
         ParticipationNetworkStatus.Text = "Network participation is disabled; no listener is open.";
         if (settingsLoadFailed)
         {
-            LifecycleState.Text = "Error — local settings are invalid; correct the settings file before reconnecting.";
+            LifecycleState.Text = "Error — local settings could not be loaded or validated; check the settings file and permissions before reconnecting.";
         }
     }
 
