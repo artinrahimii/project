@@ -790,7 +790,10 @@ class DecisionTraceabilityTests(unittest.TestCase):
             "T0007's report must identify T0007 instead of another task.",
         )
         self.assertIn("T0007-A074", report)
-        self.assertIn("T0007 remains `in_progress`", report)
+        self.assertIn("**Status:** `in_progress`", report)
+        self.assertNotIn("## T0121-A003", report)
+        self.assertNotIn("## T0121-A004", report)
+        self.assertNotIn("## T0121-A005", report)
 
 
 if __name__ == "__main__":

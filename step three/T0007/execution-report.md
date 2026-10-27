@@ -15,3 +15,16 @@
 - Exact V 3.0.427 quality gate passed 179 Python tests, syntax, graph, and recorded-output/evidence checks: [run 40552218897](https://github.com/artinrahimii/project/actions/runs/40552218897).
 - Exact V 3.0.427 product workflow passed HostLifecycle, Windows WPF and Android APK/Protobuf jobs: [run 40552218539](https://github.com/artinrahimii/project/actions/runs/40552218539).
 - That result verified the bounded ADR-0015 traceability increment only; T0007 remained `in_progress` and `AC-P2P-01` remained **NOT RUN**.
+
+
+## Verification result for T0007-A074 — exact V 3.0.429
+
+- **Exact commit:** `b09b9e548f78a675dc3a3f15278d781e14bda566` ([V 3.0.429](https://github.com/artinrahimii/project/commit/b09b9e548f78a675dc3a3f15278d781e14bda566)).
+- **Quality gate:** failed, run [40562659330](https://github.com/artinrahimii/project/actions/runs/40562659330). 181 tests ran; exactly one failed because the new guard looked for a phrase that was not used by the report's actual status line. This failure is preserved in graph attempt T0007-A075.
+- **Host lifecycle suite:** passed on exact V 3.0.429 in [product run 40562659371](https://github.com/artinrahimii/project/actions/runs/40562659371). Windows host build and Android APK were still running when this report update began; do not treat the aggregate product workflow as passed until its final conclusion is inspected.
+
+## Attempt T0007-A076 — align the report-identity guard to the report contract
+
+- Corrected the assertion to check the actual `**Status:** `in_progress`` line and added negative assertions against the stale T0121-A003/A004/A005 headings that caused the report ownership regression.
+- No production source, protocol, dependency edge, or task completion status changed.
+- Exact-commit CI for V 3.0.430 is pending. T0007 remains `in_progress`; T0121 remains `in_progress`; `AC-P2P-01` remains **NOT RUN**.
