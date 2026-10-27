@@ -1,26 +1,31 @@
-# T0117 verification evidence — exact-SHA CI pending
+# T0117 verification evidence — accepted
 
-## Source integrity
-- Repository `artinrahimii/project`, branch `main`.
-- Original implementation commit: `V 3.0.351`, SHA `d056c1c1c77903165576078b0d7c3fbe35b60676`.
-- Graph at that commit: Blob `d006eb634df7008f2ffd95b447e636309cf44c4e`, 1,805,090 bytes; Git SHA-1 matched the original content; parsed 229 tasks / 426 edges.
+## Graph/source integrity
+- Repository: `artinrahimii/project`, branch `main`.
+- Baseline for the task: `d4b2c7ee8e28729b4d22179810614c516aee7d0f` (`V 3.0.350`).
+- Baseline graph Blob `d006eb634df7008f2ffd95b447e636309cf44c4e`, 1,805,090 bytes; exact Git object SHA-1 matched and the JSON parsed to 229 tasks / 426 edges.
 
-## Implementation
-- Package: [Nethermind.Libp2p 1.0.3](https://www.nuget.org/packages/Nethermind.Libp2p), MIT, .NET 10.
-- Uses libp2p's default TCP stack with Noise/TLS negotiation; no forced-plaintext mode enabled.
-- `Libp2pPeerTransport` validates the target multiaddress PeerId, matches it against the expected identity and then verifies the peer identity obtained from the session address. Listening is explicit and requires an expected peer identity.
-- `Libp2pPeerMessageProtocol` sends and receives bounded varint-prefixed binary messages and uses bounded channel backpressure.
+## Library/implementation
+- `Nethermind.Libp2p` `1.0.3`, MIT, .NET 10: [NuGet](https://www.nuget.org/packages/Nethermind.Libp2p), [source](https://github.com/NethermindEth/dotnet-libp2p).
+- `Libp2pPeerTransport` implements `IPeerTransport`, verifies target address PeerId against `PeerTransportEndpoint` and then verifies the authenticated session PeerId.
+- `Libp2pPeerMessageProtocol` provides bounded length-prefixed binary messages with backpressure and I/O errors on incomplete/disconnected streams.
+- The library default TCP stack negotiates Noise or TLS; the code does not enable the plaintext enforcement option.
+- Two-peer runtime tests exercise mismatched-identity rejection, bidirectional binary transfer, size limits and disconnect state.
 
-## Exact commit outcomes
-- **V 3.0.351:** compile failed; fixed ambiguous channel type, missing published `ISession.RemotePeerId`, and protocol instance dialing API mismatch.
-- **V 3.0.352:** compiled and the real loopback integration reached the first disconnect call after preceding assertions executed: authenticated peer identities, client-to-server binary round-trip, server-to-client binary round-trip, and oversized message rejection. Failed because the library's long-running `DialAsync<TProtocol>` task ends with `TaskCanceledException` when the session is deliberately disconnected, which the adapter did not yet treat as expected teardown.
-- **V 3.0.353:** adds a narrowly filtered handling path for expected protocol task cancellation, conditioned on the caller's token not being cancelled. Its runtime test proceeded through actual peer connection, PeerId pinning, bidirectional binary messages, over-limit rejection, and disconnect without throwing; it then failed because `IsConnected` stayed true briefly during protocol-task teardown.
-- **V 3.0.354:** makes `IsConnected` immediately false once local disconnect starts, while still requiring a live protocol and authenticated identity for the true state. Exact-head tests pending.
-- Step Three quality gate on V 3.0.352 passed: https://github.com/artinrahimii/project/actions/runs/40444570058
+## Exact-SHA verification on V 3.0.354
+- HostLifecycle/P2P integration: **PASS** — https://github.com/artinrahimii/project/actions/runs/40445103348/job/121994383982
+- Windows WPF product build and policy checks: **PASS** — https://github.com/artinrahimii/project/actions/runs/40445103348/job/121994383755
+- Android client build/Protobuf tests: **PASS** — https://github.com/artinrahimii/project/actions/runs/40445103348/job/121994384052
+- Step Three quality gate: **PASS** — https://github.com/artinrahimii/project/actions/runs/40445103235
 
-## Dependency review
-- `T0116 → T0117`: `contract_or_interface_dependency`, validated.
-- `T0115 → T0117`: `sequencing_only`, validated; TCP-listener tests are not consumed by the libp2p adapter. Both `blocks` edges are retained.
+## Failure and retry record
+- A001 / V 3.0.351: compile-time API mismatches; failed.
+- A002 / V 3.0.352: expected libp2p protocol-task cancellation escaped during disconnect; failed.
+- A003 / V 3.0.353: `IsConnected` stayed true briefly after disconnect; failed.
+- A004 / V 3.0.354: all runtime and product/quality acceptance passed; succeeded.
+All three failures remain in the graph's execution history; they have not been removed from the record.
 
-## Remaining boundaries
-No claim of hole punching, circuit relay, Android compatibility, app-level Protobuf inference request/response transport, peer discovery/rendezvous, or AC-P2P-01 is made. The library roadmap itself marks hole punching and circuit relay as work in progress.
+## Reviewed next dependencies
+- `T0117 → T0118`: `contract_or_interface_dependency`; fallback connection logic directly consumes the secure peer transport / expected PeerId contract.
+- `T0115 → T0118`: `sequencing_only`; the older TCP listener tests are not a direct API input to the libp2p fallback path.
+Both original `blocks` edge types remain.

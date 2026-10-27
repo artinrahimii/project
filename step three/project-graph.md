@@ -21090,8 +21090,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0116 و T0115 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "تکمیل‌شده",
       "actual_output_paths": [
         "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
         "src/Host.Windows/Networking/Libp2pPeerMessageProtocol.cs",
@@ -21113,12 +21113,12 @@
         "step three/T0117/execution-report.md",
         "step three/T0117/evidence/verification.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nSelected Nethermind.Libp2p 1.0.3 (MIT; .NET 10) after checking package and source-repository license/transport matrix. The implementation uses the default TCP + Noise/TLS negotiation (does not enable plaintext), validates the target /p2p PeerId against PeerTransportEndpoint, and uses bounded varint-prefixed binary messages. A real loopback two-peer test sends data in both directions. The library repository currently marks hole punching and circuit relay work-in-progress; neither is claimed complete.\nV3.0.351 exact-SHA HostLifecycle build failed at compile time because three member/signature choices in the adapter did not match published Nethermind.Libp2p 1.0.3: channel name ambiguity, no ISession.RemotePeerId, and no instance protocol-dial overload. These are recorded as a failed implementation attempt and corrected for V3.0.352; T0117 remains in progress.\nV3.0.352 runtime acceptance established that the peers connected, identity pins matched, binary messages round-tripped both ways and oversized messages were rejected, but expected protocol-task cancellation escaped during intentional disconnect. V3.0.353 adds a filtered OperationCanceledException catch that only applies when the caller token is not cancelled; the task stays in progress until exact-SHA CI passes.\nV3.0.353 integration test confirmed authenticated libp2p connection, binary payload delivery in both directions, max-size rejection and no exception from disconnect, but found that the public IsConnected property stayed true momentarily while the libp2p protocol task unwound. V3.0.354 makes local disconnected state immediate by checking the disconnect-started flag too; exact-SHA test pending.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nSelected Nethermind.Libp2p 1.0.3 (MIT; .NET 10) after checking package and source-repository license/transport matrix. The implementation uses the default TCP + Noise/TLS negotiation (does not enable plaintext), validates the target /p2p PeerId against PeerTransportEndpoint, and uses bounded varint-prefixed binary messages. A real loopback two-peer test sends data in both directions. The library repository currently marks hole punching and circuit relay work-in-progress; neither is claimed complete.\nV3.0.351 exact-SHA HostLifecycle build failed at compile time because three member/signature choices in the adapter did not match published Nethermind.Libp2p 1.0.3: channel name ambiguity, no ISession.RemotePeerId, and no instance protocol-dial overload. These are recorded as a failed implementation attempt and corrected for V3.0.352; T0117 remains in progress.\nV3.0.352 runtime acceptance established that the peers connected, identity pins matched, binary messages round-tripped both ways and oversized messages were rejected, but expected protocol-task cancellation escaped during intentional disconnect. V3.0.353 adds a filtered OperationCanceledException catch that only applies when the caller token is not cancelled; the task stays in progress until exact-SHA CI passes.\nV3.0.353 integration test confirmed authenticated libp2p connection, binary payload delivery in both directions, max-size rejection and no exception from disconnect, but found that the public IsConnected property stayed true momentarily while the libp2p protocol task unwound. V3.0.354 makes local disconnected state immediate by checking the disconnect-started flag too; exact-SHA test pending.\nT0117 accepted on V3.0.354: HostLifecycle reported PASS for direct libp2p TCP exchange, PeerId pinning, bounded framing and idempotent disconnect. Windows WPF build/policy/smoke, Android APK/Protobuf round-trip, and Step Three quality/graph/evidence jobs all passed. Three failed development attempts remain transparently recorded; the final implementation and acceptance are complete.",
       "execution_summary": {
-        "attempt_count": 4,
+        "attempt_count": 5,
         "failed_attempt_count": 3,
-        "last_attempt_id": "T0117-A004",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "T0117-A004-verification",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
           "src/Host.Windows/Networking/Libp2pPeerMessageProtocol.cs",
@@ -21133,9 +21133,15 @@
         "related_commits": [
           "d056c1c1c77903165576078b0d7c3fbe35b60676",
           "2a316393e3787653f1e85aa8f4ba37a1959e40c8",
-          "bc196a4b98091de1806d5921aa13b847549ff407"
+          "bc196a4b98091de1806d5921aa13b847549ff407",
+          "6653db2be37ba5b4ff964543efab997dd217aa9b"
         ],
-        "tests_passed": [],
+        "tests_passed": [
+          "HostLifecycle real libp2p two-peer integration — PASS on V 3.0.354. The CI log contains: PASS: IPeerTransport contract plus direct libp2p TCP message exchange, peer identity pinning, bounded framing and idempotent disconnect. https://github.com/artinrahimii/project/actions/runs/40445103348/job/121994383982",
+          "Windows WPF Release build, formatting, generated Protobuf validation, startup smoke, host policy/capability checks and artifact upload — PASS on V 3.0.354: https://github.com/artinrahimii/project/actions/runs/40445103348/job/121994383755",
+          "Android lint, debug APK, Protobuf round-trip tests, generated Java/Kotlin source checks and artifact upload — PASS on V 3.0.354: https://github.com/artinrahimii/project/actions/runs/40445103348/job/121994384052",
+          "Step Three quality gate (Python tests, graph consistency and recorded output/evidence guards) — PASS on V 3.0.354: https://github.com/artinrahimii/project/actions/runs/40445103235"
+        ],
         "tests_failed": [
           "V 3.0.351 HostLifecycle compile failed before running runtime tests; the published Nethermind.Libp2p 1.0.3 API uses System.Threading.Channels.Channel ambiguously with Nethermind.Libp2p.Core.Channel, has no ISession.RemotePeerId property, and no instance-based ISession.DialAsync overload. These compile errors are corrected in V 3.0.352.",
           "V 3.0.352 HostLifecycle runtime acceptance reached the disconnect step after the direct peer connection, PeerId pinning, two-way binary payloads and oversized-message rejection executed, but DisconnectAsync propagated TaskCanceledException from the libp2p protocol DialAsync task during intentional session teardown. Corrected in V 3.0.353 to treat this cancellation as normal only when the caller's cancellation token is not cancelled.",
@@ -21144,7 +21150,7 @@
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "required",
+          "state": "passed",
           "triggering_contracts": [
             "IPeerTransport secure-connect/send/receive/disconnect contract",
             "PeerTransportEndpoint expected PeerId contract",
@@ -21311,6 +21317,51 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Run exact-head CI. Mark T0117 done only if real peer exchange, size limit, peer identity mismatch, disconnect semantics and product/quality workflows pass."
+        },
+        {
+          "attempt_id": "T0117-A004-verification",
+          "started_at": "2026-10-27T03:36:20Z",
+          "ended_at": "2026-10-27T03:38:25Z",
+          "result": "succeeded",
+          "summary": "Exact V3.0.354 CI passed the complete two-peer libp2p acceptance: the actual connection authenticated the pinned PeerIds, carried binary messages in both directions, rejected an oversized message, and reported disconnected immediately after local disconnect. HostLifecycle, Windows product build and checks, Android APK/Protobuf tests, and Step Three quality gate all passed.",
+          "changed_files": [
+            "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+            "src/Host.Windows/Networking/Libp2pPeerMessageProtocol.cs",
+            "src/Host.Windows/WhiteP.Host.Windows.csproj",
+            "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+            "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs",
+            "docs/decisions/ADR-0002-direct-p2p-data-path.md",
+            "step three/T0117/execution-report.md",
+            "step three/T0117/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": "6653db2be37ba5b4ff964543efab997dd217aa9b",
+          "tests": [
+            {
+              "name": "PeerTransportContractAcceptanceTests",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40445103348/job/121994383982"
+            },
+            {
+              "name": "Windows WPF product build",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40445103348/job/121994383755"
+            },
+            {
+              "name": "Android product build",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40445103348/job/121994384052"
+            },
+            {
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40445103235"
+            }
+          ],
+          "failure_details": "Three earlier attempts are retained: V3.0.351 compile-time API mismatch; V3.0.352 expected protocol-task cancellation surfaced from disconnect; V3.0.353 stale IsConnected state after disconnect. All three were corrected before the V3.0.354 successful CI run.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "follow_up": "T0118 is next. Its incoming edges have been reviewed; no relay/NAT-traversal capability is claimed merely because the host transport now passes its loopback acceptance."
         }
       ]
     },
@@ -29233,19 +29284,30 @@
       "from": "T0117",
       "to": "T0118",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0118's fallback connection strategy must reuse the secure IPeerTransport connection, expected PeerId, and address/connection error contract introduced by T0117. This is a direct transport API/security-contract dependency; preserve the existing blocks edge.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/Networking/IPeerTransport.cs",
+        "src/Host.Windows/Networking/PeerTransportEndpoint.cs",
+        "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+        "src/Host.Windows/Networking/Libp2pPeerMessageProtocol.cs",
+        "docs/decisions/ADR-0002-direct-p2p-data-path.md"
+      ]
     },
     {
       "from": "T0115",
       "to": "T0118",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0115 tests the legacy one-frame TCP listener lifecycle and frame rejection. T0118 works with the peer-transport address/connection path and consumes no T0115-specific API or data artifact; keep blocks as conservative execution order.",
+      "validation_status": "validated",
+      "evidence": [
+        "tests/HostLifecycle.Tests/NetworkInferenceRequestFrameAcceptanceTests.cs",
+        "src/Host.Windows/Networking/NetworkInferenceRequestFrameReader.cs",
+        "src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs",
+        "step three/T0115/evidence/verification.md"
+      ]
     },
     {
       "from": "T0118",
@@ -33483,8 +33545,43 @@
         "step three/T0115/evidence/verification.md"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-27T03:41:07.654Z",
+      "edge_from": "T0117",
+      "edge_to": "T0118",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "old_validation_status": "unreviewed",
+      "new_validation_status": "validated",
+      "reason": "Reviewed T0118's fallback-connect task against the concrete T0117 IPeerTransport/Multiaddress/PeerId contract; it consumes that transport API and error/security boundary. Original blocks edge retained.",
+      "evidence": [
+        "src/Host.Windows/Networking/IPeerTransport.cs",
+        "src/Host.Windows/Networking/PeerTransportEndpoint.cs",
+        "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+        "src/Host.Windows/Networking/Libp2pPeerMessageProtocol.cs",
+        "docs/decisions/ADR-0002-direct-p2p-data-path.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-27T03:41:07.654Z",
+      "edge_from": "T0115",
+      "edge_to": "T0118",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "old_validation_status": "unreviewed",
+      "new_validation_status": "validated",
+      "reason": "Reviewed T0115 test artifacts and T0118 transport requirements; T0118 consumes no T0115 API or output. Original blocks edge retained as conservative order.",
+      "evidence": [
+        "tests/HostLifecycle.Tests/NetworkInferenceRequestFrameAcceptanceTests.cs",
+        "src/Host.Windows/Networking/NetworkInferenceRequestFrameReader.cs",
+        "src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs",
+        "step three/T0115/evidence/verification.md"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-27T03:26:54.005Z"
+  "updated_at": "2026-10-27T03:41:07.654Z"
 }
 ```
