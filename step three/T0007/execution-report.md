@@ -678,3 +678,22 @@
 - Change: changed only the new ADR-0010 source-contract assertion from `"Catalog metadata"` to `"catalog metadata"`, matching the actual lowercase phrase in the registered ADR. No runtime source, requirements, contracts, or dependency edges changed.
 - Tests: the preceding A059 failure is preserved at [run 40542397238](https://github.com/artinrahimii/project/actions/runs/40542397238). Automated tests have not yet been rerun on the corrected commit.
 - Follow-up: inspect exact V 3.0.416 quality CI and any product workflow triggered by the commit. Keep T0007 in_progress and preserve the failure count.
+
+
+## Attempt T0007-A061 — failed second exact-commit regression
+- Recorded: 2026-10-27T16:39:56.362Z
+- Result: failed.
+- Commit under test: [V 3.0.416 — 5a2efdd43bdf48647d5d901fe0087b9029a462a4](https://github.com/artinrahimii/project/commit/5a2efdd43bdf48647d5d901fe0087b9029a462a4).
+- Exact CI evidence: [Step Three quality run 40542883641](https://github.com/artinrahimii/project/actions/runs/40542883641) again ran 175 Python tests and failed the same new method on the next case-sensitive text assertion. The assertion searched for `not independent proof of publisher identity`, but the ADR says `not a detached signature or independent proof of publisher identity`. The implementation/source-path and earlier test assertions were reached successfully; syntax, graph and evidence steps were skipped because unit tests failed.
+- Product workflow for V 3.0.416: still **in_progress** at record time — [run 40542882979](https://github.com/artinrahimii/project/actions/runs/40542882979).
+- Failure preserved. A062 changes only this test phrase to match the documented wording.
+- Follow-up: rerun exact-commit quality checks after the assertion is corrected; do not close T0007 based on source-link presence alone.
+
+
+## Attempt T0007-A062 — align publisher-provenance assertion with ADR wording
+- Started: 2026-10-27T16:39:56.362Z
+- Result: partial at commit creation; exact-commit CI pending.
+- Base: 5a2efdd43bdf48647d5d901fe0087b9029a462a4 (V 3.0.416).
+- Change: corrected the source-contract assertion to require the actual sentence fragment `not a detached signature or independent proof of publisher identity`. Review of every `assertIn` in the new test against the exact source/documentation files confirmed the remaining literals match. No production code or dependency edge changed.
+- Tests: A059 (first wording mismatch) and A061 (second wording mismatch) remain preserved in history. No automated test has run on V 3.0.417 yet.
+- Follow-up: inspect V 3.0.417 Step Three quality and product-build workflows; maintain T0007 as `in_progress` until the task-wide criterion is satisfied.
