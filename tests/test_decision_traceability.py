@@ -14,6 +14,7 @@ ACCEPTANCE = (ROOT / "docs/acceptance.md").read_text(encoding="utf-8")
 ADR1 = (ROOT / "docs/decisions/ADR-0001-platform-build-baselines.md").read_text(encoding="utf-8")
 ADR2 = (ROOT / "docs/decisions/ADR-0002-direct-p2p-data-path.md").read_text(encoding="utf-8")
 ADR3 = (ROOT / "docs/decisions/ADR-0003-local-inference-backend.md").read_text(encoding="utf-8")
+ADR3_TCP = (ROOT / "docs/decisions/ADR-0003-tcp-request-framing.md").read_text(encoding="utf-8")
 
 
 class DecisionTraceabilityTests(unittest.TestCase):
@@ -22,6 +23,12 @@ class DecisionTraceabilityTests(unittest.TestCase):
             "docs/decisions/ADR-0001-platform-build-baselines.md",
             "docs/decisions/ADR-0002-direct-p2p-data-path.md",
             "docs/decisions/ADR-0003-local-inference-backend.md",
+            "docs/decisions/ADR-0003-tcp-request-framing.md",
+            "protocol/whitep/v1/messages.proto",
+            "src/Shared.Contracts/ProtocolMessageLimits.cs",
+            "src/Host.Windows/Networking/NetworkInferenceRequestFrameReader.cs",
+            "src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs",
+            "tests/HostLifecycle.Tests/NetworkInferenceRequestFrameAcceptanceTests.cs",
             "tests/test_product_build_contract.py",
             "tests/test_readme_contract.py",
             "tests/test_reproducible_build_contract.py",
@@ -84,6 +91,33 @@ class DecisionTraceabilityTests(unittest.TestCase):
         self.assertIn("NOT RUN", REGISTER)
         self.assertIn("live inference against a supported model remains unverified", REGISTER.lower())
         self.assertIn("runtime acceptance", REGISTER.lower())
+
+
+
+    def test_tcp_framing_decision_maps_to_production_parser_and_runnable_acceptance_test(self):
+        reader = (ROOT / "src/Host.Windows/Networking/NetworkInferenceRequestFrameReader.cs").read_text(encoding="utf-8")
+        listener = (ROOT / "src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs").read_text(encoding="utf-8")
+        limits = (ROOT / "src/Shared.Contracts/ProtocolMessageLimits.cs").read_text(encoding="utf-8")
+        csharp_tests = (ROOT / "tests/HostLifecycle.Tests/NetworkInferenceRequestFrameAcceptanceTests.cs").read_text(encoding="utf-8")
+        entrypoint = (ROOT / "tests/HostLifecycle.Tests/Program.cs").read_text(encoding="utf-8")
+
+        self.assertIn("ADR-0003-tcp-request-framing.md", REGISTER)
+        self.assertIn("protocol_version = 1.0.0", ADR3_TCP)
+        self.assertIn("MaximumRequestMessageBytes", ADR3_TCP)
+        self.assertIn("BinaryPrimitives.ReadUInt32BigEndian(prefix)", reader)
+        self.assertIn("payloadLength > ProtocolMessageLimits.MaximumRequestMessageBytes", reader)
+        self.assertIn("ProtocolMessageParser.ParseInferenceRequest(payload)", reader)
+        self.assertIn("MaximumRequestMessageBytes = 16 * 1024", limits)
+        self.assertIn("if (!IPAddress.IsLoopback(bindAddress))", listener)
+        self.assertIn("if (!_isParticipationActive()) return;", listener)
+        for case in (
+            "ValidLengthPrefixedRequestReachesTheSharedParserAsync",
+            "InvalidFramesAreRejectedAsync",
+            "ShutdownCancelsAClientWaitingForItsFrameAsync",
+        ):
+            with self.subTest(case=case):
+                self.assertIn(case, csharp_tests)
+        self.assertIn("NetworkInferenceRequestFrameAcceptanceTests.RunAsync()", entrypoint)
 
 
 if __name__ == "__main__":

@@ -335,3 +335,14 @@
 - A029 result: the bounded listener-identity wait resolved the repeated V 3.0.386 QUIC assertion failure. Both prior failures remain recorded in the graph history; they were not deleted or relabelled as passes.
 - Result: this bounded verification attempt succeeded, but task T0007 stays `in_progress`; it is not the whole task's acceptance. The graph still contains 229 tasks and 426 edges; no task status was promoted to done and no edge changed.
 - Follow-up: continue T0007 by mapping further uncovered technical decisions to production source/configuration and executable tests, then re-run all applicable exact-commit acceptance gates.
+
+## Attempt T0007-A031 — TCP framing decision traceability
+
+- Started/recorded: 2026-10-27T11:24:00Z.
+- Exact baseline: `655ab148f6b234c04b036c1305f6a5a9820e1ff0` (`V 3.0.388`) on online `main`; the repository tree and graph Blob were checked at that commit.
+- Review: `ADR-0003-tcp-request-framing.md` describes an existing loopback-only listener, 4-byte big-endian frame reader, protocol size bounds, Protobuf parser and executable loopback TCP acceptance tests. The decision was missing from `docs/decisions/README.md` and from the automated decision-traceability checks.
+- Changes: added the decision register row with explicit source/test paths and the runtime limitation; added `test_tcp_framing_decision_maps_to_production_parser_and_runnable_acceptance_test` to assert traceability to the production parser, loopback-only listener, limits and runnable C# acceptance suite.
+- Dependency review: `T0006 → T0007` remains `validated / contract_or_interface_dependency`; `T0007 → T0008` remains `validated / sequencing_only`. Both relationships and their evidence were inspected at the baseline. No graph edge was changed.
+- Local test limitation: the runtime has no repository checkout and cannot resolve `github.com` for a Git clone, so the Python suite and .NET lifecycle suite were not run locally. The exact-commit GitHub Actions outcome must be inspected after the push; no test pass is claimed here.
+- Result: partial. The traceability increment is implemented, but `T0007` remains `in_progress` because broad task-wide decision-to-code/configuration/test traceability is still incomplete.
+- Follow-up: inspect CI for the exact implementation commit and append a separate verification record with real run IDs and outcomes. Preserve this partial attempt as historical evidence.
