@@ -17,6 +17,7 @@ ADR3 = (ROOT / "docs/decisions/ADR-0003-local-inference-backend.md").read_text(e
 ADR3_TCP = (ROOT / "docs/decisions/ADR-0003-tcp-request-framing.md").read_text(encoding="utf-8")
 ADR5_TRANSPORT = (ROOT / "docs/decisions/ADR-0005-authenticated-peer-transport-fallback.md").read_text(encoding="utf-8")
 ADR6_LEASE = (ROOT / "docs/decisions/ADR-0006-peer-announcement-leases.md").read_text(encoding="utf-8")
+ADR7_SINGLE_ACTIVE = (ROOT / "docs/decisions/ADR-0007-single-active-inference.md").read_text(encoding="utf-8")
 
 
 class DecisionTraceabilityTests(unittest.TestCase):
@@ -184,6 +185,58 @@ class DecisionTraceabilityTests(unittest.TestCase):
         self.assertIn("await lease.StopAsync()", acceptance_tests)
         self.assertIn("AC-P2P-01 remains `NOT RUN`", ADR6_LEASE)
         self.assertIn("T0121 remains `in_progress`", ADR6_LEASE)
+
+
+    def test_single_active_inference_decision_maps_to_admission_coordinator_and_protocol_tests(self):
+        paths = (
+            "docs/decisions/ADR-0007-single-active-inference.md",
+            "src/Host.Windows/Requests/HostRequestAdmissionPolicy.cs",
+            "src/Host.Windows/Requests/HostRequestCoordinator.cs",
+            "src/Host.Windows/Networking/NetworkInferenceRequestResponseMapper.cs",
+            "tests/HostLifecycle.Tests/HostRequestAdmissionTests.cs",
+            "tests/HostLifecycle.Tests/HostRequestCoordinatorBusyTests.cs",
+            "tests/HostLifecycle.Tests/HostRequestCoordinatorFailureAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/HostRequestResponseDeliveryTests.cs",
+            "tests/HostLifecycle.Tests/NetworkInferenceRequestResponseMapperAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/Program.cs",
+        )
+        for relative_path in paths:
+            with self.subTest(path=relative_path):
+                self.assertTrue((ROOT / relative_path).is_file(), relative_path)
+                self.assertIn(Path(relative_path).name, REGISTER)
+                if relative_path != paths[0]:
+                    self.assertIn(relative_path, ADR7_SINGLE_ACTIVE)
+
+        self.assertIn("REQ-005", ADR7_SINGLE_ACTIVE)
+        self.assertIn("REQ-015", ADR7_SINGLE_ACTIVE)
+        self.assertIn("REQ-016", ADR7_SINGLE_ACTIVE)
+        self.assertIn("AC-P2P-01", ADR7_SINGLE_ACTIVE)
+        self.assertIn("NOT RUN", ADR7_SINGLE_ACTIVE)
+
+        policy = (ROOT / "src/Host.Windows/Requests/HostRequestAdmissionPolicy.cs").read_text(encoding="utf-8")
+        coordinator = (ROOT / "src/Host.Windows/Requests/HostRequestCoordinator.cs").read_text(encoding="utf-8")
+        mapper = (ROOT / "src/Host.Windows/Networking/NetworkInferenceRequestResponseMapper.cs").read_text(encoding="utf-8")
+        busy = (ROOT / "tests/HostLifecycle.Tests/HostRequestCoordinatorBusyTests.cs").read_text(encoding="utf-8")
+        failure_tests = (ROOT / "tests/HostLifecycle.Tests/HostRequestCoordinatorFailureAcceptanceTests.cs").read_text(encoding="utf-8")
+        response_tests = (ROOT / "tests/HostLifecycle.Tests/NetworkInferenceRequestResponseMapperAcceptanceTests.cs").read_text(encoding="utf-8")
+        entrypoint = (ROOT / "tests/HostLifecycle.Tests/Program.cs").read_text(encoding="utf-8")
+
+        for token in ("InactiveParticipation", "ModelNotReady", "ModelMismatch", "CapacityUnknown", "CapacityInsufficient", "DeadlineExpired"):
+            with self.subTest(policy_token=token):
+                self.assertIn(token, policy)
+        self.assertIn("WaitAsync(0, cancellationToken)", coordinator)
+        self.assertIn("activeCancellation.Token.ThrowIfCancellationRequested()", coordinator)
+        self.assertIn("the late result was withheld", coordinator)
+        self.assertIn("HostRequestCoordinatorBusyTests.RunAsync()", entrypoint)
+        self.assertIn("HostRequestCoordinatorFailureAcceptanceTests.RunAsync()", entrypoint)
+        self.assertIn("HostRequestAdmissionTests.RunAsync()", entrypoint)
+        self.assertIn("HostRequestResponseDeliveryTests.RunAsync()", entrypoint)
+        self.assertIn("HostBusy", mapper)
+        self.assertIn("UnsupportedModel", mapper)
+        self.assertIn("ProtocolErrorCode.ResourceLimit", mapper)
+        self.assertIn("must not queue 32 requests", busy)
+        self.assertIn("ExpiredDeadlineIsRejectedBeforeInference", failure_tests)
+        self.assertIn("InternalFailureIsSanitized", response_tests)
 
 
 if __name__ == "__main__":
