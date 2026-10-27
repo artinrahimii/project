@@ -12,6 +12,8 @@
     <ProjectReference Include="../../src/Host.Application/WhiteP.Host.Application.csproj" />
     <ProjectReference Include="../../src/Host.Infrastructure/WhiteP.Host.Infrastructure.csproj" />
     <ProjectReference Include="../../src/Shared.Contracts/WhiteP.Shared.Contracts.csproj" />
+    <ProjectReference Include="../../src/Rendezvous.Service/WhiteP.Rendezvous.Service.csproj" />
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="../../src/Host.Windows/Inference/LocalInferenceProcessLauncher.cs" Link="LocalInferenceProcessLauncher.cs" />
@@ -36,6 +38,7 @@
     <Compile Include="../../src/Host.Windows/Networking/IPeerTransport.cs" Link="Networking/IPeerTransport.cs" />
     <Compile Include="../../src/Host.Windows/Networking/Libp2pPeerTransport.cs" Link="Networking/Libp2pPeerTransport.cs" />
     <Compile Include="../../src/Host.Windows/Networking/PeerTransportFallbackConnector.cs" Link="Networking/PeerTransportFallbackConnector.cs" />
+    <Compile Include="../../src/Host.Windows/Networking/PeerAnnouncementClient.cs" Link="Networking/PeerAnnouncementClient.cs" />
     <Compile Include="../../src/Host.Windows/Networking/Libp2pPeerMessageProtocol.cs" Link="Networking/Libp2pPeerMessageProtocol.cs" />
     <Compile Include="../../src/Host.Windows/Networking/PeerTransportEndpoint.cs" Link="Networking/PeerTransportEndpoint.cs" />
     <Compile Include="../../src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs" Link="Networking/ParticipationGatedNetworkListener.cs" />

@@ -21698,33 +21698,146 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0119 و T0115 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
-      "expected_output_paths": [
-        "src/Shared.Networking/ یا src/Host.Windows/Networking/ + tests/"
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "src/Shared.Contracts/Networking/PeerAnnouncement.cs",
+        "src/Host.Windows/Networking/PeerAnnouncementClient.cs",
+        "src/Rendezvous.Service/WhiteP.Rendezvous.Service.csproj",
+        "src/Rendezvous.Service/Program.cs",
+        "src/Rendezvous.Service/PeerAnnouncementServiceHost.cs",
+        "src/Rendezvous.Service/PeerAnnouncementDirectory.cs",
+        "tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+        "WhiteP.sln",
+        "step three/T0120/execution-report.md",
+        "step three/T0120/evidence/verification.md"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "expected_output_paths": [
+        "src/Shared.Contracts/Networking/PeerAnnouncement.cs",
+        "src/Host.Windows/Networking/PeerAnnouncementClient.cs",
+        "src/Rendezvous.Service/PeerAnnouncementServiceHost.cs",
+        "tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs"
+      ],
+      "evidence": [
+        "src/Shared.Contracts/Networking/PeerAnnouncement.cs",
+        "src/Host.Windows/Networking/PeerAnnouncementClient.cs",
+        "src/Rendezvous.Service/PeerAnnouncementServiceHost.cs",
+        "src/Rendezvous.Service/PeerAnnouncementDirectory.cs",
+        "tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "docs/decisions/ADR-0002-direct-p2p-data-path.md",
+        "docs/decisions/ADR-0004-encrypted-relay-boundary.md",
+        "step three/T0120/evidence/verification.md"
+      ],
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0120-A001 adds a typed metadata-only announcement contract, a client with only announcement/capability operations, and an ephemeral HTTP rendezvous service exposing only the announcement POST and capability GET. Strict JSON rejects unknown fields, the in-memory directory expires and replaces the latest announcement rather than storing history, and the 16 KiB limit is enforced. Real loopback tests are wired; exact-head CI pending.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0120-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Shared.Contracts/Networking/PeerAnnouncement.cs",
+          "src/Host.Windows/Networking/PeerAnnouncementClient.cs",
+          "src/Rendezvous.Service/WhiteP.Rendezvous.Service.csproj",
+          "src/Rendezvous.Service/Program.cs",
+          "src/Rendezvous.Service/PeerAnnouncementServiceHost.cs",
+          "src/Rendezvous.Service/PeerAnnouncementDirectory.cs",
+          "tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs",
+          "tests/HostLifecycle.Tests/Program.cs",
+          "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+          "WhiteP.sln",
+          "step three/T0120/execution-report.md",
+          "step three/T0120/evidence/verification.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
-          "affected_by_contract_changes": [],
-          "review_evidence": []
+          "state": "required",
+          "triggering_contracts": [
+            "REQ-010 direct P2P data path",
+            "REQ-011 no central inference API or conversation history",
+            "ADR-0004 relay metadata privacy boundary",
+            "16 KiB announcement/control-message raw size limit"
+          ],
+          "affected_by_contract_changes": [
+            "T0121"
+          ],
+          "review_evidence": [
+            "docs/requirements.md",
+            "docs/decisions/ADR-0002-direct-p2p-data-path.md",
+            "docs/decisions/ADR-0004-encrypted-relay-boundary.md",
+            "src/Shared.Contracts/Networking/PeerAnnouncement.cs",
+            "src/Rendezvous.Service/PeerAnnouncementServiceHost.cs",
+            "tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0120-A001",
+          "started_at": "2026-10-27T04:48:52.440Z",
+          "ended_at": "2026-10-27T04:48:52.440Z",
+          "result": "partial",
+          "summary": "Implemented a strict metadata-only shared announcement contract, a client with only announcement/capability-discovery methods, and an in-memory ASP.NET Core rendezvous service with exactly two routes. Added real loopback HTTP tests for announcement/discovery/update, no inference route, rejection of unknown prompt fields and raw messages over 16 KiB. Exact-head CI pending.",
+          "changed_files": [
+            "src/Shared.Contracts/Networking/PeerAnnouncement.cs",
+            "src/Host.Windows/Networking/PeerAnnouncementClient.cs",
+            "src/Rendezvous.Service/WhiteP.Rendezvous.Service.csproj",
+            "src/Rendezvous.Service/Program.cs",
+            "src/Rendezvous.Service/PeerAnnouncementServiceHost.cs",
+            "src/Rendezvous.Service/PeerAnnouncementDirectory.cs",
+            "tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+            "WhiteP.sln",
+            "step three/T0120/execution-report.md",
+            "step three/T0120/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "PeerAnnouncementClientAcceptanceTests",
+              "result": "pending",
+              "summary": "Real loopback HTTP integration for announce/discover/update, route restriction, prompt-field rejection and raw body size."
+            },
+            {
+              "name": "HostLifecycle suite",
+              "result": "pending",
+              "summary": "Compile/run the new .NET 10 service and client integration tests."
+            },
+            {
+              "name": "Windows/Android product build and Step Three quality gate",
+              "result": "pending",
+              "summary": "Exact-head CI pending."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            {
+              "path": "src/Shared.Contracts/Networking/PeerAnnouncement.cs",
+              "detail": "Metadata-only DTO with PeerId, direct addresses, capability names and expiry; strict JSON rejects unknown fields."
+            },
+            {
+              "path": "src/Rendezvous.Service/PeerAnnouncementServiceHost.cs",
+              "detail": "Only POST announcement and GET capability endpoints; raw request body limited to 16 KiB."
+            },
+            {
+              "path": "src/Rendezvous.Service/PeerAnnouncementDirectory.cs",
+              "detail": "Ephemeral in-memory current announcements, expiry, replacement rather than history."
+            }
+          ],
+          "follow_up": "Run exact-head CI and fix observed issues before marking done. AC-P2P-01 remains NOT RUN until Android-to-Windows inference routing exists."
+        }
+      ]
     },
     {
       "id": "T0121",
@@ -29581,10 +29694,15 @@
       "from": "T0115",
       "to": "T0120",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "Reviewed T0115's per-connection inference-frame listener and tests against T0120's separate HTTP metadata announcement service. T0120 consumes no T0115 API or data artifact; preserve the original blocks edge as conservative execution order only.",
+      "validation_status": "validated",
+      "evidence": [
+        "tests/HostLifecycle.Tests/NetworkInferenceRequestFrameAcceptanceTests.cs",
+        "src/Host.Windows/Networking/NetworkInferenceRequestFrameReader.cs",
+        "src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs",
+        "step three/T0115/evidence/verification.md"
+      ]
     },
     {
       "from": "T0120",
@@ -33872,8 +33990,25 @@
         "tests/test_relay_privacy_boundary.py"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-27T04:48:52.440Z",
+      "edge_from": "T0115",
+      "edge_to": "T0120",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "old_validation_status": "unreviewed",
+      "new_validation_status": "validated",
+      "reason": "Reviewed T0115's per-connection inference-frame listener and tests against T0120's separate HTTP metadata announcement service. T0120 consumes no T0115 API or data artifact; preserve the original blocks edge as conservative execution order only.",
+      "evidence": [
+        "tests/HostLifecycle.Tests/NetworkInferenceRequestFrameAcceptanceTests.cs",
+        "src/Host.Windows/Networking/NetworkInferenceRequestFrameReader.cs",
+        "src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs",
+        "step three/T0115/evidence/verification.md"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-27T04:31:56.858Z"
+  "updated_at": "2026-10-27T04:48:52.440Z"
 }
 ```
