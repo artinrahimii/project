@@ -24629,8 +24629,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0120 و T0115 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال انجام",
+      "status": "blocked",
+      "status_fa": "مسدود",
       "actual_output_paths": [
         "src/Host.Windows/Networking/PeerAnnouncementLeasePublisher.cs",
         "tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs",
@@ -24649,12 +24649,12 @@
         "src/Rendezvous.Service/PeerAnnouncementDirectory.cs",
         "step three/T0121/evidence/verification.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0121-A005 verification update (2026-10-27): all exact-commit GitHub Actions workflows for V 3.0.368 passed, including the HostLifecycle acceptance suite. This validates the correction to the tests, but does not complete runtime lifecycle integration: the publisher is not yet wired to the WPF participation toggle and safe reachable rendezvous/advertised-address configuration remains unavailable. Task status remains in_progress.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0121-A005 verification update (2026-10-27): all exact-commit GitHub Actions workflows for V 3.0.368 passed, including the HostLifecycle acceptance suite. This validates the correction to the tests, but does not complete runtime lifecycle integration: the publisher is not yet wired to the WPF participation toggle and safe reachable rendezvous/advertised-address configuration remains unavailable. Task status remains in_progress.\n\nT0121-A006 (2026-10-27): status changed from in_progress to blocked after source- and graph-backed review. The lease publisher/loopback tests exist, but the real WPF host listener remains loopback-only and explicitly closes inbound requests until protocol handling is implemented; no verified advertised address, rendezvous HTTPS setting or wired stable host identity exists. T0130 identity work sits downstream of T0128, which itself depends on T0121/T0122; do not add a new identity edge without resolving this potential cycle. Unblock only after authenticated peer-reachable host request handling, verified identity/address/HTTPS settings and WPF lifecycle integration pass exact-host tests. T0122 remains not_started.",
       "execution_summary": {
-        "attempt_count": 5,
+        "attempt_count": 6,
         "failed_attempt_count": 1,
-        "last_attempt_id": "T0121-A005",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "T0121-A006",
+        "last_attempt_result": "blocked",
         "changed_files": [
           "src/Host.Windows/Networking/PeerAnnouncementLeasePublisher.cs",
           "tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs",
@@ -24665,7 +24665,8 @@
         ],
         "related_commits": [
           "969ad720db1a84c1f633031300ba26e00d48d5fa",
-          "8a49b48259f693dc2ddc04e846a78fe15bff8227"
+          "8a49b48259f693dc2ddc04e846a78fe15bff8227",
+          "f4b1a85e5649ad959704cc15f75e07da35973dff"
         ],
         "tests_passed": [
           "HostLifecycle unit/integration suite PASS on exact 969ad720db1a84c1f633031300ba26e00d48d5fa; log confirms periodic TTL renewal and natural expiry acceptance: https://github.com/artinrahimii/project/actions/runs/40455186298/job/122026746502",
@@ -24682,7 +24683,7 @@
         "tests_failed": [
           "V 3.0.367 CI: Host lifecycle tests failed to compile because the new test passed HttpClient where PeerAnnouncementClient is required (CS1503)."
         ],
-        "blocked_reason": null,
+        "blocked_reason": "The renewable publisher exists and loopback TTL tests passed, but safe production integration cannot proceed: the WPF participation listener is explicitly loopback-only, MainWindow reports inbound requests remain closed until protocol handling exists, no verified peer-reachable advertised address or validated rendezvous HTTPS setting is configured, and the production host has no wired stable peer identity. T0130 (host identity/private-key storage) is currently downstream of T0128, whose graph path passes through T0121/T0122; adding a new T0130 -> T0121 edge without resolving that order would create a dependency cycle. Do not advertise an unreachable host.",
         "reopened_reason": null,
         "contract_revalidation": {
           "state": "not_required",
@@ -24693,7 +24694,8 @@
             "src/Host.Windows/Networking/PeerAnnouncementClient.cs",
             "src/Rendezvous.Service/PeerAnnouncementDirectory.cs"
           ]
-        }
+        },
+        "follow_up": "Unblock only after the host has an authenticated peer-reachable inbound request path with a stable verified peer identity, validated HTTPS rendezvous configuration and a verified advertised address; wire the lease publisher start/stop into the WPF participation toggle and shutdown; add exact-host-lifecycle tests proving safe renew/revoke/expiry behavior. Resolve the identity task ordering/cycle before introducing any new dependency edge. Keep T0122 not_started until T0121 acceptance is actually met."
       },
       "execution_history": [
         {
@@ -24861,6 +24863,30 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Implement runtime configuration only after the product has a validated externally reachable rendezvous HTTPS endpoint, a verified peer-reachable listening address and an explicit trusted peer-identity policy. Wire publisher start/stop to the actual participation toggle and shutdown, and add exact-host-lifecycle integration tests. Keep T0121 in_progress until that real integration is safely verified; keep T0121 -> T0122 unreviewed until its relationship is checked with source evidence."
+        },
+        {
+          "attempt_id": "T0121-A006",
+          "started_at": "2026-10-27T18:54:09.307Z",
+          "ended_at": "2026-10-27T18:54:09.307Z",
+          "result": "blocked",
+          "summary": "Reviewed the exact-main host listener, WPF participation lifecycle, announcement publisher and dependency plan. Existing TTL renewal works in loopback integration tests, but the real host cannot safely advertise a reachable inference capability: inbound requests are closed, listener bind policy is loopback-only, and no configured/verified rendezvous address plus stable host identity is wired. A prospective T0130 identity dependency would currently create a cycle through T0121->T0122...T0128. No production behavior was changed; task status is blocked pending the specific transport/identity/configuration prerequisites.",
+          "changed_files": [
+            "step three/project-graph.md",
+            "step three/T0121/execution-report.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Source and dependency inspection",
+              "result": "not_run",
+              "summary": "No new executable test was run in this blocker-recording attempt. Prior loopback renewal/expiry tests remain recorded in T0121-A005; they do not prove WPF runtime wiring or peer reachability."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": "The renewable publisher exists and loopback TTL tests passed, but safe production integration cannot proceed: the WPF participation listener is explicitly loopback-only, MainWindow reports inbound requests remain closed until protocol handling exists, no verified peer-reachable advertised address or validated rendezvous HTTPS setting is configured, and the production host has no wired stable peer identity. T0130 (host identity/private-key storage) is currently downstream of T0128, whose graph path passes through T0121/T0122; adding a new T0130 -> T0121 edge without resolving that order would create a dependency cycle. Do not advertise an unreachable host.",
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Unblock only after the host has an authenticated peer-reachable inbound request path with a stable verified peer identity, validated HTTPS rendezvous configuration and a verified advertised address; wire the lease publisher start/stop into the WPF participation toggle and shutdown; add exact-host-lifecycle tests proving safe renew/revoke/expiry behavior. Resolve the identity task ordering/cycle before introducing any new dependency edge. Keep T0122 not_started until T0121 acceptance is actually met."
         }
       ]
     },
