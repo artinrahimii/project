@@ -515,3 +515,16 @@
 - **Graph integrity:** read from Blob `06cebecea135f31919d139f71ccc58e904967474` attached to the exact baseline commit. Original content is 2,000,597 UTF-8 bytes (1,878,657 characters), calculated Git SHA-1 Blob matches exactly; complete fenced JSON parses as 229 unique task IDs and 426 edges. This attempt preserves all 426 edge records and existing classifications.
 - **Result:** partial pending CI; do not close broad T0007 from a single decision-traceability increment.
 - **Follow-up:** inspect exact candidate Step Three quality and product CI, preserve any failures, then re-check the final PR head before merge.
+
+
+## Attempt T0007-A048 — exact-candidate CI verification (2026-10-27)
+
+- **Verified candidate:** `f8d39b25a7be91a72b3b7b4928142428f09f656c`, PR [#2](https://github.com/artinrahimii/project/pull/2), based on V 3.0.402.
+- **Step Three quality gate: PASS** — [run 40521379703](https://github.com/artinrahimii/project/actions/runs/40521379703), job `122249094800`. The complete Python suite reported **170 tests, OK**; syntax, graph and repository evidence checks passed (0 errors, one preserved `T0001` unmapped-dependency warning).
+- **HostLifecycle tests: PASS** — [job 122249096158](https://github.com/artinrahimii/project/actions/runs/40521379736/job/122249096158).
+- **Windows WPF: PASS** — [job 122249096378](https://github.com/artinrahimii/project/actions/runs/40521379736/job/122249096378): C# formatting, Release build, generated Protobuf validation, startup smoke, Windows process-policy rejection and backend/model capability gates passed.
+- **Android APK: PASS** — [job 122249095883](https://github.com/artinrahimii/project/actions/runs/40521379736/job/122249095883): Kotlin lint, debug APK, Protobuf round-trip, generated sources and artifact upload passed.
+- **Aggregate product workflow: PASS** — [run 40521379736](https://github.com/artinrahimii/project/actions/runs/40521379736), all three product jobs succeeded.
+- **Scope boundary:** the new test is a source-to-decision traceability regression. It is not a standalone live-model execution test and does not complete Android-to-Windows routing. T0007 remains `in_progress`; `AC-P2P-01` remains **NOT RUN**.
+- **Result:** A047's bounded local-engine process decision-traceability increment is verified. The attempt is recorded as a separate success; A047 remains a partial attempt from its original point in history. Broad T0007 remains `in_progress`, because one more traceability record does not prove all project technical decisions are covered.
+- **Graph/dependency integrity:** all 426 edges remain unchanged. `T0006 → T0007` remains `validated / contract_or_interface_dependency`; `T0007 → T0008` remains `validated / sequencing_only`. The original T0001 unmapped-dependency warning is retained as metadata.
