@@ -189,7 +189,8 @@ internal static class PeerAnnouncementClientAcceptanceTests
 
     private static void LeasePublisherConfigurationIsValidated()
     {
-        using var client = new HttpClient();
+        using var httpClient = new HttpClient();
+        var client = new PeerAnnouncementClient(httpClient, new Uri("http://127.0.0.1:1234/"));
         string peerId = CreatePeerId();
         var template = new PeerAnnouncement(
             peerId,

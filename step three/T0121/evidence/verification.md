@@ -32,3 +32,11 @@ The lease publisher is not yet wired into the WPF host participation lifecycle b
 - **Graph validation:** Blob `491422474a6ccceb3c687b14d052465150334e9e`, 1876796 UTF-8 bytes, 1755078 text characters; computed Git SHA-1 equals the tree Blob ID; fenced JSON parses to 229 nodes and 426 edges.
 - **New-commit CI:** pending. No new configuration test is marked passed until the workflow result for the resulting main commit is inspected.
 - **Acceptance gap unchanged:** host-UI/lifecycle wiring is not safe yet because reachable rendezvous/address configuration is absent and the current listener binds loopback only.
+
+
+## T0121-A004 — correct the CI compile failure
+
+- **Detected failure:** the Host lifecycle job for `V 3.0.367` failed while compiling the new configuration tests. Compiler error `CS1503` identified an `HttpClient` passed where `PeerAnnouncementClient` is required at the new test construction call sites. [Failed job logs](https://github.com/artinrahimii/project/actions/runs/40455847517)
+- **Correction:** the test now wraps its loopback `HttpClient` in `PeerAnnouncementClient` before exercising `PeerAnnouncementLeasePublisher` constructor validation. The tests do not send a network request during these constructor assertions.
+- **Verification:** exact commit `e4bd21fe4bc3a7bad2e0ed45f12843284bb58ee2` has a passing graph/Python quality workflow, but its Host lifecycle job failed as above. The correction's exact-commit CI is pending; no test pass is claimed yet.
+- **Task status:** `in_progress`; the host UI/participation lifecycle integration is still not safe to enable without configured rendezvous HTTPS and a verified peer-reachable address.

@@ -21983,9 +21983,9 @@
       ],
       "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
       "execution_summary": {
-        "attempt_count": 3,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "T0121-A003",
+        "attempt_count": 4,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "T0121-A004",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Host.Windows/Networking/PeerAnnouncementLeasePublisher.cs",
@@ -22005,7 +22005,9 @@
           "Android Kotlin lint, debug APK build, Protobuf round-trip and generated-source checks PASS: https://github.com/artinrahimii/project/actions/runs/40455186298/job/122026746493",
           "Real local llama.cpp process and GGUF response/cancellation integration PASS: https://github.com/artinrahimii/project/actions/runs/40455186251"
         ],
-        "tests_failed": [],
+        "tests_failed": [
+          "V 3.0.367 CI: Host lifecycle tests failed to compile because the new test passed HttpClient where PeerAnnouncementClient is required (CS1503)."
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -22092,7 +22094,7 @@
           "attempt_id": "T0121-A003",
           "started_at": "2026-10-27T05:31:42.020Z",
           "ended_at": "2026-10-27T05:31:42.020Z",
-          "result": "partial",
+          "result": "failed",
           "summary": "Hardened cancellation-source cleanup in the lease publisher and added acceptance checks for configuration defaults and invalid TTL/renewal boundaries. The host UI/lifecycle integration remains intentionally incomplete until a reachable rendezvous URL and verified peer address can be configured. Exact-commit CI is pending.",
           "changed_files": [
             "src/Host.Windows/Networking/PeerAnnouncementLeasePublisher.cs",
@@ -22105,15 +22107,41 @@
           "tests": [
             {
               "command": "GitHub Actions product-build and Step Three quality workflows on V 3.0.367",
+              "result": "failed",
+              "summary": "CI run 40455847517, job 122028863224: CS1503 compile errors; the test helper used HttpClient instead of constructing PeerAnnouncementClient. https://github.com/artinrahimii/project/actions/runs/40455847517"
+            }
+          ],
+          "failure_details": "GitHub Actions Host lifecycle tests failed to compile the new configuration test: CS1503 at PeerAnnouncementClientAcceptanceTests.cs lines 209, 212, 215, 218 and 221 because an HttpClient was passed where PeerAnnouncementClient is required.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Correct the test fixture to wrap HttpClient in PeerAnnouncementClient, commit the correction and verify the exact new CI run."
+        },
+        {
+          "attempt_id": "T0121-A004",
+          "started_at": "2026-10-27T05:34:00.245Z",
+          "ended_at": "2026-10-27T05:34:00.245Z",
+          "result": "partial",
+          "summary": "Corrected the CI-detected type mismatch in the new lease publisher configuration tests by constructing PeerAnnouncementClient over a loopback HttpClient. Exact-commit CI is pending; T0121 remains incomplete until safe host lifecycle integration exists.",
+          "changed_files": [
+            "tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs",
+            "step three/T0121/execution-report.md",
+            "step three/T0121/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "command": "GitHub Actions product-build and Step Three quality workflows on V 3.0.368",
               "result": "pending",
-              "summary": "New tests and production cleanup change await CI for the exact online commit; no local build/test result is asserted."
+              "summary": "The previous commit V 3.0.367's Host lifecycle job found CS1503 compile errors in the new test method. This correction now uses PeerAnnouncementClient; verify the new commit's exact CI before marking tests passed."
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect CI for V 3.0.367. Then design and test safe host participation integration only with a configured HTTPS rendezvous endpoint and a verified non-loopback peer-reachable advertised address."
+          "follow_up": "Inspect CI for V 3.0.368. If it passes, keep T0121 in_progress until rendezvous HTTPS and peer-reachable address configuration can be safely wired into the host lifecycle."
         }
       ]
     },
@@ -34286,6 +34314,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-27T05:31:42.020Z"
+  "updated_at": "2026-10-27T05:34:00.245Z"
 }
 ```
