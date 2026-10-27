@@ -21731,11 +21731,11 @@
         "docs/decisions/ADR-0004-encrypted-relay-boundary.md",
         "step three/T0120/evidence/verification.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0120-A001 adds a typed metadata-only announcement contract, a client with only announcement/capability operations, and an ephemeral HTTP rendezvous service exposing only the announcement POST and capability GET. Strict JSON rejects unknown fields, the in-memory directory expires and replaces the latest announcement rather than storing history, and the 16 KiB limit is enforced. Real loopback tests are wired; exact-head CI pending.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0120-A001 adds a typed metadata-only announcement contract, a client with only announcement/capability operations, and an ephemeral HTTP rendezvous service exposing only the announcement POST and capability GET. Strict JSON rejects unknown fields, the in-memory directory expires and replaces the latest announcement rather than storing history, and the 16 KiB limit is enforced. Real loopback tests are wired; exact-head CI pending.\nV 3.0.361 HostLifecycle failed before executing the loopback service tests because the capability-control test input did not unambiguously create a newline. T0120-A002 makes the control character explicit; the next exact-head CI will decide acceptance.",
       "execution_summary": {
-        "attempt_count": 1,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "T0120-A001",
+        "attempt_count": 2,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "T0120-A002",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Shared.Contracts/Networking/PeerAnnouncement.cs",
@@ -21752,9 +21752,15 @@
           "step three/T0120/evidence/verification.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
-        "tests_failed": [],
+        "related_commits": [
+          "9985bb108c02226f1817b6d6cd2562467703e487"
+        ],
+        "tests_passed": [
+          "Step Three quality gate PASS on V 3.0.361: https://github.com/artinrahimii/project/actions/runs/40451885488 (structure/evidence test only; C# runtime acceptance did not pass in this attempt)."
+        ],
+        "tests_failed": [
+          "V 3.0.361 HostLifecycle failed in VerifyContractSurfaceIsMetadataOnly before service integration because the capability control-character test input was not generated unambiguously: https://github.com/artinrahimii/project/actions/runs/40451885440"
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -21782,9 +21788,9 @@
         {
           "attempt_id": "T0120-A001",
           "started_at": "2026-10-27T04:48:52.440Z",
-          "ended_at": "2026-10-27T04:48:52.440Z",
-          "result": "partial",
-          "summary": "Implemented a strict metadata-only shared announcement contract, a client with only announcement/capability-discovery methods, and an in-memory ASP.NET Core rendezvous service with exactly two routes. Added real loopback HTTP tests for announcement/discovery/update, no inference route, rejection of unknown prompt fields and raw messages over 16 KiB. Exact-head CI pending.",
+          "ended_at": "2026-10-27T04:50:38Z",
+          "result": "failed",
+          "summary": "Exact V 3.0.361 HostLifecycle started the full suite and compiled the service/client successfully. It failed in the test helper before starting the loopback service: the source escaped newline was ambiguous after layered generation, so the intended invalid capability was not rejected by that assertion. No service integration assertions had run yet; this was a faulty test input, not evidence of request content reaching the service.",
           "changed_files": [
             "src/Shared.Contracts/Networking/PeerAnnouncement.cs",
             "src/Host.Windows/Networking/PeerAnnouncementClient.cs",
@@ -21800,25 +21806,22 @@
             "step three/T0120/evidence/verification.md",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "9985bb108c02226f1817b6d6cd2562467703e487",
           "tests": [
             {
-              "name": "PeerAnnouncementClientAcceptanceTests",
-              "result": "pending",
-              "summary": "Real loopback HTTP integration for announce/discover/update, route restriction, prompt-field rejection and raw body size."
+              "name": "HostLifecycle suite / PeerAnnouncementClientAcceptanceTests",
+              "result": "failed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40451885440",
+              "summary": "The test run failed at VerifyContractSurfaceIsMetadataOnly: the capability control-character test did not throw because the generated test input did not unambiguously create the intended invalid value. The loopback service tests did not execute."
             },
             {
-              "name": "HostLifecycle suite",
-              "result": "pending",
-              "summary": "Compile/run the new .NET 10 service and client integration tests."
-            },
-            {
-              "name": "Windows/Android product build and Step Three quality gate",
-              "result": "pending",
-              "summary": "Exact-head CI pending."
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40451885488",
+              "summary": "Python tests, graph structure and evidence checks passed on V 3.0.361; this does not replace the C# runtime acceptance."
             }
           ],
-          "failure_details": null,
+          "failure_details": "Test code used a nested escaped newline literal that did not reliably produce the intended invalid capability value. The C# service/client compiled, but the suite stopped before runtime integration tests.",
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [
@@ -21835,7 +21838,43 @@
               "detail": "Ephemeral in-memory current announcements, expiry, replacement rather than history."
             }
           ],
-          "follow_up": "Run exact-head CI and fix observed issues before marking done. AC-P2P-01 remains NOT RUN until Android-to-Windows inference routing exists."
+          "follow_up": "Construct the control character explicitly with string.Concat(\"inference\", (char)10, \"request\") and rerun the exact-head suite."
+        },
+        {
+          "attempt_id": "T0120-A002",
+          "started_at": "2026-10-27T04:52:12.840Z",
+          "ended_at": "2026-10-27T04:52:12.840Z",
+          "result": "partial",
+          "summary": "Corrected the capability validation test to construct the newline character explicitly using string.Concat(..., (char)10, ...). The real service tests will now proceed beyond the failing precondition; exact-head CI is pending.",
+          "changed_files": [
+            "tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs",
+            "step three/T0120/execution-report.md",
+            "step three/T0120/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "PeerAnnouncementClientAcceptanceTests",
+              "result": "pending",
+              "summary": "Re-run the suite with unambiguous invalid capability input, then validate real loopback announce/discover/replace, unknown prompt-field rejection and 16 KiB limit."
+            },
+            {
+              "name": "Windows host and Android product build",
+              "result": "pending",
+              "summary": "Check current V 3.0.361 workflows and exact V 3.0.362 reruns."
+            },
+            {
+              "name": "Step Three quality gate",
+              "result": "pending",
+              "summary": "Exact V 3.0.362 graph/evidence CI pending."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Run exact V 3.0.362 CI. If runtime tests fail, inspect their precise failure; keep T0120 in_progress until runtime and product gates pass."
         }
       ]
     },
@@ -34009,6 +34048,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-27T04:48:52.440Z"
+  "updated_at": "2026-10-27T04:52:12.840Z"
 }
 ```

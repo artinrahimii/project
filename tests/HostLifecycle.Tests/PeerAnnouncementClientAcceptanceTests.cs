@@ -35,7 +35,7 @@ internal static class PeerAnnouncementClientAcceptanceTests
             .Select(method => method.Name).OrderBy(name => name, StringComparer.Ordinal).ToArray();
         Assert(methods.SequenceEqual(["AnnounceAsync", "DiscoverByCapabilityAsync"]),
             "The rendezvous client must expose only metadata announcement and capability discovery operations.");
-        ExpectArgumentException(() => PeerAnnouncement.ValidateCapabilityName("inference\nrequest"),
+        ExpectArgumentException(() => PeerAnnouncement.ValidateCapabilityName(string.Concat("inference", (char)10, "request")),
             "Capability names containing control characters must be rejected.");
         string expectedPeer = CreatePeerId(), otherPeer = CreatePeerId();
         ExpectArgumentException(() => new PeerAnnouncement(expectedPeer,

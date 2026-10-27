@@ -1,21 +1,22 @@
-# T0120 verification evidence — exact-head CI pending
+# T0120 verification evidence — first runtime attempt failed; corrected test pending
 
 ## Baseline integrity
-- Repository: `artinrahimii/project`, branch `main`.
-- Base: `V 3.0.360`, `919b02586d8e6c62994e7dc9402b642f3704b663`.
-- Graph Blob `3e073274c08216ef3fbd800d468e7e19dc690f52`: full original content was retrieved; Git Blob SHA-1 matched and fenced JSON reconstructed exactly: 229 tasks, 426 edges, 229 execution-order entries.
+- Repository: `artinrahimii/project`, `main`.
+- First implementation commit: `V 3.0.361`, `9985bb108c02226f1817b6d6cd2562467703e487`.
+- The graph Blob was fetched in full and reconstructed exactly before the task update; it contains 229 tasks and 426 edges.
 
-## Actual outputs
-- `src/Shared.Contracts/Networking/PeerAnnouncement.cs`: strict metadata-only schema, direct TCP/QUIC address validation, capability tokens and bounded JSON wire format.
-- `src/Host.Windows/Networking/PeerAnnouncementClient.cs`: only announcement/capability-discovery API; HTTPS outside loopback; bounded response reader.
-- `src/Rendezvous.Service/PeerAnnouncementServiceHost.cs`: only announcement POST and capability GET routes, strict JSON fields and 16 KiB raw request limit.
-- `src/Rendezvous.Service/PeerAnnouncementDirectory.cs`: in-memory expiry and replacement rather than announcement history.
-- `tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs`: actual loopback service integration and negative tests.
-- `WhiteP.sln` and HostLifecycle configuration updated to build and run service/tests.
+## Observed exact-head results
+- **Step Three quality gate — PASS:** https://github.com/artinrahimii/project/actions/runs/40451885488. This validates Python tests, graph structure and recorded evidence, not the C# service runtime.
+- **HostLifecycle — FAIL:** https://github.com/artinrahimii/project/actions/runs/40451885440. Existing host/P2P tests passed, but `VerifyContractSurfaceIsMetadataOnly` failed because the capability control-character test input did not unambiguously produce a newline. The loopback HTTP assertions had not executed.
 
-## Dependency evidence
-- `T0119 → T0120`: validated contract dependency on ADR-0004's metadata-only privacy boundary.
-- `T0115 → T0120`: reviewed as sequencing-only; original `blocks` edge retained.
+## Correction
+- `PeerAnnouncementClientAcceptanceTests.cs` now builds the newline explicitly using `string.Concat("inference", (char)10, "request")`.
+- `T0120-A001` remains recorded as failed; `T0120-A002` is pending exact-head CI. No runtime acceptance claim is made yet.
 
-## Current result
-Exact-head CI has not yet confirmed compilation or runtime acceptance. T0120 must remain in progress until the new loopback test, product builds and graph/output/evidence gate pass. No Android-to-Windows end-to-end inference claim is made.
+## Runtime acceptance still required
+- Announce / capability discovery / replacement over a real loopback HTTP service.
+- Unsupported capability returns no peers.
+- No inference route exists.
+- Extra prompt field is rejected before directory storage.
+- Raw request body over 16 KiB is rejected.
+- Windows WPF build, Android APK checks, and graph/evidence quality gate pass on the same commit.
