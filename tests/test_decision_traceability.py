@@ -3,6 +3,7 @@
 This test validates source/config/test links and intentionally does not mark
 runtime-only acceptance gates as passed.
 """
+import re
 import unittest
 from pathlib import Path
 
@@ -292,6 +293,53 @@ class DecisionTraceabilityTests(unittest.TestCase):
         self.assertIn('"WHITEP_LLAMA_SERVER_SHA256=$serverSha256"', workflow)
         self.assertIn("AC-P2P-01", ADR8_PROCESS_LAUNCH)
         self.assertIn("NOT RUN", ADR8_PROCESS_LAUNCH)
+
+
+    def test_every_registered_decision_links_to_existing_sources_and_verification(self):
+        rows = [
+            line for line in REGISTER.splitlines()
+            if line.startswith("| [ADR-")
+        ]
+        self.assertTrue(rows, "The decision register must contain decision rows.")
+
+        for row in rows:
+            cells = [
+                cell.strip()
+                for cell in row.strip().strip("|").split("|")
+            ]
+            with self.subTest(decision_row=cells[0] if cells else row):
+                self.assertEqual(5, len(cells), row)
+                match = re.search(r"\]\(([^)]+\.md)\)", cells[0])
+                self.assertIsNotNone(match, "Decision row must link its ADR document.")
+                decision_doc = ROOT / "docs" / "decisions" / match.group(1)
+                self.assertTrue(decision_doc.is_file(), str(decision_doc))
+
+                for label, column_index in (
+                    ("source/configuration", 2),
+                    ("test/verification", 3),
+                ):
+                    linked_paths = [
+                        reference
+                        for reference in re.findall(r"`([^`]+)`", cells[column_index])
+                        if "/" in reference
+                        and not reference.startswith(("https://", "http://"))
+                    ]
+                    self.assertTrue(
+                        linked_paths,
+                        f"{decision_doc.name} must link {label} paths.",
+                    )
+                    for relative_path in linked_paths:
+                        with self.subTest(decision=decision_doc.name, reference=relative_path):
+                            self.assertTrue(
+                                (ROOT / relative_path).exists(),
+                                f"{decision_doc.name} references missing path {relative_path}",
+                            )
+                    if label == "test/verification":
+                        self.assertTrue(
+                            any(path.startswith(("tests/", ".github/workflows/")) for path in linked_paths),
+                            f"{decision_doc.name} must link an executable test or workflow.",
+                        )
+                self.assertTrue(cells[4], f"{decision_doc.name} must state its evidence boundary.")
 
 if __name__ == "__main__":
     unittest.main()

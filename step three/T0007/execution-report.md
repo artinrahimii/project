@@ -528,3 +528,13 @@
 - **Scope boundary:** the new test is a source-to-decision traceability regression. It is not a standalone live-model execution test and does not complete Android-to-Windows routing. T0007 remains `in_progress`; `AC-P2P-01` remains **NOT RUN**.
 - **Result:** A047's bounded local-engine process decision-traceability increment is verified. The attempt is recorded as a separate success; A047 remains a partial attempt from its original point in history. Broad T0007 remains `in_progress`, because one more traceability record does not prove all project technical decisions are covered.
 - **Graph/dependency integrity:** all 426 edges remain unchanged. `T0006 → T0007` remains `validated / contract_or_interface_dependency`; `T0007 → T0008` remains `validated / sequencing_only`. The original T0001 unmapped-dependency warning is retained as metadata.
+
+## T0007-A049 — enforce repository-wide decision-register traceability (2026-10-27)
+
+- **Baseline:** exact online `main` commit `cce864baff2315eaa151a4c5c395e0f6c467d2f4` (`V 3.0.403`). The branch and version history were rechecked before writing. The graph Blob `b860800c1da84607ee8cc1045237d5d504612e82` was completely retrieved through Git Blob API and previously validated against its Git SHA-1 object ID; the baseline tree confirms the file belongs to this commit.
+- **Review:** the technology decision register contains 9 ADR rows. A repository-tree preflight resolved every linked ADR document and all inline source/configuration/test/workflow paths. The existing traceability suite had manually selected path assertions, so newly added or edited rows could miss a generalized dangling-link check.
+- **Change:** added a table-driven regression to `tests/test_decision_traceability.py`. It checks every ADR row for a real linked decision document, existing source/configuration paths, existing verification paths, an executable test/workflow reference, and a stated evidence boundary.
+- **Scope boundary:** this is a traceability-quality increment only. It does not change runtime behavior, claim live relay/model/P2P acceptance, or close T0007. Existing dependency edges and classifications are unchanged.
+- **Verification:** the exact candidate's Step Three quality and product workflows are pending. No local checkout/test runner was available in this session, so no local test result is claimed.
+- **Result:** partial pending exact-commit CI. T0007 stays `in_progress`; `AC-P2P-01` remains **NOT RUN**.
+- **Follow-up:** inspect CI on `V 3.0.404`; preserve any failure, correct the regression if needed, and record a separate evidence-backed verification attempt.
