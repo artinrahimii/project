@@ -697,3 +697,17 @@
 - Change: corrected the source-contract assertion to require the actual sentence fragment `not a detached signature or independent proof of publisher identity`. Review of every `assertIn` in the new test against the exact source/documentation files confirmed the remaining literals match. No production code or dependency edge changed.
 - Tests: A059 (first wording mismatch) and A061 (second wording mismatch) remain preserved in history. No automated test has run on V 3.0.417 yet.
 - Follow-up: inspect V 3.0.417 Step Three quality and product-build workflows; maintain T0007 as `in_progress` until the task-wide criterion is satisfied.
+
+
+## Attempt T0007-A063 — exact-commit verification of ADR-0010 traceability
+- Recorded: 2026-10-27T16:42:56.559Z
+- Result: partial; traceability regression and HostLifecycle are verified, Windows and Android product jobs were still running at capture.
+- Commit under test: [V 3.0.417 — daaf9c23cbc17696017e6a7ee23601eb628f6808](https://github.com/artinrahimii/project/commit/daaf9c23cbc17696017e6a7ee23601eb628f6808).
+- Graph/blob integrity: `step three/project-graph.md` was read from Blob `b3a43d071ff83f7ef5199557cf47186f634c503f`, resolved from the exact commit tree. The original content measured 2,043,562 UTF-8 bytes (1,921,622 Unicode characters); locally computed Git SHA-1 `b3a43d071ff83f7ef5199557cf47186f634c503f` matched the tree Blob ID, and the complete graph parsed as 229 nodes / 426 edges.
+- Step Three quality gate: **PASS**, exact commit [run 40543263979](https://github.com/artinrahimii/project/actions/runs/40543263979). The log shows `test_verified_model_install_decision_maps_to_streaming_integrity_and_atomic_activation ... ok`; all **175 Python tests** passed, and syntax, graph structure and recorded-output/evidence validation passed.
+- HostLifecycle job: **PASS** on exact commit [job 122326991032](https://github.com/artinrahimii/project/actions/runs/40543264004/job/122326991032); MsQuic setup and lifecycle tests both completed successfully.
+- Windows WPF job at capture: **in progress**; build and Protobuf source verification passed, but the agent-tool policy/capability checks and final artifact steps were not yet complete.
+- Android APK job at capture: **in progress**; Kotlin lint and APK build passed, Protobuf round-trip tests, generated-source verification and final upload were not yet complete.
+- The two prior exact-commit regression failures for ADR-0010 remain preserved under A059/A061. A062's correction is now proven by the exact V 3.0.417 quality run.
+- No production runtime code or dependency edge changed in this verification note. T0007 remains `in_progress`; `AC-P2P-01` remains **NOT RUN**.
+- Follow-up: inspect the outstanding Windows and Android jobs. Keep this partial result honest; continue tracing other decisions in T0007 before considering task-wide acceptance.
