@@ -19,6 +19,25 @@ class NetworkListenerExposureTests(unittest.TestCase):
         self.assertIn("if (active && _networkParticipationLifecycle.LocalEndpoint is { } endpoint)", WINDOW)
 
 
+    def test_participation_activation_failure_contains_rollback_failure_safely(self):
+        start = WINDOW.index("private async void NetworkParticipationToggle_Changed")
+        end = WINDOW.index("private async void MainWindow_Closing", start)
+        handler = WINDOW[start:end]
+
+        primary_catch = handler.index("catch (Exception exception)")
+        rollback = handler.index("await _networkParticipationLifecycle.SetParticipationActiveAsync(false);", primary_catch)
+        disposed_catch = handler.index("catch (ObjectDisposedException)", rollback)
+        rollback_catch = handler.index("catch (Exception rollbackException)", disposed_catch)
+        self.assertLess(primary_catch, rollback)
+        self.assertLess(rollback, disposed_catch)
+        self.assertLess(disposed_catch, rollback_catch)
+        self.assertIn("string rollbackFailureMessage = string.Empty;", handler)
+        self.assertIn("HostErrorPresentation.ToUserMessage(rollbackException)", handler)
+        self.assertIn("Listener cleanup could not be confirmed. Restart the host before retrying.", handler)
+        self.assertIn("{HostErrorPresentation.ToUserMessage(exception)}{rollbackFailureMessage}", handler)
+        self.assertNotIn("rollbackException.Message", handler)
+        self.assertNotIn("rollbackException.ToString()", handler)
+
     def test_window_closing_waits_for_listener_disposal_before_closing_again(self):
         start = WINDOW.index("private async void MainWindow_Closing")
         end = WINDOW.index("private void MainWindow_Closed", start)

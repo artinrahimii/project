@@ -283,3 +283,12 @@ Evidence: [quality run 40465152381](https://github.com/artinrahimii/project/acti
 ## T0007-A023 — exact-commit quality and recovered product CI evidence
 
 The exact [`V 3.0.380`](https://github.com/artinrahimii/project/commit/6e0b1b0ea4a2a1384b7deff1f73a0405b904520b) quality run [40465955556](https://github.com/artinrahimii/project/actions/runs/40465955556) passed 164 Python tests and graph/output-evidence checks (0 errors, one preserved T0001 unmapped-dependency warning). Product workflow [40465955605](https://github.com/artinrahimii/project/actions/runs/40465955605) first failed in the HostLifecycle QUIC fallback expected-peer identity assertion. After inspecting the transport connector, peer identity validation and regression, the failed job was rerun on the same commit; attempt 2 passed and its log explicitly shows the authenticated TCP-to-QUIC fallback contract passing. Windows and Android jobs also passed. The failure was not reproduced, and its root cause remains undetermined; no speculative production change was made. This records CI status transparently and does not complete T0007.
+
+
+## T0007-A024 — contain network-listener rollback failures in the WPF event handler
+
+When activating network participation fails, the WPF `async void` event handler attempts to disable the listener as a rollback. The handler previously caught only `ObjectDisposedException` from that rollback; another stop/disposal exception could escape the UI event handler. The handler now contains other rollback exceptions, presents them through `HostErrorPresentation.ToUserMessage` (never raw exception details), and explicitly tells the user that listener state could not be confirmed and the host should be restarted before retrying. The original activation error remains mapped to safe user-facing guidance.
+
+Regression test: `tests/test_network_listener_exposure.py::NetworkListenerExposureTests.test_participation_activation_failure_contains_rollback_failure_safely` checks the primary-error/rollback sequence, the additional catch, safe error mapping, and the recovery warning.
+
+Acceptance for this increment: the regression passes in the exact-commit quality gate, and the Windows WPF build/startup smoke and HostLifecycle tests pass. This does not complete broad T0007 traceability or prove that every network listener failure can be recovered without restart.

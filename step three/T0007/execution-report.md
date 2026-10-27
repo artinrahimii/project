@@ -248,3 +248,15 @@
 - Assessment: the exact failure appears non-reproducible in this retry; its root cause is not established. No speculative network-code change was made. Keep the initial failure and the successful retry both in the audit trail rather than erasing the failure.
 - Result: partial. This verifies the documentation/evidence commit's quality gate and recovered product CI; it does not complete broad T0007 traceability. T0007 stays `in_progress`; no task status or dependency edge changed.
 - Follow-up: continue T0007 by reviewing a separate uncovered production decision. If the QUIC identity assertion recurs, examine peer-session state/handshake synchronization before altering the transport contract.
+
+
+## Attempt T0007-A024 — contain listener rollback errors (2026-10-27)
+
+- Base: [`V 3.0.381` (`3ee882de648fbb2e6bb24d3ff38882d1d07b6a53`)](https://github.com/artinrahimii/project/commit/3ee882de648fbb2e6bb24d3ff38882d1d07b6a53).
+- Source finding: `NetworkParticipationToggle_Changed` runs as a WPF `async void` event handler. After an activation error it tries to disable the listener, but the rollback path handled only `ObjectDisposedException`; any other stop/disposal exception could escape the event handler and leave the actual listener state uncertain while the toggle is unchecked.
+- Implementation: added a catch for rollback exceptions other than `ObjectDisposedException`. The handler maps the rollback failure through `HostErrorPresentation.ToUserMessage`, does not expose raw exception data, and warns that listener cleanup could not be confirmed and the host should be restarted before retrying. The original activation exception still uses the existing safe mapper.
+- Regression: added `test_participation_activation_failure_contains_rollback_failure_safely` to `tests/test_network_listener_exposure.py`, asserting the catch ordering, safe error mapping, and recovery message.
+- Dependency review: inspected `T0006 → T0007` (validated `contract_or_interface_dependency`) and `T0007 → T0008` (validated `sequencing_only`). Both retain their existing relation, classification, rationale and evidence.
+- Local execution: no local repository checkout, Python runtime, Windows/.NET runtime is available in this tool session; no local test run is claimed. Exact-commit CI is pending.
+- Result at creation: partial pending CI. T0007 remains `in_progress`; this fixes one async event-handler rollback boundary and does not complete broad technical-decision traceability.
+- Follow-up: inspect the exact commit's quality gate for the new Python regression and graph/evidence checks; verify Windows build/startup smoke and HostLifecycle jobs. Record results in a separate follow-up attempt after checking the actual logs.
