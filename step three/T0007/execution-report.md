@@ -468,3 +468,12 @@
 - **Product workflow boundary:** run 40511618719 was still in progress when this record was written; the Windows WPF build and Android APK jobs had not finalized. No aggregate Windows/Android product-build success is claimed here.
 - **Failure history:** the V 3.0.397 and V 3.0.398 traceability assertion failures remain recorded under A041/A042 and in `tests_failed`; the corrected test passes on V 3.0.399.
 - **Task status:** this bounded source-to-test traceability increment is verified. T0007 stays `in_progress` because its broad criterion—tracing every relevant technical decision—is not proven complete; T0121 remains `in_progress`; AC-P2P-01 remains **NOT RUN**.
+
+
+## Attempt T0007-A044 — final V 3.0.399/V 3.0.400 CI outcomes
+
+- **Later-finalized V 3.0.399 product workflow: PASS** — [run 40511618719](https://github.com/artinrahimii/project/actions/runs/40511618719) completed successfully after A043 had correctly reported that run as still in progress at the time.
+- **V 3.0.400 Step Three quality gate: PASS** — [run 40512175008](https://github.com/artinrahimii/project/actions/runs/40512175008). The exact commit passed 168 Python tests, Python syntax, graph structure (229 nodes / 426 edges), and recorded-output/evidence validation with 0 errors and one preserved warning.
+- **V 3.0.400 product workflow: PASS** — [run 40512175062](https://github.com/artinrahimii/project/actions/runs/40512175062). HostLifecycle [job 122216633744](https://github.com/artinrahimii/project/actions/runs/40512175062), Windows WPF [job 122216633803](https://github.com/artinrahimii/project/actions/runs/40512175062), and Android APK [job 122216633464](https://github.com/artinrahimii/project/actions/runs/40512175062) all succeeded.
+- **Result boundary:** the corrected ADR-0006 traceability regression is verified by the exact V 3.0.399/V 3.0.400 CI runs. The historical V 3.0.397 and V 3.0.398 assertion failures remain preserved. T0007 remains `in_progress` because broad decision-to-code/config/test traceability is not complete; T0121 remains `in_progress`; AC-P2P-01 remains **NOT RUN**.
+- **Next step:** continue T0007 with additional uncovered decisions and inspect their actual source, config, and executable tests. Do not complete T0007 or claim product-level P2P acceptance from these bounded checks.
