@@ -1,15 +1,19 @@
-# T0119 verification evidence — pending exact-head quality gate
+# T0119 verification evidence — accepted as design/policy deliverable
 
-## Baseline integrity
+## Source integrity
 - Repository: `artinrahimii/project`, branch `main`.
-- Base commit: `V 3.0.358`, `fd86ea667ff5e13dc230d982f76b2b2a55a26993`.
-- Graph Blob `1c95ae7879e578edf1df37c325df215ea9d50954`: 1,841,895 original UTF-8 bytes and 1,720,180 returned text characters. Git Blob SHA-1 matched; full fenced JSON parsed/reconstructed exactly (229 tasks, 426 edges).
+- Base commit: `V 3.0.359`, `4c568f4aa6485bd9c54a082841eabf5dc9b30ef7`.
+- Graph Blob: `fb6fde0f76ff150611e85ca927af37727253e308`; full original content measured 1,847,509 UTF-8 bytes and 1,725,798 returned text characters. Git Blob SHA-1 matched; complete fenced JSON parsed and reconstructed exactly: 229 tasks, 426 edges.
 
-## Decision and source-contract guard
-- `docs/decisions/ADR-0004-encrypted-relay-boundary.md`: first-release no-relay decision, future end-to-end opaque-byte path, and explicit metadata exposure.
-- `tests/test_relay_privacy_boundary.py`: guards that relay remains disabled in the host transport, exhausted direct candidates fail explicitly, and any future relay needs end-to-end encryption and documented metadata exposure.
-- `docs/decisions/README.md`: registers the new ADR and corrects the ADR-0002 evidence statement to distinguish host-side TCP/QUIC integration from still-unimplemented Android-to-Windows app-level routing.
-- `T0119 → T0120`: validated as `contract_or_interface_dependency`; peer announcements must consume the metadata-only privacy boundary.
+## Exact-head CI
+- `RelayPrivacyBoundaryTests` — **PASS**, four tests; https://github.com/artinrahimii/project/actions/runs/40450008797/job/122010271159.
+- Step Three quality gate — **PASS**, 159 Python tests, syntax, graph validation and output/evidence checks; https://github.com/artinrahimii/project/actions/runs/40450008797.
 
-## Scope boundary
-This task attempt provides architecture/contract design only, not a working relay stream. The upstream relay README notes a stream-bridging gap. No relay runtime acceptance is claimed. Direct TCP/QUIC exhaustion remains an explicit connection failure.
+## Verified policy
+- Production `Libp2pPeerTransport` does not enable `WithRelay()`.
+- `PeerTransportFallbackConnector` returns explicit connection-unavailable failure after all direct candidates fail.
+- ADR-0004 defines a future relay as opaque byte forwarding under end-to-end encryption and lists peer IDs, IP/ports, reservation/outcome status, timing, duration, byte counts and traffic-size patterns as observable metadata.
+- `T0119 → T0120` was reviewed and validated as `contract_or_interface_dependency`; the future discovery/rendezvous service is constrained to metadata only.
+
+## Limitation (explicit)
+No runtime relay byte stream was implemented or accepted by this task. The upstream libp2p relay README identifies a stream-bridging gap; a future implementation must pass the documented three-peer test before being enabled.

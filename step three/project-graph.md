@@ -21570,8 +21570,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0118 و T0115 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "تکمیل‌شده",
       "actual_output_paths": [
         "docs/decisions/ADR-0004-encrypted-relay-boundary.md",
         "tests/test_relay_privacy_boundary.py",
@@ -21589,12 +21589,12 @@
         "src/Host.Windows/Networking/PeerTransportFallbackConnector.cs",
         "src/Host.Windows/Networking/Libp2pPeerTransport.cs"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0119-A001 establishes the first-release relay decision and source-contract guard: no relay fallback is enabled because ADR-0002 requires direct failure to be explicit and upstream libp2p documentation calls out a stream-bridging gap. Future relay design is opaque end-to-end protected byte forwarding and explicitly lists metadata visibility. This is a design/policy deliverable, not an implemented relay stream.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0119-A001 establishes the first-release relay decision and source-contract guard: no relay fallback is enabled because ADR-0002 requires direct failure to be explicit and upstream libp2p documentation calls out a stream-bridging gap. Future relay design is opaque end-to-end protected byte forwarding and explicitly lists metadata visibility. This is a design/policy deliverable, not an implemented relay stream.\nT0119 accepted as a design/policy task after exact V 3.0.359 quality-gate CI passed all 159 Python tests, including the four relay privacy guard tests. This completion covers the first-release no-relay decision, future opaque end-to-end-byte boundary and metadata exposure record; it explicitly does not claim a working relay stream.",
       "execution_summary": {
         "attempt_count": 1,
         "failed_attempt_count": 0,
         "last_attempt_id": "T0119-A001",
-        "last_attempt_result": "partial",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "docs/decisions/ADR-0004-encrypted-relay-boundary.md",
           "docs/decisions/README.md",
@@ -21603,13 +21603,18 @@
           "step three/T0119/evidence/verification.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
+        "related_commits": [
+          "4c568f4aa6485bd9c54a082841eabf5dc9b30ef7"
+        ],
+        "tests_passed": [
+          "RelayPrivacyBoundaryTests: all four source-contract tests passed on exact V 3.0.359; CI log shows each test OK. https://github.com/artinrahimii/project/actions/runs/40450008797/job/122010271159",
+          "Step Three quality gate: 159 Python tests passed; Python syntax, graph structure and output/evidence checks passed on exact V 3.0.359. https://github.com/artinrahimii/project/actions/runs/40450008797"
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "required",
+          "state": "passed",
           "triggering_contracts": [
             "REQ-010 direct data path",
             "REQ-011 no central inference API or conversation history",
@@ -21621,18 +21626,21 @@
           "review_evidence": [
             "docs/decisions/ADR-0002-direct-p2p-data-path.md",
             "docs/decisions/ADR-0004-encrypted-relay-boundary.md",
+            "docs/decisions/README.md",
             "docs/requirements.md",
-            "tests/test_relay_privacy_boundary.py"
+            "tests/test_relay_privacy_boundary.py",
+            "https://github.com/artinrahimii/project/actions/runs/40450008797/job/122010271159"
           ]
-        }
+        },
+        "follow_up": "T0120 is next. Keep announcement/rendezvous messages metadata-only; relay runtime remains intentionally disabled until its separate three-peer end-to-end-encrypted byte-forwarding acceptance gate is implemented."
       },
       "execution_history": [
         {
           "attempt_id": "T0119-A001",
           "started_at": "2026-10-27T04:28:49.332Z",
-          "ended_at": "2026-10-27T04:28:49.332Z",
-          "result": "partial",
-          "summary": "Recorded an explicit first-release policy not to enable relay fallback, because ADR-0002 requires direct-path failure to remain explicit and the upstream libp2p relay documentation describes a stream-bridging gap. Specified a future relay as opaque end-to-end encrypted byte forwarding and listed relay-visible metadata; added a source-contract test. Exact-head quality-gate CI is pending; no working relay stream is claimed.",
+          "ended_at": "2026-10-27T04:29:35.200Z",
+          "result": "succeeded",
+          "summary": "Accepted the first-release relay privacy boundary after exact V 3.0.359 quality-gate CI passed 159 Python tests, including all four new relay privacy guard tests, graph structure and recorded-output/evidence validation. This completes the design/guard deliverable only; a working relay byte stream remains unimplemented.",
           "changed_files": [
             "docs/decisions/ADR-0004-encrypted-relay-boundary.md",
             "docs/decisions/README.md",
@@ -21641,17 +21649,19 @@
             "step three/T0119/evidence/verification.md",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "4c568f4aa6485bd9c54a082841eabf5dc9b30ef7",
           "tests": [
             {
               "name": "RelayPrivacyBoundaryTests",
-              "result": "pending",
-              "summary": "Source-contract regression test must pass in the Step Three quality gate."
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40450008797/job/122010271159",
+              "summary": "Four tests passed: relay remains disabled, direct exhaustion fails closed, future relays require opaque end-to-end protected bytes, metadata visibility is documented, and the decision is registered."
             },
             {
               "name": "Step Three quality gate",
-              "result": "pending",
-              "summary": "Must run the full Python suite, graph validation and recorded-output/evidence checks on the exact commit."
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40450008797",
+              "summary": "159 Python tests passed; syntax, graph structure, and recorded outputs/evidence checks passed."
             }
           ],
           "failure_details": null,
@@ -21667,7 +21677,7 @@
               "detail": "Guards against enabling WithRelay in the production transport until a working relay path is reviewed and acceptance criteria are met."
             }
           ],
-          "follow_up": "Run exact-head Step Three quality gate. Accept T0119 as a design/policy task only if the guard passes; do not claim relay runtime implementation. T0120 should consume this contract and remain metadata-only."
+          "follow_up": "T0120 is next. Implement the announcement/rendezvous service as a metadata-only control plane. A working relay stream is not delivered; any future relay implementation must pass the three-peer end-to-end-encrypted byte-stream acceptance gate defined in ADR-0004."
         }
       ]
     },
@@ -33864,6 +33874,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-27T04:28:49.332Z"
+  "updated_at": "2026-10-27T04:31:56.858Z"
 }
 ```
