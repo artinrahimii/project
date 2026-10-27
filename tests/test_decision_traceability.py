@@ -28,6 +28,8 @@ ADR12_LOCAL_SETTINGS = (ROOT / "docs/decisions/ADR-0012-local-settings-validatio
 ADR13_TEMP_REQUEST_ID = (ROOT / "docs/decisions/ADR-0013-temporary-request-identifiers.md").read_text(encoding="utf-8")
 ADR14_CROSS_PLATFORM_PROTOCOL = (ROOT / "docs/decisions/ADR-0014-versioned-cross-platform-protocol.md").read_text(encoding="utf-8")
 ADR15_PARTICIPATION_LIFECYCLE = (ROOT / "docs/decisions/ADR-0015-fail-closed-participation-listener-lifecycle.md").read_text(encoding="utf-8")
+ADR16_CRYPTO_TRANSPORT = (ROOT / "docs/decisions/ADR-0016-maintained-libp2p-cryptographic-transport.md").read_text(encoding="utf-8")
+ADR17_HOST_IDENTITY = (ROOT / "docs/decisions/ADR-0017-windows-user-scoped-host-identity-storage.md").read_text(encoding="utf-8")
 
 
 class DecisionTraceabilityTests(unittest.TestCase):
@@ -782,6 +784,64 @@ class DecisionTraceabilityTests(unittest.TestCase):
             "Every docs/decisions/ADR-*.md file must have exactly one row in the decision register.",
         )
 
+
+    def test_maintained_libp2p_security_decision_maps_to_real_source_and_acceptance(self):
+        paths = (
+            "docs/decisions/ADR-0016-maintained-libp2p-cryptographic-transport.md",
+            "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+            "src/Host.Windows/Networking/Libp2pPeerMessageProtocol.cs",
+            "src/Shared.Security/PeerSecurityPolicy.cs",
+            "src/Shared.Security/WhiteP.Shared.Security.csproj",
+            "tests/HostLifecycle.Tests/PeerSecurityPolicyAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs",
+            "tests/test_crypto_library_policy.py",
+            "tests/HostLifecycle.Tests/Program.cs",
+            ".github/workflows/product-build.yml",
+        )
+        for relative_path in paths:
+            with self.subTest(path=relative_path):
+                self.assertTrue((ROOT / relative_path).is_file(), relative_path)
+                self.assertIn(Path(relative_path).name, REGISTER)
+                if relative_path != paths[0]:
+                    self.assertIn(relative_path, ADR16_CRYPTO_TRANSPORT)
+
+        policy = (ROOT / "src/Shared.Security/PeerSecurityPolicy.cs").read_text(encoding="utf-8")
+        transport = (ROOT / "src/Host.Windows/Networking/Libp2pPeerTransport.cs").read_text(encoding="utf-8")
+        self.assertIn("new PeerId(identity)", policy)
+        self.assertIn("PeerSecurityPolicy.ValidatePeerIdentity(identity);", transport)
+        self.assertIn("PeerSecurityPolicyAcceptanceTests.Run()", (ROOT / "tests/HostLifecycle.Tests/Program.cs").read_text(encoding="utf-8"))
+        self.assertIn("PeerTransportContractAcceptanceTests.RunAsync()", (ROOT / "tests/HostLifecycle.Tests/Program.cs").read_text(encoding="utf-8"))
+        for phrase in ("Nethermind.Libp2p", "Noise/TLS", "not an independent cryptographic audit", "AC-P2P-01", "NOT RUN"):
+            with self.subTest(phrase=phrase):
+                self.assertIn(phrase.lower(), ADR16_CRYPTO_TRANSPORT.lower())
+
+    def test_user_scoped_host_identity_decision_maps_to_protection_and_storage_tests(self):
+        paths = (
+            "docs/decisions/ADR-0017-windows-user-scoped-host-identity-storage.md",
+            "src/Shared.Security/HostIdentityStore.cs",
+            "src/Host.Windows/Security/WindowsDpapiSecretProtector.cs",
+            "src/Host.Windows/Security/WindowsHostIdentityProvider.cs",
+            "tests/HostLifecycle.Tests/HostIdentityStoreAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/WindowsHostIdentityStoreAcceptanceTests.cs",
+            "tests/test_host_identity_store.py",
+            ".github/workflows/product-build.yml",
+        )
+        for relative_path in paths:
+            with self.subTest(path=relative_path):
+                self.assertTrue((ROOT / relative_path).is_file(), relative_path)
+                self.assertIn(Path(relative_path).name, REGISTER)
+                if relative_path != paths[0]:
+                    self.assertIn(relative_path, ADR17_HOST_IDENTITY)
+
+        store = (ROOT / "src/Shared.Security/HostIdentityStore.cs").read_text(encoding="utf-8")
+        protector = (ROOT / "src/Host.Windows/Security/WindowsDpapiSecretProtector.cs").read_text(encoding="utf-8")
+        windows_tests = (ROOT / "tests/HostLifecycle.Tests/WindowsHostIdentityStoreAcceptanceTests.cs").read_text(encoding="utf-8")
+        self.assertIn("LoadOrCreate", store)
+        self.assertIn("DataProtectionScope.CurrentUser", protector)
+        self.assertIn("tampered", windows_tests.lower())
+        for phrase in ("DataProtectionScope.CurrentUser", "not store private-key bytes in plaintext", "AC-P2P-01", "NOT RUN"):
+            with self.subTest(phrase=phrase):
+                self.assertIn(phrase.lower(), ADR17_HOST_IDENTITY.lower())
 
     def test_t0007_execution_report_matches_its_task_folder(self):
         report = (ROOT / "step three/T0007/execution-report.md").read_text(encoding="utf-8")
