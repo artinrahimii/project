@@ -752,3 +752,13 @@
 - Tests at creation: existing source and acceptance tests were inspected; no local test command was run. Exact-main CI must validate the new test before this increment is marked verified.
 - Result boundary: `T0007` remains `in_progress`; `AC-P2P-01` remains **NOT RUN**.
 - Follow-up: inspect exact V 3.0.420 quality and product workflows; preserve any failures.
+
+
+## Attempt T0007-A068 — verify ADR-0012 on exact V 3.0.420
+- Recorded: 2026-10-27T16:54:54.270Z
+- Result: succeeded for the bounded ADR-0012 traceability increment; T0007 remains in progress.
+- Commit under verification: [V 3.0.420 — 6c1a432fc45471408f3d7440fe457116f12db5dc](https://github.com/artinrahimii/project/commit/6c1a432fc45471408f3d7440fe457116f12db5dc).
+- Step Three quality gate: **PASS** — [run 40545121743](https://github.com/artinrahimii/project/actions/runs/40545121743) completed on the exact commit. The new test `test_local_settings_decision_maps_to_bounded_schema_versioned_fail_closed_persistence` passed; all **177 Python tests** returned `OK`, and syntax, graph structure and recorded-output/evidence validation passed.
+- White-P product workflow: **PASS** — [run 40545121750](https://github.com/artinrahimii/project/actions/runs/40545121750) completed successfully on the same commit. Windows WPF, HostLifecycle (including `LocalHostSettingsPersistenceTests` after MsQuic setup) and Android APK/Protobuf jobs all passed.
+- This verifies the bounded ADR-0012 source/test traceability increment. It does not claim every security property of the OS settings directory has been audited, nor does it complete broad T0007 or the P2P runtime gate. `T0007` remains `in_progress`; `AC-P2P-01` remains **NOT RUN**.
+- Follow-up: continue reviewing remaining decisions against real source and executable tests.
