@@ -490,3 +490,15 @@
 - **Graph integrity:** baseline graph retrieved via Git Blob after the normal file endpoint returned empty content. The full original UTF-8 content was 1,995,434 bytes (1,873,494 characters); recomputed Git SHA-1 Blob ID matched `365c43b68fd4c13307ad8019b148b9a1df69a894`. The fenced JSON parsed as 229 unique task IDs and 426 edges. The source graph's existing JSON formatting is preserved except for the target T0007 tracking fields.
 - **Result:** partial, pending exact-commit quality/product CI. Do not promote T0007 to done from an ADR or static source-contract test alone.
 - **Follow-up:** inspect the exact candidate commit's Step Three quality gate and product workflow; retain any CI failure in history and continue T0007 only after verified results.
+
+
+## Attempt T0007-A046 — exact candidate CI verification for A045
+
+- **Verified at:** 2026-10-27T13:50:45.119Z.
+- **Exact tested PR candidate:** `V 3.0.401` baseline `f97911baade1d6dfdd7b92ecb50eb0a578e7abea`; candidate head before this verification record was appended: `0ce0d7013c9b94302d9ddec6dbe10bd2626032c0` on `execution/t0007-a045-2026-10-27`, PR [#1](https://github.com/artinrahimii/project/pull/1).
+- **Step Three quality gate: PASS** — [run 40515254924](https://github.com/artinrahimii/project/actions/runs/40515254924). The exact candidate completed 169 Python tests; Python syntax, graph structure, and repository-backed output/evidence validation passed. Graph guard reported 0 errors and one preserved warning.
+- **HostLifecycle unit/integration: PASS** — [job 122227428752](https://github.com/artinrahimii/project/actions/runs/40515255239/job/122227428752).
+- **Windows WPF: PASS** — [job 122227429151](https://github.com/artinrahimii/project/actions/runs/40515255239/job/122227429151), including formatting, Release build, generated Protobuf validation, startup smoke, and the three agent-tool policy/capability gates.
+- **Android APK: PASS** — [job 122227428100](https://github.com/artinrahimii/project/actions/runs/40515255239/job/122227428100), including Kotlin lint, debug APK assembly, Protobuf round-trip tests, generated-source validation, and artifact upload.
+- **Result boundary:** this proves the bounded ADR-0007 traceability regression and current platform CI on the tested candidate. No runtime application code changed; these checks do not prove Android-to-Windows end-to-end routing. `AC-P2P-01` remains **NOT RUN** and T0007 remains `in_progress`.
+- **Follow-up:** re-check the PR head after this report/graph update, ensure final-head quality/product checks pass, then squash-merge only if the main head and PR candidate are still consistent.
