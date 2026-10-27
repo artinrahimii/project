@@ -582,3 +582,12 @@
 - **Windows WPF: PENDING at capture time** — job [122276068511](https://github.com/artinrahimii/project/actions/runs/40528935196/job/122276068511) was still running. Aggregate product success is not claimed.
 - **Scope:** the ADR-index regression is verified; broad T0007 remains `in_progress`; `AC-P2P-01` remains **NOT RUN**.
 - **Follow-up:** re-check the Windows WPF job before recording a final product-workflow conclusion.
+
+## T0007-A053 — close deferred verification of the corrected ADR index guard (2026-10-27)
+
+- **Exact candidate code commit:** `dc1ad9adf93b7d5620e01ae2eac82b88e38a4ab2` (`V 3.0.407`).
+- **Step Three quality gate: PASS** — [run 40528935126](https://github.com/artinrahimii/project/actions/runs/40528935126), 172 Python tests, including `test_every_adr_document_is_registered`, plus Python syntax, graph structure and output/evidence validation.
+- **Full product workflow for V 3.0.407: PASS** — [run 40528935196](https://github.com/artinrahimii/project/actions/runs/40528935196); Windows WPF job 122276068511, Android APK job 122276068858, and HostLifecycle job 122276068960 all completed successfully.
+- **Follow-up evidence:** the report/graph-only commit `0700792eab9a972ab3f97316d5e6c123f23567b1` (`V 3.0.408`) passed its Step Three quality gate [40529423055](https://github.com/artinrahimii/project/actions/runs/40529423055). Its product workflow [40529423067](https://github.com/artinrahimii/project/actions/runs/40529423067) was still in progress when captured; that commit made no runtime or test source changes.
+- **Scope:** the missing-ADR-registration guard and its code candidate are now verified. Broad T0007 remains `in_progress`; `AC-P2P-01` remains **NOT RUN**.
+- **Follow-up:** continue tracing remaining technical decisions and runnable tests; do not close T0007 based on this bounded increment.
