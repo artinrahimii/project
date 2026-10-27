@@ -175,3 +175,16 @@
 - Exact-commit CI: pending until the new commit's quality and product workflows are inspected.
 - Result: partial; this protects one concrete decision boundary but does not satisfy broad T0007 traceability. Keep T0007 `in_progress` and do not change dependency edges.
 - Follow-up: inspect exact-commit quality CI for the named regression and total Python/graph checks, plus the product workflow's HostLifecycle, Windows, and Android jobs; record only observed results.
+
+
+## Attempt T0007-A018 — verification of A017 (2026-10-27)
+
+- Implementation commit: [`V 3.0.375` (`60afaa2d1dddbbb06d49c96c22a2627beb34180a`)](https://github.com/artinrahimii/project/commit/60afaa2d1dddbbb06d49c96c22a2627beb34180a), verified as the online `main` head before this evidence update.
+- New regression: `test_local_engine_start_errors_use_safe_user_facing_mapping` appeared as `ok` in [Step Three quality run 40461197719](https://github.com/artinrahimii/project/actions/runs/40461197719).
+- Python quality gate: **PASS** — 163 tests; syntax, graph structure, and repository-backed output/evidence checks passed with **0 errors and 1 preserved T0001 unmapped-dependency warning**.
+- Host lifecycle unit/integration tests: **PASS** — [job 122045972704](https://github.com/artinrahimii/project/actions/runs/40461197898/job/122045972704). Logs include passing readiness, serialization, cancellation, listener, transport, protocol, and backend lifecycle checks.
+- Windows WPF: **PASS** — [job 122045972413](https://github.com/artinrahimii/project/actions/runs/40461197898/job/122045972413). Release build had **0 errors and 1 CS4014 warning** at `MainWindow.xaml.cs:858` for the deferred `Dispatcher.BeginInvoke`; the WPF startup smoke passed and the Windows artifact uploaded.
+- Android: **PASS** — [job 122045972822](https://github.com/artinrahimii/project/actions/runs/40461197898/job/122045972822). Kotlin formatting/lint, `assembleDebug`, `testDebugUnitTest`, generated Protobuf verification, and APK artifact upload passed.
+- Aggregate product workflow: **PASS** — [run 40461197898](https://github.com/artinrahimii/project/actions/runs/40461197898), all three jobs succeeded.
+- Result: partial. A017 is verified, but the broad task-wide decision-to-code/configuration/test criterion remains unmet; keep T0007 `in_progress`. No dependency edge or task status was changed.
+- Follow-up: continue the broad T0007 traceability matrix; separately review whether the existing CS4014 warning can be removed without changing the deferred window-shutdown contract. Do not promote T0007 to `done` based on this single increment.

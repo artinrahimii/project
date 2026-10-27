@@ -243,3 +243,10 @@ The two WPF shutdown regression tests added in A015 passed on exact commit [`V 3
 The Windows local-engine start handler must map process-launch failures through `HostErrorPresentation.ToUserMessage` instead of displaying `Exception.Message` or `Exception.ToString()`. The existing application mapper provides stable, actionable messages for known failures and a generic safe message for unexpected exceptions. The regression test `test_local_engine_start_errors_use_safe_user_facing_mapping` locks the WPF caller to that mapper and rejects direct exception-detail presentation.
 
 This is a source-level regression guard for the UI/error boundary. It does not prove that a real local engine starts successfully or cover every UI error path. Exact-commit CI is pending for this attempt; T0007 remains `in_progress`.
+
+
+## T0007-A018 — exact-commit verification of the safe-error regression
+
+On exact implementation commit [`V 3.0.375`](https://github.com/artinrahimii/project/commit/60afaa2d1dddbbb06d49c96c22a2627beb34180a), the new WPF error-mapping regression appeared as `ok` and the quality gate passed **163 Python tests**. Graph structure and repository-backed output/evidence checks passed with **0 errors and 1 preserved T0001 warning**. The product workflow also completed successfully: HostLifecycle tests passed, the Windows WPF Release build and startup smoke passed, and Android formatting/lint, debug APK assembly, unit tests and generated Protobuf checks passed. See [quality run 40461197719](https://github.com/artinrahimii/project/actions/runs/40461197719) and [product run 40461197898](https://github.com/artinrahimii/project/actions/runs/40461197898).
+
+The Windows build reported one compiler warning, CS4014, for the deferred `Dispatcher.BeginInvoke` call in `MainWindow.xaml.cs:858`; the build had 0 errors and the startup smoke passed. This existing warning was not introduced by A017 and remains a follow-up review item. These results verify this incremental regression only; broad T0007 traceability remains incomplete.
