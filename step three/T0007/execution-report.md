@@ -762,3 +762,15 @@
 - White-P product workflow: **PASS** — [run 40545121750](https://github.com/artinrahimii/project/actions/runs/40545121750) completed successfully on the same commit. Windows WPF, HostLifecycle (including `LocalHostSettingsPersistenceTests` after MsQuic setup) and Android APK/Protobuf jobs all passed.
 - This verifies the bounded ADR-0012 source/test traceability increment. It does not claim every security property of the OS settings directory has been audited, nor does it complete broad T0007 or the P2P runtime gate. `T0007` remains `in_progress`; `AC-P2P-01` remains **NOT RUN**.
 - Follow-up: continue reviewing remaining decisions against real source and executable tests.
+
+
+## Attempt T0007-A069 — temporary request identity traceability
+- Started: 2026-10-27T16:59:28.682Z
+- Result: partial at commit creation; exact-commit CI pending.
+- Base: 2d642ab01a0399004fcc4bcd76918c49577b81e2 (V 3.0.421), confirmed as online `main` before patch. The graph at `step three/project-graph.md` was read from Blob `467f5ce4cb5239045390166268a5a33bc11f29f8`; its Git SHA-1 and full UTF-8 byte size matched the commit tree, and the complete fenced JSON parsed as 229 nodes / 426 edges.
+- Source finding: REQ-012 is implemented by a 128-bit cryptographic request-ID generator, a registered 4,096-sample format/uniqueness regression, protocol identifier validation and typed response mapping. The rendezvous announcement contract exposes peer metadata only, and its in-memory directory stores current announcements, not request IDs. The remaining traceability gap was the missing dedicated decision record and source-linked test.
+- Change: added `docs/decisions/ADR-0013-temporary-request-identifiers.md`, registered it in `docs/decisions/README.md`, and added `test_temporary_request_identity_decision_maps_to_crypto_ids_and_metadata_only_rendezvous` to `tests/test_decision_traceability.py`.
+- No production runtime code, protocol contract or dependency edge changed. The ADR explicitly distinguishes sample uniqueness from a mathematical guarantee and does not claim deployment log retention has been audited.
+- Test status at creation: source files and existing executable acceptance paths were inspected at the exact base. No local repository test command was run; exact-main GitHub Actions validation is pending.
+- Result boundary: this is one bounded traceability increment, not completion of broad T0007. Keep `T0007` `in_progress`; `AC-P2P-01` remains **NOT RUN**.
+- Follow-up: inspect exact `V 3.0.422` quality and product-build workflows. Preserve any failed result; only mark this increment CI-verified after reading the exact run.

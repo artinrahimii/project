@@ -25,6 +25,7 @@ ADR9_AGENT_TOOLS = (ROOT / "docs/decisions/ADR-0009-agent-tool-execution-boundar
 ADR10_MODEL_INSTALLATION = (ROOT / "docs/decisions/ADR-0010-verified-model-installation.md").read_text(encoding="utf-8")
 ADR11_HOST_CAPACITY = (ROOT / "docs/decisions/ADR-0011-host-capacity-readiness.md").read_text(encoding="utf-8")
 ADR12_LOCAL_SETTINGS = (ROOT / "docs/decisions/ADR-0012-local-settings-validation-and-persistence.md").read_text(encoding="utf-8")
+ADR13_TEMP_REQUEST_ID = (ROOT / "docs/decisions/ADR-0013-temporary-request-identifiers.md").read_text(encoding="utf-8")
 
 
 class DecisionTraceabilityTests(unittest.TestCase):
@@ -544,6 +545,57 @@ class DecisionTraceabilityTests(unittest.TestCase):
         self.assertIn("LocalHostSettingsStore.cs", ADR12_LOCAL_SETTINGS)
         self.assertIn("This is not an OS permission/ACL audit", ADR12_LOCAL_SETTINGS)
         self.assertIn("ADR-0012-local-settings-validation-and-persistence.md", REGISTER)
+
+
+
+    def test_temporary_request_identity_decision_maps_to_crypto_ids_and_metadata_only_rendezvous(self):
+        paths = (
+            "docs/requirements.md",
+            "protocol/whitep/v1/messages.proto",
+            "src/Host.Windows/Requests/SecureRequestIdGenerator.cs",
+            "src/Host.Windows/Networking/NetworkInferenceRequestResponseMapper.cs",
+            "src/Shared.Contracts/ProtocolMessageValidator.cs",
+            "src/Shared.Contracts/Networking/PeerAnnouncement.cs",
+            "src/Rendezvous.Service/PeerAnnouncementDirectory.cs",
+            "tests/HostLifecycle.Tests/SecureRequestIdGeneratorTests.cs",
+            "tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/Program.cs",
+            ".github/workflows/product-build.yml",
+        )
+        self.assertTrue((ROOT / "docs/decisions/ADR-0013-temporary-request-identifiers.md").is_file())
+        for relative_path in paths:
+            with self.subTest(path=relative_path):
+                self.assertTrue((ROOT / relative_path).is_file(), relative_path)
+                self.assertIn(relative_path, ADR13_TEMP_REQUEST_ID)
+
+        requirements = (ROOT / "docs/requirements.md").read_text(encoding="utf-8")
+        protocol = (ROOT / "protocol/whitep/v1/messages.proto").read_text(encoding="utf-8")
+        generator = (ROOT / "src/Host.Windows/Requests/SecureRequestIdGenerator.cs").read_text(encoding="utf-8")
+        id_tests = (ROOT / "tests/HostLifecycle.Tests/SecureRequestIdGeneratorTests.cs").read_text(encoding="utf-8")
+        validator = (ROOT / "src/Shared.Contracts/ProtocolMessageValidator.cs").read_text(encoding="utf-8")
+        mapper = (ROOT / "src/Host.Windows/Networking/NetworkInferenceRequestResponseMapper.cs").read_text(encoding="utf-8")
+        announcement = (ROOT / "src/Shared.Contracts/Networking/PeerAnnouncement.cs").read_text(encoding="utf-8")
+        directory = (ROOT / "src/Rendezvous.Service/PeerAnnouncementDirectory.cs").read_text(encoding="utf-8")
+        rendezvous_tests = (ROOT / "tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs").read_text(encoding="utf-8")
+        harness = (ROOT / "tests/HostLifecycle.Tests/Program.cs").read_text(encoding="utf-8")
+
+        self.assertIn("REQ-012", requirements)
+        self.assertIn("request_id", protocol)
+        self.assertIn("RandomByteCount = 16", generator)
+        self.assertIn("RandomNumberGenerator.GetBytes(RandomByteCount)", generator)
+        self.assertIn('Prefix = "req_"', generator)
+        self.assertIn("sampleCount = 4096", id_tests)
+        self.assertIn("identifiers.Add(requestId)", id_tests)
+        self.assertIn("MaximumRequestIdentifierLength = 128", validator)
+        self.assertIn("IsValidRequestIdentifier(requestId)", validator)
+        self.assertIn("RequireIdentifier(requestId, nameof(requestId))", mapper)
+        self.assertIn("PeerId = ValidatePeerId(peerId)", announcement)
+        self.assertIn("Dictionary<string, PeerAnnouncement>", directory)
+        self.assertNotIn("request_id", directory.lower())
+        self.assertIn("PeerAnnouncement must expose only peer ID, addresses, capabilities and expiry.", rendezvous_tests)
+        self.assertIn("SecureRequestIdGeneratorTests.Run();", harness)
+        self.assertIn("collision probability", ADR13_TEMP_REQUEST_ID.lower())
+        self.assertIn("AC-P2P-01", ADR13_TEMP_REQUEST_ID)
 
 
     def test_every_registered_decision_links_to_existing_sources_and_verification(self):
