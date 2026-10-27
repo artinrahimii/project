@@ -21113,11 +21113,11 @@
         "step three/T0117/execution-report.md",
         "step three/T0117/evidence/verification.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nSelected Nethermind.Libp2p 1.0.3 (MIT; .NET 10) after checking package and source-repository license/transport matrix. The implementation uses the default TCP + Noise/TLS negotiation (does not enable plaintext), validates the target /p2p PeerId against PeerTransportEndpoint, and uses bounded varint-prefixed binary messages. A real loopback two-peer test sends data in both directions. The library repository currently marks hole punching and circuit relay work-in-progress; neither is claimed complete.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nSelected Nethermind.Libp2p 1.0.3 (MIT; .NET 10) after checking package and source-repository license/transport matrix. The implementation uses the default TCP + Noise/TLS negotiation (does not enable plaintext), validates the target /p2p PeerId against PeerTransportEndpoint, and uses bounded varint-prefixed binary messages. A real loopback two-peer test sends data in both directions. The library repository currently marks hole punching and circuit relay work-in-progress; neither is claimed complete.\nV3.0.351 exact-SHA HostLifecycle build failed at compile time because three member/signature choices in the adapter did not match published Nethermind.Libp2p 1.0.3: channel name ambiguity, no ISession.RemotePeerId, and no instance protocol-dial overload. These are recorded as a failed implementation attempt and corrected for V3.0.352; T0117 remains in progress.",
       "execution_summary": {
-        "attempt_count": 1,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "T0117-A001",
+        "attempt_count": 2,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "T0117-A002",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
@@ -21130,9 +21130,13 @@
           "step three/T0117/evidence/verification.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
+        "related_commits": [
+          "d056c1c1c77903165576078b0d7c3fbe35b60676"
+        ],
         "tests_passed": [],
-        "tests_failed": [],
+        "tests_failed": [
+          "V 3.0.351 HostLifecycle compile failed before running runtime tests; the published Nethermind.Libp2p 1.0.3 API uses System.Threading.Channels.Channel ambiguously with Nethermind.Libp2p.Core.Channel, has no ISession.RemotePeerId property, and no instance-based ISession.DialAsync overload. These compile errors are corrected in V 3.0.352."
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -21159,9 +21163,9 @@
         {
           "attempt_id": "T0117-A001",
           "started_at": "2026-10-27T03:26:54.005Z",
-          "ended_at": "2026-10-27T03:26:54.005Z",
-          "result": "partial",
-          "summary": "Reviewed the secure IPeerTransport contract, published .NET 10/MIT package and source implementation, then added a concrete Nethermind.Libp2p 1.0.3 adapter and bounded binary session protocol. Added a real loopback two-peer acceptance test for identity pinning, bidirectional binary delivery, oversized-message rejection and idempotent disconnect; exact-head CI pending.",
+          "ended_at": "2026-10-27T03:28:10Z",
+          "result": "failed",
+          "summary": "Implemented the concrete libp2p adapter and real two-peer acceptance test, but the V3.0.351 HostLifecycle build failed at compile time due to three version-specific API mismatches. No runtime acceptance ran on that SHA. The precise errors and correction are recorded in this attempt.",
           "changed_files": [
             "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
             "src/Host.Windows/Networking/Libp2pPeerMessageProtocol.cs",
@@ -21173,30 +21177,20 @@
             "step three/T0117/evidence/verification.md",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "d056c1c1c77903165576078b0d7c3fbe35b60676",
           "tests": [
             {
-              "name": "PeerTransportContractAcceptanceTests",
-              "result": "pending",
-              "summary": "Real two-peer loopback test must pass on the exact commit."
+              "name": "HostLifecycle compile",
+              "result": "failed",
+              "summary": "V3.0.351 failed with CS0104 for Channel ambiguity; CS1061 for ISession.RemotePeerId at two call sites; and CS0411 for the unsupported instance DialAsync overload."
             },
             {
               "name": "Step Three quality gate",
               "result": "pending",
-              "summary": "Python tests, graph validation and evidence guard pending."
-            },
-            {
-              "name": "Windows WPF product build",
-              "result": "pending",
-              "summary": "The new package and adapter must compile and product checks pass."
-            },
-            {
-              "name": "HostLifecycle runtime acceptance",
-              "result": "pending",
-              "summary": "The real libp2p message exchange and current host lifecycle tests must pass."
+              "summary": "V3.0.351 quality gate passed graph/Python validation; product compile still failed."
             }
           ],
-          "failure_details": null,
+          "failure_details": "Compiler errors in V3.0.351: CS0104 ('Channel' ambiguous between System.Threading.Channels.Channel and Nethermind.Libp2p.Core.Channel); CS1061 (ISession has no RemotePeerId in the published package); CS0411 (generic type arguments cannot be inferred from the unsupported instance DialAsync overload).",
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [
@@ -21213,7 +21207,49 @@
               "detail": "Records MIT library choice, default TCP Noise/TLS stack and separate pending NAT traversal/relay/end-to-end tasks."
             }
           ],
-          "follow_up": "Run exact-head quality and product CI. Repair compilation/runtime errors and mark done only after real two-peer acceptance passes."
+          "follow_up": "Correct the API usage against the published 1.0.3 package and rerun the exact-head product and quality workflows."
+        },
+        {
+          "attempt_id": "T0117-A002",
+          "started_at": "2026-10-27T03:30:03.719Z",
+          "ended_at": "2026-10-27T03:30:03.719Z",
+          "result": "partial",
+          "summary": "Corrected the compile-time incompatibilities reported by exact V3.0.351 CI: fully qualified System.Threading.Channels.Channel.CreateBounded, derive the verified PeerId from session.RemoteAddress.GetPeerId() for the published package API, and dial the registered protocol by generic type (DialAsync<Libp2pPeerMessageProtocol>). Exact-head runtime acceptance pending.",
+          "changed_files": [
+            "src/Host.Windows/Networking/Libp2pPeerMessageProtocol.cs",
+            "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+            "step three/T0117/execution-report.md",
+            "step three/T0117/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "HostLifecycle compile and real P2P test",
+              "result": "pending",
+              "summary": "Must compile against Nethermind.Libp2p 1.0.3 and prove actual two-peer exchange."
+            },
+            {
+              "name": "Step Three quality gate",
+              "result": "pending",
+              "summary": "Must pass graph structure and recorded-output/evidence guards."
+            },
+            {
+              "name": "Windows WPF product build",
+              "result": "pending",
+              "summary": "Must compile product adapter and pass Windows policy/smoke gates."
+            },
+            {
+              "name": "Android build",
+              "result": "pending",
+              "summary": "Must preserve existing Android build and Protobuf round-trip."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Run exact-head CI. If compilation succeeds, inspect the real peer message exchange; fix runtime issues before marking T0117 done."
         }
       ]
     },

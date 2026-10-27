@@ -27,7 +27,7 @@ internal sealed class Libp2pPeerMessageProtocol : SymmetricSessionProtocol, ISes
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(maximumMessageBytes);
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(inboundQueueCapacity);
         _maximumMessageBytes = maximumMessageBytes;
-        _inbound = Channel.CreateBounded<byte[]>(new BoundedChannelOptions(inboundQueueCapacity)
+        _inbound = System.Threading.Channels.Channel.CreateBounded<byte[]>(new BoundedChannelOptions(inboundQueueCapacity)
         {
             FullMode = BoundedChannelFullMode.Wait,
             SingleReader = true,

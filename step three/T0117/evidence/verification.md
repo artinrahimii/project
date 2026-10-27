@@ -22,7 +22,8 @@
 - `T0115 → T0117`: `sequencing_only`, validated; existing TCP listener tests are not a direct API/data input to the new libp2p adapter. The original `blocks` order is retained.
 
 ## Verification status
-- Exact-head HostLifecycle/libp2p exchange: pending.
+- V 3.0.351: HostLifecycle compile **FAILED** before runtime acceptance with CS0104 (ambiguous `Channel`), CS1061 (`ISession.RemotePeerId` absent in the published API), and CS0411 (unsupported instance `DialAsync` overload). These errors were observed in workflow job logs, then corrected in attempt A002.
+- Exact-head HostLifecycle/libp2p exchange after correction: pending.
 - Exact-head Windows WPF Release build and package restore: pending.
 - Exact-head Step Three quality/graph/output/evidence gate: pending.
 - No end-to-end Android↔Windows claim is made in this task.

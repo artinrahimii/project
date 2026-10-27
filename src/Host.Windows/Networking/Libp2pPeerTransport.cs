@@ -178,7 +178,8 @@ public sealed class Libp2pPeerTransport : IPeerTransport
         {
             cancellationToken.ThrowIfCancellationRequested();
             session = await _peer.DialAsync(remoteAddress, cancellationToken).ConfigureAwait(false);
-            string actualPeerIdentity = session.RemotePeerId.ToString();
+            string actualPeerIdentity = session.RemoteAddress.GetPeerId()?.ToString()
+                ?? throw new AuthenticationException("The libp2p session did not expose an authenticated peer identity.");
             if (!string.Equals(actualPeerIdentity, endpoint.ExpectedPeerIdentity, StringComparison.Ordinal))
             {
                 await session.DisconnectAsync().ConfigureAwait(false);
@@ -193,7 +194,7 @@ public sealed class Libp2pPeerTransport : IPeerTransport
             }
 
             Volatile.Write(ref _remotePeerIdentity, actualPeerIdentity);
-            Task dialTask = session.DialAsync(_protocol, cancellationToken);
+            Task dialTask = session.DialAsync<Libp2pPeerMessageProtocol>(cancellationToken);
             Volatile.Write(ref _dialTask, dialTask);
 
             using var startupCancellation = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
@@ -321,7 +322,8 @@ public sealed class Libp2pPeerTransport : IPeerTransport
         string identity;
         try
         {
-            identity = session.RemotePeerId.ToString();
+            identity = session.RemoteAddress.GetPeerId()?.ToString()
+                ?? throw new AuthenticationException("The libp2p session did not expose an authenticated peer identity.");
         }
         catch (Exception)
         {
