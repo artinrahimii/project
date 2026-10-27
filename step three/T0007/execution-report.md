@@ -591,3 +591,15 @@
 - **Follow-up evidence:** the report/graph-only commit `0700792eab9a972ab3f97316d5e6c123f23567b1` (`V 3.0.408`) passed its Step Three quality gate [40529423055](https://github.com/artinrahimii/project/actions/runs/40529423055). Its product workflow [40529423067](https://github.com/artinrahimii/project/actions/runs/40529423067) was still in progress when captured; that commit made no runtime or test source changes.
 - **Scope:** the missing-ADR-registration guard and its code candidate are now verified. Broad T0007 remains `in_progress`; `AC-P2P-01` remains **NOT RUN**.
 - **Follow-up:** continue tracing remaining technical decisions and runnable tests; do not close T0007 based on this bounded increment.
+
+
+## T0007-A054 — trace the encrypted-relay privacy boundary to executable guards (2026-10-27)
+
+- **Baseline:** exact online `main` commit `4fcd14bf34aa1832e68790176ad8461610f2c1b3` (`V 3.0.409`). The branch reference and version history were freshly checked before editing.
+- **Source review:** `ADR-0004` states that the first release does not enable relay data and that exhausted direct paths must fail with an explicit connection-unavailable outcome. `Libp2pPeerTransport` currently configures direct TCP/QUIC and does not opt into `WithRelay()`; `PeerTransportFallbackConnector` fails closed with `PeerConnectionUnavailableException`. The dedicated `tests/test_relay_privacy_boundary.py` checks this boundary and metadata disclosure.
+- **Gap:** the repository-wide decision traceability test checked generic register links, but did not directly tie ADR-0004 to these specific implementation files and privacy regression cases.
+- **Change:** added `test_encrypted_relay_boundary_decision_maps_to_fail_closed_transport_and_privacy_tests` and an ADR-0004 source constant in `tests/test_decision_traceability.py`. The guard links the decision, production connector, disabled-relay configuration, executable privacy tests, metadata boundary, and the intentionally unpassed `AC-P2P-01` gate.
+- **Scope boundary:** no runtime transport, relay, cryptographic behavior, protocol contract, configuration, or graph dependency edge changed. This is an executable traceability-quality improvement; it does not implement a relay or prove Android-to-Windows end-to-end routing. `AC-P2P-01` remains **NOT RUN** and T0007 remains `in_progress`.
+- **Verification:** source and graph baseline Blob IDs were verified against the exact V 3.0.409 tree. The local test command could not be run in this session; the new test remains pending exact-commit GitHub Actions verification.
+- **Follow-up:** inspect the exact V 3.0.410 Step Three quality gate and product build, preserve any failure, and only then record success in a separate evidence update.
+

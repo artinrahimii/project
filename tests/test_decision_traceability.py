@@ -16,6 +16,7 @@ ADR1 = (ROOT / "docs/decisions/ADR-0001-platform-build-baselines.md").read_text(
 ADR2 = (ROOT / "docs/decisions/ADR-0002-direct-p2p-data-path.md").read_text(encoding="utf-8")
 ADR3 = (ROOT / "docs/decisions/ADR-0003-local-inference-backend.md").read_text(encoding="utf-8")
 ADR3_TCP = (ROOT / "docs/decisions/ADR-0003-tcp-request-framing.md").read_text(encoding="utf-8")
+ADR4_RELAY = (ROOT / "docs/decisions/ADR-0004-encrypted-relay-boundary.md").read_text(encoding="utf-8")
 ADR5_TRANSPORT = (ROOT / "docs/decisions/ADR-0005-authenticated-peer-transport-fallback.md").read_text(encoding="utf-8")
 ADR6_LEASE = (ROOT / "docs/decisions/ADR-0006-peer-announcement-leases.md").read_text(encoding="utf-8")
 ADR7_SINGLE_ACTIVE = (ROOT / "docs/decisions/ADR-0007-single-active-inference.md").read_text(encoding="utf-8")
@@ -154,6 +155,31 @@ class DecisionTraceabilityTests(unittest.TestCase):
         self.assertIn("PeerTransportContractAcceptanceTests.RunAsync()", entrypoint)
         self.assertIn("AC-P2P-01", ADR5_TRANSPORT)
         self.assertIn("NOT RUN", ACCEPTANCE)
+
+
+    def test_encrypted_relay_boundary_decision_maps_to_fail_closed_transport_and_privacy_tests(self):
+        transport = (ROOT / "src/Host.Windows/Networking/Libp2pPeerTransport.cs").read_text(encoding="utf-8")
+        connector = (ROOT / "src/Host.Windows/Networking/PeerTransportFallbackConnector.cs").read_text(encoding="utf-8")
+        privacy_tests = (ROOT / "tests/test_relay_privacy_boundary.py").read_text(encoding="utf-8")
+
+        self.assertIn("ADR-0004-encrypted-relay-boundary.md", REGISTER)
+        self.assertIn("Libp2pPeerTransport", ADR4_RELAY)
+        self.assertIn("PeerTransportFallbackConnector", ADR4_RELAY)
+        self.assertIn("tests/test_relay_privacy_boundary.py", REGISTER)
+        self.assertIn("no relay data path is enabled", ADR4_RELAY.lower())
+        self.assertNotIn(".WithRelay(", transport)
+        self.assertIn("throw new PeerConnectionUnavailableException(failures);", connector)
+
+        for case in (
+            "test_first_release_relay_is_disabled_and_direct_exhaustion_fails_closed",
+            "test_future_relay_must_forward_opaque_end_to_end_protected_bytes",
+            "test_relay_metadata_visibility_is_explicit_and_not_promised_away",
+        ):
+            with self.subTest(case=case):
+                self.assertIn(case, privacy_tests)
+
+        self.assertIn("AC-P2P-01", ADR4_RELAY)
+        self.assertIn("NOT RUN", ADR4_RELAY)
 
 
     def test_peer_announcement_lease_decision_maps_to_expiry_directory_and_live_acceptance(self):
