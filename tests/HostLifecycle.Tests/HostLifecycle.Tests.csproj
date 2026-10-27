@@ -35,6 +35,7 @@
     <Compile Include="../../src/Host.Windows/Tools/AgentToolWorkerHost.cs" Link="Tools/AgentToolWorkerHost.cs" />
     <Compile Include="../../src/Host.Windows/Networking/IPeerTransport.cs" Link="Networking/IPeerTransport.cs" />
     <Compile Include="../../src/Host.Windows/Networking/Libp2pPeerTransport.cs" Link="Networking/Libp2pPeerTransport.cs" />
+    <Compile Include="../../src/Host.Windows/Networking/PeerTransportFallbackConnector.cs" Link="Networking/PeerTransportFallbackConnector.cs" />
     <Compile Include="../../src/Host.Windows/Networking/Libp2pPeerMessageProtocol.cs" Link="Networking/Libp2pPeerMessageProtocol.cs" />
     <Compile Include="../../src/Host.Windows/Networking/PeerTransportEndpoint.cs" Link="Networking/PeerTransportEndpoint.cs" />
     <Compile Include="../../src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs" Link="Networking/ParticipationGatedNetworkListener.cs" />

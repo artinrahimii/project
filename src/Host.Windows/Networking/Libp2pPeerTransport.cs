@@ -53,7 +53,7 @@ public sealed class Libp2pPeerTransport : IPeerTransport
         _protocol = new Libp2pPeerMessageProtocol(maximumMessageBytes, inboundQueueCapacity);
         _services = new ServiceCollection()
             .AddLogging()
-            .AddLibp2p(builder => builder.AddProtocol(_protocol))
+            .AddLibp2p(builder => builder.WithQuic().AddProtocol(_protocol))
             .BuildServiceProvider();
         try
         {
@@ -121,12 +121,16 @@ public sealed class Libp2pPeerTransport : IPeerTransport
             AddressFamily.InterNetworkV6 => $"/ip6/{bindAddress}",
             _ => throw new ArgumentException("Only IP addresses can be used for listening.", nameof(bindAddress))
         };
-        Multiaddress listenAddress = Multiaddress.Decode($"{prefix}/tcp/{port}");
-        await _peer.StartListenAsync([listenAddress], cancellationToken).ConfigureAwait(false);
+        // Expose two direct paths for the same authenticated PeerId: TCP with negotiated
+        // Noise/TLS, and QUIC over UDP with libp2p's authenticated QUIC stack.
+        // Discovery shares addresses only; inference payloads remain on the peer connection.
+        Multiaddress tcpListenAddress = Multiaddress.Decode($"{prefix}/tcp/{port}");
+        Multiaddress quicListenAddress = Multiaddress.Decode($"{prefix}/udp/{port}/quic-v1");
+        await _peer.StartListenAsync([tcpListenAddress, quicListenAddress], cancellationToken).ConfigureAwait(false);
 
         string[] addresses = _peer.ListenAddresses.Count > 0
             ? _peer.ListenAddresses.Select(AddLocalPeerIdentity).Distinct(StringComparer.Ordinal).ToArray()
-            : [AddLocalPeerIdentity(listenAddress.ToString())];
+            : [AddLocalPeerIdentity(tcpListenAddress.ToString()), AddLocalPeerIdentity(quicListenAddress.ToString())];
         if (addresses.Length == 0)
         {
             throw new IOException("The libp2p node started without publishing a listen address.");

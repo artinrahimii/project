@@ -21382,33 +21382,120 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0117 و T0115 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "src/Host.Windows/Networking/PeerTransportFallbackConnector.cs",
+        "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+        "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+        ".github/workflows/product-build.yml",
+        "step three/T0118/execution-report.md",
+        "step three/T0118/evidence/verification.md"
+      ],
       "expected_output_paths": [
         "src/Shared.Networking/ یا src/Host.Windows/Networking/ + tests/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "src/Host.Windows/Networking/PeerTransportFallbackConnector.cs",
+        "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+        "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs",
+        ".github/workflows/product-build.yml",
+        "docs/decisions/ADR-0002-direct-p2p-data-path.md",
+        "step three/T0118/evidence/verification.md"
+      ],
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0118-A001 adds ordered direct-address fallback between TCP and QUIC/UDP under the same expected PeerId. The connector receives only endpoint/identity metadata and never application payloads. It covers the case where TCP is unavailable but direct UDP/QUIC remains reachable; it does not claim to traverse NAT or a firewall that blocks both paths. Exact-head CI pending.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0118-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Host.Windows/Networking/PeerTransportFallbackConnector.cs",
+          "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+          "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs",
+          "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+          ".github/workflows/product-build.yml",
+          "step three/T0118/execution-report.md",
+          "step three/T0118/evidence/verification.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
-          "affected_by_contract_changes": [],
-          "review_evidence": []
+          "state": "required",
+          "triggering_contracts": [
+            "IPeerTransport secure-connect/send/receive/disconnect contract",
+            "PeerTransportEndpoint pinned expected PeerId contract",
+            "direct TCP plus QUIC/UDP candidate-address contract"
+          ],
+          "affected_by_contract_changes": [
+            "T0119",
+            "T0120"
+          ],
+          "review_evidence": [
+            "src/Host.Windows/Networking/IPeerTransport.cs",
+            "src/Host.Windows/Networking/PeerTransportEndpoint.cs",
+            "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+            "src/Host.Windows/Networking/PeerTransportFallbackConnector.cs",
+            "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0118-A001",
+          "started_at": "2026-10-27T04:11:22.737Z",
+          "ended_at": "2026-10-27T04:11:22.737Z",
+          "result": "partial",
+          "summary": "Added TCP+QUIC direct listen addresses, a PeerId-pinned fallback connector and a real integration scenario that first refuses TCP and then connects via QUIC to the same expected peer. The connector receives only address and identity metadata. Exact-head CI pending; NAT hole punching and relay are not claimed.",
+          "changed_files": [
+            "src/Host.Windows/Networking/PeerTransportFallbackConnector.cs",
+            "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+            "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+            ".github/workflows/product-build.yml",
+            "step three/T0118/execution-report.md",
+            "step three/T0118/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "HostLifecycle/P2P fallback integration",
+              "result": "pending",
+              "summary": "Verify a refused TCP endpoint falls back to QUIC on the same pinned PeerId and preserves binary bytes in both directions."
+            },
+            {
+              "name": "HostLifecycle complete suite",
+              "result": "pending",
+              "summary": "Runs with the required Linux MsQuic native runtime installed."
+            },
+            {
+              "name": "Windows WPF, Android APK/Protobuf and Step Three quality gate",
+              "result": "pending",
+              "summary": "Exact-head regression workflows pending."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            {
+              "path": "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+              "detail": "Adds the libp2p QUIC transport and publishes TCP and QUIC/UDP addresses for the same PeerId."
+            },
+            {
+              "path": "src/Host.Windows/Networking/PeerTransportFallbackConnector.cs",
+              "detail": "Adds sequential direct-address retries, consistent expected PeerId validation, safe error summaries, failed-transport disposal and success ownership."
+            }
+          ],
+          "follow_up": "Run exact-head CI. Fix any observed issue, and keep T0118 in_progress until the real fallback passes. Do not claim hole punching or relay."
+        }
+      ]
     },
     {
       "id": "T0119",
@@ -29313,19 +29400,29 @@
       "from": "T0118",
       "to": "T0119",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "Reviewed T0118 direct address fallback against T0119's conditional encrypted-byte-relay task. The relay design can be assessed after direct candidates and does not consume a T0118-specific API or data artifact, so preserve the blocks edge as conservative sequencing only.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/Networking/PeerTransportFallbackConnector.cs",
+        "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+        "docs/decisions/ADR-0002-direct-p2p-data-path.md",
+        "step three/T0118/execution-report.md"
+      ]
     },
     {
       "from": "T0115",
       "to": "T0119",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "Reviewed T0115 legacy TCP listener lifecycle and frame-rejection artifacts against T0119 relay-byte design. T0119 consumes no T0115-specific API or data output; preserve blocks as conservative sequencing only.",
+      "validation_status": "validated",
+      "evidence": [
+        "tests/HostLifecycle.Tests/NetworkInferenceRequestFrameAcceptanceTests.cs",
+        "src/Host.Windows/Networking/NetworkInferenceRequestFrameReader.cs",
+        "src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs",
+        "step three/T0115/evidence/verification.md"
+      ]
     },
     {
       "from": "T0119",
@@ -33580,8 +33677,42 @@
         "step three/T0115/evidence/verification.md"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-27T04:11:22.737Z",
+      "edge_from": "T0118",
+      "edge_to": "T0119",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "old_validation_status": "unreviewed",
+      "new_validation_status": "validated",
+      "reason": "Reviewed T0118 direct address fallback against T0119's conditional encrypted-byte-relay task. The relay design can be assessed after direct candidates and does not consume a T0118-specific API or data artifact, so preserve the blocks edge as conservative sequencing only.",
+      "evidence": [
+        "src/Host.Windows/Networking/PeerTransportFallbackConnector.cs",
+        "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+        "docs/decisions/ADR-0002-direct-p2p-data-path.md",
+        "step three/T0118/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-27T04:11:22.737Z",
+      "edge_from": "T0115",
+      "edge_to": "T0119",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "old_validation_status": "unreviewed",
+      "new_validation_status": "validated",
+      "reason": "Reviewed T0115 legacy TCP listener lifecycle and frame-rejection artifacts against T0119 relay-byte design. T0119 consumes no T0115-specific API or data output; preserve blocks as conservative sequencing only.",
+      "evidence": [
+        "tests/HostLifecycle.Tests/NetworkInferenceRequestFrameAcceptanceTests.cs",
+        "src/Host.Windows/Networking/NetworkInferenceRequestFrameReader.cs",
+        "src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs",
+        "step three/T0115/evidence/verification.md"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-27T03:41:07.654Z"
+  "updated_at": "2026-10-27T04:11:22.737Z"
 }
 ```

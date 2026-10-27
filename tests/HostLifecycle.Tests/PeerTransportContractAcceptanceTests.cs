@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Security.Authentication;
+using Nethermind.Libp2p.Core;
 using WhiteP.Host.Windows.Networking;
 
 internal static class PeerTransportContractAcceptanceTests
@@ -15,7 +16,9 @@ internal static class PeerTransportContractAcceptanceTests
         VerifyInterfaceExposesTheRequiredSecureLifecycle();
         VerifyEndpointRequiresAddressAndExpectedIdentity();
         await VerifyDirectEncryptedPeerMessageExchangeAsync().ConfigureAwait(false);
-        Console.WriteLine("PASS: IPeerTransport contract plus direct libp2p TCP message exchange, peer identity pinning, bounded framing and idempotent disconnect.");
+        await VerifyQuicFallbackAfterUnreachableTcpAddressAsync().ConfigureAwait(false);
+        await VerifyFallbackRejectsMixedPeerIdentitiesBeforeConnectingAsync().ConfigureAwait(false);
+        Console.WriteLine("PASS: IPeerTransport contract, direct libp2p TCP exchange, authenticated TCP-to-QUIC fallback, bounded framing and disconnect semantics.");
     }
 
     private static async Task VerifyDirectEncryptedPeerMessageExchangeAsync()
@@ -27,9 +30,11 @@ internal static class PeerTransportContractAcceptanceTests
 
         int port = ReserveTcpPort();
         await server.StartListeningAsync(IPAddress.Loopback, port).WaitAsync(TimeSpan.FromSeconds(10)).ConfigureAwait(false);
-        string serverAddress = server.ListenAddresses.Single();
+        string serverAddress = server.ListenAddresses.Single(address => address.Contains("/tcp/", StringComparison.Ordinal));
         Assert(serverAddress.Contains("/p2p/", StringComparison.Ordinal),
             "The listen address must include the local PeerId for authenticated dialing.");
+        Assert(server.ListenAddresses.Any(address => address.Contains("/quic-v1", StringComparison.Ordinal)),
+            "The listener must publish a QUIC/UDP alternative for the same authenticated peer.");
 
         await using (var mismatchedIdentityClient = new Libp2pPeerTransport(maximumMessageBytes: 1024))
         {
@@ -88,6 +93,105 @@ internal static class PeerTransportContractAcceptanceTests
         await client.DisconnectAsync(timeout.Token).ConfigureAwait(false);
         await client.DisconnectAsync(timeout.Token).ConfigureAwait(false);
         Assert(!client.IsConnected, "Disconnect must clear the authenticated connection state.");
+    }
+
+    private static async Task VerifyQuicFallbackAfterUnreachableTcpAddressAsync()
+    {
+        var fallbackClientIdentity = new Identity();
+        string fallbackClientPeerId = new PeerId(fallbackClientIdentity.PublicKey).ToString();
+        await using var server = new Libp2pPeerTransport(
+            expectedRemotePeerIdentity: fallbackClientPeerId,
+            maximumMessageBytes: 1024);
+
+        using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(25));
+        int listenPort = ReserveTcpPort();
+        await server.StartListeningAsync(IPAddress.Loopback, listenPort, timeout.Token)
+            .WaitAsync(TimeSpan.FromSeconds(10), timeout.Token).ConfigureAwait(false);
+
+        string tcpAddress = server.ListenAddresses.Single(address => address.Contains("/tcp/", StringComparison.Ordinal));
+        string quicAddress = server.ListenAddresses.Single(address => address.Contains("/quic-v1", StringComparison.Ordinal));
+        int closedPort = ReserveTcpPort();
+        string unavailableTcpAddress = ReplaceAddressPort(tcpAddress, "tcp", closedPort);
+
+        var candidates = new[]
+        {
+            new PeerTransportEndpoint(unavailableTcpAddress, server.LocalPeerIdentity),
+            new PeerTransportEndpoint(quicAddress, server.LocalPeerIdentity)
+        };
+
+        await using PeerTransportConnectionResult connection = await PeerTransportFallbackConnector.ConnectAsync(
+            candidates,
+            server.LocalPeerIdentity,
+            () => new Libp2pPeerTransport(localIdentity: fallbackClientIdentity, maximumMessageBytes: 1024),
+            timeout.Token).WaitAsync(TimeSpan.FromSeconds(25), timeout.Token).ConfigureAwait(false);
+
+        Assert(connection.FailedAttemptCount == 1,
+            "Fallback should report one refused TCP candidate before selecting QUIC.");
+        Assert(connection.SelectedEndpoint.Address == quicAddress,
+            "The fallback must select the reachable QUIC address after the TCP candidate fails.");
+        Assert(connection.Transport.IsConnected &&
+               connection.Transport.RemotePeerIdentity == server.LocalPeerIdentity &&
+               server.RemotePeerIdentity == fallbackClientPeerId,
+            "The fallback transport must authenticate the same expected peer identity.");
+
+        byte[] requestBytes = [0x10, 0x00, 0xFE, 0x44];
+        await connection.Transport.SendMessageAsync(requestBytes, timeout.Token).ConfigureAwait(false);
+        byte[] receivedRequest = await server.ReceiveMessageAsync(timeout.Token)
+            .WaitAsync(TimeSpan.FromSeconds(5), timeout.Token).ConfigureAwait(false);
+        Assert(requestBytes.SequenceEqual(receivedRequest),
+            "Binary request bytes must travel directly over the selected peer connection.");
+
+        byte[] responseBytes = [0x20, 0xFD, 0x00, 0x99];
+        await server.SendMessageAsync(responseBytes, timeout.Token).ConfigureAwait(false);
+        byte[] receivedResponse = await connection.Transport.ReceiveMessageAsync(timeout.Token)
+            .WaitAsync(TimeSpan.FromSeconds(5), timeout.Token).ConfigureAwait(false);
+        Assert(responseBytes.SequenceEqual(receivedResponse),
+            "Binary response bytes must return directly over the selected peer connection.");
+
+        await connection.Transport.DisconnectAsync(timeout.Token).ConfigureAwait(false);
+        Assert(!connection.Transport.IsConnected,
+            "The selected fallback connection must report disconnected after local teardown.");
+    }
+
+    private static async Task VerifyFallbackRejectsMixedPeerIdentitiesBeforeConnectingAsync()
+    {
+        await using var expectedPeer = new Libp2pPeerTransport();
+        int factoryCalls = 0;
+        var candidates = new[]
+        {
+            new PeerTransportEndpoint("/ip4/127.0.0.1/tcp/41001", expectedPeer.LocalPeerIdentity),
+            new PeerTransportEndpoint("/ip4/127.0.0.1/udp/41001/quic-v1", "different-peer-identity")
+        };
+
+        try
+        {
+            await PeerTransportFallbackConnector.ConnectAsync(
+                candidates,
+                expectedPeer.LocalPeerIdentity,
+                () =>
+                {
+                    factoryCalls++;
+                    return new Libp2pPeerTransport();
+                }).ConfigureAwait(false);
+        }
+        catch (ArgumentException)
+        {
+            Assert(factoryCalls == 0,
+                "Mixed peer identities must be rejected before creating or dialing a transport.");
+            return;
+        }
+
+        throw new InvalidOperationException("Fallback accepted a candidate list with mixed expected peer identities.");
+    }
+
+    private static string ReplaceAddressPort(string multiaddress, string protocol, int replacementPort)
+    {
+        string[] parts = multiaddress.Split('/');
+        int protocolIndex = Array.IndexOf(parts, protocol);
+        Assert(protocolIndex >= 0 && protocolIndex + 1 < parts.Length,
+            $"The advertised multiaddress does not contain a valid /{protocol}/port segment.");
+        parts[protocolIndex + 1] = replacementPort.ToString(System.Globalization.CultureInfo.InvariantCulture);
+        return string.Join("/", parts);
     }
 
     private static int ReserveTcpPort()

@@ -125,11 +125,21 @@ jobs:
   host-lifecycle-tests:
     name: Host lifecycle unit and integration tests
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 10.0.x
+      - name: Install MsQuic runtime for QUIC fallback integration
+        shell: bash
+        run: |
+          set -euo pipefail
+          . /etc/os-release
+          curl -fsSL "https://packages.microsoft.com/config/ubuntu/${VERSION_ID}/packages-microsoft-prod.deb" -o /tmp/packages-microsoft-prod.deb
+          sudo dpkg -i /tmp/packages-microsoft-prod.deb
+          rm /tmp/packages-microsoft-prod.deb
+          sudo apt-get update
+          sudo apt-get install --yes libmsquic
       - name: Run lifecycle tests
         run: dotnet run --project tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj --configuration Release
