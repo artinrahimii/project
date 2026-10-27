@@ -20,9 +20,10 @@ internal static class PeerAnnouncementClientAcceptanceTests
         VerifyContractSurfaceIsMetadataOnly();
         NonLoopbackPlainHttpIsRejected();
         await RealAnnouncementAndCapabilityDiscoveryWorkOverLoopbackAsync().ConfigureAwait(false);
+        await PeriodicLeaseRenewalRefreshesTtlAndStopsAsync().ConfigureAwait(false);
         await UnknownPromptFieldIsRejectedByTheControlPlaneAsync().ConfigureAwait(false);
         await OversizedControlMessagesAreRejectedAsync().ConfigureAwait(false);
-        Console.WriteLine("PASS: metadata-only peer announcement and capability discovery; unknown content fields and oversized control messages are rejected.");
+        Console.WriteLine("PASS: metadata-only discovery, periodic TTL renewal/expiry, unknown-field rejection and control-message bounds.");
     }
 
     private static void VerifyContractSurfaceIsMetadataOnly()
@@ -86,6 +87,53 @@ internal static class PeerAnnouncementClientAcceptanceTests
             Assert(noPostInference.StatusCode == HttpStatusCode.NotFound, "The service must not accept inference content on any route.");
         }
         finally { await app.StopAsync().ConfigureAwait(false); }
+    }
+
+    private static async Task PeriodicLeaseRenewalRefreshesTtlAndStopsAsync()
+    {
+        await using var app = PeerAnnouncementServiceHost.Create(Array.Empty<string>(), "http://127.0.0.1:0");
+        await app.StartAsync().ConfigureAwait(false);
+        try
+        {
+            var server = app.Services.GetRequiredService<IServer>();
+            var serviceUri = new Uri(server.Features.Get<IServerAddressesFeature>()!.Addresses.Single(), UriKind.Absolute);
+            using var httpClient = new HttpClient();
+            var client = new PeerAnnouncementClient(httpClient, serviceUri);
+            string peerId = CreatePeerId();
+            var template = new PeerAnnouncement(
+                peerId,
+                [$"/ip4/127.0.0.1/tcp/43011/p2p/{peerId}"],
+                ["inference.v1"],
+                DateTimeOffset.UtcNow.AddMinutes(1));
+
+            await using var lease = new PeerAnnouncementLeasePublisher(
+                client,
+                template,
+                TimeSpan.FromSeconds(2),
+                TimeSpan.FromMilliseconds(200));
+            await lease.StartAsync().ConfigureAwait(false);
+            Assert(lease.IsRunning, "The lease publisher should start after its first announcement succeeds.");
+
+            var first = await client.DiscoverByCapabilityAsync("inference.v1").ConfigureAwait(false);
+            Assert(first.Count == 1 && first[0].PeerId == peerId, "Starting the lease should publish the peer immediately.");
+            DateTimeOffset firstExpiry = first[0].ExpiresAtUtc;
+
+            await Task.Delay(TimeSpan.FromMilliseconds(450)).ConfigureAwait(false);
+            var renewed = await client.DiscoverByCapabilityAsync("inference.v1").ConfigureAwait(false);
+            Assert(renewed.Count == 1 && renewed[0].ExpiresAtUtc > firstExpiry,
+                "Periodic renewal should replace the current announcement with a later expiry.");
+            Assert(lease.LastRenewalFailureType is null, "A successful renewal should leave no recorded transient failure.");
+
+            await lease.StopAsync().ConfigureAwait(false);
+            Assert(!lease.IsRunning, "Stopping the lease should cancel its periodic renewal loop.");
+            await Task.Delay(TimeSpan.FromMilliseconds(2350)).ConfigureAwait(false);
+            Assert((await client.DiscoverByCapabilityAsync("inference.v1").ConfigureAwait(false)).Count == 0,
+                "After renewal stops, the directory should stop returning the peer when its last TTL expires.");
+        }
+        finally
+        {
+            await app.StopAsync().ConfigureAwait(false);
+        }
     }
 
     private static async Task UnknownPromptFieldIsRejectedByTheControlPlaneAsync()

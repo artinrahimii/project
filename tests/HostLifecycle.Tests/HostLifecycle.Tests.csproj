@@ -39,6 +39,7 @@
     <Compile Include="../../src/Host.Windows/Networking/Libp2pPeerTransport.cs" Link="Networking/Libp2pPeerTransport.cs" />
     <Compile Include="../../src/Host.Windows/Networking/PeerTransportFallbackConnector.cs" Link="Networking/PeerTransportFallbackConnector.cs" />
     <Compile Include="../../src/Host.Windows/Networking/PeerAnnouncementClient.cs" Link="Networking/PeerAnnouncementClient.cs" />
+    <Compile Include="../../src/Host.Windows/Networking/PeerAnnouncementLeasePublisher.cs" Link="Networking/PeerAnnouncementLeasePublisher.cs" />
     <Compile Include="../../src/Host.Windows/Networking/Libp2pPeerMessageProtocol.cs" Link="Networking/Libp2pPeerMessageProtocol.cs" />
     <Compile Include="../../src/Host.Windows/Networking/PeerTransportEndpoint.cs" Link="Networking/PeerTransportEndpoint.cs" />
     <Compile Include="../../src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs" Link="Networking/ParticipationGatedNetworkListener.cs" />

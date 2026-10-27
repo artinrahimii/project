@@ -21961,20 +21961,40 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0120 و T0115 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال انجام",
+      "actual_output_paths": [
+        "src/Host.Windows/Networking/PeerAnnouncementLeasePublisher.cs",
+        "tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+        "step three/T0121/execution-report.md",
+        "step three/T0121/evidence/verification.md"
+      ],
       "expected_output_paths": [
         "src/Shared.Networking/ یا src/Host.Windows/Networking/ + tests/"
       ],
-      "evidence": [],
+      "evidence": [
+        "src/Host.Windows/Networking/PeerAnnouncementLeasePublisher.cs",
+        "tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+        "src/Host.Windows/Networking/PeerAnnouncementClient.cs",
+        "src/Rendezvous.Service/PeerAnnouncementDirectory.cs",
+        "step three/T0121/evidence/verification.md"
+      ],
       "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0121-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Host.Windows/Networking/PeerAnnouncementLeasePublisher.cs",
+          "tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs",
+          "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+          "step three/T0121/execution-report.md",
+          "step three/T0121/evidence/verification.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
@@ -21984,10 +22004,43 @@
           "state": "not_required",
           "triggering_contracts": [],
           "affected_by_contract_changes": [],
-          "review_evidence": []
+          "review_evidence": [
+            "src/Shared.Contracts/Networking/PeerAnnouncement.cs",
+            "src/Host.Windows/Networking/PeerAnnouncementClient.cs",
+            "src/Rendezvous.Service/PeerAnnouncementDirectory.cs"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0121-A001",
+          "started_at": "2026-10-27T05:24:17.800Z",
+          "ended_at": "2026-10-27T05:24:17.800Z",
+          "result": "partial",
+          "summary": "Added a reusable renewable announcement-lease publisher and a live loopback HTTP acceptance test for initial publish, TTL extension, stop and natural expiry. Host UI/runtime wiring remains outstanding because the current host does not yet configure a reachable rendezvous endpoint or advertise a verified non-loopback peer address.",
+          "changed_files": [
+            "src/Host.Windows/Networking/PeerAnnouncementLeasePublisher.cs",
+            "tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+            "step three/T0121/execution-report.md",
+            "step three/T0121/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "command": "GitHub Actions product-build and Step Three quality workflows",
+              "result": "pending",
+              "summary": "Will run after the online main commit. A local .NET SDK is not installed in this execution environment, so no local .NET test result is claimed."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "After CI completes, record the exact workflow evidence; then integrate the lease publisher only when a reachable host address and rendezvous endpoint can be configured without advertising loopback as remotely reachable."
+        }
+      ]
     },
     {
       "id": "T0122",
@@ -29813,19 +29866,29 @@
       "from": "T0120",
       "to": "T0121",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0121 renews the existing metadata announcement by publishing a fresh ExpiresAtUtc through PeerAnnouncementClient.AnnounceAsync; the announcement contract caps expiry at MaximumLifetime and the directory replaces a peer's current record and filters expired records during discovery. This is a direct API/lease contract dependency, not inferred from type=blocks.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Shared.Contracts/Networking/PeerAnnouncement.cs",
+        "src/Host.Windows/Networking/PeerAnnouncementClient.cs",
+        "src/Rendezvous.Service/PeerAnnouncementDirectory.cs",
+        "step three/T0120/execution-report.md"
+      ]
     },
     {
       "from": "T0115",
       "to": "T0121",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0115 verifies the legacy TCP inference-frame listener's disconnect, malformed-frame and shutdown behavior. T0121 uses the HTTP metadata announcement client and expiry directory and consumes no T0115-specific API or output; keep the original blocks edge as conservative execution order only.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/Networking/NetworkInferenceRequestFrameReader.cs",
+        "src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs",
+        "tests/HostLifecycle.Tests/NetworkInferenceRequestFrameAcceptanceTests.cs",
+        "step three/T0115/execution-report.md"
+      ]
     },
     {
       "from": "T0121",
@@ -34112,8 +34175,42 @@
         "step three/T0115/evidence/verification.md"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-27T05:24:17.800Z",
+      "edge_from": "T0120",
+      "edge_to": "T0121",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "old_validation_status": "unreviewed",
+      "new_validation_status": "validated",
+      "reason": "T0121 renews the existing metadata announcement by publishing a fresh ExpiresAtUtc through PeerAnnouncementClient.AnnounceAsync; the announcement contract caps expiry at MaximumLifetime and the directory replaces a peer's current record and filters expired records during discovery. This is a direct API/lease contract dependency, not inferred from type=blocks.",
+      "evidence": [
+        "src/Shared.Contracts/Networking/PeerAnnouncement.cs",
+        "src/Host.Windows/Networking/PeerAnnouncementClient.cs",
+        "src/Rendezvous.Service/PeerAnnouncementDirectory.cs",
+        "step three/T0120/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-27T05:24:17.800Z",
+      "edge_from": "T0115",
+      "edge_to": "T0121",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "old_validation_status": "unreviewed",
+      "new_validation_status": "validated",
+      "reason": "T0115 verifies the legacy TCP inference-frame listener's disconnect, malformed-frame and shutdown behavior. T0121 uses the HTTP metadata announcement client and expiry directory and consumes no T0115-specific API or output; keep the original blocks edge as conservative execution order only.",
+      "evidence": [
+        "src/Host.Windows/Networking/NetworkInferenceRequestFrameReader.cs",
+        "src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs",
+        "tests/HostLifecycle.Tests/NetworkInferenceRequestFrameAcceptanceTests.cs",
+        "step three/T0115/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-27T04:58:10Z"
+  "updated_at": "2026-10-27T05:24:17.800Z"
 }
 ```
