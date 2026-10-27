@@ -40,3 +40,16 @@ The lease publisher is not yet wired into the WPF host participation lifecycle b
 - **Correction:** the test now wraps its loopback `HttpClient` in `PeerAnnouncementClient` before exercising `PeerAnnouncementLeasePublisher` constructor validation. The tests do not send a network request during these constructor assertions.
 - **Verification:** exact commit `e4bd21fe4bc3a7bad2e0ed45f12843284bb58ee2` has a passing graph/Python quality workflow, but its Host lifecycle job failed as above. The correction's exact-commit CI is pending; no test pass is claimed yet.
 - **Task status:** `in_progress`; the host UI/participation lifecycle integration is still not safe to enable without configured rendezvous HTTPS and a verified peer-reachable address.
+
+
+## T0121-A005 — exact-commit CI verification (2026-10-27)
+
+- **Exact implementation/test commit:** [`8a49b48259f693dc2ddc04e846a78fe15bff8227` (`V 3.0.368`)](https://github.com/artinrahimii/project/commit/8a49b48259f693dc2ddc04e846a78fe15bff8227).
+- **Step Three quality gate:** PASS — [run 40456065310](https://github.com/artinrahimii/project/actions/runs/40456065310); all automated test, Python syntax, graph, and output/evidence steps completed successfully.
+- **HostLifecycle acceptance tests:** PASS — [job 122029550003](https://github.com/artinrahimii/project/actions/runs/40456065291/job/122029550003), including the corrected T0121 acceptance suite.
+- **Windows WPF build/startup checks:** PASS — [job 122029549657](https://github.com/artinrahimii/project/actions/runs/40456065291/job/122029549657).
+- **Android APK/lint/Protobuf:** PASS — [job 122029549997](https://github.com/artinrahimii/project/actions/runs/40456065291/job/122029549997).
+- **Live local inference integration:** PASS — [run 40456065350](https://github.com/artinrahimii/project/actions/runs/40456065350), including the pinned llama.cpp/GGUF and actual local-model inference step.
+- **Acceptance boundary:** these results verify the exact V 3.0.368 build and tests, not host network-participation integration. The publisher is still disconnected from the WPF toggle, and no validated public rendezvous endpoint plus peer-reachable address/identity configuration exists. T0121 therefore remains `in_progress`.
+- **Graph integrity:** the unchanged T0121 -> T0122 edge remains `unreviewed`; no edge classification was changed in this attempt.
+- **Product change:** none in this attempt; this section records observed CI output only.

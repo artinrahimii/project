@@ -21981,11 +21981,11 @@
         "src/Rendezvous.Service/PeerAnnouncementDirectory.cs",
         "step three/T0121/evidence/verification.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0121-A005 verification update (2026-10-27): all exact-commit GitHub Actions workflows for V 3.0.368 passed, including the HostLifecycle acceptance suite. This validates the correction to the tests, but does not complete runtime lifecycle integration: the publisher is not yet wired to the WPF participation toggle and safe reachable rendezvous/advertised-address configuration remains unavailable. Task status remains in_progress.",
       "execution_summary": {
-        "attempt_count": 4,
+        "attempt_count": 5,
         "failed_attempt_count": 1,
-        "last_attempt_id": "T0121-A004",
+        "last_attempt_id": "T0121-A005",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Host.Windows/Networking/PeerAnnouncementLeasePublisher.cs",
@@ -21996,14 +21996,20 @@
           "step three/project-graph.md"
         ],
         "related_commits": [
-          "969ad720db1a84c1f633031300ba26e00d48d5fa"
+          "969ad720db1a84c1f633031300ba26e00d48d5fa",
+          "8a49b48259f693dc2ddc04e846a78fe15bff8227"
         ],
         "tests_passed": [
           "HostLifecycle unit/integration suite PASS on exact 969ad720db1a84c1f633031300ba26e00d48d5fa; log confirms periodic TTL renewal and natural expiry acceptance: https://github.com/artinrahimii/project/actions/runs/40455186298/job/122026746502",
           "Step Three quality gate PASS on exact 969ad720db1a84c1f633031300ba26e00d48d5fa (Python tests, compileall, graph structure and repo output/evidence guard): https://github.com/artinrahimii/project/actions/runs/40455186284",
           "Windows WPF Release build, C# whitespace formatting, generated Protobuf validation, startup smoke and host policy/capability checks PASS: https://github.com/artinrahimii/project/actions/runs/40455186298/job/122026746273",
           "Android Kotlin lint, debug APK build, Protobuf round-trip and generated-source checks PASS: https://github.com/artinrahimii/project/actions/runs/40455186298/job/122026746493",
-          "Real local llama.cpp process and GGUF response/cancellation integration PASS: https://github.com/artinrahimii/project/actions/runs/40455186251"
+          "Real local llama.cpp process and GGUF response/cancellation integration PASS: https://github.com/artinrahimii/project/actions/runs/40455186251",
+          "Step Three quality gate on exact commit 8a49b48259f693dc2ddc04e846a78fe15bff8227 — PASS: Run 40456065310, job 122029549896: automated tests, Python syntax, graph structure, and repository-backed output/evidence checks all completed successfully. https://github.com/artinrahimii/project/actions/runs/40456065310",
+          "Host lifecycle unit and integration tests on exact commit 8a49b48259f693dc2ddc04e846a78fe15bff8227 — PASS: Run 40456065291, job 122029550003: the HostLifecycle unit/integration test step completed successfully, including the corrected T0121 acceptance test suite. https://github.com/artinrahimii/project/actions/runs/40456065291/job/122029550003",
+          "Windows WPF host Release build and startup smoke on exact commit 8a49b48259f693dc2ddc04e846a78fe15bff8227 — PASS: Run 40456065291, job 122029549657: C# formatting, Release build, generated Protobuf validation, startup smoke, and Windows policy checks passed. https://github.com/artinrahimii/project/actions/runs/40456065291/job/122029549657",
+          "Android APK build, lint and Protobuf checks on exact commit 8a49b48259f693dc2ddc04e846a78fe15bff8227 — PASS: Run 40456065291, job 122029549997: Kotlin formatting/lint, debug APK build, Protobuf round-trip, generated-source validation, and artifact upload passed. https://github.com/artinrahimii/project/actions/runs/40456065291/job/122029549997",
+          "Real local llama.cpp/GGUF inference integration on exact commit 8a49b48259f693dc2ddc04e846a78fe15bff8227 — PASS: Run 40456065350, job 122029550007: pinned llama.cpp and GGUF validation plus live local-model inference acceptance completed successfully. https://github.com/artinrahimii/project/actions/runs/40456065350"
         ],
         "tests_failed": [
           "V 3.0.367 CI: Host lifecycle tests failed to compile because the new test passed HttpClient where PeerAnnouncementClient is required (CS1503)."
@@ -22142,6 +22148,51 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Inspect CI for V 3.0.368. If it passes, keep T0121 in_progress until rendezvous HTTPS and peer-reachable address configuration can be safely wired into the host lifecycle."
+        },
+        {
+          "attempt_id": "T0121-A005",
+          "started_at": "2026-10-27T05:37:00Z",
+          "ended_at": "2026-10-27T05:39:00Z",
+          "result": "partial",
+          "summary": "Verified the exact V 3.0.368 main commit on GitHub Actions. Step Three quality checks, HostLifecycle tests, Windows WPF build/startup checks, Android APK/lint/Protobuf checks, and live local llama.cpp/GGUF inference all passed. T0121 remains incomplete because the renewable publisher is not wired into the WPF participation lifecycle, and no safe configured rendezvous HTTPS endpoint plus verified peer-reachable address/identity path is available; advertising loopback or an unverified address would be incorrect.",
+          "changed_files": [
+            "step three/T0121/execution-report.md",
+            "step three/T0121/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "command": "Step Three quality gate on exact commit 8a49b48259f693dc2ddc04e846a78fe15bff8227",
+              "result": "passed",
+              "summary": "Run 40456065310, job 122029549896: automated tests, Python syntax, graph structure, and repository-backed output/evidence checks all completed successfully. https://github.com/artinrahimii/project/actions/runs/40456065310"
+            },
+            {
+              "command": "Host lifecycle unit and integration tests on exact commit 8a49b48259f693dc2ddc04e846a78fe15bff8227",
+              "result": "passed",
+              "summary": "Run 40456065291, job 122029550003: the HostLifecycle unit/integration test step completed successfully, including the corrected T0121 acceptance test suite. https://github.com/artinrahimii/project/actions/runs/40456065291/job/122029550003"
+            },
+            {
+              "command": "Windows WPF host Release build and startup smoke on exact commit 8a49b48259f693dc2ddc04e846a78fe15bff8227",
+              "result": "passed",
+              "summary": "Run 40456065291, job 122029549657: C# formatting, Release build, generated Protobuf validation, startup smoke, and Windows policy checks passed. https://github.com/artinrahimii/project/actions/runs/40456065291/job/122029549657"
+            },
+            {
+              "command": "Android APK build, lint and Protobuf checks on exact commit 8a49b48259f693dc2ddc04e846a78fe15bff8227",
+              "result": "passed",
+              "summary": "Run 40456065291, job 122029549997: Kotlin formatting/lint, debug APK build, Protobuf round-trip, generated-source validation, and artifact upload passed. https://github.com/artinrahimii/project/actions/runs/40456065291/job/122029549997"
+            },
+            {
+              "command": "Real local llama.cpp/GGUF inference integration on exact commit 8a49b48259f693dc2ddc04e846a78fe15bff8227",
+              "result": "passed",
+              "summary": "Run 40456065350, job 122029550007: pinned llama.cpp and GGUF validation plus live local-model inference acceptance completed successfully. https://github.com/artinrahimii/project/actions/runs/40456065350"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Implement runtime configuration only after the product has a validated externally reachable rendezvous HTTPS endpoint, a verified peer-reachable listening address and an explicit trusted peer-identity policy. Wire publisher start/stop to the actual participation toggle and shutdown, and add exact-host-lifecycle integration tests. Keep T0121 in_progress until that real integration is safely verified; keep T0121 -> T0122 unreviewed until its relationship is checked with source evidence."
         }
       ]
     },
@@ -34314,6 +34365,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-27T05:34:00.245Z"
+  "updated_at": "2026-10-27T05:39:00Z"
 }
 ```
