@@ -400,3 +400,12 @@
 - Product workflow: [run 40508722167](https://github.com/artinrahimii/project/actions/runs/40508722167) was still in progress when inspected. The HostLifecycle test command step had passed but the job had not finalized; Windows and Android jobs had not reached final conclusions. No aggregate product success is claimed here.
 - Result: this quality verification succeeded, but A035 is still a partial implementation increment and `T0007` remains `in_progress`.
 - Follow-up: inspect the final product workflow outcome and continue mapping uncovered decisions to production code/configuration and runnable tests.
+
+## Attempt T0007-A037 — final V 3.0.392 product CI and V 3.0.393 quality verification
+
+- Verified at: 2026-10-27T16:36:00+03:30.
+- V 3.0.392 full product workflow: PASS — [run 40508722167](https://github.com/artinrahimii/project/actions/runs/40508722167) ultimately concluded successfully across HostLifecycle, Windows WPF and Android. This result became final after A036 had recorded the workflow as still in progress.
+- V 3.0.393 Step Three quality gate: PASS — [run 40509035773](https://github.com/artinrahimii/project/actions/runs/40509035773), including automated tests, Python syntax, graph structure, and recorded-output/evidence validation.
+- V 3.0.393 product workflow: [run 40509035822](https://github.com/artinrahimii/project/actions/runs/40509035822) remained in progress at this check; no aggregate product success is claimed for that commit.
+- Result: the bounded verification succeeded; `T0007` remains `in_progress` and `AC-P2P-01` remains **NOT RUN**.
+- Follow-up: inspect final product CI on V 3.0.393, then continue the next traceability increment without marking broad T0007 acceptance complete.

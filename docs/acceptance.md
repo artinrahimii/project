@@ -357,3 +357,8 @@ Added [ADR-0005](decisions/ADR-0005-authenticated-peer-transport-fallback.md) an
 ## T0007-A036 — exact V 3.0.392 quality verification
 
 The exact V 3.0.392 Step Three quality gate [40508722204](https://github.com/artinrahimii/project/actions/runs/40508722204) passed automated tests, Python syntax, graph structure (229 nodes / 426 edges), and recorded-output/evidence validation. This run includes the new ADR-0005 source-contract regression for authenticated direct peer transport fallback. Product workflow [40508722167](https://github.com/artinrahimii/project/actions/runs/40508722167) remained in progress at the time of this record; no aggregate Windows/Android product success is claimed. T0007 remains `in_progress`.
+
+
+## T0007-A037 — final V 3.0.392 product CI and V 3.0.393 quality verification
+
+The full product workflow on exact V 3.0.392 [40508722167](https://github.com/artinrahimii/project/actions/runs/40508722167) subsequently concluded successfully; its HostLifecycle, Windows WPF and Android jobs all completed successfully. The exact V 3.0.393 Step Three quality gate [40509035773](https://github.com/artinrahimii/project/actions/runs/40509035773) also passed automated tests, syntax, graph structure and output/evidence checks. The product workflow for V 3.0.393 [40509035822](https://github.com/artinrahimii/project/actions/runs/40509035822) remained in progress at the time of recording, so no full-product result is claimed for it. T0007 remains `in_progress`; `AC-P2P-01` remains **NOT RUN**.
