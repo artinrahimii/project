@@ -558,3 +558,17 @@
 - **Verification:** exact-candidate quality/product CI is pending; no local test run is claimed.
 - **Result:** partial pending exact-commit CI.
 - **Follow-up:** inspect CI on `V 3.0.406`, fix any failure, and append a separate verification attempt.
+
+## T0007-A051 — failed exact-commit verification (2026-10-27)
+
+- **Candidate:** `a8c6258bfaac1dc183a74c1abc6b8f613bb8ac96` (`V 3.0.406`).
+- **Step Three quality gate: FAILED** — [run 40528510897](https://github.com/artinrahimii/project/actions/runs/40528510897). The suite ran 172 tests and reported one error in `test_every_adr_document_is_registered`: `TypeError` at test line 349 because an over-escaped regex made the extracted item a tuple instead of a path string.
+- **Action:** the failed attempt is preserved in graph history. The test is corrected to parse Markdown link delimiters directly, avoiding that regex.
+- **Result:** failed; no pass is claimed for A051.
+
+## T0007-A052 — correct ADR register test after CI failure (2026-10-27)
+
+- **Baseline:** exact online `main` commit `a8c6258bfaac1dc183a74c1abc6b8f613bb8ac96` (`V 3.0.406`); the failing workflow was inspected before correction.
+- **Fix:** replaced the over-escaped regex extraction with explicit parsing of the `](...)` Markdown link in each ADR row. The regression continues to check that all actual `docs/decisions/ADR-*.md` files are registered exactly once.
+- **Verification:** the corrected exact-candidate quality and product workflows are pending. No local test result is claimed.
+- **Scope:** no runtime code or dependency edge changed. T0007 stays `in_progress`; `AC-P2P-01` remains **NOT RUN**.

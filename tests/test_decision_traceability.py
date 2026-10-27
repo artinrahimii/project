@@ -345,14 +345,24 @@ class DecisionTraceabilityTests(unittest.TestCase):
     def test_every_adr_document_is_registered(self):
         decision_dir = ROOT / "docs" / "decisions"
         decision_files = sorted(path.name for path in decision_dir.glob("ADR-*.md"))
-        registered_files = [
-            Path(path).name
-            for path in re.findall(
-                r"^\\|\\s*\\[ADR-[^\\]]+\\]\\(([^)]+\\.md)\\)\\s*\\|",
-                REGISTER,
-                re.MULTILINE,
+        registered_files = []
+
+        for line in REGISTER.splitlines():
+            if not line.startswith("| [ADR-"):
+                continue
+            link_start = line.find("](")
+            link_end = line.find(")", link_start + 2)
+            self.assertGreaterEqual(
+                link_start,
+                0,
+                f"Decision row has no ADR link: {line}",
             )
-        ]
+            self.assertGreater(
+                link_end,
+                link_start + 2,
+                f"Decision row has a malformed ADR link: {line}",
+            )
+            registered_files.append(Path(line[link_start + 2:link_end]).name)
 
         self.assertTrue(decision_files, "At least one ADR document must exist.")
         self.assertEqual(
@@ -365,6 +375,7 @@ class DecisionTraceabilityTests(unittest.TestCase):
             sorted(registered_files),
             "Every docs/decisions/ADR-*.md file must have exactly one row in the decision register.",
         )
+
 
 if __name__ == "__main__":
     unittest.main()
