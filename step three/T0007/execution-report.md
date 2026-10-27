@@ -538,3 +538,12 @@
 - **Verification:** the exact candidate's Step Three quality and product workflows are pending. No local checkout/test runner was available in this session, so no local test result is claimed.
 - **Result:** partial pending exact-commit CI. T0007 stays `in_progress`; `AC-P2P-01` remains **NOT RUN**.
 - **Follow-up:** inspect CI on `V 3.0.404`; preserve any failure, correct the regression if needed, and record a separate evidence-backed verification attempt.
+
+## T0007-A050 — verify decision-register traceability on exact CI candidate (2026-10-27)
+
+- **Candidate:** `27b1f9123218702b2fcbefe3c721fe77ba9a69f9` (`V 3.0.404`) on online `main`.
+- **Step Three quality gate: PASS** — run [40525282945](https://github.com/artinrahimii/project/actions/runs/40525282945), including **171 Python tests**, Python syntax, graph structure, and repository-backed output/evidence validation. The new `test_every_registered_decision_links_to_existing_sources_and_verification` is explicitly `ok` in the exact-commit log.
+- **HostLifecycle: PASS** — job [122263068318](https://github.com/artinrahimii/project/actions/runs/40525282904/job/122263068318).
+- **Aggregate product build: PENDING** — run [40525282904](https://github.com/artinrahimii/project/actions/runs/40525282904) was still in progress when this record was written; the Windows WPF and Android APK jobs had not reached a final conclusion. No aggregate product pass is claimed.
+- **Scope:** the all-register traceability increment is verified, but broad T0007 remains `in_progress`; `AC-P2P-01` remains **NOT RUN**. No dependency edge or classification changed.
+- **Follow-up:** inspect the remaining Windows and Android job results before claiming whole-product CI success.
