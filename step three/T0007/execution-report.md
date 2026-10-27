@@ -346,3 +346,16 @@
 - Local test limitation: the runtime has no repository checkout and cannot resolve `github.com` for a Git clone, so the Python suite and .NET lifecycle suite were not run locally. The exact-commit GitHub Actions outcome must be inspected after the push; no test pass is claimed here.
 - Result: partial. The traceability increment is implemented, but `T0007` remains `in_progress` because broad task-wide decision-to-code/configuration/test traceability is still incomplete.
 - Follow-up: inspect CI for the exact implementation commit and append a separate verification record with real run IDs and outcomes. Preserve this partial attempt as historical evidence.
+
+## Attempt T0007-A032 — exact V 3.0.389 verification of TCP framing decision traceability
+
+- Verified at: 2026-10-27T12:53:22.560Z.
+- Implementation commit: `903c68987682b9611c7fc58586446719f013e26b` (`V 3.0.389`) at online `main`; the branch head and commit-specific workflow runs were checked before recording this result.
+- Step Three quality gate: PASS — [run 40496338761](https://github.com/artinrahimii/project/actions/runs/40496338761), job 122162624726. Automated tests, Python syntax, graph structure (229 nodes / 426 edges), and recorded-output/evidence validation steps all completed successfully. The decision-traceability regression added by A031 is in this commit's automated test suite.
+- HostLifecycle integration: PASS — [job 122162625961](https://github.com/artinrahimii/project/actions/runs/40496338808/job/122162625961).
+- Windows WPF: PASS — [job 122162625880](https://github.com/artinrahimii/project/actions/runs/40496338808/job/122162625880), including C# formatting, Release build, generated Protobuf checks, startup smoke, agent-tool policy/capability gates, and artifact upload.
+- Android client: PASS — [job 122162625405](https://github.com/artinrahimii/project/actions/runs/40496338808/job/122162625405), including Kotlin lint, debug APK build, Protobuf round-trip tests, generated-source validation, and artifact upload.
+- Dependency review: `T0006 → T0007` remains `validated / contract_or_interface_dependency`; `T0007 → T0008` remains `validated / sequencing_only`. No edge was changed.
+- Scope boundary: this verifies the A031 decision-register/test traceability increment and the exact-commit quality/product CI gates. These results do not prove Android-to-Windows end-to-end inference or live model inference on this commit, and they do not complete the broad task-wide decision-to-code/configuration/test traceability criterion.
+- Result: this verification attempt succeeded; `T0007` stays `in_progress`. No previous failed CI evidence was removed or reclassified.
+- Follow-up: trace the next uncovered implementation decision to production source/configuration and executable tests, then inspect exact-commit CI. Do not mark T0007 done until its broad acceptance criterion is met.
