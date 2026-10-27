@@ -21698,8 +21698,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0119 و T0115 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "تکمیل‌شده",
       "actual_output_paths": [
         "src/Shared.Contracts/Networking/PeerAnnouncement.cs",
         "src/Host.Windows/Networking/PeerAnnouncementClient.cs",
@@ -21731,12 +21731,12 @@
         "docs/decisions/ADR-0004-encrypted-relay-boundary.md",
         "step three/T0120/evidence/verification.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0120-A001 adds a typed metadata-only announcement contract, a client with only announcement/capability operations, and an ephemeral HTTP rendezvous service exposing only the announcement POST and capability GET. Strict JSON rejects unknown fields, the in-memory directory expires and replaces the latest announcement rather than storing history, and the 16 KiB limit is enforced. Real loopback tests are wired; exact-head CI pending.\nV 3.0.361 HostLifecycle failed before executing the loopback service tests because the capability-control test input did not unambiguously create a newline. T0120-A002 makes the control character explicit; the next exact-head CI will decide acceptance.\nV 3.0.362 then failed due an inverted ExpectArgumentException test helper: the contract correctly threw ArgumentException for the explicit newline, but the helper treated that expected exception as a failure. T0120-A003 fixes the helper; runtime integration remains pending.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0120-A001 adds a typed metadata-only announcement contract, a client with only announcement/capability operations, and an ephemeral HTTP rendezvous service exposing only the announcement POST and capability GET. Strict JSON rejects unknown fields, the in-memory directory expires and replaces the latest announcement rather than storing history, and the 16 KiB limit is enforced. Real loopback tests are wired; exact-head CI pending.\nV 3.0.361 HostLifecycle failed before executing the loopback service tests because the capability-control test input did not unambiguously create a newline. T0120-A002 makes the control character explicit; the next exact-head CI will decide acceptance.\nV 3.0.362 then failed due an inverted ExpectArgumentException test helper: the contract correctly threw ArgumentException for the explicit newline, but the helper treated that expected exception as a failure. T0120-A003 fixes the helper; runtime integration remains pending.\nT0120 accepted on exact V 3.0.363 after three attempts: two test attempts failed before loopback integration because of test-input/helper issues; both fixes are preserved in history. The third attempt passed HostLifecycle loopback integration, Windows WPF build/startup/policy checks, Android APK/Protobuf checks, live local llama.cpp/GGUF inference integration, and the Step Three quality/evidence gate. Acceptance is limited to metadata-only announcement/discovery and does not claim the Android app now routes inference to a Windows peer; AC-P2P-01 remains NOT RUN.",
       "execution_summary": {
         "attempt_count": 3,
         "failed_attempt_count": 2,
         "last_attempt_id": "T0120-A003",
-        "last_attempt_result": "partial",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Shared.Contracts/Networking/PeerAnnouncement.cs",
           "src/Host.Windows/Networking/PeerAnnouncementClient.cs",
@@ -21754,19 +21754,24 @@
         ],
         "related_commits": [
           "9985bb108c02226f1817b6d6cd2562467703e487",
-          "7d74171cec228e534f2700f0afc3c5085bf419e5"
+          "7d74171cec228e534f2700f0afc3c5085bf419e5",
+          "63cbad84a6b34367c3ec306116d2b0d8d8320d81"
         ],
         "tests_passed": [
-          "Step Three quality gate PASS on V 3.0.361 and V 3.0.362; these runs validate Python/graph/evidence checks but not C# runtime acceptance."
+          "HostLifecycle suite / PeerAnnouncementClientAcceptanceTests: PASS — https://github.com/artinrahimii/project/actions/runs/40452476275/job/122018153179. Exact V 3.0.363 HostLifecycle job succeeded. Log explicitly reported PASS for metadata-only peer announcement/capability discovery and rejection of unknown content fields and oversized control messages; loopback announce/discover/replacement and route policy tests are wired into the same test method.",
+          "Windows WPF product build: PASS — https://github.com/artinrahimii/project/actions/runs/40452476275/job/122018153275. Exact V 3.0.363 C# formatting, Release build, generated Protobuf, WPF startup smoke and host policy/capability checks passed.",
+          "Android client APK / Protobuf: PASS — https://github.com/artinrahimii/project/actions/runs/40452476275/job/122018153379. Exact V 3.0.363 lint, debug APK, Protobuf round trip, generated sources and artifact upload passed.",
+          "Real local inference integration: PASS — https://github.com/artinrahimii/project/actions/runs/40452476398. Exact V 3.0.363 live llama.cpp/GGUF inference integration passed.",
+          "Step Three quality/evidence gate: PASS — https://github.com/artinrahimii/project/actions/runs/40452476336. Exact V 3.0.363 Python tests, graph structure, syntax and recorded-output/evidence checks passed."
         ],
         "tests_failed": [
-          "V 3.0.361 HostLifecycle: capability invalid-input assertion failed because first generated test string did not create the intended control character; loopback assertions not reached. https://github.com/artinrahimii/project/actions/runs/40451885440",
-          "V 3.0.362 HostLifecycle: explicit newline was rejected correctly but the test helper treated the expected ArgumentException as failure due an inverted try/catch return. Loopback assertions not reached. https://github.com/artinrahimii/project/actions/runs/40452192247"
+          "V 3.0.361 HostLifecycle failure retained: control-character test input was not unambiguous; the loopback service assertions did not execute. https://github.com/artinrahimii/project/actions/runs/40451885440",
+          "V 3.0.362 HostLifecycle failure retained: the explicit newline was rejected, but the assertion helper fell through after catching the expected ArgumentException; loopback assertions did not execute. https://github.com/artinrahimii/project/actions/runs/40452192247"
         ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "required",
+          "state": "passed",
           "triggering_contracts": [
             "REQ-010 direct P2P data path",
             "REQ-011 no central inference API or conversation history",
@@ -21782,9 +21787,17 @@
             "docs/decisions/ADR-0004-encrypted-relay-boundary.md",
             "src/Shared.Contracts/Networking/PeerAnnouncement.cs",
             "src/Rendezvous.Service/PeerAnnouncementServiceHost.cs",
-            "tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs"
+            "tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs",
+            "src/Host.Windows/Networking/PeerAnnouncementClient.cs",
+            "src/Rendezvous.Service/PeerAnnouncementDirectory.cs",
+            "https://github.com/artinrahimii/project/actions/runs/40452476275/job/122018153179",
+            "https://github.com/artinrahimii/project/actions/runs/40452476275/job/122018153275",
+            "https://github.com/artinrahimii/project/actions/runs/40452476275/job/122018153379",
+            "https://github.com/artinrahimii/project/actions/runs/40452476398",
+            "https://github.com/artinrahimii/project/actions/runs/40452476336"
           ]
-        }
+        },
+        "follow_up": "T0121 is the next task. Do not claim AC-P2P-01 or Android-to-Windows inference routing is complete; that is a separate unimplemented runtime path."
       },
       "execution_history": [
         {
@@ -21880,39 +21893,54 @@
         },
         {
           "attempt_id": "T0120-A003",
-          "started_at": "2026-10-27T04:55:24.031Z",
-          "ended_at": "2026-10-27T04:55:24.031Z",
-          "result": "partial",
-          "summary": "Corrected ExpectArgumentException so it returns only from the ArgumentException catch. If an invalid input is accepted without throwing, the helper now fails; expected validation exceptions are correctly treated as passing checks. Exact-head CI pending.",
+          "started_at": "2026-10-27T04:56:20Z",
+          "ended_at": "2026-10-27T04:57:06Z",
+          "result": "succeeded",
+          "summary": "Exact V 3.0.363 passed the loopback metadata rendezvous tests; the aggregate test log reported PASS for announcement/capability discovery, unknown content-field rejection and oversize rejection. Windows WPF, Android APK/Protobuf, live local llama.cpp/GGUF integration and Step Three quality/evidence checks also all passed on this exact SHA. Earlier A001/A002 assertion failures remain in history.",
           "changed_files": [
             "tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs",
             "step three/T0120/execution-report.md",
             "step three/T0120/evidence/verification.md",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "63cbad84a6b34367c3ec306116d2b0d8d8320d81",
           "tests": [
             {
-              "name": "PeerAnnouncementClientAcceptanceTests",
-              "result": "pending",
-              "summary": "The fixed assertion helper must pass the validation precondition and run real loopback announce/discover, replacement, no-inference-route, unknown-field, and oversize checks."
+              "name": "HostLifecycle suite / PeerAnnouncementClientAcceptanceTests",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40452476275/job/122018153179",
+              "summary": "Exact V 3.0.363 HostLifecycle job succeeded. Log explicitly reported PASS for metadata-only peer announcement/capability discovery and rejection of unknown content fields and oversized control messages; loopback announce/discover/replacement and route policy tests are wired into the same test method."
             },
             {
-              "name": "Product build",
-              "result": "pending",
-              "summary": "Exact V 3.0.363 Windows/Android builds and HostLifecycle execution pending."
+              "name": "Windows WPF product build",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40452476275/job/122018153275",
+              "summary": "Exact V 3.0.363 C# formatting, Release build, generated Protobuf, WPF startup smoke and host policy/capability checks passed."
             },
             {
-              "name": "Step Three quality gate",
-              "result": "pending",
-              "summary": "Exact V 3.0.363 graph/evidence validation pending."
+              "name": "Android client APK / Protobuf",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40452476275/job/122018153379",
+              "summary": "Exact V 3.0.363 lint, debug APK, Protobuf round trip, generated sources and artifact upload passed."
+            },
+            {
+              "name": "Real local inference integration",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40452476398",
+              "summary": "Exact V 3.0.363 live llama.cpp/GGUF inference integration passed."
+            },
+            {
+              "name": "Step Three quality/evidence gate",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40452476336",
+              "summary": "Exact V 3.0.363 Python tests, graph structure, syntax and recorded-output/evidence checks passed."
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Run exact V 3.0.363 CI. If loopback integration now runs, fix any actual service/runtime issue before accepting T0120."
+          "follow_up": "T0120 is accepted. Next graph task is T0121; keep the independent application-level Android-to-Windows inference acceptance AC-P2P-01 NOT RUN until an actual route is implemented and proven."
         }
       ]
     },
@@ -34086,6 +34114,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-27T04:55:24.031Z"
+  "updated_at": "2026-10-27T04:58:10Z"
 }
 ```
