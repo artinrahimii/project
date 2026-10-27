@@ -809,3 +809,11 @@
 - Correction: replaced the incorrect filename-in-content assertion with checks for an actual `InferenceRequest` fixture row and the `Base64(wire bytes)` fixture header. The canonical schema, generated bindings, shared fixtures and ADR text are unchanged.
 - No production code, schema, or graph edges changed. The preceding A071 failure remains recorded.
 - Follow-up: inspect V 3.0.425's exact Step Three quality and product workflow. Keep `T0007` `in_progress`; `AC-P2P-01` remains **NOT RUN**.
+
+
+## Verification result for T0007-A072 — exact V 3.0.425
+- Verified: 2026-10-27T17:13:12.123Z
+- Step Three quality gate: **PASS** — [run 40548049260](https://github.com/artinrahimii/project/actions/runs/40548049260) completed on exact commit `27b4175fadf0a530534268c5caa7c0065dd5bd72`. The corrected `test_versioned_cross_platform_protocol_decision_maps_to_canonical_schema_and_wire_checks` is explicitly `ok`; **179 Python tests** passed, as did Python syntax, graph structure and recorded-output/evidence validation.
+- White-P product workflow: **PASS** — [run 40548049300](https://github.com/artinrahimii/project/actions/runs/40548049300) completed successfully on the same exact commit. HostLifecycle job 122343916350, Android APK job 122343916819 and Windows WPF job 122343916961 all passed.
+- The prior A071 quality failure remains preserved; its separate V 3.0.424 product workflow later completed successfully. The correction only changed the fixture-content assertion, not the schema, generated bindings, runtime code or dependency edges.
+- This verifies the bounded REQ-013 traceability increment only. `T0007` remains `in_progress`; `AC-P2P-01` remains **NOT RUN**.
