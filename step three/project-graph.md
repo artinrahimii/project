@@ -21983,9 +21983,9 @@
       ],
       "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
       "execution_summary": {
-        "attempt_count": 1,
+        "attempt_count": 2,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0121-A001",
+        "last_attempt_id": "T0121-A002",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Host.Windows/Networking/PeerAnnouncementLeasePublisher.cs",
@@ -21995,8 +21995,16 @@
           "step three/T0121/evidence/verification.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
+        "related_commits": [
+          "969ad720db1a84c1f633031300ba26e00d48d5fa"
+        ],
+        "tests_passed": [
+          "HostLifecycle unit/integration suite PASS on exact 969ad720db1a84c1f633031300ba26e00d48d5fa; log confirms periodic TTL renewal and natural expiry acceptance: https://github.com/artinrahimii/project/actions/runs/40455186298/job/122026746502",
+          "Step Three quality gate PASS on exact 969ad720db1a84c1f633031300ba26e00d48d5fa (Python tests, compileall, graph structure and repo output/evidence guard): https://github.com/artinrahimii/project/actions/runs/40455186284",
+          "Windows WPF Release build, C# whitespace formatting, generated Protobuf validation, startup smoke and host policy/capability checks PASS: https://github.com/artinrahimii/project/actions/runs/40455186298/job/122026746273",
+          "Android Kotlin lint, debug APK build, Protobuf round-trip and generated-source checks PASS: https://github.com/artinrahimii/project/actions/runs/40455186298/job/122026746493",
+          "Real local llama.cpp process and GGUF response/cancellation integration PASS: https://github.com/artinrahimii/project/actions/runs/40455186251"
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -22039,6 +22047,46 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "After CI completes, record the exact workflow evidence; then integrate the lease publisher only when a reachable host address and rendezvous endpoint can be configured without advertising loopback as remotely reachable."
+        },
+        {
+          "attempt_id": "T0121-A002",
+          "started_at": "2026-10-27T05:24:58Z",
+          "ended_at": "2026-10-27T05:26:56Z",
+          "result": "partial",
+          "summary": "Verified the implementation commit on GitHub Actions: host lifecycle integration tests including TTL renewal/expiry, Step Three quality/evidence guard, Windows WPF Release build/startup smoke, Android lint/debug APK/Protobuf, and real local llama.cpp inference all passed. T0121 remains in_progress because the reusable lease publisher is not yet wired into the host UI/lifecycle; a reachable rendezvous endpoint and externally reachable address are not configured.",
+          "changed_files": [
+            "step three/T0121/execution-report.md",
+            "step three/T0121/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "command": "dotnet run --project tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj --configuration Release",
+              "result": "passed",
+              "summary": "Exact commit 969ad720db1a84c1f633031300ba26e00d48d5fa; PASS line confirms metadata-only discovery, periodic TTL renewal/expiry, unknown-field rejection and control-message bounds. https://github.com/artinrahimii/project/actions/runs/40455186298/job/122026746502"
+            },
+            {
+              "command": "Step Three quality workflow",
+              "result": "passed",
+              "summary": "Python tests, compileall, graph structure and output/evidence checks passed. https://github.com/artinrahimii/project/actions/runs/40455186284"
+            },
+            {
+              "command": "White-P product build",
+              "result": "passed",
+              "summary": "Windows build/format/startup smoke and Android APK/lint/Protobuf jobs all completed successfully. https://github.com/artinrahimii/project/actions/runs/40455186298"
+            },
+            {
+              "command": "Real local inference integration",
+              "result": "passed",
+              "summary": "Live local llama.cpp inference and cancellation checks passed. https://github.com/artinrahimii/project/actions/runs/40455186251"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Wire the lease publisher into actual host participation only after a configuration path for the rendezvous HTTPS endpoint and a verified peer-reachable advertised address exists; add UI/lifecycle acceptance for renew, revoke, app shutdown and expired-host removal."
         }
       ]
     },
@@ -34211,6 +34259,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-27T05:24:17.800Z"
+  "updated_at": "2026-10-27T05:26:56Z"
 }
 ```
