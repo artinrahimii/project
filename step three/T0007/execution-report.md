@@ -623,3 +623,16 @@
 - The corrected ADR-0004 traceability regression passed as part of Step Three quality run [40535105698](https://github.com/artinrahimii/project/actions/runs/40535105698); the suite ran 173 Python tests and reported `OK`.
 - The exact V 3.0.411 product workflow [40535105512](https://github.com/artinrahimii/project/actions/runs/40535105512) completed successfully: Windows WPF build/startup/policy gates, HostLifecycle integration tests, and Android APK/lint/Protobuf checks all passed.
 - Attempt A054 remains failed in the task history for the incorrect assertion in its original commit; A055 is the corrected, CI-verified increment. The overall task T0007 remains `in_progress`, and product P2P gate `AC-P2P-01` remains **NOT RUN**.
+
+
+## Attempt T0007-A056
+- Started: 2026-10-27T16:22:27.874Z
+- Result: partial at commit creation; exact-commit CI verification was pending.
+- Base: 3e43e6909c22d4ebe07073332803d1c54b481fa1 (V 3.0.412).
+- Scope: closed a traceability gap for the existing REQ-017 agent-tool execution boundary. The implementation and runnable HostLifecycle tests already existed, but their architecture/security contract was not represented as a dedicated registered decision.
+- Decision artifact: added `docs/decisions/ADR-0009-agent-tool-execution-boundary.md`, registered it in `docs/decisions/README.md`, and added `test_agent_tool_execution_decision_maps_to_fail_closed_bounded_worker` to `tests/test_decision_traceability.py`.
+- Source review: traced the current capability gate, allowlist/schema validator, confirmation-aware coordinator, shell-free worker process, bounded worker protocol, and their executable HostLifecycle test registrations. No production/runtime code or dependency edge was changed.
+- Security limit: the decision explicitly states that the worker runs as the same OS user and is not an AppContainer/restricted-token sandbox. No broad security-isolation claim is made.
+- Test status at creation: no local test command was executed in this environment. Exact-main GitHub Actions validation is pending and must be inspected before the increment is recorded as verified.
+- Result boundary: this increment does not complete the broad T0007 acceptance criterion; T0007 remains `in_progress`. `AC-P2P-01` remains **NOT RUN**.
+- Follow-up: inspect Step Three quality and product-build workflows triggered by V 3.0.413 on the exact commit. Preserve any failed result; if checks pass, append a separate verification attempt with the observed run URLs and leave T0007 open until remaining decisions are traced.

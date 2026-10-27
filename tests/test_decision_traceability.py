@@ -21,6 +21,7 @@ ADR5_TRANSPORT = (ROOT / "docs/decisions/ADR-0005-authenticated-peer-transport-f
 ADR6_LEASE = (ROOT / "docs/decisions/ADR-0006-peer-announcement-leases.md").read_text(encoding="utf-8")
 ADR7_SINGLE_ACTIVE = (ROOT / "docs/decisions/ADR-0007-single-active-inference.md").read_text(encoding="utf-8")
 ADR8_PROCESS_LAUNCH = (ROOT / "docs/decisions/ADR-0008-local-engine-process-ownership.md").read_text(encoding="utf-8")
+ADR9_AGENT_TOOLS = (ROOT / "docs/decisions/ADR-0009-agent-tool-execution-boundary.md").read_text(encoding="utf-8")
 
 
 class DecisionTraceabilityTests(unittest.TestCase):
@@ -320,6 +321,60 @@ class DecisionTraceabilityTests(unittest.TestCase):
         self.assertIn('"WHITEP_LLAMA_SERVER_SHA256=$serverSha256"', workflow)
         self.assertIn("AC-P2P-01", ADR8_PROCESS_LAUNCH)
         self.assertIn("NOT RUN", ADR8_PROCESS_LAUNCH)
+
+
+    def test_agent_tool_execution_decision_maps_to_fail_closed_bounded_worker(self):
+        paths = (
+            "docs/requirements.md",
+            "src/Host.Windows/Chat/AgentToolCapabilities.cs",
+            "src/Host.Windows/Tools/AgentToolRegistry.cs",
+            "src/Host.Windows/Tools/AgentToolExecutionCoordinator.cs",
+            "src/Host.Windows/Tools/AgentToolProcessExecutor.cs",
+            "src/Host.Windows/Tools/AgentToolWorkerHost.cs",
+            "src/Host.Windows/Tools/WpfAgentToolConfirmationService.cs",
+            "tests/HostLifecycle.Tests/AgentToolExecutionAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/AgentToolProcessExecutorTests.cs",
+            "tests/HostLifecycle.Tests/AgentToolPolicyRejectionAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/AgentToolCapabilityAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/AgentToolRegistryAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+            ".github/workflows/product-build.yml",
+        )
+        self.assertTrue((ROOT / "docs/decisions/ADR-0009-agent-tool-execution-boundary.md").is_file())
+        for relative_path in paths:
+            with self.subTest(path=relative_path):
+                self.assertTrue((ROOT / relative_path).is_file(), relative_path)
+                self.assertIn(relative_path, ADR9_AGENT_TOOLS)
+
+        requirements = (ROOT / "docs/requirements.md").read_text(encoding="utf-8")
+        registry = (ROOT / "src/Host.Windows/Tools/AgentToolRegistry.cs").read_text(encoding="utf-8")
+        coordinator = (ROOT / "src/Host.Windows/Tools/AgentToolExecutionCoordinator.cs").read_text(encoding="utf-8")
+        executor = (ROOT / "src/Host.Windows/Tools/AgentToolProcessExecutor.cs").read_text(encoding="utf-8")
+        worker = (ROOT / "src/Host.Windows/Tools/AgentToolWorkerHost.cs").read_text(encoding="utf-8")
+        capabilities = (ROOT / "src/Host.Windows/Chat/AgentToolCapabilities.cs").read_text(encoding="utf-8")
+        harness = (ROOT / "tests/HostLifecycle.Tests/Program.cs").read_text(encoding="utf-8")
+
+        self.assertIn("REQ-017", requirements)
+        self.assertIn("REQ-017", ADR9_AGENT_TOOLS)
+        self.assertIn("GetModelAdvertisableDefinitionsAsync", registry)
+        self.assertIn("AgentToolCapabilityPolicy.EvaluateAsync", coordinator)
+        self.assertIn("RequiresUserConfirmation", coordinator)
+        self.assertIn("UseShellExecute = false", executor)
+        self.assertIn('info.ArgumentList.Add("--agent-tool-worker")', executor)
+        self.assertIn("info.Environment.Clear()", executor)
+        self.assertIn("process.Kill(entireProcessTree: true)", executor)
+        self.assertIn("MaximumRequestBytes = 64 * 1024", worker)
+        self.assertIn("MaximumResponseBytes = 64 * 1024", worker)
+        self.assertIn("MaximumReportAge", capabilities)
+        self.assertIn("same operating-system user", ADR9_AGENT_TOOLS)
+        self.assertIn("AppContainer", ADR9_AGENT_TOOLS)
+        self.assertIn("AgentToolExecutionAcceptanceTests.RunAsync();", harness)
+        self.assertIn("AgentToolProcessExecutorTests.RunAsync();", harness)
+        self.assertIn("AgentToolPolicyRejectionAcceptanceTests.RunAsync();", harness)
+        self.assertIn("AgentToolCapabilityAcceptanceTests.RunAsync();", harness)
+        self.assertIn("AgentToolRegistryAcceptanceTests.RunAsync();", harness)
+        self.assertIn("ADR-0009-agent-tool-execution-boundary.md", REGISTER)
 
 
     def test_every_registered_decision_links_to_existing_sources_and_verification(self):
