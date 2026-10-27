@@ -199,3 +199,16 @@
 - Local execution: this session has no local repository checkout/toolchain; no local test result is claimed. Exact-commit CI is pending.
 - Result at commit creation: partial pending validation. T0007 remains `in_progress`; no dependency edges or task completion statuses were changed.
 - Follow-up: inspect the exact commit's quality workflow and Windows build logs. Verify the named regression passes and CS4014 no longer appears for `MainWindow.xaml.cs:858`; ensure lifecycle, Windows, and Android jobs pass before recording acceptance.
+
+
+## Attempt T0007-A020 — exact-commit CI verification of A019 (2026-10-27)
+
+- Implementation commit verified: [`V 3.0.377` (`4674853a748b8fb266255f7fc172d1376c590540`)](https://github.com/artinrahimii/project/commit/4674853a748b8fb266255f7fc172d1376c590540), confirmed as the online `main` head before this evidence update.
+- Shutdown regression: `test_window_closing_waits_for_listener_disposal_before_closing_again` appeared as `ok` in [Step Three quality run 40463541745](https://github.com/artinrahimii/project/actions/runs/40463541745).
+- Python quality gate: **PASS** — 163 tests, syntax validation, graph structure validation, and repository-backed output/evidence checks; **0 errors and 1 preserved T0001 unmapped-dependency warning**.
+- Windows WPF: **PASS** — [job 122053473094](https://github.com/artinrahimii/project/actions/runs/40463541747/job/122053473094). Release build succeeded with **0 warnings and 0 errors**, generated Protobuf check passed, WPF startup smoke passed, and the Windows artifact uploaded. The log contains no CS4014 diagnostic after the explicit discard.
+- HostLifecycle: **PASS** — [job 122053472664](https://github.com/artinrahimii/project/actions/runs/40463541747/job/122053472664); executable unit/integration harness completed successfully.
+- Android: **PASS** — [job 122053472980](https://github.com/artinrahimii/project/actions/runs/40463541747/job/122053472980); Kotlin formatting/lint, `assembleDebug`, `testDebugUnitTest`, generated Protobuf validation and APK upload passed.
+- Aggregate product workflow: **PASS** — [run 40463541747](https://github.com/artinrahimii/project/actions/runs/40463541747), all three jobs succeeded.
+- Result: partial. The warning fix and its regression are verified, but broad T0007 decision-to-code/configuration/test traceability remains incomplete; retain `in_progress`. No dependency edges or other task statuses changed.
+- Follow-up: continue the broader T0007 traceability matrix; preserve the now-verified deferred shutdown ordering. Do not promote T0007 to `done` based on this one increment.

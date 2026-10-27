@@ -257,3 +257,10 @@ The Windows build reported one compiler warning, CS4014, for the deferred `Dispa
 The WPF shutdown handler intentionally posts the second `Close()` to the Dispatcher only after awaiting network-listener disposal and returning from the original `Closing` event. The call now explicitly discards its awaitable operation (`_ = Dispatcher.BeginInvoke(...)`) to document that deliberate fire-and-forget scheduling and suppress compiler warning CS4014 without changing the ordering contract. The existing shutdown source regression now requires this explicit discard as well as disposal-before-reschedule ordering.
 
 Acceptance for this narrow change: the source regression passes; the exact-commit Windows build reports no CS4014 at this callsite; startup smoke and HostLifecycle tests remain green. This does not complete broad T0007 traceability.
+
+
+## T0007-A020 — exact-commit verification of deferred shutdown scheduling
+
+On exact implementation commit [`V 3.0.377`](https://github.com/artinrahimii/project/commit/4674853a748b8fb266255f7fc172d1376c590540), the enhanced `test_window_closing_waits_for_listener_disposal_before_closing_again` passed within the 163-test Python quality suite. Graph/evidence validation returned **0 errors and 1 preserved T0001 warning**. The product workflow completed successfully: HostLifecycle tests passed; the Windows WPF Release build, generated Protobuf checks and startup smoke passed; Android lint, debug APK assembly, unit tests and generated-source checks passed. The Windows compiler log reported **0 warnings and 0 errors**, and no CS4014 occurrence remained at the previously warned Dispatcher callsite.
+
+Evidence: [quality run 40463541745](https://github.com/artinrahimii/project/actions/runs/40463541745), [product run 40463541747](https://github.com/artinrahimii/project/actions/runs/40463541747). This verifies the incremental shutdown-warning fix, not the full broad T0007 criterion.
