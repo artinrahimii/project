@@ -711,3 +711,23 @@
 - The two prior exact-commit regression failures for ADR-0010 remain preserved under A059/A061. A062's correction is now proven by the exact V 3.0.417 quality run.
 - No production runtime code or dependency edge changed in this verification note. T0007 remains `in_progress`; `AC-P2P-01` remains **NOT RUN**.
 - Follow-up: inspect the outstanding Windows and Android jobs. Keep this partial result honest; continue tracing other decisions in T0007 before considering task-wide acceptance.
+
+
+## Attempt T0007-A064 — follow-up for exact V 3.0.417 product CI
+- Recorded: 2026-10-27T16:47:23.505Z
+- Result: succeeded.
+- Commit under verification: [V 3.0.417 — daaf9c23cbc17696017e6a7ee23601eb628f6808](https://github.com/artinrahimii/project/commit/daaf9c23cbc17696017e6a7ee23601eb628f6808).
+- Step Three quality gate: **PASS**, [run 40543263979](https://github.com/artinrahimii/project/actions/runs/40543263979): 175 Python tests passed, including the corrected ADR-0010 traceability test; Python syntax, graph and recorded-output/evidence validation passed.
+- Complete product workflow: **PASS**, [run 40543264004](https://github.com/artinrahimii/project/actions/runs/40543264004). The HostLifecycle job 122326991032, Android APK job 122326991532, and Windows WPF job 122326991612 all completed successfully.
+- This resolves the pending outcomes noted in A063 without rewriting that historical entry. It verifies ADR-0010's bounded traceability increment, not completion of broad T0007 or any runtime P2P acceptance gate.
+
+## Attempt T0007-A065 — ADR-0011 host capacity/readiness traceability
+- Started: 2026-10-27T16:47:23.505Z
+- Result: partial at commit creation; exact-commit CI pending.
+- Base: 8ba340a2fd490b7081e4df7cc0d577b5027e8197 (V 3.0.418).
+- Source review: inspected the current platform-neutral `HostCapabilities` state machine, `HostReadinessEvaluator`, Windows OS/memory/disk measurement service, UI generation gate, C# capacity acceptance checks, and Python hardware-discovery source-contract tests.
+- Change: added `docs/decisions/ADR-0011-host-capacity-readiness.md`, registered it in `docs/decisions/README.md`, and added `test_host_capacity_decision_maps_to_observed_measurements_and_fail_closed_readiness` to `tests/test_decision_traceability.py`.
+- Scope: the decision states that `Unknown` is not `Ready`, known failures are `Insufficient`, and readiness requires valid observed measurements plus explicit RAM/disk/backend checks. It states display-adapter inventory is not proof of GPU compute/VRAM. No runtime code or dependency edge changed.
+- Local test execution: not run in this environment. The exact-commit GitHub Actions quality and product workflows are the verification authority for this increment.
+- Result boundary: T0007 remains `in_progress`; `AC-HOST-01` retains its own hardware evidence requirements, and `AC-P2P-01` remains **NOT RUN**.
+- Follow-up: inspect exact V 3.0.419 quality and product workflows; preserve any failing result and do not close T0007 based on a new ADR alone.

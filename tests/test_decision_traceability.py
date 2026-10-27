@@ -23,6 +23,7 @@ ADR7_SINGLE_ACTIVE = (ROOT / "docs/decisions/ADR-0007-single-active-inference.md
 ADR8_PROCESS_LAUNCH = (ROOT / "docs/decisions/ADR-0008-local-engine-process-ownership.md").read_text(encoding="utf-8")
 ADR9_AGENT_TOOLS = (ROOT / "docs/decisions/ADR-0009-agent-tool-execution-boundary.md").read_text(encoding="utf-8")
 ADR10_MODEL_INSTALLATION = (ROOT / "docs/decisions/ADR-0010-verified-model-installation.md").read_text(encoding="utf-8")
+ADR11_HOST_CAPACITY = (ROOT / "docs/decisions/ADR-0011-host-capacity-readiness.md").read_text(encoding="utf-8")
 
 
 class DecisionTraceabilityTests(unittest.TestCase):
@@ -447,6 +448,55 @@ class DecisionTraceabilityTests(unittest.TestCase):
         self.assertIn("catalog metadata", ADR10_MODEL_INSTALLATION)
         self.assertIn("not a detached signature or independent proof of publisher identity", ADR10_MODEL_INSTALLATION)
         self.assertIn("ADR-0010-verified-model-installation.md", REGISTER)
+
+
+    def test_host_capacity_decision_maps_to_observed_measurements_and_fail_closed_readiness(self):
+        paths = (
+            "docs/requirements.md",
+            "docs/acceptance.md",
+            "src/Host.Domain/HostCapabilities.cs",
+            "src/Host.Application/HostReadinessEvaluator.cs",
+            "src/Host.Application/HostReadinessResult.cs",
+            "src/Host.Windows/WindowsHostHardwareDiscovery.cs",
+            "src/Host.Windows/MainWindow.xaml.cs",
+            "src/Host.Windows/MainWindow.xaml",
+            "tests/HostLifecycle.Tests/HostCapacityAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "tests/test_windows_hardware_discovery.py",
+            ".github/workflows/product-build.yml",
+        )
+        self.assertTrue((ROOT / "docs/decisions/ADR-0011-host-capacity-readiness.md").is_file())
+        for relative_path in paths:
+            with self.subTest(path=relative_path):
+                self.assertTrue((ROOT / relative_path).is_file(), relative_path)
+                self.assertIn(relative_path, ADR11_HOST_CAPACITY)
+
+        domain = (ROOT / "src/Host.Domain/HostCapabilities.cs").read_text(encoding="utf-8")
+        evaluator = (ROOT / "src/Host.Application/HostReadinessEvaluator.cs").read_text(encoding="utf-8")
+        discovery = (ROOT / "src/Host.Windows/WindowsHostHardwareDiscovery.cs").read_text(encoding="utf-8")
+        window = (ROOT / "src/Host.Windows/MainWindow.xaml.cs").read_text(encoding="utf-8")
+        csharp_tests = (ROOT / "tests/HostLifecycle.Tests/HostCapacityAcceptanceTests.cs").read_text(encoding="utf-8")
+        harness = (ROOT / "tests/HostLifecycle.Tests/Program.cs").read_text(encoding="utf-8")
+        hardware_tests = (ROOT / "tests/test_windows_hardware_discovery.py").read_text(encoding="utf-8")
+
+        self.assertIn("REQ-006", REQUIREMENTS)
+        self.assertIn("AC-HOST-01", ACCEPTANCE)
+        self.assertIn("GlobalMemoryStatusEx", discovery)
+        self.assertIn("memoryStatus.AvailablePhysical", discovery)
+        self.assertIn("new DriveInfo(systemDriveRoot)", discovery)
+        self.assertIn("HostCapacityState.Insufficient", domain)
+        self.assertIn("HostCapacityState.Unknown", domain)
+        self.assertIn("return HostCapacityState.Ready", domain)
+        self.assertIn("CanRunInference => CapacityState == HostCapacityState.Ready", domain)
+        self.assertIn("double.IsFinite(requiredGiB)", evaluator)
+        self.assertIn("HostReadinessEvaluator.Evaluate", window)
+        self.assertIn("capacityState == HostCapacityState.Ready", window)
+        self.assertIn("GPU compute/VRAM capability is not verified", window)
+        self.assertIn("HostCapacityAcceptanceTests.Run();", harness)
+        self.assertIn("Low RAM with other checks unknown", csharp_tests)
+        self.assertIn("Missing checks and measurements", csharp_tests)
+        self.assertIn("test_capacity_is_unknown_until_measurements_and_readiness_checks_are_verified", hardware_tests)
+        self.assertIn("ADR-0011-host-capacity-readiness.md", REGISTER)
 
 
     def test_every_registered_decision_links_to_existing_sources_and_verification(self):
