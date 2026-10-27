@@ -391,3 +391,12 @@
 - Dependency review: `T0006 → T0007` remains `validated / contract_or_interface_dependency`; `T0007 → T0008` remains `validated / sequencing_only`. Both existing relationships remain unchanged.
 - Result: partial; the source/test traceability increment is implemented, but exact-commit CI is pending. Keep T0007 `in_progress` until its broader acceptance is met.
 - Follow-up: inspect exact-commit CI, repair any regression, and continue tracing uncovered implementation decisions without changing unreviewed edges.
+
+## Attempt T0007-A036 — exact V 3.0.392 quality verification
+
+- Verified at: 2026-10-27T16:33:00+03:30.
+- Exact implementation commit: `1980fb7b8dfc0a9877b29189899143af3e1561db` (`V 3.0.392`) on online `main`.
+- Step Three quality gate: PASS — [run 40508722204](https://github.com/artinrahimii/project/actions/runs/40508722204), job 122204669313. Automated tests (including the new ADR-0005 traceability regression), Python syntax, graph structure (229 nodes / 426 edges), and recorded-output/evidence validation all succeeded.
+- Product workflow: [run 40508722167](https://github.com/artinrahimii/project/actions/runs/40508722167) was still in progress when inspected. The HostLifecycle test command step had passed but the job had not finalized; Windows and Android jobs had not reached final conclusions. No aggregate product success is claimed here.
+- Result: this quality verification succeeded, but A035 is still a partial implementation increment and `T0007` remains `in_progress`.
+- Follow-up: inspect the final product workflow outcome and continue mapping uncovered decisions to production code/configuration and runnable tests.

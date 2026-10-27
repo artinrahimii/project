@@ -352,3 +352,8 @@ The exact V 3.0.391 Step Three quality gate [40507611666](https://github.com/art
 ## T0007-A035 — authenticated direct peer transport fallback traceability
 
 Added [ADR-0005](decisions/ADR-0005-authenticated-peer-transport-fallback.md) and a source-contract regression mapping it to `PeerTransportFallbackConnector` and the runnable `PeerTransportContractAcceptanceTests` suite. The production connector verifies the pinned remote peer identity before returning a connection, rejects mixed expected identities before dialing, cleans up failed transports, and records only failure address/type metadata. The host-side fallback test exercises the unavailable TCP candidate followed by QUIC and checks direct binary request/response exchange. These tests do not establish Android-to-Windows app-level routing; `AC-P2P-01` remains **NOT RUN**. Exact-commit CI for this increment is pending.
+
+
+## T0007-A036 — exact V 3.0.392 quality verification
+
+The exact V 3.0.392 Step Three quality gate [40508722204](https://github.com/artinrahimii/project/actions/runs/40508722204) passed automated tests, Python syntax, graph structure (229 nodes / 426 edges), and recorded-output/evidence validation. This run includes the new ADR-0005 source-contract regression for authenticated direct peer transport fallback. Product workflow [40508722167](https://github.com/artinrahimii/project/actions/runs/40508722167) remained in progress at the time of this record; no aggregate Windows/Android product success is claimed. T0007 remains `in_progress`.
