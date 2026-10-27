@@ -1,13 +1,14 @@
 # T0117 execution report — implementation and runtime debugging in progress
 
 - **Task:** connect a license-compatible open-source P2P transport implementation to the concrete `IPeerTransport` code.
-- **Current attempt:** `T0117-A003`.
+- **Current attempt:** `T0117-A004`; prior attempts A001/A002/A003 are recorded individually with their compile/runtime failures.
 - **Base:** `main` at `d4b2c7ee8e28729b4d22179810614c516aee7d0f` (`V 3.0.350`). Graph Blob `d006eb634df7008f2ffd95b447e636309cf44c4e`, 1,805,090 bytes, recomputed Git Blob SHA-1 matched, complete JSON parsed to 229 tasks / 426 edges.
 - **Library:** `Nethermind.Libp2p` `1.0.3`, MIT, .NET 10. Source https://github.com/NethermindEth/dotnet-libp2p; package https://www.nuget.org/packages/Nethermind.Libp2p.
 - **Production implementation:** `Libp2pPeerTransport.cs` implements `IPeerTransport`, validates the `/p2p` identity against `PeerTransportEndpoint`, verifies the peer identity exposed by the established session, provides explicit non-wildcard listening and pins the expected inbound identity. `Libp2pPeerMessageProtocol.cs` uses varint-prefixed binary messages, bounded size checks and queue backpressure.
 - **V 3.0.351 failed:** HostLifecycle compilation reported CS0104 (ambiguous `Channel`), CS1061 (`ISession.RemotePeerId` absent in the published package API) and CS0411 (unsupported instance `DialAsync` overload). These were corrected for V 3.0.352.
 - **V 3.0.352 runtime result:** after those compile fixes, the integration test reached the disconnect step after the connection, peer identity checks, bidirectional binary messages and oversized-message rejection had executed. It then failed because intentional session disconnect cancels the long-running libp2p protocol dial task, and that `TaskCanceledException` escaped from `DisconnectAsync`.
-- **V 3.0.353 correction:** `DisconnectAsync` now treats cancellation of that protocol task as expected only when the caller's own cancellation token is not cancelled. Cancellation requested by the caller remains observable.
+- **V 3.0.353 correction:** `DisconnectAsync` treats cancellation of the protocol task as expected only when the caller's own cancellation token is not cancelled. The real exchange then reached the final state assertion but exposed a brief stale `IsConnected` value while the protocol loop unwound.
+- **V 3.0.354 correction:** `IsConnected` now becomes false as soon as local disconnect begins, in addition to checking the protocol channel and authenticated peer identity. This preserves caller-requested cancellation while making local connection-state semantics immediate.
 - **Dependency review:** `T116 → T0117` remains `contract_or_interface_dependency`; `T0115 → T0117` remains `sequencing_only`. Original `blocks` edge types are preserved, with rationale/evidence in the graph.
 - **Scope limits:** the library's roadmap marks hole punching and circuit relay as work in progress. This does not claim NAT traversal, Android interoperability, discovery/rendezvous, full application Protobuf request/response integration, or AC-P2P-01.
 - **Status:** `in_progress`; the task cannot be accepted until the V 3.0.353 exact-head real two-peer test and product/quality CI pass.

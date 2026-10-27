@@ -21113,11 +21113,11 @@
         "step three/T0117/execution-report.md",
         "step three/T0117/evidence/verification.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nSelected Nethermind.Libp2p 1.0.3 (MIT; .NET 10) after checking package and source-repository license/transport matrix. The implementation uses the default TCP + Noise/TLS negotiation (does not enable plaintext), validates the target /p2p PeerId against PeerTransportEndpoint, and uses bounded varint-prefixed binary messages. A real loopback two-peer test sends data in both directions. The library repository currently marks hole punching and circuit relay work-in-progress; neither is claimed complete.\nV3.0.351 exact-SHA HostLifecycle build failed at compile time because three member/signature choices in the adapter did not match published Nethermind.Libp2p 1.0.3: channel name ambiguity, no ISession.RemotePeerId, and no instance protocol-dial overload. These are recorded as a failed implementation attempt and corrected for V3.0.352; T0117 remains in progress.\nV3.0.352 runtime acceptance established that the peers connected, identity pins matched, binary messages round-tripped both ways and oversized messages were rejected, but expected protocol-task cancellation escaped during intentional disconnect. V3.0.353 adds a filtered OperationCanceledException catch that only applies when the caller token is not cancelled; the task stays in progress until exact-SHA CI passes.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nSelected Nethermind.Libp2p 1.0.3 (MIT; .NET 10) after checking package and source-repository license/transport matrix. The implementation uses the default TCP + Noise/TLS negotiation (does not enable plaintext), validates the target /p2p PeerId against PeerTransportEndpoint, and uses bounded varint-prefixed binary messages. A real loopback two-peer test sends data in both directions. The library repository currently marks hole punching and circuit relay work-in-progress; neither is claimed complete.\nV3.0.351 exact-SHA HostLifecycle build failed at compile time because three member/signature choices in the adapter did not match published Nethermind.Libp2p 1.0.3: channel name ambiguity, no ISession.RemotePeerId, and no instance protocol-dial overload. These are recorded as a failed implementation attempt and corrected for V3.0.352; T0117 remains in progress.\nV3.0.352 runtime acceptance established that the peers connected, identity pins matched, binary messages round-tripped both ways and oversized messages were rejected, but expected protocol-task cancellation escaped during intentional disconnect. V3.0.353 adds a filtered OperationCanceledException catch that only applies when the caller token is not cancelled; the task stays in progress until exact-SHA CI passes.\nV3.0.353 integration test confirmed authenticated libp2p connection, binary payload delivery in both directions, max-size rejection and no exception from disconnect, but found that the public IsConnected property stayed true momentarily while the libp2p protocol task unwound. V3.0.354 makes local disconnected state immediate by checking the disconnect-started flag too; exact-SHA test pending.",
       "execution_summary": {
-        "attempt_count": 3,
-        "failed_attempt_count": 2,
-        "last_attempt_id": "T0117-A003",
+        "attempt_count": 4,
+        "failed_attempt_count": 3,
+        "last_attempt_id": "T0117-A004",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
@@ -21132,12 +21132,14 @@
         ],
         "related_commits": [
           "d056c1c1c77903165576078b0d7c3fbe35b60676",
-          "2a316393e3787653f1e85aa8f4ba37a1959e40c8"
+          "2a316393e3787653f1e85aa8f4ba37a1959e40c8",
+          "bc196a4b98091de1806d5921aa13b847549ff407"
         ],
         "tests_passed": [],
         "tests_failed": [
           "V 3.0.351 HostLifecycle compile failed before running runtime tests; the published Nethermind.Libp2p 1.0.3 API uses System.Threading.Channels.Channel ambiguously with Nethermind.Libp2p.Core.Channel, has no ISession.RemotePeerId property, and no instance-based ISession.DialAsync overload. These compile errors are corrected in V 3.0.352.",
-          "V 3.0.352 HostLifecycle runtime acceptance reached the disconnect step after the direct peer connection, PeerId pinning, two-way binary payloads and oversized-message rejection executed, but DisconnectAsync propagated TaskCanceledException from the libp2p protocol DialAsync task during intentional session teardown. Corrected in V 3.0.353 to treat this cancellation as normal only when the caller's cancellation token is not cancelled."
+          "V 3.0.352 HostLifecycle runtime acceptance reached the disconnect step after the direct peer connection, PeerId pinning, two-way binary payloads and oversized-message rejection executed, but DisconnectAsync propagated TaskCanceledException from the libp2p protocol DialAsync task during intentional session teardown. Corrected in V 3.0.353 to treat this cancellation as normal only when the caller's cancellation token is not cancelled.",
+          "V 3.0.353 HostLifecycle runtime test confirmed connection establishment, authenticated PeerIds, bidirectional binary message round-trip, oversized-message rejection and completed DisconnectAsync, but then failed the immediate-state assertion because IsConnected was still true until the libp2p ConnectAsync task unwound. Corrected in V 3.0.354 by making IsConnected immediately false after local DisconnectAsync begins, while retaining protocol state as a second condition."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -21246,9 +21248,35 @@
         {
           "attempt_id": "T0117-A003",
           "started_at": "2026-10-27T03:33:02.079Z",
-          "ended_at": "2026-10-27T03:33:02.079Z",
+          "ended_at": "2026-10-27T03:34:14Z",
+          "result": "failed",
+          "summary": "The exact V3.0.353 HostLifecycle integration test passed connection setup, pinned peer identity checks, both binary message round trips, over-limit rejection and DisconnectAsync without a thrown exception, but then failed the immediate state assertion because IsConnected remained true until libp2p protocol task teardown completed.",
+          "changed_files": [
+            "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+            "step three/T0117/execution-report.md",
+            "step three/T0117/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": "bc196a4b98091de1806d5921aa13b847549ff407",
+          "tests": [
+            {
+              "name": "HostLifecycle/libp2p peer exchange",
+              "result": "failed",
+              "summary": "All transport assertions through both message exchanges, size rejection and disconnect completion ran; the following Assert(!client.IsConnected) failed because IsConnected didn't immediately reflect the locally requested disconnect."
+            }
+          ],
+          "failure_details": "System.InvalidOperationException: Disconnect must clear the authenticated connection state. Stack trace: PeerTransportContractAcceptanceTests.VerifyDirectEncryptedPeerMessageExchangeAsync line 90 on V3.0.353. This is a stale local state query after explicit disconnect, not a failure of message exchange.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Make IsConnected return false as soon as DisconnectAsync begins, while still requiring the protocol channel and authenticated identity for the positive connected state."
+        },
+        {
+          "attempt_id": "T0117-A004",
+          "started_at": "2026-10-27T03:35:31.665Z",
+          "ended_at": "2026-10-27T03:35:31.665Z",
           "result": "partial",
-          "summary": "Updated DisconnectAsync to tolerate cancellation from the libp2p protocol dial task after an intentional session disconnect, but only when the caller's CancellationToken was not cancelled. This keeps caller-requested cancellation observable. Exact-head runtime acceptance pending.",
+          "summary": "Updated IsConnected to include the transport's local disconnect-started flag, so connection state becomes false immediately when DisconnectAsync begins, even while libp2p's long-running protocol task is still unwinding. The protocol's connected flag and verified remote identity remain required for the connected state. Exact-head CI pending.",
           "changed_files": [
             "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
             "step three/T0117/execution-report.md",
@@ -21258,31 +21286,31 @@
           "commit_sha": null,
           "tests": [
             {
-              "name": "HostLifecycle/libp2p peer exchange",
+              "name": "PeerTransportContractAcceptanceTests",
               "result": "pending",
-              "summary": "Verify disconnect completes without surfacing expected protocol cancellation, and no caller-cancellation is swallowed."
+              "summary": "Expect the full two-peer exchange and immediate disconnected-state assertion to pass."
             },
             {
               "name": "Step Three quality gate",
               "result": "pending",
-              "summary": "Validate graph attempt/failure counters and recorded evidence."
+              "summary": "Validate graph history/failed-attempt counters and evidence."
             },
             {
               "name": "Windows WPF product build",
               "result": "pending",
-              "summary": "Compile and execute current product policy/smoke gates."
+              "summary": "Compile and complete host policy/smoke checks."
             },
             {
-              "name": "Android APK/Protobuf checks",
+              "name": "Android product build",
               "result": "pending",
-              "summary": "Preserve the current Android build."
+              "summary": "Confirm existing APK and protocol tests remain green."
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Run exact-head CI. If connection, message exchange, message limit, and disconnect all pass, finalize T0117. Otherwise fix the observed failure and retain in_progress."
+          "follow_up": "Run exact-head CI. Mark T0117 done only if real peer exchange, size limit, peer identity mismatch, disconnect semantics and product/quality workflows pass."
         }
       ]
     },

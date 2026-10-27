@@ -75,7 +75,7 @@ public sealed class Libp2pPeerTransport : IPeerTransport
     /// <summary>Multiaddresses that include this peer's authenticated identity.</summary>
     public IReadOnlyList<string> ListenAddresses => Array.AsReadOnly(Volatile.Read(ref _listenAddresses).ToArray());
 
-    public bool IsConnected => _protocol.IsConnected && RemotePeerIdentity is not null;
+    public bool IsConnected => Volatile.Read(ref _disconnectStarted) == 0 && _protocol.IsConnected && RemotePeerIdentity is not null;
 
     public string? RemotePeerIdentity => Volatile.Read(ref _remotePeerIdentity);
 

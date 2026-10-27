@@ -14,7 +14,8 @@
 ## Exact commit outcomes
 - **V 3.0.351:** compile failed; fixed ambiguous channel type, missing published `ISession.RemotePeerId`, and protocol instance dialing API mismatch.
 - **V 3.0.352:** compiled and the real loopback integration reached the first disconnect call after preceding assertions executed: authenticated peer identities, client-to-server binary round-trip, server-to-client binary round-trip, and oversized message rejection. Failed because the library's long-running `DialAsync<TProtocol>` task ends with `TaskCanceledException` when the session is deliberately disconnected, which the adapter did not yet treat as expected teardown.
-- **V 3.0.353:** adds a narrowly filtered handling path for that expected cancellation, conditioned on the caller's cancellation token not being cancelled. Exact-head tests pending.
+- **V 3.0.353:** adds a narrowly filtered handling path for expected protocol task cancellation, conditioned on the caller's token not being cancelled. Its runtime test proceeded through actual peer connection, PeerId pinning, bidirectional binary messages, over-limit rejection, and disconnect without throwing; it then failed because `IsConnected` stayed true briefly during protocol-task teardown.
+- **V 3.0.354:** makes `IsConnected` immediately false once local disconnect starts, while still requiring a live protocol and authenticated identity for the true state. Exact-head tests pending.
 - Step Three quality gate on V 3.0.352 passed: https://github.com/artinrahimii/project/actions/runs/40444570058
 
 ## Dependency review
