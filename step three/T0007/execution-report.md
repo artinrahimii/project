@@ -283,3 +283,17 @@
 - Local test execution: not available in this tool session because there is no local repository checkout or .NET/Python runtime. The exact new commit must be evaluated by GitHub Actions before results are reported as passed.
 - Result at creation: partial, CI pending. T0007 remains `in_progress`; this is another bounded decision-to-code-to-test trace, not full task completion.
 - Follow-up: inspect exact-commit Step Three quality and product CI. If any check fails, diagnose and correct it before recording successful acceptance.
+
+
+## Attempt T0007-A027 — exact V 3.0.384 CI verification (2026-10-27)
+
+- Implementation commit: [`V 3.0.384` (`07e33b1a7c0d452b1521f78376ad16bfc2257982`)](https://github.com/artinrahimii/project/commit/07e33b1a7c0d452b1521f78376ad16bfc2257982).
+- Step Three quality gate: [run 40469317766]( https://github.com/artinrahimii/project/actions/runs/40469317766 ) passed. The workflow ran 165 Python tests, including `test_participation_activation_failure_uses_behaviorally_tested_recovery`; Python syntax, graph structure and repository-backed output/evidence checks passed with 0 errors and one preserved T0001 unmapped-dependency warning.
+- Host lifecycle unit/integration: [job 122072293472](https://github.com/artinrahimii/project/actions/runs/40469317799/job/122072293472) passed. Its log explicitly printed `PASS: participation activation recovery maps errors safely and preserves disposal semantics.`, exercising the new production helper for successful rollback, secondary rollback failure and disposal during shutdown.
+- Windows WPF: [job 122072293543](https://github.com/artinrahimii/project/actions/runs/40469317799/job/122072293543) passed C# formatting, Release build, generated Protobuf validation, startup smoke, agent-tool policy checks, and artifact upload.
+- Android: [job 122072293223](https://github.com/artinrahimii/project/actions/runs/40469317799/job/122072293223) passed Kotlin formatting/lint, debug APK build, Protobuf round-trip tests, generated-source validation, and artifact upload.
+- Product workflow: [run 40469317799]( https://github.com/artinrahimii/project/actions/runs/40469317799 ) completed successfully with all three jobs passing.
+- Real local inference: [run 40469317738]( https://github.com/artinrahimii/project/actions/runs/40469317738 ) passed the pinned llama.cpp/ GGUF live inference acceptance job. This is broader product CI, not evidence of Android-to-Windows P2P routing.
+- Dependency review: `T0006 → T0007` retains its validated `contract_or_interface_dependency` classification; `T0007 → T0008` retains its validated `sequencing_only` classification. No edge was changed.
+- Result: partial. The executable rollback contract and current product CI passed, but T0007's broad task-wide decision traceability remains incomplete. Keep node status `in_progress`; no task promoted to `done`.
+- Follow-up: continue with a separate uncovered production decision and its source/configuration/runtime test. Keep full product P2P and privacy release gates separate until their own evidence exists.
