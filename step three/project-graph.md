@@ -21570,33 +21570,106 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0118 و T0115 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
-      "expected_output_paths": [
-        "src/Shared.Networking/ یا src/Host.Windows/Networking/ + tests/"
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "docs/decisions/ADR-0004-encrypted-relay-boundary.md",
+        "tests/test_relay_privacy_boundary.py",
+        "step three/T0119/execution-report.md",
+        "step three/T0119/evidence/verification.md"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "expected_output_paths": [
+        "docs/decisions/ADR-0004-encrypted-relay-boundary.md + tests/test_relay_privacy_boundary.py + step three/T0119/evidence/verification.md"
+      ],
+      "evidence": [
+        "docs/decisions/ADR-0002-direct-p2p-data-path.md",
+        "docs/decisions/ADR-0004-encrypted-relay-boundary.md",
+        "docs/decisions/README.md",
+        "tests/test_relay_privacy_boundary.py",
+        "src/Host.Windows/Networking/PeerTransportFallbackConnector.cs",
+        "src/Host.Windows/Networking/Libp2pPeerTransport.cs"
+      ],
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0119-A001 establishes the first-release relay decision and source-contract guard: no relay fallback is enabled because ADR-0002 requires direct failure to be explicit and upstream libp2p documentation calls out a stream-bridging gap. Future relay design is opaque end-to-end protected byte forwarding and explicitly lists metadata visibility. This is a design/policy deliverable, not an implemented relay stream.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0119-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "docs/decisions/ADR-0004-encrypted-relay-boundary.md",
+          "docs/decisions/README.md",
+          "tests/test_relay_privacy_boundary.py",
+          "step three/T0119/execution-report.md",
+          "step three/T0119/evidence/verification.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
-          "affected_by_contract_changes": [],
-          "review_evidence": []
+          "state": "required",
+          "triggering_contracts": [
+            "REQ-010 direct data path",
+            "REQ-011 no central inference API or conversation history",
+            "relay opaque-byte and metadata-visible boundary"
+          ],
+          "affected_by_contract_changes": [
+            "T0120"
+          ],
+          "review_evidence": [
+            "docs/decisions/ADR-0002-direct-p2p-data-path.md",
+            "docs/decisions/ADR-0004-encrypted-relay-boundary.md",
+            "docs/requirements.md",
+            "tests/test_relay_privacy_boundary.py"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0119-A001",
+          "started_at": "2026-10-27T04:28:49.332Z",
+          "ended_at": "2026-10-27T04:28:49.332Z",
+          "result": "partial",
+          "summary": "Recorded an explicit first-release policy not to enable relay fallback, because ADR-0002 requires direct-path failure to remain explicit and the upstream libp2p relay documentation describes a stream-bridging gap. Specified a future relay as opaque end-to-end encrypted byte forwarding and listed relay-visible metadata; added a source-contract test. Exact-head quality-gate CI is pending; no working relay stream is claimed.",
+          "changed_files": [
+            "docs/decisions/ADR-0004-encrypted-relay-boundary.md",
+            "docs/decisions/README.md",
+            "tests/test_relay_privacy_boundary.py",
+            "step three/T0119/execution-report.md",
+            "step three/T0119/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "RelayPrivacyBoundaryTests",
+              "result": "pending",
+              "summary": "Source-contract regression test must pass in the Step Three quality gate."
+            },
+            {
+              "name": "Step Three quality gate",
+              "result": "pending",
+              "summary": "Must run the full Python suite, graph validation and recorded-output/evidence checks on the exact commit."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            {
+              "path": "docs/decisions/ADR-0004-encrypted-relay-boundary.md",
+              "detail": "Defines no relay for first release and the future opaque-byte/end-to-end encryption and metadata exposure boundary."
+            },
+            {
+              "path": "tests/test_relay_privacy_boundary.py",
+              "detail": "Guards against enabling WithRelay in the production transport until a working relay path is reviewed and acceptance criteria are met."
+            }
+          ],
+          "follow_up": "Run exact-head Step Three quality gate. Accept T0119 as a design/policy task only if the guard passes; do not claim relay runtime implementation. T0120 should consume this contract and remain metadata-only."
+        }
+      ]
     },
     {
       "id": "T0120",
@@ -29484,10 +29557,15 @@
       "from": "T0119",
       "to": "T0120",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0120 implements peer announcements/rendezvous and must consume this privacy boundary: it may expose PeerId/address/capability/connection metadata only, never prompts, response bytes or conversation history. This is a direct privacy/contract dependency rather than mere ordering.",
+      "validation_status": "validated",
+      "evidence": [
+        "docs/decisions/ADR-0002-direct-p2p-data-path.md",
+        "docs/decisions/ADR-0004-encrypted-relay-boundary.md",
+        "docs/requirements.md",
+        "tests/test_relay_privacy_boundary.py"
+      ]
     },
     {
       "from": "T0115",
@@ -33767,8 +33845,25 @@
         "step three/T0115/evidence/verification.md"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-27T04:28:49.332Z",
+      "edge_from": "T0119",
+      "edge_to": "T0120",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "old_validation_status": "unreviewed",
+      "new_validation_status": "validated",
+      "reason": "T0120 implements peer announcements/rendezvous and must consume this privacy boundary: it may expose PeerId/address/capability/connection metadata only, never prompts, response bytes or conversation history. This is a direct privacy/contract dependency rather than mere ordering.",
+      "evidence": [
+        "docs/decisions/ADR-0002-direct-p2p-data-path.md",
+        "docs/decisions/ADR-0004-encrypted-relay-boundary.md",
+        "docs/requirements.md",
+        "tests/test_relay_privacy_boundary.py"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-27T04:16:00Z"
+  "updated_at": "2026-10-27T04:28:49.332Z"
 }
 ```
