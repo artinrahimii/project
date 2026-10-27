@@ -774,3 +774,13 @@
 - Test status at creation: source files and existing executable acceptance paths were inspected at the exact base. No local repository test command was run; exact-main GitHub Actions validation is pending.
 - Result boundary: this is one bounded traceability increment, not completion of broad T0007. Keep `T0007` `in_progress`; `AC-P2P-01` remains **NOT RUN**.
 - Follow-up: inspect exact `V 3.0.422` quality and product-build workflows. Preserve any failed result; only mark this increment CI-verified after reading the exact run.
+
+
+## Attempt T0007-A070 — verify temporary request identity traceability on exact V 3.0.422
+- Recorded: 2026-10-27T17:02:42.211Z
+- Result: succeeded for the bounded ADR-0013 traceability increment; broad T0007 remains in progress.
+- Commit under verification: [V 3.0.422 — 56e557b6a3f0ef291f2d3c0e6e3015cbe6f2acc9](https://github.com/artinrahimii/project/commit/56e557b6a3f0ef291f2d3c0e6e3015cbe6f2acc9).
+- Step Three quality gate: **PASS** — [run 40546396745](https://github.com/artinrahimii/project/actions/runs/40546396745) completed on the exact commit. The new regression `test_temporary_request_identity_decision_maps_to_crypto_ids_and_metadata_only_rendezvous` is explicitly `ok`; **178 Python tests** passed, and Python syntax, graph structure, plus recorded-output/evidence validation passed.
+- White-P product workflow: **PASS** — [run 40546396887](https://github.com/artinrahimii/project/actions/runs/40546396887) completed successfully on the same exact commit. HostLifecycle job 122338066845, Android APK job 122338067519, and Windows WPF job 122338068047 all passed. The HostLifecycle run completed after MsQuic setup; Android passed Kotlin lint, APK build, Protobuf round-trip and generated-source checks; Windows passed build, generated Protobuf, startup smoke and all agent-tool policy/capability checks.
+- The evidence validates ADR-0013's bounded source/test traceability. The 4,096-ID sample is not a mathematical global uniqueness proof; deployment log-retention audit remains separate. `T0007` remains `in_progress`; `AC-P2P-01` remains **NOT RUN**.
+- Follow-up: continue broad decision-to-code/configuration/test traceability, preserve all attempt history, and keep unsupported runtime claims separate from host-side tests.
