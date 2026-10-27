@@ -9,3 +9,17 @@
 - **Verification:** local .NET build/test execution is unavailable in this tool environment. Exact-commit GitHub Actions must validate compilation and acceptance tests. No test is claimed passed until those runs finish.
 - **Boundary:** the trust API requires explicitlyConfirmed=true from a caller; the WPF UI does not yet provide a peer-enrollment prompt. No independent-node E2E or AC-P2P-01 success is claimed.
 - **Next:** inspect exact-commit quality, HostLifecycle, Windows DPAPI and Android jobs. Repair any failure and rerun before marking T0131 done.
+
+
+## T0131-A001 — exact V 3.0.439 CI failure
+
+- Step Three quality gate: **FAIL** — [run 40582042880](https://github.com/artinrahimii/project/actions/runs/40582042880), `DEPENDENCY_CYCLE`. Three previously reviewed sequencing-only edges `T0128 → T0129/T0130/T0131` were still active beside the actual contract chain `T0129 → T0130 → T0131 → T0128`.
+- HostLifecycle and Windows WPF build: **FAIL** — [product run 40582042752](https://github.com/artinrahimii/project/actions/runs/40582042752), `CS9135` at `PeerTrustStore.cs:222`. The new peer-trust tests did not execute.
+- Real-inference workflow: **FAIL** for the same exact commit ([run 40582042794](https://github.com/artinrahimii/project/actions/runs/40582042794)); it provides no acceptance pass for T0131.
+- T0131 remains `in_progress` pending successful exact-commit verification.
+
+## T0131-A002 — corrections
+
+- Replaced the protected-payload size guard's relational pattern with ordinary bounds comparisons.
+- Removed the three non-technical sequencing-only edges `T0128 → T0129/T0130/T0131` from active dependencies, because they conflict with the actual contract chain. Their reasons and evidence remain in the append-only `edge_change_log`. The real `T0131 → T0128` prerequisite stays active; the DAG is now acyclic and execution order places T0131 before T0128.
+- Exact V 3.0.440 CI is pending; no new test is claimed to pass yet.

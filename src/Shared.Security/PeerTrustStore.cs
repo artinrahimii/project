@@ -219,7 +219,7 @@ public sealed class PeerTrustStore
                 throw new InvalidDataException("The peer trust document is outside the permitted size.");
 
             protectedPayload = _protector.Protect(plaintext);
-            if (protectedPayload.Length is 0 or > (MaximumEnvelopeBytes - FileMagic.Length - 1))
+            if (protectedPayload.Length == 0 || protectedPayload.Length > (MaximumEnvelopeBytes - FileMagic.Length - 1))
                 throw new InvalidDataException("The protected peer trust payload is outside the permitted size.");
 
             envelope = new byte[FileMagic.Length + 1 + protectedPayload.Length];

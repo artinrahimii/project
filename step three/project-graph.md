@@ -25218,7 +25218,7 @@
       "outputs": [
         "خروجی قابل بررسی مربوط به «از کتابخانهٔ رمزنگاری معتبر و نگهداری‌شده استفاده کن؛ الگوریتم رمزنگاری اختصاصی نساز.» در مسیر src/Shared.Security/ + tests/security/؛ همراه با آزمون/شاهد پذیرش متناسب."
       ],
-      "start_condition": "The incoming T0128 -> T0129 edge has been validated as sequencing_only: the independent-node end-to-end acceptance test consumes no cryptography-library selection or PeerId-parser artifact. This task may precede T0128 to establish the maintained security-library boundary that the eventual end-to-end test must exercise. The T0128 edge remains in the graph and T0128 acceptance remains pending.",
+      "start_condition": "The maintained libp2p PeerId parsing/security-library boundary can be implemented before the final independent-node acceptance. The historical sequencing-only T0128 → T0129 edge was removed from active adjacency to keep the graph acyclic; its rationale/evidence remain in edge_change_log.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
       "status": "done",
       "status_fa": "تکمیل‌شده",
@@ -25246,7 +25246,7 @@
         "tests/test_crypto_library_policy.py",
         "docs/decisions/ADR-0016-maintained-libp2p-cryptographic-transport.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0129-A001 (2026-10-27): reviewed T0128 -> T0129 as sequencing_only based on actual source/test contracts; the original edge is retained. Added a shared PeerId input/parser policy backed by Nethermind.Libp2p.Core, wired it into the host transport, added C#/Python regression coverage and ADR-0016, and updated the pinned libp2p package to 1.1.0 for exact-CI validation. CI pending; T0129 remains in_progress.\n\nT0129-A002 verification (exact V 3.0.434, 2026-10-27): 184 Python tests and all quality/graph/evidence gates passed; HostLifecycle including the new PeerSecurityPolicy acceptance test passed; Windows WPF Release build/startup/policy checks passed; Android APK/lint/Protobuf passed; real llama.cpp/GGUF inference and cancellation passed. T0129 is done for maintained-library selection/integration and PeerId input validation only. This is not an independent cryptographic audit, identity key persistence, peer enrollment, or Android-to-Windows end-to-end acceptance. AC-P2P-01 remains NOT RUN.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0129-A001 (2026-10-27): reviewed T0128 -> T0129 as sequencing_only based on actual source/test contracts; the original edge is retained. Added a shared PeerId input/parser policy backed by Nethermind.Libp2p.Core, wired it into the host transport, added C#/Python regression coverage and ADR-0016, and updated the pinned libp2p package to 1.1.0 for exact-CI validation. CI pending; T0129 remains in_progress.\n\nT0129-A002 verification (exact V 3.0.434, 2026-10-27): 184 Python tests and all quality/graph/evidence gates passed; HostLifecycle including the new PeerSecurityPolicy acceptance test passed; Windows WPF Release build/startup/policy checks passed; Android APK/lint/Protobuf passed; real llama.cpp/GGUF inference and cancellation passed. T0129 is done for maintained-library selection/integration and PeerId input validation only. This is not an independent cryptographic audit, identity key persistence, peer enrollment, or Android-to-Windows end-to-end acceptance. AC-P2P-01 remains NOT RUN.\n\nDependency graph correction (V 3.0.440): the validated sequencing-only T0128 → T0129 edge has been removed from active dependencies because the final trust/transport chain now requires T0131 → T0128. The old edge and evidence remain in edge_change_log. T0129 remains done; its implementation and exact-commit CI evidence are unchanged.",
       "execution_summary": {
         "attempt_count": 2,
         "failed_attempt_count": 0,
@@ -25406,7 +25406,7 @@
       "outputs": [
         "خروجی قابل بررسی مربوط به «هویت کلید میزبان را بساز و کلید خصوصی را در ذخیره‌سازی امن سیستم نگه دار.» در مسیر src/Shared.Security/ + tests/security/؛ همراه با آزمون/شاهد پذیرش متناسب."
       ],
-      "start_condition": "T0129 is done. The reviewed T0128 → T0130 edge is sequencing_only: the independent-node end-to-end acceptance consumes no persistent key-store artifact and can follow stable host identity setup. Preserve T0128 and its pending acceptance.",
+      "start_condition": "T0129 is done. The historical sequencing-only T0128 → T0130 relationship was removed from active edges because T0130 consumes no T0128 output and the final technical chain points from T0131 to T0128. The removed edge's rationale/evidence remain in edge_change_log.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
       "status": "done",
       "status_fa": "تکمیل‌شده",
@@ -25442,7 +25442,7 @@
         "tests/test_host_identity_store.py",
         "docs/decisions/ADR-0017-windows-user-scoped-host-identity-storage.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0130-A001 (2026-10-27): reviewed T0129 → T0130 as contract_or_interface_dependency and T0128 → T0130 as sequencing_only using actual project/source/test contracts; both original blocks edges remain. Implemented protected persistent host identity and portable/Windows acceptance tests; exact-commit CI pending. Status remains in_progress until tests and product/quality workflows pass.\n\nT0130-A001 CI outcome (2026-10-27): Step Three quality passed; Windows WPF build/startup and explicit Windows DPAPI stability/at-rest/tamper acceptance passed; Android build/tests and real inference passed. HostLifecycle failed at concurrent first-run creation: separate store instances returned different PeerIds. T0130-A002 adds a path-scoped named mutex to serialize creation across instances/processes. Status remains in_progress pending rerun.\n\nT0130-A002 verified on exact V 3.0.437 (2026-10-27): Step Three quality passed; HostLifecycle passed including concurrent first-run callers converging on one PeerId; Windows WPF and dedicated DPAPI stability/at-rest/tamper acceptance passed; Android APK/lint/Protobuf passed. Task complete within stable identity and protected persistence scope only. T0121 remains blocked; AC-P2P-01 remains NOT RUN.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0130-A001 (2026-10-27): reviewed T0129 → T0130 as contract_or_interface_dependency and T0128 → T0130 as sequencing_only using actual project/source/test contracts; both original blocks edges remain. Implemented protected persistent host identity and portable/Windows acceptance tests; exact-commit CI pending. Status remains in_progress until tests and product/quality workflows pass.\n\nT0130-A001 CI outcome (2026-10-27): Step Three quality passed; Windows WPF build/startup and explicit Windows DPAPI stability/at-rest/tamper acceptance passed; Android build/tests and real inference passed. HostLifecycle failed at concurrent first-run creation: separate store instances returned different PeerIds. T0130-A002 adds a path-scoped named mutex to serialize creation across instances/processes. Status remains in_progress pending rerun.\n\nT0130-A002 verified on exact V 3.0.437 (2026-10-27): Step Three quality passed; HostLifecycle passed including concurrent first-run callers converging on one PeerId; Windows WPF and dedicated DPAPI stability/at-rest/tamper acceptance passed; Android APK/lint/Protobuf passed. Task complete within stable identity and protected persistence scope only. T0121 remains blocked; AC-P2P-01 remains NOT RUN.\n\nDependency graph correction (V 3.0.440): the validated sequencing-only T0128 → T0130 edge was removed from active dependencies. T0130 consumes the T0129 security/library boundary, not an output from T0128; the historical edge rationale/evidence remain in edge_change_log. T0130's accepted code and CI evidence are unchanged.",
       "execution_summary": {
         "attempt_count": 2,
         "failed_attempt_count": 1,
@@ -25636,7 +25636,7 @@
       "outputs": [
         "خروجی قابل بررسی مربوط به «روش اعتماد اولیه و تأیید هویت همتا را پیاده‌سازی کن.» در مسیر src/Shared.Security/ + tests/security/؛ همراه با آزمون/شاهد پذیرش متناسب."
       ],
-      "start_condition": "T0130 is done. The historical T0128 → T0131 edge is sequencing_only; the validated technical dependency runs T0131 → T0128 because the final independent-node acceptance consumes this task's trust API.",
+      "start_condition": "T0130 is done. The active contract prerequisite is T0131 → T0128 because the final independent-node acceptance consumes this task's trust API. The former T0128 → T0131 sequencing-only edge was removed from active edges to prevent a cycle; rationale/evidence remain in edge_change_log.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
       "status": "in_progress",
       "status_fa": "در حال انجام",
@@ -25672,11 +25672,11 @@
         "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs",
         "docs/decisions/ADR-0018-explicit-peer-trust-and-identity-verification.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0131-A001: reviewed T0130 → T0131 as contract_or_interface_dependency. T0128 → T0131 is sequencing_only; added missing actual dependency T0131 → T0128 because final E2E consumes the explicit trust API. The original edge type=blocks remains; rationale, evidence and order change are recorded.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0131-A001: reviewed T0130 → T0131 as contract_or_interface_dependency. T0128 → T0131 is sequencing_only; added missing actual dependency T0131 → T0128 because final E2E consumes the explicit trust API. The original edge type=blocks remains; rationale, evidence and order change are recorded.\n\nT0131-A001 CI result (V 3.0.439): graph quality failed due to a dependency cycle, and HostLifecycle/Windows build failed with CS9135 at PeerTrustStore.cs:222. A002 fixes the bounds check and removes obsolete active sequencing edges from T0128 to T0129, T0130 and T0131. Their reasons/evidence remain in edge_change_log; T0131 → T0128 remains the actual contract edge. Status remains in_progress pending CI.",
       "execution_summary": {
-        "attempt_count": 1,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "T0131-A001",
+        "attempt_count": 2,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "T0131-A002",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Shared.Security/PeerTrustStore.cs",
@@ -25693,47 +25693,45 @@
           "step three/T0131/evidence/verification.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
+        "related_commits": [
+          "1ab05a610b6276c4a453105e76d8a4cd501ccb9b"
+        ],
         "tests_passed": [],
-        "tests_failed": [],
+        "tests_failed": [
+          "V 3.0.439 Step Three graph validation failed with DEPENDENCY_CYCLE; the active sequencing-only edges T0128 → T0129/T0130/T0131 formed a cycle with the real technical chain T0129 → T0130 → T0131 → T0128.",
+          "V 3.0.439 HostLifecycle and Windows builds failed with CS9135 at PeerTrustStore.cs:222, so the new peer-trust acceptance tests did not execute.",
+          "V 3.0.439 real inference workflow failed on this exact commit; no T0131 acceptance pass is inferred."
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "required",
+          "state": "in_review",
           "triggering_contracts": [
-            "Transport now requires PeerTrustStore before listening/dialing",
-            "T0128 consumes trust API"
+            "PeerTrustStore payload-size guard compile expression",
+            "Acyclic dependency graph after adding T0131 → T0128"
           ],
           "affected_by_contract_changes": [
             "T0128",
-            "T0132",
-            "T0133",
-            "T0134",
-            "T0137"
+            "T0129",
+            "T0130",
+            "T0131"
           ],
           "review_evidence": [
-            "src/Shared.Security/HostIdentityStore.cs",
-            "src/Host.Windows/Security/WindowsDpapiSecretProtector.cs",
-            "src/Host.Windows/Security/WindowsHostIdentityProvider.cs",
-            "src/Shared.Security/PeerSecurityPolicy.cs",
-            "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
-            "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs",
-            "docs/decisions/ADR-0016-maintained-libp2p-cryptographic-transport.md",
             "src/Shared.Security/PeerTrustStore.cs",
-            "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+            "tools/graph_guard.py",
             "tests/HostLifecycle.Tests/PeerTrustStoreAcceptanceTests.cs",
             "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs"
           ]
         },
-        "follow_up": "Inspect exact-commit Step Three quality, HostLifecycle, Windows DPAPI and Android jobs. Keep T0131 in_progress until CI passes; T0128 is explicitly dependent on T0131."
+        "follow_up": "A002 fixes the CS9135 expression and removes reviewed sequencing-only edges T0128 → T0129/T0130/T0131 from active dependencies; rationales/evidence remain in edge_change_log. The actual T0131 → T0128 contract edge remains. Run exact-commit quality, HostLifecycle, Windows DPAPI and Android jobs."
       },
       "execution_history": [
         {
           "attempt_id": "T0131-A001",
           "started_at": "2026-10-27T20:52:43.631Z",
-          "ended_at": "2026-10-27T20:52:43.631Z",
-          "result": "partial",
-          "summary": "Added protected trust-on-first-use storage for canonical PeerIds and required a trust store in Libp2pPeerTransport. Unknown identities are rejected before listen/dial; explicit approval can be persisted and reloaded. Portable and Windows DPAPI tests plus transport trust-gate coverage added. Exact-commit CI pending.",
+          "ended_at": "2026-10-27T20:54:51Z",
+          "result": "failed",
+          "summary": "Added persistent trust storage, transport trust enforcement, tests, and workflow wiring. Exact V 3.0.439 CI exposed a compile error in the protected-payload size pattern and a dependency cycle because active sequencing edges T0128 → T0129/T0130/T0131 remained beside the real contract chain ending in T0131 → T0128.",
           "changed_files": [
             "src/Shared.Security/PeerTrustStore.cs",
             "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
@@ -25749,41 +25747,83 @@
             "step three/T0131/evidence/verification.md",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "1ab05a610b6276c4a453105e76d8a4cd501ccb9b",
           "tests": [
             {
-              "name": "PeerTrustStore acceptance",
-              "result": "pending",
-              "summary": "Explicit approval, unknown rejection, persisted reload, canonical ID validation and corrupt-store fail-closed."
-            },
-            {
-              "name": "Peer transport trust gate",
-              "result": "pending",
-              "summary": "Unknown ID rejected before dial, approval allows retry, address identity mismatch rejected."
-            },
-            {
-              "name": "Windows DPAPI trust acceptance",
-              "result": "pending",
-              "summary": "At-rest privacy, reload and tamper rejection."
-            },
-            {
               "name": "Step Three quality gate",
-              "result": "pending",
-              "summary": "Exact graph, Python and output/evidence validation."
+              "result": "failed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40582042880",
+              "summary": "Dependency cycle detected."
             },
             {
-              "name": "Product build",
-              "result": "pending",
-              "summary": "HostLifecycle, Windows WPF/DPAPI and Android jobs."
+              "name": "HostLifecycle suite",
+              "result": "failed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40582042752",
+              "summary": "CS9135 compile failure at PeerTrustStore.cs:222; trust acceptance tests did not execute."
+            },
+            {
+              "name": "Windows WPF build",
+              "result": "failed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40582042752",
+              "summary": "CS9135 compile failure at PeerTrustStore.cs:222."
+            },
+            {
+              "name": "Real local inference workflow",
+              "result": "failed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40582042794",
+              "summary": "The exact V 3.0.439 run failed and is not acceptance evidence for T0131."
             }
           ],
-          "failure_details": null,
+          "failure_details": "Step Three quality failed with DEPENDENCY_CYCLE (run 40582042880). HostLifecycle and Windows build failed with CS9135 at PeerTrustStore.cs line 222 (run 40582042752). The real-inference workflow for this exact commit also failed (run 40582042794).",
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [
             "Libp2pPeerTransport now requires PeerTrustStore and checks trust before listener start and outbound dial."
           ],
           "follow_up": "Inspect exact-commit CI; preserve and fix any failures before completion."
+        },
+        {
+          "attempt_id": "T0131-A002",
+          "started_at": "2026-10-27T21:00:05.156Z",
+          "ended_at": "2026-10-27T21:00:05.156Z",
+          "result": "partial",
+          "summary": "Replaced the non-constant relational-pattern expression in the protected-payload bounds check with ordinary comparisons. Removed the three reviewed sequencing-only edges T0128 → T0129/T0130/T0131 from active adjacency to eliminate the cycle with T0129 → T0130 → T0131 → T0128; their historical rationales/evidence remain in edge_change_log. Exact V 3.0.440 CI pending.",
+          "changed_files": [
+            "src/Shared.Security/PeerTrustStore.cs",
+            "step three/project-graph.md",
+            "step three/T0131/execution-report.md",
+            "step three/T0131/evidence/verification.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Step Three quality gate",
+              "result": "pending",
+              "summary": "Validate acyclic graph and evidence/output checks."
+            },
+            {
+              "name": "HostLifecycle peer-trust acceptance",
+              "result": "pending",
+              "summary": "Compile and pass unknown-peer rejection, explicit trust/retry, persistence and fail-closed cases."
+            },
+            {
+              "name": "Windows DPAPI peer trust acceptance",
+              "result": "pending",
+              "summary": "At-rest privacy, persisted reload and tamper rejection."
+            },
+            {
+              "name": "Windows and Android product build",
+              "result": "pending",
+              "summary": "Pass platform builds, HostLifecycle tests, Android lint/APK/Protobuf."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "Removed obsolete active sequencing edges from T0128 to T0129/T0130/T0131; original rationale/evidence are retained in edge_change_log. The actual contract chain remains T0129 → T0130 → T0131 → T0128."
+          ],
+          "follow_up": "Inspect exact V 3.0.440 quality/product job results. Preserve/fix any new failure before marking T0131 done."
         }
       ]
     },
@@ -33325,21 +33365,6 @@
       "evidence": []
     },
     {
-      "from": "T0128",
-      "to": "T0129",
-      "type": "blocks",
-      "dependency_classification": "sequencing_only",
-      "rationale": "Reviewed T0128's independent-node end-to-end acceptance against T0129's output. T0128 verifies the assembled peer discovery/transport path but produces no cryptography-library selection or PeerId-parser artifact consumed by T0129. The repository already uses Nethermind.Libp2p and delegates secure-channel setup to its Noise/TLS stack; centralizing this maintained-library boundary should precede, not wait for, final multi-node acceptance. Preserve the original blocks edge as a sequencing-only relationship and run T0129 ahead of T0128 only with this recorded evidence.",
-      "validation_status": "validated",
-      "evidence": [
-        "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
-        "src/Host.Windows/Networking/Libp2pPeerMessageProtocol.cs",
-        "docs/decisions/ADR-0002-direct-p2p-data-path.md",
-        "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs",
-        "step three/T0128/execution-report.md"
-      ]
-    },
-    {
       "from": "T0129",
       "to": "T0130",
       "type": "blocks",
@@ -33354,20 +33379,6 @@
       ]
     },
     {
-      "from": "T0128",
-      "to": "T0130",
-      "type": "blocks",
-      "dependency_classification": "sequencing_only",
-      "rationale": "T0128 is the final independent-node E2E acceptance task and does not consume persistent key-store output from T0130. A stable host identity is useful input for repeatable peer identity during that later acceptance. Retain the edge and type=blocks, but classify this relationship as sequencing_only to allow T0130 first.",
-      "validation_status": "validated",
-      "evidence": [
-        "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
-        "src/Host.Windows/Networking/Libp2pPeerMessageProtocol.cs",
-        "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs",
-        "docs/decisions/ADR-0002-direct-p2p-data-path.md"
-      ]
-    },
-    {
       "from": "T0130",
       "to": "T0131",
       "type": "blocks",
@@ -33379,19 +33390,6 @@
         "src/Host.Windows/Security/WindowsDpapiSecretProtector.cs",
         "src/Host.Windows/Security/WindowsHostIdentityProvider.cs",
         "src/Shared.Security/PeerSecurityPolicy.cs"
-      ]
-    },
-    {
-      "from": "T0128",
-      "to": "T0131",
-      "type": "blocks",
-      "dependency_classification": "sequencing_only",
-      "rationale": "T0128's final independent-node acceptance does not produce a trust API consumed by T0131. The trust policy and component tests can be implemented independently, so retain this historical edge as sequencing_only and execute T0131 first.",
-      "validation_status": "validated",
-      "evidence": [
-        "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
-        "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs",
-        "docs/decisions/ADR-0016-maintained-libp2p-cryptographic-transport.md"
       ]
     },
     {
@@ -37694,6 +37692,60 @@
         "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-27T21:00:05.156Z",
+      "edge_from": "T0128",
+      "edge_to": "T0129",
+      "old_classification": "sequencing_only",
+      "new_classification": "sequencing_only",
+      "old_validation_status": "validated",
+      "new_validation_status": "validated",
+      "change_action": "removed_from_active_edges",
+      "reason": "Removed the reviewed sequencing-only T0128 → T0129 edge from active dependencies because it created a directed cycle with the actual technical chain T0129 → T0130 → T0131 → T0128. The original rationale/evidence remain in this append-only log; the safe execution order runs T0129 before T0128, and T0129 consumes no output from T0128.",
+      "evidence": [
+        "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+        "src/Host.Windows/Networking/Libp2pPeerMessageProtocol.cs",
+        "docs/decisions/ADR-0002-direct-p2p-data-path.md",
+        "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs",
+        "step three/T0128/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-27T21:00:05.156Z",
+      "edge_from": "T0128",
+      "edge_to": "T0130",
+      "old_classification": "sequencing_only",
+      "new_classification": "sequencing_only",
+      "old_validation_status": "validated",
+      "new_validation_status": "validated",
+      "change_action": "removed_from_active_edges",
+      "reason": "Removed the reviewed sequencing-only T0128 → T0130 edge from active dependencies because it created a directed cycle with the actual technical chain T0129 → T0130 → T0131 → T0128. The original rationale/evidence remain in this append-only log; the safe execution order runs T0130 before T0128, and T0130 consumes no output from T0128.",
+      "evidence": [
+        "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+        "src/Host.Windows/Networking/Libp2pPeerMessageProtocol.cs",
+        "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs",
+        "docs/decisions/ADR-0002-direct-p2p-data-path.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-27T21:00:05.156Z",
+      "edge_from": "T0128",
+      "edge_to": "T0131",
+      "old_classification": "sequencing_only",
+      "new_classification": "sequencing_only",
+      "old_validation_status": "validated",
+      "new_validation_status": "validated",
+      "change_action": "removed_from_active_edges",
+      "reason": "Removed the reviewed sequencing-only T0128 → T0131 edge from active dependencies because it created a directed cycle with the actual technical chain T0129 → T0130 → T0131 → T0128. The original rationale/evidence remain in this append-only log; the safe execution order runs T0131 before T0128, and T0131 consumes no output from T0128.",
+      "evidence": [
+        "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+        "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs",
+        "docs/decisions/ADR-0016-maintained-libp2p-cryptographic-transport.md"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
   "updated_at": "2026-10-27",
@@ -37736,6 +37788,24 @@
         "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
         "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs",
         "docs/decisions/ADR-0016-maintained-libp2p-cryptographic-transport.md",
+        "src/Shared.Security/PeerTrustStore.cs",
+        "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+        "tests/HostLifecycle.Tests/PeerTrustStoreAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-27T21:00:05.156Z",
+      "moved_tasks": [
+        "T0131"
+      ],
+      "old_positions": {
+        "T0131": 123
+      },
+      "new_anchor": "Immediately after T0130 and before the blocked T0121/T0128 chain",
+      "reason": "T0131 consumes T0130 and must precede T0128 because the independent-node acceptance consumes PeerTrustStore. The three historical sequencing-only edges from T0128 to T0129/T0130/T0131 were removed from active edges to prevent a cycle; their review records remain in edge_change_log.",
+      "evidence": [
         "src/Shared.Security/PeerTrustStore.cs",
         "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
         "tests/HostLifecycle.Tests/PeerTrustStoreAcceptanceTests.cs",
