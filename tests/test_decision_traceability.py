@@ -18,6 +18,7 @@ ADR3_TCP = (ROOT / "docs/decisions/ADR-0003-tcp-request-framing.md").read_text(e
 ADR5_TRANSPORT = (ROOT / "docs/decisions/ADR-0005-authenticated-peer-transport-fallback.md").read_text(encoding="utf-8")
 ADR6_LEASE = (ROOT / "docs/decisions/ADR-0006-peer-announcement-leases.md").read_text(encoding="utf-8")
 ADR7_SINGLE_ACTIVE = (ROOT / "docs/decisions/ADR-0007-single-active-inference.md").read_text(encoding="utf-8")
+ADR8_PROCESS_LAUNCH = (ROOT / "docs/decisions/ADR-0008-local-engine-process-ownership.md").read_text(encoding="utf-8")
 
 
 class DecisionTraceabilityTests(unittest.TestCase):
@@ -28,6 +29,13 @@ class DecisionTraceabilityTests(unittest.TestCase):
             "docs/decisions/ADR-0003-local-inference-backend.md",
             "docs/decisions/ADR-0003-tcp-request-framing.md",
             "docs/decisions/ADR-0005-authenticated-peer-transport-fallback.md",
+            "docs/decisions/ADR-0008-local-engine-process-ownership.md",
+            "src/Host.Windows/Inference/LocalInferenceProcessLauncher.cs",
+            "src/Host.Windows/Inference/LocalInferenceBinaryVerifier.cs",
+            "tests/HostLifecycle.Tests/LocalInferenceProcessLauncherTests.cs",
+            "tests/test_local_inference_binary_verifier.py",
+            "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+            ".github/workflows/real-inference.yml",
             "protocol/whitep/v1/messages.proto",
             "src/Shared.Contracts/ProtocolMessageLimits.cs",
             "src/Host.Windows/Networking/NetworkInferenceRequestFrameReader.cs",
@@ -238,6 +246,52 @@ class DecisionTraceabilityTests(unittest.TestCase):
         self.assertIn("ExpiredDeadlineIsRejectedBeforeInference", failure_tests)
         self.assertIn("InternalFailureIsSanitized", response_tests)
 
+    def test_local_engine_process_decision_maps_to_verified_shell_free_launch_and_ownership(self):
+        paths = (
+            "docs/decisions/ADR-0008-local-engine-process-ownership.md",
+            "src/Host.Windows/Inference/LocalInferenceProcessLauncher.cs",
+            "src/Host.Windows/Inference/LocalInferenceBinaryVerifier.cs",
+            "tests/HostLifecycle.Tests/LocalInferenceProcessLauncherTests.cs",
+            "tests/test_local_inference_binary_verifier.py",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+            ".github/workflows/real-inference.yml",
+        )
+        for relative_path in paths:
+            with self.subTest(path=relative_path):
+                self.assertTrue((ROOT / relative_path).is_file(), relative_path)
+                self.assertIn(Path(relative_path).name, REGISTER)
+                if relative_path != paths[0]:
+                    self.assertIn(relative_path, ADR8_PROCESS_LAUNCH)
+
+        launcher = (ROOT / "src/Host.Windows/Inference/LocalInferenceProcessLauncher.cs").read_text(encoding="utf-8")
+        verifier = (ROOT / "src/Host.Windows/Inference/LocalInferenceBinaryVerifier.cs").read_text(encoding="utf-8")
+        csharp_tests = (ROOT / "tests/HostLifecycle.Tests/LocalInferenceProcessLauncherTests.cs").read_text(encoding="utf-8")
+        harness = (ROOT / "tests/HostLifecycle.Tests/Program.cs").read_text(encoding="utf-8")
+        project = (ROOT / "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj").read_text(encoding="utf-8")
+        workflow = (ROOT / ".github/workflows/real-inference.yml").read_text(encoding="utf-8")
+
+        self.assertIn("WHITEP_LLAMA_SERVER_VERSION", launcher)
+        self.assertIn("WHITEP_LLAMA_SERVER_SHA256", launcher)
+        self.assertLess(
+            verifier.index("CryptographicOperations.FixedTimeEquals(expectedHash, actualHash)"),
+            verifier.index('startInfo.ArgumentList.Add("--version")'),
+        )
+        self.assertIn("The llama.cpp executable changed during version verification", verifier)
+        self.assertIn("UseShellExecute = false", launcher)
+        self.assertIn('info.ArgumentList.Add("--host")', launcher)
+        self.assertIn('info.ArgumentList.Add("127.0.0.1")', launcher)
+        self.assertIn('info.ArgumentList.Add("--no-webui")', launcher)
+        self.assertIn("process.Kill(entireProcessTree: true)", launcher)
+        self.assertIn("DefaultStopTimeout = TimeSpan.FromSeconds(5)", launcher)
+        self.assertIn("info.ArgumentList.SequenceEqual(expected)", csharp_tests)
+        self.assertIn("Non-loopback bind must be rejected.", csharp_tests)
+        self.assertIn("LocalInferenceProcessLauncherTests.Run();", harness)
+        self.assertIn("LocalInferenceBinaryVerifier.cs", project)
+        self.assertIn('"WHITEP_LLAMA_SERVER_VERSION=11443"', workflow)
+        self.assertIn('"WHITEP_LLAMA_SERVER_SHA256=$serverSha256"', workflow)
+        self.assertIn("AC-P2P-01", ADR8_PROCESS_LAUNCH)
+        self.assertIn("NOT RUN", ADR8_PROCESS_LAUNCH)
 
 if __name__ == "__main__":
     unittest.main()

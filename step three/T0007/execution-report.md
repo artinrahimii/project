@@ -502,3 +502,29 @@
 - **Android APK: PASS** — [job 122227428100](https://github.com/artinrahimii/project/actions/runs/40515255239/job/122227428100), including Kotlin lint, debug APK assembly, Protobuf round-trip tests, generated-source validation, and artifact upload.
 - **Result boundary:** this proves the bounded ADR-0007 traceability regression and current platform CI on the tested candidate. No runtime application code changed; these checks do not prove Android-to-Windows end-to-end routing. `AC-P2P-01` remains **NOT RUN** and T0007 remains `in_progress`.
 - **Follow-up:** re-check the PR head after this report/graph update, ensure final-head quality/product checks pass, then squash-merge only if the main head and PR candidate are still consistent.
+
+
+## Attempt T0007-A047 — local engine process launch traceability (2026-10-27)
+
+- **Baseline:** exact online `main` commit `abf91d47d220b4b36fb6351742abe6d4d067690b` (`V 3.0.402`). The branch history was inspected first; the preceding version message is `V 3.0.402` (the preceding commit body repeats the same line, which is preserved as historical metadata). The next version for a successful online commit is `V 3.0.403`.
+- **Source review:** `LocalInferenceProcessLauncher` requires caller-configured expected version and SHA-256, invokes `LocalInferenceBinaryVerifier` before server startup, constructs shell-free argv with separate `ArgumentList` items, validates a `.gguf` file / model alias and loopback HTTP endpoint, binds the managed server only to `127.0.0.1`, and disposes only the process it owns. The verifier checks the expected digest before a bounded shell-free `--version` probe and rechecks the digest before returning.
+- **Gap and implementation:** the decision register lacked a dedicated traceability record for this existing security/resource-ownership boundary. Added `docs/decisions/ADR-0008-local-engine-process-ownership.md`, added its row to `docs/decisions/README.md`, and added `test_local_engine_process_decision_maps_to_verified_shell_free_launch_and_ownership` in `tests/test_decision_traceability.py`. Also added the decision evidence boundary to `docs/acceptance.md`.
+- **Scope:** no product runtime code, model process policy, configuration value, protocol contract, or dependency edge was changed. The decision describes current behavior and configured trust inputs; it does not claim independent publisher attestation, a generalized process sandbox, or Android-to-Windows P2P delivery.
+- **Dependency review:** `T0006 → T0007` remains `validated / contract_or_interface_dependency`; `T0007 → T0008` remains `validated / sequencing_only`; no dependency edge changed. `T0121` remains `in_progress` because the host has no real peer-reachable transport identity/address to publish; `AC-P2P-01` stays **NOT RUN**.
+- **Local execution:** no local checkout/toolchain is available through this session. New Python regression and full platform tests are pending exact-candidate GitHub Actions; not yet marked as passed.
+- **Graph integrity:** read from Blob `06cebecea135f31919d139f71ccc58e904967474` attached to the exact baseline commit. Original content is 2,000,597 UTF-8 bytes (1,878,657 characters), calculated Git SHA-1 Blob matches exactly; complete fenced JSON parses as 229 unique task IDs and 426 edges. This attempt preserves all 426 edge records and existing classifications.
+- **Result:** partial pending CI; do not close broad T0007 from a single decision-traceability increment.
+- **Follow-up:** inspect exact candidate Step Three quality and product CI, preserve any failures, then re-check the final PR head before merge.
+
+
+## Attempt T0007-A048 — exact-candidate CI verification (2026-10-27)
+
+- **Verified candidate:** `f8d39b25a7be91a72b3b7b4928142428f09f656c`, PR [#2](https://github.com/artinrahimii/project/pull/2), based on V 3.0.402.
+- **Step Three quality gate: PASS** — [run 40521379703](https://github.com/artinrahimii/project/actions/runs/40521379703), job `122249094800`. The complete Python suite reported **170 tests, OK**; syntax, graph and repository evidence checks passed (0 errors, one preserved `T0001` unmapped-dependency warning).
+- **HostLifecycle tests: PASS** — [job 122249096158](https://github.com/artinrahimii/project/actions/runs/40521379736/job/122249096158).
+- **Windows WPF: PASS** — [job 122249096378](https://github.com/artinrahimii/project/actions/runs/40521379736/job/122249096378): C# formatting, Release build, generated Protobuf validation, startup smoke, Windows process-policy rejection and backend/model capability gates passed.
+- **Android APK: PASS** — [job 122249095883](https://github.com/artinrahimii/project/actions/runs/40521379736/job/122249095883): Kotlin lint, debug APK, Protobuf round-trip, generated sources and artifact upload passed.
+- **Aggregate product workflow: PASS** — [run 40521379736](https://github.com/artinrahimii/project/actions/runs/40521379736), all three product jobs succeeded.
+- **Scope boundary:** the new test is a source-to-decision traceability regression. It is not a standalone live-model execution test and does not complete Android-to-Windows routing. T0007 remains `in_progress`; `AC-P2P-01` remains **NOT RUN**.
+- **Result:** A047's bounded local-engine process decision-traceability increment is verified. The attempt is recorded as a separate success; A047 remains a partial attempt from its original point in history. Broad T0007 remains `in_progress`, because one more traceability record does not prove all project technical decisions are covered.
+- **Graph/dependency integrity:** all 426 edges remain unchanged. `T0006 → T0007` remains `validated / contract_or_interface_dependency`; `T0007 → T0008` remains `validated / sequencing_only`. The original T0001 unmapped-dependency warning is retained as metadata.

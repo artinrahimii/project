@@ -372,3 +372,13 @@ The full product workflow for exact V 3.0.393 [40509035822](https://github.com/a
 ## T0007-A039 — V 3.0.394 product and V 3.0.395 quality verification
 
 The full product workflow for exact V 3.0.394 [40509343712](https://github.com/artinrahimii/project/actions/runs/40509343712) completed successfully. The exact V 3.0.395 Step Three quality gate [40509744832](https://github.com/artinrahimii/project/actions/runs/40509744832) passed automated tests, Python syntax, graph structure, and output/evidence validation. Product workflow [40509745205](https://github.com/artinrahimii/project/actions/runs/40509745205) remained in progress at the time of this record; no full product result is claimed for V 3.0.395. T0007 remains `in_progress`; `AC-P2P-01` remains **NOT RUN**.
+
+
+## T0007-A047 — local engine process launch traceability (pending exact-commit CI)
+
+Added ADR-0008 to connect the existing managed local llama.cpp process boundary to production code, pinned release/hash inputs, executable argument-construction tests, binary-verification source checks, and the opt-in real-inference workflow. The new Python regression verifies the links and key fail-closed invariants. Existing fixture-based argument tests are not treated as proof of live inference, and a configured hash is not described as independent provenance verification. Exact-commit quality/product CI is pending; T0007 remains `in_progress`, and `AC-P2P-01` remains **NOT RUN**.
+
+
+## T0007-A048 — exact candidate CI verification for local engine process traceability
+
+The exact candidate `f8d39b25a7be91a72b3b7b4928142428f09f656c` passed the Step Three quality gate ([run 40521379703](https://github.com/artinrahimii/project/actions/runs/40521379703)): 170 Python tests, Python syntax, graph structure and repository-backed evidence checks; graph guard reported zero errors and one preserved T0001 unmapped-dependency warning. The aggregate product workflow ([run 40521379736](https://github.com/artinrahimii/project/actions/runs/40521379736)) succeeded with HostLifecycle, Windows WPF and Android APK jobs all passing. This verifies the bounded source-to-decision traceability increment, not live-model acceptance or end-to-end Android-to-Windows routing. T0007 remains `in_progress`; `AC-P2P-01` remains **NOT RUN**.
