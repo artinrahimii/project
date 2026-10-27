@@ -271,3 +271,15 @@
 - Dependency review: `T0006 → T0007` remains a validated `contract_or_interface_dependency`; `T0007 → T0008` remains a validated `sequencing_only` edge. Their type, classification, rationale, and evidence were not changed. Other edges, including the unreviewed `T0121 → T0122` edge, were left untouched.
 - Result: partial. Exact-head tests passed for the bounded A024 change, but the broad traceability criterion of T0007 remains incomplete. Node status remains `in_progress`; no task was promoted to `done`.
 - Follow-up: continue T0007 by tracing another uncovered production decision to real source/configuration and automated acceptance. Prefer a runtime test where an appropriate harness exists; keep the current GUI fault-injection limitation explicit.
+
+
+## Attempt T0007-A026 — move rollback behavior into an executable production contract (2026-10-27)
+
+- Base: [`V 3.0.383` (`d1edc5518ad33ebdb43840d8857430079a12490d`)](https://github.com/artinrahimii/project/commit/d1edc5518ad33ebdb43840d8857430079a12490d).
+- Finding: A024's nested rollback catch prevented a second exception from escaping the WPF `async void` handler, but its regression only inspected source text; it did not execute the recovery behavior itself.
+- Implementation: added `src/Host.Application/ParticipationActivationRecovery.cs` and wired `MainWindow.NetworkParticipationToggle_Changed` to the helper. A successful rollback returns the sanitized activation message; `ObjectDisposedException` stays a shutdown-owned cleanup case; any other rollback failure adds safe restart guidance and uses the existing exception mapper.
+- Executable tests: added `tests/HostLifecycle.Tests/ParticipationActivationRecoveryTests.cs` and registered it in `tests/HostLifecycle.Tests/Program.cs`. The tests execute success, secondary-failure, and disposal paths and assert that exception details containing path/token-like strings never appear in user-facing text. The Python source guard now verifies the production WPF handler delegates to the tested helper.
+- Dependency review: `T0006 → T0007` remains validated as `contract_or_interface_dependency`; `T0007 → T0008` remains validated as `sequencing_only`. No edge was changed.
+- Local test execution: not available in this tool session because there is no local repository checkout or .NET/Python runtime. The exact new commit must be evaluated by GitHub Actions before results are reported as passed.
+- Result at creation: partial, CI pending. T0007 remains `in_progress`; this is another bounded decision-to-code-to-test trace, not full task completion.
+- Follow-up: inspect exact-commit Step Three quality and product CI. If any check fails, diagnose and correct it before recording successful acceptance.

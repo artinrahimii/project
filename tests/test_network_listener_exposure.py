@@ -5,6 +5,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 LISTENER = (ROOT / "src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs").read_text(encoding="utf-8")
 WINDOW = (ROOT / "src/Host.Windows/MainWindow.xaml.cs").read_text(encoding="utf-8")
+RECOVERY = (ROOT / "src/Host.Application/ParticipationActivationRecovery.cs").read_text(encoding="utf-8")
+RECOVERY_TESTS = (ROOT / "tests/HostLifecycle.Tests/ParticipationActivationRecoveryTests.cs").read_text(encoding="utf-8")
+TEST_ENTRYPOINT = (ROOT / "tests/HostLifecycle.Tests/Program.cs").read_text(encoding="utf-8")
 
 
 class NetworkListenerExposureTests(unittest.TestCase):
@@ -19,24 +22,28 @@ class NetworkListenerExposureTests(unittest.TestCase):
         self.assertIn("if (active && _networkParticipationLifecycle.LocalEndpoint is { } endpoint)", WINDOW)
 
 
-    def test_participation_activation_failure_contains_rollback_failure_safely(self):
+    def test_participation_activation_failure_uses_behaviorally_tested_recovery(self):
         start = WINDOW.index("private async void NetworkParticipationToggle_Changed")
         end = WINDOW.index("private async void MainWindow_Closing", start)
         handler = WINDOW[start:end]
 
-        primary_catch = handler.index("catch (Exception exception)")
-        rollback = handler.index("await _networkParticipationLifecycle.SetParticipationActiveAsync(false);", primary_catch)
-        disposed_catch = handler.index("catch (ObjectDisposedException)", rollback)
-        rollback_catch = handler.index("catch (Exception rollbackException)", disposed_catch)
-        self.assertLess(primary_catch, rollback)
-        self.assertLess(rollback, disposed_catch)
-        self.assertLess(disposed_catch, rollback_catch)
-        self.assertIn("string rollbackFailureMessage = string.Empty;", handler)
-        self.assertIn("HostErrorPresentation.ToUserMessage(rollbackException)", handler)
-        self.assertIn("Listener cleanup could not be confirmed. Restart the host before retrying.", handler)
-        self.assertIn("{HostErrorPresentation.ToUserMessage(exception)}{rollbackFailureMessage}", handler)
-        self.assertNotIn("rollbackException.Message", handler)
-        self.assertNotIn("rollbackException.ToString()", handler)
+        self.assertIn("await ParticipationActivationRecovery.RecoverAsync(", handler)
+        self.assertIn("exception,", handler)
+        self.assertIn("() => _networkParticipationLifecycle.SetParticipationActiveAsync(false)", handler)
+        self.assertIn("ParticipationNetworkStatus.Text = failureMessage;", handler)
+        self.assertNotIn("exception.Message", handler)
+        self.assertNotIn("exception.ToString()", handler)
+
+        self.assertIn("public static async Task<string> RecoverAsync", RECOVERY)
+        self.assertIn("catch (ObjectDisposedException)", RECOVERY)
+        self.assertIn("catch (Exception rollbackException)", RECOVERY)
+        self.assertIn("HostErrorPresentation.ToUserMessage(rollbackException)", RECOVERY)
+        self.assertNotIn("rollbackException.Message", RECOVERY)
+        self.assertNotIn("rollbackException.ToString()", RECOVERY)
+
+        self.assertIn("await ParticipationActivationRecoveryTests.RunAsync();", TEST_ENTRYPOINT)
+        self.assertIn("A failed rollback must produce safe recovery guidance.", RECOVERY_TESTS)
+        self.assertIn("A disposed lifecycle during shutdown must not report a second cleanup failure.", RECOVERY_TESTS)
 
     def test_window_closing_waits_for_listener_disposal_before_closing_again(self):
         start = WINDOW.index("private async void MainWindow_Closing")

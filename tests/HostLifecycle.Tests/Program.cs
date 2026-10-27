@@ -105,6 +105,7 @@ await HostRequestCoordinatorConcurrencyTests.RunAsync();
 await HostRequestCoordinatorFailureAcceptanceTests.RunAsync();
 await HostNetworkListenerParticipationTests.RunAsync();
 await ParticipationNetworkListenerLifecycleTests.RunAsync();
+await ParticipationActivationRecoveryTests.RunAsync();
 await NetworkInferenceRequestFrameAcceptanceTests.RunAsync();
 await NetworkInferenceRequestResponseMapperAcceptanceTests.RunAsync();
 await PeerTransportContractAcceptanceTests.RunAsync().ConfigureAwait(false);

@@ -800,28 +800,14 @@ public partial class MainWindow : Window
             _suppressParticipationToggleChanged = true;
             NetworkParticipationToggle.IsChecked = false;
             _suppressParticipationToggleChanged = false;
-            string rollbackFailureMessage = string.Empty;
-            try
-            {
-                await _networkParticipationLifecycle.SetParticipationActiveAsync(false);
-            }
-            catch (ObjectDisposedException)
-            {
-                // Window shutdown already owns final disposal.
-            }
-            catch (Exception rollbackException)
-            {
-                // A failed rollback must not escape this async-void WPF event handler.
-                // Use the safe mapper and tell the user that listener state needs recovery.
-                rollbackFailureMessage =
-                    " Listener cleanup could not be confirmed. Restart the host before retrying. " +
-                    HostErrorPresentation.ToUserMessage(rollbackException);
-            }
+
+            var failureMessage = await ParticipationActivationRecovery.RecoverAsync(
+                exception,
+                () => _networkParticipationLifecycle.SetParticipationActiveAsync(false));
 
             if (!_windowClosing)
             {
-                ParticipationNetworkStatus.Text =
-                    $"Could not activate network participation: {HostErrorPresentation.ToUserMessage(exception)}{rollbackFailureMessage}";
+                ParticipationNetworkStatus.Text = failureMessage;
             }
         }
         finally
