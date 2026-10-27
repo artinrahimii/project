@@ -783,5 +783,15 @@ class DecisionTraceabilityTests(unittest.TestCase):
         )
 
 
+    def test_t0007_execution_report_matches_its_task_folder(self):
+        report = (ROOT / "step three/T0007/execution-report.md").read_text(encoding="utf-8")
+        self.assertTrue(
+            report.startswith("# T0007 execution report"),
+            "T0007's report must identify T0007 instead of another task.",
+        )
+        self.assertIn("T0007-A074", report)
+        self.assertIn("T0007 remains `in_progress`", report)
+
+
 if __name__ == "__main__":
     unittest.main()
