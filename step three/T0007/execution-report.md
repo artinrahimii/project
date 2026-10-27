@@ -224,3 +224,16 @@
 - Local execution: this session has no local repository checkout/Windows/.NET runtime to execute the repository test commands directly. No local test pass is claimed; exact-commit CI is pending.
 - Result at creation: partial pending CI. T0007 remains `in_progress`; one startup failure boundary is covered, not the full broad decision-to-code/configuration/test criterion.
 - Follow-up: inspect the exact commit's quality CI for the new Python test and graph/evidence checks; inspect the HostLifecycle job for the semantic-settings C# test and Windows WPF job for a successful build/startup smoke. Record passing results only from actual logs.
+
+
+## Attempt T0007-A022 — exact-commit verification of A021 (2026-10-27)
+
+- Implementation commit: [`V 3.0.379` (`3d9ac800cea63ea1e536f6fb79f49e712d2cfaec`)](https://github.com/artinrahimii/project/commit/3d9ac800cea63ea1e536f6fb79f49e712d2cfaec), confirmed as the online `main` head before this evidence update.
+- New WPF startup regression: `test_wpf_startup_contains_semantically_invalid_or_unreadable_settings` passed in [Step Three quality run 40465152381](https://github.com/artinrahimii/project/actions/runs/40465152381). The quality suite completed **164 Python tests**; syntax, graph structure and repository-backed evidence validation passed with **0 errors and 1 preserved T0001 unmapped-dependency warning**.
+- Semantic-settings runtime regression: the HostLifecycle job passed in [product run 40465152290, job 122058644449](https://github.com/artinrahimii/project/actions/runs/40465152290/job/122058644449). Its log confirms the settings persistence harness passed round-trip, legacy compatibility, semantic validation, invalid selection rejection, and fail-closed persistence.
+- Windows WPF: **PASS** — [job 122058644622](https://github.com/artinrahimii/project/actions/runs/40465152290/job/122058644622). Release build succeeded with **0 warnings and 0 errors**; generated Protobuf verification, WPF startup smoke, agent-tool process restrictions/policy checks and artifact upload succeeded.
+- Android: **PASS** — [job 122058644218](https://github.com/artinrahimii/project/actions/runs/40465152290/job/122058644218). Kotlin formatting/lint, debug APK assembly, Protobuf round-trip unit tests, generated Java/Kotlin checks and artifact upload succeeded.
+- Live local inference: **PASS** — [Real local inference run 40465152321](https://github.com/artinrahimii/project/actions/runs/40465152321) completed successfully. The log confirms real llama.cpp inference, observed active-generation cancellation, and clean stop of the app-owned process.
+- Aggregate product workflow: **PASS** — [run 40465152290](https://github.com/artinrahimii/project/actions/runs/40465152290); all three product jobs succeeded. The real-inference workflow also concluded `success`.
+- Result: partial. A021 is verified, but this one error boundary does not satisfy broad task-wide decision-to-code/configuration/test traceability. Keep T0007 `in_progress`; no dependency edges or unrelated task statuses changed.
+- Follow-up: continue tracing a different uncovered production decision and its config/test evidence; retain the exact CI evidence for this increment without promoting T0007 to `done`.
