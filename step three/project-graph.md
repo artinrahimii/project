@@ -25219,8 +25219,8 @@
       ],
       "start_condition": "The incoming T0128 -> T0129 edge has been validated as sequencing_only: the independent-node end-to-end acceptance test consumes no cryptography-library selection or PeerId-parser artifact. This task may precede T0128 to establish the maintained security-library boundary that the eventual end-to-end test must exercise. The T0128 edge remains in the graph and T0128 acceptance remains pending.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال انجام",
+      "status": "done",
+      "status_fa": "تکمیل‌شده",
       "actual_output_paths": [
         "src/Shared.Security/WhiteP.Shared.Security.csproj",
         "src/Shared.Security/PeerSecurityPolicy.cs",
@@ -25245,12 +25245,12 @@
         "tests/test_crypto_library_policy.py",
         "docs/decisions/ADR-0016-maintained-libp2p-cryptographic-transport.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0129-A001 (2026-10-27): reviewed T0128 -> T0129 as sequencing_only based on actual source/test contracts; the original edge is retained. Added a shared PeerId input/parser policy backed by Nethermind.Libp2p.Core, wired it into the host transport, added C#/Python regression coverage and ADR-0016, and updated the pinned libp2p package to 1.1.0 for exact-CI validation. CI pending; T0129 remains in_progress.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0129-A001 (2026-10-27): reviewed T0128 -> T0129 as sequencing_only based on actual source/test contracts; the original edge is retained. Added a shared PeerId input/parser policy backed by Nethermind.Libp2p.Core, wired it into the host transport, added C#/Python regression coverage and ADR-0016, and updated the pinned libp2p package to 1.1.0 for exact-CI validation. CI pending; T0129 remains in_progress.\n\nT0129-A002 verification (exact V 3.0.434, 2026-10-27): 184 Python tests and all quality/graph/evidence gates passed; HostLifecycle including the new PeerSecurityPolicy acceptance test passed; Windows WPF Release build/startup/policy checks passed; Android APK/lint/Protobuf passed; real llama.cpp/GGUF inference and cancellation passed. T0129 is done for maintained-library selection/integration and PeerId input validation only. This is not an independent cryptographic audit, identity key persistence, peer enrollment, or Android-to-Windows end-to-end acceptance. AC-P2P-01 remains NOT RUN.",
       "execution_summary": {
-        "attempt_count": 1,
+        "attempt_count": 2,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0129-A001",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "T0129-A002",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Shared.Security/WhiteP.Shared.Security.csproj",
           "src/Shared.Security/PeerSecurityPolicy.cs",
@@ -25263,10 +25263,20 @@
           "docs/decisions/ADR-0016-maintained-libp2p-cryptographic-transport.md",
           "docs/decisions/README.md",
           "WhiteP.sln",
-          "step three/T0129/execution-report.md"
+          "step three/T0129/execution-report.md",
+          "step three/T0129/evidence/verification.md",
+          "step three/project-graph.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
+        "related_commits": [
+          "b596fcc84e2e45b9b08c795bac783246f71040ec"
+        ],
+        "tests_passed": [
+          "V 3.0.434 Step Three quality gate 40566205060 — PASS: 184 Python tests, syntax, graph structure, and output/evidence checks.",
+          "V 3.0.434 HostLifecycle tests, including shared PeerSecurityPolicy acceptance and authenticated TCP/QUIC tests — PASS (run 40566204844, job 122408014504).",
+          "V 3.0.434 Windows WPF Release build/startup and agent-tool policy gates — PASS (run 40566204844, job 122408014090).",
+          "V 3.0.434 Android APK/lint/Protobuf/generated-source checks — PASS (run 40566204844, job 122408013857).",
+          "V 3.0.434 real local llama.cpp/GGUF inference, cancellation and process shutdown — PASS (run 40566204993)."
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -25275,7 +25285,8 @@
           "triggering_contracts": [],
           "affected_by_contract_changes": [],
           "review_evidence": []
-        }
+        },
+        "follow_up": "T0129 is complete within its library/PeerId-policy scope. Review T0130's incoming dependency edges before starting it; T0128 multi-node E2E and T0121 host-announcement integration remain incomplete."
       },
       "execution_history": [
         {
@@ -25327,6 +25338,56 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Inspect exact V 3.0.434 CI. Preserve any failure and repair before marking T0129 done. T0128's multi-node E2E and blocked T0121 remain incomplete."
+        },
+        {
+          "attempt_id": "T0129-A002",
+          "started_at": "2026-10-27T19:07:15Z",
+          "ended_at": "2026-10-27T19:10:00Z",
+          "result": "succeeded",
+          "summary": "Verified T0129-A001 on exact V 3.0.434. Step Three quality passed 184 Python tests and syntax/graph/output-evidence gates; HostLifecycle including shared PeerSecurityPolicy and authenticated TCP/QUIC checks passed; Windows WPF Release build/startup/policy checks and Android APK/lint/Protobuf passed; pinned llama.cpp/GGUF live inference, cancellation and clean process shutdown passed. Completion is limited to the maintained library and PeerId input-policy boundary.",
+          "changed_files": [
+            "step three/T0129/execution-report.md",
+            "step three/T0129/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": "b596fcc84e2e45b9b08c795bac783246f71040ec",
+          "tests": [
+            {
+              "name": "Step Three quality gate (exact V 3.0.434)",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40566205060",
+              "summary": "184 Python tests passed; Python syntax, graph validation and output/evidence verification passed."
+            },
+            {
+              "name": "HostLifecycle unit/integration (exact V 3.0.434)",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40566204844/job/122408014504",
+              "summary": "Includes the explicit PASS from PeerSecurityPolicyAcceptanceTests and existing authenticated TCP/QUIC transport tests."
+            },
+            {
+              "name": "Windows WPF build/startup/policy (exact V 3.0.434)",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40566204844/job/122408014090",
+              "summary": "Release build, generated Protobuf, startup smoke and agent-tool policy gates passed."
+            },
+            {
+              "name": "Android APK/lint/Protobuf (exact V 3.0.434)",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40566204844/job/122408013857",
+              "summary": "Kotlin formatting/lint, debug APK build, Protobuf round-trip, generated-source validation and artifact upload passed."
+            },
+            {
+              "name": "Real llama.cpp/GGUF inference (exact V 3.0.434)",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40566204993",
+              "summary": "Pinned CPU binary/GGUF validation, live inference, cancellation and owned-process shutdown passed."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Proceed only to T0130 after reviewing its incoming edges. T0128 remains a separate multi-node acceptance task; T0121 remains blocked until authenticated reachable host integration and verified address/identity configuration exist."
         }
       ]
     },
