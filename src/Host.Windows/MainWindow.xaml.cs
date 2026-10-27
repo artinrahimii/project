@@ -855,7 +855,7 @@ public partial class MainWindow : Window
         finally
         {
             // Defer the second Close until the original Closing event has returned, even when cleanup completes synchronously.
-            Dispatcher.BeginInvoke(
+            _ = Dispatcher.BeginInvoke(
                 System.Windows.Threading.DispatcherPriority.Normal,
                 new Action(() =>
                 {

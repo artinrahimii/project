@@ -977,13 +977,15 @@
         "tests/test_inference_backend_abstraction.py",
         "tests/test_network_listener_exposure.py"
       ],
-      "notes": "T0007 remains a broad traceability task. A007's deterministic unavailable-backend fallback and exact-message regression assertion passed GitHub Actions on V 3.0.42. Revalidation of main commit 2b15191008128bdf98cda5a6eaacbf5796c964ed shows MainWindow explicitly injects LocalInferenceBackendFactory.Create, which returns LlamaCppServerBackend; UnconfiguredInferenceBackend is only the HostInferenceSession default fallback when no backend/factory is configured, not evidence by itself that the current UI has no production backend. Keep T0007 in_progress because the broad task-wide traceability criterion is not yet proven complete. Current-round CI retries failed before runner allocation, so no new tests were executed. The T0007 -> T0008 edge remains validated as sequencing_only. Latest exact-main commit 95addc4385000528d2f7e10cea646ad84da05e8a was revalidated: both current workflows failed on retry before runner allocation (runner_id=0, empty runner_name, steps=[]). The validation tool's compatibility with the documented result 'passed' and two graph counter mismatches were corrected in this round; this does not complete T0007 or prove product acceptance.\n\nT0007-A013 added a source-level regression guard for WPF local-backend composition and loopback-only settings validation. This attempt is partial; broad task-wide decision traceability remains open. Exact-commit CI result is pending.\n\nT0007-A014 verified A013 on exact online commit 03292bd4a23c42361ba2ecd907957e6ee2153028 (V 3.0.370). The new source-level regression appears as an `ok` test in the CI log, the Step Three quality gate passed all 160 Python tests and graph/output checks (0 errors, one preserved T0001 unmapped-dependency warning), and HostLifecycle, Windows and Android product jobs passed. T0007 remains in_progress because this is one guarded composition boundary, not full task-wide traceability.\n\nT0007-A015 adds source-level regression coverage for the WPF shutdown safety contract: the close event cancels the initial close, awaits listener lifecycle disposal, and only then schedules a permitted close; the Closed handler cancels pending operations and disposes owned inference resources. Exact-commit CI is pending; task-wide traceability remains incomplete.\n\nT0007-A016 verified the A015 shutdown regression on exact commit 1fd025faa94f60e70344a2c1717b10d6da460a43 (V 3.0.372). Both new Python tests passed; 162 Python tests passed in total; graph/evidence validation had 0 errors and one preserved T0001 warning; HostLifecycle, Windows, Android and aggregate product CI passed. T0007 remains in_progress because broad decision traceability is not complete.\n\nHistory integrity note (V 3.0.374): A015 retains its original pending-at-creation test state; the observed successful results are recorded separately under A016 after the exact V 3.0.372 CI logs were inspected.\n\nT0007-A017 adds a source-level regression guard for the WPF local-engine process-start error boundary. The handler must use HostErrorPresentation.ToUserMessage and must not expose raw exception text or local paths. Exact-commit CI is pending at creation; this covers one boundary only and does not complete task-wide traceability.\n\nHistory integrity note (V 3.0.376): A017 preserves its original pending-at-creation test state; observed exact-commit results are recorded separately in A018. On V 3.0.375 the 163-test Python quality gate and all HostLifecycle, Windows WPF and Android product jobs passed. Windows build had one existing CS4014 warning at MainWindow.xaml.cs:858 for the intentionally deferred Dispatcher.BeginInvoke; broad T0007 acceptance remains incomplete.",
+      "notes": "T0007 remains a broad traceability task. A007's deterministic unavailable-backend fallback and exact-message regression assertion passed GitHub Actions on V 3.0.42. Revalidation of main commit 2b15191008128bdf98cda5a6eaacbf5796c964ed shows MainWindow explicitly injects LocalInferenceBackendFactory.Create, which returns LlamaCppServerBackend; UnconfiguredInferenceBackend is only the HostInferenceSession default fallback when no backend/factory is configured, not evidence by itself that the current UI has no production backend. Keep T0007 in_progress because the broad task-wide traceability criterion is not yet proven complete. Current-round CI retries failed before runner allocation, so no new tests were executed. The T0007 -> T0008 edge remains validated as sequencing_only. Latest exact-main commit 95addc4385000528d2f7e10cea646ad84da05e8a was revalidated: both current workflows failed on retry before runner allocation (runner_id=0, empty runner_name, steps=[]). The validation tool's compatibility with the documented result 'passed' and two graph counter mismatches were corrected in this round; this does not complete T0007 or prove product acceptance.\n\nT0007-A013 added a source-level regression guard for WPF local-backend composition and loopback-only settings validation. This attempt is partial; broad task-wide decision traceability remains open. Exact-commit CI result is pending.\n\nT0007-A014 verified A013 on exact online commit 03292bd4a23c42361ba2ecd907957e6ee2153028 (V 3.0.370). The new source-level regression appears as an `ok` test in the CI log, the Step Three quality gate passed all 160 Python tests and graph/output checks (0 errors, one preserved T0001 unmapped-dependency warning), and HostLifecycle, Windows and Android product jobs passed. T0007 remains in_progress because this is one guarded composition boundary, not full task-wide traceability.\n\nT0007-A015 adds source-level regression coverage for the WPF shutdown safety contract: the close event cancels the initial close, awaits listener lifecycle disposal, and only then schedules a permitted close; the Closed handler cancels pending operations and disposes owned inference resources. Exact-commit CI is pending; task-wide traceability remains incomplete.\n\nT0007-A016 verified the A015 shutdown regression on exact commit 1fd025faa94f60e70344a2c1717b10d6da460a43 (V 3.0.372). Both new Python tests passed; 162 Python tests passed in total; graph/evidence validation had 0 errors and one preserved T0001 warning; HostLifecycle, Windows, Android and aggregate product CI passed. T0007 remains in_progress because broad decision traceability is not complete.\n\nHistory integrity note (V 3.0.374): A015 retains its original pending-at-creation test state; the observed successful results are recorded separately under A016 after the exact V 3.0.372 CI logs were inspected.\n\nT0007-A017 adds a source-level regression guard for the WPF local-engine process-start error boundary. The handler must use HostErrorPresentation.ToUserMessage and must not expose raw exception text or local paths. Exact-commit CI is pending at creation; this covers one boundary only and does not complete task-wide traceability.\n\nHistory integrity note (V 3.0.376): A017 preserves its original pending-at-creation test state; observed exact-commit results are recorded separately in A018. On V 3.0.375 the 163-test Python quality gate and all HostLifecycle, Windows WPF and Android product jobs passed. Windows build had one existing CS4014 warning at MainWindow.xaml.cs:858 for the intentionally deferred Dispatcher.BeginInvoke; broad T0007 acceptance remains incomplete.\n\nT0007-A019 addresses the previously recorded CS4014 warning at MainWindow.xaml.cs:858. The Dispatcher callback is intentionally deferred until listener disposal has completed and the initial Closing event has returned. The returned DispatcherOperation is now explicitly discarded and the shutdown regression requires this form while preserving disposal-before-reschedule ordering. Exact-commit CI is pending at creation; broad T0007 traceability remains open.",
       "execution_summary": {
-        "attempt_count": 18,
+        "attempt_count": 19,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0007-A018",
+        "last_attempt_id": "T0007-A019",
         "last_attempt_result": "partial",
         "changed_files": [
+          "src/Host.Windows/MainWindow.xaml.cs",
+          "tests/test_network_listener_exposure.py",
           "docs/acceptance.md",
           "step three/T0007/execution-report.md",
           "step three/project-graph.md"
@@ -994,7 +996,8 @@
           "cac4757623634ae5389b2a31e42a01d10b334c3c",
           "03292bd4a23c42361ba2ecd907957e6ee2153028",
           "1fd025faa94f60e70344a2c1717b10d6da460a43",
-          "60afaa2d1dddbbb06d49c96c22a2627beb34180a"
+          "60afaa2d1dddbbb06d49c96c22a2627beb34180a",
+          "b77f75899c8cf04d641319fac8335d12ea72c009"
         ],
         "tests_passed": [
           "GitHub Actions Step Three quality gate run 39671083734 — passed for exact commit aa1bc7e77bc5bbce80e9d7f987de75c1bdc71c36 (V 3.0.42).",
@@ -1583,6 +1586,33 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Continue broad T0007 source/configuration/test traceability. Review the existing CS4014 warning at MainWindow.xaml.cs:858 separately and preserve the window-shutdown ordering contract. Keep T0007 in_progress and do not change unrelated dependency edges."
+        },
+        {
+          "attempt_id": "T0007-A019",
+          "started_at": "2026-10-27T06:50:25.279Z",
+          "ended_at": "2026-10-27T06:50:25.279Z",
+          "result": "partial",
+          "summary": "Explicitly discarded the intentionally deferred Dispatcher.BeginInvoke operation to document fire-and-forget shutdown scheduling and remove the CS4014 compiler warning; strengthened the source regression to preserve listener-disposal-before-close ordering. Exact-commit CI pending.",
+          "changed_files": [
+            "src/Host.Windows/MainWindow.xaml.cs",
+            "tests/test_network_listener_exposure.py",
+            "docs/acceptance.md",
+            "step three/T0007/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "command": "python -m unittest discover -s tests -v",
+              "result": "pending",
+              "summary": "The enhanced shutdown regression and all Python tests await exact-commit quality CI; no pass is claimed at creation."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Verify the new shutdown regression and quality gate on exact commit; inspect Windows build log for absence of CS4014 at MainWindow.xaml.cs:858, and verify HostLifecycle and Android jobs. Keep T0007 in_progress and preserve graph edges."
         }
       ]
     },
@@ -34606,6 +34636,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-27T06:30:59.945Z"
+  "updated_at": "2026-10-27T06:50:25.279Z"
 }
 ```

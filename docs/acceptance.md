@@ -250,3 +250,10 @@ This is a source-level regression guard for the UI/error boundary. It does not p
 On exact implementation commit [`V 3.0.375`](https://github.com/artinrahimii/project/commit/60afaa2d1dddbbb06d49c96c22a2627beb34180a), the new WPF error-mapping regression appeared as `ok` and the quality gate passed **163 Python tests**. Graph structure and repository-backed output/evidence checks passed with **0 errors and 1 preserved T0001 warning**. The product workflow also completed successfully: HostLifecycle tests passed, the Windows WPF Release build and startup smoke passed, and Android formatting/lint, debug APK assembly, unit tests and generated Protobuf checks passed. See [quality run 40461197719](https://github.com/artinrahimii/project/actions/runs/40461197719) and [product run 40461197898](https://github.com/artinrahimii/project/actions/runs/40461197898).
 
 The Windows build reported one compiler warning, CS4014, for the deferred `Dispatcher.BeginInvoke` call in `MainWindow.xaml.cs:858`; the build had 0 errors and the startup smoke passed. This existing warning was not introduced by A017 and remains a follow-up review item. These results verify this incremental regression only; broad T0007 traceability remains incomplete.
+
+
+## T0007-A019 — explicit deferred-close scheduling
+
+The WPF shutdown handler intentionally posts the second `Close()` to the Dispatcher only after awaiting network-listener disposal and returning from the original `Closing` event. The call now explicitly discards its awaitable operation (`_ = Dispatcher.BeginInvoke(...)`) to document that deliberate fire-and-forget scheduling and suppress compiler warning CS4014 without changing the ordering contract. The existing shutdown source regression now requires this explicit discard as well as disposal-before-reschedule ordering.
+
+Acceptance for this narrow change: the source regression passes; the exact-commit Windows build reports no CS4014 at this callsite; startup smoke and HostLifecycle tests remain green. This does not complete broad T0007 traceability.

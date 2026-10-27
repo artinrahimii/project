@@ -188,3 +188,14 @@
 - Aggregate product workflow: **PASS** — [run 40461197898](https://github.com/artinrahimii/project/actions/runs/40461197898), all three jobs succeeded.
 - Result: partial. A017 is verified, but the broad task-wide decision-to-code/configuration/test criterion remains unmet; keep T0007 `in_progress`. No dependency edge or task status was changed.
 - Follow-up: continue the broad T0007 traceability matrix; separately review whether the existing CS4014 warning can be removed without changing the deferred window-shutdown contract. Do not promote T0007 to `done` based on this single increment.
+
+
+## Attempt T0007-A019 — explicit intentional Dispatcher scheduling (2026-10-27)
+
+- Base commit: [`V 3.0.376` (`b77f75899c8cf04d641319fac8335d12ea72c009`)](https://github.com/artinrahimii/project/commit/b77f75899c8cf04d641319fac8335d12ea72c009).
+- Source review: `MainWindow_Closing` awaits `_networkParticipationLifecycle.DisposeAsync()`, then posts the permitted second `Close()` for execution after the initial closing event returns. The Windows build logged CS4014 at this deliberately deferred `Dispatcher.BeginInvoke` call.
+- Implementation: changed the call to `_ = Dispatcher.BeginInvoke(...)` to state explicitly that the returned dispatcher operation is intentionally not awaited; this preserves the deferral order and addresses the compiler diagnostic without moving or awaiting the close callback.
+- Regression: updated `test_window_closing_waits_for_listener_disposal_before_closing_again` to require the explicit discard while continuing to check the disposal-before-reschedule order.
+- Local execution: this session has no local repository checkout/toolchain; no local test result is claimed. Exact-commit CI is pending.
+- Result at commit creation: partial pending validation. T0007 remains `in_progress`; no dependency edges or task completion statuses were changed.
+- Follow-up: inspect the exact commit's quality workflow and Windows build logs. Verify the named regression passes and CS4014 no longer appears for `MainWindow.xaml.cs:858`; ensure lifecycle, Windows, and Android jobs pass before recording acceptance.
