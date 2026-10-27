@@ -21090,33 +21090,132 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0116 و T0115 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+        "src/Host.Windows/Networking/Libp2pPeerMessageProtocol.cs",
+        "src/Host.Windows/WhiteP.Host.Windows.csproj",
+        "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+        "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs",
+        "docs/decisions/ADR-0002-direct-p2p-data-path.md"
+      ],
       "expected_output_paths": [
         "src/Shared.Networking/ یا src/Host.Windows/Networking/ + tests/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+        "src/Host.Windows/Networking/Libp2pPeerMessageProtocol.cs",
+        "src/Host.Windows/WhiteP.Host.Windows.csproj",
+        "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+        "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs",
+        "docs/decisions/ADR-0002-direct-p2p-data-path.md",
+        "step three/T0117/execution-report.md",
+        "step three/T0117/evidence/verification.md"
+      ],
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nSelected Nethermind.Libp2p 1.0.3 (MIT; .NET 10) after checking package and source-repository license/transport matrix. The implementation uses the default TCP + Noise/TLS negotiation (does not enable plaintext), validates the target /p2p PeerId against PeerTransportEndpoint, and uses bounded varint-prefixed binary messages. A real loopback two-peer test sends data in both directions. The library repository currently marks hole punching and circuit relay work-in-progress; neither is claimed complete.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0117-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+          "src/Host.Windows/Networking/Libp2pPeerMessageProtocol.cs",
+          "src/Host.Windows/WhiteP.Host.Windows.csproj",
+          "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+          "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs",
+          "docs/decisions/ADR-0002-direct-p2p-data-path.md",
+          "step three/T0117/execution-report.md",
+          "step three/T0117/evidence/verification.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
-          "affected_by_contract_changes": [],
-          "review_evidence": []
+          "state": "required",
+          "triggering_contracts": [
+            "IPeerTransport secure-connect/send/receive/disconnect contract",
+            "PeerTransportEndpoint expected PeerId contract",
+            "libp2p binary message framing and maximum-message limit"
+          ],
+          "affected_by_contract_changes": [
+            "T0118",
+            "T0119",
+            "T0120"
+          ],
+          "review_evidence": [
+            "src/Host.Windows/Networking/IPeerTransport.cs",
+            "src/Host.Windows/Networking/PeerTransportEndpoint.cs",
+            "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+            "src/Host.Windows/Networking/Libp2pPeerMessageProtocol.cs"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0117-A001",
+          "started_at": "2026-10-27T03:26:54.005Z",
+          "ended_at": "2026-10-27T03:26:54.005Z",
+          "result": "partial",
+          "summary": "Reviewed the secure IPeerTransport contract, published .NET 10/MIT package and source implementation, then added a concrete Nethermind.Libp2p 1.0.3 adapter and bounded binary session protocol. Added a real loopback two-peer acceptance test for identity pinning, bidirectional binary delivery, oversized-message rejection and idempotent disconnect; exact-head CI pending.",
+          "changed_files": [
+            "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+            "src/Host.Windows/Networking/Libp2pPeerMessageProtocol.cs",
+            "src/Host.Windows/WhiteP.Host.Windows.csproj",
+            "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+            "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs",
+            "docs/decisions/ADR-0002-direct-p2p-data-path.md",
+            "step three/T0117/execution-report.md",
+            "step three/T0117/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "PeerTransportContractAcceptanceTests",
+              "result": "pending",
+              "summary": "Real two-peer loopback test must pass on the exact commit."
+            },
+            {
+              "name": "Step Three quality gate",
+              "result": "pending",
+              "summary": "Python tests, graph validation and evidence guard pending."
+            },
+            {
+              "name": "Windows WPF product build",
+              "result": "pending",
+              "summary": "The new package and adapter must compile and product checks pass."
+            },
+            {
+              "name": "HostLifecycle runtime acceptance",
+              "result": "pending",
+              "summary": "The real libp2p message exchange and current host lifecycle tests must pass."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            {
+              "path": "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+              "detail": "Adds a concrete IPeerTransport backed by Nethermind.Libp2p, explicit listen address, authenticated PeerId pinning and single-session lifecycle."
+            },
+            {
+              "path": "src/Host.Windows/Networking/Libp2pPeerMessageProtocol.cs",
+              "detail": "Adds bounded varint-prefixed binary messages, maximum-size enforcement, backpressure and I/O failure on disconnect."
+            },
+            {
+              "path": "docs/decisions/ADR-0002-direct-p2p-data-path.md",
+              "detail": "Records MIT library choice, default TCP Noise/TLS stack and separate pending NAT traversal/relay/end-to-end tasks."
+            }
+          ],
+          "follow_up": "Run exact-head quality and product CI. Repair compilation/runtime errors and mark done only after real two-peer acceptance passes."
+        }
+      ]
     },
     {
       "id": "T0118",
@@ -29009,24 +29108,29 @@
       "to": "T0117",
       "type": "blocks",
       "dependency_classification": "contract_or_interface_dependency",
-      "rationale": "T0117's task is an implementation of a selected open-source transport library connected to actual code. That implementation must satisfy the connect/send/receive/disconnect API and security identity contract introduced by T0116; this is a direct API contract dependency.",
+      "rationale": "The new Libp2pPeerTransport implements IPeerTransport, maps PeerTransportEndpoint to a libp2p Multiaddress with a pinned PeerId, and exposes bounded message send/receive/disconnect through that interface.",
       "validation_status": "validated",
       "evidence": [
-        "step three/project-graph.md",
-        "docs/requirements.md",
-        "docs/decisions/ADR-0002-direct-p2p-data-path.md",
         "src/Host.Windows/Networking/IPeerTransport.cs",
-        "src/Host.Windows/Networking/PeerTransportEndpoint.cs"
+        "src/Host.Windows/Networking/PeerTransportEndpoint.cs",
+        "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+        "src/Host.Windows/Networking/Libp2pPeerMessageProtocol.cs",
+        "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs"
       ]
     },
     {
       "from": "T0115",
       "to": "T0117",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0115 covers the existing TCP frame-reader/listener disconnect, malformed-frame, sequential-client and shutdown behavior. The new libp2p adapter implements IPeerTransport directly and consumes none of those listener methods or test artifacts; preserve blocks as conservative ordering only.",
+      "validation_status": "validated",
+      "evidence": [
+        "tests/HostLifecycle.Tests/NetworkInferenceRequestFrameAcceptanceTests.cs",
+        "src/Host.Windows/Networking/NetworkInferenceRequestFrameReader.cs",
+        "src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs",
+        "step three/T0115/evidence/verification.md"
+      ]
     },
     {
       "from": "T0117",
@@ -33265,8 +33369,25 @@
         "src/Host.Windows/Networking/PeerTransportEndpoint.cs"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-27T03:26:54.005Z",
+      "edge_from": "T0115",
+      "edge_to": "T0117",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "old_validation_status": "unreviewed",
+      "new_validation_status": "validated",
+      "reason": "Reviewed the exact T0115 TCP-listener tests and T0117 implementation target. The libp2p adapter consumes no T0115-specific API; the blocks edge is retained as conservative order.",
+      "evidence": [
+        "tests/HostLifecycle.Tests/NetworkInferenceRequestFrameAcceptanceTests.cs",
+        "src/Host.Windows/Networking/NetworkInferenceRequestFrameReader.cs",
+        "src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs",
+        "step three/T0115/evidence/verification.md"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-26T23:19:06.976Z"
+  "updated_at": "2026-10-27T03:26:54.005Z"
 }
 ```

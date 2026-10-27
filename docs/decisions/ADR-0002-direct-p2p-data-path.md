@@ -1,6 +1,6 @@
 # ADR-0002: Direct P2P is the inference data path
 
-- **Status:** Accepted as the first-release architecture decision; implementation remains pending.
+- **Status:** Accepted; host-side libp2p transport implementation is being introduced, but end-to-end Android ↔ Windows acceptance remains pending.
 - **Date:** 2026-10-22
 - **Related task:** T0019
 - **Requirements:** REQ-010 and REQ-011 in `docs/requirements.md`
@@ -17,7 +17,7 @@ The Android client must be able to request inference from a Windows host running
 3. The rendezvous/coordination component must not relay inference prompts or responses, generate inference output, or maintain conversation history.
 4. If a direct data path cannot be established, the request must fail with an explicit connection-unavailable outcome. The first release must not silently fall back to a server-relayed inference payload.
 5. Request identifiers remain temporary; this decision does not introduce a permanent user identity for inference routing.
-6. Selection of a P2P library, NAT traversal strategy, wire-level authentication, encryption protocol, and detailed failure/retry behavior remains with the later implementation tasks and their acceptance tests.
+6. The initial host adapter uses `Nethermind.Libp2p` 1.0.3 (MIT). Its default TCP stream stack negotiates Noise or TLS rather than forcing plaintext. The adapter pins the expected `/p2p` PeerId, bounds application message sizes, and provides one complete binary message per send/receive call. NAT traversal, circuit relay, and rendezvous remain separate tasks; the library marks hole punching/circuit relay as work in progress.
 
 ## Consequences
 
@@ -27,6 +27,6 @@ The Android client must be able to request inference from a Windows host running
 
 ## Implementation status and verification
 
-This is an architecture decision, not a delivered P2P feature. The current Android request UI still discloses that transport is not implemented. Peer discovery, host-to-client transport, real direct-P2P request/response, and the product acceptance gate `AC-P2P-01` remain unimplemented / NOT RUN.
+This is an architecture decision plus the selected host transport adapter; it is not evidence of a complete Android-to-Windows product feature by itself. The host adapter must pass its real two-peer integration test. The Android request UI still discloses that app-level transport is not implemented. Android interoperability, peer discovery, NAT traversal, relay policy, routing the app's InferenceRequest/InferenceResponse contracts through this transport, and product acceptance gate `AC-P2P-01` remain unimplemented / NOT RUN.
 
 The source-contract test `tests/test_p2p_data_path_decision.py` checks consistency between this decision, the requirement, and the README. Passing that test does not prove runtime routing or network privacy.

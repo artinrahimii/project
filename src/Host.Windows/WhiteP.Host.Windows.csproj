@@ -10,6 +10,7 @@
     <AssemblyName>WhiteP.Host.Windows</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Nethermind.Libp2p" Version="1.0.3" />
     <ProjectReference Include="../Host.Domain/WhiteP.Host.Domain.csproj" />
     <ProjectReference Include="../Host.Application/WhiteP.Host.Application.csproj" />
     <ProjectReference Include="../Host.Infrastructure/WhiteP.Host.Infrastructure.csproj" />
