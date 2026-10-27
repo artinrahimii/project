@@ -284,6 +284,12 @@ public sealed class Libp2pPeerTransport : IPeerTransport
             {
                 // Session disconnect remains authoritative even if the library task takes longer to unwind.
             }
+            catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
+            {
+                // Expected: the libp2p session cancels its long-running protocol dial task
+                // when the caller intentionally disconnects. Caller-requested cancellation
+                // is not swallowed because the filter excludes a cancelled caller token.
+            }
         }
     }
 

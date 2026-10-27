@@ -1,29 +1,25 @@
-# T0117 verification evidence — awaiting exact-head CI
+# T0117 verification evidence — exact-SHA CI pending
 
-## Baseline integrity
-- Repository: `artinrahimii/project`, branch `main`.
-- Base commit: `d4b2c7ee8e28729b4d22179810614c516aee7d0f`; base tree: `350e508da8513337c84c3cf8c2df02e123fa41ae`.
-- Graph path: `step three/project-graph.md`, Blob `d006eb634df7008f2ffd95b447e636309cf44c4e`, 1,805,090 bytes. The full Blob was retrieved through Git Blob API after normal file fetch was known to return empty content. The Git SHA-1 of the entire original content matched `d006eb634df7008f2ffd95b447e636309cf44c4e`; JSON parsed to 229 tasks / 426 edges.
+## Source integrity
+- Repository `artinrahimii/project`, branch `main`.
+- Original implementation commit: `V 3.0.351`, SHA `d056c1c1c77903165576078b0d7c3fbe35b60676`.
+- Graph at that commit: Blob `d006eb634df7008f2ffd95b447e636309cf44c4e`, 1,805,090 bytes; Git SHA-1 matched the original content; parsed 229 tasks / 426 edges.
 
-## Library review
-- Package: [Nethermind.Libp2p 1.0.3](https://www.nuget.org/packages/Nethermind.Libp2p), license MIT and target .NET 10.
-- Source: https://github.com/NethermindEth/dotnet-libp2p.
-- Default stack uses TCP and negotiates Noise or TLS; the code does not call `WithPlaintextEnforced`.
-- The source project's own roadmap marks hole punching and circuit relay as work in progress. They are explicitly not treated as available features.
+## Implementation
+- Package: [Nethermind.Libp2p 1.0.3](https://www.nuget.org/packages/Nethermind.Libp2p), MIT, .NET 10.
+- Uses libp2p's default TCP stack with Noise/TLS negotiation; no forced-plaintext mode enabled.
+- `Libp2pPeerTransport` validates the target multiaddress PeerId, matches it against the expected identity and then verifies the peer identity obtained from the session address. Listening is explicit and requires an expected peer identity.
+- `Libp2pPeerMessageProtocol` sends and receives bounded varint-prefixed binary messages and uses bounded channel backpressure.
 
-## Implementation and test surface
-- `src/Host.Windows/Networking/Libp2pPeerTransport.cs`: concrete `IPeerTransport`; validates target multiaddress PeerId and checks the established session's authenticated PeerId; opt-in listening requires a specific bind address and expected remote identity.
-- `src/Host.Windows/Networking/Libp2pPeerMessageProtocol.cs`: message-level length-prefixed binary transfer, maximum length bound, inbound queue capacity/backpressure, safe error on incomplete frame and no payload logging.
-- Host and HostLifecycle test project reference `Nethermind.Libp2p` `1.0.3`.
-- `PeerTransportContractAcceptanceTests` now exercises a real pair of local libp2p peers and checks identity mismatch rejection, two-way binary round-trip, over-limit message rejection and idempotent disconnect.
+## Exact commit outcomes
+- **V 3.0.351:** compile failed; fixed ambiguous channel type, missing published `ISession.RemotePeerId`, and protocol instance dialing API mismatch.
+- **V 3.0.352:** compiled and the real loopback integration reached the first disconnect call after preceding assertions executed: authenticated peer identities, client-to-server binary round-trip, server-to-client binary round-trip, and oversized message rejection. Failed because the library's long-running `DialAsync<TProtocol>` task ends with `TaskCanceledException` when the session is deliberately disconnected, which the adapter did not yet treat as expected teardown.
+- **V 3.0.353:** adds a narrowly filtered handling path for that expected cancellation, conditioned on the caller's cancellation token not being cancelled. Exact-head tests pending.
+- Step Three quality gate on V 3.0.352 passed: https://github.com/artinrahimii/project/actions/runs/40444570058
 
-## Reviewed dependencies
-- `T0116 → T0117`: `contract_or_interface_dependency`, validated; implementation conforms to the secure connect/send/receive/disconnect interface and expected-peer endpoint.
-- `T0115 → T0117`: `sequencing_only`, validated; existing TCP listener tests are not a direct API/data input to the new libp2p adapter. The original `blocks` order is retained.
+## Dependency review
+- `T0116 → T0117`: `contract_or_interface_dependency`, validated.
+- `T0115 → T0117`: `sequencing_only`, validated; TCP-listener tests are not consumed by the libp2p adapter. Both `blocks` edges are retained.
 
-## Verification status
-- V 3.0.351: HostLifecycle compile **FAILED** before runtime acceptance with CS0104 (ambiguous `Channel`), CS1061 (`ISession.RemotePeerId` absent in the published API), and CS0411 (unsupported instance `DialAsync` overload). These errors were observed in workflow job logs, then corrected in attempt A002.
-- Exact-head HostLifecycle/libp2p exchange after correction: pending.
-- Exact-head Windows WPF Release build and package restore: pending.
-- Exact-head Step Three quality/graph/output/evidence gate: pending.
-- No end-to-end Android↔Windows claim is made in this task.
+## Remaining boundaries
+No claim of hole punching, circuit relay, Android compatibility, app-level Protobuf inference request/response transport, peer discovery/rendezvous, or AC-P2P-01 is made. The library roadmap itself marks hole punching and circuit relay as work in progress.
