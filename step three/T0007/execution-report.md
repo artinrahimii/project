@@ -612,6 +612,14 @@
 - **Correction:** moved only the acceptance-gate assertions from `ADR4_RELAY` to the already loaded `ADR2` constant. ADR-0004 remains tested for disabled relay, direct-transport fail-closed behavior, existing privacy tests and metadata disclosure.
 - **History integrity:** attempt `T0007-A054` is now marked **failed** with the exact CI URL and failure detail. The failed test has not been re-labelled as a pass.
 - **Scope:** no production/runtime code or graph edge changed. T0007 remains `in_progress`; `AC-P2P-01` remains **NOT RUN**.
-- **Verification:** correction is pending exact-commit Step Three quality and product CI. The product workflow for V 3.0.410 remained in progress at this evidence capture; its final result will not be inferred.
-- **Follow-up:** inspect the exact V 3.0.411 quality gate and each product job. Preserve any new failure and only record success after the runner reports it.
+- **Verification: PASS on exact commit \`811e26b95ef28fafee5a3ec294fa007fa893e51e\` (V 3.0.411).** The [Step Three quality gate](https://github.com/artinrahimii/project/actions/runs/40535105698) passed all **173 Python tests**, including this corrected test explicitly reported `ok`, plus syntax, graph-structure, and output/evidence checks. The [White-P product workflow](https://github.com/artinrahimii/project/actions/runs/40535105512) passed all three jobs: Windows WPF, HostLifecycle, and Android APK. The earlier V 3.0.410 Step Three quality failure remains preserved under A054; its product workflow subsequently passed independently.
+- **Result:** A055 succeeded as a bounded traceability increment. T0007 remains `in_progress`; `AC-P2P-01` remains **NOT RUN**. No runtime transport or dependency edge was changed.
+- **Follow-up:** trace the next technical decision and corresponding runnable source/configuration/test evidence; do not close T0007 until the task-wide criteria are proven.
 
+
+
+## Evidence integrity — exact V 3.0.411 result (recorded 2026-10-27T15:54:32.226Z)
+
+- The corrected ADR-0004 traceability regression passed as part of Step Three quality run [40535105698](https://github.com/artinrahimii/project/actions/runs/40535105698); the suite ran 173 Python tests and reported `OK`.
+- The exact V 3.0.411 product workflow [40535105512](https://github.com/artinrahimii/project/actions/runs/40535105512) completed successfully: Windows WPF build/startup/policy gates, HostLifecycle integration tests, and Android APK/lint/Protobuf checks all passed.
+- Attempt A054 remains failed in the task history for the incorrect assertion in its original commit; A055 is the corrected, CI-verified increment. The overall task T0007 remains `in_progress`, and product P2P gate `AC-P2P-01` remains **NOT RUN**.
