@@ -731,3 +731,24 @@
 - Local test execution: not run in this environment. The exact-commit GitHub Actions quality and product workflows are the verification authority for this increment.
 - Result boundary: T0007 remains `in_progress`; `AC-HOST-01` retains its own hardware evidence requirements, and `AC-P2P-01` remains **NOT RUN**.
 - Follow-up: inspect exact V 3.0.419 quality and product workflows; preserve any failing result and do not close T0007 based on a new ADR alone.
+
+
+## Attempt T0007-A066 — verify ADR-0011 on exact V 3.0.419
+- Recorded: 2026-10-27T16:51:28.818Z
+- Result: succeeded for the bounded ADR-0011 traceability increment; T0007 remains in progress.
+- Commit under verification: [V 3.0.419 — 3f8c47f67acfd2228fed99c2c5f9e7b843fa95fb](https://github.com/artinrahimii/project/commit/3f8c47f67acfd2228fed99c2c5f9e7b843fa95fb).
+- Step Three quality gate: **PASS** — [run 40544461334](https://github.com/artinrahimii/project/actions/runs/40544461334) completed on the exact commit. The new test `test_host_capacity_decision_maps_to_observed_measurements_and_fail_closed_readiness` passed; all **176 Python tests** returned `OK`, and syntax, graph structure, and recorded-output/evidence validation passed.
+- White-P product workflow: **PASS** — [run 40544461341](https://github.com/artinrahimii/project/actions/runs/40544461341) completed successfully on the same exact commit. Windows WPF, HostLifecycle (including lifecycle tests after MsQuic setup), and Android APK jobs all passed.
+- This verifies the bounded ADR-0011 source/test traceability addition, not physical-device/GPU verification or completion of the broad T0007 acceptance criterion. `T0007` remains `in_progress`; `AC-P2P-01` remains **NOT RUN**.
+- Follow-up: continue checking additional source-backed decisions against the ADR register.
+
+## Attempt T0007-A067 — trace safe local settings persistence
+- Started: 2026-10-27T16:51:28.818Z
+- Result: partial at commit creation; exact-commit CI is pending.
+- Base: 3f8c47f67acfd2228fed99c2c5f9e7b843fa95fb (V 3.0.419).
+- Source review: inspected `LocalHostSettingsStore`, WPF settings-load/save and error mapping, the registered `LocalHostSettingsPersistenceTests`, and `test_local_config_safety.py` at the exact base commit. The current ADR register has no dedicated decision for this existing schema-versioned local settings boundary.
+- Change: added `docs/decisions/ADR-0012-local-settings-validation-and-persistence.md`, registered it in `docs/decisions/README.md`, and added `test_local_settings_decision_maps_to_bounded_schema_versioned_fail_closed_persistence` to `tests/test_decision_traceability.py`.
+- The decision documents the loopback-only URL constraint, bounded timeout/model identifiers, schema version, atomic temp-file promotion, invalid-file preservation, safe startup error messages, legacy optional-field compatibility and non-secret environment sample. No runtime code or dependency edge changed.
+- Tests at creation: existing source and acceptance tests were inspected; no local test command was run. Exact-main CI must validate the new test before this increment is marked verified.
+- Result boundary: `T0007` remains `in_progress`; `AC-P2P-01` remains **NOT RUN**.
+- Follow-up: inspect exact V 3.0.420 quality and product workflows; preserve any failures.

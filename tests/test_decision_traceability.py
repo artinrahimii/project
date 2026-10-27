@@ -24,6 +24,7 @@ ADR8_PROCESS_LAUNCH = (ROOT / "docs/decisions/ADR-0008-local-engine-process-owne
 ADR9_AGENT_TOOLS = (ROOT / "docs/decisions/ADR-0009-agent-tool-execution-boundary.md").read_text(encoding="utf-8")
 ADR10_MODEL_INSTALLATION = (ROOT / "docs/decisions/ADR-0010-verified-model-installation.md").read_text(encoding="utf-8")
 ADR11_HOST_CAPACITY = (ROOT / "docs/decisions/ADR-0011-host-capacity-readiness.md").read_text(encoding="utf-8")
+ADR12_LOCAL_SETTINGS = (ROOT / "docs/decisions/ADR-0012-local-settings-validation-and-persistence.md").read_text(encoding="utf-8")
 
 
 class DecisionTraceabilityTests(unittest.TestCase):
@@ -497,6 +498,52 @@ class DecisionTraceabilityTests(unittest.TestCase):
         self.assertIn("Missing checks and measurements", csharp_tests)
         self.assertIn("test_capacity_is_unknown_until_measurements_and_readiness_checks_are_verified", hardware_tests)
         self.assertIn("ADR-0011-host-capacity-readiness.md", REGISTER)
+
+
+    def test_local_settings_decision_maps_to_bounded_schema_versioned_fail_closed_persistence(self):
+        paths = (
+            "docs/requirements.md",
+            "src/Host.Infrastructure/LocalHostSettingsStore.cs",
+            "src/Host.Windows/MainWindow.xaml.cs",
+            ".env.example",
+            ".gitignore",
+            "tests/HostLifecycle.Tests/LocalHostSettingsPersistenceTests.cs",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "tests/test_local_config_safety.py",
+            ".github/workflows/product-build.yml",
+        )
+        self.assertTrue((ROOT / "docs/decisions/ADR-0012-local-settings-validation-and-persistence.md").is_file())
+        for relative_path in paths:
+            with self.subTest(path=relative_path):
+                self.assertTrue((ROOT / relative_path).is_file(), relative_path)
+                self.assertIn(relative_path, ADR12_LOCAL_SETTINGS)
+
+        requirements = (ROOT / "docs/requirements.md").read_text(encoding="utf-8")
+        store = (ROOT / "src/Host.Infrastructure/LocalHostSettingsStore.cs").read_text(encoding="utf-8")
+        window = (ROOT / "src/Host.Windows/MainWindow.xaml.cs").read_text(encoding="utf-8")
+        persistence_tests = (ROOT / "tests/HostLifecycle.Tests/LocalHostSettingsPersistenceTests.cs").read_text(encoding="utf-8")
+        harness = (ROOT / "tests/HostLifecycle.Tests/Program.cs").read_text(encoding="utf-8")
+        safety_tests = (ROOT / "tests/test_local_config_safety.py").read_text(encoding="utf-8")
+
+        self.assertIn("REQ-014", requirements)
+        self.assertIn("CurrentSchemaVersion = 1", store)
+        self.assertIn("Environment.SpecialFolder.LocalApplicationData", store)
+        self.assertIn("endpoint.IsLoopback", store)
+        self.assertIn("endpoint.UserInfo.Length != 0", store)
+        self.assertIn("RequestTimeoutSeconds is < 1 or > 3600", store)
+        self.assertIn("FileMode.CreateNew", store)
+        self.assertIn("stream.Flush(flushToDisk: true)", store)
+        self.assertIn("File.Move(temporaryPath, _filePath, overwrite: true)", store)
+        self.assertIn("settingsLoadFailed = true;", window)
+        self.assertIn("LocalHostSettingsPersistenceTests.Run();", harness)
+        self.assertIn("LoadsLegacySettingsWithoutSelection", persistence_tests)
+        self.assertIn("Failed validation must not rewrite the user's invalid settings file.", persistence_tests)
+        self.assertIn("test_wpf_startup_contains_semantically_invalid_or_unreadable_settings", safety_tests)
+        self.assertIn("test_environment_example_is_allowlisted_and_non_secret", safety_tests)
+        self.assertIn("not auto-loaded", (ROOT / ".env.example").read_text(encoding="utf-8"))
+        self.assertIn("LocalHostSettingsStore.cs", ADR12_LOCAL_SETTINGS)
+        self.assertIn("This is not an OS permission/ACL audit", ADR12_LOCAL_SETTINGS)
+        self.assertIn("ADR-0012-local-settings-validation-and-persistence.md", REGISTER)
 
 
     def test_every_registered_decision_links_to_existing_sources_and_verification(self):
