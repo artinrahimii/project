@@ -439,3 +439,13 @@
 - **Current baseline CI (before this change):** exact V 3.0.396 Step Three quality gate passed at [run 40510169922](https://github.com/artinrahimii/project/actions/runs/40510169922) and the product build passed at [run 40510169570](https://github.com/artinrahimii/project/actions/runs/40510169570). These runs are baseline evidence, not verification of this new test.
 - **Attempt outcome:** partial; exact-commit CI pending. The existing failed-attempt record and earlier successful bounded traceability checks remain intact.
 - **Follow-up:** inspect the new main commit's Step Three quality gate and product workflow. If the new regression passes, append a separate verification attempt; keep T0007 in progress until its broad acceptance criterion is supported.
+
+
+## Attempt T0007-A041 — fix the ADR-0006 register-path assertion
+
+- **Observed exact-commit result:** V 3.0.397 Step Three quality gate [run 40511115515](https://github.com/artinrahimii/project/actions/runs/40511115515) failed in the new `test_peer_announcement_lease_decision_maps_to_expiry_directory_and_live_acceptance` subtest for `docs/decisions/ADR-0006-peer-announcement-leases.md`. The test expected the full path inside the register, while the Markdown table intentionally links to the filename relative to the decision directory. The run completed 168 Python tests with one failure; syntax, graph and evidence steps were skipped after the failure.
+- **Correction applied:** changed the register assertion to use `Path(relative_path).name`, consistent with the pre-existing register test's relative-link semantics. No production feature code or dependency edge was changed.
+- **Other exact-commit workflow:** the V 3.0.397 product workflow [run 40511115742](https://github.com/artinrahimii/project/actions/runs/40511115742) was still in progress when this correction was prepared; its conclusion is not inferred here.
+- **Graph integrity before correction:** current V 3.0.397 graph Blob `ec9ff3496328c70895ee16faad0d9645a137b208`, listed as 1,983,428 bytes in its exact tree. The fetched original content recomputed to that Blob SHA through GitHub, parsed as 229 nodes and 426 edges, and preserved its exact JSON formatting on reserialization.
+- **Attempt result:** failed CI result retained; corrective commit's exact-commit CI is pending. `T0007` stays `in_progress`; `T0121` stays `in_progress`; `AC-P2P-01` stays **NOT RUN**.
+- **Follow-up:** inspect exact V 3.0.398 Step Three quality and product workflows; only record a verification attempt after checking those results.
