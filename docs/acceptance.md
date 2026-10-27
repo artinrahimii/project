@@ -231,3 +231,8 @@ Two regression tests in `tests/test_network_listener_exposure.py` now guard the 
 - The second checks that `MainWindow_Closed` cancels pending operation/model-update work and disposes the inference session and owned local inference process launcher.
 
 These are source-level regression checks for the shutdown ordering and cleanup contract. They do not replace runtime cancellation tests or prove product-wide lifecycle correctness. The exact-commit CI result is pending at this point in the attempt history.
+
+
+## T0007-A016 — shutdown regression verification
+
+The two WPF shutdown regression tests added in A015 passed on exact commit [`V 3.0.372` (`1fd025faa94f60e70344a2c1717b10d6da460a43`)](https://github.com/artinrahimii/project/commit/1fd025faa94f60e70344a2c1717b10d6da460a43). [Step Three quality run 40459341616](https://github.com/artinrahimii/project/actions/runs/40459341616) passed 162 Python tests and graph/output-evidence checks (zero errors, one preserved warning). [The product build run 40459341489](https://github.com/artinrahimii/project/actions/runs/40459341489) completed successfully with HostLifecycle, Windows WPF and Android jobs passing. This is evidence for this specific regression, not completion of broad T0007.

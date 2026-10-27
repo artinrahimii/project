@@ -152,3 +152,15 @@
 - **Verification:** pending exact-commit GitHub Actions. The tests are not counted as passed before the CI logs show their outcomes.
 - **Limit:** source-level assertions protect the current composition from accidental removal/reordering; they do not themselves execute a WPF window or prove all shutdown races are covered.
 - **Result:** partial. `T0007` remains `in_progress`; no dependency edges were changed.
+
+
+## Attempt T0007-A016 — exact-commit CI verification for shutdown tests (2026-10-27)
+
+- Implementation commit: [`V 3.0.372` (`1fd025faa94f60e70344a2c1717b10d6da460a43`)](https://github.com/artinrahimii/project/commit/1fd025faa94f60e70344a2c1717b10d6da460a43), confirmed as the online `main` head before this evidence update.
+- Both new tests, `test_window_closing_waits_for_listener_disposal_before_closing_again` and `test_window_closed_cancels_pending_work_and_releases_owned_resources`, appeared as `ok` in [quality run 40459341616](https://github.com/artinrahimii/project/actions/runs/40459341616).
+- Python quality gate: **PASS** — 162 tests; syntax, graph and repository-backed evidence checks passed with **0 errors and 1 warning**. The existing T0001 free-text prerequisite remains metadata.
+- HostLifecycle: **PASS** — [job 122039986881](https://github.com/artinrahimii/project/actions/runs/40459341489/job/122039986881), including TTL renewal/expiry acceptance.
+- Windows WPF build: **PASS** — [job 122039987147](https://github.com/artinrahimii/project/actions/runs/40459341489/job/122039987147), including Release build, startup smoke, policy checks and artifact upload.
+- Android: **PASS** — [job 122039987378](https://github.com/artinrahimii/project/actions/runs/40459341489/job/122039987378), including lint, APK and Protobuf checks.
+- Aggregate product workflow: **PASS** — [run 40459341489](https://github.com/artinrahimii/project/actions/runs/40459341489), completed successfully for the exact implementation commit.
+- Result: partial. These results verify this regression only; broad T0007 decision-to-code/configuration/test traceability remains incomplete. No dependency edges were changed and no task was promoted to `done`.
