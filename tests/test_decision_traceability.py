@@ -234,7 +234,7 @@ class DecisionTraceabilityTests(unittest.TestCase):
         self.assertIn("HostBusy", mapper)
         self.assertIn("UnsupportedModel", mapper)
         self.assertIn("ProtocolErrorCode.ResourceLimit", mapper)
-        self.assertIn("must not queue 32 requests", busy)
+        self.assertIn("Concurrent requests must not queue", busy)
         self.assertIn("ExpiredDeadlineIsRejectedBeforeInference", failure_tests)
         self.assertIn("InternalFailureIsSanitized", response_tests)
 
