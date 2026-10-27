@@ -19,5 +19,29 @@ class NetworkListenerExposureTests(unittest.TestCase):
         self.assertIn("if (active && _networkParticipationLifecycle.LocalEndpoint is { } endpoint)", WINDOW)
 
 
+    def test_window_closing_waits_for_listener_disposal_before_closing_again(self):
+        start = WINDOW.index("private async void MainWindow_Closing")
+        end = WINDOW.index("private void MainWindow_Closed", start)
+        closing = WINDOW[start:end]
+
+        self.assertIn("if (_allowWindowClose)", closing)
+        self.assertIn("e.Cancel = true;", closing)
+        dispose = closing.index("await _networkParticipationLifecycle.DisposeAsync();")
+        retry_close = closing.index("Dispatcher.BeginInvoke(")
+        self.assertLess(dispose, retry_close)
+        self.assertIn("_allowWindowClose = true;", closing)
+        self.assertIn("Close();", closing)
+
+    def test_window_closed_cancels_pending_work_and_releases_owned_resources(self):
+        start = WINDOW.index("private void MainWindow_Closed")
+        closed = WINDOW[start:]
+
+        self.assertIn("_operationCancellation?.Cancel();", closed)
+        self.assertIn("_modelUpdateCancellation?.Cancel();", closed)
+        self.assertIn("_operationCancellation?.Dispose();", closed)
+        self.assertIn("_session.Dispose();", closed)
+        self.assertIn("_localInferenceProcessLauncher.Dispose();", closed)
+
+
 if __name__ == "__main__":
     unittest.main()

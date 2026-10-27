@@ -222,3 +222,12 @@ Verification command in CI: `python -m unittest discover -s tests -v`. This atte
 ## T0007-A014 — verification of the loopback-composition regression
 
 The exact `V 3.0.370` commit passed [Step Three quality run 40458375752](https://github.com/artinrahimii/project/actions/runs/40458375752): 160 Python tests passed, including `test_wpf_connect_uses_validated_loopback_settings_before_backend_connect`; graph and repository-backed evidence checks also passed with zero errors and one preserved unmapped-dependency warning. The [product build workflow 40458375705](https://github.com/artinrahimii/project/actions/runs/40458375705) also completed successfully, including HostLifecycle tests, Windows WPF build/startup/policy checks, and Android APK/lint/Protobuf checks. This verifies the submitted regression and configured CI, not the entirety of the broad T0007 traceability requirement.
+
+
+## T0007-A015 — WPF shutdown lifecycle traceability
+
+Two regression tests in `tests/test_network_listener_exposure.py` now guard the window shutdown contract:
+- The first checks that `MainWindow_Closing` cancels the initial close, awaits `ParticipationNetworkListenerLifecycle.DisposeAsync`, and only schedules the permitted second `Close()` after disposal.
+- The second checks that `MainWindow_Closed` cancels pending operation/model-update work and disposes the inference session and owned local inference process launcher.
+
+These are source-level regression checks for the shutdown ordering and cleanup contract. They do not replace runtime cancellation tests or prove product-wide lifecycle correctness. The exact-commit CI result is pending at this point in the attempt history.

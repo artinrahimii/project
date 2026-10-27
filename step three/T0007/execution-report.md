@@ -142,3 +142,13 @@
 - **Aggregate product workflow:** PASS — [run 40458375705](https://github.com/artinrahimii/project/actions/runs/40458375705), completed successfully for the same commit.
 - **History policy:** A013 remains a separate partial implementation record; its exact commit SHA was resolved here rather than rewriting its result. A014 records the later verification result. No earlier attempt or failure was deleted.
 - **Task status remains `in_progress`:** this concrete regression protects the local backend's configuration boundary but does not satisfy broad task-wide traceability for every technical decision. No dependency edge or task-completion status was changed.
+
+
+## T0007-A015 — WPF shutdown safety regression tests (2026-10-27)
+
+- **Base:** `d0d8831acc04c4b9212c5a246239a17f14e162bb` (`V 3.0.371`), verified as online `main` before editing.
+- **Source review:** `MainWindow_Closing` cancels the initial close event, awaits `_networkParticipationLifecycle.DisposeAsync()`, then schedules a second close on the dispatcher. `MainWindow_Closed` cancels pending operation/model-update tokens and disposes the host inference session and owned local-engine process launcher.
+- **Implementation:** added two regression tests to `tests/test_network_listener_exposure.py` guarding the shutdown ordering and resource cleanup contract.
+- **Verification:** pending exact-commit GitHub Actions. The tests are not counted as passed before the CI logs show their outcomes.
+- **Limit:** source-level assertions protect the current composition from accidental removal/reordering; they do not themselves execute a WPF window or prove all shutdown races are covered.
+- **Result:** partial. `T0007` remains `in_progress`; no dependency edges were changed.

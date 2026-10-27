@@ -962,7 +962,8 @@
         "tests/HostLifecycle.Tests/Program.cs",
         "docs/acceptance.md",
         "step three/T0007/execution-report.md",
-        "tests/test_inference_backend_abstraction.py"
+        "tests/test_inference_backend_abstraction.py",
+        "tests/test_network_listener_exposure.py"
       ],
       "expected_output_paths": [
         "docs/acceptance.md + tests/ (معیار و آزمون متناظر)"
@@ -973,15 +974,17 @@
         "docs/acceptance.md",
         "step three/T0007/execution-report.md",
         "src/Host.Application/HostInferenceSession.cs",
-        "tests/test_inference_backend_abstraction.py"
+        "tests/test_inference_backend_abstraction.py",
+        "tests/test_network_listener_exposure.py"
       ],
-      "notes": "T0007 remains a broad traceability task. A007's deterministic unavailable-backend fallback and exact-message regression assertion passed GitHub Actions on V 3.0.42. Revalidation of main commit 2b15191008128bdf98cda5a6eaacbf5796c964ed shows MainWindow explicitly injects LocalInferenceBackendFactory.Create, which returns LlamaCppServerBackend; UnconfiguredInferenceBackend is only the HostInferenceSession default fallback when no backend/factory is configured, not evidence by itself that the current UI has no production backend. Keep T0007 in_progress because the broad task-wide traceability criterion is not yet proven complete. Current-round CI retries failed before runner allocation, so no new tests were executed. The T0007 -> T0008 edge remains validated as sequencing_only. Latest exact-main commit 95addc4385000528d2f7e10cea646ad84da05e8a was revalidated: both current workflows failed on retry before runner allocation (runner_id=0, empty runner_name, steps=[]). The validation tool's compatibility with the documented result 'passed' and two graph counter mismatches were corrected in this round; this does not complete T0007 or prove product acceptance.\n\nT0007-A013 added a source-level regression guard for WPF local-backend composition and loopback-only settings validation. This attempt is partial; broad task-wide decision traceability remains open. Exact-commit CI result is pending.\n\nT0007-A014 verified A013 on exact online commit 03292bd4a23c42361ba2ecd907957e6ee2153028 (V 3.0.370). The new source-level regression appears as an `ok` test in the CI log, the Step Three quality gate passed all 160 Python tests and graph/output checks (0 errors, one preserved T0001 unmapped-dependency warning), and HostLifecycle, Windows and Android product jobs passed. T0007 remains in_progress because this is one guarded composition boundary, not full task-wide traceability.",
+      "notes": "T0007 remains a broad traceability task. A007's deterministic unavailable-backend fallback and exact-message regression assertion passed GitHub Actions on V 3.0.42. Revalidation of main commit 2b15191008128bdf98cda5a6eaacbf5796c964ed shows MainWindow explicitly injects LocalInferenceBackendFactory.Create, which returns LlamaCppServerBackend; UnconfiguredInferenceBackend is only the HostInferenceSession default fallback when no backend/factory is configured, not evidence by itself that the current UI has no production backend. Keep T0007 in_progress because the broad task-wide traceability criterion is not yet proven complete. Current-round CI retries failed before runner allocation, so no new tests were executed. The T0007 -> T0008 edge remains validated as sequencing_only. Latest exact-main commit 95addc4385000528d2f7e10cea646ad84da05e8a was revalidated: both current workflows failed on retry before runner allocation (runner_id=0, empty runner_name, steps=[]). The validation tool's compatibility with the documented result 'passed' and two graph counter mismatches were corrected in this round; this does not complete T0007 or prove product acceptance.\n\nT0007-A013 added a source-level regression guard for WPF local-backend composition and loopback-only settings validation. This attempt is partial; broad task-wide decision traceability remains open. Exact-commit CI result is pending.\n\nT0007-A014 verified A013 on exact online commit 03292bd4a23c42361ba2ecd907957e6ee2153028 (V 3.0.370). The new source-level regression appears as an `ok` test in the CI log, the Step Three quality gate passed all 160 Python tests and graph/output checks (0 errors, one preserved T0001 unmapped-dependency warning), and HostLifecycle, Windows and Android product jobs passed. T0007 remains in_progress because this is one guarded composition boundary, not full task-wide traceability.\n\nT0007-A015 adds source-level regression coverage for the WPF shutdown safety contract: the close event cancels the initial close, awaits listener lifecycle disposal, and only then schedules a permitted close; the Closed handler cancels pending operations and disposes owned inference resources. Exact-commit CI is pending; task-wide traceability remains incomplete.",
       "execution_summary": {
-        "attempt_count": 14,
+        "attempt_count": 15,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0007-A014",
+        "last_attempt_id": "T0007-A015",
         "last_attempt_result": "partial",
         "changed_files": [
+          "tests/test_network_listener_exposure.py",
           "docs/acceptance.md",
           "step three/T0007/execution-report.md",
           "step three/project-graph.md"
@@ -1422,6 +1425,32 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Continue the broad T0007 source/configuration/test traceability review, focusing on another concrete unguarded decision boundary. Preserve the validated T0007 -> T0008 sequencing_only edge. Do not mark T0007 done based on this one composition regression."
+        },
+        {
+          "attempt_id": "T0007-A015",
+          "started_at": "2026-10-27T06:07:59.530Z",
+          "ended_at": "2026-10-27T06:07:59.530Z",
+          "result": "partial",
+          "summary": "Added two source-level regression tests guarding asynchronous WPF shutdown order and release of owned resources. Exact-commit CI has not yet been checked; the task remains in_progress.",
+          "changed_files": [
+            "tests/test_network_listener_exposure.py",
+            "docs/acceptance.md",
+            "step three/T0007/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "command": "python -m unittest discover -s tests -v",
+              "result": "pending",
+              "summary": "Two new WPF shutdown regression tests are submitted for execution by the exact-commit quality workflow; no pass is claimed at creation time."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Verify both new test names in exact-commit Python CI logs and verify product workflow; record actual results in a follow-up attempt. Continue broader T0007 traceability; keep status in_progress."
         }
       ]
     },
@@ -34445,6 +34474,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-27T06:01:59.560Z"
+  "updated_at": "2026-10-27T06:07:59.530Z"
 }
 ```
