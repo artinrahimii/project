@@ -795,3 +795,17 @@
 - No production runtime code, wire schema, or dependency edge changed. The record explicitly distinguishes cross-language wire-level coverage from live Android-to-Windows transport; `AC-P2P-01` remains **NOT RUN**.
 - Test status at creation: existing source, round-trip suites, shared fixtures, schema guards and workflow paths were inspected at the exact base commit. No local repository test command was run; exact-main CI is pending.
 - Follow-up: inspect exact `V 3.0.424` quality and product workflows; preserve any failures before recording verification.
+
+
+## Verification result for T0007-A071 — exact V 3.0.424 failure
+- Verified: 2026-10-27T17:09:41.485Z
+- Step Three quality gate: **FAIL** — [run 40547584862](https://github.com/artinrahimii/project/actions/runs/40547584862) ran **179 tests; one failed**. `test_versioned_cross_platform_protocol_decision_maps_to_canonical_schema_and_wire_checks` expected the literal `protobuf-wire-fixtures.txt` filename inside the fixture file contents. The source fixture contains a header and message/Base64 rows, not its own path. Python syntax, graph, and output/evidence validation were skipped after the test failure.
+- At capture, the separate product workflow [run 40547584988](https://github.com/artinrahimii/project/actions/runs/40547584988) was `completed`; no conclusion is inferred here.
+- Failure is preserved in execution history and failed-attempt counter. This was an invalid source-contract assertion, not evidence of a wire-schema or runtime regression.
+
+## Attempt T0007-A072 — correct fixture-content assertion
+- Started: 2026-10-27T17:09:41.485Z
+- Result: partial at commit creation; exact-commit CI pending.
+- Correction: replaced the incorrect filename-in-content assertion with checks for an actual `InferenceRequest` fixture row and the `Base64(wire bytes)` fixture header. The canonical schema, generated bindings, shared fixtures and ADR text are unchanged.
+- No production code, schema, or graph edges changed. The preceding A071 failure remains recorded.
+- Follow-up: inspect V 3.0.425's exact Step Three quality and product workflow. Keep `T0007` `in_progress`; `AC-P2P-01` remains **NOT RUN**.
