@@ -24888,7 +24888,7 @@
         "src/Shared.Networking/ یا src/Host.Windows/Networking/ + tests/"
       ],
       "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nDependency review (2026-10-27): T0121 -> T0122 was validated as contract_or_interface_dependency because expiry-safe discovery relies on the announcement TTL contract and stopped renewals eventually expiring. T0115 -> T0122 was validated as sequencing_only because its local TCP frame lifecycle tests provide no runtime API consumed by metadata-directory expiry filtering. Both original type=blocks edges remain intact; T0122 stays not_started until T0121 is completed.",
       "execution_summary": {
         "attempt_count": 0,
         "failed_attempt_count": 0,
@@ -32716,19 +32716,31 @@
       "from": "T0121",
       "to": "T0122",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "Reviewed the T0121 renewable lease publisher against T0122's requirement to stop returning expired/disconnected peers. T0122 relies on the expiry contract (PeerAnnouncement.ExpiresAtUtc) and on the fact that a disconnected publisher eventually stops refreshing its lease; the directory removes entries whose expiry has passed. This is a real lease/expiry contract dependency, not inferred from type=blocks. Preserve the edge and do not start T0122 until T0121's end-to-end lease lifecycle is completed and verified.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Shared.Contracts/Networking/PeerAnnouncement.cs",
+        "src/Host.Windows/Networking/PeerAnnouncementLeasePublisher.cs",
+        "src/Rendezvous.Service/PeerAnnouncementDirectory.cs",
+        "tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs",
+        "step three/T0121/execution-report.md"
+      ]
     },
     {
       "from": "T0115",
       "to": "T0122",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "Reviewed T0115's legacy TCP frame/listener disconnect, malformed-frame, sequential-client, and shutdown tests against T0122's metadata-directory expiry filtering. T0122 consumes no T0115 runtime API or test output; the directory filters PeerAnnouncement expiry metadata independently. Preserve the existing blocks edge as conservative execution order, not as a technical prerequisite.",
+      "validation_status": "validated",
+      "evidence": [
+        "tests/HostLifecycle.Tests/NetworkInferenceRequestFrameAcceptanceTests.cs",
+        "src/Host.Windows/Networking/NetworkInferenceRequestFrameReader.cs",
+        "src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs",
+        "src/Rendezvous.Service/PeerAnnouncementDirectory.cs",
+        "step three/T0115/execution-report.md"
+      ]
     },
     {
       "from": "T0122",
@@ -37028,6 +37040,42 @@
         "src/Host.Windows/Networking/NetworkInferenceRequestFrameReader.cs",
         "src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs",
         "tests/HostLifecycle.Tests/NetworkInferenceRequestFrameAcceptanceTests.cs",
+        "step three/T0115/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-27T18:52:04.396Z",
+      "edge_from": "T0121",
+      "edge_to": "T0122",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "old_validation_status": "unreviewed",
+      "new_validation_status": "validated",
+      "reason": "Reviewed the T0121 renewable lease publisher against T0122's requirement to stop returning expired/disconnected peers. T0122 relies on the expiry contract (PeerAnnouncement.ExpiresAtUtc) and on the fact that a disconnected publisher eventually stops refreshing its lease; the directory removes entries whose expiry has passed. This is a real lease/expiry contract dependency, not inferred from type=blocks. Preserve the edge and do not start T0122 until T0121's end-to-end lease lifecycle is completed and verified.",
+      "evidence": [
+        "src/Shared.Contracts/Networking/PeerAnnouncement.cs",
+        "src/Host.Windows/Networking/PeerAnnouncementLeasePublisher.cs",
+        "src/Rendezvous.Service/PeerAnnouncementDirectory.cs",
+        "tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs",
+        "step three/T0121/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-27T18:52:04.396Z",
+      "edge_from": "T0115",
+      "edge_to": "T0122",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "old_validation_status": "unreviewed",
+      "new_validation_status": "validated",
+      "reason": "Reviewed T0115's legacy TCP frame/listener disconnect, malformed-frame, sequential-client, and shutdown tests against T0122's metadata-directory expiry filtering. T0122 consumes no T0115 runtime API or test output; the directory filters PeerAnnouncement expiry metadata independently. Preserve the existing blocks edge as conservative execution order, not as a technical prerequisite.",
+      "evidence": [
+        "tests/HostLifecycle.Tests/NetworkInferenceRequestFrameAcceptanceTests.cs",
+        "src/Host.Windows/Networking/NetworkInferenceRequestFrameReader.cs",
+        "src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs",
+        "src/Rendezvous.Service/PeerAnnouncementDirectory.cs",
         "step three/T0115/execution-report.md"
       ],
       "reviewed_by": "Step Three execution review"
