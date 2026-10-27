@@ -966,7 +966,8 @@
         "tests/test_network_listener_exposure.py",
         "src/Host.Application/ParticipationActivationRecovery.cs",
         "tests/HostLifecycle.Tests/ParticipationActivationRecoveryTests.cs",
-        "src/Host.Application/HostInferenceSession.cs"
+        "src/Host.Application/HostInferenceSession.cs",
+        "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs"
       ],
       "expected_output_paths": [
         "docs/acceptance.md + tests/ (معیار و آزمون متناظر)"
@@ -980,13 +981,14 @@
         "tests/test_inference_backend_abstraction.py",
         "tests/test_network_listener_exposure.py",
         "src/Host.Application/ParticipationActivationRecovery.cs",
-        "tests/HostLifecycle.Tests/ParticipationActivationRecoveryTests.cs"
+        "tests/HostLifecycle.Tests/ParticipationActivationRecoveryTests.cs",
+        "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs"
       ],
-      "notes": "T0007 remains a broad traceability task. A007's deterministic unavailable-backend fallback and exact-message regression assertion passed GitHub Actions on V 3.0.42. Revalidation of main commit 2b15191008128bdf98cda5a6eaacbf5796c964ed shows MainWindow explicitly injects LocalInferenceBackendFactory.Create, which returns LlamaCppServerBackend; UnconfiguredInferenceBackend is only the HostInferenceSession default fallback when no backend/factory is configured, not evidence by itself that the current UI has no production backend. Keep T0007 in_progress because the broad task-wide traceability criterion is not yet proven complete. Current-round CI retries failed before runner allocation, so no new tests were executed. The T0007 -> T0008 edge remains validated as sequencing_only. Latest exact-main commit 95addc4385000528d2f7e10cea646ad84da05e8a was revalidated: both current workflows failed on retry before runner allocation (runner_id=0, empty runner_name, steps=[]). The validation tool's compatibility with the documented result 'passed' and two graph counter mismatches were corrected in this round; this does not complete T0007 or prove product acceptance.\n\nT0007-A013 added a source-level regression guard for WPF local-backend composition and loopback-only settings validation. This attempt is partial; broad task-wide decision traceability remains open. Exact-commit CI result is pending.\n\nT0007-A014 verified A013 on exact online commit 03292bd4a23c42361ba2ecd907957e6ee2153028 (V 3.0.370). The new source-level regression appears as an `ok` test in the CI log, the Step Three quality gate passed all 160 Python tests and graph/output checks (0 errors, one preserved T0001 unmapped-dependency warning), and HostLifecycle, Windows and Android product jobs passed. T0007 remains in_progress because this is one guarded composition boundary, not full task-wide traceability.\n\nT0007-A015 adds source-level regression coverage for the WPF shutdown safety contract: the close event cancels the initial close, awaits listener lifecycle disposal, and only then schedules a permitted close; the Closed handler cancels pending operations and disposes owned inference resources. Exact-commit CI is pending; task-wide traceability remains incomplete.\n\nT0007-A016 verified the A015 shutdown regression on exact commit 1fd025faa94f60e70344a2c1717b10d6da460a43 (V 3.0.372). Both new Python tests passed; 162 Python tests passed in total; graph/evidence validation had 0 errors and one preserved T0001 warning; HostLifecycle, Windows, Android and aggregate product CI passed. T0007 remains in_progress because broad decision traceability is not complete.\n\nHistory integrity note (V 3.0.374): A015 retains its original pending-at-creation test state; the observed successful results are recorded separately under A016 after the exact V 3.0.372 CI logs were inspected.\n\nT0007-A017 adds a source-level regression guard for the WPF local-engine process-start error boundary. The handler must use HostErrorPresentation.ToUserMessage and must not expose raw exception text or local paths. Exact-commit CI is pending at creation; this covers one boundary only and does not complete task-wide traceability.\n\nHistory integrity note (V 3.0.376): A017 preserves its original pending-at-creation test state; observed exact-commit results are recorded separately in A018. On V 3.0.375 the 163-test Python quality gate and all HostLifecycle, Windows WPF and Android product jobs passed. Windows build had one existing CS4014 warning at MainWindow.xaml.cs:858 for the intentionally deferred Dispatcher.BeginInvoke; broad T0007 acceptance remains incomplete.\n\nT0007-A019 addresses the previously recorded CS4014 warning at MainWindow.xaml.cs:858. The Dispatcher callback is intentionally deferred until listener disposal has completed and the initial Closing event has returned. The returned DispatcherOperation is now explicitly discarded and the shutdown regression requires this form while preserving disposal-before-reschedule ordering. Exact-commit CI is pending at creation; broad T0007 traceability remains open.\n\nHistory integrity note (V 3.0.378): A019 retains its original pending-at-creation test result. Exact V 3.0.377 quality and product CI evidence is recorded separately in A020: 163 Python tests passed; all product jobs passed; Windows build reported 0 warnings and 0 errors, including no remaining CS4014 diagnostic at the deferred Dispatcher.BeginInvoke call.\n\nT0007-A021: WPF settings-load error boundary now includes semantic validation, I/O, and permission failures; safe defaults remain in memory and user-facing guidance excludes raw exception/path details. A C# persistence regression verifies invalid semantic settings are rejected without overwriting the file, and a Python source regression protects the constructor catch. Exact-commit CI pending; keep T0007 in_progress.\n\nHistory integrity note (V 3.0.380): T0007-A021 preserves its original pending-at-creation result. Successful exact V 3.0.379 quality, HostLifecycle, Windows, Android and real-inference results are recorded separately in A022. T0007 remains in_progress; these checks verify the settings-load error boundary, not all technical decisions.\n\nHistory integrity note (V 3.0.381): V 3.0.380's exact-commit quality CI passed. Its product workflow initially failed the HostLifecycle QUIC fallback expected-peer identity assertion; rerunning the failed job on the same commit passed, including the exact fallback regression. Both outcomes are recorded under T0007-A023. The cause was not established; no networking behavior was changed. T0007 remains in_progress.\n\nT0007-A024: WPF participation activation rollback now contains non-disposal exceptions from the attempt to stop the listener; user-facing recovery status uses the safe exception mapper. Added a source regression for the nested rollback failure. Exact-commit CI pending; do not claim that listener state is recovered if shutdown itself fails.\n\nT0007-A025 (2026-10-27): exact V 3.0.382 CI evidence verified. Quality run 40467751244 passed 165 Python tests including the A024 rollback regression, syntax, graph and evidence checks (0 errors; one preserved T0001 unmapped-dependency warning). Product run 40467751261 passed Windows WPF build/startup, Android APK and HostLifecycle jobs. This is source-level regression evidence, not runtime WPF fault injection. T0007 remains in_progress; no edge classification changed.\n\nT0007-A026 (2026-10-27): moved network-participation rollback status composition into a production helper used by WPF and added runnable C# tests for successful rollback, secondary failure with secret-bearing details, and ObjectDisposedException during shutdown. The Python guard now checks the WPF-to-helper composition. Exact-commit CI is pending. T0007 remains in_progress.\n\nT0007-A027 (2026-10-27): Exact V 3.0.384 verification passed. Quality run 40469317766 completed 165 Python tests plus syntax, graph and repository evidence checks (0 errors; one preserved T0001 unmapped-dependency warning). Product workflow 40469317799 passed Windows WPF, Android APK and HostLifecycle jobs; the HostLifecycle log explicitly printed the new ParticipationActivationRecoveryTests PASS line. Real local inference run 40469317738 also passed. The production rollback contract is verified, but broad T0007 traceability remains incomplete and status stays in_progress.\n\nT0007-A028 (2026-10-27): found a resource-ownership gap during backend replacement. If disposal of the previous backend throws, HostInferenceSession now fails closed to UnconfiguredInferenceBackend and best-effort disposes the unadopted replacement. A new runnable C# regression asserts Error/non-connected status, exactly one disposal attempt for both backends, and no replacement health probe. Exact-commit CI is pending; broad T0007 traceability remains incomplete. The T0006 -> T0007 and T0007 -> T0008 validated classifications are unchanged.",
+      "notes": "T0007 remains a broad traceability task. A007's deterministic unavailable-backend fallback and exact-message regression assertion passed GitHub Actions on V 3.0.42. Revalidation of main commit 2b15191008128bdf98cda5a6eaacbf5796c964ed shows MainWindow explicitly injects LocalInferenceBackendFactory.Create, which returns LlamaCppServerBackend; UnconfiguredInferenceBackend is only the HostInferenceSession default fallback when no backend/factory is configured, not evidence by itself that the current UI has no production backend. Keep T0007 in_progress because the broad task-wide traceability criterion is not yet proven complete. Current-round CI retries failed before runner allocation, so no new tests were executed. The T0007 -> T0008 edge remains validated as sequencing_only. Latest exact-main commit 95addc4385000528d2f7e10cea646ad84da05e8a was revalidated: both current workflows failed on retry before runner allocation (runner_id=0, empty runner_name, steps=[]). The validation tool's compatibility with the documented result 'passed' and two graph counter mismatches were corrected in this round; this does not complete T0007 or prove product acceptance.\n\nT0007-A013 added a source-level regression guard for WPF local-backend composition and loopback-only settings validation. This attempt is partial; broad task-wide decision traceability remains open. Exact-commit CI result is pending.\n\nT0007-A014 verified A013 on exact online commit 03292bd4a23c42361ba2ecd907957e6ee2153028 (V 3.0.370). The new source-level regression appears as an `ok` test in the CI log, the Step Three quality gate passed all 160 Python tests and graph/output checks (0 errors, one preserved T0001 unmapped-dependency warning), and HostLifecycle, Windows and Android product jobs passed. T0007 remains in_progress because this is one guarded composition boundary, not full task-wide traceability.\n\nT0007-A015 adds source-level regression coverage for the WPF shutdown safety contract: the close event cancels the initial close, awaits listener lifecycle disposal, and only then schedules a permitted close; the Closed handler cancels pending operations and disposes owned inference resources. Exact-commit CI is pending; task-wide traceability remains incomplete.\n\nT0007-A016 verified the A015 shutdown regression on exact commit 1fd025faa94f60e70344a2c1717b10d6da460a43 (V 3.0.372). Both new Python tests passed; 162 Python tests passed in total; graph/evidence validation had 0 errors and one preserved T0001 warning; HostLifecycle, Windows, Android and aggregate product CI passed. T0007 remains in_progress because broad decision traceability is not complete.\n\nHistory integrity note (V 3.0.374): A015 retains its original pending-at-creation test state; the observed successful results are recorded separately under A016 after the exact V 3.0.372 CI logs were inspected.\n\nT0007-A017 adds a source-level regression guard for the WPF local-engine process-start error boundary. The handler must use HostErrorPresentation.ToUserMessage and must not expose raw exception text or local paths. Exact-commit CI is pending at creation; this covers one boundary only and does not complete task-wide traceability.\n\nHistory integrity note (V 3.0.376): A017 preserves its original pending-at-creation test state; observed exact-commit results are recorded separately in A018. On V 3.0.375 the 163-test Python quality gate and all HostLifecycle, Windows WPF and Android product jobs passed. Windows build had one existing CS4014 warning at MainWindow.xaml.cs:858 for the intentionally deferred Dispatcher.BeginInvoke; broad T0007 acceptance remains incomplete.\n\nT0007-A019 addresses the previously recorded CS4014 warning at MainWindow.xaml.cs:858. The Dispatcher callback is intentionally deferred until listener disposal has completed and the initial Closing event has returned. The returned DispatcherOperation is now explicitly discarded and the shutdown regression requires this form while preserving disposal-before-reschedule ordering. Exact-commit CI is pending at creation; broad T0007 traceability remains open.\n\nHistory integrity note (V 3.0.378): A019 retains its original pending-at-creation test result. Exact V 3.0.377 quality and product CI evidence is recorded separately in A020: 163 Python tests passed; all product jobs passed; Windows build reported 0 warnings and 0 errors, including no remaining CS4014 diagnostic at the deferred Dispatcher.BeginInvoke call.\n\nT0007-A021: WPF settings-load error boundary now includes semantic validation, I/O, and permission failures; safe defaults remain in memory and user-facing guidance excludes raw exception/path details. A C# persistence regression verifies invalid semantic settings are rejected without overwriting the file, and a Python source regression protects the constructor catch. Exact-commit CI pending; keep T0007 in_progress.\n\nHistory integrity note (V 3.0.380): T0007-A021 preserves its original pending-at-creation result. Successful exact V 3.0.379 quality, HostLifecycle, Windows, Android and real-inference results are recorded separately in A022. T0007 remains in_progress; these checks verify the settings-load error boundary, not all technical decisions.\n\nHistory integrity note (V 3.0.381): V 3.0.380's exact-commit quality CI passed. Its product workflow initially failed the HostLifecycle QUIC fallback expected-peer identity assertion; rerunning the failed job on the same commit passed, including the exact fallback regression. Both outcomes are recorded under T0007-A023. The cause was not established; no networking behavior was changed. T0007 remains in_progress.\n\nT0007-A024: WPF participation activation rollback now contains non-disposal exceptions from the attempt to stop the listener; user-facing recovery status uses the safe exception mapper. Added a source regression for the nested rollback failure. Exact-commit CI pending; do not claim that listener state is recovered if shutdown itself fails.\n\nT0007-A025 (2026-10-27): exact V 3.0.382 CI evidence verified. Quality run 40467751244 passed 165 Python tests including the A024 rollback regression, syntax, graph and evidence checks (0 errors; one preserved T0001 unmapped-dependency warning). Product run 40467751261 passed Windows WPF build/startup, Android APK and HostLifecycle jobs. This is source-level regression evidence, not runtime WPF fault injection. T0007 remains in_progress; no edge classification changed.\n\nT0007-A026 (2026-10-27): moved network-participation rollback status composition into a production helper used by WPF and added runnable C# tests for successful rollback, secondary failure with secret-bearing details, and ObjectDisposedException during shutdown. The Python guard now checks the WPF-to-helper composition. Exact-commit CI is pending. T0007 remains in_progress.\n\nT0007-A027 (2026-10-27): Exact V 3.0.384 verification passed. Quality run 40469317766 completed 165 Python tests plus syntax, graph and repository evidence checks (0 errors; one preserved T0001 unmapped-dependency warning). Product workflow 40469317799 passed Windows WPF, Android APK and HostLifecycle jobs; the HostLifecycle log explicitly printed the new ParticipationActivationRecoveryTests PASS line. Real local inference run 40469317738 also passed. The production rollback contract is verified, but broad T0007 traceability remains incomplete and status stays in_progress.\n\nT0007-A028 (2026-10-27): found a resource-ownership gap during backend replacement. If disposal of the previous backend throws, HostInferenceSession now fails closed to UnconfiguredInferenceBackend and best-effort disposes the unadopted replacement. A new runnable C# regression asserts Error/non-connected status, exactly one disposal attempt for both backends, and no replacement health probe. Exact-commit CI is pending; broad T0007 traceability remains incomplete. The T0006 -> T0007 and T0007 -> T0008 validated classifications are unchanged.\n\nT0007-A029 (2026-10-27): exact V 3.0.386 CI verified the quality gate (165 Python tests, graph/output checks 0 errors and 1 preserved T0001 warning), Windows build/startup, Android APK/lint, and real local llama.cpp/GGUF inference; the A028 behavioral backend-replacement regression printed PASS in the real-inference job. The aggregate product workflow's HostLifecycle job failed twice at the QUIC fallback listener-identity assertion. Inspection shows the test checked the listener's asynchronously-published RemotePeerIdentity immediately after the dialer's protocol-ready return; changed the test to wait up to five seconds for the listener callback before retaining the strict identity assertion. Exact V 3.0.387 CI is pending. No production transport contract or graph edge was changed.",
       "execution_summary": {
-        "attempt_count": 28,
+        "attempt_count": 29,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0007-A028",
+        "last_attempt_id": "T0007-A029",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Host.Windows/MainWindow.xaml.cs",
@@ -997,7 +999,8 @@
           "src/Host.Application/ParticipationActivationRecovery.cs",
           "tests/HostLifecycle.Tests/ParticipationActivationRecoveryTests.cs",
           "tests/HostLifecycle.Tests/Program.cs",
-          "src/Host.Application/HostInferenceSession.cs"
+          "src/Host.Application/HostInferenceSession.cs",
+          "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs"
         ],
         "related_commits": [
           "632c36d257ca079dd9bdee07f5415aa3c7c97cc3",
@@ -1010,7 +1013,8 @@
           "4674853a748b8fb266255f7fc172d1376c590540",
           "3d9ac800cea63ea1e536f6fb79f49e712d2cfaec",
           "d7c39dec96034f8e28233b145b94cb2d7724f147",
-          "07e33b1a7c0d452b1521f78376ad16bfc2257982"
+          "07e33b1a7c0d452b1521f78376ad16bfc2257982",
+          "a45896dc0681cc8ffe36d7a43041d1b773d0b4a9"
         ],
         "tests_passed": [
           "GitHub Actions Step Three quality gate run 39671083734 — passed for exact commit aa1bc7e77bc5bbce80e9d7f987de75c1bdc71c36 (V 3.0.42).",
@@ -1055,9 +1059,16 @@
           "Windows WPF job 122072293543 passed on exact commit 07e33b1a7c0d452b1521f78376ad16bfc2257982: C# formatting, Release build, generated Protobuf, startup smoke, agent-tool policy/capability checks and artifact upload. https://github.com/artinrahimii/project/actions/runs/40469317799/job/122072293543",
           "Android job 122072293223 passed on exact commit 07e33b1a7c0d452b1521f78376ad16bfc2257982: Kotlin lint, debug APK, Protobuf tests, generated sources and artifact upload. https://github.com/artinrahimii/project/actions/runs/40469317799/job/122072293223",
           "White-P product build run 40469317799 completed success on exact commit 07e33b1a7c0d452b1521f78376ad16bfc2257982; all 3 jobs successful. https://github.com/artinrahimii/project/actions/runs/40469317799",
-          "Real local inference run 40469317738 passed on exact commit 07e33b1a7c0d452b1521f78376ad16bfc2257982, including live pinned llama.cpp/GGUF inference. https://github.com/artinrahimii/project/actions/runs/40469317738"
+          "Real local inference run 40469317738 passed on exact commit 07e33b1a7c0d452b1521f78376ad16bfc2257982, including live pinned llama.cpp/GGUF inference. https://github.com/artinrahimii/project/actions/runs/40469317738",
+          "V 3.0.386 Step Three quality run 40479992960 — 165 Python tests, Python syntax, graph structure, recorded-output/evidence validation passed; 0 errors and 1 preserved T0001 unmapped-dependency warning.",
+          "V 3.0.386 Windows WPF job 122107603674 — C# formatting, Release build, generated Protobuf, startup smoke, policy/capability tests and artifact upload passed.",
+          "V 3.0.386 Android job 122107603311 — Kotlin lint, debug APK, Protobuf round-trip tests, generated sources and artifact upload passed.",
+          "V 3.0.386 real local inference run 40479992903 — live llama.cpp/GGUF inference, cancellation and process shutdown passed; log includes PASS for T0007-A028 backend replacement disposal regression."
         ],
-        "tests_failed": [],
+        "tests_failed": [
+          "V 3.0.386 HostLifecycle job 122107603086, run 40479993095 attempt 1 — failed at PeerTransportContractAcceptanceTests.VerifyQuicFallbackAfterUnreachableTcpAddressAsync assertion for listener authenticated identity; Windows/Android jobs passed.",
+          "V 3.0.386 HostLifecycle retry job 122108525759, run 40479993095 attempt 2 — same listener identity assertion failed again. Inspect and fix test synchronization; do not claim the aggregate product workflow passed."
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -2019,6 +2030,63 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Inspect the exact V 3.0.386 quality and product workflows. Fix any failure before recording success; keep T0007 in_progress."
+        },
+        {
+          "attempt_id": "T0007-A029",
+          "started_at": "2026-10-27T09:24:48.755Z",
+          "ended_at": "2026-10-27T09:24:48.755Z",
+          "result": "partial",
+          "summary": "Exact V 3.0.386 quality, Windows, Android and real-model inference checks passed, including the new backend replacement disposal regression. HostLifecycle failed twice at a separate QUIC fallback identity assertion. Inspected the transport and found the test synchronously reads the listener's identity before its OnPeerConnected callback is guaranteed to publish it; added a bounded wait while preserving strict identity equality.",
+          "changed_files": [
+            "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs",
+            "docs/acceptance.md",
+            "step three/T0007/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Step Three quality gate — run 40479992960",
+              "result": "passed",
+              "summary": "165 Python tests; syntax, graph and recorded-output/evidence validation passed with zero errors and one preserved T0001 warning.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40479992960"
+            },
+            {
+              "name": "Windows WPF build — job 122107603674",
+              "result": "passed",
+              "summary": "Formatting, Release build, generated Protobuf, startup smoke and agent-tool gates passed in the first product attempt.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40479993095"
+            },
+            {
+              "name": "Android APK — job 122107603311",
+              "result": "passed",
+              "summary": "Lint, debug APK, Protobuf round-trip tests and generated-source checks passed in the first product attempt.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40479993095"
+            },
+            {
+              "name": "Real local inference — run 40479992903",
+              "result": "passed",
+              "summary": "Live llama.cpp/GGUF inference passed; log includes the A028 backend replacement regression PASS.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40479992903"
+            },
+            {
+              "name": "HostLifecycle — first attempt, run 40479993095",
+              "result": "failed",
+              "summary": "QUIC fallback test failed on listener RemotePeerIdentity assertion before later Program.cs checks ran.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40479993095/attempts/1"
+            },
+            {
+              "name": "HostLifecycle — retry, run 40479993095",
+              "result": "failed",
+              "summary": "The same listener identity assertion failed again on the same implementation commit; this is treated as reproducible until the A029 test correction passes.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40479993095/attempts/2"
+            }
+          ],
+          "failure_details": "The listener's authenticated remote identity is published from OnPeerConnected, independent of the dialing peer's protocol-ready signal. The previous test read the listener property immediately after client ConnectSecureAsync and did not await the callback's state publication.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect exact V 3.0.387 CI, particularly HostLifecycle, and diagnose any remaining failure. Keep T0007 in_progress."
         }
       ]
     },

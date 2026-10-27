@@ -310,3 +310,15 @@
 - Local execution: not run; this tool session has no checked-out repository and the container cannot resolve GitHub for a local clone. No local C# build or test pass is claimed.
 - Dependency review: preserve `T0006 → T0007` as validated `contract_or_interface_dependency` and `T0007 → T0008` as validated `sequencing_only`; no edge changes were needed.
 - Follow-up: inspect quality and product workflows on the exact implementation commit. Record actual CI output in a separate verification attempt; keep T0007 `in_progress` until broad technical-decision traceability is complete.
+
+## Attempt T0007-A029 — synchronize the QUIC fallback identity assertion
+
+- Started / recorded: 2026-10-27T09:24:48.755Z.
+- Result at creation: partial; exact-commit CI pending.
+- Verification of V 3.0.386: Step Three quality run 40479992960 passed 165 Python tests, syntax validation, graph validation and recorded-output/evidence checks (0 errors; one preserved T0001 unmapped-dependency warning). Windows WPF build/startup and Android lint/debug APK/Protobuf jobs passed. Real local inference run 40479992903 passed and its log includes the new A028 behavioral regression: PASS for failed-backend replacement disposal. These results do not make the full product workflow green.
+- Product lifecycle failure: run 40479993095 failed twice (attempts 1 and 2) at PeerTransportContractAcceptanceTests.VerifyQuicFallbackAfterUnreachableTcpAddressAsync, asserting listener and dialer identities. The same path had a recorded first-attempt failure and retry-success in prior T0007 history; two failures in this round mean it must be treated as reproducible until verified after correction.
+- Root-cause assessment: the test read server.RemotePeerIdentity synchronously as soon as the dialer's ConnectSecureAsync completed. In the concrete transport, the listener identity is written by a separate OnPeerConnected callback; the dialer-side protocol-ready signal does not guarantee that this listener-side callback has already published its property. This is a test synchronization defect hypothesis grounded in those production call paths; the change preserves the strict identity assertion.
+- Test correction: separately assert the authenticated identity from the dialing transport, then wait up to five seconds for the listener's RemotePeerIdentity callback to publish a value before asserting that it exactly matches the pinned client identity. The cancellation token remains bounded and the test fails if the expected identity is never observed.
+- Changed paths: tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs, docs/acceptance.md, step three/T0007/execution-report.md, step three/project-graph.md.
+- Dependency review: T0006 → T0007 remains validated contract_or_interface_dependency; T0007 → T0008 remains validated sequencing_only. No graph edge changed.
+- Follow-up: inspect the exact V 3.0.387 quality, Windows/Android product builds, HostLifecycle retry, and real local inference CI. Keep T0007 in_progress until the broad decision-traceability acceptance criterion is satisfied.

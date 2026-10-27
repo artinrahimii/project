@@ -130,9 +130,19 @@ internal static class PeerTransportContractAcceptanceTests
         Assert(connection.SelectedEndpoint.Address == quicAddress,
             "The fallback must select the reachable QUIC address after the TCP candidate fails.");
         Assert(connection.Transport.IsConnected &&
-               connection.Transport.RemotePeerIdentity == server.LocalPeerIdentity &&
-               server.RemotePeerIdentity == fallbackClientPeerId,
-            "The fallback transport must authenticate the same expected peer identity.");
+               connection.Transport.RemotePeerIdentity == server.LocalPeerIdentity,
+            "The dialing transport must authenticate the expected remote peer identity.");
+
+        // The local dialer can finish protocol startup before the remote listener's OnConnected
+        // callback publishes RemotePeerIdentity. Await that independent state signal with a bound.
+        DateTimeOffset listenerIdentityDeadline = DateTimeOffset.UtcNow.AddSeconds(5);
+        while (server.RemotePeerIdentity is null && DateTimeOffset.UtcNow < listenerIdentityDeadline)
+        {
+            await Task.Delay(TimeSpan.FromMilliseconds(10), timeout.Token).ConfigureAwait(false);
+        }
+
+        Assert(server.RemotePeerIdentity == fallbackClientPeerId,
+            "The listener must observe the expected authenticated peer identity before the test proceeds.");
 
         byte[] requestBytes = [0x10, 0x00, 0xFE, 0x44];
         await connection.Transport.SendMessageAsync(requestBytes, timeout.Token).ConfigureAwait(false);

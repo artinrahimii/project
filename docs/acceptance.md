@@ -319,3 +319,9 @@ Scope boundary: these results verify the local production rollback-helper behavi
 HostInferenceSession.ConnectAsync previously created a replacement backend and then disposed the current backend before assigning the replacement. If disposing the current backend threw, the replacement was neither adopted nor disposed, while the session retained a reference to the backend whose disposal had failed. The code now clears the active backend reference to the safe unconfigured implementation before attempting retirement, and best-effort disposes the unadopted replacement if retirement fails. The status remains a generic error and does not expose exception details.
 
 The runnable HostLifecycle.Tests regression uses a disposable prior backend that throws on retirement and a disposable replacement backend. It asserts that the session remains non-connected in Error, the replacement is disposed exactly once, and no replacement health check is started. Exact-commit CI is pending at creation; this is a bounded lifecycle/error-path increment, not completion of broad T0007 traceability.
+
+## T0007-A029 — bounded wait for listener identity publication in the QUIC fallback test
+
+The HostLifecycle job failed twice on V 3.0.386 at the assertion that both ends had published the pinned identities. The dialing side awaited local protocol readiness and verified its remote PeerId; the listener exposes its remote identity through the separate OnPeerConnected event callback. The test previously read server.RemotePeerIdentity immediately without waiting for that callback.
+
+The QUIC fallback acceptance test now performs the dialer identity assertion separately, then waits up to five seconds for the listener callback to publish its identity and strictly checks the pinned value. This is a test synchronization correction; it does not weaken identity validation or change transport security behavior. The exact V 3.0.387 workflow outcome is pending.
