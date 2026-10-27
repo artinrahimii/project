@@ -409,3 +409,12 @@
 - V 3.0.393 product workflow: [run 40509035822](https://github.com/artinrahimii/project/actions/runs/40509035822) remained in progress at this check; no aggregate product success is claimed for that commit.
 - Result: the bounded verification succeeded; `T0007` remains `in_progress` and `AC-P2P-01` remains **NOT RUN**.
 - Follow-up: inspect final product CI on V 3.0.393, then continue the next traceability increment without marking broad T0007 acceptance complete.
+
+## Attempt T0007-A038 — final V 3.0.393 product CI and V 3.0.394 quality verification
+
+- Verified at: 2026-10-27T16:38:00+03:30.
+- V 3.0.393 full product workflow: PASS — [run 40509035822](https://github.com/artinrahimii/project/actions/runs/40509035822). Windows WPF [122205744042](https://github.com/artinrahimii/project/actions/runs/40509035822/job/122205744042), Android APK [122205744291](https://github.com/artinrahimii/project/actions/runs/40509035822/job/122205744291), and HostLifecycle [122205744653](https://github.com/artinrahimii/project/actions/runs/40509035822/job/122205744653) all succeeded.
+- V 3.0.394 Step Three quality gate: PASS — [run 40509343557](https://github.com/artinrahimii/project/actions/runs/40509343557), including automated tests, Python syntax, graph structure, and recorded-output/evidence validation.
+- V 3.0.394 product workflow: [run 40509343712](https://github.com/artinrahimii/project/actions/runs/40509343712) was still in progress at this check; no full-product success is claimed for that commit.
+- Result: this bounded verification succeeded. `T0007` remains `in_progress`; `AC-P2P-01` remains **NOT RUN**.
+- Follow-up: inspect final product CI for V 3.0.394 and continue mapping remaining decisions to production code/configuration and runnable tests.
