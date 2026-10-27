@@ -660,3 +660,21 @@
 - Tests at commit creation: existing source and registered acceptance tests inspected; no local execution command was run. The new Python source-contract regression and product build await exact-commit CI.
 - Result boundary: T0007 stays `in_progress`; `AC-P2P-01` stays **NOT RUN**. This is a bounded traceability increment, not completion of T0007 or the product.
 - Follow-up: inspect exact-main V 3.0.415 Step Three and product-build workflows. Preserve failures and append a separate verification attempt only after reviewing exact-commit results.
+
+
+## Attempt T0007-A059 — failed exact-commit regression
+- Recorded: 2026-10-27T16:37:35.177Z
+- Result: failed.
+- Commit under test: [V 3.0.415 — 2ea2d11f850cd254760b8b0002590261853c8d4b](https://github.com/artinrahimii/project/commit/2ea2d11f850cd254760b8b0002590261853c8d4b).
+- Exact CI evidence: [Step Three quality run 40542397238](https://github.com/artinrahimii/project/actions/runs/40542397238) failed in `test_verified_model_install_decision_maps_to_streaming_integrity_and_atomic_activation` after 175 tests ran. The assertion expected `"Catalog metadata"`, but the ADR correctly contains lowercase `"catalog metadata"`. This is a case-sensitive test-string mismatch; it does not establish a defect in the model installer or its acceptance tests. Syntax, graph and evidence validation steps were skipped because the unit-test step failed.
+- Failure preserved; no history was rewritten. The correction follows in A060 and changes only this string assertion.
+- Follow-up: run the quality gate and product workflow against the corrected commit; do not mark T0007 done from this bounded increment.
+
+
+## Attempt T0007-A060 — correct the failed assertion
+- Started: 2026-10-27T16:37:35.177Z
+- Result: partial at commit creation; exact-commit CI pending.
+- Base: 2ea2d11f850cd254760b8b0002590261853c8d4b (V 3.0.415).
+- Change: changed only the new ADR-0010 source-contract assertion from `"Catalog metadata"` to `"catalog metadata"`, matching the actual lowercase phrase in the registered ADR. No runtime source, requirements, contracts, or dependency edges changed.
+- Tests: the preceding A059 failure is preserved at [run 40542397238](https://github.com/artinrahimii/project/actions/runs/40542397238). Automated tests have not yet been rerun on the corrected commit.
+- Follow-up: inspect exact V 3.0.416 quality CI and any product workflow triggered by the commit. Keep T0007 in_progress and preserve the failure count.

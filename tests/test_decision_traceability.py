@@ -444,7 +444,7 @@ class DecisionTraceabilityTests(unittest.TestCase):
         self.assertIn("IncompleteModelDownloadAcceptanceTests.Run();", harness)
         self.assertIn("ModelDownloadCancellationAcceptanceTests.Run();", harness)
         self.assertIn("UpdateModelSafetyAcceptanceTests.Run();", harness)
-        self.assertIn("Catalog metadata", ADR10_MODEL_INSTALLATION)
+        self.assertIn("catalog metadata", ADR10_MODEL_INSTALLATION)
         self.assertIn("not independent proof of publisher identity", ADR10_MODEL_INSTALLATION)
         self.assertIn("ADR-0010-verified-model-installation.md", REGISTER)
 
