@@ -600,6 +600,18 @@
 - **Gap:** the repository-wide decision traceability test checked generic register links, but did not directly tie ADR-0004 to these specific implementation files and privacy regression cases.
 - **Change:** added `test_encrypted_relay_boundary_decision_maps_to_fail_closed_transport_and_privacy_tests` and an ADR-0004 source constant in `tests/test_decision_traceability.py`. The guard links the decision, production connector, disabled-relay configuration, executable privacy tests, metadata boundary, and the intentionally unpassed `AC-P2P-01` gate.
 - **Scope boundary:** no runtime transport, relay, cryptographic behavior, protocol contract, configuration, or graph dependency edge changed. This is an executable traceability-quality improvement; it does not implement a relay or prove Android-to-Windows end-to-end routing. `AC-P2P-01` remains **NOT RUN** and T0007 remains `in_progress`.
-- **Verification:** source and graph baseline Blob IDs were verified against the exact V 3.0.409 tree. The local test command could not be run in this session; the new test remains pending exact-commit GitHub Actions verification.
-- **Follow-up:** inspect the exact V 3.0.410 Step Three quality gate and product build, preserve any failure, and only then record success in a separate evidence update.
+- **Verification:** exact V 3.0.410 Step Three quality gate [run 40534677028](https://github.com/artinrahimii/project/actions/runs/40534677028) ran 173 tests and failed the new test at the assertion expecting `AC-P2P-01` inside ADR-0004. The gate reference is defined in ADR-0002; no runtime failure was identified. This failure is preserved in graph attempt A054.
+- **Follow-up:** corrected the assertion in attempt A055 to check ADR-0002 for `AC-P2P-01` and `NOT RUN`; verify on the exact V 3.0.411 commit. The V 3.0.410 product workflow was still running at the time of this correction, so no aggregate product-build pass is claimed.
+
+
+
+## T0007-A055 — correct the ADR-0004 traceability assertion after CI failure (2026-10-27)
+
+- **Baseline:** exact online `main` commit `1fcd45fad0292fe3cbbb3f5a60d0876aaaabc646` (`V 3.0.410`). The failure log was inspected before changing the test.
+- **Observed failure:** Step Three quality workflow [40534677028](https://github.com/artinrahimii/project/actions/runs/40534677028) ran 173 tests and failed the new test because `AC-P2P-01` is not named inside ADR-0004. The test incorrectly expected that gate to be defined by the relay decision; ADR-0002 is the direct-P2P decision that records `AC-P2P-01` and `NOT RUN`.
+- **Correction:** moved only the acceptance-gate assertions from `ADR4_RELAY` to the already loaded `ADR2` constant. ADR-0004 remains tested for disabled relay, direct-transport fail-closed behavior, existing privacy tests and metadata disclosure.
+- **History integrity:** attempt `T0007-A054` is now marked **failed** with the exact CI URL and failure detail. The failed test has not been re-labelled as a pass.
+- **Scope:** no production/runtime code or graph edge changed. T0007 remains `in_progress`; `AC-P2P-01` remains **NOT RUN**.
+- **Verification:** correction is pending exact-commit Step Three quality and product CI. The product workflow for V 3.0.410 remained in progress at this evidence capture; its final result will not be inferred.
+- **Follow-up:** inspect the exact V 3.0.411 quality gate and each product job. Preserve any new failure and only record success after the runner reports it.
 

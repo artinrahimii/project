@@ -178,8 +178,9 @@ class DecisionTraceabilityTests(unittest.TestCase):
             with self.subTest(case=case):
                 self.assertIn(case, privacy_tests)
 
-        self.assertIn("AC-P2P-01", ADR4_RELAY)
-        self.assertIn("NOT RUN", ADR4_RELAY)
+        # The end-to-end product gate is tracked by the direct-P2P decision, not ADR-0004.
+        self.assertIn("AC-P2P-01", ADR2)
+        self.assertIn("NOT RUN", ADR2)
 
 
     def test_peer_announcement_lease_decision_maps_to_expiry_directory_and_live_acceptance(self):
