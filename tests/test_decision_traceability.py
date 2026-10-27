@@ -27,6 +27,7 @@ ADR11_HOST_CAPACITY = (ROOT / "docs/decisions/ADR-0011-host-capacity-readiness.m
 ADR12_LOCAL_SETTINGS = (ROOT / "docs/decisions/ADR-0012-local-settings-validation-and-persistence.md").read_text(encoding="utf-8")
 ADR13_TEMP_REQUEST_ID = (ROOT / "docs/decisions/ADR-0013-temporary-request-identifiers.md").read_text(encoding="utf-8")
 ADR14_CROSS_PLATFORM_PROTOCOL = (ROOT / "docs/decisions/ADR-0014-versioned-cross-platform-protocol.md").read_text(encoding="utf-8")
+ADR15_PARTICIPATION_LIFECYCLE = (ROOT / "docs/decisions/ADR-0015-fail-closed-participation-listener-lifecycle.md").read_text(encoding="utf-8")
 
 
 class DecisionTraceabilityTests(unittest.TestCase):
@@ -653,6 +654,51 @@ class DecisionTraceabilityTests(unittest.TestCase):
         self.assertIn("Verify generated Protobuf Java and Kotlin sources", workflow)
         self.assertIn("AC-P2P-01", ADR14_CROSS_PLATFORM_PROTOCOL)
         self.assertIn("NOT RUN", ADR14_CROSS_PLATFORM_PROTOCOL)
+
+
+
+    def test_participation_listener_lifecycle_decision_maps_to_fail_closed_wpf_shutdown(self):
+        paths = (
+            "src/Host.Windows/MainWindow.xaml",
+            "src/Host.Windows/MainWindow.xaml.cs",
+            "src/Host.Windows/Networking/ParticipationNetworkListenerLifecycle.cs",
+            "src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs",
+            "src/Host.Application/ParticipationActivationRecovery.cs",
+            "tests/HostLifecycle.Tests/ParticipationNetworkListenerLifecycleTests.cs",
+            "tests/HostLifecycle.Tests/ParticipationActivationRecoveryTests.cs",
+            "tests/HostLifecycle.Tests/NetworkInferenceRequestFrameAcceptanceTests.cs",
+            "tests/test_network_listener_exposure.py",
+            ".github/workflows/product-build.yml",
+        )
+        self.assertIn("ADR-0015-fail-closed-participation-listener-lifecycle.md", REGISTER)
+        for relative_path in paths:
+            with self.subTest(path=relative_path):
+                self.assertTrue((ROOT / relative_path).is_file(), relative_path)
+                self.assertIn(relative_path, ADR15_PARTICIPATION_LIFECYCLE)
+
+        window_xaml = (ROOT / "src/Host.Windows/MainWindow.xaml").read_text(encoding="utf-8")
+        window = (ROOT / "src/Host.Windows/MainWindow.xaml.cs").read_text(encoding="utf-8")
+        lifecycle = (ROOT / "src/Host.Windows/Networking/ParticipationNetworkListenerLifecycle.cs").read_text(encoding="utf-8")
+        listener = (ROOT / "src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs").read_text(encoding="utf-8")
+        lifecycle_tests = (ROOT / "tests/HostLifecycle.Tests/ParticipationNetworkListenerLifecycleTests.cs").read_text(encoding="utf-8")
+        recovery_tests = (ROOT / "tests/HostLifecycle.Tests/ParticipationActivationRecoveryTests.cs").read_text(encoding="utf-8")
+        exposure_tests = (ROOT / "tests/test_network_listener_exposure.py").read_text(encoding="utf-8")
+
+        self.assertIn("new(IPAddress.Loopback, 0)", window)
+        self.assertIn("await _networkParticipationLifecycle.SetParticipationActiveAsync(active)", window)
+        self.assertIn("await _networkParticipationLifecycle.DisposeAsync()", window)
+        self.assertIn("Inbound requests are closed until protocol handling is implemented.", window)
+        self.assertIn("loopback-only", window_xaml.lower())
+        self.assertIn("await _listener.StopAsync()", lifecycle)
+        self.assertIn("_participationActive = false", lifecycle)
+        self.assertIn("IPAddress.IsLoopback(bindAddress)", listener)
+        self.assertIn("DeactivationStopsAndReleasesTheListenerAsync", lifecycle_tests)
+        self.assertIn("DisposalStopsAnActiveListenerAsync", lifecycle_tests)
+        self.assertIn("SuccessfulRollbackKeepsTheActivationMessageSafeAsync", recovery_tests)
+        self.assertIn("FailedRollbackAddsSafeRecoveryGuidanceAsync", recovery_tests)
+        self.assertIn("test_window_closing_waits_for_listener_disposal_before_closing_again", exposure_tests)
+        self.assertIn("AC-P2P-01", ADR15_PARTICIPATION_LIFECYCLE)
+        self.assertIn("NOT RUN", ADR15_PARTICIPATION_LIFECYCLE)
 
 
     def test_every_registered_decision_links_to_existing_sources_and_verification(self):
