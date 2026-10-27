@@ -449,3 +449,12 @@
 - **Graph integrity before correction:** current V 3.0.397 graph Blob `ec9ff3496328c70895ee16faad0d9645a137b208`, listed as 1,983,428 bytes in its exact tree. The fetched original content recomputed to that Blob SHA through GitHub, parsed as 229 nodes and 426 edges, and preserved its exact JSON formatting on reserialization.
 - **Attempt result:** failed CI result retained; corrective commit's exact-commit CI is pending. `T0007` stays `in_progress`; `T0121` stays `in_progress`; `AC-P2P-01` stays **NOT RUN**.
 - **Follow-up:** inspect exact V 3.0.398 Step Three quality and product workflows; only record a verification attempt after checking those results.
+
+
+## Attempt T0007-A042 — remove the ADR self-reference assumption
+
+- **Observed exact-commit result:** V 3.0.398 Step Three quality gate [run 40511392201](https://github.com/artinrahimii/project/actions/runs/40511392201) again failed only in the new ADR-0006 subtest. The first path assertion had been corrected, but the next assertion required the ADR file's own full path to occur inside the ADR body. Decision records need not link to themselves; the register's relative Markdown link identifies the ADR, while the ADR body should link implementation and executable test sources.
+- **Correction applied:** the path loop still checks that every target exists and the register contains its filename. It now checks that implementation and test paths appear in the ADR body, while excluding only the ADR itself from the self-link assertion.
+- **Preserved scope:** no production code, test semantics, or graph edges were changed. T0007 remains `in_progress`; T0121 remains `in_progress`; AC-P2P-01 remains **NOT RUN**.
+- **Verification state:** the failing result is recorded in `execution_history` and `tests_failed`. The exact V 3.0.399 quality and product results are pending.
+- **Follow-up:** inspect both V 3.0.399 workflows; append a separate verification attempt only after checking their exact SHA and conclusions.

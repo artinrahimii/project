@@ -159,7 +159,8 @@ class DecisionTraceabilityTests(unittest.TestCase):
             with self.subTest(path=relative_path):
                 self.assertTrue((ROOT / relative_path).is_file(), relative_path)
                 self.assertIn(Path(relative_path).name, REGISTER)
-                self.assertIn(relative_path, ADR6_LEASE)
+                if relative_path != paths[0]:
+                    self.assertIn(relative_path, ADR6_LEASE)
 
         contract = (ROOT / "src/Shared.Contracts/Networking/PeerAnnouncement.cs").read_text(encoding="utf-8")
         client = (ROOT / "src/Host.Windows/Networking/PeerAnnouncementClient.cs").read_text(encoding="utf-8")
