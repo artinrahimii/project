@@ -217,3 +217,8 @@ Static graph review found T0090/T0091 `failed_attempt_count` values inconsistent
 A new regression test in `tests/test_inference_backend_abstraction.py` checks the actual source composition path: the WPF **Connect** handler persists its settings through `LocalHostSettingsStore.Save`, connects using the normalized `_settings.ServerUrl` and `_settings.ModelId`, and does not pass the raw URL textbox directly to the session. The same test checks that the settings store validates settings and rejects non-loopback inference URLs. This is a source-level regression guard for the local-only backend decision; it is not a live-network trace and does not prove P2P, encryption, or no-storage acceptance.
 
 Verification command in CI: `python -m unittest discover -s tests -v`. This attempt remains partial until the exact commit's quality workflow runs successfully.
+
+
+## T0007-A014 — verification of the loopback-composition regression
+
+The exact `V 3.0.370` commit passed [Step Three quality run 40458375752](https://github.com/artinrahimii/project/actions/runs/40458375752): 160 Python tests passed, including `test_wpf_connect_uses_validated_loopback_settings_before_backend_connect`; graph and repository-backed evidence checks also passed with zero errors and one preserved unmapped-dependency warning. The [product build workflow 40458375705](https://github.com/artinrahimii/project/actions/runs/40458375705) also completed successfully, including HostLifecycle tests, Windows WPF build/startup/policy checks, and Android APK/lint/Protobuf checks. This verifies the submitted regression and configured CI, not the entirety of the broad T0007 traceability requirement.

@@ -129,3 +129,16 @@
 - **Verification:** pending the exact `V 3.0.370` GitHub Actions quality workflow; this tool session has no local checkout from which to run Python/.NET tests independently. No test pass is claimed before the workflow result is observed.
 - **Scope limit:** this protects one concrete local-backend composition decision; it does not satisfy the broad T0007 task-wide traceability criterion and does not prove live host inference, network routing, P2P transport, encryption, or storage behavior.
 - **Result:** partial; T0007 remains `in_progress`. No dependency edge was changed.
+
+
+## Attempt T0007-A014 — exact-commit CI verification (2026-10-27)
+
+- **Verified implementation commit:** [`V 3.0.370` (`03292bd4a23c42361ba2ecd907957e6ee2153028`)](https://github.com/artinrahimii/project/commit/03292bd4a23c42361ba2ecd907957e6ee2153028), confirmed as the online `main` head when its CI evidence was inspected.
+- **New regression:** `test_wpf_connect_uses_validated_loopback_settings_before_backend_connect` appears as `ok` in the exact-commit Python test log. It checks the WPF Connect -> validated settings store -> HostInferenceSession path and the loopback-only inference URL constraint.
+- **Step Three quality gate:** PASS — [run 40458375752](https://github.com/artinrahimii/project/actions/runs/40458375752). All **160 Python tests** passed; Python syntax, graph validation, and recorded-output/evidence checks passed. The guard returned **0 errors and 1 warning**, preserving the existing unmapped free-text prerequisite on `T0001` as metadata rather than silently converting it into a task ID.
+- **HostLifecycle tests:** PASS — [job 122036917609](https://github.com/artinrahimii/project/actions/runs/40458375705/job/122036917609).
+- **Windows WPF Release build/startup/policy checks:** PASS — [job 122036917783](https://github.com/artinrahimii/project/actions/runs/40458375705/job/122036917783); build artifact upload completed successfully.
+- **Android lint/APK/Protobuf checks:** PASS — [job 122036917772](https://github.com/artinrahimii/project/actions/runs/40458375705/job/122036917772).
+- **Aggregate product workflow:** PASS — [run 40458375705](https://github.com/artinrahimii/project/actions/runs/40458375705), completed successfully for the same commit.
+- **History policy:** A013 remains a separate partial implementation record; its exact commit SHA was resolved here rather than rewriting its result. A014 records the later verification result. No earlier attempt or failure was deleted.
+- **Task status remains `in_progress`:** this concrete regression protects the local backend's configuration boundary but does not satisfy broad task-wide traceability for every technical decision. No dependency edge or task-completion status was changed.

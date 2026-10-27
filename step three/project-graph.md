@@ -975,29 +975,34 @@
         "src/Host.Application/HostInferenceSession.cs",
         "tests/test_inference_backend_abstraction.py"
       ],
-      "notes": "T0007 remains a broad traceability task. A007's deterministic unavailable-backend fallback and exact-message regression assertion passed GitHub Actions on V 3.0.42. Revalidation of main commit 2b15191008128bdf98cda5a6eaacbf5796c964ed shows MainWindow explicitly injects LocalInferenceBackendFactory.Create, which returns LlamaCppServerBackend; UnconfiguredInferenceBackend is only the HostInferenceSession default fallback when no backend/factory is configured, not evidence by itself that the current UI has no production backend. Keep T0007 in_progress because the broad task-wide traceability criterion is not yet proven complete. Current-round CI retries failed before runner allocation, so no new tests were executed. The T0007 -> T0008 edge remains validated as sequencing_only. Latest exact-main commit 95addc4385000528d2f7e10cea646ad84da05e8a was revalidated: both current workflows failed on retry before runner allocation (runner_id=0, empty runner_name, steps=[]). The validation tool's compatibility with the documented result 'passed' and two graph counter mismatches were corrected in this round; this does not complete T0007 or prove product acceptance.\n\nT0007-A013 added a source-level regression guard for WPF local-backend composition and loopback-only settings validation. This attempt is partial; broad task-wide decision traceability remains open. Exact-commit CI result is pending.",
+      "notes": "T0007 remains a broad traceability task. A007's deterministic unavailable-backend fallback and exact-message regression assertion passed GitHub Actions on V 3.0.42. Revalidation of main commit 2b15191008128bdf98cda5a6eaacbf5796c964ed shows MainWindow explicitly injects LocalInferenceBackendFactory.Create, which returns LlamaCppServerBackend; UnconfiguredInferenceBackend is only the HostInferenceSession default fallback when no backend/factory is configured, not evidence by itself that the current UI has no production backend. Keep T0007 in_progress because the broad task-wide traceability criterion is not yet proven complete. Current-round CI retries failed before runner allocation, so no new tests were executed. The T0007 -> T0008 edge remains validated as sequencing_only. Latest exact-main commit 95addc4385000528d2f7e10cea646ad84da05e8a was revalidated: both current workflows failed on retry before runner allocation (runner_id=0, empty runner_name, steps=[]). The validation tool's compatibility with the documented result 'passed' and two graph counter mismatches were corrected in this round; this does not complete T0007 or prove product acceptance.\n\nT0007-A013 added a source-level regression guard for WPF local-backend composition and loopback-only settings validation. This attempt is partial; broad task-wide decision traceability remains open. Exact-commit CI result is pending.\n\nT0007-A014 verified A013 on exact online commit 03292bd4a23c42361ba2ecd907957e6ee2153028 (V 3.0.370). The new source-level regression appears as an `ok` test in the CI log, the Step Three quality gate passed all 160 Python tests and graph/output checks (0 errors, one preserved T0001 unmapped-dependency warning), and HostLifecycle, Windows and Android product jobs passed. T0007 remains in_progress because this is one guarded composition boundary, not full task-wide traceability.",
       "execution_summary": {
-        "attempt_count": 13,
+        "attempt_count": 14,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0007-A013",
+        "last_attempt_id": "T0007-A014",
         "last_attempt_result": "partial",
         "changed_files": [
+          "docs/acceptance.md",
           "step three/T0007/execution-report.md",
-          "step three/project-graph.md",
-          "tests/test_inference_backend_abstraction.py",
-          "docs/acceptance.md"
+          "step three/project-graph.md"
         ],
         "related_commits": [
           "632c36d257ca079dd9bdee07f5415aa3c7c97cc3",
           "150c3eb3ff3b25c73cf68d3ccf0fa4ce191c3d84",
-          "cac4757623634ae5389b2a31e42a01d10b334c3c"
+          "cac4757623634ae5389b2a31e42a01d10b334c3c",
+          "03292bd4a23c42361ba2ecd907957e6ee2153028"
         ],
         "tests_passed": [
           "GitHub Actions Step Three quality gate run 39671083734 — passed for exact commit aa1bc7e77bc5bbce80e9d7f987de75c1bdc71c36 (V 3.0.42).",
           "GitHub Actions White-P product build run 39671083885 — passed for exact commit aa1bc7e77bc5bbce80e9d7f987de75c1bdc71c36 (V 3.0.42).",
           "In-memory exact-graph structural check: 229 unique task IDs, 426 valid-endpoint edges, no dependency cycle, matching task-history counters after correction, and existing output/evidence paths for done tasks; full graph_guard.py command and product tests were not run.",
           "Step Three quality gate run 40200490663, attempt 4 — passed on exact main commit cac4757623634ae5389b2a31e42a01d10b334c3c: 149 Python tests, compileall, graph structure, output/evidence checks.",
-          "White-P product build run 40200490646, attempt 6 — passed on exact main commit cac4757623634ae5389b2a31e42a01d10b334c3c: Windows WPF Release build/startup smoke, HostLifecycle tests, Android lint/APK/Protobuf tests and generated-source validation."
+          "White-P product build run 40200490646, attempt 6 — passed on exact main commit cac4757623634ae5389b2a31e42a01d10b334c3c: Windows WPF Release build/startup smoke, HostLifecycle tests, Android lint/APK/Protobuf tests and generated-source validation.",
+          "Step Three quality gate run 40458375752, exact commit 03292bd4a23c42361ba2ecd907957e6ee2153028: 160 Python tests passed, including test_wpf_connect_uses_validated_loopback_settings_before_backend_connect; Python syntax, graph validation, and recorded-output/evidence validation passed with 0 errors and one preserved T0001 unmapped-dependency warning. https://github.com/artinrahimii/project/actions/runs/40458375752",
+          "HostLifecycle unit/integration job passed on exact commit 03292bd4a23c42361ba2ecd907957e6ee2153028; output includes the periodic TTL-renewal acceptance test and settings/loopback validation. https://github.com/artinrahimii/project/actions/runs/40458375705/job/122036917609",
+          "Android APK job passed on exact commit 03292bd4a23c42361ba2ecd907957e6ee2153028; Kotlin lint, debug APK, Protobuf tests and generated-source checks passed. https://github.com/artinrahimii/project/actions/runs/40458375705/job/122036917772",
+          "Windows WPF job passed on exact commit 03292bd4a23c42361ba2ecd907957e6ee2153028; build, Protobuf generated-source verification, WPF startup smoke, and Windows policy checks passed; the full product-build workflow concluded success. https://github.com/artinrahimii/project/actions/runs/40458375705/job/122036917783",
+          "White-P product build run 40458375705 completed successfully on exact commit 03292bd4a23c42361ba2ecd907957e6ee2153028. https://github.com/artinrahimii/project/actions/runs/40458375705"
         ],
         "tests_failed": [],
         "blocked_reason": null,
@@ -1359,7 +1364,7 @@
             "step three/T0007/execution-report.md",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "03292bd4a23c42361ba2ecd907957e6ee2153028",
           "tests": [
             {
               "command": "python -m unittest discover -s tests -v",
@@ -1372,6 +1377,51 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Inspect exact V 3.0.370 GitHub Actions quality and product workflows. If the new regression passes, record its CI evidence in a follow-up graph/report update. Continue task-wide traceability against real source/config/tests; do not mark T0007 done from this single regression."
+        },
+        {
+          "attempt_id": "T0007-A014",
+          "started_at": "2026-10-27T06:01:59.560Z",
+          "ended_at": "2026-10-27T06:01:59.560Z",
+          "result": "partial",
+          "summary": "Verified the T0007-A013 regression and full configured CI on exact commit V 3.0.370. The new Python test was reported ok; all 160 quality tests passed; HostLifecycle, Windows WPF build/startup/policy checks, and Android APK/lint/Protobuf jobs passed. Broad T0007 task-wide traceability remains incomplete.",
+          "changed_files": [
+            "docs/acceptance.md",
+            "step three/T0007/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "command": "Step Three quality gate — run 40458375752",
+              "result": "passed",
+              "summary": "160 Python tests passed including the newly added WPF local-backend validated-settings regression; Python syntax, graph validation, and output/evidence checks passed with 0 errors and one preserved T0001 unmapped-dependency warning. https://github.com/artinrahimii/project/actions/runs/40458375752"
+            },
+            {
+              "command": "HostLifecycle unit and integration tests — run 40458375705, job 122036917609",
+              "result": "passed",
+              "summary": "The actual HostLifecycle test step completed successfully; TTL renewal and loopback settings acceptance remained green. https://github.com/artinrahimii/project/actions/runs/40458375705/job/122036917609"
+            },
+            {
+              "command": "Windows WPF build and startup smoke — run 40458375705, job 122036917783",
+              "result": "passed",
+              "summary": "Release build, generated Protobuf checks, WPF startup smoke and tool policy tests passed; build artifacts uploaded. https://github.com/artinrahimii/project/actions/runs/40458375705/job/122036917783"
+            },
+            {
+              "command": "Android APK/lint/Protobuf — run 40458375705, job 122036917772",
+              "result": "passed",
+              "summary": "Formatting/lint, debug APK, Protobuf round trip, generated-source validation and APK artifact upload passed. https://github.com/artinrahimii/project/actions/runs/40458375705/job/122036917772"
+            },
+            {
+              "command": "White-P product build — run 40458375705",
+              "result": "passed",
+              "summary": "All three product jobs completed successfully on exact commit 03292bd4a23c42361ba2ecd907957e6ee2153028. https://github.com/artinrahimii/project/actions/runs/40458375705"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Continue the broad T0007 source/configuration/test traceability review, focusing on another concrete unguarded decision boundary. Preserve the validated T0007 -> T0008 sequencing_only edge. Do not mark T0007 done based on this one composition regression."
         }
       ]
     },
@@ -34395,6 +34445,6 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-27T05:57:49.139Z"
+  "updated_at": "2026-10-27T06:01:59.560Z"
 }
 ```
