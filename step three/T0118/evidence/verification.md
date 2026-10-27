@@ -1,20 +1,21 @@
-# T0118 verification evidence — fallback failure found; correction pending CI
+# T0118 verification evidence — accepted on exact V 3.0.357
 
-## Baseline integrity
-- Repository `artinrahimii/project`, branch `main`.
-- Implementation under test: `V 3.0.356`, `27099fc451a383811823e3232ac49fce02fb4b8a`.
-- Graph path `step three/project-graph.md`, Blob `2d66e97a2480905f26a2085471c0eae7d307cee0`; retrieved in full and original Git Blob SHA-1 matched. Fenced JSON parsed/reconstructed exactly: 229 tasks, 426 edges.
+## Source integrity
+- Repository: `artinrahimii/project`, branch `main`.
+- Tested code commit: `2ed9620edf1b1035ba17ae5b5f4d4e3414717cdb` (`V 3.0.357`).
+- The graph at the prior commit was retrieved by Git Blob API (ordinary file fetch returned empty content); complete content matched its Git Blob SHA-1 and parsed/reconstructed exactly to 229 tasks and 426 edges.
 
-## V 3.0.356 exact-head results
-- Step Three quality gate: **PASS**, https://github.com/artinrahimii/project/actions/runs/40448409838.
-- HostLifecycle: **FAIL** at `VerifyQuicFallbackAfterUnreachableTcpAddressAsync`, https://github.com/artinrahimii/project/actions/runs/40448409783/job/122005094326.
-- Linux MsQuic installation: **PASS** within the HostLifecycle job.
-- Failure: `PeerConnectionException` wrapped `SocketException(Connection refused)`; the direct-address fallback did not recognize the wrapper as retryable and stopped before trying QUIC.
+## Runtime and product acceptance
+- **HostLifecycle/P2P fallback — PASS:** https://github.com/artinrahimii/project/actions/runs/40448655571/job/122005897811. The job log explicitly reports `PASS: IPeerTransport contract, direct libp2p TCP exchange, authenticated TCP-to-QUIC fallback, bounded framing and disconnect semantics.`
+- **Windows WPF build/policy checks — PASS:** https://github.com/artinrahimii/project/actions/runs/40448655571/job/122005898090.
+- **Android APK/Protobuf checks — PASS:** https://github.com/artinrahimii/project/actions/runs/40448655571/job/122005898087.
+- **Step Three quality gate — PASS:** https://github.com/artinrahimii/project/actions/runs/40448655603.
 
-## Correction in T0118-A002
-- Retry detection inspects nested `InnerException` causes and `AggregateException` children for connection errors.
-- The test still requires the same expected PeerId across candidates and successful binary request/response exchange over direct QUIC.
-- Exact V 3.0.357 HostLifecycle, Windows WPF, Android APK/Protobuf, and Step Three quality results are pending; no acceptance is inferred from source presence.
+The regression scenario first attempts a refused TCP address, then connects to the same expected PeerId via its advertised QUIC/UDP address, transmits binary request bytes and returns binary response bytes over the selected peer transport. It also tests that a candidate list containing different expected identities is rejected before any transport factory call.
 
-## Scope boundary
-This fallback can use QUIC when TCP is unavailable but direct UDP/QUIC is reachable. Hole punching, symmetric-NAT traversal, relay availability and app-level Android↔Windows end-to-end routing remain unproven.
+## Failed attempt retained
+- **V 3.0.356 / T0118-A001 — FAIL:** `PeerConnectionException` wrapped a socket-refusal inner exception and was not recognized as retryable, preventing QUIC fallback. Exact log: https://github.com/artinrahimii/project/actions/runs/40448409783/job/122005094326.
+- **V 3.0.357 / T0118-A002 — PASS:** nested exception classification corrected the retry behavior; exact-head tests passed. The graph retains the first failure and increments the successful attempt record.
+
+## Scope limitation
+This establishes an alternate direct route when TCP is unavailable but direct QUIC/UDP remains reachable. It does not demonstrate NAT hole punching, symmetric-NAT traversal, relay functionality, or connectivity in environments where TCP and QUIC are both blocked. Those limits are not represented as completed.
