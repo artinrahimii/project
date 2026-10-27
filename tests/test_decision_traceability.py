@@ -16,6 +16,7 @@ ADR2 = (ROOT / "docs/decisions/ADR-0002-direct-p2p-data-path.md").read_text(enco
 ADR3 = (ROOT / "docs/decisions/ADR-0003-local-inference-backend.md").read_text(encoding="utf-8")
 ADR3_TCP = (ROOT / "docs/decisions/ADR-0003-tcp-request-framing.md").read_text(encoding="utf-8")
 ADR5_TRANSPORT = (ROOT / "docs/decisions/ADR-0005-authenticated-peer-transport-fallback.md").read_text(encoding="utf-8")
+ADR6_LEASE = (ROOT / "docs/decisions/ADR-0006-peer-announcement-leases.md").read_text(encoding="utf-8")
 
 
 class DecisionTraceabilityTests(unittest.TestCase):
@@ -143,6 +144,45 @@ class DecisionTraceabilityTests(unittest.TestCase):
         self.assertIn("PeerTransportContractAcceptanceTests.RunAsync()", entrypoint)
         self.assertIn("AC-P2P-01", ADR5_TRANSPORT)
         self.assertIn("NOT RUN", ACCEPTANCE)
+
+
+    def test_peer_announcement_lease_decision_maps_to_expiry_directory_and_live_acceptance(self):
+        paths = (
+            "docs/decisions/ADR-0006-peer-announcement-leases.md",
+            "src/Shared.Contracts/Networking/PeerAnnouncement.cs",
+            "src/Host.Windows/Networking/PeerAnnouncementClient.cs",
+            "src/Host.Windows/Networking/PeerAnnouncementLeasePublisher.cs",
+            "src/Rendezvous.Service/PeerAnnouncementDirectory.cs",
+            "tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs",
+        )
+        for relative_path in paths:
+            with self.subTest(path=relative_path):
+                self.assertTrue((ROOT / relative_path).is_file(), relative_path)
+                self.assertIn(relative_path, REGISTER)
+                self.assertIn(relative_path, ADR6_LEASE)
+
+        contract = (ROOT / "src/Shared.Contracts/Networking/PeerAnnouncement.cs").read_text(encoding="utf-8")
+        client = (ROOT / "src/Host.Windows/Networking/PeerAnnouncementClient.cs").read_text(encoding="utf-8")
+        publisher = (ROOT / "src/Host.Windows/Networking/PeerAnnouncementLeasePublisher.cs").read_text(encoding="utf-8")
+        directory = (ROOT / "src/Rendezvous.Service/PeerAnnouncementDirectory.cs").read_text(encoding="utf-8")
+        acceptance_tests = (ROOT / "tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs").read_text(encoding="utf-8")
+
+        self.assertIn("MaximumMessageBytes = 16 * 1024", contract)
+        self.assertIn("MaximumLifetime = TimeSpan.FromHours(24)", contract)
+        self.assertIn("Rendezvous requires HTTPS except for loopback tests.", client)
+        self.assertIn("DefaultTimeToLive = TimeSpan.FromMinutes(5)", publisher)
+        self.assertIn("DefaultRenewalInterval = TimeSpan.FromMinutes(1)", publisher)
+        self.assertIn("DateTimeOffset.UtcNow.Add(_timeToLive)", publisher)
+        self.assertIn("Task.Delay(_renewalInterval, cancellationToken)", publisher)
+        self.assertIn("expires naturally", publisher.lower())
+        self.assertIn("RemoveExpired(DateTimeOffset.UtcNow)", directory)
+        self.assertIn("pair.Value.ExpiresAtUtc <= now", directory)
+        self.assertIn("_current.Remove(id)", directory)
+        self.assertIn("PeriodicLeaseRenewalRefreshesTtlAndStopsAsync", acceptance_tests)
+        self.assertIn("ExpiresAtUtc > firstExpiry", acceptance_tests)
+        self.assertIn("await lease.StopAsync()", acceptance_tests)
+        self.assertIn("AC-P2P-01 remains `NOT RUN`", ADR6_LEASE)
+        self.assertIn("T0121 remains `in_progress`", ADR6_LEASE)
 
 
 if __name__ == "__main__":

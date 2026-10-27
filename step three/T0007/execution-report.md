@@ -427,3 +427,15 @@
 - V 3.0.395 product workflow: [run 40509745205](https://github.com/artinrahimii/project/actions/runs/40509745205) was still in progress at this check. Do not infer an aggregate product result from an in-progress workflow.
 - Result: the bounded verification succeeded. `T0007` remains `in_progress`; `AC-P2P-01` remains **NOT RUN**.
 - Follow-up: inspect final product CI for V 3.0.395 and continue mapping remaining decisions to production code/configuration and runnable tests.
+
+
+## Attempt T0007-A040 — metadata-only peer-announcement lease decision traceability
+
+- **Base commit:** `V 3.0.396` — `046be366ae6ce1800b1241b58a6ea45bd41b510f`; the branch head and its tree were re-read before preparing this increment.
+- **Source integrity:** the graph was obtained from Blob `6b8995d3c7ef41ed4b91378cb2614d94bbc7b78c` in the base commit tree (reported tree size: 1,980,376 bytes). The fenced JSON parsed as 229 unique tasks and 426 edges with no unresolved edge endpoints; reserializing the parsed JSON with two-space indentation exactly reproduced the existing inner JSON. A GitHub-created blob from the original UTF-8 content returned the same Blob SHA.
+- **Implementation/traceability change:** added `docs/decisions/ADR-0006-peer-announcement-leases.md` to document the already implemented metadata-only lease contract, five-minute default TTL, one-minute default renewal interval, expiry cleanup on directory access, current-record replacement, and the fact that stopping renewal allows the last entry to expire rather than revoking it immediately. Updated the decision register and added a source-contract regression in `tests/test_decision_traceability.py` tied to the actual publisher, directory and C# loopback acceptance test.
+- **Evidence boundary preserved:** this increment does not wire the publisher into the WPF participation lifecycle. No safe configured production rendezvous endpoint or verified peer-reachable advertised address is established here. `T0121` remains `in_progress`; `AC-P2P-01` remains **NOT RUN**; broad T0007 traceability also remains incomplete.
+- **Local verification:** the graph was structurally parsed and its exact JSON formatting was checked. The newly added Python test and .NET acceptance suite were not run locally in this environment; exact-commit GitHub Actions is pending. No test pass is claimed for the new regression at creation time.
+- **Current baseline CI (before this change):** exact V 3.0.396 Step Three quality gate passed at [run 40510169922](https://github.com/artinrahimii/project/actions/runs/40510169922) and the product build passed at [run 40510169570](https://github.com/artinrahimii/project/actions/runs/40510169570). These runs are baseline evidence, not verification of this new test.
+- **Attempt outcome:** partial; exact-commit CI pending. The existing failed-attempt record and earlier successful bounded traceability checks remain intact.
+- **Follow-up:** inspect the new main commit's Step Three quality gate and product workflow. If the new regression passes, append a separate verification attempt; keep T0007 in progress until its broad acceptance criterion is supported.
