@@ -61,3 +61,16 @@
 - **Scope boundary:** this is a T0007 decision-to-source/test traceability increment. No production runtime code, listener bind policy, P2P implementation, graph edge or acceptance status was changed. The ADR explicitly says the WPF host remains loopback-only and that `AC-P2P-01` is **NOT RUN**.
 - **Test status at commit creation:** exact-head quality and product CI are pending; no local repository test/build is claimed because no checked-out repository runner was available in this execution environment.
 - **Follow-up:** inspect Step Three quality and product workflows on the exact online commit. Preserve any failure; keep broad `T0007` `in_progress` and keep `T0121` `in_progress` until a safe reachable identity/address configuration and participation lifecycle integration are verified.
+
+
+
+## Verification result for T0007-A073 — exact V 3.0.427
+
+- **Verified:** 2026-10-27T17:39:14.406Z
+- **Implementation commit:** [V 3.0.427 — 9f78bc8bf93c704d453b5a240f9fd854a8864276](https://github.com/artinrahimii/project/commit/9f78bc8bf93c704d453b5a240f9fd854a8864276), confirmed as the exact head SHA used by the workflows.
+- **Step Three quality gate — PASS:** [run 40552218897](https://github.com/artinrahimii/project/actions/runs/40552218897) completed successfully. Python test discovery, Python syntax compilation, graph structure validation, and repository-backed output/evidence validation passed.
+- **White-P product workflow — PASS:** [run 40552218539](https://github.com/artinrahimii/project/actions/runs/40552218539) completed successfully on the same exact SHA.
+  - **HostLifecycle tests — PASS:** [job 122358707034](https://github.com/artinrahimii/project/actions/runs/40552218539/job/122358707034).
+  - **Windows WPF build/startup and policy checks — PASS:** [job 122358707083](https://github.com/artinrahimii/project/actions/runs/40552218539/job/122358707083).
+  - **Android APK, lint, Protobuf round-trip and generated-source checks — PASS:** [job 122358706347](https://github.com/artinrahimii/project/actions/runs/40552218539/job/122358706347).
+- **Result boundary:** this verifies the new ADR/register/source-traceability regression and confirms existing platform workflows still pass. It does not complete broad T0007, establish public peer reachability, or prove Android-to-Windows request/response. T0007 remains `in_progress`; T0121 remains `in_progress`; `AC-P2P-01` remains **NOT RUN**.
