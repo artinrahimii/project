@@ -31,3 +31,10 @@
 
 - Added the missing `ClientNavigation.kt` implementation and its import; aligned the source-contract test with the real route owner; fixed the observed multiline-expression style.
 - Exact-head CI is pending. No test execution is claimed in the local tool session.
+
+
+## V 3.0.488 CI result — ledger validation failure
+
+- Step Three quality job [123103335543](https://github.com/artinrahimii/project/actions/runs/40769725447): 199 Python tests passed; graph_guard failed with `ATTEMPT_COUNT_MISMATCH` (`summary=4`, `history=5`) for T0139. Existing T0001 free-text dependency remained a warning.
+- Android job [123103334973](https://github.com/artinrahimii/project/actions/runs/40769725408/job/123103334973): `ktlintCheck` passed; APK build/JUnit had not completed at status capture. HostLifecycle [123103335562](https://github.com/artinrahimii/project/actions/runs/40769725408/job/123103335562) passed. Windows job [123103335380](https://github.com/artinrahimii/project/actions/runs/40769725408/job/123103335380) was still running.
+- Attempt A005 corrects the summary count to the actual append-only history length. T0139 remains in_progress pending new exact-head CI.

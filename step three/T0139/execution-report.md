@@ -22,3 +22,16 @@
 - Added the missing import to `MainActivity.kt` and applied the ktlint-reported newline style to the multiline `Modifier` expression.
 - Updated source-contract assertions to read `ClientNavigation.kt` and to validate its actual start and top-level routes. Existing assertions continue to check that transport is explicitly unimplemented and no request is sent.
 - No local checkout/command runner is available through this execution, so no local tests are claimed. Exact-head CI must pass quality tests, Kotlin lint, APK build and Android JUnit before T0139 can be marked done.
+
+
+## Exact-head audit — V 3.0.488 (T0139-A004 verification)
+
+- The Step Three quality job [123103335543](https://github.com/artinrahimii/project/actions/runs/40769725447) ran all **199 Python tests successfully**, then failed in graph_guard with `ATTEMPT_COUNT_MISMATCH: T0139: summary=4, history=5`. The validator also preserved the existing T0001 unmapped free-text dependency as a warning.
+- The Android job [123103334973](https://github.com/artinrahimii/project/actions/runs/40769725408/job/123103334973) passed `ktlintCheck`; debug APK and Android JUnit steps were still running at the time of this status capture. HostLifecycle [123103335562](https://github.com/artinrahimii/project/actions/runs/40769725408/job/123103335562) passed. Windows job [123103335380](https://github.com/artinrahimii/project/actions/runs/40769725408/job/123103335380) was still running, so no pass is claimed for it yet.
+- The graph mismatch is a reporting/ledger error: one append-only CI-verification entry was added without increasing `attempt_count`. A005 updates the count to equal history length and recalculates the failed-attempt count by counting history entries with `result=failed`; prior history is retained.
+
+## Attempt T0139-A005 — repair execution ledger (CI pending)
+
+- Changes: graph summary counters and this report/evidence are synchronized with append-only history; no application source or dependency contract was changed.
+- GitHub Blob retrieval and parsing of the complete exact-head graph were revalidated. No local test command is claimed; the next exact-head CI must validate graph structure and repository output/evidence again.
+- T0139 remains `in_progress`. Do not start dependent T0140 before T0139 passes its acceptance checks.

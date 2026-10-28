@@ -28220,24 +28220,22 @@
         "https://github.com/artinrahimii/project/actions/runs/40769048874/job/123100940796",
         "https://github.com/artinrahimii/project/actions/runs/40769048985/job/123100941472"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0139-A001 verification (V 3.0.485): Step Three quality run 40767883598 failed three existing exact-wording checks for the P2P preview/non-delivery strings. Android product job 123096849669 stopped at ktlintCheck: uppercase Compose function names, multiline-expression formatting, a max-line-length violation and enum trailing comma. HostLifecycle job 123096849547 passed, but Android APK/JUnit did not run after lint failure. A002 restores the compatible privacy/non-delivery copy and corrects the reported Kotlin style violations; exact-head CI is pending.\n\nT0139-A002 verification (V 3.0.486): quality job 40768437264 ran 199 tests and failed two assertions in the newly added source-contract test because it expected the earlier `WhitePClientApp()` function name and older transport-encryption wording. Android job 123098803201 again failed at ktlintCheck; detailed log text could not be retrieved, so no further exact style errors are asserted. HostLifecycle job 123098803429 passed. A003 updates the route helper to avoid the enum/semicolon style edge case and aligns source-contract tests to the corrected source, not to older string literals.\n\nT0139-A003 exact-head verification (V 3.0.487): Step Three quality failed one source-contract test because it still looked for ClientDestination.startDestination; Android ktlint failed at MainActivity.kt:266, so APK/JUnit were skipped. A separate exact recursive-tree inspection found ClientNavigation.kt absent even though MainActivity referenced ClientNavigation; A004 adds that missing implementation and import, fixes the ktlint style and updates route assertions. It remains in_progress until exact-head CI passes.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0139-A001 verification (V 3.0.485): Step Three quality run 40767883598 failed three existing exact-wording checks for the P2P preview/non-delivery strings. Android product job 123096849669 stopped at ktlintCheck: uppercase Compose function names, multiline-expression formatting, a max-line-length violation and enum trailing comma. HostLifecycle job 123096849547 passed, but Android APK/JUnit did not run after lint failure. A002 restores the compatible privacy/non-delivery copy and corrects the reported Kotlin style violations; exact-head CI is pending.\n\nT0139-A002 verification (V 3.0.486): quality job 40768437264 ran 199 tests and failed two assertions in the newly added source-contract test because it expected the earlier `WhitePClientApp()` function name and older transport-encryption wording. Android job 123098803201 again failed at ktlintCheck; detailed log text could not be retrieved, so no further exact style errors are asserted. HostLifecycle job 123098803429 passed. A003 updates the route helper to avoid the enum/semicolon style edge case and aligns source-contract tests to the corrected source, not to older string literals.\n\nT0139-A003 exact-head verification (V 3.0.487): Step Three quality failed one source-contract test because it still looked for ClientDestination.startDestination; Android ktlint failed at MainActivity.kt:266, so APK/JUnit were skipped. A separate exact recursive-tree inspection found ClientNavigation.kt absent even though MainActivity referenced ClientNavigation; A004 adds that missing implementation and import, fixes the ktlint style and updates route assertions. It remains in_progress until exact-head CI passes.\n\nV 3.0.488 exact-head CI: 199 Python unit tests passed, but graph_guard rejected T0139 because execution_summary.attempt_count was 4 while the append-only execution_history had 5 entries. Android ktlint passed; APK/JUnit and Windows host jobs were still in progress at the status capture. A005 corrects the ledger counters without changing source; T0139 remains in_progress pending the next exact-head CI.",
       "execution_summary": {
-        "attempt_count": 4,
-        "failed_attempt_count": 3,
-        "last_attempt_id": "T0139-A004",
+        "attempt_count": 7,
+        "failed_attempt_count": 4,
+        "last_attempt_id": "T0139-A005",
         "last_attempt_result": "partial",
         "changed_files": [
-          "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
-          "src/Client.Android/app/src/main/java/com/whitep/client/ui/navigation/ClientNavigation.kt",
-          "tests/test_android_compose_navigation.py",
+          "step three/project-graph.md",
           "step three/T0139/execution-report.md",
-          "step three/T0139/evidence/verification.md",
-          "step three/project-graph.md"
+          "step three/T0139/evidence/verification.md"
         ],
         "related_commits": [
           "b4224c06e9b09c108361965143d93d1eaf42b789",
           "1fed6eecb0a79edf0a9cec6a32c6c2bf11eaf98f",
-          "44255431091833a713800cad4bed144b4a54c7df"
+          "44255431091833a713800cad4bed144b4a54c7df",
+          "88ecfbbec6a63538531d0230ad2de1176be3dc29"
         ],
         "tests_passed": [],
         "tests_failed": [
@@ -28245,7 +28243,8 @@
           "V 3.0.486: 2 new navigation source-contract assertions failed because they expected an old Composable function name and old encryption wording; Android ktlintCheck also failed before APK/JUnit. HostLifecycle passed.",
           "Exact V 3.0.487 Step Three quality job 123100940796 failed 1 of 199 tests: source-contract expected ClientDestination.startDestination after code moved the reference to ClientNavigation.startDestination; graph/syntax/evidence checks were skipped. https://github.com/artinrahimii/project/actions/runs/40769048874/job/123100940796",
           "Exact V 3.0.487 Android job 123100941472 failed ktlintCheck at MainActivity.kt:266 (“A multiline expression should start on a new line”); APK/JUnit were skipped. https://github.com/artinrahimii/project/actions/runs/40769048985/job/123100941472",
-          "Exact recursive tree at V 3.0.487 did not contain src/Client.Android/app/src/main/java/com/whitep/client/ui/navigation/ClientNavigation.kt although MainActivity referenced ClientNavigation; this compile blocker is addressed by A004 but awaits CI proof."
+          "Exact recursive tree at V 3.0.487 did not contain src/Client.Android/app/src/main/java/com/whitep/client/ui/navigation/ClientNavigation.kt although MainActivity referenced ClientNavigation; this compile blocker is addressed by A004 but awaits CI proof.",
+          "V 3.0.488 Step Three quality job 123103335543: 199 Python tests passed, then graph_guard failed with ATTEMPT_COUNT_MISMATCH (summary=4, history=5) for T0139. The V488 Android lint step passed, while APK/JUnit and Windows checks were still running at the latest status read."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -28464,6 +28463,87 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Record V 3.0.488 SHA and exact-head CI results in a follow-up graph/report update. Do not mark T0139 done until both quality gate and the complete Android workflow pass."
+        },
+        {
+          "attempt_id": "T0139-A004-CI-VERIFY",
+          "started_at": "2026-10-28T21:10:35Z",
+          "ended_at": "2026-10-28T21:10:45Z",
+          "result": "failed",
+          "summary": "Exact V 3.0.488 Step Three workflow ran all 199 Python unit tests successfully, but the graph structure validator failed due to a mismatch between T0139 summary attempt_count (4) and its execution_history (5). Android Kotlin lint passed; APK/JUnit were still in progress when status was read. HostLifecycle passed.",
+          "changed_files": [],
+          "commit_sha": "88ecfbbec6a63538531d0230ad2de1176be3dc29",
+          "tests": [
+            {
+              "name": "Step Three Python unit tests — V 3.0.488",
+              "result": "passed",
+              "summary": "199 tests passed in GitHub Actions before the graph guard ran."
+            },
+            {
+              "name": "Graph structural validator — V 3.0.488",
+              "result": "failed",
+              "summary": "ATTEMPT_COUNT_MISMATCH: T0139 summary=4, history=5. The existing unmapped free-text dependency warning for T0001 was preserved.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40769725447"
+            },
+            {
+              "name": "Android Kotlin lint — V 3.0.488",
+              "result": "passed",
+              "summary": "ktlintCheck completed successfully; APK and JUnit were still running at the latest status read.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40769725408/job/123103334973"
+            },
+            {
+              "name": "HostLifecycle integration — V 3.0.488",
+              "result": "passed",
+              "summary": "HostLifecycle test job completed successfully.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40769725408/job/123103335562"
+            },
+            {
+              "name": "Windows WPF host — V 3.0.488",
+              "result": "pending",
+              "summary": "The job was still running at the latest status read.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40769725408/job/123103335380"
+            },
+            {
+              "name": "Android APK build and JUnit — V 3.0.488",
+              "result": "pending",
+              "summary": "Build/test steps had not completed at the latest status read.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40769725408/job/123103334973"
+            }
+          ],
+          "failure_details": "The quality gate failed only after the 199 Python unit tests passed: graph_guard reported ATTEMPT_COUNT_MISMATCH for T0139. This mismatch was introduced when adding an append-only CI verification event without updating the aggregate attempt_count.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Correct T0139 summary.attempt_count to equal the total append-only execution_history length; preserve the prior records. Re-run graph guard, repository evidence validation and all product workflow checks."
+        },
+        {
+          "attempt_id": "T0139-A005",
+          "started_at": "2026-10-28T21:12:29.595Z",
+          "ended_at": "2026-10-28T21:12:29.595Z",
+          "result": "partial",
+          "summary": "Corrected task-ledger counters to match the append-only execution history and recorded the exact V 3.0.488 CI result. No source or contract changes were made in this attempt. Complete exact-head quality and product CI remain necessary before task completion.",
+          "changed_files": [
+            "step three/project-graph.md",
+            "step three/T0139/execution-report.md",
+            "step three/T0139/evidence/verification.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Git Blob integrity and JSON parse",
+              "result": "passed",
+              "summary": "The complete graph was recovered by Blob ID and parsed; original Git Blob SHA-1 matched the tree."
+            },
+            {
+              "name": "Repository CI for updated ledger",
+              "result": "pending",
+              "summary": "The next commit's quality gate must confirm graph counters and recorded outputs/evidence."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect the remaining V 3.0.488 Android and Windows results; resolve any failures. The next task is T0139 exact-head revalidation, not T0140."
         }
       ]
     },
