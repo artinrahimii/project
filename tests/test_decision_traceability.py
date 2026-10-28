@@ -30,6 +30,7 @@ ADR14_CROSS_PLATFORM_PROTOCOL = (ROOT / "docs/decisions/ADR-0014-versioned-cross
 ADR15_PARTICIPATION_LIFECYCLE = (ROOT / "docs/decisions/ADR-0015-fail-closed-participation-listener-lifecycle.md").read_text(encoding="utf-8")
 ADR16_CRYPTO_TRANSPORT = (ROOT / "docs/decisions/ADR-0016-maintained-libp2p-cryptographic-transport.md").read_text(encoding="utf-8")
 ADR17_HOST_IDENTITY = (ROOT / "docs/decisions/ADR-0017-windows-user-scoped-host-identity-storage.md").read_text(encoding="utf-8")
+ADR18_EXPLICIT_PEER_TRUST = (ROOT / "docs/decisions/ADR-0018-explicit-peer-trust-and-identity-verification.md").read_text(encoding="utf-8")
 
 
 class DecisionTraceabilityTests(unittest.TestCase):
@@ -845,6 +846,58 @@ class DecisionTraceabilityTests(unittest.TestCase):
         for phrase in ("DataProtectionScope.CurrentUser", "at-rest protection", "AC-P2P-01", "NOT RUN"):
             with self.subTest(phrase=phrase):
                 self.assertIn(phrase.lower(), ADR17_HOST_IDENTITY.lower())
+
+    def test_explicit_peer_trust_decision_maps_to_persistent_store_transport_gate_and_acceptance(self):
+        paths = (
+            "docs/decisions/ADR-0018-explicit-peer-trust-and-identity-verification.md",
+            "src/Shared.Security/PeerTrustStore.cs",
+            "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+            "src/Host.Windows/Security/WindowsDpapiSecretProtector.cs",
+            "tests/HostLifecycle.Tests/PeerTrustStoreAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/WindowsPeerTrustStoreAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/Program.cs",
+            ".github/workflows/product-build.yml",
+            "tests/test_decision_traceability.py",
+        )
+        for relative_path in paths:
+            with self.subTest(path=relative_path):
+                self.assertTrue((ROOT / relative_path).is_file(), relative_path)
+                self.assertIn(Path(relative_path).name, REGISTER)
+                if relative_path != paths[0]:
+                    self.assertIn(relative_path, ADR18_EXPLICIT_PEER_TRUST)
+
+        store = (ROOT / "src/Shared.Security/PeerTrustStore.cs").read_text(encoding="utf-8")
+        transport = (ROOT / "src/Host.Windows/Networking/Libp2pPeerTransport.cs").read_text(encoding="utf-8")
+        protector = (ROOT / "src/Host.Windows/Security/WindowsDpapiSecretProtector.cs").read_text(encoding="utf-8")
+        portable_tests = (ROOT / "tests/HostLifecycle.Tests/PeerTrustStoreAcceptanceTests.cs").read_text(encoding="utf-8")
+        windows_tests = (ROOT / "tests/HostLifecycle.Tests/WindowsPeerTrustStoreAcceptanceTests.cs").read_text(encoding="utf-8")
+        entrypoint = (ROOT / "tests/HostLifecycle.Tests/Program.cs").read_text(encoding="utf-8")
+
+        self.assertIn("TrustPeerAfterExplicitConfirmation", store)
+        self.assertIn("if (!explicitlyConfirmed)", store)
+        self.assertIn("ValidateCanonicalPeerId", store)
+        self.assertIn("MaximumTrustedPeers", store)
+        self.assertIn('throw new AuthenticationException("The peer identity has not been explicitly trusted.")', store)
+        self.assertIn("DataProtectionScope.CurrentUser", protector)
+        self.assertIn("_peerTrustStore.EnsureTrusted(_expectedRemotePeerIdentity);", transport)
+        self.assertIn("_peerTrustStore.EnsureTrusted(endpoint.ExpectedPeerIdentity);", transport)
+        self.assertIn("The authenticated libp2p peer identity did not match the expected identity.", transport)
+        self.assertIn("explicitlyConfirmed: false", portable_tests)
+        self.assertIn("corrupt trust store must fail closed", portable_tests.lower())
+        self.assertIn("tampered DPAPI peer-trust data must fail closed", windows_tests.lower())
+        self.assertIn("PeerTrustStoreAcceptanceTests.Run()", entrypoint)
+        self.assertIn("WindowsPeerTrustStoreAcceptanceTests.Run()", entrypoint)
+        self.assertIn("PeerTransportContractAcceptanceTests.RunAsync()", entrypoint)
+
+        for phrase in (
+            "unknown libp2p peerids are not trusted automatically",
+            "current-user dpapi",
+            "does not yet present a peer-enrollment prompt",
+            "full independent-node e2e remain separate",
+        ):
+            with self.subTest(phrase=phrase):
+                self.assertIn(phrase, ADR18_EXPLICIT_PEER_TRUST.lower())
 
     def test_t0007_execution_report_matches_its_task_folder(self):
         report = (ROOT / "step three/T0007/execution-report.md").read_text(encoding="utf-8")
