@@ -28033,11 +28033,11 @@
         "step three/T0138/execution-report.md",
         "step three/T0138/evidence/verification.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0138-A001 (2026-10-28T19:12:38.745Z): reviewed the T0128 -> T0138 edge against the exact versioned schema, host secure-channel boundary, host request parser and WPF handler. These sources establish the disclosure independently of an external-node reachability result; the new warning explicitly keeps AC-P2P-01/AC-PRIV-01 NOT RUN. Reclassified T0128 -> T0138 as validated sequencing_only and removed it from active prerequisites, preserving edge-change history. Added README, REQ-019, acceptance-policy and ADR-0019 disclosure, plus a source-contract test. CI is pending; task remains in_progress.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0138-A001 (2026-10-28T19:12:38.745Z): reviewed the T0128 -> T0138 edge against the exact versioned schema, host secure-channel boundary, host request parser and WPF handler. These sources establish the disclosure independently of an external-node reachability result; the new warning explicitly keeps AC-P2P-01/AC-PRIV-01 NOT RUN. Reclassified T0128 -> T0138 as validated sequencing_only and removed it from active prerequisites, preserving edge-change history. Added README, REQ-019, acceptance-policy and ADR-0019 disclosure, plus a source-contract test. CI is pending; task remains in_progress.\n\nT0138-A001 CI result (V 3.0.482, 2026-10-28): Step Three quality gate 40752311175 failed exactly one subtest because the test expected the explicit phrase 'not end-to-end encryption against the processing host', while ADR-0019 phrased the equivalent warning as 'Do not call this end-to-end encryption against the processing host'. This is a wording-contract mismatch; no successful acceptance is claimed. A002 makes the exact disclosure explicit and reruns all relevant checks.",
       "execution_summary": {
-        "attempt_count": 1,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "T0138-A001",
+        "attempt_count": 2,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "T0138-A002",
         "last_attempt_result": "partial",
         "changed_files": [
           "README.md",
@@ -28050,9 +28050,13 @@
           "step three/T0138/evidence/verification.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
+        "related_commits": [
+          "f36ed82fc41a45caf22f948b13e3a7da27d985ec"
+        ],
         "tests_passed": [],
-        "tests_failed": [],
+        "tests_failed": [
+          "V 3.0.482 Step Three quality gate job 123041967360 failed one subtest in tests/test_host_content_visibility.py because ADR-0019 did not contain the exact disclosure phrase expected by the test. Workflow: https://github.com/artinrahimii/project/actions/runs/40752311175"
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -28078,9 +28082,9 @@
         {
           "attempt_id": "T0138-A001",
           "started_at": "2026-10-28T19:12:38.745Z",
-          "ended_at": null,
-          "result": "partial",
-          "summary": "Inspected the exact T0138 dependency/code boundary, added an explicit endpoint-visibility disclosure to README, REQ-019, acceptance policy and new ADR-0019; registered the ADR and added a runnable Python source-contract test. Reviewed T0128 -> T0138 as sequencing-only and removed it from active prerequisites because the docs explicitly preserve independent-node and privacy runtime gates as NOT RUN. Exact-head CI pending.",
+          "ended_at": "2026-10-28T19:13:21Z",
+          "result": "failed",
+          "summary": "The V 3.0.482 Step Three quality gate ran 195 Python tests and reported exactly one failed subtest: the new visibility test expected the phrase 'not end-to-end encryption against the processing host', while ADR-0019 expressed the same boundary as 'Do not call this end-to-end encryption against the processing host.' This is a documentation/test wording mismatch; no claim that task acceptance passed.",
           "changed_files": [
             "README.md",
             "docs/requirements.md",
@@ -28092,30 +28096,22 @@
             "step three/T0138/evidence/verification.md",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "f36ed82fc41a45caf22f948b13e3a7da27d985ec",
           "tests": [
             {
-              "name": "Host content visibility source-contract tests",
-              "result": "pending",
-              "summary": "Verify the canonical Protobuf prompt/capsule fields, host parser/handler source and disclosure text."
+              "name": "Step Three Python test suite — V 3.0.482",
+              "result": "failed",
+              "summary": "195 tests ran; one new source-contract subtest failed because the exact wording in ADR-0019 differed from the assertion phrase.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40752311175"
             },
             {
-              "name": "Python repository test suite",
-              "result": "pending",
-              "summary": "Run unittest discovery including the new source-contract test."
-            },
-            {
-              "name": "Graph structure and evidence paths",
-              "result": "pending",
-              "summary": "Run graph_guard, including repository-backed expected/output paths and dependency history."
-            },
-            {
-              "name": "Product build and host lifecycle regression tests",
-              "result": "pending",
-              "summary": "Confirm docs/test-only change does not regress host/Android builds or HostLifecycle."
+              "name": "Product workflow — V 3.0.482",
+              "result": "passed",
+              "summary": "Windows WPF, Android APK, and HostLifecycle jobs completed successfully; this product workflow does not replace the failed Step Three quality gate.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40752311239"
             }
           ],
-          "failure_details": null,
+          "failure_details": "Step Three quality run 40752311175 / job 123041967360 failed at tests/test_host_content_visibility.py::test_readme_requirements_and_adr_disclose_endpoint_visibility, subtest phrase='not end-to-end encryption against the processing host'. The ADR stated 'Do not call this end-to-end encryption against the processing host.' The test requires an explicit searchable phrase. Graph checks were skipped because the automated test step failed first.",
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [
@@ -28123,6 +28119,47 @@
             "ADR-0019 distinguishes transport encryption from secrecy against the receiving host."
           ],
           "follow_up": "Verify exact V 3.0.482 workflow results. If source-contract, Python and graph quality gates pass, preserve T0128 as a separate NOT RUN runtime gate and finalize T0138; fix any observed failure first."
+        },
+        {
+          "attempt_id": "T0138-A002",
+          "started_at": "2026-10-28T19:16:35.294Z",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Adjusted ADR-0019 to state explicitly: 'This is not end-to-end encryption against the processing host' so the privacy boundary is unambiguous and matches the new contract test. Graph/report history updated to preserve the failed A001 result; exact V 3.0.483 CI pending.",
+          "changed_files": [
+            "docs/decisions/ADR-0019-host-visible-inference-content.md",
+            "step three/T0138/execution-report.md",
+            "step three/T0138/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Host content visibility source-contract tests",
+              "result": "pending",
+              "summary": "Retest explicit endpoint-visibility wording and architecture source contract."
+            },
+            {
+              "name": "Python repository test suite",
+              "result": "pending",
+              "summary": "Rerun all repository tests on the corrected exact commit."
+            },
+            {
+              "name": "Graph structure and recorded evidence",
+              "result": "pending",
+              "summary": "Run graph_guard once the Python suite passes."
+            },
+            {
+              "name": "Product build regression",
+              "result": "pending",
+              "summary": "Product workflow V 3.0.482 has passed; rerun on corrected source and inspect exact conclusions."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Run exact V 3.0.483 Step Three quality and product CI. Do not mark T0138 done until the new contract test and graph guard pass."
         }
       ]
     },

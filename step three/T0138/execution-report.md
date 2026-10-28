@@ -1,10 +1,9 @@
 # T0138 — Execution report
 
-- **Status:** `in_progress`; documentation and source-contract test are committed pending exact-head CI.
-- **Attempt:** `T0138-A001`.
-- **Base:** `main` / `dd0b9988c95901d1c391d2f6c362d3b4531747b4` (`V 3.0.481`).
-- **Dependency review:** `T0137 → T0138` is already validated `sequencing_only`. The `T0128 → T0138` edge was reviewed against the canonical request schema and host-side parsing/handler code, classified as `sequencing_only`, and removed from active prerequisites. T0128 itself remains `not_started`; this task does not claim independent-node delivery.
-- **Disclosure:** README, REQ-019, acceptance policy and ADR-0019 explicitly state that the receiving host can read `InferenceRequest.prompt` and `context_capsule` after transport decryption; channel encryption is not secrecy against the endpoint.
-- **Repeatable check:** Added `tests/test_host_content_visibility.py` to compare the disclosure with the canonical schema and host handler and ensure runtime P2P gates remain unpassed.
-- **Runtime boundary:** `AC-P2P-01` and `AC-PRIV-01` remain **NOT RUN** pending actual independent-node path and storage/network inspection.
-- **CI:** Pending on `V 3.0.482`; no test result is claimed as successful before workflow completion.
+- **Status:** `in_progress`; first exact-head quality gate exposed one wording-contract mismatch; the explicit phrase is corrected in `T0138-A002` and CI for the corrected commit is pending.
+- **Attempt A001:** failed on one subtest; 195 Python tests ran, one reported failure.
+- **Failure:** `tests/test_host_content_visibility.py` expected `not end-to-end encryption against the processing host`, but ADR-0019 said `Do not call this end-to-end encryption against the processing host`. [Quality run](https://github.com/artinrahimii/project/actions/runs/40752311175).
+- **Correction A002:** ADR-0019 now explicitly states: `This is not end-to-end encryption against the processing host`; this is a privacy disclosure, not a claim of runtime Android-to-Windows delivery.
+- **Implementation/doc scope:** README, REQ-019, acceptance policy, ADR-0019 and the decision register disclose that the processing host can read `InferenceRequest.prompt` and `context_capsule` after transport decryption. A source-contract test compares these claims with the canonical schema and host handler.
+- **Dependency review:** `T0128 → T0138` is validated `sequencing_only` and removed from active prerequisites; independent-node product and privacy gates remain NOT RUN.
+- **Next:** Verify exact `V 3.0.483` quality and product workflows; task remains in progress until CI passes.

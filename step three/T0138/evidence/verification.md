@@ -1,23 +1,18 @@
 # T0138 — Verification evidence
 
-## Exact base and graph integrity
-- Branch: `main`; base commit: `dd0b9988c95901d1c391d2f6c362d3b4531747b4` (`V 3.0.481`); tree: `df76c18f7cae546aa45b21b5d1899154ffe4025c`.
-- Graph path: `step three/project-graph.md`; Blob: `6555d850f9f74ff55cff4b22d59550b674ca1f67`.
-- Original graph: **2,332,362 UTF-8 bytes**, **2,210,346 characters**; Git Blob SHA-1 matches the tree entry. Full fenced JSON parsed successfully to 229 tasks and 418 active edges.
+## Base integrity
+- Branch: `main`; base: `V 3.0.482` — `f36ed82fc41a45caf22f948b13e3a7da27d985ec`; tree: `b5c21f2651e6f8dc01545173d9da31c9bb682a39`.
+- `step three/project-graph.md` blob: `6f3b7a06a80272d1ff61cbe3e0e7fe78cf063eb1`; **2,339,067 UTF-8 bytes** and **2,217,246 characters**; calculated Git Blob SHA-1 matches.
+- Full graph JSON validates as 229 tasks and 417 active edges.
 
-## Source evidence for the endpoint boundary
-- `protocol/whitep/v1/messages.proto` declares `InferenceRequest.prompt` and `InferenceRequest.context_capsule`.
-- `src/Host.Windows/Networking/Libp2pPeerMessageProtocol.cs` documents that encryption/authentication are provided by the libp2p secure transport, not by the framing protocol.
-- `src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs` parses and validates the inbound request before dispatching the wire message to the handler.
-- `src/Host.Windows/MainWindow.xaml.cs` parses the request and passes the request object to `_session.GenerateAsync(request, token)`.
-- These are source/schema facts; they do not prove end-to-end Android-to-Windows routing or no-storage behavior.
+## A001 quality failure
+- Run: [Step Three quality gate V 3.0.482](https://github.com/artinrahimii/project/actions/runs/40752311175); job `123041967360`.
+- Result: 195 tests ran; one subtest failed. The test expected an explicit `not end-to-end encryption against the processing host` phrase, while ADR-0019 used `Do not call this end-to-end encryption against the processing host`. Graph validation steps were skipped because the unit-test step failed first.
+- Product workflow V 3.0.482 [completed successfully](https://github.com/artinrahimii/project/actions/runs/40752311239), including Windows, Android and HostLifecycle jobs.
 
-## Dependency-edge decision
-- `T0137 → T0138` stays validated `sequencing_only`.
-- `T0128 → T0138` was `unreviewed`. It is now validated as `sequencing_only` and removed from active dependencies because an accurate endpoint-readability disclosure does not depend on external-node reachability; the text explicitly maintains the independent-node gate as NOT RUN. The removal and evidence are recorded in `edge_change_log`.
+## A002 correction
+- ADR-0019 updated to explicitly say `This is not end-to-end encryption against the processing host`.
+- Exact V 3.0.483 Python/source-contract/graph checks and product regression results are pending.
 
-## Current test status
-- New source-contract test: pending exact-head CI.
-- Python repository suite/graph_guard: pending exact-head CI.
-- Product regression: pending exact-head CI.
-- No claim of successful acceptance until the workflow results are inspected.
+## Boundary
+- This disclosure does not satisfy `T0128`, `AC-P2P-01`, or `AC-PRIV-01`; those independent runtime gates remain unverified.
