@@ -27537,11 +27537,9 @@
         "tests/HostLifecycle.Tests/RequestIdentityIndependenceAcceptanceTests.cs",
         "tests/HostLifecycle.Tests/Program.cs",
         "docs/decisions/ADR-0013-temporary-request-identifiers.md",
-        "protocol/whitep/v1/messages.proto",
-        "https://github.com/artinrahimii/project/actions/runs/40733512116/job/122975807228",
-        "https://github.com/artinrahimii/project/actions/runs/40733512114"
+        "protocol/whitep/v1/messages.proto"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0135-A001 (2026-10-28): reviewed T0134 and T0128 edges against current source/wire contracts. Existing 128-bit opaque ID generation and the no-user/conversation wire contract were present; added an integrated acceptance test to enforce that boundary and preserve response correlation. Exact-commit CI is pending, so status remains in_progress. T0128 remains not_started and is not claimed as passed.\n\nT0135-A002: fixed A001's compile error by adding the missing Google.Protobuf namespace for ToByteArray(). The fix is pending exact-commit CI; A001 remains recorded as failed.\n\nT0135-A002 completion evidence (2026-10-28): the missing Google.Protobuf namespace found by A001 was added in V 3.0.475. The exact HostLifecycle job passed and explicitly logged request identity independence; Step Three quality gate, Windows WPF build, Android APK/Protobuf checks and real local inference integration also passed. A001 remains recorded as a failed compile attempt; current status is done based on A002 evidence.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0135-A001 (2026-10-28): reviewed T0134 and T0128 edges against current source/wire contracts. Existing 128-bit opaque ID generation and the no-user/conversation wire contract were present; added an integrated acceptance test to enforce that boundary and preserve response correlation. Exact-commit CI is pending, so status remains in_progress. T0128 remains not_started and is not claimed as passed.\n\nT0135-A002: fixed A001's compile error by adding the missing Google.Protobuf namespace for ToByteArray(). The fix is pending exact-commit CI; A001 remains recorded as failed.\n\nT0135-A002 completion evidence (2026-10-28): the missing Google.Protobuf namespace found by A001 was added in V 3.0.475. The exact HostLifecycle job passed and explicitly logged request identity independence; Step Three quality gate, Windows WPF build, Android APK/Protobuf checks and real local inference integration also passed. A001 remains recorded as a failed compile attempt; current status is done based on A002 evidence.\n\nFinalization QA review: the V 3.0.476 Step Three quality gate correctly rejected two CI URLs stored in node.evidence as if they were repository files. Removed those URLs from the graph evidence-path list; the URLs remain in step three/T0135/evidence/verification.md. This metadata correction does not invalidate the exact V 3.0.475 passing request-identity acceptance test. V 3.0.477 quality gate rerun is pending.",
       "execution_summary": {
         "attempt_count": 2,
         "failed_attempt_count": 1,
@@ -27566,7 +27564,8 @@
           "Exact V 3.0.475 real local inference integration workflow passed: run 40733512148."
         ],
         "tests_failed": [
-          "V 3.0.474 HostLifecycle job 122974324111 failed before assertions with compiler CS1061 because Google.Protobuf's ToByteArray extension namespace was missing; corrected in V 3.0.475."
+          "V 3.0.474 HostLifecycle job 122974324111 failed before assertions with compiler CS1061 because Google.Protobuf's ToByteArray extension namespace was missing; corrected in V 3.0.475.",
+          "V 3.0.476 Step Three quality gate failed because node.evidence contained two URLs instead of repository file paths (MISSING_EVIDENCE_FILE); corrected in V 3.0.477. The T0135 HostLifecycle acceptance itself had already passed on V 3.0.475."
         ],
         "blocked_reason": null,
         "reopened_reason": null,

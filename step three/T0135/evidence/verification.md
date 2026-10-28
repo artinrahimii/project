@@ -29,3 +29,10 @@
 ## مرز نتیجه
 
 T0135 مطابق معیار پذیرش قرارداد/شناسهٔ درخواست تکمیل شد. این نتیجه اجرای end-to-end روی دو شبکهٔ مستقل نیست؛ `T0128` همچنان `not_started` باقی می‌ماند.
+
+
+## Follow-up quality check
+
+- V 3.0.476 Step Three quality gate failed: `MISSING_EVIDENCE_FILE` for the two GitHub Actions URLs mistakenly placed in the `T0135.evidence` path list — [run 40734226597](https://github.com/artinrahimii/project/actions/runs/40734226597).
+- Corrective change for V 3.0.477: removed URLs from `node.evidence`, retaining them as links in this Markdown evidence file. The four repository evidence paths remain present in `node.evidence`.
+- Exact V 3.0.475 code acceptance remains PASS (HostLifecycle job 122975807228). Revalidation of the graph quality gate on V 3.0.477 is pending.

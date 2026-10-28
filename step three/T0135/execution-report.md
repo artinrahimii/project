@@ -24,3 +24,8 @@
 ## وظیفهٔ منطقی بعدی
 
 `T0136` باقی است؛ یال‌های `T0135 → T0136` و `T0128 → T0136` هنوز بررسی‌نشده‌اند و باید قبل از اجرای آن تحلیل شوند. `T0128` اجرا‌نشده باقی می‌ماند.
+
+
+## Finalization quality-gate correction (V 3.0.477)
+
+The first completion-report revision, V 3.0.476, had a graph-format error: two GitHub Actions URLs were included in `T0135.evidence`, which is defined as repository file paths. The exact Step Three quality gate correctly failed with two `MISSING_EVIDENCE_FILE` errors. The graph now lists only real repository paths in that field; CI URLs remain in the Markdown evidence record. This is a traceability-metadata correction, not a change to the request-ID implementation or its already-passing V 3.0.475 HostLifecycle test. The new V 3.0.477 quality-gate result is pending.
