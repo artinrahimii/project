@@ -27539,11 +27539,11 @@
         "docs/decisions/ADR-0013-temporary-request-identifiers.md",
         "protocol/whitep/v1/messages.proto"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0135-A001 (2026-10-28): reviewed T0134 and T0128 edges against current source/wire contracts. Existing 128-bit opaque ID generation and the no-user/conversation wire contract were present; added an integrated acceptance test to enforce that boundary and preserve response correlation. Exact-commit CI is pending, so status remains in_progress. T0128 remains not_started and is not claimed as passed.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0135-A001 (2026-10-28): reviewed T0134 and T0128 edges against current source/wire contracts. Existing 128-bit opaque ID generation and the no-user/conversation wire contract were present; added an integrated acceptance test to enforce that boundary and preserve response correlation. Exact-commit CI is pending, so status remains in_progress. T0128 remains not_started and is not claimed as passed.\n\nT0135-A002: fixed A001's compile error by adding the missing Google.Protobuf namespace for ToByteArray(). The fix is pending exact-commit CI; A001 remains recorded as failed.",
       "execution_summary": {
-        "attempt_count": 1,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "T0135-A001",
+        "attempt_count": 2,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "T0135-A002",
         "last_attempt_result": "partial",
         "changed_files": [
           "tests/HostLifecycle.Tests/RequestIdentityIndependenceAcceptanceTests.cs",
@@ -27552,9 +27552,13 @@
           "step three/T0135/evidence/verification.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
+        "related_commits": [
+          "d6cd1fced96dd85626c0e16b044b5a111f8890a3"
+        ],
         "tests_passed": [],
-        "tests_failed": [],
+        "tests_failed": [
+          "V 3.0.474 HostLifecycle job 122974324111 failed at compile time with CS1061 because Google.Protobuf's ToByteArray extension namespace was not imported."
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -27568,12 +27572,39 @@
         {
           "attempt_id": "T0135-A001",
           "started_at": "2026-10-28T17:00:00.000Z",
-          "ended_at": "2026-10-28T17:03:00.000Z",
-          "result": "partial",
-          "summary": "Added and registered a request-identity-independence acceptance test. It checks opaque 128-bit request IDs, excludes stable user/account/device/conversation fields from selected Protobuf message descriptors, round-trips a valid request through protocol validation, and confirms typed failure correlation. Exact-commit CI is pending; task is not yet done.",
+          "ended_at": "2026-10-28T17:10:38.000Z",
+          "result": "failed",
+          "summary": "Exact V 3.0.474 HostLifecycle run failed during C# compilation: RequestIdentityIndependenceAcceptanceTests called InferenceRequest.ToByteArray without importing the Google.Protobuf extension namespace. No test assertion was executed in that run.",
           "changed_files": [
             "tests/HostLifecycle.Tests/RequestIdentityIndependenceAcceptanceTests.cs",
             "tests/HostLifecycle.Tests/Program.cs",
+            "step three/T0135/execution-report.md",
+            "step three/T0135/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "command": "dotnet run --project tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj --configuration Release",
+              "result": "failed",
+              "summary": "CS1061 at RequestIdentityIndependenceAcceptanceTests.cs:50:79 — no accessible ToByteArray extension because using Google.Protobuf was missing.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40733088328/job/122974324111"
+            }
+          ],
+          "failure_details": "Compiler error CS1061: InferenceRequest does not contain ToByteArray and no accessible extension method was in scope. The fix is to import Google.Protobuf; no implementation correctness or runtime assertion is claimed from this failed run.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Added using Google.Protobuf in T0135-A002; rerun exact-main HostLifecycle workflow before marking T0135 done."
+        },
+        {
+          "attempt_id": "T0135-A002",
+          "started_at": "2026-10-28T17:10:38.000Z",
+          "ended_at": "2026-10-28T17:12:30.000Z",
+          "result": "partial",
+          "summary": "Corrected the exact CI compile failure by importing Google.Protobuf so the acceptance test can call the Protobuf ToByteArray extension. The new source has not yet been rerun; task remains in_progress.",
+          "changed_files": [
+            "tests/HostLifecycle.Tests/RequestIdentityIndependenceAcceptanceTests.cs",
             "step three/T0135/execution-report.md",
             "step three/T0135/evidence/verification.md",
             "step three/project-graph.md"
@@ -27584,7 +27615,7 @@
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect the exact V 3.0.474 HostLifecycle and Step Three quality workflows. Mark T0135 done only after the new acceptance test and repository quality gate pass; otherwise fix the source/test and retry."
+          "follow_up": "Inspect V 3.0.475 HostLifecycle and quality workflows; retain the failed A001 record regardless of outcome."
         }
       ]
     },

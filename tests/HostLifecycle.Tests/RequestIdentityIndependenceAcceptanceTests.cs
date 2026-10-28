@@ -1,4 +1,5 @@
 using System.Text.RegularExpressions;
+using Google.Protobuf;
 using Google.Protobuf.Reflection;
 using WhiteP.Host.Infrastructure;
 using WhiteP.Host.Windows.Networking;
