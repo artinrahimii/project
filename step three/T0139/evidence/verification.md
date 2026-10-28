@@ -69,3 +69,9 @@
 - Final graph counts after T0139 acceptance: 131 done, 97 not_started, 1 blocked, 0 in_progress out of 229 tasks. Unreviewed edge count remains 188; no unrelated edges were reclassified.
 - Scope limit preserved: the app is a runnable Compose shell and request editor preview; actual Android-to-Windows transport is not implemented, and no delivery/no-storage claim is made.
 - Next task T0140 has a validated `sequencing_only` incoming edge from T0139 and an unreviewed incoming edge from T0138. Review the latter before selecting or modifying T0140.
+
+
+## V 3.0.492 graph validation failure and evidence-list correction
+
+- [Quality workflow 40771426467](https://github.com/artinrahimii/project/actions/runs/40771426467): 200 Python tests, syntax compilation and structural graph checks passed. The final repository output/evidence gate failed with 8 `MISSING_EVIDENCE_FILE` errors because URLs to historical Actions runs were incorrectly included in the local `T0139.evidence` list.
+- Correction: keep external URLs in execution-history test records/reports; keep `evidence` limited to local file paths that exist in the repository. The accepted application commit remains V 3.0.491, whose exact product workflow passed Android build/JUnit/Protobuf, Windows WPF/security and HostLifecycle checks.

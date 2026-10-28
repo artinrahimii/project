@@ -67,3 +67,10 @@
 - **V 3.0.490 failure retained:** [workflow 40770498046](https://github.com/artinrahimii/project/actions/runs/40770498046) passed lint but failed at Kotlin compilation because `ClientNavigation` was declared twice. A007 removed the duplicate in `ClientDestination.kt` and added a regression test; the complete V 3.0.491 workflow then passed.
 - **Decision:** the scoped Compose app shell meets T0139's acceptance criterion: output exists, its source-contract checks pass, and the exact commit builds and passes Android tests. The app remains a preview; Android-to-host transport, live peer discovery and runtime no-storage behavior are not implemented or validated by this task.
 - **Next task:** T0140 (ViewModel/repository/data layer) is next by the graph's sequencing-only T0139 edge. Its T0138 incoming edge remains `unreviewed`; validate that edge against the task's real interfaces before changing T0140.
+
+
+## V 3.0.492 graph-guard result and V 3.0.493 evidence-list repair
+
+- Step Three quality run [40771426467](https://github.com/artinrahimii/project/actions/runs/40771426467): all **200 Python tests** passed, Python syntax compilation passed, and the graph structure check reported **0 errors / 1 existing warning** across 229 tasks and 417 edges. The separate repository output/evidence gate failed with 8 `MISSING_EVIDENCE_FILE` errors because historical GitHub Actions URLs were stored in T0139's `evidence` field, which is defined as local file paths.
+- The evidence URLs remain in execution-history test records and this report. The graph's `evidence` array now contains only existing repository file paths; `status_fa` is synchronized with `status=done`. No dependency edges or application source were changed in this repair.
+- V 3.0.491 remains the accepted source commit for T0139's implementation: exact-head quality and complete Android/Windows/HostLifecycle product checks passed there. V 3.0.492's Android and HostLifecycle jobs also passed; Windows was still running at inspection, so no complete V 3.0.492 product pass is claimed in this record.
