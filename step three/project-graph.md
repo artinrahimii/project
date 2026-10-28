@@ -26875,8 +26875,7 @@
       "title": "محرمانگی، تمامیت و احراز هویت ارتباط را با TLS یا پروتکل امن معتبر برقرار کن.",
       "section": "13. هویت ارتباطی و رمزنگاری",
       "depends_on": [
-        "T0131",
-        "T0128"
+        "T0131"
       ],
       "inputs": [
         "خروجی تأییدشدهٔ پیش‌نیازها",
@@ -26885,35 +26884,121 @@
       "outputs": [
         "خروجی قابل بررسی مربوط به «محرمانگی، تمامیت و احراز هویت ارتباط را با TLS یا پروتکل امن معتبر برقرار کن.» در مسیر src/Shared.Security/ + tests/security/؛ همراه با آزمون/شاهد پذیرش متناسب."
       ],
-      "start_condition": "همهٔ پیش‌نیازهای T0131 و T0128 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
+      "start_condition": "پیش‌نیاز فنی T0131 تکمیل و معیارهای پذیرش آن پاس شده باشند. اجرای نهایی مستقل‌گره‌ای T0128 جداگانه باقی می‌ماند و پیش‌نیاز فنی برای ساخت و آزمون کانال امن نیست.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "done",
+      "status_fa": "انجام‌شده",
+      "actual_output_paths": [
+        "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+        "src/Shared.Security/PeerSecurityPolicy.cs",
+        "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/PeerSecurityPolicyAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/PeerTrustStoreAcceptanceTests.cs",
+        "docs/decisions/ADR-0016-maintained-libp2p-cryptographic-transport.md",
+        "step three/T0132/execution-report.md",
+        "step three/T0132/evidence/verification.md",
+        "step three/project-graph.md"
+      ],
       "expected_output_paths": [
         "src/Shared.Security/ + tests/security/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+        "src/Shared.Security/PeerSecurityPolicy.cs",
+        "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/PeerSecurityPolicyAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/PeerTrustStoreAcceptanceTests.cs",
+        "docs/decisions/ADR-0016-maintained-libp2p-cryptographic-transport.md",
+        "step three/T0132/evidence/verification.md"
+      ],
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0132-A001 (2026-10-28): Verified existing maintained libp2p secure transport, explicit trusted PeerId gate, normalized identity policy and fail-closed mismatched/unknown peer handling. Exact V 3.0.456 HostLifecycle CI passed direct libp2p exchange, authenticated TCP-to-QUIC fallback, malformed identity rejection and explicit persisted peer trust (job 122904254752); exact-head Windows and Android product jobs and Step Three quality checks passed. Reviewed T0131 → T0132 as a real consumed interface dependency. Reviewed T0128 → T0132 as sequencing-only; the final independent-node end-to-end task consumes the secure channel but produces no artifact needed to implement it, so the edge was removed from active edges with historical review preserved. No product code was changed because this task's maintained implementation and executable tests already existed and were verified. T0128 remains not_started and independent-network acceptance is not claimed.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
-        "related_commits": [],
-        "tests_passed": [],
+        "last_attempt_id": "T0132-A001",
+        "last_attempt_result": "succeeded",
+        "changed_files": [
+          "step three/project-graph.md",
+          "step three/T0132/execution-report.md",
+          "step three/T0132/evidence/verification.md"
+        ],
+        "related_commits": [
+          "13b6b91380e4d29054a03b0190284a4cbe699365"
+        ],
+        "tests_passed": [
+          "Exact V 3.0.456 HostLifecycle job 122904254752: PASS direct libp2p TCP exchange, authenticated TCP-to-QUIC fallback, bounded framing and disconnect semantics.",
+          "Exact V 3.0.456 HostLifecycle job 122904254752: PASS malformed peer identity input rejected by PeerSecurityPolicy.",
+          "Exact V 3.0.456 HostLifecycle job 122904254752: PASS explicit persisted peer trust and fail-closed unknown/corrupt identity handling.",
+          "Exact V 3.0.456 Windows WPF build/startup/security job 122904254631: PASS.",
+          "Exact V 3.0.456 Android APK/lint/Protobuf job 122904254265: PASS.",
+          "Exact V 3.0.456 Step Three quality gate 40713345604: PASS."
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
+          "state": "validated",
+          "triggering_contracts": [
+            "PeerTrustStore.EnsureTrusted",
+            "Libp2pPeerTransport authenticated connected state"
+          ],
           "affected_by_contract_changes": [],
-          "review_evidence": []
+          "review_evidence": [
+            "src/Shared.Security/PeerTrustStore.cs",
+            "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+            "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0132-A001",
+          "started_at": "2026-10-28T15:16:20.771Z",
+          "ended_at": "2026-10-28T15:16:20.771Z",
+          "result": "succeeded",
+          "summary": "Verified the already-present maintained libp2p secure transport and peer identity policy using exact-head CI. Direct authenticated exchange, TCP-to-QUIC fallback, malformed identity rejection and fail-closed trust tests passed. Reviewed dependencies: T0131 is a true consumed trust interface; T0128 is sequencing-only for this task and remains a separate independent-node acceptance.",
+          "changed_files": [
+            "step three/project-graph.md",
+            "step three/T0132/execution-report.md",
+            "step three/T0132/evidence/verification.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "HostLifecycle secure transport acceptance — exact V 3.0.456",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40713345711/job/122904254752",
+              "summary": "Job logs include direct libp2p TCP exchange, authenticated TCP-to-QUIC fallback, bounded framing, identity rejection, and explicit peer trust pass messages."
+            },
+            {
+              "name": "Windows WPF Release/build/security checks — exact V 3.0.456",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40713345711/job/122904254631",
+              "summary": "Completed successfully on the exact online commit."
+            },
+            {
+              "name": "Android APK/lint/Protobuf checks — exact V 3.0.456",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40713345711/job/122904254265",
+              "summary": "Completed successfully on the exact online commit."
+            },
+            {
+              "name": "Step Three quality gate — exact V 3.0.456",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40713345604",
+              "summary": "Graph, evidence and automated checks completed successfully."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "Reviewed and validated T0131 → T0132 as contract/interface dependency.",
+            "Reviewed T0128 → T0132 as sequencing-only and removed it from active dependencies; historical evidence preserved in edge_change_log."
+          ],
+          "follow_up": "Keep T0128 pending until real two-node/independent-network acceptance is performed; then continue the remaining security/privacy tasks under their own reviewed prerequisites."
+        }
+      ]
     },
     {
       "id": "T0133",
@@ -34439,19 +34524,15 @@
       "from": "T0131",
       "to": "T0132",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
-    },
-    {
-      "from": "T0128",
-      "to": "T0132",
-      "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0132's secure transport must apply the trust API implemented by T0131: Libp2pPeerTransport calls PeerTrustStore.EnsureTrusted for the pinned expected PeerId, rejects mismatched identities, and only reports connected after the maintained libp2p secure protocol becomes ready. This is a direct consumed interface, not inferred from the blocks label.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Shared.Security/PeerTrustStore.cs",
+        "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+        "tests/HostLifecycle.Tests/PeerTrustStoreAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs"
+      ]
     },
     {
       "from": "T0132",
@@ -36266,6 +36347,7 @@
     "T0129",
     "T0130",
     "T0131",
+    "T0132",
     "T0121",
     "T0122",
     "T0123",
@@ -36274,7 +36356,6 @@
     "T0126",
     "T0127",
     "T0128",
-    "T0132",
     "T0133",
     "T0134",
     "T0135",
@@ -38789,6 +38870,43 @@
         "docs/decisions/ADR-0016-maintained-libp2p-cryptographic-transport.md"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-28T15:16:20.771Z",
+      "edge_from": "T0131",
+      "edge_to": "T0132",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "old_validation_status": "unreviewed",
+      "new_validation_status": "validated",
+      "reason": "T0132's secure transport must apply the trust API implemented by T0131: Libp2pPeerTransport calls PeerTrustStore.EnsureTrusted for the pinned expected PeerId, rejects mismatched identities, and only reports connected after the maintained libp2p secure protocol becomes ready. This is a direct consumed interface, not inferred from the blocks label.",
+      "evidence": [
+        "src/Shared.Security/PeerTrustStore.cs",
+        "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+        "tests/HostLifecycle.Tests/PeerTrustStoreAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-28T15:16:20.771Z",
+      "edge_from": "T0128",
+      "edge_to": "T0132",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "old_validation_status": "unreviewed",
+      "new_validation_status": "validated",
+      "change_action": "removed_from_active_edges",
+      "reason": "The T0128 deliverable is a final end-to-end test on two real computers/independent network nodes. T0132 implements and tests the secure channel itself and consumes no output or API produced by that final test; the secure transport can be verified using the existing real libp2p loopback acceptance suite before the external end-to-end milestone. Removing this ordering-only edge lets security implementation precede the test that exercises it, without claiming T0128 passed or changing its status.",
+      "evidence": [
+        "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+        "src/Shared.Security/PeerSecurityPolicy.cs",
+        "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/PeerSecurityPolicyAcceptanceTests.cs",
+        "docs/decisions/ADR-0016-maintained-libp2p-cryptographic-transport.md",
+        "https://github.com/artinrahimii/project/actions/runs/40713345711/job/122904254752"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
   "updated_at": "2026-10-28",
@@ -38853,6 +38971,26 @@
         "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
         "tests/HostLifecycle.Tests/PeerTrustStoreAcceptanceTests.cs",
         "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-28T15:16:20.771Z",
+      "moved_tasks": [
+        "T0132"
+      ],
+      "old_positions": {
+        "T0132": 132
+      },
+      "new_anchor": "Immediately after T0131 and before the blocked T0121/T0128 chain",
+      "reason": "Reviewed T0128 → T0132 against the actual secure transport and test contract. T0132's secure channel consumes the trust interface from T0131, and its direct authenticated exchange/identity-policy tests pass on the exact current commit. T0128 is a separate deployment-independent-node acceptance and produces no artifact consumed by T0132, so preserve its historical rationale but remove the sequencing-only edge from active dependencies. This does not claim independent-network acceptance.",
+      "evidence": [
+        "src/Shared.Security/PeerTrustStore.cs",
+        "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+        "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/PeerSecurityPolicyAcceptanceTests.cs",
+        "docs/decisions/ADR-0016-maintained-libp2p-cryptographic-transport.md",
+        "https://github.com/artinrahimii/project/actions/runs/40713345711/job/122904254752"
       ],
       "reviewed_by": "Step Three execution review"
     }
