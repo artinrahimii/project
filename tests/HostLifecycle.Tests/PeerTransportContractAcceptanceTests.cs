@@ -164,7 +164,7 @@ internal static class PeerTransportContractAcceptanceTests
                 .ConfigureAwait(false);
         }
         catch (Exception exception) when (
-            exception is AuthenticationException or IOException or SocketException or InvalidOperationException)
+            exception is AuthenticationException or IOException or SocketException or PeerConnectionException or InvalidOperationException)
         {
             rejected = true;
         }

@@ -56,3 +56,20 @@ Add a real negative integration case at the libp2p secure-channel boundary for u
 - **Test result:** pending. No local .NET execution was possible because this environment has no `dotnet` executable. The GitHub combined commit-status query returned no entries; the available workflow-run retrieval only exposes pull-request-triggered runs, so this connector cannot verify a push-triggered run or its logs. Empty status data is not treated as a pass or failure.
 - **State remains** `in_progress` until the exact-commit HostLifecycle job verifies the added cases. No test has been marked passed from code presence alone.
 - **Next action:** retrieve the GitHub Actions check run for commit `e0512ece82f900e2a3f4586a6c286454eac994a2`, verify both security-negative cases executed and passed, then decide whether the remaining unsupported secure-channel version requirement needs a separate test before completion.
+
+
+## CI failure diagnosis — T0134-A005 and T0134-A006
+
+The exact push-triggered workflow runs are now available through GitHub's Actions REST endpoint (the earlier connector helper did not expose push runs):
+
+- [V 3.0.465 product-build run 40722598672](https://github.com/artinrahimii/project/actions/runs/40722598672), HostLifecycle job 122937219297: **failed**.
+- [V 3.0.468 product-build run 40723019009](https://github.com/artinrahimii/project/actions/runs/40723019009), HostLifecycle job 122938717256: **failed again**. The Android APK and Windows WPF jobs passed.
+- [V 3.0.468 Step Three quality gate 40723018973](https://github.com/artinrahimii/project/actions/runs/40723018973): **passed**.
+
+Both HostLifecycle logs terminate in `VerifySecureChannelRejectsUnexpectedPeerIdentityAsync`: the libp2p dial throws `Nethermind.Libp2p.Core.Exceptions.PeerConnectionException`, but the test catch filter did not include that wrapper exception. The exception escaped the test runner before its negative assertion and before `VerifyRejectsPlaintextOnlyPeerAsync` could run. This proves the test suite failed; it does not prove a plaintext connection was accepted or that the intended rejection assertion passed.
+
+## Corrective attempt — T0134-A007
+
+The catch filter in `tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs` now includes `PeerConnectionException`, the failure type actually emitted by the maintained libp2p stack. The test still asserts that the failed handshake leaves the client disconnected and `RemotePeerIdentity` null. No .NET test has yet run against this corrective revision; its result is **pending CI**, not passed.
+
+T0134 remains `in_progress`. After CI, verify that both negative tests execute and pass. Separately determine whether the acceptance requirement still needs a direct negative test for an unsupported Noise/TLS secure-channel protocol version; this fix does not close that possible coverage gap.

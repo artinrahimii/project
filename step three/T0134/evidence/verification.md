@@ -44,3 +44,23 @@ A direct failing-handshake test for unsupported libp2p Noise/TLS secure-channel 
 - The earlier `VerifySecureChannelRejectsUnexpectedPeerIdentityAsync` remains in the same acceptance suite and tests a trusted-but-wrong advertised PeerId against a live listener's actual identity.
 - **Verification state: pending CI.** The current environment has no .NET SDK/runtime command available, so no local test was executed. The available GitHub combined-status API returned an empty status list, and the available workflow-run lookup does not expose push-triggered runs. No pass/fail conclusion is inferred from these empty responses.
 - This is implementation evidence only until the exact-commit HostLifecycle job's logs confirm that both tests actually ran and passed. A plaintext-only mismatch test does not by itself prove every unsupported Noise/TLS protocol version is rejected.
+
+
+## T0134-A005: first confirmed secure-channel CI failure
+
+- Exact test revision: [V 3.0.465](https://github.com/artinrahimii/project/commit/e0512ece82f900e2a3f4586a6c286454eac994a2).
+- Run: [White-P product build 40722598672](https://github.com/artinrahimii/project/actions/runs/40722598672), HostLifecycle job 122937219297.
+- Observed result: **failed** at `VerifySecureChannelRejectsUnexpectedPeerIdentityAsync`. The actual libp2p dial surfaced `PeerConnectionException`; the test only caught `AuthenticationException`, `IOException`, `SocketException`, and `InvalidOperationException`, so the expected failed connection escaped as an unhandled exception.
+- This is an observed test-harness failure, not a passing security assertion. The plaintext-only negative case wasn't reached in this run.
+
+## T0134-A006: reproduced on latest main
+
+- Latest graph revision tested: [V 3.0.468](https://github.com/artinrahimii/project/commit/6776cebc6d4f578bb16f672b9db05d6a4abe2984).
+- Run: [White-P product build 40723019009](https://github.com/artinrahimii/project/actions/runs/40723019009), HostLifecycle job 122938717256. It reproduced the same unhandled `PeerConnectionException`; the Android and Windows build jobs succeeded. [Step Three quality gate 40723018973](https://github.com/artinrahimii/project/actions/runs/40723018973) passed graph/evidence validation.
+- Result for the secure-channel test suite: **failed**. No passing result is inferred from the successful quality gate.
+
+## T0134-A007: corrective change, pending CI
+
+- Source: `tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs`.
+- Change: add `PeerConnectionException` to the existing expected-failure filter, using the exception type explicitly named by the CI stack trace. Keep the post-failure assertions that no connection or authenticated remote identity is published.
+- Verification: not yet run on the corrective revision. This evidence is pending CI; don't mark the test or T0134 as passed until logs show the test completed and the plaintext-only test also executed successfully. A direct unsupported Noise/TLS protocol-version test may remain necessary.
