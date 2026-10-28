@@ -24939,7 +24939,11 @@
         "tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs",
         "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
         "step three/T0121/execution-report.md",
-        "step three/T0121/evidence/verification.md"
+        "step three/T0121/evidence/verification.md",
+        "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "src/Host.Windows/MainWindow.xaml",
+        "step three/project-graph.md"
       ],
       "expected_output_paths": [
         "src/Shared.Networking/ یا src/Host.Windows/Networking/ + tests/"
@@ -24950,21 +24954,27 @@
         "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
         "src/Host.Windows/Networking/PeerAnnouncementClient.cs",
         "src/Rendezvous.Service/PeerAnnouncementDirectory.cs",
-        "step three/T0121/evidence/verification.md"
+        "step three/T0121/evidence/verification.md",
+        "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "src/Host.Windows/MainWindow.xaml"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0121-A005 verification update (2026-10-27): all exact-commit GitHub Actions workflows for V 3.0.368 passed, including the HostLifecycle acceptance suite. This validates the correction to the tests, but does not complete runtime lifecycle integration: the publisher is not yet wired to the WPF participation toggle and safe reachable rendezvous/advertised-address configuration remains unavailable. Task status remains in_progress.\n\nT0121-A006 (2026-10-27): status changed from in_progress to blocked after source- and graph-backed review. The lease publisher/loopback tests exist, but the real WPF host listener remains loopback-only and explicitly closes inbound requests until protocol handling is implemented; no verified advertised address, rendezvous HTTPS setting or wired stable host identity exists. T0130 identity work sits downstream of T0128, which itself depends on T0121/T0122; do not add a new identity edge without resolving this potential cycle. Unblock only after authenticated peer-reachable host request handling, verified identity/address/HTTPS settings and WPF lifecycle integration pass exact-host tests. T0122 remains not_started.\n\nT0130 ordering update: identity-store work is scheduled before the blocked announcement chain after validating T0128 → T0130 as sequencing_only. This resolves the ordering-cycle concern only; it does not unblock T0121 because production identity wiring, authenticated reachable inbound handling, HTTPS rendezvous and a verified advertised address remain missing.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0121-A005 verification update (2026-10-27): all exact-commit GitHub Actions workflows for V 3.0.368 passed, including the HostLifecycle acceptance suite. This validates the correction to the tests, but does not complete runtime lifecycle integration: the publisher is not yet wired to the WPF participation toggle and safe reachable rendezvous/advertised-address configuration remains unavailable. Task status remains in_progress.\n\nT0121-A006 (2026-10-27): status changed from in_progress to blocked after source- and graph-backed review. The lease publisher/loopback tests exist, but the real WPF host listener remains loopback-only and explicitly closes inbound requests until protocol handling is implemented; no verified advertised address, rendezvous HTTPS setting or wired stable host identity exists. T0130 identity work sits downstream of T0128, which itself depends on T0121/T0122; do not add a new identity edge without resolving this potential cycle. Unblock only after authenticated peer-reachable host request handling, verified identity/address/HTTPS settings and WPF lifecycle integration pass exact-host tests. T0122 remains not_started.\n\nT0130 ordering update: identity-store work is scheduled before the blocked announcement chain after validating T0128 → T0130 as sequencing_only. This resolves the ordering-cycle concern only; it does not unblock T0121 because production identity wiring, authenticated reachable inbound handling, HTTPS rendezvous and a verified advertised address remain missing.\n\nT0121-A007 (2026-10-28): Added PeerAnnouncementHostLifecycle and connected it to WPF participation: fixed-address libp2p listening for an explicitly trusted peer, HTTPS rendezvous lease publishing/renewal, Protobuf request parsing, coordinator/readiness admission, real-session inference response, and stop-on-disconnect. Added a loopback service integration test for authenticated message exchange and expiry. The UI requires an explicit user attestation that the advertised address was tested from the remote peer; the app itself does not probe public reachability. Exact-head CI pending, so status stays blocked.\n",
       "execution_summary": {
-        "attempt_count": 6,
+        "attempt_count": 7,
         "failed_attempt_count": 1,
-        "last_attempt_id": "T0121-A006",
-        "last_attempt_result": "blocked",
+        "last_attempt_id": "T0121-A007",
+        "last_attempt_result": "partial",
         "changed_files": [
           "src/Host.Windows/Networking/PeerAnnouncementLeasePublisher.cs",
           "tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs",
           "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
           "step three/T0121/execution-report.md",
           "step three/T0121/evidence/verification.md",
-          "step three/project-graph.md"
+          "step three/project-graph.md",
+          "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs",
+          "src/Host.Windows/MainWindow.xaml.cs",
+          "src/Host.Windows/MainWindow.xaml"
         ],
         "related_commits": [
           "969ad720db1a84c1f633031300ba26e00d48d5fa",
@@ -24986,7 +24996,7 @@
         "tests_failed": [
           "V 3.0.367 CI: Host lifecycle tests failed to compile because the new test passed HttpClient where PeerAnnouncementClient is required (CS1503)."
         ],
-        "blocked_reason": "The renewable publisher and loopback TTL tests exist, and T0130 stable host identity/private-key persistence is now verified. However, the publisher is still not wired to the WPF participation lifecycle; inbound request handling remains fail-closed; no validated HTTPS rendezvous endpoint or verified peer-reachable advertised address is configured. A stable persisted identity alone does not make the host remotely reachable.",
+        "blocked_reason": "The host now has a configuration-driven lifecycle that listens with libp2p under an explicitly trusted remote PeerId, publishes a renewable HTTPS/loopback-test lease, routes messages to a real request handler and stops renewal on disconnect. Exact-candidate CI has not yet run, and production Internet reachability remains an operator-provided assertion rather than an automated external probe; keep this task blocked until exact-head CI passes and deployment-specific peer reachability is independently demonstrated.",
         "reopened_reason": null,
         "contract_revalidation": {
           "state": "not_required",
@@ -24998,7 +25008,7 @@
             "src/Rendezvous.Service/PeerAnnouncementDirectory.cs"
           ]
         },
-        "follow_up": "Wire the verified T0130 identity provider into a real authenticated peer-reachable listener only after inbound protocol handling, HTTPS rendezvous configuration, and a verified advertised address exist; then add exact host lifecycle tests for announce/renew/stop/shutdown/expiry. Keep T0121 blocked and T0122 not_started until demonstrated."
+        "follow_up": "Run exact-PR-head quality and product workflows; fix and rerun any failures. Test with a peer on an independent network and a real HTTPS rendezvous before marking T0121 done or starting T0122."
       },
       "execution_history": [
         {
@@ -25190,6 +25200,46 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Unblock only after the host has an authenticated peer-reachable inbound request path with a stable verified peer identity, validated HTTPS rendezvous configuration and a verified advertised address; wire the lease publisher start/stop into the WPF participation toggle and shutdown; add exact-host-lifecycle tests proving safe renew/revoke/expiry behavior. Resolve the identity task ordering/cycle before introducing any new dependency edge. Keep T0122 not_started until T0121 acceptance is actually met."
+        },
+        {
+          "attempt_id": "T0121-A007",
+          "started_at": "2026-10-28T08:55:24.957Z",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Added a configuration-driven WPF peer hosting path backed by Libp2pPeerTransport and PeerAnnouncementLeasePublisher. It requires an explicitly trusted peer identity, fixed bind/advertised addresses, a user confirmation that the address was tested from the remote peer, and an HTTPS rendezvous endpoint (loopback HTTP only for tests). The handler validates incoming Protobuf inference requests, gates them through HostRequestCoordinator and the live inference session, and returns an InferenceResponse. Added an integration test covering real loopback rendezvous announcement, authenticated libp2p message exchange, disconnect-driven lease stop and natural expiry. Exact-head CI and external-network reachability verification are pending.",
+          "changed_files": [
+            "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs",
+            "src/Host.Windows/MainWindow.xaml.cs",
+            "src/Host.Windows/MainWindow.xaml",
+            "tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+            "step three/T0121/execution-report.md",
+            "step three/T0121/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Peer host lifecycle loopback integration",
+              "result": "pending",
+              "summary": "Runs an actual libp2p connection between separately instantiated trusted peer transports; verifies announcement, handler round-trip, disconnect and TTL expiry."
+            },
+            {
+              "name": "Step Three quality gate and product CI",
+              "result": "pending",
+              "summary": "Must complete on the exact PR head before recording success."
+            },
+            {
+              "name": "Independent-network public reachability",
+              "result": "not_run",
+              "summary": "Requires a remote peer outside the local loopback test and deployment-specific rendezvous/port configuration."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": "Production address reachability cannot be inferred from a local bind or loopback integration test. The UI requires an operator confirmation and the code reports that public reachability is not independently verified by the app.",
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Verify exact-head CI, repair any failures, then obtain independent-network reachability evidence. Keep T0121 blocked and T0122 not_started until those conditions are met."
         }
       ]
     },

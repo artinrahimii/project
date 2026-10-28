@@ -53,3 +53,11 @@ The lease publisher is not yet wired into the WPF host participation lifecycle b
 - **Acceptance boundary:** these results verify the exact V 3.0.368 build and tests, not host network-participation integration. The publisher is still disconnected from the WPF toggle, and no validated public rendezvous endpoint plus peer-reachable address/identity configuration exists. T0121 therefore remains `in_progress`.
 - **Graph integrity:** the unchanged T0121 -> T0122 edge remains `unreviewed`; no edge classification was changed in this attempt.
 - **Product change:** none in this attempt; this section records observed CI output only.
+
+## T0121-A007 — exact-source and test scope (2026-10-28)
+
+- **Base:** `0f7dab4f9db6d343cbbc6a54c341083a2b470081` (`V 3.0.446`), with the graph Blob resolved from the exact main commit tree.
+- **Implementation paths:** `src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs`, `src/Host.Windows/MainWindow.xaml.cs`, `src/Host.Windows/MainWindow.xaml`.
+- **Test path:** `tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs`; the test project links the lifecycle class from the production source tree in `tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj`.
+- **Graph path:** `step three/project-graph.md`. The original large-graph content was retrieved through the Git Blob API after normal file-content fetch returned zero characters. Before this candidate edit, the source Blob SHA was `0be6e6a1cc26a429bbc1800f175be0efab6b567e`, size was 2,175,654 UTF-8 bytes and the computed Git SHA-1 matched the tree entry; the complete fenced JSON parsed as 229 nodes / 424 edges. The graph update preserves the original JSON formatting and all existing dependency edges.
+- **Validation still pending:** exact-PR-head Step Three quality gate, HostLifecycle integration test, Windows WPF build/startup checks and Android product checks. An external peer on a separate network and a deployment-specific HTTPS rendezvous endpoint were not available in this run. No claim of public reachability or AC-P2P-01 success is made.
