@@ -62,3 +62,10 @@
 - Adjusted the nested prompt/status argument indentation and closing parenthesis under the multiline MutableStateFlow.copy() call in updatePrompt to match the actual ktlint diagnostics.
 - Finalized A004 as failed based on the exact V 3.0.498 Android lint result. The graph now reports attempt_count=5 and failed_attempt_count=4, matching the five history entries and four entries marked failed.
 - V 3.0.499 exact-head CI is pending. T0140 remains in_progress; no Android APK/JUnit/Protobuf success is claimed and no local Android SDK run was performed.
+
+
+## T0140-A005 exact-head V 3.0.499 CI result — succeeded
+
+- Step Three quality gate passed on exact commit 0606d03724c227819d7864e50d95dcf1e3d761a5: https://github.com/artinrahimii/project/actions/runs/40777115647.
+- White-P product workflow passed on that exact commit: https://github.com/artinrahimii/project/actions/runs/40777115802. Android lint, debug APK build, the Gradle testDebugUnitTest task, Protobuf Java/Kotlin generation checks and APK upload all passed. Windows WPF build, startup smoke, agent-tool policy/capability and DPAPI identity/trust checks passed. HostLifecycle integration tests passed.
+- Based on these exact-head results, T0140 status is now done. The summary retains four earlier failed attempts (attempt_count=5, failed_attempt_count=4) and records A005 as succeeded. This completes the ViewModel/repository architecture task only; it does not claim Android-to-host transport or Room persistence is implemented.

@@ -40,3 +40,12 @@
 - Graph was retrieved via exact-tree Blob 3d1cee2e4b52bc5456afa804a5c6b7417d47712a (2,419,983 expected bytes). Its complete UTF-8 content hash and size matched the exact Git Blob; all 229 nodes and 417 edges parsed.
 - Step Three quality gate passed; Android ktlint failed only on three nested indentation lines in ClientRequestRepository.kt:updatePrompt; APK/JUnit/Protobuf skipped. HostLifecycle passed; Windows WPF was still running when inspected.
 - A005 fixes those lines, finalizes A004's now-known failed result and keeps the task in_progress pending exact-head V 3.0.499 validation.
+
+
+## T0140 final acceptance — V 3.0.499
+- Exact main commit: 0606d03724c227819d7864e50d95dcf1e3d761a5; Step Three quality gate PASS: https://github.com/artinrahimii/project/actions/runs/40777115647; product build PASS: https://github.com/artinrahimii/project/actions/runs/40777115802.
+- Android: ktlint PASS, debug APK PASS, Gradle testDebugUnitTest PASS, generated Protobuf Java/Kotlin checks PASS, APK artifact upload PASS.
+- Windows: WPF build/startup smoke PASS; agent-tool process restrictions, policy rejection, backend/model capability gate and user-scoped DPAPI identity/trust storage PASS.
+- HostLifecycle unit/integration tests PASS.
+- Graph remained valid JSON with 229 task nodes / 417 edges. A005 is succeeded; T0140 is done with four earlier failed attempts retained. Android-to-host transport remains explicitly unimplemented.
+- Next logical task is T0141. Its unreviewed T0138 -> T0141 edge and the requirement for local conversation persistence versus privacy wording must be reviewed before implementation.
