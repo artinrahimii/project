@@ -75,3 +75,13 @@ The lease publisher is not yet wired into the WPF host participation lifecycle b
 - **Android build/lint/Protobuf PASS:** [40661258731 job 122724562866](https://github.com/artinrahimii/project/actions/runs/40661258731/job/122724562866).
 - **Live local inference PASS:** [40661258746](https://github.com/artinrahimii/project/actions/runs/40661258746).
 - **External reachability not run:** this execution has no separate-network remote peer/deployment rendezvous endpoint. No claim is made that the public advertised address works; `AC-P2P-01` remains **NOT RUN**.
+
+
+## 2026-10-28 — exact online main-head revalidation
+
+- Baseline: `main` at `d1056208073960132aaa04cdb1568cfb29b13284` (`V 3.0.447`).
+- Graph integrity: Blob `94b2f9396cf2b988c85e2082b8626910acfdd74f`, 2,191,744 UTF-8 bytes; recomputed Git Blob SHA-1 matched the tree entry. Full fenced JSON parsed as 229 tasks / 424 edges.
+- Exact-head CI jobs inspected and confirmed successful: [Step Three quality gate](https://github.com/artinrahimii/project/actions/runs/40662651891/job/122729230638), [HostLifecycle integration](https://github.com/artinrahimii/project/actions/runs/40662651874/job/122729230947), [Windows WPF](https://github.com/artinrahimii/project/actions/runs/40662651874/job/122729231366), [Android APK](https://github.com/artinrahimii/project/actions/runs/40662651874/job/122729231269), and [live local inference](https://github.com/artinrahimii/project/actions/runs/40662652089/job/122729231944). These statuses were inspected; no new test run was launched during this audit.
+- Independent-network acceptance: **NOT RUN**. No configured production HTTPS rendezvous endpoint or second peer on an independent network was available. Public reachability must not be inferred from loopback CI.
+- Local clone: attempted and failed because `github.com` could not be resolved in this environment; no local build/test is claimed.
+- Result: T0121 stays blocked, T0122 stays not_started, and AC-P2P-01 stays NOT RUN. No dependency edges were changed.
