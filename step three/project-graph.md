@@ -27156,8 +27156,8 @@
       ],
       "start_condition": "T0133's security identity/trust/transport contracts are complete and verified. T0128 is a separate independent-network acceptance test; it provides no artifact consumed by the deterministic rejection checks required here.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "src/Shared.Security/PeerSecurityPolicy.cs",
         "src/Shared.Security/HostIdentityStore.cs",
@@ -27177,12 +27177,12 @@
         "src/Shared.Security/ + tests/security/"
       ],
       "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nDependency review: T0133 → T0134 validated as contract_or_interface_dependency. T0128 → T0134 validated as sequencing_only and removed from active dependencies because external two-node deployment testing does not produce an implementation dependency for invalid-key, unknown-peer, or unsupported-version rejection. T0128 remains not_started and is not claimed as passed.\n\nCI evidence (V 3.0.459): the HostLifecycle job passed new malformed-private-key and unsupported identity-envelope-version assertions, along with existing malformed PeerId and unknown-peer rejection tests. The quality gate passed. T0134 intentionally remains in_progress: a direct negative test for incompatible libp2p Noise/TLS secure-channel version negotiation or an invalid secure-channel certificate has not yet been established. Existing application ProtocolVersionPolicy tests do not substitute for that missing low-level secure-channel test.\n\nT0134-A003 (V 3.0.461): Added an integration test that dials the running libp2p listener using a valid but intentionally mismatched remote PeerId while the dialer's trust store explicitly trusts that ID. This targets actual authenticated remote-identity/certificate mismatch rather than the existing pre-dial address/pinned-ID mismatch case. The source and report updates are recorded in V 3.0.461–V 3.0.463. The exact-commit GitHub combined-status query returned an empty status list and local .NET tests were not run, so this attempt remains pending CI; no acceptance claim is added until test logs verify execution and success.\n\nT0134-A004 (V 3.0.465): Added VerifyRejectsPlaintextOnlyPeerAsync to the integrated HostLifecycle suite. It configures a local libp2p peer with WithPlaintextEnforced(), then attempts to connect from the production secure transport to that peer's actual PeerId. The intended behavior is failure without a plaintext downgrade or authenticated connected state. This complements A003's live remote-PeerId mismatch test. No local .NET test was run; available status and workflow lookup did not provide an exact push-triggered test result. The task remains in_progress and the new tests are not marked passed.\n\nT0134-A005 (CI evidence on V 3.0.465): the exact HostLifecycle job failed because VerifySecureChannelRejectsUnexpectedPeerIdentityAsync did not catch the PeerConnectionException thrown by LocalPeer.DialAsyncCore / Libp2pPeerTransport.ConnectSecureAsync. The unhandled exception aborted the suite before the test assertion and before A004's plaintext-only case was reached.\n\nT0134-A006 (reproduced on V 3.0.468): the exact HostLifecycle job failed with the same PeerConnectionException at the same test path. The Android and WPF jobs passed and the Step Three quality gate passed; the integration test still failed. No security acceptance pass is claimed.\n\nT0134-A007 (corrective code change in this revision): added PeerConnectionException to the identity-mismatch negative test's expected connection-failure filter. The post-failure assertions still require client.IsConnected to be false and RemotePeerIdentity to be null. The correction has not yet been exercised by CI. T0134 remains in_progress, and explicit unsupported Noise/TLS secure-channel protocol-version coverage remains a separate acceptance question.\n\nT0134-A008: GitHub Actions for V 3.0.469 confirmed the A007 catch-filter correction. HostLifecycle job 122949971717 passed, with explicit log output PASS for both VerifySecureChannelRejectsUnexpectedPeerIdentityAsync and VerifyRejectsPlaintextOnlyPeerAsync. Android APK and Windows WPF jobs passed, the real local llama.cpp/GGUF inference workflow 40726185709 passed, and Step Three quality gate 40726185483 passed. No result from these runs is claimed for unsupported secure-channel protocol-version negotiation.\n\nT0134-A009: Added an integrated negative test using a real local libp2p listener whose encryption protocol list contains only /tls/999.0.0. The production client must fail to negotiate a shared secure-channel protocol and must not publish connection/authenticated-identity state. Pending exact-commit CI; this tests an unsupported libp2p secure-channel protocol ID/version, not every TLS wire-level version failure.\n\nT0134-A010 source-review fix: the first /tls/999.0.0 test draft included a literal dollar sign in the generated server multiaddress. This was detected before claiming acceptance and fixed in V 3.0.471. Neither that draft nor the new test is treated as passed. Pending exact-commit CI must verify the corrected version-ID rejection case and the prior security-negative cases.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nDependency review: T0133 → T0134 validated as contract_or_interface_dependency. T0128 → T0134 validated as sequencing_only and removed from active dependencies because external two-node deployment testing does not produce an implementation dependency for invalid-key, unknown-peer, or unsupported-version rejection. T0128 remains not_started and is not claimed as passed.\n\nCI evidence (V 3.0.459): the HostLifecycle job passed new malformed-private-key and unsupported identity-envelope-version assertions, along with existing malformed PeerId and unknown-peer rejection tests. The quality gate passed. T0134 intentionally remains in_progress: a direct negative test for incompatible libp2p Noise/TLS secure-channel version negotiation or an invalid secure-channel certificate has not yet been established. Existing application ProtocolVersionPolicy tests do not substitute for that missing low-level secure-channel test.\n\nT0134-A003 (V 3.0.461): Added an integration test that dials the running libp2p listener using a valid but intentionally mismatched remote PeerId while the dialer's trust store explicitly trusts that ID. This targets actual authenticated remote-identity/certificate mismatch rather than the existing pre-dial address/pinned-ID mismatch case. The source and report updates are recorded in V 3.0.461–V 3.0.463. The exact-commit GitHub combined-status query returned an empty status list and local .NET tests were not run, so this attempt remains pending CI; no acceptance claim is added until test logs verify execution and success.\n\nT0134-A004 (V 3.0.465): Added VerifyRejectsPlaintextOnlyPeerAsync to the integrated HostLifecycle suite. It configures a local libp2p peer with WithPlaintextEnforced(), then attempts to connect from the production secure transport to that peer's actual PeerId. The intended behavior is failure without a plaintext downgrade or authenticated connected state. This complements A003's live remote-PeerId mismatch test. No local .NET test was run; available status and workflow lookup did not provide an exact push-triggered test result. The task remains in_progress and the new tests are not marked passed.\n\nT0134-A005 (CI evidence on V 3.0.465): the exact HostLifecycle job failed because VerifySecureChannelRejectsUnexpectedPeerIdentityAsync did not catch the PeerConnectionException thrown by LocalPeer.DialAsyncCore / Libp2pPeerTransport.ConnectSecureAsync. The unhandled exception aborted the suite before the test assertion and before A004's plaintext-only case was reached.\n\nT0134-A006 (reproduced on V 3.0.468): the exact HostLifecycle job failed with the same PeerConnectionException at the same test path. The Android and WPF jobs passed and the Step Three quality gate passed; the integration test still failed. No security acceptance pass is claimed.\n\nT0134-A007 (corrective code change in this revision): added PeerConnectionException to the identity-mismatch negative test's expected connection-failure filter. The post-failure assertions still require client.IsConnected to be false and RemotePeerIdentity to be null. The correction has not yet been exercised by CI. T0134 remains in_progress, and explicit unsupported Noise/TLS secure-channel protocol-version coverage remains a separate acceptance question.\n\nT0134-A008: GitHub Actions for V 3.0.469 confirmed the A007 catch-filter correction. HostLifecycle job 122949971717 passed, with explicit log output PASS for both VerifySecureChannelRejectsUnexpectedPeerIdentityAsync and VerifyRejectsPlaintextOnlyPeerAsync. Android APK and Windows WPF jobs passed, the real local llama.cpp/GGUF inference workflow 40726185709 passed, and Step Three quality gate 40726185483 passed. No result from these runs is claimed for unsupported secure-channel protocol-version negotiation.\n\nT0134-A009: Added an integrated negative test using a real local libp2p listener whose encryption protocol list contains only /tls/999.0.0. The production client must fail to negotiate a shared secure-channel protocol and must not publish connection/authenticated-identity state. Pending exact-commit CI; this tests an unsupported libp2p secure-channel protocol ID/version, not every TLS wire-level version failure.\n\nT0134-A010 source-review fix: the first /tls/999.0.0 test draft included a literal dollar sign in the generated server multiaddress. This was detected before claiming acceptance and fixed in V 3.0.471. Neither that draft nor the new test is treated as passed. Pending exact-commit CI must verify the corrected version-ID rejection case and the prior security-negative cases.\n\nT0134-A010 verified on the corrected source revision V 3.0.471. The initial V 3.0.470 draft was not used as acceptance evidence: source review found its constructed address could include a literal dollar sign, so that PASS line alone was insufficient to prove protocol negotiation. The corrected V 3.0.471 HostLifecycle job 122955900543 (run 40727866470) then explicitly emitted PASS for unexpected remote PeerId rejection, plaintext-only peer rejection without downgrade, and unsupported secure-channel protocol ID/version negotiation; the job completed successfully. The same revision's Android APK and Windows WPF jobs succeeded, its real local inference integration run 40727866362 succeeded, and Step Three quality gate run 40727866237 succeeded.",
       "execution_summary": {
         "attempt_count": 10,
         "failed_attempt_count": 2,
         "last_attempt_id": "T0134-A010",
-        "last_attempt_result": "partial",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs",
           "step three/T0134/execution-report.md",
@@ -27198,14 +27198,22 @@
           "338af8f098b57f8e19ff0f14f9fa98c97f015485",
           "bcfe5544850a87ef1330626582e03ecd3c897d7e",
           "6776cebc6d4f578bb16f672b9db05d6a4abe2984",
-          "782be7fbd75edba6160f9e93f5c8323976764df6"
+          "782be7fbd75edba6160f9e93f5c8323976764df6",
+          "f88a66f1e99c3f94923a6cafc2a48e824c967cfb",
+          "406baaec426819380fe6e7588b297df3ad6f39de"
         ],
         "tests_passed": [
           "GitHub Actions product-build run 40717445528, Host lifecycle job 122918865305 on commit 234b79b9248f38a037febba07c55a265b2e0fc31: success. Log includes PASS for PeerSecurityPolicy rejection of malformed identities; PeerTrustStore fail-closed unknown/corrupt peer handling; HostIdentityStore rejecting corrupt envelopes, unsupported identity versions and malformed private keys.",
           "GitHub Actions Step Three quality gate run 40717445979 on commit 234b79b9248f38a037febba07c55a265b2e0fc31: success; graph structure/evidence checks passed.",
           "GitHub Actions V 3.0.469 HostLifecycle job 122949971717 (run 40726185754) passed; exact log output: PASS: libp2p secure-channel authentication rejects a remote identity that does not match the pinned PeerId.",
           "GitHub Actions V 3.0.469 HostLifecycle job 122949971717 (run 40726185754) passed; exact log output: PASS: secure libp2p dialing rejects a plaintext-only peer and does not downgrade to an insecure connection.",
-          "GitHub Actions Step Three quality gate run 40726185483 passed for V 3.0.469; real local inference integration run 40726185709 passed."
+          "GitHub Actions Step Three quality gate run 40726185483 passed for V 3.0.469; real local inference integration run 40726185709 passed.",
+          "V 3.0.471 HostLifecycle run 40727866470, job 122955900543: PASS: libp2p secure-channel authentication rejects a remote identity that does not match the pinned PeerId.",
+          "V 3.0.471 HostLifecycle run 40727866470, job 122955900543: PASS: secure libp2p dialing rejects a plaintext-only peer and does not downgrade to an insecure connection.",
+          "V 3.0.471 HostLifecycle run 40727866470, job 122955900543: PASS: secure libp2p negotiation rejects an unsupported secure-channel protocol ID/version without an insecure connection.",
+          "V 3.0.471 Android APK job 122955899965 and Windows WPF job 122955900557: success.",
+          "V 3.0.471 Real local inference integration run 40727866362: success.",
+          "V 3.0.471 Step Three quality gate run 40727866237: success."
         ],
         "tests_failed": [
           "GitHub Actions run 40722598672, HostLifecycle job 122937219297, commit e0512ece82f900e2a3f4586a6c286454eac994a2: failed in VerifySecureChannelRejectsUnexpectedPeerIdentityAsync because PeerConnectionException escaped the expected-failure filter; the plaintext-only case was not reached.",
@@ -27428,40 +27436,63 @@
           "started_at": "2026-10-28T16:35:35.868Z",
           "ended_at": null,
           "result": "partial",
-          "summary": "Added a test-only libp2p listener builder that advertises only unsupported secure-channel protocol ID/version /tls/999.0.0, and an integrated production-client negative test expecting negotiation rejection without connected or authenticated remote-peer state. The new test is not yet verified by CI.",
+          "summary": "Added unsupported /tls/999.0.0 test in V3.0.470. The logs printed PASS, but source review then found the constructed address could include a literal dollar sign; therefore that output is not accepted as proof of protocol-version negotiation. The corrected address was committed and verified in A010.",
           "changed_files": [
             "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs",
             "step three/T0134/execution-report.md",
             "step three/T0134/evidence/verification.md",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "f88a66f1e99c3f94923a6cafc2a48e824c967cfb",
           "tests": [],
-          "failure_details": null,
+          "failure_details": "Source-review risk: the initial address interpolation could produce a malformed multiaddress. The V3.0.470 PASS output was conservatively not accepted as proof of secure-channel negotiation.",
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect exact V3.0.470 HostLifecycle logs. Do not mark T0134 done unless the unsupported-version test and the prior remote identity mismatch/plaintext-only tests all run and pass; determine whether a TLS wire-level version negotiation case is also explicitly required."
+          "follow_up": "Use the corrected V3.0.471 outcome recorded in A010; preserve this as a partial draft attempt."
         },
         {
           "attempt_id": "T0134-A010",
           "started_at": "2026-10-28T16:37:23.518Z",
-          "ended_at": null,
-          "result": "partial",
-          "summary": "Source review caught and corrected the unsupported secure-channel test's constructed listen-address interpolation before treating it as acceptance evidence. The server still advertises only /tls/999.0.0; exact-commit CI is pending.",
+          "ended_at": "2026-10-28T16:38:40Z",
+          "result": "succeeded",
+          "summary": "Corrected the unsupported protocol-version test's listen-address construction and verified the corrected revision in exact-commit GitHub Actions. The V3.0.471 HostLifecycle job passed and explicitly printed PASS for remote identity mismatch, plaintext-only peer rejection without downgrade, and unsupported /tls/999.0.0 secure-channel protocol ID/version negotiation. Android APK, Windows WPF, real local inference, and graph quality gate jobs also succeeded.",
           "changed_files": [
-            "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs",
-            "step three/T0134/execution-report.md",
-            "step three/T0134/evidence/verification.md",
-            "step three/project-graph.md"
+            "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs"
           ],
-          "commit_sha": null,
-          "tests": [],
+          "commit_sha": "406baaec426819380fe6e7588b297df3ad6f39de",
+          "tests": [
+            {
+              "command": "GitHub Actions White-P product build / HostLifecycle job 122955900543",
+              "result": "passed",
+              "summary": "Run 40727866470 on V3.0.471; explicit PASS for unexpected remote PeerId rejection, plaintext-only peer rejection without downgrade, and unsupported secure-channel protocol ID/version negotiation."
+            },
+            {
+              "command": "GitHub Actions White-P product build / Android client APK job 122955899965",
+              "result": "passed",
+              "summary": "APK build, Kotlin formatting/lint, Protobuf round-trip tests, generated sources and artifact upload passed."
+            },
+            {
+              "command": "GitHub Actions White-P product build / Windows WPF host job 122955900557",
+              "result": "passed",
+              "summary": "Formatting, build, startup smoke test, agent-tool policy/security checks and DPAPI peer trust storage checks passed."
+            },
+            {
+              "command": "GitHub Actions Real local inference integration",
+              "result": "passed",
+              "summary": "Run 40727866362; pinned llama.cpp/GGUF checks and live inference response passed."
+            },
+            {
+              "command": "GitHub Actions Step Three quality gate",
+              "result": "passed",
+              "summary": "Run 40727866237; graph structure and recorded evidence quality checks passed."
+            }
+          ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Verify the corrected V3.0.471 HostLifecycle logs and ensure unsupported protocol ID/version, unexpected remote identity, and plaintext-only negative tests all execute and pass."
+          "follow_up": "T0134 satisfies the current graph acceptance scope. The verified test concerns unsupported libp2p secure-channel protocol ID/version negotiation; it does not claim every TLS wire-level compatibility permutation was tested."
         }
       ]
     },

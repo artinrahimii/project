@@ -82,10 +82,22 @@ A direct failing-handshake test for unsupported libp2p Noise/TLS secure-channel 
 
 ## T0134-A009 address-construction review
 
-The first revision of `VerifyRejectsUnsupportedSecureChannelProtocolVersionAsync` had an interpolation typo which would have prefixed a literal dollar sign to the multiaddress. This was detected during source review; that revision is not acceptance evidence and no test pass is inferred from it. The address expression is corrected in [V 3.0.471](https://github.com/artinrahimii/project/commit/TODO) before acceptance is evaluated.
+The first revision of `VerifyRejectsUnsupportedSecureChannelProtocolVersionAsync` had an interpolation typo which would have prefixed a literal dollar sign to the multiaddress. This was detected during source review; that revision is not acceptance evidence and no test pass is inferred from it. The address expression is corrected in [V 3.0.471](https://github.com/artinrahimii/project/commit/406baaec426819380fe6e7588b297df3ad6f39de) before acceptance is evaluated.
 
 ## T0134-A010 — corrected unsupported secure-channel ID/version case
 
 - The test builds a live local libp2p peer whose encryption stack advertises only `/tls/999.0.0` and dials it through the production secure transport.
 - Corrected address construction now appends `/p2p/{serverPeerIdentity}` without a stray prefix when necessary.
 - Expected behavior remains fail-closed negotiation with no connected state and no authenticated remote identity. CI for the corrective revision is pending; this isn't yet a test pass.
+
+
+## Final verified acceptance for T0134-A010
+
+- Source commit: [V 3.0.471](https://github.com/artinrahimii/project/commit/406baaec426819380fe6e7588b297df3ad6f39de).
+- [White-P product build 40727866470](https://github.com/artinrahimii/project/actions/runs/40727866470), HostLifecycle job 122955900543 completed successfully. Exact log output includes:
+  - `PASS: libp2p secure-channel authentication rejects a remote identity that does not match the pinned PeerId.`
+  - `PASS: secure libp2p dialing rejects a plaintext-only peer and does not downgrade to an insecure connection.`
+  - `PASS: secure libp2p negotiation rejects an unsupported secure-channel protocol ID/version without an insecure connection.`
+- The corrected server address was tested against the actual unsupported-version fixture. This is independent of the V3.0.470 draft, whose output was conservatively not counted after review found the interpolation defect.
+- Android APK and Windows WPF jobs passed in run 40727866470; [real local inference integration 40727866362](https://github.com/artinrahimii/project/actions/runs/40727866362) and [Step Three quality gate 40727866237](https://github.com/artinrahimii/project/actions/runs/40727866237) also passed.
+- Acceptance decision: all current T0134 criteria are evidenced. The graph task status is `done`; this does not claim every TLS wire-level compatibility permutation has been tested.

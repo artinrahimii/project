@@ -94,9 +94,21 @@ The test has not yet run on this revision. T0134 remains `in_progress` until the
 
 ## T0134-A009 source review correction
 
-During review of the new `/tls/999.0.0` test fixture, a string-interpolation typo was found in the constructed listen address: the draft emitted a literal dollar sign before the address. It was corrected in [V 3.0.471](https://github.com/artinrahimii/project/commit/TODO) to construct `{tcpAddress}/p2p/{serverPeerIdentity}` correctly when the listener address does not already contain a peer ID. The A009 test has not been treated as passing; the CI outcome for the superseded V 3.0.470 revision must be read separately from the corrected revision.
+During review of the new `/tls/999.0.0` test fixture, a string-interpolation typo was found in the constructed listen address: the draft emitted a literal dollar sign before the address. It was corrected in [V 3.0.471](https://github.com/artinrahimii/project/commit/406baaec426819380fe6e7588b297df3ad6f39de) to construct `{tcpAddress}/p2p/{serverPeerIdentity}` correctly when the listener address does not already contain a peer ID. The A009 test has not been treated as passing; the CI outcome for the superseded V 3.0.470 revision must be read separately from the corrected revision.
 
 ## Corrective attempt — T0134-A010 (pending CI)
 
 - **Change:** fixed the test-only multiaddress interpolation in `VerifyRejectsUnsupportedSecureChannelProtocolVersionAsync`; its server still advertises only `/tls/999.0.0`, and its client must reject negotiation without publishing connection state.
 - **Verification:** not yet available for the corrective revision. T0134 remains `in_progress`; the exact commit's HostLifecycle job must print the unsupported-version PASS line and still pass the identity-mismatch and plaintext-only cases.
+
+
+## Final acceptance evidence — T0134-A010
+
+The corrected source revision [V 3.0.471](https://github.com/artinrahimii/project/commit/406baaec426819380fe6e7588b297df3ad6f39de) was verified by exact-commit GitHub Actions:
+
+- [White-P product build run 40727866470](https://github.com/artinrahimii/project/actions/runs/40727866470), HostLifecycle job 122955900543: **passed**. The logs explicitly report PASS for the unexpected authenticated remote PeerId case, plaintext-only peer rejection without downgrade, and unsupported `/tls/999.0.0` secure-channel protocol ID/version negotiation.
+- In the same run, Android job 122955899965 and Windows WPF job 122955900557 passed. [Real local inference integration run 40727866362](https://github.com/artinrahimii/project/actions/runs/40727866362) passed, as did the [Step Three quality gate run 40727866237](https://github.com/artinrahimii/project/actions/runs/40727866237).
+
+The V 3.0.470 PASS line for the new version-ID case is deliberately **not** used as acceptance evidence because source review found the initial address interpolation could generate a malformed multiaddress. V 3.0.471 fixed the address, and the actual HostLifecycle run for that corrected revision independently emitted the expected PASS line. Earlier failed A005/A006 attempts remain in history, with the uncaught `PeerConnectionException` cause and corrective evidence preserved.
+
+**Final state:** T0134 is now `done`. Evidence covers malformed persisted key/identity material, unknown/untrusted peers, authenticated remote identity mismatch, plaintext-only downgrade rejection, application-protocol version checks, and unsupported libp2p secure-channel protocol ID/version negotiation. It does not claim exhaustive coverage of every TLS wire-level configuration.
