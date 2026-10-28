@@ -163,3 +163,16 @@ The current V 3.0.435 graph was re-read before T0130 work. Repository transport 
 - **Independent-network acceptance — NOT RUN:** no configured production HTTPS rendezvous endpoint or second peer on a separate network was available. CI/loopback results do not satisfy the external reachability requirement.
 - **Status:** `T0121` remains `blocked`, `T0122` remains `not_started`, and `AC-P2P-01` remains **NOT RUN**. No code or dependency edge was changed. This is evidence synchronization, not implementation progress.
 - **Follow-up:** obtain a production rendezvous URL and independent-network peer, verify the advertised TCP/UDP endpoint, and then re-evaluate T0121.
+
+
+## T0121-A018 — exact V 3.0.455 CI completed successfully; deployment acceptance remains blocked (2026-10-28)
+
+- **Exact online baseline:** [`8c770adbf0cb51153e301fdbec1ad8ddc242da0a`](https://github.com/artinrahimii/project/commit/8c770adbf0cb51153e301fdbec1ad8ddc242da0a), message `V 3.0.455`.
+- **Graph integrity:** exact-tree Git Blob `2a02bd71e2bf4fb7c0295906114bae801196789e` fetched in full; 2,233,276 UTF-8 bytes; recomputed Git Blob SHA-1 matched; full fenced JSON parsed as 229 nodes / 424 edges.
+- **Step Three quality gate — PASS:** [run 40711411110](https://github.com/artinrahimii/project/actions/runs/40711411110).
+- **HostLifecycle integration — PASS:** [job 122897386880](https://github.com/artinrahimii/project/actions/runs/40711410986/job/122897386880).
+- **Windows WPF Release/startup/security — PASS:** [job 122897387158](https://github.com/artinrahimii/project/actions/runs/40711410986/job/122897387158).
+- **Android APK/lint/Protobuf — PASS:** [job 122897386482](https://github.com/artinrahimii/project/actions/runs/40711410986/job/122897386482).
+- **Independent-network acceptance — NOT RUN:** no configured production HTTPS rendezvous endpoint or peer on an independent network was available. Loopback tests and CI do not establish external reachability.
+- **Result:** `T0121` remains `blocked`; `T0122` remains `not_started`; `AC-P2P-01` remains **NOT RUN**. No implementation code or dependency edge changed; this records completed CI evidence, not product implementation progress.
+- **Next:** deploy/configure the HTTPS rendezvous endpoint and verify advertised TCP/UDP reachability from a separate peer network before re-evaluating T0121.

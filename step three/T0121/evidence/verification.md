@@ -130,3 +130,15 @@ The lease publisher is not yet wired into the WPF host participation lifecycle b
 - [Android APK/lint/Protobuf checks — PASS](https://github.com/artinrahimii/project/actions/runs/40709904932/job/122892022486).
 - These results are from completed online GitHub Actions runs for this exact commit. No local build/test was run in this execution.
 - Independent-network reachability and production HTTPS rendezvous acceptance remain **NOT RUN**. `T0121` remains blocked; `T0122` remains not_started; `AC-P2P-01` remains **NOT RUN**. No product source or edge was changed.
+
+
+## Exact online main V 3.0.455 — completed CI verification
+
+- Baseline: [`8c770adbf0cb51153e301fdbec1ad8ddc242da0a`](https://github.com/artinrahimii/project/commit/8c770adbf0cb51153e301fdbec1ad8ddc242da0a), commit message `V 3.0.455`.
+- Graph Blob `2a02bd71e2bf4fb7c0295906114bae801196789e` was fetched from the exact tree; 2,233,276 UTF-8 bytes, recomputed Git Blob SHA-1 matched, complete fenced JSON parsed as 229 tasks / 424 edges.
+- [Step Three quality gate — PASS](https://github.com/artinrahimii/project/actions/runs/40711411110).
+- [Host lifecycle integration — PASS](https://github.com/artinrahimii/project/actions/runs/40711410986/job/122897386880).
+- [Windows WPF host — PASS](https://github.com/artinrahimii/project/actions/runs/40711410986/job/122897387158).
+- [Android APK — PASS](https://github.com/artinrahimii/project/actions/runs/40711410986/job/122897386482).
+- These are completed GitHub Actions results for this exact online commit; no local build/test was run in this execution.
+- Independent-network reachability and production HTTPS rendezvous acceptance remain **NOT RUN**. `T0121` stays blocked, `T0122` stays not_started, and `AC-P2P-01` stays **NOT RUN**. No product source or edge was changed.
