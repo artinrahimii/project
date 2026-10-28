@@ -27985,45 +27985,146 @@
       "title": "اسناد حریم خصوصی را صریحاً به‌گونه‌ای بنویس که میزبان پردازشگر می‌تواند متن درخواست و capsule را بخواند.",
       "section": "13. هویت ارتباطی و رمزنگاری",
       "depends_on": [
-        "T0137",
-        "T0128"
+        "T0137"
       ],
       "inputs": [
         "خروجی تأییدشدهٔ پیش‌نیازها",
         "نیازمندی مرتبط: اسناد حریم خصوصی را صریحاً به‌گونه‌ای بنویس که میزبان پردازشگر می‌تواند متن درخواست و capsule را بخواند."
       ],
       "outputs": [
-        "خروجی قابل بررسی مربوط به «اسناد حریم خصوصی را صریحاً به‌گونه‌ای بنویس که میزبان پردازشگر می‌تواند متن درخواست و capsule را بخواند.» در مسیر src/Shared.Security/ + tests/security/؛ همراه با آزمون/شاهد پذیرش متناسب."
+        "Explicit, user-readable privacy documentation stating that a processing host can inspect InferenceRequest.prompt and context_capsule after transport decryption, while distinguishing channel encryption from endpoint secrecy.",
+        "A source-contract test that checks schema, host handler, documentation disclosure, and the still-unverified Android-to-Windows runtime gate."
       ],
-      "start_condition": "همهٔ پیش‌نیازهای T0137 و T0128 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
+      "start_condition": "T0137 is done. The privacy disclosure is based on the canonical request schema and the current host-side parser/handler boundary; T0128's independent-node connectivity test is a separate runtime gate and remains explicitly NOT RUN here.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
-      "expected_output_paths": [
-        "src/Shared.Security/ + tests/security/"
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "README.md",
+        "docs/requirements.md",
+        "docs/acceptance.md",
+        "docs/decisions/ADR-0019-host-visible-inference-content.md",
+        "docs/decisions/README.md",
+        "tests/test_host_content_visibility.py",
+        "step three/T0138/execution-report.md",
+        "step three/T0138/evidence/verification.md",
+        "step three/project-graph.md"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "expected_output_paths": [
+        "README.md",
+        "docs/requirements.md",
+        "docs/acceptance.md",
+        "docs/decisions/ADR-0019-host-visible-inference-content.md",
+        "docs/decisions/README.md",
+        "tests/test_host_content_visibility.py"
+      ],
+      "evidence": [
+        "protocol/whitep/v1/messages.proto",
+        "src/Host.Windows/Networking/Libp2pPeerMessageProtocol.cs",
+        "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "README.md",
+        "docs/requirements.md",
+        "docs/acceptance.md",
+        "docs/decisions/ADR-0019-host-visible-inference-content.md",
+        "docs/decisions/README.md",
+        "tests/test_host_content_visibility.py",
+        "tests/test_claims_audit.py",
+        "step three/T0138/execution-report.md",
+        "step three/T0138/evidence/verification.md"
+      ],
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0138-A001 (2026-10-28T19:12:38.745Z): reviewed the T0128 -> T0138 edge against the exact versioned schema, host secure-channel boundary, host request parser and WPF handler. These sources establish the disclosure independently of an external-node reachability result; the new warning explicitly keeps AC-P2P-01/AC-PRIV-01 NOT RUN. Reclassified T0128 -> T0138 as validated sequencing_only and removed it from active prerequisites, preserving edge-change history. Added README, REQ-019, acceptance-policy and ADR-0019 disclosure, plus a source-contract test. CI is pending; task remains in_progress.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0138-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "README.md",
+          "docs/requirements.md",
+          "docs/acceptance.md",
+          "docs/decisions/ADR-0019-host-visible-inference-content.md",
+          "docs/decisions/README.md",
+          "tests/test_host_content_visibility.py",
+          "step three/T0138/execution-report.md",
+          "step three/T0138/evidence/verification.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
-          "affected_by_contract_changes": [],
-          "review_evidence": []
+          "state": "required",
+          "triggering_contracts": [
+            "The shared InferenceRequest includes prompt and context_capsule fields",
+            "The host receives and parses the request before local inference",
+            "Transport encryption terminates at the receiving endpoint and does not conceal content from that endpoint"
+          ],
+          "affected_by_contract_changes": [
+            "T0138"
+          ],
+          "review_evidence": [
+            "protocol/whitep/v1/messages.proto",
+            "src/Host.Windows/Networking/Libp2pPeerMessageProtocol.cs",
+            "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs",
+            "src/Host.Windows/MainWindow.xaml.cs",
+            "tests/test_host_content_visibility.py"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0138-A001",
+          "started_at": "2026-10-28T19:12:38.745Z",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Inspected the exact T0138 dependency/code boundary, added an explicit endpoint-visibility disclosure to README, REQ-019, acceptance policy and new ADR-0019; registered the ADR and added a runnable Python source-contract test. Reviewed T0128 -> T0138 as sequencing-only and removed it from active prerequisites because the docs explicitly preserve independent-node and privacy runtime gates as NOT RUN. Exact-head CI pending.",
+          "changed_files": [
+            "README.md",
+            "docs/requirements.md",
+            "docs/acceptance.md",
+            "docs/decisions/ADR-0019-host-visible-inference-content.md",
+            "docs/decisions/README.md",
+            "tests/test_host_content_visibility.py",
+            "step three/T0138/execution-report.md",
+            "step three/T0138/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Host content visibility source-contract tests",
+              "result": "pending",
+              "summary": "Verify the canonical Protobuf prompt/capsule fields, host parser/handler source and disclosure text."
+            },
+            {
+              "name": "Python repository test suite",
+              "result": "pending",
+              "summary": "Run unittest discovery including the new source-contract test."
+            },
+            {
+              "name": "Graph structure and evidence paths",
+              "result": "pending",
+              "summary": "Run graph_guard, including repository-backed expected/output paths and dependency history."
+            },
+            {
+              "name": "Product build and host lifecycle regression tests",
+              "result": "pending",
+              "summary": "Confirm docs/test-only change does not regress host/Android builds or HostLifecycle."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "REQ-019 now explicitly requires disclosure that the processing host can read prompt and context_capsule after transport decryption.",
+            "ADR-0019 distinguishes transport encryption from secrecy against the receiving host."
+          ],
+          "follow_up": "Verify exact V 3.0.482 workflow results. If source-contract, Python and graph quality gates pass, preserve T0128 as a separate NOT RUN runtime gate and finalize T0138; fix any observed failure first."
+        }
+      ]
     },
     {
       "id": "T0139",
@@ -35382,15 +35483,6 @@
       ]
     },
     {
-      "from": "T0128",
-      "to": "T0138",
-      "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
-    },
-    {
       "from": "T0138",
       "to": "T0139",
       "type": "blocks",
@@ -39869,6 +39961,26 @@
         "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs",
         "src/Shared.Security/AuthenticatedRequestReplayGuard.cs",
         "src/Host.Windows/Networking/PeerResponseCorrelationValidator.cs"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-28T19:12:38.745Z",
+      "edge_from": "T0128",
+      "edge_to": "T0138",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "old_validation_status": "unreviewed",
+      "new_validation_status": "validated",
+      "change_action": "removed_from_active_edges",
+      "reason": "T0128 establishes live connectivity/reachability between independent nodes, but T0138 documents an endpoint visibility fact already defined by the canonical InferenceRequest fields and by the existing host parser/handler boundary. The disclosure explicitly preserves AC-P2P-01 and AC-PRIV-01 as NOT RUN, so a successful independent-network test is not a technical input to the accuracy of this warning. Retain this only as conservative historical order, not an active prerequisite.",
+      "evidence": [
+        "protocol/whitep/v1/messages.proto",
+        "src/Host.Windows/Networking/Libp2pPeerMessageProtocol.cs",
+        "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "docs/acceptance.md",
+        "docs/decisions/ADR-0002-direct-p2p-data-path.md"
       ],
       "reviewed_by": "Step Three execution review"
     }

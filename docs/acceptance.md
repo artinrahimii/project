@@ -54,6 +54,12 @@ These CI results demonstrate that the configured Windows and Android build entry
 
 A release candidate is accepted only when every applicable gate below has a linked test result or inspection record from the actual implementation. A missing project, skipped test, mocked-only end-to-end path, unavailable device, or unrecorded result is **not passed**. Mark each gate `PASS`, `FAIL`, or `NOT RUN`; `NOT RUN` blocks release acceptance. Preserve logs and toolchain versions without recording prompts, model responses, credentials, or other sensitive payloads.
 
+### Endpoint visibility and request-content privacy boundary (T0138)
+
+The recipient host is a security endpoint, not an opaque relay. The canonical `InferenceRequest` contains `prompt` and `context_capsule`; the host process parses the request and passes the request to its inference session. Therefore, when a request reaches a processing host, that host can read the prompt text and capsule bytes. Noise/TLS transport encryption protects the channel from observers between the peers; it does not hide the payload from the receiving host and is not end-to-end encryption against that endpoint. Users should send requests only to a host they trust and should not assume that the host operator or software cannot retain content.
+
+This is a source/contract disclosure, not a claim that the complete Android-to-Windows path has been delivered or that the endpoint never stores content. `AC-P2P-01` and `AC-PRIV-01` remain **NOT RUN** until their separate runtime, network-path, and storage-inspection criteria pass.
+
 ### Gate matrix
 
 | Gate | Required real acceptance evidence | Required verification | Failure condition |

@@ -121,10 +121,10 @@ The first release is intended to comprise a Windows host, an Android client, sha
 - **Trace:** T0010, T0024–T0030.
 
 ### REQ-019 — Honest capability and privacy claims
-- **Requirement:** UI and documentation distinguish implemented, unavailable, and unverified capabilities; claims such as local-only, P2P, encrypted, or no-storage are not presented as proven without matching evidence.
-- **Acceptance:** Contract tests prevent unsupported completion/privacy claims in project documentation, and each security/privacy claim links to a repeatable test or audit result.
-- **Verification:** Documentation contract tests plus feature-specific network/security tests; text checks alone do not prove runtime privacy.
-- **Trace:** T0001–T0009, T0011–T0013.
+- **Requirement:** UI and documentation distinguish implemented, unavailable, and unverified capabilities; claims such as local-only, P2P, encrypted, or no-storage are not presented as proven without matching evidence. Privacy documentation must explicitly disclose that the processing host is an endpoint that can read the `InferenceRequest.prompt` text and `context_capsule` bytes after transport decryption; transport encryption must not be described as protecting content from that host.
+- **Acceptance:** Contract tests prevent unsupported completion/privacy claims in project documentation, explicitly check the processing-host visibility disclosure, and link each security/privacy claim to a repeatable test or audit result. Documentation must keep the Android-to-Windows runtime gates visibly unverified until the relevant runtime evidence passes.
+- **Verification:** Documentation/source-contract tests plus feature-specific network/security tests; text checks alone do not prove runtime privacy or end-to-end routing.
+- **Trace:** T0001–T0009, T0011–T0013, T0138.
 
 ### REQ-020 — Explicit first-release boundary
 - **Requirement:** The first release prioritizes Windows hosting, Android requesting, one inference per host, local model execution, and direct P2P exchange; full model marketplace and broad unrestricted agent execution are out of scope.
