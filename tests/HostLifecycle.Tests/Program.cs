@@ -116,6 +116,7 @@ await ParticipationActivationRecoveryTests.RunAsync();
 await NetworkInferenceRequestFrameAcceptanceTests.RunAsync();
 await NetworkInferenceRequestResponseMapperAcceptanceTests.RunAsync();
 await PeerTransportContractAcceptanceTests.RunAsync().ConfigureAwait(false);
+PeerMessageSecurityAcceptanceTests.Run();
 PeerSecurityPolicyAcceptanceTests.Run();
 PeerTrustStoreAcceptanceTests.Run();
 HostIdentityStoreAcceptanceTests.Run();

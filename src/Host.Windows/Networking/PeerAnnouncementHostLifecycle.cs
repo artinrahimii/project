@@ -5,7 +5,11 @@ using System.Net.Http;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
+using Google.Protobuf;
 using Nethermind.Libp2p.Core;
+using WhiteP.Host.Infrastructure;
+using WhiteP.Shared.Contracts;
+using WhiteP.Shared.Contracts.V1;
 using WhiteP.Shared.Contracts.Networking;
 using WhiteP.Shared.Security;
 
@@ -30,6 +34,7 @@ public sealed class PeerAnnouncementHostLifecycle : IAsyncDisposable
     private readonly PeerAnnouncementClient _announcementClient;
     private readonly TimeSpan _timeToLive;
     private readonly TimeSpan _renewalInterval;
+    private readonly AuthenticatedRequestReplayGuard _replayGuard;
 
     private Libp2pPeerTransport? _transport;
     private PeerAnnouncementLeasePublisher? _publisher;
@@ -51,7 +56,8 @@ public sealed class PeerAnnouncementHostLifecycle : IAsyncDisposable
         bool advertisedAddressVerified,
         Func<byte[], CancellationToken, Task<byte[]>> requestHandler,
         TimeSpan? timeToLive = null,
-        TimeSpan? renewalInterval = null)
+        TimeSpan? renewalInterval = null,
+        AuthenticatedRequestReplayGuard? replayGuard = null)
     {
         ArgumentNullException.ThrowIfNull(trustStore);
         ArgumentNullException.ThrowIfNull(localIdentity);
@@ -89,6 +95,7 @@ public sealed class PeerAnnouncementHostLifecycle : IAsyncDisposable
         _requestHandler = requestHandler;
         _timeToLive = timeToLive ?? PeerAnnouncementLeasePublisher.DefaultTimeToLive;
         _renewalInterval = renewalInterval ?? PeerAnnouncementLeasePublisher.DefaultRenewalInterval;
+        _replayGuard = replayGuard ?? new AuthenticatedRequestReplayGuard();
         _httpClient = new HttpClient { Timeout = TimeSpan.FromSeconds(10) };
         try
         {
@@ -261,11 +268,47 @@ public sealed class PeerAnnouncementHostLifecycle : IAsyncDisposable
 
             while (!cancellationToken.IsCancellationRequested)
             {
-                byte[] request = await transport.ReceiveMessageAsync(cancellationToken).ConfigureAwait(false);
-                byte[] response = await _requestHandler(request, cancellationToken).ConfigureAwait(false);
-                if (response is null || response.Length == 0)
+                byte[] requestWire = await transport.ReceiveMessageAsync(cancellationToken).ConfigureAwait(false);
+                var parsedRequest = ProtocolMessageParser.ParseInferenceRequest(requestWire);
+                if (!parsedRequest.IsValid || parsedRequest.Message is null)
+                    throw new InvalidDataException("The peer sent a malformed or invalid inference request.");
+
+                InferenceRequest request = parsedRequest.Message;
+                string authenticatedPeerIdentity = transport.RemotePeerIdentity
+                    ?? throw new InvalidDataException("The secure peer session has no authenticated remote identity.");
+                if (!StringComparer.Ordinal.Equals(authenticatedPeerIdentity, _expectedPeerIdentity))
+                    throw new InvalidDataException("The secure peer session identity changed unexpectedly.");
+
+                DateTimeOffset requestExpiry = DateTimeOffset.FromUnixTimeMilliseconds(checked((long)request.DeadlineUnixMs));
+                var replayDecision = _replayGuard.TryRegister(
+                    authenticatedPeerIdentity, request.RequestId, request.AttemptId, requestExpiry, DateTimeOffset.UtcNow);
+
+                if (replayDecision != AuthenticatedRequestReplayDecision.Accepted)
+                {
+                    InferenceResponse rejected = CreateReplayRejection(request);
+                    PeerResponseCorrelationValidator.Validate(request, rejected, LocalPeerIdentity);
+                    await transport.SendMessageAsync(rejected.ToByteArray(), cancellationToken).ConfigureAwait(false);
+                    continue;
+                }
+
+                byte[] responseWire = await _requestHandler(requestWire, cancellationToken).ConfigureAwait(false);
+                if (responseWire is null || responseWire.Length == 0)
                     throw new InvalidDataException("The peer request handler returned no response.");
-                await transport.SendMessageAsync(response, cancellationToken).ConfigureAwait(false);
+                if (responseWire.Length > ProtocolMessageLimits.MaximumResponseMessageBytes)
+                    throw new InvalidDataException("The peer response exceeds the protocol message limit.");
+
+                InferenceResponse parsedResponse;
+                try
+                {
+                    parsedResponse = InferenceResponse.Parser.ParseFrom(responseWire);
+                }
+                catch (InvalidProtocolBufferException exception)
+                {
+                    throw new InvalidDataException("The peer request handler produced malformed response data.", exception);
+                }
+
+                PeerResponseCorrelationValidator.Validate(request, parsedResponse, LocalPeerIdentity);
+                await transport.SendMessageAsync(responseWire, cancellationToken).ConfigureAwait(false);
             }
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
@@ -282,6 +325,19 @@ public sealed class PeerAnnouncementHostLifecycle : IAsyncDisposable
             catch (Exception disconnectException) { Volatile.Write(ref _lastFailureType, disconnectException.GetType().Name); }
         }
     }
+
+    private InferenceResponse CreateReplayRejection(InferenceRequest request) =>
+        new()
+        {
+            RequestId = request.RequestId,
+            AttemptId = request.AttemptId,
+            EphemeralHostId = LocalPeerIdentity,
+            Outcome = InferenceOutcome.Rejected,
+            OutputText = string.Empty,
+            CompletedAtUnixMs = (ulong)Math.Max(1L, DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()),
+            ModelId = request.ModelId,
+            ErrorMessage = "A duplicate or untracked request was rejected."
+        };
 
     public async ValueTask DisposeAsync()
     {

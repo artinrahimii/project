@@ -27763,8 +27763,7 @@
       "title": "آزمون دستکاری پیام، جعل پاسخ، replay و اتصال به همتای نامعتبر را بنویس.",
       "section": "13. هویت ارتباطی و رمزنگاری",
       "depends_on": [
-        "T0136",
-        "T0128"
+        "T0136"
       ],
       "inputs": [
         "خروجی تأییدشدهٔ پیش‌نیازها",
@@ -27773,35 +27772,134 @@
       "outputs": [
         "خروجی قابل بررسی مربوط به «آزمون دستکاری پیام، جعل پاسخ، replay و اتصال به همتای نامعتبر را بنویس.» در مسیر src/Shared.Security/ + tests/security/؛ همراه با آزمون/شاهد پذیرش متناسب."
       ],
-      "start_condition": "همهٔ پیش‌نیازهای T0136 و T0128 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
+      "start_condition": "T0136 is done. The parser/response-correlation/replay tests run against local security boundaries and authenticated loopback peers; T0128's independent-network reachability acceptance is tracked separately and is not an API prerequisite for these tests.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
-      "expected_output_paths": [
-        "src/Shared.Security/ + tests/security/"
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "src/Shared.Security/AuthenticatedRequestReplayGuard.cs",
+        "src/Host.Windows/Networking/PeerResponseCorrelationValidator.cs",
+        "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs",
+        "tests/HostLifecycle.Tests/PeerMessageSecurityAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "step three/T0137/execution-report.md",
+        "step three/T0137/evidence/verification.md",
+        "step three/project-graph.md"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "expected_output_paths": [
+        "src/Shared.Security/AuthenticatedRequestReplayGuard.cs",
+        "src/Host.Windows/Networking/PeerResponseCorrelationValidator.cs",
+        "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs",
+        "tests/HostLifecycle.Tests/PeerMessageSecurityAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/Program.cs"
+      ],
+      "evidence": [
+        "src/Shared.Security/AuthenticatedRequestReplayGuard.cs",
+        "src/Host.Windows/Networking/PeerResponseCorrelationValidator.cs",
+        "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs",
+        "tests/HostLifecycle.Tests/PeerMessageSecurityAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs",
+        "step three/T0137/execution-report.md",
+        "step three/T0137/evidence/verification.md"
+      ],
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0137-A001 (2026-10-28T18:15:37.898Z): Reviewed the T0136 and T0128 incoming edges against the actual implementation. T0136 -> T0137 remains active as sequencing_only; T0128 -> T0137 was validated as sequencing_only and removed from active edges because the negative security suite runs against local parser/transport boundaries and authenticated loopback peers. T0137 -> T0138 was reviewed as sequencing_only and retained as a conservative execution-order edge. Added bounded in-memory authenticated-peer request/attempt replay fencing at the peer host boundary, strict request parsing, response size/Protobuf/ID/model/host correlation checks before send, and C# acceptance tests for tampered messages, forged responses, replay, and untrusted peer behavior. Exact-head CI is pending; task remains in_progress. This does not claim independent-network acceptance T0128.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0137-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Shared.Security/AuthenticatedRequestReplayGuard.cs",
+          "src/Host.Windows/Networking/PeerResponseCorrelationValidator.cs",
+          "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs",
+          "src/Host.Windows/MainWindow.xaml.cs",
+          "tests/HostLifecycle.Tests/PeerMessageSecurityAcceptanceTests.cs",
+          "tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs",
+          "tests/HostLifecycle.Tests/Program.cs",
+          "step three/T0137/execution-report.md",
+          "step three/T0137/evidence/verification.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
-          "affected_by_contract_changes": [],
-          "review_evidence": []
+          "state": "required",
+          "triggering_contracts": [
+            "Authenticated libp2p peer identity is the replay-cache namespace",
+            "InferenceRequest request_id/attempt_id is the replay tuple",
+            "InferenceResponse request_id/attempt_id/model_id/host identity must match the active request"
+          ],
+          "affected_by_contract_changes": [
+            "T0137"
+          ],
+          "review_evidence": [
+            "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs",
+            "src/Host.Windows/Networking/PeerResponseCorrelationValidator.cs",
+            "src/Shared.Security/AuthenticatedRequestReplayGuard.cs",
+            "tests/HostLifecycle.Tests/PeerMessageSecurityAcceptanceTests.cs"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0137-A001",
+          "started_at": "2026-10-28T18:15:37.898Z",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Added a bounded in-memory replay guard keyed by the authenticated remote PeerId plus request_id/attempt_id; validated incoming protobuf requests before dispatch; checked outbound response size, schema, request/attempt/model correlation, and local host identity; added parser, replay-cache and forged-response acceptance cases; converted peer-host loopback acceptance from arbitrary bytes to versioned InferenceRequest/InferenceResponse messages and added exact replay rejection. CI for this source revision is pending.",
+          "changed_files": [
+            "src/Shared.Security/AuthenticatedRequestReplayGuard.cs",
+            "src/Host.Windows/Networking/PeerResponseCorrelationValidator.cs",
+            "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs",
+            "src/Host.Windows/MainWindow.xaml.cs",
+            "tests/HostLifecycle.Tests/PeerMessageSecurityAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "step three/T0137/execution-report.md",
+            "step three/T0137/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "PeerMessageSecurityAcceptanceTests",
+              "result": "pending",
+              "summary": "Tampered request parsing, replay tuple/capacity/expiry, and forged response correlation assertions."
+            },
+            {
+              "name": "PeerAnnouncementClientAcceptanceTests peer-host loopback",
+              "result": "pending",
+              "summary": "Authenticated loopback protobuf request/response, response correlation and exact replay rejected before a second handler invocation."
+            },
+            {
+              "name": "PeerTransportContractAcceptanceTests",
+              "result": "pending",
+              "summary": "Existing live libp2p tests verify untrusted peer and unexpected authenticated identity rejection."
+            },
+            {
+              "name": "Step Three quality gate",
+              "result": "pending",
+              "summary": "Graph structure, dependency edge evidence, recorded output paths and Python checks."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "PeerAnnouncementHostLifecycle now rejects malformed/non-InferenceRequest input before handler dispatch.",
+            "PeerAnnouncementHostLifecycle only transmits a response whose protobuf contract and request/attempt/model/host correlation match the active authenticated request.",
+            "The replay fence retains accepted request/attempt tuples in bounded memory until their deadlines and fails closed at capacity."
+          ],
+          "follow_up": "Inspect exact-commit HostLifecycle, Windows WPF, Android APK and Step Three quality workflows. If all pass and logs confirm the new acceptance lines, append a succeeded attempt and finalize T0137; otherwise preserve this partial attempt and fix the observed failure."
+        }
+      ]
     },
     {
       "id": "T0138",
@@ -35179,28 +35277,30 @@
       "from": "T0136",
       "to": "T0137",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
-    },
-    {
-      "from": "T0128",
-      "to": "T0137",
-      "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0137 exercises the versioned request/attempt fields, but no function, implementation, or contract introduced by the random-ID generator is required to validate parser tampering, response correlation, replay tuple fencing, or peer authentication. Keep this edge as conservative execution order only; the tests use the existing request/attempt contract and can run against local authenticated loopback peers.",
+      "validation_status": "validated",
+      "evidence": [
+        "protocol/whitep/v1/messages.proto",
+        "src/Shared.Contracts/ProtocolMessageValidator.cs",
+        "src/Host.Windows/Requests/SecureRequestIdGenerator.cs",
+        "tests/HostLifecycle.Tests/PeerMessageSecurityAcceptanceTests.cs"
+      ]
     },
     {
       "from": "T0137",
       "to": "T0138",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0138 documents which parties can read request/capsule contents and consumes no security-test API added by T0137. Retain the edge as conservative ordering only; the separate T0128 edge still tracks external-network acceptance for the privacy claim.",
+      "validation_status": "validated",
+      "evidence": [
+        "docs/requirements.md",
+        "docs/decisions/ADR-0018-explicit-peer-trust-and-identity-verification.md",
+        "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs",
+        "src/Shared.Security/AuthenticatedRequestReplayGuard.cs",
+        "src/Host.Windows/Networking/PeerResponseCorrelationValidator.cs"
+      ]
     },
     {
       "from": "T0128",
@@ -36921,6 +37021,7 @@
     "T0134",
     "T0135",
     "T0136",
+    "T0137",
     "T0121",
     "T0122",
     "T0123",
@@ -36929,7 +37030,6 @@
     "T0126",
     "T0127",
     "T0128",
-    "T0137",
     "T0138",
     "T0139",
     "T0140",
@@ -39638,6 +39738,60 @@
         "https://github.com/artinrahimii/project/actions/runs/40734640359/job/122979781847"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-28T18:15:37.898Z",
+      "edge_from": "T0136",
+      "edge_to": "T0137",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "old_validation_status": "unreviewed",
+      "new_validation_status": "validated",
+      "reason": "T0137 exercises the versioned request/attempt fields, but no function, implementation, or contract introduced by the random-ID generator is required to validate parser tampering, response correlation, replay tuple fencing, or peer authentication. Keep this edge as conservative execution order only; the tests use the existing request/attempt contract and can run against local authenticated loopback peers.",
+      "evidence": [
+        "protocol/whitep/v1/messages.proto",
+        "src/Shared.Contracts/ProtocolMessageValidator.cs",
+        "src/Host.Windows/Requests/SecureRequestIdGenerator.cs",
+        "tests/HostLifecycle.Tests/PeerMessageSecurityAcceptanceTests.cs"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-28T18:15:37.898Z",
+      "edge_from": "T0128",
+      "edge_to": "T0137",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "old_validation_status": "unreviewed",
+      "new_validation_status": "validated",
+      "change_action": "removed_from_active_edges",
+      "reason": "T0137's acceptance is a local security-negative-test suite and a loopback authenticated peer exchange. It consumes no API, configuration, or artifact from the two-independent-network deployment acceptance in T0128; that external reachability gate remains independently uncompleted and is not needed to test parser rejection, peer identity checks, request replay fencing, or response correlation.",
+      "evidence": [
+        "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs",
+        "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+        "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/PeerMessageSecurityAcceptanceTests.cs"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-28T18:15:37.898Z",
+      "edge_from": "T0137",
+      "edge_to": "T0138",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "old_validation_status": "unreviewed",
+      "new_validation_status": "validated",
+      "reason": "T0138 documents which parties can read request/capsule contents and consumes no security-test API added by T0137. Retain the edge as conservative ordering only; the separate T0128 edge still tracks external-network acceptance for the privacy claim.",
+      "evidence": [
+        "docs/requirements.md",
+        "docs/decisions/ADR-0018-explicit-peer-trust-and-identity-verification.md",
+        "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs",
+        "src/Shared.Security/AuthenticatedRequestReplayGuard.cs",
+        "src/Host.Windows/Networking/PeerResponseCorrelationValidator.cs"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
   "updated_at": "2026-10-28",
@@ -39808,6 +39962,24 @@
         "tests/HostLifecycle.Tests/SecureRequestIdGeneratorTests.cs",
         "tests/HostLifecycle.Tests/Program.cs",
         "https://github.com/artinrahimii/project/actions/runs/40734640359/job/122979781847"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-28T18:15:37.898Z",
+      "moved_tasks": [
+        "T0137"
+      ],
+      "old_positions": {
+        "T0137": 136
+      },
+      "new_anchor": "Immediately after T0136 and before the externally blocked T0121/T0122/T0128 chain",
+      "reason": "After reviewing T0137's incoming edges, the independent-network E2E edge was found to be sequencing-only and removed from active dependencies. Local authenticated-loopback and parser security tests can execute after T0136 without claiming T0128 success.",
+      "evidence": [
+        "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs",
+        "tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/PeerMessageSecurityAcceptanceTests.cs"
       ],
       "reviewed_by": "Step Three execution review"
     }

@@ -32,6 +32,7 @@ public partial class MainWindow : Window
     private readonly HostInferenceSession _session;
     private readonly ChatConversation _conversation = new();
     private readonly HostRequestCoordinator _peerRequestCoordinator = new();
+    private readonly AuthenticatedRequestReplayGuard _peerRequestReplayGuard = new();
     private PeerAnnouncementHostLifecycle? _peerParticipationService;
     private string? _requestedModelMemoryRequirementText;
     private string? _requestedMinimumFreeDiskRequirementText;
@@ -857,7 +858,8 @@ public partial class MainWindow : Window
                 advertisedAddress,
                 peerPort,
                 advertisedAddressVerified: true,
-                HandlePeerInferenceMessageAsync);
+                HandlePeerInferenceMessageAsync,
+                replayGuard: _peerRequestReplayGuard);
             _peerParticipationService = service;
             await service.StartAsync();
 

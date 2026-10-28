@@ -1,17 +1,23 @@
 using System;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Reflection;
 using System.Text;
 using System.Text.Json;
+using Google.Protobuf;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.Extensions.DependencyInjection;
 using Nethermind.Libp2p.Core;
+using WhiteP.Host.Infrastructure;
 using WhiteP.Host.Windows.Networking;
+using WhiteP.Host.Windows.Requests;
 using WhiteP.Rendezvous.Service;
+using WhiteP.Shared.Contracts;
 using WhiteP.Shared.Contracts.Networking;
+using WhiteP.Shared.Contracts.V1;
 
 internal static class PeerAnnouncementClientAcceptanceTests
 {
@@ -179,6 +185,7 @@ internal static class PeerAnnouncementClientAcceptanceTests
         Assert(unverifiedAddressRejected,
             "The host must refuse to publish an advertised address unless its reachability has been independently confirmed.");
 
+        var requestHandlerCalls = 0;
         await using var host = new PeerAnnouncementHostLifecycle(
             hostTrust.Store,
             hostIdentity,
@@ -188,7 +195,27 @@ internal static class PeerAnnouncementClientAcceptanceTests
             IPAddress.Loopback,
             ReservePort(),
             advertisedAddressVerified: true,
-            (bytes, _) => Task.FromResult(bytes.Reverse().ToArray()),
+            (bytes, _) =>
+            {
+                var parsed = ProtocolMessageParser.ParseInferenceRequest(bytes);
+                if (!parsed.IsValid || parsed.Message is null)
+                    throw new InvalidDataException("The loopback test supplied an invalid inference request.");
+
+                Interlocked.Increment(ref requestHandlerCalls);
+                var requestMessage = parsed.Message;
+                var responseMessage = new InferenceResponse
+                {
+                    RequestId = requestMessage.RequestId,
+                    AttemptId = requestMessage.AttemptId,
+                    EphemeralHostId = hostPeerId,
+                    Outcome = InferenceOutcome.Succeeded,
+                    OutputText = "loopback-inference-result",
+                    CompletedAtUnixMs = (ulong)Math.Max(1L, DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()),
+                    ModelId = requestMessage.ModelId,
+                    ErrorMessage = string.Empty
+                };
+                return Task.FromResult(responseMessage.ToByteArray());
+            },
             TimeSpan.FromSeconds(2),
             TimeSpan.FromMilliseconds(150));
 
@@ -219,12 +246,39 @@ internal static class PeerAnnouncementClientAcceptanceTests
         Assert(client.IsConnected && host.IsActive,
             "A separately instantiated trusted peer must establish an authenticated encrypted connection to the published host.");
 
-        byte[] request = [0x00, 0x01, 0xFE, 0x7F, 0x22];
+        var requestMessage = new InferenceRequest
+        {
+            ProtocolVersion = ProtocolVersionPolicy.CurrentVersion,
+            RequestId = SecureRequestIdGenerator.CreateRequestId(),
+            AttemptId = "attempt-loopback-001",
+            ModelId = "fixture-model",
+            Prompt = "peer security acceptance request",
+            DeadlineUnixMs = (ulong)DateTimeOffset.UtcNow.AddMinutes(2).ToUnixTimeMilliseconds(),
+            MaxOutputTokens = 32
+        };
+        byte[] request = requestMessage.ToByteArray();
         await client.SendMessageAsync(request, timeout.Token).ConfigureAwait(false);
-        byte[] response = await client.ReceiveMessageAsync(timeout.Token)
+        byte[] responseWire = await client.ReceiveMessageAsync(timeout.Token)
             .WaitAsync(TimeSpan.FromSeconds(10), timeout.Token).ConfigureAwait(false);
-        Assert(response.SequenceEqual(request.Reverse()),
-            "The host lifecycle must deliver a received peer message to its real request handler and send the handler response back over libp2p.");
+        var response = InferenceResponse.Parser.ParseFrom(responseWire);
+        Assert(response.RequestId == requestMessage.RequestId &&
+               response.AttemptId == requestMessage.AttemptId &&
+               response.EphemeralHostId == hostPeerId &&
+               response.Outcome == InferenceOutcome.Succeeded &&
+               response.OutputText == "loopback-inference-result",
+            "The host must return a protocol-valid response correlated to the authenticated request.");
+
+        await client.SendMessageAsync(request, timeout.Token).ConfigureAwait(false);
+        byte[] replayWire = await client.ReceiveMessageAsync(timeout.Token)
+            .WaitAsync(TimeSpan.FromSeconds(10), timeout.Token).ConfigureAwait(false);
+        var replayResponse = InferenceResponse.Parser.ParseFrom(replayWire);
+        Assert(replayResponse.Outcome == InferenceOutcome.Rejected &&
+               replayResponse.RequestId == requestMessage.RequestId &&
+               replayResponse.AttemptId == requestMessage.AttemptId &&
+               replayResponse.ErrorMessage == "A duplicate or untracked request was rejected.",
+            "Replaying the same authenticated request/attempt tuple must be rejected without a second handler invocation.");
+        Assert(Volatile.Read(ref requestHandlerCalls) == 1,
+            "An exact replay must not reach the inference handler twice.");
 
         await client.DisconnectAsync(timeout.Token).ConfigureAwait(false);
         DateTimeOffset stoppedDeadline = DateTimeOffset.UtcNow.AddSeconds(5);
