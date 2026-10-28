@@ -64,3 +64,17 @@ A direct failing-handshake test for unsupported libp2p Noise/TLS secure-channel 
 - Source: `tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs`.
 - Change: add `PeerConnectionException` to the existing expected-failure filter, using the exception type explicitly named by the CI stack trace. Keep the post-failure assertions that no connection or authenticated remote identity is published.
 - Verification: not yet run on the corrective revision. This evidence is pending CI; don't mark the test or T0134 as passed until logs show the test completed and the plaintext-only test also executed successfully. A direct unsupported Noise/TLS protocol-version test may remain necessary.
+
+
+## T0134-A008 — correction confirmed by exact-commit CI
+
+- Commit: [V 3.0.469](https://github.com/artinrahimii/project/commit/782be7fbd75edba6160f9e93f5c8323976764df6).
+- [HostLifecycle job 122949971717](https://github.com/artinrahimii/project/actions/runs/40726185754) completed successfully. Its log explicitly reports PASS for the unexpected remote identity test and the plaintext-only peer rejection test. The same White-P product workflow passed its Android APK and Windows WPF jobs.
+- [Real local inference integration](https://github.com/artinrahimii/project/actions/runs/40726185709) passed, and [Step Three quality gate](https://github.com/artinrahimii/project/actions/runs/40726185483) passed.
+- This verifies the A007 catch-filter correction and the two negative cases previously failing/not reached. It is not evidence of a dedicated unsupported secure-channel version test.
+
+## T0134-A009 — unsupported libp2p secure-channel protocol ID/version (pending CI)
+
+- Added `VerifyRejectsUnsupportedSecureChannelProtocolVersionAsync` using an actual local libp2p peer factory whose stream encryption stack advertises only `/tls/999.0.0`. The production dialer uses the regular registered Noise/TLS stack and should fail negotiation because no secure-channel protocol ID is shared.
+- The assertion requires rejection and that `client.IsConnected` stays false and `client.RemotePeerIdentity` remains null. The test fixture implements only the IProtocol ID marker and does not implement or replace cryptographic algorithms.
+- No result is claimed yet for the new test; its exact-commit CI must show the output line and the entire HostLifecycle job must pass before acceptance status is reconsidered.

@@ -73,3 +73,20 @@ Both HostLifecycle logs terminate in `VerifySecureChannelRejectsUnexpectedPeerId
 The catch filter in `tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs` now includes `PeerConnectionException`, the failure type actually emitted by the maintained libp2p stack. The test still asserts that the failed handshake leaves the client disconnected and `RemotePeerIdentity` null. No .NET test has yet run against this corrective revision; its result is **pending CI**, not passed.
 
 T0134 remains `in_progress`. After CI, verify that both negative tests execute and pass. Separately determine whether the acceptance requirement still needs a direct negative test for an unsupported Noise/TLS secure-channel protocol version; this fix does not close that possible coverage gap.
+
+
+## CI verification — T0134-A008
+
+The exact push-triggered CI for [V 3.0.469](https://github.com/artinrahimii/project/commit/782be7fbd75edba6160f9e93f5c8323976764df6) completed successfully:
+
+- [White-P product build run 40726185754](https://github.com/artinrahimii/project/actions/runs/40726185754): HostLifecycle job 122949971717 passed. Its log explicitly prints PASS for both `VerifySecureChannelRejectsUnexpectedPeerIdentityAsync` and `VerifyRejectsPlaintextOnlyPeerAsync`; Android APK formatting/build/Protobuf checks and Windows WPF build/smoke/security checks also passed.
+- [Real local inference integration run 40726185709](https://github.com/artinrahimii/project/actions/runs/40726185709): passed, including the real local llama.cpp/GGUF response check.
+- [Step Three quality gate run 40726185483](https://github.com/artinrahimii/project/actions/runs/40726185483): passed.
+
+This confirms the A007 exception-filter correction and the identity-mismatch/plaintext-only negative cases. It does not cover an explicitly unsupported libp2p secure-channel protocol ID/version.
+
+## New acceptance case — T0134-A009 (pending CI)
+
+Added `VerifyRejectsUnsupportedSecureChannelProtocolVersionAsync` to the integrated HostLifecycle acceptance suite. It starts a real local libp2p listener whose stream stack advertises only `/tls/999.0.0`, while the production secure client offers its normal supported Noise/TLS protocols. The expected behavior is negotiation failure with neither a connected state nor an authenticated remote identity. The test uses the maintained libp2p stack and a test-only protocol-ID fixture; it adds no custom cryptography and changes no production protocol policy.
+
+The test has not yet run on this revision. T0134 remains `in_progress` until the exact commit's HostLifecycle logs confirm this new assertion and the prior negative cases all passed. This specifically tests unsupported libp2p secure-channel protocol ID/version negotiation; it does not independently test every possible TLS wire-level protocol-version failure.
