@@ -20,6 +20,8 @@
 - HTTPS/loopback policy and metadata-only HTTP API: `src/Host.Windows/Networking/PeerAnnouncementClient.cs`.
 - Renewal lifecycle and TTL refresh: `src/Host.Windows/Networking/PeerAnnouncementLeasePublisher.cs`.
 - Expiry cleanup and current-record replacement: `src/Rendezvous.Service/PeerAnnouncementDirectory.cs`.
+- WPF peer-host lifecycle and authenticated request processing: `src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs`.
+- WPF participation enable/disable, endpoint configuration, and shutdown wiring: `src/Host.Windows/MainWindow.xaml.cs` and `src/Host.Windows/MainWindow.xaml`.
 - Executable loopback acceptance cases: `tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs`, including `PeriodicLeaseRenewalRefreshesTtlAndStopsAsync` and `PeerHostLifecyclePublishesAndServesTrustedPeerAsync`.
 - Stable Windows host identity and explicit peer trust consumed by the WPF lifecycle: `src/Host.Windows/Security/WindowsHostIdentityProvider.cs` and `src/Shared.Security/PeerTrustStore.cs`.
 - Source/configuration/test traceability regression: `tests/test_decision_traceability.py`.
