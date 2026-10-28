@@ -21,9 +21,9 @@ class AndroidComposeNavigationTests(unittest.TestCase):
     def test_launcher_activity_starts_the_compose_app_and_home_is_the_start_route(self):
         self.assertIn('android.intent.action.MAIN', MANIFEST)
         self.assertIn('android.intent.category.LAUNCHER', MANIFEST)
-        self.assertIn("WhitePClientApp()", ACTIVITY)
+        self.assertIn("whitePClientApp()", ACTIVITY)
         self.assertIn("startDestination = ClientDestination.startDestination.route", ACTIVITY)
-        self.assertIn("val startDestination: ClientDestination = HOME", DESTINATIONS)
+        self.assertIn("val startDestination: ClientDestination = ClientDestination.HOME", DESTINATIONS)
 
     def test_navigation_compose_dependency_is_explicitly_pinned(self):
         self.assertIn(
@@ -39,7 +39,7 @@ class AndroidComposeNavigationTests(unittest.TestCase):
             with self.subTest(destination=destination):
                 self.assertIn(f"{destination}(", DESTINATIONS)
                 self.assertIn(f"composable(ClientDestination.{destination}.route)", ACTIVITY)
-        self.assertIn("ClientDestination.bottomNavigation.forEach", ACTIVITY)
+        self.assertIn("ClientNavigation.bottomNavigation.forEach", ACTIVITY)
         self.assertIn("navController.navigate(item.route)", ACTIVITY)
         self.assertIn("popUpTo(navController.graph.findStartDestination().id)", ACTIVITY)
         self.assertIn("launchSingleTop = true", ACTIVITY)
@@ -48,7 +48,7 @@ class AndroidComposeNavigationTests(unittest.TestCase):
     def test_request_screen_does_not_claim_to_send_and_privacy_screen_discloses_host_visibility(self):
         self.assertIn("Android-to-host transport is not implemented.", ACTIVITY)
         self.assertIn("The processing host can read your prompt and context capsule", ACTIVITY)
-        self.assertIn("Transport encryption protects data in transit.", ACTIVITY)
+        self.assertIn("Transport encryption protects data in transit, not from the receiving host.", ACTIVITY)
         self.assertIn("Android-to-Windows delivery", ACTIVITY)
         self.assertIn("no-storage behavior have not been verified.", ACTIVITY)
 

@@ -56,7 +56,7 @@ private fun whitePClientApp() {
     Scaffold(
         bottomBar = {
             NavigationBar {
-                ClientDestination.bottomNavigation.forEach { item ->
+                ClientNavigation.bottomNavigation.forEach { item ->
                     val selected =
                         currentDestination?.hierarchy?.any { it.route == item.route } == true
                     NavigationBarItem(
@@ -79,7 +79,7 @@ private fun whitePClientApp() {
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = ClientDestination.startDestination.route,
+            startDestination = ClientNavigation.startDestination.route,
             modifier = Modifier.padding(innerPadding),
         ) {
             composable(ClientDestination.HOME.route) {

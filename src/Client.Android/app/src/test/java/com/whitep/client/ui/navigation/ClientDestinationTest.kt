@@ -11,7 +11,7 @@ class ClientDestinationTest {
         val destinations = ClientDestination.values()
 
         assertEquals(destinations.size, destinations.map { it.route }.toSet().size)
-        assertEquals(ClientDestination.HOME, ClientDestination.startDestination)
+        assertEquals(ClientDestination.HOME, ClientNavigation.startDestination)
     }
 
     @Test
@@ -22,9 +22,9 @@ class ClientDestinationTest {
                 ClientDestination.CONNECTIONS,
                 ClientDestination.PRIVACY,
             ),
-            ClientDestination.bottomNavigation,
+            ClientNavigation.bottomNavigation,
         )
-        assertTrue(ClientDestination.bottomNavigation.contains(ClientDestination.HOME))
-        assertFalse(ClientDestination.bottomNavigation.contains(ClientDestination.REQUEST))
+        assertTrue(ClientNavigation.bottomNavigation.contains(ClientDestination.HOME))
+        assertFalse(ClientNavigation.bottomNavigation.contains(ClientDestination.REQUEST))
     }
 }
