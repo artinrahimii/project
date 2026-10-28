@@ -27158,35 +27158,53 @@
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
       "status": "in_progress",
       "status_fa": "در حال اجرا",
-      "actual_output_paths": [],
+      "actual_output_paths": [
+        "src/Shared.Security/PeerSecurityPolicy.cs",
+        "src/Shared.Security/HostIdentityStore.cs",
+        "src/Shared.Security/PeerTrustStore.cs",
+        "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+        "tests/HostLifecycle.Tests/PeerSecurityPolicyAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/PeerTrustStoreAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/HostIdentityStoreAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "docs/decisions/ADR-0016-maintained-libp2p-cryptographic-transport.md",
+        "step three/T0134/execution-report.md",
+        "step three/T0134/evidence/verification.md",
+        "step three/project-graph.md"
+      ],
       "expected_output_paths": [
         "src/Shared.Security/ + tests/security/"
       ],
       "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nDependency review: T0133 → T0134 validated as contract_or_interface_dependency. T0128 → T0134 validated as sequencing_only and removed from active dependencies because external two-node deployment testing does not produce an implementation dependency for invalid-key, unknown-peer, or unsupported-version rejection. T0128 remains not_started and is not claimed as passed.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nDependency review: T0133 → T0134 validated as contract_or_interface_dependency. T0128 → T0134 validated as sequencing_only and removed from active dependencies because external two-node deployment testing does not produce an implementation dependency for invalid-key, unknown-peer, or unsupported-version rejection. T0128 remains not_started and is not claimed as passed.\n\nCI evidence (V 3.0.459): the HostLifecycle job passed new malformed-private-key and unsupported identity-envelope-version assertions, along with existing malformed PeerId and unknown-peer rejection tests. The quality gate passed. T0134 intentionally remains in_progress: a direct negative test for incompatible libp2p Noise/TLS secure-channel version negotiation or an invalid secure-channel certificate has not yet been established. Existing application ProtocolVersionPolicy tests do not substitute for that missing low-level secure-channel test.",
       "execution_summary": {
-        "attempt_count": 1,
+        "attempt_count": 2,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0134-A001",
-        "last_attempt_result": "implementation_added_tests_not_run",
+        "last_attempt_id": "T0134-A002",
+        "last_attempt_result": "ci_passed_acceptance_gap_open",
         "changed_files": [
           "tests/HostLifecycle.Tests/HostIdentityStoreAcceptanceTests.cs",
           "step three/project-graph.md",
           "step three/T0134/execution-report.md",
           "step three/T0134/evidence/verification.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
+        "related_commits": [
+          "234b79b9248f38a037febba07c55a265b2e0fc31"
+        ],
+        "tests_passed": [
+          "GitHub Actions product-build run 40717445528, Host lifecycle job 122918865305 on commit 234b79b9248f38a037febba07c55a265b2e0fc31: success. Log includes PASS for PeerSecurityPolicy rejection of malformed identities; PeerTrustStore fail-closed unknown/corrupt peer handling; HostIdentityStore rejecting corrupt envelopes, unsupported identity versions and malformed private keys.",
+          "GitHub Actions Step Three quality gate run 40717445979 on commit 234b79b9248f38a037febba07c55a265b2e0fc31: success; graph structure/evidence checks passed."
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "in_progress",
+          "state": "validated",
           "triggering_contracts": [
-            "T0133 identity validation",
-            "T0133 explicit peer-trust contract",
-            "maintained libp2p secure-channel peer identity",
-            "ProtocolVersionPolicy unsupported-version rejection"
+            "T0133 persistent host identity validation",
+            "T0133 explicit peer trust / authenticated PeerId contract",
+            "ProtocolVersionPolicy application-protocol version handling"
           ],
           "affected_by_contract_changes": [],
           "review_evidence": [
@@ -27194,11 +27212,9 @@
             "src/Shared.Security/HostIdentityStore.cs",
             "src/Shared.Security/PeerTrustStore.cs",
             "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
-            "tests/HostLifecycle.Tests/PeerSecurityPolicyAcceptanceTests.cs",
-            "tests/HostLifecycle.Tests/PeerTrustStoreAcceptanceTests.cs",
-            "tests/HostLifecycle.Tests/HostIdentityStoreAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs",
             "tests/HostLifecycle.Tests/Program.cs",
-            "docs/decisions/ADR-0016-maintained-libp2p-cryptographic-transport.md"
+            "https://github.com/artinrahimii/project/actions/runs/40717445528/job/122918865305"
           ]
         }
       },
@@ -27217,6 +27233,32 @@
           ],
           "commit_sha": null,
           "tests": []
+        },
+        {
+          "attempt_id": "T0134-A002",
+          "started_at": "2026-10-28T15:35:07Z",
+          "ended_at": "2026-10-28T15:35:53Z",
+          "result": "ci_passed_acceptance_gap_open",
+          "summary": "The exact implementation commit's HostLifecycle acceptance job passed, including the new malformed-private-key and unsupported-identity-envelope-version assertions. The quality gate also passed. The task remains in_progress because no explicit negative integration test yet exercises rejection of an incompatible libp2p Noise/TLS secure-channel negotiation version or invalid secure-channel certificate; unsupported application-protocol versions are covered separately.",
+          "changed_files": [
+            "tests/HostLifecycle.Tests/HostIdentityStoreAcceptanceTests.cs",
+            "step three/project-graph.md",
+            "step three/T0134/execution-report.md",
+            "step three/T0134/evidence/verification.md"
+          ],
+          "commit_sha": "234b79b9248f38a037febba07c55a265b2e0fc31",
+          "tests": [
+            {
+              "command": "GitHub Actions: White-P product build / Host lifecycle unit and integration tests",
+              "result": "passed",
+              "summary": "GitHub Actions product-build run 40717445528, Host lifecycle job 122918865305 on commit 234b79b9248f38a037febba07c55a265b2e0fc31: success. Log includes PASS for PeerSecurityPolicy rejection of malformed identities; PeerTrustStore fail-closed unknown/corrupt peer handling; HostIdentityStore rejecting corrupt envelopes, unsupported identity versions and malformed private keys."
+            },
+            {
+              "command": "GitHub Actions: Step Three quality gate",
+              "result": "passed",
+              "summary": "GitHub Actions Step Three quality gate run 40717445979 on commit 234b79b9248f38a037febba07c55a265b2e0fc31: success; graph structure/evidence checks passed."
+            }
+          ]
         }
       ]
     },
