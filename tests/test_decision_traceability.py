@@ -200,6 +200,11 @@ class DecisionTraceabilityTests(unittest.TestCase):
             "src/Shared.Contracts/Networking/PeerAnnouncement.cs",
             "src/Host.Windows/Networking/PeerAnnouncementClient.cs",
             "src/Host.Windows/Networking/PeerAnnouncementLeasePublisher.cs",
+            "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs",
+            "src/Host.Windows/MainWindow.xaml.cs",
+            "src/Host.Windows/MainWindow.xaml",
+            "src/Host.Windows/Security/WindowsHostIdentityProvider.cs",
+            "src/Shared.Security/PeerTrustStore.cs",
             "src/Rendezvous.Service/PeerAnnouncementDirectory.cs",
             "tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs",
         )
@@ -228,10 +233,12 @@ class DecisionTraceabilityTests(unittest.TestCase):
         self.assertIn("pair.Value.ExpiresAtUtc <= now", directory)
         self.assertIn("_current.Remove(id)", directory)
         self.assertIn("PeriodicLeaseRenewalRefreshesTtlAndStopsAsync", acceptance_tests)
+        self.assertIn("PeerHostLifecyclePublishesAndServesTrustedPeerAsync", acceptance_tests)
+        self.assertIn("WPF participation enable/disable and shutdown are now wired", ADR6_LEASE)
         self.assertIn("ExpiresAtUtc > firstExpiry", acceptance_tests)
         self.assertIn("await lease.StopAsync()", acceptance_tests)
         self.assertIn("AC-P2P-01 remains `NOT RUN`", ADR6_LEASE)
-        self.assertIn("T0121 remains `in_progress`", ADR6_LEASE)
+        self.assertIn("T0121 remains `blocked`", ADR6_LEASE)
 
 
     def test_single_active_inference_decision_maps_to_admission_coordinator_and_protocol_tests(self):

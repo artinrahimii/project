@@ -1,4 +1,4 @@
-# T0121 execution report — partial; CI verified
+# T0121 execution report — code and CI verified; external network acceptance blocked
 
 - **Task:** implement renewable host-presence announcements with TTL.
 - **Implementation commit:** `V 3.0.365` — [`969ad720db1a84c1f633031300ba26e00d48d5fa`](https://api.github.com/repos/artinrahimii/project/commit/969ad720db1a84c1f633031300ba26e00d48d5fa).
@@ -75,3 +75,24 @@ The current V 3.0.435 graph was re-read before T0130 work. Repository transport 
 - **Exact-head CI:** pending. No build/test pass is claimed until the product and quality workflows complete on the final PR head.
 - **Known remaining acceptance gap:** the integration test is loopback-hosted. Public-network reachability of a deployment's advertised address and the actual hosted rendezvous endpoint cannot be verified from this repository-only run. The code fails closed unless an operator explicitly confirms the address was independently tested, and the UI avoids claiming the app performs that test. Keep T0121 blocked until exact-head CI and independent-network acceptance are recorded.
 - **Status:** partial implementation; no dependency edges changed. T0122 remains not_started.
+
+
+## T0121-A008 — startup/guard correction, final product check failed (2026-10-28)
+
+- **Candidate:** `b352d775b8583655d1e2414e712e0a1c7fa11292` on PR #6, based on the checked `main` commit `0f7dab4f9db6d343cbbc6a54c341083a2b470081` (`V 3.0.446`).
+- **Runtime correction:** the host listener now waits for the first authenticated libp2p session before calling `ReceiveMessageAsync`, whose transport contract intentionally rejects a missing session. This prevents the newly published lease from being stopped immediately after startup when no peer has connected yet.
+- **Regression guards:** Python checks now assert the active authenticated-host configuration and fail-closed behavior, while retaining the separate guard that the legacy `ParticipationGatedNetworkListener` remains loopback-only.
+- **Passed on this exact candidate:** [Step Three quality gate run 40661160984](https://github.com/artinrahimii/project/actions/runs/40661160984) (191 Python tests; graph 229 tasks/424 edges, zero errors and one preserved T0001 warning); [HostLifecycle job 122724238606](https://github.com/artinrahimii/project/actions/runs/40661160981/job/122724238606), including the loopback rendezvous/authenticated-peer test.
+- **Failure retained:** the exact candidate's overall [product workflow 40661160981](https://github.com/artinrahimii/project/actions/runs/40661160981) failed its Windows build with CS0104 for ambiguous `HostCapabilities` and CS1061 because `Google.Protobuf` was not imported for `InferenceResponse.ToByteArray()`. These are compile errors, not accepted product behavior; A009 fixes them. No history was erased.
+
+## T0121-A009 — exact-candidate CI verified (2026-10-28)
+
+- **Candidate source commit:** `c06d0ff57e18c2e0ea8f685692553ab8ba089fe6` (`T0121-A009: resolve WPF protobuf and host capability references`), on PR #6 targeting `main`.
+- **Implementation:** added the domain `HostCapabilities` alias and imported `Google.Protobuf` for the existing serialization extension. The host lifecycle waits for an authenticated session, keeps the metadata-only lease renewed while active, passes bounded/parsed requests to the existing host coordinator and live inference session, and stops renewal on disconnection or shutdown. The WPF controls require an explicit trusted PeerId, HTTPS rendezvous URL, fixed bind/advertised addresses and port, plus the operator's separate-network reachability confirmation.
+- **Step Three quality gate PASS:** [run 40661258738](https://github.com/artinrahimii/project/actions/runs/40661258738) — 191 Python tests passed; graph guard verified 229 tasks and 424 edges, zero errors and one existing T0001 unmapped-dependency warning.
+- **HostLifecycle + peer-host acceptance PASS:** [job 122724562643](https://github.com/artinrahimii/project/actions/runs/40661258731/job/122724562643) — the exact candidate's lifecycle suite passed, including the new loopback-hosted announcement, authenticated libp2p request/response, disconnect-driven lease stop and expiry test.
+- **Windows WPF Release build/startup/DPAPI PASS:** [job 122724563236](https://github.com/artinrahimii/project/actions/runs/40661258731/job/122724563236) — formatting, build, generated Protobuf validation, WPF startup smoke, agent-tool policy checks and Windows DPAPI identity/trust acceptance passed.
+- **Android APK/lint/Protobuf PASS:** [job 122724562866](https://github.com/artinrahimii/project/actions/runs/40661258731/job/122724562866).
+- **Real local inference PASS:** [run 40661258746](https://github.com/artinrahimii/project/actions/runs/40661258746) — pinned llama.cpp/GGUF validation and live local-model inference/cancellation passed.
+- **Remaining acceptance gap:** no remote peer on an independent network or configured production rendezvous/port-forwarded address was available in this execution. Loopback CI does not prove public reachability, and the UI's checked confirmation is an operator assertion rather than an active probe by the application. T0121 therefore remains `blocked`; `T0122` remains `not_started`; `AC-P2P-01` remains **NOT RUN**.
+- **Dependency graph:** no edges changed; all 424 edges are preserved, including the validated `T0121 → T0122` contract dependency.
