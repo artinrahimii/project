@@ -118,3 +118,13 @@ The current V 3.0.435 graph was re-read before T0130 work. Repository transport 
 - **Unresolved acceptance:** no configured production HTTPS rendezvous endpoint or second peer on an independent network was available. Public reachability of the advertised TCP/QUIC addresses remains **NOT RUN**; loopback tests do not prove it.
 - **State and impact:** `T0121` remains `blocked`; `T0122` remains `not_started`; `AC-P2P-01` remains **NOT RUN**. No source files or dependency edges changed; this record is evidence synchronization, not software implementation progress.
 - **Next:** run deployment-specific reachability acceptance from an independent network and record the observed results before re-evaluating `T0121`.
+
+
+## T0121-A012 — exact V 3.0.449 CI completed; external acceptance still blocked (2026-10-28)
+
+- **Exact online baseline:** `main` at [`ff6dc21837e52c9e3e8123d409b3b41aa265c4a5`](https://github.com/artinrahimii/project/commit/ff6dc21837e52c9e3e8123d409b3b41aa265c4a5), message `V 3.0.449`.
+- **Graph integrity:** the recursive Git tree for this exact commit identified `step three/project-graph.md` as Blob `506e379f69c53aabdb2f5884cb40f6926886ae35`, size 2,203,126 bytes. The ordinary file fetch returned zero characters, so the graph was re-fetched using Git Blob API. Full content length: 2,203,126 UTF-8 bytes and 2,081,221 text characters. Recomputed Git Blob SHA-1 matched the tree entry; fenced JSON parsed completely as 229 tasks / 424 edges.
+- **Exact-head CI inspected:** [Step Three quality gate]( https://github.com/artinrahimii/project/actions/runs/40705066591/job/122874848819 ), [HostLifecycle integration]( https://github.com/artinrahimii/project/actions/runs/40705066594/job/122874849027 ), [Windows WPF build]( https://github.com/artinrahimii/project/actions/runs/40705066594/job/122874848582 ), and [Android APK build]( https://github.com/artinrahimii/project/actions/runs/40705066594/job/122874848980 ) all completed successfully on `V 3.0.449`. These are GitHub Actions results inspected during this audit; no additional test run was launched by this audit.
+- **Independent acceptance:** NOT RUN. No configured production HTTPS rendezvous endpoint or second peer on an independent network was available. Loopback integration and operator attestation do not prove public reachability of advertised TCP/QUIC endpoints.
+- **Outcome:** `T0121` remains `blocked`; `T0122` remains `not_started`; `AC-P2P-01` remains **NOT RUN**. No product source or dependency edge changed. This is a durable evidence update, not implementation progress.
+- **Next:** perform deployment-specific reachability acceptance from a peer on an independent network, then re-evaluate `T0121` before starting `T0122`.

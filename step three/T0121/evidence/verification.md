@@ -94,3 +94,11 @@ The lease publisher is not yet wired into the WPF host participation lifecycle b
 - Exact-head CI completed successfully: [quality gate](https://github.com/artinrahimii/project/actions/runs/40704091906/job/122871401609), [HostLifecycle integration](https://github.com/artinrahimii/project/actions/runs/40704092070/job/122871402110), [Windows host build](https://github.com/artinrahimii/project/actions/runs/40704092070/job/122871401355), and [Android APK build](https://github.com/artinrahimii/project/actions/runs/40704092070/job/122871401840).
 - Independent-network reachability acceptance remains **NOT RUN** because no deployed HTTPS rendezvous endpoint or external peer was available. T0121 remains blocked; T0122 remains not_started; AC-P2P-01 remains NOT RUN.
 - No dependency edge changed, and no product implementation was modified in this verification-only attempt.
+
+
+## Exact online main V 3.0.449 — post-CI revalidation (2026-10-28)
+
+- Baseline: `main` at `ff6dc21837e52c9e3e8123d409b3b41aa265c4a5` (`V 3.0.449`); commit tree `53335766a2d5157876a5d1cf2a694f33f50254da`.
+- Graph tree entry: `step three/project-graph.md`, Blob `506e379f69c53aabdb2f5884cb40f6926886ae35`, 2,203,126 bytes. The ordinary file fetch returned empty content; Git Blob API recovered the full file. Recomputed Git Blob SHA-1 exactly matched the tree entry. Original text is 2,081,221 characters; UTF-8 body is 2,203,126 bytes. Fenced JSON parsed as 229 nodes and 424 edges.
+- Exact-head CI results inspected and completed successfully: [quality gate]( https://github.com/artinrahimii/project/actions/runs/40705066591/job/122874848819 ), [HostLifecycle integration]( https://github.com/artinrahimii/project/actions/runs/40705066594/job/122874849027 ), [Windows WPF build]( https://github.com/artinrahimii/project/actions/runs/40705066594/job/122874848582 ), [Android APK build]( https://github.com/artinrahimii/project/actions/runs/40705066594/job/122874848980 ). No new local tests/builds were claimed.
+- Independent-network acceptance remains **NOT RUN** because no deployed HTTPS rendezvous endpoint or second peer was available. `T0121` stays blocked, `T0122` stays not_started, and `AC-P2P-01` stays **NOT RUN**. No source code or edge was changed.
