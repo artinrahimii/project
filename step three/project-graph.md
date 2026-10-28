@@ -27145,8 +27145,7 @@
       "title": "گواهی یا کلید نامعتبر، همتای ناشناخته و نسخهٔ رمزنگاری ناسازگار را رد کن.",
       "section": "13. هویت ارتباطی و رمزنگاری",
       "depends_on": [
-        "T0133",
-        "T0128"
+        "T0133"
       ],
       "inputs": [
         "خروجی تأییدشدهٔ پیش‌نیازها",
@@ -27155,35 +27154,71 @@
       "outputs": [
         "خروجی قابل بررسی مربوط به «گواهی یا کلید نامعتبر، همتای ناشناخته و نسخهٔ رمزنگاری ناسازگار را رد کن.» در مسیر src/Shared.Security/ + tests/security/؛ همراه با آزمون/شاهد پذیرش متناسب."
       ],
-      "start_condition": "همهٔ پیش‌نیازهای T0133 و T0128 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
+      "start_condition": "T0133's security identity/trust/transport contracts are complete and verified. T0128 is a separate independent-network acceptance test; it provides no artifact consumed by the deterministic rejection checks required here.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
       "actual_output_paths": [],
       "expected_output_paths": [
         "src/Shared.Security/ + tests/security/"
       ],
       "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nDependency review: T0133 → T0134 validated as contract_or_interface_dependency. T0128 → T0134 validated as sequencing_only and removed from active dependencies because external two-node deployment testing does not produce an implementation dependency for invalid-key, unknown-peer, or unsupported-version rejection. T0128 remains not_started and is not claimed as passed.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0134-A001",
+        "last_attempt_result": "implementation_added_tests_not_run",
+        "changed_files": [
+          "tests/HostLifecycle.Tests/HostIdentityStoreAcceptanceTests.cs",
+          "step three/project-graph.md",
+          "step three/T0134/execution-report.md",
+          "step three/T0134/evidence/verification.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
+          "state": "in_progress",
+          "triggering_contracts": [
+            "T0133 identity validation",
+            "T0133 explicit peer-trust contract",
+            "maintained libp2p secure-channel peer identity",
+            "ProtocolVersionPolicy unsupported-version rejection"
+          ],
           "affected_by_contract_changes": [],
-          "review_evidence": []
+          "review_evidence": [
+            "src/Shared.Security/PeerSecurityPolicy.cs",
+            "src/Shared.Security/HostIdentityStore.cs",
+            "src/Shared.Security/PeerTrustStore.cs",
+            "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+            "tests/HostLifecycle.Tests/PeerSecurityPolicyAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/PeerTrustStoreAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/HostIdentityStoreAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "docs/decisions/ADR-0016-maintained-libp2p-cryptographic-transport.md"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0134-A001",
+          "started_at": "2026-10-28T15:34:38.282Z",
+          "ended_at": null,
+          "result": "implementation_added_tests_not_run",
+          "summary": "Reviewed T0133/T0128 dependencies, removed the external-network sequencing-only edge, and added explicit fail-closed acceptance cases for an unsupported persisted identity-envelope version and malformed private-key bytes. The new assertions are pending the exact-commit GitHub Actions run.",
+          "changed_files": [
+            "tests/HostLifecycle.Tests/HostIdentityStoreAcceptanceTests.cs",
+            "step three/project-graph.md",
+            "step three/T0134/execution-report.md",
+            "step three/T0134/evidence/verification.md"
+          ],
+          "commit_sha": null,
+          "tests": []
+        }
+      ]
     },
     {
       "id": "T0135",
@@ -34647,19 +34682,20 @@
       "from": "T0133",
       "to": "T0134",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
-    },
-    {
-      "from": "T0128",
-      "to": "T0134",
-      "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0134's rejection behavior consumes T0133's implemented host-identity validation, canonical PeerId policy, explicit peer trust, and authenticated libp2p transport boundary. The code paths call PeerSecurityPolicy.ValidatePeerIdentity, PeerTrustStore.EnsureTrusted, HostIdentityStore validation, and libp2p-authenticated remote identity checks; these are concrete APIs/contracts rather than ordering alone.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Shared.Security/PeerSecurityPolicy.cs",
+        "src/Shared.Security/HostIdentityStore.cs",
+        "src/Shared.Security/PeerTrustStore.cs",
+        "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+        "tests/HostLifecycle.Tests/PeerSecurityPolicyAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/PeerTrustStoreAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/HostIdentityStoreAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "docs/decisions/ADR-0016-maintained-libp2p-cryptographic-transport.md"
+      ]
     },
     {
       "from": "T0134",
@@ -36440,6 +36476,7 @@
     "T0131",
     "T0132",
     "T0133",
+    "T0134",
     "T0121",
     "T0122",
     "T0123",
@@ -36448,7 +36485,6 @@
     "T0126",
     "T0127",
     "T0128",
-    "T0134",
     "T0135",
     "T0136",
     "T0137",
@@ -39040,6 +39076,51 @@
         "https://github.com/artinrahimii/project/actions/runs/40713345711/job/122904254631"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-28T15:34:38.282Z",
+      "edge_from": "T0133",
+      "edge_to": "T0134",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "old_validation_status": "unreviewed",
+      "new_validation_status": "validated",
+      "reason": "Reviewed the security rejection task against the actual identity, peer-trust, transport, and protocol-version policy APIs. T0134 consumes the concrete contracts established by T0133 rather than only a sequential phase boundary.",
+      "evidence": [
+        "src/Shared.Security/PeerSecurityPolicy.cs",
+        "src/Shared.Security/HostIdentityStore.cs",
+        "src/Shared.Security/PeerTrustStore.cs",
+        "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+        "tests/HostLifecycle.Tests/PeerSecurityPolicyAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/PeerTrustStoreAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/HostIdentityStoreAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "docs/decisions/ADR-0016-maintained-libp2p-cryptographic-transport.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-28T15:34:38.282Z",
+      "edge_from": "T0128",
+      "edge_to": "T0134",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "old_validation_status": "unreviewed",
+      "new_validation_status": "validated",
+      "change_action": "removed_from_active_edges",
+      "reason": "T0128's output is an external two-computer/independent-network end-to-end acceptance result. It produces no source API, key-validation contract, peer-trust data model, or protocol-version artifact consumed by T0134. T0134 can be implemented and tested using deterministic identity/trust rejection tests and the existing real libp2p loopback transport suite. This review does not claim that T0128 has run or passed.",
+      "evidence": [
+        "step three/project-graph.md (T0128 output and acceptance definition)",
+        "src/Shared.Security/HostIdentityStore.cs",
+        "src/Shared.Security/PeerTrustStore.cs",
+        "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+        "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/HostIdentityStoreAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "docs/decisions/ADR-0016-maintained-libp2p-cryptographic-transport.md",
+        "https://github.com/artinrahimii/project/actions/runs/40715062620/job/122910382895"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
   "updated_at": "2026-10-28",
@@ -39148,6 +39229,31 @@
         "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs",
         "https://github.com/artinrahimii/project/actions/runs/40713345711/job/122904254752",
         "https://github.com/artinrahimii/project/actions/runs/40713345711/job/122904254631"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-28T15:34:38.282Z",
+      "moved_tasks": [
+        "T0134"
+      ],
+      "old_positions": {
+        "T0134": 134
+      },
+      "new_anchor": "Immediately after T0133 and before the pending T0121/T0128 independent-network acceptance chain",
+      "reason": "After validating T0133 → T0134 as a contract dependency and T0128 → T0134 as sequencing-only, T0134 can be implemented/tested with local invalid-input and loopback security acceptance tests. T0128 remains pending; this does not satisfy or bypass the external-network acceptance itself.",
+      "evidence": [
+        "src/Shared.Security/PeerSecurityPolicy.cs",
+        "src/Shared.Security/HostIdentityStore.cs",
+        "src/Shared.Security/PeerTrustStore.cs",
+        "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+        "tests/HostLifecycle.Tests/PeerSecurityPolicyAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/PeerTrustStoreAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/HostIdentityStoreAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "docs/decisions/ADR-0016-maintained-libp2p-cryptographic-transport.md",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs"
       ],
       "reviewed_by": "Step Three execution review"
     }

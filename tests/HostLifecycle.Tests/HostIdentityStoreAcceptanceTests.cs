@@ -57,7 +57,40 @@ internal static class HostIdentityStoreAcceptanceTests
             Assert(invalidEnvelopeRejected, "An invalid existing identity file must be rejected, not replaced with a new key.");
             Assert(File.ReadAllBytes(corruptPath).SequenceEqual(corrupt), "An invalid existing identity file must remain untouched.");
 
-            Console.WriteLine("PASS: host identity store serializes concurrent creation, preserves PeerId on reload and fails closed on invalid or unreadable files.");
+
+            string unsupportedVersionPath = Path.Combine(root, "unsupported-identity-version");
+            byte[] unsupportedVersion = [0x57, 0x50, 0x48, 0x49, 0x02, 0xA7, 0x01];
+            File.WriteAllBytes(unsupportedVersionPath, unsupportedVersion);
+            bool unsupportedVersionRejected = false;
+            try
+            {
+                _ = new HostIdentityStore(unsupportedVersionPath, new TestOnlyPrefixProtector()).LoadOrCreate();
+            }
+            catch (InvalidDataException)
+            {
+                unsupportedVersionRejected = true;
+            }
+            Assert(unsupportedVersionRejected, "An unsupported persisted identity format version must be rejected.");
+            Assert(File.ReadAllBytes(unsupportedVersionPath).SequenceEqual(unsupportedVersion),
+                "An unsupported identity version must not be silently rewritten.");
+
+            string malformedKeyPath = Path.Combine(root, "malformed-private-key");
+            byte[] malformedKey = [0x57, 0x50, 0x48, 0x49, 0x01, 0xA7, 0xFF];
+            File.WriteAllBytes(malformedKeyPath, malformedKey);
+            bool malformedKeyRejected = false;
+            try
+            {
+                _ = new HostIdentityStore(malformedKeyPath, new TestOnlyPrefixProtector()).LoadOrCreate();
+            }
+            catch (InvalidDataException)
+            {
+                malformedKeyRejected = true;
+            }
+            Assert(malformedKeyRejected, "Malformed persisted private-key protobuf must be rejected.");
+            Assert(File.ReadAllBytes(malformedKeyPath).SequenceEqual(malformedKey),
+                "Malformed private-key material must not be overwritten with a newly generated identity.");
+
+            Console.WriteLine("PASS: host identity store serializes concurrent creation, preserves PeerId on reload and rejects corrupt envelopes, unsupported identity versions and malformed private keys.");
         }
         finally
         {
