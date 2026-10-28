@@ -21,13 +21,12 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
@@ -36,6 +35,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.whitep.client.ui.navigation.ClientDestination
 import com.whitep.client.ui.navigation.ClientNavigation
+import com.whitep.client.ui.request.RequestViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -172,17 +172,19 @@ private fun homeScreen(
 }
 
 @Composable
-private fun requestScreen(onBack: () -> Unit) {
-    var requestText by remember { mutableStateOf("") }
-    var status by remember { mutableStateOf("Nothing has been sent.") }
+private fun requestScreen(
+    onBack: () -> Unit,
+    requestViewModel: RequestViewModel = viewModel(),
+) {
+    val requestState by requestViewModel.uiState.collectAsState()
 
     appPage(
         title = "New request",
         subtitle = "Prepare text only. This preview does not send it to a host.",
     ) {
         OutlinedTextField(
-            value = requestText,
-            onValueChange = { requestText = it },
+            value = requestState.prompt,
+            onValueChange = requestViewModel::updatePrompt,
             modifier = Modifier.fillMaxWidth(),
             label = { Text("Prompt") },
             supportingText = { Text("Text remains in this screen's in-memory state.") },
@@ -190,19 +192,12 @@ private fun requestScreen(onBack: () -> Unit) {
             maxLines = 8,
         )
         Button(
-            onClick = {
-                status =
-                    if (requestText.isBlank()) {
-                        "Enter a prompt first."
-                    } else {
-                        "Request not sent: no host transport yet; Android-to-host transport is not implemented."
-                    }
-            },
+            onClick = requestViewModel::prepareRequest,
             modifier = Modifier.fillMaxWidth(),
         ) {
             Text("Prepare request")
         }
-        Text("Status: $status", style = MaterialTheme.typography.bodyMedium)
+        Text("Status: ${requestState.statusMessage}", style = MaterialTheme.typography.bodyMedium)
         OutlinedButton(onClick = onBack, modifier = Modifier.fillMaxWidth()) {
             Text("Back")
         }

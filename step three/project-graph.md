@@ -28968,33 +28968,135 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0139 و T0138 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال انجام",
+      "actual_output_paths": [
+        "src/Client.Android/app/build.gradle.kts",
+        "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientRequestRepository.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/data/ClientRequestRepositoryTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
+        "tests/test_android_request_architecture.py",
+        "step three/T0140/execution-report.md",
+        "step three/T0140/evidence/verification.md",
+        "step three/project-graph.md"
+      ],
       "expected_output_paths": [
         "src/Client.Android/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientRequestRepository.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/data/ClientRequestRepositoryTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
+        "tests/test_android_request_architecture.py",
+        "docs/decisions/ADR-0019-host-visible-inference-content.md",
+        "step three/T0140/execution-report.md",
+        "step three/T0140/evidence/verification.md"
+      ],
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0140-A001 started on bce6c85dade0311ffe48b2ed8d75253e66408fb0 after graph/blob verification. T0138 -> T0140 was reviewed as sequencing_only: endpoint-visibility documentation constrains claims but is not a Kotlin API consumed by the data layer. T0140 -> T0141 was reviewed as contract_or_interface_dependency: the upcoming Room adapter must satisfy the Flow/suspend repository boundary and draft/status types. Both retain type=blocks; unrelated unreviewed edges remain unchanged.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
-        "related_commits": [],
+        "last_attempt_id": "T0140-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Client.Android/app/build.gradle.kts",
+          "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
+          "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientRequestRepository.kt",
+          "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt",
+          "src/Client.Android/app/src/test/java/com/whitep/client/data/ClientRequestRepositoryTest.kt",
+          "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
+          "tests/test_android_request_architecture.py",
+          "step three/T0140/execution-report.md",
+          "step three/T0140/evidence/verification.md",
+          "step three/project-graph.md"
+        ],
+        "related_commits": [
+          "bce6c85dade0311ffe48b2ed8d75253e66408fb0"
+        ],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
-          "affected_by_contract_changes": [],
-          "review_evidence": []
+          "state": "passed",
+          "triggering_contracts": [
+            "T0138 host-visible request content disclosure",
+            "T0141 future Room implementation contract"
+          ],
+          "affected_by_contract_changes": [
+            "ClientRequestRepository Flow/suspend interface",
+            "ClientRequestDraft and typed request preparation status"
+          ],
+          "review_evidence": [
+            "docs/decisions/ADR-0019-host-visible-inference-content.md",
+            "docs/requirements.md",
+            "tests/test_host_content_visibility.py",
+            "step three/project-graph.md",
+            "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientRequestRepository.kt",
+            "step one/V1.0.md",
+            "step three/project-graph.md"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0140-A001",
+          "started_at": "2026-10-28T21:34:55.721Z",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Added a process-memory request repository behind a Flow/suspend interface, typed draft/preparation states, and a ViewModel that maps repository state to Compose UI state. Wired the request editor to the ViewModel; blank prompts are rejected, nonblank drafts remain local and report transport unavailable. Added Android JUnit tests and a Python source-contract test. No network, database, disk write or host delivery is introduced. Exact-head CI is pending.",
+          "changed_files": [
+            "src/Client.Android/app/build.gradle.kts",
+            "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientRequestRepository.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/data/ClientRequestRepositoryTest.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
+            "tests/test_android_request_architecture.py",
+            "step three/T0140/execution-report.md",
+            "step three/T0140/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "related_commits": [
+            "bce6c85dade0311ffe48b2ed8d75253e66408fb0"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Git Blob integrity and prerequisite/edge review",
+              "result": "passed",
+              "summary": "Graph Blob 1d4d66d441501adfaed608f8a5b3bd973eb6c0a4 from tree a220e1c1e9d45686ebf512ab3c8568edcff8ef78 recomputed to same SHA-1 from 2399083 UTF-8 bytes; JSON round-trip passed for 229 nodes / 417 edges. T0138/T0139 were done; both T0140-related edges were reviewed and logged."
+            },
+            {
+              "name": "Local Python/Kotlin test execution",
+              "result": "not_run",
+              "summary": "No usable local checkout or Android SDK runner is available in this session; exact-head GitHub Actions results are pending."
+            },
+            {
+              "name": "Step Three quality gate",
+              "result": "pending"
+            },
+            {
+              "name": "Android ktlint/APK/JUnit/Protobuf",
+              "result": "pending"
+            },
+            {
+              "name": "HostLifecycle and Windows WPF product checks",
+              "result": "pending"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "Introduced ClientRequestRepository Flow/suspend API, ClientRequestDraft, RequestDraftStatus and RequestPreparationResult; T0141 is expected to add persistent Room implementation behind a data boundary."
+          ],
+          "follow_up": "Run exact-head quality and product CI. Keep T0140 in_progress until source-contract, graph/evidence, Kotlin lint, APK/JUnit/Protobuf, HostLifecycle and Windows WPF checks pass."
+        }
+      ]
     },
     {
       "id": "T0141",
@@ -36294,19 +36396,28 @@
       "from": "T0138",
       "to": "T0140",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0138 supplies the endpoint-visibility and honest-capability disclosure, but produces documentation/source-contract tests rather than a Kotlin API consumed by the ViewModel/repository. T0140 must preserve the warning that the processing host can inspect prompt/capsule and must not claim transport or no-storage guarantees; it can follow the reviewed ADR without a technical output from T0138. Keep the existing `type=blocks` edge as conservative execution ordering only.",
+      "validation_status": "validated",
+      "evidence": [
+        "docs/decisions/ADR-0019-host-visible-inference-content.md",
+        "docs/requirements.md",
+        "tests/test_host_content_visibility.py",
+        "step three/project-graph.md"
+      ]
     },
     {
       "from": "T0140",
       "to": "T0141",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0140 introduces the stable ClientRequestRepository Flow/suspend contract together with ClientRequestDraft, RequestDraftStatus and typed preparation results. T0141's Room-backed data implementation must satisfy this repository boundary for draft/status data without coupling the ViewModel to Room. This is an interface contract dependency, not an inference from the `blocks` label alone. Preserve the edge type as `blocks`.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientRequestRepository.kt",
+        "step one/V1.0.md",
+        "step three/project-graph.md"
+      ]
     },
     {
       "from": "T0138",
@@ -40804,6 +40915,39 @@
         "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
         "src/Client.Android/app/src/main/java/com/whitep/client/ui/navigation/ClientDestination.kt",
         "step three/project-graph.md (T0140 task definition)"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-28T21:34:55.721Z",
+      "edge_from": "T0138",
+      "edge_to": "T0140",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "old_validation_status": "unreviewed",
+      "new_validation_status": "validated",
+      "reason": "T0138 supplies the endpoint-visibility and honest-capability disclosure, but produces documentation/source-contract tests rather than a Kotlin API consumed by the ViewModel/repository. T0140 must preserve the warning that the processing host can inspect prompt/capsule and must not claim transport or no-storage guarantees; it can follow the reviewed ADR without a technical output from T0138. Keep the existing `type=blocks` edge as conservative execution ordering only.",
+      "evidence": [
+        "docs/decisions/ADR-0019-host-visible-inference-content.md",
+        "docs/requirements.md",
+        "tests/test_host_content_visibility.py",
+        "step three/project-graph.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-28T21:34:55.721Z",
+      "edge_from": "T0140",
+      "edge_to": "T0141",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "old_validation_status": "unreviewed",
+      "new_validation_status": "validated",
+      "reason": "T0140 introduces the stable ClientRequestRepository Flow/suspend contract together with ClientRequestDraft, RequestDraftStatus and typed preparation results. T0141's Room-backed data implementation must satisfy this repository boundary for draft/status data without coupling the ViewModel to Room. This is an interface contract dependency, not an inference from the `blocks` label alone. Preserve the edge type as `blocks`.",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientRequestRepository.kt",
+        "step one/V1.0.md",
+        "step three/project-graph.md"
       ],
       "reviewed_by": "Step Three execution review"
     }
