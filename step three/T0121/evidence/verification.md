@@ -118,3 +118,15 @@ The lease publisher is not yet wired into the WPF host participation lifecycle b
 - Graph Blob `c565a7ee388a1af895c5d1031966ea0c3393d76e`: 2,219,085 UTF-8 bytes, 2,097,136 text characters; recomputed Git Blob SHA-1 matched the tree entry. Complete fenced JSON parsed as 229 tasks / 424 edges.
 - Exact-head [quality gate]( https://github.com/artinrahimii/project/actions/runs/40708989069 ) and [HostLifecycle integration]( https://github.com/artinrahimii/project/actions/runs/40708988954/job/122888764070 ) completed successfully. [Windows WPF build]( https://github.com/artinrahimii/project/actions/runs/40708988954/job/122888764070 ) and [Android APK build]( https://github.com/artinrahimii/project/actions/runs/40708988954/job/122888763816 ) remain in progress; no final result was recorded during this check.
 - Independent-network acceptance remains **NOT RUN**. T0121 remains blocked, T0122 remains not_started, and AC-P2P-01 remains **NOT RUN**. No product code or dependency edge changed.
+
+
+## Exact online main V 3.0.454 — current-head CI verification
+
+- Baseline: [`1572ba5150e4bcd09f1264bb9162c54e081aff2d`](https://github.com/artinrahimii/project/commit/1572ba5150e4bcd09f1264bb9162c54e081aff2d), commit message `V 3.0.454`.
+- Graph Blob `f76fb050ac68d4d995aed6ad564bf68e811a9052` verified from the exact tree: 2,228,168 UTF-8 bytes; recomputed SHA-1 matched; complete fenced JSON parsed to 229 tasks / 424 edges.
+- [Step Three quality gate — PASS](https://github.com/artinrahimii/project/actions/runs/40709904930).
+- [Host lifecycle/integration — PASS](https://github.com/artinrahimii/project/actions/runs/40709904932/job/122892022010).
+- [Windows WPF Release build/startup/security checks — PASS](https://github.com/artinrahimii/project/actions/runs/40709904932/job/122892022375).
+- [Android APK/lint/Protobuf checks — PASS](https://github.com/artinrahimii/project/actions/runs/40709904932/job/122892022486).
+- These results are from completed online GitHub Actions runs for this exact commit. No local build/test was run in this execution.
+- Independent-network reachability and production HTTPS rendezvous acceptance remain **NOT RUN**. `T0121` remains blocked; `T0122` remains not_started; `AC-P2P-01` remains **NOT RUN**. No product source or edge was changed.
