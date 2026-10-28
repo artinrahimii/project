@@ -6,7 +6,12 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Security.Authentication;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Multiformats.Address;
+using Nethermind.Libp2p;
 using Nethermind.Libp2p.Core;
+using Nethermind.Libp2p.Core.Exceptions;
 using WhiteP.Host.Windows.Networking;
 
 internal static class PeerTransportContractAcceptanceTests
@@ -17,6 +22,7 @@ internal static class PeerTransportContractAcceptanceTests
         VerifyEndpointRequiresAddressAndExpectedIdentity();
         await VerifyDirectEncryptedPeerMessageExchangeAsync().ConfigureAwait(false);
         await VerifySecureChannelRejectsUnexpectedPeerIdentityAsync().ConfigureAwait(false);
+        await VerifyRejectsPlaintextOnlyPeerAsync().ConfigureAwait(false);
         await VerifyQuicFallbackAfterUnreachableTcpAddressAsync().ConfigureAwait(false);
         await VerifyFallbackRejectsMixedPeerIdentitiesBeforeConnectingAsync().ConfigureAwait(false);
         Console.WriteLine("PASS: IPeerTransport contract, direct libp2p TCP exchange, authenticated TCP-to-QUIC fallback, bounded framing and disconnect semantics.");
@@ -170,6 +176,68 @@ internal static class PeerTransportContractAcceptanceTests
 
         Console.WriteLine(
             "PASS: libp2p secure-channel authentication rejects a remote identity that does not match the pinned PeerId.");
+    }
+
+    private static async Task VerifyRejectsPlaintextOnlyPeerAsync()
+    {
+        using var clientTrustFixture = new TestPeerTrustStoreFixture();
+        using ServiceProvider serverServices = new ServiceCollection()
+            .AddLogging()
+            .AddLibp2p(builder => builder.WithPlaintextEnforced())
+            .BuildServiceProvider();
+
+        IPeerFactory serverFactory = serverServices.GetRequiredService<IPeerFactory>();
+        await using ILocalPeer serverPeer = serverFactory.Create();
+
+        using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(15));
+        int port = ReserveTcpPort();
+        await serverPeer.StartListenAsync(
+                [Multiaddress.Decode($"/ip4/127.0.0.1/tcp/{port}")],
+                timeout.Token)
+            .WaitAsync(TimeSpan.FromSeconds(10), timeout.Token)
+            .ConfigureAwait(false);
+
+        string serverPeerIdentity = new PeerId(serverPeer.Identity.PublicKey).ToString();
+        Multiaddress tcpAddress = serverPeer.ListenAddresses.Single(
+            address => address.ToString().Contains("/tcp/", StringComparison.Ordinal));
+        string serverAddress = tcpAddress.GetPeerId() is null
+            ? $"{tcpAddress}/p2p/{serverPeerIdentity}"
+            : tcpAddress.ToString();
+
+        clientTrustFixture.Store.TrustPeerAfterExplicitConfirmation(
+            serverPeerIdentity,
+            explicitlyConfirmed: true);
+
+        await using var client = new Libp2pPeerTransport(
+            clientTrustFixture.Store,
+            maximumMessageBytes: 1024);
+
+        bool rejected = false;
+        try
+        {
+            await client.ConnectSecureAsync(
+                    new PeerTransportEndpoint(serverAddress, serverPeerIdentity),
+                    timeout.Token)
+                .WaitAsync(TimeSpan.FromSeconds(10), timeout.Token)
+                .ConfigureAwait(false);
+        }
+        catch (Exception exception) when (
+            exception is AuthenticationException
+                or IOException
+                or SocketException
+                or InvalidOperationException
+                or Libp2pException)
+        {
+            rejected = true;
+        }
+
+        Assert(rejected,
+            "A secure libp2p dialer must reject a peer that offers plaintext only when no compatible secure channel can be negotiated.");
+        Assert(!client.IsConnected && client.RemotePeerIdentity is null,
+            "A failed secure-channel negotiation must never publish a connected or authenticated remote peer.");
+
+        Console.WriteLine(
+            "PASS: secure libp2p dialing rejects a plaintext-only peer and does not downgrade to an insecure connection.");
     }
 
     private static async Task VerifyQuicFallbackAfterUnreachableTcpAddressAsync()
