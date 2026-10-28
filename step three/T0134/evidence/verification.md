@@ -35,3 +35,12 @@ A direct failing-handshake test for unsupported libp2p Noise/TLS secure-channel 
 - The test deliberately makes the address PeerId match the dialer's expected PeerId, while the listening endpoint's actual cryptographic identity is different. This is intended to pass the application's pre-dial address/pinned-ID consistency check and exercise the libp2p authentication boundary rather than only testing a local string mismatch.
 - Verification state: **pending CI**. No local .NET execution was performed; the combined commit-status lookup returned an empty status list. There is no successful test output for this new case yet.
 - Until CI logs prove that the case ran and passed, this is implementation evidence only, not acceptance evidence. The test targets remote authenticated identity/certificate mismatch; unsupported Noise/TLS protocol-version negotiation is not independently claimed as tested.
+
+
+## T0134-A004: secure-channel downgrade negative case
+
+- Test source commit: [V 3.0.465](https://github.com/artinrahimii/project/commit/e0512ece82f900e2a3f4586a6c286454eac994a2).
+- Added `VerifyRejectsPlaintextOnlyPeerAsync`: it creates a local libp2p server using `WithPlaintextEnforced()`, trusts the server's actual PeerId on the client, and attempts a connection with the production transport that offers secure Noise/TLS rather than plaintext. Expected behavior is rejection without publishing an authenticated connection. The setup uses the existing `Nethermind.Libp2p` API; no custom cryptographic code is introduced.
+- The earlier `VerifySecureChannelRejectsUnexpectedPeerIdentityAsync` remains in the same acceptance suite and tests a trusted-but-wrong advertised PeerId against a live listener's actual identity.
+- **Verification state: pending CI.** The current environment has no .NET SDK/runtime command available, so no local test was executed. The available GitHub combined-status API returned an empty status list, and the available workflow-run lookup does not expose push-triggered runs. No pass/fail conclusion is inferred from these empty responses.
+- This is implementation evidence only until the exact-commit HostLifecycle job's logs confirm that both tests actually ran and passed. A plaintext-only mismatch test does not by itself prove every unsupported Noise/TLS protocol version is rejected.
