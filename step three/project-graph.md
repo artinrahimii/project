@@ -27997,8 +27997,8 @@
       ],
       "start_condition": "T0137 is done. The privacy disclosure is based on the canonical request schema and the current host-side parser/handler boundary; T0128's independent-node connectivity test is a separate runtime gate and remains explicitly NOT RUN here.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "README.md",
         "docs/requirements.md",
@@ -28033,12 +28033,12 @@
         "step three/T0138/execution-report.md",
         "step three/T0138/evidence/verification.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0138-A001 (2026-10-28T19:12:38.745Z): reviewed the T0128 -> T0138 edge against the exact versioned schema, host secure-channel boundary, host request parser and WPF handler. These sources establish the disclosure independently of an external-node reachability result; the new warning explicitly keeps AC-P2P-01/AC-PRIV-01 NOT RUN. Reclassified T0128 -> T0138 as validated sequencing_only and removed it from active prerequisites, preserving edge-change history. Added README, REQ-019, acceptance-policy and ADR-0019 disclosure, plus a source-contract test. CI is pending; task remains in_progress.\n\nT0138-A001 CI result (V 3.0.482, 2026-10-28): Step Three quality gate 40752311175 failed exactly one subtest because the test expected the explicit phrase 'not end-to-end encryption against the processing host', while ADR-0019 phrased the equivalent warning as 'Do not call this end-to-end encryption against the processing host'. This is a wording-contract mismatch; no successful acceptance is claimed. A002 makes the exact disclosure explicit and reruns all relevant checks.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0138-A001 (2026-10-28T19:12:38.745Z): reviewed the T0128 -> T0138 edge against the exact versioned schema, host secure-channel boundary, host request parser and WPF handler. These sources establish the disclosure independently of an external-node reachability result; the new warning explicitly keeps AC-P2P-01/AC-PRIV-01 NOT RUN. Reclassified T0128 -> T0138 as validated sequencing_only and removed it from active prerequisites, preserving edge-change history. Added README, REQ-019, acceptance-policy and ADR-0019 disclosure, plus a source-contract test. CI is pending; task remains in_progress.\n\nT0138-A001 CI result (V 3.0.482, 2026-10-28): Step Three quality gate 40752311175 failed exactly one subtest because the test expected the explicit phrase 'not end-to-end encryption against the processing host', while ADR-0019 phrased the equivalent warning as 'Do not call this end-to-end encryption against the processing host'. This is a wording-contract mismatch; no successful acceptance is claimed. A002 makes the exact disclosure explicit and reruns all relevant checks.\n\nT0138-A002 verification (V 3.0.483, completed 2026-10-28T19:17:43Z): exact wording corrected in ADR-0019 and revalidated by quality CI 40752968011. All 195 Python tests passed; syntax and recorded-output/evidence guard passed. graph_guard reported 0 errors and 1 preserved warning for T0001's existing free-text prerequisite, which is retained as metadata per the policy. Product workflow 40752968080 completed successfully: HostLifecycle job 123044253346, Windows WPF job 123044253238 and Android APK job 123044252712 all passed. T0138 is complete as a disclosure + source-contract test task. T0128 and AC-P2P-01/AC-PRIV-01 remain not_started/NOT RUN; this does not claim live Android-to-Windows routing or runtime no-storage behavior.",
       "execution_summary": {
         "attempt_count": 2,
         "failed_attempt_count": 1,
         "last_attempt_id": "T0138-A002",
-        "last_attempt_result": "partial",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "README.md",
           "docs/requirements.md",
@@ -28051,20 +28051,26 @@
           "step three/project-graph.md"
         ],
         "related_commits": [
-          "f36ed82fc41a45caf22f948b13e3a7da27d985ec"
+          "f36ed82fc41a45caf22f948b13e3a7da27d985ec",
+          "18060380d0cdfb4a8231e72ac6a5a469fce3fddd"
         ],
-        "tests_passed": [],
+        "tests_passed": [
+          "Exact V 3.0.483 Step Three quality run 40752968011: 195 Python tests passed, syntax check passed, both graph_guard checks reported 0 errors and 1 existing T0001 unmapped free-text dependency warning preserved as metadata.",
+          "Exact V 3.0.483 HostLifecycle job 123044253346 passed.",
+          "Exact V 3.0.483 Windows WPF job 123044253238 passed build, Protobuf generation, startup smoke and identity/trust safety tests.",
+          "Exact V 3.0.483 Android APK job 123044252712 passed lint, APK build, Protobuf round-trip, generated sources and artifact upload."
+        ],
         "tests_failed": [
-          "V 3.0.482 Step Three quality gate job 123041967360 failed one subtest in tests/test_host_content_visibility.py because ADR-0019 did not contain the exact disclosure phrase expected by the test. Workflow: https://github.com/artinrahimii/project/actions/runs/40752311175"
+          "Historical V 3.0.482 quality run 40752311175 had one assertion wording mismatch; the ADR was corrected and the entire suite passed on V 3.0.483."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "required",
+          "state": "passed",
           "triggering_contracts": [
             "The shared InferenceRequest includes prompt and context_capsule fields",
             "The host receives and parses the request before local inference",
-            "Transport encryption terminates at the receiving endpoint and does not conceal content from that endpoint"
+            "Transport encryption protects the channel but not the contents from the receiving endpoint"
           ],
           "affected_by_contract_changes": [
             "T0138"
@@ -28074,7 +28080,8 @@
             "src/Host.Windows/Networking/Libp2pPeerMessageProtocol.cs",
             "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs",
             "src/Host.Windows/MainWindow.xaml.cs",
-            "tests/test_host_content_visibility.py"
+            "tests/test_host_content_visibility.py",
+            "https://github.com/artinrahimii/project/actions/runs/40752968011"
           ]
         }
       },
@@ -28123,36 +28130,40 @@
         {
           "attempt_id": "T0138-A002",
           "started_at": "2026-10-28T19:16:35.294Z",
-          "ended_at": null,
-          "result": "partial",
-          "summary": "Adjusted ADR-0019 to state explicitly: 'This is not end-to-end encryption against the processing host' so the privacy boundary is unambiguous and matches the new contract test. Graph/report history updated to preserve the failed A001 result; exact V 3.0.483 CI pending.",
+          "ended_at": "2026-10-28T19:17:43Z",
+          "result": "succeeded",
+          "summary": "Corrected the explicit endpoint-encryption wording in ADR-0019. Exact V 3.0.483 quality CI passed all 195 Python tests, Python syntax, graph structure and repository-backed evidence paths; HostLifecycle, Windows WPF and Android APK jobs all passed. The only graph-guard output is one preserved UNMAPPED_DEPENDENCY warning for T0001's existing free-text metadata; graph guard reports zero errors.",
           "changed_files": [
             "docs/decisions/ADR-0019-host-visible-inference-content.md",
             "step three/T0138/execution-report.md",
             "step three/T0138/evidence/verification.md",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "18060380d0cdfb4a8231e72ac6a5a469fce3fddd",
           "tests": [
             {
-              "name": "Host content visibility source-contract tests",
-              "result": "pending",
-              "summary": "Retest explicit endpoint-visibility wording and architecture source contract."
+              "name": "Step Three quality gate — exact V 3.0.483",
+              "result": "passed",
+              "summary": "Ran 195 Python tests; OK. Python syntax check passed. Both graph_guard runs reported 0 errors and 1 warning: the existing T0001 free-text prerequisite was preserved as metadata, as the guard explicitly requires.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40752968011"
             },
             {
-              "name": "Python repository test suite",
-              "result": "pending",
-              "summary": "Rerun all repository tests on the corrected exact commit."
+              "name": "HostLifecycle unit and integration — exact V 3.0.483",
+              "result": "passed",
+              "summary": "Job completed successfully; log includes PASS for tampered request rejection, bounded replay fencing, forged response correlation rejection and authenticated-peer checks.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40752968080/job/123044253346"
             },
             {
-              "name": "Graph structure and recorded evidence",
-              "result": "pending",
-              "summary": "Run graph_guard once the Python suite passes."
+              "name": "Windows WPF build — exact V 3.0.483",
+              "result": "passed",
+              "summary": "Release build, generated Protobuf source, startup smoke, agent-tool safety checks, DPAPI host identity and peer-trust storage checks passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40752968080/job/123044253238"
             },
             {
-              "name": "Product build regression",
-              "result": "pending",
-              "summary": "Product workflow V 3.0.482 has passed; rerun on corrected source and inspect exact conclusions."
+              "name": "Android client APK — exact V 3.0.483",
+              "result": "passed",
+              "summary": "Kotlin formatting/lint, debug APK build, Protobuf round-trip tests, generated-source verification and artifact upload passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40752968080/job/123044252712"
             }
           ],
           "failure_details": null,
