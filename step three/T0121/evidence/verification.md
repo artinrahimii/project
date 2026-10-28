@@ -110,3 +110,11 @@ The lease publisher is not yet wired into the WPF host participation lifecycle b
 - Graph Blob `ee2097c43cada89d2581c1ac14682b33414b2190`: 2,209,184 UTF-8 bytes, 2,087,263 characters; recomputed Git Blob SHA-1 matched. Full fenced JSON parsed as 229 tasks / 424 edges.
 - Exact-head CI: [quality gate]( https://github.com/artinrahimii/project/actions/runs/40706062117 ), [Android APK]( https://github.com/artinrahimii/project/actions/runs/40706063503/job/122878385398 ), and [HostLifecycle tests]( https://github.com/artinrahimii/project/actions/runs/40706063503/job/122878385751 ) completed successfully. [Windows WPF build]( https://github.com/artinrahimii/project/actions/runs/40706063503/job/122878385648 ) remains `in_progress` at `Set up job`; no final outcome was recorded during this check.
 - External acceptance remains **NOT RUN** because no production HTTPS rendezvous endpoint or independent-network peer was available. `T0121` remains blocked; `T0122` remains not_started; `AC-P2P-01` remains **NOT RUN**. No source code or dependency edge was changed.
+
+
+## Exact online main V 3.0.452 — CI snapshot (2026-10-28)
+
+- Baseline: `main` at `07b430e8f8bb6753e20d8421324fdfc652bfaed4` (`V 3.0.452`), tree `5cf93b16eadf62cd72bb7df4c98feb8dfc4156e7`.
+- Graph Blob `c565a7ee388a1af895c5d1031966ea0c3393d76e`: 2,219,085 UTF-8 bytes, 2,097,136 text characters; recomputed Git Blob SHA-1 matched the tree entry. Complete fenced JSON parsed as 229 tasks / 424 edges.
+- Exact-head [quality gate]( https://github.com/artinrahimii/project/actions/runs/40708989069 ) and [HostLifecycle integration]( https://github.com/artinrahimii/project/actions/runs/40708988954/job/122888764070 ) completed successfully. [Windows WPF build]( https://github.com/artinrahimii/project/actions/runs/40708988954/job/122888764070 ) and [Android APK build]( https://github.com/artinrahimii/project/actions/runs/40708988954/job/122888763816 ) remain in progress; no final result was recorded during this check.
+- Independent-network acceptance remains **NOT RUN**. T0121 remains blocked, T0122 remains not_started, and AC-P2P-01 remains **NOT RUN**. No product code or dependency edge changed.

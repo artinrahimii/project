@@ -139,3 +139,14 @@ The current V 3.0.435 graph was re-read before T0130 work. Repository transport 
 - **Independent-network acceptance:** NOT RUN. No configured production HTTPS rendezvous endpoint or second peer on an independent network was available.
 - **Outcome:** `T0121` remains `blocked`; `T0122` remains `not_started`; `AC-P2P-01` remains **NOT RUN**. No product source or dependency edge changed; this update records new CI evidence and is not implementation progress.
 - **Next:** finish inspecting the exact-head Windows build and obtain deployment-specific reachability evidence before re-evaluating `T0121`.
+
+
+## T0121-A015 — exact V 3.0.452 CI revalidation; external acceptance blocked (2026-10-28)
+
+- **Exact online baseline:** `main` at [`07b430e8f8bb6753e20d8421324fdfc652bfaed4`](https://github.com/artinrahimii/project/commit/07b430e8f8bb6753e20d8421324fdfc652bfaed4), message `V 3.0.452`.
+- **Graph integrity:** tree entry `step three/project-graph.md` is Blob `c565a7ee388a1af895c5d1031966ea0c3393d76e`, size 2,219,085 bytes. Git Blob API returned the full file; recomputed Git Blob SHA-1 matched. Content is 2,219,085 UTF-8 bytes and 2,097,136 characters; fenced JSON parses completely as 229 nodes and 424 edges.
+- **Exact-head CI inspected:** [Step Three quality gate — PASS]( https://github.com/artinrahimii/project/actions/runs/40708989069 ) and [HostLifecycle integration — PASS]( https://github.com/artinrahimii/project/actions/runs/40708988954/job/122888764070 ).
+- **Pending CI:** [Windows WPF]( https://github.com/artinrahimii/project/actions/runs/40708988954/job/122888764070 ) and [Android APK]( https://github.com/artinrahimii/project/actions/runs/40708988954/job/122888763816 ) remained `in_progress` without final conclusions at inspection time. Overall product workflow: [https://github.com/artinrahimii/project/actions/runs/40708988954]( https://github.com/artinrahimii/project/actions/runs/40708988954 ).
+- **External acceptance:** NOT RUN. No production HTTPS rendezvous endpoint or peer on an independent network was available. Loopback integration and CI do not establish public TCP/QUIC reachability.
+- **Outcome:** `T0121` remains `blocked`; `T0122` remains `not_started`; `AC-P2P-01` remains **NOT RUN**. No source code or dependency edge changed; this is an evidence synchronization attempt, not implementation progress.
+- **Next:** obtain the final Windows/Android CI results and perform independent-network deployment acceptance before re-evaluating `T0121`.
