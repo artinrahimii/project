@@ -26,3 +26,12 @@ The runner's `Program.cs` also has test assertions that missing/malformed and un
 ## Outstanding acceptance gap
 
 A direct failing-handshake test for unsupported libp2p Noise/TLS secure-channel negotiation or invalid secure-channel certificate has not yet been run. No custom crypto implementation was added. T0134 remains `in_progress` pending that evidence.
+
+
+## New negative-test attempt — not yet verified
+
+- Code commit: [V 3.0.461](https://github.com/artinrahimii/project/commit/a9ab827ab2d2a767825085e7185eba655fafbe29).
+- Added test: `VerifySecureChannelRejectsUnexpectedPeerIdentityAsync` in `tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs`.
+- The test deliberately makes the address PeerId match the dialer's expected PeerId, while the listening endpoint's actual cryptographic identity is different. This is intended to pass the application's pre-dial address/pinned-ID consistency check and exercise the libp2p authentication boundary rather than only testing a local string mismatch.
+- Verification state: **pending CI**. No local .NET execution was performed; the combined commit-status lookup returned an empty status list. There is no successful test output for this new case yet.
+- Until CI logs prove that the case ran and passed, this is implementation evidence only, not acceptance evidence. The test targets remote authenticated identity/certificate mismatch; unsupported Noise/TLS protocol-version negotiation is not independently claimed as tested.
