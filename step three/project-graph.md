@@ -24948,7 +24948,8 @@
         "tests/test_network_listener_exposure.py",
         "docs/decisions/ADR-0006-peer-announcement-leases.md",
         "docs/decisions/README.md",
-        "step three/T0121/evidence/v3.0.451-current-head.md"
+        "step three/T0121/evidence/v3.0.451-current-head.md",
+        "step three/T0121/evidence/v3.0.452-ci-final.md"
       ],
       "expected_output_paths": [
         "src/Shared.Networking/ یا src/Host.Windows/Networking/ + tests/"
@@ -24967,13 +24968,14 @@
         "tests/test_network_listener_exposure.py",
         "docs/decisions/ADR-0006-peer-announcement-leases.md",
         "docs/decisions/README.md",
-        "step three/T0121/evidence/v3.0.451-current-head.md"
+        "step three/T0121/evidence/v3.0.451-current-head.md",
+        "step three/T0121/evidence/v3.0.452-ci-final.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0121-A005 verification update (2026-10-27): all exact-commit GitHub Actions workflows for V 3.0.368 passed, including the HostLifecycle acceptance suite. This validates the correction to the tests, but does not complete runtime lifecycle integration: the publisher is not yet wired to the WPF participation toggle and safe reachable rendezvous/advertised-address configuration remains unavailable. Task status remains in_progress.\n\nT0121-A006 (2026-10-27): status changed from in_progress to blocked after source- and graph-backed review. The lease publisher/loopback tests exist, but the real WPF host listener remains loopback-only and explicitly closes inbound requests until protocol handling is implemented; no verified advertised address, rendezvous HTTPS setting or wired stable host identity exists. T0130 identity work sits downstream of T0128, which itself depends on T0121/T0122; do not add a new identity edge without resolving this potential cycle. Unblock only after authenticated peer-reachable host request handling, verified identity/address/HTTPS settings and WPF lifecycle integration pass exact-host tests. T0122 remains not_started.\n\nT0130 ordering update: identity-store work is scheduled before the blocked announcement chain after validating T0128 → T0130 as sequencing_only. This resolves the ordering-cycle concern only; it does not unblock T0121 because production identity wiring, authenticated reachable inbound handling, HTTPS rendezvous and a verified advertised address remain missing.\n\nT0121-A007 (2026-10-28): Added PeerAnnouncementHostLifecycle and connected it to WPF participation: fixed-address libp2p listening for an explicitly trusted peer, HTTPS rendezvous lease publishing/renewal, Protobuf request parsing, coordinator/readiness admission, real-session inference response, and stop-on-disconnect. Added a loopback service integration test for authenticated message exchange and expiry. The UI requires an explicit user attestation that the advertised address was tested from the remote peer; the app itself does not probe public reachability. Exact-head CI pending, so status stays blocked.\n\n\nT0121-A008/A009 (2026-10-28): The first host integration candidate was corrected to wait for an authenticated libp2p session before reading peer messages, obsolete loopback-only WPF assertions were replaced with peer-host configuration guards, and WPF type/protobuf references were fixed. Exact candidate c06d0ff passed all Step Three, HostLifecycle/peer-host, Windows WPF/DPAPI, Android and live-inference workflows. T0121 remains blocked only on independently evidenced deployment reachability/HTTPS rendezvous; no public-reachability or AC-P2P-01 success is claimed.\n\n\nT0121-A010 (2026-10-28): Re-read V 3.0.447 at online main head d1056208073960132aaa04cdb1568cfb29b13284. The full graph Blob SHA-1 matched the exact tree object; 229 tasks and 424 edges parsed. Current-head quality, HostLifecycle, Windows WPF, Android APK and local-inference CI statuses were all completed/successful. No production HTTPS rendezvous endpoint or second peer on an independent network was available, so deployment reachability remains NOT RUN; the local shallow clone also failed at DNS resolution, and no local test run is claimed. No edges or implementation files changed. T0121 remains blocked; T0122 remains not_started; AC-P2P-01 remains NOT RUN.\n\nT0121-A011 (2026-10-28): Re-read exact online main head e1ebd0895083da5558963911b04fbc9231b266cd (V 3.0.448). Exact-head Step Three quality, HostLifecycle integration, Windows WPF build, and Android APK all completed successfully. The graph was re-read from Blob 3533bf1eeaf654469f93f1edaf6c6863b9bd9af0; full UTF-8 content and JSON integrity were checked in this run. No deployed HTTPS rendezvous endpoint or independent-network peer was available, so reachability acceptance remains NOT RUN. No implementation or graph edge changed; this is an evidence synchronization attempt only. T0121 remains blocked, T0122 remains not_started, and AC-P2P-01 remains NOT RUN.\n\n\nT0121-A012 (2026-10-28): Revalidated exact online main head ff6dc21837e52c9e3e8123d409b3b41aa265c4a5 (V 3.0.449). Git Trees API identified the graph Blob 506e379f69c53aabdb2f5884cb40f6926886ae35; Git Blob API returned the complete content, recomputed Git Blob SHA-1 matched, and fenced JSON parsed as 229 tasks / 424 edges. Exact-head Step Three quality gate, HostLifecycle integration, Windows WPF build and Android APK CI all report completed/success. No deployed HTTPS rendezvous endpoint or second peer on an independent network was available, so independent reachability remains NOT RUN. No code or edge changed; this is evidence synchronization, not software progress. T0121 remains blocked; T0122 remains not_started; AC-P2P-01 remains NOT RUN.\n\nT0121-A013 (2026-10-28): Revalidated exact online main head d5f7c1d5416fef22cffa21608b173ed7839a6c38 (V 3.0.450). Git Blob API contents for graph, execution report and verification evidence matched their exact Git Blob SHA-1 IDs; the complete graph parses as 229 tasks / 424 edges. Exact-head Step Three quality gate, Android APK build, and HostLifecycle tests completed successfully. Windows WPF job remains in_progress at Set up job; no success/failure conclusion is claimed. No deployed production HTTPS rendezvous endpoint or second peer on an independent network was available, so reachability acceptance remains NOT RUN. No source code or dependency edge changed; this is fresh CI evidence recording, not software implementation progress. T0121 remains blocked, T0122 remains not_started, and AC-P2P-01 remains NOT RUN.\n\nT0121-A014 (2026-10-28): Revalidated exact online main head 20f3389614e2f6584e1d9af6d6b80af7cadea55f (V 3.0.451). Exact-head Step Three quality gate, HostLifecycle integration tests, Windows WPF Release build and Android APK build all completed successfully (https://github.com/artinrahimii/project/actions/runs/40707006692; https://github.com/artinrahimii/project/actions/runs/40707006686/job/122881723665; https://github.com/artinrahimii/project/actions/runs/40707006686/job/122881724223; https://github.com/artinrahimii/project/actions/runs/40707006686/job/122881724071). The graph was recovered via the Git Blob API from its exact tree entry; complete UTF-8 bytes matched the recorded Blob SHA-1 and JSON parsed as 229 tasks / 424 edges. No production HTTPS rendezvous endpoint or second peer on an independent network was available, so independent reachability remains NOT RUN. No product source or dependency edge changed. T0121 remains blocked; T0122 remains not_started; AC-P2P-01 remains NOT RUN.\n\nT0121-A015 (2026-10-28): Revalidated exact online main head 07b430e8f8bb6753e20d8421324fdfc652bfaed4 (V 3.0.452). The graph was retrieved via the Blob SHA recorded in that commit's tree; recomputed Git Blob SHA-1 matched and the complete JSON parsed as 229 tasks / 424 edges. Exact-head Step Three quality gate and HostLifecycle integration passed. Android APK and Windows WPF jobs remain in_progress, with no final conclusion available at this inspection. No production HTTPS rendezvous endpoint or independent-network peer was available, so external reachability remains NOT RUN. No implementation or dependency edge changed; this update records current CI evidence and is not software implementation progress. T0121 remains blocked, T0122 remains not_started, and AC-P2P-01 remains NOT RUN.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0121-A005 verification update (2026-10-27): all exact-commit GitHub Actions workflows for V 3.0.368 passed, including the HostLifecycle acceptance suite. This validates the correction to the tests, but does not complete runtime lifecycle integration: the publisher is not yet wired to the WPF participation toggle and safe reachable rendezvous/advertised-address configuration remains unavailable. Task status remains in_progress.\n\nT0121-A006 (2026-10-27): status changed from in_progress to blocked after source- and graph-backed review. The lease publisher/loopback tests exist, but the real WPF host listener remains loopback-only and explicitly closes inbound requests until protocol handling is implemented; no verified advertised address, rendezvous HTTPS setting or wired stable host identity exists. T0130 identity work sits downstream of T0128, which itself depends on T0121/T0122; do not add a new identity edge without resolving this potential cycle. Unblock only after authenticated peer-reachable host request handling, verified identity/address/HTTPS settings and WPF lifecycle integration pass exact-host tests. T0122 remains not_started.\n\nT0130 ordering update: identity-store work is scheduled before the blocked announcement chain after validating T0128 → T0130 as sequencing_only. This resolves the ordering-cycle concern only; it does not unblock T0121 because production identity wiring, authenticated reachable inbound handling, HTTPS rendezvous and a verified advertised address remain missing.\n\nT0121-A007 (2026-10-28): Added PeerAnnouncementHostLifecycle and connected it to WPF participation: fixed-address libp2p listening for an explicitly trusted peer, HTTPS rendezvous lease publishing/renewal, Protobuf request parsing, coordinator/readiness admission, real-session inference response, and stop-on-disconnect. Added a loopback service integration test for authenticated message exchange and expiry. The UI requires an explicit user attestation that the advertised address was tested from the remote peer; the app itself does not probe public reachability. Exact-head CI pending, so status stays blocked.\n\n\nT0121-A008/A009 (2026-10-28): The first host integration candidate was corrected to wait for an authenticated libp2p session before reading peer messages, obsolete loopback-only WPF assertions were replaced with peer-host configuration guards, and WPF type/protobuf references were fixed. Exact candidate c06d0ff passed all Step Three, HostLifecycle/peer-host, Windows WPF/DPAPI, Android and live-inference workflows. T0121 remains blocked only on independently evidenced deployment reachability/HTTPS rendezvous; no public-reachability or AC-P2P-01 success is claimed.\n\n\nT0121-A010 (2026-10-28): Re-read V 3.0.447 at online main head d1056208073960132aaa04cdb1568cfb29b13284. The full graph Blob SHA-1 matched the exact tree object; 229 tasks and 424 edges parsed. Current-head quality, HostLifecycle, Windows WPF, Android APK and local-inference CI statuses were all completed/successful. No production HTTPS rendezvous endpoint or second peer on an independent network was available, so deployment reachability remains NOT RUN; the local shallow clone also failed at DNS resolution, and no local test run is claimed. No edges or implementation files changed. T0121 remains blocked; T0122 remains not_started; AC-P2P-01 remains NOT RUN.\n\nT0121-A011 (2026-10-28): Re-read exact online main head e1ebd0895083da5558963911b04fbc9231b266cd (V 3.0.448). Exact-head Step Three quality, HostLifecycle integration, Windows WPF build, and Android APK all completed successfully. The graph was re-read from Blob 3533bf1eeaf654469f93f1edaf6c6863b9bd9af0; full UTF-8 content and JSON integrity were checked in this run. No deployed HTTPS rendezvous endpoint or independent-network peer was available, so reachability acceptance remains NOT RUN. No implementation or graph edge changed; this is an evidence synchronization attempt only. T0121 remains blocked, T0122 remains not_started, and AC-P2P-01 remains NOT RUN.\n\n\nT0121-A012 (2026-10-28): Revalidated exact online main head ff6dc21837e52c9e3e8123d409b3b41aa265c4a5 (V 3.0.449). Git Trees API identified the graph Blob 506e379f69c53aabdb2f5884cb40f6926886ae35; Git Blob API returned the complete content, recomputed Git Blob SHA-1 matched, and fenced JSON parsed as 229 tasks / 424 edges. Exact-head Step Three quality gate, HostLifecycle integration, Windows WPF build and Android APK CI all report completed/success. No deployed HTTPS rendezvous endpoint or second peer on an independent network was available, so independent reachability remains NOT RUN. No code or edge changed; this is evidence synchronization, not software progress. T0121 remains blocked; T0122 remains not_started; AC-P2P-01 remains NOT RUN.\n\nT0121-A013 (2026-10-28): Revalidated exact online main head d5f7c1d5416fef22cffa21608b173ed7839a6c38 (V 3.0.450). Git Blob API contents for graph, execution report and verification evidence matched their exact Git Blob SHA-1 IDs; the complete graph parses as 229 tasks / 424 edges. Exact-head Step Three quality gate, Android APK build, and HostLifecycle tests completed successfully. Windows WPF job remains in_progress at Set up job; no success/failure conclusion is claimed. No deployed production HTTPS rendezvous endpoint or second peer on an independent network was available, so reachability acceptance remains NOT RUN. No source code or dependency edge changed; this is fresh CI evidence recording, not software implementation progress. T0121 remains blocked, T0122 remains not_started, and AC-P2P-01 remains NOT RUN.\n\nT0121-A014 (2026-10-28): Revalidated exact online main head 20f3389614e2f6584e1d9af6d6b80af7cadea55f (V 3.0.451). Exact-head Step Three quality gate, HostLifecycle integration tests, Windows WPF Release build and Android APK build all completed successfully (https://github.com/artinrahimii/project/actions/runs/40707006692; https://github.com/artinrahimii/project/actions/runs/40707006686/job/122881723665; https://github.com/artinrahimii/project/actions/runs/40707006686/job/122881724223; https://github.com/artinrahimii/project/actions/runs/40707006686/job/122881724071). The graph was recovered via the Git Blob API from its exact tree entry; complete UTF-8 bytes matched the recorded Blob SHA-1 and JSON parsed as 229 tasks / 424 edges. No production HTTPS rendezvous endpoint or second peer on an independent network was available, so independent reachability remains NOT RUN. No product source or dependency edge changed. T0121 remains blocked; T0122 remains not_started; AC-P2P-01 remains NOT RUN.\n\nT0121-A015 (2026-10-28): Revalidated exact online main head 07b430e8f8bb6753e20d8421324fdfc652bfaed4 (V 3.0.452). The graph was retrieved via the Blob SHA recorded in that commit's tree; recomputed Git Blob SHA-1 matched and the complete JSON parsed as 229 tasks / 424 edges. Exact-head Step Three quality gate and HostLifecycle integration passed. Android APK and Windows WPF jobs remain in_progress, with no final conclusion available at this inspection. No production HTTPS rendezvous endpoint or independent-network peer was available, so external reachability remains NOT RUN. No implementation or dependency edge changed; this update records current CI evidence and is not software implementation progress. T0121 remains blocked, T0122 remains not_started, and AC-P2P-01 remains NOT RUN.\n\nT0121-A016 (2026-10-28): Final result correction for exact V 3.0.452 (https://github.com/artinrahimii/project/actions/runs/40708989069; HostLifecycle https://github.com/artinrahimii/project/actions/runs/40708988954/job/122888764070; Windows WPF https://github.com/artinrahimii/project/actions/runs/40708988954/job/122888764130; Android APK https://github.com/artinrahimii/project/actions/runs/40708988954/job/122888763816). All four exact-head CI workflows/jobs completed successfully; this supersedes the A015 observations that Windows and Android were still in progress at that earlier inspection. No production HTTPS rendezvous endpoint or independent-network peer was available, so public reachability remains NOT RUN. No implementation or edge changed; T0121 remains blocked, T0122 remains not_started, and AC-P2P-01 remains NOT RUN.",
       "execution_summary": {
-        "attempt_count": 15,
+        "attempt_count": 16,
         "failed_attempt_count": 3,
-        "last_attempt_id": "T0121-A015",
+        "last_attempt_id": "T0121-A016",
         "last_attempt_result": "blocked",
         "changed_files": [
           "src/Host.Windows/Networking/PeerAnnouncementLeasePublisher.cs",
@@ -24989,7 +24991,8 @@
           "tests/test_network_listener_exposure.py",
           "docs/decisions/ADR-0006-peer-announcement-leases.md",
           "docs/decisions/README.md",
-          "step three/T0121/evidence/v3.0.451-current-head.md"
+          "step three/T0121/evidence/v3.0.451-current-head.md",
+          "step three/T0121/evidence/v3.0.452-ci-final.md"
         ],
         "related_commits": [
           "969ad720db1a84c1f633031300ba26e00d48d5fa",
@@ -25062,14 +25065,18 @@
           "Completed successfully: https://github.com/artinrahimii/project/actions/runs/40707006686/job/122881724223",
           "Completed successfully: https://github.com/artinrahimii/project/actions/runs/40707006686/job/122881724071",
           "Step Three quality gate — exact V 3.0.452: PASS — https://github.com/artinrahimii/project/actions/runs/40708989069.",
-          "HostLifecycle unit/integration — exact V 3.0.452: PASS — https://github.com/artinrahimii/project/actions/runs/40708988954/job/122888764070."
+          "HostLifecycle unit/integration — exact V 3.0.452: PASS — https://github.com/artinrahimii/project/actions/runs/40708988954/job/122888764070.",
+          "Step Three quality gate — exact V 3.0.452: PASS — https://github.com/artinrahimii/project/actions/runs/40708989069",
+          "HostLifecycle unit and integration — exact V 3.0.452: PASS — https://github.com/artinrahimii/project/actions/runs/40708988954/job/122888764070",
+          "Windows WPF host Release build — exact V 3.0.452: PASS — https://github.com/artinrahimii/project/actions/runs/40708988954/job/122888764130",
+          "Android APK build, lint and Protobuf checks — exact V 3.0.452: PASS — https://github.com/artinrahimii/project/actions/runs/40708988954/job/122888763816"
         ],
         "tests_failed": [
           "V 3.0.367 CI: Host lifecycle tests failed to compile because the new test passed HttpClient where PeerAnnouncementClient is required (CS1503).",
           "Initial peer-host candidate ae5f4bd61656816377ee133a58ffa5196f31016b: quality guard failed on obsolete loopback-only UI assertions, HostLifecycle test failed because the receive loop attempted ReceiveMessageAsync before a remote session existed, and WPF compilation failed on HostStatus/Google.Protobuf references; corrected in A008/A009.",
           "Candidate b352d775b8583655d1e2414e712e0a1c7fa11292: exact product workflow failed Windows compilation for ambiguous HostCapabilities (CS0104) and missing Google.Protobuf ToByteArray extension (CS1061); corrected in A009. https://github.com/artinrahimii/project/actions/runs/40661160981/job/122724238289"
         ],
-        "blocked_reason": "Production HTTPS rendezvous and independent-network reachability are still unverified; the exact V 3.0.452 Android and Windows jobs are still running. Do not infer public reachability from loopback acceptance.",
+        "blocked_reason": "All exact V 3.0.452 CI checks passed (quality, HostLifecycle, Android, Windows), but the actual deployment acceptance for production HTTPS rendezvous and peer reachability from an independent network remains not run.",
         "reopened_reason": null,
         "contract_revalidation": {
           "state": "not_required",
@@ -25081,7 +25088,7 @@
             "src/Rendezvous.Service/PeerAnnouncementDirectory.cs"
           ]
         },
-        "follow_up": "Inspect the final results of the exact V 3.0.452 Windows WPF and Android APK jobs. Independently verify the configured production HTTPS rendezvous and advertised TCP/QUIC endpoints from a second network, then re-evaluate T0121. Keep T0122 not_started and AC-P2P-01 NOT RUN until their actual acceptance criteria pass."
+        "follow_up": "Use a production HTTPS rendezvous endpoint and a second peer on an independent network to verify the advertised TCP/QUIC address. Only then reevaluate T0121 and unblock T0122."
       },
       "execution_history": [
         {
@@ -25714,6 +25721,54 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Inspect the final results of the exact V 3.0.452 Windows WPF and Android APK jobs. Independently verify the configured production HTTPS rendezvous and advertised TCP/QUIC endpoints from a second network, then re-evaluate T0121. Keep T0122 not_started and AC-P2P-01 NOT RUN until their actual acceptance criteria pass."
+        },
+        {
+          "attempt_id": "T0121-A016",
+          "started_at": "2026-10-28T14:49:56.398Z",
+          "ended_at": "2026-10-28T14:49:56.398Z",
+          "result": "blocked",
+          "summary": "Finalized the exact V 3.0.452 CI outcomes that were pending during A015. Step Three quality, HostLifecycle tests, Android APK/lint/Protobuf, and Windows WPF Release build/startup/DPAPI all completed successfully. The independent-network deployment acceptance remains not run because no production HTTPS rendezvous endpoint or second peer on a different network was available. No source code or dependency edge changed.",
+          "changed_files": [
+            "step three/T0121/evidence/v3.0.452-ci-final.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Step Three quality gate — exact V 3.0.452",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40708989069",
+              "summary": "Exact-head quality workflow completed successfully."
+            },
+            {
+              "name": "HostLifecycle unit and integration — exact V 3.0.452",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40708988954/job/122888764070",
+              "summary": "Exact-head HostLifecycle unit/integration job completed successfully."
+            },
+            {
+              "name": "Windows WPF host Release build — exact V 3.0.452",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40708988954/job/122888764130",
+              "summary": "Exact-head Windows WPF build/startup/DPAPI job completed successfully; this resolves the prior in-progress state."
+            },
+            {
+              "name": "Android APK build, lint and Protobuf checks — exact V 3.0.452",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40708988954/job/122888763816",
+              "summary": "Exact-head Android APK job completed successfully; this resolves the prior in-progress state."
+            },
+            {
+              "name": "Independent-network TCP/QUIC reachability and production HTTPS rendezvous",
+              "result": "not_run",
+              "summary": "No production HTTPS rendezvous endpoint or second peer on an independent network was available."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": "CI is green but production HTTPS rendezvous and independent-network advertised TCP/QUIC reachability remain unverified.",
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Configure production HTTPS rendezvous and use a second peer on an independent network to verify the advertised TCP/QUIC address; then re-evaluate T0121. Do not start T0122 until T0121 acceptance passes."
         }
       ]
     },
