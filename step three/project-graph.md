@@ -28190,20 +28190,44 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0138 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "src/Client.Android/app/build.gradle.kts",
+        "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/navigation/ClientDestination.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/navigation/ClientDestinationTest.kt",
+        "tests/test_android_compose_navigation.py",
+        "step three/T0139/execution-report.md",
+        "step three/T0139/evidence/verification.md",
+        "step three/project-graph.md"
+      ],
       "expected_output_paths": [
         "src/Client.Android/"
       ],
-      "evidence": [],
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/navigation/ClientDestination.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/navigation/ClientDestinationTest.kt",
+        "tests/test_android_compose_navigation.py",
+        "docs/decisions/ADR-0019-host-visible-inference-content.md",
+        "step three/T0139/evidence/verification.md"
+      ],
       "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0139-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Client.Android/app/build.gradle.kts",
+          "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
+          "src/Client.Android/app/src/main/java/com/whitep/client/ui/navigation/ClientDestination.kt",
+          "src/Client.Android/app/src/test/java/com/whitep/client/ui/navigation/ClientDestinationTest.kt",
+          "tests/test_android_compose_navigation.py",
+          "step three/T0139/execution-report.md",
+          "step three/T0139/evidence/verification.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
@@ -28216,7 +28240,56 @@
           "review_evidence": []
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0139-A001",
+          "started_at": "2026-10-28T20:57:03.350Z",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Implemented a runnable Compose navigation shell, Home, Request, Connections and Privacy screens; added route registry, pinned Navigation Compose dependency, Android JUnit route tests and Python source-contract tests. Exact-head CI pending; task remains in progress.",
+          "changed_files": [
+            "src/Client.Android/app/build.gradle.kts",
+            "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/navigation/ClientDestination.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/ui/navigation/ClientDestinationTest.kt",
+            "tests/test_android_compose_navigation.py",
+            "step three/T0139/execution-report.md",
+            "step three/T0139/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Android Kotlin formatting/lint",
+              "result": "pending",
+              "summary": "Run exact-head ktlintCheck."
+            },
+            {
+              "name": "Android APK compile",
+              "result": "pending",
+              "summary": "Run exact-head assembleDebug with Navigation Compose 2.10.2."
+            },
+            {
+              "name": "Android JUnit unit tests",
+              "result": "pending",
+              "summary": "Run testDebugUnitTest for route registry and existing Protobuf round-trip tests."
+            },
+            {
+              "name": "Step Three Python and graph quality gate",
+              "result": "pending",
+              "summary": "Run repository Python tests, syntax checks and graph/evidence guard."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "Android UI now exposes the T0138 endpoint-visibility disclosure and does not claim request delivery or persistence.",
+            "Introduced Navigation Compose 2.10.2 and a stable route registry for the Android app shell."
+          ],
+          "follow_up": "Run exact-head CI. Fix observed failures and only finalize T0139 after Android lint/APK/JUnit plus Step Three source/graph checks pass."
+        }
+      ]
     },
     {
       "id": "T0140",
@@ -35534,19 +35607,28 @@
       "from": "T0138",
       "to": "T0139",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0139 adds a user-visible Privacy destination that consumes the endpoint-visibility disclosure established by T0138. The host's ability to read prompt and context_capsule is a semantic UI/content contract, although no T0138 class or function is imported by Android.",
+      "validation_status": "validated",
+      "evidence": [
+        "docs/decisions/ADR-0019-host-visible-inference-content.md",
+        "docs/requirements.md (REQ-019)",
+        "tests/test_host_content_visibility.py",
+        "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt"
+      ]
     },
     {
       "from": "T0139",
       "to": "T0140",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0139 provides the routable Compose shell and named destinations that subsequent ViewModel/repository work can attach to, but T0140 does not require a code API or data type produced by T0139. Keep this edge as conservative execution order only.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/navigation/ClientDestination.kt",
+        "step three/project-graph.md (T0140 task definition)"
+      ]
     },
     {
       "from": "T0138",
@@ -40031,9 +40113,42 @@
         "docs/decisions/ADR-0002-direct-p2p-data-path.md"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-28T20:57:03.350Z",
+      "edge_from": "T0138",
+      "edge_to": "T0139",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "old_validation_status": "unreviewed",
+      "new_validation_status": "validated",
+      "reason": "T0139 adds a user-visible Privacy destination that consumes the endpoint-visibility disclosure established by T0138. The host's ability to read prompt and context_capsule is a semantic UI/content contract, although no T0138 class or function is imported by Android.",
+      "evidence": [
+        "docs/decisions/ADR-0019-host-visible-inference-content.md",
+        "docs/requirements.md (REQ-019)",
+        "tests/test_host_content_visibility.py",
+        "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-28T20:57:03.350Z",
+      "edge_from": "T0139",
+      "edge_to": "T0140",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "old_validation_status": "unreviewed",
+      "new_validation_status": "validated",
+      "reason": "T0139 provides the routable Compose shell and named destinations that subsequent ViewModel/repository work can attach to, but T0140 does not require a code API or data type produced by T0139. Keep this edge as conservative execution order only.",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/navigation/ClientDestination.kt",
+        "step three/project-graph.md (T0140 task definition)"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-28",
+  "updated_at": "2026-10-29",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",
