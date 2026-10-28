@@ -101,3 +101,8 @@ The first revision of `VerifyRejectsUnsupportedSecureChannelProtocolVersionAsync
 - The corrected server address was tested against the actual unsupported-version fixture. This is independent of the V3.0.470 draft, whose output was conservatively not counted after review found the interpolation defect.
 - Android APK and Windows WPF jobs passed in run 40727866470; [real local inference integration 40727866362](https://github.com/artinrahimii/project/actions/runs/40727866362) and [Step Three quality gate 40727866237](https://github.com/artinrahimii/project/actions/runs/40727866237) also passed.
 - Acceptance decision: all current T0134 criteria are evidenced. The graph task status is `done`; this does not claim every TLS wire-level compatibility permutation has been tested.
+
+
+## Graph guard correction for V 3.0.472
+
+The graph quality gate [run 40728705601](https://github.com/artinrahimii/project/actions/runs/40728705601) failed because a completed node must carry explicit `evidence` entries, including at least one path under `tests/`; `T0134.evidence` had not yet been populated. The 191 Python tests and Python syntax check preceding graph validation passed; graph validation reported `DONE_WITHOUT_EVIDENCE` and `DONE_WITHOUT_TEST_FILE_EVIDENCE`. The V 3.0.473 graph now lists the real test source files and the task's report/evidence files. No new test pass is inferred from this metadata correction.

@@ -112,3 +112,10 @@ The corrected source revision [V 3.0.471](https://github.com/artinrahimii/projec
 The V 3.0.470 PASS line for the new version-ID case is deliberately **not** used as acceptance evidence because source review found the initial address interpolation could generate a malformed multiaddress. V 3.0.471 fixed the address, and the actual HostLifecycle run for that corrected revision independently emitted the expected PASS line. Earlier failed A005/A006 attempts remain in history, with the uncaught `PeerConnectionException` cause and corrective evidence preserved.
 
 **Final state:** T0134 is now `done`. Evidence covers malformed persisted key/identity material, unknown/untrusted peers, authenticated remote identity mismatch, plaintext-only downgrade rejection, application-protocol version checks, and unsupported libp2p secure-channel protocol ID/version negotiation. It does not claim exhaustive coverage of every TLS wire-level configuration.
+
+
+## Graph quality-gate follow-up — V 3.0.472 / V 3.0.473
+
+The Step Three quality gate for [V 3.0.472](https://github.com/artinrahimii/project/commit/e17296c1c9a220525b7b66eee92255a117008a22), run [40728705601](https://github.com/artinrahimii/project/actions/runs/40728705601), found two graph-ledger metadata errors: `T0134` was marked done with an empty node-level `evidence` array, and that array did not directly reference a test source file. The graph guard’s 191 Python tests and syntax check passed; graph validation then failed with exactly those two errors. This did not invalidate the already-passing HostLifecycle test run, but it meant the evidence ledger was incomplete.
+
+The V 3.0.473 correction adds explicit node-level evidence links to the existing identity-store, peer-security, peer-trust and transport test sources plus the T0134 report/evidence files. No task status or dependency edge was changed in this correction. The exact V 3.0.473 quality-gate result must be checked before claiming the ledger is clean.
