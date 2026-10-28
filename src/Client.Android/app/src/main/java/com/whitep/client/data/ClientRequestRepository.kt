@@ -43,9 +43,9 @@ class InMemoryClientRequestRepository(
     override suspend fun updatePrompt(prompt: String) {
         mutableDraft.value =
             mutableDraft.value.copy(
-            prompt = prompt,
-            status = RequestDraftStatus.NOT_SENT,
-        )
+                prompt = prompt,
+                status = RequestDraftStatus.NOT_SENT,
+            )
     }
 
     override suspend fun prepareRequest(): RequestPreparationResult {

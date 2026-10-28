@@ -50,3 +50,15 @@
 - In RequestViewModel.kt, when branches and stateIn arguments use the indentation required by the exact CI diagnostics.
 - Finalized A002 and A003 as failed attempts because their exact CI results are now known. execution_summary.failed_attempt_count=3 now equals the three execution_history entries whose result is failed; A004 is the current partial attempt. No historical record was deleted and no dependency edge changed.
 - V 3.0.498 CI is pending. T0140 remains in_progress; no APK/JUnit/Protobuf success is claimed. No local Android SDK run was performed.
+
+
+## T0140-A004 exact-head V 3.0.498 CI result — failed
+
+- Exact V 3.0.498 Step Three quality gate passed: https://github.com/artinrahimii/project/actions/runs/40776795341. The graph guard and Python checks completed successfully.
+- The Android job in https://github.com/artinrahimii/project/actions/runs/40776795367 failed at Verify Kotlin formatting and lint. Ktlint found three indentation diagnostics in ClientRequestRepository.kt lines 46–48 in the multiline copy() call inside updatePrompt. Android APK, repository/ViewModel JUnit and generated Protobuf checks were skipped. HostLifecycle passed; Windows WPF remained in progress at the last inspection.
+
+## T0140-A005 — final repository indentation repair; validation pending
+
+- Adjusted the nested prompt/status argument indentation and closing parenthesis under the multiline MutableStateFlow.copy() call in updatePrompt to match the actual ktlint diagnostics.
+- Finalized A004 as failed based on the exact V 3.0.498 Android lint result. The graph now reports attempt_count=5 and failed_attempt_count=4, matching the five history entries and four entries marked failed.
+- V 3.0.499 exact-head CI is pending. T0140 remains in_progress; no Android APK/JUnit/Protobuf success is claimed and no local Android SDK run was performed.

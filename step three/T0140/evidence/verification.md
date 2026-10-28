@@ -33,3 +33,10 @@
 - Step Three CI failed because the recorded failed-attempt count was 2 but only one history item was finalized as failed. This is corrected by finalizing A002 and A003 according to observed CI results, preserving their records and adding A004.
 - Android ktlint on V 3.0.497 failed with main-source formatting diagnostics; the corresponding ClientRequestRepository.kt and RequestViewModel.kt expressions were reformatted. Android APK/JUnit/Protobuf remain unverified pending V 3.0.498 CI. HostLifecycle passed; Windows WPF remained in progress when last inspected.
 - No acceptance status or edge classification was changed. T0140 stays in_progress until exact-head CI passes.
+
+
+## V 3.0.498 exact-head verification and A005
+- Main commit: eaf42f0224b75135bedfd16234be7b1096bbb46c; tree f88def530b41889b68b5b98efe932a0881c6d8e9.
+- Graph was retrieved via exact-tree Blob 3d1cee2e4b52bc5456afa804a5c6b7417d47712a (2,419,983 expected bytes). Its complete UTF-8 content hash and size matched the exact Git Blob; all 229 nodes and 417 edges parsed.
+- Step Three quality gate passed; Android ktlint failed only on three nested indentation lines in ClientRequestRepository.kt:updatePrompt; APK/JUnit/Protobuf skipped. HostLifecycle passed; Windows WPF was still running when inspected.
+- A005 fixes those lines, finalizes A004's now-known failed result and keeps the task in_progress pending exact-head V 3.0.499 validation.
