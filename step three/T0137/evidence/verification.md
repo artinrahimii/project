@@ -1,25 +1,23 @@
 # T0137 — شواهد و اعتبارسنجی
 
-## نسخه و گراف مبنا
-- Branch: `main`
-- Commit پایهٔ اصلاح: `80fa3a12c7387a1bfb5c8e39e9f1463cfd58b425` — `V 3.0.479`
-- Tree: `49f27fa8e56243f89f0f25f8837650ee04b9ce83`
-- Graph Blob: `8057a52cebba439bd7b7046fc74a7d54596f99ab`
-- اندازهٔ محتوای فایل: **2,323,501 بایت UTF-8**؛ طول رشته: **2,201,506 نویسه**.
-- Git Blob SHA-1 روی بایت‌های اصلی و شامل حصار Markdown محاسبه شد و با `8057a52cebba439bd7b7046fc74a7d54596f99ab` تطبیق داشت؛ JSON کامل 229 وظیفه و 418 یال فعال را parse کرد.
+## دریافت و اعتبارسنجی گراف مبنا
+- Branch: `main`; commit مبنا: `V 3.0.480` — `9a3ad37c0534832002a9aa96b52db6863838f746`.
+- Tree: `7a62d234d584aa6c8f0514a494a1d252ed209abd`; graph Blob: `9cbefc74b737fb81eab1c1621168d2725bb56517`.
+- اندازهٔ محتوای اصلی: **2,328,976 بایت UTF-8**؛ طول رشته: **2,206,971 نویسه**.
+- SHA-1 صحیح شیء Git (نوع + طول بایتی + NUL + بایت‌های کامل شامل حصار Markdown) با Blob ID در درخت تطبیق داشت؛ JSON کامل parse شد: **229 وظیفه / 418 یال فعال**.
 
-## تلاش A001 — شکست کامپایل روی `V 3.0.479`
-- HostLifecycle job `123011004076`: شکست پیش از assertions؛ نبود `using Google.Protobuf` باعث `CS1061` برای `InferenceRequest.ToByteArray()` در خطوط 22 و 27 آزمون تازه شد.
-- فایل `PeerResponseCorrelationValidator.cs` در پروژهٔ HostLifecycle.Tests که فهرست `Compile Include` صریح دارد وارد نشده بود؛ نتیجه `CS0103` در آزمون و `PeerAnnouncementHostLifecycle` بود.
-- [HostLifecycle failure log](https://github.com/artinrahimii/project/actions/runs/40743489739/job/123011004076)
-- [Real local inference failure log](https://github.com/artinrahimii/project/actions/runs/40743490197/job/123011003755)
-- Windows WPF build job شکست خورد؛ Android APK job `123011004204` موفق شد؛ quality gate job `123011003650` موفق شد. موفقیت‌های مستقل جایگزین تست‌های C# اجرا‌نشده نیست.
+## تلاش A001 — خطای کامپایل حفظ‌شده
+- `V 3.0.479` در HostLifecycle job `123011004076` شکست خورد: `CS1061` به‌علت نبود `using Google.Protobuf;` و `CS0103` به‌علت نبودن لینک صریح `PeerResponseCorrelationValidator.cs` در `HostLifecycle.Tests.csproj`. Assertions جدید در آن commit اجرا نشدند.
+- [لاگ شکست A001](https://github.com/artinrahimii/project/actions/runs/40743489739/job/123011004076).
 
-## تلاش A002 — اصلاح wiring پروژه
-- `tests/HostLifecycle.Tests/PeerMessageSecurityAcceptanceTests.cs`: وارد کردن `Google.Protobuf` برای extensionهای Protobuf.
-- `tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj`: لینک صریح `src/Host.Windows/Networking/PeerResponseCorrelationValidator.cs` تا فایل در کامپایل executable test runner حضور داشته باشد.
-- نتیجهٔ CI روی `V 3.0.480`: در زمان ثبت، هنوز pending؛ PASS ادعا نمی‌شود.
+## تلاش A002 — اصلاح و شواهد پذیرش موفق
+- `V 3.0.480` اصلاح کرد: namespace افزونه‌های Protobuf به آزمون امنیتی افزوده شد و `PeerResponseCorrelationValidator.cs` به فهرست Compile صریح پروژهٔ آزمون لینک شد.
+- [HostLifecycle integration PASS](https://github.com/artinrahimii/project/actions/runs/40744170733/job/123013419409): شامل آزمون‌های جدید tampered request/replay/forged response و آزمون‌های قبلی identity mismatch، plaintext-only و secure-channel-version mismatch.
+- [Windows WPF build and DPAPI identity/trust PASS](https://github.com/artinrahimii/project/actions/runs/40744170733/job/123013419686).
+- [Android APK/lint/Protobuf PASS](https://github.com/artinrahimii/project/actions/runs/40744170733/job/123013419135).
+- [Real local inference and cancellation PASS](https://github.com/artinrahimii/project/actions/runs/40744170628/job/123013419660).
+- [Graph/Python quality gate PASS](https://github.com/artinrahimii/project/actions/runs/40744170564/job/123013418399).
 
 ## محدوده و ریسک
-- Replay fence در حافظه نگه‌داری می‌شود و در restart حذف می‌شود؛ replay میان restartها با این cache به‌تنهایی دفع نمی‌شود.
-- آزمون loopback جایگزین `T0128` و بررسی reachability مستقل نیست.
+- Replay cache فقط در حافظه است و پس از restart پاک می‌شود؛ replay بین restartها دفع‌شده فرض نمی‌شود.
+- آزمون loopback/CI جایگزین آزمون `T0128` روی دو شبکهٔ مستقل نیست؛ آن وظیفه هنوز NOT RUN است.
