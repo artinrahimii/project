@@ -49,7 +49,8 @@ class AndroidComposeNavigationTests(unittest.TestCase):
         self.assertIn("Android-to-host transport is not implemented.", ACTIVITY)
         self.assertIn("The processing host can read your prompt and context capsule", ACTIVITY)
         self.assertIn("Transport encryption protects data in transit.", ACTIVITY)
-        self.assertIn("Android-to-Windows delivery and no-storage behavior have not been verified.", ACTIVITY)
+        self.assertIn("Android-to-Windows delivery", ACTIVITY)
+        self.assertIn("no-storage behavior have not been verified.", ACTIVITY)
 
 
 if __name__ == "__main__":

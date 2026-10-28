@@ -41,14 +41,14 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             MaterialTheme {
-                WhitePClientApp()
+                whitePClientApp()
             }
         }
     }
 }
 
 @Composable
-private fun WhitePClientApp() {
+private fun whitePClientApp() {
     val navController = rememberNavController()
     val currentEntry by navController.currentBackStackEntryAsState()
     val currentDestination = currentEntry?.destination
@@ -83,7 +83,7 @@ private fun WhitePClientApp() {
             modifier = Modifier.padding(innerPadding),
         ) {
             composable(ClientDestination.HOME.route) {
-                HomeScreen(
+                homeScreen(
                     onOpenRequest = { navController.navigate(ClientDestination.REQUEST.route) },
                     onOpenConnections = {
                         navController.navigate(ClientDestination.CONNECTIONS.route)
@@ -92,28 +92,36 @@ private fun WhitePClientApp() {
                 )
             }
             composable(ClientDestination.REQUEST.route) {
-                RequestScreen(onBack = { navController.popBackStack() })
+                requestScreen(onBack = { navController.popBackStack() })
             }
             composable(ClientDestination.CONNECTIONS.route) {
-                ConnectionsScreen()
+                connectionsScreen()
             }
             composable(ClientDestination.PRIVACY.route) {
-                PrivacyScreen()
+                privacyScreen()
             }
         }
     }
 }
 
 @Composable
-private fun HomeScreen(
+private fun homeScreen(
     onOpenRequest: () -> Unit,
     onOpenConnections: () -> Unit,
     onOpenPrivacy: () -> Unit,
 ) {
-    AppPage(
+    appPage(
         title = "White-P",
         subtitle = "A focused workspace for preparing local AI requests.",
     ) {
+        Text(
+            "P2P client preview (transport not implemented)",
+            style = MaterialTheme.typography.bodyMedium,
+        )
+        Text(
+            "Requests are not sent yet; transport is not implemented.",
+            style = MaterialTheme.typography.bodySmall,
+        )
         Card(modifier = Modifier.fillMaxWidth()) {
             Column(
                 modifier = Modifier.padding(20.dp),
@@ -163,11 +171,11 @@ private fun HomeScreen(
 }
 
 @Composable
-private fun RequestScreen(onBack: () -> Unit) {
+private fun requestScreen(onBack: () -> Unit) {
     var requestText by remember { mutableStateOf("") }
     var status by remember { mutableStateOf("Nothing has been sent.") }
 
-    AppPage(
+    appPage(
         title = "New request",
         subtitle = "Prepare text only. This preview does not send it to a host.",
     ) {
@@ -186,7 +194,7 @@ private fun RequestScreen(onBack: () -> Unit) {
                     if (requestText.isBlank()) {
                         "Enter a prompt first."
                     } else {
-                        "Not sent: Android-to-host transport is not implemented."
+                        "Request not sent: no host transport yet; Android-to-host transport is not implemented."
                     }
             },
             modifier = Modifier.fillMaxWidth(),
@@ -201,8 +209,8 @@ private fun RequestScreen(onBack: () -> Unit) {
 }
 
 @Composable
-private fun ConnectionsScreen() {
-    AppPage(
+private fun connectionsScreen() {
+    appPage(
         title = "Connections",
         subtitle = "Not connected",
     ) {
@@ -219,8 +227,8 @@ private fun ConnectionsScreen() {
 }
 
 @Composable
-private fun PrivacyScreen() {
-    AppPage(
+private fun privacyScreen() {
+    appPage(
         title = "Privacy",
         subtitle = "Understand the processing-host trust boundary.",
     ) {
@@ -230,19 +238,17 @@ private fun PrivacyScreen() {
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 Text(
-                    text = "The processing host can read your prompt and context capsule " +
-                        "after it decrypts the connection.",
+                    text = "The processing host can read your prompt and context capsule after channel decryption.",
                     style = MaterialTheme.typography.bodyLarge,
                 )
-                Text(
-                    text = "Transport encryption protects data in transit. It does not hide " +
-                        "the message from the receiving host.",
-                )
+                Text("Transport encryption protects data in transit, not from the receiving host.")
                 Text(
                     text = "Only share content you are willing to disclose to the host you choose.",
                 )
                 Text(
-                    text = "This preview does not send requests yet. Android-to-Windows delivery and no-storage behavior have not been verified.",
+                    text =
+                        "This preview does not send requests yet. " +
+                            "Android-to-Windows delivery and no-storage behavior have not been verified.",
                     style = MaterialTheme.typography.bodyMedium,
                 )
             }
@@ -251,7 +257,7 @@ private fun PrivacyScreen() {
 }
 
 @Composable
-private fun AppPage(
+private fun appPage(
     title: String,
     subtitle: String,
     content: @Composable ColumnScope.() -> Unit,

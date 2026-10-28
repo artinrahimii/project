@@ -1,21 +1,17 @@
 # T0139 — Verification evidence
 
-## Source revision and graph integrity
-- Read from branch `main`, commit `f589e843dfd019ab160b02e11380a3e6b406a0f4`, tree `da1352b145a0237c4aabe0ca513fa1d234d3618c`.
-- Graph path: `step three/project-graph.md`; Blob ID: `4816ddf279ba4cbbfe3b4d8fdf0bfd65455212c5`.
-- Original graph content: **2,344,448 UTF-8 bytes**, **2,222,614 characters**.
-- Git object SHA-1 recalculated over `blob {byte length}\0` plus the full original UTF-8 bytes (including Markdown fences): `4816ddf279ba4cbbfe3b4d8fdf0bfd65455212c5`; matched the tree Blob ID. JSON parses fully to 229 tasks and 417 active edges.
-- T0138's endpoint disclosure is present in `docs/decisions/ADR-0019-host-visible-inference-content.md`; its source-contract test and recorded V 3.0.483 CI evidence are present on current HEAD.
-- The T0139 task folder did not exist in the base tree.
+## Graph and source baseline
+- Exact base: `main`, `V 3.0.485`, `1fed6eecb0a79edf0a9cec6a32c6c2bf11eaf98f`; tree `e4ceb5f8580b81ff6ad736d4d6580d85035ff8d5`.
+- Graph Blob `2e7c4232c1f6c756ad39ebdfaf4f29c9a4cafef8`; original bytes **2,351,270 UTF-8 bytes**, string length **2,229,438 characters**. Git Blob SHA-1 over `blob {length}\0` plus complete raw bytes matched the tree entry. Full JSON parsed as 229 tasks / 417 active edges.
+- Current task status remains `in_progress`; A001 failure is preserved in graph history and A002 is a correction attempt, not yet a pass.
 
-## Dependency-edge review
-- T0138 → T0139: validated as `contract_or_interface_dependency`; the new Privacy destination surfaces the reviewed processing-host visibility disclosure, making that boundary part of the UI content contract. Evidence: ADR-0019, REQ-019, `tests/test_host_content_visibility.py`, and the Privacy destination.
-- T0139 → T0140: validated as `sequencing_only`; ViewModel/repository work can build on the route shell, but T0139 provides no hard code API prerequisite. Conservative order retained.
-- No unrelated or unreviewed edge was changed.
+## A001 — failed exact-head checks (V 3.0.485)
+- [Quality job 123096849080](https://github.com/artinrahimii/project/actions/runs/40767883598/job/123096849080): 199 tests ran; three existing source-contract tests failed because MainActivity had removed required explicit P2P preview/no-delivery copy.
+- [Android job 123096849669](https://github.com/artinrahimii/project/actions/runs/40767883644/job/123096849669): ktlintCheck failed on uppercase Compose function names, multi-line expression formatting, one line >120 chars and a missing trailing enum comma. APK and Android JUnit tasks were skipped.
+- [HostLifecycle job 123096849547](https://github.com/artinrahimii/project/actions/runs/40767883644/job/123096849547): passed. This does not imply Android build success.
 
-## Implementation and test scope
-- `src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt`: runnable Home, Request, Connections and Privacy screens under a Compose `NavHost`; top-level bottom navigation with state restoration; the request action explicitly says the request was not sent.
-- `src/Client.Android/app/src/main/java/com/whitep/client/ui/navigation/ClientDestination.kt`: canonical route registry.
-- `src/Client.Android/app/src/test/java/com/whitep/client/ui/navigation/ClientDestinationTest.kt`: JUnit route uniqueness/start destination/top-level destination tests.
-- `tests/test_android_compose_navigation.py`: source-contract tests for launcher entry point, route registration, navigation state and privacy disclosure.
-- Exact-head CI status at this commit: **pending**; no passing result is claimed before a workflow returns.
+## A002 — corrective changes
+- Restores the required old preview and not-sent phrases without claiming transport has been implemented.
+- Renames private Compose functions to lowercase camel case, shortens privacy wording, uses ktlint-compliant continuation formatting, and adds the enum trailing comma.
+- Updates the new source-contract check to assert the privacy sentence's components without requiring a single literal line.
+- A002 CI status: **pending**; no passing result is yet claimed.

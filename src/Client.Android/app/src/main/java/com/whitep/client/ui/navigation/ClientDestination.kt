@@ -13,7 +13,8 @@ internal enum class ClientDestination(
     HOME("home", "Home", "⌂"),
     REQUEST("request", "New request", "＋"),
     CONNECTIONS("connections", "Connections", "↔"),
-    PRIVACY("privacy", "Privacy", "i");
+    PRIVACY("privacy", "Privacy", "i"),
+    ;
 
     companion object {
         val startDestination: ClientDestination = HOME
