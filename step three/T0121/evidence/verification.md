@@ -85,3 +85,12 @@ The lease publisher is not yet wired into the WPF host participation lifecycle b
 - Independent-network acceptance: **NOT RUN**. No configured production HTTPS rendezvous endpoint or second peer on an independent network was available. Public reachability must not be inferred from loopback CI.
 - Local clone: attempted and failed because `github.com` could not be resolved in this environment; no local build/test is claimed.
 - Result: T0121 stays blocked, T0122 stays not_started, and AC-P2P-01 stays NOT RUN. No dependency edges were changed.
+
+
+## 2026-10-28 — exact V 3.0.448 CI revalidation
+
+- Baseline: `main` at `e1ebd0895083da5558963911b04fbc9231b266cd` (`V 3.0.448`).
+- Graph read method: Git Trees API -> exact graph Blob `3533bf1eeaf654469f93f1edaf6c6863b9bd9af0` -> Git Blob API. The complete original content was 2,197,870 UTF-8 bytes; recomputed Git Blob SHA-1 matched the tree entry; fenced JSON parsed as 229 tasks and 424 edges.
+- Exact-head CI completed successfully: [quality gate](https://github.com/artinrahimii/project/actions/runs/40704091906/job/122871401609), [HostLifecycle integration](https://github.com/artinrahimii/project/actions/runs/40704092070/job/122871402110), [Windows host build](https://github.com/artinrahimii/project/actions/runs/40704092070/job/122871401355), and [Android APK build](https://github.com/artinrahimii/project/actions/runs/40704092070/job/122871401840).
+- Independent-network reachability acceptance remains **NOT RUN** because no deployed HTTPS rendezvous endpoint or external peer was available. T0121 remains blocked; T0122 remains not_started; AC-P2P-01 remains NOT RUN.
+- No dependency edge changed, and no product implementation was modified in this verification-only attempt.
