@@ -1,26 +1,31 @@
-# T0135 — شواهد و اعتبارسنجی
+# T0135 — شواهد و اعتبارسنجی نهایی
 
-## گراف و نسخهٔ دقیق بررسی‌شده
+## گراف در نسخهٔ دقیق مبنا
 
-- بررسی قبل از اصلاح: `main` روی `V 3.0.474`، commit `d6cd1fced96dd85626c0e16b044b5a111f8890a3`.
-- Tree SHA: `da9040116d69e07392903c7f1a6f06c2e08e0f56`.
-- مسیر graph: `step three/project-graph.md`; Blob `2286f25800dc8613d4f3abd3679ed48b498f8366`.
-- روش دریافت: Tree API از tree مختص commit و سپس Git Blob API.
-- اندازهٔ Blob اعلام‌شده و UTF-8 محاسبه‌شده: **2,298,059 بایت**؛ طول رشتهٔ دریافتی: **2,175,961 نویسه**.
-- Git Blob SHA-1 محاسبه‌شده از محتوای کامل اصلی شامل حصارهای Markdown: `2286f25800dc8613d4f3abd3679ed48b498f8366`; تطبیق با Blob همان tree: موفق.
-- JSON کامل parse شد: 229 گره، 420 یال فعال؛ T0135 در `in_progress` بود و سابقهٔ تغییر یال‌ها در گراف موجود بود.
+- Branch: `main`; commit: `0f2e7efcd21d5a1d44f116054021a8adcd84ddf1` (`V 3.0.475`); tree: `b958d8d3c7da90d16211907bce5b7fcb0fd63f68`.
+- مسیر: `step three/project-graph.md`; Blob tree: `d00d88bb7da70254eca07ec92f10dadfa80153de`.
+- Blob از Git Trees API و سپس Git Blob API دریافت شد.
+- اندازهٔ اصلی در tree / UTF-8 محاسبه‌شده: **2,300,005 بایت**؛ طول رشته **2,177,905 نویسه**.
+- Git Blob SHA-1 روی کل محتوای اصلی، از جمله fenced Markdown، با `d00d88bb7da70254eca07ec92f10dadfa80153de` برابر بود؛ JSON کامل parse شد.
+- آمار گراف: 229 گره، 420 یال فعال؛ 126 `done`، یک `blocked`، 101 `not_started` و T0135 در حال انجام بود؛ 196 یال `unreviewed`.
 
-## شواهد کد
+## کد/قرارداد
 
-- `src/Host.Windows/Requests/SecureRequestIdGenerator.cs`: مولد ID تصادفی ۱۲۸ بیتی بدون پارامتر هویتی.
-- `protocol/whitep/v1/messages.proto`: قرارداد wire، request و attempt ID را جدا نگه می‌دارد.
-- `src/Host.Windows/Networking/NetworkInferenceRequestResponseMapper.cs`: حفظ request ID در پاسخ‌های خطادار.
-- `docs/decisions/ADR-0013-temporary-request-identifiers.md`: تصمیم معماری شناسه‌های موقت.
-- آزمون اختصاصی `tests/HostLifecycle.Tests/RequestIdentityIndependenceAcceptanceTests.cs` به `tests/HostLifecycle.Tests/Program.cs` متصل است.
+- `src/Host.Windows/Requests/SecureRequestIdGenerator.cs`: شناسهٔ opaque با ۱۶ بایت رمزنگاری‌شده، بدون ورودی هویتی.
+- `protocol/whitep/v1/messages.proto`: request/attempt IDs مستقل و بدون فیلد پایدار کاربر/گفت‌وگو.
+- `src/Host.Windows/Networking/NetworkInferenceRequestResponseMapper.cs`: حفظ request ID در پاسخ خطای typed.
+- `tests/HostLifecycle.Tests/RequestIdentityIndependenceAcceptanceTests.cs` و `tests/HostLifecycle.Tests/Program.cs`: آزمون پذیرش و اتصال به runner.
+- `docs/decisions/ADR-0013-temporary-request-identifiers.md`: تصمیم معماری مرتبط.
 
-## نتایج CI
+## نتایج CI روی دقیقاً V 3.0.475
 
-- Step Three quality gate روی exact commit V 3.0.474: **PASS** — [run 40733088130](https://github.com/artinrahimii/project/actions/runs/40733088130).
-- HostLifecycle روی exact commit V 3.0.474: **FAIL در کامپایل** پیش از اجرای آزمون‌ها؛ `CS1061` برای extension `ToByteArray`، به دلیل نبود `using Google.Protobuf;` — [job 122974324111](https://github.com/artinrahimii/project/actions/runs/40733088328/job/122974324111).
-- رفع خطا در تغییر جاری: اضافه‌شدن `using Google.Protobuf;`; منتظر اجرای CI نسخهٔ بعدی هستیم.
-- هیچ ادعایی دربارهٔ اجرای موفق آزمون تازه یا اجرای محلی وجود ندارد.
+- HostLifecycle: **PASS**, شامل خروجی صریح آزمون جدید — [run 40733512116 / job 122975807228](https://github.com/artinrahimii/project/actions/runs/40733512116/job/122975807228).
+- Step Three quality gate: **PASS** — [run 40733512114](https://github.com/artinrahimii/project/actions/runs/40733512114).
+- Windows WPF host: **PASS** — [run 40733512116 / job 122975807074](https://github.com/artinrahimii/project/actions/runs/40733512116/job/122975807074).
+- Android APK/lint/Protobuf: **PASS** — [run 40733512116 / job 122975806646](https://github.com/artinrahimii/project/actions/runs/40733512116/job/122975806646).
+- Real local inference integration: **PASS** — [run 40733512148](https://github.com/artinrahimii/project/actions/runs/40733512148).
+- تلاش اول V 3.0.474 با `CS1061` شکست خورد و در execution history نگه داشته شده است؛ تلاش دوم بعد از اصلاح موفق شد.
+
+## مرز نتیجه
+
+T0135 مطابق معیار پذیرش قرارداد/شناسهٔ درخواست تکمیل شد. این نتیجه اجرای end-to-end روی دو شبکهٔ مستقل نیست؛ `T0128` همچنان `not_started` باقی می‌ماند.

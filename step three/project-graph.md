@@ -27519,8 +27519,8 @@
       ],
       "start_condition": "T0134 is done and its exact-head secure-channel rejection tests are passing. T0128 is tracked independently because independent-network acceptance produces no API/contract required to test request-ID independence.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال انجام",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "src/Host.Windows/Requests/SecureRequestIdGenerator.cs",
         "protocol/whitep/v1/messages.proto",
@@ -27537,14 +27537,16 @@
         "tests/HostLifecycle.Tests/RequestIdentityIndependenceAcceptanceTests.cs",
         "tests/HostLifecycle.Tests/Program.cs",
         "docs/decisions/ADR-0013-temporary-request-identifiers.md",
-        "protocol/whitep/v1/messages.proto"
+        "protocol/whitep/v1/messages.proto",
+        "https://github.com/artinrahimii/project/actions/runs/40733512116/job/122975807228",
+        "https://github.com/artinrahimii/project/actions/runs/40733512114"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0135-A001 (2026-10-28): reviewed T0134 and T0128 edges against current source/wire contracts. Existing 128-bit opaque ID generation and the no-user/conversation wire contract were present; added an integrated acceptance test to enforce that boundary and preserve response correlation. Exact-commit CI is pending, so status remains in_progress. T0128 remains not_started and is not claimed as passed.\n\nT0135-A002: fixed A001's compile error by adding the missing Google.Protobuf namespace for ToByteArray(). The fix is pending exact-commit CI; A001 remains recorded as failed.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0135-A001 (2026-10-28): reviewed T0134 and T0128 edges against current source/wire contracts. Existing 128-bit opaque ID generation and the no-user/conversation wire contract were present; added an integrated acceptance test to enforce that boundary and preserve response correlation. Exact-commit CI is pending, so status remains in_progress. T0128 remains not_started and is not claimed as passed.\n\nT0135-A002: fixed A001's compile error by adding the missing Google.Protobuf namespace for ToByteArray(). The fix is pending exact-commit CI; A001 remains recorded as failed.\n\nT0135-A002 completion evidence (2026-10-28): the missing Google.Protobuf namespace found by A001 was added in V 3.0.475. The exact HostLifecycle job passed and explicitly logged request identity independence; Step Three quality gate, Windows WPF build, Android APK/Protobuf checks and real local inference integration also passed. A001 remains recorded as a failed compile attempt; current status is done based on A002 evidence.",
       "execution_summary": {
         "attempt_count": 2,
         "failed_attempt_count": 1,
         "last_attempt_id": "T0135-A002",
-        "last_attempt_result": "partial",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "tests/HostLifecycle.Tests/RequestIdentityIndependenceAcceptanceTests.cs",
           "tests/HostLifecycle.Tests/Program.cs",
@@ -27553,11 +27555,18 @@
           "step three/project-graph.md"
         ],
         "related_commits": [
-          "d6cd1fced96dd85626c0e16b044b5a111f8890a3"
+          "d6cd1fced96dd85626c0e16b044b5a111f8890a3",
+          "0f2e7efcd21d5a1d44f116054021a8adcd84ddf1"
         ],
-        "tests_passed": [],
+        "tests_passed": [
+          "Exact V 3.0.475 HostLifecycle: RequestIdentityIndependenceAcceptanceTests emitted PASS; run 40733512116/job 122975807228.",
+          "Exact V 3.0.475 Step Three quality gate passed: run 40733512114.",
+          "Exact V 3.0.475 Windows WPF build passed: run 40733512116/job 122975807074.",
+          "Exact V 3.0.475 Android APK build and Protobuf checks passed: run 40733512116/job 122975806646.",
+          "Exact V 3.0.475 real local inference integration workflow passed: run 40733512148."
+        ],
         "tests_failed": [
-          "V 3.0.474 HostLifecycle job 122974324111 failed at compile time with CS1061 because Google.Protobuf's ToByteArray extension namespace was not imported."
+          "V 3.0.474 HostLifecycle job 122974324111 failed before assertions with compiler CS1061 because Google.Protobuf's ToByteArray extension namespace was missing; corrected in V 3.0.475."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -27582,7 +27591,7 @@
             "step three/T0135/evidence/verification.md",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "d6cd1fced96dd85626c0e16b044b5a111f8890a3",
           "tests": [
             {
               "command": "dotnet run --project tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj --configuration Release",
@@ -27600,22 +27609,53 @@
         {
           "attempt_id": "T0135-A002",
           "started_at": "2026-10-28T17:10:38.000Z",
-          "ended_at": "2026-10-28T17:12:30.000Z",
-          "result": "partial",
-          "summary": "Corrected the exact CI compile failure by importing Google.Protobuf so the acceptance test can call the Protobuf ToByteArray extension. The new source has not yet been rerun; task remains in_progress.",
+          "ended_at": "2026-10-28T17:14:39.000Z",
+          "result": "succeeded",
+          "summary": "Fixed the missing Google.Protobuf extension namespace and reran exact V 3.0.475 workflows. The HostLifecycle job passed and printed the explicit request-identity-independence PASS line; Step Three quality, Windows WPF, Android APK and real local inference workflows also completed successfully.",
           "changed_files": [
             "tests/HostLifecycle.Tests/RequestIdentityIndependenceAcceptanceTests.cs",
             "step three/T0135/execution-report.md",
             "step three/T0135/evidence/verification.md",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
-          "tests": [],
+          "commit_sha": "0f2e7efcd21d5a1d44f116054021a8adcd84ddf1",
+          "tests": [
+            {
+              "command": "dotnet run --project tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj --configuration Release",
+              "result": "passed",
+              "summary": "HostLifecycle integration job completed successfully; log explicitly contains PASS for request identity independence, protocol contract exclusion of stable IDs and request correlation.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40733512116/job/122975807228"
+            },
+            {
+              "command": "Step Three quality gate",
+              "result": "passed",
+              "summary": "Exact V 3.0.475 graph structure and evidence checks passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40733512114"
+            },
+            {
+              "command": "Windows WPF host build",
+              "result": "passed",
+              "summary": "Exact-head Release build/startup/security checks passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40733512116/job/122975807074"
+            },
+            {
+              "command": "Android APK build",
+              "result": "passed",
+              "summary": "Exact-head Android build, lint and Protobuf checks passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40733512116/job/122975806646"
+            },
+            {
+              "command": "Real local inference integration",
+              "result": "passed",
+              "summary": "Exact-head pinned llama.cpp/GGUF integration workflow succeeded.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40733512148"
+            }
+          ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect V 3.0.475 HostLifecycle and quality workflows; retain the failed A001 record regardless of outcome."
+          "follow_up": "Before starting T0136, review the T0135→T0136 and T0128→T0136 edges because they remain unreviewed; T0128 remains not_started."
         }
       ]
     },

@@ -1,24 +1,26 @@
 # T0135 — گزارش اجرای وظیفه
 
-- **وضعیت فعلی:** `in_progress`؛ نسخهٔ `V 3.0.474` شکست کامپایل داشت، اصلاح در `V 3.0.475` ثبت می‌شود و نتیجهٔ آزمون اصلاح‌شده هنوز در انتظار است.
-- **نسخهٔ مبنا:** `V 3.0.473` — `598b34674a15ded12c0c38979eed0d3a09a8189c`.
-- **هدف:** مستقل نگه‌داشتن شناسهٔ هم‌بستگی درخواست از شناسهٔ پایدار کاربر و گفت‌وگو.
+- **وضعیت نهایی:** `done`.
+- **Commit حاوی اصلاح و آزمون پذیرفته‌شده:** [V 3.0.475 — `0f2e7efcd21d5a1d44f116054021a8adcd84ddf1`](https://github.com/artinrahimii/project/commit/0f2e7efcd21d5a1d44f116054021a8adcd84ddf1).
+- **تلاش‌ها:** ۲؛ نخستین تلاش با خطای کامپایل شکست خورد، اصلاح شد و تلاش دوم از CI گذشت.
 
-## بررسی و تغییر واقعی
+## پیاده‌سازی
 
-- `src/Host.Windows/Requests/SecureRequestIdGenerator.cs` شناسه را با ۱۶ بایت `RandomNumberGenerator` و قالب opaque `req_` + ۳۲ رقم hex می‌سازد؛ تابع پارامتر کاربر، دستگاه یا گفت‌وگو نمی‌پذیرد.
-- `protocol/whitep/v1/messages.proto` فیلدهای `request_id` و `attempt_id` را جدا می‌کند و شناسهٔ پایدار کاربر/گفت‌وگو را در پیام‌های انتخاب‌شده تعریف نمی‌کند.
-- `ChatConversation` پیام‌ها و sequence درون‌نشستی نگه می‌دارد و شناسهٔ پایدار گفت‌وگو تعریف نمی‌کند.
-- `tests/HostLifecycle.Tests/RequestIdentityIndependenceAcceptanceTests.cs` به harness موجود اضافه شد تا قالب opaque، عدم وجود فیلدهای پایدار هویتی در پیام‌های منتخب Protobuf، round-trip درخواست و حفظ correlation در خطای typed را آزمون کند. اجرای آزمون در `Program.cs` ثبت است.
+`tests/HostLifecycle.Tests/RequestIdentityIndependenceAcceptanceTests.cs` به test runner موجود متصل شد. آزمون قالب شناسهٔ opaque با ۱۲۸ بیت تصادفی، ۵۱۲ تولید نمونه، نبود فیلدهای پایدار `user_id`/`account_id`/`device_id`/`conversation_id`/`persistent_conversation_id` در پیام‌های منتخب Protobuf، اعتبارسنجی درخواست serialize/parse شده و حفظ request ID در پاسخ خطای typed را می‌سنجد.
 
-## وابستگی‌ها
+کد مولد شناسه و قرارداد wire تغییر نکردند؛ پیاده‌سازی موجود با regression test اجرایی حفاظت شد. `ChatConversation` فقط پیام و شمارهٔ ترتیبی session-local نگه می‌دارد و شناسهٔ پایدار گفت‌وگو ایجاد نمی‌کند.
 
-- یال `T0134 → T0135` با شواهد کد/قرارداد به `sequencing_only` اعتبارسنجی و در گراف فعال نگه داشته شد؛ ترتیب محافظه‌کارانه همچنان رعایت می‌شود.
-- یال `T0128 → T0135` با دلیل و سابقه از یال‌های فعال حذف شد: آزمون شبکهٔ مستقل هیچ API یا قرارداد لازم برای آزمون جداسازی شناسه تولید نمی‌کند. این تغییر به معنی اجرا یا موفقیت `T0128` نیست؛ وضعیت آن `not_started` باقی است.
+## بازبینی وابستگی‌ها
 
-## آزمون‌ها و رفع خطا
+- `T0134 → T0135` به `sequencing_only` اعتبارسنجی و در گراف فعال حفظ شد.
+- `T0128 → T0135` با شواهد و دلیل ثبت‌شده از یال‌های فعال حذف شد؛ آزمون دو رایانه/شبکهٔ مستقل API یا قرارداد لازم برای جداسازی شناسه تولید نمی‌کند. این اقدام اجرای `T0128` را اثبات نمی‌کند؛ آن همچنان `not_started` است.
 
-- **V 3.0.474:** Step Three quality gate موفق شد: [run 40733088130](https://github.com/artinrahimii/project/actions/runs/40733088130).
-- **V 3.0.474:** HostLifecycle failed قبل از اجرای تست‌ها با `CS1061` در خط فراخوانی `InferenceRequest.ToByteArray()`: فضای نام extension از `Google.Protobuf` وارد نشده بود. گزارش دقیق: [job 122974324111](https://github.com/artinrahimii/project/actions/runs/40733088328/job/122974324111).
-- **اصلاح:** `using Google.Protobuf;` به آزمون افزوده شد. این اصلاح هنوز آزمون نشده است؛ نتیجهٔ CI نسخهٔ `V 3.0.475` تعیین خواهد کرد که وظیفه قابل تکمیل هست یا باید دوباره اصلاح شود.
-- اجرای محلی .NET ادعا نمی‌شود.
+## نتایج آزمون
+
+- تلاش اول در `V 3.0.474`: شکست کامپایل `CS1061` به دلیل واردنشدن namespace مربوط به extension `Google.Protobuf` برای `ToByteArray()`؛ سابقه حفظ شده است.
+- تلاش دوم در `V 3.0.475`: پس از افزودن `using Google.Protobuf;`، HostLifecycle موفق شد و لاگ صریحاً ثبت کرد: `PASS: request IDs remain opaque and independent of stable user/conversation identifiers; protocol contracts exclude stable IDs and preserve request correlation.`
+- Step Three quality gate، Windows WPF build، Android APK/Protobuf، و real local inference integration روی همان commit نیز موفق شدند.
+
+## وظیفهٔ منطقی بعدی
+
+`T0136` باقی است؛ یال‌های `T0135 → T0136` و `T0128 → T0136` هنوز بررسی‌نشده‌اند و باید قبل از اجرای آن تحلیل شوند. `T0128` اجرا‌نشده باقی می‌ماند.
