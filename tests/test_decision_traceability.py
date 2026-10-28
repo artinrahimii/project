@@ -695,7 +695,7 @@ class DecisionTraceabilityTests(unittest.TestCase):
         self.assertIn("await _peerParticipationService.DisposeAsync();", window)
         self.assertIn("PeerReachabilityConfirmed.IsChecked != true", window)
         self.assertIn("advertisedAddressVerified: true", window)
-        self.assertIn("this app does not independently verify public Internet reachability", window.lower())
+        self.assertIn("this app does not independently verify public internet reachability", window.lower())
         for control in ("PeerRendezvousUrl", "PeerBindAddress", "PeerAdvertisedAddress", "PeerPort", "PeerTrustedIdentity", "PeerReachabilityConfirmed"):
             with self.subTest(control=control):
                 self.assertIn(f'x:Name="{control}"', window_xaml)

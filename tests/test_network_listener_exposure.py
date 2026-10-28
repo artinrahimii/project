@@ -32,7 +32,7 @@ class NetworkListenerExposureTests(unittest.TestCase):
         self.assertIn("await service.StartAsync();", WINDOW)
         self.assertIn("PeerReachabilityConfirmed.IsChecked != true", WINDOW)
         self.assertIn("TrustPeerAfterExplicitConfirmation(expectedPeerIdentity, explicitlyConfirmed: true)", WINDOW)
-        self.assertIn("this app does not independently verify public Internet reachability", WINDOW.lower())
+        self.assertIn("this app does not independently verify public internet reachability", WINDOW.lower())
         self.assertIn("Peer hosting is disabled. The last rendezvous lease is no longer renewed", WINDOW)
         self.assertIn("loopback http is accepted only for integration testing", WINDOW_XAML.lower())
         # The legacy listener class remains loopback-only; the WPF peer-host path no longer uses its random loopback endpoint.
