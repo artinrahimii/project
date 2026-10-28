@@ -264,7 +264,7 @@ internal static class PeerTransportContractAcceptanceTests
         Multiaddress tcpAddress = serverPeer.ListenAddresses.Single(
             address => address.ToString().Contains("/tcp/", StringComparison.Ordinal));
         string serverAddress = tcpAddress.GetPeerId() is null
-            ? $"${tcpAddress}/p2p/{serverPeerIdentity}"
+            ? $"{tcpAddress}/p2p/{serverPeerIdentity}"
             : tcpAddress.ToString();
 
         clientTrustFixture.Store.TrustPeerAfterExplicitConfirmation(

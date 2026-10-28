@@ -90,3 +90,13 @@ This confirms the A007 exception-filter correction and the identity-mismatch/pla
 Added `VerifyRejectsUnsupportedSecureChannelProtocolVersionAsync` to the integrated HostLifecycle acceptance suite. It starts a real local libp2p listener whose stream stack advertises only `/tls/999.0.0`, while the production secure client offers its normal supported Noise/TLS protocols. The expected behavior is negotiation failure with neither a connected state nor an authenticated remote identity. The test uses the maintained libp2p stack and a test-only protocol-ID fixture; it adds no custom cryptography and changes no production protocol policy.
 
 The test has not yet run on this revision. T0134 remains `in_progress` until the exact commit's HostLifecycle logs confirm this new assertion and the prior negative cases all passed. This specifically tests unsupported libp2p secure-channel protocol ID/version negotiation; it does not independently test every possible TLS wire-level protocol-version failure.
+
+
+## T0134-A009 source review correction
+
+During review of the new `/tls/999.0.0` test fixture, a string-interpolation typo was found in the constructed listen address: the draft emitted a literal dollar sign before the address. It was corrected in [V 3.0.471](https://github.com/artinrahimii/project/commit/TODO) to construct `{tcpAddress}/p2p/{serverPeerIdentity}` correctly when the listener address does not already contain a peer ID. The A009 test has not been treated as passing; the CI outcome for the superseded V 3.0.470 revision must be read separately from the corrected revision.
+
+## Corrective attempt — T0134-A010 (pending CI)
+
+- **Change:** fixed the test-only multiaddress interpolation in `VerifyRejectsUnsupportedSecureChannelProtocolVersionAsync`; its server still advertises only `/tls/999.0.0`, and its client must reject negotiation without publishing connection state.
+- **Verification:** not yet available for the corrective revision. T0134 remains `in_progress`; the exact commit's HostLifecycle job must print the unsupported-version PASS line and still pass the identity-mismatch and plaintext-only cases.

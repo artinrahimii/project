@@ -78,3 +78,14 @@ A direct failing-handshake test for unsupported libp2p Noise/TLS secure-channel 
 - Added `VerifyRejectsUnsupportedSecureChannelProtocolVersionAsync` using an actual local libp2p peer factory whose stream encryption stack advertises only `/tls/999.0.0`. The production dialer uses the regular registered Noise/TLS stack and should fail negotiation because no secure-channel protocol ID is shared.
 - The assertion requires rejection and that `client.IsConnected` stays false and `client.RemotePeerIdentity` remains null. The test fixture implements only the IProtocol ID marker and does not implement or replace cryptographic algorithms.
 - No result is claimed yet for the new test; its exact-commit CI must show the output line and the entire HostLifecycle job must pass before acceptance status is reconsidered.
+
+
+## T0134-A009 address-construction review
+
+The first revision of `VerifyRejectsUnsupportedSecureChannelProtocolVersionAsync` had an interpolation typo which would have prefixed a literal dollar sign to the multiaddress. This was detected during source review; that revision is not acceptance evidence and no test pass is inferred from it. The address expression is corrected in [V 3.0.471](https://github.com/artinrahimii/project/commit/TODO) before acceptance is evaluated.
+
+## T0134-A010 — corrected unsupported secure-channel ID/version case
+
+- The test builds a live local libp2p peer whose encryption stack advertises only `/tls/999.0.0` and dials it through the production secure transport.
+- Corrected address construction now appends `/p2p/{serverPeerIdentity}` without a stray prefix when necessary.
+- Expected behavior remains fail-closed negotiation with no connected state and no authenticated remote identity. CI for the corrective revision is pending; this isn't yet a test pass.
