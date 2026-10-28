@@ -35,3 +35,16 @@
 - Changes: graph summary counters and this report/evidence are synchronized with append-only history; no application source or dependency contract was changed.
 - GitHub Blob retrieval and parsing of the complete exact-head graph were revalidated. No local test command is claimed; the next exact-head CI must validate graph structure and repository output/evidence again.
 - T0139 remains `in_progress`. Do not start dependent T0140 before T0139 passes its acceptance checks.
+
+
+## V 3.0.489 exact-head verification — Android build failed
+
+- [Step Three quality gate](https://github.com/artinrahimii/project/actions/runs/40770058117): **passed**; the 199-test Python suite and graph/evidence checks completed successfully.
+- [White-P product build](https://github.com/artinrahimii/project/actions/runs/40770058274), Android job 123104516428: Kotlin lint passed, but `assembleDebug` failed at `:app:checkDebugAarMetadata`. GitHub Actions reported that Navigation Compose 2.10.2 requires Android API 37 and AGP 9.1.0+, while this project remains at compileSdk 36 / AGP 8.13.0. Android JUnit/generated-source steps were skipped. Host lifecycle passed; Windows WPF was still running when inspected.
+- This is a verified dependency/build-tool incompatibility, not a route-code failure. T0139 remains `in_progress`.
+
+## Attempt T0139-A006 — dependency compatibility repair
+
+- Changed `androidx.navigation:navigation-compose` from `2.10.2` to `2.9.8`, the latest 2.9 stable line listed in the official [Navigation release notes](https://developer.android.com/jetpack/androidx/releases/navigation), to preserve the current AGP 8.13 / compileSdk 36 baseline rather than upgrading the Android build system as an unrelated scope expansion.
+- Updated the test's pinned dependency assertion accordingly. Route and privacy behavior did not change.
+- Exact-head CI is pending. No APK or Android JUnit pass is claimed until Actions confirms it.

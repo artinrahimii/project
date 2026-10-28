@@ -30,7 +30,7 @@ class AndroidComposeNavigationTests(unittest.TestCase):
 
     def test_navigation_compose_dependency_is_explicitly_pinned(self):
         self.assertIn(
-            'implementation("androidx.navigation:navigation-compose:2.10.2")',
+            'implementation("androidx.navigation:navigation-compose:2.9.8")',
             ANDROID_BUILD,
         )
         self.assertIn("rememberNavController()", ACTIVITY)

@@ -38,3 +38,15 @@
 - Step Three quality job [123103335543](https://github.com/artinrahimii/project/actions/runs/40769725447): 199 Python tests passed; graph_guard failed with `ATTEMPT_COUNT_MISMATCH` (`summary=4`, `history=5`) for T0139. Existing T0001 free-text dependency remained a warning.
 - Android job [123103334973](https://github.com/artinrahimii/project/actions/runs/40769725408/job/123103334973): `ktlintCheck` passed; APK build/JUnit had not completed at status capture. HostLifecycle [123103335562](https://github.com/artinrahimii/project/actions/runs/40769725408/job/123103335562) passed. Windows job [123103335380](https://github.com/artinrahimii/project/actions/runs/40769725408/job/123103335380) was still running.
 - Attempt A005 corrects the summary count to the actual append-only history length. T0139 remains in_progress pending new exact-head CI.
+
+
+## Exact-head audit — V 3.0.489
+
+- Step Three quality gate [40770058117](https://github.com/artinrahimii/project/actions/runs/40770058117): passed.
+- Android product build [40770058274](https://github.com/artinrahimii/project/actions/runs/40770058274), job [123104516428](https://github.com/artinrahimii/project/actions/runs/40770058274): ktlint passed; debug APK failed at `:app:checkDebugAarMetadata`. The log specifies Navigation Compose 2.10.2 requires compile API 37 and AGP 9.1.0+; the project currently uses SDK 36 / AGP 8.13.0. Android JUnit, generated-source checks and APK upload were skipped. Host lifecycle passed; Windows build had not yet completed at inspection.
+- The full graph Blob from V 3.0.489 was read via Git Blob API; UTF-8 byte size matched the tree's 2,371,630 bytes, and the Git SHA-1 was independently recalculated against the tree Blob before editing.
+
+## Attempt T0139-A006 — pending validation
+
+- Pinned Navigation Compose to `2.9.8` and updated the dependency contract assertion. This keeps the navigation implementation on a stable version line that predates the API 37 / AGP 9.1 requirement while leaving AGP, Gradle, compileSdk, targetSdk, and minSdk untouched.
+- Exact-head CI must now pass graph guard, source tests, ktlint, APK build, Android JUnit, generated Protobuf validation, HostLifecycle, and Windows WPF checks before T0139 can become done.
