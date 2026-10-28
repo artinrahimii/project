@@ -695,11 +695,11 @@ class DecisionTraceabilityTests(unittest.TestCase):
         self.assertIn("await _peerParticipationService.DisposeAsync();", window)
         self.assertIn("PeerReachabilityConfirmed.IsChecked != true", window)
         self.assertIn("advertisedAddressVerified: true", window)
-        self.assertIn("does not independently verify public Internet reachability", window)
+        self.assertIn("this app does not independently verify public Internet reachability", window.lower())
         for control in ("PeerRendezvousUrl", "PeerBindAddress", "PeerAdvertisedAddress", "PeerPort", "PeerTrustedIdentity", "PeerReachabilityConfirmed"):
             with self.subTest(control=control):
                 self.assertIn(f'x:Name="{control}"', window_xaml)
-        self.assertIn("Loopback HTTP is accepted only for loopback testing", window_xaml)
+        self.assertIn("loopback http is accepted only for integration testing", window_xaml.lower())
         self.assertIn("public sealed class PeerAnnouncementHostLifecycle", peer_host)
         self.assertIn("await transport.StartListeningAsync(_bindAddress, _port, cancellationToken)", peer_host)
         self.assertIn("PeerAnnouncementLeasePublisher", peer_host)
