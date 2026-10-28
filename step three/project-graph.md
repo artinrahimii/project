@@ -27663,8 +27663,7 @@
       "title": "برای درخواست‌های مختلف شناسه‌های تصادفی مستقل تولید کن؛ هش ساده را جایگزین شناسهٔ امن نکن.",
       "section": "13. هویت ارتباطی و رمزنگاری",
       "depends_on": [
-        "T0135",
-        "T0128"
+        "T0135"
       ],
       "inputs": [
         "خروجی تأییدشدهٔ پیش‌نیازها",
@@ -27673,24 +27672,47 @@
       "outputs": [
         "خروجی قابل بررسی مربوط به «برای درخواست‌های مختلف شناسه‌های تصادفی مستقل تولید کن؛ هش ساده را جایگزین شناسهٔ امن نکن.» در مسیر src/Shared.Security/ + tests/security/؛ همراه با آزمون/شاهد پذیرش متناسب."
       ],
-      "start_condition": "همهٔ پیش‌نیازهای T0135 و T0128 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
+      "start_condition": "T0135 must be done with exact-head acceptance evidence. T0128 is tracked separately because independent-network acceptance does not provide an API or contract required for cryptographically secure random request IDs.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "done",
+      "status_fa": "انجام‌شده",
+      "actual_output_paths": [
+        "src/Host.Windows/Requests/SecureRequestIdGenerator.cs",
+        "tests/HostLifecycle.Tests/SecureRequestIdGeneratorTests.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0136/execution-report.md",
+        "step three/T0136/evidence/verification.md",
+        "step three/project-graph.md"
+      ],
       "expected_output_paths": [
         "src/Shared.Security/ + tests/security/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "src/Host.Windows/Requests/SecureRequestIdGenerator.cs",
+        "tests/HostLifecycle.Tests/SecureRequestIdGeneratorTests.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0136/execution-report.md",
+        "step three/T0136/evidence/verification.md"
+      ],
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0136-A001 (2026-10-28): audited the existing CSPRNG generator and its registered acceptance suite on exact V 3.0.477. The implementation uses RandomNumberGenerator.GetBytes(16), not a hash/digest, and the HostLifecycle log explicitly confirms 4096 generated IDs with format and sample-uniqueness checks passing. No redundant replacement implementation was introduced; task completion is based on source inspection plus an executed exact-head acceptance test. T0128 remains not_started and does not block this task after its edge was validated as sequencing-only.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
-        "related_commits": [],
-        "tests_passed": [],
+        "last_attempt_id": "T0136-A001",
+        "last_attempt_result": "succeeded",
+        "changed_files": [
+          "step three/T0136/execution-report.md",
+          "step three/T0136/evidence/verification.md",
+          "step three/project-graph.md"
+        ],
+        "related_commits": [
+          "2b64a70c59c1d02c9d30d6ef510e6952b89cdb14"
+        ],
+        "tests_passed": [
+          "Exact V 3.0.477 HostLifecycle job 122979781847 passed and emitted: PASS: generated 4096 temporary request IDs using a cryptographic RNG; format and sample uniqueness checks passed.",
+          "Exact V 3.0.477 Step Three quality gate 40734640272 passed.",
+          "Exact V 3.0.477 HostLifecycle log also emitted the request-identity-independence acceptance PASS; T0135 remains complete."
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -27701,7 +27723,40 @@
           "review_evidence": []
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0136-A001",
+          "started_at": "2026-10-28T17:23:23.126Z",
+          "ended_at": "2026-10-28T17:23:23.126Z",
+          "result": "succeeded",
+          "summary": "Verified the existing request-ID implementation uses the OS-backed cryptographic RNG (16 random bytes per call) and never substitutes a simple hash/digest. The existing 4096-sample acceptance test is registered in the HostLifecycle runner and passed on exact V 3.0.477 CI; its log explicitly confirms CSPRNG generation, format and sample uniqueness. No duplicate generator was added.",
+          "changed_files": [
+            "step three/T0136/execution-report.md",
+            "step three/T0136/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": "2b64a70c59c1d02c9d30d6ef510e6952b89cdb14",
+          "tests": [
+            {
+              "name": "SecureRequestIdGeneratorTests in HostLifecycle",
+              "result": "passed",
+              "summary": "Generated 4096 temporary request IDs using a cryptographic RNG; format and sample uniqueness checks passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40734640359/job/122979781847"
+            },
+            {
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "summary": "Exact V 3.0.477 task graph and evidence guard passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40734640272"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "T0137 is the next logical task. Review T0136 -> T0137 and T0128 -> T0137 edges before work; T0128 remains not_started."
+        }
+      ]
     },
     {
       "id": "T0137",
@@ -35109,19 +35164,16 @@
       "from": "T0135",
       "to": "T0136",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
-    },
-    {
-      "from": "T0128",
-      "to": "T0136",
-      "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "The concrete output needed by T0136 is the existing SecureRequestIdGenerator API and its executable acceptance test. The dependency remains as a conservative execution-order constraint after T0135, but T0135's new independence test does not provide or change the generator implementation/API. Exact V 3.0.477 HostLifecycle CI re-executes the generator test on the current source.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/Requests/SecureRequestIdGenerator.cs",
+        "tests/HostLifecycle.Tests/SecureRequestIdGeneratorTests.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "tests/HostLifecycle.Tests/RequestIdentityIndependenceAcceptanceTests.cs",
+        "https://github.com/artinrahimii/project/actions/runs/40734640359/job/122979781847"
+      ]
     },
     {
       "from": "T0136",
@@ -36868,6 +36920,7 @@
     "T0133",
     "T0134",
     "T0135",
+    "T0136",
     "T0121",
     "T0122",
     "T0123",
@@ -36876,7 +36929,6 @@
     "T0126",
     "T0127",
     "T0128",
-    "T0136",
     "T0137",
     "T0138",
     "T0139",
@@ -39549,6 +39601,43 @@
         "docs/decisions/ADR-0013-temporary-request-identifiers.md"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-28T17:23:23.126Z",
+      "edge_from": "T0135",
+      "edge_to": "T0136",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "old_validation_status": "unreviewed",
+      "new_validation_status": "validated",
+      "reason": "The concrete output needed by T0136 is the existing SecureRequestIdGenerator API and its executable acceptance test. The dependency remains as a conservative execution-order constraint after T0135, but T0135's new independence test does not provide or change the generator implementation/API. Exact V 3.0.477 HostLifecycle CI re-executes the generator test on the current source.",
+      "evidence": [
+        "src/Host.Windows/Requests/SecureRequestIdGenerator.cs",
+        "tests/HostLifecycle.Tests/SecureRequestIdGeneratorTests.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "tests/HostLifecycle.Tests/RequestIdentityIndependenceAcceptanceTests.cs",
+        "https://github.com/artinrahimii/project/actions/runs/40734640359/job/122979781847"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-28T17:23:23.126Z",
+      "edge_from": "T0128",
+      "edge_to": "T0136",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "old_validation_status": "unreviewed",
+      "new_validation_status": "validated",
+      "change_action": "removed_from_active_edges",
+      "reason": "T0128 provides external two-computer/independent-network acceptance for network reachability and interoperability; it produces no CSPRNG API or random-ID algorithm consumed by T0136. Cryptographic request-ID generation and the repeated-call acceptance test run locally within HostLifecycle. Removing this sequencing-only edge does not claim T0128 executed or passed.",
+      "evidence": [
+        "step three/project-graph.md (T0128 acceptance definition and expected outputs)",
+        "src/Host.Windows/Requests/SecureRequestIdGenerator.cs",
+        "tests/HostLifecycle.Tests/SecureRequestIdGeneratorTests.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "https://github.com/artinrahimii/project/actions/runs/40734640359/job/122979781847"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
   "updated_at": "2026-10-28",
@@ -39701,6 +39790,24 @@
         "src/Host.Windows/Networking/NetworkInferenceRequestResponseMapper.cs",
         "tests/HostLifecycle.Tests/RequestIdentityIndependenceAcceptanceTests.cs",
         "docs/decisions/ADR-0013-temporary-request-identifiers.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-28T17:23:23.126Z",
+      "moved_tasks": [
+        "T0136"
+      ],
+      "old_positions": {
+        "T0136": 136
+      },
+      "new_anchor": "Immediately after T0135 and before the blocked T0121/T0128 external-network acceptance chain",
+      "reason": "After reviewing both prerequisite relations, retain T0135 -> T0136 as a sequencing-only conservative edge and remove T0128 -> T0136 as sequencing-only: the independent-network acceptance does not produce a CSPRNG implementation or random-ID contract consumed by T0136. The actual CSPRNG generator and its test are already available and pass on exact V 3.0.477.",
+      "evidence": [
+        "src/Host.Windows/Requests/SecureRequestIdGenerator.cs",
+        "tests/HostLifecycle.Tests/SecureRequestIdGeneratorTests.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "https://github.com/artinrahimii/project/actions/runs/40734640359/job/122979781847"
       ],
       "reviewed_by": "Step Three execution review"
     }
