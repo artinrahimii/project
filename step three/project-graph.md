@@ -28220,28 +28220,32 @@
         "https://github.com/artinrahimii/project/actions/runs/40769048874/job/123100940796",
         "https://github.com/artinrahimii/project/actions/runs/40769048985/job/123100941472"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0139-A001 verification (V 3.0.485): Step Three quality run 40767883598 failed three existing exact-wording checks for the P2P preview/non-delivery strings. Android product job 123096849669 stopped at ktlintCheck: uppercase Compose function names, multiline-expression formatting, a max-line-length violation and enum trailing comma. HostLifecycle job 123096849547 passed, but Android APK/JUnit did not run after lint failure. A002 restores the compatible privacy/non-delivery copy and corrects the reported Kotlin style violations; exact-head CI is pending.\n\nT0139-A002 verification (V 3.0.486): quality job 40768437264 ran 199 tests and failed two assertions in the newly added source-contract test because it expected the earlier `WhitePClientApp()` function name and older transport-encryption wording. Android job 123098803201 again failed at ktlintCheck; detailed log text could not be retrieved, so no further exact style errors are asserted. HostLifecycle job 123098803429 passed. A003 updates the route helper to avoid the enum/semicolon style edge case and aligns source-contract tests to the corrected source, not to older string literals.\n\nT0139-A003 exact-head verification (V 3.0.487): Step Three quality failed one source-contract test because it still looked for ClientDestination.startDestination; Android ktlint failed at MainActivity.kt:266, so APK/JUnit were skipped. A separate exact recursive-tree inspection found ClientNavigation.kt absent even though MainActivity referenced ClientNavigation; A004 adds that missing implementation and import, fixes the ktlint style and updates route assertions. It remains in_progress until exact-head CI passes.\n\nV 3.0.488 exact-head CI: 199 Python unit tests passed, but graph_guard rejected T0139 because execution_summary.attempt_count was 4 while the append-only execution_history had 5 entries. Android ktlint passed; APK/JUnit and Windows host jobs were still in progress at the status capture. A005 corrects the ledger counters without changing source; T0139 remains in_progress pending the next exact-head CI.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0139-A001 verification (V 3.0.485): Step Three quality run 40767883598 failed three existing exact-wording checks for the P2P preview/non-delivery strings. Android product job 123096849669 stopped at ktlintCheck: uppercase Compose function names, multiline-expression formatting, a max-line-length violation and enum trailing comma. HostLifecycle job 123096849547 passed, but Android APK/JUnit did not run after lint failure. A002 restores the compatible privacy/non-delivery copy and corrects the reported Kotlin style violations; exact-head CI is pending.\n\nT0139-A002 verification (V 3.0.486): quality job 40768437264 ran 199 tests and failed two assertions in the newly added source-contract test because it expected the earlier `WhitePClientApp()` function name and older transport-encryption wording. Android job 123098803201 again failed at ktlintCheck; detailed log text could not be retrieved, so no further exact style errors are asserted. HostLifecycle job 123098803429 passed. A003 updates the route helper to avoid the enum/semicolon style edge case and aligns source-contract tests to the corrected source, not to older string literals.\n\nT0139-A003 exact-head verification (V 3.0.487): Step Three quality failed one source-contract test because it still looked for ClientDestination.startDestination; Android ktlint failed at MainActivity.kt:266, so APK/JUnit were skipped. A separate exact recursive-tree inspection found ClientNavigation.kt absent even though MainActivity referenced ClientNavigation; A004 adds that missing implementation and import, fixes the ktlint style and updates route assertions. It remains in_progress until exact-head CI passes.\n\nV 3.0.488 exact-head CI: 199 Python unit tests passed, but graph_guard rejected T0139 because execution_summary.attempt_count was 4 while the append-only execution_history had 5 entries. Android ktlint passed; APK/JUnit and Windows host jobs were still in progress at the status capture. A005 corrects the ledger counters without changing source; T0139 remains in_progress pending the next exact-head CI.\n\nT0139-A006 exact V 3.0.490 verification: versioned Navigation Compose dependency pin changed to 2.9.8 after exact V 3.0.489 CI exposed AGP/compileSdk incompatibility. At inspection, V 3.0.490's Step Three quality and HostLifecycle had passed, but APK and Windows jobs were still running, so complete product success was not claimed. Exact source review additionally found two declarations of internal object ClientNavigation (one within ClientDestination.kt and one in ClientNavigation.kt); A007 removes the duplicate and adds a source-contract regression test. T0139 stays in_progress pending exact-head APK/JUnit and full CI results.",
       "execution_summary": {
-        "attempt_count": 9,
+        "attempt_count": 11,
         "failed_attempt_count": 5,
-        "last_attempt_id": "T0139-A006",
+        "last_attempt_id": "T0139-A007",
         "last_attempt_result": "partial",
         "changed_files": [
+          "src/Client.Android/app/src/main/java/com/whitep/client/ui/navigation/ClientDestination.kt",
+          "tests/test_android_compose_navigation.py",
           "step three/project-graph.md",
           "step three/T0139/execution-report.md",
-          "step three/T0139/evidence/verification.md",
-          "src/Client.Android/app/build.gradle.kts",
-          "tests/test_android_compose_navigation.py"
+          "step three/T0139/evidence/verification.md"
         ],
         "related_commits": [
           "b4224c06e9b09c108361965143d93d1eaf42b789",
           "1fed6eecb0a79edf0a9cec6a32c6c2bf11eaf98f",
           "44255431091833a713800cad4bed144b4a54c7df",
           "88ecfbbec6a63538531d0230ad2de1176be3dc29",
-          "fbd8a96134152cff78e23699d20a29113008a6a6"
+          "fbd8a96134152cff78e23699d20a29113008a6a6",
+          "9d9cfa67ef3c7e009a6d7e441080ffda38631e28"
         ],
         "tests_passed": [
-          "V 3.0.489: 199-test Step Three quality gate and Android ktlint passed; these did not include successful APK/JUnit."
+          "V 3.0.488: 199 Python unit tests passed before graph_guard failed on T0139 attempt counter/history mismatch.",
+          "V 3.0.488: Android ktlintCheck passed; HostLifecycle passed.",
+          "V 3.0.489: Step Three quality gate, HostLifecycle, Windows WPF build and Android ktlint passed; Android APK failed on dependency/AAR metadata compatibility.",
+          "V 3.0.490: Step Three quality gate passed and HostLifecycle passed; Android APK/Windows product workflow were pending during the verification record."
         ],
         "tests_failed": [
           "V 3.0.485: 3 existing privacy/P2P source-contract tests failed because MainActivity no longer included their explicit truthful preview/non-delivery text; Android ktlint also failed on style conventions.",
@@ -28250,7 +28254,8 @@
           "Exact V 3.0.487 Android job 123100941472 failed ktlintCheck at MainActivity.kt:266 (“A multiline expression should start on a new line”); APK/JUnit were skipped. https://github.com/artinrahimii/project/actions/runs/40769048985/job/123100941472",
           "Exact recursive tree at V 3.0.487 did not contain src/Client.Android/app/src/main/java/com/whitep/client/ui/navigation/ClientNavigation.kt although MainActivity referenced ClientNavigation; this compile blocker is addressed by A004 but awaits CI proof.",
           "V 3.0.488 Step Three quality job 123103335543: 199 Python tests passed, then graph_guard failed with ATTEMPT_COUNT_MISMATCH (summary=4, history=5) for T0139. The V488 Android lint step passed, while APK/JUnit and Windows checks were still running at the latest status read.",
-          "Exact V 3.0.489 CI result: source-contract quality gate passed and Android ktlint passed, but assembleDebug failed at :app:checkDebugAarMetadata. Navigation Compose 2.10.2 requires Android API 37 and AGP 9.1.0 or higher; the repo baseline is compileSdk 36 / AGP 8.13.0. The Android JUnit and generated-source steps were skipped, so T0139 remains in_progress."
+          "Exact V 3.0.489 CI result: source-contract quality gate passed and Android ktlint passed, but assembleDebug failed at :app:checkDebugAarMetadata. Navigation Compose 2.10.2 requires Android API 37 and AGP 9.1.0 or higher; the repo baseline is compileSdk 36 / AGP 8.13.0. The Android JUnit and generated-source steps were skipped, so T0139 remains in_progress.",
+          "V 3.0.489: assembleDebug failed at :app:checkDebugAarMetadata because navigation-compose 2.10.2 requires API 37 / AGP 9.1+, while the project uses compileSdk 36 / AGP 8.13.0; Android JUnit and generated-source steps were skipped."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -28653,6 +28658,104 @@
             "Navigation Compose pinned from 2.10.2 to 2.9.8 to remain compatible with the current compileSdk 36 / AGP 8.13 baseline; no route API or product scope change."
           ],
           "follow_up": "Inspect exact V 3.0.490 Actions. If any quality, Android APK/JUnit/Protobuf, host lifecycle or Windows WPF check fails, keep T0139 in_progress and append a new evidenced attempt."
+        },
+        {
+          "attempt_id": "T0139-A006-CI-VERIFY",
+          "started_at": "2026-10-28T21:15:59Z",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Exact V 3.0.490 CI was still running during this review. The dependency downgrade addresses the earlier checkDebugAarMetadata error, but the Android compile/JUnit and product workflow conclusion are not yet available; no pass is claimed.",
+          "changed_files": [],
+          "related_commits": [
+            "9d9cfa67ef3c7e009a6d7e441080ffda38631e28"
+          ],
+          "commit_sha": "9d9cfa67ef3c7e009a6d7e441080ffda38631e28",
+          "tests": [
+            {
+              "name": "Step Three quality gate — V 3.0.490",
+              "result": "passed",
+              "summary": "Run 40770498278 completed successfully; repository source/graph/evidence checks passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40770498278"
+            },
+            {
+              "name": "Android product workflow — V 3.0.490",
+              "result": "pending",
+              "summary": "Lint has passed, debug APK build was in progress at exact-tree inspection; Android JUnit and generated Protobuf checks had not yet reported results.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40770498046"
+            },
+            {
+              "name": "Host lifecycle unit/integration — V 3.0.490",
+              "result": "passed",
+              "summary": "Job 123106056762 passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40770498046"
+            },
+            {
+              "name": "Windows WPF build/startup/security — V 3.0.490",
+              "result": "pending",
+              "summary": "Job 123106057216 was still running during exact-head inspection.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40770498046"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Recheck exact V 3.0.490 product workflow after completion. Ensure the duplicate ClientNavigation declaration across ClientDestination.kt and ClientNavigation.kt is removed before marking T0139 done."
+        },
+        {
+          "attempt_id": "T0139-A007",
+          "started_at": "2026-10-28T21:18:02.188Z",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Pinned Navigation Compose to the compatible 2.9.8 stable line in A006. Exact-tree review found ClientNavigation declared both inside ClientDestination.kt and as the canonical ClientNavigation.kt object; removed the duplicate declaration and added a regression test enforcing one source of truth. Exact-head CI is pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/navigation/ClientDestination.kt",
+            "tests/test_android_compose_navigation.py",
+            "step three/project-graph.md",
+            "step three/T0139/execution-report.md",
+            "step three/T0139/evidence/verification.md"
+          ],
+          "related_commits": [
+            "9d9cfa67ef3c7e009a6d7e441080ffda38631e28"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Exact-head Git Blob integrity / graph JSON",
+              "result": "passed",
+              "summary": "All edited inputs were fetched by Blob IDs from the exact parent tree, recomputed Git Blob SHA-1s matched tree entries, and the 229-node/417-edge graph round-tripped byte-identically before ledger edits."
+            },
+            {
+              "name": "Local Python suite",
+              "result": "not_run",
+              "summary": "Local runner could not resolve github.com for checkout; no test-suite pass is claimed from the local environment."
+            },
+            {
+              "name": "Local Android build/JUnit",
+              "result": "not_run",
+              "summary": "Gradle is not installed locally; exact-head GitHub Actions is the required verifier."
+            },
+            {
+              "name": "Step Three quality gate",
+              "result": "pending",
+              "summary": "Must validate the source regression test and repository evidence after commit."
+            },
+            {
+              "name": "Android ktlint/APK/JUnit/Protobuf",
+              "result": "pending",
+              "summary": "Must run on the exact commit; no Android product pass claimed yet."
+            },
+            {
+              "name": "HostLifecycle and Windows WPF",
+              "result": "pending",
+              "summary": "Exact-head product workflow results are required; previous revision's success does not substitute."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Verify the exact main commit's source/graph quality and product build. Keep T0139 in_progress unless the Android APK and unit tests pass and the source-contract/graph gates succeed."
         }
       ]
     },

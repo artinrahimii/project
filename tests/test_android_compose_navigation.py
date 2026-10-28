@@ -28,6 +28,11 @@ class AndroidComposeNavigationTests(unittest.TestCase):
         self.assertIn("startDestination = ClientNavigation.startDestination.route", ACTIVITY)
         self.assertIn("val startDestination: ClientDestination = ClientDestination.HOME", NAVIGATION)
 
+    def test_navigation_object_has_single_source_of_truth(self):
+        self.assertNotIn("internal object ClientNavigation", DESTINATIONS)
+        self.assertIn("internal object ClientNavigation", NAVIGATION)
+        self.assertIn("val startDestination: ClientDestination = ClientDestination.HOME", NAVIGATION)
+
     def test_navigation_compose_dependency_is_explicitly_pinned(self):
         self.assertIn(
             'implementation("androidx.navigation:navigation-compose:2.9.8")',

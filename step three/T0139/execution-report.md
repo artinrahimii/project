@@ -48,3 +48,10 @@
 - Changed `androidx.navigation:navigation-compose` from `2.10.2` to `2.9.8`, the latest 2.9 stable line listed in the official [Navigation release notes](https://developer.android.com/jetpack/androidx/releases/navigation), to preserve the current AGP 8.13 / compileSdk 36 baseline rather than upgrading the Android build system as an unrelated scope expansion.
 - Updated the test's pinned dependency assertion accordingly. Route and privacy behavior did not change.
 - Exact-head CI is pending. No APK or Android JUnit pass is claimed until Actions confirms it.
+
+
+## Attempt T0139-A007 — route owner uniqueness
+
+- Exact base: `9d9cfa67ef3c7e009a6d7e441080ffda38631e28`, `V 3.0.490`; tree `83277318237d23d8b590225ec9f54d4f93e360fa`. Dependency pin is now `androidx.navigation:navigation-compose:2.9.8`, selected after V 3.0.489 CI showed 2.10.2 was incompatible with AGP 8.13 / compileSdk 36.
+- Static review found `internal object ClientNavigation` defined in both `ClientDestination.kt` and `ClientNavigation.kt`. The CI for V 3.0.489 had stopped in `checkDebugAarMetadata` before Kotlin compilation, so that duplicate had not yet been compiler-validated. This attempt removes the duplicate object from the enum source and adds a Python source-contract test requiring the canonical navigation object to live only in `ClientNavigation.kt`.
+- Preflight verified the source snippets and unique insertion anchor. Local Kotlin/Python tests were not run because this runtime has no Gradle and could not make a successful GitHub clone; exact-head CI is pending. T0139 remains `in_progress`.

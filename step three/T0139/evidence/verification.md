@@ -50,3 +50,11 @@
 
 - Pinned Navigation Compose to `2.9.8` and updated the dependency contract assertion. This keeps the navigation implementation on a stable version line that predates the API 37 / AGP 9.1 requirement while leaving AGP, Gradle, compileSdk, targetSdk, and minSdk untouched.
 - Exact-head CI must now pass graph guard, source tests, ktlint, APK build, Android JUnit, generated Protobuf validation, HostLifecycle, and Windows WPF checks before T0139 can become done.
+
+
+## A007 — single navigation owner and Android build compatibility
+
+- Parent commit: `9d9cfa67ef3c7e009a6d7e441080ffda38631e28` (`V 3.0.490`). Exact-tree Blob verification was run on every input file before modification; the graph parsed as 229 tasks / 417 edges and the original graph content round-tripped byte-for-byte before its task ledger was edited.
+- The exact V 3.0.489 Android log states that `navigation-compose-android:2.10.2` requires AGP 9.1+, while the project uses AGP 8.13.0 / compileSdk 36; the log also reported AndroidX Lifecycle 2.11.0 requiring API 37 / newer AGP. V 3.0.490 pins Navigation Compose to 2.9.8, a stable release line documented in the [official AndroidX Navigation release notes](https://developer.android.com/jetpack/androidx/releases/navigation). V 3.0.490 CI: source/graph quality passed, HostLifecycle passed, Android lint passed; APK build and Windows product jobs were still running at the exact-tree capture, so those results are not marked passed here.
+- Source review of the V 3.0.490 tree found a second `internal object ClientNavigation` declaration left in `ClientDestination.kt` alongside the dedicated `ClientNavigation.kt` file. The prior APK build had failed before Kotlin compilation, so no compiler result for the duplicate was available. A007 removes the duplicate and adds a regression test verifying the single canonical object.
+- Local Python, Android and Windows commands were not run; local GitHub name resolution failed and Gradle/.NET SDKs are absent. Exact-head GitHub Actions is pending. Keep T0139 `in_progress` until APK, Android JUnit/generated source, quality and all required product jobs pass.

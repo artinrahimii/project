@@ -15,9 +15,3 @@ internal enum class ClientDestination(
     CONNECTIONS("connections", "Connections", "↔"),
     PRIVACY("privacy", "Privacy", "i"),
 }
-
-internal object ClientNavigation {
-    val startDestination: ClientDestination = ClientDestination.HOME
-    val bottomNavigation: List<ClientDestination> =
-        listOf(ClientDestination.HOME, ClientDestination.CONNECTIONS, ClientDestination.PRIVACY)
-}
