@@ -29000,9 +29000,9 @@
       ],
       "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0140-A001 started on bce6c85dade0311ffe48b2ed8d75253e66408fb0 after graph/blob verification. T0138 -> T0140 was reviewed as sequencing_only: endpoint-visibility documentation constrains claims but is not a Kotlin API consumed by the data layer. T0140 -> T0141 was reviewed as contract_or_interface_dependency: the upcoming Room adapter must satisfy the Flow/suspend repository boundary and draft/status types. Both retain type=blocks; unrelated unreviewed edges remain unchanged.",
       "execution_summary": {
-        "attempt_count": 2,
-        "failed_attempt_count": 1,
-        "last_attempt_id": "T0140-A002",
+        "attempt_count": 3,
+        "failed_attempt_count": 2,
+        "last_attempt_id": "T0140-A003",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Client.Android/app/build.gradle.kts",
@@ -29021,13 +29021,17 @@
         ],
         "related_commits": [
           "bce6c85dade0311ffe48b2ed8d75253e66408fb0",
-          "c7374040f6eb2af0d228e64bc8a7076c3f3c2cf1"
+          "c7374040f6eb2af0d228e64bc8a7076c3f3c2cf1",
+          "6624b6292645c37c6f221fa16be69b98808254bb"
         ],
         "tests_passed": [
-          "V 3.0.495 HostLifecycle job passed."
+          "V 3.0.495 HostLifecycle job passed.",
+          "Step Three quality gate — exact V 3.0.496 PASS: https://github.com/artinrahimii/project/actions/runs/40773838960",
+          "Windows WPF and HostLifecycle — exact V 3.0.496 PASS: https://github.com/artinrahimii/project/actions/runs/40773838950"
         ],
         "tests_failed": [
-          "Source contracts still asserted that delivery-status text lived in MainActivity; the ViewModel now owns that state. ktlint identified exact source/test formatting violations, so product build did not reach APK/JUnit."
+          "Source contracts still asserted that delivery-status text lived in MainActivity; the ViewModel now owns that state. ktlint identified exact source/test formatting violations, so product build did not reach APK/JUnit.",
+          "Android ktlint failed at V 3.0.496 before APK/JUnit/Protobuf; the diagnostics identified only ClientRequestRepositoryTest.kt indentation."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -29050,7 +29054,8 @@
             "step one/V1.0.md",
             "step three/project-graph.md"
           ]
-        }
+        },
+        "follow_up": "Verify exact-head V 3.0.497 Android lint, debug APK, repository/ViewModel JUnit and Protobuf checks. Keep T0140 in_progress until all required gates pass."
       },
       "execution_history": [
         {
@@ -29159,6 +29164,52 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Wait for exact-head V3.0.496 quality/product CI. Do not mark T0140 done until all required gates pass."
+        },
+        {
+          "attempt_id": "T0140-A003",
+          "started_at": "2026-10-28T21:58:00.745Z",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Exact-head V 3.0.496 CI was inspected: Step Three quality passed; Android lint failed only because ClientRequestRepositoryTest.kt used incorrect indentation, while Windows WPF and HostLifecycle passed. Re-indented all three runBlocking test bodies based on exact ktlint diagnostics. No production behavior changed. Exact-head V 3.0.497 CI is pending; no local Android SDK run is claimed.",
+          "changed_files": [
+            "src/Client.Android/app/src/test/java/com/whitep/client/data/ClientRequestRepositoryTest.kt",
+            "step three/T0140/execution-report.md",
+            "step three/T0140/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "related_commits": [
+            "6624b6292645c37c6f221fa16be69b98808254bb"
+          ],
+          "tests": [
+            {
+              "name": "Step Three quality gate — V 3.0.496",
+              "result": "passed",
+              "summary": "Python/graph quality checks passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40773838960"
+            },
+            {
+              "name": "Windows WPF host — V 3.0.496",
+              "result": "passed",
+              "summary": "Release build/startup/security steps passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40773838950"
+            },
+            {
+              "name": "HostLifecycle integration — V 3.0.496",
+              "result": "passed",
+              "summary": "Host lifecycle job passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40773838950"
+            },
+            {
+              "name": "Android ktlint/APK/JUnit/Protobuf — V 3.0.497",
+              "result": "pending",
+              "summary": "Indentation repaired; exact-head validation required."
+            }
+          ],
+          "failure_details": "V 3.0.496 product run 40773838950 failed at :app:ktlintTestSourceSetCheck; all 22 reported style diagnostics were unexpected indentation in ClientRequestRepositoryTest.kt lines 11–40. APK/JUnit/Protobuf steps were skipped; Windows WPF and HostLifecycle jobs passed.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Verify exact V 3.0.497 Android lint, debug APK, repository/ViewModel JUnit and Protobuf checks; retain in_progress until all pass."
         }
       ]
     },
@@ -41016,7 +41067,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-29",
+  "updated_at": "2026-10-28T21:58:00.745Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

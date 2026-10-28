@@ -25,3 +25,15 @@
 - Migrated legacy source-contract assertions in `test_android_compose_navigation.py`, `test_central_inference_boundary.py`, and `test_claims_audit.py` to inspect the ViewModel for request-delivery status while continuing to test the Compose privacy disclosure and truthful preview text.
 - Reworked Kotlin multiline expression formatting and added blank lines between declarations/members per the exact ktlint messages from the V 3.0.495 CI log.
 - No product behavior or dependency contract was changed by this repair. Run the quality and product workflows again; keep the task in progress until every required job passes.
+
+
+## T0140-A002 exact-head CI result — failed
+
+- Exact main head `6624b6292645c37c6f221fa16be69b98808254bb` (`V 3.0.496`): [Step Three quality gate](https://github.com/artinrahimii/project/actions/runs/40773838960) passed.
+- [White-P product build](https://github.com/artinrahimii/project/actions/runs/40773838950): Windows WPF and HostLifecycle jobs passed. The Android job failed only at `:app:ktlintTestSourceSetCheck`: 22 indentation diagnostics in `ClientRequestRepositoryTest.kt` (lines 11–40). Android APK, JUnit and generated Protobuf checks were skipped and are not claimed as passed.
+
+## T0140-A003 — formatting repair applied; validation pending
+
+- Corrected indentation inside all three `runBlocking` test bodies in `src/Client.Android/app/src/test/java/com/whitep/client/data/ClientRequestRepositoryTest.kt`, following the exact ktlint diagnostics.
+- No production behavior changed. The repository remains process-memory-only and explicitly reports transport unavailable; no Android-to-host delivery, persistence, or Room implementation is claimed.
+- The complete graph Blob was verified against the V 3.0.496 tree before editing (2,412,702 UTF-8 bytes; computed Git Blob SHA-1 matched). T0140 remains `in_progress` until exact-head V 3.0.497 lint, APK, JUnit and Protobuf checks pass. Local Android tests were not run because no usable local Android SDK/test runner is available in this execution.

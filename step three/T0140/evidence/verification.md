@@ -18,3 +18,10 @@
 - Step Three quality run [40773211226](https://github.com/artinrahimii/project/actions/runs/40773211226): 203 tests, 3 failures. The failing assertions were stale source-location assumptions: delivery status is owned by `RequestViewModel.kt`, not embedded as literals in `MainActivity.kt`.
 - Android product run [40773210522](https://github.com/artinrahimii/project/actions/runs/40773210522), job `123115597191`: ktlint failed with expression-formatting and blank-line violations in the new Kotlin repository/ViewModel/JUnit files, so APK/JUnit did not run. HostLifecycle passed.
 - A002 changes the three stale source contracts to inspect the ViewModel and applies multiline/spacing fixes in four Kotlin files. These are pending CI verification.
+
+
+## V 3.0.496 exact-head review and A003 repair
+- Pinned main commit: `6624b6292645c37c6f221fa16be69b98808254bb`; tree: `e0fffa820ec20c95a8ae2de5eead7bdaf8c2c9ce`.
+- Git Trees API graph entry: `step three/project-graph.md`, Blob `258b336efdc9de8168a2bd53f7fc06f4c84a905a`, expected size 2,412,702 bytes. Git Blob retrieval returned 2,290,782 Unicode characters / 2,412,702 UTF-8 bytes; recomputed Git Blob SHA-1 matched. Fenced JSON parsed as 229 nodes and 417 edges.
+- Exact V 3.0.496 workflow results: Step Three quality passed; Windows WPF and HostLifecycle passed. Android failed before build because `ClientRequestRepositoryTest.kt` indentation failed ktlint; APK/JUnit/Protobuf steps were skipped.
+- A003 changes only indentation of the three Kotlin repository test bodies plus this task's execution evidence and graph state. Task status stays `in_progress` pending exact-head CI.
