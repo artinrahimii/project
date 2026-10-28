@@ -76,3 +76,14 @@
 - **Files changed in this correction:** `tests/test_decision_traceability.py`, `step three/T0007/execution-report.md`, and `step three/project-graph.md`.
 - **Result:** partial; correction is queued for exact-commit validation. No test pass is claimed for this fix until the V 3.0.443 quality workflow is observed.
 - **Follow-up:** inspect Step Three and product workflows for exact `V 3.0.443` commit, append verification as `T0007-A082`, and resolve that commit SHA from the online `main` history. Keep `T0007` and `T0131` `in_progress`, `T0121` `blocked`, and `AC-P2P-01` **NOT RUN**.
+
+
+## T0007-A082 — exact-commit verification of the ADR-0018 traceability correction
+
+- **Verified implementation commit:** `db6b7f1bf87747bf4d10f4f8e1f227df4264cde3` (`V 3.0.443`), now identifiable from online `main` history.
+- **Step Three quality gate:** passed on that exact SHA, run [40638504799](https://github.com/artinrahimii/project/actions/runs/40638504799). All **190 Python tests** passed. Python syntax checks, graph validation, and recorded-output/evidence validation passed. Graph guard reported **229 tasks, 424 edges, 0 errors**, with one preserved T0001 unmapped-dependency metadata warning.
+- **Product workflow:** passed on the same exact SHA, run [40638504787](https://github.com/artinrahimii/project/actions/runs/40638504787). HostLifecycle unit/integration job [122650936156] passed, including direct libp2p TCP exchange, authenticated TCP-to-QUIC fallback, explicit peer trust/fail-closed checks and identity/storage acceptance. Windows WPF job [122650936490] passed formatting, Release build (**0 warnings, 0 errors**), Protobuf verification, startup smoke, policy/capability guards and DPAPI peer-trust tamper checks. Android APK job [122650936473] passed Kotlin formatting/lint, debug APK assembly, Protobuf round-trip tests, generated-source checks and artifact upload.
+- **Preserved regression history:** the initial exact V 3.0.442 quality failure remains recorded under A080/A081; the lowercase assertion correction in V 3.0.443 then passed the full 190-test gate. The V 3.0.442 product workflow later also completed successfully: [40638269908](https://github.com/artinrahimii/project/actions/runs/40638269908).
+- **Evidence boundary:** this confirms the bounded ADR-0018 traceability correction and the named existing host checks. It does not deliver peer-enrollment UI, independent-node Android-to-Windows end-to-end acceptance, or broad T0007 task-wide traceability. Keep `T0007` and `T0131` `in_progress`; `T0121` remains `blocked`; `AC-P2P-01` remains **NOT RUN**.
+- **Files changed in this verification record:** `docs/decisions/ADR-0018-explicit-peer-trust-and-identity-verification.md`; `docs/decisions/README.md`; `step three/T0007/execution-report.md`; `step three/project-graph.md`.
+- **Next action:** continue broad task-wide T0007 decision-to-source/test traceability; do not close the task based only on this bounded increment.

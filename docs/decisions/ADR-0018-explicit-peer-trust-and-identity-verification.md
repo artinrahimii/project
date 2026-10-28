@@ -1,6 +1,6 @@
 # ADR-0018: Explicit peer trust and identity verification
 
-- **Status:** Proposed pending exact-commit CI verification; peer-enrollment UI and full independent-node E2E remain separate.
+- **Status:** Exact commit V 3.0.443 passed the Step Three quality gate and product workflow; peer-enrollment UI and full independent-node E2E remain separate.
 - **Date:** 2026-10-27
 - **Related task:** T0131.
 - **Decision:** Unknown libp2p PeerIds are not trusted automatically. A caller must explicitly confirm the exact canonical PeerId before adding it to a persistent trust registry. Reconnection is permitted only for a stored decision; a different PeerId remains unknown rather than replacing a prior identity.
