@@ -1,7 +1,7 @@
-# T0007 execution report — in progress
+# T0007 execution report — completed (decision/source/configuration/test traceability scope)
 
 - **Task:** reflect every technical decision in executable source, configuration, and matching tests; documentation alone is insufficient.
-- **Status:** `in_progress`. The task-wide traceability criterion remains open; this attempt addresses report integrity and adds a regression guard only.
+- **Current status:** `done` for the scoped criterion of linking each technology decision to existing source/configuration and executable test/workflow evidence. This does not assert that runtime-only product gates such as Android-to-Windows P2P are complete.
 - **Baseline commit:** `V 3.0.428` — `9e57f7de508f42f794beb021fae1665d68da05a7`.
 - **Task history:** the append-only record for the preceding 73 attempts is retained in `step three/project-graph.md`. The latest completed increment before this attempt was T0007-A073 on exact V 3.0.427; its bounded source-traceability regression and both quality/product workflows passed. This does not establish broad task completion.
 - **Report ownership correction (T0007-A074):** the prior contents at this path began with a T0121 report title and mixed T0121-A003/A004/A005 material with T0007-A073 verification. T0121's detailed history remains preserved in `step three/T0121/execution-report.md`; the previous T0007 attempt history remains in the graph. This file is now scoped to T0007.
@@ -96,3 +96,13 @@
 - **Traceability audit:** the decision register has 19 registered ADR rows/documents (including separate ADR-0003 decisions). Existing regression coverage checks every ADR document is registered, each decision row links existing source/configuration and test/workflow paths, and decision-specific source contracts for the current decisions ADR-0001 through ADR-0018.
 - **Mismatch found:** T0007's `actual_output_paths` and `evidence` arrays lagged its already verified ADR-0016/0017/0018 source/test traceability increment. Added those three ADR documents and `step three/T0007/evidence/verification.md` to the graph and added a regression test to prevent that drift.
 - **Current state:** partial pending exact PR-head CI for the newly added regression; T0007 remains `in_progress` until that run is confirmed. This task covers decision/source/configuration/test traceability only; it does not mark live Android-to-Windows P2P or `AC-P2P-01` passed. T0121 remains blocked.
+
+
+## T0007-A084 — exact candidate verification and scoped completion
+
+- **Tested candidate:** `b19d533fbd190ac930359cf56992b553245911e6`, branched from exact main `V 3.0.445` (`2927754d34c547b90dbc9a974b63febb8a7cae09`).
+- **Step Three quality:** PASS, run [40650078853](https://github.com/artinrahimii/project/actions/runs/40650078853): **191 Python tests passed**, including `test_t0007_graph_tracks_current_adr_outputs_and_verification`; Python syntax, graph validation (229 nodes / 424 edges), and repository-backed output/evidence checks passed with zero errors and one preserved T0001 unmapped-dependency warning.
+- **Product baseline:** the exact unchanged main V 3.0.445 product workflow [40648190753](https://github.com/artinrahimii/project/actions/runs/40648190753) passed HostLifecycle, Windows WPF/DPAPI, and Android APK/lint/Protobuf jobs. No production runtime code or dependency edge changed in this T0007 traceability increment.
+- **Audit conclusion:** the decision register has 19 ADR rows/documents; current tests verify each ADR document is registered, source/configuration and test/workflow links exist, and decision-specific source-contract coverage maps the current ADR decisions. T0007 graph output/evidence now also records ADR-0016/0017/0018 and its evidence file.
+- **Status:** `done` for decision/source/configuration/test traceability only. This does not implement the WPF peer-enrollment prompt, public rendezvous wiring, or independent-node Android-to-Windows P2P. `T0121` remains blocked and `AC-P2P-01` remains **NOT RUN**.
+- **Merge gate:** this completion record remains in the PR until its updated exact head passes all quality and product jobs.
