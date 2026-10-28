@@ -121,6 +121,7 @@ PeerTrustStoreAcceptanceTests.Run();
 HostIdentityStoreAcceptanceTests.Run();
 await PeerAnnouncementClientAcceptanceTests.RunAsync().ConfigureAwait(false);
 SecureRequestIdGeneratorTests.Run();
+RequestIdentityIndependenceAcceptanceTests.Run();
 await HostRequestAdmissionTests.RunAsync();
 await HostInferenceSessionConcurrencyTests.RunAsync();
 await HostInferenceSessionConcurrencyTests.DisconnectReleasesBackendAsync();

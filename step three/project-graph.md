@@ -27508,8 +27508,7 @@
       "title": "شناسهٔ درخواست را از شناسهٔ کاربر و شناسهٔ دائمی گفت‌وگو مستقل نگه دار.",
       "section": "13. هویت ارتباطی و رمزنگاری",
       "depends_on": [
-        "T0134",
-        "T0128"
+        "T0134"
       ],
       "inputs": [
         "خروجی تأییدشدهٔ پیش‌نیازها",
@@ -27518,22 +27517,41 @@
       "outputs": [
         "خروجی قابل بررسی مربوط به «شناسهٔ درخواست را از شناسهٔ کاربر و شناسهٔ دائمی گفت‌وگو مستقل نگه دار.» در مسیر src/Shared.Security/ + tests/security/؛ همراه با آزمون/شاهد پذیرش متناسب."
       ],
-      "start_condition": "همهٔ پیش‌نیازهای T0134 و T0128 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
+      "start_condition": "T0134 is done and its exact-head secure-channel rejection tests are passing. T0128 is tracked independently because independent-network acceptance produces no API/contract required to test request-ID independence.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال انجام",
+      "actual_output_paths": [
+        "src/Host.Windows/Requests/SecureRequestIdGenerator.cs",
+        "protocol/whitep/v1/messages.proto",
+        "src/Host.Windows/Networking/NetworkInferenceRequestResponseMapper.cs",
+        "tests/HostLifecycle.Tests/RequestIdentityIndependenceAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0135/execution-report.md",
+        "step three/T0135/evidence/verification.md"
+      ],
       "expected_output_paths": [
         "src/Shared.Security/ + tests/security/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "tests/HostLifecycle.Tests/RequestIdentityIndependenceAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "docs/decisions/ADR-0013-temporary-request-identifiers.md",
+        "protocol/whitep/v1/messages.proto"
+      ],
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0135-A001 (2026-10-28): reviewed T0134 and T0128 edges against current source/wire contracts. Existing 128-bit opaque ID generation and the no-user/conversation wire contract were present; added an integrated acceptance test to enforce that boundary and preserve response correlation. Exact-commit CI is pending, so status remains in_progress. T0128 remains not_started and is not claimed as passed.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0135-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "tests/HostLifecycle.Tests/RequestIdentityIndependenceAcceptanceTests.cs",
+          "tests/HostLifecycle.Tests/Program.cs",
+          "step three/T0135/execution-report.md",
+          "step three/T0135/evidence/verification.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
@@ -27546,7 +27564,29 @@
           "review_evidence": []
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0135-A001",
+          "started_at": "2026-10-28T17:00:00.000Z",
+          "ended_at": "2026-10-28T17:03:00.000Z",
+          "result": "partial",
+          "summary": "Added and registered a request-identity-independence acceptance test. It checks opaque 128-bit request IDs, excludes stable user/account/device/conversation fields from selected Protobuf message descriptors, round-trips a valid request through protocol validation, and confirms typed failure correlation. Exact-commit CI is pending; task is not yet done.",
+          "changed_files": [
+            "tests/HostLifecycle.Tests/RequestIdentityIndependenceAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "step three/T0135/execution-report.md",
+            "step three/T0135/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect the exact V 3.0.474 HostLifecycle and Step Three quality workflows. Mark T0135 done only after the new acceptance test and repository quality gate pass; otherwise fix the source/test and retry."
+        }
+      ]
     },
     {
       "id": "T0136",
@@ -34984,19 +35024,16 @@
       "from": "T0134",
       "to": "T0135",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
-    },
-    {
-      "from": "T0128",
-      "to": "T0135",
-      "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0134 validates authenticated secure-channel/peer/protocol-negotiation rejection. T0135 consumes none of those rejection-test APIs; it tests request-ID generation and request/response Protobuf correlation independently. Keep the edge active as a conservative execution-order constraint, not as a proven technical prerequisite.",
+      "validation_status": "validated",
+      "evidence": [
+        "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs",
+        "protocol/whitep/v1/messages.proto",
+        "src/Host.Windows/Requests/SecureRequestIdGenerator.cs",
+        "tests/HostLifecycle.Tests/RequestIdentityIndependenceAcceptanceTests.cs",
+        "docs/decisions/ADR-0013-temporary-request-identifiers.md"
+      ]
     },
     {
       "from": "T0135",
@@ -36760,6 +36797,7 @@
     "T0132",
     "T0133",
     "T0134",
+    "T0135",
     "T0121",
     "T0122",
     "T0123",
@@ -36768,7 +36806,6 @@
     "T0126",
     "T0127",
     "T0128",
-    "T0135",
     "T0136",
     "T0137",
     "T0138",
@@ -39404,6 +39441,44 @@
         "https://github.com/artinrahimii/project/actions/runs/40715062620/job/122910382895"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-28T17:03:00.000Z",
+      "edge_from": "T0134",
+      "edge_to": "T0135",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "old_validation_status": "unreviewed",
+      "new_validation_status": "validated",
+      "reason": "T0134 validates authenticated secure-channel/peer/protocol-negotiation rejection. T0135 consumes none of those rejection-test APIs; it tests request-ID generation and request/response Protobuf correlation independently. Keep the edge active as a conservative execution-order constraint, not as a proven technical prerequisite.",
+      "evidence": [
+        "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs",
+        "protocol/whitep/v1/messages.proto",
+        "src/Host.Windows/Requests/SecureRequestIdGenerator.cs",
+        "tests/HostLifecycle.Tests/RequestIdentityIndependenceAcceptanceTests.cs",
+        "docs/decisions/ADR-0013-temporary-request-identifiers.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-28T17:03:00.000Z",
+      "edge_from": "T0128",
+      "edge_to": "T0135",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "old_validation_status": "unreviewed",
+      "new_validation_status": "validated",
+      "change_action": "removed_from_active_edges",
+      "reason": "T0128 produces external two-computer/independent-network acceptance evidence but no request-ID API, stable-identity model, or protocol contract consumed by T0135. Request-ID independence can be implemented and tested locally using the current generator, Protobuf descriptors and typed response mapping. This classification does not claim T0128 has run or passed.",
+      "evidence": [
+        "step three/project-graph.md (T0128 acceptance and expected output)",
+        "src/Host.Windows/Requests/SecureRequestIdGenerator.cs",
+        "protocol/whitep/v1/messages.proto",
+        "src/Host.Windows/Networking/NetworkInferenceRequestResponseMapper.cs",
+        "tests/HostLifecycle.Tests/RequestIdentityIndependenceAcceptanceTests.cs",
+        "docs/decisions/ADR-0013-temporary-request-identifiers.md"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
   "updated_at": "2026-10-28",
@@ -39537,6 +39612,25 @@
         "docs/decisions/ADR-0016-maintained-libp2p-cryptographic-transport.md",
         "tests/HostLifecycle.Tests/Program.cs",
         "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-28T17:03:00.000Z",
+      "moved_tasks": [
+        "T0135"
+      ],
+      "old_positions": {
+        "T0135": 135
+      },
+      "new_anchor": "Immediately after T0134 and before the blocked T0121/T0128 external-network acceptance chain",
+      "reason": "T0134 remains a sequencing-only conservative constraint; T0128 is an external deployment acceptance gate and is not a technical prerequisite for request-ID independence. The request identifier contract and test can be validated locally without claiming T0128 has passed.",
+      "evidence": [
+        "src/Host.Windows/Requests/SecureRequestIdGenerator.cs",
+        "protocol/whitep/v1/messages.proto",
+        "src/Host.Windows/Networking/NetworkInferenceRequestResponseMapper.cs",
+        "tests/HostLifecycle.Tests/RequestIdentityIndependenceAcceptanceTests.cs",
+        "docs/decisions/ADR-0013-temporary-request-identifiers.md"
       ],
       "reviewed_by": "Step Three execution review"
     }
