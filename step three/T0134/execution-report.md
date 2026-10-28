@@ -45,3 +45,14 @@ Add a real negative integration case at the libp2p secure-channel boundary for u
 - **State remains** `in_progress` until the exact-commit HostLifecycle job verifies this case and the logs confirm it was exercised.
 - **Security scope:** this case targets authenticated remote-identity/certificate mismatch at the libp2p transport boundary. It does not by itself prove rejection of every unsupported Noise/TLS protocol-version negotiation.
 - **Next action:** inspect the exact commit's GitHub Actions run and test log. If the job fails, diagnose/fix and re-run; if it passes, review whether all T0134 acceptance scope is covered before changing the node to `done`.
+
+
+## Latest attempt: T0134-A004
+
+- **Code/test commit:** [V 3.0.465](https://github.com/artinrahimii/project/commit/e0512ece82f900e2a3f4586a6c286454eac994a2), on `main`.
+- **Changed file:** `tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs`.
+- **Additional negative test:** `VerifyRejectsPlaintextOnlyPeerAsync` creates a real local libp2p listener configured to offer plaintext only, then attempts to connect with the application's secure-only transport to the listener's actual PeerId. The intended acceptance result is that protocol negotiation fails and the client never reports a connected/authenticated peer. This tests fail-closed behavior when no mutually supported secure channel exists; it is not a direct test of every unsupported Noise/TLS protocol version.
+- **Prior negative test retained:** `VerifySecureChannelRejectsUnexpectedPeerIdentityAsync` attempts a connection where the dial address advertises a valid but incorrect remote PeerId.
+- **Test result:** pending. No local .NET execution was possible because this environment has no `dotnet` executable. The GitHub combined commit-status query returned no entries; the available workflow-run retrieval only exposes pull-request-triggered runs, so this connector cannot verify a push-triggered run or its logs. Empty status data is not treated as a pass or failure.
+- **State remains** `in_progress` until the exact-commit HostLifecycle job verifies the added cases. No test has been marked passed from code presence alone.
+- **Next action:** retrieve the GitHub Actions check run for commit `e0512ece82f900e2a3f4586a6c286454eac994a2`, verify both security-negative cases executed and passed, then decide whether the remaining unsupported secure-channel version requirement needs a separate test before completion.
