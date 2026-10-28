@@ -28993,13 +28993,16 @@
         "tests/test_android_request_architecture.py",
         "docs/decisions/ADR-0019-host-visible-inference-content.md",
         "step three/T0140/execution-report.md",
-        "step three/T0140/evidence/verification.md"
+        "step three/T0140/evidence/verification.md",
+        "tests/test_android_compose_navigation.py",
+        "tests/test_central_inference_boundary.py",
+        "tests/test_claims_audit.py"
       ],
       "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0140-A001 started on bce6c85dade0311ffe48b2ed8d75253e66408fb0 after graph/blob verification. T0138 -> T0140 was reviewed as sequencing_only: endpoint-visibility documentation constrains claims but is not a Kotlin API consumed by the data layer. T0140 -> T0141 was reviewed as contract_or_interface_dependency: the upcoming Room adapter must satisfy the Flow/suspend repository boundary and draft/status types. Both retain type=blocks; unrelated unreviewed edges remain unchanged.",
       "execution_summary": {
-        "attempt_count": 1,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "T0140-A001",
+        "attempt_count": 2,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "T0140-A002",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Client.Android/app/build.gradle.kts",
@@ -29011,13 +29014,21 @@
           "tests/test_android_request_architecture.py",
           "step three/T0140/execution-report.md",
           "step three/T0140/evidence/verification.md",
-          "step three/project-graph.md"
+          "step three/project-graph.md",
+          "tests/test_android_compose_navigation.py",
+          "tests/test_central_inference_boundary.py",
+          "tests/test_claims_audit.py"
         ],
         "related_commits": [
-          "bce6c85dade0311ffe48b2ed8d75253e66408fb0"
+          "bce6c85dade0311ffe48b2ed8d75253e66408fb0",
+          "c7374040f6eb2af0d228e64bc8a7076c3f3c2cf1"
         ],
-        "tests_passed": [],
-        "tests_failed": [],
+        "tests_passed": [
+          "V 3.0.495 HostLifecycle job passed."
+        ],
+        "tests_failed": [
+          "Source contracts still asserted that delivery-status text lived in MainActivity; the ViewModel now owns that state. ktlint identified exact source/test formatting violations, so product build did not reach APK/JUnit."
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -29045,9 +29056,9 @@
         {
           "attempt_id": "T0140-A001",
           "started_at": "2026-10-28T21:34:55.721Z",
-          "ended_at": null,
-          "result": "partial",
-          "summary": "Added a process-memory request repository behind a Flow/suspend interface, typed draft/preparation states, and a ViewModel that maps repository state to Compose UI state. Wired the request editor to the ViewModel; blank prompts are rejected, nonblank drafts remain local and report transport unavailable. Added Android JUnit tests and a Python source-contract test. No network, database, disk write or host delivery is introduced. Exact-head CI is pending.",
+          "ended_at": "2026-10-28T21:37:00Z",
+          "result": "failed",
+          "summary": "Implementation introduced the repository/ViewModel boundary and JUnit/Python tests, but exact-head V3.0.495 CI failed before Android compilation: three source-contract assertions still looked for request-delivery status strings in MainActivity after those messages moved to RequestViewModel, and ktlint reported formatting errors in the new repository and JUnit test files. HostLifecycle passed; Windows job was still running at inspection. No Android APK or JUnit success is claimed for this attempt.",
           "changed_files": [
             "src/Client.Android/app/build.gradle.kts",
             "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
@@ -29066,35 +29077,88 @@
           "commit_sha": null,
           "tests": [
             {
-              "name": "Git Blob integrity and prerequisite/edge review",
+              "name": "Graph integrity and dependency review",
               "result": "passed",
-              "summary": "Graph Blob 1d4d66d441501adfaed608f8a5b3bd973eb6c0a4 from tree a220e1c1e9d45686ebf512ab3c8568edcff8ef78 recomputed to same SHA-1 from 2399083 UTF-8 bytes; JSON round-trip passed for 229 nodes / 417 edges. T0138/T0139 were done; both T0140-related edges were reviewed and logged."
+              "summary": "Exact graph Blob SHA verified; 229 tasks/417 edges parsed. T0138->T0140 and T0140->T0141 edge review recorded."
             },
             {
-              "name": "Local Python/Kotlin test execution",
-              "result": "not_run",
-              "summary": "No usable local checkout or Android SDK runner is available in this session; exact-head GitHub Actions results are pending."
+              "name": "Step Three quality gate — V 3.0.495",
+              "result": "failed",
+              "summary": "203 tests ran; 3 failed because source-contract tests expected request status strings in MainActivity rather than the new RequestViewModel. The output/evidence graph guard was not reached.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40773211226"
+            },
+            {
+              "name": "Android ktlint — V 3.0.495",
+              "result": "failed",
+              "summary": "ktlintTestSourceSetCheck and ktlintMainSourceSetCheck failed on expression formatting and blank-line rules in ClientRequestRepository.kt, RequestViewModel.kt, ClientRequestRepositoryTest.kt and RequestViewModelTest.kt. APK compilation/JUnit were skipped.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40773210522"
+            },
+            {
+              "name": "HostLifecycle — V 3.0.495",
+              "result": "passed",
+              "summary": "Host lifecycle job passed for this exact head.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40773210522"
+            }
+          ],
+          "failure_details": "Source contracts still asserted that delivery-status text lived in MainActivity; the ViewModel now owns that state. ktlint identified exact source/test formatting violations, so product build did not reach APK/JUnit.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "Introduced ClientRequestRepository Flow/suspend API, ClientRequestDraft, RequestDraftStatus and RequestPreparationResult; T0141 is expected to add persistent Room implementation behind a data boundary."
+          ],
+          "follow_up": "A002 moves the three legacy assertions to inspect RequestViewModel and formats the Kotlin repository/ViewModel/JUnit code to the exact ktlint diagnostics. Re-run all exact-head checks."
+        },
+        {
+          "attempt_id": "T0140-A002",
+          "started_at": "2026-10-28T21:39:20.706Z",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Repairing A001 findings: migrated source-contract assertions to the ViewModel's truthful status source and formatted multiline Kotlin expressions/enum declarations/interfaces per the observed ktlint diagnostics. Exact-head CI remains pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientRequestRepository.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/data/ClientRequestRepositoryTest.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
+            "tests/test_android_compose_navigation.py",
+            "tests/test_central_inference_boundary.py",
+            "tests/test_claims_audit.py",
+            "step three/T0140/execution-report.md",
+            "step three/T0140/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "related_commits": [
+            "c7374040f6eb2af0d228e64bc8a7076c3f3c2cf1"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Source-contract assertion migration",
+              "result": "pending",
+              "summary": "Legacy checks now read delivery-state wording from RequestViewModel."
+            },
+            {
+              "name": "Kotlin formatting",
+              "result": "pending",
+              "summary": "ktlint will verify formatting changes."
             },
             {
               "name": "Step Three quality gate",
               "result": "pending"
             },
             {
-              "name": "Android ktlint/APK/JUnit/Protobuf",
+              "name": "Android lint/APK/JUnit/Protobuf",
               "result": "pending"
             },
             {
-              "name": "HostLifecycle and Windows WPF product checks",
+              "name": "HostLifecycle and Windows product jobs",
               "result": "pending"
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
-          "contract_changes": [
-            "Introduced ClientRequestRepository Flow/suspend API, ClientRequestDraft, RequestDraftStatus and RequestPreparationResult; T0141 is expected to add persistent Room implementation behind a data boundary."
-          ],
-          "follow_up": "Run exact-head quality and product CI. Keep T0140 in_progress until source-contract, graph/evidence, Kotlin lint, APK/JUnit/Protobuf, HostLifecycle and Windows WPF checks pass."
+          "contract_changes": [],
+          "follow_up": "Wait for exact-head V3.0.496 quality/product CI. Do not mark T0140 done until all required gates pass."
         }
       ]
     },

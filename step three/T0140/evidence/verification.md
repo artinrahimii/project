@@ -11,3 +11,10 @@
 - Android ktlint, debug APK, repository/ViewModel JUnit, generated Protobuf checks.
 - HostLifecycle and Windows WPF product jobs.
 - Local commands are marked `not_run`; no local test pass or Android-to-host transport claim is made.
+
+
+## A001 CI failures / A002 repair
+
+- Step Three quality run [40773211226](https://github.com/artinrahimii/project/actions/runs/40773211226): 203 tests, 3 failures. The failing assertions were stale source-location assumptions: delivery status is owned by `RequestViewModel.kt`, not embedded as literals in `MainActivity.kt`.
+- Android product run [40773210522](https://github.com/artinrahimii/project/actions/runs/40773210522), job `123115597191`: ktlint failed with expression-formatting and blank-line violations in the new Kotlin repository/ViewModel/JUnit files, so APK/JUnit did not run. HostLifecycle passed.
+- A002 changes the three stale source contracts to inspect the ViewModel and applies multiline/spacing fixes in four Kotlin files. These are pending CI verification.

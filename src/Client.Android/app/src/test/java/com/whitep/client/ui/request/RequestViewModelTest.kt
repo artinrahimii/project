@@ -12,10 +12,11 @@ import org.junit.Test
 
 class RequestViewModelTest {
     private val commandScope = CoroutineScope(SupervisorJob() + Dispatchers.Unconfined)
-    private val viewModel = RequestViewModel(
-        repository = InMemoryClientRequestRepository(),
-        operationScope = commandScope,
-    )
+    private val viewModel =
+        RequestViewModel(
+            repository = InMemoryClientRequestRepository(),
+            operationScope = commandScope,
+        )
 
     @After
     fun tearDown() {

@@ -15,6 +15,9 @@ NAVIGATION = (
 ANDROID_BUILD = (
     ROOT / "src/Client.Android/app/build.gradle.kts"
 ).read_text(encoding="utf-8")
+REQUEST_VIEW_MODEL = (
+    ROOT / "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt"
+).read_text(encoding="utf-8")
 MANIFEST = (
     ROOT / "src/Client.Android/app/src/main/AndroidManifest.xml"
 ).read_text(encoding="utf-8")
@@ -59,7 +62,8 @@ class AndroidComposeNavigationTests(unittest.TestCase):
         self.assertIn("restoreState = true", ACTIVITY)
 
     def test_request_screen_does_not_claim_to_send_and_privacy_screen_discloses_host_visibility(self):
-        self.assertIn("Android-to-host transport is not implemented.", ACTIVITY)
+        self.assertIn("Android-to-host transport is not implemented.", REQUEST_VIEW_MODEL)
+        self.assertIn("Request not sent: no host transport yet", REQUEST_VIEW_MODEL)
         self.assertIn("The processing host can read your prompt and context capsule", ACTIVITY)
         self.assertIn("Transport encryption protects data in transit, not from the receiving host.", ACTIVITY)
         self.assertIn("Android-to-Windows delivery", ACTIVITY)

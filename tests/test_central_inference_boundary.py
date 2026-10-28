@@ -10,6 +10,9 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "src"
+ANDROID_REQUEST_VIEW_MODEL = (
+    SRC / "Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt"
+)
 SOURCE_SUFFIXES = {".cs", ".kt", ".java", ".js", ".jsx", ".ts", ".tsx", ".py", ".go", ".rs"}
 CENTRAL_ROUTE_HANDLER_PATTERNS = (
     re.compile(
@@ -60,7 +63,9 @@ class CentralInferenceBoundaryTests(unittest.TestCase):
     def test_current_android_client_does_not_claim_prompt_delivery(self):
         client = (SRC / "Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt").read_text(encoding="utf-8")
         self.assertIn("Requests are not sent yet; transport is not implemented.", client)
-        self.assertIn("Request not sent: no host transport yet", client)
+        view_model = ANDROID_REQUEST_VIEW_MODEL.read_text(encoding="utf-8")
+        self.assertIn("Request not sent: no host transport yet", view_model)
+        self.assertIn("Android-to-host transport is not implemented.", view_model)
 
     def test_requirement_requires_network_evidence_beyond_source_search(self):
         requirements = (ROOT / "docs/requirements.md").read_text(encoding="utf-8")

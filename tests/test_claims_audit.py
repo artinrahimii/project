@@ -11,6 +11,9 @@ README = (ROOT / "README.md").read_text(encoding="utf-8")
 ACCEPTANCE = (ROOT / "docs/acceptance.md").read_text(encoding="utf-8")
 REQUIREMENTS = (ROOT / "docs/requirements.md").read_text(encoding="utf-8")
 ANDROID_UI = (ROOT / "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt").read_text(encoding="utf-8")
+ANDROID_REQUEST_VIEW_MODEL = (
+    ROOT / "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt"
+).read_text(encoding="utf-8")
 WINDOW_UI = (ROOT / "src/Host.Windows/MainWindow.xaml").read_text(encoding="utf-8")
 HOST_LIFECYCLE = (ROOT / "src/Host.Domain/HostLifecycle.cs").read_text(encoding="utf-8")
 HOST_SESSION = (ROOT / "src/Host.Application/HostInferenceSession.cs").read_text(encoding="utf-8")
@@ -21,7 +24,8 @@ class ClaimsAuditTests(unittest.TestCase):
     def test_android_ui_discloses_preview_and_does_not_claim_request_delivery(self):
         self.assertIn("P2P client preview (transport not implemented)", ANDROID_UI)
         self.assertIn("Requests are not sent yet; transport is not implemented.", ANDROID_UI)
-        self.assertIn("Request not sent: no host transport yet", ANDROID_UI)
+        self.assertIn("Request not sent: no host transport yet", ANDROID_REQUEST_VIEW_MODEL)
+        self.assertIn("Android-to-host transport is not implemented.", ANDROID_REQUEST_VIEW_MODEL)
 
     def test_windows_ui_exposes_local_backend_connection_and_generation(self):
         self.assertIn('Title="White-P Local AI Host"', WINDOW_UI)

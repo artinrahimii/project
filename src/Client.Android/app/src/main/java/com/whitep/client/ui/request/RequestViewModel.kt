@@ -17,7 +17,8 @@ data class RequestUiState(
     val status: RequestDraftStatus = RequestDraftStatus.NOT_SENT,
 ) {
     val statusMessage: String
-        get() = when (status) {
+        get() =
+            when (status) {
             RequestDraftStatus.NOT_SENT -> "Nothing has been sent."
             RequestDraftStatus.EMPTY_PROMPT -> "Enter a prompt first."
             RequestDraftStatus.TRANSPORT_UNAVAILABLE ->
@@ -33,9 +34,10 @@ class RequestViewModel(
     private val commandsScope: CoroutineScope
         get() = operationScope ?: viewModelScope
 
-    val uiState: StateFlow<RequestUiState> = repository.draft
-        .map { draft -> RequestUiState(prompt = draft.prompt, status = draft.status) }
-        .stateIn(
+    val uiState: StateFlow<RequestUiState> =
+        repository.draft
+            .map { draft -> RequestUiState(prompt = draft.prompt, status = draft.status) }
+            .stateIn(
             scope = commandsScope,
             started = SharingStarted.Eagerly,
             initialValue = RequestUiState(),
