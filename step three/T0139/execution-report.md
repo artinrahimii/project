@@ -55,3 +55,15 @@
 - Exact base: `9d9cfa67ef3c7e009a6d7e441080ffda38631e28`, `V 3.0.490`; tree `83277318237d23d8b590225ec9f54d4f93e360fa`. Dependency pin is now `androidx.navigation:navigation-compose:2.9.8`, selected after V 3.0.489 CI showed 2.10.2 was incompatible with AGP 8.13 / compileSdk 36.
 - Static review found `internal object ClientNavigation` defined in both `ClientDestination.kt` and `ClientNavigation.kt`. The CI for V 3.0.489 had stopped in `checkDebugAarMetadata` before Kotlin compilation, so that duplicate had not yet been compiler-validated. This attempt removes the duplicate object from the enum source and adds a Python source-contract test requiring the canonical navigation object to live only in `ClientNavigation.kt`.
 - Preflight verified the source snippets and unique insertion anchor. Local Kotlin/Python tests were not run because this runtime has no Gradle and could not make a successful GitHub clone; exact-head CI is pending. T0139 remains `in_progress`.
+
+
+## T0139 accepted — exact V 3.0.491 CI
+
+- **Accepted commit:** [`V 3.0.491` — `5a053f1c3a62a57f96d819a411cddced70742b39`](https://github.com/artinrahimii/project/commit/5a053f1c3a62a57f96d819a411cddced70742b39).
+- **Step Three quality gate:** [run 40770851920](https://github.com/artinrahimii/project/actions/runs/40770851920) succeeded; source-contract, graph and recorded-evidence checks passed.
+- **Android:** [product workflow 40770851948](https://github.com/artinrahimii/project/actions/runs/40770851948), job 123107310521: Kotlin lint, debug APK build, Android Protobuf round-trip JUnit, generated Java/Kotlin Protobuf source verification, and APK artifact upload all passed.
+- **Windows host:** the same workflow, job 123107310782: C# format, Release build, generated C# Protobuf source, WPF startup smoke, agent-tool process restrictions, policy rejection, backend/model capability gate, DPAPI host identity/peer trust storage, and artifact upload all passed.
+- **Host lifecycle:** job 123107310837 passed.
+- **V 3.0.490 failure retained:** [workflow 40770498046](https://github.com/artinrahimii/project/actions/runs/40770498046) passed lint but failed at Kotlin compilation because `ClientNavigation` was declared twice. A007 removed the duplicate in `ClientDestination.kt` and added a regression test; the complete V 3.0.491 workflow then passed.
+- **Decision:** the scoped Compose app shell meets T0139's acceptance criterion: output exists, its source-contract checks pass, and the exact commit builds and passes Android tests. The app remains a preview; Android-to-host transport, live peer discovery and runtime no-storage behavior are not implemented or validated by this task.
+- **Next task:** T0140 (ViewModel/repository/data layer) is next by the graph's sequencing-only T0139 edge. Its T0138 incoming edge remains `unreviewed`; validate that edge against the task's real interfaces before changing T0140.
