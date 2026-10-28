@@ -1,12 +1,10 @@
 # T0137 — گزارش اجرای وظیفه
 
-- **وضعیت فعلی:** `in_progress`؛ آزمون CI برای commit پیاده‌سازی در انتظار بررسی است.
-- **Attempt:** `T0137-A001`
-- **مبنای دقیق:** `main` / `8e3e48dc035fc36a2c3d851d3ac6a6b8ca1d45c2` (`V 3.0.478`).
-- **گراف:** `step three/project-graph.md` از Blob `0820ccb59d3c716bbc7a9eca7dcb9b4335da3d28` در Tree `81cb2e17837e46c1ef8bdafeb4330f768ca0081e` دریافت شد؛ محتوای کامل 2,311,197 بایت UTF-8 با SHA-1 شیء Git تطبیق داشت و JSON کامل به 229 گره و 419 یال تجزیه شد.
-- **اجرا:** افزودن کنترل replay در حافظه با کلید PeerId احرازشده + request_id + attempt_id؛ رد درخواست Protobuf نامعتبر پیش از handler؛ اعتبارسنجی اندازه و قالب InferenceResponse و تطبیق request/attempt/model/host پیش از ارسال؛ افزودن آزمون‌های منفی و تبدیل آزمون loopback به درخواست/پاسخ نسخه‌دار واقعی.
-- **آزمون‌های این commit:** هنوز اجرای CI برای commit جدید بررسی نشده است؛ هیچ نتیجهٔ PASS جدیدی ادعا نمی‌شود.
-- **محدوده:** تست‌های peer/loopback و CI جایگزین `T0128` نیستند؛ آزمون دو شبکهٔ مستقل همچنان اجرا‌نشده است.
-- **محدودیت replay cache:** حافظه‌ای، محدود به 8192 کلید زنده به‌صورت پیش‌فرض و نگهداری تا زمان deadline؛ در ظرفیت کامل درخواست جدید fail-closed می‌شود. داده در دیسک ذخیره نمی‌شود و با فرایند جدید پاک می‌شود.
-- **وابستگی‌ها:** `T0136 → T0137` به صورت `sequencing_only` و `validated` حفظ شد. `T0128 → T0137` پس از بررسی کد و آزمون‌های loopback به صورت `sequencing_only` اعتبارسنجی و از یال‌های فعال حذف شد؛ این تغییر موفقیت T0128 را ادعا نمی‌کند. `T0137 → T0138` به عنوان ترتیب محافظه‌کارانه `sequencing_only` باقی ماند.
-- **ادامه:** CI دقیق این commit را بررسی کن؛ تنها پس از مشاهدهٔ لاگ‌های واقعی موفق، وضعیت را به `done` تغییر بده.
+- **وضعیت فعلی:** `in_progress`؛ تلاش نخست با خطای کامپایل شکست خورد؛ اصلاح منبع/پروژه در `T0137-A002` ثبت شد و CI دقیق نسخهٔ جدید هنوز pending است.
+- **مبنای اصلاح:** `main` / `80fa3a12c7387a1bfb5c8e39e9f1463cfd58b425` (`V 3.0.479`); نسخهٔ اصلاحی `V 3.0.480`.
+- **خطای دقیق مشاهده‌شده:** HostLifecycle job `123011004076` با `CS1061` در `PeerMessageSecurityAcceptanceTests.cs` (متد extension مربوط به `ToByteArray` به‌علت نبودن `using Google.Protobuf`) و `CS0103` برای `PeerResponseCorrelationValidator` به‌علت نبودن این فایل در فهرست Compile صریح پروژهٔ آزمون شکست خورد؛ assertions اجرا نشده‌اند. [لاگ](https://github.com/artinrahimii/project/actions/runs/40743489739/job/123011004076).
+- **اصلاح A002:** افزودن `using Google.Protobuf;` به آزمون امنیتی و افزودن لینک صریح `PeerResponseCorrelationValidator.cs` در `tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj`.
+- **نتایج V 3.0.479:** Android APK موفق؛ Step Three quality gate موفق؛ HostLifecycle، Windows WPF و real local inference شکست خوردند. شکست‌ها به‌عنوان نتیجهٔ رفتار امنیتی تفسیر نشده‌اند، چون کامپایل پیش از اجرای assertions متوقف شد.
+- **پیاده‌سازی:** کنترل replay در حافظه با کلید PeerId احرازشده + request_id + attempt_id؛ parser قبل از dispatch؛ اعتبارسنجی اندازه/قالب/هم‌بستگی پاسخ قبل از ارسال؛ آزمون‌های tampering/replay/forged response و loopback پروتکلی.
+- **محدوده:** T0128 (آزمون end-to-end روی دو شبکهٔ مستقل) همچنان `not_started` و NOT RUN است؛ این تغییر آن را تکمیل نمی‌کند.
+- **ادامه:** بررسی دقیق CI مربوط به `V 3.0.480`; فقط بعد از PASS واقعی HostLifecycle، build ویندوز، APK اندروید و real local inference می‌توان این وظیفه را تکمیل‌شده دانست.

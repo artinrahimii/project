@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using Google.Protobuf;
 using WhiteP.Host.Infrastructure;
 using WhiteP.Host.Windows.Networking;
 using WhiteP.Shared.Contracts;

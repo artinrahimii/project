@@ -1,26 +1,25 @@
 # T0137 — شواهد و اعتبارسنجی
 
-## نسخه و دریافت گراف
+## نسخه و گراف مبنا
 - Branch: `main`
-- Commit مبنا: `8e3e48dc035fc36a2c3d851d3ac6a6b8ca1d45c2` — `V 3.0.478`
-- Tree: `81cb2e17837e46c1ef8bdafeb4330f768ca0081e`
-- Graph Blob از همان tree: `0820ccb59d3c716bbc7a9eca7dcb9b4335da3d28`
-- اندازهٔ Blob و بایت‌های UTF-8 دریافتی: **2,311,197 بایت**
-- طول رشتهٔ حاصل از دریافت: **2,189,147 نویسه**
-- Git Blob SHA-1 روی محتوای اصلی (شامل حصارهای Markdown): `0820ccb59d3c716bbc7a9eca7dcb9b4335da3d28` — **تطبیق شد**
-- JSON کامل پس از برداشتن حصار Markdown تجزیه شد: **229 وظیفه / 419 یال**، بدون یال ارجاع‌داده‌شده به شناسهٔ ناموجود.
+- Commit پایهٔ اصلاح: `80fa3a12c7387a1bfb5c8e39e9f1463cfd58b425` — `V 3.0.479`
+- Tree: `49f27fa8e56243f89f0f25f8837650ee04b9ce83`
+- Graph Blob: `8057a52cebba439bd7b7046fc74a7d54596f99ab`
+- اندازهٔ محتوای فایل: **2,323,501 بایت UTF-8**؛ طول رشته: **2,201,506 نویسه**.
+- Git Blob SHA-1 روی بایت‌های اصلی و شامل حصار Markdown محاسبه شد و با `8057a52cebba439bd7b7046fc74a7d54596f99ab` تطبیق داشت؛ JSON کامل 229 وظیفه و 418 یال فعال را parse کرد.
 
-## پیاده‌سازی در تلاش T0137-A001
-- `src/Shared.Security/AuthenticatedRequestReplayGuard.cs`: کلید replay از PeerId احرازشده، request ID و attempt ID تشکیل می‌شود؛ داده فقط در حافظه نگه داشته می‌شود؛ deadlineهای گذشته پاک می‌شوند؛ کلید زنده در ظرفیت پر حذف نمی‌شود و درخواست جدید fail-closed می‌شود.
-- `src/Host.Windows/Networking/PeerResponseCorrelationValidator.cs`: پاسخ فقط وقتی قابل ارسال است که قرارداد پیام و request/attempt/model/host identity با درخواست فعال و هویت میزبان هم‌خوان باشد.
-- `src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs`: درخواست ورودی قبل از handler تجزیه و اعتبارسنجی می‌شود؛ درخواست تکراری پاسخ رد ثابت می‌گیرد و handler دوباره اجرا نمی‌شود؛ پاسخ نامعتبر یا دارای هم‌بستگی نادرست ارسال نمی‌شود.
-- `tests/HostLifecycle.Tests/PeerMessageSecurityAcceptanceTests.cs`: ورودی دستکاری‌شده/نامعتبر، کلید تکراری، تفکیک همتا/تلاش، ظرفیت/انقضا و پاسخ جعلی/نامنطبق را بررسی می‌کند.
-- `tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs`: آزمون یکپارچهٔ loopback با InferenceRequest/InferenceResponse و ارسال دوبارهٔ همان request/attempt برای اثبات رد replay.
-- `tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs`: آزمون‌های موجود هویت همتای ناشناخته/نامنطبق، plaintext-only peer و نسخهٔ secure-channel ناسازگار را اجرا می‌کند.
+## تلاش A001 — شکست کامپایل روی `V 3.0.479`
+- HostLifecycle job `123011004076`: شکست پیش از assertions؛ نبود `using Google.Protobuf` باعث `CS1061` برای `InferenceRequest.ToByteArray()` در خطوط 22 و 27 آزمون تازه شد.
+- فایل `PeerResponseCorrelationValidator.cs` در پروژهٔ HostLifecycle.Tests که فهرست `Compile Include` صریح دارد وارد نشده بود؛ نتیجه `CS0103` در آزمون و `PeerAnnouncementHostLifecycle` بود.
+- [HostLifecycle failure log](https://github.com/artinrahimii/project/actions/runs/40743489739/job/123011004076)
+- [Real local inference failure log](https://github.com/artinrahimii/project/actions/runs/40743490197/job/123011003755)
+- Windows WPF build job شکست خورد؛ Android APK job `123011004204` موفق شد؛ quality gate job `123011003650` موفق شد. موفقیت‌های مستقل جایگزین تست‌های C# اجرا‌نشده نیست.
 
-## وضعیت آزمون
-در زمان ثبت این attempt هنوز نتیجهٔ workflowهای commit جدید دریافت نشده است. CI مبنای قبلی `V 3.0.478` موفق بوده، اما آن نتیجه شواهد موفقیت این تغییرات جدید نیست. لینک‌ها/شناسه‌های workflow جدید پس از بررسی exact-head به همین فایل اضافه می‌شوند.
+## تلاش A002 — اصلاح wiring پروژه
+- `tests/HostLifecycle.Tests/PeerMessageSecurityAcceptanceTests.cs`: وارد کردن `Google.Protobuf` برای extensionهای Protobuf.
+- `tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj`: لینک صریح `src/Host.Windows/Networking/PeerResponseCorrelationValidator.cs` تا فایل در کامپایل executable test runner حضور داشته باشد.
+- نتیجهٔ CI روی `V 3.0.480`: در زمان ثبت، هنوز pending؛ PASS ادعا نمی‌شود.
 
-## مرز ادعا و ریسک
-- این مجموعه آزمون‌های محلی/loopback است؛ `T0128` و دسترسی از شبکهٔ مستقل همچنان `not_started` و NOT RUN هستند.
-- replay cache متکی به حافظهٔ زندهٔ فرایند است؛ پس از restart پاک می‌شود. این تصمیم از ذخیرهٔ پایدار شناسه‌های درخواست جلوگیری می‌کند، اما replay بین restartها را به تنهایی دفع نمی‌کند.
+## محدوده و ریسک
+- Replay fence در حافظه نگه‌داری می‌شود و در restart حذف می‌شود؛ replay میان restartها با این cache به‌تنهایی دفع نمی‌شود.
+- آزمون loopback جایگزین `T0128` و بررسی reachability مستقل نیست.

@@ -27786,7 +27786,8 @@
         "src/Host.Windows/MainWindow.xaml.cs",
         "step three/T0137/execution-report.md",
         "step three/T0137/evidence/verification.md",
-        "step three/project-graph.md"
+        "step three/project-graph.md",
+        "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj"
       ],
       "expected_output_paths": [
         "src/Shared.Security/AuthenticatedRequestReplayGuard.cs",
@@ -27806,11 +27807,11 @@
         "step three/T0137/execution-report.md",
         "step three/T0137/evidence/verification.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0137-A001 (2026-10-28T18:15:37.898Z): Reviewed the T0136 and T0128 incoming edges against the actual implementation. T0136 -> T0137 remains active as sequencing_only; T0128 -> T0137 was validated as sequencing_only and removed from active edges because the negative security suite runs against local parser/transport boundaries and authenticated loopback peers. T0137 -> T0138 was reviewed as sequencing_only and retained as a conservative execution-order edge. Added bounded in-memory authenticated-peer request/attempt replay fencing at the peer host boundary, strict request parsing, response size/Protobuf/ID/model/host correlation checks before send, and C# acceptance tests for tampered messages, forged responses, replay, and untrusted peer behavior. Exact-head CI is pending; task remains in_progress. This does not claim independent-network acceptance T0128.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0137-A001 (2026-10-28T18:15:37.898Z): Reviewed the T0136 and T0128 incoming edges against the actual implementation. T0136 -> T0137 remains active as sequencing_only; T0128 -> T0137 was validated as sequencing_only and removed from active edges because the negative security suite runs against local parser/transport boundaries and authenticated loopback peers. T0137 -> T0138 was reviewed as sequencing_only and retained as a conservative execution-order edge. Added bounded in-memory authenticated-peer request/attempt replay fencing at the peer host boundary, strict request parsing, response size/Protobuf/ID/model/host correlation checks before send, and C# acceptance tests for tampered messages, forged responses, replay, and untrusted peer behavior. Exact-head CI is pending; task remains in_progress. This does not claim independent-network acceptance T0128.\n\nT0137-A001 verification (V 3.0.479, 2026-10-28): exact-head HostLifecycle compilation failed before assertions with CS1061 for missing Google.Protobuf using and CS0103 because PeerResponseCorrelationValidator.cs was absent from the explicit Compile list in HostLifecycle.Tests.csproj. The real local inference workflow hit the same compile failure. Windows WPF workflow failed; Android APK and Step Three quality gate passed independently. A002 applies these build-wiring corrections; no behavior assertion is treated as passed until exact-head CI succeeds.",
       "execution_summary": {
-        "attempt_count": 1,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "T0137-A001",
+        "attempt_count": 2,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "T0137-A002",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Shared.Security/AuthenticatedRequestReplayGuard.cs",
@@ -27822,11 +27823,21 @@
           "tests/HostLifecycle.Tests/Program.cs",
           "step three/T0137/execution-report.md",
           "step three/T0137/evidence/verification.md",
-          "step three/project-graph.md"
+          "step three/project-graph.md",
+          "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj"
         ],
-        "related_commits": [],
-        "tests_passed": [],
-        "tests_failed": [],
+        "related_commits": [
+          "80fa3a12c7387a1bfb5c8e39e9f1463cfd58b425"
+        ],
+        "tests_passed": [
+          "Exact V 3.0.479 Android client APK job 123011004204 passed (lint, debug APK, Protobuf round-trip, generated-source validation).",
+          "Exact V 3.0.479 Step Three quality gate job 123011003650 passed (graph structure, Python tests/syntax, recorded output/evidence checks)."
+        ],
+        "tests_failed": [
+          "Exact V 3.0.479 HostLifecycle job 123011004076 failed before test assertions: CS1061 for InferenceRequest.ToByteArray because Google.Protobuf namespace was missing in PeerMessageSecurityAcceptanceTests.cs; CS0103 for PeerResponseCorrelationValidator because its source was not linked into HostLifecycle.Tests.csproj.",
+          "Exact V 3.0.479 real local inference job 123011003755 failed at the same HostLifecycle test-project compile boundary.",
+          "Exact V 3.0.479 Windows WPF workflow job 123011004526 failed; follow-up CI will validate after explicit source link and using fixes."
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -27851,9 +27862,9 @@
         {
           "attempt_id": "T0137-A001",
           "started_at": "2026-10-28T18:15:37.898Z",
-          "ended_at": null,
-          "result": "partial",
-          "summary": "Added a bounded in-memory replay guard keyed by the authenticated remote PeerId plus request_id/attempt_id; validated incoming protobuf requests before dispatch; checked outbound response size, schema, request/attempt/model correlation, and local host identity; added parser, replay-cache and forged-response acceptance cases; converted peer-host loopback acceptance from arbitrary bytes to versioned InferenceRequest/InferenceResponse messages and added exact replay rejection. CI for this source revision is pending.",
+          "ended_at": "2026-10-28T18:19:46.803Z",
+          "result": "failed",
+          "summary": "Exact V 3.0.479 CI failed during compilation before the new acceptance assertions could run. Compiler output identified a missing Google.Protobuf namespace in PeerMessageSecurityAcceptanceTests.cs and PeerResponseCorrelationValidator.cs missing from the explicit Compile list in HostLifecycle.Tests.csproj. These are build-wiring defects; no behavior-level PASS is inferred from the failed run.",
           "changed_files": [
             "src/Shared.Security/AuthenticatedRequestReplayGuard.cs",
             "src/Host.Windows/Networking/PeerResponseCorrelationValidator.cs",
@@ -27869,27 +27880,37 @@
           "commit_sha": null,
           "tests": [
             {
-              "name": "PeerMessageSecurityAcceptanceTests",
-              "result": "pending",
-              "summary": "Tampered request parsing, replay tuple/capacity/expiry, and forged response correlation assertions."
+              "name": "Host lifecycle unit and integration tests — V 3.0.479",
+              "result": "failed",
+              "summary": "Compilation failed before assertions: missing Google.Protobuf namespace and missing explicit source link for PeerResponseCorrelationValidator.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40743489739/job/123011004076"
             },
             {
-              "name": "PeerAnnouncementClientAcceptanceTests peer-host loopback",
-              "result": "pending",
-              "summary": "Authenticated loopback protobuf request/response, response correlation and exact replay rejected before a second handler invocation."
+              "name": "Real local inference integration — V 3.0.479",
+              "result": "failed",
+              "summary": "Acceptance executable failed compilation on the same missing namespace/source-link errors, before live inference assertion.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40743490197/job/123011003755"
             },
             {
-              "name": "PeerTransportContractAcceptanceTests",
-              "result": "pending",
-              "summary": "Existing live libp2p tests verify untrusted peer and unexpected authenticated identity rejection."
+              "name": "Windows WPF host build — V 3.0.479",
+              "result": "failed",
+              "summary": "Windows workflow failed; the HostLifecycle test project in the job has the same explicit source-link issue.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40743489739/job/123011004526"
             },
             {
-              "name": "Step Three quality gate",
-              "result": "pending",
-              "summary": "Graph structure, dependency edge evidence, recorded output paths and Python checks."
+              "name": "Android client APK — V 3.0.479",
+              "result": "passed",
+              "summary": "Android lint, debug APK, Protobuf round-trip and generated-source validation completed successfully.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40743489739/job/123011004204"
+            },
+            {
+              "name": "Step Three quality gate — V 3.0.479",
+              "result": "passed",
+              "summary": "Python tests, syntax checks, graph structure, recorded outputs/evidence completed successfully.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40743490249/job/123011003650"
             }
           ],
-          "failure_details": null,
+          "failure_details": "Exact V 3.0.479 HostLifecycle job 123011004076 failed before assertions with CS1061 on PeerMessageSecurityAcceptanceTests.cs lines 22 and 27 (InferenceRequest.ToByteArray extension unresolved), and CS0103 for PeerResponseCorrelationValidator in the new test and PeerAnnouncementHostLifecycle. The real local inference workflow job 123011003755 failed at the same test-project compilation boundary. Windows WPF job 123011004526 failed; Android APK job 123011004204 passed independently. The Step Three graph/Python quality gate passed but does not substitute for the failed C# compilation.",
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [
@@ -27898,6 +27919,53 @@
             "The replay fence retains accepted request/attempt tuples in bounded memory until their deadlines and fails closed at capacity."
           ],
           "follow_up": "Inspect exact-commit HostLifecycle, Windows WPF, Android APK and Step Three quality workflows. If all pass and logs confirm the new acceptance lines, append a succeeded attempt and finalize T0137; otherwise preserve this partial attempt and fix the observed failure."
+        },
+        {
+          "attempt_id": "T0137-A002",
+          "started_at": "2026-10-28T18:19:46.803Z",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Corrected exact V 3.0.479 compile defects: imported Google.Protobuf so generated message ToByteArray extension methods resolve, and explicitly linked PeerResponseCorrelationValidator.cs into HostLifecycle.Tests.csproj, which uses an explicit list of host source files. Corrected source and graph/report history are committed as V 3.0.480; exact-head CI is pending.",
+          "changed_files": [
+            "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+            "tests/HostLifecycle.Tests/PeerMessageSecurityAcceptanceTests.cs",
+            "step three/T0137/execution-report.md",
+            "step three/T0137/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "HostLifecycle unit and integration tests",
+              "result": "pending",
+              "summary": "Compile and execute after adding the missing namespace and explicit source link."
+            },
+            {
+              "name": "Windows WPF build and lifecycle tests",
+              "result": "pending",
+              "summary": "Rebuild after explicit source link correction."
+            },
+            {
+              "name": "Real local inference integration",
+              "result": "pending",
+              "summary": "Build and run live local inference after the HostLifecycle compile boundary is fixed."
+            },
+            {
+              "name": "Android client APK",
+              "result": "pending",
+              "summary": "Re-run exact-head product workflow; previous V 3.0.479 APK succeeded."
+            },
+            {
+              "name": "Step Three quality gate",
+              "result": "pending",
+              "summary": "Validate graph history, file paths, syntax and recorded evidence."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Verify exact V 3.0.480 HostLifecycle, Windows WPF, Android APK, real local inference and Step Three workflow results. Fix any further observed failure; do not mark T0137 done until the new acceptance assertions and existing peer identity/security tests pass."
         }
       ]
     },
