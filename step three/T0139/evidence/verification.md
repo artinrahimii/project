@@ -75,3 +75,10 @@
 
 - [Quality workflow 40771426467](https://github.com/artinrahimii/project/actions/runs/40771426467): 200 Python tests, syntax compilation and structural graph checks passed. The final repository output/evidence gate failed with 8 `MISSING_EVIDENCE_FILE` errors because URLs to historical Actions runs were incorrectly included in the local `T0139.evidence` list.
 - Correction: keep external URLs in execution-history test records/reports; keep `evidence` limited to local file paths that exist in the repository. The accepted application commit remains V 3.0.491, whose exact product workflow passed Android build/JUnit/Protobuf, Windows WPF/security and HostLifecycle checks.
+
+
+## V 3.0.493 — evidence correction verified
+
+- [Quality job 123110916311](https://github.com/artinrahimii/project/actions/runs/40771879685/job/123110916311): 200 Python tests passed; graph-only and repository-root guards passed. The final graph has 229 tasks / 417 edges, zero errors and one preserved existing T0001 warning.
+- The eight V 3.0.492 `MISSING_EVIDENCE_FILE` errors came from external URLs included in `T0139.evidence`; those URLs have been removed from that path list and kept in reports/history. Evidence now names local files only.
+- The prior full V 3.0.491 product workflow passed Android APK/JUnit/Protobuf, Windows WPF/security and HostLifecycle checks.

@@ -28215,22 +28215,16 @@
         "src/Client.Android/app/src/main/java/com/whitep/client/ui/navigation/ClientNavigation.kt",
         "step three/T0139/execution-report.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0139-A001 verification (V 3.0.485): Step Three quality run 40767883598 failed three existing exact-wording checks for the P2P preview/non-delivery strings. Android product job 123096849669 stopped at ktlintCheck: uppercase Compose function names, multiline-expression formatting, a max-line-length violation and enum trailing comma. HostLifecycle job 123096849547 passed, but Android APK/JUnit did not run after lint failure. A002 restores the compatible privacy/non-delivery copy and corrects the reported Kotlin style violations; exact-head CI is pending.\n\nT0139-A002 verification (V 3.0.486): quality job 40768437264 ran 199 tests and failed two assertions in the newly added source-contract test because it expected the earlier `WhitePClientApp()` function name and older transport-encryption wording. Android job 123098803201 again failed at ktlintCheck; detailed log text could not be retrieved, so no further exact style errors are asserted. HostLifecycle job 123098803429 passed. A003 updates the route helper to avoid the enum/semicolon style edge case and aligns source-contract tests to the corrected source, not to older string literals.\n\nT0139-A003 exact-head verification (V 3.0.487): Step Three quality failed one source-contract test because it still looked for ClientDestination.startDestination; Android ktlint failed at MainActivity.kt:266, so APK/JUnit were skipped. A separate exact recursive-tree inspection found ClientNavigation.kt absent even though MainActivity referenced ClientNavigation; A004 adds that missing implementation and import, fixes the ktlint style and updates route assertions. It remains in_progress until exact-head CI passes.\n\nV 3.0.488 exact-head CI: 199 Python unit tests passed, but graph_guard rejected T0139 because execution_summary.attempt_count was 4 while the append-only execution_history had 5 entries. Android ktlint passed; APK/JUnit and Windows host jobs were still in progress at the status capture. A005 corrects the ledger counters without changing source; T0139 remains in_progress pending the next exact-head CI.\n\nT0139-A006 exact V 3.0.490 verification: versioned Navigation Compose dependency pin changed to 2.9.8 after exact V 3.0.489 CI exposed AGP/compileSdk incompatibility. At inspection, V 3.0.490's Step Three quality and HostLifecycle had passed, but APK and Windows jobs were still running, so complete product success was not claimed. Exact source review additionally found two declarations of internal object ClientNavigation (one within ClientDestination.kt and one in ClientNavigation.kt); A007 removes the duplicate and adds a source-contract regression test. T0139 stays in_progress pending exact-head APK/JUnit and full CI results.\n\nT0139-A007 accepted on exact main commit V 3.0.491 (5a053f1c3a62a57f96d819a411cddced70742b39): Step Three quality gate 40770851920 passed. Product workflow 40770851948 passed every job: Android lint, debug APK build, Protobuf round-trip unit tests, generated Java/Kotlin Protobuf source checks, and artifact upload; Windows WPF formatting/build, C# Protobuf generation, startup smoke, process/policy/capability gates, DPAPI peer trust/identity storage and artifact upload; HostLifecycle tests. The earlier V 3.0.490 compile failure was a duplicated ClientNavigation object and is recorded as a failed verification attempt. T0139 now satisfies its scoped acceptance criteria and is done. Do not claim live Android-to-Windows request delivery: the screen explicitly continues to disclose that transport is not implemented. Before T0140, validate its incoming T0138 -> T0140 unreviewed edge.\n\nV 3.0.492 graph output/evidence validation: the 200 Python tests, compileall, and graph structure check passed, but `graph_guard.py --repo-root` failed with 8 MISSING_EVIDENCE_FILE errors because historical GitHub Actions URLs had been placed in the node's `evidence` file-path list. The URLs remain in execution-history test records and reports; the `evidence` field now contains only real local repository paths. This was a graph evidence-format issue; it does not invalidate the completed V 3.0.491 source acceptance checks.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0139-A001 verification (V 3.0.485): Step Three quality run 40767883598 failed three existing exact-wording checks for the P2P preview/non-delivery strings. Android product job 123096849669 stopped at ktlintCheck: uppercase Compose function names, multiline-expression formatting, a max-line-length violation and enum trailing comma. HostLifecycle job 123096849547 passed, but Android APK/JUnit did not run after lint failure. A002 restores the compatible privacy/non-delivery copy and corrects the reported Kotlin style violations; exact-head CI is pending.\n\nT0139-A002 verification (V 3.0.486): quality job 40768437264 ran 199 tests and failed two assertions in the newly added source-contract test because it expected the earlier `WhitePClientApp()` function name and older transport-encryption wording. Android job 123098803201 again failed at ktlintCheck; detailed log text could not be retrieved, so no further exact style errors are asserted. HostLifecycle job 123098803429 passed. A003 updates the route helper to avoid the enum/semicolon style edge case and aligns source-contract tests to the corrected source, not to older string literals.\n\nT0139-A003 exact-head verification (V 3.0.487): Step Three quality failed one source-contract test because it still looked for ClientDestination.startDestination; Android ktlint failed at MainActivity.kt:266, so APK/JUnit were skipped. A separate exact recursive-tree inspection found ClientNavigation.kt absent even though MainActivity referenced ClientNavigation; A004 adds that missing implementation and import, fixes the ktlint style and updates route assertions. It remains in_progress until exact-head CI passes.\n\nV 3.0.488 exact-head CI: 199 Python unit tests passed, but graph_guard rejected T0139 because execution_summary.attempt_count was 4 while the append-only execution_history had 5 entries. Android ktlint passed; APK/JUnit and Windows host jobs were still in progress at the status capture. A005 corrects the ledger counters without changing source; T0139 remains in_progress pending the next exact-head CI.\n\nT0139-A006 exact V 3.0.490 verification: versioned Navigation Compose dependency pin changed to 2.9.8 after exact V 3.0.489 CI exposed AGP/compileSdk incompatibility. At inspection, V 3.0.490's Step Three quality and HostLifecycle had passed, but APK and Windows jobs were still running, so complete product success was not claimed. Exact source review additionally found two declarations of internal object ClientNavigation (one within ClientDestination.kt and one in ClientNavigation.kt); A007 removes the duplicate and adds a source-contract regression test. T0139 stays in_progress pending exact-head APK/JUnit and full CI results.\n\nT0139-A007 accepted on exact main commit V 3.0.491 (5a053f1c3a62a57f96d819a411cddced70742b39): Step Three quality gate 40770851920 passed. Product workflow 40770851948 passed every job: Android lint, debug APK build, Protobuf round-trip unit tests, generated Java/Kotlin Protobuf source checks, and artifact upload; Windows WPF formatting/build, C# Protobuf generation, startup smoke, process/policy/capability gates, DPAPI peer trust/identity storage and artifact upload; HostLifecycle tests. The earlier V 3.0.490 compile failure was a duplicated ClientNavigation object and is recorded as a failed verification attempt. T0139 now satisfies its scoped acceptance criteria and is done. Do not claim live Android-to-Windows request delivery: the screen explicitly continues to disclose that transport is not implemented. Before T0140, validate its incoming T0138 -> T0140 unreviewed edge.\n\nV 3.0.492 graph output/evidence validation: the 200 Python tests, compileall, and graph structure check passed, but `graph_guard.py --repo-root` failed with 8 MISSING_EVIDENCE_FILE errors because historical GitHub Actions URLs had been placed in the node's `evidence` file-path list. The URLs remain in execution-history test records and reports; the `evidence` field now contains only real local repository paths. This was a graph evidence-format issue; it does not invalidate the completed V 3.0.491 source acceptance checks.\n\nV 3.0.493 verified the evidence-list correction: all 200 Python tests and both graph guards passed; 229 tasks / 417 edges, zero errors and one existing T0001 warning preserved. T0139.evidence now contains only actual repository paths. The full V 3.0.491 Android/Windows/HostLifecycle workflow was already successful; V 3.0.493 re-ran quality/evidence checks after report metadata cleanup. T0139 remains done. T0140 is next, but its incoming T0138 -> T0140 edge is unreviewed and must be reviewed against real interfaces before execution.",
       "execution_summary": {
-        "attempt_count": 13,
-        "failed_attempt_count": 6,
-        "last_attempt_id": "T0139-A007-CI-VERIFY",
+        "attempt_count": 15,
+        "failed_attempt_count": 7,
+        "last_attempt_id": "T0139-A008-CI-VERIFY",
         "last_attempt_result": "succeeded",
         "changed_files": [
-          "src/Client.Android/app/build.gradle.kts",
-          "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
-          "src/Client.Android/app/src/main/java/com/whitep/client/ui/navigation/ClientDestination.kt",
-          "src/Client.Android/app/src/main/java/com/whitep/client/ui/navigation/ClientNavigation.kt",
-          "src/Client.Android/app/src/test/java/com/whitep/client/ui/navigation/ClientDestinationTest.kt",
-          "tests/test_android_compose_navigation.py",
+          "step three/project-graph.md",
           "step three/T0139/execution-report.md",
-          "step three/T0139/evidence/verification.md",
-          "step three/project-graph.md"
+          "step three/T0139/evidence/verification.md"
         ],
         "related_commits": [
           "b4224c06e9b09c108361965143d93d1eaf42b789",
@@ -28239,7 +28233,8 @@
           "88ecfbbec6a63538531d0230ad2de1176be3dc29",
           "fbd8a96134152cff78e23699d20a29113008a6a6",
           "9d9cfa67ef3c7e009a6d7e441080ffda38631e28",
-          "5a053f1c3a62a57f96d819a411cddced70742b39"
+          "5a053f1c3a62a57f96d819a411cddced70742b39",
+          "9dcf6b2018853bf7d766cb979b1248ca23cc7bca"
         ],
         "tests_passed": [
           "V 3.0.488: 199 Python tests passed before graph_guard identified a T0139 attempt counter/history mismatch; this run as a whole did not pass.",
@@ -28249,7 +28244,8 @@
           "V 3.0.491: Step Three quality gate passed.",
           "V 3.0.491: Android Kotlin lint, debug APK build, Protobuf round-trip JUnit, generated Java/Kotlin Protobuf checks and APK artifact upload passed.",
           "V 3.0.491: Windows WPF format/build/startup/security/DPAPI checks and Windows artifact upload passed.",
-          "V 3.0.491: HostLifecycle unit and integration tests passed."
+          "V 3.0.491: HostLifecycle unit and integration tests passed.",
+          "V 3.0.493: 200 Python tests, graph structure guard (229 tasks / 417 edges; zero errors and one preserved T0001 warning), and repository-root evidence validation all passed. https://github.com/artinrahimii/project/actions/runs/40771879685/job/123110916311"
         ],
         "tests_failed": [
           "V 3.0.485: 3 existing privacy/P2P source-contract tests failed because MainActivity no longer included their explicit truthful preview/non-delivery text; Android ktlint also failed on style conventions.",
@@ -28261,7 +28257,8 @@
           "Exact V 3.0.489 CI result: source-contract quality gate passed and Android ktlint passed, but assembleDebug failed at :app:checkDebugAarMetadata. Navigation Compose 2.10.2 requires Android API 37 and AGP 9.1.0 or higher; the repo baseline is compileSdk 36 / AGP 8.13.0. The Android JUnit and generated-source steps were skipped, so T0139 remains in_progress.",
           "V 3.0.489: assembleDebug failed at :app:checkDebugAarMetadata because navigation-compose 2.10.2 requires API 37 / AGP 9.1+, while the project uses compileSdk 36 / AGP 8.13.0; Android JUnit and generated-source steps were skipped.",
           "V 3.0.490: Android compileDebugKotlin failed because ClientNavigation was redeclared in ClientDestination.kt and ClientNavigation.kt; dependent Android JUnit/generated-source checks were skipped.",
-          "V 3.0.492 Step Three quality run 40771426467: 200 Python tests and graph structure validation passed, but the output/evidence validator failed with 8 MISSING_EVIDENCE_FILE errors because external Actions URLs in T0139.evidence were treated as repository paths. V 3.0.493 removes URLs from that local-file evidence list while preserving all links in execution_history and reports."
+          "V 3.0.492 Step Three quality run 40771426467: 200 Python tests and graph structure validation passed, but the output/evidence validator failed with 8 MISSING_EVIDENCE_FILE errors because external Actions URLs in T0139.evidence were treated as repository paths. V 3.0.493 removes URLs from that local-file evidence list while preserving all links in execution_history and reports.",
+          "V 3.0.492 repo-root quality validation failed with 8 MISSING_EVIDENCE_FILE errors because GitHub Actions URLs were stored in T0139.evidence and interpreted as local paths; evidence paths are normalized in V 3.0.493. https://github.com/artinrahimii/project/actions/runs/40771426467/job/123109340572"
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -28872,6 +28869,85 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "T0139 meets its scoped acceptance criterion. Before starting T0140, review the still-unreviewed T0138 -> T0140 dependency edge against the ViewModel/repository data-layer contracts and preserve that edge until evidence supports reclassification."
+        },
+        {
+          "attempt_id": "T0139-A007-QUALITY-GATE-VERIFY",
+          "started_at": "2026-10-28T21:22:41Z",
+          "ended_at": "2026-10-28T21:22:49Z",
+          "result": "failed",
+          "summary": "Exact V 3.0.492 Step Three workflow ran 200 Python unit tests successfully and graph-only validation reported 0 errors / 1 preserved warning, but repo-root evidence validation failed with eight MISSING_EVIDENCE_FILE errors because historical GitHub Actions URLs stored in T0139.evidence were treated as local paths. Android APK and HostLifecycle jobs passed; Windows was still in progress at capture.",
+          "changed_files": [],
+          "commit_sha": "eaa3275b6e5715df161742a01218a85516023950",
+          "tests": [
+            {
+              "name": "Python quality tests — V 3.0.492",
+              "result": "passed",
+              "summary": "200 Python tests completed successfully before the repository-root evidence guard."
+            },
+            {
+              "name": "Graph structural guard — V 3.0.492",
+              "result": "passed",
+              "summary": "229 tasks / 417 edges, zero errors; one existing T0001 unmapped free-text dependency warning preserved as metadata.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40771426467"
+            },
+            {
+              "name": "Repository-root evidence guard — V 3.0.492",
+              "result": "failed",
+              "summary": "Eight URL strings in T0139.evidence were interpreted as local filesystem paths, producing MISSING_EVIDENCE_FILE errors.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40771426467/job/123109340572"
+            },
+            {
+              "name": "Android APK — V 3.0.492",
+              "result": "passed",
+              "summary": "Android APK job succeeded.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40771426468/job/123109341095"
+            },
+            {
+              "name": "HostLifecycle — V 3.0.492",
+              "result": "passed",
+              "summary": "Host lifecycle integration passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40771426468/job/123109341293"
+            }
+          ],
+          "failure_details": "The implementation itself was already verified at V 3.0.491. V3.0.492 failed the repository-root validation only because URLs were placed in a field interpreted as local evidence paths; the URLs should be retained in test records and Markdown instead.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Remove URL strings from the evidence path list, retain links in history/reports, and rerun both graph and repo-root guards."
+        },
+        {
+          "attempt_id": "T0139-A008-CI-VERIFY",
+          "started_at": "2026-10-28T21:25:54Z",
+          "ended_at": "2026-10-28T21:26:00Z",
+          "result": "succeeded",
+          "summary": "Exact V 3.0.493 quality gate passed after normalizing T0139.evidence to real repository files only. All 200 Python tests passed; syntax checks, graph-only validation and repo-root output/evidence validation passed. Graph guard reported 229 tasks / 417 edges, zero errors, and one preserved T0001 free-text dependency warning. The task's prior V 3.0.491 product build/test proof remains valid.",
+          "changed_files": [],
+          "commit_sha": "9dcf6b2018853bf7d766cb979b1248ca23cc7bca",
+          "tests": [
+            {
+              "name": "Python quality suite — V 3.0.493",
+              "result": "passed",
+              "summary": "200 Python tests passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40771879685/job/123110916311"
+            },
+            {
+              "name": "Graph guard — V 3.0.493",
+              "result": "passed",
+              "summary": "229 task nodes, 417 edges, zero errors, one pre-existing warning preserved.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40771879685/job/123110916311"
+            },
+            {
+              "name": "Repository-root evidence guard — V 3.0.493",
+              "result": "passed",
+              "summary": "T0139 evidence contains only actual repository paths; the previous eight MISSING_EVIDENCE_FILE errors are cleared.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40771879685/job/123110916311"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "T0139 remains accepted. Before starting T0140, review the unreviewed T0138 -> T0140 edge against real contracts; preserve its unreviewed state if evidence is insufficient."
         }
       ]
     },
