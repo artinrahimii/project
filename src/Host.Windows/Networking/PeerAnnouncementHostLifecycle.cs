@@ -253,6 +253,12 @@ public sealed class PeerAnnouncementHostLifecycle : IAsyncDisposable
     {
         try
         {
+            // StartListenAsync opens the listener before any remote session exists. Wait for the
+            // explicit peer-identity gate and negotiated secure protocol to become connected
+            // before calling ReceiveMessageAsync, which intentionally fails closed otherwise.
+            while (!cancellationToken.IsCancellationRequested && !transport.IsConnected)
+                await Task.Delay(TimeSpan.FromMilliseconds(50), cancellationToken).ConfigureAwait(false);
+
             while (!cancellationToken.IsCancellationRequested)
             {
                 byte[] request = await transport.ReceiveMessageAsync(cancellationToken).ConfigureAwait(false);

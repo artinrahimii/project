@@ -17,6 +17,7 @@ using WhiteP.Host.Windows.Security;
 using Nethermind.Libp2p.Core;
 using WhiteP.Shared.Contracts;
 using WhiteP.Shared.Contracts.V1;
+using HostStatus = WhiteP.Host.Domain.HostStatus;
 using WhiteP.Shared.Security;
 
 namespace WhiteP.Host.Windows;
