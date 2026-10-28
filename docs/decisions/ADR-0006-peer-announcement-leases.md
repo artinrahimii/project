@@ -1,6 +1,6 @@
 # ADR-0006: Expiring metadata-only peer announcement leases
 
-- **Status:** Accepted for the rendezvous-directory and reusable lease-publisher behavior. Wiring the publisher into the Windows participation lifecycle remains incomplete.
+- **Status:** Accepted for the rendezvous-directory, reusable lease publisher, and Windows peer-host lifecycle integration. Deployment-specific public reachability remains an unverified acceptance condition.
 - **Date:** 2026-10-27
 - **Related tasks:** T0007 (decision-to-source/test traceability), T0120 (metadata-only rendezvous), T0121 (renewable peer presence).
 - **Related requirements:** REQ-010 and REQ-011 in `docs/requirements.md`.
@@ -20,12 +20,15 @@
 - HTTPS/loopback policy and metadata-only HTTP API: `src/Host.Windows/Networking/PeerAnnouncementClient.cs`.
 - Renewal lifecycle and TTL refresh: `src/Host.Windows/Networking/PeerAnnouncementLeasePublisher.cs`.
 - Expiry cleanup and current-record replacement: `src/Rendezvous.Service/PeerAnnouncementDirectory.cs`.
-- Executable loopback acceptance cases: `tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs`, including `PeriodicLeaseRenewalRefreshesTtlAndStopsAsync`.
+- WPF peer-host lifecycle and authenticated request processing: `src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs`.
+- WPF participation enable/disable, endpoint configuration, and shutdown wiring: `src/Host.Windows/MainWindow.xaml.cs` and `src/Host.Windows/MainWindow.xaml`.
+- Executable loopback acceptance cases: `tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs`, including `PeriodicLeaseRenewalRefreshesTtlAndStopsAsync` and `PeerHostLifecyclePublishesAndServesTrustedPeerAsync`.
+- Stable Windows host identity and explicit peer trust consumed by the WPF lifecycle: `src/Host.Windows/Security/WindowsHostIdentityProvider.cs` and `src/Shared.Security/PeerTrustStore.cs`.
 - Source/configuration/test traceability regression: `tests/test_decision_traceability.py`.
 - Decision register: `docs/decisions/README.md`.
 
 ## Evidence boundary and remaining work
 
-The loopback acceptance test covers immediate publication, renewal to a later expiry, stopping renewal, and omission from discovery after the last TTL expires. Those tests do not prove that a production Windows host is publicly reachable or that the publisher is wired to the WPF participation toggle and shutdown lifecycle.
+The loopback acceptance test covers immediate publication, renewal to a later expiry, stopping renewal, and omission from discovery after the last TTL expires. A new loopback host-lifecycle test also exercises authenticated libp2p request/response after the lease is published and stops renewal after the peer disconnects. WPF participation enable/disable and shutdown are now wired to this lifecycle and exact-candidate CI passed. These tests still do not prove that a deployment's advertised address is reachable from the public Internet or that a production HTTPS rendezvous endpoint is configured.
 
-**T0121 remains `in_progress`** until safe rendezvous URL and peer-reachable address configuration exists and the publisher is connected to real participation enable/disable and shutdown paths. **AC-P2P-01 remains `NOT RUN`** until Android-to-Windows end-to-end inference routing is exercised against its acceptance criteria.
+**T0121 remains `blocked`** until deployment-specific rendezvous and advertised TCP/UDP addresses are verified from a peer on an independent network. The application requires explicit operator confirmation but does not itself perform a public reachability probe. **AC-P2P-01 remains `NOT RUN`** until Android-to-Windows end-to-end inference routing is exercised against its acceptance criteria.

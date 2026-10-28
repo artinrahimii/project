@@ -12,6 +12,15 @@ using WhiteP.Host.Infrastructure;
 using WhiteP.Host.Windows.Inference;
 using WhiteP.Host.Windows.Models;
 using WhiteP.Host.Windows.Networking;
+using WhiteP.Host.Windows.Requests;
+using WhiteP.Host.Windows.Security;
+using Nethermind.Libp2p.Core;
+using WhiteP.Shared.Contracts;
+using WhiteP.Shared.Contracts.V1;
+using Google.Protobuf;
+using HostCapabilities = WhiteP.Host.Domain.HostCapabilities;
+using HostStatus = WhiteP.Host.Domain.HostStatus;
+using WhiteP.Shared.Security;
 
 namespace WhiteP.Host.Windows;
 
@@ -22,8 +31,8 @@ public partial class MainWindow : Window
     private LocalHostSettings _settings = LocalHostSettings.Defaults;
     private readonly HostInferenceSession _session;
     private readonly ChatConversation _conversation = new();
-    private readonly ParticipationNetworkListenerLifecycle _networkParticipationLifecycle =
-        new(IPAddress.Loopback, 0);
+    private readonly HostRequestCoordinator _peerRequestCoordinator = new();
+    private PeerAnnouncementHostLifecycle? _peerParticipationService;
     private string? _requestedModelMemoryRequirementText;
     private string? _requestedMinimumFreeDiskRequirementText;
     private CancellationTokenSource? _operationCancellation;
@@ -778,45 +787,207 @@ public partial class MainWindow : Window
         NetworkParticipationToggle.IsEnabled = false;
         try
         {
-            await _networkParticipationLifecycle.SetParticipationActiveAsync(active);
-            if (_windowClosing)
+            if (!active)
             {
+                var previous = _peerParticipationService;
+                _peerParticipationService = null;
+                if (previous is not null)
+                {
+                    await previous.DisposeAsync();
+                }
+
+                ParticipationNetworkStatus.Text =
+                    "Peer hosting is disabled. The last rendezvous lease is no longer renewed and expires naturally.";
                 return;
             }
 
-            if (active && _networkParticipationLifecycle.LocalEndpoint is { } endpoint)
+            if (!_session.IsConnected || !_capacityReady)
+                throw new InvalidOperationException("Connect to a healthy local inference backend and verify host capacity before enabling peer inference.");
+
+            if (!Uri.TryCreate(PeerRendezvousUrl.Text.Trim(), UriKind.Absolute, out var rendezvousUri))
+                throw new ArgumentException("Enter an absolute HTTPS rendezvous URL. HTTP is permitted only for loopback testing.");
+
+            if (!IPAddress.TryParse(PeerBindAddress.Text.Trim(), out var bindAddress))
+                throw new ArgumentException("Enter a specific local interface IP address for the peer listener.");
+
+            if (!IPAddress.TryParse(PeerAdvertisedAddress.Text.Trim(), out var advertisedAddress))
+                throw new ArgumentException("Enter the IP address that the remote peer has independently verified as reachable.");
+
+            if (!int.TryParse(PeerPort.Text.Trim(), NumberStyles.None, CultureInfo.InvariantCulture, out var peerPort) ||
+                peerPort is < 1 or > IPEndPoint.MaxPort)
+                throw new ArgumentException("Enter a fixed TCP/UDP peer port from 1 through 65535.");
+
+            if (PeerReachabilityConfirmed.IsChecked != true)
+                throw new ArgumentException("Confirm that this advertised address and port were tested from the remote peer before publishing.");
+
+            var expectedPeerIdentity = PeerTrustedIdentity.Text.Trim();
+            if (string.IsNullOrWhiteSpace(expectedPeerIdentity))
+                throw new ArgumentException("Enter the exact PeerId of the remote peer you explicitly trust.");
+
+            var localIdentity = new WindowsHostIdentityProvider().LoadOrCreate();
+            var localData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            if (string.IsNullOrWhiteSpace(localData))
+                throw new InvalidOperationException("The current user's local application data directory is unavailable.");
+
+            var trustStore = new PeerTrustStore(
+                Path.Combine(localData, "WhiteP", "security", "peer-trust-v1.dpapi"),
+                new WindowsDpapiSecretProtector());
+
+            if (!trustStore.IsTrusted(expectedPeerIdentity))
             {
-                ParticipationNetworkStatus.Text =
-                    $"Loopback-only listener active at {endpoint.Address}:{endpoint.Port}. " +
-                    "Inbound requests are closed until protocol handling is implemented.";
+                var trustAnswer = MessageBox.Show(
+                    this,
+                    $"Trust this exact peer identity for authenticated incoming inference?\n\n{expectedPeerIdentity}\n\nOnly continue if you verified this PeerId through a separate trusted channel.",
+                    "Confirm peer identity",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Warning,
+                    MessageBoxResult.No);
+                if (trustAnswer != MessageBoxResult.Yes)
+                    throw new InvalidOperationException("Peer hosting was cancelled because the remote identity was not approved.");
+
+                trustStore.TrustPeerAfterExplicitConfirmation(expectedPeerIdentity, explicitlyConfirmed: true);
             }
-            else
-            {
-                ParticipationNetworkStatus.Text = "Network participation is disabled; no listener is open.";
-            }
+
+            var service = new PeerAnnouncementHostLifecycle(
+                trustStore,
+                localIdentity,
+                expectedPeerIdentity,
+                rendezvousUri,
+                bindAddress,
+                advertisedAddress,
+                peerPort,
+                advertisedAddressVerified: true,
+                HandlePeerInferenceMessageAsync);
+            _peerParticipationService = service;
+            await service.StartAsync();
+
+            ParticipationNetworkStatus.Text =
+                $"Authenticated peer host active. Local PeerId: {service.LocalPeerIdentity}. " +
+                $"Lease published to rendezvous and renewed periodically. The advertised address was operator-confirmed; this app does not independently verify public Internet reachability.";
         }
         catch (Exception exception)
         {
+            var failedService = _peerParticipationService;
+            _peerParticipationService = null;
+            if (failedService is not null)
+            {
+                try { await failedService.DisposeAsync(); }
+                catch (Exception) { }
+            }
+
             _suppressParticipationToggleChanged = true;
             NetworkParticipationToggle.IsChecked = false;
             _suppressParticipationToggleChanged = false;
 
-            var failureMessage = await ParticipationActivationRecovery.RecoverAsync(
-                exception,
-                () => _networkParticipationLifecycle.SetParticipationActiveAsync(false));
-
             if (!_windowClosing)
             {
-                ParticipationNetworkStatus.Text = failureMessage;
+                ParticipationNetworkStatus.Text =
+                    "Peer hosting could not be enabled. Check the backend, explicit peer trust, HTTPS rendezvous, bind address, port forwarding/firewall and independently tested advertised address. " +
+                    HostErrorPresentation.ToUserMessage(exception);
             }
         }
         finally
         {
             if (!_windowClosing)
-            {
                 NetworkParticipationToggle.IsEnabled = true;
-            }
         }
+    }
+
+    private async Task<byte[]> HandlePeerInferenceMessageAsync(byte[] wireBytes, CancellationToken cancellationToken)
+    {
+        var parsed = ProtocolMessageParser.ParseInferenceRequest(wireBytes);
+        if (!parsed.IsValid || parsed.Message is null)
+            throw new InvalidDataException("The peer sent a malformed or invalid inference request.");
+
+        var request = parsed.Message;
+        var currentService = _peerParticipationService
+            ?? throw new InvalidOperationException("Peer hosting is no longer active.");
+
+        var admission = new HostRequestAdmissionContext(
+            currentService.IsActive,
+            _session.Status.State,
+            request.ModelId,
+            ModelId.Text.Trim(),
+            _capacityReady ? HostCapacityState.Ready : HostCapacityState.Unknown,
+            request.DeadlineUnixMs);
+
+        HostRequestOutcome<string> outcome;
+        try
+        {
+            outcome = await _peerRequestCoordinator.TryExecuteAsync(
+                admission,
+                token => _session.GenerateAsync(request, token),
+                cancellationToken);
+        }
+        catch (OperationCanceledException)
+        {
+            throw;
+        }
+        catch (Exception)
+        {
+            var failed = CreatePeerInferenceResponse(
+                request,
+                currentService.LocalPeerIdentity,
+                InferenceOutcome.Failed,
+                string.Empty,
+                "The host could not process the request.");
+            return failed.ToByteArray();
+        }
+
+        if (outcome.Status == HostRequestStatus.Completed && outcome.Result is not null)
+        {
+            return CreatePeerInferenceResponse(
+                request,
+                currentService.LocalPeerIdentity,
+                InferenceOutcome.Succeeded,
+                outcome.Result,
+                string.Empty).ToByteArray();
+        }
+
+        var errorText = outcome.Status == HostRequestStatus.Busy
+            ? "The host is busy or temporarily unavailable; retry later."
+            : "The host cannot currently admit this request.";
+        return CreatePeerInferenceResponse(
+            request,
+            currentService.LocalPeerIdentity,
+            outcome.Status == HostRequestStatus.Busy ? InferenceOutcome.Failed : InferenceOutcome.Rejected,
+            string.Empty,
+            errorText).ToByteArray();
+    }
+
+    private static InferenceResponse CreatePeerInferenceResponse(
+        InferenceRequest request,
+        string localPeerIdentity,
+        InferenceOutcome outcome,
+        string outputText,
+        string errorMessage)
+    {
+        var response = new InferenceResponse
+        {
+            RequestId = request.RequestId,
+            AttemptId = request.AttemptId,
+            EphemeralHostId = localPeerIdentity,
+            Outcome = outcome,
+            OutputText = outputText,
+            CompletedAtUnixMs = (ulong)Math.Max(1L, DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()),
+            ModelId = request.ModelId,
+            ErrorMessage = errorMessage
+        };
+
+        var validation = ProtocolMessageValidator.ValidateInferenceResponse(
+            response.RequestId,
+            response.AttemptId,
+            response.EphemeralHostId,
+            (int)response.Outcome,
+            response.OutputText,
+            response.CompletedAtUnixMs,
+            response.ModelId,
+            response.ErrorMessage,
+            response.CalculateSize());
+        if (!validation.IsValid)
+            throw new InvalidDataException("The generated peer inference response did not satisfy the wire contract.");
+
+        return response;
     }
 
     private async void MainWindow_Closing(object? sender, System.ComponentModel.CancelEventArgs e)
@@ -839,7 +1010,11 @@ public partial class MainWindow : Window
 
         try
         {
-            await _networkParticipationLifecycle.DisposeAsync();
+            if (_peerParticipationService is not null)
+            {
+                await _peerParticipationService.DisposeAsync();
+                _peerParticipationService = null;
+            }
         }
         catch (Exception exception)
         {

@@ -24939,7 +24939,15 @@
         "tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs",
         "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
         "step three/T0121/execution-report.md",
-        "step three/T0121/evidence/verification.md"
+        "step three/T0121/evidence/verification.md",
+        "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "src/Host.Windows/MainWindow.xaml",
+        "step three/project-graph.md",
+        "tests/test_decision_traceability.py",
+        "tests/test_network_listener_exposure.py",
+        "docs/decisions/ADR-0006-peer-announcement-leases.md",
+        "docs/decisions/README.md"
       ],
       "expected_output_paths": [
         "src/Shared.Networking/ یا src/Host.Windows/Networking/ + tests/"
@@ -24950,26 +24958,45 @@
         "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
         "src/Host.Windows/Networking/PeerAnnouncementClient.cs",
         "src/Rendezvous.Service/PeerAnnouncementDirectory.cs",
-        "step three/T0121/evidence/verification.md"
+        "step three/T0121/evidence/verification.md",
+        "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "src/Host.Windows/MainWindow.xaml",
+        "tests/test_decision_traceability.py",
+        "tests/test_network_listener_exposure.py",
+        "docs/decisions/ADR-0006-peer-announcement-leases.md",
+        "docs/decisions/README.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0121-A005 verification update (2026-10-27): all exact-commit GitHub Actions workflows for V 3.0.368 passed, including the HostLifecycle acceptance suite. This validates the correction to the tests, but does not complete runtime lifecycle integration: the publisher is not yet wired to the WPF participation toggle and safe reachable rendezvous/advertised-address configuration remains unavailable. Task status remains in_progress.\n\nT0121-A006 (2026-10-27): status changed from in_progress to blocked after source- and graph-backed review. The lease publisher/loopback tests exist, but the real WPF host listener remains loopback-only and explicitly closes inbound requests until protocol handling is implemented; no verified advertised address, rendezvous HTTPS setting or wired stable host identity exists. T0130 identity work sits downstream of T0128, which itself depends on T0121/T0122; do not add a new identity edge without resolving this potential cycle. Unblock only after authenticated peer-reachable host request handling, verified identity/address/HTTPS settings and WPF lifecycle integration pass exact-host tests. T0122 remains not_started.\n\nT0130 ordering update: identity-store work is scheduled before the blocked announcement chain after validating T0128 → T0130 as sequencing_only. This resolves the ordering-cycle concern only; it does not unblock T0121 because production identity wiring, authenticated reachable inbound handling, HTTPS rendezvous and a verified advertised address remain missing.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0121-A005 verification update (2026-10-27): all exact-commit GitHub Actions workflows for V 3.0.368 passed, including the HostLifecycle acceptance suite. This validates the correction to the tests, but does not complete runtime lifecycle integration: the publisher is not yet wired to the WPF participation toggle and safe reachable rendezvous/advertised-address configuration remains unavailable. Task status remains in_progress.\n\nT0121-A006 (2026-10-27): status changed from in_progress to blocked after source- and graph-backed review. The lease publisher/loopback tests exist, but the real WPF host listener remains loopback-only and explicitly closes inbound requests until protocol handling is implemented; no verified advertised address, rendezvous HTTPS setting or wired stable host identity exists. T0130 identity work sits downstream of T0128, which itself depends on T0121/T0122; do not add a new identity edge without resolving this potential cycle. Unblock only after authenticated peer-reachable host request handling, verified identity/address/HTTPS settings and WPF lifecycle integration pass exact-host tests. T0122 remains not_started.\n\nT0130 ordering update: identity-store work is scheduled before the blocked announcement chain after validating T0128 → T0130 as sequencing_only. This resolves the ordering-cycle concern only; it does not unblock T0121 because production identity wiring, authenticated reachable inbound handling, HTTPS rendezvous and a verified advertised address remain missing.\n\nT0121-A007 (2026-10-28): Added PeerAnnouncementHostLifecycle and connected it to WPF participation: fixed-address libp2p listening for an explicitly trusted peer, HTTPS rendezvous lease publishing/renewal, Protobuf request parsing, coordinator/readiness admission, real-session inference response, and stop-on-disconnect. Added a loopback service integration test for authenticated message exchange and expiry. The UI requires an explicit user attestation that the advertised address was tested from the remote peer; the app itself does not probe public reachability. Exact-head CI pending, so status stays blocked.\n\n\nT0121-A008/A009 (2026-10-28): The first host integration candidate was corrected to wait for an authenticated libp2p session before reading peer messages, obsolete loopback-only WPF assertions were replaced with peer-host configuration guards, and WPF type/protobuf references were fixed. Exact candidate c06d0ff passed all Step Three, HostLifecycle/peer-host, Windows WPF/DPAPI, Android and live-inference workflows. T0121 remains blocked only on independently evidenced deployment reachability/HTTPS rendezvous; no public-reachability or AC-P2P-01 success is claimed.\n",
       "execution_summary": {
-        "attempt_count": 6,
-        "failed_attempt_count": 1,
-        "last_attempt_id": "T0121-A006",
-        "last_attempt_result": "blocked",
+        "attempt_count": 9,
+        "failed_attempt_count": 3,
+        "last_attempt_id": "T0121-A009",
+        "last_attempt_result": "partial",
         "changed_files": [
           "src/Host.Windows/Networking/PeerAnnouncementLeasePublisher.cs",
           "tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs",
           "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
           "step three/T0121/execution-report.md",
           "step three/T0121/evidence/verification.md",
-          "step three/project-graph.md"
+          "step three/project-graph.md",
+          "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs",
+          "src/Host.Windows/MainWindow.xaml.cs",
+          "src/Host.Windows/MainWindow.xaml",
+          "tests/test_decision_traceability.py",
+          "tests/test_network_listener_exposure.py",
+          "docs/decisions/ADR-0006-peer-announcement-leases.md",
+          "docs/decisions/README.md"
         ],
         "related_commits": [
           "969ad720db1a84c1f633031300ba26e00d48d5fa",
           "8a49b48259f693dc2ddc04e846a78fe15bff8227",
-          "f4b1a85e5649ad959704cc15f75e07da35973dff"
+          "f4b1a85e5649ad959704cc15f75e07da35973dff",
+          "ae5f4bd61656816377ee133a58ffa5196f31016b",
+          "baffe949368cf7428156e3f6d5721bd6e1dc38d8",
+          "bf09e64da6c95a2892fe3425e5d634e66180820e",
+          "b352d775b8583655d1e2414e712e0a1c7fa11292",
+          "c06d0ff57e18c2e0ea8f685692553ab8ba089fe6"
         ],
         "tests_passed": [
           "HostLifecycle unit/integration suite PASS on exact 969ad720db1a84c1f633031300ba26e00d48d5fa; log confirms periodic TTL renewal and natural expiry acceptance: https://github.com/artinrahimii/project/actions/runs/40455186298/job/122026746502",
@@ -24981,12 +25008,18 @@
           "Host lifecycle unit and integration tests on exact commit 8a49b48259f693dc2ddc04e846a78fe15bff8227 — PASS: Run 40456065291, job 122029550003: the HostLifecycle unit/integration test step completed successfully, including the corrected T0121 acceptance test suite. https://github.com/artinrahimii/project/actions/runs/40456065291/job/122029550003",
           "Windows WPF host Release build and startup smoke on exact commit 8a49b48259f693dc2ddc04e846a78fe15bff8227 — PASS: Run 40456065291, job 122029549657: C# formatting, Release build, generated Protobuf validation, startup smoke, and Windows policy checks passed. https://github.com/artinrahimii/project/actions/runs/40456065291/job/122029549657",
           "Android APK build, lint and Protobuf checks on exact commit 8a49b48259f693dc2ddc04e846a78fe15bff8227 — PASS: Run 40456065291, job 122029549997: Kotlin formatting/lint, debug APK build, Protobuf round-trip, generated-source validation, and artifact upload passed. https://github.com/artinrahimii/project/actions/runs/40456065291/job/122029549997",
-          "Real local llama.cpp/GGUF inference integration on exact commit 8a49b48259f693dc2ddc04e846a78fe15bff8227 — PASS: Run 40456065350, job 122029550007: pinned llama.cpp and GGUF validation plus live local-model inference acceptance completed successfully. https://github.com/artinrahimii/project/actions/runs/40456065350"
+          "Real local llama.cpp/GGUF inference integration on exact commit 8a49b48259f693dc2ddc04e846a78fe15bff8227 — PASS: Run 40456065350, job 122029550007: pinned llama.cpp and GGUF validation plus live local-model inference acceptance completed successfully. https://github.com/artinrahimii/project/actions/runs/40456065350",
+          "Exact c06d0ff57e18c2e0ea8f685692553ab8ba089fe6: Step Three quality gate PASS, 191 Python tests; graph 229 nodes / 424 edges, zero errors and one preserved T0001 warning. https://github.com/artinrahimii/project/actions/runs/40661258738",
+          "Exact c06d0ff57e18c2e0ea8f685692553ab8ba089fe6: HostLifecycle integration PASS, including PeerAnnouncementHostLifecycle loopback authenticated-peer request/response and lease expiry. https://github.com/artinrahimii/project/actions/runs/40661258731/job/122724562643",
+          "Exact c06d0ff57e18c2e0ea8f685692553ab8ba089fe6: Windows WPF build/startup/DPAPI and Android APK/lint/Protobuf product jobs PASS. https://github.com/artinrahimii/project/actions/runs/40661258731",
+          "Exact c06d0ff57e18c2e0ea8f685692553ab8ba089fe6: pinned llama.cpp/GGUF live local inference workflow PASS. https://github.com/artinrahimii/project/actions/runs/40661258746"
         ],
         "tests_failed": [
-          "V 3.0.367 CI: Host lifecycle tests failed to compile because the new test passed HttpClient where PeerAnnouncementClient is required (CS1503)."
+          "V 3.0.367 CI: Host lifecycle tests failed to compile because the new test passed HttpClient where PeerAnnouncementClient is required (CS1503).",
+          "Initial peer-host candidate ae5f4bd61656816377ee133a58ffa5196f31016b: quality guard failed on obsolete loopback-only UI assertions, HostLifecycle test failed because the receive loop attempted ReceiveMessageAsync before a remote session existed, and WPF compilation failed on HostStatus/Google.Protobuf references; corrected in A008/A009.",
+          "Candidate b352d775b8583655d1e2414e712e0a1c7fa11292: exact product workflow failed Windows compilation for ambiguous HostCapabilities (CS0104) and missing Google.Protobuf ToByteArray extension (CS1061); corrected in A009. https://github.com/artinrahimii/project/actions/runs/40661160981/job/122724238289"
         ],
-        "blocked_reason": "The renewable publisher and loopback TTL tests exist, and T0130 stable host identity/private-key persistence is now verified. However, the publisher is still not wired to the WPF participation lifecycle; inbound request handling remains fail-closed; no validated HTTPS rendezvous endpoint or verified peer-reachable advertised address is configured. A stable persisted identity alone does not make the host remotely reachable.",
+        "blocked_reason": "The authenticated WPF peer-host lifecycle, renewable announcement, loopback peer exchange, shutdown/disconnect expiry, and Windows/Android/quality workflows are now verified. However, this run did not independently verify a production advertised address from another network or connect to a deployment-configured HTTPS rendezvous service. UI confirmation is an operator assertion, not an active remote-reachability probe. Keep T0121 blocked and AC-P2P-01 NOT RUN until that deployment-specific acceptance is captured.",
         "reopened_reason": null,
         "contract_revalidation": {
           "state": "not_required",
@@ -24998,7 +25031,7 @@
             "src/Rendezvous.Service/PeerAnnouncementDirectory.cs"
           ]
         },
-        "follow_up": "Wire the verified T0130 identity provider into a real authenticated peer-reachable listener only after inbound protocol handling, HTTPS rendezvous configuration, and a verified advertised address exist; then add exact host lifecycle tests for announce/renew/stop/shutdown/expiry. Keep T0121 blocked and T0122 not_started until demonstrated."
+        "follow_up": "Verify the configured HTTPS rendezvous service and advertised TCP/UDP address from a peer on an independent network. Then re-evaluate T0121 for completion and start T0122 only after its verified dependency is done. Keep AC-P2P-01 NOT RUN until Android-to-Windows inference is tested end-to-end."
       },
       "execution_history": [
         {
@@ -25190,6 +25223,152 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Unblock only after the host has an authenticated peer-reachable inbound request path with a stable verified peer identity, validated HTTPS rendezvous configuration and a verified advertised address; wire the lease publisher start/stop into the WPF participation toggle and shutdown; add exact-host-lifecycle tests proving safe renew/revoke/expiry behavior. Resolve the identity task ordering/cycle before introducing any new dependency edge. Keep T0122 not_started until T0121 acceptance is actually met."
+        },
+        {
+          "attempt_id": "T0121-A007",
+          "started_at": "2026-10-28T08:55:24.957Z",
+          "ended_at": "2026-10-28T08:57:41Z",
+          "result": "failed",
+          "summary": "Added a configuration-driven WPF peer hosting path backed by Libp2pPeerTransport and PeerAnnouncementLeasePublisher. It requires an explicitly trusted peer identity, fixed bind/advertised addresses, a user confirmation that the address was tested from the remote peer, and an HTTPS rendezvous endpoint (loopback HTTP only for tests). The handler validates incoming Protobuf inference requests, gates them through HostRequestCoordinator and the live inference session, and returns an InferenceResponse. Added an integration test covering real loopback rendezvous announcement, authenticated libp2p message exchange, disconnect-driven lease stop and natural expiry. Exact-head CI and external-network reachability verification are pending. Initial exact-head validation did not pass: the listener loop tried to receive before any remote session existed, the WPF compile had ambiguous HostStatus / missing protobuf extension errors, and the Python guard still expected the obsolete loopback scaffold. These were diagnosed and corrected in A008/A009; no prior failure was deleted.",
+          "changed_files": [
+            "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs",
+            "src/Host.Windows/MainWindow.xaml.cs",
+            "src/Host.Windows/MainWindow.xaml",
+            "tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+            "step three/T0121/execution-report.md",
+            "step three/T0121/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Step Three quality gate, initial A007 candidate",
+              "result": "failed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40660367142",
+              "summary": "Python guard failures expected the legacy WPF loopback-only scaffold. The current code path and regression checks were revised in A008."
+            },
+            {
+              "name": "HostLifecycle integration, initial A007 candidate",
+              "result": "failed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40660367381/job/122721588439",
+              "summary": "Peer host lifecycle assertion failed because receive processing started before an authenticated peer session was connected; A008 now waits for transport.IsConnected before reading."
+            },
+            {
+              "name": "Windows WPF build, initial A007 candidate",
+              "result": "failed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40660367381/job/122721588881",
+              "summary": "CS0104 HostStatus ambiguity and missing InferenceResponse.ToByteArray extension were observed and subsequently corrected."
+            },
+            {
+              "name": "Independent-network reachability",
+              "result": "not_run",
+              "summary": "Requires a deployment-specific rendezvous HTTPS endpoint and a separate remote peer."
+            }
+          ],
+          "failure_details": "Exact candidate ae5f4bd61656816377ee133a58ffa5196f31016b failed its first validation pass. The receive loop exited before the first remote session; the WPF source also lacked unambiguous HostStatus qualification and the Google.Protobuf extension import; obsolete Python assertions still described the retired loopback scaffold. These defects were fixed in subsequent candidate commits.",
+          "blocked_reason": "Production address reachability cannot be inferred from a local bind or loopback integration test. The UI requires an operator confirmation and the code reports that public reachability is not independently verified by the app.",
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Wait for an authenticated transport session before calling ReceiveMessageAsync, update guards to assert the current peer-host configuration, resolve both WPF type/extension compile errors, and rerun the exact-head quality/product/inference workflows. Independently verify deployment reachability before unblocking T0121."
+        },
+        {
+          "attempt_id": "T0121-A008",
+          "started_at": "2026-10-28T08:59:40Z",
+          "ended_at": "2026-10-28T09:03:05Z",
+          "result": "failed",
+          "summary": "Fixed receive-loop startup so the lease can remain published while no peer is connected, and updated WPF exposure/decision-traceability guards to cover the explicit peer configuration. The exact b352d775 candidate passed the Step Three quality gate and HostLifecycle integration suite (including the new loopback libp2p request/response and lease-expiry test), but the product workflow still failed WPF compilation because HostCapabilities was ambiguous and the Google.Protobuf extension namespace was not imported. Those two compile errors were fixed in A009; failed CI evidence is retained.",
+          "changed_files": [
+            "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs",
+            "src/Host.Windows/MainWindow.xaml.cs",
+            "tests/test_network_listener_exposure.py",
+            "tests/test_decision_traceability.py"
+          ],
+          "commit_sha": "b352d775b8583655d1e2414e712e0a1c7fa11292",
+          "tests": [
+            {
+              "name": "Step Three quality gate on b352d775",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40661160984",
+              "summary": "191 Python tests, syntax and output/evidence checks passed; graph guard reported 229 tasks / 424 edges with zero errors and one preserved T0001 warning."
+            },
+            {
+              "name": "HostLifecycle and peer-host loopback integration on b352d775",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40661160981/job/122724238606",
+              "summary": "The host lifecycle suite passed, including the new peer host test under the same harness."
+            },
+            {
+              "name": "Windows WPF product build on b352d775",
+              "result": "failed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40661160981/job/122724238289",
+              "summary": "Build failed with CS0104 for HostCapabilities and CS1061 because the Google.Protobuf ToByteArray extension was not in scope; resolved in A009."
+            }
+          ],
+          "failure_details": "Although quality and HostLifecycle tests passed, the Windows Release build failed with CS0104 ('HostCapabilities' ambiguous between WhiteP.Host.Domain.HostCapabilities and WhiteP.Shared.Contracts.V1.HostCapabilities) and CS1061 (InferenceResponse.ToByteArray extension unavailable without using Google.Protobuf). The attempt did not achieve a green product workflow.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Qualify HostCapabilities to WhiteP.Host.Domain and import Google.Protobuf, then re-run the full exact-head quality, product and real-inference workflows. Keep T0121 blocked until a separate-network peer verifies the advertised endpoint."
+        },
+        {
+          "attempt_id": "T0121-A009",
+          "started_at": "2026-10-28T09:03:05Z",
+          "ended_at": "2026-10-28T09:05:26Z",
+          "result": "partial",
+          "summary": "Resolved the final WPF compile errors by explicitly aliasing the domain HostCapabilities type and importing Google.Protobuf for the existing InferenceResponse serialization extension. All three workflows passed on exact candidate c06d0ff57e18c2e0ea8f685692553ab8ba089fe6: Step Three quality, product build with HostLifecycle/Windows/Android jobs, and live local llama.cpp/GGUF inference. The new test covers loopback rendezvous publication, authenticated libp2p request/response, disconnect-driven lease stop and natural expiry. T0121 remains blocked because public reachability of a deployment-specific advertised address and real HTTPS rendezvous was not tested from an independent network; AC-P2P-01 remains NOT RUN.",
+          "changed_files": [
+            "src/Host.Windows/MainWindow.xaml.cs",
+            "docs/decisions/ADR-0006-peer-announcement-leases.md",
+            "docs/decisions/README.md",
+            "tests/test_decision_traceability.py",
+            "step three/T0121/execution-report.md",
+            "step three/T0121/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": "c06d0ff57e18c2e0ea8f685692553ab8ba089fe6",
+          "tests": [
+            {
+              "name": "Step Three quality gate on exact candidate c06d0ff",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40661258738",
+              "summary": "Ran 191 Python tests successfully; graph guard validated 229 tasks / 424 edges with 0 errors and one preserved T0001 warning."
+            },
+            {
+              "name": "HostLifecycle integration and authenticated peer-host test",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40661258731/job/122724562643",
+              "summary": "HostLifecycle unit/integration suite passed on the exact candidate, including the new peer-host lifecycle acceptance test."
+            },
+            {
+              "name": "Windows WPF Release build/startup/DPAPI",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40661258731/job/122724563236",
+              "summary": "C# formatting, Windows host build, generated Protobuf validation, WPF startup smoke, policy checks and user-scoped DPAPI identity/trust tests passed."
+            },
+            {
+              "name": "Android APK/lint/Protobuf",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40661258731/job/122724562866",
+              "summary": "Android build, lint, Protobuf round-trip and generated source validation passed."
+            },
+            {
+              "name": "Live local inference integration",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40661258746",
+              "summary": "Pinned llama.cpp/GGUF validation and live local-model inference/cancellation workflow passed."
+            },
+            {
+              "name": "Independent-network advertised-address reachability",
+              "result": "not_run",
+              "summary": "No external peer/deployment endpoint was provided in this execution; loopback CI does not establish public reachability."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": "Source, host lifecycle, Windows/Android builds and exact-candidate CI are verified, but deployment-specific peer reachability is not. The WPF UI requires an operator assertion, and the application does not actively probe a remote network path; do not mark the task complete based only on loopback integration.",
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Verify the configured HTTPS rendezvous service and advertised TCP/UDP address from a peer on an independent network. After that acceptance is captured, re-evaluate T0121 for completion and then start T0122. Keep AC-P2P-01 NOT RUN until Android-to-Windows application-level inference passes."
         }
       ]
     },

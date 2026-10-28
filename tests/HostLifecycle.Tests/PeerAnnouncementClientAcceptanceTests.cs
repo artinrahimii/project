@@ -22,6 +22,7 @@ internal static class PeerAnnouncementClientAcceptanceTests
         LeasePublisherConfigurationIsValidated();
         await RealAnnouncementAndCapabilityDiscoveryWorkOverLoopbackAsync().ConfigureAwait(false);
         await PeriodicLeaseRenewalRefreshesTtlAndStopsAsync().ConfigureAwait(false);
+        await PeerHostLifecyclePublishesAndServesTrustedPeerAsync().ConfigureAwait(false);
         await UnknownPromptFieldIsRejectedByTheControlPlaneAsync().ConfigureAwait(false);
         await OversizedControlMessagesAreRejectedAsync().ConfigureAwait(false);
         Console.WriteLine("PASS: metadata-only discovery, lease configuration validation, periodic TTL renewal/expiry, unknown-field rejection and control-message bounds.");
@@ -135,6 +136,114 @@ internal static class PeerAnnouncementClientAcceptanceTests
         {
             await app.StopAsync().ConfigureAwait(false);
         }
+    }
+
+    private static async Task PeerHostLifecyclePublishesAndServesTrustedPeerAsync()
+    {
+        await using var app = PeerAnnouncementServiceHost.Create(Array.Empty<string>(), "http://127.0.0.1:0");
+        await app.StartAsync().ConfigureAwait(false);
+
+        var server = app.Services.GetRequiredService<IServer>();
+        var serviceUri = new Uri(server.Features.Get<IServerAddressesFeature>()!.Addresses.Single(), UriKind.Absolute);
+        using var directoryHttpClient = new HttpClient();
+        var directoryClient = new PeerAnnouncementClient(directoryHttpClient, serviceUri);
+        using var hostTrust = new TestPeerTrustStoreFixture();
+        using var clientTrust = new TestPeerTrustStoreFixture();
+        var hostIdentity = new Identity();
+        var clientIdentity = new Identity();
+        string hostPeerId = new PeerId(hostIdentity.PublicKey).ToString();
+        string clientPeerId = new PeerId(clientIdentity.PublicKey).ToString();
+        hostTrust.Store.TrustPeerAfterExplicitConfirmation(clientPeerId, explicitlyConfirmed: true);
+        clientTrust.Store.TrustPeerAfterExplicitConfirmation(hostPeerId, explicitlyConfirmed: true);
+
+        bool unverifiedAddressRejected = false;
+        try
+        {
+            _ = new PeerAnnouncementHostLifecycle(
+                hostTrust.Store,
+                hostIdentity,
+                clientPeerId,
+                serviceUri,
+                IPAddress.Loopback,
+                IPAddress.Loopback,
+                ReservePort(),
+                advertisedAddressVerified: false,
+                (bytes, _) => Task.FromResult(bytes.ToArray()),
+                TimeSpan.FromSeconds(2),
+                TimeSpan.FromMilliseconds(150));
+        }
+        catch (ArgumentException)
+        {
+            unverifiedAddressRejected = true;
+        }
+        Assert(unverifiedAddressRejected,
+            "The host must refuse to publish an advertised address unless its reachability has been independently confirmed.");
+
+        await using var host = new PeerAnnouncementHostLifecycle(
+            hostTrust.Store,
+            hostIdentity,
+            clientPeerId,
+            serviceUri,
+            IPAddress.Loopback,
+            IPAddress.Loopback,
+            ReservePort(),
+            advertisedAddressVerified: true,
+            (bytes, _) => Task.FromResult(bytes.Reverse().ToArray()),
+            TimeSpan.FromSeconds(2),
+            TimeSpan.FromMilliseconds(150));
+
+        await host.StartAsync().WaitAsync(TimeSpan.FromSeconds(10)).ConfigureAwait(false);
+        Assert(host.IsActive, "The host lifecycle should become active only after listener startup and the initial rendezvous announcement succeed.");
+
+        var announcements = await directoryClient.DiscoverByCapabilityAsync("inference.v1").ConfigureAwait(false);
+        var announcement = announcements.SingleOrDefault(peer => peer.PeerId == hostPeerId);
+        Assert(announcement is not null, "Starting the host lifecycle must immediately publish its stable local PeerId.");
+        Assert(announcement!.Addresses.Count == 2 &&
+               announcement.Addresses.Any(address => address.Contains("/tcp/", StringComparison.Ordinal)) &&
+               announcement.Addresses.Any(address => address.Contains("/quic-v1", StringComparison.Ordinal)),
+            "The announcement must advertise direct TCP and QUIC addresses carrying the exact local PeerId.");
+        Assert(announcement.ExpiresAtUtc > DateTimeOffset.UtcNow &&
+               announcement.SupportsCapability("inference.v1"),
+            "The first host announcement must expose a live expiry and the inference capability.");
+
+        await using var client = new Libp2pPeerTransport(
+            clientTrust.Store,
+            localIdentity: clientIdentity,
+            maximumMessageBytes: 1024);
+        using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(20));
+        var endpoint = new PeerTransportEndpoint(
+            announcement.Addresses.Single(address => address.Contains("/tcp/", StringComparison.Ordinal)),
+            hostPeerId);
+        await client.ConnectSecureAsync(endpoint, timeout.Token)
+            .WaitAsync(TimeSpan.FromSeconds(20), timeout.Token).ConfigureAwait(false);
+        Assert(client.IsConnected && host.IsActive,
+            "A separately instantiated trusted peer must establish an authenticated encrypted connection to the published host.");
+
+        byte[] request = [0x00, 0x01, 0xFE, 0x7F, 0x22];
+        await client.SendMessageAsync(request, timeout.Token).ConfigureAwait(false);
+        byte[] response = await client.ReceiveMessageAsync(timeout.Token)
+            .WaitAsync(TimeSpan.FromSeconds(10), timeout.Token).ConfigureAwait(false);
+        Assert(response.SequenceEqual(request.Reverse()),
+            "The host lifecycle must deliver a received peer message to its real request handler and send the handler response back over libp2p.");
+
+        await client.DisconnectAsync(timeout.Token).ConfigureAwait(false);
+        DateTimeOffset stoppedDeadline = DateTimeOffset.UtcNow.AddSeconds(5);
+        while (host.IsActive && DateTimeOffset.UtcNow < stoppedDeadline)
+            await Task.Delay(TimeSpan.FromMilliseconds(25), timeout.Token).ConfigureAwait(false);
+        Assert(!host.IsActive,
+            "A peer disconnect or failed message lifecycle must stop host availability and stop lease renewal.");
+
+        await Task.Delay(TimeSpan.FromSeconds(2.2), timeout.Token).ConfigureAwait(false);
+        var expired = await directoryClient.DiscoverByCapabilityAsync("inference.v1").ConfigureAwait(false);
+        Assert(expired.All(peer => peer.PeerId != hostPeerId),
+            "After the last renewable lease expires, the directory must no longer return the disconnected host.");
+    }
+
+    private static int ReservePort()
+    {
+        using var listener = new System.Net.Sockets.TcpListener(IPAddress.Loopback, 0);
+        listener.Start();
+        return ((IPEndPoint)listener.LocalEndpoint).Port;
     }
 
     private static async Task UnknownPromptFieldIsRejectedByTheControlPlaneAsync()

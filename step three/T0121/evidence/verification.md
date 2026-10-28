@@ -1,4 +1,4 @@
-# T0121 verification evidence — exact commit CI passed
+# T0121 verification evidence — historical CI and exact-candidate integration results
 
 ## Baseline and graph integrity
 - Repository: `artinrahimii/project`; target branch: `main`.
@@ -53,3 +53,25 @@ The lease publisher is not yet wired into the WPF host participation lifecycle b
 - **Acceptance boundary:** these results verify the exact V 3.0.368 build and tests, not host network-participation integration. The publisher is still disconnected from the WPF toggle, and no validated public rendezvous endpoint plus peer-reachable address/identity configuration exists. T0121 therefore remains `in_progress`.
 - **Graph integrity:** the unchanged T0121 -> T0122 edge remains `unreviewed`; no edge classification was changed in this attempt.
 - **Product change:** none in this attempt; this section records observed CI output only.
+
+## T0121-A007 — exact-source and test scope (2026-10-28)
+
+- **Base:** `0f7dab4f9db6d343cbbc6a54c341083a2b470081` (`V 3.0.446`), with the graph Blob resolved from the exact main commit tree.
+- **Implementation paths:** `src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs`, `src/Host.Windows/MainWindow.xaml.cs`, `src/Host.Windows/MainWindow.xaml`.
+- **Test path:** `tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs`; the test project links the lifecycle class from the production source tree in `tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj`.
+- **Graph path:** `step three/project-graph.md`. The original large-graph content was retrieved through the Git Blob API after normal file-content fetch returned zero characters. Before this candidate edit, the source Blob SHA was `0be6e6a1cc26a429bbc1800f175be0efab6b567e`, size was 2,175,654 UTF-8 bytes and the computed Git SHA-1 matched the tree entry; the complete fenced JSON parsed as 229 nodes / 424 edges. The graph update preserves the original JSON formatting and all existing dependency edges.
+- **Validation still pending:** exact-PR-head Step Three quality gate, HostLifecycle integration test, Windows WPF build/startup checks and Android product checks. An external peer on a separate network and a deployment-specific HTTPS rendezvous endpoint were not available in this run. No claim of public reachability or AC-P2P-01 success is made.
+
+
+## T0121-A008/A009 — candidate failures preserved and corrected (2026-10-28)
+
+- **Large graph baseline:** exact main commit `0f7dab4f9db6d343cbbc6a54c341083a2b470081`. Its graph Blob `0be6e6a1cc26a429bbc1800f175be0efab6b567e` was retrieved after ordinary fetch returned an empty string; the complete file was 2,175,654 UTF-8 bytes and its computed Git Blob SHA-1 matched. The original fenced JSON parsed as 229 tasks/424 edges.
+- **Updated candidate graph before this verification record:** Blob `62bae2ed10194eea1b6f5ce69633e90db26b9b66`, 2,179,623 UTF-8 bytes (2,057,762 JavaScript string characters); the computed Git Blob SHA-1 matched, JSON parsed completely, and all 229 nodes/424 edges remained present. `T0121` remains blocked and `T0122` not started.
+- **A008 failure preserved:** [quality run 40661160984](https://github.com/artinrahimii/project/actions/runs/40661160984) and [HostLifecycle job 122724238606](https://github.com/artinrahimii/project/actions/runs/40661160981/job/122724238606) passed on candidate `b352d775b8583655d1e2414e712e0a1c7fa11292`, but [overall product run 40661160981](https://github.com/artinrahimii/project/actions/runs/40661160981) failed Windows compilation because `HostCapabilities` was ambiguous and `Google.Protobuf` was missing from scope. No failed outcome was removed; A009 repairs those exact errors.
+- **A009 exact-candidate source:** `c06d0ff57e18c2e0ea8f685692553ab8ba089fe6`.
+- **Quality gate PASS:** [40661258738](https://github.com/artinrahimii/project/actions/runs/40661258738) — 191 Python tests, graph/evidence checks, 229 tasks/424 edges, zero errors and one preserved T0001 warning.
+- **Host lifecycle/peer-host integration PASS:** [40661258731 job 122724562643](https://github.com/artinrahimii/project/actions/runs/40661258731/job/122724562643).
+- **Windows build/startup/DPAPI PASS:** [40661258731 job 122724563236](https://github.com/artinrahimii/project/actions/runs/40661258731/job/122724563236).
+- **Android build/lint/Protobuf PASS:** [40661258731 job 122724562866](https://github.com/artinrahimii/project/actions/runs/40661258731/job/122724562866).
+- **Live local inference PASS:** [40661258746](https://github.com/artinrahimii/project/actions/runs/40661258746).
+- **External reachability not run:** this execution has no separate-network remote peer/deployment rendezvous endpoint. No claim is made that the public advertised address works; `AC-P2P-01` remains **NOT RUN**.
