@@ -87,3 +87,12 @@
 - **Evidence boundary:** this confirms the bounded ADR-0018 traceability correction and the named existing host checks. It does not deliver peer-enrollment UI, independent-node Android-to-Windows end-to-end acceptance, or broad T0007 task-wide traceability. Keep `T0007` and `T0131` `in_progress`; `T0121` remains `blocked`; `AC-P2P-01` remains **NOT RUN**.
 - **Files changed in this verification record:** `docs/decisions/ADR-0018-explicit-peer-trust-and-identity-verification.md`; `docs/decisions/README.md`; `step three/T0007/execution-report.md`; `step three/project-graph.md`.
 - **Next action:** continue broad task-wide T0007 decision-to-source/test traceability; do not close the task based only on this bounded increment.
+
+
+## T0007-A083 — current-main decision traceability audit (2026-10-28)
+
+- **Baseline:** exact `main` commit `2927754d34c547b90dbc9a974b63febb8a7cae09` (`V 3.0.445`). The graph was read from Blob `ce2fcdc126903e7458755d6485cc0e3a04a54c8d`; the complete 2,167,061-byte UTF-8 content matched that Git Blob ID and parsed as 229 tasks / 424 edges.
+- **Existing verification:** Step Three quality run [40648190821](https://github.com/artinrahimii/project/actions/runs/40648190821) passed all 190 Python tests, Python syntax, graph validation, and repository-backed output/evidence checks. The guard reported zero errors and one preserved T0001 unmapped-dependency warning. Product workflow [40648190753](https://github.com/artinrahimii/project/actions/runs/40648190753) passed HostLifecycle, Windows WPF/DPAPI, and Android APK/lint/Protobuf jobs.
+- **Traceability audit:** the decision register has 19 registered ADR rows/documents (including separate ADR-0003 decisions). Existing regression coverage checks every ADR document is registered, each decision row links existing source/configuration and test/workflow paths, and decision-specific source contracts for the current decisions ADR-0001 through ADR-0018.
+- **Mismatch found:** T0007's `actual_output_paths` and `evidence` arrays lagged its already verified ADR-0016/0017/0018 source/test traceability increment. Added those three ADR documents and `step three/T0007/evidence/verification.md` to the graph and added a regression test to prevent that drift.
+- **Current state:** partial pending exact PR-head CI for the newly added regression; T0007 remains `in_progress` until that run is confirmed. This task covers decision/source/configuration/test traceability only; it does not mark live Android-to-Windows P2P or `AC-P2P-01` passed. T0121 remains blocked.
