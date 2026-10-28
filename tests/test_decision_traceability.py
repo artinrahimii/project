@@ -915,7 +915,7 @@ class DecisionTraceabilityTests(unittest.TestCase):
 
     def test_t0007_graph_tracks_current_adr_outputs_and_verification(self):
         graph_markdown = (ROOT / "step three/project-graph.md").read_text(encoding="utf-8")
-        match = re.search(r"```json\\s*([\\s\\S]*?)```", graph_markdown, re.IGNORECASE)
+        match = re.search(r"```json\s*([\s\S]*?)```", graph_markdown, re.IGNORECASE)
         self.assertIsNotNone(match, "The task graph must contain its complete fenced JSON object.")
         graph = json.loads(match.group(1))
         task = next(node for node in graph["nodes"] if node["id"] == "T0007")
