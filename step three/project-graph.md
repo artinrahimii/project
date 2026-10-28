@@ -27177,11 +27177,11 @@
         "src/Shared.Security/ + tests/security/"
       ],
       "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nDependency review: T0133 → T0134 validated as contract_or_interface_dependency. T0128 → T0134 validated as sequencing_only and removed from active dependencies because external two-node deployment testing does not produce an implementation dependency for invalid-key, unknown-peer, or unsupported-version rejection. T0128 remains not_started and is not claimed as passed.\n\nCI evidence (V 3.0.459): the HostLifecycle job passed new malformed-private-key and unsupported identity-envelope-version assertions, along with existing malformed PeerId and unknown-peer rejection tests. The quality gate passed. T0134 intentionally remains in_progress: a direct negative test for incompatible libp2p Noise/TLS secure-channel version negotiation or an invalid secure-channel certificate has not yet been established. Existing application ProtocolVersionPolicy tests do not substitute for that missing low-level secure-channel test.\n\nT0134-A003 (V 3.0.461): Added an integration test that dials the running libp2p listener using a valid but intentionally mismatched remote PeerId while the dialer's trust store explicitly trusts that ID. This targets actual authenticated remote-identity/certificate mismatch rather than the existing pre-dial address/pinned-ID mismatch case. The source and report updates are recorded in V 3.0.461–V 3.0.463. The exact-commit GitHub combined-status query returned an empty status list and local .NET tests were not run, so this attempt remains pending CI; no acceptance claim is added until test logs verify execution and success.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nDependency review: T0133 → T0134 validated as contract_or_interface_dependency. T0128 → T0134 validated as sequencing_only and removed from active dependencies because external two-node deployment testing does not produce an implementation dependency for invalid-key, unknown-peer, or unsupported-version rejection. T0128 remains not_started and is not claimed as passed.\n\nCI evidence (V 3.0.459): the HostLifecycle job passed new malformed-private-key and unsupported identity-envelope-version assertions, along with existing malformed PeerId and unknown-peer rejection tests. The quality gate passed. T0134 intentionally remains in_progress: a direct negative test for incompatible libp2p Noise/TLS secure-channel version negotiation or an invalid secure-channel certificate has not yet been established. Existing application ProtocolVersionPolicy tests do not substitute for that missing low-level secure-channel test.\n\nT0134-A003 (V 3.0.461): Added an integration test that dials the running libp2p listener using a valid but intentionally mismatched remote PeerId while the dialer's trust store explicitly trusts that ID. This targets actual authenticated remote-identity/certificate mismatch rather than the existing pre-dial address/pinned-ID mismatch case. The source and report updates are recorded in V 3.0.461–V 3.0.463. The exact-commit GitHub combined-status query returned an empty status list and local .NET tests were not run, so this attempt remains pending CI; no acceptance claim is added until test logs verify execution and success.\n\nT0134-A004 (V 3.0.465): Added VerifyRejectsPlaintextOnlyPeerAsync to the integrated HostLifecycle suite. It configures a local libp2p peer with WithPlaintextEnforced(), then attempts to connect from the production secure transport to that peer's actual PeerId. The intended behavior is failure without a plaintext downgrade or authenticated connected state. This complements A003's live remote-PeerId mismatch test. No local .NET test was run; available status and workflow lookup did not provide an exact push-triggered test result. The task remains in_progress and the new tests are not marked passed.",
       "execution_summary": {
-        "attempt_count": 3,
+        "attempt_count": 4,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0134-A003",
+        "last_attempt_id": "T0134-A004",
         "last_attempt_result": "pending_ci",
         "changed_files": [
           "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs",
@@ -27193,7 +27193,10 @@
           "234b79b9248f38a037febba07c55a265b2e0fc31",
           "a9ab827ab2d2a767825085e7185eba655fafbe29",
           "879967335f8085f5975b59914c6f2c58ac01a1fc",
-          "f022da2290b28344a05d4f245e40f9af53adff52"
+          "f022da2290b28344a05d4f245e40f9af53adff52",
+          "e0512ece82f900e2a3f4586a6c286454eac994a2",
+          "338af8f098b57f8e19ff0f14f9fa98c97f015485",
+          "bcfe5544850a87ef1330626582e03ecd3c897d7e"
         ],
         "tests_passed": [
           "GitHub Actions product-build run 40717445528, Host lifecycle job 122918865305 on commit 234b79b9248f38a037febba07c55a265b2e0fc31: success. Log includes PASS for PeerSecurityPolicy rejection of malformed identities; PeerTrustStore fail-closed unknown/corrupt peer handling; HostIdentityStore rejecting corrupt envelopes, unsupported identity versions and malformed private keys.",
@@ -27282,6 +27285,26 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Find the exact-commit GitHub Actions run and verify the HostLifecycle job logs. Do not mark done on code presence alone. If this case passes, confirm the full T0134 rejection scope; if it fails, inspect the failure and correct the test/implementation."
+        },
+        {
+          "attempt_id": "T0134-A004",
+          "started_at": "2026-10-28T16:05:57Z",
+          "ended_at": null,
+          "result": "pending_ci",
+          "summary": "Added a second negative integration case that starts a live local libp2p listener offering plaintext only, while the production transport dials with its secure-only Noise/TLS stack using the server's actual PeerId. The intended outcome is fail-closed rejection with no authenticated/connected remote peer. This complements A003's valid-but-mismatched remote PeerId test. No local .NET execution was possible; GitHub status/run lookup tools did not expose a verifiable push-triggered result, so acceptance remains pending.",
+          "changed_files": [
+            "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs",
+            "step three/T0134/execution-report.md",
+            "step three/T0134/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": "e0512ece82f900e2a3f4586a6c286454eac994a2",
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Verify the HostLifecycle check logs for V 3.0.465 and confirm both secure-channel negative cases executed and passed. If the plaintext-only test passes, separately determine whether a direct unsupported Noise/TLS protocol-version case is still required by T0134 acceptance."
         }
       ]
     },
