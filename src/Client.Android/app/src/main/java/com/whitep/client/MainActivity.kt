@@ -35,6 +35,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.whitep.client.ui.navigation.ClientDestination
+import com.whitep.client.ui.navigation.ClientNavigation
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -263,10 +264,11 @@ private fun appPage(
     content: @Composable ColumnScope.() -> Unit,
 ) {
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(24.dp),
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(24.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
         content = {
             Text(title, style = MaterialTheme.typography.headlineMedium)

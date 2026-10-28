@@ -19,3 +19,15 @@
 - MainActivity and route tests now use the actual lowercase `whitePClientApp()` convention and the explicit statement that transport encryption does not hide content from the receiver.
 - The enum is now a pure route enum; `ClientNavigation` owns start/top-level destinations, avoiding enum companion/separator formatting.
 - Exact A003 CI result: **pending**.
+
+
+## V 3.0.487 verification — failed
+
+- [Step Three quality job 123100940796](https://github.com/artinrahimii/project/actions/runs/40769048874/job/123100940796): 199 tests ran; 1 failed source-contract assertion still expected `ClientDestination.startDestination`. Graph/syntax/evidence checks were skipped.
+- [Android job 123100941472](https://github.com/artinrahimii/project/actions/runs/40769048985/job/123100941472): ktlint failed at `MainActivity.kt:266` (“A multiline expression should start on a new line”); APK/JUnit were skipped. [HostLifecycle job 123100941303](https://github.com/artinrahimii/project/actions/runs/40769048985/job/123100941303) passed.
+- Exact recursive-tree inspection of V 3.0.487 confirmed the referenced `ClientNavigation.kt` was absent, despite `MainActivity.kt` referring to it. This would cause a compilation failure after style issues were corrected.
+
+## Attempt T0139-A004
+
+- Added the missing `ClientNavigation.kt` implementation and its import; aligned the source-contract test with the real route owner; fixed the observed multiline-expression style.
+- Exact-head CI is pending. No test execution is claimed in the local tool session.

@@ -28191,7 +28191,7 @@
       "start_condition": "همهٔ پیش‌نیازهای T0138 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
       "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status_fa": "در حال انجام",
       "actual_output_paths": [
         "src/Client.Android/app/build.gradle.kts",
         "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
@@ -28200,7 +28200,8 @@
         "tests/test_android_compose_navigation.py",
         "step three/T0139/execution-report.md",
         "step three/T0139/evidence/verification.md",
-        "step three/project-graph.md"
+        "step three/project-graph.md",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/navigation/ClientNavigation.kt"
       ],
       "expected_output_paths": [
         "src/Client.Android/"
@@ -28214,19 +28215,20 @@
         "https://github.com/artinrahimii/project/actions/runs/40767883598/job/123096849080",
         "https://github.com/artinrahimii/project/actions/runs/40767883644/job/123096849669",
         "https://github.com/artinrahimii/project/actions/runs/40768437264/job/123098802251",
-        "https://github.com/artinrahimii/project/actions/runs/40768437336/job/123098803201"
+        "https://github.com/artinrahimii/project/actions/runs/40768437336/job/123098803201",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/navigation/ClientNavigation.kt",
+        "https://github.com/artinrahimii/project/actions/runs/40769048874/job/123100940796",
+        "https://github.com/artinrahimii/project/actions/runs/40769048985/job/123100941472"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0139-A001 verification (V 3.0.485): Step Three quality run 40767883598 failed three existing exact-wording checks for the P2P preview/non-delivery strings. Android product job 123096849669 stopped at ktlintCheck: uppercase Compose function names, multiline-expression formatting, a max-line-length violation and enum trailing comma. HostLifecycle job 123096849547 passed, but Android APK/JUnit did not run after lint failure. A002 restores the compatible privacy/non-delivery copy and corrects the reported Kotlin style violations; exact-head CI is pending.\n\nT0139-A002 verification (V 3.0.486): quality job 40768437264 ran 199 tests and failed two assertions in the newly added source-contract test because it expected the earlier `WhitePClientApp()` function name and older transport-encryption wording. Android job 123098803201 again failed at ktlintCheck; detailed log text could not be retrieved, so no further exact style errors are asserted. HostLifecycle job 123098803429 passed. A003 updates the route helper to avoid the enum/semicolon style edge case and aligns source-contract tests to the corrected source, not to older string literals.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0139-A001 verification (V 3.0.485): Step Three quality run 40767883598 failed three existing exact-wording checks for the P2P preview/non-delivery strings. Android product job 123096849669 stopped at ktlintCheck: uppercase Compose function names, multiline-expression formatting, a max-line-length violation and enum trailing comma. HostLifecycle job 123096849547 passed, but Android APK/JUnit did not run after lint failure. A002 restores the compatible privacy/non-delivery copy and corrects the reported Kotlin style violations; exact-head CI is pending.\n\nT0139-A002 verification (V 3.0.486): quality job 40768437264 ran 199 tests and failed two assertions in the newly added source-contract test because it expected the earlier `WhitePClientApp()` function name and older transport-encryption wording. Android job 123098803201 again failed at ktlintCheck; detailed log text could not be retrieved, so no further exact style errors are asserted. HostLifecycle job 123098803429 passed. A003 updates the route helper to avoid the enum/semicolon style edge case and aligns source-contract tests to the corrected source, not to older string literals.\n\nT0139-A003 exact-head verification (V 3.0.487): Step Three quality failed one source-contract test because it still looked for ClientDestination.startDestination; Android ktlint failed at MainActivity.kt:266, so APK/JUnit were skipped. A separate exact recursive-tree inspection found ClientNavigation.kt absent even though MainActivity referenced ClientNavigation; A004 adds that missing implementation and import, fixes the ktlint style and updates route assertions. It remains in_progress until exact-head CI passes.",
       "execution_summary": {
-        "attempt_count": 3,
-        "failed_attempt_count": 2,
-        "last_attempt_id": "T0139-A003",
+        "attempt_count": 4,
+        "failed_attempt_count": 3,
+        "last_attempt_id": "T0139-A004",
         "last_attempt_result": "partial",
         "changed_files": [
-          "src/Client.Android/app/build.gradle.kts",
           "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
-          "src/Client.Android/app/src/main/java/com/whitep/client/ui/navigation/ClientDestination.kt",
-          "src/Client.Android/app/src/test/java/com/whitep/client/ui/navigation/ClientDestinationTest.kt",
+          "src/Client.Android/app/src/main/java/com/whitep/client/ui/navigation/ClientNavigation.kt",
           "tests/test_android_compose_navigation.py",
           "step three/T0139/execution-report.md",
           "step three/T0139/evidence/verification.md",
@@ -28234,12 +28236,16 @@
         ],
         "related_commits": [
           "b4224c06e9b09c108361965143d93d1eaf42b789",
-          "1fed6eecb0a79edf0a9cec6a32c6c2bf11eaf98f"
+          "1fed6eecb0a79edf0a9cec6a32c6c2bf11eaf98f",
+          "44255431091833a713800cad4bed144b4a54c7df"
         ],
         "tests_passed": [],
         "tests_failed": [
           "V 3.0.485: 3 existing privacy/P2P source-contract tests failed because MainActivity no longer included their explicit truthful preview/non-delivery text; Android ktlint also failed on style conventions.",
-          "V 3.0.486: 2 new navigation source-contract assertions failed because they expected an old Composable function name and old encryption wording; Android ktlintCheck also failed before APK/JUnit. HostLifecycle passed."
+          "V 3.0.486: 2 new navigation source-contract assertions failed because they expected an old Composable function name and old encryption wording; Android ktlintCheck also failed before APK/JUnit. HostLifecycle passed.",
+          "Exact V 3.0.487 Step Three quality job 123100940796 failed 1 of 199 tests: source-contract expected ClientDestination.startDestination after code moved the reference to ClientNavigation.startDestination; graph/syntax/evidence checks were skipped. https://github.com/artinrahimii/project/actions/runs/40769048874/job/123100940796",
+          "Exact V 3.0.487 Android job 123100941472 failed ktlintCheck at MainActivity.kt:266 (“A multiline expression should start on a new line”); APK/JUnit were skipped. https://github.com/artinrahimii/project/actions/runs/40769048985/job/123100941472",
+          "Exact recursive tree at V 3.0.487 did not contain src/Client.Android/app/src/main/java/com/whitep/client/ui/navigation/ClientNavigation.kt although MainActivity referenced ClientNavigation; this compile blocker is addressed by A004 but awaits CI proof."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -28386,6 +28392,78 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Check exact V 3.0.487 workflow results. If any failure remains, preserve A003 and perform another evidenced repair attempt; only mark done after both quality gate and the complete Android workflow pass."
+        },
+        {
+          "attempt_id": "T0139-A003-CI-VERIFY",
+          "started_at": "2026-10-28T21:05:53Z",
+          "ended_at": "2026-10-28T21:06:58Z",
+          "result": "failed",
+          "summary": "Exact V 3.0.487 workflow results identify one stale start-route source-contract test and Android ktlint failure; independent tree inspection also showed the referenced ClientNavigation source was absent.",
+          "changed_files": [],
+          "commit_sha": "44255431091833a713800cad4bed144b4a54c7df",
+          "tests": [
+            {
+              "name": "Step Three quality gate — exact V 3.0.487",
+              "result": "failed",
+              "summary": "199 tests ran; one source-contract assertion still expected startDestination under ClientDestination. Graph/syntax/evidence steps were skipped.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40769048874/job/123100940796"
+            },
+            {
+              "name": "Android Kotlin lint — exact V 3.0.487",
+              "result": "failed",
+              "summary": "ktlint rejected MainActivity.kt:266: a multiline expression should start on a new line; APK/JUnit skipped.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40769048985/job/123100941472"
+            },
+            {
+              "name": "HostLifecycle integration — exact V 3.0.487",
+              "result": "passed",
+              "summary": "HostLifecycle unit/integration job passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40769048985/job/123100941303"
+            }
+          ],
+          "failure_details": "The source-contract assertion referenced ClientDestination.startDestination after refactoring to ClientNavigation. KtLint rejected the multiline Modifier expression. The exact recursive tree also lacked ClientNavigation.kt, so code referencing ClientNavigation was not compilable as present.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Add the missing navigation implementation/import, correct the actual route contract assertions and multiline Modifier expression; rerun exact-head CI."
+        },
+        {
+          "attempt_id": "T0139-A004",
+          "started_at": "2026-10-28T21:10:13.816Z",
+          "ended_at": "2026-10-28T21:10:13.816Z",
+          "result": "partial",
+          "summary": "Added the missing ClientNavigation route object and its import, corrected the multiline Modifier expression, and aligned the Python source-contract test with the actual route source. Exact-head CI is pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/navigation/ClientNavigation.kt",
+            "tests/test_android_compose_navigation.py",
+            "step three/T0139/execution-report.md",
+            "step three/T0139/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Step Three quality gate",
+              "result": "pending",
+              "summary": "Exact-head Python tests, syntax, graph structure and repository evidence gates required after commit."
+            },
+            {
+              "name": "Android Kotlin lint",
+              "result": "pending",
+              "summary": "Exact-head ktlint run required after commit."
+            },
+            {
+              "name": "Android APK build and JUnit",
+              "result": "pending",
+              "summary": "Will run only if lint succeeds; previous commit skipped these steps after lint failed."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Record V 3.0.488 SHA and exact-head CI results in a follow-up graph/report update. Do not mark T0139 done until both quality gate and the complete Android workflow pass."
         }
       ]
     },

@@ -9,6 +9,9 @@ ACTIVITY = (
 DESTINATIONS = (
     ROOT / "src/Client.Android/app/src/main/java/com/whitep/client/ui/navigation/ClientDestination.kt"
 ).read_text(encoding="utf-8")
+NAVIGATION = (
+    ROOT / "src/Client.Android/app/src/main/java/com/whitep/client/ui/navigation/ClientNavigation.kt"
+).read_text(encoding="utf-8")
 ANDROID_BUILD = (
     ROOT / "src/Client.Android/app/build.gradle.kts"
 ).read_text(encoding="utf-8")
@@ -22,8 +25,8 @@ class AndroidComposeNavigationTests(unittest.TestCase):
         self.assertIn('android.intent.action.MAIN', MANIFEST)
         self.assertIn('android.intent.category.LAUNCHER', MANIFEST)
         self.assertIn("whitePClientApp()", ACTIVITY)
-        self.assertIn("startDestination = ClientDestination.startDestination.route", ACTIVITY)
-        self.assertIn("val startDestination: ClientDestination = ClientDestination.HOME", DESTINATIONS)
+        self.assertIn("startDestination = ClientNavigation.startDestination.route", ACTIVITY)
+        self.assertIn("val startDestination: ClientDestination = ClientDestination.HOME", NAVIGATION)
 
     def test_navigation_compose_dependency_is_explicitly_pinned(self):
         self.assertIn(
@@ -40,6 +43,11 @@ class AndroidComposeNavigationTests(unittest.TestCase):
                 self.assertIn(f"{destination}(", DESTINATIONS)
                 self.assertIn(f"composable(ClientDestination.{destination}.route)", ACTIVITY)
         self.assertIn("ClientNavigation.bottomNavigation.forEach", ACTIVITY)
+        self.assertIn("val bottomNavigation: List<ClientDestination>", NAVIGATION)
+        self.assertIn("ClientDestination.HOME", NAVIGATION)
+        self.assertIn("ClientDestination.CONNECTIONS", NAVIGATION)
+        self.assertIn("ClientDestination.PRIVACY", NAVIGATION)
+        self.assertNotIn("ClientDestination.REQUEST", NAVIGATION)
         self.assertIn("navController.navigate(item.route)", ACTIVITY)
         self.assertIn("popUpTo(navController.graph.findStartDestination().id)", ACTIVITY)
         self.assertIn("launchSingleTop = true", ACTIVITY)
