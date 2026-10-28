@@ -65,3 +65,14 @@
 - **Verification at preparation:** source, test entry-point and documentation paths were inspected at the exact baseline commit. The newly added Python test was **not run locally** because no local checkout/runtime is available in this execution. Exact-commit Step Three and product CI are pending; no CI pass is claimed yet.
 - **Result:** partial pending exact-commit CI. Keep `T0007` and `T0131` `in_progress`; `T0121` remains `blocked`; `AC-P2P-01` remains **NOT RUN**.
 - **Follow-up:** inspect CI for the exact `V 3.0.442` commit. Record the observed result in a separate append-only verification attempt (`T0007-A081`); the commit SHA for A080 is resolved from online `main` history there rather than embedded self-referentially.
+
+
+## T0007-A081 — correct assertion casing after exact V 3.0.442 CI failure
+
+- **Observed baseline:** exact online `main` commit `7889bf9044f898e9173f668526cbde53ca1a2139` (`V 3.0.442`).
+- **Failure evidence:** Step Three quality gate [run 40638269876](https://github.com/artinrahimii/project/actions/runs/40638269876) ran 190 Python tests and failed only the new `test_explicit_peer_trust_decision_maps_to_persistent_store_transport_gate_and_acceptance` assertion. The expected phrase used uppercase `DPAPI` while the actual comparison lowercased the Windows acceptance-test source; Python string containment is case-sensitive. The quality workflow skipped subsequent syntax/graph/evidence steps after the test failure.
+- **Correction:** normalize the expected phrase to lowercase in the assertion; no application code, runtime behavior, interface, graph edge or product acceptance claim is changed.
+- **Product workflow:** run [40638269908](https://github.com/artinrahimii/project/actions/runs/40638269908) was still `in_progress` when inspected; its final result is not yet recorded.
+- **Files changed in this correction:** `tests/test_decision_traceability.py`, `step three/T0007/execution-report.md`, and `step three/project-graph.md`.
+- **Result:** partial; correction is queued for exact-commit validation. No test pass is claimed for this fix until the V 3.0.443 quality workflow is observed.
+- **Follow-up:** inspect Step Three and product workflows for exact `V 3.0.443` commit, append verification as `T0007-A082`, and resolve that commit SHA from the online `main` history. Keep `T0007` and `T0131` `in_progress`, `T0121` `blocked`, and `AC-P2P-01` **NOT RUN**.

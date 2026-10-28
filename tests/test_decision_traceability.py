@@ -885,7 +885,7 @@ class DecisionTraceabilityTests(unittest.TestCase):
         self.assertIn("The authenticated libp2p peer identity did not match the expected identity.", transport)
         self.assertIn("explicitlyConfirmed: false", portable_tests)
         self.assertIn("corrupt trust store must fail closed", portable_tests.lower())
-        self.assertIn("tampered DPAPI peer-trust data must fail closed", windows_tests.lower())
+        self.assertIn("tampered dpapi peer-trust data must fail closed", windows_tests.lower())
         self.assertIn("PeerTrustStoreAcceptanceTests.Run()", entrypoint)
         self.assertIn("WindowsPeerTrustStoreAcceptanceTests.Run()", entrypoint)
         self.assertIn("PeerTransportContractAcceptanceTests.RunAsync()", entrypoint)
