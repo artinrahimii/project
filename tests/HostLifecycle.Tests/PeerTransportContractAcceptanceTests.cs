@@ -16,6 +16,7 @@ internal static class PeerTransportContractAcceptanceTests
         VerifyInterfaceExposesTheRequiredSecureLifecycle();
         VerifyEndpointRequiresAddressAndExpectedIdentity();
         await VerifyDirectEncryptedPeerMessageExchangeAsync().ConfigureAwait(false);
+        await VerifySecureChannelRejectsUnexpectedPeerIdentityAsync().ConfigureAwait(false);
         await VerifyQuicFallbackAfterUnreachableTcpAddressAsync().ConfigureAwait(false);
         await VerifyFallbackRejectsMixedPeerIdentitiesBeforeConnectingAsync().ConfigureAwait(false);
         Console.WriteLine("PASS: IPeerTransport contract, direct libp2p TCP exchange, authenticated TCP-to-QUIC fallback, bounded framing and disconnect semantics.");
@@ -114,6 +115,61 @@ internal static class PeerTransportContractAcceptanceTests
         await client.DisconnectAsync(timeout.Token).ConfigureAwait(false);
         await client.DisconnectAsync(timeout.Token).ConfigureAwait(false);
         Assert(!client.IsConnected, "Disconnect must clear the authenticated connection state.");
+    }
+
+    private static async Task VerifySecureChannelRejectsUnexpectedPeerIdentityAsync()
+    {
+        using var clientTrustFixture = new TestPeerTrustStoreFixture();
+        using var serverTrustFixture = new TestPeerTrustStoreFixture();
+
+        var unexpectedIdentity = new Identity();
+        string unexpectedPeerIdentity = new PeerId(unexpectedIdentity.PublicKey).ToString();
+
+        await using var client = new Libp2pPeerTransport(clientTrustFixture.Store, maximumMessageBytes: 1024);
+        await using var server = new Libp2pPeerTransport(
+            serverTrustFixture.Store,
+            expectedRemotePeerIdentity: client.LocalPeerIdentity,
+            maximumMessageBytes: 1024);
+
+        clientTrustFixture.Store.TrustPeerAfterExplicitConfirmation(
+            unexpectedPeerIdentity,
+            explicitlyConfirmed: true);
+        serverTrustFixture.Store.TrustPeerAfterExplicitConfirmation(
+            client.LocalPeerIdentity,
+            explicitlyConfirmed: true);
+
+        using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(15));
+        int port = ReserveTcpPort();
+        await server.StartListeningAsync(IPAddress.Loopback, port, timeout.Token)
+            .WaitAsync(TimeSpan.FromSeconds(10), timeout.Token)
+            .ConfigureAwait(false);
+
+        string actualServerAddress = server.ListenAddresses.Single(
+            address => address.Contains("/tcp/", StringComparison.Ordinal));
+        string addressWithUnexpectedPeerIdentity = ReplacePeerIdentity(actualServerAddress, unexpectedPeerIdentity);
+
+        bool rejected = false;
+        try
+        {
+            await client.ConnectSecureAsync(
+                new PeerTransportEndpoint(addressWithUnexpectedPeerIdentity, unexpectedPeerIdentity),
+                timeout.Token)
+                .WaitAsync(TimeSpan.FromSeconds(10), timeout.Token)
+                .ConfigureAwait(false);
+        }
+        catch (Exception exception) when (
+            exception is AuthenticationException or IOException or SocketException or InvalidOperationException)
+        {
+            rejected = true;
+        }
+
+        Assert(rejected,
+            "The libp2p secure-channel boundary must reject a remote identity that differs from the pinned PeerId.");
+        Assert(!client.IsConnected && client.RemotePeerIdentity is null,
+            "A failed secure-channel identity check must never publish a connected or authenticated remote peer.");
+
+        Console.WriteLine(
+            "PASS: libp2p secure-channel authentication rejects a remote identity that does not match the pinned PeerId.");
     }
 
     private static async Task VerifyQuicFallbackAfterUnreachableTcpAddressAsync()
@@ -219,6 +275,15 @@ internal static class PeerTransportContractAcceptanceTests
         }
 
         throw new InvalidOperationException("Fallback accepted a candidate list with mixed expected peer identities.");
+    }
+
+    private static string ReplacePeerIdentity(string multiaddress, string replacementPeerIdentity)
+    {
+        const string peerMarker = "/p2p/";
+        int markerIndex = multiaddress.LastIndexOf(peerMarker, StringComparison.Ordinal);
+        Assert(markerIndex >= 0,
+            "The server multiaddress must include its authenticated /p2p identity segment.");
+        return multiaddress[..(markerIndex + peerMarker.Length)] + replacementPeerIdentity;
     }
 
     private static string ReplaceAddressPort(string multiaddress, string protocol, int replacementPort)
