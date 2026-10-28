@@ -34,3 +34,14 @@ The code delegates secure-channel cryptography and peer authentication to the ma
 ## Next action
 
 Add a real negative integration case at the libp2p secure-channel boundary for unsupported secure-channel negotiation/certificate validation (without implementing custom cryptography), run it in CI, and only then decide whether T0134 satisfies all of its intended acceptance scope.
+
+
+## Latest attempt: T0134-A003
+
+- **Code/test commit:** [V 3.0.461](https://github.com/artinrahimii/project/commit/a9ab827ab2d2a767825085e7185eba655fafbe29), on `main`.
+- **Changed file:** `tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs`.
+- **Change:** added `VerifySecureChannelRejectsUnexpectedPeerIdentityAsync`. It creates a syntactically valid but different libp2p PeerId, explicitly trusts that ID on the dialer, rewrites the actual listener address to advertise the different ID, and attempts a real local libp2p connection. The intended negative assertion is that the actual remote identity is rejected and no connected/remote identity is published to the dialer.
+- **Test result:** pending. The local environment did not run .NET tests. The GitHub combined-status lookup for the exact code commit returned no status entries, which does **not** establish CI success or failure.
+- **State remains** `in_progress` until the exact-commit HostLifecycle job verifies this case and the logs confirm it was exercised.
+- **Security scope:** this case targets authenticated remote-identity/certificate mismatch at the libp2p transport boundary. It does not by itself prove rejection of every unsupported Noise/TLS protocol-version negotiation.
+- **Next action:** inspect the exact commit's GitHub Actions run and test log. If the job fails, diagnose/fix and re-run; if it passes, review whether all T0134 acceptance scope is covered before changing the node to `done`.
