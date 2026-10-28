@@ -41,7 +41,8 @@ class InMemoryClientRequestRepository(
     override val draft: StateFlow<ClientRequestDraft> = mutableDraft.asStateFlow()
 
     override suspend fun updatePrompt(prompt: String) {
-        mutableDraft.value = mutableDraft.value.copy(
+        mutableDraft.value =
+            mutableDraft.value.copy(
             prompt = prompt,
             status = RequestDraftStatus.NOT_SENT,
         )
@@ -51,10 +52,16 @@ class InMemoryClientRequestRepository(
         val current = mutableDraft.value
         val result =
             if (current.prompt.isBlank()) {
-                mutableDraft.value = current.copy(status = RequestDraftStatus.EMPTY_PROMPT)
+                mutableDraft.value =
+                    current.copy(
+                        status = RequestDraftStatus.EMPTY_PROMPT,
+                    )
                 RequestPreparationResult.EMPTY_PROMPT
             } else {
-                mutableDraft.value = current.copy(status = RequestDraftStatus.TRANSPORT_UNAVAILABLE)
+                mutableDraft.value =
+                    current.copy(
+                        status = RequestDraftStatus.TRANSPORT_UNAVAILABLE,
+                    )
                 RequestPreparationResult.TRANSPORT_UNAVAILABLE
             }
         return result

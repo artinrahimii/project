@@ -37,3 +37,16 @@
 - Corrected indentation inside all three `runBlocking` test bodies in `src/Client.Android/app/src/test/java/com/whitep/client/data/ClientRequestRepositoryTest.kt`, following the exact ktlint diagnostics.
 - No production behavior changed. The repository remains process-memory-only and explicitly reports transport unavailable; no Android-to-host delivery, persistence, or Room implementation is claimed.
 - The complete graph Blob was verified against the V 3.0.496 tree before editing (2,412,702 UTF-8 bytes; computed Git Blob SHA-1 matched). T0140 remains `in_progress` until exact-head V 3.0.497 lint, APK, JUnit and Protobuf checks pass. Local Android tests were not run because no usable local Android SDK/test runner is available in this execution.
+
+
+## T0140-A003 exact-head CI result — failed
+
+- Exact V 3.0.497 Step Three quality run https://github.com/artinrahimii/project/actions/runs/40776289411 failed graph validation: FAILED_ATTEMPT_COUNT_MISMATCH: T0140 summary=2, history=1. Python tests and syntax checks passed; repository evidence validation was skipped after graph guard failure.
+- Exact V 3.0.497 product workflow https://github.com/artinrahimii/project/actions/runs/40776289369: HostLifecycle passed; Android failed at :app:ktlintMainSourceSetCheck. Diagnostics: ClientRequestRepository.kt line 44 multiline-expression wrapping; RequestViewModel.kt lines 22–26 and 41–44 unexpected indentation. Android APK, JUnit and generated Protobuf steps were skipped. Windows WPF was still running at last inspection, so no conclusion is claimed.
+
+## T0140-A004 — source formatting and graph-history correction
+
+- In ClientRequestRepository.kt, multiline assignments/copy expressions now put the right-hand expression on the next line and follow ktlint nested indentation.
+- In RequestViewModel.kt, when branches and stateIn arguments use the indentation required by the exact CI diagnostics.
+- Finalized A002 and A003 as failed attempts because their exact CI results are now known. execution_summary.failed_attempt_count=3 now equals the three execution_history entries whose result is failed; A004 is the current partial attempt. No historical record was deleted and no dependency edge changed.
+- V 3.0.498 CI is pending. T0140 remains in_progress; no APK/JUnit/Protobuf success is claimed. No local Android SDK run was performed.

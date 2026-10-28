@@ -29000,9 +29000,9 @@
       ],
       "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0140-A001 started on bce6c85dade0311ffe48b2ed8d75253e66408fb0 after graph/blob verification. T0138 -> T0140 was reviewed as sequencing_only: endpoint-visibility documentation constrains claims but is not a Kotlin API consumed by the data layer. T0140 -> T0141 was reviewed as contract_or_interface_dependency: the upcoming Room adapter must satisfy the Flow/suspend repository boundary and draft/status types. Both retain type=blocks; unrelated unreviewed edges remain unchanged.",
       "execution_summary": {
-        "attempt_count": 3,
-        "failed_attempt_count": 2,
-        "last_attempt_id": "T0140-A003",
+        "attempt_count": 4,
+        "failed_attempt_count": 3,
+        "last_attempt_id": "T0140-A004",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Client.Android/app/build.gradle.kts",
@@ -29022,16 +29022,21 @@
         "related_commits": [
           "bce6c85dade0311ffe48b2ed8d75253e66408fb0",
           "c7374040f6eb2af0d228e64bc8a7076c3f3c2cf1",
-          "6624b6292645c37c6f221fa16be69b98808254bb"
+          "6624b6292645c37c6f221fa16be69b98808254bb",
+          "448a9412c583574c5bed2de18cfe79075635bdd5"
         ],
         "tests_passed": [
           "V 3.0.495 HostLifecycle job passed.",
           "Step Three quality gate — exact V 3.0.496 PASS: https://github.com/artinrahimii/project/actions/runs/40773838960",
-          "Windows WPF and HostLifecycle — exact V 3.0.496 PASS: https://github.com/artinrahimii/project/actions/runs/40773838950"
+          "Windows WPF and HostLifecycle — exact V 3.0.496 PASS: https://github.com/artinrahimii/project/actions/runs/40773838950",
+          "HostLifecycle integration — exact V 3.0.497 PASS: https://github.com/artinrahimii/project/actions/runs/40776289369"
         ],
         "tests_failed": [
           "Source contracts still asserted that delivery-status text lived in MainActivity; the ViewModel now owns that state. ktlint identified exact source/test formatting violations, so product build did not reach APK/JUnit.",
-          "Android ktlint failed at V 3.0.496 before APK/JUnit/Protobuf; the diagnostics identified only ClientRequestRepositoryTest.kt indentation."
+          "Android ktlint failed at V 3.0.496 before APK/JUnit/Protobuf; the diagnostics identified only ClientRequestRepositoryTest.kt indentation.",
+          "Android ktlintTestSourceSetCheck — exact V 3.0.496 failed before APK/JUnit/Protobuf: https://github.com/artinrahimii/project/actions/runs/40773838950",
+          "Step Three graph guard — exact V 3.0.497 failed FAILED_ATTEMPT_COUNT_MISMATCH (summary=2, history=1): https://github.com/artinrahimii/project/actions/runs/40776289411",
+          "Android ktlintMainSourceSetCheck — exact V 3.0.497 failed; APK/JUnit/Protobuf skipped: https://github.com/artinrahimii/project/actions/runs/40776289369"
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -29055,7 +29060,7 @@
             "step three/project-graph.md"
           ]
         },
-        "follow_up": "Verify exact-head V 3.0.497 Android lint, debug APK, repository/ViewModel JUnit and Protobuf checks. Keep T0140 in_progress until all required gates pass."
+        "follow_up": "Validate exact V 3.0.498: graph guard must pass; Android main/test ktlint, debug APK, repository/ViewModel JUnit, Protobuf, Windows WPF and HostLifecycle must complete before T0140 can be marked done."
       },
       "execution_history": [
         {
@@ -29116,9 +29121,9 @@
         {
           "attempt_id": "T0140-A002",
           "started_at": "2026-10-28T21:39:20.706Z",
-          "ended_at": null,
-          "result": "partial",
-          "summary": "Repairing A001 findings: migrated source-contract assertions to the ViewModel's truthful status source and formatted multiline Kotlin expressions/enum declarations/interfaces per the observed ktlint diagnostics. Exact-head CI remains pending.",
+          "ended_at": "2026-10-28T21:42:20Z",
+          "result": "failed",
+          "summary": "Exact-head V 3.0.496 final result: source-contract migration and Python checks passed, but Android ktlintTestSourceSetCheck failed in ClientRequestRepositoryTest.kt because of incorrect indentation. APK/JUnit/Protobuf did not run; Windows WPF and HostLifecycle jobs passed.",
           "changed_files": [
             "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientRequestRepository.kt",
             "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt",
@@ -29137,40 +29142,41 @@
           "commit_sha": null,
           "tests": [
             {
+              "name": "Step Three quality gate — V 3.0.496",
+              "result": "passed",
+              "summary": "Python/source/graph checks passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40773838960"
+            },
+            {
               "name": "Source-contract assertion migration",
-              "result": "pending",
-              "summary": "Legacy checks now read delivery-state wording from RequestViewModel."
+              "result": "passed",
+              "summary": "Exact-head V 3.0.496 Step Three quality job passed."
             },
             {
-              "name": "Kotlin formatting",
-              "result": "pending",
-              "summary": "ktlint will verify formatting changes."
+              "name": "Android ktlint — V 3.0.496",
+              "result": "failed",
+              "summary": "Test source set indentation failed before APK/JUnit/Protobuf.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40773838950"
             },
             {
-              "name": "Step Three quality gate",
-              "result": "pending"
-            },
-            {
-              "name": "Android lint/APK/JUnit/Protobuf",
-              "result": "pending"
-            },
-            {
-              "name": "HostLifecycle and Windows product jobs",
-              "result": "pending"
+              "name": "Windows WPF and HostLifecycle — V 3.0.496",
+              "result": "passed",
+              "summary": "Both jobs passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40773838950"
             }
           ],
-          "failure_details": null,
+          "failure_details": "White-P product run 40773838950: :app:ktlintTestSourceSetCheck failed with 22 unexpected-indentation diagnostics in ClientRequestRepositoryTest.kt; APK, JUnit and generated Protobuf steps skipped.",
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Wait for exact-head V3.0.496 quality/product CI. Do not mark T0140 done until all required gates pass."
+          "follow_up": "Correct test-source indentation and re-run exact-head CI; done by A003, whose final result is recorded separately."
         },
         {
           "attempt_id": "T0140-A003",
           "started_at": "2026-10-28T21:58:00.745Z",
-          "ended_at": null,
-          "result": "partial",
-          "summary": "Exact-head V 3.0.496 CI was inspected: Step Three quality passed; Android lint failed only because ClientRequestRepositoryTest.kt used incorrect indentation, while Windows WPF and HostLifecycle passed. Re-indented all three runBlocking test bodies based on exact ktlint diagnostics. No production behavior changed. Exact-head V 3.0.497 CI is pending; no local Android SDK run is claimed.",
+          "ended_at": "2026-10-28T21:59:12Z",
+          "result": "failed",
+          "summary": "Exact-head V 3.0.497 failed validation: graph guard found FAILED_ATTEMPT_COUNT_MISMATCH (T0140 summary=2, history=1), and Android ktlintMainSourceSetCheck found remaining multiline-expression and RequestViewModel indentation errors. HostLifecycle passed; Windows WPF was still running at inspection.",
           "changed_files": [
             "src/Client.Android/app/src/test/java/com/whitep/client/data/ClientRequestRepositoryTest.kt",
             "step three/T0140/execution-report.md",
@@ -29182,34 +29188,81 @@
           ],
           "tests": [
             {
-              "name": "Step Three quality gate — V 3.0.496",
-              "result": "passed",
-              "summary": "Python/graph quality checks passed.",
-              "url": "https://github.com/artinrahimii/project/actions/runs/40773838960"
-            },
-            {
-              "name": "Windows WPF host — V 3.0.496",
-              "result": "passed",
-              "summary": "Release build/startup/security steps passed.",
-              "url": "https://github.com/artinrahimii/project/actions/runs/40773838950"
-            },
-            {
-              "name": "HostLifecycle integration — V 3.0.496",
-              "result": "passed",
-              "summary": "Host lifecycle job passed.",
-              "url": "https://github.com/artinrahimii/project/actions/runs/40773838950"
+              "name": "Step Three quality gate — V 3.0.497",
+              "result": "failed",
+              "summary": "Graph guard: FAILED_ATTEMPT_COUNT_MISMATCH T0140 summary=2, history=1.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40776289411"
             },
             {
               "name": "Android ktlint/APK/JUnit/Protobuf — V 3.0.497",
+              "result": "failed",
+              "summary": "ktlintMainSourceSetCheck failed; APK, JUnit and generated Protobuf checks skipped.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40776289369"
+            },
+            {
+              "name": "HostLifecycle integration — V 3.0.497",
+              "result": "passed",
+              "summary": "Host lifecycle job completed successfully.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40776289369"
+            },
+            {
+              "name": "Windows WPF host — V 3.0.497",
               "result": "pending",
-              "summary": "Indentation repaired; exact-head validation required."
+              "summary": "Job remained in progress at last inspection; no conclusion claimed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40776289369"
             }
           ],
-          "failure_details": "V 3.0.496 product run 40773838950 failed at :app:ktlintTestSourceSetCheck; all 22 reported style diagnostics were unexpected indentation in ClientRequestRepositoryTest.kt lines 11–40. APK/JUnit/Protobuf steps were skipped; Windows WPF and HostLifecycle jobs passed.",
+          "failure_details": "Step Three gate 40776289411 failed because FAILED_ATTEMPT_COUNT_MISMATCH: T0140 summary=2, history=1. Android job 123126345273 failed at :app:ktlintMainSourceSetCheck: ClientRequestRepository.kt line 44 multiline-expression wrapping; RequestViewModel.kt lines 22–26 and 41–44 indentation. APK/JUnit/Protobuf skipped.",
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Verify exact V 3.0.497 Android lint, debug APK, repository/ViewModel JUnit and Protobuf checks; retain in_progress until all pass."
+          "follow_up": "A004 corrects the remaining source formatting and synchronizes attempt summary/history; rerun all exact-head checks."
+        },
+        {
+          "attempt_id": "T0140-A004",
+          "started_at": "2026-10-28T22:01:57.296Z",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Reformatted the multiline StateFlow/copy expressions in ClientRequestRepository.kt and the when/stateIn nesting in RequestViewModel.kt from exact V 3.0.497 ktlint output. Finalized A002 and A003 as failed after CI results arrived, keeping failed_attempt_count equal to recorded failed history. No product behavior or dependency edges changed. V 3.0.498 validation pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientRequestRepository.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt",
+            "step three/T0140/execution-report.md",
+            "step three/T0140/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "related_commits": [
+            "448a9412c583574c5bed2de18cfe79075635bdd5"
+          ],
+          "tests": [
+            {
+              "name": "Graph integrity and Blob verification — base V 3.0.497",
+              "result": "passed",
+              "summary": "Exact Blob SHA/bytes matched; 229 tasks and 417 edges parsed; T0140 state verified."
+            },
+            {
+              "name": "Step Three quality gate — V 3.0.497",
+              "result": "failed",
+              "summary": "Found summary/history count mismatch, corrected in A004.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40776289411"
+            },
+            {
+              "name": "Android lint — V 3.0.497",
+              "result": "failed",
+              "summary": "Remaining main-source formatting diagnostics corrected in this attempt; APK/JUnit/Protobuf skipped at the failed run.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40776289369"
+            },
+            {
+              "name": "Exact-head V 3.0.498 CI",
+              "result": "pending",
+              "summary": "Graph guard, Kotlin lint, APK, JUnit, Protobuf and required product jobs must pass."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Review V 3.0.498 exact-head CI. Keep T0140 in_progress until graph guard, Android lint, APK, repository/ViewModel JUnit, Protobuf, Windows and HostLifecycle checks pass."
         }
       ]
     },
@@ -41067,7 +41120,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-28T21:58:00.745Z",
+  "updated_at": "2026-10-28T22:01:57.296Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

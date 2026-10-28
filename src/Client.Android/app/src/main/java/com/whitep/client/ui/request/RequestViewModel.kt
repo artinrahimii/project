@@ -19,11 +19,11 @@ data class RequestUiState(
     val statusMessage: String
         get() =
             when (status) {
-            RequestDraftStatus.NOT_SENT -> "Nothing has been sent."
-            RequestDraftStatus.EMPTY_PROMPT -> "Enter a prompt first."
-            RequestDraftStatus.TRANSPORT_UNAVAILABLE ->
-                "Request not sent: no host transport yet; Android-to-host transport is not implemented."
-        }
+                RequestDraftStatus.NOT_SENT -> "Nothing has been sent."
+                RequestDraftStatus.EMPTY_PROMPT -> "Enter a prompt first."
+                RequestDraftStatus.TRANSPORT_UNAVAILABLE ->
+                    "Request not sent: no host transport yet; Android-to-host transport is not implemented."
+            }
 }
 
 /** ViewModel for draft preparation only; request delivery is not implied. */
@@ -38,10 +38,10 @@ class RequestViewModel(
         repository.draft
             .map { draft -> RequestUiState(prompt = draft.prompt, status = draft.status) }
             .stateIn(
-            scope = commandsScope,
-            started = SharingStarted.Eagerly,
-            initialValue = RequestUiState(),
-        )
+                scope = commandsScope,
+                started = SharingStarted.Eagerly,
+                initialValue = RequestUiState(),
+            )
 
     fun updatePrompt(prompt: String) {
         commandsScope.launch { repository.updatePrompt(prompt) }

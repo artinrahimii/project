@@ -25,3 +25,11 @@
 - Git Trees API graph entry: `step three/project-graph.md`, Blob `258b336efdc9de8168a2bd53f7fc06f4c84a905a`, expected size 2,412,702 bytes. Git Blob retrieval returned 2,290,782 Unicode characters / 2,412,702 UTF-8 bytes; recomputed Git Blob SHA-1 matched. Fenced JSON parsed as 229 nodes and 417 edges.
 - Exact V 3.0.496 workflow results: Step Three quality passed; Windows WPF and HostLifecycle passed. Android failed before build because `ClientRequestRepositoryTest.kt` indentation failed ktlint; APK/JUnit/Protobuf steps were skipped.
 - A003 changes only indentation of the three Kotlin repository test bodies plus this task's execution evidence and graph state. Task status stays `in_progress` pending exact-head CI.
+
+
+## V 3.0.497 exact-head verification and A004
+- Main commit under review: 448a9412c583574c5bed2de18cfe79075635bdd5; tree 79bb9311541738362bf171420983e5c576b5b8dc.
+- Graph retrieved from exact tree Blob 679ae2a4a90b5563c344e4c6973286e3fbf42b6b, declared size 2,415,981 bytes. It parsed as 229 nodes / 417 edges. The exact Blob SHA/byte comparison succeeded when verifying the current base tree.
+- Step Three CI failed because the recorded failed-attempt count was 2 but only one history item was finalized as failed. This is corrected by finalizing A002 and A003 according to observed CI results, preserving their records and adding A004.
+- Android ktlint on V 3.0.497 failed with main-source formatting diagnostics; the corresponding ClientRequestRepository.kt and RequestViewModel.kt expressions were reformatted. Android APK/JUnit/Protobuf remain unverified pending V 3.0.498 CI. HostLifecycle passed; Windows WPF remained in progress when last inspected.
+- No acceptance status or edge classification was changed. T0140 stays in_progress until exact-head CI passes.
