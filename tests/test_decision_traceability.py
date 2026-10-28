@@ -3,6 +3,7 @@
 This test validates source/config/test links and intentionally does not mark
 runtime-only acceptance gates as passed.
 """
+import json
 import re
 import unittest
 from pathlib import Path
@@ -910,6 +911,27 @@ class DecisionTraceabilityTests(unittest.TestCase):
         self.assertNotIn("## T0121-A003", report)
         self.assertNotIn("## T0121-A004", report)
         self.assertNotIn("## T0121-A005", report)
+
+
+    def test_t0007_graph_tracks_current_adr_outputs_and_verification(self):
+        graph_markdown = (ROOT / "step three/project-graph.md").read_text(encoding="utf-8")
+        match = re.search(r"```json\\s*([\\s\\S]*?)```", graph_markdown, re.IGNORECASE)
+        self.assertIsNotNone(match, "The task graph must contain its complete fenced JSON object.")
+        graph = json.loads(match.group(1))
+        task = next(node for node in graph["nodes"] if node["id"] == "T0007")
+
+        required_paths = (
+            "docs/decisions/ADR-0016-maintained-libp2p-cryptographic-transport.md",
+            "docs/decisions/ADR-0017-windows-user-scoped-host-identity-storage.md",
+            "docs/decisions/ADR-0018-explicit-peer-trust-and-identity-verification.md",
+            "step three/T0007/evidence/verification.md",
+        )
+        for relative_path in required_paths:
+            with self.subTest(path=relative_path):
+                self.assertIn(relative_path, task["actual_output_paths"])
+                self.assertIn(relative_path, task["evidence"])
+                self.assertTrue((ROOT / relative_path).is_file(), relative_path)
+
 
 
 if __name__ == "__main__":
