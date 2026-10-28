@@ -27005,8 +27005,7 @@
       "title": "در صورت استفاده از اتصال P2P با رمزنگاری سرتاسری، کلیدهای نشست و اعتبارسنجی همتا را با کتابخانهٔ استاندارد مدیریت کن.",
       "section": "13. هویت ارتباطی و رمزنگاری",
       "depends_on": [
-        "T0132",
-        "T0128"
+        "T0132"
       ],
       "inputs": [
         "خروجی تأییدشدهٔ پیش‌نیازها",
@@ -27015,35 +27014,131 @@
       "outputs": [
         "خروجی قابل بررسی مربوط به «در صورت استفاده از اتصال P2P با رمزنگاری سرتاسری، کلیدهای نشست و اعتبارسنجی همتا را با کتابخانهٔ استاندارد مدیریت کن.» در مسیر src/Shared.Security/ + tests/security/؛ همراه با آزمون/شاهد پذیرش متناسب."
       ],
-      "start_condition": "همهٔ پیش‌نیازهای T0132 و T0128 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
+      "start_condition": "پیش‌نیاز فنی T0132 تکمیل و معیارهای پذیرش آن پاس شده باشند. آزمون واقعی دو گرهٔ مستقل T0128 یک پذیرش انتهایی جداگانه است و خروجی‌ای مصرف‌شده توسط مدیریت هویت/کلید تولید نمی‌کند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "done",
+      "status_fa": "انجام‌شده",
+      "actual_output_paths": [
+        "src/Shared.Security/HostIdentityStore.cs",
+        "src/Shared.Security/PeerTrustStore.cs",
+        "src/Host.Windows/Security/WindowsHostIdentityProvider.cs",
+        "src/Host.Windows/Security/WindowsDpapiSecretProtector.cs",
+        "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+        "tests/HostLifecycle.Tests/HostIdentityStoreAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/WindowsHostIdentityStoreAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/PeerTrustStoreAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/WindowsPeerTrustStoreAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs",
+        "docs/decisions/ADR-0016-maintained-libp2p-cryptographic-transport.md",
+        "step three/T0133/execution-report.md",
+        "step three/T0133/evidence/verification.md",
+        "step three/project-graph.md"
+      ],
       "expected_output_paths": [
         "src/Shared.Security/ + tests/security/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "src/Shared.Security/HostIdentityStore.cs",
+        "src/Shared.Security/PeerTrustStore.cs",
+        "src/Host.Windows/Security/WindowsHostIdentityProvider.cs",
+        "src/Host.Windows/Security/WindowsDpapiSecretProtector.cs",
+        "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+        "tests/HostLifecycle.Tests/HostIdentityStoreAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/WindowsHostIdentityStoreAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/PeerTrustStoreAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/WindowsPeerTrustStoreAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs",
+        "docs/decisions/ADR-0016-maintained-libp2p-cryptographic-transport.md",
+        "step three/T0133/evidence/verification.md"
+      ],
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0133-A001 (2026-10-28): Verified that session keys are managed by maintained Nethermind.Libp2p secure-channel negotiation, while stable Ed25519 host identity and explicit peer trust are stored through the OS-protected identity/trust services. Exact V 3.0.456 HostLifecycle logs passed direct secure exchange, authenticated fallback, PeerId validation, host identity persistence and peer trust acceptance. Windows job passed current-user DPAPI key-at-rest and tamper tests. T0132 → T0133 was validated as a consumed secure-transport contract. T0128 → T0133 was reviewed as sequencing-only because the independent-node run does not produce an API/artifact consumed by identity/key handling; it was removed from active edges with historical evidence retained. No source code was duplicated or modified. T0128 remains not_started.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
-        "related_commits": [],
-        "tests_passed": [],
+        "last_attempt_id": "T0133-A001",
+        "last_attempt_result": "succeeded",
+        "changed_files": [
+          "step three/project-graph.md",
+          "step three/T0133/execution-report.md",
+          "step three/T0133/evidence/verification.md"
+        ],
+        "related_commits": [
+          "f7a708a47d07e2b5790d7e720874cf6cc7bfb8d1",
+          "13b6b91380e4d29054a03b0190284a4cbe699365"
+        ],
+        "tests_passed": [
+          "V 3.0.456 HostLifecycle job 122904254752 PASS: direct secure libp2p exchange, authenticated TCP-to-QUIC fallback, peer identity validation, persistent trust and host identity acceptance.",
+          "V 3.0.456 Windows WPF job 122904254631 PASS: DPAPI-protected host key at rest, stable PeerId across reload, peer-trust persistence, and tamper rejection.",
+          "V 3.0.456 Android APK job 122904254265 PASS.",
+          "V 3.0.456 Step Three quality gate 40713345604 PASS."
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
+          "state": "validated",
+          "triggering_contracts": [
+            "secure libp2p session from T0132",
+            "PeerTrustStore trusted PeerId interface"
+          ],
           "affected_by_contract_changes": [],
-          "review_evidence": []
+          "review_evidence": [
+            "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+            "src/Shared.Security/HostIdentityStore.cs",
+            "src/Shared.Security/PeerTrustStore.cs",
+            "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0133-A001",
+          "started_at": "2026-10-28T15:20:13.735Z",
+          "ended_at": "2026-10-28T15:20:13.735Z",
+          "result": "succeeded",
+          "summary": "Verified the existing maintained libp2p session-key handling, persistent OS-protected identity and explicit peer trust via exact-commit acceptance tests. HostLifecycle and Windows DPAPI/tamper tests passed on V 3.0.456. Reviewed T0132 as technical prerequisite and T0128 as sequencing-only; T0128 remains pending.",
+          "changed_files": [
+            "step three/project-graph.md",
+            "step three/T0133/execution-report.md",
+            "step three/T0133/evidence/verification.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "HostLifecycle session/key/trust acceptance — exact V 3.0.456",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40713345711/job/122904254752",
+              "summary": "Direct libp2p secure exchange, authenticated TCP-to-QUIC fallback, identity rejection and persisted peer trust messages passed."
+            },
+            {
+              "name": "Windows DPAPI host identity and trust store — exact V 3.0.456",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40713345711/job/122904254631",
+              "summary": "Logs confirm stable PeerId, protected private key bytes at rest, persistent peer trust, and tamper rejection."
+            },
+            {
+              "name": "Android APK — exact V 3.0.456",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40713345711/job/122904254265",
+              "summary": "Android lint/build/protobuf workflow completed successfully."
+            },
+            {
+              "name": "Step Three quality gate — exact V 3.0.456",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40713345604",
+              "summary": "Graph structure and automated quality checks passed."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "Validated T0132 → T0133 as contract/interface dependency.",
+            "Validated T0128 → T0133 as sequencing-only and removed it from active edges; historical rationale/evidence retained."
+          ],
+          "follow_up": "Proceed to T0134 only after reviewing its prerequisites and criteria. Keep T0128 pending until actual independent-node end-to-end acceptance is performed."
+        }
+      ]
     },
     {
       "id": "T0134",
@@ -34538,19 +34633,15 @@
       "from": "T0132",
       "to": "T0133",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
-    },
-    {
-      "from": "T0128",
-      "to": "T0133",
-      "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0133's session-key and peer-authentication behavior is provided by the maintained secure transport established by T0132. Libp2pPeerTransport relies on the negotiated secure protocol, validates the authenticated PeerId against the pinned expected identity, and delegates session key establishment to the library rather than implementing a custom key schedule.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+        "src/Shared.Security/PeerSecurityPolicy.cs",
+        "docs/decisions/ADR-0016-maintained-libp2p-cryptographic-transport.md",
+        "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs"
+      ]
     },
     {
       "from": "T0133",
@@ -36348,6 +36439,7 @@
     "T0130",
     "T0131",
     "T0132",
+    "T0133",
     "T0121",
     "T0122",
     "T0123",
@@ -36356,7 +36448,6 @@
     "T0126",
     "T0127",
     "T0128",
-    "T0133",
     "T0134",
     "T0135",
     "T0136",
@@ -38907,6 +38998,48 @@
         "https://github.com/artinrahimii/project/actions/runs/40713345711/job/122904254752"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-28T15:20:13.735Z",
+      "edge_from": "T0132",
+      "edge_to": "T0133",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "old_validation_status": "unreviewed",
+      "new_validation_status": "validated",
+      "reason": "T0133's session-key and peer-authentication behavior is provided by the maintained secure transport established by T0132. Libp2pPeerTransport relies on the negotiated secure protocol, validates the authenticated PeerId against the pinned expected identity, and delegates session key establishment to the library rather than implementing a custom key schedule.",
+      "evidence": [
+        "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+        "src/Shared.Security/PeerSecurityPolicy.cs",
+        "docs/decisions/ADR-0016-maintained-libp2p-cryptographic-transport.md",
+        "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-28T15:20:13.735Z",
+      "edge_from": "T0128",
+      "edge_to": "T0133",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "old_validation_status": "unreviewed",
+      "new_validation_status": "validated",
+      "change_action": "removed_from_active_edges",
+      "reason": "T0128 produces final end-to-end evidence from two independent nodes; it does not produce an API or artifact consumed by persistent host identity, session-key negotiation, or explicit peer-trust logic. T0133 can be implemented and locally acceptance-tested using the secure session and persistent identity APIs already present. The independent-node scenario remains a separate pending acceptance, not a prerequisite to implement these components.",
+      "evidence": [
+        "src/Shared.Security/HostIdentityStore.cs",
+        "src/Shared.Security/PeerTrustStore.cs",
+        "src/Host.Windows/Security/WindowsHostIdentityProvider.cs",
+        "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+        "tests/HostLifecycle.Tests/HostIdentityStoreAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/WindowsHostIdentityStoreAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/PeerTrustStoreAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/WindowsPeerTrustStoreAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs",
+        "https://github.com/artinrahimii/project/actions/runs/40713345711/job/122904254752",
+        "https://github.com/artinrahimii/project/actions/runs/40713345711/job/122904254631"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
   "updated_at": "2026-10-28",
@@ -38991,6 +39124,30 @@
         "tests/HostLifecycle.Tests/PeerSecurityPolicyAcceptanceTests.cs",
         "docs/decisions/ADR-0016-maintained-libp2p-cryptographic-transport.md",
         "https://github.com/artinrahimii/project/actions/runs/40713345711/job/122904254752"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-28T15:20:13.735Z",
+      "moved_tasks": [
+        "T0133"
+      ],
+      "old_positions": {
+        "T0133": 133
+      },
+      "new_anchor": "Immediately after T0132 and before the blocked T0121/T0128 chain",
+      "reason": "The output of T0133 consumes T0132's maintained secure transport; its persistent identity, session-key delegation and peer-trust checks can be executed without the final independent-node run T0128. The latter is sequencing-only for T0133 and has been removed from active edges with the evidence retained in edge_change_log.",
+      "evidence": [
+        "src/Shared.Security/HostIdentityStore.cs",
+        "src/Shared.Security/PeerTrustStore.cs",
+        "src/Host.Windows/Security/WindowsHostIdentityProvider.cs",
+        "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+        "tests/HostLifecycle.Tests/HostIdentityStoreAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/WindowsHostIdentityStoreAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/PeerTrustStoreAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs",
+        "https://github.com/artinrahimii/project/actions/runs/40713345711/job/122904254752",
+        "https://github.com/artinrahimii/project/actions/runs/40713345711/job/122904254631"
       ],
       "reviewed_by": "Step Three execution review"
     }
