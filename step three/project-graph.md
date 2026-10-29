@@ -33143,8 +33143,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0152 و T0150 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال انجام",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
         "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt",
@@ -33167,25 +33167,31 @@
         "step three/T0153/execution-report.md",
         "step three/T0153/evidence/verification.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0153-A001 adds capsule view/edit/create/delete controls to the existing conversation detail screen and wires them to a Room-backed ViewModel/repository. Incoming T0152 edge was validated as contract_or_interface_dependency; T0150 edge as sequencing_only; both blocks edges remain. Exact-head CI is pending.\nT0153-A001 exact-head result: quality passed 242 Python tests and graph/evidence guards, but V 3.0.558 Android lint failed on one >120-character error string and delete-dialog Text formatting. A002 fixes those two reported lines; CI pending.\nT0153-A002 exact-head V 3.0.559: quality passed 242 Python tests and graph guards; main-source lint passed, but test-source lint failed due import order and one unused import. A003 sorts and cleans imports; CI pending.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0153-A001 adds capsule view/edit/create/delete controls to the existing conversation detail screen and wires them to a Room-backed ViewModel/repository. Incoming T0152 edge was validated as contract_or_interface_dependency; T0150 edge as sequencing_only; both blocks edges remain. Exact-head CI is pending.\nT0153-A001 exact-head result: quality passed 242 Python tests and graph/evidence guards, but V 3.0.558 Android lint failed on one >120-character error string and delete-dialog Text formatting. A002 fixes those two reported lines; CI pending.\nT0153-A002 exact-head V 3.0.559: quality passed 242 Python tests and graph guards; main-source lint passed, but test-source lint failed due import order and one unused import. A003 sorts and cleans imports; CI pending.\nT0153 accepted on exact-head V 3.0.560 CI: quality and all product jobs passed, including the new ViewModel tests. The capsule UI is local-only and does not add a host transport or at-rest-encryption claim.",
       "execution_summary": {
         "attempt_count": 3,
         "failed_attempt_count": 2,
         "last_attempt_id": "T0153-A003",
-        "last_attempt_result": "partial",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModelTest.kt",
           "step three/T0153/execution-report.md",
           "step three/T0153/evidence/verification.md",
-          "step three/project-graph.md"
+          "step three/project-graph.md",
+          "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+          "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt",
+          "tests/test_android_context_capsule_ui_contract.py"
         ],
         "related_commits": [
           "a9b213cef89f21fff4a88a7ac4c5142f3f8d636f",
-          "671fa1f5da4ec40fa0a1c3507b1c5f9b8000ca91"
+          "671fa1f5da4ec40fa0a1c3507b1c5f9b8000ca91",
+          "ed2d729c78a50b7aa297fe900d03f849ac78610c"
         ],
         "tests_passed": [
           "V 3.0.558 quality run 40898143390 passed 242 Python tests and graph/evidence checks. https://github.com/artinrahimii/project/actions/runs/40898143390",
-          "V 3.0.559 quality run 40898787440 passed 242 Python tests and graph/evidence validation; Android main-source lint passed. https://github.com/artinrahimii/project/actions/runs/40898787440"
+          "V 3.0.559 quality run 40898787440 passed 242 Python tests and graph/evidence validation; Android main-source lint passed. https://github.com/artinrahimii/project/actions/runs/40898787440",
+          "V 3.0.560 Step Three quality run 40899261329 passed 242 Python tests, syntax, graph and output/evidence guards; graph guard reported 229 tasks/417 edges, zero errors and one preserved T0001 metadata warning. https://github.com/artinrahimii/project/actions/runs/40899261329",
+          "V 3.0.560 product run 40899261512 passed all four jobs: Android ktlintCheck, assembleDebug, testDebugUnitTest, generated Protobuf Java/Kotlin verification and APK upload; Windows WPF and HostLifecycle checks passed. https://github.com/artinrahimii/project/actions/runs/40899261512"
         ],
         "tests_failed": [
           "V 3.0.558 product run 40898143330 failed Android ktlint on the schema-version message length and delete-confirmation Text formatting; APK/JVM stages were skipped. https://github.com/artinrahimii/project/actions/runs/40898143330",
@@ -33194,7 +33200,7 @@
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "required",
+          "state": "passed",
           "triggering_contracts": [
             "Room repository per-conversation observe/save/delete contract from T0152",
             "ConversationContextCapsule v1 schema and 4,096-byte UTF-8 limit",
@@ -33217,7 +33223,9 @@
             "https://github.com/artinrahimii/project/actions/runs/40898143390",
             "https://github.com/artinrahimii/project/actions/runs/40898143330",
             "https://github.com/artinrahimii/project/actions/runs/40898787440",
-            "https://github.com/artinrahimii/project/actions/runs/40898787349"
+            "https://github.com/artinrahimii/project/actions/runs/40898787349",
+            "https://github.com/artinrahimii/project/actions/runs/40899261329",
+            "https://github.com/artinrahimii/project/actions/runs/40899261512"
           ]
         }
       },
@@ -33345,39 +33353,74 @@
         {
           "attempt_id": "T0153-A003",
           "started_at": "2026-10-29T15:11:20Z",
-          "ended_at": "2026-10-29T15:11:20Z",
-          "result": "partial",
-          "summary": "Sorted ViewModel test imports and removed the unused ConversationContextCapsule import reported by ktlint. Exact-head CI is pending.",
+          "ended_at": "2026-10-29T15:15:35Z",
+          "result": "succeeded",
+          "summary": "The ViewModel test imports were sorted and the unused import removed. Exact-head V 3.0.560 CI passed all required quality and product gates: 242 Python tests and graph/evidence validation; Android ktlintCheck, assembleDebug, testDebugUnitTest, generated Protobuf verification and APK upload; Windows WPF and HostLifecycle.",
           "changed_files": [
             "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModelTest.kt",
             "step three/T0153/execution-report.md",
             "step three/T0153/evidence/verification.md",
             "step three/project-graph.md"
           ],
-          "related_commits": [],
-          "commit_sha": null,
+          "related_commits": [
+            "ed2d729c78a50b7aa297fe900d03f849ac78610c"
+          ],
+          "commit_sha": "ed2d729c78a50b7aa297fe900d03f849ac78610c",
           "tests": [
             {
-              "name": "Android ktlintCheck",
-              "result": "not_run",
-              "summary": "The exact import findings were corrected; next CI result is pending."
+              "name": "Step Three quality gate — run 40899261329",
+              "result": "passed",
+              "summary": "242 Python tests passed; syntax, graph structure and recorded-output/evidence checks passed. Graph guard reported 229 tasks/417 edges, zero errors and one preserved T0001 unmapped-dependency warning.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40899261329"
             },
             {
-              "name": "Android assembleDebug / testDebugUnitTest",
-              "result": "not_run",
-              "summary": "Awaiting lint and subsequent product stages on V 3.0.560."
+              "name": "Android ktlintCheck — product run 40899261512",
+              "result": "passed",
+              "summary": "Kotlin main and test source formatting/lint passed on the exact implementation head.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40899261512"
             },
             {
-              "name": "Step Three quality gate",
-              "result": "not_run",
-              "summary": "Updated attempt history and evidence report await exact-head validation."
+              "name": "Android assembleDebug — product run 40899261512",
+              "result": "passed",
+              "summary": "Debug APK built successfully.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40899261512"
+            },
+            {
+              "name": "Android testDebugUnitTest — product run 40899261512",
+              "result": "passed",
+              "summary": "The full Android JVM unit-test task passed, including ConversationContextCapsuleViewModelTest create/edit/delete persistence and blank-goal validation cases.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40899261512"
+            },
+            {
+              "name": "Generated Protobuf Java/Kotlin verification — product run 40899261512",
+              "result": "passed",
+              "summary": "Generated Java and Kotlin Protobuf source checks passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40899261512"
+            },
+            {
+              "name": "APK artifact upload — product run 40899261512",
+              "result": "passed",
+              "summary": "Android debug APK artifact upload completed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40899261512"
+            },
+            {
+              "name": "Windows WPF host — product run 40899261512",
+              "result": "passed",
+              "summary": "Windows WPF build, startup smoke and configured safety/security checks passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40899261512"
+            },
+            {
+              "name": "HostLifecycle — product run 40899261512",
+              "result": "passed",
+              "summary": "Host lifecycle unit and integration tests passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40899261512"
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect V 3.0.560 exact-head CI. Fix further findings, then accept T0153 only after the UI ViewModel test and full product checks pass."
+          "follow_up": "T0153 is accepted. The next graph task should be selected only after reviewing its actual incoming edges and the accepted implementation contracts."
         }
       ]
     },
@@ -45219,7 +45262,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-29T15:11:20Z",
+  "updated_at": "2026-10-29T15:15:35Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

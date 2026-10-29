@@ -35,3 +35,12 @@ No local tests are claimed. Exact-head CI must pass Android lint, debug APK buil
 - Quality [run 40898787440](https://github.com/artinrahimii/project/actions/runs/40898787440) passed **242 Python tests**, syntax, graph structure and output/evidence checks. The graph guard reported 229 tasks/417 edges, zero errors and one preserved T0001 warning.
 - Product [run 40898787349](https://github.com/artinrahimii/project/actions/runs/40898787349): main-source ktlint passed and HostLifecycle passed, but test-source ktlint failed due import ordering and an unused `ConversationContextCapsule` import in `ConversationContextCapsuleViewModelTest.kt`. APK build and Android JVM tests were skipped; Windows WPF was in progress at report time.
 - **T0153-A002 is recorded as failed** for this lint issue. **T0153-A003** sorts the imports and removes the unused import; exact-head CI is pending.
+
+
+## Acceptance verified — V 3.0.560
+
+- **T0153 is accepted and marked `done`** against implementation commit [`ed2d729c78a50b7aa297fe900d03f849ac78610c`](https://github.com/artinrahimii/project/commit/ed2d729c78a50b7aa297fe900d03f849ac78610c).
+- Step Three quality [run 40899261329](https://github.com/artinrahimii/project/actions/runs/40899261329) passed **242 Python tests**, Python syntax, graph structure, and recorded-output/evidence validation. The graph guard reported 229 tasks / 417 edges, zero errors, and one preserved T0001 unmapped-dependency metadata warning.
+- Product CI [run 40899261512](https://github.com/artinrahimii/project/actions/runs/40899261512) passed all four jobs. Android `ktlintCheck`, `assembleDebug`, `testDebugUnitTest`, generated Protobuf Java/Kotlin checks and APK upload passed. The Windows WPF build/startup/security checks and HostLifecycle tests passed.
+- The ViewModel tests exercised capsule create/edit/delete persistence and rejection of a blank goal. The UI displays the saved capsule, edits its five content fields, saves through the accepted Room repository and confirms deletion. The disclosure keeps the feature local-only; no host transport or at-rest-encryption claim is made.
+- Earlier failed attempts A001 and A002 remain in the execution history and are not erased. A003 is accepted because the exact-head CI gates all passed.

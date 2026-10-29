@@ -20,3 +20,11 @@
 - [Quality run 40898787440](https://github.com/artinrahimii/project/actions/runs/40898787440) passed 242 Python tests and graph/evidence checks (229 tasks / 417 edges, zero errors).
 - [Product run 40898787349](https://github.com/artinrahimii/project/actions/runs/40898787349) passed main-source Kotlin lint and HostLifecycle, but test-source lint failed on import order and one unused import in the new ViewModel test. APK/JVM tasks were skipped.
 - A003 sorts imports and removes the unused symbol. The task remains in progress until the next exact-head build and JVM suite pass.
+
+
+## Final acceptance — V 3.0.560
+
+- Quality [40899261329](https://github.com/artinrahimii/project/actions/runs/40899261329): 242 Python tests passed; syntax, graph structure and output/evidence guards passed with 229 tasks, 417 edges, zero errors and one preserved T0001 warning.
+- Product [40899261512](https://github.com/artinrahimii/project/actions/runs/40899261512): Android lint, debug APK build, the full JVM test task, generated Protobuf source checks, and artifact upload all passed; Windows WPF and HostLifecycle jobs passed.
+- Runtime test coverage for the UI/ViewModel includes creating, editing and deleting the stored capsule, plus blank-goal validation without writing invalid data.
+- T0153 is accepted within its scope. This task does not implement Android-to-Windows delivery and does not claim data-at-rest encryption.
