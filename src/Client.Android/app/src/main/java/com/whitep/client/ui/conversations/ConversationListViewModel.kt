@@ -46,13 +46,9 @@ class ConversationListViewModel(
         return true
     }
 
-    suspend fun deleteConversation(conversationId: String): Boolean {
-        return conversationDao.deleteById(conversationId) > 0
-    }
+    suspend fun deleteConversation(conversationId: String): Boolean = conversationDao.deleteById(conversationId) > 0
 
-    suspend fun getConversation(conversationId: String): ConversationEntity? {
-        return conversationDao.findById(conversationId)
-    }
+    suspend fun getConversation(conversationId: String): ConversationEntity? = conversationDao.findById(conversationId)
 
     private fun nextUpdatedAt(previous: Long): Long {
         val next = if (previous == Long.MAX_VALUE) previous else previous + 1

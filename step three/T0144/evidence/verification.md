@@ -1,9 +1,9 @@
 # T0144 evidence ledger
 
-- Implementation: [`V 3.0.517`](https://github.com/artinrahimii/project/commit/12b76f6f617c982b1353e8e6ec7cb7f5370bb6b3).
-- Initial exact-head CI: Python quality test failed due to stale single-line source-contract expectation; Android ktlint failed on formatting/import ordering. Links:
-  - https://github.com/artinrahimii/project/actions/runs/40849730503/job/123365907777
-  - https://github.com/artinrahimii/project/actions/runs/40849730591/job/123365908350
-- Host lifecycle integration job passed on V 3.0.517: https://github.com/artinrahimii/project/actions/runs/40849730591/job/123365908429 (not Android evidence).
-- Attempt A002 corrects the observed source-contract and ktlint failures. Its build/test result remains pending until CI completes on the corresponding commit.
-- Do not mark T0144 complete unless the exact-head quality gate, Android lint/build, and Android JVM tests pass.
+- Initial implementation: [`V 3.0.517`](https://github.com/artinrahimii/project/commit/12b76f6f617c982b1353e8e6ec7cb7f5370bb6b3).
+- First correction: [`V 3.0.518`](https://github.com/artinrahimii/project/commit/06b8dd63afa37902ea9b834e97abe80458f6375b).
+- Exact-head quality gate on V 3.0.518: passed, 218 Python tests and graph guard; https://github.com/artinrahimii/project/actions/runs/40851894119.
+- Exact-head HostLifecycle tests on V 3.0.518: passed; https://github.com/artinrahimii/project/actions/runs/40851894117/job/123373165089.
+- Android ktlint on V 3.0.518: failed on three formatting rules; APK build and Android unit tests were skipped. https://github.com/artinrahimii/project/actions/runs/40851894117/job/123373165453.
+- Attempt A003 modifies only the residual lint issues and synchronizes the graph/history. Its exact-head CI result remains pending.
+- **T0144 is not complete** until Android lint, APK build, and Android JVM tests pass on the same commit.

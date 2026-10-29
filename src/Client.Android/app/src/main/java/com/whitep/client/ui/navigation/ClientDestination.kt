@@ -17,7 +17,7 @@ internal enum class ClientDestination(
     CONVERSATION_DETAIL("conversation/{conversationId}", "Conversation", "↩"),
     REQUEST("request", "New request", "＋"),
     CONNECTIONS("connections", "Connections", "↔"),
-    PRIVACY("privacy", "Privacy", "i"),;
+    PRIVACY("privacy", "Privacy", "i"), ;
 
     companion object {
         const val CONVERSATION_ID_ARGUMENT = "conversationId"

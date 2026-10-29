@@ -30301,9 +30301,9 @@
       ],
       "notes": "T0144 implementation is committed for exact-head validation; do not mark done until Android ktlint, assembleDebug, testDebugUnitTest, Python source-contract tests, and graph guard pass on the actual commit.",
       "execution_summary": {
-        "attempt_count": 2,
-        "failed_attempt_count": 1,
-        "last_attempt_id": "T0144-A002",
+        "attempt_count": 3,
+        "failed_attempt_count": 2,
+        "last_attempt_id": "T0144-A003",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationListViewModel.kt",
@@ -30320,14 +30320,16 @@
           "step three/project-graph.md"
         ],
         "related_commits": [
-          "12b76f6f617c982b1353e8e6ec7cb7f5370bb6b3"
+          "06b8dd63afa37902ea9b834e97abe80458f6375b",
+          "06b8dd63afa37902ea9b834e97abe80458f6375b"
         ],
         "tests_passed": [
-          "Host lifecycle unit and integration — exact V 3.0.517: passed (job 123365908429); does not establish Android acceptance."
+          "Step Three quality gate — exact V 3.0.518: 218 Python tests passed and graph guard passed; https://github.com/artinrahimii/project/actions/runs/40851894119",
+          "Host lifecycle unit/integration — exact V 3.0.518: passed; https://github.com/artinrahimii/project/actions/runs/40851894117/job/123373165089"
         ],
         "tests_failed": [
-          "Step Three quality gate — exact V 3.0.517: 217 passed, 1 failed; stale source-contract expectation (run 40849730503/job 123365907777).",
-          "Android ktlintCheck — exact V 3.0.517: failed on Kotlin formatting/import ordering (run 40849730591/job 123365908350)."
+          "T0144-A001 / V 3.0.517: quality test 217/218 passed; one stale source-contract assertion failed.",
+          "T0144-A002 / V 3.0.518: Android ktlint failed on 3 remaining formatting errors; Android APK build and Android unit tests did not run."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -30386,8 +30388,8 @@
         {
           "attempt_id": "T0144-A002",
           "started_at": "2026-10-29T09:42:46.974Z",
-          "ended_at": "2026-10-29T09:42:46.974Z",
-          "result": "partial",
+          "ended_at": "2026-10-29T09:45:26.743Z",
+          "result": "failed",
           "summary": "Corrected the failed source-contract assertion to validate the multiline route wiring and applied all exact-head ktlint formatting/import-order corrections identified by Android CI. Waiting for complete CI rerun on this correction commit.",
           "changed_files": [
             "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
@@ -30402,21 +30404,59 @@
           "commit_sha": null,
           "tests": [
             {
+              "command": "Step Three quality gate — run 40851894119 / job 123373164731",
+              "result": "passed",
+              "summary": "218 Python tests passed; graph guard reported 229 tasks / 417 edges and preserved the T0001 free-text dependency warning. https://github.com/artinrahimii/project/actions/runs/40851894119"
+            },
+            {
+              "command": "Android ktlintCheck — run 40851894117 / job 123373165453",
+              "result": "failed",
+              "summary": "ktlintMainSourceSetCheck failed on three remaining style errors; no APK build or Android unit tests ran. https://github.com/artinrahimii/project/actions/runs/40851894117/job/123373165453"
+            },
+            {
+              "command": "Host lifecycle unit/integration — run 40851894117 / job 123373165089",
+              "result": "passed",
+              "summary": "Host lifecycle test job passed for exact V 3.0.518. https://github.com/artinrahimii/project/actions/runs/40851894117/job/123373165089"
+            }
+          ],
+          "failure_details": "Exact V 3.0.518 Android CI still failed ktlintMainSourceSetCheck: MainActivity.kt reported a multiline-expression layout violation; ConversationListViewModel.kt reported that the delete/get block bodies should be expression bodies; ClientDestination.kt reported missing spacing after the trailing comma before the enum semicolon.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect both workflow conclusions on the correction commit SHA. Fix any residual failures, then update attempt A002 with actual observed results and reevaluate T0144; do not mark done before acceptance tests pass."
+        },
+        {
+          "attempt_id": "T0144-A003",
+          "started_at": "2026-10-29T09:45:26.743Z",
+          "ended_at": "2026-10-29T09:45:26.743Z",
+          "result": "partial",
+          "summary": "Applied the three exact remaining formatting fixes observed in the V 3.0.518 Android lint log. Pending exact-head quality/product CI rerun.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationListViewModel.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/navigation/ClientDestination.kt",
+            "step three/T0144/execution-report.md",
+            "step three/T0144/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
               "command": "Step Three quality gate",
               "result": "not_run",
-              "summary": "Correction commit will trigger the exact-head workflow."
+              "summary": "Will run on the correction commit."
             },
             {
               "command": "Android ktlintCheck, assembleDebug, testDebugUnitTest",
               "result": "not_run",
-              "summary": "Correction commit will trigger product-build workflow."
+              "summary": "Will run on the correction commit."
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect both workflow conclusions on the correction commit SHA. Fix any residual failures, then update attempt A002 with actual observed results and reevaluate T0144; do not mark done before acceptance tests pass."
+          "follow_up": "Check exact-head CI for the next commit. Do not mark T0144 done before Kotlin lint, APK build, and Android unit tests pass."
         }
       ]
     },
@@ -42248,7 +42288,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-29T09:42:46.974Z",
+  "updated_at": "2026-10-29T09:45:26.743Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",
