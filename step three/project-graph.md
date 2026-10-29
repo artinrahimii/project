@@ -32436,23 +32436,29 @@
         "docs/requirements.md",
         "step three/T0150/execution-report.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0151-A001 introduces schemaVersion=1 and the goal/keyFacts/decisions/constraints/unresolvedItems model, strict UTF-8 JSON decoding, and the existing 4,096-byte hard protocol ceiling. Persistence and UI remain T0152/T0153. Exact-head CI pending.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0151-A001 introduces schemaVersion=1 and the goal/keyFacts/decisions/constraints/unresolvedItems model, strict UTF-8 JSON decoding, and the existing 4,096-byte hard protocol ceiling. Persistence and UI remain T0152/T0153. Exact-head CI pending.\nT0151-A002 exact-head CI: quality passed 234 Python tests and graph/evidence gates; product CI failed only Android test-source ktlint at ConversationContextCapsuleTest.kt:147:57 (single-expression helper body should remain on same line as signature), so APK/JVM tests did not run. Windows and HostLifecycle jobs passed. T0151-A003 fixes that expression wrapping; exact-head CI pending.",
       "execution_summary": {
-        "attempt_count": 1,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "T0151-A001",
+        "attempt_count": 3,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "T0151-A003",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/context/ConversationContextCapsule.kt",
           "src/Client.Android/app/src/test/java/com/whitep/client/context/ConversationContextCapsuleTest.kt",
-          "tests/test_android_context_capsule_contract.py",
+          null,
           "step three/T0151/execution-report.md",
           "step three/T0151/evidence/verification.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
-        "tests_failed": [],
+        "related_commits": [
+          "01e72c108e59d61da634b08dde8bef8df2622939"
+        ],
+        "tests_passed": [
+          "V 3.0.548 Step Three quality run 40881923866 passed 234 Python tests, syntax checks, graph/evidence validation, and graph guard (229 tasks/417 edges, zero errors, one preserved T0001 warning)."
+        ],
+        "tests_failed": [
+          "V 3.0.548 product run 40881924197: Android ktlintTestSourceSetCheck failed at ConversationContextCapsuleTest.kt:147:57 because the body expression fits on the signature line. APK build and JVM tests were skipped. Windows WPF build/smoke/security checks and HostLifecycle tests passed."
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -32522,6 +32528,87 @@
             "Introduces local versioned capsule domain/JSON codec; Room persistence and UI are reserved for T0152/T0153."
           ],
           "follow_up": "Inspect exact-head quality/product CI, fix any lint/compiler/test failures, and keep T0151 in_progress until all required checks pass."
+        },
+        {
+          "attempt_id": "T0151-A002",
+          "started_at": "2026-10-29T13:27:04Z",
+          "ended_at": "2026-10-29T13:27:12Z",
+          "result": "failed",
+          "summary": "V 3.0.548 quality gate passed 234 Python tests, syntax, graph structure and evidence checks (229 tasks/417 edges, zero errors, one T0001 warning preserved). Product CI failed Android ktlintTestSourceSetCheck at ConversationContextCapsuleTest.kt:147:57 because the single-expression JSONArray.toStringList helper body fit on the signature line. APK build and JVM tests were skipped; Windows WPF and HostLifecycle jobs passed.",
+          "changed_files": [
+            "src/Client.Android/app/src/test/java/com/whitep/client/context/ConversationContextCapsuleTest.kt",
+            "step three/T0151/execution-report.md",
+            "step three/T0151/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": "01e72c108e59d61da634b08dde8bef8df2622939",
+          "tests": [
+            {
+              "name": "Step Three quality — run 40881923866",
+              "result": "passed",
+              "summary": "234 Python tests and syntax passed; graph and recorded output/evidence gates passed with 229 tasks/417 edges, zero errors and one preserved warning.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40881923866"
+            },
+            {
+              "name": "Android ktlint — product run 40881924197",
+              "result": "failed",
+              "summary": "One formatting finding at ConversationContextCapsuleTest.kt:147:57; Android APK build and JVM tests did not run.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40881924197"
+            },
+            {
+              "name": "Windows WPF job — product run 40881924197",
+              "result": "passed",
+              "summary": "Build, WPF startup and safety/security checks passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40881924197"
+            },
+            {
+              "name": "HostLifecycle job — product run 40881924197",
+              "result": "passed",
+              "summary": "Host lifecycle unit/integration job passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40881924197"
+            }
+          ],
+          "failure_details": "KtLint: ConversationContextCapsuleTest.kt:147:57 First line of body expression fits on same line as function signature.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Keep the single-expression JSON-array helper body on the function signature line; rerun exact-head Android lint, APK build and JVM tests before marking T0151 done."
+        },
+        {
+          "attempt_id": "T0151-A003",
+          "started_at": "2026-10-29T13:29:19.954Z",
+          "ended_at": "2026-10-29T13:29:19.954Z",
+          "result": "partial",
+          "summary": "Adjusted the single-expression JSONArray.toStringList helper to keep its expression on the signature line, matching ktlint without changing test behavior. Exact-head CI pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/test/java/com/whitep/client/context/ConversationContextCapsuleTest.kt",
+            "step three/T0151/execution-report.md",
+            "step three/T0151/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Android ktlintCheck",
+              "result": "not_run",
+              "summary": "Style correction prepared; exact-head product CI pending."
+            },
+            {
+              "name": "Android assembleDebug / testDebugUnitTest",
+              "result": "not_run",
+              "summary": "Awaiting ktlint and subsequent build/test steps."
+            },
+            {
+              "name": "Step Three quality gate",
+              "result": "not_run",
+              "summary": "Awaiting exact-head CI."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect V 3.0.549 quality/product results. Only accept T0151 after Android lint, APK build, capsule JVM tests and Python/graph/evidence checks pass."
         }
       ]
     },
@@ -44383,7 +44470,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-29T13:25:30.504Z",
+  "updated_at": "2026-10-29T13:29:19.954Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

@@ -30,3 +30,10 @@ No local test execution is claimed. Exact-head CI is pending for:
 - other repository product checks.
 
 Keep T0151 `in_progress` until the exact-head outcomes are inspected. Record and fix any lint/compiler/test failure before acceptance.
+
+
+## Exact-head correction history
+
+- **V 3.0.548 quality** [40881923866](https://github.com/artinrahimii/project/actions/runs/40881923866) passed 234 Python tests, Python syntax, graph structure and recorded-output/evidence validation. Graph guard reported 229 tasks/417 edges, zero errors and one preserved T0001 warning.
+- **V 3.0.548 product** [40881924197](https://github.com/artinrahimii/project/actions/runs/40881924197): Windows WPF and HostLifecycle jobs passed. Android lint failed at `ConversationContextCapsuleTest.kt:147:57` because `JSONArray.toStringList()` had its single-expression body on a second line; APK assembly and JVM tests did not run.
+- **T0151-A002** records that failure. **T0151-A003** corrects only the helper's line wrapping. No Kotlin behavior or model contract changed; exact-head CI is still pending.

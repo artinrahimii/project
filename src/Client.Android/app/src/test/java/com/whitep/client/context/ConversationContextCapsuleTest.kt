@@ -144,6 +144,5 @@ class ConversationContextCapsuleTest {
             .toString()
             .toByteArray(Charsets.UTF_8)
 
-    private fun JSONArray.toStringList(): List<String> =
-        (0 until length()).map { getString(it) }
+    private fun JSONArray.toStringList(): List<String> = (0 until length()).map { getString(it) }
 }

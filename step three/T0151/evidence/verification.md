@@ -6,3 +6,10 @@
 - **Source-contract tests:** `tests/test_android_context_capsule_contract.py` checks the schema fields, byte cap and presence of runtime test coverage.
 - **Dependency review:** T0150 → T0151 validated as `sequencing_only`; T0151 → T0152 as `contract_or_interface_dependency`. Rationale/evidence appended to graph edge history.
 - **Not yet proven:** Kotlin lint/compile, Robolectric/JVM execution, APK build, Python suite, graph guard and exact-head CI.
+
+
+## Exact-head correction history
+
+- V 3.0.548 quality [40881923866](https://github.com/artinrahimii/project/actions/runs/40881923866) passed 234 Python tests and graph/evidence gates.
+- V 3.0.548 product [40881924197](https://github.com/artinrahimii/project/actions/runs/40881924197) passed Windows WPF and HostLifecycle, but Android ktlint failed one test-helper formatting rule at `ConversationContextCapsuleTest.kt:147:57`; Android APK/JVM tests were skipped.
+- A003 moves the simple helper expression onto the signature line. This fix is not accepted until new exact-head CI passes.
