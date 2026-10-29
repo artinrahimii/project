@@ -125,7 +125,7 @@ internal fun conversationDetailScreen(
                     Text("No messages yet. Write a message below to save it in this conversation.")
                 }
                 messages.forEach { message ->
-                    MessageCard(message = message)
+                    messageCard(message = message)
                 }
 
                 OutlinedTextField(
@@ -163,7 +163,7 @@ internal fun conversationDetailScreen(
 }
 
 @Composable
-private fun MessageCard(message: MessageEntity) {
+private fun messageCard(message: MessageEntity) {
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(
             modifier = Modifier.padding(16.dp),

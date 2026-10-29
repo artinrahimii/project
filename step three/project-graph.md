@@ -30704,11 +30704,11 @@
         "docs/decisions/ADR-0020-android-client-local-conversation-storage.md",
         "step three/T0138/execution-report.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0145-A001 (2026-10-29T10:39:09.416Z): Added a Room-backed message ViewModel and connected the conversation detail screen to the existing ordered message Flow. Messages are saved locally as user-authored rows; the UI explicitly states that host transmission is unavailable. Added Room/Robolectric tests for chronological persistence and blank rejection, plus source-contract tests. Exact-head CI is pending; remain in_progress until both quality and Android product workflows pass.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0145-A001 (2026-10-29T10:39:09.416Z): Added a Room-backed message ViewModel and connected the conversation detail screen to the existing ordered message Flow. Messages are saved locally as user-authored rows; the UI explicitly states that host transmission is unavailable. Added Room/Robolectric tests for chronological persistence and blank rejection, plus source-contract tests. Exact-head CI is pending; remain in_progress until both quality and Android product workflows pass.\n\nT0145-A001 exact-head CI result (V 3.0.524): Step Three quality gate passed. Android product workflow failed at ktlintMainSourceSetCheck because the private composable helper `MessageCard` used uppercase naming. Android APK build and JVM unit tests were skipped; HostLifecycle job passed. A002 renames the helper to `messageCard`; do not close T0145 until Android lint, build, and unit tests pass on the corrected commit.",
       "execution_summary": {
-        "attempt_count": 1,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "T0145-A001",
+        "attempt_count": 2,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "T0145-A002",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationMessagesViewModel.kt",
@@ -30719,9 +30719,13 @@
           "step three/T0145/evidence/verification.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
+        "related_commits": [
+          "65560c8fe116ba024c0ece8fad5a2dd214fc78f1"
+        ],
         "tests_passed": [],
-        "tests_failed": [],
+        "tests_failed": [
+          "V 3.0.524 Android ktlintCheck failed at ConversationDetailScreen.kt:166:13 because private composable MessageCard used uppercase naming; build and JVM tests were skipped. https://github.com/artinrahimii/project/actions/runs/40859323728"
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -30775,6 +30779,87 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Inspect exact-head quality and product workflows. Fix any source-contract, ktlint, compile, Room/Robolectric, or integration failure before marking T0145 done."
+        },
+        {
+          "attempt_id": "T0145-A001-CI",
+          "started_at": "2026-10-29T10:39:48Z",
+          "ended_at": "2026-10-29T10:40:40Z",
+          "result": "failed",
+          "summary": "The exact V 3.0.524 Android product job failed at ktlintMainSourceSetCheck because the helper composable function MessageCard began with an uppercase letter. Since lint failed first, assembleDebug and testDebugUnitTest were not run on that commit.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt"
+          ],
+          "commit_sha": "65560c8fe116ba024c0ece8fad5a2dd214fc78f1",
+          "tests": [
+            {
+              "command": "Android ktlintCheck — product run 40859323728 / job 123398224271",
+              "result": "failed",
+              "summary": "ktlintMainSourceSetCheck rejected ConversationDetailScreen.kt:166:13: function names should start lowercase.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40859323728"
+            },
+            {
+              "command": "gradle --no-daemon assembleDebug",
+              "result": "not_run",
+              "summary": "Skipped because ktlint failed."
+            },
+            {
+              "command": "gradle --no-daemon testDebugUnitTest",
+              "result": "not_run",
+              "summary": "Skipped because ktlint failed."
+            },
+            {
+              "command": "HostLifecycle unit/integration — run 40859323728",
+              "result": "passed",
+              "summary": "The full host lifecycle job succeeded.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40859323728"
+            }
+          ],
+          "failure_details": "Kotlin lint failure was limited to the uppercase function name MessageCard in ConversationDetailScreen.kt. Android compilation and unit tests were not reached on this commit.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Rename the private composable to messageCard and rerun exact-head Android lint, APK build, and JVM tests; keep T0145 in_progress until all required checks pass."
+        },
+        {
+          "attempt_id": "T0145-A002",
+          "started_at": "2026-10-29T10:41:28.718Z",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Corrected the exact ktlint failure by renaming the private composable helper MessageCard to messageCard. Exact-head CI rerun is pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+            "step three/T0145/execution-report.md",
+            "step three/T0145/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "command": "Android ktlintCheck",
+              "result": "not_run",
+              "summary": "Will run on the correction commit."
+            },
+            {
+              "command": "Android assembleDebug",
+              "result": "not_run",
+              "summary": "Will run on the correction commit."
+            },
+            {
+              "command": "Android testDebugUnitTest",
+              "result": "not_run",
+              "summary": "Will run on the correction commit."
+            },
+            {
+              "command": "Step Three quality gate",
+              "result": "not_run",
+              "summary": "Will run on the correction commit."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect exact-head quality and product jobs for V 3.0.525. Resolve any remaining failure before completion."
         }
       ]
     },
@@ -42609,7 +42694,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-29T10:39:09.416Z",
+  "updated_at": "2026-10-29T10:41:28.718Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",
