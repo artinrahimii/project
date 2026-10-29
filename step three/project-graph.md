@@ -29385,11 +29385,11 @@
         "src/Client.Android/app/src/main/java/com/whitep/client/data/RoomClientRequestRepository.kt",
         "step three/T0141/execution-report.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0141-A001 (2026-10-29): Added version-1 Room entities/DAOs for conversations, messages, request states and the current draft; added a Room-backed implementation of the existing request repository contract, database acceptance tests, and a local-storage privacy decision. T0138 -> T0141 was reviewed as sequencing_only after ADR-0020 explicitly resolved the local-persistence boundary; original type=blocks and edge order were preserved. Exact-candidate CI is pending; this task remains in_progress until the runtime tests and product build pass.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0141-A001 (2026-10-29): Added version-1 Room entities/DAOs for conversations, messages, request states and the current draft; added a Room-backed implementation of the existing request repository contract, database acceptance tests, and a local-storage privacy decision. T0138 -> T0141 was reviewed as sequencing_only after ADR-0020 explicitly resolved the local-persistence boundary; original type=blocks and edge order were preserved. Exact-candidate CI is pending; this task remains in_progress until the runtime tests and product build pass.\n\nT0141-A001 exact-head result (2026-10-29): quality gate passed and HostLifecycle tests passed, but Android ktlintTestSourceSetCheck failed in ClientDatabaseTest.kt and skipped APK/JUnit/Protobuf. A002 corrects only the test formatting from CI diagnostics; this is retained as a failed attempt.",
       "execution_summary": {
-        "attempt_count": 1,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "T0141-A001",
+        "attempt_count": 2,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "T0141-A002",
         "last_attempt_result": "in_progress",
         "changed_files": [
           "src/Client.Android/build.gradle.kts",
@@ -29407,9 +29407,16 @@
           "step three/T0141/execution-report.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
-        "tests_failed": [],
+        "related_commits": [
+          "822ee80620c56774cd20068a87deb5c45d082b85"
+        ],
+        "tests_passed": [
+          "Step Three quality gate — V 3.0.501: passed (https://github.com/artinrahimii/project/actions/runs/40839337539)",
+          "HostLifecycle unit/integration — V 3.0.501: passed (https://github.com/artinrahimii/project/actions/runs/40839337468/job/123331640644)"
+        ],
+        "tests_failed": [
+          "Android Kotlin ktlint — V 3.0.501 failed in ClientDatabaseTest.kt; APK/JUnit/Protobuf skipped (https://github.com/artinrahimii/project/actions/runs/40839337468)"
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -29435,9 +29442,9 @@
         {
           "attempt_id": "T0141-A001",
           "started_at": "2026-10-29T08:01:34.215Z",
-          "ended_at": null,
-          "result": "in_progress",
-          "summary": "Implemented the local Room schema/DAOs and repository adapter, wrote database acceptance tests and privacy-boundary regressions, and documented the exact task/edge boundary. Exact-head CI is required before acceptance.",
+          "ended_at": "2026-10-29T08:03:26Z",
+          "result": "failed",
+          "summary": "Exact V 3.0.501 quality gate passed and HostLifecycle tests passed, but Android ktlintTestSourceSetCheck failed in ClientDatabaseTest.kt. Android APK/JUnit/Protobuf steps were skipped. The test was reformatted in A002; no Android pass is claimed for A001.",
           "changed_files": [
             "src/Client.Android/build.gradle.kts",
             "src/Client.Android/app/build.gradle.kts",
@@ -29454,10 +29461,37 @@
             "step three/T0141/execution-report.md",
             "step three/project-graph.md"
           ],
-          "related_commits": [],
-          "commit_sha": null,
-          "tests": [],
-          "failure_details": null,
+          "related_commits": [
+            "822ee80620c56774cd20068a87deb5c45d082b85"
+          ],
+          "commit_sha": "822ee80620c56774cd20068a87deb5c45d082b85",
+          "tests": [
+            {
+              "name": "Step Three quality gate — V 3.0.501",
+              "result": "passed",
+              "summary": "Exact-head Python tests, syntax, graph structure and repository-backed outputs/evidence validation passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40839337539"
+            },
+            {
+              "name": "Android Kotlin ktlint — V 3.0.501",
+              "result": "failed",
+              "summary": "ktlintTestSourceSetCheck failed in ClientDatabaseTest.kt; APK, JUnit and generated Protobuf steps were skipped.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40839337468"
+            },
+            {
+              "name": "HostLifecycle unit/integration — V 3.0.501",
+              "result": "passed",
+              "summary": "HostLifecycle unit/integration job completed successfully.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40839337468/job/123331640644"
+            },
+            {
+              "name": "Windows WPF product build — V 3.0.501",
+              "result": "in_progress_at_inspection",
+              "summary": "The job had not reached a final conclusion at the last inspection; no result is claimed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40839337468"
+            }
+          ],
+          "failure_details": "Android ktlintTestSourceSetCheck failed at multiline expression formatting and long chained assertions in ClientDatabaseTest.kt (including lines 23, 26, 35, 76-77, 82 and 117). Build stopped before APK/JUnit/Protobuf steps.",
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [
@@ -29465,7 +29499,29 @@
             "Added RoomClientRequestRepository behind the existing ClientRequestRepository interface.",
             "Resolved the unreviewed T0138 -> T0141 relationship as sequencing_only after documenting local persistence scope, no central sync, and no at-rest encryption claim."
           ],
-          "follow_up": "Inspect exact-head quality and Android product CI; correct any failures and do not mark T0141 done until the relevant checks succeed."
+          "follow_up": "A002 reformats the database test file exactly against these diagnostics; re-run exact-head CI."
+        },
+        {
+          "attempt_id": "T0141-A002",
+          "started_at": "2026-10-29T08:04:30.912Z",
+          "ended_at": null,
+          "result": "in_progress",
+          "summary": "Corrected only ktlint formatting violations in ClientDatabaseTest.kt identified by exact V 3.0.501 CI. Re-running all exact-head checks before acceptance.",
+          "changed_files": [
+            "src/Client.Android/app/src/test/java/com/whitep/client/data/ClientDatabaseTest.kt",
+            "step three/T0141/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "related_commits": [
+            "822ee80620c56774cd20068a87deb5c45d082b85"
+          ],
+          "commit_sha": null,
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect exact-head CI for this correction. T0141 remains in_progress until the Android APK, JUnit, Protobuf and quality checks pass."
         }
       ]
     },
@@ -41302,7 +41358,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-29T08:01:34.215Z",
+  "updated_at": "2026-10-29T08:04:30.912Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",
