@@ -20,3 +20,11 @@
 - V 3.0.549 quality run [40882506760](https://github.com/artinrahimii/project/actions/runs/40882506760) passed the Python/graph/evidence gates.
 - V 3.0.549 product run [40882506722](https://github.com/artinrahimii/project/actions/runs/40882506722) failed only the Android main-source ktlint stage at `ConversationContextCapsule.kt:166`; APK/JVM stages were not reached. Windows WPF and HostLifecycle passed.
 - A005 reformats this assignment and call only. Runtime correctness and capsule tests are not yet confirmed.
+
+
+## V 3.0.550 exact-head runtime result and correction
+
+- Quality run [40883740170](https://github.com/artinrahimii/project/actions/runs/40883740170) passed 234 Python tests and graph/evidence gates.
+- Product run [40883740159](https://github.com/artinrahimii/project/actions/runs/40883740159): Android lint and debug APK assembly passed; Android JVM tests failed 6 of 36 methods in `ConversationContextCapsuleTest` with `java.lang.RuntimeException` at JSON-backed setup/codec lines. Windows WPF and HostLifecycle jobs passed.
+- Full root-exception text was not included in the workflow's failure summary. The test source uses Android `org.json`; the class had no Robolectric runner despite Robolectric already being a project test dependency and being used by `ClientDatabaseTest`.
+- A006 adds the existing Robolectric runner configured for SDK 35 plus a source-contract assertion. This fix remains unverified until the next exact-head CI result; T0151 must remain in progress meanwhile.

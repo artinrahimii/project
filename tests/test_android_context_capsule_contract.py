@@ -23,6 +23,13 @@ class AndroidContextCapsuleContractTests(unittest.TestCase):
         self.assertIn("UNKNOWN_FIELD", source)
         self.assertIn("MISSING_FIELD", source)
 
+    def test_android_json_tests_use_robolectric_runtime(self):
+        source = UNIT_TEST.read_text(encoding="utf-8")
+        self.assertIn("import org.junit.runner.RunWith", source)
+        self.assertIn("import org.robolectric.RobolectricTestRunner", source)
+        self.assertIn("@RunWith(RobolectricTestRunner::class)", source)
+        self.assertIn("@Config(sdk = [35])", source)
+
     def test_android_unit_tests_cover_versioning_round_trip_and_bounds(self):
         source = UNIT_TEST.read_text(encoding="utf-8")
         for test in (

@@ -44,3 +44,12 @@ Keep T0151 `in_progress` until the exact-head outcomes are inspected. Record and
 - **Quality** [run 40882506760](https://github.com/artinrahimii/project/actions/runs/40882506760) passed 234 Python tests, syntax checks, graph structure and output/evidence validation (229 tasks/417 edges, zero errors; one preserved T0001 metadata warning).
 - **Product** [run 40882506722](https://github.com/artinrahimii/project/actions/runs/40882506722): Windows WPF and HostLifecycle jobs passed. Android lint failed in the model source at `ConversationContextCapsule.kt:166`: the long `unresolvedItems` assignment needed multiline formatting. APK build and Android JVM tests were skipped.
 - **T0151-A004** records that observed failure. **T0151-A005** wraps the property assignment, JSON-array argument, closing parenthesis and Elvis fallback across lines, without changing the model schema or decoding rules. Exact-head CI is pending.
+
+
+## Exact-head runtime failure — V 3.0.550
+
+- Step Three quality [run 40883740170](https://github.com/artinrahimii/project/actions/runs/40883740170) passed: 234 Python tests, syntax, graph structure and recorded-output/evidence checks; the graph guard reported 229 tasks/417 edges, zero errors and one preserved T0001 warning.
+- Product CI [run 40883740159](https://github.com/artinrahimii/project/actions/runs/40883740159) passed Android `ktlintCheck` and `assembleDebug`, and also passed the Windows WPF and HostLifecycle jobs. The Android JVM test stage then failed: 36 tests completed and 6 failed in `ConversationContextCapsuleTest`, each reported as `java.lang.RuntimeException` at JSON-related setup/encode/decode lines (23, 73, 84, 106, 118 and 138). The APK build succeeded, but this does not satisfy the task's test acceptance criterion.
+- The workflow summary did not expose the full root-exception message. The common runtime failure, direct use of Android `org.json`, and the repository's existing Robolectric-based `ClientDatabaseTest` indicate that this class needs to execute under Robolectric rather than the default JVM runner. The Robolectric dependency was already present; no new dependency is needed.
+- **T0151-A006** adds `@RunWith(RobolectricTestRunner::class)` and `@Config(sdk = [35])` to the capsule test class and adds a Python contract test to prevent regression. This is a targeted test-environment fix; no model API or JSON schema changed.
+- T0151 remains `in_progress` pending exact-head Android lint, APK build, JVM tests, and quality/graph/evidence checks. No local test execution is claimed.
