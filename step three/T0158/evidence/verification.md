@@ -41,3 +41,11 @@
 - Android: FAIL at KtLint for `Unexpected newline before '.'` in two test builder chains; APK/JVM/migration tests not reached, [workflow 40946486860](https://github.com/artinrahimii/project/actions/runs/40946486860).
 - Windows WPF host checks and HostLifecycle unit/integration: PASS, [workflow 40946486860](https://github.com/artinrahimii/project/actions/runs/40946486860).
 - A005 corrects chain formatting; exact-head V 3.0.584 results remain pending.
+
+
+## Exact-head V 3.0.584 test outcomes
+
+- Step Three quality: PASS, 257 tests, [workflow 40947302353](https://github.com/artinrahimii/project/actions/runs/40947302353).
+- Android: FAIL at KtLint, `Expected newline before '.'` for `.build()` at `ConversationContextCapsuleViewModelTest.kt:56`; APK/JVM/migration tests not reached, [workflow 40947302434](https://github.com/artinrahimii/project/actions/runs/40947302434).
+- HostLifecycle unit/integration: PASS. Windows WPF was completing additional policy checks when inspected.
+- A006 corrects chain wrapping; V 3.0.585 exact-head checks are pending.

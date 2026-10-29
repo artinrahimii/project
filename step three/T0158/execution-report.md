@@ -12,7 +12,7 @@
 - **Migration:** Room database schema moves from v3 to v4 using non-destructive `MIGRATION_3_4`; old capsule/request/message records are not intentionally rewritten.
 - **Tests added/updated:** Room persistence tests cover source/time/field-name metadata, not duplicating content values, delete cascade and migration. A ViewModel test covers source attribution after an explicitly reviewed Save. Python source contracts guard migration and network-boundary constraints.
 - **Local execution:** The connected GitHub tools do not provide a local Gradle/Android/Python runtime. No local test run is claimed.
-- **Current status:** `in_progress`; the Python NameError and subsequent KtLint issues were recorded and corrected stepwise. V 3.0.583 quality and Windows/HostLifecycle checks passed, but KtLint reported `Unexpected newline before '.'` at two test builder chains. A005 attaches the following call to the closing parenthesis; V 3.0.584 product checks are pending. No acceptance claim is made.
+- **Current status:** `in_progress`; V 3.0.584 passed quality, but Android KtLint reported `Expected newline before '.'` at `.build()` in the ViewModel test builder. A006 separates `.build()` according to the exact diagnostic; V 3.0.585 Android tests are pending. No acceptance claim is made.
 - **Next action:** Inspect exact-head quality/product CI. Fix any compile, schema migration, lint or test failures before marking T0158 complete.
 
 
@@ -50,3 +50,12 @@
 - Android product workflow [40946486860](https://github.com/artinrahimii/project/actions/runs/40946486860) failed at KtLint with `Unexpected newline before '.'` at `ClientDatabaseMigrationTest.kt:96` and `ConversationContextCapsuleViewModelTest.kt:57`. APK/JVM test steps were not reached.
 - Windows WPF build/startup/policy checks and HostLifecycle unit/integration both passed on the same head.
 - A005 attaches the next chained call to the closing parenthesis for both builders; exact-head V 3.0.584 CI is pending.
+
+
+## T0158-A005 CI result and T0158-A006 correction
+
+- Exact candidate commit `V 3.0.584`: `909025a386497fa69d6b6fdfc8d8aacf5879dc59`.
+- Step Three quality workflow [40947302353](https://github.com/artinrahimii/project/actions/runs/40947302353) passed its 257 Python tests and graph/evidence checks.
+- Android product workflow [40947302434](https://github.com/artinrahimii/project/actions/runs/40947302434) failed at KtLint with `Expected newline before '.'` at `ConversationContextCapsuleViewModelTest.kt:56` before `.build()`. The migration-test call formatting was accepted; APK/JVM test steps were not reached.
+- HostLifecycle tests passed; the Windows WPF job was still completing its last extra host policy checks at the last inspection.
+- A006 places `.build()` on its own continuation line while leaving `.allowMainThreadQueries()` attached to the migration-call close. Exact-head V 3.0.585 CI is pending.
