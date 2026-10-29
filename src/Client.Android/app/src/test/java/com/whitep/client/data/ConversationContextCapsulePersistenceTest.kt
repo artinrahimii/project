@@ -144,7 +144,8 @@ class ConversationContextCapsulePersistenceTest {
             database.conversationDao().upsert(conversation("valid-conversation"))
             val repository =
                 RoomConversationContextCapsuleRepository(database.conversationContextCapsuleDao())
-            val rejected = repository.save(
+            val rejected =
+                repository.save(
                 "valid-conversation",
                 ConversationContextCapsule(goal = "  "),
                 10L,

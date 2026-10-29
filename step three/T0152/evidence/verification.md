@@ -1,3 +1,10 @@
+
+
+## V 3.0.553 CI failure and A002 correction
+
+- [Quality run 40887316120](https://github.com/artinrahimii/project/actions/runs/40887316120) ran 239 tests and failed three older assertions coupled to Room schema version 2 and the earlier single migration. The new T0152 contract checks themselves passed.
+- [Product run 40887316116](https://github.com/artinrahimii/project/actions/runs/40887316116) failed Android ktlint on two Kotlin test formatting findings; APK and JVM tasks were skipped. HostLifecycle passed; Windows WPF was not yet complete when recorded.
+- The fix corrects old tests to assert schema v3, both registered migrations and the v1→v3 path, and reformats the flagged Kotlin expressions. This attempt is not considered successful until exact-head CI passes.
 # T0152 evidence ledger
 
 - **Entity:** `src/Client.Android/app/src/main/java/com/whitep/client/data/ConversationContextCapsuleEntity.kt` stores one BLOB per `conversationId` and declares a Room foreign key with cascade deletion.

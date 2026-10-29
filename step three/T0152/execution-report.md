@@ -1,3 +1,10 @@
+
+
+## First exact-head CI result — V 3.0.553
+
+- Quality [run 40887316120](https://github.com/artinrahimii/project/actions/runs/40887316120) ran **239 Python tests** and failed three existing contract assertions that hard-coded database schema v2 and a single 1→2 migration. The four newly added T0152 source-contract tests passed. The graph guard and subsequent quality checks were skipped after the suite failed.
+- Product [run 40887316116](https://github.com/artinrahimii/project/actions/runs/40887316116) passed HostLifecycle but Android `ktlintTestSourceSetCheck` failed two format findings: `ClientDatabaseMigrationTest.kt:108` and `ConversationContextCapsulePersistenceTest.kt:147`. APK/JVM test stages were skipped; Windows WPF was still running at report time.
+- **T0152-A001 is recorded as failed** rather than accepted. **T0152-A002** updates the two legacy Python guard files to expect schema v3 and both migrations, reformats both Kotlin expressions, and awaits a new exact-head CI run.
 # T0152 execution report
 
 - **Task:** Persist each versioned conversation context capsule in Room as a conversation-scoped record.

@@ -14,9 +14,10 @@ INDEX_NAME = "index_request_states_conversationId_createdAtEpochMillis_requestId
 class AndroidDatabaseMigrationContractTests(unittest.TestCase):
     def test_room_version_and_migration_are_registered(self):
         database = DATABASE_SOURCE.read_text(encoding="utf-8")
-        self.assertIn("version = 2", database)
+        self.assertIn("version = 3", database)
         self.assertIn("Migration(1, 2)", database)
-        self.assertIn("addMigrations(MIGRATION_1_2)", database)
+        self.assertIn("Migration(2, 3)", database)
+        self.assertIn("addMigrations(MIGRATION_1_2, MIGRATION_2_3)", database)
         self.assertIn(INDEX_NAME, database)
 
     def test_migration_index_matches_the_entity_and_version_one_fixture(self):
@@ -31,7 +32,9 @@ class AndroidDatabaseMigrationContractTests(unittest.TestCase):
     def test_runtime_upgrade_test_checks_version_data_and_index(self):
         test_source = MIGRATION_TEST.read_text(encoding="utf-8")
         self.assertIn("legacyDatabase.version = 1", test_source)
-        self.assertIn("addMigrations(ClientDatabase.MIGRATION_1_2)", test_source)
+        self.assertIn("addMigrations(ClientDatabase.MIGRATION_1_2, ClientDatabase.MIGRATION_2_3)", test_source)
+        self.assertIn("assertEquals(3, migratedDatabase.openHelper.readableDatabase.version)", test_source)
+        self.assertIn("conversationContextCapsuleDao", test_source)
         self.assertIn("migratedDatabase.openHelper.readableDatabase.version", test_source)
         self.assertIn("Legacy conversation", test_source)
         self.assertIn(INDEX_NAME, test_source)

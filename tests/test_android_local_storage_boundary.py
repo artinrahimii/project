@@ -10,9 +10,10 @@ class AndroidLocalStorageBoundaryTests(unittest.TestCase):
     def test_room_database_is_versioned_and_uses_app_private_context(self):
         source = (ANDROID / "ClientDatabase.kt").read_text(encoding="utf-8")
         self.assertIn("@Database(", source)
-        self.assertIn("version = 2", source)
+        self.assertIn("version = 3", source)
         self.assertIn("Migration(1, 2)", source)
-        self.assertIn("addMigrations(MIGRATION_1_2)", source)
+        self.assertIn("Migration(2, 3)", source)
+        self.assertIn("addMigrations(MIGRATION_1_2, MIGRATION_2_3)", source)
         self.assertIn("exportSchema = true", source)
         self.assertIn("context.applicationContext", source)
         self.assertIn('"whitep-client.db"', source)

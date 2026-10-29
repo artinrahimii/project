@@ -105,7 +105,12 @@ class ClientDatabaseMigrationTest {
                     .first()
                     .map { it.messageId },
             )
-            assertEquals(null, migratedDatabase.conversationContextCapsuleDao().findByConversationId("conversation-legacy"))
+            assertEquals(
+                null,
+                migratedDatabase
+                    .conversationContextCapsuleDao()
+                    .findByConversationId("conversation-legacy"),
+            )
             val request = migratedDatabase.requestStateDao().findById("request-legacy")
             assertEquals(PersistedRequestStatus.WAITING, request?.status)
             assertEquals("NETWORK_UNAVAILABLE", request?.errorCode)

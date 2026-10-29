@@ -32836,26 +32836,31 @@
         "step three/T0152/execution-report.md",
         "step three/T0152/evidence/verification.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0152-A001 adds conversation-scoped Room BLOB persistence using the accepted T0151 v1 codec, Room schema v3 migration, and Robolectric/Python tests. T0150 → T0152 was reviewed as sequencing_only and validated; its blocks edge remains. Exact-head CI is required before acceptance.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0152-A001 adds conversation-scoped Room BLOB persistence using the accepted T0151 v1 codec, Room schema v3 migration, and Robolectric/Python tests. T0150 → T0152 was reviewed as sequencing_only and validated; its blocks edge remains. Exact-head CI is required before acceptance.\nT0152-A001 exact-head V 3.0.553 failed due to three stale Python schema-v2 assertions and two ktlint formatting findings. A002 updates the assertions to schema v3/migrations 1→2→3 and corrects the two test-source format findings; CI pending.",
       "execution_summary": {
-        "attempt_count": 1,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "T0152-A001",
+        "attempt_count": 2,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "T0152-A002",
         "last_attempt_result": "partial",
         "changed_files": [
-          "src/Client.Android/app/src/main/java/com/whitep/client/data/ConversationContextCapsuleEntity.kt",
-          "src/Client.Android/app/src/main/java/com/whitep/client/data/RoomConversationContextCapsuleRepository.kt",
-          "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientDatabase.kt",
-          "src/Client.Android/app/src/test/java/com/whitep/client/data/ConversationContextCapsulePersistenceTest.kt",
           "src/Client.Android/app/src/test/java/com/whitep/client/data/ClientDatabaseMigrationTest.kt",
-          "tests/test_android_context_capsule_persistence_contract.py",
+          "src/Client.Android/app/src/test/java/com/whitep/client/data/ConversationContextCapsulePersistenceTest.kt",
+          "tests/test_android_database_migration_contract.py",
+          "tests/test_android_local_storage_boundary.py",
           "step three/T0152/execution-report.md",
           "step three/T0152/evidence/verification.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
-        "tests_failed": [],
+        "related_commits": [
+          "a642943d0604d8e33a80ceeb47099b031617fe1a"
+        ],
+        "tests_passed": [
+          "V 3.0.553 HostLifecycle product job passed; this partial result does not override the failing quality/lint gates."
+        ],
+        "tests_failed": [
+          "V 3.0.553 quality run 40887316120 failed 3 existing Python contract assertions that still expected Room v2 / only migration 1→2. https://github.com/artinrahimii/project/actions/runs/40887316120",
+          "V 3.0.553 Android lint in product run 40887316116 failed two format findings in ClientDatabaseMigrationTest.kt:108 and ConversationContextCapsulePersistenceTest.kt:147; build/JVM stages were skipped. https://github.com/artinrahimii/project/actions/runs/40887316116"
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -32879,7 +32884,9 @@
             "src/Client.Android/app/src/main/java/com/whitep/client/data/ConversationEntity.kt",
             "step three/T0150/execution-report.md",
             "step three/T0151/execution-report.md",
-            "src/Client.Android/app/src/test/java/com/whitep/client/data/ConversationContextCapsulePersistenceTest.kt"
+            "src/Client.Android/app/src/test/java/com/whitep/client/data/ConversationContextCapsulePersistenceTest.kt",
+            "https://github.com/artinrahimii/project/actions/runs/40887316120",
+            "https://github.com/artinrahimii/project/actions/runs/40887316116"
           ]
         }
       },
@@ -32887,9 +32894,9 @@
         {
           "attempt_id": "T0152-A001",
           "started_at": "2026-10-29T13:55:20Z",
-          "ended_at": "2026-10-29T13:55:20Z",
-          "result": "partial",
-          "summary": "Reviewed T0150→T0152 as sequencing_only, then added a conversation-scoped Room entity/DAO/repository, schema migration 2→3, migration and persistence acceptance tests, and Python contract guards. Exact-head CI has not yet run for these changes.",
+          "ended_at": "2026-10-29T14:01:58Z",
+          "result": "failed",
+          "summary": "Exact-head V 3.0.553 failed quality and Android lint. The Python suite ran 239 tests and 3 old contract assertions still expected Room schema v2 and only MIGRATION_1_2; the new persistence contract tests passed. Android ktlint failed in ClientDatabaseMigrationTest.kt:108 formatting and ConversationContextCapsulePersistenceTest.kt:147 expression wrapping, so APK build and JVM tests were skipped. HostLifecycle passed; Windows WPF was still running when this record was written.",
           "changed_files": [
             "src/Client.Android/app/src/main/java/com/whitep/client/data/ConversationContextCapsuleEntity.kt",
             "src/Client.Android/app/src/main/java/com/whitep/client/data/RoomConversationContextCapsuleRepository.kt",
@@ -32901,38 +32908,90 @@
             "step three/T0152/evidence/verification.md",
             "step three/project-graph.md"
           ],
-          "related_commits": [],
-          "commit_sha": null,
+          "related_commits": [
+            "a642943d0604d8e33a80ceeb47099b031617fe1a"
+          ],
+          "commit_sha": "a642943d0604d8e33a80ceeb47099b031617fe1a",
           "tests": [
             {
-              "name": "ConversationContextCapsulePersistenceTest",
-              "result": "not_run",
-              "summary": "Added file-backed Robolectric persistence tests; exact-head Android JVM task pending."
+              "name": "Step Three quality gate — run 40887316120",
+              "result": "failed",
+              "summary": "239 tests ran; 3 legacy source-contract assertions remained coupled to database v2 / only migration 1→2. New T0152 source-contract tests passed; remaining guards were skipped after test failure.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40887316120"
             },
             {
-              "name": "ClientDatabaseMigrationTest",
-              "result": "not_run",
-              "summary": "Extended to migrate schema v1 through v2 to v3; exact-head Android JVM task pending."
+              "name": "Android ktlintCheck — product run 40887316116",
+              "result": "failed",
+              "summary": "Two format findings: ClientDatabaseMigrationTest.kt:108 needs multiline call formatting; ConversationContextCapsulePersistenceTest.kt:147 needs the multiline expression to start on a new line.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40887316116"
             },
             {
-              "name": "tests/test_android_context_capsule_persistence_contract.py",
+              "name": "Android assembleDebug / testDebugUnitTest",
               "result": "not_run",
-              "summary": "Added source-contract checks; exact-head Python/quality task pending."
+              "summary": "Skipped because ktlint failed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40887316116"
             },
             {
-              "name": "Android ktlintCheck / assembleDebug / testDebugUnitTest",
+              "name": "HostLifecycle job — product run 40887316116",
+              "result": "passed",
+              "summary": "Host lifecycle job passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40887316116"
+            },
+            {
+              "name": "Windows WPF job — product run 40887316116",
               "result": "not_run",
-              "summary": "Awaiting CI on V 3.0.553."
+              "summary": "Still in progress when the task history was updated.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40887316116"
             }
           ],
-          "failure_details": null,
+          "failure_details": "Quality run 40887316120: test_room_version_and_migration_are_registered, test_runtime_upgrade_test_checks_version_data_and_index, and test_room_database_is_versioned_and_uses_app_private_context fail because they assert schema version 2 or only the 1→2 migration. Product run 40887316116: ktlintTestSourceSetCheck failed two formatting rules in ClientDatabaseMigrationTest.kt:108 and ConversationContextCapsulePersistenceTest.kt:147. No Android build/JVM test result exists for this head.",
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [
             "Added conversation-scoped capsule table/repository",
             "Raised Room DB schema to v3 with migration 2→3"
           ],
-          "follow_up": "Inspect exact-head V 3.0.553 CI. Fix lint/build/test/migration issues before accepting T0152."
+          "follow_up": "Update the older database migration and local-storage source-contract tests for schema v3 and chained migrations; fix both ktlint findings; run the full exact-head CI before accepting T0152."
+        },
+        {
+          "attempt_id": "T0152-A002",
+          "started_at": "2026-10-29T14:02:10Z",
+          "ended_at": "2026-10-29T14:02:10Z",
+          "result": "partial",
+          "summary": "Corrected legacy Python source-contract checks to expect Room schema v3 and both sequential migrations, and reformatted the two reported Kotlin test expressions. Exact-head CI is pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/test/java/com/whitep/client/data/ClientDatabaseMigrationTest.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/data/ConversationContextCapsulePersistenceTest.kt",
+            "tests/test_android_database_migration_contract.py",
+            "tests/test_android_local_storage_boundary.py",
+            "step three/T0152/execution-report.md",
+            "step three/T0152/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "related_commits": [],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "tests/test_android_database_migration_contract.py",
+              "result": "not_run",
+              "summary": "Source assertions updated for schema v3 and migrations 1→2→3; awaiting exact-head quality gate."
+            },
+            {
+              "name": "tests/test_android_local_storage_boundary.py",
+              "result": "not_run",
+              "summary": "Storage boundary assertions updated for schema v3 and registered migrations; awaiting exact-head quality gate."
+            },
+            {
+              "name": "Android ktlintCheck / assembleDebug / testDebugUnitTest",
+              "result": "not_run",
+              "summary": "Two formatting corrections prepared; Android build/test awaits exact-head CI."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect exact-head V 3.0.554 quality and product workflows. Address further failures without removing tests; accept T0152 only after the full chain passes."
         }
       ]
     },
@@ -44773,7 +44832,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-29T13:55:20Z",
+  "updated_at": "2026-10-29T14:02:10Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",
