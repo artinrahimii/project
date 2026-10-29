@@ -35644,33 +35644,109 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0159 و T0150 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/protocol/InferenceRequestPayloadBuilder.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/protocol/InferenceRequestPayloadBuilderTest.kt",
+        "step three/T0160/execution-report.md",
+        "step three/T0160/evidence/verification.md",
+        "step three/project-graph.md"
+      ],
       "expected_output_paths": [
         "src/Client.Android/Context/ + tests/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/protocol/InferenceRequestPayloadBuilder.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/protocol/InferenceRequestPayloadBuilderTest.kt",
+        "protocol/whitep/v1/messages.proto",
+        "src/Client.Android/app/src/main/java/com/whitep/client/context/ConversationContextCapsule.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/protocol/ProtocolMessages.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/protocol/ProtoRoundTripTest.kt",
+        "docs/decisions/ADR-0002-direct-p2p-data-path.md",
+        "step three/T0159/execution-report.md",
+        "step three/T0150/execution-report.md",
+        "step three/T0160/execution-report.md",
+        "step three/T0160/evidence/verification.md"
+      ],
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0160-A001 (2026-10-29T21:11:45Z): Added the real generated-Protobuf payload builder and four JVM tests for selected-message/capsule composition, no history/permanent conversation ID, UTF-8 prompt byte limit, invalid capsule rejection, and 16 KiB serialized cap. This does not claim a live network send; exact-head V 3.0.594 CI pending.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0160-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Client.Android/app/src/main/java/com/whitep/client/protocol/InferenceRequestPayloadBuilder.kt",
+          "src/Client.Android/app/src/test/java/com/whitep/client/protocol/InferenceRequestPayloadBuilderTest.kt",
+          "step three/T0160/execution-report.md",
+          "step three/T0160/evidence/verification.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
-          "affected_by_contract_changes": [],
-          "review_evidence": []
+          "state": "in_review",
+          "triggering_contracts": [
+            "InferenceRequest protobuf wire fields",
+            "ConversationContextCapsule UTF-8 JSON codec and 4096-byte ceiling",
+            "protocol payload and history/privacy boundary"
+          ],
+          "affected_by_contract_changes": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/protocol/InferenceRequestPayloadBuilder.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/protocol/InferenceRequestPayloadBuilderTest.kt"
+          ],
+          "review_evidence": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/protocol/InferenceRequestPayloadBuilder.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/protocol/InferenceRequestPayloadBuilderTest.kt",
+            "protocol/whitep/v1/messages.proto",
+            "src/Client.Android/app/src/main/java/com/whitep/client/context/ConversationContextCapsule.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/protocol/ProtoRoundTripTest.kt",
+            "docs/decisions/ADR-0002-direct-p2p-data-path.md"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0160-A001",
+          "started_at": "2026-10-29T21:11:45Z",
+          "ended_at": "2026-10-29T21:11:45Z",
+          "result": "partial",
+          "summary": "Added a real generated InferenceRequest payload builder that accepts only a current prompt and local capsule (not full message history or permanent conversation ID), and four JVM tests for payload fields, capsule bytes, Protobuf round-trip, and size/invalid-input rejection. No live peer send is implemented by this task. Exact-head CI pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/protocol/InferenceRequestPayloadBuilder.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/protocol/InferenceRequestPayloadBuilderTest.kt",
+            "step three/T0160/execution-report.md",
+            "step three/T0160/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Step Three quality gate — V 3.0.594",
+              "result": "not_run",
+              "summary": "Runs after commit."
+            },
+            {
+              "name": "Android KtLint/APK/JVM/Protobuf — V 3.0.594",
+              "result": "not_run",
+              "summary": "Runs after commit."
+            },
+            {
+              "name": "Windows WPF and HostLifecycle — V 3.0.594",
+              "result": "not_run",
+              "summary": "Runs after commit."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect exact-head V 3.0.594 CI and fix all failures; do not mark T0160 done until all payload tests and required gates pass."
+        }
+      ]
     },
     {
       "id": "T0161",
@@ -47473,7 +47549,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-29T21:08:10Z",
+  "updated_at": "2026-10-29T21:11:45Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",
