@@ -52,6 +52,27 @@ class AndroidConversationDetailContractTests(unittest.TestCase):
         self.assertIn("PersistedRequestStatus.FAILED", test_source)
         self.assertIn('application.deleteDatabase(databaseName)', test_source)
 
+
+    def test_end_to_end_local_conversation_workflow_has_repository_and_ui_coverage(self):
+        workflow = (UNIT_TESTS / "ui/conversations/ConversationWorkflowAcceptanceTest.kt").read_text(encoding="utf-8")
+        list_screen = (ANDROID / "ui/conversations/ConversationListScreen.kt").read_text(encoding="utf-8")
+        detail_screen = (ANDROID / "ui/conversations/ConversationDetailScreen.kt").read_text(encoding="utf-8")
+
+        self.assertIn("createsConversationSendsMessagesAndRestoresHistoryAcrossDatabaseReopen", workflow)
+        self.assertIn("conversationListViewModel.createConversation(", workflow)
+        self.assertIn("messagesViewModel.sendMessage(", workflow)
+        self.assertIn("firstDatabase.close()", workflow)
+        self.assertIn("reopenedDatabase", workflow)
+        self.assertIn("restoredMessagesViewModel.messages.first()", workflow)
+        self.assertIn(".messageDao()", workflow)
+        self.assertIn(".requestStateDao()", workflow)
+        self.assertIn("conversationListViewModel.createConversation()", list_screen)
+        self.assertIn("onOpenConversation(conversation.conversationId)", list_screen)
+        self.assertIn("conversationMessagesViewModel.messages.collectAsState", detail_screen)
+        self.assertIn("conversationMessagesViewModel.sendMessage(messageText)", detail_screen)
+        self.assertIn("Messages are saved only on this device", detail_screen)
+        self.assertIn("Sending to a processing host is not available yet", detail_screen)
+
     def test_room_tests_cover_ordered_persistence_and_blank_rejection(self):
         test_source = (UNIT_TESTS / "ui/conversations/ConversationMessagesViewModelTest.kt").read_text(encoding="utf-8")
         self.assertIn("persistsMessagesInChronologicalOrder", test_source)

@@ -32227,33 +32227,113 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0149 و T0138 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال انجام",
+      "actual_output_paths": [
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationWorkflowAcceptanceTest.kt",
+        "tests/test_android_conversation_detail_contract.py",
+        "step three/T0150/execution-report.md",
+        "step three/T0150/evidence/verification.md",
+        "step three/project-graph.md"
+      ],
       "expected_output_paths": [
         "src/Client.Android/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationWorkflowAcceptanceTest.kt",
+        "tests/test_android_conversation_detail_contract.py",
+        "step three/T0150/execution-report.md",
+        "step three/T0150/evidence/verification.md",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationListScreen.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationListViewModel.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationMessagesViewModel.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientDatabase.kt",
+        "step three/T0149/execution-report.md",
+        "docs/decisions/ADR-0019-host-visible-inference-content.md"
+      ],
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0150-A001 adds a disk-backed Android repository/ViewModel workflow test for create → send → close/reopen → restore history and request-state rows, plus Python source-contract coverage of Compose UI wiring. Exact-head CI is pending.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0150-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationWorkflowAcceptanceTest.kt",
+          "tests/test_android_conversation_detail_contract.py",
+          "step three/T0150/execution-report.md",
+          "step three/T0150/evidence/verification.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
-          "affected_by_contract_changes": [],
-          "review_evidence": []
+          "state": "required",
+          "triggering_contracts": [
+            "ConversationListViewModel create/lookup API",
+            "ConversationMessagesViewModel sendMessage/ordered-flow contract",
+            "Room persistence and UI wiring"
+          ],
+          "affected_by_contract_changes": [
+            "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationWorkflowAcceptanceTest.kt",
+            "tests/test_android_conversation_detail_contract.py"
+          ],
+          "review_evidence": [
+            "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationWorkflowAcceptanceTest.kt",
+            "tests/test_android_conversation_detail_contract.py",
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationListScreen.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+            "step three/T0149/execution-report.md"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0150-A001",
+          "started_at": "2026-10-29T12:53:41.061Z",
+          "ended_at": "2026-10-29T12:53:50.711Z",
+          "result": "partial",
+          "summary": "Added a Robolectric/JVM workflow acceptance test using a file-backed Room database. It creates a conversation through ConversationListViewModel, sends two messages through ConversationMessagesViewModel, persists a request state, closes the first database, opens the same file, and verifies restored conversation, ordered message history and request-state metadata. Added Python source-contract coverage for Compose list/detail actions and the integration test. Exact-head CI is pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationWorkflowAcceptanceTest.kt",
+            "tests/test_android_conversation_detail_contract.py",
+            "step three/T0150/execution-report.md",
+            "step three/T0150/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "ConversationWorkflowAcceptanceTest.createsConversationSendsMessagesAndRestoresHistoryAcrossDatabaseReopen",
+              "result": "not_run",
+              "summary": "Added to Android Robolectric/JVM suite; not executed locally."
+            },
+            {
+              "name": "tests/test_android_conversation_detail_contract.py end-to-end workflow contract",
+              "result": "not_run",
+              "summary": "Added UI wiring and integration-path assertions; not executed locally."
+            },
+            {
+              "name": "Android ktlintCheck / assembleDebug / testDebugUnitTest",
+              "result": "not_run",
+              "summary": "Pending exact-head GitHub Actions."
+            },
+            {
+              "name": "Step Three quality, graph, output/evidence validation",
+              "result": "not_run",
+              "summary": "Pending exact-head GitHub Actions."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect exact-head quality/product workflows. Close T0150 only after the integration test, Android lint/build/JVM suite, Python suite, graph guard and repository-backed evidence checks pass. Preserve any failed attempt and correct it before acceptance."
+        }
+      ]
     },
     {
       "id": "T0151",
@@ -39381,19 +39461,32 @@
       "from": "T0149",
       "to": "T0150",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0150's integration test directly consumes the local Room conversation/message/request-state DAO contracts and verifies the same close/reopen persistence and chronological message-read behavior exercised and accepted by T0149. This is grounded in those concrete production APIs and acceptance tests, rather than inferred from the blocks edge.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientDatabase.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/MessageEntity.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/RequestStateEntity.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/data/ClientDatabaseTest.kt",
+        "step three/T0149/execution-report.md",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationWorkflowAcceptanceTest.kt"
+      ]
     },
     {
       "from": "T0138",
       "to": "T0150",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0138 defines the receiving-host visibility/privacy boundary, while T0150 exercises only local Compose wiring, ViewModels and Room persistence APIs; no host API or network transport is consumed, and the UI explicitly discloses that host sending is unavailable. Retain blocks as conservative sequence only.",
+      "validation_status": "validated",
+      "evidence": [
+        "docs/decisions/ADR-0019-host-visible-inference-content.md",
+        "docs/decisions/ADR-0020-android-client-local-conversation-storage.md",
+        "tests/test_host_content_visibility.py",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationListScreen.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt"
+      ]
     },
     {
       "from": "T0150",
@@ -44054,9 +44147,46 @@
         "step three/T0138/execution-report.md"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "from": "T0149",
+      "to": "T0150",
+      "changed_at": "2026-10-29T12:53:50.711Z",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "old_validation_status": "unreviewed",
+      "new_validation_status": "validated",
+      "reason": "T0150's integration test directly consumes the local Room conversation/message/request-state DAO contracts and verifies the same close/reopen persistence and chronological message-read behavior exercised and accepted by T0149. This is grounded in those concrete production APIs and acceptance tests, rather than inferred from the blocks edge.",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientDatabase.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/MessageEntity.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/RequestStateEntity.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/data/ClientDatabaseTest.kt",
+        "step three/T0149/execution-report.md",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationWorkflowAcceptanceTest.kt"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "from": "T0138",
+      "to": "T0150",
+      "changed_at": "2026-10-29T12:53:50.711Z",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "old_validation_status": "unreviewed",
+      "new_validation_status": "validated",
+      "reason": "T0138 defines the receiving-host visibility/privacy boundary, while T0150 exercises only local Compose wiring, ViewModels and Room persistence APIs; no host API or network transport is consumed, and the UI explicitly discloses that host sending is unavailable. Retain blocks as conservative sequence only.",
+      "evidence": [
+        "docs/decisions/ADR-0019-host-visible-inference-content.md",
+        "docs/decisions/ADR-0020-android-client-local-conversation-storage.md",
+        "tests/test_host_content_visibility.py",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationListScreen.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-29T12:47:30.750Z",
+  "updated_at": "2026-10-29T12:53:50.711Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",
