@@ -31827,33 +31827,105 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0148 و T0138 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال انجام",
+      "actual_output_paths": [
+        "src/Client.Android/app/src/test/java/com/whitep/client/data/ClientDatabaseTest.kt",
+        "tests/test_android_conversation_detail_contract.py",
+        "step three/T0149/execution-report.md",
+        "step three/T0149/evidence/verification.md",
+        "step three/project-graph.md"
+      ],
       "expected_output_paths": [
         "src/Client.Android/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "src/Client.Android/app/src/test/java/com/whitep/client/data/ClientDatabaseTest.kt",
+        "tests/test_android_conversation_detail_contract.py",
+        "step three/T0149/execution-report.md",
+        "step three/T0149/evidence/verification.md",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientDatabase.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/MessageEntity.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/RequestStateEntity.kt"
+      ],
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0149-A001 adds a file-backed Room close/reopen regression covering message ordering and persisted request states. Exact-head CI is pending; no acceptance claim until it passes.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0149-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Client.Android/app/src/test/java/com/whitep/client/data/ClientDatabaseTest.kt",
+          "tests/test_android_conversation_detail_contract.py",
+          "step three/T0149/execution-report.md",
+          "step three/T0149/evidence/verification.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
-          "affected_by_contract_changes": [],
-          "review_evidence": []
+          "state": "required",
+          "triggering_contracts": [
+            "Room message/request-state persistence across database instance replacement"
+          ],
+          "affected_by_contract_changes": [
+            "src/Client.Android/app/src/test/java/com/whitep/client/data/ClientDatabaseTest.kt",
+            "tests/test_android_conversation_detail_contract.py"
+          ],
+          "review_evidence": [
+            "src/Client.Android/app/src/test/java/com/whitep/client/data/ClientDatabaseTest.kt",
+            "tests/test_android_conversation_detail_contract.py",
+            "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientDatabase.kt"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0149-A001",
+          "started_at": "2026-10-29T12:34:18.190Z",
+          "ended_at": "2026-10-29T12:34:22.646Z",
+          "result": "partial",
+          "summary": "Added a file-backed Room regression that seeds a conversation, ordered messages, and WAITING/FAILED request states, closes the first database instance, opens a second instance against the same file, and verifies recovered content/order/status/error metadata. Added a Python source-contract check. Exact-head CI has not yet run; task completion remains pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/test/java/com/whitep/client/data/ClientDatabaseTest.kt",
+            "tests/test_android_conversation_detail_contract.py",
+            "step three/T0149/execution-report.md",
+            "step three/T0149/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "messagesAndRequestStatusesSurviveClosingAndReopeningFileBackedDatabase",
+              "result": "not_run",
+              "summary": "Added to Robolectric/JVM tests; local Gradle execution unavailable in this tool session."
+            },
+            {
+              "name": "tests/test_android_conversation_detail_contract.py file-backed reopen contract",
+              "result": "not_run",
+              "summary": "Added source-contract assertions; local Python execution not claimed."
+            },
+            {
+              "name": "Android ktlintCheck / assembleDebug / testDebugUnitTest",
+              "result": "not_run",
+              "summary": "Awaiting exact-head GitHub Actions."
+            },
+            {
+              "name": "Step Three graph/evidence guard",
+              "result": "not_run",
+              "summary": "Awaiting exact-head GitHub Actions."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect exact-head quality and product CI. Only mark T0149 done if the file-backed database reopen test, Android lint/build/JVM tests, and graph/evidence checks pass; preserve any failing attempt and correct it."
+        }
+      ]
     },
     {
       "id": "T0150",
@@ -38995,19 +39067,32 @@
       "from": "T0148",
       "to": "T0149",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0148's implementation changes only the unsent composer draft to SavedStateHandle-backed ViewModel state. T0149 verifies recovery of Room-persisted message and request-state rows by closing one file-backed database instance and opening another; it consumes no API or output specific to the draft-restoration task. Retain the blocks edge as conservative sequencing only.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationMessagesViewModel.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientDatabase.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/MessageEntity.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/RequestStateEntity.kt",
+        "step three/T0148/execution-report.md"
+      ]
     },
     {
       "from": "T0138",
       "to": "T0149",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0138 records what a receiving host can see after decrypting an inference request. T0149 is a local Room persistence/reopen contract and consumes no API from the privacy-disclosure task; the test explicitly reads local rows and does not claim network delivery or encrypted-at-rest protection. Retain the blocks edge as conservative sequencing only.",
+      "validation_status": "validated",
+      "evidence": [
+        "docs/decisions/ADR-0019-host-visible-inference-content.md",
+        "docs/decisions/ADR-0020-android-client-local-conversation-storage.md",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientDatabase.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/MessageEntity.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/RequestStateEntity.kt",
+        "step three/T0138/execution-report.md"
+      ]
     },
     {
       "from": "T0149",
@@ -43649,8 +43734,46 @@
       ],
       "reviewed_by": "Step Three execution review"
     }
+  ,
+    {
+      "from": "T0148",
+      "to": "T0149",
+      "changed_at": "2026-10-29T12:34:22.646Z",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "old_validation_status": "unreviewed",
+      "new_validation_status": "validated",
+      "reason": "T0148's implementation changes only the unsent composer draft to SavedStateHandle-backed ViewModel state. T0149 verifies recovery of Room-persisted message and request-state rows by closing one file-backed database instance and opening another; it consumes no API or output specific to the draft-restoration task. Retain the blocks edge as conservative sequencing only.",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationMessagesViewModel.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientDatabase.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/MessageEntity.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/RequestStateEntity.kt",
+        "step three/T0148/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "from": "T0138",
+      "to": "T0149",
+      "changed_at": "2026-10-29T12:34:22.646Z",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "old_validation_status": "unreviewed",
+      "new_validation_status": "validated",
+      "reason": "T0138 records what a receiving host can see after decrypting an inference request. T0149 is a local Room persistence/reopen contract and consumes no API from the privacy-disclosure task; the test explicitly reads local rows and does not claim network delivery or encrypted-at-rest protection. Retain the blocks edge as conservative sequencing only.",
+      "evidence": [
+        "docs/decisions/ADR-0019-host-visible-inference-content.md",
+        "docs/decisions/ADR-0020-android-client-local-conversation-storage.md",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientDatabase.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/MessageEntity.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/RequestStateEntity.kt",
+        "step three/T0138/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    }
   ],
-  "updated_at": "2026-10-29T12:29:49.619Z",
+  "updated_at": "2026-10-29T12:34:22.646Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

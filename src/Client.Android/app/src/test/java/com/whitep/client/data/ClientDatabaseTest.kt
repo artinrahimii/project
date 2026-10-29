@@ -172,6 +172,120 @@ class ClientDatabaseTest {
         }
 
     @Test
+    fun messagesAndRequestStatusesSurviveClosingAndReopeningFileBackedDatabase() =
+        runBlocking {
+            val application = RuntimeEnvironment.getApplication()
+            val databaseName = "t0149-reopen-test.db"
+            val conversationId = "conversation-reopened"
+            application.deleteDatabase(databaseName)
+
+            try {
+                val firstDatabase =
+                    Room
+                        .databaseBuilder(
+                            application,
+                            ClientDatabase::class.java,
+                            databaseName,
+                        ).allowMainThreadQueries()
+                        .build()
+                try {
+                    firstDatabase.conversationDao().upsert(
+                        ConversationEntity(
+                            conversationId = conversationId,
+                            title = "Persisted conversation",
+                            createdAtEpochMillis = 10L,
+                            updatedAtEpochMillis = 30L,
+                        ),
+                    )
+                    firstDatabase.messageDao().upsert(
+                        MessageEntity(
+                            messageId = "message-first",
+                            conversationId = conversationId,
+                            authorRole = "user",
+                            content = "Persisted user message",
+                            createdAtEpochMillis = 20L,
+                        ),
+                    )
+                    firstDatabase.messageDao().upsert(
+                        MessageEntity(
+                            messageId = "message-second",
+                            conversationId = conversationId,
+                            authorRole = "assistant",
+                            content = "Persisted assistant message",
+                            createdAtEpochMillis = 30L,
+                        ),
+                    )
+                    firstDatabase.requestStateDao().upsert(
+                        RequestStateEntity(
+                            requestId = "request-waiting",
+                            conversationId = conversationId,
+                            status = PersistedRequestStatus.WAITING,
+                            createdAtEpochMillis = 25L,
+                            updatedAtEpochMillis = 26L,
+                            attemptNumber = 1,
+                        ),
+                    )
+                    firstDatabase.requestStateDao().upsert(
+                        RequestStateEntity(
+                            requestId = "request-failed",
+                            conversationId = conversationId,
+                            status = PersistedRequestStatus.FAILED,
+                            createdAtEpochMillis = 35L,
+                            updatedAtEpochMillis = 36L,
+                            attemptNumber = 2,
+                            errorCode = "HOST_UNAVAILABLE",
+                        ),
+                    )
+                } finally {
+                    firstDatabase.close()
+                }
+
+                val reopenedDatabase =
+                    Room
+                        .databaseBuilder(
+                            application,
+                            ClientDatabase::class.java,
+                            databaseName,
+                        ).allowMainThreadQueries()
+                        .build()
+                try {
+                    assertEquals(
+                        "Persisted conversation",
+                        reopenedDatabase.conversationDao().findById(conversationId)?.title,
+                    )
+                    val restoredMessages =
+                        reopenedDatabase.messageDao()
+                            .observeForConversation(conversationId)
+                            .first()
+                    assertEquals(
+                        listOf("message-first", "message-second"),
+                        restoredMessages.map { it.messageId },
+                    )
+                    assertEquals(
+                        listOf("Persisted user message", "Persisted assistant message"),
+                        restoredMessages.map { it.content },
+                    )
+
+                    val restoredRequestStates =
+                        reopenedDatabase.requestStateDao()
+                            .observeForConversation(conversationId)
+                            .first()
+                    assertEquals(
+                        listOf(PersistedRequestStatus.WAITING, PersistedRequestStatus.FAILED),
+                        restoredRequestStates.map { it.status },
+                    )
+                    assertEquals(1, restoredRequestStates.first().attemptNumber)
+                    assertEquals(2, restoredRequestStates.last().attemptNumber)
+                    assertEquals("HOST_UNAVAILABLE", restoredRequestStates.last().errorCode)
+                } finally {
+                    reopenedDatabase.close()
+                }
+            } finally {
+                application.deleteDatabase(databaseName)
+            }
+        }
+
+    @Test
     fun roomRepositoryRetainsDraftAndDoesNotClaimTransportSuccess() =
         runBlocking {
             val firstRepository = RoomClientRequestRepository(database.clientRequestDraftDao())

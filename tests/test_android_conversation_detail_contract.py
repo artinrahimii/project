@@ -38,6 +38,18 @@ class AndroidConversationDetailContractTests(unittest.TestCase):
         self.assertNotIn("var draft by remember(conversationId)", screen)
         self.assertIn("draftIsRestoredAfterViewModelRecreation", unit_test)
 
+    def test_file_backed_messages_and_request_states_survive_database_reopen(self):
+        test_source = (UNIT_TESTS / "data/ClientDatabaseTest.kt").read_text(encoding="utf-8")
+        self.assertIn("messagesAndRequestStatusesSurviveClosingAndReopeningFileBackedDatabase", test_source)
+        self.assertIn('Room.databaseBuilder(', test_source)
+        self.assertIn("firstDatabase.close()", test_source)
+        self.assertIn("reopenedDatabase", test_source)
+        self.assertIn("reopenedDatabase.messageDao()", test_source)
+        self.assertIn("reopenedDatabase.requestStateDao()", test_source)
+        self.assertIn("PersistedRequestStatus.WAITING", test_source)
+        self.assertIn("PersistedRequestStatus.FAILED", test_source)
+        self.assertIn('application.deleteDatabase(databaseName)', test_source)
+
     def test_room_tests_cover_ordered_persistence_and_blank_rejection(self):
         test_source = (UNIT_TESTS / "ui/conversations/ConversationMessagesViewModelTest.kt").read_text(encoding="utf-8")
         self.assertIn("persistsMessagesInChronologicalOrder", test_source)
