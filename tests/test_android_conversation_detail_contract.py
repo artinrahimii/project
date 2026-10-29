@@ -41,7 +41,8 @@ class AndroidConversationDetailContractTests(unittest.TestCase):
     def test_file_backed_messages_and_request_states_survive_database_reopen(self):
         test_source = (UNIT_TESTS / "data/ClientDatabaseTest.kt").read_text(encoding="utf-8")
         self.assertIn("messagesAndRequestStatusesSurviveClosingAndReopeningFileBackedDatabase", test_source)
-        self.assertIn('Room.databaseBuilder(', test_source)
+        self.assertIn("Room", test_source)
+        self.assertIn(".databaseBuilder(", test_source)
         self.assertIn("firstDatabase.close()", test_source)
         self.assertIn("reopenedDatabase", test_source)
         self.assertIn("reopenedDatabase.messageDao()", test_source)

@@ -31848,11 +31848,11 @@
         "src/Client.Android/app/src/main/java/com/whitep/client/data/MessageEntity.kt",
         "src/Client.Android/app/src/main/java/com/whitep/client/data/RequestStateEntity.kt"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0149-A001 adds a file-backed Room close/reopen regression covering message ordering and persisted request states. Exact-head CI is pending; no acceptance claim until it passes.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0149-A001 adds a file-backed Room close/reopen regression covering message ordering and persisted request states. Exact-head CI is pending; no acceptance claim until it passes.\nT0149-A002 records the V 3.0.541 quality assertion failure; T0149-A003 corrects the formatting-sensitive source assertion. The Room file-backed JVM test and product CI remain unverified.",
       "execution_summary": {
-        "attempt_count": 1,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "T0149-A001",
+        "attempt_count": 3,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "T0149-A003",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Client.Android/app/src/test/java/com/whitep/client/data/ClientDatabaseTest.kt",
@@ -31861,13 +31861,17 @@
           "step three/T0149/evidence/verification.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
+        "related_commits": [
+          "c619d3b1269357563ab2f2047ad6a7a2bf126d5b"
+        ],
         "tests_passed": [],
-        "tests_failed": [],
+        "tests_failed": [
+          "Step Three quality run 40874466336 on V 3.0.541: 230 tests ran; one false-negative source assertion expected Room.databaseBuilder( to be contiguous, while Kotlin formatting split the invocation. Graph guard was skipped."
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "required",
+          "state": "in_review",
           "triggering_contracts": [
             "Room message/request-state persistence across database instance replacement"
           ],
@@ -31924,6 +31928,70 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Inspect exact-head quality and product CI. Only mark T0149 done if the file-backed database reopen test, Android lint/build/JVM tests, and graph/evidence checks pass; preserve any failing attempt and correct it."
+        },
+        {
+          "attempt_id": "T0149-A002",
+          "started_at": "2026-10-29T12:35:03Z",
+          "ended_at": "2026-10-29T12:35:13Z",
+          "result": "failed",
+          "summary": "The V 3.0.541 Step Three quality run executed 230 Python tests and found one failure in the new source-contract test: it expected 'Room.databaseBuilder(' as a contiguous string while the Kotlin source follows project formatting with Room and .databaseBuilder( on separate lines. Graph/syntax checks were skipped after the test-suite failure. This is a brittle test assertion; it does not by itself demonstrate a Room runtime failure.",
+          "changed_files": [
+            "tests/test_android_conversation_detail_contract.py",
+            "src/Client.Android/app/src/test/java/com/whitep/client/data/ClientDatabaseTest.kt",
+            "step three/T0149/execution-report.md",
+            "step three/T0149/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": "c619d3b1269357563ab2f2047ad6a7a2bf126d5b",
+          "tests": [
+            {
+              "name": "Step Three quality gate — run 40874466336",
+              "result": "failed",
+              "summary": "230 tests ran; 1 source-contract assertion failed at test_android_conversation_detail_contract.py:44. Expected contiguous Room.databaseBuilder( not present because Kotlin formatting splits the call across lines. Graph validation and later quality steps were skipped.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40874466336"
+            }
+          ],
+          "failure_details": "AssertionError: 'Room.databaseBuilder(' not found in ClientDatabaseTest.kt. Actual source uses Room followed by a line break and .databaseBuilder(...).",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Correct the source-contract assertion to separately check Room and .databaseBuilder(, rerun the quality workflow, and inspect product build/JVM tests. Do not mark T0149 done until the file-backed regression itself passes."
+        },
+        {
+          "attempt_id": "T0149-A003",
+          "started_at": "2026-10-29T12:36:37.064Z",
+          "ended_at": "2026-10-29T12:36:37.064Z",
+          "result": "partial",
+          "summary": "Corrected the source-contract assertion to match the repository's multiline Kotlin formatting without changing the production or database test implementation. Exact-head CI is pending.",
+          "changed_files": [
+            "tests/test_android_conversation_detail_contract.py",
+            "step three/T0149/execution-report.md",
+            "step three/T0149/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "tests/test_android_conversation_detail_contract.py",
+              "result": "not_run",
+              "summary": "Assertion adjusted; not executed locally in this tool session."
+            },
+            {
+              "name": "Step Three quality gate",
+              "result": "not_run",
+              "summary": "Pending CI after V 3.0.542."
+            },
+            {
+              "name": "Android ktlintCheck / assembleDebug / testDebugUnitTest",
+              "result": "not_run",
+              "summary": "Pending CI after V 3.0.542."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect V 3.0.542 quality and product runs. If quality passes, verify the file-backed Room reopen JVM test actually ran successfully before marking T0149 done."
         }
       ]
     },
@@ -43773,7 +43841,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-29T12:34:22.646Z",
+  "updated_at": "2026-10-29T12:36:37.064Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

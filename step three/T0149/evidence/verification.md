@@ -1,9 +1,8 @@
 # T0149 evidence ledger
 
-- **Attempt:** `T0149-A001`; result `partial`; no CI success claimed yet.
-- **Production persistence contract:** `src/Client.Android/app/src/main/java/com/whitep/client/data/ClientDatabase.kt` opens the app-private Room database; `MessageEntity.kt` and `RequestStateEntity.kt` define conversation-scoped rows and ordered flows.
-- **Screen consumption:** `ConversationDetailScreen.kt` observes messages and request states using Room-backed flows, while the message ViewModel persists user messages to Room.
-- **New disk-backed regression:** `src/Client.Android/app/src/test/java/com/whitep/client/data/ClientDatabaseTest.kt` opens a named on-disk database, seeds messages/request-state rows, closes it, reopens the same file, and asserts restored ordering and state metadata.
-- **Repository contract check:** `tests/test_android_conversation_detail_contract.py` asserts the reopen test and file-backed database lifecycle exist.
-- **Dependency reviews:** T0148 → T0149 and T0138 → T0149 were validated as sequencing-only. Their original `blocks` relations remain.
-- **Not yet proven:** Kotlin formatting, compile/APK build, JVM/Robolectric execution, Python suite, graph guard, or exact-head CI for this attempt.
+- **Implementation/test revision:** [`V 3.0.541`](https://github.com/artinrahimii/project/commit/c619d3b1269357563ab2f2047ad6a7a2bf126d5b).
+- **Actual database output:** `src/Client.Android/app/src/test/java/com/whitep/client/data/ClientDatabaseTest.kt` contains the on-disk database close/reopen test for message ordering and request-state values/metadata.
+- **Python contract test:** `tests/test_android_conversation_detail_contract.py` includes a source check for the file-backed regression.
+- **Observed failure:** [quality run 40874466336](https://github.com/artinrahimii/project/actions/runs/40874466336) ran 230 tests and failed one assertion because the test expected `Room.databaseBuilder(` contiguously, whereas the real Kotlin source has a line break. This is a test-source formatting mismatch; the database runtime test was not executed by the Python suite.
+- **Correction:** A003 separates checks for `Room` and `.databaseBuilder(`. The corrected code has not yet passed exact-head CI.
+- **Not proven yet:** actual Room file-backed reopen test, Android lint/build/JVM tests, new commit quality gate and graph/evidence checks.
