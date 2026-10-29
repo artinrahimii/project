@@ -29357,33 +29357,117 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0140 و T0138 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "src/Client.Android/build.gradle.kts",
+        "src/Client.Android/app/build.gradle.kts",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/ConversationEntity.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/MessageEntity.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/RequestStateEntity.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientRequestDraftEntity.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientDatabase.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/RoomClientRequestRepository.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/data/ClientDatabaseTest.kt",
+        "tests/test_android_local_storage_boundary.py",
+        "docs/decisions/ADR-0020-android-client-local-conversation-storage.md",
+        "docs/decisions/README.md",
+        "step three/T0141/execution-report.md"
+      ],
       "expected_output_paths": [
         "src/Client.Android/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "src/Client.Android/app/src/test/java/com/whitep/client/data/ClientDatabaseTest.kt",
+        "tests/test_android_local_storage_boundary.py",
+        "docs/decisions/ADR-0020-android-client-local-conversation-storage.md",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientDatabase.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/RoomClientRequestRepository.kt",
+        "step three/T0141/execution-report.md"
+      ],
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0141-A001 (2026-10-29): Added version-1 Room entities/DAOs for conversations, messages, request states and the current draft; added a Room-backed implementation of the existing request repository contract, database acceptance tests, and a local-storage privacy decision. T0138 -> T0141 was reviewed as sequencing_only after ADR-0020 explicitly resolved the local-persistence boundary; original type=blocks and edge order were preserved. Exact-candidate CI is pending; this task remains in_progress until the runtime tests and product build pass.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0141-A001",
+        "last_attempt_result": "in_progress",
+        "changed_files": [
+          "src/Client.Android/build.gradle.kts",
+          "src/Client.Android/app/build.gradle.kts",
+          "src/Client.Android/app/src/main/java/com/whitep/client/data/ConversationEntity.kt",
+          "src/Client.Android/app/src/main/java/com/whitep/client/data/MessageEntity.kt",
+          "src/Client.Android/app/src/main/java/com/whitep/client/data/RequestStateEntity.kt",
+          "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientRequestDraftEntity.kt",
+          "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientDatabase.kt",
+          "src/Client.Android/app/src/main/java/com/whitep/client/data/RoomClientRequestRepository.kt",
+          "src/Client.Android/app/src/test/java/com/whitep/client/data/ClientDatabaseTest.kt",
+          "tests/test_android_local_storage_boundary.py",
+          "docs/decisions/ADR-0020-android-client-local-conversation-storage.md",
+          "docs/decisions/README.md",
+          "step three/T0141/execution-report.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
-          "affected_by_contract_changes": [],
-          "review_evidence": []
+          "state": "passed",
+          "triggering_contracts": [
+            "T0138 processing-host content disclosure and privacy requirements",
+            "T0140 ClientRequestRepository Flow/suspend contract"
+          ],
+          "affected_by_contract_changes": [
+            "Android local persistence policy",
+            "Room repository adapter, entity and DAO boundary"
+          ],
+          "review_evidence": [
+            "docs/decisions/ADR-0019-host-visible-inference-content.md",
+            "docs/requirements.md (REQ-011/REQ-019)",
+            "docs/decisions/ADR-0020-android-client-local-conversation-storage.md",
+            "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientRequestRepository.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/data/RoomClientRequestRepository.kt"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0141-A001",
+          "started_at": "2026-10-29T08:01:34.215Z",
+          "ended_at": null,
+          "result": "in_progress",
+          "summary": "Implemented the local Room schema/DAOs and repository adapter, wrote database acceptance tests and privacy-boundary regressions, and documented the exact task/edge boundary. Exact-head CI is required before acceptance.",
+          "changed_files": [
+            "src/Client.Android/build.gradle.kts",
+            "src/Client.Android/app/build.gradle.kts",
+            "src/Client.Android/app/src/main/java/com/whitep/client/data/ConversationEntity.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/data/MessageEntity.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/data/RequestStateEntity.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientRequestDraftEntity.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientDatabase.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/data/RoomClientRequestRepository.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/data/ClientDatabaseTest.kt",
+            "tests/test_android_local_storage_boundary.py",
+            "docs/decisions/ADR-0020-android-client-local-conversation-storage.md",
+            "docs/decisions/README.md",
+            "step three/T0141/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "related_commits": [],
+          "commit_sha": null,
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "Introduced local Room tables for conversations, messages, request-state metadata, and the current request draft.",
+            "Added RoomClientRequestRepository behind the existing ClientRequestRepository interface.",
+            "Resolved the unreviewed T0138 -> T0141 relationship as sequencing_only after documenting local persistence scope, no central sync, and no at-rest encryption claim."
+          ],
+          "follow_up": "Inspect exact-head quality and Android product CI; correct any failures and do not mark T0141 done until the relevant checks succeed."
+        }
+      ]
     },
     {
       "id": "T0142",
@@ -36665,10 +36749,16 @@
       "from": "T0138",
       "to": "T0141",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "ADR-0019 establishes a host-visible-content disclosure and endpoint-trust boundary, but it does not provide a Kotlin API or data contract consumed by the Room implementation. The new ADR-0020 resolves the local-persistence policy explicitly: message/draft text may persist only in Android app-private storage, there is no central/rendezvous synchronization, request-state rows omit prompt/capsule/response content, and encryption at rest is not claimed. Keep type=blocks and the conservative execution order; classify this relationship as sequencing only rather than inferring a technical dependency from the edge label.",
+      "validation_status": "validated",
+      "evidence": [
+        "docs/decisions/ADR-0019-host-visible-inference-content.md",
+        "docs/requirements.md (REQ-011/REQ-019)",
+        "docs/decisions/ADR-0020-android-client-local-conversation-storage.md",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientDatabase.kt",
+        "tests/test_android_local_storage_boundary.py"
+      ]
     },
     {
       "from": "T0141",
@@ -41192,9 +41282,27 @@
         "step three/project-graph.md"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-29T08:01:34.215Z",
+      "edge_from": "T0138",
+      "edge_to": "T0141",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "old_validation_status": "unreviewed",
+      "new_validation_status": "validated",
+      "reason": "ADR-0019 establishes a host-visible-content disclosure and endpoint-trust boundary, but it does not provide a Kotlin API or data contract consumed by the Room implementation. The new ADR-0020 resolves the local-persistence policy explicitly: message/draft text may persist only in Android app-private storage, there is no central/rendezvous synchronization, request-state rows omit prompt/capsule/response content, and encryption at rest is not claimed. Keep type=blocks and the conservative execution order; classify this relationship as sequencing only rather than inferring a technical dependency from the edge label.",
+      "evidence": [
+        "docs/decisions/ADR-0019-host-visible-inference-content.md",
+        "docs/requirements.md (REQ-011/REQ-019)",
+        "docs/decisions/ADR-0020-android-client-local-conversation-storage.md",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientDatabase.kt",
+        "tests/test_android_local_storage_boundary.py"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-28T22:08:36.708Z",
+  "updated_at": "2026-10-29T08:01:34.215Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",
