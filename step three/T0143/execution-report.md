@@ -1,17 +1,11 @@
-# T0143 execution report — completed
+# T0143 execution report — final evidence correction pending CI
 
 - **Task:** Connect the conversation-list screen to live Room data.
-- **Final status:** `done`.
-- **Implementation commit:** [V 3.0.513 — c063ff766946b365a907776324cd8f646487a22e](https://github.com/artinrahimii/project/commit/c063ff766946b365a907776324cd8f646487a22e).
-- **Feature:** Added a Compose Conversations bottom-navigation route. `conversationListScreen()` obtains the application-scoped Room database and collects `ConversationDao.observeAll()` through `ConversationListViewModel`. It displays a real empty state and, for stored rows, titles and last-updated timestamps. No sample conversation data is used.
-- **Runtime test:** `ConversationListViewModelTest` passed as part of `testDebugUnitTest`. It checks the initial empty list, inserts two entities into an in-memory Room database, and asserts that the ViewModel emits the persisted conversations in the DAO-defined sort order.
-- **Navigation test:** Updated and passed `ClientDestinationTest` to assert the Conversations destination is included in bottom navigation.
-- **Attempt history:** A001 and A002 failed Kotlin lint and remain recorded; A003 fixed the issues and passed. No earlier failure was deleted.
-- **Final acceptance:**
-  - [Step Three quality gate 40846225141](https://github.com/artinrahimii/project/actions/runs/40846225141) — passed.
-  - [Android product workflow 40846225053](https://github.com/artinrahimii/project/actions/runs/40846225053) — passed: ktlint, debug APK assembly, `testDebugUnitTest`, generated Protobuf checks and Android APK upload.
-  - In the same product workflow, Windows WPF build, startup smoke, agent-tool restrictions/policy/capability and host-identity checks, and HostLifecycle unit/integration tests passed.
-- **Artifact:** [Android debug APK artifact](https://github.com/artinrahimii/project/actions/runs/40846225053/artifacts/12885471239).
-- **Privacy and scope boundary:** The screen explicitly labels history as device-local. It does not claim encryption at rest, request transport, or conversation-opening/edit/delete behavior. Those conversation actions remain in T0144; P2P transport remains a separate task.
-- **Dependency review:** T0142→T0143 was validated as a database compatibility contract; T0138→T0143 was validated as sequencing-only. The graph contains the evidence and rationale.
-- **Next logical task:** T0144, after checking its incoming edge classifications, actual prerequisites, and acceptance criteria.
+- **Current graph status:** `in_progress` until the closeout evidence gate passes. The actual Android implementation already passed Android product CI on V 3.0.513.
+- **Implementation revision:** [V 3.0.513 — c063ff766946b365a907776324cd8f646487a22e](https://github.com/artinrahimii/project/commit/c063ff766946b365a907776324cd8f646487a22e).
+- **Verified implementation behavior:** The Conversations bottom-navigation route loads a Compose list that collects the application database's `ConversationDao.observeAll()` via `ConversationListViewModel`, shows the true empty state and renders persisted titles/timestamps. The Android runtime test inserted records into Room and verified the emitted ordering.
+- **Implementation acceptance CI:** [Step Three quality gate 40846225141](https://github.com/artinrahimii/project/actions/runs/40846225141) passed. [Android/Windows product workflow 40846225053](https://github.com/artinrahimii/project/actions/runs/40846225053) passed the Android lint/APK/unit-test/Protobuf/artifact jobs, Windows host build and checks, and HostLifecycle job.
+- **Closeout issue:** The graph-only closeout commit V 3.0.514 triggered [quality run 40846887277](https://github.com/artinrahimii/project/actions/runs/40846887277), which failed the graph guard with `DONE_WITHOUT_TEST_FILE_EVIDENCE`. The guard explicitly requires a test-source evidence path starting with top-level `tests/` or `test/`; the real Android runtime test resides under the standard Gradle `src/test` tree and was not recognized by that check.
+- **A004 correction:** Added `tests/test_android_conversation_list_contract.py` as a supplementary test that checks the actual screen uses the Room DAO flow, emits persisted rows/empty state, and remains reachable through bottom navigation. The runtime Room test remains in place; this Python test supplements it rather than replacing it.
+- **Scope boundary:** Creating, renaming, deleting, and opening selected conversations remain in T0144. Message sending and P2P transport are not claimed.
+- **Next action:** Validate the evidence correction on exact-head CI. Keep T0143 in_progress until the graph quality gate and product workflow pass on the corrective commit; then make the final graph closeout.

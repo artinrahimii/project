@@ -29972,8 +29972,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0142 و T0138 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "done",
-      "status_fa": "تکمیل‌شده",
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
       "actual_output_paths": [
         "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationListScreen.kt",
         "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationListViewModel.kt",
@@ -29983,7 +29983,8 @@
         "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationListViewModelTest.kt",
         "src/Client.Android/app/src/test/java/com/whitep/client/ui/navigation/ClientDestinationTest.kt",
         "step three/T0143/execution-report.md",
-        "step three/T0143/evidence/verification.md"
+        "step three/T0143/evidence/verification.md",
+        "tests/test_android_conversation_list_contract.py"
       ],
       "expected_output_paths": [
         "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationListScreen.kt",
@@ -29999,14 +30000,15 @@
         "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationListViewModelTest.kt",
         "src/Client.Android/app/src/test/java/com/whitep/client/ui/navigation/ClientDestinationTest.kt",
         "step three/T0143/execution-report.md",
-        "step three/T0143/evidence/verification.md"
+        "step three/T0143/evidence/verification.md",
+        "tests/test_android_conversation_list_contract.py"
       ],
-      "notes": "T0143-A001 adds a reachable Compose Conversations destination backed by ConversationDao.observeAll(), plus a Room-backed ViewModel test. Task remains in_progress pending exact-head Android and Step Three CI.\nT0143-A001 failed Android ktlint (import ordering and uppercase composable name); T0143-A002 corrects those exact findings. Task remains in_progress pending Android build/unit tests.\nT0143-A002 passed graph CI but failed Android ktlint on one stale import. T0143-A003 aligns the import name to conversationListScreen; remains in_progress until Android build/test pass.\nT0143 is completed after exact-head V 3.0.513 CI passed: Step Three quality, Android lint/build/unit tests/Protobuf/APK upload, Windows host build/smoke/security checks and HostLifecycle tests.",
+      "notes": "T0143-A001 adds a reachable Compose Conversations destination backed by ConversationDao.observeAll(), plus a Room-backed ViewModel test. Task remains in_progress pending exact-head Android and Step Three CI.\nT0143-A001 failed Android ktlint (import ordering and uppercase composable name); T0143-A002 corrects those exact findings. Task remains in_progress pending Android build/unit tests.\nT0143-A002 passed graph CI but failed Android ktlint on one stale import. T0143-A003 aligns the import name to conversationListScreen; remains in_progress until Android build/test pass.\nT0143 is completed after exact-head V 3.0.513 CI passed: Step Three quality, Android lint/build/unit tests/Protobuf/APK upload, Windows host build/smoke/security checks and HostLifecycle tests.\nThe V 3.0.514 closeout gate reported DONE_WITHOUT_TEST_FILE_EVIDENCE because graph_guard recognizes test source evidence under top-level tests/ or test/. Android runtime tests passed, but add an explicit source-contract test under tests/ and rerun the graph gate before final closeout.",
       "execution_summary": {
-        "attempt_count": 3,
+        "attempt_count": 4,
         "failed_attempt_count": 2,
-        "last_attempt_id": "T0143-A003",
-        "last_attempt_result": "succeeded",
+        "last_attempt_id": "T0143-A004",
+        "last_attempt_result": "partial",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationListViewModel.kt",
           "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationListScreen.kt",
@@ -30017,12 +30019,14 @@
           "src/Client.Android/app/src/test/java/com/whitep/client/ui/navigation/ClientDestinationTest.kt",
           "step three/T0143/execution-report.md",
           "step three/T0143/evidence/verification.md",
-          "step three/project-graph.md"
+          "step three/project-graph.md",
+          "tests/test_android_conversation_list_contract.py"
         ],
         "related_commits": [
           "168b7028096efcacb440e8e984d3a58eab029a3d",
           "be9dd7659a7765d7c8901418d6eb26348fd987f6",
-          "c063ff766946b365a907776324cd8f646487a22e"
+          "c063ff766946b365a907776324cd8f646487a22e",
+          "277b243f6cffc14118fedd5e330716cbe1cd4cfb"
         ],
         "tests_passed": [
           "Step Three quality gate 40846225141 passed (https://github.com/artinrahimii/project/actions/runs/40846225141).",
@@ -30031,7 +30035,8 @@
         ],
         "tests_failed": [
           "Historical A001 (V 3.0.511): ktlint rejected import order and uppercase composable naming; corrected.",
-          "Historical A002 (V 3.0.512): ktlint rejected the stale import after renaming the composable; corrected."
+          "Historical A002 (V 3.0.512): ktlint rejected the stale import after renaming the composable; corrected.",
+          "Closeout graph validation run 40846887277 failed with DONE_WITHOUT_TEST_FILE_EVIDENCE: graph_guard requires at least one evidence path under top-level tests/ or test/; the Android runtime test was located under the Android Gradle src/test tree."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -30199,6 +30204,26 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "T0143 is accepted. Next logical task is T0144 after reviewing its incoming edges and actual prerequisite outputs."
+        },
+        {
+          "attempt_id": "T0143-A004",
+          "started_at": "2026-10-29T09:08:10.778Z",
+          "ended_at": "2026-10-29T09:08:10.778Z",
+          "result": "partial",
+          "summary": "The V 3.0.514 closeout graph gate found that completed tasks need an evidence path rooted at tests/ or test/, while the actual Android runtime test lives under the Gradle src/test tree. Added a complementary top-level Python source-contract test that checks the real Room flow and navigation wiring. The next graph gate must pass before task closeout.",
+          "changed_files": [
+            "tests/test_android_conversation_list_contract.py",
+            "step three/T0143/execution-report.md",
+            "step three/T0143/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [],
+          "failure_details": "GitHub Actions run 40846887277 failed graph structure validation: DONE_WITHOUT_TEST_FILE_EVIDENCE for T0143. Python tests and syntax passed; output/evidence validation was skipped after graph guard failure.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Run exact-head quality gate and product build on the corrective commit. If the root test source is recognized and all tests pass, mark T0143 done in a final closeout commit."
         }
       ]
     },
@@ -42037,7 +42062,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-29T09:04:23.817Z",
+  "updated_at": "2026-10-29T09:08:10.778Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

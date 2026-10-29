@@ -1,30 +1,16 @@
-# T0143 verification evidence — final acceptance
+# T0143 verification evidence — evidence-path correction
 
-## Exact implementation revision
+## Implementation acceptance already passed on V 3.0.513
 
-- Commit: `c063ff766946b365a907776324cd8f646487a22e` (`V 3.0.513`).
-- Step Three quality gate: [40846225141](https://github.com/artinrahimii/project/actions/runs/40846225141) — successful.
-- Product workflow: [40846225053](https://github.com/artinrahimii/project/actions/runs/40846225053) — successful. Every job passed:
-  - Android client APK
-  - Windows WPF host
-  - Host lifecycle unit and integration tests
+- [Step Three quality gate 40846225141](https://github.com/artinrahimii/project/actions/runs/40846225141): passed.
+- [Product workflow 40846225053](https://github.com/artinrahimii/project/actions/runs/40846225053): all jobs passed. Android `ktlintCheck`, `assembleDebug`, `testDebugUnitTest`, Protobuf source checks and APK artifact upload succeeded; Windows and HostLifecycle jobs also passed.
 
-## Android acceptance
+## Failed closeout guard — V 3.0.514
 
-- Kotlin lint: passed.
-- `assembleDebug`: passed.
-- `testDebugUnitTest`: passed; logs show `Task :app:testDebugUnitTest` followed by `BUILD SUCCESSFUL`.
-- Generated Java/Kotlin Protobuf verification: passed.
-- APK artifact upload: passed; artifact ID `12885471239`.
-- The ViewModel test reads from a real Room DAO Flow, tests the initial empty result, inserts two records into Room and verifies persisted titles and DAO ordering.
+- [Quality run 40846887277](https://github.com/artinrahimii/project/actions/runs/40846887277): graph guard emitted `DONE_WITHOUT_TEST_FILE_EVIDENCE` for T0143. The checker accepts test-evidence paths beginning with top-level `tests/` or `test/`; it did not recognize the Gradle-scoped Android unit-test source path.
 
-## Graph and output
+## A004
 
-- Graph contains 229 tasks and 417 edges.
-- T0143 is marked `done` only after the exact implementation commit's CI passed.
-- Two earlier lint failures are preserved in execution history.
-- T0142→T0143 and T0138→T0143 classifications and supporting evidence are recorded in the graph's edge change log.
-
-## Explicit limit
-
-Creation, renaming, deleting and opening a selected conversation are outside T0143 and remain assigned to T0144. No claim is made that peer transport or request delivery is implemented.
+- Added `tests/test_android_conversation_list_contract.py`, checking Room database/DAO flow usage, real rows/empty state and navigation wiring.
+- The Android runtime test remains `src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationListViewModelTest.kt`.
+- A004 is awaiting a new exact-head quality gate and product workflow; no result is recorded as passed yet.
