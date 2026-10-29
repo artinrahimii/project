@@ -34438,8 +34438,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0156 و T0150 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt",
         "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
@@ -34463,12 +34463,12 @@
         "step three/T0157/execution-report.md",
         "step three/T0157/evidence/verification.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0157-A001 implements a deterministic conflict-review layer for changed goals and a bounded set of explicit negation/opposite terms. Conflicts remain suggestions, the saved capsule is unchanged before Save, and each suggestion requires an explicit keep-current or use-suggestion decision. Exact-head CI pending; outgoing T0157→T0158 remains unreviewed.\nT0157-A002 failed exact-head acceptance: one Python source-contract assertion searched for KEEP_CURRENT in the wrong source layer and Android ktlint blocked APK/JVM tests. A003 moves the assertion to Compose and fixes the reported Kotlin formatting; CI pending.\nT0157-A003 failed only on the remaining KtLint chain-wrapping rule at line 464; quality gate and HostLifecycle passed, Android build/JVM tests did not run. A004 joins `.toMutableList()` to the lambda close and awaits exact-head CI.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0157-A001 implements a deterministic conflict-review layer for changed goals and a bounded set of explicit negation/opposite terms. Conflicts remain suggestions, the saved capsule is unchanged before Save, and each suggestion requires an explicit keep-current or use-suggestion decision. Exact-head CI pending; outgoing T0157→T0158 remains unreviewed.\nT0157-A002 failed exact-head acceptance: one Python source-contract assertion searched for KEEP_CURRENT in the wrong source layer and Android ktlint blocked APK/JVM tests. A003 moves the assertion to Compose and fixes the reported Kotlin formatting; CI pending.\nT0157-A003 failed only on the remaining KtLint chain-wrapping rule at line 464; quality gate and HostLifecycle passed, Android build/JVM tests did not run. A004 joins `.toMutableList()` to the lambda close and awaits exact-head CI.\nT0157-A005 (2026-10-29): Exact online main head 6379a8510316be3c2cfd9faadf14898a604355db (V 3.0.578) passed the Step Three quality gate, Android lint/APK/JVM/Protobuf/artifact checks, Windows WPF build/startup checks, and HostLifecycle unit/integration. Graph Blob b65cdbdf1dfcae918640e4032da5795e4c0442b7 was retrieved from the exact tree; the complete 2809857-byte UTF-8 content matched the recomputed Git Blob SHA-1 and parsed as 229 nodes / 417 edges. T0157 is accepted. The outgoing T0157 → T0158 edge remains unreviewed. The heuristic prompts for explicit review of detected conflicts but does not claim general semantic contradiction detection.",
       "execution_summary": {
-        "attempt_count": 4,
+        "attempt_count": 5,
         "failed_attempt_count": 2,
-        "last_attempt_id": "T0157-A004",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "T0157-A005",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt",
           "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
@@ -34480,13 +34480,18 @@
         ],
         "related_commits": [
           "b7b492a902a989dfeaeb10547af996ed7085bd0a",
-          "22b852a6acb2db365d158cbf72b976ad05a894a5"
+          "22b852a6acb2db365d158cbf72b976ad05a894a5",
+          "6379a8510316be3c2cfd9faadf14898a604355db"
         ],
         "tests_passed": [
           "Exact V 3.0.576 Windows WPF host build/startup/policy/DPAPI checks and artifact upload passed (product run 40920502283).",
           "Exact V 3.0.576 HostLifecycle unit/integration tests passed (product run 40920502283).",
           "Exact V 3.0.577 Step Three quality gate passed (run 40921532799).",
-          "Exact V 3.0.577 HostLifecycle unit/integration job passed (product run 40921532777)."
+          "Exact V 3.0.577 HostLifecycle unit/integration job passed (product run 40921532777).",
+          "Exact V 3.0.578 Step Three quality gate (workflow 40922097585, job 123617769867): automated tests, Python syntax, graph structure and repository-backed recorded-output/evidence checks passed.",
+          "Exact V 3.0.578 Android product (workflow 40922097593, job 123617770490): Kotlin lint, debug APK build, Android JVM unit tests, generated Protobuf verification and APK upload passed.",
+          "Exact V 3.0.578 Windows WPF host (job 123617770138): formatting, Release build, Protobuf verification, startup smoke and artifact upload passed.",
+          "Exact V 3.0.578 HostLifecycle unit/integration tests (job 123617770564) passed."
         ],
         "tests_failed": [
           "Exact V 3.0.576 Step Three quality run 40920502076: 253 tests ran; one conflict-review source-contract assertion searched KEEP_CURRENT in the ViewModel rather than the Compose UI.",
@@ -34496,7 +34501,7 @@
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "in_review",
+          "state": "passed",
           "triggering_contracts": [
             "Conflict review and explicit resolution contract",
             "Capsule draft state and manual-save gate"
@@ -34511,7 +34516,14 @@
             "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt",
             "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
             "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModelTest.kt",
-            "step three/T0156/execution-report.md"
+            "step three/T0156/execution-report.md",
+            "tests/test_android_context_capsule_conflict_review_contract.py",
+            "https://github.com/artinrahimii/project/actions/runs/40922097585",
+            "https://github.com/artinrahimii/project/actions/runs/40922097585/job/123617769867",
+            "https://github.com/artinrahimii/project/actions/runs/40922097593",
+            "https://github.com/artinrahimii/project/actions/runs/40922097593/job/123617770490",
+            "https://github.com/artinrahimii/project/actions/runs/40922097593/job/123617770138",
+            "https://github.com/artinrahimii/project/actions/runs/40922097593/job/123617770564"
           ]
         }
       },
@@ -34703,6 +34715,54 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Inspect V 3.0.578 exact-head CI. If lint passes, review compile/test output and correct any further failures; do not mark T0157 done before all acceptance gates pass."
+        },
+        {
+          "attempt_id": "T0157-A005",
+          "started_at": "2026-10-29T19:35:00Z",
+          "ended_at": "2026-10-29T19:42:00Z",
+          "result": "succeeded",
+          "summary": "Exact V 3.0.578 head 6379a8510316be3c2cfd9faadf14898a604355db passed Step Three quality, Android lint/APK/JVM/Protobuf, Windows WPF build/startup and HostLifecycle integration. Graph Blob SHA and complete JSON structure were verified before updating task status.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModelTest.kt",
+            "tests/test_android_context_capsule_conflict_review_contract.py",
+            "step three/T0157/execution-report.md",
+            "step three/T0157/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": "6379a8510316be3c2cfd9faadf14898a604355db",
+          "tests": [
+            {
+              "name": "Step Three quality gate — workflow 40922097585",
+              "result": "passed",
+              "summary": "Automated tests, Python syntax, graph structure and recorded-output/evidence validation passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40922097585"
+            },
+            {
+              "name": "Android product build — workflow 40922097593",
+              "result": "passed",
+              "summary": "Kotlin lint, debug APK, JVM unit tests, generated Protobuf verification and APK artifact upload passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40922097593"
+            },
+            {
+              "name": "Windows WPF host — job 123617770138",
+              "result": "passed",
+              "summary": "Formatting, Release build, Protobuf validation, startup smoke and artifact upload passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40922097593/job/123617770138"
+            },
+            {
+              "name": "HostLifecycle unit/integration — job 123617770564",
+              "result": "passed",
+              "summary": "Lifecycle unit and integration test step passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40922097593/job/123617770564"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Before starting T0158, validate the still-unreviewed T0157 → T0158 edge against actual producer/consumer contracts; preserve it until supported by evidence."
         }
       ]
     },
@@ -46540,7 +46600,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-29T17:30:36.777Z",
+  "updated_at": "2026-10-29T19:42:00Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

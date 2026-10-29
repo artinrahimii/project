@@ -11,8 +11,8 @@
 - **Limit of conflict detection:** This is a conservative lexical heuristic for explicit negation and a small set of direct opposite terms, plus treating any changed nonblank goal as a potential conflict. It is not general semantic contradiction detection or an AI factuality guarantee. Non-detected conflicts may still exist and can be reviewed manually.
 - **Persistence boundary:** The existing saved capsule is not overwritten merely by generating a suggestion. Explicit conflict decisions are part of the editable draft and are persisted only after Save.
 - **Tests:** Added a Robolectric regression scenario for a changed goal and contradictory `enabled/disabled` key fact, verifying that the original record is unchanged before choices and save. Added a Python UI/source contract test.
-- **Local execution:** The connected GitHub tools do not provide a local Android/Gradle or Python execution environment; no local test run is claimed. Exact-head GitHub Actions are pending.
-- **Status:** `in_progress`, attempt `T0157-A001` is `partial` pending exact-head CI.
+- **Local execution:** The connected GitHub tools do not provide a local Android/Gradle or Python execution environment; no local test run is claimed. Exact-head GitHub Actions results are recorded under attempt A005 below.
+- **Current status:** `done` after exact-head V 3.0.578 acceptance (`T0157-A005`); all prior failed/partial attempts are retained below.
 - **Next action:** Inspect exact-head quality and product workflows. Fix any lint/test/build failures while preserving this attempt; do not mark T0157 done until the Android conflict-review test and all required gates pass.
 
 
@@ -35,3 +35,15 @@
 - Step Three quality [run 40921532799](https://github.com/artinrahimii/project/actions/runs/40921532799) passed its Python, graph and repository-backed output/evidence checks.
 - Android product [run 40921532777](https://github.com/artinrahimii/project/actions/runs/40921532777) failed `ktlintMainSourceSetCheck` on one remaining formatting finding: `ConversationContextCapsuleViewModel.kt:464:21 Unexpected newline before '.'`. APK build and JVM tests were skipped. HostLifecycle tests passed. The Windows job was still running when the graph was updated.
 - A003 remains failed and is not accepted. A004 only joins the `.toMutableList()` call to the multiline filter closing brace; it does not change conflict-detection behavior.
+
+
+## Exact-head V 3.0.578 acceptance attempt A005 — passed
+
+- Tested implementation head: [6379a8510316be3c2cfd9faadf14898a604355db](https://github.com/artinrahimii/project/commit/6379a8510316be3c2cfd9faadf14898a604355db) on online branch `main`.
+- Graph retrieval/validation: Git Trees API identified `step three/project-graph.md` as Blob `b65cdbdf1dfcae918640e4032da5795e4c0442b7` at this exact head. Git Blob API returned the complete fenced Markdown/JSON; the original UTF-8 content measured 2,809,857 bytes and 2,687,553 Unicode characters. Recomputed Git Blob SHA-1 over `blob <byte length>\0<original bytes>` matched `b65cdbdf1dfcae918640e4032da5795e4c0442b7`; the JSON parsed as 229 tasks and 417 edges.
+- Step Three quality gate [workflow 40922097585](https://github.com/artinrahimii/project/actions/runs/40922097585) / [job 123617769867](https://github.com/artinrahimii/project/actions/runs/40922097585/job/123617769867) — PASS: automated tests, Python syntax, dependency-graph structure and repository-backed recorded-output/evidence checks.
+- Android product workflow [40922097593](https://github.com/artinrahimii/project/actions/runs/40922097593) / [job 123617770490](https://github.com/artinrahimii/project/actions/runs/40922097593/job/123617770490) — PASS: Kotlin lint, debug APK build, Android JVM unit tests, generated Protobuf verification and APK artifact upload. The prior KtLint failures are superseded by this exact-head pass, but remain recorded as failed attempts A002/A003.
+- Windows WPF host [job 123617770138](https://github.com/artinrahimii/project/actions/runs/40922097593/job/123617770138) — PASS: C# formatting, Release build, generated Protobuf verification, WPF startup smoke and build artifact upload.
+- Host lifecycle unit/integration [job 123617770564](https://github.com/artinrahimii/project/actions/runs/40922097593/job/123617770564) — PASS.
+- Acceptance result: the conflict-review implementation and regression coverage are present in the repository, and all task-required exact-head CI gates passed. The saved capsule remains unchanged until explicit user review/save; this lexical conflict heuristic is not general semantic contradiction detection.
+- Result: `succeeded`; task state may be marked `done`. No local test execution is claimed. The outgoing `T0157 → T0158` edge remains unreviewed until T0158 is selected.

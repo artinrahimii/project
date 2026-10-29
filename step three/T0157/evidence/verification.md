@@ -25,3 +25,14 @@
 - Quality [run 40921532799](https://github.com/artinrahimii/project/actions/runs/40921532799): pass.
 - Product [run 40921532777](https://github.com/artinrahimii/project/actions/runs/40921532777): Android ktlint failed one remaining format finding at `ConversationContextCapsuleViewModel.kt:464:21`; APK/JVM were skipped. HostLifecycle passed; the Windows job was still pending at the time of recording.
 - A004 joins the closing brace and `.toMutableList()`. The task remains in progress pending exact-head build and test evidence.
+
+
+## Exact-head V 3.0.578 final verification — passed
+
+- Online `main` tested implementation SHA: `6379a8510316be3c2cfd9faadf14898a604355db`; commit message: `V 3.0.578`.
+- Graph source at that exact commit: `step three/project-graph.md`, tree Blob `b65cdbdf1dfcae918640e4032da5795e4c0442b7`, declared size 2,809,857 bytes. Git Blob API returned 2,809,857 UTF-8 bytes (2,687,553 Unicode characters); recomputed Git Blob SHA-1 matched. The original fenced JSON parsed completely as 229 nodes / 417 edges. Graph formatting fences were retained for hashing; only a separate in-memory copy was parsed.
+- Incoming dependency evidence remains unchanged: `T0156 → T0157` is validated `contract_or_interface_dependency`; `T0150 → T0157` is validated `sequencing_only`. Both `blocks` edges are preserved. The outgoing `T0157 → T0158` edge remains `unreviewed`.
+- Step Three automated test, Python syntax, graph integrity and recorded-output/evidence checks: PASS ([workflow](https://github.com/artinrahimii/project/actions/runs/40922097585), [job](https://github.com/artinrahimii/project/actions/runs/40922097585/job/123617769867)).
+- Android Kotlin lint, debug APK build, JVM unit tests, generated Protobuf checks and APK upload: PASS ([workflow](https://github.com/artinrahimii/project/actions/runs/40922097593), [job](https://github.com/artinrahimii/project/actions/runs/40922097593/job/123617770490)).
+- Windows WPF formatting/build/Protobuf/startup-smoke/artifact upload: PASS ([job](https://github.com/artinrahimii/project/actions/runs/40922097593/job/123617770138)). HostLifecycle unit/integration tests: PASS ([job](https://github.com/artinrahimii/project/actions/runs/40922097593/job/123617770564)).
+- No local Android/Gradle/Python test run is claimed; acceptance is based on the exact-head GitHub Actions outcomes above.
