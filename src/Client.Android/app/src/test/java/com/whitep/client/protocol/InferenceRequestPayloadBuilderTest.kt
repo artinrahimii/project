@@ -38,7 +38,7 @@ class InferenceRequestPayloadBuilderTest {
         assertTrue(
             unrelatedHistory.none { oldMessage ->
                 request.prompt.contains(oldMessage) ||
-                    request.toByteArray().toString(Charsets.UTF_8).contains(oldMessage)
+                    String(request.toByteArray(), Charsets.UTF_8).contains(oldMessage)
             },
         )
         assertFalse(

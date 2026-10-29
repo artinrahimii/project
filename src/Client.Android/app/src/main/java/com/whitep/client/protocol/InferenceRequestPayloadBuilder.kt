@@ -20,10 +20,13 @@ enum class InferenceRequestPayloadRejection {
 }
 
 sealed interface InferenceRequestPayloadBuildResult {
-    data class Built(val request: InferenceRequest) : InferenceRequestPayloadBuildResult
+    data class Built(
+        val request: InferenceRequest,
+    ) : InferenceRequestPayloadBuildResult
 
-    data class Rejected(val reason: InferenceRequestPayloadRejection) :
-        InferenceRequestPayloadBuildResult
+    data class Rejected(
+        val reason: InferenceRequestPayloadRejection,
+    ) : InferenceRequestPayloadBuildResult
 }
 
 /**

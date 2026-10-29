@@ -35669,11 +35669,11 @@
         "step three/T0160/execution-report.md",
         "step three/T0160/evidence/verification.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0160-A001 (2026-10-29T21:11:45Z): Added the real generated-Protobuf payload builder and four JVM tests for selected-message/capsule composition, no history/permanent conversation ID, UTF-8 prompt byte limit, invalid capsule rejection, and 16 KiB serialized cap. This does not claim a live network send; exact-head V 3.0.594 CI pending.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0160-A001 (2026-10-29T21:11:45Z): Added the real generated-Protobuf payload builder and four JVM tests for selected-message/capsule composition, no history/permanent conversation ID, UTF-8 prompt byte limit, invalid capsule rejection, and 16 KiB serialized cap. This does not claim a live network send; exact-head V 3.0.594 CI pending.\nT0160-A002 (2026-10-29T21:15:15Z): Applied exact KtLint formatting to the result data classes and replaced the test's byte-array text conversion with the standard String constructor. V 3.0.594 had a passing quality gate but failed Android lint; APK/JVM/Protobuf did not run. Exact-head V 3.0.595 CI pending.",
       "execution_summary": {
-        "attempt_count": 1,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "T0160-A001",
+        "attempt_count": 2,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "T0160-A002",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/protocol/InferenceRequestPayloadBuilder.kt",
@@ -35682,9 +35682,31 @@
           "step three/T0160/evidence/verification.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
-        "tests_failed": [],
+        "related_commits": [
+          "d4a998eec098b85d64579e0df58b21397791d271"
+        ],
+        "tests_passed": [
+          {
+            "name": "Step Three quality gate — V 3.0.594",
+            "result": "passed",
+            "summary": "257 Python tests and graph/evidence validation passed.",
+            "url": "https://github.com/artinrahimii/project/actions/runs/40955832262"
+          },
+          {
+            "name": "HostLifecycle — V 3.0.594",
+            "result": "passed",
+            "summary": "HostLifecycle tests passed.",
+            "url": "https://github.com/artinrahimii/project/actions/runs/40955831999"
+          }
+        ],
+        "tests_failed": [
+          {
+            "name": "Android KtLint — V 3.0.594",
+            "result": "failed",
+            "summary": "New builder data-class layout; APK/JVM/Protobuf were skipped.",
+            "url": "https://github.com/artinrahimii/project/actions/runs/40955831999"
+          }
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -35712,9 +35734,49 @@
         {
           "attempt_id": "T0160-A001",
           "started_at": "2026-10-29T21:11:45Z",
-          "ended_at": "2026-10-29T21:11:45Z",
+          "ended_at": "2026-10-29T21:13:24Z",
+          "result": "failed",
+          "summary": "Added InferenceRequestPayloadBuilder and four JVM payload-boundary tests. Step Three quality passed, but Android KtLint failed on the multiline formatting of the two result data classes in the new builder; APK/JVM/Protobuf were skipped.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/protocol/InferenceRequestPayloadBuilder.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/protocol/InferenceRequestPayloadBuilderTest.kt",
+            "step three/T0160/execution-report.md",
+            "step three/T0160/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": "d4a998eec098b85d64579e0df58b21397791d271",
+          "tests": [
+            {
+              "name": "Step Three quality gate — V 3.0.594",
+              "result": "passed",
+              "summary": "257 Python tests and graph/evidence validation passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40955832262"
+            },
+            {
+              "name": "Android Kotlin lint — V 3.0.594",
+              "result": "failed",
+              "summary": "Two result data classes need multiline parameter formatting and expected supertype spacing in InferenceRequestPayloadBuilder.kt:23–26; APK/JVM/Protobuf skipped.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40955831999"
+            },
+            {
+              "name": "HostLifecycle — V 3.0.594",
+              "result": "passed",
+              "summary": "HostLifecycle unit/integration job passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40955831999"
+            }
+          ],
+          "failure_details": "KtLint reported `Newline expected after opening parenthesis`, `Newline expected before closing parenthesis`, and `Expected single space before the super type` in InferenceRequestPayloadBuilder.kt lines 23–26. Android APK, JVM and Protobuf steps were skipped. The Step Three quality gate and HostLifecycle job passed; Windows WPF was still in progress when recorded.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "A002 reformats the two data classes and uses the byte-array String constructor in the test. Inspect exact-head V 3.0.595 CI."
+        },
+        {
+          "attempt_id": "T0160-A002",
+          "started_at": "2026-10-29T21:15:15Z",
+          "ended_at": "2026-10-29T21:15:15Z",
           "result": "partial",
-          "summary": "Added a real generated InferenceRequest payload builder that accepts only a current prompt and local capsule (not full message history or permanent conversation ID), and four JVM tests for payload fields, capsule bytes, Protobuf round-trip, and size/invalid-input rejection. No live peer send is implemented by this task. Exact-head CI pending.",
+          "summary": "Reformatted the two new result data classes according to KtLint and changed the history-exclusion test to inspect bytes using `String(bytes, Charsets.UTF_8)`. Exact-head V 3.0.595 CI pending.",
           "changed_files": [
             "src/Client.Android/app/src/main/java/com/whitep/client/protocol/InferenceRequestPayloadBuilder.kt",
             "src/Client.Android/app/src/test/java/com/whitep/client/protocol/InferenceRequestPayloadBuilderTest.kt",
@@ -35725,17 +35787,17 @@
           "commit_sha": null,
           "tests": [
             {
-              "name": "Step Three quality gate — V 3.0.594",
+              "name": "Step Three quality gate — V 3.0.595",
               "result": "not_run",
               "summary": "Runs after commit."
             },
             {
-              "name": "Android KtLint/APK/JVM/Protobuf — V 3.0.594",
+              "name": "Android KtLint/APK/JVM/Protobuf — V 3.0.595",
               "result": "not_run",
               "summary": "Runs after commit."
             },
             {
-              "name": "Windows WPF and HostLifecycle — V 3.0.594",
+              "name": "Windows WPF and HostLifecycle — V 3.0.595",
               "result": "not_run",
               "summary": "Runs after commit."
             }
@@ -35744,7 +35806,7 @@
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect exact-head V 3.0.594 CI and fix all failures; do not mark T0160 done until all payload tests and required gates pass."
+          "follow_up": "Inspect exact-head V 3.0.595 CI; do not mark T0160 done until the payload JVM tests and all required build/quality gates pass."
         }
       ]
     },
@@ -47549,7 +47611,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-29T21:11:45Z",
+  "updated_at": "2026-10-29T21:15:15Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

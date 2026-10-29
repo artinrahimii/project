@@ -8,3 +8,11 @@
 - Negative tests cover a prompt over 8,192 UTF-8 bytes, invalid capsule data, and a serialized request exceeding 16 KiB.
 - Explicit limit: no live network transport or peer send/receive is implemented by this task; this is payload construction and protocol-boundary verification only.
 - Exact-head V 3.0.594 CI: pending; no local Gradle result is claimed.
+
+
+## Exact-head V 3.0.594 verification
+
+- Step Three quality passed all 257 Python tests and graph/evidence validation, [workflow 40955832262](https://github.com/artinrahimii/project/actions/runs/40955832262).
+- Android KtLint failed on formatting of the new `InferenceRequestPayloadBuildResult` data classes; APK build, JVM tests and generated Protobuf checks were skipped, [workflow 40955831999](https://github.com/artinrahimii/project/actions/runs/40955831999).
+- HostLifecycle unit/integration passed. Windows WPF build was still running when inspected and is not counted as passed here, [workflow 40955831999](https://github.com/artinrahimii/project/actions/runs/40955831999).
+- A002 reformats the result data classes and corrects the test's serialization-to-text expression. V 3.0.595 validation is pending.
