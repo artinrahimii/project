@@ -76,9 +76,10 @@ internal fun conversationDetailScreen(
     var state by remember(conversationId) {
         mutableStateOf<ConversationDetailUiState>(ConversationDetailUiState.Loading)
     }
-    val messageValidation = remember(draft) {
-        ConversationMessageValidator.validate(draft)
-    }
+    val messageValidation =
+        remember(draft) {
+            ConversationMessageValidator.validate(draft)
+        }
 
     LaunchedEffect(conversationId, conversationListViewModel) {
         state =
