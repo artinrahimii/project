@@ -34059,29 +34059,29 @@
       ],
       "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
       "execution_summary": {
-        "attempt_count": 4,
-        "failed_attempt_count": 3,
-        "last_attempt_id": "T0156-A004",
+        "attempt_count": 5,
+        "failed_attempt_count": 4,
+        "last_attempt_id": "T0156-A005",
         "last_attempt_result": "partial",
         "changed_files": [
-          "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt",
           "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModelTest.kt",
           "step three/T0156/execution-report.md",
           "step three/T0156/evidence/verification.md",
           "step three/project-graph.md"
         ],
         "related_commits": [
-          "38720492fec9590d64de6b5e135d2bc9443a33fd"
+          "55c47efe12cd750de1db5936fb7a42f99943fcda"
         ],
         "tests_passed": [
-          "V 3.0.570: Python 249-test suite, compileall and structural guard passed; HostLifecycle passed.",
+          "V 3.0.570: Python 249-test suite, compileall and structural graph guard passed; HostLifecycle passed.",
           "V 3.0.571: Python 250-test suite, compileall and graph/repository-backed evidence gates passed; HostLifecycle passed.",
-          "V 3.0.572: Python 250-test suite, compileall and graph/repository-backed evidence gates passed; Android ktlintCheck and assembleDebug passed; Windows WPF build/startup/security and HostLifecycle passed."
+          "V 3.0.572: Python 250-test suite, compileall and graph/repository-backed evidence gates passed; Kotlin lint and APK build passed; Windows WPF and HostLifecycle passed."
         ],
         "tests_failed": [
-          "V 3.0.570: false-positive placeholder guard and Kotlin lint failures, fixed in V 3.0.571.",
-          "V 3.0.571: one Android test-source ktlint blank-line failure, fixed in V 3.0.572.",
-          "V 3.0.572: one Android JVM test failed: suggestsCapsuleFromOnlyThisConversationsLocalHistoryAndRequiresSave; 52 tests ran with 1 failure, so generated Protobuf checks and APK upload were skipped."
+          "V 3.0.570: graph TODO scanner false-positive and Kotlin lint failed; corrected in V 3.0.571.",
+          "V 3.0.571: Android test-source ktlint failed one extra blank line; corrected in V 3.0.572.",
+          "V 3.0.572: Android JVM suite ran 52 tests with one failure in the new history/manual-save acceptance test.",
+          "V 3.0.573: Android ktlint failed on the diagnostic assertion before JVM tests ran; corrected in A005."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -34271,10 +34271,53 @@
           "attempt_id": "T0156-A004",
           "started_at": "2026-10-29T16:53:15.733Z",
           "ended_at": "2026-10-29T16:54:15.733Z",
-          "result": "partial",
-          "summary": "Changed the history updater to fetch the existing capsule from the repository if its StateFlow observation has not populated the current ViewModel state yet. Added a failure message to the acceptance assertion; exact-head CI is pending.",
+          "result": "failed",
+          "summary": "The Step Three quality gate passed 250 Python tests and graph/evidence checks. Android lint failed before compile/test because the diagnostic assertion added for A004 violated Kotlin wrapping and maximum-line-length rules at ConversationContextCapsuleViewModelTest.kt:159; APK/JVM tests were skipped. A005 wraps the assertion and retries the exact-head pipeline.",
           "changed_files": [
             "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModelTest.kt",
+            "step three/T0156/execution-report.md",
+            "step three/T0156/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": "55c47efe12cd750de1db5936fb7a42f99943fcda",
+          "tests": [
+            {
+              "name": "Step Three quality gate — run 40916215922",
+              "result": "passed",
+              "summary": "250 Python tests, compileall and graph/repository-backed output-evidence gates passed: 229 tasks / 417 edges, zero errors and one preserved T0001 warning.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40916215922"
+            },
+            {
+              "name": "Android ktlintCheck — product run 40916215951",
+              "result": "failed",
+              "summary": "Five Kotlin formatting findings on the diagnostic assert at ConversationContextCapsuleViewModelTest.kt:159: arguments must wrap, dot/closing parenthesis placement and max line length. Android build/JVM tests were not run.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40916215951"
+            },
+            {
+              "name": "HostLifecycle unit and integration — product run 40916215951",
+              "result": "passed",
+              "summary": "Job completed successfully."
+            },
+            {
+              "name": "Windows WPF host build",
+              "result": "not_run",
+              "summary": "The job was still in progress when this attempt was updated; actual completion was not captured at that point."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "A005 wraps the diagnostic assertion over separate lines following ktlint rules; inspect the exact-head CI for the underlying history assertion failure once JVM tests run."
+        },
+        {
+          "attempt_id": "T0156-A005",
+          "started_at": "2026-10-29T16:55:59.506Z",
+          "ended_at": "2026-10-29T16:56:44.505Z",
+          "result": "partial",
+          "summary": "Wrapped the diagnostic assertion over multiple lines to satisfy the repository's Kotlin formatting rules. Exact-head lint, build, and JVM revalidation are pending.",
+          "changed_files": [
             "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModelTest.kt",
             "step three/T0156/execution-report.md",
             "step three/T0156/evidence/verification.md",
@@ -34283,31 +34326,31 @@
           "commit_sha": null,
           "tests": [
             {
-              "name": "Android testDebugUnitTest — history isolation/manual save",
+              "name": "Android ktlintCheck",
               "result": "not_run",
-              "summary": "The prior exact-head run failed one new acceptance test; repository fallback correction is prepared and awaits a fresh run."
+              "summary": "Assertion formatting correction prepared; exact-head validation pending."
             },
             {
-              "name": "Android ktlintCheck / assembleDebug / testDebugUnitTest",
+              "name": "Android testDebugUnitTest — history isolation/manual save",
               "result": "not_run",
-              "summary": "The diagnostic assertion and persisted-capsule fallback require exact-head revalidation."
+              "summary": "The prior run failed before executing this test due to ktlint; the next run will test the repository fallback."
             },
             {
               "name": "Step Three quality gate",
               "result": "not_run",
-              "summary": "Rerun after code change pending."
+              "summary": "Rerun after formatting correction pending."
             },
             {
-              "name": "Windows WPF and HostLifecycle workflows",
+              "name": "Windows WPF and HostLifecycle jobs",
               "result": "not_run",
-              "summary": "Previous exact-head jobs passed; check fresh run."
+              "summary": "Inspect the new exact-head run outcomes."
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect exact V 3.0.573 results. T0156 remains in progress until Python/evidence gates, Android lint/build/JVM tests, Protobuf and artifact upload, Windows WPF and HostLifecycle all pass."
+          "follow_up": "Inspect exact V 3.0.574 CI. If the history isolation test still fails, use the enriched state error to identify whether empty local history, summary rejection, or persistence is responsible. Keep T0156 in progress until all gates pass."
         }
       ]
     },

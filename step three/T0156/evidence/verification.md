@@ -27,3 +27,9 @@
 - Android lint and debug APK build passed, but Android JVM suite completed 52 tests with one failure in the new local-history/manual-save test. Generated Protobuf and APK upload were skipped.
 - Windows WPF build and all configured startup/security checks passed; HostLifecycle passed.
 - A004 reads an existing persisted capsule directly when the ViewModel StateFlow has not yet observed it. This is a corrective attempt, not an acceptance claim.
+
+## V 3.0.573 result and A005
+
+- Step Three quality passed 250 Python tests, compilation and graph/repository-backed evidence validation.
+- Android ktlint rejected the diagnostic assertion formatting before any APK/JVM tests ran; HostLifecycle passed and Windows WPF was still running.
+- A005 applies the formatting correction. T0156 remains in progress pending exact-head test results.

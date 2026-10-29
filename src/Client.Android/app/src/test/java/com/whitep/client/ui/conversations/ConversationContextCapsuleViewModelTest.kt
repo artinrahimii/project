@@ -156,7 +156,11 @@ class ConversationContextCapsuleViewModelTest {
             shadowOf(Looper.getMainLooper()).idle()
             val viewModel = createViewModel()
 
-            assertTrue("Local history update failed: ${viewModel.uiState.value.errorMessage}", viewModel.updateFromLocalHistory())
+            val updateSucceeded = viewModel.updateFromLocalHistory()
+            assertTrue(
+                "Local history update failed: ${viewModel.uiState.value.errorMessage}",
+                updateSucceeded,
+            )
             val draft = viewModel.uiState.value
             assertTrue(draft.isEditing)
             assertEquals("Ship a local release", draft.goal)

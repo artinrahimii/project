@@ -42,3 +42,14 @@
 
 - Change: use `repository.find(conversationId)` as a fallback for the existing capsule when the current UI state is not yet loaded, avoiding reliance on asynchronous StateFlow delivery for the summary's input.
 - Exact-head V 3.0.573 validation is pending; T0156 remains in progress.
+
+## Exact-head V 3.0.573 result — attempt A004
+
+- Step Three quality [run 40916215922](https://github.com/artinrahimii/project/actions/runs/40916215922) passed 250 Python tests, `compileall`, graph structure and repository-backed output/evidence validation (229 nodes / 417 edges, zero errors and one preserved warning).
+- Product [run 40916215951](https://github.com/artinrahimii/project/actions/runs/40916215951): Android ktlint failed five formatting findings on the newly enriched assertion at `ConversationContextCapsuleViewModelTest.kt:159`; the Android JVM task did not run. HostLifecycle passed; Windows WPF was still running at update time.
+- A004 therefore remains a failed acceptance attempt; T0156 stays in progress. A005 wraps the assertion according to ktlint and retries the test that previously failed.
+
+## Corrective attempt A005
+
+- Change: split the diagnostic assertion across lines to satisfy argument wrapping, dot placement, max line length and closing-parenthesis rules.
+- Exact-head V 3.0.574 results are pending. No acceptance is claimed.
