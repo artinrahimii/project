@@ -7,8 +7,8 @@ import com.whitep.client.context.ConversationContextCapsule
 import com.whitep.client.context.ConversationContextCapsuleError
 import com.whitep.client.context.ConversationContextCapsuleSummaryResult
 import com.whitep.client.context.ConversationContextSummaryMessage
-import com.whitep.client.context.ConversationContextSummaryRequest
 import com.whitep.client.context.ConversationContextSummaryRejectionReason
+import com.whitep.client.context.ConversationContextSummaryRequest
 import com.whitep.client.context.SchemaValidatedConversationContextCapsuleSummarizer
 import com.whitep.client.data.ConversationContextCapsuleLoadResult
 import com.whitep.client.data.ConversationContextCapsuleSaveResult
@@ -186,7 +186,6 @@ class ConversationContextCapsuleViewModel(
     fun updateConstraints(value: String) = updateDraft { it.copy(constraintsText = value) }
 
     fun updateUnresolvedItems(value: String) = updateDraft { it.copy(unresolvedItemsText = value) }
-
 
     /**
      * Builds a reviewable capsule draft from this conversation's local Room history.
@@ -370,7 +369,6 @@ class ConversationContextCapsuleViewModel(
             false
         }
     }
-
 
     private fun ConversationContextCapsuleUiState.toCapsuleDraftOrNull(): ConversationContextCapsule? {
         if (!isEditing || goal.isBlank()) return capsule

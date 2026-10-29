@@ -87,7 +87,7 @@ def validate_graph(graph: dict, repo_root: Path | None = None) -> list[Finding]:
             if repo_root is not None:
                 code_suffixes = {".py", ".cs", ".kt", ".kts", ".java", ".js", ".jsx", ".ts", ".tsx", ".go", ".rs", ".cpp", ".h", ".hpp", ".swift"}
                 placeholder_patterns = (
-                    (re.compile(r"\bTODO\b", re.IGNORECASE), "TODO marker"),
+                    (re.compile(r"""(?<!["'])\bTODO\b(?!["'])""", re.IGNORECASE), "TODO marker"),
                     (re.compile(r"\bNotImplementedException\b"), "NotImplementedException"),
                     (re.compile(r"\bNotImplementedError\b"), "NotImplementedError"),
                     (re.compile(r"\bmock implementation\b", re.IGNORECASE), "mock implementation"),

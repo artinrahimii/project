@@ -100,6 +100,29 @@ class ValidateTests(unittest.TestCase):
             codes={x.code for x in validate_graph(g, root)}
             self.assertIn("DONE_WITH_PLACEHOLDER_IMPLEMENTATION", codes)
 
+
+    def test_done_does_not_treat_todo_string_label_as_placeholder(self):
+        import tempfile
+        g = graph_fixture()
+        node = g["nodes"][0]
+        node.update({"status": "done", "actual_output_paths": ["src/engine.py"],
+                     "acceptance": "Engine returns computed output.",
+                     "evidence": ["report.md", "tests/test_engine.py"],
+                     "execution_history": [{"result": "succeeded"}],
+                     "execution_summary": {"attempt_count": 1, "failed_attempt_count": 0,
+                                           "tests_passed": ["unit tests passed"]}})
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            (root / "src").mkdir()
+            (root / "tests").mkdir()
+            (root / "src" / "engine.py").write_text(
+                'FIELD_LABEL = "todo"\\ndef infer():\\n    return FIELD_LABEL\\n'
+            )
+            (root / "report.md").write_text("reviewed evidence")
+            (root / "tests" / "test_engine.py").write_text("def test_engine(): pass")
+            codes = {finding.code for finding in validate_graph(g, root)}
+            self.assertNotIn("DONE_WITH_PLACEHOLDER_IMPLEMENTATION", codes)
+
     def test_done_accepts_code_without_known_placeholder_markers(self):
         import tempfile
         g=graph_fixture(); node=g["nodes"][0]

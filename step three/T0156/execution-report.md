@@ -8,3 +8,14 @@
 - **Tests added:** A Robolectric test creates a saved capsule, inserts messages into two conversations, verifies only the selected conversation's history informs the proposed draft, and confirms persistence happens only after Save. A Python source-contract test checks the Room-scoped flow and the no-network/current-transport boundary.
 - **Local validation:** The connected GitHub tool session does not run Gradle or Python locally. No local test command is claimed. Exact-head GitHub Actions must pass before accepting this task.
 - **Status:** `in_progress`, attempt `T0156-A001` partial; lint, JVM and repository quality checks are pending.
+
+## Exact-head V 3.0.570 result — attempt A001
+
+- Step Three quality run [40914145750](https://github.com/artinrahimii/project/actions/runs/40914145750): 249 Python tests and `compileall` passed; structural graph validation passed (229 nodes / 417 edges, 0 errors, one preserved T0001 metadata warning). The repo-backed recorded-output/evidence guard then failed because it treated the valid quoted field label `"todo"` in the T0155 summarizer as an unfinished TODO marker.
+- Product run [40914145365](https://github.com/artinrahimii/project/actions/runs/40914145365): Android `ktlintMainSourceSetCheck` failed import order and needless blank lines at `ConversationContextCapsuleViewModel.kt:190` and `:374`. APK build and Android JVM tests were skipped. HostLifecycle passed; the Windows WPF job was still running when this record was updated.
+- A001 is a failed acceptance attempt; T0156 remains in progress. A002 sorts the imports/removes extra blank lines and adds a regression-tested fix for quoted TODO-like string labels.
+
+## Corrective attempt A002
+
+- Changes: narrowed the TODO marker regex so quoted labels such as `"todo"` do not trigger placeholder detection, while unquoted TODO markers remain detectable; added a dedicated graph-guard regression test and fixed all three reported Kotlin lint findings.
+- Exact-head V 3.0.571 CI is pending. No claim of successful APK build/JVM tests or final task acceptance is made in this section.
