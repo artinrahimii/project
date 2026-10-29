@@ -34829,11 +34829,11 @@
         "https://github.com/artinrahimii/project/actions/runs/40943199249",
         "https://github.com/artinrahimii/project/actions/runs/40943199144"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0158-A001 (2026-10-29T19:58:20Z): Reviewed both incoming edges against actual code and requirements, kept their `blocks` types, and validated both as contract_or_interface_dependency. Implemented local Room provenance/history events with source, timestamp and changed field names only; added transactionally coupled capsule/audit persistence, schema v3→v4 migration, ViewModel source attribution, runtime and Python tests. `protocol/whitep/v1/messages.proto` remains unchanged. Exact-head CI is pending; outgoing T0158 → T0159 remains unreviewed.\nT0158-A001 CI failure recorded: Step Three quality workflow 40945024330 ran 257 Python tests; 256 passed and one errored with a NameError caused by the new `conversation_context_capsule_changes` assertion being placed in a test method without the `database` variable. Corrected the assertion scope for A002; product workflow on V 3.0.580 was still running at the time of this record.\nT0158-A002 (2026-10-29T20:02:00Z): Moved the failing migration-contract assertion into the scope that defines `database`; exact-head V 3.0.581 CI is pending.\nT0158-A002 exact-head V 3.0.581 CI: Step Three quality passed all 257 Python tests and graph/evidence checks; Windows WPF build and HostLifecycle tests passed. Android KtLint failed only on the long addMigrations line in ConversationContextCapsuleViewModelTest.kt (line 52); APK/JVM steps were not reached. A003 reformats that call; exact-head V 3.0.582 CI pending.\nT0158-A003 CI result: the 257-test Step Three quality gate passed. Android KtLint then failed at ClientDatabaseMigrationTest.kt:91 on the analogous long addMigrations call. Windows WPF build and HostLifecycle tests passed. A004 reformats the call and updates the Python source contract to validate the multiline form; Android APK/JVM/migration tests are still pending.\nT0158-A004 (2026-10-29T20:08:41Z): Updated the multiline Room migration test setup and corresponding Python contract; exact-head V 3.0.583 CI pending.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0158-A001 (2026-10-29T19:58:20Z): Reviewed both incoming edges against actual code and requirements, kept their `blocks` types, and validated both as contract_or_interface_dependency. Implemented local Room provenance/history events with source, timestamp and changed field names only; added transactionally coupled capsule/audit persistence, schema v3→v4 migration, ViewModel source attribution, runtime and Python tests. `protocol/whitep/v1/messages.proto` remains unchanged. Exact-head CI is pending; outgoing T0158 → T0159 remains unreviewed.\nT0158-A001 CI failure recorded: Step Three quality workflow 40945024330 ran 257 Python tests; 256 passed and one errored with a NameError caused by the new `conversation_context_capsule_changes` assertion being placed in a test method without the `database` variable. Corrected the assertion scope for A002; product workflow on V 3.0.580 was still running at the time of this record.\nT0158-A002 (2026-10-29T20:02:00Z): Moved the failing migration-contract assertion into the scope that defines `database`; exact-head V 3.0.581 CI is pending.\nT0158-A002 exact-head V 3.0.581 CI: Step Three quality passed all 257 Python tests and graph/evidence checks; Windows WPF build and HostLifecycle tests passed. Android KtLint failed only on the long addMigrations line in ConversationContextCapsuleViewModelTest.kt (line 52); APK/JVM steps were not reached. A003 reformats that call; exact-head V 3.0.582 CI pending.\nT0158-A003 CI result: the 257-test Step Three quality gate passed. Android KtLint then failed at ClientDatabaseMigrationTest.kt:91 on the analogous long addMigrations call. Windows WPF build and HostLifecycle tests passed. A004 reformats the call and updates the Python source contract to validate the multiline form; Android APK/JVM/migration tests are still pending.\nT0158-A004 (2026-10-29T20:08:41Z): Updated the multiline Room migration test setup and corresponding Python contract; exact-head V 3.0.583 CI pending.\nT0158-A004 CI result: Step Three passed 257 tests; Windows WPF and HostLifecycle passed. Android KtLint reported Unexpected newline before '.' in two test builder chains after the multiline migration change. A005 attaches the following method calls to the closing parenthesis; APK/JVM tests remain pending.\nT0158-A005 (2026-10-29T20:13:51Z): Fixed the chain wrapping based on exact KtLint diagnostics. Validation is pending V 3.0.584.",
       "execution_summary": {
-        "attempt_count": 4,
-        "failed_attempt_count": 3,
-        "last_attempt_id": "T0158-A004",
+        "attempt_count": 5,
+        "failed_attempt_count": 4,
+        "last_attempt_id": "T0158-A005",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/data/ConversationContextCapsuleChangeEntity.kt",
@@ -34856,33 +34856,34 @@
         "related_commits": [
           "9673db6f13e46c05b289dd2e096eeeb0e4a29eb7",
           "09c6636a866cc12242a02b699001edf568779c7c",
-          "43d636c0b325be15cfb1931bf6c07f1f71076a6e"
+          "43d636c0b325be15cfb1931bf6c07f1f71076a6e",
+          "378de686fc2bcb0bb8c4c54bd0728de5a4d6833f"
         ],
         "tests_passed": [
           {
             "name": "Step Three quality gate",
             "result": "passed",
-            "summary": "257 tests and graph/evidence validation passed on V 3.0.582.",
-            "url": "https://github.com/artinrahimii/project/actions/runs/40945957102"
+            "summary": "257 Python tests and graph validation passed on V 3.0.583.",
+            "url": "https://github.com/artinrahimii/project/actions/runs/40946486989"
           },
           {
             "name": "Windows WPF host",
             "result": "passed",
-            "summary": "Build and WPF startup smoke passed on V 3.0.582.",
-            "url": "https://github.com/artinrahimii/project/actions/runs/40945957438"
+            "summary": "Windows host product checks passed on V 3.0.583.",
+            "url": "https://github.com/artinrahimii/project/actions/runs/40946486860"
           },
           {
-            "name": "HostLifecycle tests",
+            "name": "HostLifecycle",
             "result": "passed",
-            "summary": "Unit/integration passed on V 3.0.582.",
-            "url": "https://github.com/artinrahimii/project/actions/runs/40945957438"
+            "summary": "Unit/integration test passed on V 3.0.583.",
+            "url": "https://github.com/artinrahimii/project/actions/runs/40946486860"
           }
         ],
         "tests_failed": [
           {
             "name": "Android ktlint",
             "result": "failed",
-            "summary": "ClientDatabaseMigrationTest.kt:91; 3-argument addMigrations call violates per-argument layout/120-column rule. Fixed in A004."
+            "summary": "Unexpected newline before '.' on calls following multiline addMigrations in ClientDatabaseMigrationTest.kt and ConversationContextCapsuleViewModelTest.kt; corrected in A005."
           }
         ],
         "blocked_reason": null,
@@ -35050,8 +35051,8 @@
         {
           "attempt_id": "T0158-A004",
           "started_at": "2026-10-29T20:08:41Z",
-          "ended_at": "2026-10-29T20:08:41Z",
-          "result": "partial",
+          "ended_at": "2026-10-29T20:13:51Z",
+          "result": "failed",
           "summary": "Reformatted the migration list in ClientDatabaseMigrationTest.kt and changed the Python contract from a single-line string expectation to checks for the registration and each migration token. Exact-head V 3.0.583 CI pending.",
           "changed_files": [
             "src/Client.Android/app/src/test/java/com/whitep/client/data/ClientDatabaseMigrationTest.kt",
@@ -35060,29 +35061,75 @@
             "step three/T0158/evidence/verification.md",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "378de686fc2bcb0bb8c4c54bd0728de5a4d6833f",
           "tests": [
             {
               "name": "Step Three quality gate — V 3.0.583",
-              "result": "not_run",
-              "summary": "Runs after follow-up commit."
+              "result": "passed",
+              "summary": "257 Python tests plus graph/evidence gates passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40946486989"
             },
             {
-              "name": "Android KtLint/APK/JVM/migration — V 3.0.583",
-              "result": "not_run",
-              "summary": "Runs after follow-up commit."
+              "name": "Android Kotlin lint — V 3.0.583",
+              "result": "failed",
+              "summary": "KtLint Unexpected newline before '.' at ClientDatabaseMigrationTest.kt:96 and ConversationContextCapsuleViewModelTest.kt:57.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40946486860"
             },
             {
-              "name": "Windows and HostLifecycle — V 3.0.583",
+              "name": "Windows WPF host — V 3.0.583",
+              "result": "passed",
+              "summary": "Windows host checks passed and job completed successfully.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40946486860"
+            },
+            {
+              "name": "HostLifecycle tests — V 3.0.583",
+              "result": "passed",
+              "summary": "Lifecycle unit/integration passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40946486860"
+            }
+          ],
+          "failure_details": "Exact-head V 3.0.583 Android KtLint failed with `Unexpected newline before '.'` at ClientDatabaseMigrationTest.kt line 96 before `.build()` and ConversationContextCapsuleViewModelTest.kt line 57 before `.allowMainThreadQueries()`. The calls are now attached to the closing parenthesis. Quality passed; Windows WPF and HostLifecycle passed; APK/JVM tests were not reached.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect exact-head V 3.0.583 CI. T0158 remains in progress until all Android tests/build and Step Three checks pass."
+        },
+        {
+          "attempt_id": "T0158-A005",
+          "started_at": "2026-10-29T20:13:51Z",
+          "ended_at": "2026-10-29T20:13:51Z",
+          "result": "partial",
+          "summary": "Adjusted the two Kotlin test builder chains so `.build()` / `.allowMainThreadQueries().build()` follow the multiline migration call's closing parenthesis without a newline before the dot. Exact-head V 3.0.584 CI pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/test/java/com/whitep/client/data/ClientDatabaseMigrationTest.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModelTest.kt",
+            "step three/T0158/execution-report.md",
+            "step three/T0158/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Step Three quality gate — V 3.0.584",
               "result": "not_run",
-              "summary": "Runs after follow-up commit."
+              "summary": "Runs after commit."
+            },
+            {
+              "name": "Android KtLint/APK/JVM/migration — V 3.0.584",
+              "result": "not_run",
+              "summary": "Runs after commit."
+            },
+            {
+              "name": "Windows and HostLifecycle — V 3.0.584",
+              "result": "not_run",
+              "summary": "Runs after commit."
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect exact-head V 3.0.583 CI. T0158 remains in progress until all Android tests/build and Step Three checks pass."
+          "follow_up": "Inspect V 3.0.584 exact-head KtLint and all remaining product tests; do not mark T0158 done until all gates pass."
         }
       ]
     },
@@ -46889,7 +46936,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-29T20:08:41Z",
+  "updated_at": "2026-10-29T20:13:51Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

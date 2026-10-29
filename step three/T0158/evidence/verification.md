@@ -33,3 +33,11 @@
 - Android: FAIL at KtLint line 91 of `ClientDatabaseMigrationTest.kt`; APK/JVM/migration tests not reached, [workflow 40945957438](https://github.com/artinrahimii/project/actions/runs/40945957438).
 - Windows WPF build/startup smoke and HostLifecycle unit/integration: PASS, [workflow 40945957438](https://github.com/artinrahimii/project/actions/runs/40945957438).
 - A004 fixes the migration test formatting and source-contract assertion; exact-head V 3.0.583 verification is pending.
+
+
+## Exact-head V 3.0.583 test outcomes
+
+- Step Three quality: PASS, 257 tests, [workflow 40946486989](https://github.com/artinrahimii/project/actions/runs/40946486989).
+- Android: FAIL at KtLint for `Unexpected newline before '.'` in two test builder chains; APK/JVM/migration tests not reached, [workflow 40946486860](https://github.com/artinrahimii/project/actions/runs/40946486860).
+- Windows WPF host checks and HostLifecycle unit/integration: PASS, [workflow 40946486860](https://github.com/artinrahimii/project/actions/runs/40946486860).
+- A005 corrects chain formatting; exact-head V 3.0.584 results remain pending.

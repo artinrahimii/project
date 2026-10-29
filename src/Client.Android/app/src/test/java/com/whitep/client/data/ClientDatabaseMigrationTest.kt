@@ -92,8 +92,7 @@ class ClientDatabaseMigrationTest {
                         ClientDatabase.MIGRATION_1_2,
                         ClientDatabase.MIGRATION_2_3,
                         ClientDatabase.MIGRATION_3_4,
-                    )
-                    .build()
+                    ).build()
                     .also { database = it }
 
             assertEquals(4, migratedDatabase.openHelper.readableDatabase.version)
