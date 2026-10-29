@@ -29,10 +29,13 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.whitep.client.ui.conversations.conversationDetailScreen
 import com.whitep.client.ui.conversations.conversationListScreen
 import com.whitep.client.ui.navigation.ClientDestination
 import com.whitep.client.ui.navigation.ClientNavigation
@@ -94,7 +97,30 @@ private fun whitePClientApp() {
                 )
             }
             composable(ClientDestination.CONVERSATIONS.route) {
-                conversationListScreen()
+                conversationListScreen(
+                    onOpenConversation = { conversationId ->
+                        navController.navigate(ClientDestination.conversationRoute(conversationId))
+                    },
+                )
+            }
+            composable(
+                route = ClientDestination.CONVERSATION_DETAIL.route,
+                arguments = listOf(
+                    navArgument(ClientDestination.CONVERSATION_ID_ARGUMENT) {
+                        type = NavType.StringType
+                    },
+                ),
+            ) { backStackEntry ->
+                val conversationId =
+                    requireNotNull(
+                        backStackEntry.arguments?.getString(
+                            ClientDestination.CONVERSATION_ID_ARGUMENT,
+                        ),
+                    )
+                conversationDetailScreen(
+                    conversationId = conversationId,
+                    onBack = { navController.popBackStack() },
+                )
             }
             composable(ClientDestination.REQUEST.route) {
                 requestScreen(onBack = { navController.popBackStack() })

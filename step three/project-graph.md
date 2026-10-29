@@ -30270,20 +30270,55 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0143 و T0138 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال انجام",
+      "actual_output_paths": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationListViewModel.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationListScreen.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/navigation/ClientDestination.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationListViewModelTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/navigation/ClientDestinationTest.kt",
+        "tests/test_android_conversation_list_contract.py",
+        "tests/test_android_conversation_management_contract.py",
+        "step three/T0144/execution-report.md",
+        "step three/T0144/evidence/verification.md",
+        "step three/project-graph.md"
+      ],
       "expected_output_paths": [
         "src/Client.Android/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationListViewModelTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/navigation/ClientDestinationTest.kt",
+        "tests/test_android_conversation_list_contract.py",
+        "tests/test_android_conversation_management_contract.py",
+        "step three/T0144/execution-report.md",
+        "step three/T0144/evidence/verification.md",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/ConversationEntity.kt",
+        "docs/decisions/ADR-0020-android-client-local-conversation-storage.md"
+      ],
+      "notes": "T0144 implementation is committed for exact-head validation; do not mark done until Android ktlint, assembleDebug, testDebugUnitTest, Python source-contract tests, and graph guard pass on the actual commit.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0144-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationListViewModel.kt",
+          "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationListScreen.kt",
+          "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+          "src/Client.Android/app/src/main/java/com/whitep/client/ui/navigation/ClientDestination.kt",
+          "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
+          "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationListViewModelTest.kt",
+          "src/Client.Android/app/src/test/java/com/whitep/client/ui/navigation/ClientDestinationTest.kt",
+          "tests/test_android_conversation_list_contract.py",
+          "tests/test_android_conversation_management_contract.py",
+          "step three/T0144/execution-report.md",
+          "step three/T0144/evidence/verification.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
@@ -30296,7 +30331,47 @@
           "review_evidence": []
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0144-A001",
+          "started_at": "2026-10-29T12:56:05.464+03:30",
+          "ended_at": "2026-10-29T12:56:05.464+03:30",
+          "result": "partial",
+          "summary": "Implemented Room-backed conversation creation, title rename, deletion with cascade behavior, selected-conversation lookup/detail navigation, UI dialogs/actions, and Kotlin/Python regression coverage. Completion is pending exact-head CI evidence.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationListViewModel.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationListScreen.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/navigation/ClientDestination.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationListViewModelTest.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/ui/navigation/ClientDestinationTest.kt",
+            "tests/test_android_conversation_list_contract.py",
+            "tests/test_android_conversation_management_contract.py",
+            "step three/T0144/execution-report.md",
+            "step three/T0144/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "command": "Gradle ktlintCheck, assembleDebug, and testDebugUnitTest via .github/workflows/product-build.yml",
+              "result": "not_run",
+              "summary": "Not run locally: Gradle is unavailable and this environment cannot resolve github.com; run on the pushed exact head before completion."
+            },
+            {
+              "command": "python -m unittest discover -s tests -v and tools/graph_guard.py",
+              "result": "not_run",
+              "summary": "Not run locally because the repository could not be cloned into the execution container; the exact-head GitHub quality workflow must provide the result."
+            }
+          ],
+          "failure_details": "No source tests have been represented as passed. Local clone failed due DNS resolution and Gradle is not installed; exact-head GitHub Actions is the required verification path.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect quality.yml and product-build.yml runs for the exact new main commit; fix failures and rerun. Only then update this task to done and record passing evidence."
+        }
+      ]
     },
     {
       "id": "T0145",
@@ -37516,19 +37591,28 @@
       "from": "T0143",
       "to": "T0144",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0144 directly reads and mutates the ConversationDao/ConversationEntity contract already used by T0143's Room-backed list. The DAO exposes findById, upsert, and deleteById; T0144 extends behavior through that existing data contract without changing the database schema.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/ConversationEntity.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationListViewModel.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationListScreen.kt",
+        "step three/T0143/execution-report.md"
+      ]
     },
     {
       "from": "T0138",
       "to": "T0144",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "Reviewed the privacy-boundary task against the local-only conversation UI and ADR-0020. T0144 operates on the Android app's Room database and does not send prompt/context data to a host or consume the host-disclosure contract. Preserve the edge as conservative sequencing rather than claim a technical dependency.",
+      "validation_status": "validated",
+      "evidence": [
+        "docs/decisions/ADR-0020-android-client-local-conversation-storage.md",
+        "step three/T0138/execution-report.md",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientRequestRepository.kt"
+      ]
     },
     {
       "from": "T0144",
@@ -42086,9 +42170,38 @@
         "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationListScreen.kt"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-29T09:26:05.464Z",
+      "edge_from": "T0143",
+      "edge_to": "T0144",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "reason": "T0144 directly reads and mutates the ConversationDao/ConversationEntity contract already used by T0143's Room-backed list. The DAO exposes findById, upsert, and deleteById; T0144 extends behavior through that existing data contract without changing the database schema.",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/ConversationEntity.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationListViewModel.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationListScreen.kt",
+        "step three/T0143/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-29T09:26:05.464Z",
+      "edge_from": "T0138",
+      "edge_to": "T0144",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "reason": "Reviewed the privacy-boundary task against the local-only conversation UI and ADR-0020. T0144 operates on the Android app's Room database and does not send prompt/context data to a host or consume the host-disclosure contract. Preserve the edge as conservative sequencing rather than claim a technical dependency.",
+      "evidence": [
+        "docs/decisions/ADR-0020-android-client-local-conversation-storage.md",
+        "step three/T0138/execution-report.md",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientRequestRepository.kt"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-29T09:12:45.100Z",
+  "updated_at": "2026-10-29T09:26:05.464Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

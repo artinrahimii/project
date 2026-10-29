@@ -1,5 +1,7 @@
 package com.whitep.client.ui.navigation
 
+import android.net.Uri
+
 /**
  * Destinations owned by the Android Compose shell.
  *
@@ -12,7 +14,15 @@ internal enum class ClientDestination(
 ) {
     HOME("home", "Home", "⌂"),
     CONVERSATIONS("conversations", "Conversations", "▤"),
+    CONVERSATION_DETAIL("conversation/{conversationId}", "Conversation", "↩"),
     REQUEST("request", "New request", "＋"),
     CONNECTIONS("connections", "Connections", "↔"),
-    PRIVACY("privacy", "Privacy", "i"),
+    PRIVACY("privacy", "Privacy", "i");
+
+    companion object {
+        const val CONVERSATION_ID_ARGUMENT = "conversationId"
+
+        fun conversationRoute(conversationId: String): String =
+            "conversation/${Uri.encode(conversationId)}"
+    }
 }

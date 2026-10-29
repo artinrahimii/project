@@ -27,5 +27,19 @@ class ClientDestinationTest {
         )
         assertTrue(ClientNavigation.bottomNavigation.contains(ClientDestination.HOME))
         assertFalse(ClientNavigation.bottomNavigation.contains(ClientDestination.REQUEST))
+        assertFalse(ClientNavigation.bottomNavigation.contains(ClientDestination.CONVERSATION_DETAIL))
+    }
+
+    @Test
+    fun conversationDetailRouteCanCarryAnEncodedConversationId() {
+        assertEquals(
+            "conversation/conversation-123",
+            ClientDestination.conversationRoute("conversation-123"),
+        )
+        assertEquals(
+            "conversation/one%20two",
+            ClientDestination.conversationRoute("one two"),
+        )
+        assertEquals("conversation/{conversationId}", ClientDestination.CONVERSATION_DETAIL.route)
     }
 }
