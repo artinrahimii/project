@@ -21,7 +21,8 @@ class AndroidConversationDetailContractTests(unittest.TestCase):
         self.assertIn("messageDao.observeForConversation(conversationId)", source)
         self.assertIn("messageDao.upsert(", source)
         self.assertIn('authorRole = "user"', source)
-        self.assertIn("normalizedContent.isEmpty()", source)
+        self.assertIn("ConversationMessageValidator.validate(content)", source)
+        self.assertIn("validation.normalizedText ?: return false", source)
         self.assertNotIn("Socket(", source)
         self.assertNotIn("HttpClient", source)
 

@@ -30920,6 +30920,7 @@
         "src/Client.Android/app/src/test/java/com/whitep/client/domain/ConversationMessageValidatorTest.kt",
         "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationMessagesViewModelTest.kt",
         "tests/test_android_message_validation_contract.py",
+        "tests/test_android_conversation_detail_contract.py",
         "step three/T0146/execution-report.md",
         "step three/T0146/evidence/verification.md",
         "step three/project-graph.md"
@@ -30927,12 +30928,24 @@
       "expected_output_paths": [
         "src/Client.Android/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0146-A001 (2026-10-29T11:22:00Z): Added a domain-level UTF-8 byte validator aligned with the canonical 8,192-byte prompt limit, applied it again before Room persistence, disabled the UI send action for invalid input, and added Android and Python regression tests. Dependency review validated T0145 → T0146 as a contract/interface dependency and T0138 → T0146 as sequencing-only; both conservative edges are retained. Exact-head CI is pending; keep this task in_progress until Android lint/build/unit tests and Step Three quality checks pass.",
+      "evidence": [
+        "protocol/whitep/v1/messages.proto",
+        "src/Shared.Contracts/ProtocolMessageLimits.cs",
+        "src/Client.Android/app/src/main/java/com/whitep/client/domain/ConversationMessageValidator.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationMessagesViewModel.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/domain/ConversationMessageValidatorTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationMessagesViewModelTest.kt",
+        "tests/test_android_message_validation_contract.py",
+        "tests/test_android_conversation_detail_contract.py",
+        "step three/T0145/execution-report.md",
+        "step three/T0138/execution-report.md"
+      ],
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0146-A001 (2026-10-29T11:22:00Z): Added a domain-level UTF-8 byte validator aligned with the canonical 8,192-byte prompt limit, applied it again before Room persistence, disabled the UI send action for invalid input, and added Android and Python regression tests. Dependency review validated T0145 → T0146 as a contract/interface dependency and T0138 → T0146 as sequencing-only; both conservative edges are retained. Exact-head CI is pending; keep this task in_progress until Android lint/build/unit tests and Step Three quality checks pass.\n\nT0146-A001 exact-head CI result (V 3.0.527): Step Three quality gate 40865663008 failed one of 225 tests because tests/test_android_conversation_detail_contract.py still expected the previous inline normalizedContent.isEmpty() check. The new domain validator is intentional; the source-contract test is corrected in T0146-A002. Task remains in_progress. The V 3.0.527 product workflow was running during this correction and must be inspected independently.\n\nT0146-A002 (2026-10-29T11:30:00Z): Updated the stale Python source-contract check to assert the new ConversationMessageValidator contract and rejection path. Exact-head product and quality CI are pending; task remains in_progress until both pass.",
       "execution_summary": {
-        "attempt_count": 1,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "T0146-A001",
+        "attempt_count": 2,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "T0146-A002",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/domain/ConversationMessageValidator.kt",
@@ -30941,13 +30954,18 @@
           "src/Client.Android/app/src/test/java/com/whitep/client/domain/ConversationMessageValidatorTest.kt",
           "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationMessagesViewModelTest.kt",
           "tests/test_android_message_validation_contract.py",
+          "tests/test_android_conversation_detail_contract.py",
           "step three/T0146/execution-report.md",
           "step three/T0146/evidence/verification.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
+        "related_commits": [
+          "9b9d189cac8cdaecb0bc6a19739afa8a1a8f5733"
+        ],
         "tests_passed": [],
-        "tests_failed": [],
+        "tests_failed": [
+          "V 3.0.527 Step Three quality gate run 40865663008: 225 tests ran; one stale source-contract assertion expected normalizedContent.isEmpty() in ConversationMessagesViewModel."
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -30955,7 +30973,6 @@
           "triggering_contracts": [],
           "affected_by_contract_changes": [],
           "review_evidence": [
-            "src/Client.Android/app/src/main/java/com/whitep/client/domain/ConversationMessageValidator.kt",
             "protocol/whitep/v1/messages.proto",
             "src/Shared.Contracts/ProtocolMessageLimits.cs"
           ]
@@ -30965,9 +30982,9 @@
         {
           "attempt_id": "T0146-A001",
           "started_at": "2026-10-29T11:22:00Z",
-          "ended_at": null,
-          "result": "partial",
-          "summary": "Implemented UTF-8 byte-length validation in the domain and UI and added boundary/persistence regression coverage. Exact-head CI has not yet run on this implementation commit.",
+          "ended_at": "2026-10-29T11:28:40Z",
+          "result": "failed",
+          "summary": "Implementation was committed as V 3.0.527, but the Step Three quality workflow failed one Python source-contract assertion: test_android_conversation_detail_contract.py still expected the removed inline normalizedContent.isEmpty() check instead of the new domain validator contract. This is a stale test expectation; no acceptance is claimed until corrected and rerun.",
           "changed_files": [
             "src/Client.Android/app/src/main/java/com/whitep/client/domain/ConversationMessageValidator.kt",
             "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
@@ -30979,7 +30996,7 @@
             "step three/T0146/evidence/verification.md",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "9b9d189cac8cdaecb0bc6a19739afa8a1a8f5733",
           "tests": [
             {
               "command": "ConversationMessageValidatorTest (Android JVM unit tests)",
@@ -31005,13 +31022,54 @@
               "command": "Android ktlintCheck and assembleDebug",
               "result": "not_run",
               "summary": "Pending exact-head product workflow."
+            },
+            {
+              "command": "Step Three quality gate — run 40865663008",
+              "result": "failed",
+              "summary": "225 Python tests ran; one stale source-contract assertion expected normalizedContent.isEmpty() in the ViewModel. Workflow: https://github.com/artinrahimii/project/actions/runs/40865663008"
+            }
+          ],
+          "failure_details": "Step Three quality run 40865663008 failed during Run automated tests: 225 tests ran with one failure at tests/test_android_conversation_detail_contract.py, asserting 'normalizedContent.isEmpty()'. The ViewModel now delegates to ConversationMessageValidator.validate(content) and returns false when normalizedText is null. The source-contract assertion must be updated. Product workflow 40865663105 was still running when this correction was prepared; its Android/Windows/HostLifecycle results are pending.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Update the outdated static contract assertion to check the domain validator call and its rejection return. Then inspect exact-head Android, product and Step Three workflow outcomes; do not mark T0146 done before all required checks pass."
+        },
+        {
+          "attempt_id": "T0146-A002",
+          "started_at": "2026-10-29T11:30:00Z",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Updated the existing Android conversation detail source-contract test to reflect the new domain-level validation call. Exact-head product and quality CI are pending.",
+          "changed_files": [
+            "tests/test_android_conversation_detail_contract.py",
+            "step three/T0146/execution-report.md",
+            "step three/T0146/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "command": "Step Three Python suite and graph guard",
+              "result": "not_run",
+              "summary": "Pending exact-head quality workflow for V 3.0.528."
+            },
+            {
+              "command": "Android ktlintCheck, assembleDebug, and testDebugUnitTest",
+              "result": "not_run",
+              "summary": "Pending exact-head product workflow for V 3.0.528."
+            },
+            {
+              "command": "Windows WPF build and HostLifecycle tests",
+              "result": "not_run",
+              "summary": "Pending exact-head product workflow for V 3.0.528."
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect both exact-head workflows for V 3.0.527. Fix any failures before marking T0146 done; retain the edge to T0147 as unreviewed."
+          "follow_up": "Inspect both exact-head workflows on V 3.0.528. If all required checks pass, close T0146 with evidence; otherwise preserve failures and continue corrective work."
         }
       ]
     },
@@ -42849,7 +42907,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-29T11:22:00Z",
+  "updated_at": "2026-10-29T11:30:00Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",
