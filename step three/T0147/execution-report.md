@@ -1,26 +1,29 @@
 # T0147 execution report
 
 - **Task:** Display the queued, contacting, waiting, partial, completed, failed and cancelled request states.
-- **Start revision:** [`V 3.0.531`](https://github.com/artinrahimii/project/commit/4f087b1edb10fc4624d02bf180e53f234acf96f9).
-- **Status at implementation commit:** `in_progress`; exact-head CI is pending.
+- **Start/implementation revision:** [`V 3.0.532`](https://github.com/artinrahimii/project/commit/90f542e2500e1af5a99d8f0f11336d3a29f05a1a).
+- **Correction revision:** `V 3.0.533`; exact commit SHA and rerun results will be recorded after CI.
+- **Current status:** `in_progress`; the first exact-head gates exposed a test assertion issue and Kotlin formatting issue.
 
 ## Incoming dependency review
 
-- **T0146 → T0147:** `sequencing_only`, validated from the actual code. T0146's `ConversationMessageValidator` is consumed by the message-input screen/ViewModel; the request-state display consumes `RequestStateDao.observeForConversation` and `PersistedRequestStatus`, but does not call the validator. Preserve the original `type=blocks` edge as conservative ordering, not a claimed technical dependency.
-- **T0138 → T0147:** `sequencing_only`, validated from the actual code. T0138 supplies privacy documentation/source-contract tests; this task does not consume a T0138 API or change the host trust boundary. The screen explicitly says requests are not sent in the current preview. Preserve the `type=blocks` edge as conservative ordering.
-- Both prior classifications were `unreviewed`; the edge-change log records the new classification, rationale and code evidence. No edge is deleted.
+- **T0146 → T0147:** `sequencing_only`, validated. T0147 consumes `PersistedRequestStatus` and `RequestStateDao.observeForConversation`; it does not import/call T0146's message validator. The original `type=blocks` edge remains as conservative ordering.
+- **T0138 → T0147:** `sequencing_only`, validated. T0138 provides privacy documentation/source tests, not an API consumed by this Room-backed status UI. The UI states requests are not sent in this preview. The original `type=blocks` edge remains.
+- Both edges changed from `unreviewed` to validated sequencing-only with rationale and code evidence. No edge was deleted.
 
 ## Implementation
 
-- Added a typed UI presentation for each existing `PersistedRequestStatus`.
-- Connected the conversation detail screen to the Room-backed `requestStateDao().observeForConversation(conversationId)` flow and added a request-status section using real persisted rows. When no rows exist, the UI says no request status has been recorded and explicitly notes that this preview does not send requests to a host.
-- Status cards display a label, explanatory text, update time and optional attempt/error-code metadata; they do not display prompt or context-capsule content.
-- Added a unit test covering all seven labels, a Room test that persists and reads all seven status values in creation order, and a Python source-contract guard.
+- Added a typed UI presentation for every existing `PersistedRequestStatus`.
+- Connected conversation detail to the Room-backed request-state Flow and renders cards only for real persisted rows; if none exist, the UI says so and explicitly discloses the no-transport preview.
+- Status cards show label, explanation, update time and optional attempt/error code; no prompt or context-capsule text is rendered.
+- Added a presentation unit test, Room round-trip test for all seven statuses, and Python source-contract tests.
 
-## Verification
+## Verification and correction
 
-At this first implementation commit, Android lint/build/JVM tests and the Step Three quality workflow are pending. The task must remain `in_progress` until the exact-head product and quality jobs pass.
+- **V 3.0.532 quality** [run 40868131396](https://github.com/artinrahimii/project/actions/runs/40868131396) — failed: 228 tests ran; seven new subtests expected enum members to include the type prefix, while `RequestStateEntity.kt` correctly declares bare enum members.
+- **V 3.0.532 product** [run 40868131465](https://github.com/artinrahimii/project/actions/runs/40868131465) — Android ktlint failed at `ClientDatabaseTest.kt:125:25` with “Expected newline before .”; APK build and JVM tests were skipped. HostLifecycle passed; the Windows job was still running when this correction was prepared.
+- **V 3.0.533** corrects the enum assertion and the Room-flow test formatting. Exact-head product and quality workflows are pending. Do not mark this task done before they pass.
 
 ## Acceptance boundary
 
-The UI displays states that are actually present in local Room records. It does not synthesize lifecycle transitions, create fake requests, implement request transport, or claim live Android-to-Windows connectivity.
+The UI shows statuses from local Room records only. It does not synthesize transitions, create fake requests, implement network transport or claim Android-to-Windows reachability.

@@ -34,7 +34,7 @@ class AndroidRequestStatusContractTests(unittest.TestCase):
             "CANCELLED",
         ):
             with self.subTest(status=status):
-                self.assertIn(f"PersistedRequestStatus.{status}", ENTITY)
+                self.assertIn(f"    {status},", ENTITY)
                 self.assertIn(f"PersistedRequestStatus.{status}", PRESENTATION)
                 self.assertIn(f"PersistedRequestStatus.{status} to", PRESENTATION_TEST)
 

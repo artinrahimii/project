@@ -120,13 +120,9 @@ class ClientDatabaseTest {
                 )
             }
 
-            assertEquals(
-                PersistedRequestStatus.values().toList(),
-                database.requestStateDao()
-                    .observeForConversation(conversationId)
-                    .first()
-                    .map { it.status },
-            )
+            val persistedStatuses =
+                database.requestStateDao().observeForConversation(conversationId).first().map { it.status }
+            assertEquals(PersistedRequestStatus.values().toList(), persistedStatuses)
         }
 
     @Test

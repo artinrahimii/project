@@ -31293,11 +31293,11 @@
         "step three/T0138/execution-report.md",
         "step three/T0146/execution-report.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0147-A001 (2026-10-29T11:42:00Z): Reviewed T0146 → T0147 and T0138 → T0147 against the current Room/status model and request UI. Neither predecessor's implementation/API is directly consumed; both edges are validated as sequencing_only and kept as blocks edges. Added an exhaustive presentation mapper for all seven PersistedRequestStatus values and rendered only actual Room-backed request-state rows in conversation detail; the empty state says no request state exists and transport remains unavailable. Added JVM, Room and Python contract tests. Exact-head CI pending; remain in_progress until product and quality gates pass.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0147-A001 (2026-10-29T11:42:00Z): Reviewed T0146 → T0147 and T0138 → T0147 against the current Room/status model and request UI. Neither predecessor's implementation/API is directly consumed; both edges are validated as sequencing_only and kept as blocks edges. Added an exhaustive presentation mapper for all seven PersistedRequestStatus values and rendered only actual Room-backed request-state rows in conversation detail; the empty state says no request state exists and transport remains unavailable. Added JVM, Room and Python contract tests. Exact-head CI pending; remain in_progress until product and quality gates pass.\n\nT0147-A001 exact-head CI result (V 3.0.532): Step Three quality run 40868131396 ran 228 tests; seven subtests in the new contract guard failed because Kotlin enum members in RequestStateEntity.kt are declared as bare names, not `PersistedRequestStatus.NAME`. Android product job 123427984091 failed ktlint at ClientDatabaseTest.kt:125:25 with `Expected newline before .`; APK/unit tests were skipped. HostLifecycle job 123427984365 passed. These are test/style issues, not acceptance; A002 corrects them.",
       "execution_summary": {
-        "attempt_count": 1,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "T0147-A001",
+        "attempt_count": 2,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "T0147-A002",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestStatusPresentation.kt",
@@ -31309,9 +31309,16 @@
           "step three/T0147/evidence/verification.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
-        "tests_failed": [],
+        "related_commits": [
+          "90f542e2500e1af5a99d8f0f11336d3a29f05a1a"
+        ],
+        "tests_passed": [
+          "V 3.0.532 HostLifecycle unit/integration job 123427984365 passed."
+        ],
+        "tests_failed": [
+          "V 3.0.532 Step Three quality gate 40868131396: 228 tests ran; seven subtests failed because the new source-contract test expected enum members to have a type prefix in RequestStateEntity.kt.",
+          "V 3.0.532 Android product job 123427984091: ktlint failed ClientDatabaseTest.kt:125:25 with 'Expected newline before .'; APK and Android JVM tests were skipped."
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -31329,9 +31336,9 @@
         {
           "attempt_id": "T0147-A001",
           "started_at": "2026-10-29T11:42:00Z",
-          "ended_at": null,
-          "result": "partial",
-          "summary": "Added explicit user-facing mapping for all seven persisted request states, Room-backed status rendering in conversation detail, truthful empty-state disclosure and UI/Room/Python regression coverage. Exact-head CI is pending.",
+          "ended_at": "2026-10-29T11:48:15Z",
+          "result": "failed",
+          "summary": "V 3.0.532 failed the Step Three quality run because the new Python contract test expected enum values with the Kotlin type prefix in RequestStateEntity.kt, whose enum declaration correctly uses bare enum entries. Android product CI also failed ktlint on ClientDatabaseTest.kt:125:25 ('Expected newline before .'). HostLifecycle tests passed; Windows job was still running when the results were recorded.",
           "changed_files": [
             "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestStatusPresentation.kt",
             "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
@@ -31342,39 +31349,79 @@
             "step three/T0147/evidence/verification.md",
             "step three/project-graph.md"
           ],
+          "commit_sha": "90f542e2500e1af5a99d8f0f11336d3a29f05a1a",
+          "tests": [
+            {
+              "command": "Step Three quality gate run 40868131396",
+              "result": "failed",
+              "summary": "228 tests ran; 7 subtests failed because the contract assertion expected PersistedRequestStatus.NAME in the enum declaration instead of the bare enum entry.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40868131396"
+            },
+            {
+              "command": "Android ktlintCheck product run 40868131465 / job 123427984091",
+              "result": "failed",
+              "summary": "ktlint reported ClientDatabaseTest.kt:125:25 Expected newline before '.'; APK build and Android JVM tests were skipped.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40868131465"
+            },
+            {
+              "command": "HostLifecycle product run 40868131465 / job 123427984365",
+              "result": "passed",
+              "summary": "Host lifecycle unit/integration tests passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40868131465"
+            }
+          ],
+          "failure_details": "Quality run 40868131396: 228 tests ran, with seven subtest failures for QUEUED, CONTACTING, WAITING, PARTIAL, COMPLETED, FAILED and CANCELLED because ENTITY declares each enum member without the PersistedRequestStatus. prefix. Product run 40868131465 Android job 123427984091: ktlint failed at ClientDatabaseTest.kt:125:25 with 'Expected newline before .'; APK build and Android JVM tests were skipped. HostLifecycle job 123427984365 passed; Windows job 123427984518 was in progress at the first check.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Correct the Python enum-declaration assertion and format the new Room query chain, then rerun all gates on one exact commit."
+        },
+        {
+          "attempt_id": "T0147-A002",
+          "started_at": "2026-10-29T11:49:00Z",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Corrected the source-contract assertion to match Kotlin enum declarations and changed the Room test to use a named, single-line flow chain to satisfy ktlint. Exact-head CI for V 3.0.533 is pending.",
+          "changed_files": [
+            "tests/test_android_request_status_contract.py",
+            "src/Client.Android/app/src/test/java/com/whitep/client/data/ClientDatabaseTest.kt",
+            "step three/T0147/execution-report.md",
+            "step three/T0147/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
           "commit_sha": null,
           "tests": [
             {
-              "command": "RequestStatusPresentationTest (Android JVM unit tests)",
+              "command": "Step Three Python tests and graph guards",
               "result": "not_run",
-              "summary": "Pending exact-head Gradle testDebugUnitTest."
+              "summary": "Pending exact-head quality workflow V 3.0.533."
             },
             {
-              "command": "ClientDatabaseTest all-status Room persistence test",
+              "command": "Android ktlintCheck",
               "result": "not_run",
-              "summary": "Pending exact-head Gradle testDebugUnitTest."
+              "summary": "Pending exact-head product workflow V 3.0.533."
             },
             {
-              "command": "tests/test_android_request_status_contract.py",
+              "command": "Android assembleDebug",
               "result": "not_run",
-              "summary": "Pending Step Three quality workflow."
+              "summary": "Pending exact-head product workflow V 3.0.533."
             },
             {
-              "command": "Android ktlintCheck and assembleDebug",
+              "command": "Android testDebugUnitTest",
               "result": "not_run",
-              "summary": "Pending product workflow."
+              "summary": "Pending exact-head product workflow V 3.0.533."
             },
             {
-              "command": "Step Three graph/evidence guards",
+              "command": "Windows WPF and HostLifecycle jobs",
               "result": "not_run",
-              "summary": "Pending quality workflow."
+              "summary": "Pending exact-head product workflow V 3.0.533."
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect exact-head quality and product workflows. Fix failures and rerun; mark T0147 done only after all seven mappings, Room integration tests, Android lint/build/unit tests and graph guards pass."
+          "follow_up": "Inspect exact-head V 3.0.533 quality/product jobs; close T0147 only when all seven status presentations, Room integration and all CI gates pass."
         }
       ]
     },
@@ -43215,7 +43262,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-29T11:42:00Z",
+  "updated_at": "2026-10-29T11:49:00Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

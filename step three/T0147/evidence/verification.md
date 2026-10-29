@@ -1,10 +1,9 @@
 # T0147 evidence ledger
 
-- Start revision: [`V 3.0.531`](https://github.com/artinrahimii/project/commit/4f087b1edb10fc4624d02bf180e53f234acf96f9).
-- Source model: `src/Client.Android/app/src/main/java/com/whitep/client/data/RequestStateEntity.kt` already defines all seven enum values and a Room Flow ordered by creation time.
-- Actual database contract: `src/Client.Android/app/src/main/java/com/whitep/client/data/ClientDatabase.kt` exposes `requestStateDao()`; `ClientDatabaseTest.kt` already verifies persistence/cascade behavior.
-- New implementation: `RequestStatusPresentation.kt` maps each persisted state to readable label/detail; `ConversationDetailScreen.kt` observes only real Room rows and shows an explicit empty state when no request records exist.
-- Added tests: `RequestStatusPresentationTest.kt`, `ClientDatabaseTest.kt` coverage for all seven states, and `tests/test_android_request_status_contract.py`.
-- Edge review: T0146 → T0147 and T0138 → T0147 are both validated as `sequencing_only` based on the actual contracts; their original `type=blocks` edges remain present.
-- Exact-head product and quality CI are pending at the first implementation revision.
-- **Not claimed:** live transport, actual state transitions, host delivery, response generation or independent-network P2P reachability.
+- Implementation revision: [`V 3.0.532`](https://github.com/artinrahimii/project/commit/90f542e2500e1af5a99d8f0f11336d3a29f05a1a).
+- The Room status model is `RequestStateEntity.kt`; its enum declaration uses bare Kotlin enum entries and the DAO provides `observeForConversation`.
+- V 3.0.532 quality [40868131396](https://github.com/artinrahimii/project/actions/runs/40868131396) ran 228 tests; seven new source-contract subtests failed due an incorrect test assumption about enum syntax.
+- V 3.0.532 Android product job [123427984091](https://github.com/artinrahimii/project/actions/runs/40868131465) failed ktlint on the new Room test query chain at line 125; build/tests were skipped. HostLifecycle passed.
+- V 3.0.533 fixes these test/style defects; its exact-head CI is pending.
+- Both incoming edges (T0146 → T0147 and T0138 → T0147) are validated sequencing-only, retaining their `type=blocks` values; rationale/evidence is in the graph edge-change log.
+- **Not claimed:** live status transitions, request transport, host delivery, response generation or P2P reachability.
