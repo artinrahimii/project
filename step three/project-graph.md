@@ -30911,8 +30911,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0145 و T0138 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "تکمیل‌شده",
       "actual_output_paths": [
         "src/Client.Android/app/src/main/java/com/whitep/client/domain/ConversationMessageValidator.kt",
         "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
@@ -30941,12 +30941,12 @@
         "step three/T0145/execution-report.md",
         "step three/T0138/execution-report.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0146-A001 (2026-10-29T11:22:00Z): Added a domain-level UTF-8 byte validator aligned with the canonical 8,192-byte prompt limit, applied it again before Room persistence, disabled the UI send action for invalid input, and added Android and Python regression tests. Dependency review validated T0145 → T0146 as a contract/interface dependency and T0138 → T0146 as sequencing-only; both conservative edges are retained. Exact-head CI is pending; keep this task in_progress until Android lint/build/unit tests and Step Three quality checks pass.\n\nT0146-A001 exact-head CI result (V 3.0.527): Step Three quality gate 40865663008 failed one of 225 tests because tests/test_android_conversation_detail_contract.py still expected the previous inline normalizedContent.isEmpty() check. The new domain validator is intentional; the source-contract test is corrected in T0146-A002. Task remains in_progress. The V 3.0.527 product workflow was running during this correction and must be inspected independently.\n\nT0146-A002 (2026-10-29T11:30:00Z): Updated the stale Python source-contract check to assert the new ConversationMessageValidator contract and rejection path. Exact-head product and quality CI are pending; task remains in_progress until both pass.\n\nT0146-A002 exact-head CI result (V 3.0.528, 2026-10-29): the corrected Python suite passed all 225 tests and graph guard reported 0 errors (one existing T0001 metadata warning retained). Android ktlint still failed on a syntax defect in ConversationMessagesViewModelTest.kt: the rejectsBlankMessagesWithoutPersistingThem declaration omitted '=' before runBlocking; APK build and Android unit tests were skipped. This is corrected in T0146-A003, pending V 3.0.529 CI.\n\nT0146-A003 exact-head CI result (V 3.0.529, 2026-10-29): Step Three quality gate 40866241718 passed all 225 Python tests, syntax, and graph/evidence validation (0 errors; one existing T0001 metadata warning). Product workflow 40866241861 passed Windows WPF and HostLifecycle but Android ktlint failed one formatting rule at ConversationDetailScreen.kt:79:29: a multiline expression must start on a new line. APK build and Android JVM tests were skipped. T0146-A004 applies the matching multiline initializer style; V 3.0.530 exact-head CI is pending.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0146-A001 (2026-10-29T11:22:00Z): Added a domain-level UTF-8 byte validator aligned with the canonical 8,192-byte prompt limit, applied it again before Room persistence, disabled the UI send action for invalid input, and added Android and Python regression tests. Dependency review validated T0145 → T0146 as a contract/interface dependency and T0138 → T0146 as sequencing-only; both conservative edges are retained. Exact-head CI is pending; keep this task in_progress until Android lint/build/unit tests and Step Three quality checks pass.\n\nT0146-A001 exact-head CI result (V 3.0.527): Step Three quality gate 40865663008 failed one of 225 tests because tests/test_android_conversation_detail_contract.py still expected the previous inline normalizedContent.isEmpty() check. The new domain validator is intentional; the source-contract test is corrected in T0146-A002. Task remains in_progress. The V 3.0.527 product workflow was running during this correction and must be inspected independently.\n\nT0146-A002 (2026-10-29T11:30:00Z): Updated the stale Python source-contract check to assert the new ConversationMessageValidator contract and rejection path. Exact-head product and quality CI are pending; task remains in_progress until both pass.\n\nT0146-A002 exact-head CI result (V 3.0.528, 2026-10-29): the corrected Python suite passed all 225 tests and graph guard reported 0 errors (one existing T0001 metadata warning retained). Android ktlint still failed on a syntax defect in ConversationMessagesViewModelTest.kt: the rejectsBlankMessagesWithoutPersistingThem declaration omitted '=' before runBlocking; APK build and Android unit tests were skipped. This is corrected in T0146-A003, pending V 3.0.529 CI.\n\nT0146-A003 exact-head CI result (V 3.0.529, 2026-10-29): Step Three quality gate 40866241718 passed all 225 Python tests, syntax, and graph/evidence validation (0 errors; one existing T0001 metadata warning). Product workflow 40866241861 passed Windows WPF and HostLifecycle but Android ktlint failed one formatting rule at ConversationDetailScreen.kt:79:29: a multiline expression must start on a new line. APK build and Android JVM tests were skipped. T0146-A004 applies the matching multiline initializer style; V 3.0.530 exact-head CI is pending.\n\nT0146-A004 acceptance closeout (2026-10-29): exact V 3.0.530 revision ca45cc39b1153af79b7599c49bc0d9e473471375 passed both GitHub Actions workflows. Quality gate 40866732394 passed 225 Python tests, Python syntax and graph/evidence checks (0 errors, one existing T0001 free-text metadata warning preserved). Product workflow 40866732301 passed Android ktlintCheck, assembleDebug, testDebugUnitTest, generated Protobuf Java/Kotlin verification and APK artifact upload; Windows WPF formatting/build/startup/security/DPAPI/agent-tool checks, generated Protobuf C# and artifact upload; and HostLifecycle unit/integration tests. Uploaded artifacts: Android debug APK 11,870,694 bytes; Windows host archive 14,254,951 bytes. This closes T0146 for local text validation and Room persistence only; no host delivery or independent-network P2P claim is made.",
       "execution_summary": {
         "attempt_count": 4,
         "failed_attempt_count": 3,
         "last_attempt_id": "T0146-A004",
-        "last_attempt_result": "partial",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/domain/ConversationMessageValidator.kt",
           "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
@@ -30962,19 +30962,19 @@
         "related_commits": [
           "9b9d189cac8cdaecb0bc6a19739afa8a1a8f5733",
           "59fe16a2a60395f7eb7a3b21ce73719efce8a506",
-          "d61ffa7996951a9e06d1b8012016970a367c9042"
+          "d61ffa7996951a9e06d1b8012016970a367c9042",
+          "ca45cc39b1153af79b7599c49bc0d9e473471375"
         ],
         "tests_passed": [
-          "V 3.0.528 Step Three gate run 40865887712: 225 Python tests; syntax and graph/evidence checks passed (0 errors, one preserved warning).",
-          "V 3.0.529 Step Three gate run 40866241718: 225 Python tests; syntax and graph/evidence checks passed (0 errors, one preserved warning).",
-          "V 3.0.529 Windows WPF product job 123421628222 passed.",
-          "V 3.0.529 HostLifecycle product job 123421628579 passed."
+          "V 3.0.530 Step Three quality gate run 40866732394: 225 Python tests, syntax and graph/evidence guards passed (229 nodes, 417 edges, 0 errors, 1 preserved metadata warning).",
+          "V 3.0.530 product run 40866732301: Android ktlintCheck, assembleDebug, testDebugUnitTest, generated Protobuf verification and APK upload passed.",
+          "V 3.0.530 product run 40866732301: Windows WPF formatting/build/startup/security/generated-Protobuf checks and artifact upload passed.",
+          "V 3.0.530 product run 40866732301: HostLifecycle unit/integration tests passed."
         ],
         "tests_failed": [
-          "V 3.0.527 Step Three gate run 40865663008: one stale Python source-contract assertion failed; fixed in V 3.0.528.",
-          "V 3.0.527 Android product run 40865663105: Kotlin parse error in ConversationMessagesViewModelTest.kt:96; fixed in V 3.0.529.",
-          "V 3.0.528 Android product run 40865887585: same Kotlin parse error; fixed in V 3.0.529.",
-          "V 3.0.529 Android product run 40866241861: ktlint style violation at ConversationDetailScreen.kt:79:29; fix is in this attempt."
+          "V 3.0.527 quality gate 40865663008: one outdated Python source-contract assertion failed.",
+          "V 3.0.527 product gate 40865663105 and V 3.0.528 product gate 40865887585: malformed Kotlin test declaration caused ktlint parsing failure.",
+          "V 3.0.529 product gate 40866241861: one ktlint multiline-expression style violation in ConversationDetailScreen.kt."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -31190,48 +31190,65 @@
         {
           "attempt_id": "T0146-A004",
           "started_at": "2026-10-29T11:36:00Z",
-          "ended_at": null,
-          "result": "partial",
-          "summary": "Adjusted the multiline remember(draft) initializer to match the repository's existing Kotlin formatting convention. Exact-head CI for V 3.0.530 is pending.",
+          "ended_at": "2026-10-29T11:39:30Z",
+          "result": "succeeded",
+          "summary": "The V 3.0.530 exact-head workflows passed. Step Three quality run 40866732394 passed all 225 Python tests, syntax, and both graph/evidence guards (229 tasks, 417 edges, 0 errors; one existing T0001 metadata warning preserved). Product run 40866732301 passed Android ktlintCheck, assembleDebug, testDebugUnitTest, generated Protobuf Java/Kotlin verification and APK upload; Windows formatting/build/generated Protobuf/WPF startup and security checks; and HostLifecycle unit/integration tests. Both Android debug APK (11,870,694 bytes) and Windows host artifacts (14,254,951 bytes) were uploaded.",
           "changed_files": [
             "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
             "step three/T0146/execution-report.md",
             "step three/T0146/evidence/verification.md",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "ca45cc39b1153af79b7599c49bc0d9e473471375",
           "tests": [
             {
+              "command": "Step Three quality gate run 40866732394",
+              "result": "passed",
+              "summary": "225 Python tests passed; Python compileall passed; both graph guards validated 229 tasks / 417 edges with 0 errors and one preserved T0001 UNMAPPED_DEPENDENCY metadata warning.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40866732394"
+            },
+            {
               "command": "Android ktlintCheck",
-              "result": "not_run",
-              "summary": "Pending exact-head product workflow for V 3.0.530."
+              "result": "passed",
+              "summary": "Gradle ktlintCheck completed successfully on exact V 3.0.530.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40866732301"
             },
             {
               "command": "Android assembleDebug",
-              "result": "not_run",
-              "summary": "Pending exact-head product workflow for V 3.0.530."
+              "result": "passed",
+              "summary": "Debug APK built successfully; product workflow uploaded whitep-android-debug-apk (11,870,694 bytes).",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40866732301"
             },
             {
               "command": "Android testDebugUnitTest",
-              "result": "not_run",
-              "summary": "Pending exact-head product workflow for V 3.0.530."
+              "result": "passed",
+              "summary": "All Android JVM unit tests completed successfully, including the new message-validation boundary and oversized-message non-persistence tests.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40866732301"
             },
             {
-              "command": "Step Three quality gate",
-              "result": "not_run",
-              "summary": "Pending exact-head workflow for V 3.0.530."
+              "command": "Generated Android Protobuf verification and APK upload",
+              "result": "passed",
+              "summary": "Generated Java and Kotlin Protobuf sources were found and verified; APK upload succeeded.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40866732301"
             },
             {
-              "command": "Windows WPF and HostLifecycle product jobs",
-              "result": "not_run",
-              "summary": "Pending exact-head product workflow for V 3.0.530."
+              "command": "Windows WPF product job",
+              "result": "passed",
+              "summary": "C# formatting, Release build, generated Protobuf C# checks, WPF startup smoke/security checks, and artifact upload passed; artifact archive size 14,254,951 bytes.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40866732301"
+            },
+            {
+              "command": "HostLifecycle unit/integration product job",
+              "result": "passed",
+              "summary": "HostLifecycle unit and integration tests passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40866732301"
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect exact-head V 3.0.530 workflows. Close T0146 only if Android lint, APK build, JVM tests and generated-source checks, Windows/HostLifecycle and Step Three quality all pass."
+          "follow_up": "T0146 is accepted for local Android message input validation only. Before starting T0147, review and document both incoming edges (T0146 → T0147 and T0138 → T0147) against the real request-state/domain/UI contracts; do not infer technical dependency from type=blocks alone."
         }
       ]
     },
@@ -43069,7 +43086,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-29T11:36:00Z",
+  "updated_at": "2026-10-29T11:40:00Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",
