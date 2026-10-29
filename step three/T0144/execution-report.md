@@ -1,33 +1,32 @@
 # T0144 execution report
 
 - **Task:** Create, rename, delete, and open a conversation.
-- **Status:** `in_progress`; one Android JVM test failed and is being corrected.
-- **Implementation revision:** `V 3.0.517` — `12b76f6f617c982b1353e8e6ec7cb7f5370bb6b3`.
-- **Corrections through:** `V 3.0.521` — `40aae42f0021b331a976845bc0146ddef1c19b6b`.
-- **Attempt A006:** removes the Android framework dependency from route encoding so the helper is directly testable on the JVM.
+- **Status:** `done` — local conversation CRUD and navigation acceptance is verified.
+- **Implementation baseline:** `V 3.0.517` — `12b76f6f617c982b1353e8e6ec7cb7f5370bb6b3`.
+- **Final implementation revision tested:** `V 3.0.522` — `c5775c09b8ec8ddd973bbf4e9ec34d01a6e8efbf`.
+- **Acceptance closeout:** `T0144-A007` (2026-10-29). Full prior attempt history is retained in `step three/project-graph.md`.
 
 ## Dependency review
 
 - T0143 → T0144: `contract_or_interface_dependency`, validated against the existing Room DAO/entity contract.
 - T0138 → T0144: `sequencing_only`, validated against the local-only storage boundary.
-- Rationale/evidence and earlier edge history remain in the graph; unrelated unreviewed edges remain untouched.
+- The outgoing T0144 → T0145 edge remains `unreviewed`; it was not changed as part of this closeout.
 
 ## Implementation delivered
 
-- Room-backed create, rename, delete, and lookup methods; UUID-based conversation identifiers; blank-title validation; update timestamp progression.
-- UI controls for creating, opening, renaming and deleting conversations; a detail route that loads the selected saved conversation.
-- Regression tests for CRUD, invalid rename, timestamps, cascade deletion, and encoded route parameters.
-- Replaced Android-only `Uri.encode` with Java `URLEncoder` path-segment encoding, converting spaces to `%20` and adding coverage for reserved slash and plus characters.
+- Room-backed create, rename, delete, and lookup methods; UUID-based conversation identifiers; blank-title validation; monotonic update timestamps.
+- UI actions to create, open, rename, and delete a conversation, plus a detail route that loads the selected locally saved conversation.
+- Regression coverage for CRUD behavior, invalid rename, timestamps, cascade deletion, and URL-encoded conversation routes.
+- Replaced Android-only `Uri.encode` with a JVM-available UTF-8 path-segment encoder; route cases cover spaces, slash, and plus characters.
 
-## Exact-head CI evidence on V 3.0.521
+## Exact-head CI evidence — V 3.0.522
 
-- [Quality gate passed](https://github.com/artinrahimii/project/actions/runs/40852830273): 218 Python tests and graph guard passed.
-- Android lint passed and the debug APK built successfully.
-- Android JVM tests ran 16 tests; 15 passed and `ClientDestinationTest.conversationDetailRouteCanCarryAnEncodedConversationId` failed at line 37 with a `RuntimeException`. The helper used `android.net.Uri.encode` in a plain JVM test, so this task cannot be accepted until corrected.
-- [Host lifecycle tests passed](https://github.com/artinrahimii/project/actions/runs/40852830138/job/123376305346).
-- [Windows WPF product checks passed](https://github.com/artinrahimii/project/actions/runs/40852830138/job/123376304850), including Release build, startup smoke, policy/capability checks, and DPAPI identity/trust-store checks.
-- Because the Android JVM test failed, the product workflow remains failed despite the successful APK build.
+- [Step Three quality gate passed](https://github.com/artinrahimii/project/actions/runs/40853623895): 218 Python tests passed; Python syntax checks, graph structure validation, and recorded-output/evidence validation passed. The graph guard reported 229 tasks and 417 edges.
+- [Android product job passed](https://github.com/artinrahimii/project/actions/runs/40853623906/job/123378982847): `ktlintCheck`, `assembleDebug`, `testDebugUnitTest`, generated Protobuf verification, and APK artifact upload all passed. The retrieved job log confirms the Gradle test task completed with `BUILD SUCCESSFUL`.
+- [HostLifecycle tests passed](https://github.com/artinrahimii/project/actions/runs/40853623906/job/123378982515).
+- [Windows WPF build and startup/security checks passed](https://github.com/artinrahimii/project/actions/runs/40853623906/job/123378982833), including DPAPI host identity and peer-trust storage checks.
+- Historical failures A001–A005 remain recorded in the graph; A006 corrected the JVM-only route encoder issue. A007 records the successful verification above.
 
 ## Verification boundary
 
-Gradle and a working local clone are unavailable in this execution environment. Attempt A006 uses exact failing-test evidence to remove the Android-only API, adds reserved-character checks, and will be accepted only after the next exact-head `ktlintCheck`, `assembleDebug`, and `testDebugUnitTest` all pass.
+This environment could not clone the repository locally because GitHub DNS resolution failed, so no local Gradle/Python run is claimed. The acceptance result is based on the completed GitHub Actions jobs for the exact implementation commit `c5775c09b8ec8ddd973bbf4e9ec34d01a6e8efbf`. This task confirms local conversation management and navigation; it does **not** prove Android-to-Windows P2P operation or independent-network reachability. T0121 remains blocked pending a production HTTPS rendezvous endpoint and verified reachability from a second network.

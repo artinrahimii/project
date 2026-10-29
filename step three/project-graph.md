@@ -30270,8 +30270,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0143 و T0138 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال انجام",
+      "status": "done",
+      "status_fa": "تکمیل‌شده",
       "actual_output_paths": [
         "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationListViewModel.kt",
         "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationListScreen.kt",
@@ -30297,14 +30297,15 @@
         "step three/T0144/execution-report.md",
         "step three/T0144/evidence/verification.md",
         "src/Client.Android/app/src/main/java/com/whitep/client/data/ConversationEntity.kt",
-        "docs/decisions/ADR-0020-android-client-local-conversation-storage.md"
+        "docs/decisions/ADR-0020-android-client-local-conversation-storage.md",
+        ".github/workflows/product-build.yml"
       ],
-      "notes": "T0144 implementation is committed for exact-head validation; do not mark done until Android ktlint, assembleDebug, testDebugUnitTest, Python source-contract tests, and graph guard pass on the actual commit.",
+      "notes": "T0144 remained in progress until exact-head validation. T0144-A007 confirms the required Android lint, APK build, Android JVM unit tests, Python source-contract suite, and graph guard passed on V 3.0.522; acceptance is now closed for local conversation CRUD/navigation. This does not validate independent-network P2P reachability.\n\nT0144-A007 acceptance closeout (2026-10-29): exact online main head c5775c09b8ec8ddd973bbf4e9ec34d01a6e8efbf (V 3.0.522) passed the Step Three quality gate (218 Python tests; syntax checks; graph structure and recorded-output/evidence guards). Android ktlintCheck, assembleDebug, and testDebugUnitTest all completed successfully; generated Protobuf verification and APK artifact upload succeeded. HostLifecycle unit/integration and Windows WPF build/startup/security/DPAPI checks passed. The route helper no longer depends on Android-only Uri.encode; the tested JVM-compatible UTF-8 path-segment encoder passed the route unit suite. This completes T0144's local conversation CRUD/navigation scope; it does not prove independent-network P2P reachability, and T0121 remains blocked.",
       "execution_summary": {
-        "attempt_count": 6,
+        "attempt_count": 7,
         "failed_attempt_count": 5,
-        "last_attempt_id": "T0144-A006",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "T0144-A007",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationListViewModel.kt",
           "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationListScreen.kt",
@@ -30317,13 +30318,15 @@
           "tests/test_android_conversation_management_contract.py",
           "step three/T0144/execution-report.md",
           "step three/T0144/evidence/verification.md",
-          "step three/project-graph.md"
+          "step three/project-graph.md",
+          ".github/workflows/product-build.yml"
         ],
         "related_commits": [
           "12b76f6f617c982b1353e8e6ec7cb7f5370bb6b3",
           "06b8dd63afa37902ea9b834e97abe80458f6375b",
           "44c207018fb3c2232730722b59e3cd1249317bbd",
-          "a4a0cbd167d0ceb78bc8b888d56fbf2e65f8567c"
+          "a4a0cbd167d0ceb78bc8b888d56fbf2e65f8567c",
+          "c5775c09b8ec8ddd973bbf4e9ec34d01a6e8efbf"
         ],
         "tests_passed": [
           "Step Three quality gate — V 3.0.518: 218 tests and graph guard passed.",
@@ -30334,7 +30337,14 @@
           "Android ktlintCheck — V 3.0.521: passed.",
           "Android assembleDebug — V 3.0.521: passed.",
           "Host lifecycle tests — V 3.0.521: passed.",
-          "Windows WPF product job — V 3.0.521: passed."
+          "Windows WPF product job — V 3.0.521: passed.",
+          "Step Three quality gate — V 3.0.522 / run 40853623895: 218 Python tests passed; syntax, graph structure, and recorded-output/evidence validation passed (229 tasks, 417 edges). https://github.com/artinrahimii/project/actions/runs/40853623895",
+          "Android ktlintCheck — V 3.0.522 / run 40853623906: passed. https://github.com/artinrahimii/project/actions/runs/40853623906/job/123378982847",
+          "Android assembleDebug — V 3.0.522 / run 40853623906: passed and the debug APK was produced. https://github.com/artinrahimii/project/actions/runs/40853623906/job/123378982847",
+          "Android testDebugUnitTest — V 3.0.522 / run 40853623906: passed; the exact job log shows the Gradle test task completed with BUILD SUCCESSFUL. https://github.com/artinrahimii/project/actions/runs/40853623906/job/123378982847",
+          "Generated Protobuf Java/Kotlin checks and Android debug APK artifact upload — V 3.0.522: passed. https://github.com/artinrahimii/project/actions/runs/40853623906/job/123378982847",
+          "HostLifecycle unit/integration tests — V 3.0.522: passed. https://github.com/artinrahimii/project/actions/runs/40853623906/job/123378982515",
+          "Windows WPF build, startup smoke, policy/capability, DPAPI host identity and peer trust checks — V 3.0.522: all job steps passed. https://github.com/artinrahimii/project/actions/runs/40853623906/job/123378982833"
         ],
         "tests_failed": [
           "T0144-A001 / V 3.0.517: stale source-contract expectation and Android ktlint failed.",
@@ -30588,6 +30598,69 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Verify exact-head Android lint, APK build, all JVM unit tests, generated Protobuf checks and all product jobs. If successful, record a final acceptance closeout and set T0144 to done."
+        },
+        {
+          "attempt_id": "T0144-A007",
+          "started_at": "2026-10-29T13:35:00+03:30",
+          "ended_at": "2026-10-29T13:38:06+03:30",
+          "result": "succeeded",
+          "summary": "Verified the exact online main implementation commit c5775c09b8ec8ddd973bbf4e9ec34d01a6e8efbf (V 3.0.522). The Step Three quality job passed 218 Python tests and both graph validation gates. The Android job's ktlintCheck, assembleDebug, and testDebugUnitTest tasks passed, generated Protobuf checks and APK upload passed, and HostLifecycle and Windows WPF product jobs passed. This closes the task's local conversation CRUD and navigation acceptance; it does not establish independent-network P2P reachability.",
+          "changed_files": [
+            ".github/workflows/product-build.yml",
+            "step three/T0144/execution-report.md",
+            "step three/T0144/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "command": "Step Three quality gate — V 3.0.522 (run 40853623895)",
+              "result": "passed",
+              "summary": "218 Python tests; syntax, graph structure, and recorded-output/evidence validation passed. Graph guard reported 229 tasks and 417 edges.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40853623895"
+            },
+            {
+              "command": "Android ktlintCheck — V 3.0.522",
+              "result": "passed",
+              "summary": "Kotlin formatting and lint completed successfully.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40853623906/job/123378982847"
+            },
+            {
+              "command": "Android assembleDebug — V 3.0.522",
+              "result": "passed",
+              "summary": "Debug APK build completed successfully.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40853623906/job/123378982847"
+            },
+            {
+              "command": "Android testDebugUnitTest — V 3.0.522",
+              "result": "passed",
+              "summary": "Gradle testDebugUnitTest completed with BUILD SUCCESSFUL; includes the conversation-route JVM regression tests.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40853623906/job/123378982847"
+            },
+            {
+              "command": "Generated Protobuf verification and Android APK artifact upload — V 3.0.522",
+              "result": "passed",
+              "summary": "Both final Android product-build steps completed successfully.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40853623906/job/123378982847"
+            },
+            {
+              "command": "HostLifecycle unit and integration tests — V 3.0.522",
+              "result": "passed",
+              "summary": "All job steps passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40853623906/job/123378982515"
+            },
+            {
+              "command": "Windows WPF build/startup/security checks — V 3.0.522",
+              "result": "passed",
+              "summary": "Release build, formatting, generated Protobuf, startup smoke, tool restrictions/policy/capability, and DPAPI identity/trust checks passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40853623906/job/123378982833"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Next eligible task is T0145. Before changing it, validate the currently unreviewed T0144 → T0145 edge against the real navigation/UI contracts and record grounded rationale/evidence. Keep T0121 blocked and its dependent network-discovery tasks unstarted until external reachability acceptance is met."
         }
       ]
     },
@@ -42419,7 +42492,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-29T09:55:37.927Z",
+  "updated_at": "2026-10-29T10:08:06Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",
