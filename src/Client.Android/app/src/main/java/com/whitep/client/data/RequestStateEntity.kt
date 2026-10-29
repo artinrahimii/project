@@ -29,7 +29,10 @@ enum class PersistedRequestStatus {
             onDelete = ForeignKey.CASCADE,
         ),
     ],
-    indices = [Index(value = ["conversationId", "updatedAtEpochMillis"])],
+    indices = [
+        Index(value = ["conversationId", "updatedAtEpochMillis"]),
+        Index(value = ["conversationId", "createdAtEpochMillis", "requestId"]),
+    ],
 )
 data class RequestStateEntity(
     @PrimaryKey val requestId: String,

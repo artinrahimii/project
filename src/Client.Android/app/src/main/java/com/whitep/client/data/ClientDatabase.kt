@@ -6,6 +6,8 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverter
 import androidx.room.TypeConverters
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 
 class ClientDatabaseConverters {
     @TypeConverter
@@ -28,7 +30,7 @@ class ClientDatabaseConverters {
         RequestStateEntity::class,
         ClientRequestDraftEntity::class,
     ],
-    version = 1,
+    version = 2,
     exportSchema = true,
 )
 @TypeConverters(ClientDatabaseConverters::class)
@@ -42,7 +44,17 @@ abstract class ClientDatabase : RoomDatabase() {
     abstract fun clientRequestDraftDao(): ClientRequestDraftDao
 
     companion object {
-        private const val DATABASE_NAME = "whitep-client.db"
+        internal const val DATABASE_NAME = "whitep-client.db"
+
+        val MIGRATION_1_2: Migration =
+            object : Migration(1, 2) {
+                override fun migrate(db: SupportSQLiteDatabase) {
+                    db.execSQL(
+                        "CREATE INDEX IF NOT EXISTS index_request_states_conversationId_createdAtEpochMillis_requestId " +
+                            "ON request_states (conversationId, createdAtEpochMillis, requestId)",
+                    )
+                }
+            }
 
         @Volatile
         private var instance: ClientDatabase? = null
@@ -54,7 +66,8 @@ abstract class ClientDatabase : RoomDatabase() {
                         context.applicationContext,
                         ClientDatabase::class.java,
                         DATABASE_NAME,
-                    ).build()
+                    ).addMigrations(MIGRATION_1_2)
+                    .build()
                     .also { database -> instance = database }
             }
     }

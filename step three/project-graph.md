@@ -29721,33 +29721,96 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0141 و T0138 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientDatabase.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/RequestStateEntity.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/data/ClientDatabaseMigrationTest.kt",
+        "src/Client.Android/app/src/test/resources/db/v1-schema.sql",
+        "tests/test_android_database_migration_contract.py",
+        "step three/T0142/execution-report.md",
+        "step three/T0142/evidence/verification.md",
+        "step three/project-graph.md"
+      ],
       "expected_output_paths": [
         "src/Client.Android/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientDatabase.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/RequestStateEntity.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/data/ClientDatabaseMigrationTest.kt",
+        "src/Client.Android/app/src/test/resources/db/v1-schema.sql",
+        "tests/test_android_database_migration_contract.py",
+        "step three/T0142/execution-report.md",
+        "step three/T0142/evidence/verification.md"
+      ],
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0142-A001 adds a version-1-to-2 Room migration and runtime upgrade regression test; completion is pending exact-head CI.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0142-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientDatabase.kt",
+          "src/Client.Android/app/src/main/java/com/whitep/client/data/RequestStateEntity.kt",
+          "src/Client.Android/app/src/test/java/com/whitep/client/data/ClientDatabaseMigrationTest.kt",
+          "src/Client.Android/app/src/test/resources/db/v1-schema.sql",
+          "tests/test_android_database_migration_contract.py",
+          "step three/T0142/execution-report.md",
+          "step three/T0142/evidence/verification.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
-          "affected_by_contract_changes": [],
-          "review_evidence": []
+          "state": "in_review",
+          "triggering_contracts": [
+            "T0141 Room schema version 1",
+            "T0138 processing-host privacy disclosure"
+          ],
+          "affected_by_contract_changes": [
+            "Room schema version 1 to 2: additive request-state ordering index"
+          ],
+          "review_evidence": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientDatabase.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/data/RequestStateEntity.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/data/ClientDatabaseMigrationTest.kt",
+            "docs/decisions/ADR-0020-android-client-local-conversation-storage.md"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0142-A001",
+          "started_at": "2026-10-29T08:26:48.565Z",
+          "ended_at": "2026-10-29T08:26:48.569Z",
+          "result": "partial",
+          "summary": "Implemented additive Room migration 1→2 to add a composite request-state ordering index, recorded the legacy v1 schema fixture, and added runtime and Python contract regression tests. Exact-head CI verification is pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientDatabase.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/data/RequestStateEntity.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/data/ClientDatabaseMigrationTest.kt",
+            "src/Client.Android/app/src/test/resources/db/v1-schema.sql",
+            "tests/test_android_database_migration_contract.py",
+            "step three/T0142/execution-report.md",
+            "step three/T0142/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "Database schema version 1→2; new composite index for request_states conversation/creation/request ordering."
+          ],
+          "follow_up": "Verify the exact-head Step Three quality gate and Android product build; record results and commit SHA, then mark done only if all required checks pass."
+        }
+      ]
     },
     {
       "id": "T0143",
@@ -36999,19 +37062,30 @@
       "from": "T0141",
       "to": "T0142",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0142 must upgrade the concrete Room version-1 schema created by T0141 and preserve its persisted rows. The version-2 index is aligned with RequestStateDao's conversation-scoped ordering query; this is a real schema contract dependency, not inferred from type=blocks.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientDatabase.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/RequestStateEntity.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/data/ClientDatabaseMigrationTest.kt",
+        "src/Client.Android/app/src/test/resources/db/v1-schema.sql",
+        "step three/T0141/execution-report.md"
+      ]
     },
     {
       "from": "T0138",
       "to": "T0142",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0138's processing-host disclosure informs the privacy boundary, but it supplies no Kotlin API or schema artifact consumed by the Room migration. T0142 changes only an index and preserves existing local data; keep type=blocks as conservative execution order rather than claim a direct technical dependency.",
+      "validation_status": "validated",
+      "evidence": [
+        "docs/decisions/ADR-0019-host-visible-inference-content.md",
+        "docs/decisions/ADR-0020-android-client-local-conversation-storage.md",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientDatabase.kt",
+        "src/Client.Android/app/src/test/resources/db/v1-schema.sql"
+      ]
     },
     {
       "from": "T0142",
@@ -41535,9 +41609,44 @@
         "tests/test_android_local_storage_boundary.py"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-29T08:26:48.569Z",
+      "edge_from": "T0141",
+      "edge_to": "T0142",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "old_validation_status": "unreviewed",
+      "new_validation_status": "validated",
+      "reason": "T0142 must upgrade the concrete Room version-1 schema created by T0141 and preserve its persisted rows. The version-2 index is aligned with RequestStateDao's conversation-scoped ordering query; this is a real schema contract dependency, not inferred from type=blocks.",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientDatabase.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/RequestStateEntity.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/data/ClientDatabaseMigrationTest.kt",
+        "src/Client.Android/app/src/test/resources/db/v1-schema.sql",
+        "step three/T0141/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-29T08:26:48.569Z",
+      "edge_from": "T0138",
+      "edge_to": "T0142",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "old_validation_status": "unreviewed",
+      "new_validation_status": "validated",
+      "reason": "T0138's processing-host disclosure informs the privacy boundary, but it supplies no Kotlin API or schema artifact consumed by the Room migration. T0142 changes only an index and preserves existing local data; keep type=blocks as conservative execution order rather than claim a direct technical dependency.",
+      "evidence": [
+        "docs/decisions/ADR-0019-host-visible-inference-content.md",
+        "docs/decisions/ADR-0020-android-client-local-conversation-storage.md",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientDatabase.kt",
+        "src/Client.Android/app/src/test/resources/db/v1-schema.sql"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-29T08:15:16Z",
+  "updated_at": "2026-10-29T08:26:48.569Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",
