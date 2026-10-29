@@ -12,7 +12,7 @@
 - **Migration:** Room database schema moves from v3 to v4 using non-destructive `MIGRATION_3_4`; old capsule/request/message records are not intentionally rewritten.
 - **Tests added/updated:** Room persistence tests cover source/time/field-name metadata, not duplicating content values, delete cascade and migration. A ViewModel test covers source attribution after an explicitly reviewed Save. Python source contracts guard migration and network-boundary constraints.
 - **Local execution:** The connected GitHub tools do not provide a local Gradle/Android/Python runtime. No local test run is claimed.
-- **Current status:** `in_progress`; A001 had a Python test NameError; A002 fixed that issue and passed the 257-test quality gate, but Android KtLint failed at line 52 in `ConversationContextCapsuleViewModelTest.kt`. A003 reformats that call; exact-head V 3.0.582 product tests are pending. No acceptance claim is made.
+- **Current status:** `in_progress`; A001's Python NameError and A002's first KtLint violation have been fixed in later revisions. V 3.0.582 quality and Windows/HostLifecycle checks passed, but Android KtLint found another long `addMigrations` call at `ClientDatabaseMigrationTest.kt:91`. A004 reformats it; exact-head V 3.0.583 Android tests are pending. No acceptance claim is made.
 - **Next action:** Inspect exact-head quality/product CI. Fix any compile, schema migration, lint or test failures before marking T0158 complete.
 
 
@@ -32,3 +32,12 @@
 - Android product workflow [40945444883](https://github.com/artinrahimii/project/actions/runs/40945444883) failed in Kotlin lint: line 52 of `ConversationContextCapsuleViewModelTest.kt` had a long `.addMigrations(...)` call (120-column limit and separate-argument formatting). The APK build and JVM tests were not reached on that run.
 - Windows WPF build and HostLifecycle unit/integration jobs both passed on the same head.
 - A003 changes only the migration-registration formatting in the test source; T0158 remains `in_progress` until exact-head V 3.0.582 checks pass.
+
+
+## T0158-A003 CI result and T0158-A004 correction
+
+- Exact candidate commit `V 3.0.582`: `43d636c0b325be15cfb1931bf6c07f1f71076a6e`.
+- Step Three quality workflow [40945957102](https://github.com/artinrahimii/project/actions/runs/40945957102) succeeded; its 257-test Python suite and graph/evidence checks passed.
+- Android product workflow [40945957438](https://github.com/artinrahimii/project/actions/runs/40945957438) failed at KtLint, line 91 of `ClientDatabaseMigrationTest.kt`, because the three `addMigrations` arguments had to be put on separate lines. APK build and Android JVM tests were not reached.
+- Windows WPF build/startup smoke and HostLifecycle unit/integration jobs passed on the same head.
+- A004 formats the migration call and updates `test_android_database_migration_contract.py` to verify the multi-line registration safely. T0158 remains `in_progress` until exact-head V 3.0.583 gates pass.

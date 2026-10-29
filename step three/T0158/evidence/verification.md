@@ -25,3 +25,11 @@
 - Android: FAIL at KtLint line 52 for a long `addMigrations` call; APK/JVM/migration steps were not reached, [workflow 40945444883](https://github.com/artinrahimii/project/actions/runs/40945444883).
 - Windows WPF and HostLifecycle unit/integration: PASS, [product workflow 40945444883](https://github.com/artinrahimii/project/actions/runs/40945444883).
 - A003 fixes the formatting; exact-head V 3.0.582 verification is pending.
+
+
+## Exact-head V 3.0.582 test outcomes
+
+- Step Three quality: PASS, 257 tests, [workflow 40945957102](https://github.com/artinrahimii/project/actions/runs/40945957102).
+- Android: FAIL at KtLint line 91 of `ClientDatabaseMigrationTest.kt`; APK/JVM/migration tests not reached, [workflow 40945957438](https://github.com/artinrahimii/project/actions/runs/40945957438).
+- Windows WPF build/startup smoke and HostLifecycle unit/integration: PASS, [workflow 40945957438](https://github.com/artinrahimii/project/actions/runs/40945957438).
+- A004 fixes the migration test formatting and source-contract assertion; exact-head V 3.0.583 verification is pending.

@@ -88,7 +88,11 @@ class ClientDatabaseMigrationTest {
                         context,
                         ClientDatabase::class.java,
                         ClientDatabase.DATABASE_NAME,
-                    ).addMigrations(ClientDatabase.MIGRATION_1_2, ClientDatabase.MIGRATION_2_3, ClientDatabase.MIGRATION_3_4)
+                    ).addMigrations(
+                        ClientDatabase.MIGRATION_1_2,
+                        ClientDatabase.MIGRATION_2_3,
+                        ClientDatabase.MIGRATION_3_4,
+                    )
                     .build()
                     .also { database = it }
 

@@ -34,7 +34,10 @@ class AndroidDatabaseMigrationContractTests(unittest.TestCase):
     def test_runtime_upgrade_test_checks_version_data_and_index(self):
         test_source = MIGRATION_TEST.read_text(encoding="utf-8")
         self.assertIn("legacyDatabase.version = 1", test_source)
-        self.assertIn("addMigrations(ClientDatabase.MIGRATION_1_2, ClientDatabase.MIGRATION_2_3, ClientDatabase.MIGRATION_3_4)", test_source)
+        self.assertIn("addMigrations(", test_source)
+        self.assertIn("ClientDatabase.MIGRATION_1_2", test_source)
+        self.assertIn("ClientDatabase.MIGRATION_2_3", test_source)
+        self.assertIn("ClientDatabase.MIGRATION_3_4", test_source)
         self.assertIn("assertEquals(4, migratedDatabase.openHelper.readableDatabase.version)", test_source)
         self.assertIn("changeHistoryForConversation", test_source)
         self.assertIn("conversationContextCapsuleDao", test_source)
