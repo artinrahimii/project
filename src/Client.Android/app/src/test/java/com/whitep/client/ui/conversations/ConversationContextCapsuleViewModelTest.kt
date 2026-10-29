@@ -49,7 +49,11 @@ class ConversationContextCapsuleViewModelTest {
                 .inMemoryDatabaseBuilder(
                     application,
                     ClientDatabase::class.java,
-                ).addMigrations(ClientDatabase.MIGRATION_1_2, ClientDatabase.MIGRATION_2_3, ClientDatabase.MIGRATION_3_4)
+                ).addMigrations(
+                    ClientDatabase.MIGRATION_1_2,
+                    ClientDatabase.MIGRATION_2_3,
+                    ClientDatabase.MIGRATION_3_4,
+                )
                 .allowMainThreadQueries()
                 .build()
         repository = RoomConversationContextCapsuleRepository(database.conversationContextCapsuleDao())

@@ -12,7 +12,7 @@
 - **Migration:** Room database schema moves from v3 to v4 using non-destructive `MIGRATION_3_4`; old capsule/request/message records are not intentionally rewritten.
 - **Tests added/updated:** Room persistence tests cover source/time/field-name metadata, not duplicating content values, delete cascade and migration. A ViewModel test covers source attribution after an explicitly reviewed Save. Python source contracts guard migration and network-boundary constraints.
 - **Local execution:** The connected GitHub tools do not provide a local Gradle/Android/Python runtime. No local test run is claimed.
-- **Current status:** `in_progress`; A001 failed because the new Python migration-contract assertion referenced `database` from the wrong test scope (256/257 tests passed). A002 moves that assertion into the method that defines `database`; exact-head V 3.0.581 CI is pending. No acceptance claim is made.
+- **Current status:** `in_progress`; A001 had a Python test NameError; A002 fixed that issue and passed the 257-test quality gate, but Android KtLint failed at line 52 in `ConversationContextCapsuleViewModelTest.kt`. A003 reformats that call; exact-head V 3.0.582 product tests are pending. No acceptance claim is made.
 - **Next action:** Inspect exact-head quality/product CI. Fix any compile, schema migration, lint or test failures before marking T0158 complete.
 
 
@@ -23,3 +23,12 @@
 - Corrected by moving the conversation_context_capsule_changes assertion into test_room_version_and_migration_are_registered, where database is loaded.
 - The V 3.0.580 Android product workflow was still running when this correction was recorded; it is not counted as passed or failed here.
 - T0158 stays in_progress and A001 stays in the history as a failed attempt. The follow-up commit is V 3.0.581; its exact-head workflows must pass before acceptance.
+
+
+## T0158-A002 CI result and T0158-A003 correction
+
+- Exact candidate commit `V 3.0.581`: `09c6636a866cc12242a02b699001edf568779c7c`.
+- Step Three quality workflow [40945445001](https://github.com/artinrahimii/project/actions/runs/40945445001) succeeded; the log confirms `Ran 257 tests` and graph/evidence gates passed.
+- Android product workflow [40945444883](https://github.com/artinrahimii/project/actions/runs/40945444883) failed in Kotlin lint: line 52 of `ConversationContextCapsuleViewModelTest.kt` had a long `.addMigrations(...)` call (120-column limit and separate-argument formatting). The APK build and JVM tests were not reached on that run.
+- Windows WPF build and HostLifecycle unit/integration jobs both passed on the same head.
+- A003 changes only the migration-registration formatting in the test source; T0158 remains `in_progress` until exact-head V 3.0.582 checks pass.

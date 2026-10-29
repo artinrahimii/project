@@ -17,3 +17,11 @@
 - Step Three quality workflow [40945024330](https://github.com/artinrahimii/project/actions/runs/40945024330) failed only because test_android_database_migration_contract.py asserted on the local name database from a method that defines test_source; 256/257 Python tests passed.
 - A002 correction moves that assertion to the database-source test. No product test outcome is inferred from the Python gate.
 - New exact-head quality and product workflows for V 3.0.581 are pending; T0158 remains in progress.
+
+
+## Exact-head V 3.0.581 test outcomes
+
+- Step Three quality: PASS, 257 tests, [workflow 40945445001](https://github.com/artinrahimii/project/actions/runs/40945445001).
+- Android: FAIL at KtLint line 52 for a long `addMigrations` call; APK/JVM/migration steps were not reached, [workflow 40945444883](https://github.com/artinrahimii/project/actions/runs/40945444883).
+- Windows WPF and HostLifecycle unit/integration: PASS, [product workflow 40945444883](https://github.com/artinrahimii/project/actions/runs/40945444883).
+- A003 fixes the formatting; exact-head V 3.0.582 verification is pending.

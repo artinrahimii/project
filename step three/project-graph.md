@@ -34829,11 +34829,11 @@
         "https://github.com/artinrahimii/project/actions/runs/40943199249",
         "https://github.com/artinrahimii/project/actions/runs/40943199144"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0158-A001 (2026-10-29T19:58:20Z): Reviewed both incoming edges against actual code and requirements, kept their `blocks` types, and validated both as contract_or_interface_dependency. Implemented local Room provenance/history events with source, timestamp and changed field names only; added transactionally coupled capsule/audit persistence, schema v3→v4 migration, ViewModel source attribution, runtime and Python tests. `protocol/whitep/v1/messages.proto` remains unchanged. Exact-head CI is pending; outgoing T0158 → T0159 remains unreviewed.\nT0158-A001 CI failure recorded: Step Three quality workflow 40945024330 ran 257 Python tests; 256 passed and one errored with a NameError caused by the new `conversation_context_capsule_changes` assertion being placed in a test method without the `database` variable. Corrected the assertion scope for A002; product workflow on V 3.0.580 was still running at the time of this record.\nT0158-A002 (2026-10-29T20:02:00Z): Moved the failing migration-contract assertion into the scope that defines `database`; exact-head V 3.0.581 CI is pending.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0158-A001 (2026-10-29T19:58:20Z): Reviewed both incoming edges against actual code and requirements, kept their `blocks` types, and validated both as contract_or_interface_dependency. Implemented local Room provenance/history events with source, timestamp and changed field names only; added transactionally coupled capsule/audit persistence, schema v3→v4 migration, ViewModel source attribution, runtime and Python tests. `protocol/whitep/v1/messages.proto` remains unchanged. Exact-head CI is pending; outgoing T0158 → T0159 remains unreviewed.\nT0158-A001 CI failure recorded: Step Three quality workflow 40945024330 ran 257 Python tests; 256 passed and one errored with a NameError caused by the new `conversation_context_capsule_changes` assertion being placed in a test method without the `database` variable. Corrected the assertion scope for A002; product workflow on V 3.0.580 was still running at the time of this record.\nT0158-A002 (2026-10-29T20:02:00Z): Moved the failing migration-contract assertion into the scope that defines `database`; exact-head V 3.0.581 CI is pending.\nT0158-A002 exact-head V 3.0.581 CI: Step Three quality passed all 257 Python tests and graph/evidence checks; Windows WPF build and HostLifecycle tests passed. Android KtLint failed only on the long addMigrations line in ConversationContextCapsuleViewModelTest.kt (line 52); APK/JVM steps were not reached. A003 reformats that call; exact-head V 3.0.582 CI pending.",
       "execution_summary": {
-        "attempt_count": 2,
-        "failed_attempt_count": 1,
-        "last_attempt_id": "T0158-A002",
+        "attempt_count": 3,
+        "failed_attempt_count": 2,
+        "last_attempt_id": "T0158-A003",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/data/ConversationContextCapsuleChangeEntity.kt",
@@ -34854,14 +34854,34 @@
           "step three/project-graph.md"
         ],
         "related_commits": [
-          "9673db6f13e46c05b289dd2e096eeeb0e4a29eb7"
+          "9673db6f13e46c05b289dd2e096eeeb0e4a29eb7",
+          "09c6636a866cc12242a02b699001edf568779c7c"
         ],
-        "tests_passed": [],
+        "tests_passed": [
+          {
+            "name": "Step Three Python/graf gate",
+            "result": "passed",
+            "summary": "257 tests and graph/evidence checks passed on V 3.0.581.",
+            "url": "https://github.com/artinrahimii/project/actions/runs/40945445001"
+          },
+          {
+            "name": "Windows WPF host",
+            "result": "passed",
+            "summary": "Product job completed successfully on V 3.0.581.",
+            "url": "https://github.com/artinrahimii/project/actions/runs/40945444883"
+          },
+          {
+            "name": "HostLifecycle tests",
+            "result": "passed",
+            "summary": "Product job completed successfully on V 3.0.581.",
+            "url": "https://github.com/artinrahimii/project/actions/runs/40945444883"
+          }
+        ],
         "tests_failed": [
           {
-            "name": "test_runtime_upgrade_test_checks_version_data_and_index",
+            "name": "Android ktlint",
             "result": "failed",
-            "summary": "NameError: `database` referenced from the wrong test method; all other tests in the workflow passed."
+            "summary": "Line 52 in ConversationContextCapsuleViewModelTest.kt: migration args must be on separate lines; line length >120. Corrected for A003."
           }
         ],
         "blocked_reason": null,
@@ -34939,8 +34959,8 @@
         {
           "attempt_id": "T0158-A002",
           "started_at": "2026-10-29T20:02:00Z",
-          "ended_at": "2026-10-29T20:02:00Z",
-          "result": "partial",
+          "ended_at": "2026-10-29T20:05:17Z",
+          "result": "failed",
           "summary": "Corrected the Python migration-contract test: the audit-table assertion now resides in the method that loads the database source. Product behavior and migration tests still require exact-head CI.",
           "changed_files": [
             "tests/test_android_database_migration_contract.py",
@@ -34948,24 +34968,74 @@
             "step three/T0158/evidence/verification.md",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "09c6636a866cc12242a02b699001edf568779c7c",
           "tests": [
             {
               "name": "Step Three quality gate — V 3.0.581",
-              "result": "not_run",
-              "summary": "Will run after this follow-up commit."
+              "result": "passed",
+              "summary": "257 Python automated tests passed; graph structure and recorded-output/evidence checks passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40945445001"
             },
             {
-              "name": "Android build/migration/JVM tests — V 3.0.581",
+              "name": "Android Kotlin lint — V 3.0.581",
+              "result": "failed",
+              "summary": "KtLint reported the three migration arguments at line 52 should be on separate lines; line length exceeded 120. APK build and Android JVM tests were not reached.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40945444883"
+            },
+            {
+              "name": "Windows WPF host — V 3.0.581",
+              "result": "passed",
+              "summary": "Windows build job completed successfully.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40945444883"
+            },
+            {
+              "name": "HostLifecycle unit/integration — V 3.0.581",
+              "result": "passed",
+              "summary": "Host lifecycle job completed successfully.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40945444883"
+            }
+          ],
+          "failure_details": "Exact-head V 3.0.581 quality passed, but Android ktlint failed on line 52 of ConversationContextCapsuleViewModelTest.kt because the three-argument addMigrations call exceeded 120 columns and required one argument per line. Android build/JVM/migration tests were not reached on this run. Windows WPF build and HostLifecycle tests passed.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect exact-head V 3.0.581 Step Three and Android workflows; do not mark T0158 done until all required gates pass."
+        },
+        {
+          "attempt_id": "T0158-A003",
+          "started_at": "2026-10-29T20:05:17Z",
+          "ended_at": "2026-10-29T20:05:17Z",
+          "result": "partial",
+          "summary": "Reformatted the Room migration registration in ConversationContextCapsuleViewModelTest.kt to satisfy KtLint's per-argument line and 120-column rules. V 3.0.581 quality gate passed 257 Python tests; its Android job failed at KtLint before APK/JVM tests. Windows and HostLifecycle jobs passed. Exact-head V 3.0.582 CI pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModelTest.kt",
+            "step three/T0158/execution-report.md",
+            "step three/T0158/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Step Three quality gate — V 3.0.582",
               "result": "not_run",
-              "summary": "Will run after this follow-up commit."
+              "summary": "Will run after the fix is committed."
+            },
+            {
+              "name": "Android KtLint/APK/JVM/migration tests — V 3.0.582",
+              "result": "not_run",
+              "summary": "Will run after the fix is committed."
+            },
+            {
+              "name": "Windows and HostLifecycle — V 3.0.582",
+              "result": "not_run",
+              "summary": "Will run after the fix is committed."
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect exact-head V 3.0.581 Step Three and Android workflows; do not mark T0158 done until all required gates pass."
+          "follow_up": "Review exact-head V 3.0.582 CI; mark T0158 done only when Android KtLint, APK build, JVM/migration tests, Step Three quality, Windows and HostLifecycle are all green."
         }
       ]
     },
@@ -46772,7 +46842,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-29T20:02:00Z",
+  "updated_at": "2026-10-29T20:05:17Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",
