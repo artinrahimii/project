@@ -32808,33 +32808,133 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0151 و T0150 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال انجام",
+      "actual_output_paths": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/ConversationContextCapsuleEntity.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/RoomConversationContextCapsuleRepository.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientDatabase.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/data/ConversationContextCapsulePersistenceTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/data/ClientDatabaseMigrationTest.kt",
+        "tests/test_android_context_capsule_persistence_contract.py",
+        "step three/T0152/execution-report.md",
+        "step three/T0152/evidence/verification.md",
+        "step three/project-graph.md"
+      ],
       "expected_output_paths": [
         "src/Client.Android/Context/ + tests/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/ConversationContextCapsuleEntity.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/RoomConversationContextCapsuleRepository.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientDatabase.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/data/ConversationContextCapsulePersistenceTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/data/ClientDatabaseMigrationTest.kt",
+        "tests/test_android_context_capsule_persistence_contract.py",
+        "step three/T0150/execution-report.md",
+        "step three/T0151/execution-report.md",
+        "step three/T0152/execution-report.md",
+        "step three/T0152/evidence/verification.md"
+      ],
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0152-A001 adds conversation-scoped Room BLOB persistence using the accepted T0151 v1 codec, Room schema v3 migration, and Robolectric/Python tests. T0150 → T0152 was reviewed as sequencing_only and validated; its blocks edge remains. Exact-head CI is required before acceptance.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0152-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Client.Android/app/src/main/java/com/whitep/client/data/ConversationContextCapsuleEntity.kt",
+          "src/Client.Android/app/src/main/java/com/whitep/client/data/RoomConversationContextCapsuleRepository.kt",
+          "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientDatabase.kt",
+          "src/Client.Android/app/src/test/java/com/whitep/client/data/ConversationContextCapsulePersistenceTest.kt",
+          "src/Client.Android/app/src/test/java/com/whitep/client/data/ClientDatabaseMigrationTest.kt",
+          "tests/test_android_context_capsule_persistence_contract.py",
+          "step three/T0152/execution-report.md",
+          "step three/T0152/evidence/verification.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
-          "affected_by_contract_changes": [],
-          "review_evidence": []
+          "state": "required",
+          "triggering_contracts": [
+            "Room schema v3 and sequential migration 2→3",
+            "One capsule record per conversation ID",
+            "Foreign-key cascade on conversation deletion",
+            "ConversationContextCapsule v1 codec and 4,096-byte cap"
+          ],
+          "affected_by_contract_changes": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/data/ConversationContextCapsuleEntity.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/data/RoomConversationContextCapsuleRepository.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientDatabase.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/data/ClientDatabaseMigrationTest.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/data/ConversationContextCapsulePersistenceTest.kt"
+          ],
+          "review_evidence": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/context/ConversationContextCapsule.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientDatabase.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/data/ConversationEntity.kt",
+            "step three/T0150/execution-report.md",
+            "step three/T0151/execution-report.md",
+            "src/Client.Android/app/src/test/java/com/whitep/client/data/ConversationContextCapsulePersistenceTest.kt"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0152-A001",
+          "started_at": "2026-10-29T13:55:20Z",
+          "ended_at": "2026-10-29T13:55:20Z",
+          "result": "partial",
+          "summary": "Reviewed T0150→T0152 as sequencing_only, then added a conversation-scoped Room entity/DAO/repository, schema migration 2→3, migration and persistence acceptance tests, and Python contract guards. Exact-head CI has not yet run for these changes.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/data/ConversationContextCapsuleEntity.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/data/RoomConversationContextCapsuleRepository.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientDatabase.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/data/ConversationContextCapsulePersistenceTest.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/data/ClientDatabaseMigrationTest.kt",
+            "tests/test_android_context_capsule_persistence_contract.py",
+            "step three/T0152/execution-report.md",
+            "step three/T0152/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "related_commits": [],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "ConversationContextCapsulePersistenceTest",
+              "result": "not_run",
+              "summary": "Added file-backed Robolectric persistence tests; exact-head Android JVM task pending."
+            },
+            {
+              "name": "ClientDatabaseMigrationTest",
+              "result": "not_run",
+              "summary": "Extended to migrate schema v1 through v2 to v3; exact-head Android JVM task pending."
+            },
+            {
+              "name": "tests/test_android_context_capsule_persistence_contract.py",
+              "result": "not_run",
+              "summary": "Added source-contract checks; exact-head Python/quality task pending."
+            },
+            {
+              "name": "Android ktlintCheck / assembleDebug / testDebugUnitTest",
+              "result": "not_run",
+              "summary": "Awaiting CI on V 3.0.553."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "Added conversation-scoped capsule table/repository",
+            "Raised Room DB schema to v3 with migration 2→3"
+          ],
+          "follow_up": "Inspect exact-head V 3.0.553 CI. Fix lint/build/test/migration issues before accepting T0152."
+        }
+      ]
     },
     {
       "id": "T0153",
@@ -39935,10 +40035,17 @@
       "from": "T0150",
       "to": "T0152",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0150's accepted integration test exercises conversation/message/request-state ViewModel and Room APIs for create/send/reopen history; it neither produces nor consumes a ConversationContextCapsule API or storage contract. T0152 consumes the v1 codec from T0151 and links the record to ConversationEntity via conversationId. Retain the blocks edge as conservative execution order, not a direct technical prerequisite.",
+      "validation_status": "validated",
+      "evidence": [
+        "step three/T0150/execution-report.md",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationWorkflowAcceptanceTest.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientDatabase.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/ConversationEntity.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/context/ConversationContextCapsule.kt",
+        "step three/T0151/execution-report.md"
+      ]
     },
     {
       "from": "T0152",
@@ -44645,9 +44752,28 @@
         "protocol/whitep/v1/messages.proto"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "from": "T0150",
+      "to": "T0152",
+      "changed_at": "2026-10-29T13:55:20Z",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "old_validation_status": "unreviewed",
+      "new_validation_status": "validated",
+      "reason": "T0150's accepted integration test exercises conversation/message/request-state ViewModel and Room APIs for create/send/reopen history; it neither produces nor consumes a ConversationContextCapsule API or storage contract. T0152 consumes the v1 codec from T0151 and links the record to ConversationEntity via conversationId. Retain the blocks edge as conservative execution order, not a direct technical prerequisite.",
+      "evidence": [
+        "step three/T0150/execution-report.md",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationWorkflowAcceptanceTest.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientDatabase.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/ConversationEntity.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/context/ConversationContextCapsule.kt",
+        "step three/T0151/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-29T13:51:51Z",
+  "updated_at": "2026-10-29T13:55:20Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

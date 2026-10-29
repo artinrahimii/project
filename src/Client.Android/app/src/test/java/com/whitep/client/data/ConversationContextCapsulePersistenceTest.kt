@@ -1,0 +1,194 @@
+package com.whitep.client.data
+
+import android.database.sqlite.SQLiteConstraintException
+import androidx.room.Room
+import com.whitep.client.context.ConversationContextCapsule
+import com.whitep.client.context.ConversationContextCapsuleError
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
+import org.junit.After
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
+import org.junit.Before
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.RuntimeEnvironment
+import org.robolectric.annotation.Config
+
+@RunWith(RobolectricTestRunner::class)
+@Config(sdk = [35])
+class ConversationContextCapsulePersistenceTest {
+    private val context = RuntimeEnvironment.getApplication()
+    private var activeDatabase: ClientDatabase? = null
+    private val testDatabaseNames =
+        listOf("t0152-capsule-persistence.db", "t0152-capsule-invalid.db")
+
+    @Before
+    fun setUp() {
+        testDatabaseNames.forEach(context::deleteDatabase)
+    }
+
+    @After
+    fun tearDown() {
+        activeDatabase?.close()
+        activeDatabase = null
+        testDatabaseNames.forEach(context::deleteDatabase)
+    }
+
+    @Test
+    fun capsulesRemainIndependentAcrossConversationsAndDatabaseReopen() =
+        runBlocking {
+            val databaseName = testDatabaseNames.first()
+            val firstDatabase = openDatabase(databaseName)
+            firstDatabase.conversationDao().upsert(conversation("conversation-one"))
+            firstDatabase.conversationDao().upsert(conversation("conversation-two"))
+            val firstRepository =
+                RoomConversationContextCapsuleRepository(
+                    firstDatabase.conversationContextCapsuleDao(),
+                )
+            val firstCapsule =
+                ConversationContextCapsule(
+                    goal = "Prepare the first release",
+                    keyFacts = listOf("Runs locally"),
+                    decisions = listOf("Keep conversations separate"),
+                )
+            val secondCapsule =
+                ConversationContextCapsule(
+                    goal = "Review the second release",
+                    constraints = listOf("Offline-capable"),
+                    unresolvedItems = listOf("Verify a second device"),
+                )
+
+            assertTrue(
+                firstRepository.save("conversation-one", firstCapsule, 100L)
+                    is ConversationContextCapsuleSaveResult.Saved,
+            )
+            assertTrue(
+                firstRepository.save("conversation-two", secondCapsule, 200L)
+                    is ConversationContextCapsuleSaveResult.Saved,
+            )
+            assertEquals(
+                1,
+                firstDatabase.conversationContextCapsuleDao().countForConversation("conversation-one"),
+            )
+            assertEquals(
+                1,
+                firstDatabase.conversationContextCapsuleDao().countForConversation("conversation-two"),
+            )
+            assertEquals(
+                firstCapsule,
+                (firstRepository.observe("conversation-one").first() as ConversationContextCapsuleLoadResult.Found)
+                    .capsule,
+            )
+
+            firstDatabase.close()
+            activeDatabase = null
+
+            val reopenedDatabase = openDatabase(databaseName)
+            val reopenedRepository =
+                RoomConversationContextCapsuleRepository(
+                    reopenedDatabase.conversationContextCapsuleDao(),
+                )
+            val restoredFirst = reopenedRepository.find("conversation-one")
+            val restoredSecond = reopenedRepository.find("conversation-two")
+            assertTrue(restoredFirst is ConversationContextCapsuleLoadResult.Found)
+            assertTrue(restoredSecond is ConversationContextCapsuleLoadResult.Found)
+            assertEquals(
+                firstCapsule,
+                (restoredFirst as ConversationContextCapsuleLoadResult.Found).capsule,
+            )
+            assertEquals(100L, restoredFirst.updatedAtEpochMillis)
+            assertEquals(
+                secondCapsule,
+                (restoredSecond as ConversationContextCapsuleLoadResult.Found).capsule,
+            )
+            assertEquals(200L, restoredSecond.updatedAtEpochMillis)
+
+            val updatedFirst =
+                ConversationContextCapsule(
+                    goal = "Updated first release goal",
+                    keyFacts = listOf("Updated locally"),
+                )
+            assertTrue(
+                reopenedRepository.save("conversation-one", updatedFirst, 300L)
+                    is ConversationContextCapsuleSaveResult.Saved,
+            )
+            assertEquals(
+                updatedFirst,
+                (reopenedRepository.find("conversation-one") as ConversationContextCapsuleLoadResult.Found)
+                    .capsule,
+            )
+            assertEquals(
+                secondCapsule,
+                (reopenedRepository.find("conversation-two") as ConversationContextCapsuleLoadResult.Found)
+                    .capsule,
+            )
+
+            assertEquals(1, reopenedDatabase.conversationDao().deleteById("conversation-one"))
+            assertEquals(
+                ConversationContextCapsuleLoadResult.Missing,
+                reopenedRepository.find("conversation-one"),
+            )
+            assertEquals(
+                secondCapsule,
+                (reopenedRepository.find("conversation-two") as ConversationContextCapsuleLoadResult.Found)
+                    .capsule,
+            )
+        }
+
+    @Test
+    fun invalidCapsuleIsRejectedAndForeignKeyPreventsOrphanRecords() =
+        runBlocking {
+            val database = openDatabase(testDatabaseNames.last())
+            database.conversationDao().upsert(conversation("valid-conversation"))
+            val repository =
+                RoomConversationContextCapsuleRepository(database.conversationContextCapsuleDao())
+            val rejected = repository.save(
+                "valid-conversation",
+                ConversationContextCapsule(goal = "  "),
+                10L,
+            )
+            assertTrue(rejected is ConversationContextCapsuleSaveResult.Rejected)
+            assertEquals(
+                ConversationContextCapsuleError.EMPTY_GOAL,
+                (rejected as ConversationContextCapsuleSaveResult.Rejected).error,
+            )
+            assertEquals(
+                ConversationContextCapsuleLoadResult.Missing,
+                repository.find("valid-conversation"),
+            )
+
+            var foreignKeyRejected = false
+            try {
+                repository.save(
+                    "missing-conversation",
+                    ConversationContextCapsule(goal = "A valid goal"),
+                    20L,
+                )
+            } catch (_: SQLiteConstraintException) {
+                foreignKeyRejected = true
+            }
+            assertTrue(foreignKeyRejected)
+            assertEquals(
+                ConversationContextCapsuleLoadResult.Missing,
+                repository.find("missing-conversation"),
+            )
+        }
+
+    private fun openDatabase(name: String): ClientDatabase =
+        Room
+            .databaseBuilder(context, ClientDatabase::class.java, name)
+            .addMigrations(ClientDatabase.MIGRATION_1_2, ClientDatabase.MIGRATION_2_3)
+            .allowMainThreadQueries()
+            .build()
+            .also { activeDatabase = it }
+
+    private fun conversation(id: String) =
+        ConversationEntity(
+            conversationId = id,
+            title = id,
+            createdAtEpochMillis = 1L,
+            updatedAtEpochMillis = 1L,
+        )
+}

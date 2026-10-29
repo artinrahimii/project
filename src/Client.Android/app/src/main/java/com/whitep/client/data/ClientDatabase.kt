@@ -26,16 +26,19 @@ class ClientDatabaseConverters {
 @Database(
     entities = [
         ConversationEntity::class,
+        ConversationContextCapsuleEntity::class,
         MessageEntity::class,
         RequestStateEntity::class,
         ClientRequestDraftEntity::class,
     ],
-    version = 2,
+    version = 3,
     exportSchema = true,
 )
 @TypeConverters(ClientDatabaseConverters::class)
 abstract class ClientDatabase : RoomDatabase() {
     abstract fun conversationDao(): ConversationDao
+
+    abstract fun conversationContextCapsuleDao(): ConversationContextCapsuleDao
 
     abstract fun messageDao(): MessageDao
 
@@ -57,6 +60,21 @@ abstract class ClientDatabase : RoomDatabase() {
                 }
             }
 
+        val MIGRATION_2_3: Migration =
+            object : Migration(2, 3) {
+                override fun migrate(db: SupportSQLiteDatabase) {
+                    db.execSQL(
+                        "CREATE TABLE IF NOT EXISTS `conversation_context_capsules` (" +
+                            "`conversationId` TEXT NOT NULL, " +
+                            "`serializedCapsule` BLOB NOT NULL, " +
+                            "`updatedAtEpochMillis` INTEGER NOT NULL, " +
+                            "PRIMARY KEY(`conversationId`), " +
+                            "FOREIGN KEY(`conversationId`) REFERENCES `conversations`(`conversationId`) " +
+                            "ON UPDATE NO ACTION ON DELETE CASCADE)",
+                    )
+                }
+            }
+
         @Volatile
         private var instance: ClientDatabase? = null
 
@@ -67,7 +85,7 @@ abstract class ClientDatabase : RoomDatabase() {
                         context.applicationContext,
                         ClientDatabase::class.java,
                         DATABASE_NAME,
-                    ).addMigrations(MIGRATION_1_2)
+                    ).addMigrations(MIGRATION_1_2, MIGRATION_2_3)
                     .build()
                     .also { database -> instance = database }
             }

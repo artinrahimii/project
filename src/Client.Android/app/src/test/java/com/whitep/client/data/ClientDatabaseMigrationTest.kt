@@ -88,11 +88,11 @@ class ClientDatabaseMigrationTest {
                         context,
                         ClientDatabase::class.java,
                         ClientDatabase.DATABASE_NAME,
-                    ).addMigrations(ClientDatabase.MIGRATION_1_2)
+                    ).addMigrations(ClientDatabase.MIGRATION_1_2, ClientDatabase.MIGRATION_2_3)
                     .build()
                     .also { database = it }
 
-            assertEquals(2, migratedDatabase.openHelper.readableDatabase.version)
+            assertEquals(3, migratedDatabase.openHelper.readableDatabase.version)
             assertEquals(
                 "Legacy conversation",
                 migratedDatabase.conversationDao().findById("conversation-legacy")?.title,
@@ -105,6 +105,7 @@ class ClientDatabaseMigrationTest {
                     .first()
                     .map { it.messageId },
             )
+            assertEquals(null, migratedDatabase.conversationContextCapsuleDao().findByConversationId("conversation-legacy"))
             val request = migratedDatabase.requestStateDao().findById("request-legacy")
             assertEquals(PersistedRequestStatus.WAITING, request?.status)
             assertEquals("NETWORK_UNAVAILABLE", request?.errorCode)
