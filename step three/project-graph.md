@@ -30301,9 +30301,9 @@
       ],
       "notes": "T0144 implementation is committed for exact-head validation; do not mark done until Android ktlint, assembleDebug, testDebugUnitTest, Python source-contract tests, and graph guard pass on the actual commit.",
       "execution_summary": {
-        "attempt_count": 4,
-        "failed_attempt_count": 3,
-        "last_attempt_id": "T0144-A004",
+        "attempt_count": 5,
+        "failed_attempt_count": 4,
+        "last_attempt_id": "T0144-A005",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationListViewModel.kt",
@@ -30320,20 +30320,21 @@
           "step three/project-graph.md"
         ],
         "related_commits": [
-          "44c207018fb3c2232730722b59e3cd1249317bbd",
+          "12b76f6f617c982b1353e8e6ec7cb7f5370bb6b3",
           "06b8dd63afa37902ea9b834e97abe80458f6375b",
-          "12b76f6f617c982b1353e8e6ec7cb7f5370bb6b3"
+          "44c207018fb3c2232730722b59e3cd1249317bbd"
         ],
         "tests_passed": [
           "Step Three quality gate — V 3.0.518: 218 Python tests and graph guard passed.",
           "Host lifecycle integration — V 3.0.518: passed.",
-          "Step Three quality gate — V 3.0.519: 218 Python tests and graph guard passed; https://github.com/artinrahimii/project/actions/runs/40852236710",
-          "Host lifecycle integration — V 3.0.519: passed; https://github.com/artinrahimii/project/actions/runs/40852236733"
+          "Step Three quality gate — V 3.0.519: 218 Python tests and graph guard passed.",
+          "Step Three quality gate — V 3.0.520: 218 Python tests and graph guard passed; https://github.com/artinrahimii/project/actions/runs/40852548163"
         ],
         "tests_failed": [
-          "T0144-A001 / V 3.0.517: one of 218 Python tests failed because of an outdated formatting-specific assertion; Android ktlint failed.",
-          "T0144-A002 / V 3.0.518: Android ktlint failed on three format rules.",
-          "T0144-A003 / V 3.0.519: Android ktlint failed on one remaining multiline-expression rule; Android APK build and unit tests skipped."
+          "T0144-A001 / V 3.0.517: stale source-contract test failed; Android ktlint failed.",
+          "T0144-A002 / V 3.0.518: three Kotlin formatting errors remained.",
+          "T0144-A003 / V 3.0.519: one multiline-expression error remained.",
+          "T0144-A004 / V 3.0.520: four indentation errors remained; APK build and Android unit tests skipped."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -30470,9 +30471,40 @@
         {
           "attempt_id": "T0144-A004",
           "started_at": "2026-10-29T09:47:56.913Z",
-          "ended_at": "2026-10-29T09:47:56.913Z",
-          "result": "partial",
+          "ended_at": "2026-10-29T09:50:01.103Z",
+          "result": "failed",
           "summary": "Adjusted the argument-list expression for the Android conversation detail route to satisfy the exact remaining ktlint finding.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
+            "step three/T0144/execution-report.md",
+            "step three/T0144/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "command": "Step Three quality gate — run 40852548163",
+              "result": "passed",
+              "summary": "218 Python tests and graph guard passed on exact V 3.0.520. https://github.com/artinrahimii/project/actions/runs/40852548163"
+            },
+            {
+              "command": "Android ktlintCheck — run 40852548162 / job 123375366056",
+              "result": "failed",
+              "summary": "Four indentation violations in MainActivity.kt lines 111-114; APK build and Android unit tests did not run. https://github.com/artinrahimii/project/actions/runs/40852548162"
+            }
+          ],
+          "failure_details": "Exact V 3.0.520 Android ktlint check progressed past the multiline-expression diagnostic but reported four indentation errors in MainActivity.kt lines 111-114: expected indentation 24, 28, 24, and 20 respectively. APK build and Android unit tests were skipped.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect all jobs for the next exact-head commit. If lint passes, confirm APK build and Android JVM tests also pass before completion."
+        },
+        {
+          "attempt_id": "T0144-A005",
+          "started_at": "2026-10-29T09:50:01.103Z",
+          "ended_at": "2026-10-29T09:50:01.103Z",
+          "result": "partial",
+          "summary": "Adjusted the navigation argument list's inner indentation to the exact levels required by the current ktlint configuration.",
           "changed_files": [
             "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
             "step three/T0144/execution-report.md",
@@ -30484,19 +30516,19 @@
             {
               "command": "Step Three quality gate",
               "result": "not_run",
-              "summary": "Will execute after this correction is pushed."
+              "summary": "Will execute on the correction commit."
             },
             {
               "command": "Android ktlintCheck, assembleDebug, testDebugUnitTest",
               "result": "not_run",
-              "summary": "Will execute after this correction is pushed."
+              "summary": "Will execute on the correction commit."
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect all jobs for the next exact-head commit. If lint passes, confirm APK build and Android JVM tests also pass before completion."
+          "follow_up": "Inspect exact-head CI for the next commit; if ktlint passes, wait for APK build and Android unit tests before deciding completion."
         }
       ]
     },
@@ -42328,7 +42360,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-29T09:47:56.913Z",
+  "updated_at": "2026-10-29T09:50:01.103Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

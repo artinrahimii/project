@@ -1,30 +1,30 @@
 # T0144 execution report
 
 - **Task:** Create, rename, delete, and open a conversation.
-- **Status:** `in_progress`; acceptance remains unconfirmed.
+- **Status:** `in_progress`; Android acceptance is still pending.
 - **Implementation revision:** `V 3.0.517` — `12b76f6f617c982b1353e8e6ec7cb7f5370bb6b3`.
-- **Correction revision:** `V 3.0.518` — `06b8dd63afa37902ea9b834e97abe80458f6375b`.
-- **Formatting revision:** `V 3.0.519` — `44c207018fb3c2232730722b59e3cd1249317bbd`.
-- **Next attempt:** A004, fixing the only remaining ktlint diagnostic from exact-head V 3.0.519. Its commit SHA will be resolved from the online main history after committing.
+- **Corrections:** `V 3.0.518` (`06b8dd63afa37902ea9b834e97abe80458f6375b`), `V 3.0.519` (`44c207018fb3c2232730722b59e3cd1249317bbd`), and `V 3.0.520` (`a4a0cbd167d0ceb78bc8b888d56fbf2e65f8567c`).
+- **Attempt A005:** corrects only the four indentation errors from the latest exact-head ktlint report.
 
 ## Dependency review
 
-- T0143 → T0144: `contract_or_interface_dependency`; validated against the pre-existing Room DAO/entity contract.
-- T0138 → T0144: `sequencing_only`; validated against the local-only storage boundary.
-- All rationale and edge history are preserved in `edge_change_log`. Unrelated unreviewed edges are unchanged.
+- T0143 → T0144: `contract_or_interface_dependency`, validated against the existing Room DAO/entity contract.
+- T0138 → T0144: `sequencing_only`, validated against the local-only storage boundary.
+- The rationale, evidence and historical classifications remain in the graph; other unreviewed edges are unchanged.
 
-## Delivered implementation
+## Implementation delivered
 
-- Room-backed conversation create, rename, delete and lookup, with UUID identifiers, validation of blank rename titles, and update timestamps.
-- User controls to create/open/rename/delete conversations, a confirmation dialog, and a selected-conversation detail route.
-- Regression tests for CRUD, lookup, invalid rename, update timestamp, cascade deletion and route encoding.
-- The detail surface explicitly does not claim that message composition, message delivery, P2P discovery, or Android-to-host transport are complete.
+- Room-backed conversation create, rename, delete, and lookup, with UUID-based IDs, blank-title rejection and monotonic update timestamps.
+- UI controls to create/open/rename/delete a conversation, plus selected-conversation detail navigation.
+- Regression tests for CRUD, lookup, invalid rename, timestamps, message cascade deletion, encoded routes, and source contracts.
+- The detail screen makes no claim that message sending or P2P transport is implemented by this task.
 
-## Exact-head CI evidence
+## Exact-head CI record
 
-- **V 3.0.517:** quality ran 218 tests: 217 passed and one legacy source-contract test failed; Android ktlint also failed.
-- **V 3.0.518:** [quality gate passed](https://github.com/artinrahimii/project/actions/runs/40851894119), with 218 Python tests and graph validation. [Host lifecycle tests passed](https://github.com/artinrahimii/project/actions/runs/40851894117/job/123373165089). Android ktlint then failed on 3 formatting issues.
-- **V 3.0.519:** [quality gate passed](https://github.com/artinrahimii/project/actions/runs/40852236710), with 218 Python tests and graph validation. [Host lifecycle tests passed](https://github.com/artinrahimii/project/actions/runs/40852236733). Android ktlint still failed on one multiline-expression format rule at `MainActivity.kt:109`, at `arguments = listOf(`; APK build and Android unit tests were skipped.
-- **A004:** changes `arguments =` to a separate line followed by `listOf(`, based on that precise CI diagnostic. Its result is pending.
+- **V 3.0.517:** 217/218 Python tests passed; one stale source-contract expectation failed. Android ktlint also failed.
+- **V 3.0.518:** Python quality passed (218 tests), HostLifecycle passed; Android ktlint failed on three format errors.
+- **V 3.0.519:** Python quality passed (218 tests), HostLifecycle passed; Android ktlint failed on a multiline-expression rule.
+- **V 3.0.520:** [Python quality and graph guard passed](https://github.com/artinrahimii/project/actions/runs/40852548163) (218 tests). Android ktlint reported four indentation errors at `MainActivity.kt:111-114`; APK build and Android unit tests were skipped. See [product run](https://github.com/artinrahimii/project/actions/runs/40852548162).
+- **A005:** updates the indentation to 24, 28, 24 and 20 spaces for the four lines, as explicitly reported by ktlint. Its build/test result is pending.
 
-Gradle is not installed and local Git clone is unavailable in this execution environment. No Android acceptance pass is claimed until `ktlintCheck`, `assembleDebug`, and `testDebugUnitTest` all pass on the same online commit.
+Local Gradle and a working clone are unavailable in this execution environment. No Android acceptance pass is claimed until `ktlintCheck`, `assembleDebug`, and `testDebugUnitTest` all pass on the same online commit.
