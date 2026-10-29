@@ -20,3 +20,10 @@
 - Step Three quality passed 250 Python tests, compilation, graph structure and repository-backed evidence checks.
 - Android lint failed on one needless blank line at `ConversationContextCapsuleViewModelTest.kt:112`; APK and JVM stages were not run. HostLifecycle passed; Windows WPF was still running when reviewed.
 - A003 removes the final reported blank line. T0156 remains in progress pending the new exact-head workflow.
+
+## V 3.0.572 exact-head outcome and A004
+
+- Step Three quality passed 250 Python tests, compileall, graph structure and recorded-output/evidence checks.
+- Android lint and debug APK build passed, but Android JVM suite completed 52 tests with one failure in the new local-history/manual-save test. Generated Protobuf and APK upload were skipped.
+- Windows WPF build and all configured startup/security checks passed; HostLifecycle passed.
+- A004 reads an existing persisted capsule directly when the ViewModel StateFlow has not yet observed it. This is a corrective attempt, not an acceptance claim.

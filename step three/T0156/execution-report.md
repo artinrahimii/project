@@ -30,3 +30,15 @@
 
 - Change: removed the unnecessary blank line before the new Robolectric test.
 - Exact-head V 3.0.572 results are pending. No Android build/JVM success or final T0156 acceptance is claimed.
+
+## Exact-head V 3.0.572 result — attempt A003
+
+- Step Three quality [run 40915372552](https://github.com/artinrahimii/project/actions/runs/40915372552) passed 250 Python tests, `compileall`, graph structure and repository-backed output/evidence validation (229 nodes / 417 edges, zero errors and one preserved T0001 warning).
+- Product [run 40915372539](https://github.com/artinrahimii/project/actions/runs/40915372539): Kotlin lint and debug APK build passed. The Android JVM task ran 52 tests and failed one: `ConversationContextCapsuleViewModelTest.suggestsCapsuleFromOnlyThisConversationsLocalHistoryAndRequiresSave` (AssertionError reported at the test's `runBlocking` entry, line 114). Generated Protobuf validation and artifact upload were skipped.
+- Windows WPF build, Protobuf, startup smoke, security/policy checks, DPAPI identity/trust storage and artifact upload passed; HostLifecycle passed.
+- A003 is a failed acceptance attempt. A004 makes persisted capsule loading explicit when the ViewModel's observation flow has not populated current state yet and adds a useful UI-state message to the failed assertion.
+
+## Corrective attempt A004
+
+- Change: use `repository.find(conversationId)` as a fallback for the existing capsule when the current UI state is not yet loaded, avoiding reliance on asynchronous StateFlow delivery for the summary's input.
+- Exact-head V 3.0.573 validation is pending; T0156 remains in progress.

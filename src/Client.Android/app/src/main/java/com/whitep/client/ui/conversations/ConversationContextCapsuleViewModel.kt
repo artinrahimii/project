@@ -219,7 +219,9 @@ class ConversationContextCapsuleViewModel(
                 return false
             }
 
-            val draftCapsule = current.toCapsuleDraftOrNull()
+            val draftCapsule =
+                current.toCapsuleDraftOrNull()
+                    ?: (repository.find(conversationId) as? ConversationContextCapsuleLoadResult.Found)?.capsule
             val result =
                 summarizer.summarize(
                     ConversationContextSummaryRequest(
@@ -371,7 +373,8 @@ class ConversationContextCapsuleViewModel(
     }
 
     private fun ConversationContextCapsuleUiState.toCapsuleDraftOrNull(): ConversationContextCapsule? {
-        if (!isEditing || goal.isBlank()) return capsule
+        if (!isEditing) return capsule
+        if (goal.isBlank()) return null
         return ConversationContextCapsule(
             goal = goal.trim(),
             keyFacts = keyFactsText.toItems(),
