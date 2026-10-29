@@ -50,7 +50,8 @@ abstract class ClientDatabase : RoomDatabase() {
             object : Migration(1, 2) {
                 override fun migrate(db: SupportSQLiteDatabase) {
                     db.execSQL(
-                        "CREATE INDEX IF NOT EXISTS index_request_states_conversationId_createdAtEpochMillis_requestId " +
+                        "CREATE INDEX IF NOT EXISTS " +
+                            "index_request_states_conversationId_createdAtEpochMillis_requestId " +
                             "ON request_states (conversationId, createdAtEpochMillis, requestId)",
                     )
                 }

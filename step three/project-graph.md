@@ -29745,11 +29745,11 @@
         "step three/T0142/execution-report.md",
         "step three/T0142/evidence/verification.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0142-A001 adds a version-1-to-2 Room migration and runtime upgrade regression test; completion is pending exact-head CI.\nT0142-A001 did not pass exact-head CI; corrective attempt T0142-A002 fixes the stale database-version assertion and Kotlin formatting issues. Keep in_progress until rerun passes.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0142-A001 adds a version-1-to-2 Room migration and runtime upgrade regression test; completion is pending exact-head CI.\nT0142-A001 did not pass exact-head CI; corrective attempt T0142-A002 fixes the stale database-version assertion and Kotlin formatting issues. Keep in_progress until rerun passes.\nT0142-A002 passed graph quality but failed Android ktlint; T0142-A003 applies two further CI-directed formatting corrections. Task remains in_progress pending Android build and migration test.",
       "execution_summary": {
-        "attempt_count": 2,
-        "failed_attempt_count": 1,
-        "last_attempt_id": "T0142-A002",
+        "attempt_count": 3,
+        "failed_attempt_count": 2,
+        "last_attempt_id": "T0142-A003",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientDatabase.kt",
@@ -29764,12 +29764,13 @@
         ],
         "related_commits": [],
         "tests_passed": [
-          "Windows WPF build and startup/policy gates passed on V 3.0.507 (run 40842236492).",
-          "Host lifecycle unit/integration tests passed on V 3.0.507 (run 40842236492)."
+          "Step Three quality gate run 40843247078 passed for V 3.0.508: automated tests, syntax, graph structure and output/evidence validation passed.",
+          "Host lifecycle unit/integration tests passed in product run 40843247158 for V 3.0.508."
         ],
         "tests_failed": [
-          "Step Three quality gate run 40842236474 — 211 tests ran; tests/test_android_local_storage_boundary.py expected database version 1.",
-          "Android product build run 40842236492 — ktlint check failed in ClientDatabaseMigrationTest.kt; Android build and unit tests skipped."
+          "Step Three quality gate run 40842236474 failed on a stale database version=1 assertion (V 3.0.507).",
+          "Android product run 40842236492 failed ktlint on migration test formatting (V 3.0.507).",
+          "Android product run 40843247158 failed ktlint in ClientDatabaseMigrationTest.kt chain wrapping and ClientDatabase.kt max line length (V 3.0.508); Android assemble/test skipped."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -29843,12 +29844,51 @@
         {
           "attempt_id": "T0142-A002",
           "started_at": "2026-10-29T08:35:04.502Z",
-          "ended_at": "2026-10-29T08:35:04.502Z",
-          "result": "partial",
-          "summary": "Corrected the existing Android storage-boundary assertion for database version 2 and reformatted the migration runtime test at both exact locations reported by ktlint. Exact-head CI is still pending.",
+          "ended_at": "2026-10-29T08:36:28Z",
+          "result": "failed",
+          "summary": "The corrected legacy assertion and graph checks passed, but Android product CI still stopped at ktlint: a method-chain wrapping inconsistency in ClientDatabaseMigrationTest.kt and a >120-character SQL string line in ClientDatabase.kt.",
           "changed_files": [
             "tests/test_android_local_storage_boundary.py",
             "src/Client.Android/app/src/test/java/com/whitep/client/data/ClientDatabaseMigrationTest.kt",
+            "step three/T0142/execution-report.md",
+            "step three/T0142/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": "901ec7a702082310235f88ccd6d46959d6976e34",
+          "tests": [
+            {
+              "command": "Step Three quality gate run 40843247078",
+              "result": "passed",
+              "summary": "Python automated tests, syntax check, graph structure and output/evidence validation succeeded for V 3.0.508.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40843247078"
+            },
+            {
+              "command": "Android product build run 40843247158 — ktlintCheck",
+              "result": "failed",
+              "summary": "ktlint reported Expected newline before '.' and Unexpected newline before '.' in ClientDatabaseMigrationTest.kt lines 86 and 91; ClientDatabase.kt line 53 exceeded 120 characters. APK build and Android unit tests were skipped.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40843247158"
+            },
+            {
+              "command": "Host lifecycle tests run 40843247158",
+              "result": "passed",
+              "summary": "Host lifecycle unit and integration tests passed on V 3.0.508."
+            }
+          ],
+          "failure_details": "Android ktlintCheck failed before compilation: ClientDatabaseMigrationTest.kt lines 86 and 91 had method-chain wrapping violations; ClientDatabase.kt line 53 exceeded the configured 120-character limit. Windows/host jobs were still running at the first poll, while host lifecycle subsequently passed. Android build/unit tests were not run.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Adjust the method chain to the repository's existing Room fluent-call style, split the overlong index SQL literal, then inspect the next exact-head Android job before accepting T0142."
+        },
+        {
+          "attempt_id": "T0142-A003",
+          "started_at": "2026-10-29T08:37:53.526Z",
+          "ended_at": "2026-10-29T08:37:53.526Z",
+          "result": "partial",
+          "summary": "Adjusted the migration test fluent-call wrapping to place the initial Room qualifier on its own continuation line and split the overlong SQL index name literal in ClientDatabase.kt. Exact-head CI pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/test/java/com/whitep/client/data/ClientDatabaseMigrationTest.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientDatabase.kt",
             "step three/T0142/execution-report.md",
             "step three/T0142/evidence/verification.md",
             "step three/project-graph.md"
@@ -29859,7 +29899,7 @@
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect exact-head quality and Android product workflow results; resolve any further failing checks before changing task status to done."
+          "follow_up": "Verify exact-head Step Three and all product workflow jobs. If ktlint succeeds, continue to APK assembly and Android unit tests; resolve any compile/runtime failures before marking done."
         }
       ]
     },
@@ -41697,7 +41737,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-29T08:35:04.502Z",
+  "updated_at": "2026-10-29T08:37:53.526Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

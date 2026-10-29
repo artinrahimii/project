@@ -83,12 +83,12 @@ class ClientDatabaseMigrationTest {
             }
 
             val migratedDatabase =
-                Room.databaseBuilder(
-                    context,
-                    ClientDatabase::class.java,
-                    ClientDatabase.DATABASE_NAME,
-                )
-                    .addMigrations(ClientDatabase.MIGRATION_1_2)
+                Room
+                    .databaseBuilder(
+                        context,
+                        ClientDatabase::class.java,
+                        ClientDatabase.DATABASE_NAME,
+                    ).addMigrations(ClientDatabase.MIGRATION_1_2)
                     .build()
                     .also { database = it }
 
