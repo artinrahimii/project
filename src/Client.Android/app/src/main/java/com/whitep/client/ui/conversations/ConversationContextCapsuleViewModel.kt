@@ -143,22 +143,25 @@ class ConversationContextCapsuleViewModel(
         if (!ConversationContextCapsule.isValidConfiguredSizeLimit(value)) return
         try {
             if (sizeLimitStore.saveMaxSerializedBytes(value)) {
-                _uiState.value = _uiState.value.copy(
-                    maxSerializedBytes = value,
-                    message = null,
-                    errorMessage = null,
-                )
+                _uiState.value =
+                    _uiState.value.copy(
+                        maxSerializedBytes = value,
+                        message = null,
+                        errorMessage = null,
+                    )
             } else {
-                _uiState.value = _uiState.value.copy(
-                    errorMessage = "Choose a capsule limit from 512 to 4,096 bytes in 256-byte steps.",
-                    message = null,
-                )
+                _uiState.value =
+                    _uiState.value.copy(
+                        errorMessage = "Choose a capsule limit from 512 to 4,096 bytes in 256-byte steps.",
+                        message = null,
+                    )
             }
         } catch (_: Exception) {
-            _uiState.value = _uiState.value.copy(
-                errorMessage = "The capsule size setting could not be saved.",
-                message = null,
-            )
+            _uiState.value =
+                _uiState.value.copy(
+                    errorMessage = "The capsule size setting could not be saved.",
+                    message = null,
+                )
         }
     }
 

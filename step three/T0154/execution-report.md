@@ -23,3 +23,10 @@
 ## Verification state
 
 No local Android build or test command was run in this connector execution. The attempt is intentionally `partial` until exact-head CI runs Kotlin lint, APK build, Android JVM tests, Python/graph/evidence checks, Windows WPF and HostLifecycle gates. CI failures must be corrected and recorded; do not mark this task done until the relevant gates pass.
+
+
+## First exact-head CI result — V 3.0.562
+
+- Quality [run 40903639160](https://github.com/artinrahimii/project/actions/runs/40903639160) completed successfully. Automated Python tests, Python syntax, graph structure, and recorded-output/evidence checks passed.
+- Product [run 40903639332](https://github.com/artinrahimii/project/actions/runs/40903639332) completed with an Android lint failure and HostLifecycle and Windows WPF jobs successful. Android `ktlintMainSourceSetCheck` reported three instances of “A multiline expression should start on a new line” in `ConversationContextCapsuleViewModel.kt` at lines 146, 152, and 158. APK build and Android JVM tests did not run because lint failed.
+- **T0154-A001 is recorded as failed for the product lint gate**, not accepted. **T0154-A002** moves the three `_uiState.value.copy(...)` expressions onto continuation lines; behavior is unchanged. Exact-head CI remains pending.

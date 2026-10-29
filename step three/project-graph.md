@@ -33477,30 +33477,28 @@
         "step three/T0154/execution-report.md",
         "step three/T0154/evidence/verification.md"
       ],
-      "notes": "خروجی‌های واقعی این تلاش در actual_output_paths ثبت شده‌اند؛ پذیرش نهایی منوط به CI است.\nT0154-A001 implements a persisted device-wide capsule size limit (512–4096 UTF-8 bytes in 256-byte steps), retains the fixed protocol ceiling, enforces the selected threshold during domain encoding/Room save, and exposes a Compose slider. Exact-head CI is pending; existing capsule decoding retains the fixed protocol ceiling.",
+      "notes": "خروجی‌های واقعی این تلاش در actual_output_paths ثبت شده‌اند؛ پذیرش نهایی منوط به CI است.\nT0154-A001 implements a persisted device-wide capsule size limit (512–4096 UTF-8 bytes in 256-byte steps), retains the fixed protocol ceiling, enforces the selected threshold during domain encoding/Room save, and exposes a Compose slider. Exact-head CI is pending; existing capsule decoding retains the fixed protocol ceiling.\nT0154-A001 exact-head V 3.0.562 result: Step Three quality passed; Android ktlint failed three multiline-expression formatting findings. APK/JVM stages skipped, while HostLifecycle and Windows WPF passed. A002 fixes formatting and awaits new CI.",
       "execution_summary": {
-        "attempt_count": 1,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "T0154-A001",
+        "attempt_count": 2,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "T0154-A002",
         "last_attempt_result": "partial",
         "changed_files": [
-          "src/Client.Android/app/src/main/java/com/whitep/client/context/ConversationContextCapsule.kt",
-          "src/Client.Android/app/src/main/java/com/whitep/client/data/RoomConversationContextCapsuleRepository.kt",
-          "src/Client.Android/app/src/main/java/com/whitep/client/data/ConversationContextCapsuleSizeLimitStore.kt",
           "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt",
-          "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
-          "src/Client.Android/app/src/test/java/com/whitep/client/context/ConversationContextCapsuleTest.kt",
-          "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModelTest.kt",
-          "src/Client.Android/app/src/test/java/com/whitep/client/data/ConversationContextCapsuleSizeLimitStoreTest.kt",
-          "tests/test_android_context_capsule_contract.py",
-          "tests/test_android_context_capsule_ui_contract.py",
-          "tests/test_android_context_capsule_persistence_contract.py",
           "step three/T0154/execution-report.md",
-          "step three/T0154/evidence/verification.md"
+          "step three/T0154/evidence/verification.md",
+          "step three/project-graph.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
-        "tests_failed": [],
+        "related_commits": [
+          "a8a0e7ed4c736b6191cc80dddf03d6a7f584a326"
+        ],
+        "tests_passed": [
+          "V 3.0.562 Step Three quality gate passed: https://github.com/artinrahimii/project/actions/runs/40903639160",
+          "V 3.0.562 HostLifecycle and Windows WPF jobs passed: https://github.com/artinrahimii/project/actions/runs/40903639332"
+        ],
+        "tests_failed": [
+          "V 3.0.562 Android ktlint failed three multiline-expression formatting findings; APK/JVM stages skipped: https://github.com/artinrahimii/project/actions/runs/40903639332"
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -33536,9 +33534,9 @@
         {
           "attempt_id": "T0154-A001",
           "started_at": "2026-10-29T19:15:00+03:30",
-          "ended_at": null,
-          "result": "partial",
-          "summary": "Implemented a SharedPreferences-backed device-wide capsule size setting, domain enforcement from 512 to 4096 UTF-8 bytes in 256-byte steps, ViewModel/Room save wiring, a Compose slider, and domain/persistence/ViewModel/Python contract tests. Exact-head CI is pending.",
+          "ended_at": "2026-10-29T15:40:06Z",
+          "result": "failed",
+          "summary": "The exact-head V 3.0.562 quality gate passed, and HostLifecycle plus Windows WPF product jobs passed, but Android ktlintMainSourceSetCheck failed three multiline-expression formatting findings in ConversationContextCapsuleViewModel.kt. Android APK build and JVM tests were skipped; task acceptance is not met.",
           "changed_files": [
             "src/Client.Android/app/src/main/java/com/whitep/client/context/ConversationContextCapsule.kt",
             "src/Client.Android/app/src/main/java/com/whitep/client/data/RoomConversationContextCapsuleRepository.kt",
@@ -33554,42 +33552,91 @@
             "step three/T0154/execution-report.md",
             "step three/T0154/evidence/verification.md"
           ],
-          "related_commits": [],
-          "commit_sha": null,
+          "related_commits": [
+            "a8a0e7ed4c736b6191cc80dddf03d6a7f584a326"
+          ],
+          "commit_sha": "a8a0e7ed4c736b6191cc80dddf03d6a7f584a326",
           "tests": [
             {
-              "name": "ConversationContextCapsuleTest configurable and invalid limits",
-              "result": "not_run",
-              "summary": "Domain tests added; Android JVM CI pending."
+              "name": "Step Three quality gate — V 3.0.562",
+              "result": "passed",
+              "summary": "Python tests, syntax, graph structure and output/evidence checks passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40903639160"
             },
             {
-              "name": "ConversationContextCapsuleSizeLimitStoreTest",
-              "result": "not_run",
-              "summary": "Persistence, invalid-write and corrupt-value tests added; Android JVM CI pending."
+              "name": "Android ktlintMainSourceSetCheck — V 3.0.562",
+              "result": "failed",
+              "summary": "Three findings: multiline expressions should start on a new line at lines 146, 152 and 158 of ConversationContextCapsuleViewModel.kt.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40903639332"
             },
             {
-              "name": "ConversationContextCapsuleViewModelTest selected limit enforcement",
+              "name": "Android APK build and JVM tests",
               "result": "not_run",
-              "summary": "Repository-backed validation test added; Android JVM CI pending."
+              "summary": "Skipped after Kotlin lint failure.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40903639332"
             },
             {
-              "name": "Python capsule contract tests",
-              "result": "not_run",
-              "summary": "Source-contract checks updated; quality CI pending."
+              "name": "HostLifecycle unit and integration tests",
+              "result": "passed",
+              "summary": "HostLifecycle job succeeded on this head.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40903639332"
             },
             {
-              "name": "Android lint, APK build and JVM tests",
-              "result": "not_run",
-              "summary": "Exact-head product workflow pending."
+              "name": "Windows WPF build and configured checks",
+              "result": "passed",
+              "summary": "WPF build/startup and configured safety checks succeeded.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40903639332"
             }
           ],
-          "failure_details": null,
+          "failure_details": "ktlintMainSourceSetCheck found three instances of 'A multiline expression should start on a new line' at ConversationContextCapsuleViewModel.kt:146, :152 and :158. APK/JVM stages were skipped.",
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [
             "Adds persisted device-wide max-size preference and passes it to domain codec/Room save."
           ],
-          "follow_up": "Inspect exact-head V 3.0.562 quality/product CI, fix any failures in a recorded subsequent attempt, and do not mark T0154 done until required gates pass."
+          "follow_up": "A002 formats each _uiState.value assignment with the copy call on a continuation line, then reruns exact-head CI."
+        },
+        {
+          "attempt_id": "T0154-A002",
+          "started_at": "2026-10-29T15:42:05.021Z",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Corrected the three exact multiline-expression KtLint findings in the capsule size-limit ViewModel. The correction changes formatting only; exact-head CI is pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt",
+            "step three/T0154/execution-report.md",
+            "step three/T0154/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "related_commits": [],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Android ktlintCheck",
+              "result": "not_run",
+              "summary": "Exact-head run for A002 pending."
+            },
+            {
+              "name": "Android assembleDebug",
+              "result": "not_run",
+              "summary": "Awaiting lint."
+            },
+            {
+              "name": "Android testDebugUnitTest",
+              "result": "not_run",
+              "summary": "Awaiting lint/build."
+            },
+            {
+              "name": "Step Three quality gate",
+              "result": "not_run",
+              "summary": "Exact-head quality CI pending."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Check exact-head V 3.0.563 quality/product workflows; do not mark T0154 done until all required gates pass."
         }
       ]
     },
@@ -45430,7 +45477,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-29T19:15:00+03:30",
+  "updated_at": "2026-10-29T15:42:05.021Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

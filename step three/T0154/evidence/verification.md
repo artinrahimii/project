@@ -8,3 +8,10 @@
 - **Python contract checks:** `tests/test_android_context_capsule_contract.py`, `tests/test_android_context_capsule_persistence_contract.py` and `tests/test_android_context_capsule_ui_contract.py` assert size enforcement, the repository contract, persistence, and UI wiring.
 - **Compatibility:** decoding and the default codec entry point keep the fixed 4,096-byte protocol ceiling so a reduced preference does not invalidate an older saved capsule.
 - **Pending:** exact-head CI. No test is reported as passed until CI confirms it.
+
+
+## V 3.0.562 lint failure and A002 correction
+
+- Quality [40903639160](https://github.com/artinrahimii/project/actions/runs/40903639160) passed Python tests, syntax, graph and output/evidence checks.
+- Product [40903639332](https://github.com/artinrahimii/project/actions/runs/40903639332) failed `ktlintMainSourceSetCheck` on three multiline-expression formatting findings in `ConversationContextCapsuleViewModel.kt`. APK and JVM tests were skipped; HostLifecycle and Windows WPF jobs passed.
+- A002 changes only the multiline assignment formatting. It is not accepted until a new exact-head product run completes lint, APK build and Android JVM tests.
