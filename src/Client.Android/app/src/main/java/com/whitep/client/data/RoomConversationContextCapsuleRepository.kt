@@ -72,9 +72,7 @@ class RoomConversationContextCapsuleRepository(
 
     suspend fun delete(conversationId: String): Int = dao.deleteForConversation(conversationId)
 
-    private fun toLoadResult(
-        entity: ConversationContextCapsuleEntity?,
-    ): ConversationContextCapsuleLoadResult {
+    private fun toLoadResult(entity: ConversationContextCapsuleEntity?): ConversationContextCapsuleLoadResult {
         if (entity == null) {
             return ConversationContextCapsuleLoadResult.Missing
         }

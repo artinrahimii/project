@@ -37,3 +37,10 @@ The source changes and graph record are committed as `V 3.0.553`. Exact-head CI 
 - Quality [run 40887843412](https://github.com/artinrahimii/project/actions/runs/40887843412) passed **239 Python tests** and graph validation (229 tasks/417 edges, zero errors, one preserved T0001 warning).
 - Product [run 40887843362](https://github.com/artinrahimii/project/actions/runs/40887843362) reached Android `ktlintTestSourceSetCheck` and failed four indentation findings at `ConversationContextCapsulePersistenceTest.kt:149–152`. APK build/JVM tests were skipped because lint failed.
 - **T0152-A002 is recorded as failed** for the remaining formatting issue. **T0152-A003** fixes the indentation; exact-head CI is still required.
+
+
+## Third exact-head CI result — V 3.0.555
+
+- Quality [run 40888279446](https://github.com/artinrahimii/project/actions/runs/40888279446) passed **239 Python tests**, syntax, graph structure and output/evidence validation. The graph guard reported 229 tasks/417 edges, zero errors and one preserved T0001 warning.
+- Product [run 40888279125](https://github.com/artinrahimii/project/actions/runs/40888279125) failed Android `ktlintTestSourceSetCheck` on two parameter-wrapping findings in `RoomConversationContextCapsuleRepository.kt:76`. APK build and JVM tests were skipped.
+- **T0152-A003 is recorded as failed** for this remaining lint finding. **T0152-A004** moves the single parameter onto the function-signature line and requires another exact-head CI run.

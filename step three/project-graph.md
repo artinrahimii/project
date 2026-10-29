@@ -32836,30 +32836,33 @@
         "step three/T0152/execution-report.md",
         "step three/T0152/evidence/verification.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0152-A001 adds conversation-scoped Room BLOB persistence using the accepted T0151 v1 codec, Room schema v3 migration, and Robolectric/Python tests. T0150 → T0152 was reviewed as sequencing_only and validated; its blocks edge remains. Exact-head CI is required before acceptance.\nT0152-A001 exact-head V 3.0.553 failed due to three stale Python schema-v2 assertions and two ktlint formatting findings. A002 updates the assertions to schema v3/migrations 1→2→3 and corrects the two test-source format findings; CI pending.\nT0152-A002 exact-head V 3.0.554 passed the quality gate (239 tests) but Android ktlint failed four indentation findings in the capsule persistence test, so the task remains in progress. A003 corrects the arguments' indentation; CI is pending.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0152-A001 adds conversation-scoped Room BLOB persistence using the accepted T0151 v1 codec, Room schema v3 migration, and Robolectric/Python tests. T0150 → T0152 was reviewed as sequencing_only and validated; its blocks edge remains. Exact-head CI is required before acceptance.\nT0152-A001 exact-head V 3.0.553 failed due to three stale Python schema-v2 assertions and two ktlint formatting findings. A002 updates the assertions to schema v3/migrations 1→2→3 and corrects the two test-source format findings; CI pending.\nT0152-A002 exact-head V 3.0.554 passed the quality gate (239 tests) but Android ktlint failed four indentation findings in the capsule persistence test, so the task remains in progress. A003 corrects the arguments' indentation; CI is pending.\nT0152-A003: Python/graph gates passed on V 3.0.555, but Android ktlint flagged a one-parameter function signature in RoomConversationContextCapsuleRepository.kt. A004 corrects that signature; CI pending.",
       "execution_summary": {
-        "attempt_count": 3,
-        "failed_attempt_count": 2,
-        "last_attempt_id": "T0152-A003",
+        "attempt_count": 4,
+        "failed_attempt_count": 3,
+        "last_attempt_id": "T0152-A004",
         "last_attempt_result": "partial",
         "changed_files": [
-          "src/Client.Android/app/src/test/java/com/whitep/client/data/ConversationContextCapsulePersistenceTest.kt",
+          "src/Client.Android/app/src/main/java/com/whitep/client/data/RoomConversationContextCapsuleRepository.kt",
           "step three/T0152/execution-report.md",
           "step three/T0152/evidence/verification.md",
           "step three/project-graph.md"
         ],
         "related_commits": [
           "a642943d0604d8e33a80ceeb47099b031617fe1a",
-          "bf5f2b5eb7985e6063c710e4539e133a4d00f839"
+          "bf5f2b5eb7985e6063c710e4539e133a4d00f839",
+          "5391e48b0b75feea80afa0e15a4eda3f053231fb"
         ],
         "tests_passed": [
           "V 3.0.553 HostLifecycle product job passed; this partial result does not override the failing quality/lint gates.",
-          "V 3.0.554 quality gate passed 239 Python tests and graph validation (229 tasks/417 edges, 0 errors, one T0001 warning). https://github.com/artinrahimii/project/actions/runs/40887843412"
+          "V 3.0.554 quality gate passed 239 Python tests and graph validation (229 tasks/417 edges, 0 errors, one T0001 warning). https://github.com/artinrahimii/project/actions/runs/40887843412",
+          "V 3.0.555 quality gate passed 239 Python tests and graph/evidence validation with zero errors. https://github.com/artinrahimii/project/actions/runs/40888279446"
         ],
         "tests_failed": [
           "V 3.0.553 quality run 40887316120 failed 3 existing Python contract assertions that still expected Room v2 / only migration 1→2. https://github.com/artinrahimii/project/actions/runs/40887316120",
           "V 3.0.553 Android lint in product run 40887316116 failed two format findings in ClientDatabaseMigrationTest.kt:108 and ConversationContextCapsulePersistenceTest.kt:147; build/JVM stages were skipped. https://github.com/artinrahimii/project/actions/runs/40887316116",
-          "V 3.0.554 Android ktlint failed four indentation findings at ConversationContextCapsulePersistenceTest.kt:149–152; APK/JVM stages were skipped. https://github.com/artinrahimii/project/actions/runs/40887843362"
+          "V 3.0.554 Android ktlint failed four indentation findings at ConversationContextCapsulePersistenceTest.kt:149–152; APK/JVM stages were skipped. https://github.com/artinrahimii/project/actions/runs/40887843362",
+          "V 3.0.555 Android ktlint failed two parameter-wrapping findings at RoomConversationContextCapsuleRepository.kt:76; APK/JVM tasks were skipped. https://github.com/artinrahimii/project/actions/runs/40888279125"
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -32888,7 +32891,9 @@
             "https://github.com/artinrahimii/project/actions/runs/40887316120",
             "https://github.com/artinrahimii/project/actions/runs/40887316116",
             "https://github.com/artinrahimii/project/actions/runs/40887843412",
-            "https://github.com/artinrahimii/project/actions/runs/40887843362"
+            "https://github.com/artinrahimii/project/actions/runs/40887843362",
+            "https://github.com/artinrahimii/project/actions/runs/40888279446",
+            "https://github.com/artinrahimii/project/actions/runs/40888279125"
           ]
         }
       },
@@ -33003,11 +33008,53 @@
         {
           "attempt_id": "T0152-A003",
           "started_at": "2026-10-29T14:04:58Z",
-          "ended_at": "2026-10-29T14:04:58Z",
-          "result": "partial",
-          "summary": "Corrected the remaining repository.save argument indentation reported by ktlint. Exact-head CI pending.",
+          "ended_at": "2026-10-29T14:07:34Z",
+          "result": "failed",
+          "summary": "V 3.0.555 passed the complete quality gate (239 Python tests and graph/evidence checks), but Android ktlint failed the repository function-signature wrapping in RoomConversationContextCapsuleRepository.kt:76. APK/JVM tests were skipped.",
           "changed_files": [
             "src/Client.Android/app/src/test/java/com/whitep/client/data/ConversationContextCapsulePersistenceTest.kt",
+            "step three/T0152/execution-report.md",
+            "step three/T0152/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "related_commits": [
+            "5391e48b0b75feea80afa0e15a4eda3f053231fb"
+          ],
+          "commit_sha": "5391e48b0b75feea80afa0e15a4eda3f053231fb",
+          "tests": [
+            {
+              "name": "Step Three quality gate — run 40888279446",
+              "result": "passed",
+              "summary": "239 Python tests passed; syntax, graph structure, recorded-output/evidence checks passed. Graph guard reported 229 tasks/417 edges, zero errors and one preserved T0001 warning.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40888279446"
+            },
+            {
+              "name": "Android ktlintCheck — product run 40888279125",
+              "result": "failed",
+              "summary": "Two parameter-wrapping findings at RoomConversationContextCapsuleRepository.kt:76.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40888279125"
+            },
+            {
+              "name": "Android assembleDebug / testDebugUnitTest",
+              "result": "not_run",
+              "summary": "Skipped because ktlint failed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40888279125"
+            }
+          ],
+          "failure_details": "Product run 40888279125, Android job 123497784230: ktlint reported two parameter-wrapping violations at RoomConversationContextCapsuleRepository.kt:76 because a one-parameter function signature was written across multiple lines. Build and JVM tasks were skipped.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Put the single toLoadResult parameter on the same line as its function name and rerun product CI."
+        },
+        {
+          "attempt_id": "T0152-A004",
+          "started_at": "2026-10-29T14:07:34Z",
+          "ended_at": "2026-10-29T14:07:34Z",
+          "result": "partial",
+          "summary": "Reformatted the one-parameter toLoadResult signature flagged by ktlint; exact-head CI is pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/data/RoomConversationContextCapsuleRepository.kt",
             "step three/T0152/execution-report.md",
             "step three/T0152/evidence/verification.md",
             "step three/project-graph.md"
@@ -33018,19 +33065,19 @@
             {
               "name": "Android ktlintCheck",
               "result": "not_run",
-              "summary": "The reported indentation is corrected in A003; exact-head CI pending."
+              "summary": "Function signature style corrected; exact-head CI pending."
             },
             {
               "name": "Android assembleDebug / testDebugUnitTest",
               "result": "not_run",
-              "summary": "Waiting for lint to pass on the next exact head."
+              "summary": "Awaiting the next exact-head CI run."
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Check the full V 3.0.555 CI run. Do not mark T0152 done until all quality and product jobs pass."
+          "follow_up": "Inspect exact-head V 3.0.556. Do not accept T0152 until lint, APK build, JVM persistence/migration tests and all other product/quality gates pass."
         }
       ]
     },
@@ -44871,7 +44918,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-29T14:04:58Z",
+  "updated_at": "2026-10-29T14:07:34Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",
