@@ -92,7 +92,7 @@ class ConversationMessagesViewModelTest {
         }
 
     @Test
-    fun rejectsBlankMessagesWithoutPersistingThem()
+    fun rejectsBlankMessagesWithoutPersistingThem() =
         runBlocking {
             database.conversationDao().upsert(
                 ConversationEntity(
