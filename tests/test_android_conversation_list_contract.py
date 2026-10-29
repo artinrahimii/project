@@ -27,7 +27,8 @@ class AndroidConversationListContractTests(unittest.TestCase):
         self.assertIn('CONVERSATIONS("conversations", "Conversations"', destination)
         self.assertIn("ClientDestination.CONVERSATIONS", navigation)
         self.assertIn("composable(ClientDestination.CONVERSATIONS.route)", activity)
-        self.assertIn("conversationListScreen(onOpenConversation =", activity)
+        self.assertIn("conversationListScreen(", activity)
+        self.assertIn("onOpenConversation = { conversationId ->", activity)
         self.assertIn("import com.whitep.client.ui.conversations.conversationListScreen", activity)
 
 

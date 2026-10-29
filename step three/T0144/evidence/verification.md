@@ -1,16 +1,9 @@
-# T0144 evidence ledger — implementation candidate
+# T0144 evidence ledger
 
-- Base commit: `03fa46995911896599ff478da0e27763963f72b7` (`V 3.0.516`).
-- Implemented source paths:
-  - `src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationListViewModel.kt`
-  - `src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationListScreen.kt`
-  - `src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt`
-  - `src/Client.Android/app/src/main/java/com/whitep/client/ui/navigation/ClientDestination.kt`
-  - `src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt`
-- Regression paths:
-  - `src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationListViewModelTest.kt`
-  - `src/Client.Android/app/src/test/java/com/whitep/client/ui/navigation/ClientDestinationTest.kt`
-  - `tests/test_android_conversation_list_contract.py`
-  - `tests/test_android_conversation_management_contract.py`
-- Graph: incoming T0143 and T0138 edges were individually reviewed and validated; rationale/evidence is preserved in `edge_change_log`.
-- Test result: **pending**. This ledger does not claim that a build or test has passed. Verify GitHub Actions for the exact implementation commit before completion.
+- Implementation: [`V 3.0.517`](https://github.com/artinrahimii/project/commit/12b76f6f617c982b1353e8e6ec7cb7f5370bb6b3).
+- Initial exact-head CI: Python quality test failed due to stale single-line source-contract expectation; Android ktlint failed on formatting/import ordering. Links:
+  - https://github.com/artinrahimii/project/actions/runs/40849730503/job/123365907777
+  - https://github.com/artinrahimii/project/actions/runs/40849730591/job/123365908350
+- Host lifecycle integration job passed on V 3.0.517: https://github.com/artinrahimii/project/actions/runs/40849730591/job/123365908429 (not Android evidence).
+- Attempt A002 corrects the observed source-contract and ktlint failures. Its build/test result remains pending until CI completes on the corresponding commit.
+- Do not mark T0144 complete unless the exact-head quality gate, Android lint/build, and Android JVM tests pass.

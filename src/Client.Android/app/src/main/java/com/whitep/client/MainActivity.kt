@@ -99,7 +99,9 @@ private fun whitePClientApp() {
             composable(ClientDestination.CONVERSATIONS.route) {
                 conversationListScreen(
                     onOpenConversation = { conversationId ->
-                        navController.navigate(ClientDestination.conversationRoute(conversationId))
+                        navController.navigate(
+                            ClientDestination.conversationRoute(conversationId),
+                        )
                     },
                 )
             }

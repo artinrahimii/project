@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.whitep.client.data.ConversationDao
 import com.whitep.client.data.ConversationEntity
-import java.util.UUID
 import kotlinx.coroutines.flow.Flow
+import java.util.UUID
 
 /** Exposes persisted conversations and their local lifecycle; these operations do not send requests. */
 class ConversationListViewModel(
@@ -29,7 +29,10 @@ class ConversationListViewModel(
         return conversation
     }
 
-    suspend fun renameConversation(conversationId: String, title: String): Boolean {
+    suspend fun renameConversation(
+        conversationId: String,
+        title: String,
+    ): Boolean {
         val normalizedTitle = title.trim()
         if (normalizedTitle.isEmpty()) return false
 
@@ -43,11 +46,13 @@ class ConversationListViewModel(
         return true
     }
 
-    suspend fun deleteConversation(conversationId: String): Boolean =
-        conversationDao.deleteById(conversationId) > 0
+    suspend fun deleteConversation(conversationId: String): Boolean {
+        return conversationDao.deleteById(conversationId) > 0
+    }
 
-    suspend fun getConversation(conversationId: String): ConversationEntity? =
-        conversationDao.findById(conversationId)
+    suspend fun getConversation(conversationId: String): ConversationEntity? {
+        return conversationDao.findById(conversationId)
+    }
 
     private fun nextUpdatedAt(previous: Long): Long {
         val next = if (previous == Long.MAX_VALUE) previous else previous + 1

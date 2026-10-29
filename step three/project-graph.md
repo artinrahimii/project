@@ -30301,9 +30301,9 @@
       ],
       "notes": "T0144 implementation is committed for exact-head validation; do not mark done until Android ktlint, assembleDebug, testDebugUnitTest, Python source-contract tests, and graph guard pass on the actual commit.",
       "execution_summary": {
-        "attempt_count": 1,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "T0144-A001",
+        "attempt_count": 2,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "T0144-A002",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationListViewModel.kt",
@@ -30319,9 +30319,16 @@
           "step three/T0144/evidence/verification.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
-        "tests_failed": [],
+        "related_commits": [
+          "12b76f6f617c982b1353e8e6ec7cb7f5370bb6b3"
+        ],
+        "tests_passed": [
+          "Host lifecycle unit and integration — exact V 3.0.517: passed (job 123365908429); does not establish Android acceptance."
+        ],
+        "tests_failed": [
+          "Step Three quality gate — exact V 3.0.517: 217 passed, 1 failed; stale source-contract expectation (run 40849730503/job 123365907777).",
+          "Android ktlintCheck — exact V 3.0.517: failed on Kotlin formatting/import ordering (run 40849730591/job 123365908350)."
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -30335,8 +30342,8 @@
         {
           "attempt_id": "T0144-A001",
           "started_at": "2026-10-29T12:56:05.464+03:30",
-          "ended_at": "2026-10-29T12:56:05.464+03:30",
-          "result": "partial",
+          "ended_at": "2026-10-29T09:42:46.974Z",
+          "result": "failed",
           "summary": "Implemented Room-backed conversation creation, title rename, deletion with cascade behavior, selected-conversation lookup/detail navigation, UI dialogs/actions, and Kotlin/Python regression coverage. Completion is pending exact-head CI evidence.",
           "changed_files": [
             "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationListViewModel.kt",
@@ -30355,21 +30362,61 @@
           "commit_sha": null,
           "tests": [
             {
-              "command": "Gradle ktlintCheck, assembleDebug, and testDebugUnitTest via .github/workflows/product-build.yml",
-              "result": "not_run",
-              "summary": "Not run locally: Gradle is unavailable and this environment cannot resolve github.com; run on the pushed exact head before completion."
+              "command": "Step Three quality gate — Run 40849730503 / job 123365907777",
+              "result": "failed",
+              "summary": "218 tests ran; 217 passed and one failed because the existing conversation-list contract test expected a single-line composable call. See https://github.com/artinrahimii/project/actions/runs/40849730503/job/123365907777"
             },
             {
-              "command": "python -m unittest discover -s tests -v and tools/graph_guard.py",
-              "result": "not_run",
-              "summary": "Not run locally because the repository could not be cloned into the execution container; the exact-head GitHub quality workflow must provide the result."
+              "command": "Android ktlintCheck — Run 40849730591 / job 123365908350",
+              "result": "failed",
+              "summary": "ktlintMainSourceSetCheck failed on exact V 3.0.517; errors were formatting/import order only. See https://github.com/artinrahimii/project/actions/runs/40849730591/job/123365908350"
+            },
+            {
+              "command": "Host lifecycle unit/integration — Run 40849730591 / job 123365908429",
+              "result": "passed",
+              "summary": "Host lifecycle unit and integration job passed on V 3.0.517; this does not validate Android code."
             }
           ],
-          "failure_details": "No source tests have been represented as passed. Local clone failed due DNS resolution and Gradle is not installed; exact-head GitHub Actions is the required verification path.",
+          "failure_details": "Exact-head GitHub Actions exposed one Python source-contract failure: tests/test_android_conversation_list_contract.py expected the old single-line call; Android ktlint also failed on formatting/import-order issues in MainActivity.kt, ConversationDetailScreen.kt, ConversationListViewModel.kt and ClientDestination.kt.",
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Inspect quality.yml and product-build.yml runs for the exact new main commit; fix failures and rerun. Only then update this task to done and record passing evidence."
+        },
+        {
+          "attempt_id": "T0144-A002",
+          "started_at": "2026-10-29T09:42:46.974Z",
+          "ended_at": "2026-10-29T09:42:46.974Z",
+          "result": "partial",
+          "summary": "Corrected the failed source-contract assertion to validate the multiline route wiring and applied all exact-head ktlint formatting/import-order corrections identified by Android CI. Waiting for complete CI rerun on this correction commit.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationListViewModel.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/navigation/ClientDestination.kt",
+            "tests/test_android_conversation_list_contract.py",
+            "step three/T0144/execution-report.md",
+            "step three/T0144/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "command": "Step Three quality gate",
+              "result": "not_run",
+              "summary": "Correction commit will trigger the exact-head workflow."
+            },
+            {
+              "command": "Android ktlintCheck, assembleDebug, testDebugUnitTest",
+              "result": "not_run",
+              "summary": "Correction commit will trigger product-build workflow."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect both workflow conclusions on the correction commit SHA. Fix any residual failures, then update attempt A002 with actual observed results and reevaluate T0144; do not mark done before acceptance tests pass."
         }
       ]
     },
@@ -42201,7 +42248,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-29T09:26:05.464Z",
+  "updated_at": "2026-10-29T09:42:46.974Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

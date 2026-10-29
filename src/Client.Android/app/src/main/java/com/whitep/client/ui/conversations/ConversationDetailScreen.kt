@@ -27,19 +27,27 @@ import com.whitep.client.data.ConversationEntity
 private sealed class ConversationDetailUiState {
     object Loading : ConversationDetailUiState()
 
-    data class Found(val conversation: ConversationEntity) : ConversationDetailUiState()
+    data class Found(
+        val conversation: ConversationEntity,
+    ) : ConversationDetailUiState()
 
     object Missing : ConversationDetailUiState()
 }
 
 @Composable
-internal fun conversationDetailScreen(conversationId: String, onBack: () -> Unit) {
+internal fun conversationDetailScreen(
+    conversationId: String,
+    onBack: () -> Unit,
+) {
     val applicationContext = LocalContext.current.applicationContext
     val conversationDao =
         remember(applicationContext) {
             ClientDatabase.getInstance(applicationContext).conversationDao()
         }
-    val factory = remember(conversationDao) { ConversationListViewModel.Factory(conversationDao) }
+    val factory =
+        remember(conversationDao) {
+            ConversationListViewModel.Factory(conversationDao)
+        }
     val conversationListViewModel: ConversationListViewModel = viewModel(factory = factory)
     var state by remember(conversationId) {
         mutableStateOf<ConversationDetailUiState>(ConversationDetailUiState.Loading)
