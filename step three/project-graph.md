@@ -33441,33 +33441,157 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0153 و T0150 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال انجام",
+      "actual_output_paths": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/context/ConversationContextCapsule.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/RoomConversationContextCapsuleRepository.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/ConversationContextCapsuleSizeLimitStore.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/context/ConversationContextCapsuleTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModelTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/data/ConversationContextCapsuleSizeLimitStoreTest.kt",
+        "tests/test_android_context_capsule_contract.py",
+        "tests/test_android_context_capsule_ui_contract.py",
+        "tests/test_android_context_capsule_persistence_contract.py",
+        "step three/T0154/execution-report.md",
+        "step three/T0154/evidence/verification.md",
+        "step three/project-graph.md"
+      ],
       "expected_output_paths": [
         "src/Client.Android/Context/ + tests/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/context/ConversationContextCapsule.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/RoomConversationContextCapsuleRepository.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/ConversationContextCapsuleSizeLimitStore.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/context/ConversationContextCapsuleTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModelTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/data/ConversationContextCapsuleSizeLimitStoreTest.kt",
+        "tests/test_android_context_capsule_contract.py",
+        "tests/test_android_context_capsule_ui_contract.py",
+        "tests/test_android_context_capsule_persistence_contract.py",
+        "step three/T0154/execution-report.md",
+        "step three/T0154/evidence/verification.md"
+      ],
+      "notes": "خروجی‌های واقعی این تلاش در actual_output_paths ثبت شده‌اند؛ پذیرش نهایی منوط به CI است.\nT0154-A001 implements a persisted device-wide capsule size limit (512–4096 UTF-8 bytes in 256-byte steps), retains the fixed protocol ceiling, enforces the selected threshold during domain encoding/Room save, and exposes a Compose slider. Exact-head CI is pending; existing capsule decoding retains the fixed protocol ceiling.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0154-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Client.Android/app/src/main/java/com/whitep/client/context/ConversationContextCapsule.kt",
+          "src/Client.Android/app/src/main/java/com/whitep/client/data/RoomConversationContextCapsuleRepository.kt",
+          "src/Client.Android/app/src/main/java/com/whitep/client/data/ConversationContextCapsuleSizeLimitStore.kt",
+          "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt",
+          "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+          "src/Client.Android/app/src/test/java/com/whitep/client/context/ConversationContextCapsuleTest.kt",
+          "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModelTest.kt",
+          "src/Client.Android/app/src/test/java/com/whitep/client/data/ConversationContextCapsuleSizeLimitStoreTest.kt",
+          "tests/test_android_context_capsule_contract.py",
+          "tests/test_android_context_capsule_ui_contract.py",
+          "tests/test_android_context_capsule_persistence_contract.py",
+          "step three/T0154/execution-report.md",
+          "step three/T0154/evidence/verification.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
-          "affected_by_contract_changes": [],
-          "review_evidence": []
+          "state": "required",
+          "triggering_contracts": [
+            "ConversationContextCapsule v1 codec and fixed 4,096-byte protocol ceiling",
+            "T0153 capsule form/ViewModel and Room save contract",
+            "Device-wide capsule setting persistence"
+          ],
+          "affected_by_contract_changes": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/context/ConversationContextCapsule.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/data/RoomConversationContextCapsuleRepository.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/data/ConversationContextCapsuleSizeLimitStore.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/context/ConversationContextCapsuleTest.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModelTest.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/data/ConversationContextCapsuleSizeLimitStoreTest.kt",
+            "tests/test_android_context_capsule_contract.py",
+            "tests/test_android_context_capsule_ui_contract.py",
+            "tests/test_android_context_capsule_persistence_contract.py"
+          ],
+          "review_evidence": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/data/RoomConversationContextCapsuleRepository.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+            "step three/T0153/execution-report.md",
+            "docs/requirements.md"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0154-A001",
+          "started_at": "2026-10-29T19:15:00+03:30",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Implemented a SharedPreferences-backed device-wide capsule size setting, domain enforcement from 512 to 4096 UTF-8 bytes in 256-byte steps, ViewModel/Room save wiring, a Compose slider, and domain/persistence/ViewModel/Python contract tests. Exact-head CI is pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/context/ConversationContextCapsule.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/data/RoomConversationContextCapsuleRepository.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/data/ConversationContextCapsuleSizeLimitStore.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/context/ConversationContextCapsuleTest.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModelTest.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/data/ConversationContextCapsuleSizeLimitStoreTest.kt",
+            "tests/test_android_context_capsule_contract.py",
+            "tests/test_android_context_capsule_ui_contract.py",
+            "tests/test_android_context_capsule_persistence_contract.py",
+            "step three/T0154/execution-report.md",
+            "step three/T0154/evidence/verification.md"
+          ],
+          "related_commits": [],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "ConversationContextCapsuleTest configurable and invalid limits",
+              "result": "not_run",
+              "summary": "Domain tests added; Android JVM CI pending."
+            },
+            {
+              "name": "ConversationContextCapsuleSizeLimitStoreTest",
+              "result": "not_run",
+              "summary": "Persistence, invalid-write and corrupt-value tests added; Android JVM CI pending."
+            },
+            {
+              "name": "ConversationContextCapsuleViewModelTest selected limit enforcement",
+              "result": "not_run",
+              "summary": "Repository-backed validation test added; Android JVM CI pending."
+            },
+            {
+              "name": "Python capsule contract tests",
+              "result": "not_run",
+              "summary": "Source-contract checks updated; quality CI pending."
+            },
+            {
+              "name": "Android lint, APK build and JVM tests",
+              "result": "not_run",
+              "summary": "Exact-head product workflow pending."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "Adds persisted device-wide max-size preference and passes it to domain codec/Room save."
+          ],
+          "follow_up": "Inspect exact-head V 3.0.562 quality/product CI, fix any failures in a recorded subsequent attempt, and do not mark T0154 done until required gates pass."
+        }
+      ]
     },
     {
       "id": "T0155",
@@ -40523,19 +40647,29 @@
       "from": "T0153",
       "to": "T0154",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0154 extends the capsule form and ViewModel introduced by T0153 and routes the selected limit into the existing Room repository/domain codec save contract; this is a direct UI/data-contract dependency. Retain the original blocks edge.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/RoomConversationContextCapsuleRepository.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/context/ConversationContextCapsule.kt",
+        "step three/T0153/execution-report.md"
+      ]
     },
     {
       "from": "T0150",
       "to": "T0154",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0150 validates local conversation/message persistence but neither defines nor consumes the capsule size setting. The feature shares the conversation detail flow; retain blocks as conservative order, not a direct technical dependency.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationWorkflowAcceptanceTest.kt",
+        "step three/T0150/execution-report.md",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt"
+      ]
     },
     {
       "from": "T0154",
@@ -45260,9 +45394,43 @@
         "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "from": "T0153",
+      "to": "T0154",
+      "changed_at": "2026-10-29T19:15:00+03:30",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "old_validation_status": "unreviewed",
+      "new_validation_status": "validated",
+      "reason": "T0154 extends the capsule form and ViewModel introduced by T0153 and routes the selected limit into the existing Room repository/domain codec save contract; this is a direct UI/data-contract dependency. Retain the original blocks edge.",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/RoomConversationContextCapsuleRepository.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/context/ConversationContextCapsule.kt",
+        "step three/T0153/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "from": "T0150",
+      "to": "T0154",
+      "changed_at": "2026-10-29T19:15:00+03:30",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "old_validation_status": "unreviewed",
+      "new_validation_status": "validated",
+      "reason": "T0150 validates local conversation/message persistence but neither defines nor consumes the capsule size setting. The feature shares the conversation detail flow; retain blocks as conservative order, not a direct technical dependency.",
+      "evidence": [
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationWorkflowAcceptanceTest.kt",
+        "step three/T0150/execution-report.md",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-29T15:15:35Z",
+  "updated_at": "2026-10-29T19:15:00+03:30",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

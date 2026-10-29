@@ -7,6 +7,7 @@ import com.whitep.client.context.ConversationContextCapsule
 import com.whitep.client.context.ConversationContextCapsuleError
 import com.whitep.client.data.ConversationContextCapsuleLoadResult
 import com.whitep.client.data.ConversationContextCapsuleSaveResult
+import com.whitep.client.data.ConversationContextCapsuleSizeLimitStore
 import com.whitep.client.data.RoomConversationContextCapsuleRepository
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,6 +17,7 @@ import kotlinx.coroutines.launch
 
 data class ConversationContextCapsuleUiState(
     val isLoading: Boolean = true,
+    val maxSerializedBytes: Int = ConversationContextCapsule.DEFAULT_MAX_SERIALIZED_BYTES,
     val capsule: ConversationContextCapsule? = null,
     val hasUnreadableCapsule: Boolean = false,
     val isEditing: Boolean = false,
@@ -34,9 +36,15 @@ data class ConversationContextCapsuleUiState(
 class ConversationContextCapsuleViewModel(
     private val conversationId: String,
     private val repository: RoomConversationContextCapsuleRepository,
+    private val sizeLimitStore: ConversationContextCapsuleSizeLimitStore,
     private val clockMillis: () -> Long = System::currentTimeMillis,
 ) : ViewModel() {
-    private val _uiState = MutableStateFlow(ConversationContextCapsuleUiState())
+    private val _uiState =
+        MutableStateFlow(
+            ConversationContextCapsuleUiState(
+                maxSerializedBytes = sizeLimitStore.loadMaxSerializedBytes(),
+            ),
+        )
     val uiState: StateFlow<ConversationContextCapsuleUiState> = _uiState.asStateFlow()
 
     init {
@@ -131,6 +139,29 @@ class ConversationContextCapsuleViewModel(
             )
     }
 
+    fun updateMaxSerializedBytes(value: Int) {
+        if (!ConversationContextCapsule.isValidConfiguredSizeLimit(value)) return
+        try {
+            if (sizeLimitStore.saveMaxSerializedBytes(value)) {
+                _uiState.value = _uiState.value.copy(
+                    maxSerializedBytes = value,
+                    message = null,
+                    errorMessage = null,
+                )
+            } else {
+                _uiState.value = _uiState.value.copy(
+                    errorMessage = "Choose a capsule limit from 512 to 4,096 bytes in 256-byte steps.",
+                    message = null,
+                )
+            }
+        } catch (_: Exception) {
+            _uiState.value = _uiState.value.copy(
+                errorMessage = "The capsule size setting could not be saved.",
+                message = null,
+            )
+        }
+    }
+
     fun updateGoal(value: String) = updateDraft { it.copy(goal = value) }
 
     fun updateKeyFacts(value: String) = updateDraft { it.copy(keyFactsText = value) }
@@ -154,7 +185,7 @@ class ConversationContextCapsuleViewModel(
                 unresolvedItems = current.unresolvedItemsText.toItems(),
             )
         return try {
-            when (val result = repository.save(conversationId, capsule, clockMillis())) {
+            when (val result = repository.save(conversationId, capsule, clockMillis(), current.maxSerializedBytes)) {
                 is ConversationContextCapsuleSaveResult.Saved -> {
                     val savedState = _uiState.value
                     _uiState.value =
@@ -242,7 +273,10 @@ class ConversationContextCapsuleViewModel(
         when (this) {
             ConversationContextCapsuleError.EMPTY_GOAL -> "Enter a goal before saving the context capsule."
             ConversationContextCapsuleError.BLANK_ITEM -> "Remove blank items before saving."
-            ConversationContextCapsuleError.TOO_LARGE -> "The context capsule exceeds 4,096 UTF-8 bytes."
+            ConversationContextCapsuleError.TOO_LARGE ->
+                "The context capsule exceeds the selected size limit. Shorten it or raise the limit."
+            ConversationContextCapsuleError.INVALID_SIZE_LIMIT ->
+                "Choose a capsule limit from 512 to 4,096 bytes in 256-byte steps."
             ConversationContextCapsuleError.UNSUPPORTED_SCHEMA_VERSION ->
                 "This context capsule version is not supported."
             ConversationContextCapsuleError.INVALID_UTF8,
@@ -256,13 +290,14 @@ class ConversationContextCapsuleViewModel(
     class Factory(
         private val conversationId: String,
         private val repository: RoomConversationContextCapsuleRepository,
+        private val sizeLimitStore: ConversationContextCapsuleSizeLimitStore,
     ) : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             if (!modelClass.isAssignableFrom(ConversationContextCapsuleViewModel::class.java)) {
                 throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
             }
-            return ConversationContextCapsuleViewModel(conversationId, repository) as T
+            return ConversationContextCapsuleViewModel(conversationId, repository, sizeLimitStore) as T
         }
     }
 }

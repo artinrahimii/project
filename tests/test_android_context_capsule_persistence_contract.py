@@ -27,7 +27,8 @@ class AndroidContextCapsulePersistenceContractTests(unittest.TestCase):
 
     def test_repository_uses_capsule_codec_and_rejects_invalid_payloads(self):
         source = REPOSITORY.read_text(encoding="utf-8")
-        self.assertIn("capsule.encode()", source)
+        self.assertIn("capsule.encode(maxSerializedBytes)", source)
+        self.assertIn("maxSerializedBytes: Int = ConversationContextCapsule.MAX_SERIALIZED_BYTES", source)
         self.assertIn("ConversationContextCapsule.decode(entity.serializedCapsule)", source)
         self.assertIn("ConversationContextCapsuleSaveResult.Rejected", source)
         self.assertIn("dao.upsert", source)

@@ -138,6 +138,29 @@ class ConversationContextCapsuleTest {
         )
     }
 
+    @Test
+    fun enforcesConfigurableSizeLimitBelowTheHardProtocolCeiling() {
+        val capsule = ConversationContextCapsule(goal = "x".repeat(700))
+        val rejected = capsule.encode(maxSerializedBytes = 512)
+        assertFalse(rejected.isValid)
+        assertEquals(ConversationContextCapsuleError.TOO_LARGE, rejected.error)
+        assertTrue(rejected.byteCount!! > 512)
+
+        val accepted = capsule.encode(maxSerializedBytes = 1_024)
+        assertTrue(accepted.isValid)
+        assertTrue(accepted.byteCount!! <= 1_024)
+    }
+
+    @Test
+    fun rejectsInvalidConfiguredSizeLimits() {
+        for (limit in listOf(0, 511, 513, ConversationContextCapsule.MAX_SERIALIZED_BYTES + 256)) {
+            assertEquals(
+                ConversationContextCapsuleError.INVALID_SIZE_LIMIT,
+                ConversationContextCapsule(goal = "goal").encode(maxSerializedBytes = limit).error,
+            )
+        }
+    }
+
     private fun encodedObject(version: Int = 1): ByteArray =
         JSONObject()
             .put("schemaVersion", version)

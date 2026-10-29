@@ -20,7 +20,14 @@ data class ConversationContextCapsule(
      * Encodes this capsule as versioned UTF-8 JSON. The byte limit is the existing protocol
      * ceiling; later settings may choose a lower limit but must never exceed this hard ceiling.
      */
-    fun encode(): ConversationContextCapsuleEncodingResult {
+    fun encode(maxSerializedBytes: Int = MAX_SERIALIZED_BYTES): ConversationContextCapsuleEncodingResult {
+        if (!isValidConfiguredSizeLimit(maxSerializedBytes)) {
+            return ConversationContextCapsuleEncodingResult(
+                bytes = null,
+                error = ConversationContextCapsuleError.INVALID_SIZE_LIMIT,
+                byteCount = null,
+            )
+        }
         if (schemaVersion != CURRENT_SCHEMA_VERSION) {
             return ConversationContextCapsuleEncodingResult(
                 bytes = null,
@@ -56,7 +63,7 @@ data class ConversationContextCapsule(
                 .put(FIELD_CONSTRAINTS, constraints.toJsonArray())
                 .put(FIELD_UNRESOLVED_ITEMS, unresolvedItems.toJsonArray())
         val bytes = json.toString().toByteArray(Charsets.UTF_8)
-        return if (bytes.size > MAX_SERIALIZED_BYTES) {
+        return if (bytes.size > maxSerializedBytes) {
             ConversationContextCapsuleEncodingResult(
                 bytes = null,
                 error = ConversationContextCapsuleError.TOO_LARGE,
@@ -74,6 +81,23 @@ data class ConversationContextCapsule(
     companion object {
         const val CURRENT_SCHEMA_VERSION = 1
         const val MAX_SERIALIZED_BYTES = 4 * 1024
+        const val MIN_CONFIGURABLE_SERIALIZED_BYTES = 512
+        const val CONFIGURED_SIZE_LIMIT_STEP_BYTES = 256
+        const val DEFAULT_MAX_SERIALIZED_BYTES = MAX_SERIALIZED_BYTES
+
+        fun isValidConfiguredSizeLimit(value: Int): Boolean =
+            value in MIN_CONFIGURABLE_SERIALIZED_BYTES..MAX_SERIALIZED_BYTES &&
+                (value - MIN_CONFIGURABLE_SERIALIZED_BYTES) % CONFIGURED_SIZE_LIMIT_STEP_BYTES == 0
+
+        /** Clamp corrupted persisted settings while preserving the fixed protocol ceiling. */
+        fun normalizeConfiguredSizeLimit(value: Int): Int {
+            val bounded = value.coerceIn(MIN_CONFIGURABLE_SERIALIZED_BYTES, MAX_SERIALIZED_BYTES)
+            val steps =
+                (bounded - MIN_CONFIGURABLE_SERIALIZED_BYTES + CONFIGURED_SIZE_LIMIT_STEP_BYTES / 2) /
+                    CONFIGURED_SIZE_LIMIT_STEP_BYTES
+            return (MIN_CONFIGURABLE_SERIALIZED_BYTES + steps * CONFIGURED_SIZE_LIMIT_STEP_BYTES)
+                .coerceAtMost(MAX_SERIALIZED_BYTES)
+        }
 
         private const val FIELD_SCHEMA_VERSION = "schemaVersion"
         private const val FIELD_GOAL = "goal"
@@ -222,6 +246,7 @@ enum class ConversationContextCapsuleError {
     EMPTY_GOAL,
     BLANK_ITEM,
     TOO_LARGE,
+    INVALID_SIZE_LIMIT,
     MALFORMED_JSON,
     INVALID_UTF8,
     MISSING_FIELD,

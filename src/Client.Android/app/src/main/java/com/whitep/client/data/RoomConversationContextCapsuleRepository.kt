@@ -40,9 +40,10 @@ class RoomConversationContextCapsuleRepository(
         conversationId: String,
         capsule: ConversationContextCapsule,
         updatedAtEpochMillis: Long,
+        maxSerializedBytes: Int = ConversationContextCapsule.MAX_SERIALIZED_BYTES,
     ): ConversationContextCapsuleSaveResult {
         require(conversationId.isNotBlank()) { "conversationId must not be blank" }
-        val encoded = capsule.encode()
+        val encoded = capsule.encode(maxSerializedBytes)
         val bytes = encoded.bytes
         if (!encoded.isValid || bytes == null) {
             return ConversationContextCapsuleSaveResult.Rejected(

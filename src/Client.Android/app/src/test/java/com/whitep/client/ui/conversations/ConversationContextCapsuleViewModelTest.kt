@@ -1,12 +1,15 @@
 package com.whitep.client.ui.conversations
 
+import android.content.Context
 import android.os.Looper
 import androidx.lifecycle.ViewModelStore
 import androidx.room.Room
+import com.whitep.client.context.ConversationContextCapsule
 import com.whitep.client.data.ClientDatabase
 import com.whitep.client.data.ConversationContextCapsuleLoadResult
 import com.whitep.client.data.ConversationEntity
 import com.whitep.client.data.RoomConversationContextCapsuleRepository
+import com.whitep.client.data.SharedPreferencesConversationContextCapsuleSizeLimitStore
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -27,13 +30,23 @@ class ConversationContextCapsuleViewModelTest {
     private lateinit var database: ClientDatabase
     private lateinit var repository: RoomConversationContextCapsuleRepository
     private lateinit var viewModelStore: ViewModelStore
+    private lateinit var sizeLimitStore: SharedPreferencesConversationContextCapsuleSizeLimitStore
 
     @Before
     fun setUp() {
+        val application = RuntimeEnvironment.getApplication()
+        application
+            .getSharedPreferences(
+                SharedPreferencesConversationContextCapsuleSizeLimitStore.PREFERENCES_NAME,
+                Context.MODE_PRIVATE,
+            ).edit()
+            .clear()
+            .commit()
+        sizeLimitStore = SharedPreferencesConversationContextCapsuleSizeLimitStore(application)
         database =
             Room
                 .inMemoryDatabaseBuilder(
-                    RuntimeEnvironment.getApplication(),
+                    application,
                     ClientDatabase::class.java,
                 ).addMigrations(ClientDatabase.MIGRATION_1_2, ClientDatabase.MIGRATION_2_3)
                 .allowMainThreadQueries()
@@ -108,10 +121,40 @@ class ConversationContextCapsuleViewModelTest {
             assertEquals(ConversationContextCapsuleLoadResult.Missing, repository.find("conversation-ui"))
         }
 
+    @Test
+    fun selectedSizeLimitIsPersistedAndEnforcedBeforeWritingCapsule() =
+        runBlocking {
+            val viewModel = createViewModel()
+            assertEquals(
+                ConversationContextCapsule.DEFAULT_MAX_SERIALIZED_BYTES,
+                viewModel.uiState.value.maxSerializedBytes,
+            )
+            viewModel.updateMaxSerializedBytes(512)
+            assertEquals(512, viewModel.uiState.value.maxSerializedBytes)
+            viewModel.beginEditing()
+            viewModel.updateGoal("x".repeat(700))
+
+            assertFalse(viewModel.save())
+            assertTrue(viewModel.uiState.value.errorMessage!!.contains("selected size limit"))
+            assertEquals(ConversationContextCapsuleLoadResult.Missing, repository.find("conversation-ui"))
+
+            viewModel.updateMaxSerializedBytes(1_024)
+            assertTrue(viewModel.save())
+            val saved = repository.find("conversation-ui") as ConversationContextCapsuleLoadResult.Found
+            assertTrue(saved.serializedByteCount <= 1_024)
+            assertEquals(
+                1_024,
+                SharedPreferencesConversationContextCapsuleSizeLimitStore(
+                    RuntimeEnvironment.getApplication(),
+                ).loadMaxSerializedBytes(),
+            )
+        }
+
     private fun createViewModel(): ConversationContextCapsuleViewModel =
         ConversationContextCapsuleViewModel(
             conversationId = "conversation-ui",
             repository = repository,
+            sizeLimitStore = sizeLimitStore,
             clockMillis = { 50L },
         ).also {
             viewModelStore.put("context-capsule", it)

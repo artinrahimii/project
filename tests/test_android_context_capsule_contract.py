@@ -18,7 +18,10 @@ class AndroidContextCapsuleContractTests(unittest.TestCase):
         source = MODEL.read_text(encoding="utf-8")
         self.assertIn("const val MAX_SERIALIZED_BYTES = 4 * 1024", source)
         self.assertIn("toByteArray(Charsets.UTF_8)", source)
-        self.assertIn("bytes.size > MAX_SERIALIZED_BYTES", source)
+        self.assertIn("bytes.size > maxSerializedBytes", source)
+        self.assertIn("serialized.size > MAX_SERIALIZED_BYTES", source)
+        self.assertIn("isValidConfiguredSizeLimit", source)
+        self.assertIn("INVALID_SIZE_LIMIT", source)
         self.assertIn("CodingErrorAction.REPORT", source)
         self.assertIn("UNKNOWN_FIELD", source)
         self.assertIn("MISSING_FIELD", source)
@@ -38,6 +41,8 @@ class AndroidContextCapsuleContractTests(unittest.TestCase):
             "acceptsSerializedPayloadAtExactlyTheFourKilobyteCeiling",
             "rejectsOversizedPayloadUsingUtf8EncodedByteCount",
             "rejectsMissingUnknownAndIncorrectlyTypedFields",
+            "enforcesConfigurableSizeLimitBelowTheHardProtocolCeiling",
+            "rejectsInvalidConfiguredSizeLimits",
         ):
             self.assertIn(test, source)
 

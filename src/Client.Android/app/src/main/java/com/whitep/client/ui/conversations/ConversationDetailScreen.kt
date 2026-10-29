@@ -13,6 +13,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -27,15 +28,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.whitep.client.context.ConversationContextCapsule
 import com.whitep.client.data.ClientDatabase
 import com.whitep.client.data.ConversationEntity
 import com.whitep.client.data.MessageEntity
 import com.whitep.client.data.RequestStateEntity
 import com.whitep.client.data.RoomConversationContextCapsuleRepository
+import com.whitep.client.data.SharedPreferencesConversationContextCapsuleSizeLimitStore
 import com.whitep.client.domain.ConversationMessageValidationError
 import com.whitep.client.domain.ConversationMessageValidator
 import com.whitep.client.ui.request.toPresentation
 import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
 
 private sealed class ConversationDetailUiState {
     object Loading : ConversationDetailUiState()
@@ -64,9 +68,17 @@ internal fun conversationDetailScreen(
         remember(database) {
             RoomConversationContextCapsuleRepository(database.conversationContextCapsuleDao())
         }
+    val contextCapsuleSizeLimitStore =
+        remember(applicationContext) {
+            SharedPreferencesConversationContextCapsuleSizeLimitStore(applicationContext)
+        }
     val contextCapsuleFactory =
-        remember(conversationId, contextCapsuleRepository) {
-            ConversationContextCapsuleViewModel.Factory(conversationId, contextCapsuleRepository)
+        remember(conversationId, contextCapsuleRepository, contextCapsuleSizeLimitStore) {
+            ConversationContextCapsuleViewModel.Factory(
+                conversationId,
+                contextCapsuleRepository,
+                contextCapsuleSizeLimitStore,
+            )
         }
     val contextCapsuleViewModel: ConversationContextCapsuleViewModel =
         viewModel(
@@ -149,6 +161,7 @@ internal fun conversationDetailScreen(
                     state = contextCapsuleState,
                     onBeginEditing = contextCapsuleViewModel::beginEditing,
                     onCancelEditing = contextCapsuleViewModel::cancelEditing,
+                    onMaxSerializedBytesChange = contextCapsuleViewModel::updateMaxSerializedBytes,
                     onGoalChange = contextCapsuleViewModel::updateGoal,
                     onKeyFactsChange = contextCapsuleViewModel::updateKeyFacts,
                     onDecisionsChange = contextCapsuleViewModel::updateDecisions,
@@ -227,6 +240,7 @@ private fun contextCapsuleSection(
     state: ConversationContextCapsuleUiState,
     onBeginEditing: () -> Unit,
     onCancelEditing: () -> Unit,
+    onMaxSerializedBytesChange: (Int) -> Unit,
     onGoalChange: (String) -> Unit,
     onKeyFactsChange: (String) -> Unit,
     onDecisionsChange: (String) -> Unit,
@@ -236,11 +250,32 @@ private fun contextCapsuleSection(
     onDelete: () -> Unit,
 ) {
     var confirmDelete by remember { mutableStateOf(false) }
+    val minSizeLimit = ConversationContextCapsule.MIN_CONFIGURABLE_SERIALIZED_BYTES
+    val maxSizeLimit = ConversationContextCapsule.MAX_SERIALIZED_BYTES
+    val sizeLimitStep = ConversationContextCapsule.CONFIGURED_SIZE_LIMIT_STEP_BYTES
+    val sizeLimitSteps = (maxSizeLimit - minSizeLimit) / sizeLimitStep - 1
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Text("Context capsule", style = MaterialTheme.typography.titleLarge)
         Text(
             "A short set of goals and decisions for this conversation. It stays on this device and is not sent automatically.",
+            style = MaterialTheme.typography.bodySmall,
+        )
+        Text(
+            "Maximum capsule size on this device: ${state.maxSerializedBytes} bytes",
+            style = MaterialTheme.typography.labelLarge,
+        )
+        Slider(
+            value = state.maxSerializedBytes.toFloat(),
+            onValueChange = { onMaxSerializedBytesChange(it.roundToInt()) },
+            valueRange = minSizeLimit.toFloat()..maxSizeLimit.toFloat(),
+            steps = sizeLimitSteps,
+            enabled = !state.isSaving && !state.isDeleting,
+            modifier = Modifier.fillMaxWidth(),
+        )
+        Text(
+            "This device setting applies to future saves. Existing capsules are not deleted when you lower it; " +
+                "the protocol ceiling remains 4,096 bytes.",
             style = MaterialTheme.typography.bodySmall,
         )
         if (state.isLoading) {
