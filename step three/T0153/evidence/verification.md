@@ -6,3 +6,10 @@
 - **Source contract:** `tests/test_android_context_capsule_ui_contract.py` checks actual screen controls, state wiring and the runtime-test cases.
 - **Dependency reviews:** T0152 → T0153 = `contract_or_interface_dependency`; T0150 → T0153 = `sequencing_only`. Both original `blocks` edges remain and review rationale/evidence are logged.
 - **Not yet proven:** exact-head CI for this change. Keep T0153 `in_progress` until Android lint/build/JVM checks and graph/evidence guards pass.
+
+
+## V 3.0.558 CI failure and A002 correction
+
+- [Quality run 40898143390](https://github.com/artinrahimii/project/actions/runs/40898143390) passed 242 Python tests and graph/evidence guards (229 tasks / 417 edges, zero errors).
+- [Product run 40898143330](https://github.com/artinrahimii/project/actions/runs/40898143330) failed Android ktlint on the long schema-version error string and delete-dialog `Text` formatting. APK/JVM stages did not run; HostLifecycle passed; Windows WPF was still running when first checked.
+- A002 splits the long error string and formats the confirmation text as a multiline Compose call; behavior and repository interfaces are unchanged. T0153 remains in progress until exact-head CI passes.

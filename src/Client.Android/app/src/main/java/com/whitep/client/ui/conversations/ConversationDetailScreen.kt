@@ -361,7 +361,11 @@ private fun contextCapsuleSection(
         AlertDialog(
             onDismissRequest = { confirmDelete = false },
             title = { Text("Delete context capsule?") },
-            text = { Text("This removes the saved capsule from this device. The conversation and its messages remain.") },
+            text = {
+                Text(
+                    "This removes the saved capsule from this device. The conversation and its messages remain.",
+                )
+            },
             confirmButton = {
                 TextButton(
                     onClick = {

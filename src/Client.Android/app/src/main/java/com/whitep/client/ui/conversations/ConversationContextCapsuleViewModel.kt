@@ -243,7 +243,8 @@ class ConversationContextCapsuleViewModel(
             ConversationContextCapsuleError.EMPTY_GOAL -> "Enter a goal before saving the context capsule."
             ConversationContextCapsuleError.BLANK_ITEM -> "Remove blank items before saving."
             ConversationContextCapsuleError.TOO_LARGE -> "The context capsule exceeds 4,096 UTF-8 bytes."
-            ConversationContextCapsuleError.UNSUPPORTED_SCHEMA_VERSION -> "This context capsule version is not supported."
+            ConversationContextCapsuleError.UNSUPPORTED_SCHEMA_VERSION ->
+                "This context capsule version is not supported."
             ConversationContextCapsuleError.INVALID_UTF8,
             ConversationContextCapsuleError.MALFORMED_JSON,
             ConversationContextCapsuleError.MISSING_FIELD,

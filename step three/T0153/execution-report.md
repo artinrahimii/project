@@ -21,3 +21,10 @@
 ## Verification
 
 No local tests are claimed. Exact-head CI must pass Android lint, debug APK build, JVM tests, generated Protobuf checks, Windows WPF/HostLifecycle jobs and graph/evidence guards before T0153 can be marked done.
+
+
+## First exact-head CI result — V 3.0.558
+
+- Quality [run 40898143390](https://github.com/artinrahimii/project/actions/runs/40898143390) passed **242 Python tests**, syntax checks, graph validation and output/evidence checks; the graph guard reported 229 tasks/417 edges, zero errors and one preserved T0001 metadata warning.
+- Product [run 40898143330](https://github.com/artinrahimii/project/actions/runs/40898143330) passed the HostLifecycle job. Android `ktlintMainSourceSetCheck` failed two findings: the unsupported-schema user message exceeded the 120-character limit in `ConversationContextCapsuleViewModel.kt:246`, and the delete-confirmation `Text` call needed multiline formatting in `ConversationDetailScreen.kt:364`. APK build and Android JVM tests were skipped. Windows WPF was still in progress at report time.
+- **T0153-A001 is recorded as failed**, not accepted. **T0153-A002** fixes those exact formatting findings without changing behavior; new exact-head CI is pending.
