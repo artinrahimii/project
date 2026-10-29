@@ -31848,14 +31848,14 @@
         "src/Client.Android/app/src/main/java/com/whitep/client/data/MessageEntity.kt",
         "src/Client.Android/app/src/main/java/com/whitep/client/data/RequestStateEntity.kt"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0149-A001 adds a file-backed Room close/reopen regression covering message ordering and persisted request states. Exact-head CI is pending; no acceptance claim until it passes.\nT0149-A002 records the V 3.0.541 quality assertion failure; T0149-A003 corrects the formatting-sensitive source assertion. The Room file-backed JVM test and product CI remain unverified.\nT0149-A004 records the V 3.0.542 ktlint failure in the new file-backed test chains. T0149-A005 adjusts only line wrapping; CI acceptance remains pending.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0149-A001 adds a file-backed Room close/reopen regression covering message ordering and persisted request states. Exact-head CI is pending; no acceptance claim until it passes.\nT0149-A002 records the V 3.0.541 quality assertion failure; T0149-A003 corrects the formatting-sensitive source assertion. The Room file-backed JVM test and product CI remain unverified.\nT0149-A004 records the V 3.0.542 ktlint failure in the new file-backed test chains. T0149-A005 adjusts only line wrapping; CI acceptance remains pending.\nT0149-A006 records a second format-sensitive Python assertion failure on V 3.0.543. T0149-A007 makes the assertion tolerant of the multiline Kotlin chain; exact-head CI pending.",
       "execution_summary": {
-        "attempt_count": 5,
-        "failed_attempt_count": 2,
-        "last_attempt_id": "T0149-A005",
+        "attempt_count": 7,
+        "failed_attempt_count": 3,
+        "last_attempt_id": "T0149-A007",
         "last_attempt_result": "partial",
         "changed_files": [
-          "src/Client.Android/app/src/test/java/com/whitep/client/data/ClientDatabaseTest.kt",
+          null,
           "tests/test_android_conversation_detail_contract.py",
           "step three/T0149/execution-report.md",
           "step three/T0149/evidence/verification.md",
@@ -31863,14 +31863,16 @@
         ],
         "related_commits": [
           "c619d3b1269357563ab2f2047ad6a7a2bf126d5b",
-          "306dcfb5af796811857df5a38f6860385ae695ca"
+          "306dcfb5af796811857df5a38f6860385ae695ca",
+          "842c2def1cf3c89cb103af0f0487b067a03fe160"
         ],
         "tests_passed": [
-          "V 3.0.542 Step Three quality gate 40874779599 passed 230 Python tests and graph/evidence checks."
+          "V 3.0.542 Step Three quality gate 40874779599 passed 230 Python tests and graph/evidence validation."
         ],
         "tests_failed": [
-          "V 3.0.541 quality gate 40874466336: one Python source-contract assertion expected contiguous Room.databaseBuilder( despite multiline Kotlin source formatting.",
-          "V 3.0.542 product workflow 40874779588: Android ktlint failed two chain-wrapping findings in ClientDatabaseTest.kt lines 257 and 270; APK/JVM tasks skipped."
+          "V 3.0.541 quality gate 40874466336: Python assertion expected Room.databaseBuilder( contiguously across Kotlin lines.",
+          "V 3.0.542 product workflow 40874779588: Android ktlint failed two DB call chain wrap findings; APK/JVM tests skipped.",
+          "V 3.0.543 quality gate 40875172297: source assertion expected reopenedDatabase.messageDao() on one line; graph/syntax steps skipped."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -32071,6 +32073,64 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Inspect the V 3.0.543 exact-head quality and product workflows. Confirm the file-backed close/reopen test passes before completion."
+        },
+        {
+          "attempt_id": "T0149-A006",
+          "started_at": "2026-10-29T12:40:10Z",
+          "ended_at": "2026-10-29T12:40:22Z",
+          "result": "failed",
+          "summary": "V 3.0.543 quality ran 230 Python tests but one source-contract assertion failed: it expected reopenedDatabase.messageDao() on one line while ktlint-compliant source places reopenedDatabase and .messageDao() on separate lines. Graph/syntax checks were skipped. This is a brittle source assertion rather than evidence of a Room runtime failure.",
+          "changed_files": [
+            "tests/test_android_conversation_detail_contract.py",
+            "step three/T0149/execution-report.md",
+            "step three/T0149/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": "842c2def1cf3c89cb103af0f0487b067a03fe160",
+          "tests": [
+            {
+              "name": "Step Three quality gate — run 40875172297",
+              "result": "failed",
+              "summary": "230 tests ran; only test_file_backed_messages_and_request_states_survive_database_reopen failed because reopenedDatabase.messageDao() was split across lines. Graph/syntax checks skipped.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40875172297"
+            }
+          ],
+          "failure_details": "AssertionError: reopenedDatabase.messageDao() not found; the Kotlin chain wraps before .messageDao() and .requestStateDao().",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Make source-contract assertions independent of line wrapping, then rerun quality and product workflows."
+        },
+        {
+          "attempt_id": "T0149-A007",
+          "started_at": "2026-10-29T12:42:12.898Z",
+          "ended_at": "2026-10-29T12:42:12.898Z",
+          "result": "partial",
+          "summary": "Changed the Python source-contract test to assert the reopenedDatabase receiver and the .messageDao()/.requestStateDao() selectors separately, permitting ktlint-compliant multiline code. Exact-head CI remains pending.",
+          "changed_files": [
+            "tests/test_android_conversation_detail_contract.py",
+            "step three/T0149/execution-report.md",
+            "step three/T0149/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Python quality suite",
+              "result": "not_run",
+              "summary": "Assertion adjusted; exact-head CI pending."
+            },
+            {
+              "name": "Android ktlintCheck/assembleDebug/testDebugUnitTest",
+              "result": "not_run",
+              "summary": "Exact-head product workflow pending."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect V 3.0.544 quality and product results. Do not close T0149 until the file-backed Room regression itself passes."
         }
       ]
     },
@@ -43920,7 +43980,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-29T12:39:25.180Z",
+  "updated_at": "2026-10-29T12:42:12.898Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

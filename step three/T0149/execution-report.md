@@ -1,27 +1,22 @@
 # T0149 execution report
 
 - **Task:** Restore messages and request states after the app is closed and reopened.
-- **Status:** `in_progress`; exact acceptance is still pending.
-- **Database-reopen test:** `src/Client.Android/app/src/test/java/com/whitep/client/data/ClientDatabaseTest.kt`, `messagesAndRequestStatusesSurviveClosingAndReopeningFileBackedDatabase`.
-- **V 3.0.541 quality:** [run 40874466336](https://github.com/artinrahimii/project/actions/runs/40874466336) ran 230 Python tests but failed one brittle assertion: it expected `Room.databaseBuilder(` as contiguous text when the Kotlin source formats it across lines.
-- **V 3.0.542 quality:** [run 40874779599](https://github.com/artinrahimii/project/actions/runs/40874779599) passed 230 Python tests, syntax and graph/evidence checks (229 tasks/417 edges; zero errors, one preserved T0001 metadata warning).
-- **V 3.0.542 product:** [run 40874779588](https://github.com/artinrahimii/project/actions/runs/40874779588) failed Android ktlint on two chain-wrapping rules at `ClientDatabaseTest.kt:257` and `:270`; APK and JVM tests were skipped. HostLifecycle passed; Windows WPF was still running at the last read.
-- **V 3.0.543** changes only multiline chain formatting so the receiver is on its own line before `.messageDao()` and `.requestStateDao()`. Its CI results are pending.
+- **Status:** `in_progress`; exact acceptance pending.
+- **File-backed regression:** `undefined`, `messagesAndRequestStatusesSurviveClosingAndReopeningFileBackedDatabase`.
+- **V 3.0.541 quality** [40874466336](https://github.com/artinrahimii/project/actions/runs/40874466336): 230 tests ran; a Python assertion expected `Room.databaseBuilder(` contiguously despite a Kotlin line break.
+- **V 3.0.542 quality** [40874779599](https://github.com/artinrahimii/project/actions/runs/40874779599): passed 230 Python tests and graph/evidence checks (229 tasks/417 edges, zero errors, one preserved T0001 warning).
+- **V 3.0.542 product** [40874779588](https://github.com/artinrahimii/project/actions/runs/40874779588): Android ktlint failed two chain-wrapping findings; APK/JVM steps were skipped. HostLifecycle passed.
+- **V 3.0.543 quality** [40875172297](https://github.com/artinrahimii/project/actions/runs/40875172297): 230 tests ran; a Python assertion expected `reopenedDatabase.messageDao()` as one line even though ktlint requires a multiline chain. Graph/syntax steps skipped.
+- **V 3.0.544** makes the source-contract check assert the receiver and DAO selector names independently. Exact-head workflows are pending.
 
-## Scope and dependency review
+## Implementation and dependency review
 
-The test seeds a file-backed Room database with a conversation, ordered messages, and WAITING/FAILED request-state rows, closes the first instance, opens the same file again, and verifies the recovered title, message IDs/content/order, states, attempt numbers, and error code. It closes both instances and deletes the temporary database in a `finally` block.
+The test opens a named on-disk Room database, writes a conversation, ordered messages, and WAITING/FAILED request-state rows, closes the first instance, reopens the same file, and verifies recovered details, message order/content, states, attempt numbers, and error code. It closes both instances and deletes the temporary DB in `finally`.
 
-- **T0148 → T0149:** `sequencing_only`; T0148 persists the composer draft in SavedStateHandle while this task verifies Room-persisted message/status rows. Original `blocks` edge preserved.
-- **T0138 → T0149:** `sequencing_only`; privacy disclosure supplies no database API consumed by the test. Original `blocks` edge preserved.
-- Rationale/evidence is stored in graph `edge_change_log`; outgoing T0149 → T0150 remains unreviewed.
+- **T0148 → T0149:** `sequencing_only`; SavedStateHandle draft restoration does not provide the Room-persistence API tested here. Original `blocks` edge retained.
+- **T0138 → T0149:** `sequencing_only`; the host-visibility disclosure is not a database API. Original `blocks` edge retained.
+- Both reasons/evidence are recorded; T0149 → T0150 remains unreviewed.
 
 ## Attempt history
 
-- **A001:** adds the file-backed regression and Python source check.
-- **A002:** records the quality test failure from V 3.0.541.
-- **A003:** corrects the Python string assertion; V 3.0.542 quality passes.
-- **A004:** records V 3.0.542 Android ktlint failure; no APK/JVM run.
-- **A005:** corrects the two Kotlin chain-wrapping findings; CI pending.
-
-No successful Room close/reopen runtime test is claimed until the exact-head Android JVM test passes.
+A001 initial implementation; A002 quality assertion failure; A003 Python assertion correction; A004 ktlint failure; A005 Kotlin chain formatting correction; A006 repeat Python source assertion failure; A007 line-wrap-insensitive source assertion correction. All failed attempts remain in the history. The file-backed Room JVM test has not yet been observed passing; T0149 remains `in_progress`.
