@@ -32412,33 +32412,118 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0150 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال انجام",
+      "actual_output_paths": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/context/ConversationContextCapsule.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/context/ConversationContextCapsuleTest.kt",
+        "tests/test_android_context_capsule_contract.py",
+        "step three/T0151/execution-report.md",
+        "step three/T0151/evidence/verification.md",
+        "step three/project-graph.md"
+      ],
       "expected_output_paths": [
         "src/Client.Android/Context/ + tests/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/context/ConversationContextCapsule.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/context/ConversationContextCapsuleTest.kt",
+        "tests/test_android_context_capsule_contract.py",
+        "step three/T0151/execution-report.md",
+        "step three/T0151/evidence/verification.md",
+        "protocol/whitep/v1/messages.proto",
+        "src/Shared.Contracts/ProtocolMessageLimits.cs",
+        "docs/requirements.md",
+        "step three/T0150/execution-report.md"
+      ],
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0151-A001 introduces schemaVersion=1 and the goal/keyFacts/decisions/constraints/unresolvedItems model, strict UTF-8 JSON decoding, and the existing 4,096-byte hard protocol ceiling. Persistence and UI remain T0152/T0153. Exact-head CI pending.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0151-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Client.Android/app/src/main/java/com/whitep/client/context/ConversationContextCapsule.kt",
+          "src/Client.Android/app/src/test/java/com/whitep/client/context/ConversationContextCapsuleTest.kt",
+          "tests/test_android_context_capsule_contract.py",
+          "step three/T0151/execution-report.md",
+          "step three/T0151/evidence/verification.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
-          "affected_by_contract_changes": [],
-          "review_evidence": []
+          "state": "required",
+          "triggering_contracts": [
+            "ConversationContextCapsule schemaVersion and required JSON fields",
+            "UTF-8 serialization/strict decoding",
+            "4,096-byte protocol ceiling"
+          ],
+          "affected_by_contract_changes": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/context/ConversationContextCapsule.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/context/ConversationContextCapsuleTest.kt",
+            "tests/test_android_context_capsule_contract.py"
+          ],
+          "review_evidence": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/context/ConversationContextCapsule.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/context/ConversationContextCapsuleTest.kt",
+            "tests/test_android_context_capsule_contract.py",
+            "protocol/whitep/v1/messages.proto",
+            "src/Shared.Contracts/ProtocolMessageLimits.cs",
+            "docs/requirements.md"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0151-A001",
+          "started_at": "2026-10-29T13:25:24.126Z",
+          "ended_at": "2026-10-29T13:25:30.504Z",
+          "result": "partial",
+          "summary": "Added ConversationContextCapsule v1 with goal/keyFacts/decisions/constraints/unresolvedItems, UTF-8 JSON encode/decode, strict schema/type checks, unsupported-version and invalid-UTF-8 rejection, blank-value validation and the 4,096-byte hard limit. Added eight Kotlin JVM/Robolectric tests and three Python source-contract tests. No local execution is claimed; exact-head CI is pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/context/ConversationContextCapsule.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/context/ConversationContextCapsuleTest.kt",
+            "tests/test_android_context_capsule_contract.py",
+            "step three/T0151/execution-report.md",
+            "step three/T0151/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "ConversationContextCapsuleTest",
+              "result": "not_run",
+              "summary": "Eight JVM/Robolectric tests added for round-trip/escaping, versioning, blank content, exact/oversize bytes, malformed JSON/UTF-8 and field validation."
+            },
+            {
+              "name": "tests/test_android_context_capsule_contract.py",
+              "result": "not_run",
+              "summary": "Three source-contract tests added; local Python execution not claimed."
+            },
+            {
+              "name": "Android ktlintCheck / assembleDebug / testDebugUnitTest",
+              "result": "not_run",
+              "summary": "Awaiting exact-head GitHub Actions."
+            },
+            {
+              "name": "Step Three quality, graph and evidence guards",
+              "result": "not_run",
+              "summary": "Awaiting exact-head GitHub Actions."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "Introduces local versioned capsule domain/JSON codec; Room persistence and UI are reserved for T0152/T0153."
+          ],
+          "follow_up": "Inspect exact-head quality/product CI, fix any lint/compiler/test failures, and keep T0151 in_progress until all required checks pass."
+        }
+      ]
     },
     {
       "id": "T0152",
@@ -39553,19 +39638,32 @@
       "from": "T0150",
       "to": "T0151",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0150's accepted create/send/reopen workflow test validates the existing conversation ViewModel/Room history contract but does not expose or consume a ConversationContextCapsule model. T0151's versioned capsule is an independent domain contract; retain this blocks edge as conservative ordering, not proof of direct technical dependence.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationWorkflowAcceptanceTest.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationListViewModel.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationMessagesViewModel.kt",
+        "step three/T0150/execution-report.md",
+        "src/Client.Android/app/src/main/java/com/whitep/client/context/ConversationContextCapsule.kt"
+      ]
     },
     {
       "from": "T0151",
       "to": "T0152",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0152 explicitly persists the capsule as a conversation-scoped Room record. Its entity/DAO/schema implementation must use T0151's v1 fields and JSON/UTF-8 serialization contract; schemaVersion or field-semantic changes affect persisted compatibility.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/context/ConversationContextCapsule.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/context/ConversationContextCapsuleTest.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientDatabase.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/ConversationEntity.kt",
+        "docs/requirements.md",
+        "protocol/whitep/v1/messages.proto"
+      ]
     },
     {
       "from": "T0150",
@@ -44246,8 +44344,46 @@
       ],
       "reviewed_by": "Step Three execution review"
     }
+  ,
+    {
+      "from": "T0150",
+      "to": "T0151",
+      "changed_at": "2026-10-29T13:25:30.504Z",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "old_validation_status": "unreviewed",
+      "new_validation_status": "validated",
+      "reason": "T0150's accepted create/send/reopen workflow test validates the existing conversation ViewModel/Room history contract but does not expose or consume a ConversationContextCapsule model. T0151's versioned capsule is an independent domain contract; retain this blocks edge as conservative ordering, not proof of direct technical dependence.",
+      "evidence": [
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationWorkflowAcceptanceTest.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationListViewModel.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationMessagesViewModel.kt",
+        "step three/T0150/execution-report.md",
+        "src/Client.Android/app/src/main/java/com/whitep/client/context/ConversationContextCapsule.kt"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "from": "T0151",
+      "to": "T0152",
+      "changed_at": "2026-10-29T13:25:30.504Z",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "old_validation_status": "unreviewed",
+      "new_validation_status": "validated",
+      "reason": "T0152 explicitly persists the capsule as a conversation-scoped Room record. Its entity/DAO/schema implementation must use T0151's v1 fields and JSON/UTF-8 serialization contract; schemaVersion or field-semantic changes affect persisted compatibility.",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/context/ConversationContextCapsule.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/context/ConversationContextCapsuleTest.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientDatabase.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/ConversationEntity.kt",
+        "docs/requirements.md",
+        "protocol/whitep/v1/messages.proto"
+      ],
+      "reviewed_by": "Step Three execution review"
+    }
   ],
-  "updated_at": "2026-10-29T13:15:57.108Z",
+  "updated_at": "2026-10-29T13:25:30.504Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",
