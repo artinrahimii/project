@@ -12,8 +12,8 @@
 - **Migration:** Room database schema moves from v3 to v4 using non-destructive `MIGRATION_3_4`; old capsule/request/message records are not intentionally rewritten.
 - **Tests added/updated:** Room persistence tests cover source/time/field-name metadata, not duplicating content values, delete cascade and migration. A ViewModel test covers source attribution after an explicitly reviewed Save. Python source contracts guard migration and network-boundary constraints.
 - **Local execution:** The connected GitHub tools do not provide a local Gradle/Android/Python runtime. No local test run is claimed.
-- **Current status:** `in_progress`; exact-head V 3.0.586 passed the 257-test Step Three quality gate, Windows WPF build/startup/security checks, and HostLifecycle tests. Android KtLint failed on four findings: two overlong SQL lines and a missing blank line in `ClientDatabase.kt`, plus the `.toString()` chain layout in `RoomConversationContextCapsuleRepository.kt`. APK/JVM/Protobuf checks were skipped. A008 corrects those exact findings; V 3.0.587 CI is pending. No acceptance claim is made.
-- **Next action:** Inspect exact-head quality/product CI. Fix any compile, schema migration, lint or test failures before marking T0158 complete.
+- **Current status:** `done`; exact-head V 3.0.587 passed the 257-test Step Three quality gate, Kotlin lint, Android debug APK build, Android JVM unit tests, generated Protobuf Java/Kotlin verification and APK artifact upload, plus Windows WPF build/startup/security checks and HostLifecycle unit/integration tests. Acceptance is supported by the linked CI results below; no local Gradle run is claimed.
+- **Next action:** Review the validated T0158 → T0159 and T0150 → T0159 dependency edges in the graph before implementing T0159’s remaining capsule acceptance tests.
 
 
 ## T0158-A001 CI result and T0158-A002 correction
@@ -75,3 +75,12 @@
 - Android product build: FAIL at `ktlintMainSourceSetCheck`. KtLint reported overlong lines at `ClientDatabase.kt:91` and `:95`, missing an empty line before `@Volatile` at `:100`, and `Unexpected newline before '.'` for `.toString()` at `RoomConversationContextCapsuleRepository.kt:66`. APK build, Android JVM tests and generated Protobuf checks were skipped, [workflow 40951562436](https://github.com/artinrahimii/project/actions/runs/40951562436).
 - Windows WPF host: PASS (formatting, Release build, Protobuf, startup smoke and host policy/security checks). HostLifecycle unit/integration tests: PASS, [workflow 40951562436](https://github.com/artinrahimii/project/actions/runs/40951562436).
 - A008 splits the SQL literal without changing the SQL text, separates the annotated declaration, and keeps `.toString()` attached to the lambda close while retaining the newline before `.apply`. Exact-head V 3.0.587 CI is pending.
+
+
+## Exact-head V 3.0.587 acceptance results
+
+- Step Three quality gate: PASS, 257 Python tests, syntax checks, graph structure and recorded-output/evidence validation, [workflow 40952127061](https://github.com/artinrahimii/project/actions/runs/40952127061).
+- Android product: PASS. Kotlin lint, debug APK build, Android JVM unit tests (including Room persistence/migration and capsule ViewModel tests), generated Protobuf Java/Kotlin verification, and APK artifact upload all completed successfully, [workflow 40952127190](https://github.com/artinrahimii/project/actions/runs/40952127190).
+- Windows WPF host: PASS. Formatting, Release build, Protobuf, startup smoke, process restrictions, policy rejection, model-capability gate, and DPAPI host identity/peer trust checks passed, [workflow 40952127190](https://github.com/artinrahimii/project/actions/runs/40952127190).
+- HostLifecycle unit/integration: PASS, [workflow 40952127190](https://github.com/artinrahimii/project/actions/runs/40952127190).
+- No local Android/Gradle execution is claimed; the acceptance evidence is exact-head GitHub Actions for commit `374c7416f6568cd5f267aee71a1069654fbe9afa` (`V 3.0.587`).

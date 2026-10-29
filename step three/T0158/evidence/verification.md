@@ -65,3 +65,11 @@
 - Android product workflow failed at Kotlin lint: `ClientDatabase.kt:91` and `:95` exceeded the 120-column limit; line `:100` needed an empty line before `@Volatile`; `RoomConversationContextCapsuleRepository.kt:66` reported `Unexpected newline before '.'` before `.toString()`. APK/JVM/Protobuf steps were skipped, [workflow 40951562436](https://github.com/artinrahimii/project/actions/runs/40951562436).
 - Windows WPF build/startup/security checks and HostLifecycle unit/integration tests passed in the same product workflow, [workflow 40951562436](https://github.com/artinrahimii/project/actions/runs/40951562436).
 - A008 splits the SQL fragments, inserts the required annotation spacing, and preserves the required newline before `.apply` while keeping `.toString()` adjacent to the lambda close. V 3.0.587 product validation is pending.
+
+
+## Exact-head V 3.0.587 verification
+
+- Step Three quality passed all 257 Python tests, syntax checks, graph validation, and recorded-output/evidence validation, [workflow 40952127061](https://github.com/artinrahimii/project/actions/runs/40952127061).
+- Android lint and debug APK build passed. Android JVM unit tests passed; generated Protobuf Java/Kotlin verification passed; the debug APK artifact was uploaded successfully, [workflow 40952127190](https://github.com/artinrahimii/project/actions/runs/40952127190).
+- Windows WPF formatting/build/Protobuf/startup and host-tool policy/security checks passed; HostLifecycle unit/integration passed, [workflow 40952127190](https://github.com/artinrahimii/project/actions/runs/40952127190).
+- These results apply to exact-head commit `374c7416f6568cd5f267aee71a1069654fbe9afa`. No local Gradle execution is claimed.
