@@ -13,3 +13,10 @@
 - 249 Python tests, Python compilation and structural graph validation passed. The repository-backed evidence guard failed due to a false positive: `"todo"` is a supported field label parsed by the completed T0155 implementation, not a TODO placeholder.
 - Android ktlint failed due to one import-order issue and two extra blank lines; APK/JVM stages were not run. HostLifecycle passed; Windows WPF status was still pending at the time of update.
 - Corrective commit includes a regression test for quoted labels; actual new workflow results will be recorded after they complete. T0156 remains in progress until all required gates pass.
+
+## V 3.0.571 corrective outcome and A003
+
+- Exact tested commit: `d7bea35a156598676f83f8f5263253a6eafcc5e8`.
+- Step Three quality passed 250 Python tests, compilation, graph structure and repository-backed evidence checks.
+- Android lint failed on one needless blank line at `ConversationContextCapsuleViewModelTest.kt:112`; APK and JVM stages were not run. HostLifecycle passed; Windows WPF was still running when reviewed.
+- A003 removes the final reported blank line. T0156 remains in progress pending the new exact-head workflow.

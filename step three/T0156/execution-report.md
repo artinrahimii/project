@@ -19,3 +19,14 @@
 
 - Changes: narrowed the TODO marker regex so quoted labels such as `"todo"` do not trigger placeholder detection, while unquoted TODO markers remain detectable; added a dedicated graph-guard regression test and fixed all three reported Kotlin lint findings.
 - Exact-head V 3.0.571 CI is pending. No claim of successful APK build/JVM tests or final task acceptance is made in this section.
+
+## Exact-head V 3.0.571 result — attempt A002
+
+- Step Three quality [run 40914738616](https://github.com/artinrahimii/project/actions/runs/40914738616) passed 250 Python tests, `compileall`, graph structure and repository-backed output/evidence validation (229 nodes / 417 edges, zero errors and one preserved T0001 warning).
+- Product [run 40914738746](https://github.com/artinrahimii/project/actions/runs/40914738746): Android ktlint failed one needless blank line at `ConversationContextCapsuleViewModelTest.kt:112`; APK build and Android JVM tests were skipped. HostLifecycle passed. Windows WPF was still in progress at update time.
+- A002 is a failed acceptance attempt; T0156 remains in progress. A003 removes the last blank line.
+
+## Corrective attempt A003
+
+- Change: removed the unnecessary blank line before the new Robolectric test.
+- Exact-head V 3.0.572 results are pending. No Android build/JVM success or final T0156 acceptance is claimed.

@@ -109,7 +109,6 @@ class ConversationContextCapsuleViewModelTest {
             assertFalse(viewModel.uiState.value.isEditing)
         }
 
-
     @Test
     fun suggestsCapsuleFromOnlyThisConversationsLocalHistoryAndRequiresSave() =
         runBlocking {

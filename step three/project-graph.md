@@ -34059,30 +34059,29 @@
       ],
       "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
       "execution_summary": {
-        "attempt_count": 2,
-        "failed_attempt_count": 1,
-        "last_attempt_id": "T0156-A002",
+        "attempt_count": 3,
+        "failed_attempt_count": 2,
+        "last_attempt_id": "T0156-A003",
         "last_attempt_result": "partial",
         "changed_files": [
-          "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt",
-          "tools/graph_guard.py",
-          "tests/test_graph_guard.py",
+          "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModelTest.kt",
           "step three/T0156/execution-report.md",
           "step three/T0156/evidence/verification.md",
           "step three/project-graph.md"
         ],
         "related_commits": [
-          "2dfca52b9c53cdb5343c2f3f2f6262567d5f816d"
+          "d7bea35a156598676f83f8f5263253a6eafcc5e8"
         ],
         "tests_passed": [
-          "V 3.0.570: Python suite 249 tests passed.",
-          "V 3.0.570: python -m compileall -q tools tests passed.",
-          "V 3.0.570: structural graph validation passed (229 tasks / 417 edges, 0 errors, one preserved T0001 metadata warning).",
-          "V 3.0.570: Host lifecycle unit and integration tests passed."
+          "V 3.0.570: 249 Python tests passed; Python compilation and structural graph validation passed.",
+          "V 3.0.570: Host lifecycle unit and integration tests passed.",
+          "V 3.0.571: 250 Python tests passed; Python compilation and graph/repository-backed evidence gates passed (229 tasks/417 edges, 0 errors and one preserved warning).",
+          "V 3.0.571: Host lifecycle unit and integration tests passed."
         ],
         "tests_failed": [
-          "V 3.0.570: repo-backed output/evidence guard failed on false-positive TODO match inside valid string label \"todo\" in T0155.",
-          "V 3.0.570: Android ktlint failed import order and two unnecessary blank lines; APK/JVM tests skipped."
+          "V 3.0.570: repo-backed output/evidence guard false-positive on supported string label todo; corrected in V 3.0.571.",
+          "V 3.0.570: Android ktlint failed import ordering and two blank lines; corrected in V 3.0.571.",
+          "V 3.0.571: Android ktlint failed one unnecessary blank line in ConversationContextCapsuleViewModelTest.kt:112; APK and Android JVM tests were skipped."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -34167,8 +34166,8 @@
           "attempt_id": "T0156-A002",
           "started_at": "2026-10-29T16:42:11.263Z",
           "ended_at": "2026-10-29T16:45:11.263Z",
-          "result": "partial",
-          "summary": "Corrected the Kotlin lint findings and fixed a false-positive placeholder scan that treated a valid quoted field label as an unfinished TODO. Added a graph-guard regression test to retain detection of actual unquoted TODO markers. Exact-head validation is pending.",
+          "result": "failed",
+          "summary": "The Step Three quality workflow passed 250 Python tests, compileall, graph structure and repository-backed output/evidence validation (229 tasks / 417 edges, zero errors, one preserved warning). Android ktlint still failed one unnecessary blank line in the new ViewModel test at line 112; APK/JVM tests were skipped. HostLifecycle passed; Windows WPF had not finished at the time of this update.",
           "changed_files": [
             "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt",
             "tools/graph_guard.py",
@@ -34177,34 +34176,72 @@
             "step three/T0156/evidence/verification.md",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "d7bea35a156598676f83f8f5263253a6eafcc5e8",
           "tests": [
             {
-              "name": "tests/test_graph_guard.py regression test for quoted todo label",
-              "result": "not_run",
-              "summary": "Added test asserting that a quoted label is not a placeholder; exact-head Python suite is pending."
+              "name": "Step Three quality gate — run 40914738616",
+              "result": "passed",
+              "summary": "250 Python tests passed; Python compilation, graph structure and repository-backed output/evidence validation passed (229 nodes / 417 edges, 0 errors and one preserved T0001 warning).",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40914738616"
             },
             {
-              "name": "Kotlin ktlintCheck / assembleDebug / testDebugUnitTest",
-              "result": "not_run",
-              "summary": "Import ordering and blank-line issues fixed; exact-head rerun pending."
+              "name": "Android ktlintCheck — product run 40914738746",
+              "result": "failed",
+              "summary": "One style issue remained: needless blank line at ConversationContextCapsuleViewModelTest.kt:112. APK/JVM tests were skipped.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40914738746"
             },
             {
-              "name": "Step Three quality gate",
-              "result": "not_run",
-              "summary": "The previous repo-backed scan false positive is corrected; exact-head rerun pending."
+              "name": "Host lifecycle unit and integration tests — run 40914738746",
+              "result": "passed",
+              "summary": "Host lifecycle job completed successfully."
             },
             {
-              "name": "Windows WPF host build and HostLifecycle tests",
+              "name": "Windows WPF host build — run 40914738746",
               "result": "not_run",
-              "summary": "Inspect exact-head product workflow outcomes."
+              "summary": "Still in progress when this record was updated; the final job result has not yet been verified."
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect exact V 3.0.571 GitHub Actions. Keep T0156 in_progress until repo-backed output/evidence validation, Python/graph checks, Kotlin lint, APK build, Android JVM tests, Windows WPF and HostLifecycle all pass."
+          "follow_up": "A003 removes the last ktlint-reported blank line and reruns exact-head product CI."
+        },
+        {
+          "attempt_id": "T0156-A003",
+          "started_at": "2026-10-29T16:47:42.257Z",
+          "ended_at": "2026-10-29T16:49:12.257Z",
+          "result": "partial",
+          "summary": "Removed the last ktlint-reported blank line before the new Robolectric test. Exact-head CI is pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModelTest.kt",
+            "step three/T0156/execution-report.md",
+            "step three/T0156/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Android ktlintCheck / assembleDebug / testDebugUnitTest",
+              "result": "not_run",
+              "summary": "The single reported blank line was removed; exact-head product workflow pending."
+            },
+            {
+              "name": "Step Three quality gate",
+              "result": "not_run",
+              "summary": "Previous exact-head quality run succeeded; a fresh run after this adjustment is pending."
+            },
+            {
+              "name": "Windows WPF build and HostLifecycle integration",
+              "result": "not_run",
+              "summary": "Inspect product workflow results for this commit."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect exact V 3.0.572 workflows. Do not mark T0156 done until all quality/product jobs pass, including the Robolectric test proving per-conversation history isolation and user-confirmed save."
         }
       ]
     },
@@ -46047,7 +46084,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-29T16:45:11.263Z",
+  "updated_at": "2026-10-29T16:49:12.257Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",
