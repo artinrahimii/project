@@ -33143,33 +33143,120 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0152 و T0150 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال انجام",
+      "actual_output_paths": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModelTest.kt",
+        "tests/test_android_context_capsule_ui_contract.py",
+        "step three/T0153/execution-report.md",
+        "step three/T0153/evidence/verification.md",
+        "step three/project-graph.md"
+      ],
       "expected_output_paths": [
         "src/Client.Android/Context/ + tests/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModelTest.kt",
+        "tests/test_android_context_capsule_ui_contract.py",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/RoomConversationContextCapsuleRepository.kt",
+        "step three/T0152/execution-report.md",
+        "step three/T0153/execution-report.md",
+        "step three/T0153/evidence/verification.md"
+      ],
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0153-A001 adds capsule view/edit/create/delete controls to the existing conversation detail screen and wires them to a Room-backed ViewModel/repository. Incoming T0152 edge was validated as contract_or_interface_dependency; T0150 edge as sequencing_only; both blocks edges remain. Exact-head CI is pending.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0153-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+          "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt",
+          "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModelTest.kt",
+          "tests/test_android_context_capsule_ui_contract.py",
+          "step three/T0153/execution-report.md",
+          "step three/T0153/evidence/verification.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
-          "affected_by_contract_changes": [],
-          "review_evidence": []
+          "state": "required",
+          "triggering_contracts": [
+            "Room repository per-conversation observe/save/delete contract from T0152",
+            "ConversationContextCapsule v1 schema and 4,096-byte UTF-8 limit",
+            "Conversation detail screen state and Compose event wiring"
+          ],
+          "affected_by_contract_changes": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModelTest.kt",
+            "tests/test_android_context_capsule_ui_contract.py"
+          ],
+          "review_evidence": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/data/ConversationContextCapsuleEntity.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/data/RoomConversationContextCapsuleRepository.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+            "step three/T0152/execution-report.md",
+            "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationWorkflowAcceptanceTest.kt",
+            "step three/T0150/execution-report.md",
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0153-A001",
+          "started_at": "2026-10-29T18:30:00+03:30",
+          "ended_at": "2026-10-29T18:30:00+03:30",
+          "result": "partial",
+          "summary": "Reviewed both incoming edges, added the Room-backed capsule ViewModel, connected the detail-screen UI for creating/viewing/editing/deleting a capsule, and added Robolectric plus Python source-contract tests. CI has not yet run on this change.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModelTest.kt",
+            "tests/test_android_context_capsule_ui_contract.py",
+            "step three/T0153/execution-report.md",
+            "step three/T0153/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "related_commits": [],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "ConversationContextCapsuleViewModelTest",
+              "result": "not_run",
+              "summary": "Added Robolectric tests for create/edit/delete persistence and blank-goal validation; exact-head JVM task pending."
+            },
+            {
+              "name": "tests/test_android_context_capsule_ui_contract.py",
+              "result": "not_run",
+              "summary": "Added UI wiring and lifecycle source-contract checks; exact-head quality task pending."
+            },
+            {
+              "name": "Android ktlintCheck / assembleDebug / testDebugUnitTest",
+              "result": "not_run",
+              "summary": "Waiting for exact-head V 3.0.558 CI."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "Adds Compose UI and ViewModel layer for local capsule editing"
+          ],
+          "follow_up": "Inspect exact-head V 3.0.558 quality/product CI; fix any lint/compiler/runtime test failures before accepting T0153."
+        }
+      ]
     },
     {
       "id": "T0154",
@@ -40241,19 +40328,30 @@
       "from": "T0152",
       "to": "T0153",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0152's accepted Room implementation exposes a DAO/repository for per-conversation capsule lookup, observation, save and delete. The T0153 UI and ViewModel call these exact APIs and share T0152's validated v1 codec and per-conversation key, so this is a real contract/interface dependency; retain the blocks edge.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/ConversationContextCapsuleEntity.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/RoomConversationContextCapsuleRepository.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+        "step three/T0152/execution-report.md"
+      ]
     },
     {
       "from": "T0150",
       "to": "T0153",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0150's accepted workflow tests cover conversation creation, local message sending, and history restoration, but do not expose a capsule-editing API or produce capsule form state. T0153 is added to the existing detail screen, so retain blocks as conservative sequencing, not a direct technical contract dependency.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationWorkflowAcceptanceTest.kt",
+        "step three/T0150/execution-report.md",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt"
+      ]
     },
     {
       "from": "T0153",
@@ -44961,9 +45059,44 @@
         "step three/T0151/execution-report.md"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "from": "T0152",
+      "to": "T0153",
+      "changed_at": "2026-10-29T18:30:00+03:30",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "old_validation_status": "unreviewed",
+      "new_validation_status": "validated",
+      "reason": "T0152's accepted Room implementation exposes a DAO/repository for per-conversation capsule lookup, observation, save and delete. The T0153 UI and ViewModel call these exact APIs and share T0152's validated v1 codec and per-conversation key, so this is a real contract/interface dependency; retain the blocks edge.",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/ConversationContextCapsuleEntity.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/RoomConversationContextCapsuleRepository.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+        "step three/T0152/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "from": "T0150",
+      "to": "T0153",
+      "changed_at": "2026-10-29T18:30:00+03:30",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "old_validation_status": "unreviewed",
+      "new_validation_status": "validated",
+      "reason": "T0150's accepted workflow tests cover conversation creation, local message sending, and history restoration, but do not expose a capsule-editing API or produce capsule form state. T0153 is added to the existing detail screen, so retain blocks as conservative sequencing, not a direct technical contract dependency.",
+      "evidence": [
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationWorkflowAcceptanceTest.kt",
+        "step three/T0150/execution-report.md",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-29T14:12:26Z",
+  "updated_at": "2026-10-29T18:30:00+03:30",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

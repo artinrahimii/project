@@ -7,12 +7,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -29,6 +31,7 @@ import com.whitep.client.data.ClientDatabase
 import com.whitep.client.data.ConversationEntity
 import com.whitep.client.data.MessageEntity
 import com.whitep.client.data.RequestStateEntity
+import com.whitep.client.data.RoomConversationContextCapsuleRepository
 import com.whitep.client.domain.ConversationMessageValidationError
 import com.whitep.client.domain.ConversationMessageValidator
 import com.whitep.client.ui.request.toPresentation
@@ -57,6 +60,20 @@ internal fun conversationDetailScreen(
     val conversationDao = database.conversationDao()
     val messageDao = database.messageDao()
     val requestStateDao = database.requestStateDao()
+    val contextCapsuleRepository =
+        remember(database) {
+            RoomConversationContextCapsuleRepository(database.conversationContextCapsuleDao())
+        }
+    val contextCapsuleFactory =
+        remember(conversationId, contextCapsuleRepository) {
+            ConversationContextCapsuleViewModel.Factory(conversationId, contextCapsuleRepository)
+        }
+    val contextCapsuleViewModel: ConversationContextCapsuleViewModel =
+        viewModel(
+            key = "conversation-context-capsule-$conversationId",
+            factory = contextCapsuleFactory,
+        )
+    val contextCapsuleState by contextCapsuleViewModel.uiState.collectAsState()
     val conversationFactory =
         remember(conversationDao) {
             ConversationListViewModel.Factory(conversationDao)
@@ -128,6 +145,19 @@ internal fun conversationDetailScreen(
                     }
                 }
 
+                contextCapsuleSection(
+                    state = contextCapsuleState,
+                    onBeginEditing = contextCapsuleViewModel::beginEditing,
+                    onCancelEditing = contextCapsuleViewModel::cancelEditing,
+                    onGoalChange = contextCapsuleViewModel::updateGoal,
+                    onKeyFactsChange = contextCapsuleViewModel::updateKeyFacts,
+                    onDecisionsChange = contextCapsuleViewModel::updateDecisions,
+                    onConstraintsChange = contextCapsuleViewModel::updateConstraints,
+                    onUnresolvedItemsChange = contextCapsuleViewModel::updateUnresolvedItems,
+                    onSave = { scope.launch { contextCapsuleViewModel.save() } },
+                    onDelete = { scope.launch { contextCapsuleViewModel.delete() } },
+                )
+
                 Text("Request status", style = MaterialTheme.typography.titleLarge)
                 if (requestStates.isEmpty()) {
                     Text(
@@ -189,6 +219,165 @@ internal fun conversationDetailScreen(
                 Text("This conversation could not be found on this device.")
             }
         }
+    }
+}
+
+@Composable
+private fun contextCapsuleSection(
+    state: ConversationContextCapsuleUiState,
+    onBeginEditing: () -> Unit,
+    onCancelEditing: () -> Unit,
+    onGoalChange: (String) -> Unit,
+    onKeyFactsChange: (String) -> Unit,
+    onDecisionsChange: (String) -> Unit,
+    onConstraintsChange: (String) -> Unit,
+    onUnresolvedItemsChange: (String) -> Unit,
+    onSave: () -> Unit,
+    onDelete: () -> Unit,
+) {
+    var confirmDelete by remember { mutableStateOf(false) }
+
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Text("Context capsule", style = MaterialTheme.typography.titleLarge)
+        Text(
+            "A short set of goals and decisions for this conversation. It stays on this device and is not sent automatically.",
+            style = MaterialTheme.typography.bodySmall,
+        )
+        if (state.isLoading) {
+            Text("Loading context capsule…")
+        } else if (state.isEditing) {
+            OutlinedTextField(
+                value = state.goal,
+                onValueChange = onGoalChange,
+                modifier = Modifier.fillMaxWidth(),
+                label = { Text("Goal (required)") },
+                minLines = 2,
+                maxLines = 3,
+            )
+            OutlinedTextField(
+                value = state.keyFactsText,
+                onValueChange = onKeyFactsChange,
+                modifier = Modifier.fillMaxWidth(),
+                label = { Text("Key facts — one per line") },
+                minLines = 2,
+                maxLines = 4,
+            )
+            OutlinedTextField(
+                value = state.decisionsText,
+                onValueChange = onDecisionsChange,
+                modifier = Modifier.fillMaxWidth(),
+                label = { Text("Decisions — one per line") },
+                minLines = 2,
+                maxLines = 4,
+            )
+            OutlinedTextField(
+                value = state.constraintsText,
+                onValueChange = onConstraintsChange,
+                modifier = Modifier.fillMaxWidth(),
+                label = { Text("Constraints — one per line") },
+                minLines = 2,
+                maxLines = 4,
+            )
+            OutlinedTextField(
+                value = state.unresolvedItemsText,
+                onValueChange = onUnresolvedItemsChange,
+                modifier = Modifier.fillMaxWidth(),
+                label = { Text("Unresolved items — one per line") },
+                minLines = 2,
+                maxLines = 4,
+            )
+            Button(
+                onClick = onSave,
+                enabled = !state.isSaving && !state.isDeleting,
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Text(if (state.isSaving) "Saving…" else "Save capsule")
+            }
+            OutlinedButton(
+                onClick = onCancelEditing,
+                enabled = !state.isSaving && !state.isDeleting,
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Text("Cancel")
+            }
+        } else {
+            val capsule = state.capsule
+            if (capsule != null) {
+                Text("Goal", style = MaterialTheme.typography.labelLarge)
+                Text(capsule.goal)
+                if (capsule.keyFacts.isNotEmpty()) {
+                    Text("Key facts", style = MaterialTheme.typography.labelLarge)
+                    Text(capsule.keyFacts.joinToString("\n") { "• $it" })
+                }
+                if (capsule.decisions.isNotEmpty()) {
+                    Text("Decisions", style = MaterialTheme.typography.labelLarge)
+                    Text(capsule.decisions.joinToString("\n") { "• $it" })
+                }
+                if (capsule.constraints.isNotEmpty()) {
+                    Text("Constraints", style = MaterialTheme.typography.labelLarge)
+                    Text(capsule.constraints.joinToString("\n") { "• $it" })
+                }
+                if (capsule.unresolvedItems.isNotEmpty()) {
+                    Text("Unresolved items", style = MaterialTheme.typography.labelLarge)
+                    Text(capsule.unresolvedItems.joinToString("\n") { "• $it" })
+                }
+            } else if (state.hasUnreadableCapsule) {
+                Text("A saved capsule exists but could not be read. You can replace it or delete it.")
+            } else {
+                Text("No context capsule has been saved for this conversation.")
+            }
+            Button(
+                onClick = onBeginEditing,
+                enabled = !state.isSaving && !state.isDeleting,
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Text(
+                    when {
+                        capsule != null -> "Edit capsule"
+                        state.hasUnreadableCapsule -> "Replace unreadable capsule"
+                        else -> "Create capsule"
+                    },
+                )
+            }
+            if (capsule != null || state.hasUnreadableCapsule) {
+                OutlinedButton(
+                    onClick = { confirmDelete = true },
+                    enabled = !state.isSaving && !state.isDeleting,
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Text(if (state.isDeleting) "Deleting…" else "Delete capsule")
+                }
+            }
+        }
+        state.errorMessage?.let { message ->
+            Text(message, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
+        }
+        state.message?.let { message ->
+            Text(message, style = MaterialTheme.typography.bodySmall)
+        }
+    }
+
+    if (confirmDelete) {
+        AlertDialog(
+            onDismissRequest = { confirmDelete = false },
+            title = { Text("Delete context capsule?") },
+            text = { Text("This removes the saved capsule from this device. The conversation and its messages remain.") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        confirmDelete = false
+                        onDelete()
+                    },
+                ) {
+                    Text("Delete")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { confirmDelete = false }) {
+                    Text("Cancel")
+                }
+            },
+        )
     }
 }
 
