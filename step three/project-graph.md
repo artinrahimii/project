@@ -31291,14 +31291,16 @@
         "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
         "src/Client.Android/app/src/test/java/com/whitep/client/data/ClientDatabaseTest.kt",
         "step three/T0138/execution-report.md",
-        "step three/T0146/execution-report.md"
+        "step three/T0146/execution-report.md",
+        "tests/test_android_request_status_contract.py",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestStatusPresentationTest.kt"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0147-A001 (2026-10-29T11:42:00Z): Reviewed T0146 → T0147 and T0138 → T0147 against the current Room/status model and request UI. Neither predecessor's implementation/API is directly consumed; both edges are validated as sequencing_only and kept as blocks edges. Added an exhaustive presentation mapper for all seven PersistedRequestStatus values and rendered only actual Room-backed request-state rows in conversation detail; the empty state says no request state exists and transport remains unavailable. Added JVM, Room and Python contract tests. Exact-head CI pending; remain in_progress until product and quality gates pass.\n\nT0147-A001 exact-head CI result (V 3.0.532): Step Three quality run 40868131396 ran 228 tests; seven subtests in the new contract guard failed because Kotlin enum members in RequestStateEntity.kt are declared as bare names, not `PersistedRequestStatus.NAME`. Android product job 123427984091 failed ktlint at ClientDatabaseTest.kt:125:25 with `Expected newline before .`; APK/unit tests were skipped. HostLifecycle job 123427984365 passed. These are test/style issues, not acceptance; A002 corrects them.\n\nT0147-A002 exact-head CI result (V 3.0.533): Step Three quality gate 40868507192 passed all 228 tests and both graph guards (0 errors; one preserved T0001 metadata warning). Android product job 123429253448 failed ktlint with four `Expected newline before .` violations at ClientDatabaseTest.kt:124 because the chained Flow expression was on one line. APK/JVM tests were skipped; HostLifecycle passed. T0147-A003 moves each call in the Room flow chain to an individual line; V 3.0.534 CI is pending.\n\nT0147-A003 acceptance closeout (2026-10-29): exact revision V 3.0.534 (a10aebc13e8a5caf7ce27552fd3c970f49c6c820) passed both GitHub Actions workflows. Quality run 40868883509 passed 228 Python tests, syntax, and graph/evidence guards (229 tasks, 417 edges, zero errors; existing T0001 free-text metadata warning preserved). Product run 40868883480 passed Android ktlint, assembleDebug, testDebugUnitTest (including the new seven-status mapping and Room persistence checks), generated Protobuf verification and APK upload; Windows WPF formatting/build/Protobuf/startup/security checks and artifact upload; and HostLifecycle unit/integration tests. Artifacts uploaded: whitep-android-debug-apk 11,874,698 bytes; whitep-windows-host 14,254,957 bytes. T0147 is closed for displaying actual locally persisted status rows; no status-transition engine or host transport is claimed.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0147-A001 (2026-10-29T11:42:00Z): Reviewed T0146 → T0147 and T0138 → T0147 against the current Room/status model and request UI. Neither predecessor's implementation/API is directly consumed; both edges are validated as sequencing_only and kept as blocks edges. Added an exhaustive presentation mapper for all seven PersistedRequestStatus values and rendered only actual Room-backed request-state rows in conversation detail; the empty state says no request state exists and transport remains unavailable. Added JVM, Room and Python contract tests. Exact-head CI pending; remain in_progress until product and quality gates pass.\n\nT0147-A001 exact-head CI result (V 3.0.532): Step Three quality run 40868131396 ran 228 tests; seven subtests in the new contract guard failed because Kotlin enum members in RequestStateEntity.kt are declared as bare names, not `PersistedRequestStatus.NAME`. Android product job 123427984091 failed ktlint at ClientDatabaseTest.kt:125:25 with `Expected newline before .`; APK/unit tests were skipped. HostLifecycle job 123427984365 passed. These are test/style issues, not acceptance; A002 corrects them.\n\nT0147-A002 exact-head CI result (V 3.0.533): Step Three quality gate 40868507192 passed all 228 tests and both graph guards (0 errors; one preserved T0001 metadata warning). Android product job 123429253448 failed ktlint with four `Expected newline before .` violations at ClientDatabaseTest.kt:124 because the chained Flow expression was on one line. APK/JVM tests were skipped; HostLifecycle passed. T0147-A003 moves each call in the Room flow chain to an individual line; V 3.0.534 CI is pending.\n\nT0147-A003 acceptance closeout (2026-10-29): exact revision V 3.0.534 (a10aebc13e8a5caf7ce27552fd3c970f49c6c820) passed both GitHub Actions workflows. Quality run 40868883509 passed 228 Python tests, syntax, and graph/evidence guards (229 tasks, 417 edges, zero errors; existing T0001 free-text metadata warning preserved). Product run 40868883480 passed Android ktlint, assembleDebug, testDebugUnitTest (including the new seven-status mapping and Room persistence checks), generated Protobuf verification and APK upload; Windows WPF formatting/build/Protobuf/startup/security checks and artifact upload; and HostLifecycle unit/integration tests. Artifacts uploaded: whitep-android-debug-apk 11,874,698 bytes; whitep-windows-host 14,254,957 bytes. T0147 is closed for displaying actual locally persisted status rows; no status-transition engine or host transport is claimed.\n\nT0147-A004 (2026-10-29T11:59:00Z): V 3.0.535 implementation product CI passed, but the graph closeout quality job found DONE_WITHOUT_TEST_FILE_EVIDENCE. The test file was real and listed in actual_output_paths but absent from evidence. Added that source path to T0147.evidence; exact-head graph check for V 3.0.536 is pending.",
       "execution_summary": {
-        "attempt_count": 3,
+        "attempt_count": 4,
         "failed_attempt_count": 2,
-        "last_attempt_id": "T0147-A003",
-        "last_attempt_result": "succeeded",
+        "last_attempt_id": "T0147-A004",
+        "last_attempt_result": "partial",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestStatusPresentation.kt",
           "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
@@ -31307,7 +31309,8 @@
           "tests/test_android_request_status_contract.py",
           "step three/T0147/execution-report.md",
           "step three/T0147/evidence/verification.md",
-          "step three/project-graph.md"
+          "step three/project-graph.md",
+          "tests/test_android_request_status_contract.py"
         ],
         "related_commits": [
           "90f542e2500e1af5a99d8f0f11336d3a29f05a1a",
@@ -31323,7 +31326,8 @@
         "tests_failed": [
           "V 3.0.532 quality run 40868131396: seven enum-source subtests failed because assertions expected enum type prefixes.",
           "V 3.0.532 product run 40868131465: ktlint rejected the initial Room flow chain.",
-          "V 3.0.533 product run 40868507175: ktlint reported four chain-wrap findings in ClientDatabaseTest.kt."
+          "V 3.0.533 product run 40868507175: ktlint reported four chain-wrap findings in ClientDatabaseTest.kt.",
+          "V 3.0.535 Step Three quality run 40869475088: 228 Python tests passed, but graph guard failed with DONE_WITHOUT_TEST_FILE_EVIDENCE because tests/test_android_request_status_contract.py was not listed in T0147.evidence; this evidence-reference omission is corrected in V 3.0.536."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -31484,6 +31488,32 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "T0147 accepted for display of locally persisted request status rows only. It does not implement status transitions or host transport; the next graph task should be selected after reviewing its actual incoming edges."
+        },
+        {
+          "attempt_id": "T0147-A004",
+          "started_at": "2026-10-29T11:59:00Z",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "The V 3.0.535 Step Three quality gate found one graph-recording error: DONE_WITHOUT_TEST_FILE_EVIDENCE. The Python test file was listed in actual_output_paths but missing from the task's evidence array, which the graph guard specifically requires to contain a tests/ or test/ path. The fix adds tests/test_android_request_status_contract.py to evidence. Exact-head graph validation for V 3.0.536 is pending.",
+          "changed_files": [
+            "step three/project-graph.md",
+            "step three/T0147/execution-report.md",
+            "step three/T0147/evidence/verification.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "command": "Step Three quality gate run 40869475088",
+              "result": "failed",
+              "summary": "228 Python tests passed but graph guard returned 1 error: DONE_WITHOUT_TEST_FILE_EVIDENCE for T0147; 1 pre-existing T0001 metadata warning was preserved.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40869475088"
+            }
+          ],
+          "failure_details": "Graph guard tools/graph_guard.py lines 84–86 requires at least one item in task.evidence whose path starts with tests/ or test/. T0147's test source was already listed in actual_output_paths and the source exists; it was omitted from evidence. No implementation test failed.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Include tests/test_android_request_status_contract.py in the evidence list and rerun the Step Three quality gate on V 3.0.536."
         }
       ]
     },
@@ -43324,7 +43354,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-29T11:57:00Z",
+  "updated_at": "2026-10-29T11:59:00Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",
