@@ -20,12 +20,13 @@ class ClientDatabaseTest {
 
     @Before
     fun setUp() {
-        database = Room.inMemoryDatabaseBuilder(
-            RuntimeEnvironment.getApplication(),
-            ClientDatabase::class.java,
-        )
-            .allowMainThreadQueries()
-            .build()
+        database =
+            Room
+                .inMemoryDatabaseBuilder(
+                    RuntimeEnvironment.getApplication(),
+                    ClientDatabase::class.java,
+                ).allowMainThreadQueries()
+                .build()
     }
 
     @After
