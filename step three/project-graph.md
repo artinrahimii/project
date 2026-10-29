@@ -30681,20 +30681,44 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0144 و T0138 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationMessagesViewModel.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationMessagesViewModelTest.kt",
+        "tests/test_android_conversation_detail_contract.py",
+        "step three/T0145/execution-report.md",
+        "step three/T0145/evidence/verification.md",
+        "step three/project-graph.md"
+      ],
       "expected_output_paths": [
         "src/Client.Android/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationMessagesViewModelTest.kt",
+        "tests/test_android_conversation_detail_contract.py",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/MessageEntity.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+        "step three/T0144/execution-report.md",
+        "docs/decisions/ADR-0020-android-client-local-conversation-storage.md",
+        "step three/T0138/execution-report.md"
+      ],
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0145-A001 (2026-10-29T10:39:09.416Z): Added a Room-backed message ViewModel and connected the conversation detail screen to the existing ordered message Flow. Messages are saved locally as user-authored rows; the UI explicitly states that host transmission is unavailable. Added Room/Robolectric tests for chronological persistence and blank rejection, plus source-contract tests. Exact-head CI is pending; remain in_progress until both quality and Android product workflows pass.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0145-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationMessagesViewModel.kt",
+          "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+          "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationMessagesViewModelTest.kt",
+          "tests/test_android_conversation_detail_contract.py",
+          "step three/T0145/execution-report.md",
+          "step three/T0145/evidence/verification.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
@@ -30707,7 +30731,52 @@
           "review_evidence": []
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0145-A001",
+          "started_at": "2026-10-29T10:39:09.416Z",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Implemented local Room-backed ordered message display and send/persist action, with explicit no-network disclosure. Added unit and source-contract tests; exact-head CI is pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationMessagesViewModel.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationMessagesViewModelTest.kt",
+            "tests/test_android_conversation_detail_contract.py",
+            "step three/T0145/execution-report.md",
+            "step three/T0145/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "command": "python -m unittest discover -s tests -v",
+              "result": "not_run",
+              "summary": "Will be evaluated by the exact-head Step Three quality workflow."
+            },
+            {
+              "command": "gradle --no-daemon ktlintCheck",
+              "result": "not_run",
+              "summary": "Will be evaluated by exact-head Android product CI."
+            },
+            {
+              "command": "gradle --no-daemon assembleDebug",
+              "result": "not_run",
+              "summary": "Will be evaluated by exact-head Android product CI."
+            },
+            {
+              "command": "gradle --no-daemon testDebugUnitTest",
+              "result": "not_run",
+              "summary": "Will be evaluated by exact-head Android product CI."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect exact-head quality and product workflows. Fix any source-contract, ktlint, compile, Room/Robolectric, or integration failure before marking T0145 done."
+        }
+      ]
     },
     {
       "id": "T0146",
@@ -37909,19 +37978,31 @@
       "from": "T0144",
       "to": "T0145",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0144 supplies the selected conversation ID through ClientDestination.CONVERSATION_DETAIL and the detail-screen entry point. T0145 consumes that stable route argument and extends the existing detail view to observe and persist messages for the selected conversation; this is a real screen/data-interface dependency, not inferred from type=blocks alone.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/navigation/ClientDestination.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/MessageEntity.kt",
+        "step three/T0144/execution-report.md"
+      ]
     },
     {
       "from": "T0138",
       "to": "T0145",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0138 documents that a processing host can read prompt/context contents after transport decryption, but the T0145 UI reads and writes only the Android app's local Room database and consumes no host-disclosure API or protocol contract. Keep the edge as conservative sequencing only; the UI explicitly states that messages are not transmitted to a host.",
+      "validation_status": "validated",
+      "evidence": [
+        "docs/decisions/ADR-0019-host-visible-inference-content.md",
+        "docs/decisions/ADR-0020-android-client-local-conversation-storage.md",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientRequestRepository.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+        "step three/T0138/execution-report.md"
+      ]
     },
     {
       "from": "T0145",
@@ -42490,9 +42571,45 @@
         "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientRequestRepository.kt"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "from": "T0144",
+      "to": "T0145",
+      "changed_at": "2026-10-29T10:39:09.416Z",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "old_validation_status": "unreviewed",
+      "new_validation_status": "validated",
+      "reason": "T0144 supplies the selected conversation ID through ClientDestination.CONVERSATION_DETAIL and the detail-screen entry point. T0145 consumes that stable route argument and extends the existing detail view to observe and persist messages for the selected conversation; this is a real screen/data-interface dependency, not inferred from type=blocks alone.",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/navigation/ClientDestination.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/MessageEntity.kt",
+        "step three/T0144/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "from": "T0138",
+      "to": "T0145",
+      "changed_at": "2026-10-29T10:39:09.416Z",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "old_validation_status": "unreviewed",
+      "new_validation_status": "validated",
+      "reason": "T0138 documents that a processing host can read prompt/context contents after transport decryption, but the T0145 UI reads and writes only the Android app's local Room database and consumes no host-disclosure API or protocol contract. Keep the edge as conservative sequencing only; the UI explicitly states that messages are not transmitted to a host.",
+      "evidence": [
+        "docs/decisions/ADR-0019-host-visible-inference-content.md",
+        "docs/decisions/ADR-0020-android-client-local-conversation-storage.md",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientRequestRepository.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+        "step three/T0138/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-29T10:08:06Z",
+  "updated_at": "2026-10-29T10:39:09.416Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

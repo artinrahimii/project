@@ -7,15 +7,19 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -23,6 +27,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.whitep.client.data.ClientDatabase
 import com.whitep.client.data.ConversationEntity
+import com.whitep.client.data.MessageEntity
+import kotlinx.coroutines.launch
 
 private sealed class ConversationDetailUiState {
     object Loading : ConversationDetailUiState()
@@ -40,15 +46,31 @@ internal fun conversationDetailScreen(
     onBack: () -> Unit,
 ) {
     val applicationContext = LocalContext.current.applicationContext
-    val conversationDao =
+    val database =
         remember(applicationContext) {
-            ClientDatabase.getInstance(applicationContext).conversationDao()
+            ClientDatabase.getInstance(applicationContext)
         }
-    val factory =
+    val conversationDao = database.conversationDao()
+    val messageDao = database.messageDao()
+    val conversationFactory =
         remember(conversationDao) {
             ConversationListViewModel.Factory(conversationDao)
         }
-    val conversationListViewModel: ConversationListViewModel = viewModel(factory = factory)
+    val conversationListViewModel: ConversationListViewModel = viewModel(factory = conversationFactory)
+    val messageFactory =
+        remember(conversationId, messageDao) {
+            ConversationMessagesViewModel.Factory(conversationId, messageDao)
+        }
+    val conversationMessagesViewModel: ConversationMessagesViewModel =
+        viewModel(
+            key = "conversation-messages-$conversationId",
+            factory = messageFactory,
+        )
+    val messages by conversationMessagesViewModel.messages.collectAsState(initial = emptyList())
+    val scope = rememberCoroutineScope()
+    var draft by remember(conversationId) {
+        mutableStateOf("")
+    }
     var state by remember(conversationId) {
         mutableStateOf<ConversationDetailUiState>(ConversationDetailUiState.Loading)
     }
@@ -95,16 +117,65 @@ internal fun conversationDetailScreen(
                             "Updated ${formatConversationTimestamp(currentState.conversation.updatedAtEpochMillis)}",
                             style = MaterialTheme.typography.bodySmall,
                         )
-                        Text(
-                            "Messages and sending are not available in this screen yet.",
-                            style = MaterialTheme.typography.bodyMedium,
-                        )
                     }
                 }
+
+                Text("Messages", style = MaterialTheme.typography.titleLarge)
+                if (messages.isEmpty()) {
+                    Text("No messages yet. Write a message below to save it in this conversation.")
+                }
+                messages.forEach { message ->
+                    MessageCard(message = message)
+                }
+
+                OutlinedTextField(
+                    value = draft,
+                    onValueChange = { draft = it },
+                    modifier = Modifier.fillMaxWidth(),
+                    label = { Text("Message") },
+                    minLines = 2,
+                    maxLines = 5,
+                )
+                Button(
+                    onClick = {
+                        val messageText = draft
+                        scope.launch {
+                            if (conversationMessagesViewModel.sendMessage(messageText)) {
+                                draft = ""
+                            }
+                        }
+                    },
+                    enabled = draft.isNotBlank(),
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Text("Send")
+                }
+                Text(
+                    "Messages are saved only on this device. Sending to a processing host is not available yet.",
+                    style = MaterialTheme.typography.bodySmall,
+                )
             }
             ConversationDetailUiState.Missing -> {
                 Text("This conversation could not be found on this device.")
             }
+        }
+    }
+}
+
+@Composable
+private fun MessageCard(message: MessageEntity) {
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(6.dp),
+        ) {
+            val author = if (message.authorRole == "user") "You" else message.authorRole
+            Text(author, style = MaterialTheme.typography.labelLarge)
+            Text(message.content, style = MaterialTheme.typography.bodyLarge)
+            Text(
+                formatConversationTimestamp(message.createdAtEpochMillis),
+                style = MaterialTheme.typography.bodySmall,
+            )
         }
     }
 }
