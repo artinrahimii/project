@@ -20,6 +20,7 @@ class AndroidDatabaseMigrationContractTests(unittest.TestCase):
         self.assertIn("Migration(3, 4)", database)
         self.assertIn("addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)", database)
         self.assertIn(INDEX_NAME, database)
+        self.assertIn("conversation_context_capsule_changes", database)
 
     def test_migration_index_matches_the_entity_and_version_one_fixture(self):
         entity = REQUEST_STATE_SOURCE.read_text(encoding="utf-8")
@@ -36,7 +37,6 @@ class AndroidDatabaseMigrationContractTests(unittest.TestCase):
         self.assertIn("addMigrations(ClientDatabase.MIGRATION_1_2, ClientDatabase.MIGRATION_2_3, ClientDatabase.MIGRATION_3_4)", test_source)
         self.assertIn("assertEquals(4, migratedDatabase.openHelper.readableDatabase.version)", test_source)
         self.assertIn("changeHistoryForConversation", test_source)
-        self.assertIn("conversation_context_capsule_changes", database)
         self.assertIn("conversationContextCapsuleDao", test_source)
         self.assertIn("migratedDatabase.openHelper.readableDatabase.version", test_source)
         self.assertIn("Legacy conversation", test_source)

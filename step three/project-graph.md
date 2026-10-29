@@ -34829,11 +34829,11 @@
         "https://github.com/artinrahimii/project/actions/runs/40943199249",
         "https://github.com/artinrahimii/project/actions/runs/40943199144"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0158-A001 (2026-10-29T19:58:20Z): Reviewed both incoming edges against actual code and requirements, kept their `blocks` types, and validated both as contract_or_interface_dependency. Implemented local Room provenance/history events with source, timestamp and changed field names only; added transactionally coupled capsule/audit persistence, schema v3→v4 migration, ViewModel source attribution, runtime and Python tests. `protocol/whitep/v1/messages.proto` remains unchanged. Exact-head CI is pending; outgoing T0158 → T0159 remains unreviewed.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0158-A001 (2026-10-29T19:58:20Z): Reviewed both incoming edges against actual code and requirements, kept their `blocks` types, and validated both as contract_or_interface_dependency. Implemented local Room provenance/history events with source, timestamp and changed field names only; added transactionally coupled capsule/audit persistence, schema v3→v4 migration, ViewModel source attribution, runtime and Python tests. `protocol/whitep/v1/messages.proto` remains unchanged. Exact-head CI is pending; outgoing T0158 → T0159 remains unreviewed.\nT0158-A001 CI failure recorded: Step Three quality workflow 40945024330 ran 257 Python tests; 256 passed and one errored with a NameError caused by the new `conversation_context_capsule_changes` assertion being placed in a test method without the `database` variable. Corrected the assertion scope for A002; product workflow on V 3.0.580 was still running at the time of this record.\nT0158-A002 (2026-10-29T20:02:00Z): Moved the failing migration-contract assertion into the scope that defines `database`; exact-head V 3.0.581 CI is pending.",
       "execution_summary": {
-        "attempt_count": 1,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "T0158-A001",
+        "attempt_count": 2,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "T0158-A002",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/data/ConversationContextCapsuleChangeEntity.kt",
@@ -34853,9 +34853,17 @@
           "step three/T0158/evidence/verification.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
+        "related_commits": [
+          "9673db6f13e46c05b289dd2e096eeeb0e4a29eb7"
+        ],
         "tests_passed": [],
-        "tests_failed": [],
+        "tests_failed": [
+          {
+            "name": "test_runtime_upgrade_test_checks_version_data_and_index",
+            "result": "failed",
+            "summary": "NameError: `database` referenced from the wrong test method; all other tests in the workflow passed."
+          }
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -34889,8 +34897,8 @@
         {
           "attempt_id": "T0158-A001",
           "started_at": "2026-10-29T19:58:20Z",
-          "ended_at": "2026-10-29T19:58:20Z",
-          "result": "partial",
+          "ended_at": "2026-10-29T20:02:00Z",
+          "result": "failed",
           "summary": "Implemented local capsule change-history/provenance storage, source attribution, timestamps and changed field names with a Room v3→v4 migration; capsule save and audit event are written atomically. The network Protobuf is unchanged. Acceptance remains pending exact-head CI.",
           "changed_files": [
             "src/Client.Android/app/src/main/java/com/whitep/client/data/ConversationContextCapsuleChangeEntity.kt",
@@ -34910,25 +34918,16 @@
             "step three/T0158/evidence/verification.md",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "9673db6f13e46c05b289dd2e096eeeb0e4a29eb7",
           "tests": [
             {
-              "name": "Step Three quality gate — V 3.0.580",
-              "result": "not_run",
-              "summary": "Will be executed when the remote commit is published."
-            },
-            {
-              "name": "Android lint/APK/JVM/migration tests — V 3.0.580",
-              "result": "not_run",
-              "summary": "Will be executed when the remote commit is published; inspect Room DAO transaction, migration and source-attribution tests."
-            },
-            {
-              "name": "Windows WPF and HostLifecycle — V 3.0.580",
-              "result": "not_run",
-              "summary": "Will be executed when the remote commit is published."
+              "name": "Step Three automated Python tests — workflow 40945024330",
+              "result": "failed",
+              "summary": "One test errored with NameError in test_android_database_migration_contract.py; 256 other tests passed. The assertion is moved to the method that defines `database`.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40945024330"
             }
           ],
-          "failure_details": null,
+          "failure_details": "Step Three quality workflow 40945024330 failed in test_android_database_migration_contract.AndroidDatabaseMigrationContractTests.test_runtime_upgrade_test_checks_version_data_and_index: NameError because the assertion referencing `database` was inserted in the method where only `test_source` exists. This is a test-contract scope error, not a product test result.",
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [
@@ -34936,6 +34935,37 @@
             "Repository save appends provenance metadata transactionally without storing capsule values in the history row."
           ],
           "follow_up": "Inspect exact-head V 3.0.580 CI; fix compile, Room validation, KtLint or test failures before marking T0158 done."
+        },
+        {
+          "attempt_id": "T0158-A002",
+          "started_at": "2026-10-29T20:02:00Z",
+          "ended_at": "2026-10-29T20:02:00Z",
+          "result": "partial",
+          "summary": "Corrected the Python migration-contract test: the audit-table assertion now resides in the method that loads the database source. Product behavior and migration tests still require exact-head CI.",
+          "changed_files": [
+            "tests/test_android_database_migration_contract.py",
+            "step three/T0158/execution-report.md",
+            "step three/T0158/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Step Three quality gate — V 3.0.581",
+              "result": "not_run",
+              "summary": "Will run after this follow-up commit."
+            },
+            {
+              "name": "Android build/migration/JVM tests — V 3.0.581",
+              "result": "not_run",
+              "summary": "Will run after this follow-up commit."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect exact-head V 3.0.581 Step Three and Android workflows; do not mark T0158 done until all required gates pass."
         }
       ]
     },
@@ -46742,7 +46772,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-29T19:58:20Z",
+  "updated_at": "2026-10-29T20:02:00Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",
