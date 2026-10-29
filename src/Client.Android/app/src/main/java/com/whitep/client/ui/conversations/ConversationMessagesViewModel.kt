@@ -54,11 +54,22 @@ class ConversationMessagesViewModel(
         private val conversationId: String,
         private val messageDao: MessageDao,
     ) : ViewModelProvider.Factory {
-        override fun <T : ViewModel> create(modelClass: Class<T>): T =
-            createViewModel(modelClass, SavedStateHandle())
+        override fun <T : ViewModel> create(
+            modelClass: Class<T>,
+        ): T =
+            createViewModel(
+                modelClass = modelClass,
+                savedStateHandle = SavedStateHandle(),
+            )
 
-        override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T =
-            createViewModel(modelClass, extras.createSavedStateHandle())
+        override fun <T : ViewModel> create(
+            modelClass: Class<T>,
+            extras: CreationExtras,
+        ): T =
+            createViewModel(
+                modelClass = modelClass,
+                savedStateHandle = extras.createSavedStateHandle(),
+            )
 
         @Suppress("UNCHECKED_CAST")
         private fun <T : ViewModel> createViewModel(
