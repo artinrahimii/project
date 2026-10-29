@@ -1,4 +1,5 @@
 from pathlib import Path
+import re
 import unittest
 
 
@@ -6,6 +7,13 @@ ROOT = Path(__file__).resolve().parents[1]
 ANDROID_DATA = ROOT / "src/Client.Android/app/src/main/java/com/whitep/client/data"
 VIEW_MODEL = ROOT / "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt"
 PROTO = ROOT / "protocol/whitep/v1/messages.proto"
+
+SAVE_CALL_PATTERN = re.compile(
+    r"repository\s*\.\s*save\s*\(\s*"
+    r"conversationId\s*,\s*capsule\s*,\s*clockMillis\(\)\s*,\s*"
+    r"current\.maxSerializedBytes\s*,\s*changeSource\s*,?\s*\)",
+    re.DOTALL,
+)
 
 
 class AndroidCapsuleProvenanceContractTests(unittest.TestCase):
@@ -28,7 +36,7 @@ class AndroidCapsuleProvenanceContractTests(unittest.TestCase):
         self.assertIn("ConversationContextCapsuleChangeSource.USER_EDIT", source)
         self.assertIn("ConversationContextCapsuleChangeSource.LOCAL_HISTORY_SUMMARY", source)
         self.assertIn("ConversationContextCapsuleChangeSource.LOCAL_HISTORY_SUMMARY_REVIEWED", source)
-        self.assertIn("repository.save(conversationId, capsule, clockMillis(), current.maxSerializedBytes, changeSource)", source)
+        self.assertRegex(source, SAVE_CALL_PATTERN)
 
     def test_network_inference_request_has_no_permanent_conversation_id_or_history(self):
         proto = PROTO.read_text(encoding="utf-8")

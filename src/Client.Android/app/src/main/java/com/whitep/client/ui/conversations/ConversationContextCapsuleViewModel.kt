@@ -627,7 +627,17 @@ class ConversationContextCapsuleViewModel(
                 unresolvedItems = current.unresolvedItemsText.toItems(),
             )
         return try {
-            when (val result = repository.save(conversationId, capsule, clockMillis(), current.maxSerializedBytes, changeSource)) {
+            when (
+                val result =
+                    repository
+                        .save(
+                            conversationId,
+                            capsule,
+                            clockMillis(),
+                            current.maxSerializedBytes,
+                            changeSource,
+                        )
+            ) {
                 is ConversationContextCapsuleSaveResult.Saved -> {
                     val savedState = _uiState.value
                     _uiState.value =

@@ -1,10 +1,18 @@
 from pathlib import Path
+import re
 import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
 SCREEN = ROOT / "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt"
 VIEW_MODEL = ROOT / "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt"
 VM_TEST = ROOT / "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModelTest.kt"
+
+SAVE_CALL_PATTERN = re.compile(
+    r"repository\s*\.\s*save\s*\(\s*"
+    r"conversationId\s*,\s*capsule\s*,\s*clockMillis\(\)\s*,\s*"
+    r"current\.maxSerializedBytes\s*,\s*changeSource\s*,?\s*\)",
+    re.DOTALL,
+)
 
 
 class AndroidContextCapsuleUiContractTests(unittest.TestCase):
@@ -33,7 +41,7 @@ class AndroidContextCapsuleUiContractTests(unittest.TestCase):
         self.assertIn("RoomConversationContextCapsuleRepository", screen)
         self.assertIn("contextCapsuleViewModel.uiState.collectAsState()", screen)
         self.assertIn("repository.observe(conversationId)", source)
-        self.assertIn("repository.save(conversationId, capsule, clockMillis(), current.maxSerializedBytes, changeSource)", source)
+        self.assertRegex(source, SAVE_CALL_PATTERN)
         self.assertIn("repository.delete(conversationId)", source)
 
     def test_device_size_setting_is_persisted_and_enforced_by_the_domain_codec(self):
@@ -43,7 +51,7 @@ class AndroidContextCapsuleUiContractTests(unittest.TestCase):
         repository = (ROOT / "src/Client.Android/app/src/main/java/com/whitep/client/data/RoomConversationContextCapsuleRepository.kt").read_text(encoding="utf-8")
         store = (ROOT / "src/Client.Android/app/src/main/java/com/whitep/client/data/ConversationContextCapsuleSizeLimitStore.kt").read_text(encoding="utf-8")
         self.assertIn("SharedPreferencesConversationContextCapsuleSizeLimitStore", screen)
-        self.assertIn("repository.save(conversationId, capsule, clockMillis(), current.maxSerializedBytes, changeSource)", view_model)
+        self.assertRegex(view_model, SAVE_CALL_PATTERN)
         self.assertIn("bytes.size > maxSerializedBytes", codec)
         self.assertIn("maxSerializedBytes: Int = ConversationContextCapsule.MAX_SERIALIZED_BYTES", repository)
         self.assertIn("preferences.edit().putInt(KEY_MAX_SERIALIZED_BYTES, value).apply()", store)

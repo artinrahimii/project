@@ -59,9 +59,11 @@ class RoomConversationContextCapsuleRepository(
         val previousCapsule = previousDecoded?.takeIf { it.isValid }?.capsule
         val changedFields = changedFields(previousCapsule, capsule)
         val changedFieldsJson =
-            JSONArray().apply {
-                changedFields.forEach { put(it) }
-            }.toString()
+            JSONArray()
+                .apply {
+                    changedFields.forEach { put(it) }
+                }
+                .toString()
         val change =
             ConversationContextCapsuleChangeEntity(
                 conversationId = conversationId,

@@ -49,3 +49,11 @@
 - Android: FAIL at KtLint, `Expected newline before '.'` for `.build()` at `ConversationContextCapsuleViewModelTest.kt:56`; APK/JVM/migration tests not reached, [workflow 40947302434](https://github.com/artinrahimii/project/actions/runs/40947302434).
 - HostLifecycle unit/integration: PASS. Windows WPF was completing additional policy checks when inspected.
 - A006 corrects chain wrapping; V 3.0.585 exact-head checks are pending.
+
+
+## Exact-head V 3.0.585 verification
+
+- Step Three quality gate passed all 257 Python tests plus graph/evidence validation, [workflow 40947746272](https://github.com/artinrahimii/project/actions/runs/40947746272).
+- Android product workflow failed at Kotlin lint in three main-source locations: DAO method parameter wrapping in `ConversationContextCapsuleEntity.kt:60`, chained `.toString()` formatting in `RoomConversationContextCapsuleRepository.kt:62`, and the multiline save call in `ConversationContextCapsuleViewModel.kt:630`. APK/JVM/Protobuf steps were skipped, [workflow 40947746350](https://github.com/artinrahimii/project/actions/runs/40947746350).
+- Windows WPF build/startup/security checks and HostLifecycle unit/integration tests passed in the same product workflow, [workflow 40947746350](https://github.com/artinrahimii/project/actions/runs/40947746350).
+- A007 corrects the three lint findings and loosens only the Python source-contract matching to accept semantically identical whitespace/layout. V 3.0.586 product validation is pending.

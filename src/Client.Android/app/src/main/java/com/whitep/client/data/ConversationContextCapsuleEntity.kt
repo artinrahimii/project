@@ -56,9 +56,7 @@ interface ConversationContextCapsuleDao {
             "WHERE conversationId = :conversationId " +
             "ORDER BY changedAtEpochMillis ASC, changeId ASC",
     )
-    suspend fun changeHistoryForConversation(
-        conversationId: String,
-    ): List<ConversationContextCapsuleChangeEntity>
+    suspend fun changeHistoryForConversation(conversationId: String): List<ConversationContextCapsuleChangeEntity>
 
     @Transaction
     suspend fun saveWithChange(
