@@ -33,3 +33,13 @@
 - Step Three quality passed 250 Python tests, compilation and graph/repository-backed evidence validation.
 - Android ktlint rejected the diagnostic assertion formatting before any APK/JVM tests ran; HostLifecycle passed and Windows WPF was still running.
 - A005 applies the formatting correction. T0156 remains in progress pending exact-head test results.
+
+
+## Exact-head V 3.0.574 acceptance evidence
+
+- Tested commit: `bdfd3fb0128b3dde351be0e5b6a69aaaacbdd36e` (`V 3.0.574`) on `main`.
+- Graph provenance: `step three/project-graph.md`, blob `1005df8792e7b9eff2a1a99e6ce81c7380f4ae57`; exact blob content was retrieved, parsed and SHA-1 matched. Original size: 2,785,258 UTF-8 bytes and 2,662,983 decoded characters.
+- Step Three quality run [40916608649](https://github.com/artinrahimii/project/actions/runs/40916608649): pass; 250 Python tests, compileall, graph and repository-backed evidence checks; 229 tasks / 417 edges, zero errors and one preserved T0001 warning.
+- Product run [40916608612](https://github.com/artinrahimii/project/actions/runs/40916608612): pass; Android lint, APK build, JVM tests, Protobuf verification and APK upload; Windows WPF build/startup/security/DPAPI checks and HostLifecycle tests.
+- The selected-conversation/manual-save acceptance is implemented in `ConversationContextCapsuleViewModelTest.suggestsCapsuleFromOnlyThisConversationsLocalHistoryAndRequiresSave`. The exact-head Android JVM test task completed successfully. Transport remains unimplemented; no claim about an unbuilt network payload is made.
+- The existing `blocks` edges remain. Next task T0157 requires review of its two incoming edges before implementation.

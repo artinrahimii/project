@@ -53,3 +53,14 @@
 
 - Change: split the diagnostic assertion across lines to satisfy argument wrapping, dot placement, max line length and closing-parenthesis rules.
 - Exact-head V 3.0.574 results are pending. No acceptance is claimed.
+
+
+## Exact-head V 3.0.574 acceptance — attempt A006
+
+- **Tested revision:** `bdfd3fb0128b3dde351be0e5b6a69aaaacbdd36e` on `main`, commit message `V 3.0.574`. The graph source at that revision was `step three/project-graph.md`, blob `1005df8792e7b9eff2a1a99e6ce81c7380f4ae57`; content was retrieved from the blob API and matched its Git Blob SHA-1. Original content size: 2,785,258 UTF-8 bytes; decoded text length: 2,662,983 characters.
+- **Step Three quality:** [run 40916608649](https://github.com/artinrahimii/project/actions/runs/40916608649) passed 250 Python tests, Python compilation, graph structure and repository-backed output/evidence checks. The guard reported 229 tasks and 417 edges, zero errors and one preserved T0001 metadata warning.
+- **Android product:** [run 40916608612](https://github.com/artinrahimii/project/actions/runs/40916608612) passed Kotlin lint, debug APK build, Android JVM tests including `ConversationContextCapsuleViewModelTest`, generated Protobuf verification and APK upload.
+- **Windows product:** [run 40916608612](https://github.com/artinrahimii/project/actions/runs/40916608612) passed C# formatting, Release build, Protobuf validation, WPF startup smoke, process/policy/capability checks, DPAPI identity/trust checks and artifact upload. The HostLifecycle unit/integration job also passed.
+- **Acceptance:** the local-history suggestion reads the selected conversation's `MessageDao.observeForConversation(conversationId)` stream, uses the schema-validated summarizer and configured byte limit, presents the result as an editable draft, and persists only after Save. The Robolectric test covers two messages from the selected conversation plus an unrelated second conversation, validates the suggested fields and source count, and confirms manual persistence. The ViewModel contains no HTTP or socket client; the Android application still explicitly states that host transport is not implemented. This does not claim that a future remote transport has been proven safe.
+- **Outcome:** T0156 is accepted as done after all exact-head gates passed. The four earlier failed attempts and one partial attempt remain in history.
+- **Next step:** review incoming edges for T0157 before execution; the graph's existing T0156 → T0157 edge remains unreviewed and unchanged.
