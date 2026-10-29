@@ -31269,20 +31269,46 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0146 و T0138 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestStatusPresentation.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestStatusPresentationTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/data/ClientDatabaseTest.kt",
+        "tests/test_android_request_status_contract.py",
+        "step three/T0147/execution-report.md",
+        "step three/T0147/evidence/verification.md",
+        "step three/project-graph.md"
+      ],
       "expected_output_paths": [
         "src/Client.Android/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/RequestStateEntity.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientDatabase.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/data/ClientDatabaseTest.kt",
+        "step three/T0138/execution-report.md",
+        "step three/T0146/execution-report.md"
+      ],
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0147-A001 (2026-10-29T11:42:00Z): Reviewed T0146 → T0147 and T0138 → T0147 against the current Room/status model and request UI. Neither predecessor's implementation/API is directly consumed; both edges are validated as sequencing_only and kept as blocks edges. Added an exhaustive presentation mapper for all seven PersistedRequestStatus values and rendered only actual Room-backed request-state rows in conversation detail; the empty state says no request state exists and transport remains unavailable. Added JVM, Room and Python contract tests. Exact-head CI pending; remain in_progress until product and quality gates pass.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0147-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestStatusPresentation.kt",
+          "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+          "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestStatusPresentationTest.kt",
+          "src/Client.Android/app/src/test/java/com/whitep/client/data/ClientDatabaseTest.kt",
+          "tests/test_android_request_status_contract.py",
+          "step three/T0147/execution-report.md",
+          "step three/T0147/evidence/verification.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
@@ -31292,10 +31318,65 @@
           "state": "not_required",
           "triggering_contracts": [],
           "affected_by_contract_changes": [],
-          "review_evidence": []
+          "review_evidence": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/data/RequestStateEntity.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientDatabase.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0147-A001",
+          "started_at": "2026-10-29T11:42:00Z",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Added explicit user-facing mapping for all seven persisted request states, Room-backed status rendering in conversation detail, truthful empty-state disclosure and UI/Room/Python regression coverage. Exact-head CI is pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestStatusPresentation.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestStatusPresentationTest.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/data/ClientDatabaseTest.kt",
+            "tests/test_android_request_status_contract.py",
+            "step three/T0147/execution-report.md",
+            "step three/T0147/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "command": "RequestStatusPresentationTest (Android JVM unit tests)",
+              "result": "not_run",
+              "summary": "Pending exact-head Gradle testDebugUnitTest."
+            },
+            {
+              "command": "ClientDatabaseTest all-status Room persistence test",
+              "result": "not_run",
+              "summary": "Pending exact-head Gradle testDebugUnitTest."
+            },
+            {
+              "command": "tests/test_android_request_status_contract.py",
+              "result": "not_run",
+              "summary": "Pending Step Three quality workflow."
+            },
+            {
+              "command": "Android ktlintCheck and assembleDebug",
+              "result": "not_run",
+              "summary": "Pending product workflow."
+            },
+            {
+              "command": "Step Three graph/evidence guards",
+              "result": "not_run",
+              "summary": "Pending quality workflow."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect exact-head quality and product workflows. Fix failures and rerun; mark T0147 done only after all seven mappings, Room integration tests, Android lint/build/unit tests and graph guards pass."
+        }
+      ]
     },
     {
       "id": "T0148",
@@ -38467,19 +38548,31 @@
       "from": "T0146",
       "to": "T0147",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0147 consumes PersistedRequestStatus and RequestStateDao.observeForConversation to display locally stored request states. T0146's input validator and sendMessage path are not imported or called by this status presentation. Keep the original blocks edge as conservative execution order only; no direct technical dependency was found.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/RequestStateEntity.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestStatusPresentation.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/domain/ConversationMessageValidator.kt",
+        "step three/T0146/execution-report.md"
+      ]
     },
     {
       "from": "T0138",
       "to": "T0147",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0138 documents receiving-host visibility and includes a source-contract test, but provides no Kotlin API consumed by this Room-backed status display. The UI states requests are not sent in this preview and does not change the privacy boundary. Keep the existing blocks edge as conservative sequencing.",
+      "validation_status": "validated",
+      "evidence": [
+        "docs/decisions/ADR-0019-host-visible-inference-content.md",
+        "tests/test_host_content_visibility.py",
+        "step three/T0138/execution-report.md",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/RequestStateEntity.kt"
+      ]
     },
     {
       "from": "T0147",
@@ -43084,9 +43177,45 @@
         "docs/decisions/ADR-0020-android-client-local-conversation-storage.md"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "from": "T0146",
+      "to": "T0147",
+      "changed_at": "2026-10-29T11:42:00Z",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "old_validation_status": "unreviewed",
+      "new_validation_status": "validated",
+      "reason": "T0147 consumes PersistedRequestStatus and RequestStateDao.observeForConversation to display locally stored request states. T0146's input validator and sendMessage path are not imported or called by this status presentation. Keep the original blocks edge as conservative execution order only; no direct technical dependency was found.",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/RequestStateEntity.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestStatusPresentation.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/domain/ConversationMessageValidator.kt",
+        "step three/T0146/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "from": "T0138",
+      "to": "T0147",
+      "changed_at": "2026-10-29T11:42:00Z",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "old_validation_status": "unreviewed",
+      "new_validation_status": "validated",
+      "reason": "T0138 documents receiving-host visibility and includes a source-contract test, but provides no Kotlin API consumed by this Room-backed status display. The UI states requests are not sent in this preview and does not change the privacy boundary. Keep the existing blocks edge as conservative sequencing.",
+      "evidence": [
+        "docs/decisions/ADR-0019-host-visible-inference-content.md",
+        "tests/test_host_content_visibility.py",
+        "step three/T0138/execution-report.md",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/RequestStateEntity.kt"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-29T11:40:00Z",
+  "updated_at": "2026-10-29T11:42:00Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

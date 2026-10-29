@@ -28,8 +28,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.whitep.client.data.ClientDatabase
 import com.whitep.client.data.ConversationEntity
 import com.whitep.client.data.MessageEntity
+import com.whitep.client.data.RequestStateEntity
 import com.whitep.client.domain.ConversationMessageValidationError
 import com.whitep.client.domain.ConversationMessageValidator
+import com.whitep.client.ui.request.toPresentation
 import kotlinx.coroutines.launch
 
 private sealed class ConversationDetailUiState {
@@ -54,6 +56,7 @@ internal fun conversationDetailScreen(
         }
     val conversationDao = database.conversationDao()
     val messageDao = database.messageDao()
+    val requestStateDao = database.requestStateDao()
     val conversationFactory =
         remember(conversationDao) {
             ConversationListViewModel.Factory(conversationDao)
@@ -69,6 +72,7 @@ internal fun conversationDetailScreen(
             factory = messageFactory,
         )
     val messages by conversationMessagesViewModel.messages.collectAsState(initial = emptyList())
+    val requestStates by requestStateDao.observeForConversation(conversationId).collectAsState(initial = emptyList())
     val scope = rememberCoroutineScope()
     var draft by remember(conversationId) {
         mutableStateOf("")
@@ -126,6 +130,17 @@ internal fun conversationDetailScreen(
                     }
                 }
 
+                Text("Request status", style = MaterialTheme.typography.titleLarge)
+                if (requestStates.isEmpty()) {
+                    Text(
+                        "No request status has been recorded for this conversation. " +
+                            "Requests are not sent to a host in this preview.",
+                    )
+                }
+                requestStates.forEach { requestState ->
+                    requestStatusCard(requestState)
+                }
+
                 Text("Messages", style = MaterialTheme.typography.titleLarge)
                 if (messages.isEmpty()) {
                     Text("No messages yet. Write a message below to save it in this conversation.")
@@ -175,6 +190,30 @@ internal fun conversationDetailScreen(
             ConversationDetailUiState.Missing -> {
                 Text("This conversation could not be found on this device.")
             }
+        }
+    }
+}
+
+@Composable
+private fun requestStatusCard(requestState: RequestStateEntity) {
+    val presentation = requestState.status.toPresentation()
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(6.dp),
+        ) {
+            Text(presentation.label, style = MaterialTheme.typography.titleMedium)
+            Text(presentation.detail, style = MaterialTheme.typography.bodyMedium)
+            if (requestState.attemptNumber > 0) {
+                Text("Attempt ${requestState.attemptNumber}", style = MaterialTheme.typography.bodySmall)
+            }
+            requestState.errorCode?.let { code ->
+                Text("Error code: $code", style = MaterialTheme.typography.bodySmall)
+            }
+            Text(
+                "Updated ${formatConversationTimestamp(requestState.updatedAtEpochMillis)}",
+                style = MaterialTheme.typography.bodySmall,
+            )
         }
     }
 }

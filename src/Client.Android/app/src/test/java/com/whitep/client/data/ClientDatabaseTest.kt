@@ -96,6 +96,40 @@ class ClientDatabaseTest {
         }
 
     @Test
+    fun allPersistedRequestStatusesCanBeReadFromRoomInCreationOrder() =
+        runBlocking {
+            val conversationId = "conversation-statuses"
+            database.conversationDao().upsert(
+                ConversationEntity(
+                    conversationId = conversationId,
+                    title = "Request statuses",
+                    createdAtEpochMillis = 1L,
+                    updatedAtEpochMillis = 1L,
+                ),
+            )
+
+            PersistedRequestStatus.values().forEachIndexed { index, status ->
+                database.requestStateDao().upsert(
+                    RequestStateEntity(
+                        requestId = "request-status-$index",
+                        conversationId = conversationId,
+                        status = status,
+                        createdAtEpochMillis = index.toLong(),
+                        updatedAtEpochMillis = index.toLong(),
+                    ),
+                )
+            }
+
+            assertEquals(
+                PersistedRequestStatus.values().toList(),
+                database.requestStateDao()
+                    .observeForConversation(conversationId)
+                    .first()
+                    .map { it.status },
+            )
+        }
+
+    @Test
     fun deletingConversationCascadesToMessagesAndRequestStates() =
         runBlocking {
             val conversations = database.conversationDao()
