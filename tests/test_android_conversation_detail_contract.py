@@ -26,6 +26,18 @@ class AndroidConversationDetailContractTests(unittest.TestCase):
         self.assertNotIn("Socket(", source)
         self.assertNotIn("HttpClient", source)
 
+    def test_draft_state_uses_saved_state_handle_for_recreation(self):
+        view_model = (ANDROID / "ui/conversations/ConversationMessagesViewModel.kt").read_text(encoding="utf-8")
+        screen = (ANDROID / "ui/conversations/ConversationDetailScreen.kt").read_text(encoding="utf-8")
+        unit_test = (UNIT_TESTS / "ui/conversations/ConversationMessagesViewModelTest.kt").read_text(encoding="utf-8")
+        self.assertIn('getStateFlow(DRAFT_STATE_KEY, "")', view_model)
+        self.assertIn("savedStateHandle[DRAFT_STATE_KEY] = value", view_model)
+        self.assertIn("extras.createSavedStateHandle()", view_model)
+        self.assertIn("conversationMessagesViewModel.draft.collectAsState()", screen)
+        self.assertIn("conversationMessagesViewModel.updateDraft(it)", screen)
+        self.assertNotIn("var draft by remember(conversationId)", screen)
+        self.assertIn("draftIsRestoredAfterViewModelRecreation", unit_test)
+
     def test_room_tests_cover_ordered_persistence_and_blank_rejection(self):
         test_source = (UNIT_TESTS / "ui/conversations/ConversationMessagesViewModelTest.kt").read_text(encoding="utf-8")
         self.assertIn("persistsMessagesInChronologicalOrder", test_source)

@@ -31534,33 +31534,114 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0147 و T0138 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال انجام",
+      "actual_output_paths": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationMessagesViewModel.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationMessagesViewModelTest.kt",
+        "tests/test_android_conversation_detail_contract.py",
+        "step three/T0148/execution-report.md",
+        "step three/T0148/evidence/verification.md",
+        "step three/project-graph.md"
+      ],
       "expected_output_paths": [
         "src/Client.Android/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationMessagesViewModel.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationMessagesViewModelTest.kt",
+        "tests/test_android_conversation_detail_contract.py",
+        "step three/T0148/execution-report.md",
+        "step three/T0148/evidence/verification.md"
+      ],
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0148-A001 moves the unsent composer draft into SavedStateHandle-backed ViewModel state; exact-head CI is pending and the task is not yet accepted.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0148-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationMessagesViewModel.kt",
+          "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+          "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationMessagesViewModelTest.kt",
+          "tests/test_android_conversation_detail_contract.py",
+          "step three/T0148/execution-report.md",
+          "step three/T0148/evidence/verification.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
-          "affected_by_contract_changes": [],
-          "review_evidence": []
+          "state": "required",
+          "triggering_contracts": [
+            "ConversationMessagesViewModel Factory CreationExtras and SavedStateHandle-backed draft StateFlow"
+          ],
+          "affected_by_contract_changes": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationMessagesViewModelTest.kt",
+            "tests/test_android_conversation_detail_contract.py"
+          ],
+          "review_evidence": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationMessagesViewModel.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationMessagesViewModelTest.kt",
+            "tests/test_android_conversation_detail_contract.py"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0148-A001",
+          "started_at": "2026-10-29T12:06:55.010Z",
+          "ended_at": "2026-10-29T12:06:58.856Z",
+          "result": "partial",
+          "summary": "Moved the unsent composer draft from Compose remember state into the conversation-scoped ViewModel's SavedStateHandle, exposed it as StateFlow, and updated the screen to collect/update the saved draft. Added Kotlin restoration coverage and a Python source-contract check. Exact-head CI has not yet been observed; task completion is intentionally pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationMessagesViewModel.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationMessagesViewModelTest.kt",
+            "tests/test_android_conversation_detail_contract.py",
+            "step three/T0148/execution-report.md",
+            "step three/T0148/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "ConversationMessagesViewModelTest.draftIsRestoredAfterViewModelRecreation",
+              "result": "not_run",
+              "summary": "Added to Android JVM/Robolectric tests; not executed locally in this tool session."
+            },
+            {
+              "name": "tests/test_android_conversation_detail_contract.py",
+              "result": "not_run",
+              "summary": "Saved-state and screen-wiring assertions added; not executed locally in this tool session."
+            },
+            {
+              "name": "Android ktlintCheck / assembleDebug / testDebugUnitTest",
+              "result": "not_run",
+              "summary": "Awaiting exact-head GitHub Actions after publishing the implementation commit."
+            },
+            {
+              "name": "Step Three quality and graph/evidence validation",
+              "result": "not_run",
+              "summary": "Awaiting exact-head GitHub Actions after publishing the implementation commit."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "ConversationMessagesViewModel now exposes draft StateFlow and updateDraft; sendMessage(String) and the local-only storage boundary remain unchanged."
+          ],
+          "follow_up": "Inspect all exact-head quality and product CI jobs. Only mark T0148 done after saved-state coverage, Android lint/build/unit tests, graph validation and evidence-path checks pass; record verification as a separate append-only attempt."
+        }
+      ]
     },
     {
       "id": "T0149",
@@ -38717,19 +38798,31 @@
       "from": "T0147",
       "to": "T0148",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "ConversationDetailScreen renders T0147's persisted RequestStateEntity rows through RequestStateDao.observeForConversation and requestStatusCard. T0148 changes lifecycle state handling in that same screen and must preserve the existing request-status display across recreation; this is a concrete screen/interface dependency, not inferred from the edge type.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestStatusPresentation.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/RequestStateEntity.kt",
+        "step three/T0147/execution-report.md",
+        "step three/T0147/evidence/verification.md"
+      ]
     },
     {
       "from": "T0138",
       "to": "T0148",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0138 establishes host-visible-content privacy disclosures and acceptance checks. The local composer draft uses Android SavedStateHandle while messages and request states use existing Room flows; no API from T0138 is consumed. Preserve the original blocks edge as conservative sequencing only, not a technical prerequisite.",
+      "validation_status": "validated",
+      "evidence": [
+        "docs/decisions/ADR-0019-host-visible-inference-content.md",
+        "docs/decisions/ADR-0020-android-client-local-conversation-storage.md",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationMessagesViewModel.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+        "step three/T0138/execution-report.md"
+      ]
     },
     {
       "from": "T0148",
@@ -43352,9 +43445,45 @@
         "src/Client.Android/app/src/main/java/com/whitep/client/data/RequestStateEntity.kt"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "from": "T0147",
+      "to": "T0148",
+      "changed_at": "2026-10-29T12:06:58.856Z",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "old_validation_status": "unreviewed",
+      "new_validation_status": "validated",
+      "reason": "ConversationDetailScreen renders T0147's persisted RequestStateEntity rows through RequestStateDao.observeForConversation and requestStatusCard. T0148 changes lifecycle state handling in that same screen and must preserve the existing request-status display across recreation; this is a concrete screen/interface dependency, not inferred from the edge type.",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestStatusPresentation.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/RequestStateEntity.kt",
+        "step three/T0147/execution-report.md",
+        "step three/T0147/evidence/verification.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "from": "T0138",
+      "to": "T0148",
+      "changed_at": "2026-10-29T12:06:58.856Z",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "old_validation_status": "unreviewed",
+      "new_validation_status": "validated",
+      "reason": "T0138 establishes host-visible-content privacy disclosures and acceptance checks. The local composer draft uses Android SavedStateHandle while messages and request states use existing Room flows; no API from T0138 is consumed. Preserve the original blocks edge as conservative sequencing only, not a technical prerequisite.",
+      "evidence": [
+        "docs/decisions/ADR-0019-host-visible-inference-content.md",
+        "docs/decisions/ADR-0020-android-client-local-conversation-storage.md",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationMessagesViewModel.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+        "step three/T0138/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-29T11:59:00Z",
+  "updated_at": "2026-10-29T12:06:58.856Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

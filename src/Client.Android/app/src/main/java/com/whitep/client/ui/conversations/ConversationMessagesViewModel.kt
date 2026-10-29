@@ -1,11 +1,15 @@
 package com.whitep.client.ui.conversations
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.createSavedStateHandle
+import androidx.lifecycle.viewmodel.CreationExtras
 import com.whitep.client.data.MessageDao
 import com.whitep.client.data.MessageEntity
 import com.whitep.client.domain.ConversationMessageValidator
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import java.util.UUID
 
@@ -15,8 +19,14 @@ class ConversationMessagesViewModel(
     private val messageDao: MessageDao,
     private val clockMillis: () -> Long = System::currentTimeMillis,
     private val messageIdGenerator: () -> String = { UUID.randomUUID().toString() },
+    private val savedStateHandle: SavedStateHandle = SavedStateHandle(),
 ) : ViewModel() {
     val messages: Flow<List<MessageEntity>> = messageDao.observeForConversation(conversationId)
+    val draft: StateFlow<String> = savedStateHandle.getStateFlow(DRAFT_STATE_KEY, "")
+
+    fun updateDraft(value: String) {
+        savedStateHandle[DRAFT_STATE_KEY] = value
+    }
 
     suspend fun sendMessage(content: String): Boolean {
         val validation = ConversationMessageValidator.validate(content)
@@ -44,12 +54,29 @@ class ConversationMessagesViewModel(
         private val conversationId: String,
         private val messageDao: MessageDao,
     ) : ViewModelProvider.Factory {
+        override fun <T : ViewModel> create(modelClass: Class<T>): T =
+            createViewModel(modelClass, SavedStateHandle())
+
+        override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T =
+            createViewModel(modelClass, extras.createSavedStateHandle())
+
         @Suppress("UNCHECKED_CAST")
-        override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        private fun <T : ViewModel> createViewModel(
+            modelClass: Class<T>,
+            savedStateHandle: SavedStateHandle,
+        ): T {
             if (!modelClass.isAssignableFrom(ConversationMessagesViewModel::class.java)) {
                 throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
             }
-            return ConversationMessagesViewModel(conversationId, messageDao) as T
+            return ConversationMessagesViewModel(
+                conversationId = conversationId,
+                messageDao = messageDao,
+                savedStateHandle = savedStateHandle,
+            ) as T
         }
+    }
+
+    internal companion object {
+        const val DRAFT_STATE_KEY = "conversation_draft"
     }
 }

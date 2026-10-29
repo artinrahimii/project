@@ -1,5 +1,6 @@
 package com.whitep.client.ui.conversations
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.room.Room
 import com.whitep.client.data.ClientDatabase
 import com.whitep.client.data.ConversationEntity
@@ -66,6 +67,51 @@ class ConversationMessagesViewModelTest {
             assertEquals(listOf(100L, 101L), messages.map { it.createdAtEpochMillis })
             assertEquals(listOf("user", "user"), messages.map { it.authorRole })
             assertEquals(2, database.messageDao().countForConversation("conversation-1"))
+        }
+
+    @Test
+    fun draftIsRestoredAfterViewModelRecreation() =
+        runBlocking {
+            database.conversationDao().upsert(
+                ConversationEntity(
+                    conversationId = "conversation-draft",
+                    title = "Draft conversation",
+                    createdAtEpochMillis = 1L,
+                    updatedAtEpochMillis = 1L,
+                ),
+            )
+            val savedStateHandle = SavedStateHandle()
+            val firstViewModel =
+                ConversationMessagesViewModel(
+                    conversationId = "conversation-draft",
+                    messageDao = database.messageDao(),
+                    savedStateHandle = savedStateHandle,
+                )
+            firstViewModel.updateDraft("unfinished message")
+
+            assertEquals("unfinished message", firstViewModel.draft.value)
+            assertEquals(
+                "unfinished message",
+                savedStateHandle.get<String>(ConversationMessagesViewModel.DRAFT_STATE_KEY),
+            )
+
+            // Android restores SavedStateHandle values when it recreates the owner and ViewModel.
+            val restoredStateHandle =
+                SavedStateHandle(
+                    mapOf(
+                        ConversationMessagesViewModel.DRAFT_STATE_KEY to
+                            savedStateHandle.get<String>(ConversationMessagesViewModel.DRAFT_STATE_KEY),
+                    ),
+                )
+            val recreatedViewModel =
+                ConversationMessagesViewModel(
+                    conversationId = "conversation-draft",
+                    messageDao = database.messageDao(),
+                    savedStateHandle = restoredStateHandle,
+                )
+
+            assertEquals("unfinished message", recreatedViewModel.draft.value)
+            assertTrue(recreatedViewModel.messages.first().isEmpty())
         }
 
     @Test

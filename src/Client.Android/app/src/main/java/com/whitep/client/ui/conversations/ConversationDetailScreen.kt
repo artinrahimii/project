@@ -72,11 +72,9 @@ internal fun conversationDetailScreen(
             factory = messageFactory,
         )
     val messages by conversationMessagesViewModel.messages.collectAsState(initial = emptyList())
+    val draft by conversationMessagesViewModel.draft.collectAsState()
     val requestStates by requestStateDao.observeForConversation(conversationId).collectAsState(initial = emptyList())
     val scope = rememberCoroutineScope()
-    var draft by remember(conversationId) {
-        mutableStateOf("")
-    }
     var state by remember(conversationId) {
         mutableStateOf<ConversationDetailUiState>(ConversationDetailUiState.Loading)
     }
@@ -151,7 +149,7 @@ internal fun conversationDetailScreen(
 
                 OutlinedTextField(
                     value = draft,
-                    onValueChange = { draft = it },
+                    onValueChange = { conversationMessagesViewModel.updateDraft(it) },
                     modifier = Modifier.fillMaxWidth(),
                     label = { Text("Message") },
                     isError = messageValidation.error == ConversationMessageValidationError.TOO_LONG,
@@ -173,7 +171,7 @@ internal fun conversationDetailScreen(
                         val messageText = draft
                         scope.launch {
                             if (conversationMessagesViewModel.sendMessage(messageText)) {
-                                draft = ""
+                                conversationMessagesViewModel.updateDraft("")
                             }
                         }
                     },
