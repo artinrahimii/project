@@ -33441,8 +33441,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0153 و T0150 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال انجام",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "src/Client.Android/app/src/main/java/com/whitep/client/context/ConversationContextCapsule.kt",
         "src/Client.Android/app/src/main/java/com/whitep/client/data/RoomConversationContextCapsuleRepository.kt",
@@ -33477,12 +33477,12 @@
         "step three/T0154/execution-report.md",
         "step three/T0154/evidence/verification.md"
       ],
-      "notes": "خروجی‌های واقعی این تلاش در actual_output_paths ثبت شده‌اند؛ پذیرش نهایی منوط به CI است.\nT0154-A001 implements a persisted device-wide capsule size limit (512–4096 UTF-8 bytes in 256-byte steps), retains the fixed protocol ceiling, enforces the selected threshold during domain encoding/Room save, and exposes a Compose slider. Exact-head CI is pending; existing capsule decoding retains the fixed protocol ceiling.\nT0154-A001 exact-head V 3.0.562 result: Step Three quality passed; Android ktlint failed three multiline-expression formatting findings. APK/JVM stages skipped, while HostLifecycle and Windows WPF passed. A002 fixes formatting and awaits new CI.\nT0154-A002 exact-head result: main-source lint passed but test-source lint failed on chained assertion formatting at ConversationContextCapsuleViewModelTest.kt:138; APK/JVM skipped, HostLifecycle passed, WPF pending at the captured time. A003 uses a local error-message variable.",
+      "notes": "خروجی‌های واقعی این تلاش در actual_output_paths ثبت شده‌اند؛ پذیرش نهایی منوط به CI است.\nT0154-A001 implements a persisted device-wide capsule size limit (512–4096 UTF-8 bytes in 256-byte steps), retains the fixed protocol ceiling, enforces the selected threshold during domain encoding/Room save, and exposes a Compose slider. Exact-head CI is pending; existing capsule decoding retains the fixed protocol ceiling.\nT0154-A001 exact-head V 3.0.562 result: Step Three quality passed; Android ktlint failed three multiline-expression formatting findings. APK/JVM stages skipped, while HostLifecycle and Windows WPF passed. A002 fixes formatting and awaits new CI.\nT0154-A002 exact-head result: main-source lint passed but test-source lint failed on chained assertion formatting at ConversationContextCapsuleViewModelTest.kt:138; APK/JVM skipped, HostLifecycle passed, WPF pending at the captured time. A003 uses a local error-message variable.\nT0154-A003 accepted on exact V 3.0.564: Step Three quality, Android lint/APK/JVM/Protobuf, Windows WPF and HostLifecycle gates passed. Earlier lint failures remain preserved in history.",
       "execution_summary": {
         "attempt_count": 3,
         "failed_attempt_count": 2,
         "last_attempt_id": "T0154-A003",
-        "last_attempt_result": "partial",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModelTest.kt",
           "step three/T0154/execution-report.md",
@@ -33490,13 +33490,18 @@
           "step three/project-graph.md"
         ],
         "related_commits": [
-          "e878ecaa3c0805dc71ef61c29a1e6574164dad20"
+          "e878ecaa3c0805dc71ef61c29a1e6574164dad20",
+          "76245201996af722cacc95ffd77c27d9e3c2942a"
         ],
         "tests_passed": [
           "V 3.0.562 Step Three quality gate passed: https://github.com/artinrahimii/project/actions/runs/40903639160",
           "V 3.0.562 HostLifecycle and Windows WPF jobs passed: https://github.com/artinrahimii/project/actions/runs/40903639332",
           "V 3.0.563 Step Three quality passed: https://github.com/artinrahimii/project/actions/runs/40904263570",
-          "V 3.0.563 main Kotlin source lint and HostLifecycle passed: https://github.com/artinrahimii/project/actions/runs/40904263586"
+          "V 3.0.563 main Kotlin source lint and HostLifecycle passed: https://github.com/artinrahimii/project/actions/runs/40904263586",
+          "Exact V 3.0.564 Step Three quality gate passed: https://github.com/artinrahimii/project/actions/runs/40904612498",
+          "Exact V 3.0.564 Android product job passed Kotlin lint, debug APK build, Android JVM tests, Protobuf verification and APK upload: https://github.com/artinrahimii/project/actions/runs/40904612247",
+          "Exact V 3.0.564 Windows WPF build and configured checks passed: https://github.com/artinrahimii/project/actions/runs/40904612247",
+          "Exact V 3.0.564 HostLifecycle tests passed: https://github.com/artinrahimii/project/actions/runs/40904612247"
         ],
         "tests_failed": [
           "V 3.0.562 Android ktlint failed three multiline-expression formatting findings; APK/JVM stages skipped: https://github.com/artinrahimii/project/actions/runs/40903639332",
@@ -33656,9 +33661,9 @@
         {
           "attempt_id": "T0154-A003",
           "started_at": "2026-10-29T15:43:59.415Z",
-          "ended_at": null,
-          "result": "partial",
-          "summary": "Reworked the flagged test assertion to use requireNotNull in a local variable before calling contains. This is formatting-only and exact-head CI is pending.",
+          "ended_at": "2026-10-29T16:15:20.041Z",
+          "result": "succeeded",
+          "summary": "Exact-head V 3.0.564 CI passed the complete quality and product gates after the test-source formatting correction. Android lint, debug APK build, Android JVM tests, Protobuf verification, Windows WPF, HostLifecycle, graph and recorded-evidence checks passed.",
           "changed_files": [
             "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModelTest.kt",
             "step three/T0154/execution-report.md",
@@ -33666,34 +33671,38 @@
             "step three/project-graph.md"
           ],
           "related_commits": [],
-          "commit_sha": null,
+          "commit_sha": "76245201996af722cacc95ffd77c27d9e3c2942a",
           "tests": [
             {
-              "name": "Android ktlintCheck",
-              "result": "not_run",
-              "summary": "Exact-head CI pending."
+              "name": "Step Three quality gate — V 3.0.564",
+              "result": "passed",
+              "summary": "Exact-head quality completed Python tests, syntax, graph structure and recorded-output/evidence checks.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40904612498"
             },
             {
-              "name": "Android assembleDebug",
-              "result": "not_run",
-              "summary": "Awaiting lint."
+              "name": "Android ktlintCheck, assembleDebug and testDebugUnitTest — V 3.0.564",
+              "result": "passed",
+              "summary": "Android lint, debug APK build, JVM tests, generated Protobuf validation and APK upload passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40904612247"
             },
             {
-              "name": "Android testDebugUnitTest",
-              "result": "not_run",
-              "summary": "Awaiting lint/build."
+              "name": "Windows WPF build — V 3.0.564",
+              "result": "passed",
+              "summary": "Windows host build and configured safety/security checks passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40904612247"
             },
             {
-              "name": "Step Three quality gate",
-              "result": "not_run",
-              "summary": "Exact-head quality workflow pending."
+              "name": "HostLifecycle tests — V 3.0.564",
+              "result": "passed",
+              "summary": "Host lifecycle unit/integration job passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40904612247"
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect exact-head V 3.0.564 quality/product CI; do not mark T0154 done until Android lint, APK, JVM and graph/evidence gates pass."
+          "follow_up": "T0154 accepted. T0155 consumes the configured-size and v1 codec contracts; inspect exact-head quality/product checks before promoting T0155 to done."
         }
       ]
     },
@@ -33714,20 +33723,39 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0154 و T0150 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/context/ConversationContextCapsuleSummarizer.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/context/ConversationContextCapsuleSummarizerTest.kt",
+        "tests/test_android_context_capsule_summarizer_contract.py",
+        "step three/T0155/execution-report.md",
+        "step three/T0155/evidence/verification.md"
+      ],
       "expected_output_paths": [
         "src/Client.Android/Context/ + tests/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/context/ConversationContextCapsuleSummarizer.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/context/ConversationContextCapsuleSummarizerTest.kt",
+        "tests/test_android_context_capsule_summarizer_contract.py",
+        "step three/T0155/execution-report.md",
+        "step three/T0155/evidence/verification.md"
+      ],
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0155-A001 adds a replaceable suspend provider, a conservative local extractor and a schema/size validation boundary. Five Kotlin runtime tests and Python source-contract tests were added; exact-head CI is pending.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0155-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Client.Android/app/src/main/java/com/whitep/client/context/ConversationContextCapsuleSummarizer.kt",
+          "src/Client.Android/app/src/test/java/com/whitep/client/context/ConversationContextCapsuleSummarizerTest.kt",
+          "tests/test_android_context_capsule_summarizer_contract.py",
+          "step three/T0155/execution-report.md",
+          "step three/T0155/evidence/verification.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
@@ -33740,7 +33768,51 @@
           "review_evidence": []
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0155-A001",
+          "started_at": "2026-10-29T16:15:20.041Z",
+          "ended_at": "2026-10-29T16:15:20.041Z",
+          "result": "partial",
+          "summary": "Added a replaceable suspend provider contract, a local extractive implementation, and a validating boundary using the existing v1 capsule codec and configured size limit. Added Kotlin runtime tests and Python source-contract checks. Exact-head CI is pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/context/ConversationContextCapsuleSummarizer.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/context/ConversationContextCapsuleSummarizerTest.kt",
+            "tests/test_android_context_capsule_summarizer_contract.py",
+            "step three/T0155/execution-report.md",
+            "step three/T0155/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "ConversationContextCapsuleSummarizerTest",
+              "result": "not_run",
+              "summary": "Five Kotlin unit tests added; requires exact-head Android JVM job."
+            },
+            {
+              "name": "tests/test_android_context_capsule_summarizer_contract.py",
+              "result": "not_run",
+              "summary": "Three Python source-contract tests added; requires exact-head quality job."
+            },
+            {
+              "name": "Android ktlintCheck / assembleDebug / testDebugUnitTest",
+              "result": "not_run",
+              "summary": "Requires exact-head Android product workflow."
+            },
+            {
+              "name": "Step Three graph and output/evidence checks",
+              "result": "not_run",
+              "summary": "Requires exact-head quality workflow."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect exact-head quality and product workflows. Fix and record failures; mark T0155 done only after Kotlin lint, APK build/JVM tests, Python quality, graph structure and output/evidence checks pass."
+        }
+      ]
     },
     {
       "id": "T0156",
@@ -40779,19 +40851,31 @@
       "from": "T0154",
       "to": "T0155",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "The summarizer calls the configurable size validator, encodes with the selected maxSerializedBytes, and decodes candidate bytes using the v1 codec established by T0154. This is a direct schema/size contract; retain the original blocks edge.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/context/ConversationContextCapsule.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/ConversationContextCapsuleSizeLimitStore.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/RoomConversationContextCapsuleRepository.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/context/ConversationContextCapsuleTest.kt",
+        "step three/T0154/evidence/verification.md",
+        "src/Client.Android/app/src/main/java/com/whitep/client/context/ConversationContextCapsuleSummarizer.kt"
+      ]
     },
     {
       "from": "T0150",
       "to": "T0155",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0150 established the local conversation/message history flow, but the new provider accepts its own message value objects and calls no T0150 UI, send/reopen API, or DAO. Keep blocks as conservative order rather than claiming a direct code dependency.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/MessageEntity.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationWorkflowAcceptanceTest.kt",
+        "step three/T0150/execution-report.md",
+        "src/Client.Android/app/src/main/java/com/whitep/client/context/ConversationContextCapsuleSummarizer.kt"
+      ]
     },
     {
       "from": "T0155",
@@ -45532,9 +45616,45 @@
         "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-29T16:15:20.041Z",
+      "from": "T0154",
+      "to": "T0155",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "old_validation_status": "unreviewed",
+      "new_validation_status": "validated",
+      "reason": "The summarizer calls the configurable size validator, encodes with the selected maxSerializedBytes, and decodes candidate bytes using the v1 codec established by T0154. This is a direct schema/size contract; retain the original blocks edge.",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/context/ConversationContextCapsule.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/ConversationContextCapsuleSizeLimitStore.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/RoomConversationContextCapsuleRepository.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/context/ConversationContextCapsuleTest.kt",
+        "step three/T0154/evidence/verification.md",
+        "src/Client.Android/app/src/main/java/com/whitep/client/context/ConversationContextCapsuleSummarizer.kt"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-29T16:15:20.041Z",
+      "from": "T0150",
+      "to": "T0155",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "old_validation_status": "unreviewed",
+      "new_validation_status": "validated",
+      "reason": "T0150 established the local conversation/message history flow, but the new provider accepts its own message value objects and calls no T0150 UI, send/reopen API, or DAO. Keep blocks as conservative order rather than claiming a direct code dependency.",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/MessageEntity.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationWorkflowAcceptanceTest.kt",
+        "step three/T0150/execution-report.md",
+        "src/Client.Android/app/src/main/java/com/whitep/client/context/ConversationContextCapsuleSummarizer.kt"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-29T15:43:59.415Z",
+  "updated_at": "2026-10-29T16:15:20.041Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

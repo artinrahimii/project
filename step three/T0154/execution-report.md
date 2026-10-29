@@ -1,9 +1,9 @@
 # T0154 execution report
 
 - **Task:** Make the capsule size limit configurable in settings and enforce it in the domain layer.
-- **Status:** `in_progress`; implementation and tests are committed with exact-head CI pending.
+- **Status:** `done`; implementation and regression tests passed exact-head CI on V 3.0.564.
 - **Baseline:** online `main` at [V 3.0.561](https://github.com/artinrahimii/project/commit/bc14edc67014d8456ff9a4a7a845698cc767c3ad).
-- **Attempt:** `T0154-A001`.
+- **Attempts:** `T0154-A001`, `T0154-A002`, and `T0154-A003`.
 - **Scope:** Android device-local setting and domain/Room-save enforcement. The immutable protocol ceiling remains 4,096 serialized UTF-8 bytes. This task does not change the capsule wire schema, add host transport, or claim at-rest encryption.
 
 ## Dependency review
@@ -37,3 +37,11 @@ No local Android build or test command was run in this connector execution. The 
 - Quality [run 40904263570](https://github.com/artinrahimii/project/actions/runs/40904263570) passed the Python tests, syntax, graph structure and recorded-output/evidence checks.
 - Product [run 40904263586](https://github.com/artinrahimii/project/actions/runs/40904263586): the main Kotlin source lint passed, then test-source lint failed at `ConversationContextCapsuleViewModelTest.kt:138` with “Expected newline before '.'” in the `.errorMessage!!.contains(...)` assertion. APK and Android JVM tests were skipped. HostLifecycle passed; Windows WPF was still in progress at last inspection.
 - **T0154-A002 is recorded as failed for test-source lint.** **T0154-A003** binds the error message to a local variable before asserting, avoiding the flagged chain formatting. The behavior is unchanged; exact-head CI is pending.
+
+
+## Final exact-head CI result — V 3.0.564
+
+- Exact tested main commit: `76245201996af722cacc95ffd77c27d9e3c2942a`.
+- Step Three quality run [40904612498](https://github.com/artinrahimii/project/actions/runs/40904612498) passed Python tests, syntax, graph structure and recorded-output/evidence checks.
+- Product run [40904612247](https://github.com/artinrahimii/project/actions/runs/40904612247) passed Android Kotlin lint, debug APK build, Android JVM tests, generated Protobuf validation and APK artifact upload; Windows WPF and HostLifecycle jobs also passed.
+- A003 is accepted as succeeded. Earlier A001 and A002 lint failures remain preserved in the graph history.
