@@ -31556,11 +31556,11 @@
         "step three/T0148/execution-report.md",
         "step three/T0148/evidence/verification.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0148-A001 moves the unsent composer draft into SavedStateHandle-backed ViewModel state; exact-head CI is pending and the task is not yet accepted.\n\nT0148-A001 exact-head CI outcome (V 3.0.537): Step Three quality succeeded, and Windows WPF/HostLifecycle product jobs passed. Android ktlint failed five formatting rules around the two Factory.create overloads in ConversationMessagesViewModel.kt (lines 57, 60), so Android APK build and JVM tests did not run. T0148-A002 reformats those signatures/delegate calls; exact-head CI is pending.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0148-A001 moves the unsent composer draft into SavedStateHandle-backed ViewModel state; exact-head CI is pending and the task is not yet accepted.\n\nT0148-A001 exact-head CI outcome (V 3.0.537): Step Three quality succeeded, and Windows WPF/HostLifecycle product jobs passed. Android ktlint failed five formatting rules around the two Factory.create overloads in ConversationMessagesViewModel.kt (lines 57, 60), so Android APK build and JVM tests did not run. T0148-A002 reformats those signatures/delegate calls; exact-head CI is pending.\n\nT0148-A002 exact-head CI outcome (V 3.0.538): Step Three quality succeeded. Android ktlint failed two formatting rules in ConversationMessagesViewModel.kt:58:13 and :58:34, because the single-parameter create(modelClass) signature was unnecessarily split over lines; APK build and Android JVM tests were skipped. HostLifecycle passed; Windows WPF was in progress at first observation. T0148-A003 moves only that signature to one line while retaining the multiline body expression; exact-head CI pending.",
       "execution_summary": {
-        "attempt_count": 2,
-        "failed_attempt_count": 1,
-        "last_attempt_id": "T0148-A002",
+        "attempt_count": 3,
+        "failed_attempt_count": 2,
+        "last_attempt_id": "T0148-A003",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationMessagesViewModel.kt",
@@ -31572,13 +31572,16 @@
           "step three/project-graph.md"
         ],
         "related_commits": [
-          "dc1f49e2f1e083b1fef50258b64c49e150a53dd3"
+          "dc1f49e2f1e083b1fef50258b64c49e150a53dd3",
+          "5a017e5e85e89df763d8bb2be37a25ceea77587f"
         ],
         "tests_passed": [
-          "V 3.0.537 Step Three quality workflow 40870690034 completed successfully."
+          "V 3.0.537 Step Three quality workflow 40870690034 completed successfully.",
+          "V 3.0.538 Step Three quality workflow 40872063933 passed."
         ],
         "tests_failed": [
-          "V 3.0.537 product workflow 40870690119: Android ktlint failed in ConversationMessagesViewModel.kt lines 57 and 60; APK build and Android JVM tests were skipped."
+          "V 3.0.537 product workflow 40870690119: Android ktlint failed in ConversationMessagesViewModel.kt lines 57 and 60; APK build and Android JVM tests were skipped.",
+          "V 3.0.537 product workflow 40870690119: Android ktlint failed five factory-formatting findings; V 3.0.538 product workflow 40872063919: two remaining single-parameter factory signature whitespace findings at line 58, APK build and Android JVM tests skipped."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -31654,9 +31657,48 @@
         {
           "attempt_id": "T0148-A002",
           "started_at": "2026-10-29T12:11:00Z",
+          "ended_at": "2026-10-29T12:18:31Z",
+          "result": "failed",
+          "summary": "V 3.0.538 corrected the multiline Factory.create signatures; ktlint then reported two remaining style findings only in the first, single-parameter overload: line 58:13 and line 58:34 said no whitespace is expected between the opening parenthesis and first parameter / the last parameter and closing parenthesis. APK build and Android JVM tests were skipped. Quality gate passed, and HostLifecycle passed; the Windows job was still running when recorded.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationMessagesViewModel.kt",
+            "step three/T0148/execution-report.md",
+            "step three/T0148/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": "5a017e5e85e89df763d8bb2be37a25ceea77587f",
+          "tests": [
+            {
+              "command": "Step Three quality gate run 40872063933",
+              "result": "passed",
+              "summary": "Quality gate passed on V 3.0.538.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40872063933"
+            },
+            {
+              "command": "Android ktlint in product run 40872063919",
+              "result": "failed",
+              "summary": "Two formatting findings in ConversationMessagesViewModel.kt:58:13 and :58:34; APK assembly and Android JVM tests were skipped.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40872063919"
+            },
+            {
+              "command": "HostLifecycle product job",
+              "result": "passed",
+              "summary": "HostLifecycle unit/integration tests passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40872063919"
+            }
+          ],
+          "failure_details": "Product run 40872063919 Android job 123441355286 failed :app:ktlintMainSourceSetCheck with exactly two findings: ConversationMessagesViewModel.kt:58:13 'No whitespace expected between opening parenthesis and first parameter name', and :58:34 'No whitespace expected between last parameter and closing parenthesis'. The first create(modelClass) signature must be single-line while its multiline body expression begins on the following line. APK build and JVM tests were skipped. Quality run 40872063933 passed; HostLifecycle passed; Windows WPF was still in progress during the initial result read.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Keep the single-parameter Factory.create signature on one line, with its multi-line call body following; rerun exact-head product and quality gates."
+        },
+        {
+          "attempt_id": "T0148-A003",
+          "started_at": "2026-10-29T12:20:00Z",
           "ended_at": null,
           "result": "partial",
-          "summary": "Reformatted both SavedStateHandle-aware ViewModelProvider.Factory.create overloads and their delegation to satisfy the recorded ktlint findings. Exact-head CI pending.",
+          "summary": "Reformatted the one-parameter ViewModelProvider.Factory.create signature onto one line, keeping its multi-line body expression below it. Exact-head CI is pending.",
           "changed_files": [
             "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationMessagesViewModel.kt",
             "step three/T0148/execution-report.md",
@@ -31668,29 +31710,29 @@
             {
               "command": "Android ktlintCheck",
               "result": "not_run",
-              "summary": "Pending exact-head product workflow for V 3.0.538."
+              "summary": "Pending exact-head product workflow for V 3.0.539."
             },
             {
               "command": "Android assembleDebug",
               "result": "not_run",
-              "summary": "Pending exact-head product workflow for V 3.0.538."
+              "summary": "Pending exact-head product workflow for V 3.0.539."
             },
             {
               "command": "Android testDebugUnitTest",
               "result": "not_run",
-              "summary": "Pending exact-head product workflow for V 3.0.538."
+              "summary": "Pending exact-head product workflow for V 3.0.539."
             },
             {
               "command": "Step Three graph/evidence guard",
               "result": "not_run",
-              "summary": "Pending exact-head quality workflow for V 3.0.538."
+              "summary": "Pending exact-head quality workflow for V 3.0.539."
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect exact-head V 3.0.538 quality and product workflow results. Correct any new failures and keep T0148 in_progress until Android lint/build/Robolectric saved-state test and graph guard pass."
+          "follow_up": "Inspect the exact-head V 3.0.539 quality and product outcomes. Do not close T0148 until ktlint, APK build, saved-state unit test, full Android unit suite, and graph/evidence guards pass."
         }
       ]
     },
@@ -43534,7 +43576,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-29T12:11:00Z",
+  "updated_at": "2026-10-29T12:20:00Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

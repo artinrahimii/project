@@ -2,29 +2,29 @@
 
 - **Task:** Restore conversation UI state after rotation and process recreation using ViewModel and saved state.
 - **Baseline:** [`V 3.0.536`](https://github.com/artinrahimii/project/commit/824d36186bb77e9ab27152c916462344d05456dc).
-- **Initial implementation:** [`V 3.0.537`](https://github.com/artinrahimii/project/commit/dc1f49e2f1e083b1fef50258b64c49e150a53dd3).
-- **Formatting correction:** `V 3.0.538`; exact commit SHA and CI results will be recorded after workflows finish.
-- **Status:** `in_progress`; Android product acceptance remains pending because V 3.0.537 failed ktlint before APK assembly and JVM tests.
+- **Saved-state implementation:** [`V 3.0.537`](https://github.com/artinrahimii/project/commit/dc1f49e2f1e083b1fef50258b64c49e150a53dd3).
+- **First formatting correction:** [`V 3.0.538`](https://github.com/artinrahimii/project/commit/5a017e5e85e89df763d8bb2be37a25ceea77587f).
+- **Remaining formatting correction:** `V 3.0.539`; exact SHA and results will be recorded after CI.
+- **Status:** `in_progress`; acceptance is pending Android product CI.
 
 ## Dependency review
 
-- **T0147 → T0148:** validated as `contract_or_interface_dependency`: the restoration change is made in the conversation detail screen that consumes the Room-backed request-status rows introduced by T0147; those status cards/flows must remain intact.
-- **T0138 → T0148:** validated as `sequencing_only`: T0138 supplies the host-visibility/privacy disclosure but no API consumed by the local SavedStateHandle state; the edge remains `blocks` for conservative ordering.
-- Other edges, including T0148 → T0149, remain unchanged.
+- **T0147 → T0148:** validated as `contract_or_interface_dependency` because the lifecycle change touches the conversation-detail screen that also renders T0147's Room-backed request-status cards.
+- **T0138 → T0148:** validated as `sequencing_only`; the host-visibility/privacy disclosure is not an API consumed by SavedStateHandle. Both original `blocks` edges remain.
 
 ## Implementation
 
-- Replaced Compose's non-restorable `remember(conversationId)` draft with a ViewModel-owned `StateFlow` backed by `SavedStateHandle`.
-- Added `ViewModelProvider.Factory.create(modelClass, extras)` and used `extras.createSavedStateHandle()`, so the navigation/activity saved-state owner supplies restoration values.
-- Kept message validation, Room persistence, request-status observation and `sendMessage(String)` unchanged.
-- Added a Robolectric/JVM regression test that recreates the ViewModel with restored saved-state values and verifies that the unfinished draft reappears without being stored as a message. Python source-contract coverage checks the factory and UI wiring.
+- Replaced the conversation editor's non-restorable Compose `remember` draft with a ViewModel `StateFlow` backed by Android `SavedStateHandle`.
+- Used `CreationExtras.createSavedStateHandle()` in the ViewModel factory so the Navigation/activity owner can restore saved values.
+- Kept message validation, existing Room message persistence, request-status display and the `sendMessage(String)` contract unchanged.
+- Added `draftIsRestoredAfterViewModelRecreation` to Robolectric/JVM tests and source-contract coverage for saved-state factory/UI wiring.
 
-## Verification and correction
+## Verification and corrections
 
-- **V 3.0.537 quality** [run 40870690034](https://github.com/artinrahimii/project/actions/runs/40870690034) passed.
-- **V 3.0.537 product** [run 40870690119](https://github.com/artinrahimii/project/actions/runs/40870690119): Windows WPF and HostLifecycle jobs passed, but Android ktlint failed five style findings in `ConversationMessagesViewModel.kt` lines 57 and 60. APK assembly and Android JVM tests were skipped.
-- **V 3.0.538** reformats the two Factory.create signatures and delegation expressions. Its Android lint/build/unit test and Step Three quality results are pending.
+- **V 3.0.537 quality** [40870690034](https://github.com/artinrahimii/project/actions/runs/40870690034) passed. Product [40870690119](https://github.com/artinrahimii/project/actions/runs/40870690119) passed Windows WPF and HostLifecycle, but Android ktlint found five multiline factory-formatting rules in `ConversationMessagesViewModel.kt`; APK and JVM tests were skipped.
+- **V 3.0.538 quality** [40872063933](https://github.com/artinrahimii/project/actions/runs/40872063933) passed. Product [40872063919](https://github.com/artinrahimii/project/actions/runs/40872063919) reduced the findings to two whitespace rules at `ConversationMessagesViewModel.kt:58`; APK and JVM tests were still skipped. HostLifecycle passed; Windows WPF was in progress at the first status read.
+- **V 3.0.539** keeps the one-parameter `create(modelClass)` signature on one line and places its multi-line delegate body below it. Exact-head product/quality outcomes are pending.
 
 ## Acceptance boundary
 
-SavedStateHandle supports Android-managed state restoration across configuration/process recreation when the saved state is available. It is not a replacement for T0149's durable message/request-state persistence, and this task does not claim network delivery or live request transitions.
+SavedStateHandle supports Android-managed draft restoration when saved state is available. This is distinct from durable messages/request-state persistence on normal app reopen (T0149 scope); no network delivery or live request transitions are claimed.

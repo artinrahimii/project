@@ -54,9 +54,7 @@ class ConversationMessagesViewModel(
         private val conversationId: String,
         private val messageDao: MessageDao,
     ) : ViewModelProvider.Factory {
-        override fun <T : ViewModel> create(
-            modelClass: Class<T>,
-        ): T =
+        override fun <T : ViewModel> create(modelClass: Class<T>): T =
             createViewModel(
                 modelClass = modelClass,
                 savedStateHandle = SavedStateHandle(),
