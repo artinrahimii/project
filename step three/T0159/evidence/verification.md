@@ -10,3 +10,11 @@
 - Extra ViewModel assertions prove edits append provenance, deletion cascades history rows, and unresolved conflicting suggestions cannot append a row before explicit decisions and a successful Save.
 - Python source-contract coverage checks both new runtime test cases remain present.
 - Exact-head V 3.0.591 CI: pending; no local Gradle result is claimed.
+
+
+## Exact-head V 3.0.591 verification
+
+- Step Three quality gate passed all 257 Python tests plus graph/evidence validation, [workflow 40954025969](https://github.com/artinrahimii/project/actions/runs/40954025969).
+- Android KtLint reported one style error, `Needless blank line(s)`, at `ConversationContextCapsulePersistenceTest.kt:249`. APK/JVM/Protobuf steps were skipped, [workflow 40954025988](https://github.com/artinrahimii/project/actions/runs/40954025988).
+- Windows WPF build/startup/host policy/security checks and HostLifecycle unit/integration tests passed, [workflow 40954025988](https://github.com/artinrahimii/project/actions/runs/40954025988).
+- A002 removes that extra blank line only. V 3.0.592 validation is pending.

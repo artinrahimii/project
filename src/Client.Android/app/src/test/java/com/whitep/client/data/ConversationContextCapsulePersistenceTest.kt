@@ -246,7 +246,6 @@ class ConversationContextCapsulePersistenceTest {
             )
         }
 
-
     @Test
     fun acceptsExactByteCeilingAndRejectsNextByteWithoutReplacingSavedCapsule() =
         runBlocking {

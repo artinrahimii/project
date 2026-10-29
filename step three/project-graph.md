@@ -35417,11 +35417,11 @@
         "step three/T0159/execution-report.md",
         "step three/T0159/evidence/verification.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0159-A001 (2026-10-29T20:59:40Z): Added exact 4096/4097-byte boundary coverage, invalid stored JSON/UTF-8 recovery coverage, and stronger ViewModel provenance/cascade/conflict assertions. Updated the Python source-contract test. Exact-head V 3.0.591 CI pending.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0159-A001 (2026-10-29T20:59:40Z): Added exact 4096/4097-byte boundary coverage, invalid stored JSON/UTF-8 recovery coverage, and stronger ViewModel provenance/cascade/conflict assertions. Updated the Python source-contract test. Exact-head V 3.0.591 CI pending.\nT0159-A002 (2026-10-29T21:02:43Z): Removed the single extra blank line flagged by exact-head V 3.0.591 KtLint. A001 quality gate passed, but Android APK/JVM/Protobuf did not run because of lint; Windows WPF and HostLifecycle passed. Exact-head V 3.0.592 CI pending.",
       "execution_summary": {
-        "attempt_count": 1,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "T0159-A001",
+        "attempt_count": 2,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "T0159-A002",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Client.Android/app/src/test/java/com/whitep/client/data/ConversationContextCapsulePersistenceTest.kt",
@@ -35431,9 +35431,37 @@
           "step three/T0159/evidence/verification.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
-        "tests_failed": [],
+        "related_commits": [
+          "107c3527c7e991940c552da910530ea1de16dd61"
+        ],
+        "tests_passed": [
+          {
+            "name": "Step Three quality gate — V 3.0.591",
+            "result": "passed",
+            "summary": "257 Python tests and graph/evidence validation passed.",
+            "url": "https://github.com/artinrahimii/project/actions/runs/40954025969"
+          },
+          {
+            "name": "Windows WPF host — V 3.0.591",
+            "result": "passed",
+            "summary": "Windows WPF formatting/build/startup/policy/security checks passed.",
+            "url": "https://github.com/artinrahimii/project/actions/runs/40954025988"
+          },
+          {
+            "name": "HostLifecycle — V 3.0.591",
+            "result": "passed",
+            "summary": "HostLifecycle tests passed.",
+            "url": "https://github.com/artinrahimii/project/actions/runs/40954025988"
+          }
+        ],
+        "tests_failed": [
+          {
+            "name": "Android KtLint — V 3.0.591",
+            "result": "failed",
+            "summary": "One needless blank line; APK/JVM/Protobuf steps skipped.",
+            "url": "https://github.com/artinrahimii/project/actions/runs/40954025988"
+          }
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -35461,9 +35489,9 @@
         {
           "attempt_id": "T0159-A001",
           "started_at": "2026-10-29T20:59:40Z",
-          "ended_at": "2026-10-29T20:59:40Z",
-          "result": "partial",
-          "summary": "Added exact size-ceiling/over-limit tests, malformed stored JSON and invalid UTF-8 detection/recovery tests, plus ViewModel provenance/cascade/conflict-gate assertions. The Python source-contract test requires both new JVM test names. Exact-head CI is pending.",
+          "ended_at": "2026-10-29T21:02:06Z",
+          "result": "failed",
+          "summary": "Added new Room size-boundary and corrupt-storage acceptance tests plus ViewModel provenance and conflict assertions. Step Three quality passed, but Android KtLint failed on one extra blank line before the first newly added test; APK/JVM/Protobuf were skipped.",
           "changed_files": [
             "src/Client.Android/app/src/test/java/com/whitep/client/data/ConversationContextCapsulePersistenceTest.kt",
             "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModelTest.kt",
@@ -35472,20 +35500,65 @@
             "step three/T0159/evidence/verification.md",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "107c3527c7e991940c552da910530ea1de16dd61",
           "tests": [
             {
               "name": "Step Three quality gate — V 3.0.591",
+              "result": "passed",
+              "summary": "257 Python tests and graph/evidence validation passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40954025969"
+            },
+            {
+              "name": "Android Kotlin lint — V 3.0.591",
+              "result": "failed",
+              "summary": "Needless blank line(s) at ConversationContextCapsulePersistenceTest.kt:249; APK/JVM/Protobuf steps were skipped.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40954025988"
+            },
+            {
+              "name": "Windows WPF host — V 3.0.591",
+              "result": "passed",
+              "summary": "Windows WPF formatting/build/startup/policy/security checks passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40954025988"
+            },
+            {
+              "name": "HostLifecycle unit/integration — V 3.0.591",
+              "result": "passed",
+              "summary": "HostLifecycle unit/integration tests passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40954025988"
+            }
+          ],
+          "failure_details": "Kotlin lint reported `Needless blank line(s)` at ConversationContextCapsulePersistenceTest.kt line 249. Android APK, JVM tests and generated Protobuf verification were skipped. Step Three quality, Windows WPF and HostLifecycle passed.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "A002 removes the extra blank line and re-runs the exact Android product gate."
+        },
+        {
+          "attempt_id": "T0159-A002",
+          "started_at": "2026-10-29T21:02:43Z",
+          "ended_at": "2026-10-29T21:02:43Z",
+          "result": "partial",
+          "summary": "Removed the extra blank line identified by V 3.0.591 KtLint; updated task report/evidence and recorded the failing attempt without claiming the JVM tests ran. Exact-head V 3.0.592 CI is pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/test/java/com/whitep/client/data/ConversationContextCapsulePersistenceTest.kt",
+            "step three/T0159/execution-report.md",
+            "step three/T0159/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Step Three quality gate — V 3.0.592",
               "result": "not_run",
               "summary": "Runs after commit."
             },
             {
-              "name": "Android KtLint/APK/JVM/Protobuf/migration — V 3.0.591",
+              "name": "Android KtLint/APK/JVM/Protobuf/migration — V 3.0.592",
               "result": "not_run",
               "summary": "Runs after commit."
             },
             {
-              "name": "Windows WPF and HostLifecycle — V 3.0.591",
+              "name": "Windows WPF and HostLifecycle — V 3.0.592",
               "result": "not_run",
               "summary": "Runs after commit."
             }
@@ -35494,7 +35567,7 @@
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect exact-head V 3.0.591 CI, fix any failures, and do not mark T0159 done until all required acceptance gates pass."
+          "follow_up": "Inspect exact-head V 3.0.592 CI; fix any lint/compile/test failures before completing T0159."
         }
       ]
     },
@@ -47300,7 +47373,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-29T20:59:40Z",
+  "updated_at": "2026-10-29T21:02:43Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",
