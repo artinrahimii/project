@@ -30,3 +30,12 @@
 - Step Three quality [run 40910752479](https://github.com/artinrahimii/project/actions/runs/40910752479) passed.
 - Android Kotlin lint and debug APK build passed, but `testDebugUnitTest` failed 3 of 51 tests. The failures were in the new summarizer tests while using the Android JSON codec; the test class lacked the Robolectric runner configured by existing capsule tests. Protobuf verification and artifact upload were skipped: [product run 40910752935](https://github.com/artinrahimii/project/actions/runs/40910752935).
 - Windows WPF and HostLifecycle jobs passed in run 40910752935. A004 adds `RobolectricTestRunner` and SDK 35 to make codec testing use the same runtime arrangement as the established capsule tests.
+
+
+## Final exact-head acceptance — T0155-A004
+
+- Exact tested main commit: `8dd168bf16514da4e710be227afd2237f2a65594` (V 3.0.568).
+- Step Three quality [run 40911585770](https://github.com/artinrahimii/project/actions/runs/40911585770) passed Python tests, syntax, graph structure and recorded-output/evidence validation.
+- Product [run 40911585732](https://github.com/artinrahimii/project/actions/runs/40911585732) passed Android Kotlin lint, debug APK build, all 51 Android JVM tests (including five summarizer tests), generated Protobuf validation and APK upload. Windows WPF and HostLifecycle jobs passed as well.
+- The Robolectric test-runner correction fixed the three runtime test failures from A003. T0155 is accepted; earlier failed attempts are retained in graph history and were not reclassified.
+- The default implementation is a conservative extractive provider; no external model or network-based summarization is claimed.

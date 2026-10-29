@@ -33723,8 +33723,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0154 و T0150 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "src/Client.Android/app/src/main/java/com/whitep/client/context/ConversationContextCapsuleSummarizer.kt",
         "src/Client.Android/app/src/test/java/com/whitep/client/context/ConversationContextCapsuleSummarizerTest.kt",
@@ -33742,12 +33742,12 @@
         "step three/T0155/execution-report.md",
         "step three/T0155/evidence/verification.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0155-A001 adds a replaceable suspend provider, a conservative local extractor and a schema/size validation boundary. Five Kotlin runtime tests and Python source-contract tests were added; exact-head CI is pending.\nT0155-A001 exact-head result: Step Three quality passed; Android Kotlin lint failed seven formatting findings and skipped APK/JVM; HostLifecycle passed, Windows WPF was still running at record time. A002 corrects the source formatting.\nT0155-A002 exact-head CI: quality and HostLifecycle passed; Android ktlint failed four chain formatting findings in the field-value expression and skipped APK/JVM. A003 splits normalization into independent statements; CI pending.\nT0155-A003 exact-head result: Step Three quality, Android lint, APK build, Windows WPF and HostLifecycle passed. Android JVM tests completed 51 tests with 3 failures caused during codec use in a test class lacking the established Robolectric runner. A004 configures Robolectric at SDK 35; acceptance pending.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0155-A001 adds a replaceable suspend provider, a conservative local extractor and a schema/size validation boundary. Five Kotlin runtime tests and Python source-contract tests were added; exact-head CI is pending.\nT0155-A001 exact-head result: Step Three quality passed; Android Kotlin lint failed seven formatting findings and skipped APK/JVM; HostLifecycle passed, Windows WPF was still running at record time. A002 corrects the source formatting.\nT0155-A002 exact-head CI: quality and HostLifecycle passed; Android ktlint failed four chain formatting findings in the field-value expression and skipped APK/JVM. A003 splits normalization into independent statements; CI pending.\nT0155-A003 exact-head result: Step Three quality, Android lint, APK build, Windows WPF and HostLifecycle passed. Android JVM tests completed 51 tests with 3 failures caused during codec use in a test class lacking the established Robolectric runner. A004 configures Robolectric at SDK 35; acceptance pending.\nT0155-A004 accepted from exact V 3.0.568 CI: quality, Kotlin lint, APK build, 51 Android JVM tests, generated Protobuf verification, APK upload, Windows WPF and HostLifecycle all passed. Prior A001–A003 failures remain in the append-only history.",
       "execution_summary": {
         "attempt_count": 4,
         "failed_attempt_count": 3,
         "last_attempt_id": "T0155-A004",
-        "last_attempt_result": "partial",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Client.Android/app/src/test/java/com/whitep/client/context/ConversationContextCapsuleSummarizerTest.kt",
           "step three/T0155/execution-report.md",
@@ -33757,7 +33757,8 @@
         "related_commits": [
           "0f24fc97ba11612a96ff1b8b44692a023d95e061",
           "a8995bae08aaea970ea9d035e6aa5a4b734b3659",
-          "7e882cd21ba470daebec8ee63d389e5429c625de"
+          "7e882cd21ba470daebec8ee63d389e5429c625de",
+          "8dd168bf16514da4e710be227afd2237f2a65594"
         ],
         "tests_passed": [
           "V 3.0.565 Step Three quality passed (run 40909822726): https://github.com/artinrahimii/project/actions/runs/40909822726",
@@ -33767,7 +33768,11 @@
           "V 3.0.567 Step Three quality passed (run 40910752479): https://github.com/artinrahimii/project/actions/runs/40910752479",
           "V 3.0.567 Android Kotlin lint passed and debug APK built (run 40910752935): https://github.com/artinrahimii/project/actions/runs/40910752935",
           "V 3.0.567 Windows WPF build passed (run 40910752935): https://github.com/artinrahimii/project/actions/runs/40910752935",
-          "V 3.0.567 HostLifecycle passed (run 40910752935): https://github.com/artinrahimii/project/actions/runs/40910752935"
+          "V 3.0.567 HostLifecycle passed (run 40910752935): https://github.com/artinrahimii/project/actions/runs/40910752935",
+          "V 3.0.568 Step Three quality passed (run 40911585770): https://github.com/artinrahimii/project/actions/runs/40911585770",
+          "V 3.0.568 Android lint, debug APK, all 51 JVM tests, Protobuf validation and APK upload passed (run 40911585732): https://github.com/artinrahimii/project/actions/runs/40911585732",
+          "V 3.0.568 Windows WPF build passed (run 40911585732): https://github.com/artinrahimii/project/actions/runs/40911585732",
+          "V 3.0.568 HostLifecycle tests passed (run 40911585732): https://github.com/artinrahimii/project/actions/runs/40911585732"
         ],
         "tests_failed": [
           "V 3.0.565 Android ktlintMainSourceSetCheck failed with seven source-format findings; APK/JVM stages skipped (run 40909822388): https://github.com/artinrahimii/project/actions/runs/40909822388",
@@ -33948,38 +33953,65 @@
         {
           "attempt_id": "T0155-A004",
           "started_at": "2026-10-29T16:25:59.233Z",
-          "ended_at": "2026-10-29T16:25:59.233Z",
-          "result": "partial",
-          "summary": "Added RobolectricTestRunner and SDK 35 to the summarizer unit-test class, matching the established capsule codec test setup so Android JSON codec calls execute under a runtime implementation. Exact-head CI is pending.",
+          "ended_at": "2026-10-29T16:29:35.709Z",
+          "result": "succeeded",
+          "summary": "Exact-head V 3.0.568 CI passed the quality and complete product gates after enabling the established Robolectric Android JSON runtime in the summarizer test class. Kotlin lint, debug APK, all 51 Android JVM tests, Protobuf verification, APK upload, Windows WPF and HostLifecycle passed.",
           "changed_files": [
             "src/Client.Android/app/src/test/java/com/whitep/client/context/ConversationContextCapsuleSummarizerTest.kt",
             "step three/T0155/execution-report.md",
             "step three/T0155/evidence/verification.md",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "8dd168bf16514da4e710be227afd2237f2a65594",
           "tests": [
             {
-              "name": "ConversationContextCapsuleSummarizerTest",
-              "result": "not_run",
-              "summary": "Retry with RobolectricTestRunner @Config(sdk=[35]) pending exact-head Android JVM job."
+              "name": "Step Three quality gate — V 3.0.568",
+              "result": "passed",
+              "summary": "Python tests, syntax, graph structure, and recorded-output/evidence checks passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40911585770"
             },
             {
-              "name": "Android ktlintCheck / assembleDebug / testDebugUnitTest",
-              "result": "not_run",
-              "summary": "Exact-head product workflow pending."
+              "name": "Android ktlintCheck — V 3.0.568",
+              "result": "passed",
+              "summary": "Kotlin source and test formatting/lint passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40911585732"
             },
             {
-              "name": "Step Three quality gate",
-              "result": "not_run",
-              "summary": "Exact-head quality workflow pending."
+              "name": "Android assembleDebug — V 3.0.568",
+              "result": "passed",
+              "summary": "Debug APK build passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40911585732"
+            },
+            {
+              "name": "Android testDebugUnitTest — V 3.0.568",
+              "result": "passed",
+              "summary": "All 51 Android JVM tests passed, including all five new context summarizer tests.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40911585732"
+            },
+            {
+              "name": "Generated Protobuf verification and APK upload — V 3.0.568",
+              "result": "passed",
+              "summary": "Generated Java/Kotlin Protobuf validation and APK artifact upload passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40911585732"
+            },
+            {
+              "name": "Windows WPF build — V 3.0.568",
+              "result": "passed",
+              "summary": "Windows host build and configured process restrictions passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40911585732"
+            },
+            {
+              "name": "HostLifecycle tests — V 3.0.568",
+              "result": "passed",
+              "summary": "Host lifecycle unit/integration tests passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40911585732"
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect exact-head V 3.0.568 quality and product results. Mark T0155 done only when the five new tests and all existing Android product tests pass."
+          "follow_up": "T0155 is accepted. Before starting T0156, review the T0155 → T0156 edge and the actual provider/consumer contract; preserve the current conservative order if the edge is still unreviewed."
         }
       ]
     },
@@ -45823,7 +45855,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-29T16:25:59.233Z",
+  "updated_at": "2026-10-29T16:29:35.709Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",
