@@ -121,7 +121,11 @@ class ClientDatabaseTest {
             }
 
             val persistedStatuses =
-                database.requestStateDao().observeForConversation(conversationId).first().map { it.status }
+                database
+                    .requestStateDao()
+                    .observeForConversation(conversationId)
+                    .first()
+                    .map { it.status }
             assertEquals(PersistedRequestStatus.values().toList(), persistedStatuses)
         }
 
