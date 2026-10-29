@@ -1,9 +1,13 @@
 # T0147 evidence ledger
 
-- Implementation: [`V 3.0.532`](https://github.com/artinrahimii/project/commit/90f542e2500e1af5a99d8f0f11336d3a29f05a1a); source-contract correction: [`V 3.0.533`](https://github.com/artinrahimii/project/commit/95e1af212d790aba0e9f920b30090b53d402323f).
-- V 3.0.532 quality [40868131396](https://github.com/artinrahimii/project/actions/runs/40868131396) failed seven Python subtests due to an incorrect assumption about Kotlin enum syntax; its Android job failed ktlint on the Room query chain.
-- V 3.0.533 quality [40868507192](https://github.com/artinrahimii/project/actions/runs/40868507192) passed 228 Python tests, syntax and graph guards with zero errors and one preserved T0001 metadata warning.
-- V 3.0.533 Android job in [40868507175](https://github.com/artinrahimii/project/actions/runs/40868507175) failed ktlint with four line-chain findings at ClientDatabaseTest.kt:124; APK and Android JVM tests did not run. HostLifecycle passed; Windows was still in progress when checked.
-- V 3.0.534 reformats the Room query chain; its exact-head CI is pending.
-- Both incoming edges are validated sequencing-only, with rationale/evidence captured in the graph. No `type=blocks` edge was deleted.
-- **Not claimed:** live request transitions, host delivery, response generation or independent-network P2P connectivity.
+- **Accepted code revision:** [`V 3.0.534`](https://github.com/artinrahimii/project/commit/a10aebc13e8a5caf7ce27552fd3c970f49c6c820).
+- **Step Three quality:** [run 40868883509](https://github.com/artinrahimii/project/actions/runs/40868883509) passed 228 Python tests, syntax, and both graph/evidence guards (229 tasks / 417 edges; 0 errors; one existing T0001 free-text metadata warning preserved).
+- **Product workflow:** [run 40868883480](https://github.com/artinrahimii/project/actions/runs/40868883480) passed all three jobs: Android client APK; Windows WPF host; HostLifecycle tests.
+- Android: `ktlintCheck`, `assembleDebug`, `testDebugUnitTest`, generated Protobuf Java/Kotlin verification and APK upload passed.
+- Windows: formatting, Release build, generated Protobuf C# verification, WPF startup/security checks and artifact upload passed.
+- HostLifecycle unit/integration tests passed.
+- Artifact sizes: `whitep-android-debug-apk` **11,874,698 bytes**; `whitep-windows-host` **14,254,957 bytes**.
+- Storage/UI contract: the screen renders only Room-backed `RequestStateEntity` rows and provides an empty state; it neither invents requests nor claims delivery.
+- Dependency review: T0146 → T0147 and T0138 → T0147 were validated as sequencing-only; original `blocks` edges retained.
+- Failed attempts A001 and A002 remain in the append-only graph history; A003 is the successful attempt.
+- **Not claimed:** lifecycle-transition engine, host delivery, response generation or independent-network P2P success.

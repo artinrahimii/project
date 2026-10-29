@@ -31269,8 +31269,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0146 و T0138 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "تکمیل‌شده",
       "actual_output_paths": [
         "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestStatusPresentation.kt",
         "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
@@ -31293,12 +31293,12 @@
         "step three/T0138/execution-report.md",
         "step three/T0146/execution-report.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0147-A001 (2026-10-29T11:42:00Z): Reviewed T0146 → T0147 and T0138 → T0147 against the current Room/status model and request UI. Neither predecessor's implementation/API is directly consumed; both edges are validated as sequencing_only and kept as blocks edges. Added an exhaustive presentation mapper for all seven PersistedRequestStatus values and rendered only actual Room-backed request-state rows in conversation detail; the empty state says no request state exists and transport remains unavailable. Added JVM, Room and Python contract tests. Exact-head CI pending; remain in_progress until product and quality gates pass.\n\nT0147-A001 exact-head CI result (V 3.0.532): Step Three quality run 40868131396 ran 228 tests; seven subtests in the new contract guard failed because Kotlin enum members in RequestStateEntity.kt are declared as bare names, not `PersistedRequestStatus.NAME`. Android product job 123427984091 failed ktlint at ClientDatabaseTest.kt:125:25 with `Expected newline before .`; APK/unit tests were skipped. HostLifecycle job 123427984365 passed. These are test/style issues, not acceptance; A002 corrects them.\n\nT0147-A002 exact-head CI result (V 3.0.533): Step Three quality gate 40868507192 passed all 228 tests and both graph guards (0 errors; one preserved T0001 metadata warning). Android product job 123429253448 failed ktlint with four `Expected newline before .` violations at ClientDatabaseTest.kt:124 because the chained Flow expression was on one line. APK/JVM tests were skipped; HostLifecycle passed. T0147-A003 moves each call in the Room flow chain to an individual line; V 3.0.534 CI is pending.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0147-A001 (2026-10-29T11:42:00Z): Reviewed T0146 → T0147 and T0138 → T0147 against the current Room/status model and request UI. Neither predecessor's implementation/API is directly consumed; both edges are validated as sequencing_only and kept as blocks edges. Added an exhaustive presentation mapper for all seven PersistedRequestStatus values and rendered only actual Room-backed request-state rows in conversation detail; the empty state says no request state exists and transport remains unavailable. Added JVM, Room and Python contract tests. Exact-head CI pending; remain in_progress until product and quality gates pass.\n\nT0147-A001 exact-head CI result (V 3.0.532): Step Three quality run 40868131396 ran 228 tests; seven subtests in the new contract guard failed because Kotlin enum members in RequestStateEntity.kt are declared as bare names, not `PersistedRequestStatus.NAME`. Android product job 123427984091 failed ktlint at ClientDatabaseTest.kt:125:25 with `Expected newline before .`; APK/unit tests were skipped. HostLifecycle job 123427984365 passed. These are test/style issues, not acceptance; A002 corrects them.\n\nT0147-A002 exact-head CI result (V 3.0.533): Step Three quality gate 40868507192 passed all 228 tests and both graph guards (0 errors; one preserved T0001 metadata warning). Android product job 123429253448 failed ktlint with four `Expected newline before .` violations at ClientDatabaseTest.kt:124 because the chained Flow expression was on one line. APK/JVM tests were skipped; HostLifecycle passed. T0147-A003 moves each call in the Room flow chain to an individual line; V 3.0.534 CI is pending.\n\nT0147-A003 acceptance closeout (2026-10-29): exact revision V 3.0.534 (a10aebc13e8a5caf7ce27552fd3c970f49c6c820) passed both GitHub Actions workflows. Quality run 40868883509 passed 228 Python tests, syntax, and graph/evidence guards (229 tasks, 417 edges, zero errors; existing T0001 free-text metadata warning preserved). Product run 40868883480 passed Android ktlint, assembleDebug, testDebugUnitTest (including the new seven-status mapping and Room persistence checks), generated Protobuf verification and APK upload; Windows WPF formatting/build/Protobuf/startup/security checks and artifact upload; and HostLifecycle unit/integration tests. Artifacts uploaded: whitep-android-debug-apk 11,874,698 bytes; whitep-windows-host 14,254,957 bytes. T0147 is closed for displaying actual locally persisted status rows; no status-transition engine or host transport is claimed.",
       "execution_summary": {
         "attempt_count": 3,
         "failed_attempt_count": 2,
         "last_attempt_id": "T0147-A003",
-        "last_attempt_result": "partial",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestStatusPresentation.kt",
           "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
@@ -31311,16 +31311,19 @@
         ],
         "related_commits": [
           "90f542e2500e1af5a99d8f0f11336d3a29f05a1a",
-          "95e1af212d790aba0e9f920b30090b53d402323f"
+          "95e1af212d790aba0e9f920b30090b53d402323f",
+          "a10aebc13e8a5caf7ce27552fd3c970f49c6c820"
         ],
         "tests_passed": [
-          "V 3.0.533 quality run 40868507192 passed all 228 Python tests, Python syntax and graph/evidence guards (229 tasks / 417 edges, 0 errors, one retained warning).",
-          "V 3.0.533 HostLifecycle job 123429253407 passed."
+          "V 3.0.534 Step Three quality run 40868883509 passed all 228 Python tests, syntax and graph/evidence guards (229 tasks / 417 edges, 0 errors, 1 preserved metadata warning).",
+          "V 3.0.534 product run 40868883480 passed Android ktlintCheck, assembleDebug, testDebugUnitTest, Protobuf verification and APK upload.",
+          "V 3.0.534 product run 40868883480 passed Windows WPF formatting/build/Protobuf/startup/security and artifact upload.",
+          "V 3.0.534 product run 40868883480 passed HostLifecycle unit/integration tests."
         ],
         "tests_failed": [
-          "V 3.0.532 quality run 40868131396: 7 source-contract subtests incorrectly expected a type prefix on bare Kotlin enum entries.",
-          "V 3.0.532 Android product run 40868131465: ktlint at ClientDatabaseTest.kt:125:25; corrected assertion/chain in V 3.0.533.",
-          "V 3.0.533 Android product run 40868507175: four ktlint 'Expected newline before .' findings at ClientDatabaseTest.kt:124; chain corrected in V 3.0.534."
+          "V 3.0.532 quality run 40868131396: seven enum-source subtests failed because assertions expected enum type prefixes.",
+          "V 3.0.532 product run 40868131465: ktlint rejected the initial Room flow chain.",
+          "V 3.0.533 product run 40868507175: ktlint reported four chain-wrap findings in ClientDatabaseTest.kt."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -31339,9 +31342,9 @@
         {
           "attempt_id": "T0147-A001",
           "started_at": "2026-10-29T11:42:00Z",
-          "ended_at": "2026-10-29T11:48:15Z",
+          "ended_at": "2026-10-29T11:48:20Z",
           "result": "failed",
-          "summary": "V 3.0.532 failed the Step Three quality run because the new Python contract test expected enum values with the Kotlin type prefix in RequestStateEntity.kt, whose enum declaration correctly uses bare enum entries. Android product CI also failed ktlint on ClientDatabaseTest.kt:125:25 ('Expected newline before .'). HostLifecycle tests passed; Windows job was still running when the results were recorded.",
+          "summary": "V 3.0.532 failed Step Three quality due seven enum-source subtests that expected type-prefixed members instead of bare Kotlin enum entries. Android ktlint also failed the single-line Room flow chain at ClientDatabaseTest.kt:124/125. APK build and Android JVM tests were skipped.",
           "changed_files": [
             "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestStatusPresentation.kt",
             "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
@@ -31357,34 +31360,28 @@
             {
               "command": "Step Three quality gate run 40868131396",
               "result": "failed",
-              "summary": "228 tests ran; 7 subtests failed because the contract assertion expected PersistedRequestStatus.NAME in the enum declaration instead of the bare enum entry.",
+              "summary": "Seven enum assertion subtests failed; overall suite reported 228 tests and seven failures; syntax and graph guards were skipped.",
               "url": "https://github.com/artinrahimii/project/actions/runs/40868131396"
             },
             {
-              "command": "Android ktlintCheck product run 40868131465 / job 123427984091",
+              "command": "Android ktlint in product run 40868131465",
               "result": "failed",
-              "summary": "ktlint reported ClientDatabaseTest.kt:125:25 Expected newline before '.'; APK build and Android JVM tests were skipped.",
-              "url": "https://github.com/artinrahimii/project/actions/runs/40868131465"
-            },
-            {
-              "command": "HostLifecycle product run 40868131465 / job 123427984365",
-              "result": "passed",
-              "summary": "Host lifecycle unit/integration tests passed.",
+              "summary": "Expected newline before '.' in the single-line Room DAO chain at ClientDatabaseTest.kt:124/125; build and unit tests skipped.",
               "url": "https://github.com/artinrahimii/project/actions/runs/40868131465"
             }
           ],
-          "failure_details": "Quality run 40868131396: 228 tests ran, with seven subtest failures for QUEUED, CONTACTING, WAITING, PARTIAL, COMPLETED, FAILED and CANCELLED because ENTITY declares each enum member without the PersistedRequestStatus. prefix. Product run 40868131465 Android job 123427984091: ktlint failed at ClientDatabaseTest.kt:125:25 with 'Expected newline before .'; APK build and Android JVM tests were skipped. HostLifecycle job 123427984365 passed; Windows job 123427984518 was in progress at the first check.",
+          "failure_details": "Step Three quality run 40868131396 failed 7 of 228 test subcases (under one test method): enum entries in RequestStateEntity.kt are declared as QUEUED, CONTACTING, WAITING, PARTIAL, COMPLETED, FAILED, CANCELLED, not as PersistedRequestStatus.X expressions. Android product run 40868131465 failed ktlint with 'Expected newline before .' on the Room flow chain at ClientDatabaseTest.kt:124:25; Android build and JVM tests were skipped. The failure was corrected in subsequent attempts.",
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Correct the Python enum-declaration assertion and format the new Room query chain, then rerun all gates on one exact commit."
+          "follow_up": "Use bare enum values in source contract assertions and wrap the Room Flow chain according to ktlint; rerun all gates."
         },
         {
           "attempt_id": "T0147-A002",
           "started_at": "2026-10-29T11:49:00Z",
-          "ended_at": "2026-10-29T11:51:18Z",
+          "ended_at": "2026-10-29T11:52:35Z",
           "result": "failed",
-          "summary": "Corrected the Python enum assertion; exact V 3.0.533 quality passed all 228 tests, syntax and graph/evidence guards (0 errors, one retained T0001 metadata warning). Android product CI still failed at ktlint with four 'Expected newline before .' findings on the single-line chained Room query in ClientDatabaseTest.kt:124. APK build and Android JVM tests were skipped. HostLifecycle passed; Windows was still running. A003 moves each chain call to a separate line.",
+          "summary": "V 3.0.533 corrected the enum assertion and Step Three quality passed all 228 tests, but Android ktlint still reported four 'Expected newline before .' findings on the Room flow chain in ClientDatabaseTest.kt:124. Android build and JVM tests were skipped. Windows and HostLifecycle jobs passed.",
           "changed_files": [
             "tests/test_android_request_status_contract.py",
             "src/Client.Android/app/src/test/java/com/whitep/client/data/ClientDatabaseTest.kt",
@@ -31395,75 +31392,98 @@
           "commit_sha": "95e1af212d790aba0e9f920b30090b53d402323f",
           "tests": [
             {
-              "command": "Step Three quality run 40868507192",
+              "command": "Step Three quality gate run 40868507192",
               "result": "passed",
-              "summary": "All 228 Python tests passed; compileall passed; graph/evidence checks validated 229 tasks / 417 edges with 0 errors and one preserved metadata warning.",
+              "summary": "228 Python tests passed; syntax and graph/evidence guards passed (229 tasks, 417 edges, zero errors, one preserved T0001 metadata warning).",
               "url": "https://github.com/artinrahimii/project/actions/runs/40868507192"
             },
             {
-              "command": "Android ktlintCheck product run 40868507175 / job 123429253448",
+              "command": "Android ktlint in product run 40868507175",
               "result": "failed",
-              "summary": "Four style findings in ClientDatabaseTest.kt:124 required line breaks before each method-chain dot. APK build and Android JVM tests skipped.",
+              "summary": "Four chain-wrapping findings in ClientDatabaseTest.kt:124; APK build and Android JVM tests skipped.",
               "url": "https://github.com/artinrahimii/project/actions/runs/40868507175"
             },
             {
-              "command": "HostLifecycle product run 40868507175 / job 123429253407",
+              "command": "Windows WPF product job",
               "result": "passed",
-              "summary": "HostLifecycle unit/integration tests passed.",
+              "summary": "Windows WPF job passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40868507175"
+            },
+            {
+              "command": "HostLifecycle product job",
+              "result": "passed",
+              "summary": "HostLifecycle unit/integration job passed.",
               "url": "https://github.com/artinrahimii/project/actions/runs/40868507175"
             }
           ],
-          "failure_details": "Quality run 40868507192: 228 tests passed; Python syntax and graph/evidence checks passed (229 tasks / 417 edges, 0 errors, one preserved T0001 metadata warning). Android job 123429253448 in product run 40868507175 failed ktlint with four findings at ClientDatabaseTest.kt:124:25, :124:43, :124:82, :124:90, all 'Expected newline before .'. APK build/JVM tests skipped. HostLifecycle job 123429253407 passed; Windows job 123429253159 was still in progress.",
+          "failure_details": "Quality run 40868507192 passed all 228 Python tests and both graph/evidence checks (0 errors, one preserved T0001 metadata warning). Product run 40868507175 Android job 123429253448 failed ktlint at ClientDatabaseTest.kt:124:25, :124:43, :124:82 and :124:90. Windows WPF and HostLifecycle jobs passed.",
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Place database and each chained method invocation on individual lines; rerun Android lint/build/JVM tests and quality guards on exact V 3.0.534."
+          "follow_up": "Place the database receiver and each Flow call on its own line; then run exact-head Android lint/build/JVM, Windows/HostLifecycle and Step Three quality."
         },
         {
           "attempt_id": "T0147-A003",
           "started_at": "2026-10-29T11:53:00Z",
-          "ended_at": null,
-          "result": "partial",
-          "summary": "Reformatted the Room flow chain into a receiver line followed by one method call per line, matching the existing repository Kotlin chain style. Exact-head CI for V 3.0.534 is pending.",
+          "ended_at": "2026-10-29T11:56:24Z",
+          "result": "succeeded",
+          "summary": "V 3.0.534 passed both exact-head GitHub Actions workflows. Step Three quality passed all 228 tests, syntax and graph/evidence checks (229 nodes/417 edges, zero errors, one existing T0001 metadata warning preserved). Product CI passed Android ktlintCheck, assembleDebug, testDebugUnitTest, generated Protobuf verification and APK upload; Windows WPF build/startup/security/Protobuf checks and artifact upload; and HostLifecycle unit/integration tests.",
           "changed_files": [
             "src/Client.Android/app/src/test/java/com/whitep/client/data/ClientDatabaseTest.kt",
             "step three/T0147/execution-report.md",
             "step three/T0147/evidence/verification.md",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "a10aebc13e8a5caf7ce27552fd3c970f49c6c820",
           "tests": [
             {
-              "command": "Step Three Python tests and graph guard",
-              "result": "not_run",
-              "summary": "Pending exact-head quality workflow V 3.0.534."
+              "command": "Step Three quality gate run 40868883509",
+              "result": "passed",
+              "summary": "228 Python tests passed; syntax and graph/evidence guards passed for 229 tasks / 417 edges, 0 errors, and 1 preserved T0001 metadata warning.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40868883509"
             },
             {
               "command": "Android ktlintCheck",
-              "result": "not_run",
-              "summary": "Pending exact-head product workflow V 3.0.534."
+              "result": "passed",
+              "summary": "Kotlin format/lint passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40868883480"
             },
             {
               "command": "Android assembleDebug",
-              "result": "not_run",
-              "summary": "Pending exact-head product workflow V 3.0.534."
+              "result": "passed",
+              "summary": "Android debug APK built successfully.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40868883480"
             },
             {
               "command": "Android testDebugUnitTest",
-              "result": "not_run",
-              "summary": "Pending exact-head product workflow V 3.0.534."
+              "result": "passed",
+              "summary": "Android JVM unit tests passed, including RequestStatusPresentationTest and all seven-status Room round-trip coverage.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40868883480"
             },
             {
-              "command": "Windows WPF and HostLifecycle jobs",
-              "result": "not_run",
-              "summary": "Pending/independent workflow completion for V 3.0.534."
+              "command": "Generated Protobuf Java/Kotlin verification and APK upload",
+              "result": "passed",
+              "summary": "Generated Android Protobuf sources were verified and APK uploaded.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40868883480"
+            },
+            {
+              "command": "Windows WPF build and checks",
+              "result": "passed",
+              "summary": "Windows WPF formatting, Release build, Protobuf, startup/security checks and artifact upload passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40868883480"
+            },
+            {
+              "command": "HostLifecycle unit/integration tests",
+              "result": "passed",
+              "summary": "HostLifecycle unit/integration tests passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40868883480"
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect exact-head V 3.0.534 workflows. Resolve every observed failure; T0147 remains in_progress until all required gates pass."
+          "follow_up": "T0147 accepted for display of locally persisted request status rows only. It does not implement status transitions or host transport; the next graph task should be selected after reviewing its actual incoming edges."
         }
       ]
     },
@@ -43304,7 +43324,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-29T11:53:00Z",
+  "updated_at": "2026-10-29T11:57:00Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",
