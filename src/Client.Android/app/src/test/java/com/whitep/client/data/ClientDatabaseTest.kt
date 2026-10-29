@@ -254,7 +254,8 @@ class ClientDatabaseTest {
                         reopenedDatabase.conversationDao().findById(conversationId)?.title,
                     )
                     val restoredMessages =
-                        reopenedDatabase.messageDao()
+                        reopenedDatabase
+                            .messageDao()
                             .observeForConversation(conversationId)
                             .first()
                     assertEquals(
@@ -267,7 +268,8 @@ class ClientDatabaseTest {
                     )
 
                     val restoredRequestStates =
-                        reopenedDatabase.requestStateDao()
+                        reopenedDatabase
+                            .requestStateDao()
                             .observeForConversation(conversationId)
                             .first()
                     assertEquals(

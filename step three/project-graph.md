@@ -31848,11 +31848,11 @@
         "src/Client.Android/app/src/main/java/com/whitep/client/data/MessageEntity.kt",
         "src/Client.Android/app/src/main/java/com/whitep/client/data/RequestStateEntity.kt"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0149-A001 adds a file-backed Room close/reopen regression covering message ordering and persisted request states. Exact-head CI is pending; no acceptance claim until it passes.\nT0149-A002 records the V 3.0.541 quality assertion failure; T0149-A003 corrects the formatting-sensitive source assertion. The Room file-backed JVM test and product CI remain unverified.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0149-A001 adds a file-backed Room close/reopen regression covering message ordering and persisted request states. Exact-head CI is pending; no acceptance claim until it passes.\nT0149-A002 records the V 3.0.541 quality assertion failure; T0149-A003 corrects the formatting-sensitive source assertion. The Room file-backed JVM test and product CI remain unverified.\nT0149-A004 records the V 3.0.542 ktlint failure in the new file-backed test chains. T0149-A005 adjusts only line wrapping; CI acceptance remains pending.",
       "execution_summary": {
-        "attempt_count": 3,
-        "failed_attempt_count": 1,
-        "last_attempt_id": "T0149-A003",
+        "attempt_count": 5,
+        "failed_attempt_count": 2,
+        "last_attempt_id": "T0149-A005",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Client.Android/app/src/test/java/com/whitep/client/data/ClientDatabaseTest.kt",
@@ -31862,11 +31862,15 @@
           "step three/project-graph.md"
         ],
         "related_commits": [
-          "c619d3b1269357563ab2f2047ad6a7a2bf126d5b"
+          "c619d3b1269357563ab2f2047ad6a7a2bf126d5b",
+          "306dcfb5af796811857df5a38f6860385ae695ca"
         ],
-        "tests_passed": [],
+        "tests_passed": [
+          "V 3.0.542 Step Three quality gate 40874779599 passed 230 Python tests and graph/evidence checks."
+        ],
         "tests_failed": [
-          "Step Three quality run 40874466336 on V 3.0.541: 230 tests ran; one false-negative source assertion expected Room.databaseBuilder( to be contiguous, while Kotlin formatting split the invocation. Graph guard was skipped."
+          "V 3.0.541 quality gate 40874466336: one Python source-contract assertion expected contiguous Room.databaseBuilder( despite multiline Kotlin source formatting.",
+          "V 3.0.542 product workflow 40874779588: Android ktlint failed two chain-wrapping findings in ClientDatabaseTest.kt lines 257 and 270; APK/JVM tasks skipped."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -31992,6 +31996,81 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Inspect V 3.0.542 quality and product runs. If quality passes, verify the file-backed Room reopen JVM test actually ran successfully before marking T0149 done."
+        },
+        {
+          "attempt_id": "T0149-A004",
+          "started_at": "2026-10-29T12:38:00Z",
+          "ended_at": "2026-10-29T12:38:14Z",
+          "result": "failed",
+          "summary": "V 3.0.542 passed the Step Three quality suite, but the Android product job failed ktlint on two chain-wrapping findings in ClientDatabaseTest.kt at lines 257 and 270: newline required before .messageDao() and .requestStateDao(). APK assembly and Android JVM tests were skipped; HostLifecycle passed and Windows WPF was still running when checked.",
+          "changed_files": [
+            "src/Client.Android/app/src/test/java/com/whitep/client/data/ClientDatabaseTest.kt",
+            "step three/T0149/execution-report.md",
+            "step three/T0149/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": "306dcfb5af796811857df5a38f6860385ae695ca",
+          "tests": [
+            {
+              "name": "Step Three quality gate — run 40874779599",
+              "result": "passed",
+              "summary": "230 Python tests and graph/evidence checks passed; 229 nodes/417 edges, zero errors and one existing T0001 warning preserved.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40874779599"
+            },
+            {
+              "name": "Android ktlintCheck — product run 40874779588",
+              "result": "failed",
+              "summary": "Two format findings at ClientDatabaseTest.kt:257:41 and :270:41: expected newline before '.' in the restoredMessages/restoredRequestStates Room chains. APK build and JVM tests were skipped.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40874779588"
+            },
+            {
+              "name": "HostLifecycle unit/integration — product run 40874779588",
+              "result": "passed",
+              "summary": "Job completed successfully.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40874779588"
+            }
+          ],
+          "failure_details": "ktlint findings at ClientDatabaseTest.kt:257:41 and :270:41: Expected newline before '.' for the two receiver chains.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Move the first method selectors onto continuation lines after reopenedDatabase, rerun exact-head ktlint/APK/JVM tests and graph/evidence workflow; do not mark the task done yet."
+        },
+        {
+          "attempt_id": "T0149-A005",
+          "started_at": "2026-10-29T12:39:25.180Z",
+          "ended_at": "2026-10-29T12:39:25.180Z",
+          "result": "partial",
+          "summary": "Corrected Kotlin chain wrapping by placing reopenedDatabase on its own line before .messageDao() and .requestStateDao(), matching ktlint's multiline-call rule. Exact-head CI remains pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/test/java/com/whitep/client/data/ClientDatabaseTest.kt",
+            "step three/T0149/execution-report.md",
+            "step three/T0149/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Android ktlintCheck",
+              "result": "not_run",
+              "summary": "Formatting correction committed in V 3.0.543; CI pending."
+            },
+            {
+              "name": "Android assembleDebug / testDebugUnitTest",
+              "result": "not_run",
+              "summary": "Waiting for ktlint and build to finish first."
+            },
+            {
+              "name": "Step Three quality gate",
+              "result": "not_run",
+              "summary": "Awaiting exact-head CI."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect the V 3.0.543 exact-head quality and product workflows. Confirm the file-backed close/reopen test passes before completion."
         }
       ]
     },
@@ -43841,7 +43920,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-29T12:36:37.064Z",
+  "updated_at": "2026-10-29T12:39:25.180Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",
