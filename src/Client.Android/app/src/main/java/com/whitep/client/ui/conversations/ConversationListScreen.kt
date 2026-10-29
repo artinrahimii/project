@@ -25,7 +25,7 @@ import java.time.format.FormatStyle
 import java.util.Locale
 
 @Composable
-internal fun ConversationListScreen() {
+internal fun conversationListScreen() {
     val applicationContext = LocalContext.current.applicationContext
     val conversationDao =
         remember(applicationContext) {

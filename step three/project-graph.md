@@ -29998,11 +29998,11 @@
         "step three/T0143/execution-report.md",
         "step three/T0143/evidence/verification.md"
       ],
-      "notes": "T0143-A001 adds a reachable Compose Conversations destination backed by ConversationDao.observeAll(), plus a Room-backed ViewModel test. Task remains in_progress pending exact-head Android and Step Three CI.",
+      "notes": "T0143-A001 adds a reachable Compose Conversations destination backed by ConversationDao.observeAll(), plus a Room-backed ViewModel test. Task remains in_progress pending exact-head Android and Step Three CI.\nT0143-A001 failed Android ktlint (import ordering and uppercase composable name); T0143-A002 corrects those exact findings. Task remains in_progress pending Android build/unit tests.",
       "execution_summary": {
-        "attempt_count": 1,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "T0143-A001",
+        "attempt_count": 2,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "T0143-A002",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationListViewModel.kt",
@@ -30017,8 +30017,13 @@
           "step three/project-graph.md"
         ],
         "related_commits": [],
-        "tests_passed": [],
-        "tests_failed": [],
+        "tests_passed": [
+          "Step Three quality gate run 40845443702 passed on V 3.0.511.",
+          "Host lifecycle unit/integration job in product run 40845443840 passed on V 3.0.511."
+        ],
+        "tests_failed": [
+          "Android product run 40845443840 — ktlintCheck failed at MainActivity.kt line 3 (import order) and ConversationListScreen.kt line 28 (function name). APK build and Android unit tests were skipped."
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -30042,9 +30047,9 @@
         {
           "attempt_id": "T0143-A001",
           "started_at": "2026-10-29T08:52:27.534Z",
-          "ended_at": "2026-10-29T08:52:27.534Z",
-          "result": "partial",
-          "summary": "Implemented a Compose Conversations destination in bottom navigation, a ViewModel exposing the real Room DAO Flow, an empty state and timestamped rows from persisted conversation records, and a Room-backed test for current emptiness and updated ordering. Waiting for exact-head CI; not yet completed.",
+          "ended_at": "2026-10-29T08:54:35Z",
+          "result": "failed",
+          "summary": "The Step Three quality gate passed, but the Android product job failed at ktlint before APK compilation. MainActivity imports were out of lexical order and the Compose screen function name began with an uppercase letter.",
           "changed_files": [
             "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationListViewModel.kt",
             "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationListScreen.kt",
@@ -30057,15 +30062,55 @@
             "step three/T0143/evidence/verification.md",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
-          "tests": [],
-          "failure_details": null,
+          "commit_sha": "168b7028096efcacb440e8e984d3a58eab029a3d",
+          "tests": [
+            {
+              "command": "Step Three quality gate — run 40845443702",
+              "result": "passed",
+              "summary": "Python quality checks, syntax, graph structure and recorded-output/evidence validation passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40845443702"
+            },
+            {
+              "command": "Android product build — run 40845443840",
+              "result": "failed",
+              "summary": "ktlint flagged MainActivity.kt:3 import ordering and ConversationListScreen.kt:28 function naming; APK and Android unit tests were skipped.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40845443840"
+            },
+            {
+              "command": "Host lifecycle unit/integration job — run 40845443840",
+              "result": "passed",
+              "summary": "Host lifecycle job passed; this does not substitute for Android acceptance.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40845443840"
+            }
+          ],
+          "failure_details": "Android ktlintCheck failed before compilation: MainActivity.kt imports must be lexically ordered; ConversationListScreen.kt function name must start lowercase per the repository's Kotlin style. Android APK and unit tests were skipped.",
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [
             "Added UI navigation route for Conversations; no persistence schema change."
           ],
-          "follow_up": "Run exact-head Step Three and Android product workflows. Resolve lint/build/unit failures and mark done only after all relevant gates pass."
+          "follow_up": "Correct import ordering and rename the Compose route function to lowercase, then rerun exact-head CI."
+        },
+        {
+          "attempt_id": "T0143-A002",
+          "started_at": "2026-10-29T08:56:22.047Z",
+          "ended_at": "2026-10-29T08:56:22.047Z",
+          "result": "partial",
+          "summary": "Reordered the new ConversationListScreen import in MainActivity.kt and renamed the composable function/call site to the repository's lowercase composable naming convention. Awaiting exact-head CI.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationListScreen.kt",
+            "step three/T0143/execution-report.md",
+            "step three/T0143/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Verify exact-head Step Three and Android product workflow; resolve any further lint/build/test failure before setting T0143 to done."
         }
       ]
     },
@@ -41904,7 +41949,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-29T08:52:27.534Z",
+  "updated_at": "2026-10-29T08:56:22.047Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

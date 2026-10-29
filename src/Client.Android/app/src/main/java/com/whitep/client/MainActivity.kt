@@ -33,9 +33,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.whitep.client.ui.conversations.ConversationListScreen
 import com.whitep.client.ui.navigation.ClientDestination
 import com.whitep.client.ui.navigation.ClientNavigation
-import com.whitep.client.ui.conversations.ConversationListScreen
 import com.whitep.client.ui.request.RequestViewModel
 
 class MainActivity : ComponentActivity() {
@@ -94,7 +94,7 @@ private fun whitePClientApp() {
                 )
             }
             composable(ClientDestination.CONVERSATIONS.route) {
-                ConversationListScreen()
+                conversationListScreen()
             }
             composable(ClientDestination.REQUEST.route) {
                 requestScreen(onBack = { navController.popBackStack() })

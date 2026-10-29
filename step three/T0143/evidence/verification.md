@@ -1,17 +1,16 @@
-# T0143 verification evidence — implementation pending CI
+# T0143 verification evidence — attempts A001 and A002
 
-## Source and graph validation
+## Attempt A001 — V 3.0.511
 
-- Base commit: d75e3cbdec2e552709e461c2fa46e02c2983f917 (V 3.0.510).
-- Graph Blob at base revision: eb42e164cf155682b37dce9eb1efa08fe3ed6b22; received content was 2,468,492 UTF-8 bytes, matching the tree entry, and parsed into 229 nodes and 417 edges.
-- T0142 and T0138 were both `done` before T0143 was selected.
-- `ConversationEntity.kt` defines `ConversationDao.observeAll()` as a Room Flow ordered by most recently updated conversation, then conversation ID.
+- Step Three quality gate [40845443702](https://github.com/artinrahimii/project/actions/runs/40845443702): passed.
+- Android product workflow [40845443840](https://github.com/artinrahimii/project/actions/runs/40845443840): failed at ktlint. Exact findings: import ordering in MainActivity.kt line 3 and uppercase function name in ConversationListScreen.kt line 28. APK build and Android unit tests were skipped.
+- Host lifecycle job passed but does not prove Android acceptance.
 
-## Implementation
+## Attempt A002
 
-- Added `ConversationListScreen.kt`, `ConversationListViewModel.kt`, and `ConversationListViewModelTest.kt`.
-- Registered a `CONVERSATIONS` route and bottom-navigation item; updated the navigation expectation test.
+- Corrected import order and changed the screen composable and call site to `conversationListScreen()`.
+- Exact-head CI is pending; this attempt has no passed test evidence yet.
 
-## Acceptance pending
+## Runtime acceptance still required
 
-The Android runtime test must pass on CI. The Step Three quality gate must also validate graph structure and recorded paths. No test is recorded as passed until the exact implementation commit's Actions runs confirm it.
+The Android unit test must prove that the ViewModel observes the Room DAO, starts empty and emits inserted conversations in the DAO's persisted ordering. Step Three quality validation must pass on the same commit before T0143 is completed.

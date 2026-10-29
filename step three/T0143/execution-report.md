@@ -1,12 +1,14 @@
-# T0143 execution report — implementation awaiting CI
+# T0143 execution report — corrective attempt pending CI
 
 - **Task:** Connect the conversation-list screen to live Room data.
-- **Current status:** in_progress; do not count as complete until exact-head CI passes.
-- **Base revision:** d75e3cbdec2e552709e461c2fa46e02c2983f917 (V 3.0.510).
-- **Implementation:** Added a Compose Conversations bottom-navigation destination. `ConversationListScreen` obtains the application-scoped `ClientDatabase`, observes `ConversationDao.observeAll()` through `ConversationListViewModel`, displays a real empty state when no rows exist, and renders persisted titles with last-updated timestamps. No static sample conversations were added.
-- **Runtime test:** `ConversationListViewModelTest` uses an in-memory Room database, checks its initial empty state, inserts two real conversation entities, and verifies the ViewModel emits them in DAO-defined update order with the persisted titles.
-- **Navigation test:** `ClientDestinationTest` now expects Conversations in bottom navigation.
-- **Scope boundary:** Creation, renaming, deletion, and opening a selected conversation remain in T0144; this screen does not offer nonfunctional controls for those actions. Sending requests/network transport remains unimplemented and is not implied.
-- **Dependency review:** T0142→T0143 validated as a database compatibility contract because existing v1 installs must migrate before querying the shared Room database. T0138→T0143 validated as sequencing-only: the screen uses local metadata and no interface defined by the privacy disclosure. Both decisions and evidence are recorded in the graph.
-- **Tests in this authoring environment:** Not run locally. Exact-head GitHub Actions must validate Kotlin lint, APK build, Android unit tests and graph quality before the task is marked done.
-- **Next action:** Review exact-head CI. Fix any build/lint/runtime regression, then record run IDs and results and close T0143 only when all relevant checks pass.
+- **Status:** in_progress. No Android build or runtime-test success is claimed for this task yet.
+- **Implementation commit A001:** V 3.0.511 — `168b7028096efcacb440e8e984d3a58eab029a3d`.
+- **Feature added:** Compose Conversations bottom-navigation destination; screen reads the app's shared Room database, observes `ConversationDao.observeAll()` through `ConversationListViewModel`, shows a true empty state, and renders stored titles/timestamps without sample data. A Room-backed ViewModel test checks empty state and current DAO sort order.
+- **A001 CI results:**
+  - [Step Three quality gate 40845443702](https://github.com/artinrahimii/project/actions/runs/40845443702): PASS.
+  - [Android product build 40845443840](https://github.com/artinrahimii/project/actions/runs/40845443840): FAIL at ktlint before APK compilation. `MainActivity.kt` imports were not lexicographically ordered and the composable name began uppercase. Android APK and unit tests were skipped.
+  - Host lifecycle job in the same run passed.
+- **A002 correction:** Reordered the imports and renamed the screen composable to lowercase `conversationListScreen` at both definition and call site. Exact-head CI pending.
+- **Scope boundary:** Creating, renaming, deleting and opening conversations remain in T0144. The list screen does not imply message sending or peer transport exists.
+- **Dependencies:** T0142→T0143 is validated as database compatibility; T0138→T0143 is validated as sequencing-only. Both edge decisions and evidence are preserved in the graph history.
+- **Next action:** Inspect new CI. T0143 may be marked done only after Android lint, APK build, Android unit tests including `ConversationListViewModelTest`, generated Protobuf verification and Step Three graph gate pass.
