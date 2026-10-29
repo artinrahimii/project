@@ -12,8 +12,7 @@ class ClientDatabaseConverters {
     fun persistedRequestStatusToString(value: PersistedRequestStatus): String = value.name
 
     @TypeConverter
-    fun stringToPersistedRequestStatus(value: String): PersistedRequestStatus =
-        PersistedRequestStatus.valueOf(value)
+    fun stringToPersistedRequestStatus(value: String): PersistedRequestStatus = PersistedRequestStatus.valueOf(value)
 
     @TypeConverter
     fun requestDraftStatusToString(value: RequestDraftStatus): String = value.name

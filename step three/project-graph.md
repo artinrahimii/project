@@ -29385,11 +29385,11 @@
         "src/Client.Android/app/src/main/java/com/whitep/client/data/RoomClientRequestRepository.kt",
         "step three/T0141/execution-report.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0141-A001 (2026-10-29): Added version-1 Room entities/DAOs for conversations, messages, request states and the current draft; added a Room-backed implementation of the existing request repository contract, database acceptance tests, and a local-storage privacy decision. T0138 -> T0141 was reviewed as sequencing_only after ADR-0020 explicitly resolved the local-persistence boundary; original type=blocks and edge order were preserved. Exact-candidate CI is pending; this task remains in_progress until the runtime tests and product build pass.\n\nT0141-A001 exact-head result (2026-10-29): quality gate passed and HostLifecycle tests passed, but Android ktlintTestSourceSetCheck failed in ClientDatabaseTest.kt and skipped APK/JUnit/Protobuf. A002 corrects only the test formatting from CI diagnostics; this is retained as a failed attempt.\n\nT0141-A002 exact-head result (2026-10-29): quality gate and HostLifecycle tests passed, but Android ktlint still rejected the multiline Room builder chain; APK/JUnit/Protobuf were skipped. The formatting failure remains in history; A003 applies the specific chain-format correction.\n\nT0141-A003 exact-head result (2026-10-29): formatted database test source passed, but main-source ktlint failed in ClientDatabase.kt and RoomClientRequestRepository.kt. The APK, JUnit and generated Protobuf steps were skipped. A004 addresses only the listed expression-body and method-chain formatting diagnostics.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0141-A001 (2026-10-29): Added version-1 Room entities/DAOs for conversations, messages, request states and the current draft; added a Room-backed implementation of the existing request repository contract, database acceptance tests, and a local-storage privacy decision. T0138 -> T0141 was reviewed as sequencing_only after ADR-0020 explicitly resolved the local-persistence boundary; original type=blocks and edge order were preserved. Exact-candidate CI is pending; this task remains in_progress until the runtime tests and product build pass.\n\nT0141-A001 exact-head result (2026-10-29): quality gate passed and HostLifecycle tests passed, but Android ktlintTestSourceSetCheck failed in ClientDatabaseTest.kt and skipped APK/JUnit/Protobuf. A002 corrects only the test formatting from CI diagnostics; this is retained as a failed attempt.\n\nT0141-A002 exact-head result (2026-10-29): quality gate and HostLifecycle tests passed, but Android ktlint still rejected the multiline Room builder chain; APK/JUnit/Protobuf were skipped. The formatting failure remains in history; A003 applies the specific chain-format correction.\n\nT0141-A003 exact-head result (2026-10-29): formatted database test source passed, but main-source ktlint failed in ClientDatabase.kt and RoomClientRequestRepository.kt. The APK, JUnit and generated Protobuf steps were skipped. A004 addresses only the listed expression-body and method-chain formatting diagnostics.\n\nT0141-A004 exact-head result (2026-10-29): the repository and database-builder formatting errors were cleared; only one inline converter-expression formatting error remained in ClientDatabase.kt:15. The Android APK, JUnit and Protobuf steps were skipped. A005 fixes that one line; A004 remains a failed attempt.",
       "execution_summary": {
-        "attempt_count": 4,
-        "failed_attempt_count": 3,
-        "last_attempt_id": "T0141-A004",
+        "attempt_count": 5,
+        "failed_attempt_count": 4,
+        "last_attempt_id": "T0141-A005",
         "last_attempt_result": "in_progress",
         "changed_files": [
           "src/Client.Android/build.gradle.kts",
@@ -29408,19 +29408,21 @@
           "step three/project-graph.md"
         ],
         "related_commits": [
+          "c0a6bd5e6cdfbdf6065daf3e41228511c970839b",
           "1ba5858be67c465552d577d8a7ffeca52e481437",
           "e5239fa436e1e9b56f78011410e9efb3443ae2c5",
           "822ee80620c56774cd20068a87deb5c45d082b85"
         ],
         "tests_passed": [
-          "Step Three quality gates — V 3.0.501, V 3.0.502 and V 3.0.503.",
-          "HostLifecycle unit/integration — V 3.0.501, V 3.0.502 and V 3.0.503.",
-          "Android test-source ktlint stage — V 3.0.503 only; full Android ktlint and product build did not pass."
+          "Step Three quality gates — V 3.0.501, V 3.0.502, V 3.0.503 and V 3.0.504.",
+          "HostLifecycle unit/integration — V 3.0.501, V 3.0.502, V 3.0.503 and V 3.0.504.",
+          "Android test-source ktlint — V 3.0.503; Android main-source ktlint not yet passed."
         ],
         "tests_failed": [
-          "Android ktlint — V 3.0.501 test-source formatting failed.",
-          "Android ktlint — V 3.0.502 test-source builder formatting failed.",
-          "Android ktlint — V 3.0.503 main-source formatting failed in ClientDatabase.kt and RoomClientRequestRepository.kt; APK/JUnit/Protobuf skipped."
+          "V 3.0.501 Android test-source ktlint failure.",
+          "V 3.0.502 Android test-source ktlint failure.",
+          "V 3.0.503 Android main-source ktlint failure in ClientDatabase.kt and RoomClientRequestRepository.kt.",
+          "V 3.0.504 Android main-source ktlint failure in ClientDatabase.kt line 15; APK/JUnit/Protobuf skipped."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -29591,9 +29593,9 @@
         {
           "attempt_id": "T0141-A004",
           "started_at": "2026-10-29T08:09:32.397Z",
-          "ended_at": null,
-          "result": "in_progress",
-          "summary": "Corrected Room database builder/converter wrapping and repository multiline-expression formatting based on exact V 3.0.503 CI diagnostics; exact-head checks required before acceptance.",
+          "ended_at": "2026-10-29T08:11:22Z",
+          "result": "failed",
+          "summary": "Exact V 3.0.504 quality gate and HostLifecycle passed. Main-source ktlint identified one remaining multiline converter expression in ClientDatabase.kt:15. Android APK/JUnit/Protobuf were skipped; A005 collapses that expression to the same line.",
           "changed_files": [
             "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientDatabase.kt",
             "src/Client.Android/app/src/main/java/com/whitep/client/data/RoomClientRequestRepository.kt",
@@ -29601,7 +29603,48 @@
             "step three/project-graph.md"
           ],
           "related_commits": [
-            "1ba5858be67c465552d577d8a7ffeca52e481437"
+            "c0a6bd5e6cdfbdf6065daf3e41228511c970839b"
+          ],
+          "commit_sha": "c0a6bd5e6cdfbdf6065daf3e41228511c970839b",
+          "tests": [
+            {
+              "name": "Step Three quality gate — V 3.0.504",
+              "result": "passed",
+              "summary": "Exact-head graph/Python tests, syntax, structure and evidence checks passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40840223629"
+            },
+            {
+              "name": "Android Kotlin ktlint — V 3.0.504",
+              "result": "failed",
+              "summary": "One remaining main-source ktlint issue: stringToPersistedRequestStatus expression should fit on the declaration line. APK/JUnit/Protobuf skipped.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40840223701"
+            },
+            {
+              "name": "HostLifecycle unit/integration — V 3.0.504",
+              "result": "passed",
+              "summary": "Host lifecycle unit/integration passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40840223701"
+            }
+          ],
+          "failure_details": "Android ktlintMainSourceSetCheck reported only ClientDatabase.kt:15:80: 'First line of body expression fits on same line as function signature'. APK build, JUnit and generated Protobuf steps were skipped.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "A005 moves PersistedRequestStatus.valueOf(value) onto the same line as its function signature and reruns exact-head CI."
+        },
+        {
+          "attempt_id": "T0141-A005",
+          "started_at": "2026-10-29T08:11:58.891Z",
+          "ended_at": null,
+          "result": "in_progress",
+          "summary": "Collapsed the last converter expression to the declaration line per exact V 3.0.504 ktlint diagnostics. No database semantics changed; exact-head Android and product checks are required before acceptance.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientDatabase.kt",
+            "step three/T0141/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "related_commits": [
+            "c0a6bd5e6cdfbdf6065daf3e41228511c970839b"
           ],
           "commit_sha": null,
           "tests": [],
@@ -29609,7 +29652,7 @@
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect exact-head CI; keep T0141 in_progress until complete Android ktlint, APK build, JUnit, and generated-Protobuf checks pass."
+          "follow_up": "Check the next exact-head CI result. Do not mark T0141 done until Android ktlint, APK, JUnit and generated Protobuf all pass."
         }
       ]
     },
@@ -41446,7 +41489,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-29T08:09:32.397Z",
+  "updated_at": "2026-10-29T08:11:58.891Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

@@ -1,13 +1,14 @@
-# T0141 execution report — main-source ktlint correction in progress
+# T0141 execution report — final converter-format correction in progress
 
-- **Task:** Create the Android-local Room database for conversations, messages, and request status.
-- **A001 — V 3.0.501 failed:** Step Three quality gate and HostLifecycle passed; Android test-source ktlint failed, so APK/JUnit/Protobuf were skipped. [Quality](https://github.com/artinrahimii/project/actions/runs/40839337539) · [Product](https://github.com/artinrahimii/project/actions/runs/40839337468).
-- **A002 — V 3.0.502 failed:** quality gate and HostLifecycle passed; Android test-source ktlint still failed on the database builder chain, so APK/JUnit/Protobuf were skipped. [Quality](https://github.com/artinrahimii/project/actions/runs/40839605700) · [Product](https://github.com/artinrahimii/project/actions/runs/40839605690).
-- **A003 — V 3.0.503 failed:** the formatted `ClientDatabaseTest.kt` passed its ktlint test-source stage, but main-source ktlint reported wrapping issues in `ClientDatabase.kt` and `RoomClientRequestRepository.kt`; APK/JUnit/Protobuf were skipped. [Quality](https://github.com/artinrahimii/project/actions/runs/40839863717) · [Product](https://github.com/artinrahimii/project/actions/runs/40839863583).
-- **A004 — current correction:** updated converter-expression line breaks, the Room database builder chain, and multiline expressions in the repository adapter exactly against the A003 diagnostics. No schema, query, status, or privacy policy was changed in this correction.
-- **Current status:** `in_progress`; no Android build/JUnit pass is claimed. The test file passed its lint stage in A003, but all Kotlin lint and runtime checks must pass together before task acceptance.
-- **Privacy scope:** Android app-private Room storage may retain conversations/messages and the current draft; request-state rows omit request content, deletion cascades, and this database is not encrypted at rest by T0141. T0142 owns migration tests and T0184 owns at-rest encryption work. ADR-0019 remains in force.
-- **Environment limitation:** local `git ls-remote` failed at hostname resolution, so no local Gradle build/test is claimed. GitHub Actions is the evidence source.
+- **Task:** Android-local Room persistence for conversations, messages and request status.
+- **A001 — V 3.0.501:** failed Android test-source ktlint; APK/JUnit/Protobuf skipped. [Quality](https://github.com/artinrahimii/project/actions/runs/40839337539) · [Product](https://github.com/artinrahimii/project/actions/runs/40839337468).
+- **A002 — V 3.0.502:** failed Android test-source ktlint on the Room builder chain; APK/JUnit/Protobuf skipped. [Quality](https://github.com/artinrahimii/project/actions/runs/40839605700) · [Product](https://github.com/artinrahimii/project/actions/runs/40839605690).
+- **A003 — V 3.0.503:** test-source lint passed, but main-source ktlint failed in database/repository wrapping; APK/JUnit/Protobuf skipped. [Quality](https://github.com/artinrahimii/project/actions/runs/40839863717) · [Product](https://github.com/artinrahimii/project/actions/runs/40839863583).
+- **A004 — V 3.0.504:** remaining main-source ktlint failure was limited to `ClientDatabase.kt:15`, where the enum converter body fit on the declaration line. APK/JUnit/Protobuf skipped. [Quality](https://github.com/artinrahimii/project/actions/runs/40840223629) · [Product](https://github.com/artinrahimii/project/actions/runs/40840223701).
+- **A005 — current change:** moved `PersistedRequestStatus.valueOf(value)` onto the same line as its expression-body signature, as required by the exact lint diagnostic. No runtime behavior changed.
+- **Current status:** `in_progress`; Android build, Room tests and generated-Protobuf checks still require a successful exact-head run.
+- **Scope boundary:** Room stores on-device conversations/messages and a local draft; request-state rows omit prompt/capsule/response bodies; deleting a conversation cascades to message/status rows. This task does not claim at-rest encryption, migration acceptance, or Android-to-Windows P2P completion. T0142 and T0184 remain separate.
+- **Environment limitation:** the local clone could not be reached because `git ls-remote` failed at DNS resolution; no local Gradle/JUnit run is claimed.
 
 ## Change inventory
 
