@@ -28,3 +28,12 @@
 - [Quality run 40888279446](https://github.com/artinrahimii/project/actions/runs/40888279446) passed 239 Python tests and graph/evidence checks with zero errors.
 - [Product run 40888279125](https://github.com/artinrahimii/project/actions/runs/40888279125) failed Android ktlint on the multiline, one-parameter `toLoadResult` signature at line 76; APK and JVM tasks were skipped.
 - A004 reformats the signature. Acceptance remains pending exact-head CI.
+
+
+## Final acceptance — V 3.0.556
+
+- **Accepted task:** T0152, Room persistence of ConversationContextCapsule v1.
+- **Quality:** [40888728008](https://github.com/artinrahimii/project/actions/runs/40888728008) passed 239 Python tests, syntax, graph and evidence guards; 229 tasks / 417 edges, zero errors, one retained T0001 warning.
+- **Product:** [40888728104](https://github.com/artinrahimii/project/actions/runs/40888728104) passed Android lint, debug APK build, Android JVM tests, generated Protobuf verification and APK upload; Windows WPF and HostLifecycle jobs passed.
+- **Runtime evidence:** the Android JVM suite exercised capsule isolation between conversations, file-backed close/reopen restoration, replacement without cross-conversation mutation, cascade deletion, invalid capsule rejection, orphan prevention, and schema migration from v1 through v2 to v3 while preserving legacy data.
+- T0152 is marked done only after those checks passed. It provides local persistence only; it does not imply user-facing capsule UI, P2P delivery, or encryption at rest.

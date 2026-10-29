@@ -44,3 +44,12 @@ The source changes and graph record are committed as `V 3.0.553`. Exact-head CI 
 - Quality [run 40888279446](https://github.com/artinrahimii/project/actions/runs/40888279446) passed **239 Python tests**, syntax, graph structure and output/evidence validation. The graph guard reported 229 tasks/417 edges, zero errors and one preserved T0001 warning.
 - Product [run 40888279125](https://github.com/artinrahimii/project/actions/runs/40888279125) failed Android `ktlintTestSourceSetCheck` on two parameter-wrapping findings in `RoomConversationContextCapsuleRepository.kt:76`. APK build and JVM tests were skipped.
 - **T0152-A003 is recorded as failed** for this remaining lint finding. **T0152-A004** moves the single parameter onto the function-signature line and requires another exact-head CI run.
+
+
+## Final acceptance — V 3.0.556
+
+- **T0152 is accepted as `done`** based on exact-head CI for implementation commit [`0c2d2d3e6b488c86b704d222237600156c67d573`](https://github.com/artinrahimii/project/commit/0c2d2d3e6b488c86b704d222237600156c67d573).
+- Step Three quality [run 40888728008](https://github.com/artinrahimii/project/actions/runs/40888728008) passed **239 Python tests**, syntax, graph structure and recorded-output/evidence checks. Graph guard reported 229 tasks / 417 edges, zero errors and one preserved T0001 free-text warning.
+- Product CI [run 40888728104](https://github.com/artinrahimii/project/actions/runs/40888728104) passed every job: Android `ktlintCheck`, `assembleDebug`, `testDebugUnitTest` (including new capsule persistence and database migration acceptance tests), generated Protobuf Java/Kotlin checks and APK upload; Windows WPF build and HostLifecycle tests also passed.
+- The database is now schema version 3 with sequential migrations 1→2→3. Capsules are stored as the bytes produced by the accepted v1 codec, one record per conversation, and deletion follows the conversation foreign key cascade. The implementation remains local-only and does not claim at-rest encryption or a remote transport path.
+- Earlier failed attempts A001–A003 remain in execution history; they are not erased or counted as current failures after A004 passed.

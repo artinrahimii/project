@@ -32808,8 +32808,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0151 و T0150 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال انجام",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "src/Client.Android/app/src/main/java/com/whitep/client/data/ConversationContextCapsuleEntity.kt",
         "src/Client.Android/app/src/main/java/com/whitep/client/data/RoomConversationContextCapsuleRepository.kt",
@@ -32836,12 +32836,12 @@
         "step three/T0152/execution-report.md",
         "step three/T0152/evidence/verification.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0152-A001 adds conversation-scoped Room BLOB persistence using the accepted T0151 v1 codec, Room schema v3 migration, and Robolectric/Python tests. T0150 → T0152 was reviewed as sequencing_only and validated; its blocks edge remains. Exact-head CI is required before acceptance.\nT0152-A001 exact-head V 3.0.553 failed due to three stale Python schema-v2 assertions and two ktlint formatting findings. A002 updates the assertions to schema v3/migrations 1→2→3 and corrects the two test-source format findings; CI pending.\nT0152-A002 exact-head V 3.0.554 passed the quality gate (239 tests) but Android ktlint failed four indentation findings in the capsule persistence test, so the task remains in progress. A003 corrects the arguments' indentation; CI is pending.\nT0152-A003: Python/graph gates passed on V 3.0.555, but Android ktlint flagged a one-parameter function signature in RoomConversationContextCapsuleRepository.kt. A004 corrects that signature; CI pending.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0152-A001 adds conversation-scoped Room BLOB persistence using the accepted T0151 v1 codec, Room schema v3 migration, and Robolectric/Python tests. T0150 → T0152 was reviewed as sequencing_only and validated; its blocks edge remains. Exact-head CI is required before acceptance.\nT0152-A001 exact-head V 3.0.553 failed due to three stale Python schema-v2 assertions and two ktlint formatting findings. A002 updates the assertions to schema v3/migrations 1→2→3 and corrects the two test-source format findings; CI pending.\nT0152-A002 exact-head V 3.0.554 passed the quality gate (239 tests) but Android ktlint failed four indentation findings in the capsule persistence test, so the task remains in progress. A003 corrects the arguments' indentation; CI is pending.\nT0152-A003: Python/graph gates passed on V 3.0.555, but Android ktlint flagged a one-parameter function signature in RoomConversationContextCapsuleRepository.kt. A004 corrects that signature; CI pending.\nT0152-A004 accepted on exact-head V 3.0.556 after complete quality and product CI succeeded. Room v3 migration, capsule isolation/persistence/reopen, cascade deletion, validation rejection, Android lint/build/JVM tests, generated Protobuf checks, Windows WPF and HostLifecycle gates passed. Implementation commit: 0c2d2d3e6b488c86b704d222237600156c67d573.",
       "execution_summary": {
         "attempt_count": 4,
         "failed_attempt_count": 3,
         "last_attempt_id": "T0152-A004",
-        "last_attempt_result": "partial",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/data/RoomConversationContextCapsuleRepository.kt",
           "step three/T0152/execution-report.md",
@@ -32851,12 +32851,15 @@
         "related_commits": [
           "a642943d0604d8e33a80ceeb47099b031617fe1a",
           "bf5f2b5eb7985e6063c710e4539e133a4d00f839",
-          "5391e48b0b75feea80afa0e15a4eda3f053231fb"
+          "5391e48b0b75feea80afa0e15a4eda3f053231fb",
+          "0c2d2d3e6b488c86b704d222237600156c67d573"
         ],
         "tests_passed": [
           "V 3.0.553 HostLifecycle product job passed; this partial result does not override the failing quality/lint gates.",
           "V 3.0.554 quality gate passed 239 Python tests and graph validation (229 tasks/417 edges, 0 errors, one T0001 warning). https://github.com/artinrahimii/project/actions/runs/40887843412",
-          "V 3.0.555 quality gate passed 239 Python tests and graph/evidence validation with zero errors. https://github.com/artinrahimii/project/actions/runs/40888279446"
+          "V 3.0.555 quality gate passed 239 Python tests and graph/evidence validation with zero errors. https://github.com/artinrahimii/project/actions/runs/40888279446",
+          "V 3.0.556 quality run 40888728008: all 239 Python tests and graph/output/evidence checks passed (229 tasks/417 edges, zero errors, one preserved T0001 warning). https://github.com/artinrahimii/project/actions/runs/40888728008",
+          "V 3.0.556 product run 40888728104: Android lint, APK build, JVM persistence/migration tests, generated Protobuf checks and artifact upload passed; Windows WPF and HostLifecycle jobs also passed. https://github.com/artinrahimii/project/actions/runs/40888728104"
         ],
         "tests_failed": [
           "V 3.0.553 quality run 40887316120 failed 3 existing Python contract assertions that still expected Room v2 / only migration 1→2. https://github.com/artinrahimii/project/actions/runs/40887316120",
@@ -32867,7 +32870,7 @@
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "required",
+          "state": "passed",
           "triggering_contracts": [
             "Room schema v3 and sequential migration 2→3",
             "One capsule record per conversation ID",
@@ -32893,7 +32896,9 @@
             "https://github.com/artinrahimii/project/actions/runs/40887843412",
             "https://github.com/artinrahimii/project/actions/runs/40887843362",
             "https://github.com/artinrahimii/project/actions/runs/40888279446",
-            "https://github.com/artinrahimii/project/actions/runs/40888279125"
+            "https://github.com/artinrahimii/project/actions/runs/40888279125",
+            "https://github.com/artinrahimii/project/actions/runs/40888728008",
+            "https://github.com/artinrahimii/project/actions/runs/40888728104"
           ]
         }
       },
@@ -33050,34 +33055,74 @@
         {
           "attempt_id": "T0152-A004",
           "started_at": "2026-10-29T14:07:34Z",
-          "ended_at": "2026-10-29T14:07:34Z",
-          "result": "partial",
-          "summary": "Reformatted the one-parameter toLoadResult signature flagged by ktlint; exact-head CI is pending.",
+          "ended_at": "2026-10-29T14:12:26Z",
+          "result": "succeeded",
+          "summary": "Exact-head V 3.0.556 CI passed the full quality and product pipelines. Quality ran 239 Python tests and validated syntax, graph structure and output/evidence. Product passed Kotlin lint, debug APK build, Android JVM unit tests including the capsule persistence and database migration tests, generated Protobuf checks, APK upload, Windows WPF build, and HostLifecycle tests.",
           "changed_files": [
             "src/Client.Android/app/src/main/java/com/whitep/client/data/RoomConversationContextCapsuleRepository.kt",
             "step three/T0152/execution-report.md",
             "step three/T0152/evidence/verification.md",
             "step three/project-graph.md"
           ],
-          "related_commits": [],
-          "commit_sha": null,
+          "related_commits": [
+            "0c2d2d3e6b488c86b704d222237600156c67d573"
+          ],
+          "commit_sha": "0c2d2d3e6b488c86b704d222237600156c67d573",
           "tests": [
             {
-              "name": "Android ktlintCheck",
-              "result": "not_run",
-              "summary": "Function signature style corrected; exact-head CI pending."
+              "name": "Step Three quality gate — run 40888728008",
+              "result": "passed",
+              "summary": "239 Python tests passed; syntax checks, graph structure and output/evidence checks passed. Graph guard reported 229 tasks/417 edges, 0 errors and one preserved T0001 unmapped-dependency warning.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40888728008"
             },
             {
-              "name": "Android assembleDebug / testDebugUnitTest",
-              "result": "not_run",
-              "summary": "Awaiting the next exact-head CI run."
+              "name": "Android ktlintCheck — product run 40888728104",
+              "result": "passed",
+              "summary": "Kotlin formatting and lint passed on the exact implementation head.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40888728104"
+            },
+            {
+              "name": "Android assembleDebug — product run 40888728104",
+              "result": "passed",
+              "summary": "Debug APK built successfully.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40888728104"
+            },
+            {
+              "name": "Android testDebugUnitTest — product run 40888728104",
+              "result": "passed",
+              "summary": "Android JVM suite passed, including conversation-scoped capsule persistence, close/reopen restoration, isolation/upsert, cascade delete, invalid-capsule rejection and foreign-key behavior, plus schema v1→v3 migration acceptance.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40888728104"
+            },
+            {
+              "name": "Generated Protobuf source verification — product run 40888728104",
+              "result": "passed",
+              "summary": "Generated Protobuf Java and Kotlin source presence checks passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40888728104"
+            },
+            {
+              "name": "Windows WPF host — product run 40888728104",
+              "result": "passed",
+              "summary": "WPF build and its configured startup/safety checks passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40888728104"
+            },
+            {
+              "name": "Host lifecycle — product run 40888728104",
+              "result": "passed",
+              "summary": "Host lifecycle unit and integration tests passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40888728104"
+            },
+            {
+              "name": "APK artifact upload — product run 40888728104",
+              "result": "passed",
+              "summary": "Android debug APK artifact upload completed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40888728104"
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect exact-head V 3.0.556. Do not accept T0152 until lint, APK build, JVM persistence/migration tests and all other product/quality gates pass."
+          "follow_up": "T0152 is accepted. T0153 follows in this local capsule feature chain, but its incoming edges and the overall graph's earlier blocked T0121 chain must still be checked before selecting the next task."
         }
       ]
     },
@@ -44918,7 +44963,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-29T14:07:34Z",
+  "updated_at": "2026-10-29T14:12:26Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",
