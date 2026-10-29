@@ -60,8 +60,18 @@ class ClientDatabaseMigrationTest {
                     arrayOf<Any>("message-legacy", "conversation-legacy", "user", "old message", 11L),
                 )
                 legacyDatabase.execSQL(
-                    "INSERT INTO request_states (requestId, conversationId, status, createdAtEpochMillis, updatedAtEpochMillis, attemptNumber, errorCode) VALUES (?, ?, ?, ?, ?, ?, ?)",
-                    arrayOf<Any>("request-legacy", "conversation-legacy", "WAITING", 12L, 13L, 2, "NETWORK_UNAVAILABLE"),
+                    "INSERT INTO request_states " +
+                        "(requestId, conversationId, status, createdAtEpochMillis, updatedAtEpochMillis, " +
+                        "attemptNumber, errorCode) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                    arrayOf<Any>(
+                        "request-legacy",
+                        "conversation-legacy",
+                        "WAITING",
+                        12L,
+                        13L,
+                        2,
+                        "NETWORK_UNAVAILABLE",
+                    ),
                 )
                 legacyDatabase.execSQL(
                     "INSERT INTO request_drafts (draftId, prompt, status) VALUES (?, ?, ?)",
@@ -77,7 +87,8 @@ class ClientDatabaseMigrationTest {
                     context,
                     ClientDatabase::class.java,
                     ClientDatabase.DATABASE_NAME,
-                ).addMigrations(ClientDatabase.MIGRATION_1_2)
+                )
+                    .addMigrations(ClientDatabase.MIGRATION_1_2)
                     .build()
                     .also { database = it }
 

@@ -2,17 +2,21 @@
 
 ## Scope
 
-Revision under test: implementation commit to be resolved from the online main history after the tree update.
+The schema migration and runtime migration test were introduced in V 3.0.507. Exact-head CI exposed two actionable issues before Android compilation/unit tests could run: a stale existing assertion for Room schema version 1, and ktlint formatting violations in the new migration test.
+
+## Recorded evidence for V 3.0.507
+
+- Step Three quality run 40842236474: failed; 211 Python tests ran, one failed on the obsolete version=1 assertion. Structural graph/evidence steps were skipped.
+- Android product run 40842236492: failed at ktlintCheck in ClientDatabaseMigrationTest.kt. APK build and Android unit tests were skipped.
+- Windows WPF job and host lifecycle job in that product run passed.
+
+## Corrective retry A002
+
+- tests/test_android_local_storage_boundary.py now asserts Room schema version 2 and registration of Migration(1, 2).
+- ClientDatabaseMigrationTest.kt was reformatted at the two source locations reported by ktlint.
+- Corrective revision and exact-head CI results are pending. No test success is claimed for this retry until results are fetched from GitHub Actions.
 
 ## Dependency review
 
-- T0141 → T0142: validated as contract_or_interface_dependency. The migration must upgrade the concrete Room version-1 schema produced by T0141. Evidence: ClientDatabase.kt, RequestStateEntity.kt, ClientDatabaseMigrationTest.kt, and the checked-in v1-schema.sql fixture.
-- T0138 → T0142: validated as sequencing_only. The processing-host privacy disclosure remains a requirement context, but it does not provide a Kotlin schema/API consumed by the migration. Evidence: ADR-0019, ADR-0020, and the version-1 schema fixture.
-
-## Acceptance evidence planned for exact-head CI
-
-- The runtime migration test must open a real version-1 database, preserve conversation/message/request-state/draft rows, and expose the version-2 composite index.
-- The Android product workflow must pass ktlint, assembleDebug, testDebugUnitTest, Protobuf checks, and the APK artifact step.
-- The Step Three quality gate must validate the graph and its evidence paths.
-
-No test result is recorded as passed until a successful CI run for the implementation commit is confirmed.
+- T0141 → T0142: validated as contract_or_interface_dependency because migration 1→2 updates the concrete version-1 Room schema produced by T0141.
+- T0138 → T0142: validated as sequencing_only because the host-visible-content disclosure supplies no Kotlin migration API/schema consumed by this index migration.

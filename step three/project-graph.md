@@ -29745,11 +29745,11 @@
         "step three/T0142/execution-report.md",
         "step three/T0142/evidence/verification.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0142-A001 adds a version-1-to-2 Room migration and runtime upgrade regression test; completion is pending exact-head CI.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0142-A001 adds a version-1-to-2 Room migration and runtime upgrade regression test; completion is pending exact-head CI.\nT0142-A001 did not pass exact-head CI; corrective attempt T0142-A002 fixes the stale database-version assertion and Kotlin formatting issues. Keep in_progress until rerun passes.",
       "execution_summary": {
-        "attempt_count": 1,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "T0142-A001",
+        "attempt_count": 2,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "T0142-A002",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientDatabase.kt",
@@ -29759,11 +29759,18 @@
           "tests/test_android_database_migration_contract.py",
           "step three/T0142/execution-report.md",
           "step three/T0142/evidence/verification.md",
-          "step three/project-graph.md"
+          "step three/project-graph.md",
+          "tests/test_android_local_storage_boundary.py"
         ],
         "related_commits": [],
-        "tests_passed": [],
-        "tests_failed": [],
+        "tests_passed": [
+          "Windows WPF build and startup/policy gates passed on V 3.0.507 (run 40842236492).",
+          "Host lifecycle unit/integration tests passed on V 3.0.507 (run 40842236492)."
+        ],
+        "tests_failed": [
+          "Step Three quality gate run 40842236474 — 211 tests ran; tests/test_android_local_storage_boundary.py expected database version 1.",
+          "Android product build run 40842236492 — ktlint check failed in ClientDatabaseMigrationTest.kt; Android build and unit tests skipped."
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -29787,9 +29794,9 @@
         {
           "attempt_id": "T0142-A001",
           "started_at": "2026-10-29T08:26:48.565Z",
-          "ended_at": "2026-10-29T08:26:48.569Z",
-          "result": "partial",
-          "summary": "Implemented additive Room migration 1→2 to add a composite request-state ordering index, recorded the legacy v1 schema fixture, and added runtime and Python contract regression tests. Exact-head CI verification is pending.",
+          "ended_at": "2026-10-29T08:28:09Z",
+          "result": "failed",
+          "summary": "The implementation was committed, but exact-head acceptance failed: the existing Android storage contract still asserted Room version 1, and ktlint rejected two formatting locations in the new migration test. Windows host build and host lifecycle tests passed; Android assembly and unit tests were skipped after ktlint failed.",
           "changed_files": [
             "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientDatabase.kt",
             "src/Client.Android/app/src/main/java/com/whitep/client/data/RequestStateEntity.kt",
@@ -29800,15 +29807,59 @@
             "step three/T0142/evidence/verification.md",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
-          "tests": [],
-          "failure_details": null,
+          "commit_sha": "55dbf0ac0a7429ecf5acf56bdd508a2de92a2af9",
+          "tests": [
+            {
+              "command": "Step Three quality gate run 40842236474",
+              "result": "failed",
+              "summary": "211 tests ran; test_room_database_is_versioned_and_uses_app_private_context failed because the existing test expected version = 1 instead of the new version 2.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40842236474"
+            },
+            {
+              "command": "Android product build run 40842236492 — ktlintCheck",
+              "result": "failed",
+              "summary": "ktlint flagged argument wrapping on ClientDatabaseMigrationTest.kt line 64 and newline before the Room builder chain on line 76; APK build and Android unit tests were skipped.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40842236492"
+            },
+            {
+              "command": "Windows WPF build",
+              "result": "passed",
+              "summary": "Windows WPF build and startup/policy gates passed on the same commit."
+            },
+            {
+              "command": "Host lifecycle unit and integration tests",
+              "result": "passed",
+              "summary": "Host lifecycle unit and integration tests passed on the same commit."
+            }
+          ],
+          "failure_details": "Existing tests/test_android_local_storage_boundary.py: test_room_database_is_versioned_and_uses_app_private_context expected 'version = 1'. Android ktlint rejected argument wrapping and chaining formatting in ClientDatabaseMigrationTest.kt. No Android code compilation/unit-test result was produced for this revision because the workflow stopped at ktlint.",
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [
             "Database schema version 1→2; new composite index for request_states conversation/creation/request ordering."
           ],
-          "follow_up": "Verify the exact-head Step Three quality gate and Android product build; record results and commit SHA, then mark done only if all required checks pass."
+          "follow_up": "Correct the legacy assertion and ktlint formatting, then rerun exact-head CI. Do not mark T0142 done until Android build/unit tests and graph gate pass."
+        },
+        {
+          "attempt_id": "T0142-A002",
+          "started_at": "2026-10-29T08:35:04.502Z",
+          "ended_at": "2026-10-29T08:35:04.502Z",
+          "result": "partial",
+          "summary": "Corrected the existing Android storage-boundary assertion for database version 2 and reformatted the migration runtime test at both exact locations reported by ktlint. Exact-head CI is still pending.",
+          "changed_files": [
+            "tests/test_android_local_storage_boundary.py",
+            "src/Client.Android/app/src/test/java/com/whitep/client/data/ClientDatabaseMigrationTest.kt",
+            "step three/T0142/execution-report.md",
+            "step three/T0142/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect exact-head quality and Android product workflow results; resolve any further failing checks before changing task status to done."
         }
       ]
     },
@@ -41646,7 +41697,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-29T08:26:48.569Z",
+  "updated_at": "2026-10-29T08:35:04.502Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",
