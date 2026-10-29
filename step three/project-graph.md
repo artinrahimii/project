@@ -34016,399 +34016,407 @@
       ]
     },
     {
-    "id": "T0156",
-    "title": "به‌روزرسانی capsule را از تاریخچهٔ محلی انجام بده و تاریخچهٔ کامل را در payload شبکه قرار نده.",
-    "section": "15. مخزن زمینهٔ فشردهٔ گفت‌وگو",
-    "depends_on": [
-      "T0155",
-      "T0150"
-    ],
-    "inputs": [
-      "خروجی تأییدشدهٔ پیش‌نیازها",
-      "نیازمندی مرتبط: به‌روزرسانی capsule را از تاریخچهٔ محلی انجام بده و تاریخچهٔ کامل را در payload شبکه قرار نده."
-    ],
-    "outputs": [
-      "خروجی قابل بررسی مربوط به «به‌روزرسانی capsule را از تاریخچهٔ محلی انجام بده و تاریخچهٔ کامل را در payload شبکه قرار نده.» در مسیر src/Client.Android/Context/ + tests/؛ همراه با آزمون/شاهد پذیرش متناسب."
-    ],
-    "start_condition": "همهٔ پیش‌نیازهای T0155 و T0150 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
-    "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-    "status": "done",
-    "status_fa": "انجام‌شده",
-    "actual_output_paths": [
-      "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt",
-      "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
-      "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModelTest.kt",
-      "tests/test_android_context_capsule_history_update_contract.py",
-      "step three/T0156/execution-report.md",
-      "step three/T0156/evidence/verification.md"
-    ],
-    "expected_output_paths": [
-      "src/Client.Android/Context/ + tests/"
-    ],
-    "evidence": [
-      "src/Client.Android/app/src/main/java/com/whitep/client/context/ConversationContextCapsuleSummarizer.kt",
-      "src/Client.Android/app/src/main/java/com/whitep/client/data/MessageEntity.kt",
-      "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt",
-      "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
-      "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModelTest.kt",
-      "tests/test_android_context_capsule_history_update_contract.py",
-      "step three/T0155/execution-report.md",
-      "step three/T0150/execution-report.md",
-      "tools/graph_guard.py",
-      "tests/test_graph_guard.py"
-    ],
-    "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
-    "execution_summary": {
-      "attempt_count": 6,
-      "failed_attempt_count": 4,
-      "last_attempt_id": "T0156-A006",
-      "last_attempt_result": "succeeded",
-      "changed_files": [
+      "id": "T0156",
+      "title": "به‌روزرسانی capsule را از تاریخچهٔ محلی انجام بده و تاریخچهٔ کامل را در payload شبکه قرار نده.",
+      "section": "15. مخزن زمینهٔ فشردهٔ گفت‌وگو",
+      "depends_on": [
+        "T0155",
+        "T0150"
+      ],
+      "inputs": [
+        "خروجی تأییدشدهٔ پیش‌نیازها",
+        "نیازمندی مرتبط: به‌روزرسانی capsule را از تاریخچهٔ محلی انجام بده و تاریخچهٔ کامل را در payload شبکه قرار نده."
+      ],
+      "outputs": [
+        "خروجی قابل بررسی مربوط به «به‌روزرسانی capsule را از تاریخچهٔ محلی انجام بده و تاریخچهٔ کامل را در payload شبکه قرار نده.» در مسیر src/Client.Android/Context/ + tests/؛ همراه با آزمون/شاهد پذیرش متناسب."
+      ],
+      "start_condition": "همهٔ پیش‌نیازهای T0155 و T0150 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
+      "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
+      "status": "done",
+      "status_fa": "انجام‌شده",
+      "actual_output_paths": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModelTest.kt",
+        "tests/test_android_context_capsule_history_update_contract.py",
         "step three/T0156/execution-report.md",
-        "step three/T0156/evidence/verification.md",
-        "step three/project-graph.md"
+        "step three/T0156/evidence/verification.md"
       ],
-      "related_commits": [
-        "55c47efe12cd750de1db5936fb7a42f99943fcda",
-        "bdfd3fb0128b3dde351be0e5b6a69aaaacbdd36e"
+      "expected_output_paths": [
+        "src/Client.Android/Context/ + tests/"
       ],
-      "tests_passed": [
-        "V 3.0.570: Python 249-test suite, compileall and structural graph guard passed; HostLifecycle passed.",
-        "V 3.0.571: Python 250-test suite, compileall and graph/repository-backed evidence gates passed; HostLifecycle passed.",
-        "V 3.0.572: Python 250-test suite, compileall and graph/repository-backed evidence gates passed; Kotlin lint and APK build passed; Windows WPF and HostLifecycle passed.",
-        "Exact-head V 3.0.574 Step Three quality run 40916608649: 250 Python tests, compileall, graph structure and repository-backed output/evidence validation passed (229 nodes / 417 edges, zero errors, one preserved T0001 metadata warning).",
-        "Exact-head V 3.0.574 product run 40916608612: Android ktlintCheck, assembleDebug, testDebugUnitTest, Protobuf verification and APK artifact upload passed.",
-        "Exact-head V 3.0.574 product run 40916608612: Windows WPF Release build/startup/policy/DPAPI checks and HostLifecycle unit/integration tests passed."
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/context/ConversationContextCapsuleSummarizer.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/MessageEntity.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModelTest.kt",
+        "tests/test_android_context_capsule_history_update_contract.py",
+        "step three/T0155/execution-report.md",
+        "step three/T0150/execution-report.md",
+        "tools/graph_guard.py",
+        "tests/test_graph_guard.py"
       ],
-      "tests_failed": [
-        "V 3.0.570: graph TODO scanner false-positive and Kotlin lint failed; corrected in V 3.0.571.",
-        "V 3.0.571: Android test-source ktlint failed one extra blank line; corrected in V 3.0.572.",
-        "V 3.0.572: Android JVM suite ran 52 tests with one failure in the new history/manual-save acceptance test.",
-        "V 3.0.573: Android ktlint failed on the diagnostic assertion before JVM tests ran; corrected in A005."
-      ],
-      "blocked_reason": null,
-      "reopened_reason": null,
-      "contract_revalidation": {
-        "state": "passed",
-        "triggering_contracts": [
-          "ConversationContextSummaryRequest/Accepted/Rejected contract",
-          "MessageDao.observeForConversation(conversationId) local history boundary",
-          "configured capsule serialized-byte cap"
-        ],
-        "affected_by_contract_changes": [],
-        "review_evidence": [
-          "src/Client.Android/app/src/main/java/com/whitep/client/context/ConversationContextCapsuleSummarizer.kt",
-          "src/Client.Android/app/src/main/java/com/whitep/client/data/MessageEntity.kt",
-          "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationWorkflowAcceptanceTest.kt",
-          "tools/graph_guard.py",
-          "tests/test_graph_guard.py",
-          "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt",
-          "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModelTest.kt",
-          "tests/test_android_context_capsule_history_update_contract.py",
-          "https://github.com/artinrahimii/project/actions/runs/40916608649",
-          "https://github.com/artinrahimii/project/actions/runs/40916608612"
-        ]
-      }
-    },
-    "execution_history": [
-      {
-        "attempt_id": "T0156-A001",
-        "started_at": "2026-10-29T16:37:30.393Z",
-        "ended_at": "2026-10-29T16:41:30.389Z",
-        "result": "failed",
-        "summary": "Exact-head V 3.0.570 did not pass acceptance gates. The 249-test Python suite and compileall passed, but the repository-backed output/evidence guard failed on a false-positive TODO scan of the valid string label \"todo\" in completed task T0155. Android ktlint also failed on import ordering and two unnecessary blank lines in the new ViewModel. APK/JVM tests were skipped; HostLifecycle passed.",
-        "changed_files": [
-          "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt",
-          "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
-          "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModelTest.kt",
-          "tests/test_android_context_capsule_history_update_contract.py",
-          "step three/T0156/execution-report.md",
-          "step three/T0156/evidence/verification.md",
-          "step three/project-graph.md"
-        ],
-        "commit_sha": "2dfca52b9c53cdb5343c2f3f2f6262567d5f816d",
-        "tests": [
-          {
-            "name": "Python unittest discovery",
-            "result": "passed",
-            "summary": "249 tests ran and all passed on exact V 3.0.570."
-          },
-          {
-            "name": "python -m compileall -q tools tests",
-            "result": "passed",
-            "summary": "Python syntax compilation passed on exact V 3.0.570."
-          },
-          {
-            "name": "Graph structural validation",
-            "result": "passed",
-            "summary": "229 tasks and 417 edges; zero errors and one preserved T0001 metadata warning."
-          },
-          {
-            "name": "Recorded-output/evidence guard",
-            "result": "failed",
-            "summary": "The exact-head repo-backed guard falsely detected the valid quoted field label \"todo\" in the completed T0155 summarizer as a TODO placeholder."
-          },
-          {
-            "name": "Android ktlintCheck",
-            "result": "failed",
-            "summary": "Ktlint reported the context import order and needless blank lines at ConversationContextCapsuleViewModel.kt lines 190 and 374. Android APK and JVM tests were skipped."
-          },
-          {
-            "name": "Host lifecycle unit and integration tests",
-            "result": "passed",
-            "summary": "Job passed: https://github.com/artinrahimii/project/actions/runs/40914145365/job/123589761701"
-          },
-          {
-            "name": "Windows WPF host build",
-            "result": "not_run",
-            "summary": "Still in progress when this corrective record was prepared; inspect the final job result before final acceptance."
-          }
-        ],
-        "failure_details": null,
-        "blocked_reason": null,
-        "reopened_reason": null,
-        "contract_changes": [],
-        "follow_up": "A002 sorts the context imports/removes extra blank lines and narrows the TODO-marker check so quoted string labels do not cause false positives while actual TODO comments still fail; adds a graph-guard regression test and reruns exact-head CI."
-      },
-      {
-        "attempt_id": "T0156-A002",
-        "started_at": "2026-10-29T16:42:11.263Z",
-        "ended_at": "2026-10-29T16:45:11.263Z",
-        "result": "failed",
-        "summary": "The Step Three quality workflow passed 250 Python tests, compileall, graph structure and repository-backed output/evidence validation (229 tasks / 417 edges, zero errors, one preserved warning). Android ktlint still failed one unnecessary blank line in the new ViewModel test at line 112; APK/JVM tests were skipped. HostLifecycle passed; Windows WPF had not finished at the time of this update.",
-        "changed_files": [
-          "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt",
-          "tools/graph_guard.py",
-          "tests/test_graph_guard.py",
-          "step three/T0156/execution-report.md",
-          "step three/T0156/evidence/verification.md",
-          "step three/project-graph.md"
-        ],
-        "commit_sha": "d7bea35a156598676f83f8f5263253a6eafcc5e8",
-        "tests": [
-          {
-            "name": "Step Three quality gate — run 40914738616",
-            "result": "passed",
-            "summary": "250 Python tests passed; Python compilation, graph structure and repository-backed output/evidence validation passed (229 nodes / 417 edges, 0 errors and one preserved T0001 warning).",
-            "url": "https://github.com/artinrahimii/project/actions/runs/40914738616"
-          },
-          {
-            "name": "Android ktlintCheck — product run 40914738746",
-            "result": "failed",
-            "summary": "One style issue remained: needless blank line at ConversationContextCapsuleViewModelTest.kt:112. APK/JVM tests were skipped.",
-            "url": "https://github.com/artinrahimii/project/actions/runs/40914738746"
-          },
-          {
-            "name": "Host lifecycle unit and integration tests — run 40914738746",
-            "result": "passed",
-            "summary": "Host lifecycle job completed successfully."
-          },
-          {
-            "name": "Windows WPF host build — run 40914738746",
-            "result": "not_run",
-            "summary": "Still in progress when this record was updated; the final job result has not yet been verified."
-          }
-        ],
-        "failure_details": null,
-        "blocked_reason": null,
-        "reopened_reason": null,
-        "contract_changes": [],
-        "follow_up": "A003 removes the last ktlint-reported blank line and reruns exact-head product CI."
-      },
-      {
-        "attempt_id": "T0156-A003",
-        "started_at": "2026-10-29T16:47:42.257Z",
-        "ended_at": "2026-10-29T16:49:12.257Z",
-        "result": "failed",
-        "summary": "Exact-head V 3.0.572 quality passed; Android lint and APK build passed; Windows WPF formatting/build/Protobuf/startup/security checks and HostLifecycle passed. Android JVM unit tests ran 52 tests but the new ConversationContextCapsuleViewModelTest.suggestsCapsuleFromOnlyThisConversationsLocalHistoryAndRequiresSave failed with AssertionError (line reported at the runBlocking test entry, line 114). T0156 remains in progress; saved-capsule restoration from the Room repository is made explicit to avoid relying on asynchronous StateFlow observation before summary.",
-        "changed_files": [
-          "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModelTest.kt",
-          "step three/T0156/execution-report.md",
-          "step three/T0156/evidence/verification.md",
-          "step three/project-graph.md"
-        ],
-        "commit_sha": "38720492fec9590d64de6b5e135d2bc9443a33fd",
-        "tests": [
-          {
-            "name": "Step Three quality gate — run 40915372552",
-            "result": "passed",
-            "summary": "250 Python tests passed; compileall and both graph validation/evidence gates passed: 229 tasks / 417 edges, zero errors, one preserved warning.",
-            "url": "https://github.com/artinrahimii/project/actions/runs/40915372552"
-          },
-          {
-            "name": "Android ktlintCheck — product run 40915372539",
-            "result": "passed",
-            "summary": "Kotlin formatting and lint passed."
-          },
-          {
-            "name": "Android assembleDebug — product run 40915372539",
-            "result": "passed",
-            "summary": "Debug APK built successfully."
-          },
-          {
-            "name": "Android testDebugUnitTest — product run 40915372539",
-            "result": "failed",
-            "summary": "52 tests completed, 1 failed: ConversationContextCapsuleViewModelTest.suggestsCapsuleFromOnlyThisConversationsLocalHistoryAndRequiresSave; AssertionError reported at ConversationContextCapsuleViewModelTest.kt:114. No successful final Android acceptance yet.",
-            "url": "https://github.com/artinrahimii/project/actions/runs/40915372539"
-          },
-          {
-            "name": "Generated Protobuf Java/Kotlin checks and APK artifact upload",
-            "result": "not_run",
-            "summary": "Skipped because Android JVM tests failed."
-          },
-          {
-            "name": "Windows WPF build/startup/security — product run 40915372539",
-            "result": "passed",
-            "summary": "WPF build, C# formatting, generated Protobuf, startup smoke, process restrictions, policy rejection, capability gate, DPAPI host identity/trust storage and artifact upload passed.",
-            "url": "https://github.com/artinrahimii/project/actions/runs/40915372539"
-          },
-          {
-            "name": "Host lifecycle unit and integration tests — product run 40915372539",
-            "result": "passed",
-            "summary": "Host lifecycle integration job passed.",
-            "url": "https://github.com/artinrahimii/project/actions/runs/40915372539"
-          }
-        ],
-        "failure_details": null,
-        "blocked_reason": null,
-        "reopened_reason": null,
-        "contract_changes": [],
-        "follow_up": "A004 makes the ViewModel obtain the persisted capsule directly from the repository when the observation flow has not populated current state yet, then reruns the cross-conversation/manual-save acceptance test. The test assertion includes the UI error message if local history update fails."
-      },
-      {
-        "attempt_id": "T0156-A004",
-        "started_at": "2026-10-29T16:53:15.733Z",
-        "ended_at": "2026-10-29T16:54:15.733Z",
-        "result": "failed",
-        "summary": "The Step Three quality gate passed 250 Python tests and graph/evidence checks. Android lint failed before compile/test because the diagnostic assertion added for A004 violated Kotlin wrapping and maximum-line-length rules at ConversationContextCapsuleViewModelTest.kt:159; APK/JVM tests were skipped. A005 wraps the assertion and retries the exact-head pipeline.",
-        "changed_files": [
-          "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt",
-          "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModelTest.kt",
-          "step three/T0156/execution-report.md",
-          "step three/T0156/evidence/verification.md",
-          "step three/project-graph.md"
-        ],
-        "commit_sha": "55c47efe12cd750de1db5936fb7a42f99943fcda",
-        "tests": [
-          {
-            "name": "Step Three quality gate — run 40916215922",
-            "result": "passed",
-            "summary": "250 Python tests, compileall and graph/repository-backed output-evidence gates passed: 229 tasks / 417 edges, zero errors and one preserved T0001 warning.",
-            "url": "https://github.com/artinrahimii/project/actions/runs/40916215922"
-          },
-          {
-            "name": "Android ktlintCheck — product run 40916215951",
-            "result": "failed",
-            "summary": "Five Kotlin formatting findings on the diagnostic assert at ConversationContextCapsuleViewModelTest.kt:159: arguments must wrap, dot/closing parenthesis placement and max line length. Android build/JVM tests were not run.",
-            "url": "https://github.com/artinrahimii/project/actions/runs/40916215951"
-          },
-          {
-            "name": "HostLifecycle unit and integration — product run 40916215951",
-            "result": "passed",
-            "summary": "Job completed successfully."
-          },
-          {
-            "name": "Windows WPF host build",
-            "result": "not_run",
-            "summary": "The job was still in progress when this attempt was updated; actual completion was not captured at that point."
-          }
-        ],
-        "failure_details": null,
-        "blocked_reason": null,
-        "reopened_reason": null,
-        "contract_changes": [],
-        "follow_up": "A005 wraps the diagnostic assertion over separate lines following ktlint rules; inspect the exact-head CI for the underlying history assertion failure once JVM tests run."
-      },
-      {
-        "attempt_id": "T0156-A005",
-        "started_at": "2026-10-29T16:55:59.506Z",
-        "ended_at": "2026-10-29T16:56:44.505Z",
-        "result": "partial",
-        "summary": "Wrapped the diagnostic assertion over multiple lines to satisfy the repository's Kotlin formatting rules. Exact-head lint, build, and JVM revalidation are pending.",
-        "changed_files": [
-          "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModelTest.kt",
-          "step three/T0156/execution-report.md",
-          "step three/T0156/evidence/verification.md",
-          "step three/project-graph.md"
-        ],
-        "commit_sha": null,
-        "tests": [
-          {
-            "name": "Android ktlintCheck",
-            "result": "not_run",
-            "summary": "Assertion formatting correction prepared; exact-head validation pending."
-          },
-          {
-            "name": "Android testDebugUnitTest — history isolation/manual save",
-            "result": "not_run",
-            "summary": "The prior run failed before executing this test due to ktlint; the next run will test the repository fallback."
-          },
-          {
-            "name": "Step Three quality gate",
-            "result": "not_run",
-            "summary": "Rerun after formatting correction pending."
-          },
-          {
-            "name": "Windows WPF and HostLifecycle jobs",
-            "result": "not_run",
-            "summary": "Inspect the new exact-head run outcomes."
-          }
-        ],
-        "failure_details": null,
-        "blocked_reason": null,
-        "reopened_reason": null,
-        "contract_changes": [],
-        "follow_up": "Inspect exact V 3.0.574 CI. If the history isolation test still fails, use the enriched state error to identify whether empty local history, summary rejection, or persistence is responsible. Keep T0156 in progress until all gates pass."
-      },
-      {
-        "attempt_id": "T0156-A006",
-        "started_at": "2026-10-29T16:57:18Z",
-        "ended_at": "2026-10-29T17:00:20Z",
-        "result": "succeeded",
-        "summary": "Exact-head V 3.0.574 CI passed all quality and product gates. The selected-conversation local-history/manual-save acceptance test passed in Android testDebugUnitTest; Step Three Python/graph/evidence checks, Android lint/APK/Protobuf, Windows WPF build/startup/policy/DPAPI checks, and HostLifecycle integration tests passed.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "execution_summary": {
+        "attempt_count": 6,
+        "failed_attempt_count": 4,
+        "last_attempt_id": "T0156-A006",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "step three/T0156/execution-report.md",
           "step three/T0156/evidence/verification.md",
           "step three/project-graph.md"
         ],
         "related_commits": [
+          "55c47efe12cd750de1db5936fb7a42f99943fcda",
           "bdfd3fb0128b3dde351be0e5b6a69aaaacbdd36e"
         ],
-        "commit_sha": "bdfd3fb0128b3dde351be0e5b6a69aaaacbdd36e",
-        "tests": [
-          {
-            "name": "Step Three quality gate — exact V 3.0.574",
-            "result": "passed",
-            "summary": "250 Python tests and compileall passed; graph guard reported 229 tasks / 417 edges, zero errors, and one preserved T0001 unmapped-dependency warning.",
-            "url": "https://github.com/artinrahimii/project/actions/runs/40916608649"
-          },
-          {
-            "name": "Android client — exact V 3.0.574",
-            "result": "passed",
-            "summary": "Kotlin ktlintCheck, assembleDebug, testDebugUnitTest (including ConversationContextCapsuleViewModelTest), generated Protobuf verification, and APK artifact upload passed.",
-            "url": "https://github.com/artinrahimii/project/actions/runs/40916608612"
-          },
-          {
-            "name": "Windows WPF host — exact V 3.0.574",
-            "result": "passed",
-            "summary": "C# formatting, Release build, Protobuf, WPF startup smoke, agent-tool process/policy/capability checks, user-scoped DPAPI identity/trust checks, and artifact upload passed.",
-            "url": "https://github.com/artinrahimii/project/actions/runs/40916608612"
-          },
-          {
-            "name": "HostLifecycle unit and integration — exact V 3.0.574",
-            "result": "passed",
-            "summary": "The exact-head lifecycle integration job completed successfully.",
-            "url": "https://github.com/artinrahimii/project/actions/runs/40916608612"
-          }
+        "tests_passed": [
+          "V 3.0.570: Python 249-test suite, compileall and structural graph guard passed; HostLifecycle passed.",
+          "V 3.0.571: Python 250-test suite, compileall and graph/repository-backed evidence gates passed; HostLifecycle passed.",
+          "V 3.0.572: Python 250-test suite, compileall and graph/repository-backed evidence gates passed; Kotlin lint and APK build passed; Windows WPF and HostLifecycle passed.",
+          "Exact-head V 3.0.574 Step Three quality run 40916608649: 250 Python tests, compileall, graph structure and repository-backed output/evidence validation passed (229 nodes / 417 edges, zero errors, one preserved T0001 metadata warning).",
+          "Exact-head V 3.0.574 product run 40916608612: Android ktlintCheck, assembleDebug, testDebugUnitTest, Protobuf verification and APK artifact upload passed.",
+          "Exact-head V 3.0.574 product run 40916608612: Windows WPF Release build/startup/policy/DPAPI checks and HostLifecycle unit/integration tests passed."
         ],
-        "failure_details": null,
+        "tests_failed": [
+          "V 3.0.570: graph TODO scanner false-positive and Kotlin lint failed; corrected in V 3.0.571.",
+          "V 3.0.571: Android test-source ktlint failed one extra blank line; corrected in V 3.0.572.",
+          "V 3.0.572: Android JVM suite ran 52 tests with one failure in the new history/manual-save acceptance test.",
+          "V 3.0.573: Android ktlint failed on the diagnostic assertion before JVM tests ran; corrected in A005."
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
-        "contract_changes": [],
-        "follow_up": "T0156 is accepted. Before beginning T0157, review T0156 → T0157 and T0150 → T0157 against the conflict-review contract and current repository evidence. Preserve both blocks edges unless evidence supports a recorded reclassification."
-      }
-    ]
-  },
+        "contract_revalidation": {
+          "state": "in_review",
+          "triggering_contracts": [
+            "ConversationContextSummaryRequest/Accepted/Rejected contract",
+            "MessageDao.observeForConversation(conversationId) local history boundary",
+            "configured capsule serialized-byte cap",
+            "Capsule ViewModel state now includes explicit unresolved conflict decisions and a save gate."
+          ],
+          "affected_by_contract_changes": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModelTest.kt",
+            "tests/test_android_context_capsule_conflict_review_contract.py"
+          ],
+          "review_evidence": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/context/ConversationContextCapsuleSummarizer.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/data/MessageEntity.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationWorkflowAcceptanceTest.kt",
+            "tools/graph_guard.py",
+            "tests/test_graph_guard.py",
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModelTest.kt",
+            "tests/test_android_context_capsule_history_update_contract.py",
+            "https://github.com/artinrahimii/project/actions/runs/40916608649",
+            "https://github.com/artinrahimii/project/actions/runs/40916608612",
+            "step three/T0156/execution-report.md",
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt"
+          ]
+        }
+      },
+      "execution_history": [
+        {
+          "attempt_id": "T0156-A001",
+          "started_at": "2026-10-29T16:37:30.393Z",
+          "ended_at": "2026-10-29T16:41:30.389Z",
+          "result": "failed",
+          "summary": "Exact-head V 3.0.570 did not pass acceptance gates. The 249-test Python suite and compileall passed, but the repository-backed output/evidence guard failed on a false-positive TODO scan of the valid string label \"todo\" in completed task T0155. Android ktlint also failed on import ordering and two unnecessary blank lines in the new ViewModel. APK/JVM tests were skipped; HostLifecycle passed.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModelTest.kt",
+            "tests/test_android_context_capsule_history_update_contract.py",
+            "step three/T0156/execution-report.md",
+            "step three/T0156/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": "2dfca52b9c53cdb5343c2f3f2f6262567d5f816d",
+          "tests": [
+            {
+              "name": "Python unittest discovery",
+              "result": "passed",
+              "summary": "249 tests ran and all passed on exact V 3.0.570."
+            },
+            {
+              "name": "python -m compileall -q tools tests",
+              "result": "passed",
+              "summary": "Python syntax compilation passed on exact V 3.0.570."
+            },
+            {
+              "name": "Graph structural validation",
+              "result": "passed",
+              "summary": "229 tasks and 417 edges; zero errors and one preserved T0001 metadata warning."
+            },
+            {
+              "name": "Recorded-output/evidence guard",
+              "result": "failed",
+              "summary": "The exact-head repo-backed guard falsely detected the valid quoted field label \"todo\" in the completed T0155 summarizer as a TODO placeholder."
+            },
+            {
+              "name": "Android ktlintCheck",
+              "result": "failed",
+              "summary": "Ktlint reported the context import order and needless blank lines at ConversationContextCapsuleViewModel.kt lines 190 and 374. Android APK and JVM tests were skipped."
+            },
+            {
+              "name": "Host lifecycle unit and integration tests",
+              "result": "passed",
+              "summary": "Job passed: https://github.com/artinrahimii/project/actions/runs/40914145365/job/123589761701"
+            },
+            {
+              "name": "Windows WPF host build",
+              "result": "not_run",
+              "summary": "Still in progress when this corrective record was prepared; inspect the final job result before final acceptance."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "A002 sorts the context imports/removes extra blank lines and narrows the TODO-marker check so quoted string labels do not cause false positives while actual TODO comments still fail; adds a graph-guard regression test and reruns exact-head CI."
+        },
+        {
+          "attempt_id": "T0156-A002",
+          "started_at": "2026-10-29T16:42:11.263Z",
+          "ended_at": "2026-10-29T16:45:11.263Z",
+          "result": "failed",
+          "summary": "The Step Three quality workflow passed 250 Python tests, compileall, graph structure and repository-backed output/evidence validation (229 tasks / 417 edges, zero errors, one preserved warning). Android ktlint still failed one unnecessary blank line in the new ViewModel test at line 112; APK/JVM tests were skipped. HostLifecycle passed; Windows WPF had not finished at the time of this update.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt",
+            "tools/graph_guard.py",
+            "tests/test_graph_guard.py",
+            "step three/T0156/execution-report.md",
+            "step three/T0156/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": "d7bea35a156598676f83f8f5263253a6eafcc5e8",
+          "tests": [
+            {
+              "name": "Step Three quality gate — run 40914738616",
+              "result": "passed",
+              "summary": "250 Python tests passed; Python compilation, graph structure and repository-backed output/evidence validation passed (229 nodes / 417 edges, 0 errors and one preserved T0001 warning).",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40914738616"
+            },
+            {
+              "name": "Android ktlintCheck — product run 40914738746",
+              "result": "failed",
+              "summary": "One style issue remained: needless blank line at ConversationContextCapsuleViewModelTest.kt:112. APK/JVM tests were skipped.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40914738746"
+            },
+            {
+              "name": "Host lifecycle unit and integration tests — run 40914738746",
+              "result": "passed",
+              "summary": "Host lifecycle job completed successfully."
+            },
+            {
+              "name": "Windows WPF host build — run 40914738746",
+              "result": "not_run",
+              "summary": "Still in progress when this record was updated; the final job result has not yet been verified."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "A003 removes the last ktlint-reported blank line and reruns exact-head product CI."
+        },
+        {
+          "attempt_id": "T0156-A003",
+          "started_at": "2026-10-29T16:47:42.257Z",
+          "ended_at": "2026-10-29T16:49:12.257Z",
+          "result": "failed",
+          "summary": "Exact-head V 3.0.572 quality passed; Android lint and APK build passed; Windows WPF formatting/build/Protobuf/startup/security checks and HostLifecycle passed. Android JVM unit tests ran 52 tests but the new ConversationContextCapsuleViewModelTest.suggestsCapsuleFromOnlyThisConversationsLocalHistoryAndRequiresSave failed with AssertionError (line reported at the runBlocking test entry, line 114). T0156 remains in progress; saved-capsule restoration from the Room repository is made explicit to avoid relying on asynchronous StateFlow observation before summary.",
+          "changed_files": [
+            "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModelTest.kt",
+            "step three/T0156/execution-report.md",
+            "step three/T0156/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": "38720492fec9590d64de6b5e135d2bc9443a33fd",
+          "tests": [
+            {
+              "name": "Step Three quality gate — run 40915372552",
+              "result": "passed",
+              "summary": "250 Python tests passed; compileall and both graph validation/evidence gates passed: 229 tasks / 417 edges, zero errors, one preserved warning.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40915372552"
+            },
+            {
+              "name": "Android ktlintCheck — product run 40915372539",
+              "result": "passed",
+              "summary": "Kotlin formatting and lint passed."
+            },
+            {
+              "name": "Android assembleDebug — product run 40915372539",
+              "result": "passed",
+              "summary": "Debug APK built successfully."
+            },
+            {
+              "name": "Android testDebugUnitTest — product run 40915372539",
+              "result": "failed",
+              "summary": "52 tests completed, 1 failed: ConversationContextCapsuleViewModelTest.suggestsCapsuleFromOnlyThisConversationsLocalHistoryAndRequiresSave; AssertionError reported at ConversationContextCapsuleViewModelTest.kt:114. No successful final Android acceptance yet.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40915372539"
+            },
+            {
+              "name": "Generated Protobuf Java/Kotlin checks and APK artifact upload",
+              "result": "not_run",
+              "summary": "Skipped because Android JVM tests failed."
+            },
+            {
+              "name": "Windows WPF build/startup/security — product run 40915372539",
+              "result": "passed",
+              "summary": "WPF build, C# formatting, generated Protobuf, startup smoke, process restrictions, policy rejection, capability gate, DPAPI host identity/trust storage and artifact upload passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40915372539"
+            },
+            {
+              "name": "Host lifecycle unit and integration tests — product run 40915372539",
+              "result": "passed",
+              "summary": "Host lifecycle integration job passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40915372539"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "A004 makes the ViewModel obtain the persisted capsule directly from the repository when the observation flow has not populated current state yet, then reruns the cross-conversation/manual-save acceptance test. The test assertion includes the UI error message if local history update fails."
+        },
+        {
+          "attempt_id": "T0156-A004",
+          "started_at": "2026-10-29T16:53:15.733Z",
+          "ended_at": "2026-10-29T16:54:15.733Z",
+          "result": "failed",
+          "summary": "The Step Three quality gate passed 250 Python tests and graph/evidence checks. Android lint failed before compile/test because the diagnostic assertion added for A004 violated Kotlin wrapping and maximum-line-length rules at ConversationContextCapsuleViewModelTest.kt:159; APK/JVM tests were skipped. A005 wraps the assertion and retries the exact-head pipeline.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModelTest.kt",
+            "step three/T0156/execution-report.md",
+            "step three/T0156/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": "55c47efe12cd750de1db5936fb7a42f99943fcda",
+          "tests": [
+            {
+              "name": "Step Three quality gate — run 40916215922",
+              "result": "passed",
+              "summary": "250 Python tests, compileall and graph/repository-backed output-evidence gates passed: 229 tasks / 417 edges, zero errors and one preserved T0001 warning.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40916215922"
+            },
+            {
+              "name": "Android ktlintCheck — product run 40916215951",
+              "result": "failed",
+              "summary": "Five Kotlin formatting findings on the diagnostic assert at ConversationContextCapsuleViewModelTest.kt:159: arguments must wrap, dot/closing parenthesis placement and max line length. Android build/JVM tests were not run.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40916215951"
+            },
+            {
+              "name": "HostLifecycle unit and integration — product run 40916215951",
+              "result": "passed",
+              "summary": "Job completed successfully."
+            },
+            {
+              "name": "Windows WPF host build",
+              "result": "not_run",
+              "summary": "The job was still in progress when this attempt was updated; actual completion was not captured at that point."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "A005 wraps the diagnostic assertion over separate lines following ktlint rules; inspect the exact-head CI for the underlying history assertion failure once JVM tests run."
+        },
+        {
+          "attempt_id": "T0156-A005",
+          "started_at": "2026-10-29T16:55:59.506Z",
+          "ended_at": "2026-10-29T16:56:44.505Z",
+          "result": "partial",
+          "summary": "Wrapped the diagnostic assertion over multiple lines to satisfy the repository's Kotlin formatting rules. Exact-head lint, build, and JVM revalidation are pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModelTest.kt",
+            "step three/T0156/execution-report.md",
+            "step three/T0156/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Android ktlintCheck",
+              "result": "not_run",
+              "summary": "Assertion formatting correction prepared; exact-head validation pending."
+            },
+            {
+              "name": "Android testDebugUnitTest — history isolation/manual save",
+              "result": "not_run",
+              "summary": "The prior run failed before executing this test due to ktlint; the next run will test the repository fallback."
+            },
+            {
+              "name": "Step Three quality gate",
+              "result": "not_run",
+              "summary": "Rerun after formatting correction pending."
+            },
+            {
+              "name": "Windows WPF and HostLifecycle jobs",
+              "result": "not_run",
+              "summary": "Inspect the new exact-head run outcomes."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect exact V 3.0.574 CI. If the history isolation test still fails, use the enriched state error to identify whether empty local history, summary rejection, or persistence is responsible. Keep T0156 in progress until all gates pass."
+        },
+        {
+          "attempt_id": "T0156-A006",
+          "started_at": "2026-10-29T16:57:18Z",
+          "ended_at": "2026-10-29T17:00:20Z",
+          "result": "succeeded",
+          "summary": "Exact-head V 3.0.574 CI passed all quality and product gates. The selected-conversation local-history/manual-save acceptance test passed in Android testDebugUnitTest; Step Three Python/graph/evidence checks, Android lint/APK/Protobuf, Windows WPF build/startup/policy/DPAPI checks, and HostLifecycle integration tests passed.",
+          "changed_files": [
+            "step three/T0156/execution-report.md",
+            "step three/T0156/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "related_commits": [
+            "bdfd3fb0128b3dde351be0e5b6a69aaaacbdd36e"
+          ],
+          "commit_sha": "bdfd3fb0128b3dde351be0e5b6a69aaaacbdd36e",
+          "tests": [
+            {
+              "name": "Step Three quality gate — exact V 3.0.574",
+              "result": "passed",
+              "summary": "250 Python tests and compileall passed; graph guard reported 229 tasks / 417 edges, zero errors, and one preserved T0001 unmapped-dependency warning.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40916608649"
+            },
+            {
+              "name": "Android client — exact V 3.0.574",
+              "result": "passed",
+              "summary": "Kotlin ktlintCheck, assembleDebug, testDebugUnitTest (including ConversationContextCapsuleViewModelTest), generated Protobuf verification, and APK artifact upload passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40916608612"
+            },
+            {
+              "name": "Windows WPF host — exact V 3.0.574",
+              "result": "passed",
+              "summary": "C# formatting, Release build, Protobuf, WPF startup smoke, agent-tool process/policy/capability checks, user-scoped DPAPI identity/trust checks, and artifact upload passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40916608612"
+            },
+            {
+              "name": "HostLifecycle unit and integration — exact V 3.0.574",
+              "result": "passed",
+              "summary": "The exact-head lifecycle integration job completed successfully.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40916608612"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "T0156 is accepted. Before beginning T0157, review T0156 → T0157 and T0150 → T0157 against the conflict-review contract and current repository evidence. Preserve both blocks edges unless evidence supports a recorded reclassification."
+        }
+      ]
+    },
     {
       "id": "T0157",
       "title": "وقتی پاسخ‌ها با هم تعارض دارند، موارد متعارض را به‌عنوان پیشنهاد نیازمند تأیید نگه دار.",
@@ -34426,33 +34434,120 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0156 و T0150 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModelTest.kt",
+        "tests/test_android_context_capsule_conflict_review_contract.py",
+        "step three/T0157/execution-report.md",
+        "step three/T0157/evidence/verification.md"
+      ],
       "expected_output_paths": [
         "src/Client.Android/Context/ + tests/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModelTest.kt",
+        "tests/test_android_context_capsule_conflict_review_contract.py",
+        "src/Client.Android/app/src/main/java/com/whitep/client/context/ConversationContextCapsuleSummarizer.kt",
+        "step three/T0156/execution-report.md",
+        "step three/T0150/execution-report.md",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationWorkflowAcceptanceTest.kt",
+        "step three/T0157/execution-report.md",
+        "step three/T0157/evidence/verification.md"
+      ],
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0157-A001 implements a deterministic conflict-review layer for changed goals and a bounded set of explicit negation/opposite terms. Conflicts remain suggestions, the saved capsule is unchanged before Save, and each suggestion requires an explicit keep-current or use-suggestion decision. Exact-head CI pending; outgoing T0157→T0158 remains unreviewed.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0157-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt",
+          "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+          "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModelTest.kt",
+          "tests/test_android_context_capsule_conflict_review_contract.py",
+          "step three/T0157/execution-report.md",
+          "step three/T0157/evidence/verification.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
-          "affected_by_contract_changes": [],
-          "review_evidence": []
+          "state": "in_review",
+          "triggering_contracts": [
+            "Conflict review and explicit resolution contract",
+            "Capsule draft state and manual-save gate"
+          ],
+          "affected_by_contract_changes": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModelTest.kt",
+            "tests/test_android_context_capsule_conflict_review_contract.py"
+          ],
+          "review_evidence": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModelTest.kt",
+            "step three/T0156/execution-report.md"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0157-A001",
+          "started_at": "2026-10-29T17:15:14Z",
+          "ended_at": "2026-10-29T17:18:41.899Z",
+          "result": "partial",
+          "summary": "Added explicit potential-conflict review to the Android capsule history-update draft. Changed nonblank goals and detectable direct negation/opposite list values remain suggestions; the current capsule remains unchanged and Save is blocked until every suggestion is explicitly resolved. Kotlin and Python acceptance tests were added. Exact-head CI is pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModelTest.kt",
+            "tests/test_android_context_capsule_conflict_review_contract.py",
+            "step three/T0157/execution-report.md",
+            "step three/T0157/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "related_commits": [],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "ConversationContextCapsuleViewModelTest.conflictingHistoryAnswersNeedAnExplicitChoiceBeforeSaving",
+              "result": "not_run",
+              "summary": "Robolectric acceptance test added; exact-head Android testDebugUnitTest pending."
+            },
+            {
+              "name": "tests/test_android_context_capsule_conflict_review_contract.py",
+              "result": "not_run",
+              "summary": "Python source-contract tests added; exact-head Step Three quality workflow pending."
+            },
+            {
+              "name": "Android ktlintCheck / assembleDebug / testDebugUnitTest",
+              "result": "not_run",
+              "summary": "Exact-head product CI pending."
+            },
+            {
+              "name": "Step Three graph and evidence guard",
+              "result": "not_run",
+              "summary": "Exact-head quality CI pending."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "Adds an explicit conflict-review field and resolution API to the capsule UI state; persistence is gated on user decisions."
+          ],
+          "follow_up": "Inspect exact-head quality and product workflows. Fix failures without losing this attempt. Keep T0157 in_progress until Android lint/build/JVM tests and Python graph/evidence checks all pass."
+        }
+      ]
     },
     {
       "id": "T0158",
@@ -41459,19 +41554,29 @@
       "from": "T0156",
       "to": "T0157",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0157 applies conflict reconciliation to the editable capsule draft and existing values produced through T0156's accepted local-history ViewModel contract; reconciliation must run before the save path.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModelTest.kt",
+        "step three/T0156/execution-report.md",
+        "src/Client.Android/app/src/main/java/com/whitep/client/context/ConversationContextCapsuleSummarizer.kt"
+      ]
     },
     {
       "from": "T0150",
       "to": "T0157",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0150 verifies local conversation creation, message persistence and history isolation, but does not expose the conflict-review API. Retain blocks as conservative execution order, not a direct API dependency.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationWorkflowAcceptanceTest.kt",
+        "step three/T0150/execution-report.md",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt"
+      ]
     },
     {
       "from": "T0157",
@@ -46246,9 +46351,39 @@
         "step three/T0150/execution-report.md"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-29T17:18:41.899Z",
+      "edge_from": "T0156",
+      "edge_to": "T0157",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "reason": "T0157 applies conflict reconciliation to the editable capsule draft and existing values produced through T0156's accepted local-history ViewModel contract; reconciliation must run before the save path.",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModelTest.kt",
+        "step three/T0156/execution-report.md",
+        "src/Client.Android/app/src/main/java/com/whitep/client/context/ConversationContextCapsuleSummarizer.kt"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-29T17:18:41.899Z",
+      "edge_from": "T0150",
+      "edge_to": "T0157",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "reason": "T0150 verifies local conversation creation, message persistence and history isolation, but does not expose the conflict-review API. Retain blocks as conservative execution order, not a direct API dependency.",
+      "evidence": [
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationWorkflowAcceptanceTest.kt",
+        "step three/T0150/execution-report.md",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-29T17:08:12.937Z",
+  "updated_at": "2026-10-29T17:18:41.899Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

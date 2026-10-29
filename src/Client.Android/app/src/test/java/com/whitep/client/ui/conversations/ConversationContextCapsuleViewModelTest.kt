@@ -163,23 +163,82 @@ class ConversationContextCapsuleViewModelTest {
             )
             val draft = viewModel.uiState.value
             assertTrue(draft.isEditing)
-            assertEquals("Ship a local release", draft.goal)
+            assertEquals("Original goal", draft.goal)
+            assertEquals(1, draft.conflictReviews.size)
+            assertEquals("Ship a local release", draft.conflictReviews.single().suggestion.proposedValue)
             assertTrue(draft.keyFactsText.contains("Existing fact"))
             assertTrue(draft.keyFactsText.contains("Uses on-device Room"))
             assertEquals("Keep data local", draft.decisionsText)
             assertEquals("At most four kilobytes", draft.constraintsText)
             assertEquals(2, draft.summarySourceMessageCount)
             assertFalse(draft.goal.contains("Unrelated private conversation"))
+            assertFalse(viewModel.save())
             assertEquals(
                 original,
                 (repository.find("conversation-ui") as ConversationContextCapsuleLoadResult.Found).capsule,
             )
+            assertTrue(
+                viewModel.resolveConflict(0, ConversationContextCapsuleConflictDecision.USE_SUGGESTION),
+            )
+            assertEquals("Ship a local release", viewModel.uiState.value.goal)
 
+            assertEquals(
+                original,
+                (repository.find("conversation-ui") as ConversationContextCapsuleLoadResult.Found).capsule,
+            )
             assertTrue(viewModel.save())
             val saved = repository.find("conversation-ui") as ConversationContextCapsuleLoadResult.Found
             assertEquals("Ship a local release", saved.capsule.goal)
             assertTrue(saved.capsule.keyFacts.contains("Existing fact"))
             assertTrue(saved.capsule.keyFacts.contains("Uses on-device Room"))
+        }
+
+    @Test
+    fun conflictingHistoryAnswersNeedAnExplicitChoiceBeforeSaving() =
+        runBlocking {
+            val original =
+                ConversationContextCapsule(
+                    goal = "Ship version one",
+                    keyFacts = listOf("Remote access is enabled"),
+                )
+            assertTrue(
+                repository.save("conversation-ui", original, 10L) is
+                    com.whitep.client.data.ConversationContextCapsuleSaveResult.Saved,
+            )
+            database.messageDao().upsert(
+                MessageEntity(
+                    messageId = "conflicting-answer",
+                    conversationId = "conversation-ui",
+                    authorRole = "user",
+                    content = "goal: Ship version two\nfact: Remote access is disabled",
+                    createdAtEpochMillis = 20L,
+                ),
+            )
+            shadowOf(Looper.getMainLooper()).idle()
+            val viewModel = createViewModel()
+
+            assertTrue(viewModel.updateFromLocalHistory())
+            val draft = viewModel.uiState.value
+            assertEquals("Ship version one", draft.goal)
+            assertEquals(listOf("Remote access is enabled"), draft.keyFactsText.lines())
+            assertEquals(2, draft.conflictReviews.size)
+            assertFalse(viewModel.save())
+            assertEquals(
+                original,
+                (repository.find("conversation-ui") as ConversationContextCapsuleLoadResult.Found).capsule,
+            )
+
+            assertTrue(
+                viewModel.resolveConflict(0, ConversationContextCapsuleConflictDecision.USE_SUGGESTION),
+            )
+            assertTrue(
+                viewModel.resolveConflict(1, ConversationContextCapsuleConflictDecision.KEEP_CURRENT),
+            )
+            assertTrue(viewModel.save())
+            val saved = repository.find("conversation-ui") as ConversationContextCapsuleLoadResult.Found
+            assertEquals("Ship version two", saved.capsule.goal)
+            assertEquals(listOf("Remote access is enabled"), saved.capsule.keyFacts)
+            assertTrue(viewModel.uiState.value.conflictReviews.isEmpty())
         }
 
     @Test

@@ -21,6 +21,193 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import java.util.Locale
+
+enum class ConversationContextCapsuleConflictField(val label: String) {
+    GOAL("Goal"),
+    KEY_FACT("Key fact"),
+    DECISION("Decision"),
+    CONSTRAINT("Constraint"),
+    UNRESOLVED_ITEM("Unresolved item"),
+}
+
+enum class ConversationContextCapsuleConflictDecision(val label: String) {
+    KEEP_CURRENT("Keep current value"),
+    USE_SUGGESTION("Use suggestion"),
+}
+
+data class ConversationContextCapsuleConflictSuggestion(
+    val field: ConversationContextCapsuleConflictField,
+    val currentValue: String,
+    val proposedValue: String,
+)
+
+data class ConversationContextCapsuleConflictReview(
+    val suggestion: ConversationContextCapsuleConflictSuggestion,
+    val decision: ConversationContextCapsuleConflictDecision? = null,
+)
+
+private data class CapsuleConflictReconciliation(
+    val capsule: ConversationContextCapsule,
+    val suggestions: List<ConversationContextCapsuleConflictSuggestion>,
+)
+
+private val capsuleConflictWordPattern = Regex("[\\p{L}\\p{N}]+(?:['’][\\p{L}]+)?")
+private val capsuleConflictNegations =
+    setOf(
+        "not",
+        "no",
+        "never",
+        "without",
+        "cannot",
+        "can't",
+        "don't",
+        "doesn't",
+        "isn't",
+        "aren't",
+        "won't",
+        "shouldn't",
+        "mustn't",
+    )
+private val capsuleConflictOpposites =
+    mapOf(
+        "enabled" to "disabled",
+        "disabled" to "enabled",
+        "enable" to "disable",
+        "disable" to "enable",
+        "active" to "inactive",
+        "inactive" to "active",
+        "on" to "off",
+        "off" to "on",
+        "online" to "offline",
+        "offline" to "online",
+        "connected" to "disconnected",
+        "disconnected" to "connected",
+        "available" to "unavailable",
+        "unavailable" to "available",
+        "allowed" to "disallowed",
+        "disallowed" to "allowed",
+        "allow" to "deny",
+        "deny" to "allow",
+        "required" to "optional",
+        "optional" to "required",
+        "present" to "absent",
+        "absent" to "present",
+        "included" to "excluded",
+        "excluded" to "included",
+        "include" to "exclude",
+        "exclude" to "include",
+        "true" to "false",
+        "false" to "true",
+        "yes" to "no",
+        "no" to "yes",
+        "safe" to "unsafe",
+        "unsafe" to "safe",
+        "supported" to "unsupported",
+        "unsupported" to "supported",
+    )
+
+private fun normalizeCapsuleConflictValue(value: String): String =
+    value.trim().lowercase(Locale.ROOT).replace(Regex("\\s+"), " ")
+
+private fun directlyContradictsCapsuleValue(
+    currentValue: String,
+    proposedValue: String,
+): Boolean {
+    val currentWords = capsuleConflictWordPattern.findAll(currentValue.lowercase(Locale.ROOT)).map { it.value }.toList()
+    val proposedWords = capsuleConflictWordPattern.findAll(proposedValue.lowercase(Locale.ROOT)).map { it.value }.toList()
+    if (currentWords.isEmpty() || proposedWords.isEmpty()) return false
+
+    val currentNegated = currentWords.any { it in capsuleConflictNegations }
+    val proposedNegated = proposedWords.any { it in capsuleConflictNegations }
+    if (
+        currentWords.filterNot { it in capsuleConflictNegations } ==
+        proposedWords.filterNot { it in capsuleConflictNegations } &&
+        currentNegated != proposedNegated
+    ) {
+        return true
+    }
+    if (currentWords.size != proposedWords.size) return false
+
+    var oppositeCount = 0
+    for (index in currentWords.indices) {
+        val currentWord = currentWords[index]
+        val proposedWord = proposedWords[index]
+        if (currentWord == proposedWord) continue
+        if (capsuleConflictOpposites[currentWord] != proposedWord) return false
+        oppositeCount++
+    }
+    return oppositeCount == 1
+}
+
+private fun reconcileCapsuleConflicts(
+    current: ConversationContextCapsule?,
+    proposed: ConversationContextCapsule,
+): CapsuleConflictReconciliation {
+    if (current == null) return CapsuleConflictReconciliation(proposed, emptyList())
+    val suggestions = mutableListOf<ConversationContextCapsuleConflictSuggestion>()
+    val goalChanged =
+        current.goal.isNotBlank() &&
+            normalizeCapsuleConflictValue(current.goal) != normalizeCapsuleConflictValue(proposed.goal)
+    val safeGoal =
+        if (goalChanged) {
+            suggestions.add(
+                ConversationContextCapsuleConflictSuggestion(
+                    field = ConversationContextCapsuleConflictField.GOAL,
+                    currentValue = current.goal,
+                    proposedValue = proposed.goal,
+                ),
+            )
+            current.goal
+        } else {
+            proposed.goal
+        }
+
+    fun mergeField(
+        field: ConversationContextCapsuleConflictField,
+        currentValues: List<String>,
+        proposedValues: List<String>,
+    ): List<String> {
+        val approved = currentValues.filter { it.isNotBlank() }.distinctBy(::normalizeCapsuleConflictValue)
+        val merged = approved.toMutableList()
+        val additions =
+            proposedValues.filter { proposedValue ->
+                approved.none { normalizeCapsuleConflictValue(it) == normalizeCapsuleConflictValue(proposedValue) }
+            }
+        for (addition in additions) {
+            val conflict = approved.firstOrNull { directlyContradictsCapsuleValue(it, addition) }
+            if (conflict != null) {
+                suggestions.add(
+                    ConversationContextCapsuleConflictSuggestion(
+                        field = field,
+                        currentValue = conflict,
+                        proposedValue = addition,
+                    ),
+                )
+            } else if (merged.none { normalizeCapsuleConflictValue(it) == normalizeCapsuleConflictValue(addition) }) {
+                merged.add(addition)
+            }
+        }
+        return merged
+    }
+
+    return CapsuleConflictReconciliation(
+        capsule =
+            proposed.copy(
+                goal = safeGoal,
+                keyFacts = mergeField(ConversationContextCapsuleConflictField.KEY_FACT, current.keyFacts, proposed.keyFacts),
+                decisions = mergeField(ConversationContextCapsuleConflictField.DECISION, current.decisions, proposed.decisions),
+                constraints = mergeField(ConversationContextCapsuleConflictField.CONSTRAINT, current.constraints, proposed.constraints),
+                unresolvedItems =
+                    mergeField(
+                        ConversationContextCapsuleConflictField.UNRESOLVED_ITEM,
+                        current.unresolvedItems,
+                        proposed.unresolvedItems,
+                    ),
+            ),
+        suggestions = suggestions,
+    )
+}
 
 data class ConversationContextCapsuleUiState(
     val isLoading: Boolean = true,
@@ -37,6 +224,7 @@ data class ConversationContextCapsuleUiState(
     val isDeleting: Boolean = false,
     val isUpdatingFromHistory: Boolean = false,
     val summarySourceMessageCount: Int? = null,
+    val conflictReviews: List<ConversationContextCapsuleConflictReview> = emptyList(),
     val message: String? = null,
     val errorMessage: String? = null,
 )
@@ -131,6 +319,7 @@ class ConversationContextCapsuleViewModel(
                 constraintsText = capsule?.constraints?.joinToString("\n").orEmpty(),
                 unresolvedItemsText = capsule?.unresolvedItems?.joinToString("\n").orEmpty(),
                 message = null,
+                conflictReviews = emptyList(),
                 errorMessage = null,
             )
     }
@@ -147,6 +336,7 @@ class ConversationContextCapsuleViewModel(
                 constraintsText = capsule?.constraints?.joinToString("\n").orEmpty(),
                 unresolvedItemsText = capsule?.unresolvedItems?.joinToString("\n").orEmpty(),
                 message = null,
+                conflictReviews = emptyList(),
                 errorMessage = null,
             )
     }
@@ -186,6 +376,76 @@ class ConversationContextCapsuleViewModel(
     fun updateConstraints(value: String) = updateDraft { it.copy(constraintsText = value) }
 
     fun updateUnresolvedItems(value: String) = updateDraft { it.copy(unresolvedItemsText = value) }
+
+    fun resolveConflict(
+        index: Int,
+        decision: ConversationContextCapsuleConflictDecision,
+    ): Boolean {
+        val current = _uiState.value
+        val review = current.conflictReviews.getOrNull(index) ?: return false
+        var next = current
+        if (review.decision != decision) {
+            if (review.decision == ConversationContextCapsuleConflictDecision.USE_SUGGESTION) {
+                next =
+                    replaceConflictValue(
+                        next,
+                        review.suggestion,
+                        review.suggestion.proposedValue,
+                        review.suggestion.currentValue,
+                    )
+            }
+            if (decision == ConversationContextCapsuleConflictDecision.USE_SUGGESTION) {
+                next =
+                    replaceConflictValue(
+                        next,
+                        review.suggestion,
+                        review.suggestion.currentValue,
+                        review.suggestion.proposedValue,
+                    )
+            }
+        }
+        val reviews = current.conflictReviews.toMutableList()
+        reviews[index] = review.copy(decision = decision)
+        val unresolvedCount = reviews.count { it.decision == null }
+        _uiState.value =
+            next.copy(
+                conflictReviews = reviews,
+                message =
+                    if (unresolvedCount == 0) {
+                        "All potential conflicts reviewed. Save to persist your choices."
+                    } else {
+                        "Review every potential conflict before saving."
+                    },
+                errorMessage = null,
+            )
+        return true
+    }
+
+    private fun replaceConflictValue(
+        state: ConversationContextCapsuleUiState,
+        suggestion: ConversationContextCapsuleConflictSuggestion,
+        fromValue: String,
+        toValue: String,
+    ): ConversationContextCapsuleUiState {
+        fun replaceLineItems(text: String): String {
+            val items =
+                text.toItems()
+                    .filterNot { normalizeCapsuleConflictValue(it) == normalizeCapsuleConflictValue(fromValue) }
+                    .toMutableList()
+            if (items.none { normalizeCapsuleConflictValue(it) == normalizeCapsuleConflictValue(toValue) }) {
+                items.add(toValue)
+            }
+            return items.joinToString("\n")
+        }
+        return when (suggestion.field) {
+            ConversationContextCapsuleConflictField.GOAL -> state.copy(goal = toValue)
+            ConversationContextCapsuleConflictField.KEY_FACT -> state.copy(keyFactsText = replaceLineItems(state.keyFactsText))
+            ConversationContextCapsuleConflictField.DECISION -> state.copy(decisionsText = replaceLineItems(state.decisionsText))
+            ConversationContextCapsuleConflictField.CONSTRAINT -> state.copy(constraintsText = replaceLineItems(state.constraintsText))
+            ConversationContextCapsuleConflictField.UNRESOLVED_ITEM ->
+                state.copy(unresolvedItemsText = replaceLineItems(state.unresolvedItemsText))
+        }
+    }
 
     /**
      * Builds a reviewable capsule draft from this conversation's local Room history.
@@ -232,7 +492,15 @@ class ConversationContextCapsuleViewModel(
                 )
             when (result) {
                 is ConversationContextCapsuleSummaryResult.Accepted -> {
-                    val capsule = result.capsule
+                    val reconciliation = reconcileCapsuleConflicts(draftCapsule, result.capsule)
+                    val capsule = reconciliation.capsule
+                    val reviews = reconciliation.suggestions.map { ConversationContextCapsuleConflictReview(it) }
+                    val draftMessage =
+                        if (reviews.isEmpty()) {
+                            "Draft prepared from " + result.sourceMessageCount + " local messages. Review and save to persist."
+                        } else {
+                            "Found " + reviews.size + " potential conflicts. Choose a value for each before saving."
+                        }
                     _uiState.value =
                         _uiState.value.copy(
                             isUpdatingFromHistory = false,
@@ -243,8 +511,8 @@ class ConversationContextCapsuleViewModel(
                             constraintsText = capsule.constraints.joinToString("\n"),
                             unresolvedItemsText = capsule.unresolvedItems.joinToString("\n"),
                             summarySourceMessageCount = result.sourceMessageCount,
-                            message =
-                                "Draft prepared from ${result.sourceMessageCount} local messages. Review and save to persist.",
+                            conflictReviews = reviews,
+                            message = draftMessage,
                             errorMessage = null,
                         )
                     true
@@ -288,6 +556,10 @@ class ConversationContextCapsuleViewModel(
     suspend fun save(): Boolean {
         val current = _uiState.value
         if (current.isSaving || current.isDeleting || current.isUpdatingFromHistory) return false
+        if (current.conflictReviews.any { it.decision == null }) {
+            _uiState.value = current.copy(message = null, errorMessage = "Review every potential conflict before saving.")
+            return false
+        }
         _uiState.value = current.copy(isSaving = true, message = null, errorMessage = null)
         val capsule =
             ConversationContextCapsule(
@@ -312,6 +584,7 @@ class ConversationContextCapsuleViewModel(
                             decisionsText = capsule.decisions.joinToString("\n"),
                             constraintsText = capsule.constraints.joinToString("\n"),
                             unresolvedItemsText = capsule.unresolvedItems.joinToString("\n"),
+                            conflictReviews = emptyList(),
                             message = "Context capsule saved on this device.",
                             errorMessage = null,
                         )
@@ -356,6 +629,7 @@ class ConversationContextCapsuleViewModel(
                     decisionsText = "",
                     constraintsText = "",
                     unresolvedItemsText = "",
+                    conflictReviews = emptyList(),
                     message = if (deleted) "Context capsule deleted from this device." else null,
                     errorMessage = if (deleted) null else "There is no saved context capsule to delete.",
                 )

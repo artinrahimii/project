@@ -173,6 +173,7 @@ internal fun conversationDetailScreen(
                     onUpdateFromHistory = {
                         scope.launch { contextCapsuleViewModel.updateFromLocalHistory() }
                     },
+                    onResolveConflict = contextCapsuleViewModel::resolveConflict,
                 )
 
                 Text("Request status", style = MaterialTheme.typography.titleLarge)
@@ -253,6 +254,7 @@ private fun contextCapsuleSection(
     onSave: () -> Unit,
     onDelete: () -> Unit,
     onUpdateFromHistory: () -> Unit,
+    onResolveConflict: (Int, ConversationContextCapsuleConflictDecision) -> Unit,
 ) {
     var confirmDelete by remember { mutableStateOf(false) }
     val minSizeLimit = ConversationContextCapsule.MIN_CONFIGURABLE_SERIALIZED_BYTES
@@ -331,9 +333,53 @@ private fun contextCapsuleSection(
                 minLines = 2,
                 maxLines = 4,
             )
+            if (state.conflictReviews.isNotEmpty()) {
+                Text("Potential conflicts", style = MaterialTheme.typography.titleMedium)
+                Text(
+                    "These changes are suggestions only. Choose a value for every conflict before saving.",
+                    style = MaterialTheme.typography.bodySmall,
+                )
+                state.conflictReviews.forEachIndexed { index, review ->
+                    Card(modifier = Modifier.fillMaxWidth()) {
+                        Column(
+                            modifier = Modifier.padding(12.dp),
+                            verticalArrangement = Arrangement.spacedBy(6.dp),
+                        ) {
+                            Text(review.suggestion.field.label, style = MaterialTheme.typography.labelLarge)
+                            Text("Current value: " + review.suggestion.currentValue)
+                            Text("Suggested value: " + review.suggestion.proposedValue)
+                            review.decision?.let { choice ->
+                                Text("Selected: " + choice.label, style = MaterialTheme.typography.bodySmall)
+                            }
+                            Button(
+                                onClick = {
+                                    onResolveConflict(index, ConversationContextCapsuleConflictDecision.KEEP_CURRENT)
+                                },
+                                enabled = !state.isSaving && !state.isDeleting && !state.isUpdatingFromHistory,
+                                modifier = Modifier.fillMaxWidth(),
+                            ) {
+                                Text("Keep current value")
+                            }
+                            OutlinedButton(
+                                onClick = {
+                                    onResolveConflict(index, ConversationContextCapsuleConflictDecision.USE_SUGGESTION)
+                                },
+                                enabled = !state.isSaving && !state.isDeleting && !state.isUpdatingFromHistory,
+                                modifier = Modifier.fillMaxWidth(),
+                            ) {
+                                Text("Use suggestion")
+                            }
+                        }
+                    }
+                }
+            }
             Button(
                 onClick = onSave,
-                enabled = !state.isSaving && !state.isDeleting,
+                enabled =
+                    !state.isSaving &&
+                        !state.isDeleting &&
+                        !state.isUpdatingFromHistory &&
+                        state.conflictReviews.all { it.decision != null },
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 Text(if (state.isSaving) "Saving…" else "Save capsule")
