@@ -22,7 +22,7 @@ class ConversationContextCapsulePersistenceTest {
     private val context = RuntimeEnvironment.getApplication()
     private var activeDatabase: ClientDatabase? = null
     private val testDatabaseNames =
-        listOf("t0152-capsule-persistence.db", "t0152-capsule-invalid.db")
+        listOf("t0152-capsule-persistence.db", "t0152-capsule-invalid.db", "t0158-capsule-history.db")
 
     @Before
     fun setUp() {
@@ -138,9 +138,71 @@ class ConversationContextCapsulePersistenceTest {
         }
 
     @Test
-    fun invalidCapsuleIsRejectedAndForeignKeyPreventsOrphanRecords() =
+    fun savesAppendLocalProvenanceWithFieldNamesAndTimestampWithoutCopyingValues() =
         runBlocking {
             val database = openDatabase(testDatabaseNames.last())
+            database.conversationDao().upsert(conversation("conversation-history"))
+            val repository =
+                RoomConversationContextCapsuleRepository(database.conversationContextCapsuleDao())
+            val original =
+                ConversationContextCapsule(
+                    goal = "Private original goal",
+                    keyFacts = listOf("Private original fact"),
+                )
+            assertTrue(
+                repository.save(
+                    "conversation-history",
+                    original,
+                    100L,
+                    source = ConversationContextCapsuleChangeSource.USER_EDIT,
+                ) is ConversationContextCapsuleSaveResult.Saved,
+            )
+            val revised =
+                ConversationContextCapsule(
+                    goal = "Private revised goal",
+                    keyFacts = listOf("Private revised fact"),
+                )
+            assertTrue(
+                repository.save(
+                    "conversation-history",
+                    revised,
+                    200L,
+                    source = ConversationContextCapsuleChangeSource.LOCAL_HISTORY_SUMMARY_REVIEWED,
+                ) is ConversationContextCapsuleSaveResult.Saved,
+            )
+
+            val history = repository.changeHistory("conversation-history")
+            assertEquals(2, history.size)
+            assertEquals("USER_EDIT", history.first().source)
+            assertEquals(100L, history.first().changedAtEpochMillis)
+            assertEquals(
+                "[\"schemaVersion\",\"goal\",\"keyFacts\",\"decisions\",\"constraints\",\"unresolvedItems\"]",
+                history.first().changedFieldsJson,
+            )
+            assertEquals("LOCAL_HISTORY_SUMMARY_REVIEWED", history.last().source)
+            assertEquals(200L, history.last().changedAtEpochMillis)
+            assertEquals("[\"goal\",\"keyFacts\"]", history.last().changedFieldsJson)
+            assertEquals(1, history.last().schemaVersion)
+            assertEquals(revised.encode().bytes?.size, history.last().serializedByteCount)
+            assertTrue(
+                history.none {
+                    it.changedFieldsJson.contains("Private original goal") ||
+                        it.changedFieldsJson.contains("Private revised fact")
+                },
+            )
+
+            assertEquals(1, repository.delete("conversation-history"))
+            assertTrue(repository.changeHistory("conversation-history").isEmpty())
+            assertEquals(
+                ConversationContextCapsuleLoadResult.Missing,
+                repository.find("conversation-history"),
+            )
+        }
+
+    @Test
+    fun invalidCapsuleIsRejectedAndForeignKeyPreventsOrphanRecords() =
+        runBlocking {
+            val database = openDatabase(testDatabaseNames[1])
             database.conversationDao().upsert(conversation("valid-conversation"))
             val repository =
                 RoomConversationContextCapsuleRepository(database.conversationContextCapsuleDao())
@@ -180,7 +242,7 @@ class ConversationContextCapsulePersistenceTest {
     private fun openDatabase(name: String): ClientDatabase =
         Room
             .databaseBuilder(context, ClientDatabase::class.java, name)
-            .addMigrations(ClientDatabase.MIGRATION_1_2, ClientDatabase.MIGRATION_2_3)
+            .addMigrations(ClientDatabase.MIGRATION_1_2, ClientDatabase.MIGRATION_2_3, ClientDatabase.MIGRATION_3_4)
             .allowMainThreadQueries()
             .build()
             .also { activeDatabase = it }

@@ -34783,33 +34783,161 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0157 و T0150 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/ConversationContextCapsuleChangeEntity.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/ConversationContextCapsuleEntity.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientDatabase.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/RoomConversationContextCapsuleRepository.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/data/ConversationContextCapsulePersistenceTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/data/ClientDatabaseMigrationTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModelTest.kt",
+        "tests/test_android_database_migration_contract.py",
+        "tests/test_android_local_storage_boundary.py",
+        "tests/test_android_context_capsule_persistence_contract.py",
+        "tests/test_android_context_capsule_ui_contract.py",
+        "tests/test_android_context_capsule_provenance_contract.py",
+        "step three/T0158/execution-report.md",
+        "step three/T0158/evidence/verification.md"
+      ],
       "expected_output_paths": [
         "src/Client.Android/Context/ + tests/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/ConversationContextCapsuleChangeEntity.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/ConversationContextCapsuleEntity.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientDatabase.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/RoomConversationContextCapsuleRepository.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/data/ConversationContextCapsulePersistenceTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/data/ClientDatabaseMigrationTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModelTest.kt",
+        "tests/test_android_database_migration_contract.py",
+        "tests/test_android_local_storage_boundary.py",
+        "tests/test_android_context_capsule_persistence_contract.py",
+        "tests/test_android_context_capsule_ui_contract.py",
+        "tests/test_android_context_capsule_provenance_contract.py",
+        "step three/T0158/execution-report.md",
+        "step three/T0158/evidence/verification.md",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/ConversationEntity.kt",
+        "protocol/whitep/v1/messages.proto",
+        "docs/requirements.md",
+        "step three/T0150/execution-report.md",
+        "step three/T0157/execution-report.md",
+        "https://github.com/artinrahimii/project/actions/runs/40943199249",
+        "https://github.com/artinrahimii/project/actions/runs/40943199144"
+      ],
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0158-A001 (2026-10-29T19:58:20Z): Reviewed both incoming edges against actual code and requirements, kept their `blocks` types, and validated both as contract_or_interface_dependency. Implemented local Room provenance/history events with source, timestamp and changed field names only; added transactionally coupled capsule/audit persistence, schema v3→v4 migration, ViewModel source attribution, runtime and Python tests. `protocol/whitep/v1/messages.proto` remains unchanged. Exact-head CI is pending; outgoing T0158 → T0159 remains unreviewed.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0158-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Client.Android/app/src/main/java/com/whitep/client/data/ConversationContextCapsuleChangeEntity.kt",
+          "src/Client.Android/app/src/main/java/com/whitep/client/data/ConversationContextCapsuleEntity.kt",
+          "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientDatabase.kt",
+          "src/Client.Android/app/src/main/java/com/whitep/client/data/RoomConversationContextCapsuleRepository.kt",
+          "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt",
+          "src/Client.Android/app/src/test/java/com/whitep/client/data/ConversationContextCapsulePersistenceTest.kt",
+          "src/Client.Android/app/src/test/java/com/whitep/client/data/ClientDatabaseMigrationTest.kt",
+          "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModelTest.kt",
+          "tests/test_android_database_migration_contract.py",
+          "tests/test_android_local_storage_boundary.py",
+          "tests/test_android_context_capsule_persistence_contract.py",
+          "tests/test_android_context_capsule_ui_contract.py",
+          "tests/test_android_context_capsule_provenance_contract.py",
+          "step three/T0158/execution-report.md",
+          "step three/T0158/evidence/verification.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
-          "affected_by_contract_changes": [],
-          "review_evidence": []
+          "state": "in_review",
+          "triggering_contracts": [
+            "T0157 explicit conflict-review and save gate",
+            "ConversationContextCapsule v1 schema and 4,096-byte serialization ceiling",
+            "Room schema v3 and local conversation/capsule foreign keys",
+            "Temporary request identity; no permanent conversation ID or full history in inference request"
+          ],
+          "affected_by_contract_changes": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/data/ConversationContextCapsuleChangeEntity.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/data/ConversationContextCapsuleEntity.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientDatabase.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/data/RoomConversationContextCapsuleRepository.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/data/ConversationContextCapsulePersistenceTest.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/data/ClientDatabaseMigrationTest.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModelTest.kt"
+          ],
+          "review_evidence": [
+            "step three/T0150/execution-report.md",
+            "step three/T0157/execution-report.md",
+            "src/Client.Android/app/src/main/java/com/whitep/client/data/ConversationEntity.kt",
+            "protocol/whitep/v1/messages.proto",
+            "docs/requirements.md"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0158-A001",
+          "started_at": "2026-10-29T19:58:20Z",
+          "ended_at": "2026-10-29T19:58:20Z",
+          "result": "partial",
+          "summary": "Implemented local capsule change-history/provenance storage, source attribution, timestamps and changed field names with a Room v3→v4 migration; capsule save and audit event are written atomically. The network Protobuf is unchanged. Acceptance remains pending exact-head CI.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/data/ConversationContextCapsuleChangeEntity.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/data/ConversationContextCapsuleEntity.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientDatabase.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/data/RoomConversationContextCapsuleRepository.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/data/ConversationContextCapsulePersistenceTest.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/data/ClientDatabaseMigrationTest.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModelTest.kt",
+            "tests/test_android_database_migration_contract.py",
+            "tests/test_android_local_storage_boundary.py",
+            "tests/test_android_context_capsule_persistence_contract.py",
+            "tests/test_android_context_capsule_ui_contract.py",
+            "tests/test_android_context_capsule_provenance_contract.py",
+            "step three/T0158/execution-report.md",
+            "step three/T0158/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Step Three quality gate — V 3.0.580",
+              "result": "not_run",
+              "summary": "Will be executed when the remote commit is published."
+            },
+            {
+              "name": "Android lint/APK/JVM/migration tests — V 3.0.580",
+              "result": "not_run",
+              "summary": "Will be executed when the remote commit is published; inspect Room DAO transaction, migration and source-attribution tests."
+            },
+            {
+              "name": "Windows WPF and HostLifecycle — V 3.0.580",
+              "result": "not_run",
+              "summary": "Will be executed when the remote commit is published."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "Room schema version 3→4 adds local conversation_context_capsule_changes history.",
+            "Repository save appends provenance metadata transactionally without storing capsule values in the history row."
+          ],
+          "follow_up": "Inspect exact-head V 3.0.580 CI; fix compile, Room validation, KtLint or test failures before marking T0158 done."
+        }
+      ]
     },
     {
       "id": "T0159",
@@ -41799,19 +41927,33 @@
       "from": "T0157",
       "to": "T0158",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0158 records provenance only at the accepted capsule ViewModel save boundary, after T0157's explicit conflict-review gate succeeds. The task consumes that save contract; records remain local and do not change the inference request protocol.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/RoomConversationContextCapsuleRepository.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/ConversationContextCapsuleEntity.kt",
+        "step three/T0157/execution-report.md",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModelTest.kt"
+      ]
     },
     {
       "from": "T0150",
       "to": "T0158",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0150 establishes the local Room-backed conversation workflow and stable local primary key that scopes the provenance table and cleanup behavior. This is a local persistence contract, not a network routing identity.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/ConversationEntity.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/ConversationContextCapsuleEntity.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientDatabase.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationWorkflowAcceptanceTest.kt",
+        "step three/T0150/execution-report.md",
+        "protocol/whitep/v1/messages.proto",
+        "docs/requirements.md"
+      ]
     },
     {
       "from": "T0158",
@@ -46600,7 +46742,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-29T19:42:00Z",
+  "updated_at": "2026-10-29T19:58:20Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

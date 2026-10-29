@@ -49,7 +49,7 @@ class ConversationContextCapsuleViewModelTest {
                 .inMemoryDatabaseBuilder(
                     application,
                     ClientDatabase::class.java,
-                ).addMigrations(ClientDatabase.MIGRATION_1_2, ClientDatabase.MIGRATION_2_3)
+                ).addMigrations(ClientDatabase.MIGRATION_1_2, ClientDatabase.MIGRATION_2_3, ClientDatabase.MIGRATION_3_4)
                 .allowMainThreadQueries()
                 .build()
         repository = RoomConversationContextCapsuleRepository(database.conversationContextCapsuleDao())
@@ -247,6 +247,12 @@ class ConversationContextCapsuleViewModelTest {
             val saved = repository.find("conversation-ui") as ConversationContextCapsuleLoadResult.Found
             assertEquals("Ship version two", saved.capsule.goal)
             assertEquals(listOf("Remote access is enabled"), saved.capsule.keyFacts)
+            val changes = repository.changeHistory("conversation-ui")
+            assertEquals(2, changes.size)
+            assertEquals("USER_EDIT", changes.first().source)
+            assertEquals("LOCAL_HISTORY_SUMMARY_REVIEWED", changes.last().source)
+            assertEquals(50L, changes.last().changedAtEpochMillis)
+            assertTrue(changes.last().changedFieldsJson.contains("goal"))
             assertTrue(
                 viewModel
                     .uiState

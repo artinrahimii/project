@@ -4,6 +4,7 @@ import com.whitep.client.context.ConversationContextCapsule
 import com.whitep.client.context.ConversationContextCapsuleError
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import org.json.JSONArray
 
 sealed interface ConversationContextCapsuleSaveResult {
     data class Saved(
@@ -41,6 +42,7 @@ class RoomConversationContextCapsuleRepository(
         capsule: ConversationContextCapsule,
         updatedAtEpochMillis: Long,
         maxSerializedBytes: Int = ConversationContextCapsule.MAX_SERIALIZED_BYTES,
+        source: ConversationContextCapsuleChangeSource = ConversationContextCapsuleChangeSource.USER_EDIT,
     ): ConversationContextCapsuleSaveResult {
         require(conversationId.isNotBlank()) { "conversationId must not be blank" }
         val encoded = capsule.encode(maxSerializedBytes)
@@ -52,12 +54,32 @@ class RoomConversationContextCapsuleRepository(
             )
         }
 
-        dao.upsert(
-            ConversationContextCapsuleEntity(
+        val previousEntity = dao.findByConversationId(conversationId)
+        val previousDecoded = previousEntity?.let { ConversationContextCapsule.decode(it.serializedCapsule) }
+        val previousCapsule = previousDecoded?.takeIf { it.isValid }?.capsule
+        val changedFields = changedFields(previousCapsule, capsule)
+        val changedFieldsJson =
+            JSONArray().apply {
+                changedFields.forEach { put(it) }
+            }.toString()
+        val change =
+            ConversationContextCapsuleChangeEntity(
                 conversationId = conversationId,
-                serializedCapsule = bytes,
-                updatedAtEpochMillis = updatedAtEpochMillis,
-            ),
+                source = source.name,
+                changedFieldsJson = changedFieldsJson,
+                changedAtEpochMillis = updatedAtEpochMillis,
+                schemaVersion = capsule.schemaVersion,
+                serializedByteCount = bytes.size,
+            )
+
+        dao.saveWithChange(
+            capsule =
+                ConversationContextCapsuleEntity(
+                    conversationId = conversationId,
+                    serializedCapsule = bytes,
+                    updatedAtEpochMillis = updatedAtEpochMillis,
+                ),
+            change = change,
         )
         return ConversationContextCapsuleSaveResult.Saved(
             serializedByteCount = bytes.size,
@@ -72,6 +94,22 @@ class RoomConversationContextCapsuleRepository(
         dao.observeForConversation(conversationId).map(::toLoadResult)
 
     suspend fun delete(conversationId: String): Int = dao.deleteForConversation(conversationId)
+
+    suspend fun changeHistory(conversationId: String): List<ConversationContextCapsuleChangeEntity> =
+        dao.changeHistoryForConversation(conversationId)
+
+    private fun changedFields(
+        previous: ConversationContextCapsule?,
+        current: ConversationContextCapsule,
+    ): List<String> =
+        buildList {
+            if (previous == null || previous.schemaVersion != current.schemaVersion) add("schemaVersion")
+            if (previous == null || previous.goal != current.goal) add("goal")
+            if (previous == null || previous.keyFacts != current.keyFacts) add("keyFacts")
+            if (previous == null || previous.decisions != current.decisions) add("decisions")
+            if (previous == null || previous.constraints != current.constraints) add("constraints")
+            if (previous == null || previous.unresolvedItems != current.unresolvedItems) add("unresolvedItems")
+        }
 
     private fun toLoadResult(entity: ConversationContextCapsuleEntity?): ConversationContextCapsuleLoadResult {
         if (entity == null) {

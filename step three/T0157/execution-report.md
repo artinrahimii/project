@@ -13,7 +13,7 @@
 - **Tests:** Added a Robolectric regression scenario for a changed goal and contradictory `enabled/disabled` key fact, verifying that the original record is unchanged before choices and save. Added a Python UI/source contract test.
 - **Local execution:** The connected GitHub tools do not provide a local Android/Gradle or Python execution environment; no local test run is claimed. Exact-head GitHub Actions results are recorded under attempt A005 below.
 - **Current status:** `done` after exact-head V 3.0.578 acceptance (`T0157-A005`); all prior failed/partial attempts are retained below.
-- **Next action:** Inspect exact-head quality and product workflows. Fix any lint/test/build failures while preserving this attempt; do not mark T0157 done until the Android conflict-review test and all required gates pass.
+- **Next action:** Before starting T0158, validate the still-unreviewed T0157 → T0158 edge against actual producer/consumer contracts; preserve the edge until evidence supports its classification.
 
 
 ## Exact-head V 3.0.576 acceptance attempt A002 — failed

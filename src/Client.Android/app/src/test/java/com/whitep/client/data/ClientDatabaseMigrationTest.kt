@@ -88,11 +88,11 @@ class ClientDatabaseMigrationTest {
                         context,
                         ClientDatabase::class.java,
                         ClientDatabase.DATABASE_NAME,
-                    ).addMigrations(ClientDatabase.MIGRATION_1_2, ClientDatabase.MIGRATION_2_3)
+                    ).addMigrations(ClientDatabase.MIGRATION_1_2, ClientDatabase.MIGRATION_2_3, ClientDatabase.MIGRATION_3_4)
                     .build()
                     .also { database = it }
 
-            assertEquals(3, migratedDatabase.openHelper.readableDatabase.version)
+            assertEquals(4, migratedDatabase.openHelper.readableDatabase.version)
             assertEquals(
                 "Legacy conversation",
                 migratedDatabase.conversationDao().findById("conversation-legacy")?.title,
@@ -110,6 +110,12 @@ class ClientDatabaseMigrationTest {
                 migratedDatabase
                     .conversationContextCapsuleDao()
                     .findByConversationId("conversation-legacy"),
+            )
+            assertTrue(
+                migratedDatabase
+                    .conversationContextCapsuleDao()
+                    .changeHistoryForConversation("conversation-legacy")
+                    .isEmpty(),
             )
             val request = migratedDatabase.requestStateDao().findById("request-legacy")
             assertEquals(PersistedRequestStatus.WAITING, request?.status)

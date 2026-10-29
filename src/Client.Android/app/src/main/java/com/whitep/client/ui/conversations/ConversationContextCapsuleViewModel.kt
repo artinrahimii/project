@@ -10,6 +10,7 @@ import com.whitep.client.context.ConversationContextSummaryMessage
 import com.whitep.client.context.ConversationContextSummaryRejectionReason
 import com.whitep.client.context.ConversationContextSummaryRequest
 import com.whitep.client.context.SchemaValidatedConversationContextCapsuleSummarizer
+import com.whitep.client.data.ConversationContextCapsuleChangeSource
 import com.whitep.client.data.ConversationContextCapsuleLoadResult
 import com.whitep.client.data.ConversationContextCapsuleSaveResult
 import com.whitep.client.data.ConversationContextCapsuleSizeLimitStore
@@ -251,6 +252,7 @@ data class ConversationContextCapsuleUiState(
     val isDeleting: Boolean = false,
     val isUpdatingFromHistory: Boolean = false,
     val summarySourceMessageCount: Int? = null,
+    val hasUserEditedSummaryDraft: Boolean = false,
     val conflictReviews: List<ConversationContextCapsuleConflictReview> = emptyList(),
     val message: String? = null,
     val errorMessage: String? = null,
@@ -553,6 +555,7 @@ class ConversationContextCapsuleViewModel(
                             constraintsText = capsule.constraints.joinToString("\n"),
                             unresolvedItemsText = capsule.unresolvedItems.joinToString("\n"),
                             summarySourceMessageCount = result.sourceMessageCount,
+                            hasUserEditedSummaryDraft = false,
                             conflictReviews = reviews,
                             message = draftMessage,
                             errorMessage = null,
@@ -606,6 +609,14 @@ class ConversationContextCapsuleViewModel(
                 )
             return false
         }
+        val changeSource =
+            when {
+                current.summarySourceMessageCount == null ->
+                    ConversationContextCapsuleChangeSource.USER_EDIT
+                current.conflictReviews.isNotEmpty() || current.hasUserEditedSummaryDraft ->
+                    ConversationContextCapsuleChangeSource.LOCAL_HISTORY_SUMMARY_REVIEWED
+                else -> ConversationContextCapsuleChangeSource.LOCAL_HISTORY_SUMMARY
+            }
         _uiState.value = current.copy(isSaving = true, message = null, errorMessage = null)
         val capsule =
             ConversationContextCapsule(
@@ -616,7 +627,7 @@ class ConversationContextCapsuleViewModel(
                 unresolvedItems = current.unresolvedItemsText.toItems(),
             )
         return try {
-            when (val result = repository.save(conversationId, capsule, clockMillis(), current.maxSerializedBytes)) {
+            when (val result = repository.save(conversationId, capsule, clockMillis(), current.maxSerializedBytes, changeSource)) {
                 is ConversationContextCapsuleSaveResult.Saved -> {
                     val savedState = _uiState.value
                     _uiState.value =
@@ -631,6 +642,8 @@ class ConversationContextCapsuleViewModel(
                             constraintsText = capsule.constraints.joinToString("\n"),
                             unresolvedItemsText = capsule.unresolvedItems.joinToString("\n"),
                             conflictReviews = emptyList(),
+                            summarySourceMessageCount = null,
+                            hasUserEditedSummaryDraft = false,
                             message = "Context capsule saved on this device.",
                             errorMessage = null,
                         )
@@ -705,7 +718,14 @@ class ConversationContextCapsuleViewModel(
     }
 
     private fun updateDraft(transform: (ConversationContextCapsuleUiState) -> ConversationContextCapsuleUiState) {
-        _uiState.value = transform(_uiState.value).copy(message = null, errorMessage = null)
+        val current = _uiState.value
+        _uiState.value =
+            transform(current).copy(
+                hasUserEditedSummaryDraft =
+                    current.hasUserEditedSummaryDraft || current.summarySourceMessageCount != null,
+                message = null,
+                errorMessage = null,
+            )
     }
 
     private fun String.toItems(): List<String> =

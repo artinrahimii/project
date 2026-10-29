@@ -3,8 +3,10 @@ package com.whitep.client.data
 import androidx.room.Dao
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Insert
 import androidx.room.PrimaryKey
 import androidx.room.Query
+import androidx.room.Transaction
 import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
 
@@ -45,4 +47,25 @@ interface ConversationContextCapsuleDao {
 
     @Query("SELECT COUNT(*) FROM conversation_context_capsules WHERE conversationId = :conversationId")
     suspend fun countForConversation(conversationId: String): Int
+
+    @Insert
+    suspend fun insertChange(change: ConversationContextCapsuleChangeEntity): Long
+
+    @Query(
+        "SELECT * FROM conversation_context_capsule_changes " +
+            "WHERE conversationId = :conversationId " +
+            "ORDER BY changedAtEpochMillis ASC, changeId ASC",
+    )
+    suspend fun changeHistoryForConversation(
+        conversationId: String,
+    ): List<ConversationContextCapsuleChangeEntity>
+
+    @Transaction
+    suspend fun saveWithChange(
+        capsule: ConversationContextCapsuleEntity,
+        change: ConversationContextCapsuleChangeEntity,
+    ) {
+        upsert(capsule)
+        insertChange(change)
+    }
 }

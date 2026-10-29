@@ -9,7 +9,7 @@
 - Implementation files: `src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt`, `src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt`, `src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModelTest.kt`, and `tests/test_android_context_capsule_conflict_review_contract.py`.
 - Acceptance coverage added: local test keeps the saved goal and existing key fact unchanged until review; each conflict requires an explicit `KEEP_CURRENT` or `USE_SUGGESTION` choice before Save.
 - Heuristic boundary: checks explicit negation and a bounded lexicon of opposite terms; changing a nonblank goal always prompts. It does not claim to identify every natural-language contradiction.
-- Tests were not executed locally through the connected tool. Exact-head CI must establish outcomes before acceptance.
+- Local execution limitation: no local Android/Gradle/Python run is claimed; exact-head V 3.0.578 GitHub Actions results are documented in the final verification section below.
 
 
 ## V 3.0.576 failed acceptance and corrective A003

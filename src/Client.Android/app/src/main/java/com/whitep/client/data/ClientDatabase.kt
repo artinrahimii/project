@@ -27,11 +27,12 @@ class ClientDatabaseConverters {
     entities = [
         ConversationEntity::class,
         ConversationContextCapsuleEntity::class,
+        ConversationContextCapsuleChangeEntity::class,
         MessageEntity::class,
         RequestStateEntity::class,
         ClientRequestDraftEntity::class,
     ],
-    version = 3,
+    version = 4,
     exportSchema = true,
 )
 @TypeConverters(ClientDatabaseConverters::class)
@@ -75,6 +76,27 @@ abstract class ClientDatabase : RoomDatabase() {
                 }
             }
 
+        val MIGRATION_3_4: Migration =
+            object : Migration(3, 4) {
+                override fun migrate(db: SupportSQLiteDatabase) {
+                    db.execSQL(
+                        "CREATE TABLE IF NOT EXISTS `conversation_context_capsule_changes` (" +
+                            "`changeId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                            "`conversationId` TEXT NOT NULL, " +
+                            "`source` TEXT NOT NULL, " +
+                            "`changedFieldsJson` TEXT NOT NULL, " +
+                            "`changedAtEpochMillis` INTEGER NOT NULL, " +
+                            "`schemaVersion` INTEGER NOT NULL, " +
+                            "`serializedByteCount` INTEGER NOT NULL, " +
+                            "FOREIGN KEY(`conversationId`) REFERENCES `conversation_context_capsules`(`conversationId`) " +
+                            "ON UPDATE NO ACTION ON DELETE CASCADE)",
+                    )
+                    db.execSQL(
+                        "CREATE INDEX IF NOT EXISTS `index_conversation_context_capsule_changes_conversationId_changedAtEpochMillis` " +
+                            "ON `conversation_context_capsule_changes` (`conversationId`, `changedAtEpochMillis`)",
+                    )
+                }
+            }
         @Volatile
         private var instance: ClientDatabase? = null
 
@@ -85,7 +107,7 @@ abstract class ClientDatabase : RoomDatabase() {
                         context.applicationContext,
                         ClientDatabase::class.java,
                         DATABASE_NAME,
-                    ).addMigrations(MIGRATION_1_2, MIGRATION_2_3)
+                    ).addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
                     .build()
                     .also { database -> instance = database }
             }

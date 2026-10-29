@@ -10,14 +10,24 @@ class AndroidLocalStorageBoundaryTests(unittest.TestCase):
     def test_room_database_is_versioned_and_uses_app_private_context(self):
         source = (ANDROID / "ClientDatabase.kt").read_text(encoding="utf-8")
         self.assertIn("@Database(", source)
-        self.assertIn("version = 3", source)
+        self.assertIn("version = 4", source)
         self.assertIn("Migration(1, 2)", source)
         self.assertIn("Migration(2, 3)", source)
-        self.assertIn("addMigrations(MIGRATION_1_2, MIGRATION_2_3)", source)
+        self.assertIn("Migration(3, 4)", source)
+        self.assertIn("addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)", source)
         self.assertIn("exportSchema = true", source)
         self.assertIn("context.applicationContext", source)
         self.assertIn('"whitep-client.db"', source)
         self.assertNotIn("fallbackToDestructiveMigration", source)
+
+    def test_capsule_provenance_is_local_metadata_and_cascades_with_capsule(self):
+        source = (ANDROID / "ConversationContextCapsuleChangeEntity.kt").read_text(encoding="utf-8")
+        self.assertIn("conversation_context_capsule_changes", source)
+        self.assertIn("changedAtEpochMillis", source)
+        self.assertIn("changedFieldsJson", source)
+        self.assertIn("ForeignKey.CASCADE", source)
+        self.assertNotIn("val content:", source)
+        self.assertNotIn("val prompt:", source)
 
     def test_message_and_request_status_rows_cascade_with_conversation_deletion(self):
         for filename in ("MessageEntity.kt", "RequestStateEntity.kt"):
