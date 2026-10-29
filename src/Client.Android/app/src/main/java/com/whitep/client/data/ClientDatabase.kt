@@ -88,15 +88,18 @@ abstract class ClientDatabase : RoomDatabase() {
                             "`changedAtEpochMillis` INTEGER NOT NULL, " +
                             "`schemaVersion` INTEGER NOT NULL, " +
                             "`serializedByteCount` INTEGER NOT NULL, " +
-                            "FOREIGN KEY(`conversationId`) REFERENCES `conversation_context_capsules`(`conversationId`) " +
+                            "FOREIGN KEY(`conversationId`) " +
+                            "REFERENCES `conversation_context_capsules`(`conversationId`) " +
                             "ON UPDATE NO ACTION ON DELETE CASCADE)",
                     )
                     db.execSQL(
-                        "CREATE INDEX IF NOT EXISTS `index_conversation_context_capsule_changes_conversationId_changedAtEpochMillis` " +
+                        "CREATE INDEX IF NOT EXISTS " +
+                            "`index_conversation_context_capsule_changes_conversationId_changedAtEpochMillis` " +
                             "ON `conversation_context_capsule_changes` (`conversationId`, `changedAtEpochMillis`)",
                     )
                 }
             }
+
         @Volatile
         private var instance: ClientDatabase? = null
 

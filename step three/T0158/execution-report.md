@@ -12,7 +12,7 @@
 - **Migration:** Room database schema moves from v3 to v4 using non-destructive `MIGRATION_3_4`; old capsule/request/message records are not intentionally rewritten.
 - **Tests added/updated:** Room persistence tests cover source/time/field-name metadata, not duplicating content values, delete cascade and migration. A ViewModel test covers source attribution after an explicitly reviewed Save. Python source contracts guard migration and network-boundary constraints.
 - **Local execution:** The connected GitHub tools do not provide a local Gradle/Android/Python runtime. No local test run is claimed.
-- **Current status:** `in_progress`; exact-head V 3.0.585 passed the 257-test Step Three quality gate, Windows WPF build/startup/security checks, and HostLifecycle tests. Android KtLint failed in three production-source locations (DAO parameter layout, a JSONArray method chain, and the multiline ViewModel save invocation), so APK/JVM/Protobuf checks were skipped. A007 reformats those expressions and makes source-contract checks whitespace-tolerant; V 3.0.586 CI is pending. No acceptance claim is made.
+- **Current status:** `in_progress`; exact-head V 3.0.586 passed the 257-test Step Three quality gate, Windows WPF build/startup/security checks, and HostLifecycle tests. Android KtLint failed on four findings: two overlong SQL lines and a missing blank line in `ClientDatabase.kt`, plus the `.toString()` chain layout in `RoomConversationContextCapsuleRepository.kt`. APK/JVM/Protobuf checks were skipped. A008 corrects those exact findings; V 3.0.587 CI is pending. No acceptance claim is made.
 - **Next action:** Inspect exact-head quality/product CI. Fix any compile, schema migration, lint or test failures before marking T0158 complete.
 
 
@@ -67,3 +67,11 @@
 - Android product build: FAIL at `ktlintMainSourceSetCheck`. Findings: `ConversationContextCapsuleEntity.kt:60` (single-parameter declaration wrapping), `RoomConversationContextCapsuleRepository.kt:62` (newline before `.toString()`), and `ConversationContextCapsuleViewModel.kt:630` (multiline `repository.save` call and argument wrapping). APK build, Android JVM tests and generated Protobuf checks were skipped, [workflow 40947746350](https://github.com/artinrahimii/project/actions/runs/40947746350).
 - Windows WPF host: PASS (formatting, Release build, Protobuf, startup smoke and host policy/security checks). HostLifecycle unit/integration tests: PASS, [workflow 40947746350](https://github.com/artinrahimii/project/actions/runs/40947746350).
 - A007 fixes only the reported Kotlin formatting and adjusts two Python source contracts to match the same save call across whitespace/layout changes. Exact-head V 3.0.586 CI is pending.
+
+
+## Exact-head V 3.0.586 test outcomes
+
+- Step Three quality: PASS, 257 Python tests and graph/evidence checks, [workflow 40951562516](https://github.com/artinrahimii/project/actions/runs/40951562516).
+- Android product build: FAIL at `ktlintMainSourceSetCheck`. KtLint reported overlong lines at `ClientDatabase.kt:91` and `:95`, missing an empty line before `@Volatile` at `:100`, and `Unexpected newline before '.'` for `.toString()` at `RoomConversationContextCapsuleRepository.kt:66`. APK build, Android JVM tests and generated Protobuf checks were skipped, [workflow 40951562436](https://github.com/artinrahimii/project/actions/runs/40951562436).
+- Windows WPF host: PASS (formatting, Release build, Protobuf, startup smoke and host policy/security checks). HostLifecycle unit/integration tests: PASS, [workflow 40951562436](https://github.com/artinrahimii/project/actions/runs/40951562436).
+- A008 splits the SQL literal without changing the SQL text, separates the annotated declaration, and keeps `.toString()` attached to the lambda close while retaining the newline before `.apply`. Exact-head V 3.0.587 CI is pending.

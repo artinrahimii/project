@@ -57,3 +57,11 @@
 - Android product workflow failed at Kotlin lint in three main-source locations: DAO method parameter wrapping in `ConversationContextCapsuleEntity.kt:60`, chained `.toString()` formatting in `RoomConversationContextCapsuleRepository.kt:62`, and the multiline save call in `ConversationContextCapsuleViewModel.kt:630`. APK/JVM/Protobuf steps were skipped, [workflow 40947746350](https://github.com/artinrahimii/project/actions/runs/40947746350).
 - Windows WPF build/startup/security checks and HostLifecycle unit/integration tests passed in the same product workflow, [workflow 40947746350](https://github.com/artinrahimii/project/actions/runs/40947746350).
 - A007 corrects the three lint findings and loosens only the Python source-contract matching to accept semantically identical whitespace/layout. V 3.0.586 product validation is pending.
+
+
+## Exact-head V 3.0.586 verification
+
+- Step Three quality gate passed all 257 Python tests plus graph/evidence validation, [workflow 40951562516](https://github.com/artinrahimii/project/actions/runs/40951562516).
+- Android product workflow failed at Kotlin lint: `ClientDatabase.kt:91` and `:95` exceeded the 120-column limit; line `:100` needed an empty line before `@Volatile`; `RoomConversationContextCapsuleRepository.kt:66` reported `Unexpected newline before '.'` before `.toString()`. APK/JVM/Protobuf steps were skipped, [workflow 40951562436](https://github.com/artinrahimii/project/actions/runs/40951562436).
+- Windows WPF build/startup/security checks and HostLifecycle unit/integration tests passed in the same product workflow, [workflow 40951562436](https://github.com/artinrahimii/project/actions/runs/40951562436).
+- A008 splits the SQL fragments, inserts the required annotation spacing, and preserves the required newline before `.apply` while keeping `.toString()` adjacent to the lambda close. V 3.0.587 product validation is pending.

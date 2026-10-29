@@ -62,8 +62,7 @@ class RoomConversationContextCapsuleRepository(
             JSONArray()
                 .apply {
                     changedFields.forEach { put(it) }
-                }
-                .toString()
+                }.toString()
         val change =
             ConversationContextCapsuleChangeEntity(
                 conversationId = conversationId,

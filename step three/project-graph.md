@@ -34829,11 +34829,11 @@
         "https://github.com/artinrahimii/project/actions/runs/40943199249",
         "https://github.com/artinrahimii/project/actions/runs/40943199144"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0158-A001 (2026-10-29T19:58:20Z): Reviewed both incoming edges against actual code and requirements, kept their `blocks` types, and validated both as contract_or_interface_dependency. Implemented local Room provenance/history events with source, timestamp and changed field names only; added transactionally coupled capsule/audit persistence, schema v3→v4 migration, ViewModel source attribution, runtime and Python tests. `protocol/whitep/v1/messages.proto` remains unchanged. Exact-head CI is pending; outgoing T0158 → T0159 remains unreviewed.\nT0158-A001 CI failure recorded: Step Three quality workflow 40945024330 ran 257 Python tests; 256 passed and one errored with a NameError caused by the new `conversation_context_capsule_changes` assertion being placed in a test method without the `database` variable. Corrected the assertion scope for A002; product workflow on V 3.0.580 was still running at the time of this record.\nT0158-A002 (2026-10-29T20:02:00Z): Moved the failing migration-contract assertion into the scope that defines `database`; exact-head V 3.0.581 CI is pending.\nT0158-A002 exact-head V 3.0.581 CI: Step Three quality passed all 257 Python tests and graph/evidence checks; Windows WPF build and HostLifecycle tests passed. Android KtLint failed only on the long addMigrations line in ConversationContextCapsuleViewModelTest.kt (line 52); APK/JVM steps were not reached. A003 reformats that call; exact-head V 3.0.582 CI pending.\nT0158-A003 CI result: the 257-test Step Three quality gate passed. Android KtLint then failed at ClientDatabaseMigrationTest.kt:91 on the analogous long addMigrations call. Windows WPF build and HostLifecycle tests passed. A004 reformats the call and updates the Python source contract to validate the multiline form; Android APK/JVM/migration tests are still pending.\nT0158-A004 (2026-10-29T20:08:41Z): Updated the multiline Room migration test setup and corresponding Python contract; exact-head V 3.0.583 CI pending.\nT0158-A004 CI result: Step Three passed 257 tests; Windows WPF and HostLifecycle passed. Android KtLint reported Unexpected newline before '.' in two test builder chains after the multiline migration change. A005 attaches the following method calls to the closing parenthesis; APK/JVM tests remain pending.\nT0158-A005 (2026-10-29T20:13:51Z): Fixed the chain wrapping based on exact KtLint diagnostics. Validation is pending V 3.0.584.\nT0158-A005 CI result: Step Three passed 257 tests; HostLifecycle passed. Android KtLint passed the two previous locations but reported Expected newline before '.' at ConversationContextCapsuleViewModelTest.kt:56 before `.build()`. A006 separates `.build()` onto its own line; APK/JVM tests are still pending.\nT0158-A006 (2026-10-29T20:16:36Z): Adjusted `.build()` wrapping per exact KtLint output. Exact-head V 3.0.585 CI: Step Three quality passed 257 tests, Windows WPF and HostLifecycle passed; Android KtLint failed on three production-source formatting findings and skipped APK/JVM/Protobuf. A007 fixes these findings; V 3.0.586 CI pending.\nT0158-A007 (2026-10-29T20:42:41Z): Corrected the DAO method signature wrapping, JSONArray chain layout, and ViewModel repository.save formatting to match the exact V 3.0.585 KtLint diagnostics. Updated two Python source-contract tests to accept equivalent whitespace in the same call expression. Exact-head V 3.0.586 CI is pending.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0158-A001 (2026-10-29T19:58:20Z): Reviewed both incoming edges against actual code and requirements, kept their `blocks` types, and validated both as contract_or_interface_dependency. Implemented local Room provenance/history events with source, timestamp and changed field names only; added transactionally coupled capsule/audit persistence, schema v3→v4 migration, ViewModel source attribution, runtime and Python tests. `protocol/whitep/v1/messages.proto` remains unchanged. Exact-head CI is pending; outgoing T0158 → T0159 remains unreviewed.\nT0158-A001 CI failure recorded: Step Three quality workflow 40945024330 ran 257 Python tests; 256 passed and one errored with a NameError caused by the new `conversation_context_capsule_changes` assertion being placed in a test method without the `database` variable. Corrected the assertion scope for A002; product workflow on V 3.0.580 was still running at the time of this record.\nT0158-A002 (2026-10-29T20:02:00Z): Moved the failing migration-contract assertion into the scope that defines `database`; exact-head V 3.0.581 CI is pending.\nT0158-A002 exact-head V 3.0.581 CI: Step Three quality passed all 257 Python tests and graph/evidence checks; Windows WPF build and HostLifecycle tests passed. Android KtLint failed only on the long addMigrations line in ConversationContextCapsuleViewModelTest.kt (line 52); APK/JVM steps were not reached. A003 reformats that call; exact-head V 3.0.582 CI pending.\nT0158-A003 CI result: the 257-test Step Three quality gate passed. Android KtLint then failed at ClientDatabaseMigrationTest.kt:91 on the analogous long addMigrations call. Windows WPF build and HostLifecycle tests passed. A004 reformats the call and updates the Python source contract to validate the multiline form; Android APK/JVM/migration tests are still pending.\nT0158-A004 (2026-10-29T20:08:41Z): Updated the multiline Room migration test setup and corresponding Python contract; exact-head V 3.0.583 CI pending.\nT0158-A004 CI result: Step Three passed 257 tests; Windows WPF and HostLifecycle passed. Android KtLint reported Unexpected newline before '.' in two test builder chains after the multiline migration change. A005 attaches the following method calls to the closing parenthesis; APK/JVM tests remain pending.\nT0158-A005 (2026-10-29T20:13:51Z): Fixed the chain wrapping based on exact KtLint diagnostics. Validation is pending V 3.0.584.\nT0158-A005 CI result: Step Three passed 257 tests; HostLifecycle passed. Android KtLint passed the two previous locations but reported Expected newline before '.' at ConversationContextCapsuleViewModelTest.kt:56 before `.build()`. A006 separates `.build()` onto its own line; APK/JVM tests are still pending.\nT0158-A006 (2026-10-29T20:16:36Z): Adjusted `.build()` wrapping per exact KtLint output. Exact-head V 3.0.585 CI: Step Three quality passed 257 tests, Windows WPF and HostLifecycle passed; Android KtLint failed on three production-source formatting findings and skipped APK/JVM/Protobuf. A007 fixes these findings; V 3.0.586 CI pending.\nT0158-A007 (2026-10-29T20:42:41Z): Corrected the DAO method signature wrapping, JSONArray chain layout, and ViewModel repository.save formatting to match the exact V 3.0.585 KtLint diagnostics. Updated two Python source-contract tests to accept equivalent whitespace in the same call expression. Exact-head V 3.0.586 CI: the 257-test quality gate, Windows WPF and HostLifecycle passed; Android KtLint found four format/layout violations in ClientDatabase.kt and RoomConversationContextCapsuleRepository.kt, and skipped APK/JVM/Protobuf. A008 corrects them; V 3.0.587 CI pending.\nT0158-A008 (2026-10-29T20:46:43Z): Broke the long migration SQL into adjacent string fragments with unchanged SQL content, added the empty line required before @Volatile, and placed the JSONArray line break before .apply while keeping .toString() adjacent to the lambda close. Exact-head V 3.0.587 CI is pending.",
       "execution_summary": {
-        "attempt_count": 7,
-        "failed_attempt_count": 6,
-        "last_attempt_id": "T0158-A007",
+        "attempt_count": 8,
+        "failed_attempt_count": 7,
+        "last_attempt_id": "T0158-A008",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/data/ConversationContextCapsuleChangeEntity.kt",
@@ -34859,7 +34859,8 @@
           "43d636c0b325be15cfb1931bf6c07f1f71076a6e",
           "378de686fc2bcb0bb8c4c54bd0728de5a4d6833f",
           "909025a386497fa69d6b6fdfc8d8aacf5879dc59",
-          "e27bdf8ee788d76fd20a3d7053fe3761e358acce"
+          "e27bdf8ee788d76fd20a3d7053fe3761e358acce",
+          "452d53d7243c082901d0d3a8c688616e783d356b"
         ],
         "tests_passed": [
           {
@@ -34897,6 +34898,24 @@
             "result": "passed",
             "summary": "HostLifecycle tests passed.",
             "url": "https://github.com/artinrahimii/project/actions/runs/40947746350"
+          },
+          {
+            "name": "Step Three quality gate — V 3.0.586",
+            "result": "passed",
+            "summary": "257 Python tests and graph/evidence checks passed.",
+            "url": "https://github.com/artinrahimii/project/actions/runs/40951562516"
+          },
+          {
+            "name": "Windows WPF host — V 3.0.586",
+            "result": "passed",
+            "summary": "Host formatting/build/startup/policy/security checks passed.",
+            "url": "https://github.com/artinrahimii/project/actions/runs/40951562436"
+          },
+          {
+            "name": "HostLifecycle unit/integration — V 3.0.586",
+            "result": "passed",
+            "summary": "HostLifecycle tests passed.",
+            "url": "https://github.com/artinrahimii/project/actions/runs/40951562436"
           }
         ],
         "tests_failed": [
@@ -34910,6 +34929,12 @@
             "result": "failed",
             "summary": "Three production-source formatting violations; APK/JVM/Protobuf checks were skipped.",
             "url": "https://github.com/artinrahimii/project/actions/runs/40947746350"
+          },
+          {
+            "name": "Android KtLint — V 3.0.586",
+            "result": "failed",
+            "summary": "Four production-source formatting findings; APK/JVM/Protobuf checks were skipped.",
+            "url": "https://github.com/artinrahimii/project/actions/runs/40951562436"
           }
         ],
         "blocked_reason": null,
@@ -35208,9 +35233,9 @@
         {
           "attempt_id": "T0158-A007",
           "started_at": "2026-10-29T20:42:41Z",
-          "ended_at": "2026-10-29T20:42:41Z",
-          "result": "partial",
-          "summary": "Reformatted the DAO declaration, JSONArray method chain, and ViewModel repository.save call per exact KtLint diagnostics; converted two Python source-contract tests from brittle exact-line matching to whitespace-tolerant regex matching. Exact-head V 3.0.586 CI is pending.",
+          "ended_at": "2026-10-29T20:46:43Z",
+          "result": "failed",
+          "summary": "The exact-head V 3.0.586 quality gate passed, but Android KtLint found three formatting issues in ClientDatabase.kt and one method-chain layout issue in RoomConversationContextCapsuleRepository.kt. APK/JVM/Protobuf steps were skipped.",
           "changed_files": [
             "src/Client.Android/app/src/main/java/com/whitep/client/data/ConversationContextCapsuleEntity.kt",
             "src/Client.Android/app/src/main/java/com/whitep/client/data/RoomConversationContextCapsuleRepository.kt",
@@ -35221,20 +35246,66 @@
             "step three/T0158/evidence/verification.md",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "452d53d7243c082901d0d3a8c688616e783d356b",
           "tests": [
             {
               "name": "Step Three quality gate — V 3.0.586",
+              "result": "passed",
+              "summary": "257 Python tests and graph/evidence checks passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40951562516"
+            },
+            {
+              "name": "Android Kotlin lint — V 3.0.586",
+              "result": "failed",
+              "summary": "Four findings: two max-line-length violations, missing blank line before @Volatile in ClientDatabase.kt, and unexpected newline before .toString() in RoomConversationContextCapsuleRepository.kt. APK/JVM/Protobuf steps were skipped.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40951562436"
+            },
+            {
+              "name": "Windows WPF host — V 3.0.586",
+              "result": "passed",
+              "summary": "C# formatting, Release build, generated Protobuf checks, startup smoke, and host policy/security tests passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40951562436"
+            },
+            {
+              "name": "HostLifecycle unit/integration — V 3.0.586",
+              "result": "passed",
+              "summary": "Host lifecycle unit/integration test job passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40951562436"
+            }
+          ],
+          "failure_details": "The V 3.0.586 Android product workflow failed at ktlintMainSourceSetCheck. ClientDatabase.kt had two overlong SQL lines (91, 95) and lacked a blank line before @Volatile (100). RoomConversationContextCapsuleRepository.kt reported Unexpected newline before '.' at .toString() on line 66. APK/JVM/generated Protobuf steps were skipped. The 257-test Step Three quality gate, Windows WPF checks and HostLifecycle tests passed.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "A008 splits the ClientDatabase SQL string literals, inserts the required blank line before @Volatile, and changes the JSONArray chain so the required line break is before .apply while .toString() remains attached to the lambda close. Inspect exact-head V 3.0.587 CI."
+        },
+        {
+          "attempt_id": "T0158-A008",
+          "started_at": "2026-10-29T20:46:43Z",
+          "ended_at": "2026-10-29T20:46:43Z",
+          "result": "partial",
+          "summary": "Split the long T0158 migration SQL fragments into adjacent string literals without changing SQL content, inserted the required blank line before @Volatile, and adjusted the JSONArray chain to place the newline before .apply while keeping .toString() adjacent to the lambda close. Exact-head V 3.0.587 CI is pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientDatabase.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/data/RoomConversationContextCapsuleRepository.kt",
+            "step three/T0158/execution-report.md",
+            "step three/T0158/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Step Three quality gate — V 3.0.587",
               "result": "not_run",
               "summary": "Runs after commit."
             },
             {
-              "name": "Android KtLint/APK/JVM/Protobuf/migration — V 3.0.586",
+              "name": "Android KtLint/APK/JVM/Protobuf/migration — V 3.0.587",
               "result": "not_run",
               "summary": "Runs after commit."
             },
             {
-              "name": "Windows and HostLifecycle — V 3.0.586",
+              "name": "Windows and HostLifecycle — V 3.0.587",
               "result": "not_run",
               "summary": "Runs after commit."
             }
@@ -35243,7 +35314,7 @@
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect exact-head V 3.0.586 CI. Only mark T0158 done after Android lint, APK build, JVM migration/persistence tests, Protobuf verification and required quality/host gates pass."
+          "follow_up": "Inspect exact-head V 3.0.587 CI. Do not mark T0158 done until Android lint, APK build, JVM persistence/migration tests, generated Protobuf checks and required overall gates pass."
         }
       ]
     },
@@ -47050,7 +47121,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-29T20:42:41Z",
+  "updated_at": "2026-10-29T20:46:43Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",
