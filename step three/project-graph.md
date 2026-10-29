@@ -31534,8 +31534,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0147 و T0138 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال انجام",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationMessagesViewModel.kt",
         "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
@@ -31556,12 +31556,12 @@
         "step three/T0148/execution-report.md",
         "step three/T0148/evidence/verification.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0148-A001 moves the unsent composer draft into SavedStateHandle-backed ViewModel state; exact-head CI is pending and the task is not yet accepted.\n\nT0148-A001 exact-head CI outcome (V 3.0.537): Step Three quality succeeded, and Windows WPF/HostLifecycle product jobs passed. Android ktlint failed five formatting rules around the two Factory.create overloads in ConversationMessagesViewModel.kt (lines 57, 60), so Android APK build and JVM tests did not run. T0148-A002 reformats those signatures/delegate calls; exact-head CI is pending.\n\nT0148-A002 exact-head CI outcome (V 3.0.538): Step Three quality succeeded. Android ktlint failed two formatting rules in ConversationMessagesViewModel.kt:58:13 and :58:34, because the single-parameter create(modelClass) signature was unnecessarily split over lines; APK build and Android JVM tests were skipped. HostLifecycle passed; Windows WPF was in progress at first observation. T0148-A003 moves only that signature to one line while retaining the multiline body expression; exact-head CI pending.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0148-A001 moves the unsent composer draft into SavedStateHandle-backed ViewModel state; exact-head CI is pending and the task is not yet accepted.\n\nT0148-A001 exact-head CI outcome (V 3.0.537): Step Three quality succeeded, and Windows WPF/HostLifecycle product jobs passed. Android ktlint failed five formatting rules around the two Factory.create overloads in ConversationMessagesViewModel.kt (lines 57, 60), so Android APK build and JVM tests did not run. T0148-A002 reformats those signatures/delegate calls; exact-head CI is pending.\n\nT0148-A002 exact-head CI outcome (V 3.0.538): Step Three quality succeeded. Android ktlint failed two formatting rules in ConversationMessagesViewModel.kt:58:13 and :58:34, because the single-parameter create(modelClass) signature was unnecessarily split over lines; APK build and Android JVM tests were skipped. HostLifecycle passed; Windows WPF was in progress at first observation. T0148-A003 moves only that signature to one line while retaining the multiline body expression; exact-head CI pending.\nT0148-A004 exact-head acceptance verified on 2b0c8a8231e3a258021322e6be2f24f6c168fce8 (V 3.0.539). Quality CI passed 229 Python tests, syntax, graph structure and output/evidence validation (229 nodes/417 edges; 0 errors and one pre-existing T0001 metadata warning preserved). Product CI passed Android ktlint, APK build, Android JVM tests, Protobuf verification/APK upload, Windows WPF build/startup/security/Protobuf checks and HostLifecycle tests. This accepts SavedStateHandle draft restoration when Android saved state is available; normal close/reopen persistence is T0149 scope.",
       "execution_summary": {
-        "attempt_count": 3,
+        "attempt_count": 4,
         "failed_attempt_count": 2,
-        "last_attempt_id": "T0148-A003",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "T0148-A004",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationMessagesViewModel.kt",
           "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
@@ -31573,22 +31573,30 @@
         ],
         "related_commits": [
           "dc1f49e2f1e083b1fef50258b64c49e150a53dd3",
-          "5a017e5e85e89df763d8bb2be37a25ceea77587f"
+          "5a017e5e85e89df763d8bb2be37a25ceea77587f",
+          "2b0c8a8231e3a258021322e6be2f24f6c168fce8"
         ],
         "tests_passed": [
-          "V 3.0.537 Step Three quality workflow 40870690034 completed successfully.",
-          "V 3.0.538 Step Three quality workflow 40872063933 passed."
+          "Step Three quality gate https://github.com/artinrahimii/project/actions/runs/40872603020: 229 Python tests passed; syntax and both graph/evidence guards passed; 229 tasks / 417 edges; zero errors and one preserved T0001 UNMAPPED_DEPENDENCY warning.",
+          "Android product job https://github.com/artinrahimii/project/actions/runs/40872603021: ktlintCheck passed.",
+          "Android product job https://github.com/artinrahimii/project/actions/runs/40872603021: assembleDebug passed; APK artifact whitep-android-debug-apk uploaded (11,875,221 bytes).",
+          "Android product job https://github.com/artinrahimii/project/actions/runs/40872603021: testDebugUnitTest passed, including ConversationMessagesViewModelTest.draftIsRestoredAfterViewModelRecreation.",
+          "Android product job https://github.com/artinrahimii/project/actions/runs/40872603021: generated Protobuf Java/Kotlin verification passed.",
+          "Windows WPF job https://github.com/artinrahimii/project/actions/runs/40872603021: C# formatting, Release build, Protobuf, startup smoke, tool safety/security gates and artifact upload passed (14,254,981 bytes).",
+          "HostLifecycle unit/integration job https://github.com/artinrahimii/project/actions/runs/40872603021 passed."
         ],
         "tests_failed": [
-          "V 3.0.537 product workflow 40870690119: Android ktlint failed in ConversationMessagesViewModel.kt lines 57 and 60; APK build and Android JVM tests were skipped.",
-          "V 3.0.537 product workflow 40870690119: Android ktlint failed five factory-formatting findings; V 3.0.538 product workflow 40872063919: two remaining single-parameter factory signature whitespace findings at line 58, APK build and Android JVM tests skipped."
+          "V 3.0.537 product workflow 40870690119: Android ktlint failed five factory-formatting findings; APK and JVM tests skipped.",
+          "V 3.0.538 product workflow 40872063919: Android ktlint failed two remaining whitespace findings; APK and JVM tests skipped."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "required",
+          "state": "passed",
           "triggering_contracts": [
-            "ConversationMessagesViewModel Factory CreationExtras and SavedStateHandle-backed draft StateFlow"
+            "ViewModelProvider.Factory SavedStateHandle/CreationExtras construction",
+            "ConversationDetailScreen draft StateFlow wiring",
+            "saved-state draft restoration regression"
           ],
           "affected_by_contract_changes": [
             "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
@@ -31596,10 +31604,10 @@
             "tests/test_android_conversation_detail_contract.py"
           ],
           "review_evidence": [
+            "https://github.com/artinrahimii/project/actions/runs/40872603020",
+            "https://github.com/artinrahimii/project/actions/runs/40872603021",
             "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationMessagesViewModel.kt",
-            "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
-            "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationMessagesViewModelTest.kt",
-            "tests/test_android_conversation_detail_contract.py"
+            "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationMessagesViewModelTest.kt"
           ]
         }
       },
@@ -31733,6 +31741,72 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Inspect the exact-head V 3.0.539 quality and product outcomes. Do not close T0148 until ktlint, APK build, saved-state unit test, full Android unit suite, and graph/evidence guards pass."
+        },
+        {
+          "attempt_id": "T0148-A004",
+          "started_at": "2026-10-29T12:20:00Z",
+          "ended_at": "2026-10-29T12:23:52Z",
+          "result": "succeeded",
+          "summary": "Verified exact online commit V 3.0.539 after correcting the remaining ktlint signature-formatting issue. Step Three quality passed 229 Python tests, syntax, graph structure and evidence-path checks (229 tasks/417 edges, zero errors, one preserved T0001 metadata warning). Product CI passed Android ktlintCheck, assembleDebug, testDebugUnitTest including draftIsRestoredAfterViewModelRecreation, generated Protobuf verification/APK upload; Windows WPF build, formatting, startup/security/Protobuf checks and artifact upload; and HostLifecycle integration tests. Accepts saved draft restoration with Android-managed saved state, not durable restart persistence or P2P delivery.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationMessagesViewModel.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationMessagesViewModelTest.kt",
+            "tests/test_android_conversation_detail_contract.py",
+            "step three/T0148/execution-report.md",
+            "step three/T0148/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": "2b0c8a8231e3a258021322e6be2f24f6c168fce8",
+          "tests": [
+            {
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "summary": "229 Python tests, Python syntax, graph structure and recorded-output/evidence checks passed; 229 nodes, 417 edges, zero errors and one preserved T0001 warning.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40872603020"
+            },
+            {
+              "name": "Android ktlintCheck",
+              "result": "passed",
+              "summary": "Gradle ktlintCheck completed successfully.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40872603021"
+            },
+            {
+              "name": "Android assembleDebug",
+              "result": "passed",
+              "summary": "Debug APK build succeeded.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40872603021"
+            },
+            {
+              "name": "Android testDebugUnitTest",
+              "result": "passed",
+              "summary": "Gradle testDebugUnitTest completed successfully, including the draft saved-state recreation regression.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40872603021"
+            },
+            {
+              "name": "Generated Protobuf verification and APK upload",
+              "result": "passed",
+              "summary": "Generated Android Java/Kotlin sources verified and APK artifact (11,875,221 bytes) uploaded.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40872603021"
+            },
+            {
+              "name": "Windows WPF product job",
+              "result": "passed",
+              "summary": "C# formatting, Release build, Protobuf, startup smoke, agent-tool safety/security checks and artifact upload (14,254,981 bytes) passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40872603021"
+            },
+            {
+              "name": "HostLifecycle unit/integration tests",
+              "result": "passed",
+              "summary": "Job completed successfully.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40872603021"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Next eligible task is T0149. Before changing it, inspect and validate T0148 → T0149 and T0138 → T0149 against the actual Room persistence/process-restoration contract and host-visible content/privacy boundary. Preserve unreviewed edges unless direct evidence supports a classification. Do not treat T0149 as completed until durable message/request-state recovery and its tests pass."
         }
       ]
     },
@@ -43576,7 +43650,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-29T12:20:00Z",
+  "updated_at": "2026-10-29T12:29:49.619Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",
