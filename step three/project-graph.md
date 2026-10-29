@@ -29972,33 +29972,102 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0142 و T0138 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
-      "expected_output_paths": [
-        "src/Client.Android/"
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationListViewModel.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationListScreen.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/navigation/ClientDestination.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/navigation/ClientNavigation.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationListViewModelTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/navigation/ClientDestinationTest.kt",
+        "step three/T0143/execution-report.md",
+        "step three/T0143/evidence/verification.md"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "expected_output_paths": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationListViewModel.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationListScreen.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationListViewModelTest.kt"
+      ],
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationListViewModel.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationListScreen.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationListViewModelTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/navigation/ClientDestinationTest.kt",
+        "step three/T0143/execution-report.md",
+        "step three/T0143/evidence/verification.md"
+      ],
+      "notes": "T0143-A001 adds a reachable Compose Conversations destination backed by ConversationDao.observeAll(), plus a Room-backed ViewModel test. Task remains in_progress pending exact-head Android and Step Three CI.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0143-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationListViewModel.kt",
+          "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationListScreen.kt",
+          "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
+          "src/Client.Android/app/src/main/java/com/whitep/client/ui/navigation/ClientDestination.kt",
+          "src/Client.Android/app/src/main/java/com/whitep/client/ui/navigation/ClientNavigation.kt",
+          "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationListViewModelTest.kt",
+          "src/Client.Android/app/src/test/java/com/whitep/client/ui/navigation/ClientDestinationTest.kt",
+          "step three/T0143/execution-report.md",
+          "step three/T0143/evidence/verification.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
-          "affected_by_contract_changes": [],
-          "review_evidence": []
+          "state": "in_review",
+          "triggering_contracts": [
+            "T0142 Room schema v1→v2 migration",
+            "T0138 endpoint content visibility/privacy disclosure"
+          ],
+          "affected_by_contract_changes": [
+            "Conversation list UI now opens the migrated shared Room database and observes conversation metadata"
+          ],
+          "review_evidence": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientDatabase.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/data/ConversationEntity.kt",
+            "docs/decisions/ADR-0019-host-content-visibility.md",
+            "docs/decisions/ADR-0020-android-client-local-conversation-storage.md"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0143-A001",
+          "started_at": "2026-10-29T08:52:27.534Z",
+          "ended_at": "2026-10-29T08:52:27.534Z",
+          "result": "partial",
+          "summary": "Implemented a Compose Conversations destination in bottom navigation, a ViewModel exposing the real Room DAO Flow, an empty state and timestamped rows from persisted conversation records, and a Room-backed test for current emptiness and updated ordering. Waiting for exact-head CI; not yet completed.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationListViewModel.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationListScreen.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/navigation/ClientDestination.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/navigation/ClientNavigation.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationListViewModelTest.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/ui/navigation/ClientDestinationTest.kt",
+            "step three/T0143/execution-report.md",
+            "step three/T0143/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "Added UI navigation route for Conversations; no persistence schema change."
+          ],
+          "follow_up": "Run exact-head Step Three and Android product workflows. Resolve lint/build/unit failures and mark done only after all relevant gates pass."
+        }
+      ]
     },
     {
       "id": "T0144",
@@ -37234,19 +37303,30 @@
       "from": "T0142",
       "to": "T0143",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "The screen opens the shared ClientDatabase singleton. Existing installations on schema v1 must complete the registered Room migration before ConversationDao.observeAll() can query the v2 database; this is a database availability/compatibility contract, not an inference from type=blocks alone.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientDatabase.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/ConversationEntity.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/data/ClientDatabaseMigrationTest.kt",
+        "step three/T0142/execution-report.md",
+        "https://github.com/artinrahimii/project/actions/runs/40843992314"
+      ]
     },
     {
       "from": "T0138",
       "to": "T0143",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "The disclosure establishes the endpoint trust boundary, but this screen reads only locally persisted conversation metadata and consumes no API/schema defined by T0138. Keep the edge as conservative sequencing; the screen explicitly labels history as device-local.",
+      "validation_status": "validated",
+      "evidence": [
+        "docs/decisions/ADR-0019-host-content-visibility.md",
+        "docs/decisions/ADR-0020-android-client-local-conversation-storage.md",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/ConversationEntity.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationListScreen.kt"
+      ]
     },
     {
       "from": "T0143",
@@ -41787,9 +41867,44 @@
         "src/Client.Android/app/src/test/resources/db/v1-schema.sql"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "from": "T0142",
+      "to": "T0143",
+      "changed_at": "2026-10-29T08:52:27.534Z",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "old_validation_status": "unreviewed",
+      "new_validation_status": "validated",
+      "reason": "The screen opens the shared ClientDatabase singleton. Existing installations on schema v1 must complete the registered Room migration before ConversationDao.observeAll() can query the v2 database; this is a database availability/compatibility contract, not an inference from type=blocks alone.",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientDatabase.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/ConversationEntity.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/data/ClientDatabaseMigrationTest.kt",
+        "step three/T0142/execution-report.md",
+        "https://github.com/artinrahimii/project/actions/runs/40843992314"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "from": "T0138",
+      "to": "T0143",
+      "changed_at": "2026-10-29T08:52:27.534Z",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "old_validation_status": "unreviewed",
+      "new_validation_status": "validated",
+      "reason": "The disclosure establishes the endpoint trust boundary, but this screen reads only locally persisted conversation metadata and consumes no API/schema defined by T0138. Keep the edge as conservative sequencing; the screen explicitly labels history as device-local.",
+      "evidence": [
+        "docs/decisions/ADR-0019-host-content-visibility.md",
+        "docs/decisions/ADR-0020-android-client-local-conversation-storage.md",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/ConversationEntity.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationListScreen.kt"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-29T08:41:19.481Z",
+  "updated_at": "2026-10-29T08:52:27.534Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

@@ -35,6 +35,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.whitep.client.ui.navigation.ClientDestination
 import com.whitep.client.ui.navigation.ClientNavigation
+import com.whitep.client.ui.conversations.ConversationListScreen
 import com.whitep.client.ui.request.RequestViewModel
 
 class MainActivity : ComponentActivity() {
@@ -91,6 +92,9 @@ private fun whitePClientApp() {
                     },
                     onOpenPrivacy = { navController.navigate(ClientDestination.PRIVACY.route) },
                 )
+            }
+            composable(ClientDestination.CONVERSATIONS.route) {
+                ConversationListScreen()
             }
             composable(ClientDestination.REQUEST.route) {
                 requestScreen(onBack = { navController.popBackStack() })

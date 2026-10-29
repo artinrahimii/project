@@ -19,6 +19,7 @@ class ClientDestinationTest {
         assertEquals(
             listOf(
                 ClientDestination.HOME,
+                ClientDestination.CONVERSATIONS,
                 ClientDestination.CONNECTIONS,
                 ClientDestination.PRIVACY,
             ),

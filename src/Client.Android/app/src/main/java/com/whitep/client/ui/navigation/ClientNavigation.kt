@@ -12,6 +12,7 @@ internal object ClientNavigation {
     val bottomNavigation: List<ClientDestination> =
         listOf(
             ClientDestination.HOME,
+            ClientDestination.CONVERSATIONS,
             ClientDestination.CONNECTIONS,
             ClientDestination.PRIVACY,
         )

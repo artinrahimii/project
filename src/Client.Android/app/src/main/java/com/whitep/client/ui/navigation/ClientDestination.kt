@@ -11,6 +11,7 @@ internal enum class ClientDestination(
     val glyph: String,
 ) {
     HOME("home", "Home", "⌂"),
+    CONVERSATIONS("conversations", "Conversations", "▤"),
     REQUEST("request", "New request", "＋"),
     CONNECTIONS("connections", "Connections", "↔"),
     PRIVACY("privacy", "Privacy", "i"),
