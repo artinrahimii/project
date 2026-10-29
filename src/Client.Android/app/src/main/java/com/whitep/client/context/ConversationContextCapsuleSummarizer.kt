@@ -51,9 +51,7 @@ class SchemaValidatedConversationContextCapsuleSummarizer(
     private val provider: ConversationContextCapsuleSummaryProvider =
         ExtractiveConversationContextCapsuleSummaryProvider(),
 ) {
-    suspend fun summarize(
-        request: ConversationContextSummaryRequest,
-    ): ConversationContextCapsuleSummaryResult {
+    suspend fun summarize(request: ConversationContextSummaryRequest): ConversationContextCapsuleSummaryResult {
         if (!ConversationContextCapsule.isValidConfiguredSizeLimit(request.maxSerializedBytes)) {
             return ConversationContextCapsuleSummaryResult.Rejected(
                 reason = ConversationContextSummaryRejectionReason.INVALID_SIZE_LIMIT,
@@ -126,9 +124,7 @@ class SchemaValidatedConversationContextCapsuleSummarizer(
  * explicitly marked in local message text. The initial goal falls back to the latest user message.
  */
 class ExtractiveConversationContextCapsuleSummaryProvider : ConversationContextCapsuleSummaryProvider {
-    override suspend fun summarize(
-        request: ConversationContextSummaryRequest,
-    ): ConversationContextCapsule {
+    override suspend fun summarize(request: ConversationContextSummaryRequest): ConversationContextCapsule {
         val messages = request.messages.filter { it.content.isNotBlank() }
         require(messages.isNotEmpty()) { "At least one non-empty message is required" }
 
@@ -153,7 +149,10 @@ class ExtractiveConversationContextCapsuleSummaryProvider : ConversationContextC
             explicitGoal
                 ?: existing?.goal?.takeIf { it.isNotBlank() }
                 ?: latestUnmarkedLine
-                ?: latestUserMessage.content.trim().lineSequence().first { it.isNotEmpty() }
+                ?: latestUserMessage.content
+                    .trim()
+                    .lineSequence()
+                    .first { it.isNotEmpty() }
 
         return ConversationContextCapsule(
             schemaVersion = ConversationContextCapsule.CURRENT_SCHEMA_VERSION,
@@ -173,11 +172,7 @@ class ExtractiveConversationContextCapsuleSummaryProvider : ConversationContextC
         val separator = line.indexOf(':')
         if (separator <= 0 || separator == line.lastIndex) return null
         val label = line.substring(0, separator).trim().lowercase(Locale.ROOT)
-        val value =
-            line.substring(separator + 1)
-                .trim()
-                .take(MAX_EXTRACTED_ITEM_CHARACTERS)
-                .trim()
+        val value = line.substring(separator + 1).trim().take(MAX_EXTRACTED_ITEM_CHARACTERS).trim()
         if (value.isBlank()) return null
         val category =
             when (label) {

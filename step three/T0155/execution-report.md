@@ -9,3 +9,10 @@
 - **Tests added:** Five Kotlin tests cover extraction, schema rejection, invalid size configuration, oversized output and preserving an existing capsule if no usable history remains. Python source-contract checks cover replaceability and codec enforcement.
 - **Local validation:** The connected GitHub tools do not provide local Gradle/Python execution in this run. No local command is claimed; exact-head CI is pending.
 - **Status:** `in_progress`, attempt `T0155-A001` partial. Do not mark this task done until exact-head quality and product checks pass.
+
+
+## Exact-head V 3.0.565 CI result — attempt A001
+
+- Step Three quality [run 40909822726](https://github.com/artinrahimii/project/actions/runs/40909822726) passed automated Python tests, Python syntax, graph structure and recorded-output/evidence validation.
+- Product [run 40909822388](https://github.com/artinrahimii/project/actions/runs/40909822388): Android `ktlintMainSourceSetCheck` failed seven formatting findings in this source; APK build and Android JVM tests were skipped. HostLifecycle passed. Windows WPF was still running when this report was updated.
+- A001 is a failed implementation attempt for the Android gate; it is not accepted. A002 changes only formatting and must pass a new exact-head CI run before task completion.

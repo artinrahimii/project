@@ -33742,23 +33742,28 @@
         "step three/T0155/execution-report.md",
         "step three/T0155/evidence/verification.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0155-A001 adds a replaceable suspend provider, a conservative local extractor and a schema/size validation boundary. Five Kotlin runtime tests and Python source-contract tests were added; exact-head CI is pending.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0155-A001 adds a replaceable suspend provider, a conservative local extractor and a schema/size validation boundary. Five Kotlin runtime tests and Python source-contract tests were added; exact-head CI is pending.\nT0155-A001 exact-head result: Step Three quality passed; Android Kotlin lint failed seven formatting findings and skipped APK/JVM; HostLifecycle passed, Windows WPF was still running at record time. A002 corrects the source formatting.",
       "execution_summary": {
-        "attempt_count": 1,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "T0155-A001",
+        "attempt_count": 2,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "T0155-A002",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/context/ConversationContextCapsuleSummarizer.kt",
-          "src/Client.Android/app/src/test/java/com/whitep/client/context/ConversationContextCapsuleSummarizerTest.kt",
-          "tests/test_android_context_capsule_summarizer_contract.py",
           "step three/T0155/execution-report.md",
           "step three/T0155/evidence/verification.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
-        "tests_failed": [],
+        "related_commits": [
+          "0f24fc97ba11612a96ff1b8b44692a023d95e061"
+        ],
+        "tests_passed": [
+          "V 3.0.565 Step Three quality passed (run 40909822726): https://github.com/artinrahimii/project/actions/runs/40909822726",
+          "V 3.0.565 HostLifecycle passed (run 40909822388): https://github.com/artinrahimii/project/actions/runs/40909822388"
+        ],
+        "tests_failed": [
+          "V 3.0.565 Android ktlintMainSourceSetCheck failed with seven source-format findings; APK/JVM stages skipped (run 40909822388): https://github.com/artinrahimii/project/actions/runs/40909822388"
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -33772,9 +33777,9 @@
         {
           "attempt_id": "T0155-A001",
           "started_at": "2026-10-29T16:15:20.041Z",
-          "ended_at": "2026-10-29T16:15:20.041Z",
-          "result": "partial",
-          "summary": "Added a replaceable suspend provider contract, a local extractive implementation, and a validating boundary using the existing v1 capsule codec and configured size limit. Added Kotlin runtime tests and Python source-contract checks. Exact-head CI is pending.",
+          "ended_at": "2026-10-29T16:18:09.757Z",
+          "result": "failed",
+          "summary": "V 3.0.565 Step Three quality passed automated Python tests, syntax, graph structure and output/evidence validation. Android ktlintMainSourceSetCheck failed with seven formatting findings in ConversationContextCapsuleSummarizer.kt (single-parameter signatures at lines 55/130, chained goal expression at line 156, and a field-value method chain at line 177). APK build and Android JVM tests were skipped; HostLifecycle passed. Windows WPF was still running when this attempt was recorded.",
           "changed_files": [
             "src/Client.Android/app/src/main/java/com/whitep/client/context/ConversationContextCapsuleSummarizer.kt",
             "src/Client.Android/app/src/test/java/com/whitep/client/context/ConversationContextCapsuleSummarizerTest.kt",
@@ -33783,34 +33788,85 @@
             "step three/T0155/evidence/verification.md",
             "step three/project-graph.md"
           ],
+          "commit_sha": "0f24fc97ba11612a96ff1b8b44692a023d95e061",
+          "tests": [
+            {
+              "name": "Step Three quality gate — V 3.0.565",
+              "result": "passed",
+              "summary": "Automated tests, Python syntax, graph structure and recorded-output/evidence validation all passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40909822726"
+            },
+            {
+              "name": "Android ktlintMainSourceSetCheck — V 3.0.565",
+              "result": "failed",
+              "summary": "Seven formatting findings: two on each multiline single-parameter summarize signature, three chained-call findings in the goal fallback, and one method-chain finding for the marked-field value expression.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40909822388"
+            },
+            {
+              "name": "Android debug APK build and JVM tests — V 3.0.565",
+              "result": "not_run",
+              "summary": "Skipped after Kotlin lint failure.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40909822388"
+            },
+            {
+              "name": "HostLifecycle tests — V 3.0.565",
+              "result": "passed",
+              "summary": "Host lifecycle unit/integration job passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40909822388"
+            },
+            {
+              "name": "Windows WPF build — V 3.0.565",
+              "result": "in_progress",
+              "summary": "Still in progress when A001 result was recorded.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40909822388"
+            }
+          ],
+          "failure_details": "V 3.0.565 Step Three quality passed automated Python tests, syntax, graph structure and output/evidence validation. Android ktlintMainSourceSetCheck failed with seven formatting findings in ConversationContextCapsuleSummarizer.kt (single-parameter signatures at lines 55/130, chained goal expression at line 156, and a field-value method chain at line 177). APK build and Android JVM tests were skipped; HostLifecycle passed. Windows WPF was still running when this attempt was recorded.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "A002 fixes the signature and call-chain formatting flagged by ktlint; rerun exact-head quality and product workflows. Do not mark T0155 done until Android lint, APK build and JVM tests pass."
+        },
+        {
+          "attempt_id": "T0155-A002",
+          "started_at": "2026-10-29T16:18:09.757Z",
+          "ended_at": "2026-10-29T16:18:09.757Z",
+          "result": "partial",
+          "summary": "Corrected the single-parameter function signatures and method-chain line breaks reported by V 3.0.565 ktlint. Behavior and data contracts are unchanged; exact-head CI is pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/context/ConversationContextCapsuleSummarizer.kt",
+            "step three/T0155/execution-report.md",
+            "step three/T0155/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
           "commit_sha": null,
           "tests": [
             {
-              "name": "ConversationContextCapsuleSummarizerTest",
+              "name": "Android ktlintCheck",
               "result": "not_run",
-              "summary": "Five Kotlin unit tests added; requires exact-head Android JVM job."
+              "summary": "Exact-head workflow pending."
             },
             {
-              "name": "tests/test_android_context_capsule_summarizer_contract.py",
+              "name": "Android assembleDebug",
               "result": "not_run",
-              "summary": "Three Python source-contract tests added; requires exact-head quality job."
+              "summary": "Awaiting successful lint."
             },
             {
-              "name": "Android ktlintCheck / assembleDebug / testDebugUnitTest",
+              "name": "Android testDebugUnitTest",
               "result": "not_run",
-              "summary": "Requires exact-head Android product workflow."
+              "summary": "Awaiting successful lint/build."
             },
             {
-              "name": "Step Three graph and output/evidence checks",
+              "name": "Step Three quality gate",
               "result": "not_run",
-              "summary": "Requires exact-head quality workflow."
+              "summary": "Exact-head workflow pending."
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect exact-head quality and product workflows. Fix and record failures; mark T0155 done only after Kotlin lint, APK build/JVM tests, Python quality, graph structure and output/evidence checks pass."
+          "follow_up": "Inspect the exact-head V 3.0.566 quality and product runs. If formatting passes, proceed to compile/runtime failures if any; task remains in_progress until all relevant CI gates pass."
         }
       ]
     },
@@ -45654,7 +45710,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-29T16:15:20.041Z",
+  "updated_at": "2026-10-29T16:18:09.757Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",
