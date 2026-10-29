@@ -18,3 +18,10 @@
 - Quality run [40920502076](https://github.com/artinrahimii/project/actions/runs/40920502076): 253 tests ran; one failure because the source-contract test looked for `KEEP_CURRENT` in the ViewModel instead of the Compose UI.
 - Product run [40920502283](https://github.com/artinrahimii/project/actions/runs/40920502283): Android ktlint failed on formatting in the new conflict helper/resolver and two chained test expressions; APK/JVM tests did not execute. Windows host and HostLifecycle jobs passed.
 - The failure is retained as `T0157-A002`. A003 corrects the assertion location and formatting. No successful task acceptance is claimed until exact-head CI passes.
+
+
+## V 3.0.577 failed acceptance and corrective A004
+
+- Quality [run 40921532799](https://github.com/artinrahimii/project/actions/runs/40921532799): pass.
+- Product [run 40921532777](https://github.com/artinrahimii/project/actions/runs/40921532777): Android ktlint failed one remaining format finding at `ConversationContextCapsuleViewModel.kt:464:21`; APK/JVM were skipped. HostLifecycle passed; the Windows job was still pending at the time of recording.
+- A004 joins the closing brace and `.toMutableList()`. The task remains in progress pending exact-head build and test evidence.

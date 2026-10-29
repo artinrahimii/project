@@ -460,8 +460,7 @@ class ConversationContextCapsuleViewModel(
                     .toItems()
                     .filterNot {
                         normalizeCapsuleConflictValue(it) == normalizeCapsuleConflictValue(fromValue)
-                    }
-                    .toMutableList()
+                    }.toMutableList()
             if (
                 items.none {
                     normalizeCapsuleConflictValue(it) == normalizeCapsuleConflictValue(toValue)

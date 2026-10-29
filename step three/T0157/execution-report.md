@@ -28,3 +28,10 @@
 - Moved the `KEEP_CURRENT` source-contract assertion to the Compose UI where that choice is rendered; retained the `USE_SUGGESTION` and save-gate assertions for the ViewModel.
 - Reformatted the Kotlin enum constructors, conflict-token chains, merge calls, resolver helper, save gate, and two Robolectric test expressions cited by KtLint.
 - Exact-head `V 3.0.577` quality and product runs are pending; do not accept T0157 until they pass.
+
+
+## Exact-head V 3.0.577 acceptance attempt A003 — failed
+
+- Step Three quality [run 40921532799](https://github.com/artinrahimii/project/actions/runs/40921532799) passed its Python, graph and repository-backed output/evidence checks.
+- Android product [run 40921532777](https://github.com/artinrahimii/project/actions/runs/40921532777) failed `ktlintMainSourceSetCheck` on one remaining formatting finding: `ConversationContextCapsuleViewModel.kt:464:21 Unexpected newline before '.'`. APK build and JVM tests were skipped. HostLifecycle tests passed. The Windows job was still running when the graph was updated.
+- A003 remains failed and is not accepted. A004 only joins the `.toMutableList()` call to the multiline filter closing brace; it does not change conflict-detection behavior.

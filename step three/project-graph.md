@@ -34116,7 +34116,9 @@
             "step three/T0156/execution-report.md",
             "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
             "https://github.com/artinrahimii/project/actions/runs/40920502283",
-            "https://github.com/artinrahimii/project/actions/runs/40920502076"
+            "https://github.com/artinrahimii/project/actions/runs/40920502076",
+            "https://github.com/artinrahimii/project/actions/runs/40921532799",
+            "https://github.com/artinrahimii/project/actions/runs/40921532777"
           ]
         }
       },
@@ -34461,11 +34463,11 @@
         "step three/T0157/execution-report.md",
         "step three/T0157/evidence/verification.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0157-A001 implements a deterministic conflict-review layer for changed goals and a bounded set of explicit negation/opposite terms. Conflicts remain suggestions, the saved capsule is unchanged before Save, and each suggestion requires an explicit keep-current or use-suggestion decision. Exact-head CI pending; outgoing T0157→T0158 remains unreviewed.\nT0157-A002 failed exact-head acceptance: one Python source-contract assertion searched for KEEP_CURRENT in the wrong source layer and Android ktlint blocked APK/JVM tests. A003 moves the assertion to Compose and fixes the reported Kotlin formatting; CI pending.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0157-A001 implements a deterministic conflict-review layer for changed goals and a bounded set of explicit negation/opposite terms. Conflicts remain suggestions, the saved capsule is unchanged before Save, and each suggestion requires an explicit keep-current or use-suggestion decision. Exact-head CI pending; outgoing T0157→T0158 remains unreviewed.\nT0157-A002 failed exact-head acceptance: one Python source-contract assertion searched for KEEP_CURRENT in the wrong source layer and Android ktlint blocked APK/JVM tests. A003 moves the assertion to Compose and fixes the reported Kotlin formatting; CI pending.\nT0157-A003 failed only on the remaining KtLint chain-wrapping rule at line 464; quality gate and HostLifecycle passed, Android build/JVM tests did not run. A004 joins `.toMutableList()` to the lambda close and awaits exact-head CI.",
       "execution_summary": {
-        "attempt_count": 3,
-        "failed_attempt_count": 1,
-        "last_attempt_id": "T0157-A003",
+        "attempt_count": 4,
+        "failed_attempt_count": 2,
+        "last_attempt_id": "T0157-A004",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt",
@@ -34477,15 +34479,19 @@
           "step three/project-graph.md"
         ],
         "related_commits": [
-          "b7b492a902a989dfeaeb10547af996ed7085bd0a"
+          "b7b492a902a989dfeaeb10547af996ed7085bd0a",
+          "22b852a6acb2db365d158cbf72b976ad05a894a5"
         ],
         "tests_passed": [
           "Exact V 3.0.576 Windows WPF host build/startup/policy/DPAPI checks and artifact upload passed (product run 40920502283).",
-          "Exact V 3.0.576 HostLifecycle unit/integration tests passed (product run 40920502283)."
+          "Exact V 3.0.576 HostLifecycle unit/integration tests passed (product run 40920502283).",
+          "Exact V 3.0.577 Step Three quality gate passed (run 40921532799).",
+          "Exact V 3.0.577 HostLifecycle unit/integration job passed (product run 40921532777)."
         ],
         "tests_failed": [
           "Exact V 3.0.576 Step Three quality run 40920502076: 253 tests ran; one conflict-review source-contract assertion searched KEEP_CURRENT in the ViewModel rather than the Compose UI.",
-          "Exact V 3.0.576 Android ktlintCheck in product run 40920502283 failed Kotlin formatting in the conflict code and two test expressions; APK/JVM tests were skipped."
+          "Exact V 3.0.576 Android ktlintCheck in product run 40920502283 failed Kotlin formatting in the conflict code and two test expressions; APK/JVM tests were skipped.",
+          "Exact V 3.0.577 Android ktlintCheck failed with one formatting finding at ConversationContextCapsuleViewModel.kt:464:21; APK/JVM tests were skipped (run 40921532777)."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -34612,10 +34618,10 @@
         },
         {
           "attempt_id": "T0157-A003",
-          "started_at": "2026-10-29T17:27:20.853Z",
-          "ended_at": "2026-10-29T17:27:20.853Z",
-          "result": "partial",
-          "summary": "Corrected the conflict-review contract test to assert KEEP_CURRENT at the Compose UI boundary and reformatted Kotlin enum constructors, chains, merge calls, resolver updates and Robolectric test expressions. Exact-head CI for this corrective commit is pending.",
+          "started_at": "2026-10-29T17:25:56.868Z",
+          "ended_at": "2026-10-29T17:28:22Z",
+          "result": "failed",
+          "summary": "Step Three quality passed on V 3.0.577, but Android ktlint failed with one formatting finding in the conflict resolver helper: the multiline closing brace was followed by a newline before .toMutableList(). This stopped the Android job before APK compilation and JVM tests. HostLifecycle passed; the Windows job was still running when this graph update was prepared.",
           "changed_files": [
             "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt",
             "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModelTest.kt",
@@ -34625,31 +34631,78 @@
             "step three/project-graph.md"
           ],
           "related_commits": [
-            "b7b492a902a989dfeaeb10547af996ed7085bd0a"
+            "22b852a6acb2db365d158cbf72b976ad05a894a5"
+          ],
+          "commit_sha": "22b852a6acb2db365d158cbf72b976ad05a894a5",
+          "tests": [
+            {
+              "name": "Step Three quality gate — exact V 3.0.577",
+              "result": "passed",
+              "summary": "The full Python quality suite, graph structure and repository-backed output/evidence guard passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40921532799"
+            },
+            {
+              "name": "Android ktlintCheck — exact V 3.0.577",
+              "result": "failed",
+              "summary": "One remaining formatting finding: ConversationContextCapsuleViewModel.kt:464:21 Unexpected newline before '.'. Android APK and JVM test steps were skipped.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40921532777"
+            },
+            {
+              "name": "HostLifecycle unit/integration — exact V 3.0.577",
+              "result": "passed",
+              "summary": "Host lifecycle tests completed successfully.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40921532777"
+            },
+            {
+              "name": "Windows WPF host — exact V 3.0.577",
+              "result": "not_run",
+              "summary": "The job had not completed when this attempt was recorded."
+            }
+          ],
+          "failure_details": "Android KtLint failed with `ConversationContextCapsuleViewModel.kt:464:21 Unexpected newline before '.'`, caused by the chain break before `.toMutableList()`. The Android APK build and JVM test stages were skipped.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Join the closing brace and `.toMutableList()` in the multiline filter expression, then rerun exact-head product CI. Keep the task open until Android lint/build/JVM and full quality checks pass."
+        },
+        {
+          "attempt_id": "T0157-A004",
+          "started_at": "2026-10-29T17:30:36.777Z",
+          "ended_at": "2026-10-29T17:30:36.777Z",
+          "result": "partial",
+          "summary": "Corrected the sole remaining exact-head V 3.0.577 ktlint finding by keeping `.toMutableList()` attached to the closing brace of the filter lambda. No semantic behavior change; exact-head CI pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt",
+            "step three/T0157/execution-report.md",
+            "step three/T0157/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "related_commits": [
+            "22b852a6acb2db365d158cbf72b976ad05a894a5"
           ],
           "commit_sha": null,
           "tests": [
             {
-              "name": "Python source-contract suite",
-              "result": "not_run",
-              "summary": "Assertion now targets the Compose layer where the explicit choice is rendered; exact-head quality workflow pending."
-            },
-            {
               "name": "Android ktlintCheck",
               "result": "not_run",
-              "summary": "Kotlin formatting corrections applied; exact-head lint pending."
+              "summary": "One-line formatting correction applied; exact-head lint pending."
             },
             {
               "name": "Android assembleDebug / testDebugUnitTest",
               "result": "not_run",
-              "summary": "Skipped on V 3.0.576 after lint failure; must run successfully on this corrective head."
+              "summary": "Not executed on V 3.0.577 because lint failed; rerun required on corrective head."
+            },
+            {
+              "name": "Step Three quality gate",
+              "result": "not_run",
+              "summary": "No content behavior changed; exact-head quality workflow pending."
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect exact-head V 3.0.577 quality and product jobs. Preserve A002 as failed and keep T0157 in_progress until all required gates pass."
+          "follow_up": "Inspect V 3.0.578 exact-head CI. If lint passes, review compile/test output and correct any further failures; do not mark T0157 done before all acceptance gates pass."
         }
       ]
     },
@@ -46487,7 +46540,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-29T17:27:20.853Z",
+  "updated_at": "2026-10-29T17:30:36.777Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",
