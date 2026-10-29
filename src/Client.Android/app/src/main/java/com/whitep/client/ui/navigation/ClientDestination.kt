@@ -1,6 +1,6 @@
 package com.whitep.client.ui.navigation
 
-import android.net.Uri
+import java.net.URLEncoder
 
 /**
  * Destinations owned by the Android Compose shell.
@@ -22,6 +22,8 @@ internal enum class ClientDestination(
     companion object {
         const val CONVERSATION_ID_ARGUMENT = "conversationId"
 
-        fun conversationRoute(conversationId: String): String = "conversation/${Uri.encode(conversationId)}"
+        fun conversationRoute(conversationId: String): String = "conversation/${encodePathSegment(conversationId)}"
+
+        private fun encodePathSegment(value: String): String = URLEncoder.encode(value, "UTF-8").replace("+", "%20")
     }
 }

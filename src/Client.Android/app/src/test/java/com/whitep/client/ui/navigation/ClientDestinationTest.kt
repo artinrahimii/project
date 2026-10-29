@@ -40,6 +40,14 @@ class ClientDestinationTest {
             "conversation/one%20two",
             ClientDestination.conversationRoute("one two"),
         )
+        assertEquals(
+            "conversation/one%2Ftwo",
+            ClientDestination.conversationRoute("one/two"),
+        )
+        assertEquals(
+            "conversation/one%2Btwo",
+            ClientDestination.conversationRoute("one+two"),
+        )
         assertEquals("conversation/{conversationId}", ClientDestination.CONVERSATION_DETAIL.route)
     }
 }

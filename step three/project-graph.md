@@ -30301,9 +30301,9 @@
       ],
       "notes": "T0144 implementation is committed for exact-head validation; do not mark done until Android ktlint, assembleDebug, testDebugUnitTest, Python source-contract tests, and graph guard pass on the actual commit.",
       "execution_summary": {
-        "attempt_count": 5,
-        "failed_attempt_count": 4,
-        "last_attempt_id": "T0144-A005",
+        "attempt_count": 6,
+        "failed_attempt_count": 5,
+        "last_attempt_id": "T0144-A006",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationListViewModel.kt",
@@ -30322,19 +30322,26 @@
         "related_commits": [
           "12b76f6f617c982b1353e8e6ec7cb7f5370bb6b3",
           "06b8dd63afa37902ea9b834e97abe80458f6375b",
-          "44c207018fb3c2232730722b59e3cd1249317bbd"
+          "44c207018fb3c2232730722b59e3cd1249317bbd",
+          "a4a0cbd167d0ceb78bc8b888d56fbf2e65f8567c"
         ],
         "tests_passed": [
-          "Step Three quality gate — V 3.0.518: 218 Python tests and graph guard passed.",
+          "Step Three quality gate — V 3.0.518: 218 tests and graph guard passed.",
           "Host lifecycle integration — V 3.0.518: passed.",
-          "Step Three quality gate — V 3.0.519: 218 Python tests and graph guard passed.",
-          "Step Three quality gate — V 3.0.520: 218 Python tests and graph guard passed; https://github.com/artinrahimii/project/actions/runs/40852548163"
+          "Step Three quality gate — V 3.0.519: 218 tests and graph guard passed.",
+          "Step Three quality gate — V 3.0.520: 218 tests and graph guard passed.",
+          "Step Three quality gate — V 3.0.521: 218 tests and graph guard passed; https://github.com/artinrahimii/project/actions/runs/40852830273",
+          "Android ktlintCheck — V 3.0.521: passed.",
+          "Android assembleDebug — V 3.0.521: passed.",
+          "Host lifecycle tests — V 3.0.521: passed.",
+          "Windows WPF product job — V 3.0.521: passed."
         ],
         "tests_failed": [
-          "T0144-A001 / V 3.0.517: stale source-contract test failed; Android ktlint failed.",
-          "T0144-A002 / V 3.0.518: three Kotlin formatting errors remained.",
-          "T0144-A003 / V 3.0.519: one multiline-expression error remained.",
-          "T0144-A004 / V 3.0.520: four indentation errors remained; APK build and Android unit tests skipped."
+          "T0144-A001 / V 3.0.517: stale source-contract expectation and Android ktlint failed.",
+          "T0144-A002 / V 3.0.518: Android ktlint failed.",
+          "T0144-A003 / V 3.0.519: Android ktlint failed.",
+          "T0144-A004 / V 3.0.520: Android ktlint failed.",
+          "T0144-A005 / V 3.0.521: 15 of 16 Android JVM unit tests passed; one route-encoding test failed because the helper used android.net.Uri in a plain JVM test."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -30502,8 +30509,8 @@
         {
           "attempt_id": "T0144-A005",
           "started_at": "2026-10-29T09:50:01.103Z",
-          "ended_at": "2026-10-29T09:50:01.103Z",
-          "result": "partial",
+          "ended_at": "2026-10-29T09:55:37.927Z",
+          "result": "failed",
           "summary": "Adjusted the navigation argument list's inner indentation to the exact levels required by the current ktlint configuration.",
           "changed_files": [
             "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
@@ -30514,21 +30521,73 @@
           "commit_sha": null,
           "tests": [
             {
+              "command": "Step Three quality gate — run 40852830273",
+              "result": "passed",
+              "summary": "218 Python tests and graph guard passed on exact V 3.0.521. https://github.com/artinrahimii/project/actions/runs/40852830273"
+            },
+            {
+              "command": "Android ktlintCheck — run 40852830138 / job 123376305284",
+              "result": "passed",
+              "summary": "Kotlin formatting and lint passed on V 3.0.521."
+            },
+            {
+              "command": "Android assembleDebug — run 40852830138 / job 123376305284",
+              "result": "passed",
+              "summary": "Debug APK was produced on V 3.0.521."
+            },
+            {
+              "command": "Android testDebugUnitTest — run 40852830138 / job 123376305284",
+              "result": "failed",
+              "summary": "16 tests ran, one failed: ClientDestinationTest.conversationDetailRouteCanCarryAnEncodedConversationId threw RuntimeException at line 37."
+            },
+            {
+              "command": "Host lifecycle tests — run 40852830138 / job 123376305346",
+              "result": "passed",
+              "summary": "Host lifecycle unit/integration tests passed on V 3.0.521."
+            },
+            {
+              "command": "Windows WPF product job — run 40852830138 / job 123376304850",
+              "result": "passed",
+              "summary": "C# formatting, WPF Release build, startup smoke, tool restrictions/policy/capability checks and DPAPI identity/trust-store checks passed on V 3.0.521."
+            }
+          ],
+          "failure_details": "Exact V 3.0.521 passed Kotlin lint and APK build, but testDebugUnitTest ran 16 tests and failed ClientDestinationTest.conversationDetailRouteCanCarryAnEncodedConversationId at line 37 with RuntimeException. The route helper called android.net.Uri.encode from a plain JVM JUnit test.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect exact-head CI for the next commit; if ktlint passes, wait for APK build and Android unit tests before deciding completion."
+        },
+        {
+          "attempt_id": "T0144-A006",
+          "started_at": "2026-10-29T09:55:37.927Z",
+          "ended_at": "2026-10-29T09:55:37.927Z",
+          "result": "partial",
+          "summary": "Replaced Android-only Uri.encode with java.net.URLEncoder-based UTF-8 path-segment encoding, normalizing spaces to %20; expanded JVM tests to cover whitespace, slash and plus escaping.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/navigation/ClientDestination.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/ui/navigation/ClientDestinationTest.kt",
+            "step three/T0144/execution-report.md",
+            "step three/T0144/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
               "command": "Step Three quality gate",
               "result": "not_run",
-              "summary": "Will execute on the correction commit."
+              "summary": "Will run on correction commit."
             },
             {
               "command": "Android ktlintCheck, assembleDebug, testDebugUnitTest",
               "result": "not_run",
-              "summary": "Will execute on the correction commit."
+              "summary": "Will run on correction commit."
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect exact-head CI for the next commit; if ktlint passes, wait for APK build and Android unit tests before deciding completion."
+          "follow_up": "Verify exact-head Android lint, APK build, all JVM unit tests, generated Protobuf checks and all product jobs. If successful, record a final acceptance closeout and set T0144 to done."
         }
       ]
     },
@@ -42360,7 +42419,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-29T09:50:01.103Z",
+  "updated_at": "2026-10-29T09:55:37.927Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

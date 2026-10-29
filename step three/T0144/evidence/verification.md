@@ -1,8 +1,10 @@
 # T0144 evidence ledger
 
-- Implementation: [`V 3.0.517`](https://github.com/artinrahimii/project/commit/12b76f6f617c982b1353e8e6ec7cb7f5370bb6b3).
-- Corrections: [`V 3.0.518`](https://github.com/artinrahimii/project/commit/06b8dd63afa37902ea9b834e97abe80458f6375b), [`V 3.0.519`](https://github.com/artinrahimii/project/commit/44c207018fb3c2232730722b59e3cd1249317bbd), [`V 3.0.520`](https://github.com/artinrahimii/project/commit/a4a0cbd167d0ceb78bc8b888d56fbf2e65f8567c).
-- Quality and graph guard pass on V 3.0.520: 218 Python tests; https://github.com/artinrahimii/project/actions/runs/40852548163.
-- Android ktlint on V 3.0.520: four indentation errors at `MainActivity.kt:111-114`; APK build/tests skipped. https://github.com/artinrahimii/project/actions/runs/40852548162.
-- Attempt A005 fixes exactly those indent levels. Its exact-head CI results remain pending.
-- Do not mark T0144 done until Android lint, APK build, and Android JVM tests pass on one commit.
+- Implementation baseline: [`V 3.0.517`](https://github.com/artinrahimii/project/commit/12b76f6f617c982b1353e8e6ec7cb7f5370bb6b3).
+- Formatting fixes: [`V 3.0.521`](https://github.com/artinrahimii/project/commit/40aae42f0021b331a976845bc0146ddef1c19b6b).
+- Exact-head quality gate on V 3.0.521 passed: 218 Python tests and graph validation; https://github.com/artinrahimii/project/actions/runs/40852830273.
+- Exact-head Android lint passed and `assembleDebug` produced the APK.
+- Exact-head `testDebugUnitTest`: 16 tests ran, one failed in `ClientDestinationTest.conversationDetailRouteCanCarryAnEncodedConversationId`; the route helper called Android framework `Uri.encode` from plain JVM test code.
+- Exact-head HostLifecycle tests and Windows WPF product checks passed.
+- Attempt A006 replaces Android-only path encoding with a JVM-available encoder and expands tests for spaces, slash, and plus. Results pending.
+- Do not mark T0144 complete until all Android unit tests pass on the same commit.
