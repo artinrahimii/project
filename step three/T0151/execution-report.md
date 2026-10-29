@@ -37,3 +37,10 @@ Keep T0151 `in_progress` until the exact-head outcomes are inspected. Record and
 - **V 3.0.548 quality** [40881923866](https://github.com/artinrahimii/project/actions/runs/40881923866) passed 234 Python tests, Python syntax, graph structure and recorded-output/evidence validation. Graph guard reported 229 tasks/417 edges, zero errors and one preserved T0001 warning.
 - **V 3.0.548 product** [40881924197](https://github.com/artinrahimii/project/actions/runs/40881924197): Windows WPF and HostLifecycle jobs passed. Android lint failed at `ConversationContextCapsuleTest.kt:147:57` because `JSONArray.toStringList()` had its single-expression body on a second line; APK assembly and JVM tests did not run.
 - **T0151-A002** records that failure. **T0151-A003** corrects only the helper's line wrapping. No Kotlin behavior or model contract changed; exact-head CI is still pending.
+
+
+## Exact-head correction history — V 3.0.549
+
+- **Quality** [run 40882506760](https://github.com/artinrahimii/project/actions/runs/40882506760) passed 234 Python tests, syntax checks, graph structure and output/evidence validation (229 tasks/417 edges, zero errors; one preserved T0001 metadata warning).
+- **Product** [run 40882506722](https://github.com/artinrahimii/project/actions/runs/40882506722): Windows WPF and HostLifecycle jobs passed. Android lint failed in the model source at `ConversationContextCapsule.kt:166`: the long `unresolvedItems` assignment needed multiline formatting. APK build and Android JVM tests were skipped.
+- **T0151-A004** records that observed failure. **T0151-A005** wraps the property assignment, JSON-array argument, closing parenthesis and Elvis fallback across lines, without changing the model schema or decoding rules. Exact-head CI is pending.

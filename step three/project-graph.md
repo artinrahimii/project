@@ -32436,28 +32436,30 @@
         "docs/requirements.md",
         "step three/T0150/execution-report.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0151-A001 introduces schemaVersion=1 and the goal/keyFacts/decisions/constraints/unresolvedItems model, strict UTF-8 JSON decoding, and the existing 4,096-byte hard protocol ceiling. Persistence and UI remain T0152/T0153. Exact-head CI pending.\nT0151-A002 exact-head CI: quality passed 234 Python tests and graph/evidence gates; product CI failed only Android test-source ktlint at ConversationContextCapsuleTest.kt:147:57 (single-expression helper body should remain on same line as signature), so APK/JVM tests did not run. Windows and HostLifecycle jobs passed. T0151-A003 fixes that expression wrapping; exact-head CI pending.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0151-A001 introduces schemaVersion=1 and the goal/keyFacts/decisions/constraints/unresolvedItems model, strict UTF-8 JSON decoding, and the existing 4,096-byte hard protocol ceiling. Persistence and UI remain T0152/T0153. Exact-head CI pending.\nT0151-A002 exact-head CI: quality passed 234 Python tests and graph/evidence gates; product CI failed only Android test-source ktlint at ConversationContextCapsuleTest.kt:147:57 (single-expression helper body should remain on same line as signature), so APK/JVM tests did not run. Windows and HostLifecycle jobs passed. T0151-A003 fixes that expression wrapping; exact-head CI pending.\nT0151-A004 records V 3.0.549 Android main-source ktlint failure at ConversationContextCapsule.kt:166. T0151-A005 reformats that call/Elvis chain; behavior and schema contract are unchanged. Exact-head CI remains pending.",
       "execution_summary": {
-        "attempt_count": 3,
-        "failed_attempt_count": 1,
-        "last_attempt_id": "T0151-A003",
+        "attempt_count": 5,
+        "failed_attempt_count": 2,
+        "last_attempt_id": "T0151-A005",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/context/ConversationContextCapsule.kt",
           "src/Client.Android/app/src/test/java/com/whitep/client/context/ConversationContextCapsuleTest.kt",
-          null,
+          "tests/test_android_context_capsule_contract.py",
           "step three/T0151/execution-report.md",
           "step three/T0151/evidence/verification.md",
           "step three/project-graph.md"
         ],
         "related_commits": [
-          "01e72c108e59d61da634b08dde8bef8df2622939"
+          "01e72c108e59d61da634b08dde8bef8df2622939",
+          "11597903295649f994ffad0b692fbf00220e9cbf"
         ],
         "tests_passed": [
           "V 3.0.548 Step Three quality run 40881923866 passed 234 Python tests, syntax checks, graph/evidence validation, and graph guard (229 tasks/417 edges, zero errors, one preserved T0001 warning)."
         ],
         "tests_failed": [
-          "V 3.0.548 product run 40881924197: Android ktlintTestSourceSetCheck failed at ConversationContextCapsuleTest.kt:147:57 because the body expression fits on the signature line. APK build and JVM tests were skipped. Windows WPF build/smoke/security checks and HostLifecycle tests passed."
+          "V 3.0.548 product run 40881924197: Android ktlintTestSourceSetCheck failed at ConversationContextCapsuleTest.kt:147:57 because the body expression fits on the signature line. APK build and JVM tests were skipped. Windows WPF build/smoke/security checks and HostLifecycle tests passed.",
+          "V 3.0.549 product run 40882506722: Android ktlintMainSourceSetCheck failed on multiline formatting of unresolvedItems assignment in ConversationContextCapsule.kt:166; APK/JVM tests were skipped."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -32609,6 +32611,87 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Inspect V 3.0.549 quality/product results. Only accept T0151 after Android lint, APK build, capsule JVM tests and Python/graph/evidence checks pass."
+        },
+        {
+          "attempt_id": "T0151-A004",
+          "started_at": "2026-10-29T13:30:20Z",
+          "ended_at": "2026-10-29T13:31:07Z",
+          "result": "failed",
+          "summary": "Exact-head product CI for V 3.0.549 failed Android ktlintMainSourceSetCheck in ConversationContextCapsule.kt:166. The unresolvedItems assignment/call/Elvis expression exceeded the line limit and violated multiline argument/closing-paren/Elvis wrapping rules. APK build and JVM tests did not run. Step Three quality, Windows WPF, and HostLifecycle jobs passed.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/context/ConversationContextCapsule.kt",
+            "step three/T0151/execution-report.md",
+            "step three/T0151/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": "11597903295649f994ffad0b692fbf00220e9cbf",
+          "tests": [
+            {
+              "name": "Step Three quality run 40882506760",
+              "result": "passed",
+              "summary": "234 Python tests, syntax, graph structure, and evidence checks passed; 229 nodes/417 edges, zero errors and one preserved T0001 warning.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40882506760"
+            },
+            {
+              "name": "Android ktlint — product run 40882506722",
+              "result": "failed",
+              "summary": "ktlintMainSourceSetCheck reported six line/argument/closing-parenthesis/Elvis wrapping findings on ConversationContextCapsule.kt:166. APK and JVM tests were skipped.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40882506722"
+            },
+            {
+              "name": "Windows WPF — product run 40882506722",
+              "result": "passed",
+              "summary": "Windows host formatting/build/security/startup checks passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40882506722"
+            },
+            {
+              "name": "HostLifecycle — product run 40882506722",
+              "result": "passed",
+              "summary": "Host lifecycle unit/integration tests passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40882506722"
+            }
+          ],
+          "failure_details": "ktlintMainSourceSetCheck reported at ConversationContextCapsule.kt:166:35, :166:56, :166:78, :166:80, :166:107 and :166:122. The code is valid syntactically but violates repository multiline formatting; no APK/JVM result exists for this run.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Wrap the unresolvedItems property assignment, JSONArray helper argument, closing parenthesis and Elvis return over multiple lines. Run exact-head ktlint, assembleDebug and testDebugUnitTest before accepting T0151."
+        },
+        {
+          "attempt_id": "T0151-A005",
+          "started_at": "2026-10-29T13:37:14.488Z",
+          "ended_at": "2026-10-29T13:37:14.488Z",
+          "result": "partial",
+          "summary": "Wrapped the unresolvedItems assignment and JSON array call onto separate lines, placing the helper argument and closing parenthesis on their own lines and moving the Elvis fallback below the call. No JSON schema, validation behavior, or public API changed. Exact-head CI remains pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/context/ConversationContextCapsule.kt",
+            "step three/T0151/execution-report.md",
+            "step three/T0151/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Android ktlintCheck",
+              "result": "not_run",
+              "summary": "Style fix prepared; no success claim before exact-head CI."
+            },
+            {
+              "name": "Android assembleDebug / testDebugUnitTest",
+              "result": "not_run",
+              "summary": "Awaiting lint and then build/JVM test stages."
+            },
+            {
+              "name": "Step Three quality gate",
+              "result": "not_run",
+              "summary": "Awaiting exact-head GitHub Actions."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect exact-head quality and product workflow after V 3.0.550; only accept T0151 after Android lint, APK build/JVM capsule tests and Python/graph/evidence checks all pass."
         }
       ]
     },
@@ -44470,7 +44553,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-29T13:29:19.954Z",
+  "updated_at": "2026-10-29T13:37:14.488Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

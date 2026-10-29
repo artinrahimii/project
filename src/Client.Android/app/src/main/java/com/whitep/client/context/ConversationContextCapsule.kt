@@ -163,7 +163,11 @@ data class ConversationContextCapsule(
             val keyFacts = json.readStringArray(FIELD_KEY_FACTS) ?: return invalidFieldType(serialized.size)
             val decisions = json.readStringArray(FIELD_DECISIONS) ?: return invalidFieldType(serialized.size)
             val constraints = json.readStringArray(FIELD_CONSTRAINTS) ?: return invalidFieldType(serialized.size)
-            val unresolvedItems = json.readStringArray(FIELD_UNRESOLVED_ITEMS) ?: return invalidFieldType(serialized.size)
+            val unresolvedItems =
+                json.readStringArray(
+                    FIELD_UNRESOLVED_ITEMS,
+                )
+                    ?: return invalidFieldType(serialized.size)
 
             val capsule =
                 ConversationContextCapsule(
