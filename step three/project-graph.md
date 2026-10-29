@@ -29972,11 +29972,11 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0142 و T0138 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "تکمیل‌شده",
       "actual_output_paths": [
-        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationListViewModel.kt",
         "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationListScreen.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationListViewModel.kt",
         "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
         "src/Client.Android/app/src/main/java/com/whitep/client/ui/navigation/ClientDestination.kt",
         "src/Client.Android/app/src/main/java/com/whitep/client/ui/navigation/ClientNavigation.kt",
@@ -29986,24 +29986,27 @@
         "step three/T0143/evidence/verification.md"
       ],
       "expected_output_paths": [
-        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationListViewModel.kt",
         "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationListScreen.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationListViewModel.kt",
         "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationListViewModelTest.kt"
       ],
       "evidence": [
-        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationListViewModel.kt",
         "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationListScreen.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationListViewModel.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/navigation/ClientDestination.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/navigation/ClientNavigation.kt",
         "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationListViewModelTest.kt",
         "src/Client.Android/app/src/test/java/com/whitep/client/ui/navigation/ClientDestinationTest.kt",
         "step three/T0143/execution-report.md",
         "step three/T0143/evidence/verification.md"
       ],
-      "notes": "T0143-A001 adds a reachable Compose Conversations destination backed by ConversationDao.observeAll(), plus a Room-backed ViewModel test. Task remains in_progress pending exact-head Android and Step Three CI.\nT0143-A001 failed Android ktlint (import ordering and uppercase composable name); T0143-A002 corrects those exact findings. Task remains in_progress pending Android build/unit tests.\nT0143-A002 passed graph CI but failed Android ktlint on one stale import. T0143-A003 aligns the import name to conversationListScreen; remains in_progress until Android build/test pass.",
+      "notes": "T0143-A001 adds a reachable Compose Conversations destination backed by ConversationDao.observeAll(), plus a Room-backed ViewModel test. Task remains in_progress pending exact-head Android and Step Three CI.\nT0143-A001 failed Android ktlint (import ordering and uppercase composable name); T0143-A002 corrects those exact findings. Task remains in_progress pending Android build/unit tests.\nT0143-A002 passed graph CI but failed Android ktlint on one stale import. T0143-A003 aligns the import name to conversationListScreen; remains in_progress until Android build/test pass.\nT0143 is completed after exact-head V 3.0.513 CI passed: Step Three quality, Android lint/build/unit tests/Protobuf/APK upload, Windows host build/smoke/security checks and HostLifecycle tests.",
       "execution_summary": {
         "attempt_count": 3,
         "failed_attempt_count": 2,
         "last_attempt_id": "T0143-A003",
-        "last_attempt_result": "partial",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationListViewModel.kt",
           "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationListScreen.kt",
@@ -30016,18 +30019,24 @@
           "step three/T0143/evidence/verification.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
+        "related_commits": [
+          "168b7028096efcacb440e8e984d3a58eab029a3d",
+          "be9dd7659a7765d7c8901418d6eb26348fd987f6",
+          "c063ff766946b365a907776324cd8f646487a22e"
+        ],
         "tests_passed": [
-          "Step Three quality gate run 40845871893 passed on V 3.0.512."
+          "Step Three quality gate 40846225141 passed (https://github.com/artinrahimii/project/actions/runs/40846225141).",
+          "Android lint, APK build, testDebugUnitTest, Protobuf source checks and APK upload passed in product run 40846225053 (https://github.com/artinrahimii/project/actions/runs/40846225053).",
+          "Windows WPF build, startup smoke, agent-tool policy/capability/identity checks and HostLifecycle tests passed in the same product run."
         ],
         "tests_failed": [
-          "Android product run 40845443840 failed ktlint on import ordering and uppercase composable naming (V 3.0.511).",
-          "Android product run 40845871873 failed ktlint due unused MainActivity.kt import after the screen rename (V 3.0.512); APK and Android unit tests were skipped."
+          "Historical A001 (V 3.0.511): ktlint rejected import order and uppercase composable naming; corrected.",
+          "Historical A002 (V 3.0.512): ktlint rejected the stale import after renaming the composable; corrected."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "in_review",
+          "state": "passed",
           "triggering_contracts": [
             "T0142 Room schema v1→v2 migration",
             "T0138 endpoint content visibility/privacy disclosure"
@@ -30038,8 +30047,11 @@
           "review_evidence": [
             "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientDatabase.kt",
             "src/Client.Android/app/src/main/java/com/whitep/client/data/ConversationEntity.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationListViewModelTest.kt",
             "docs/decisions/ADR-0019-host-content-visibility.md",
-            "docs/decisions/ADR-0020-android-client-local-conversation-storage.md"
+            "docs/decisions/ADR-0020-android-client-local-conversation-storage.md",
+            "https://github.com/artinrahimii/project/actions/runs/40846225141",
+            "https://github.com/artinrahimii/project/actions/runs/40846225053"
           ]
         }
       },
@@ -30128,22 +30140,65 @@
         {
           "attempt_id": "T0143-A003",
           "started_at": "2026-10-29T08:59:16.227Z",
-          "ended_at": "2026-10-29T08:59:16.227Z",
-          "result": "partial",
-          "summary": "Corrected MainActivity.kt to import conversationListScreen, matching the lowercase composable definition and call site. Exact-head CI pending.",
+          "ended_at": "2026-10-29T09:02:48Z",
+          "result": "succeeded",
+          "summary": "The exact-head CI passed after correcting the stale import. Kotlin lint, debug APK assembly, Android testDebugUnitTest, generated Java/Kotlin Protobuf verification and APK artifact upload passed. The Windows WPF build/smoke/policy checks and HostLifecycle tests also passed.",
           "changed_files": [
             "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
             "step three/T0143/execution-report.md",
             "step three/T0143/evidence/verification.md",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
-          "tests": [],
+          "commit_sha": "c063ff766946b365a907776324cd8f646487a22e",
+          "tests": [
+            {
+              "command": "Step Three quality gate — run 40846225141",
+              "result": "passed",
+              "summary": "Task graph and Python quality checks passed, including tests, syntax, graph structure and recorded-output/evidence validation.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40846225141"
+            },
+            {
+              "command": "Android ktlintCheck — product run 40846225053",
+              "result": "passed",
+              "summary": "Kotlin formatting and lint passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40846225053"
+            },
+            {
+              "command": "Android assembleDebug — product run 40846225053",
+              "result": "passed",
+              "summary": "Debug APK build succeeded.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40846225053"
+            },
+            {
+              "command": "Android testDebugUnitTest — product run 40846225053",
+              "result": "passed",
+              "summary": "Room-backed ConversationListViewModelTest and the Android JVM unit test suite completed successfully.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40846225053"
+            },
+            {
+              "command": "Generated Protobuf source verification — product run 40846225053",
+              "result": "passed",
+              "summary": "Generated Java/Kotlin and C# Protobuf sources verified.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40846225053"
+            },
+            {
+              "command": "Windows host and HostLifecycle — product run 40846225053",
+              "result": "passed",
+              "summary": "Windows WPF build/startup smoke/policy/identity checks and HostLifecycle unit/integration tests passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40846225053"
+            },
+            {
+              "command": "Android APK artifact upload — product run 40846225053",
+              "result": "passed",
+              "summary": "Artifact whitep-android-debug-apk uploaded (artifact id 12885471239).",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40846225053"
+            }
+          ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Verify exact-head Android lint, APK assembly, Android unit tests and Step Three quality; close T0143 only when the required checks pass."
+          "follow_up": "T0143 is accepted. Next logical task is T0144 after reviewing its incoming edges and actual prerequisite outputs."
         }
       ]
     },
@@ -41982,7 +42037,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-29T08:59:16.227Z",
+  "updated_at": "2026-10-29T09:04:23.817Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

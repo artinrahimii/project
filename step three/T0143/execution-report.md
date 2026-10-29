@@ -1,12 +1,17 @@
-# T0143 execution report — third corrective attempt pending CI
+# T0143 execution report — completed
 
 - **Task:** Connect the conversation-list screen to live Room data.
-- **Status:** `in_progress`; Android runtime acceptance is still pending.
-- **Implementation:** The app now has a Conversations bottom-navigation route and a Compose list screen reading the application-scoped Room database through `ConversationListViewModel` and `ConversationDao.observeAll()`. It renders the real empty state or rows with persisted titles/update timestamps; no sample conversations are embedded.
-- **Runtime test added:** `ConversationListViewModelTest` verifies that the ViewModel starts empty and emits rows inserted into Room using the DAO's actual ordering. The navigation test asserts the Conversations destination is part of the bottom navigation.
-- **A001 — V 3.0.511:** [Step Three quality gate 40845443702](https://github.com/artinrahimii/project/actions/runs/40845443702) passed. [Android product run 40845443840](https://github.com/artinrahimii/project/actions/runs/40845443840) failed ktlint because of import ordering and uppercase composable naming; APK and unit tests were skipped.
-- **A002 — V 3.0.512:** [Step Three quality gate 40845871893](https://github.com/artinrahimii/project/actions/runs/40845871893) passed. [Android product run 40845871873](https://github.com/artinrahimii/project/actions/runs/40845871873) failed ktlint on a now-unused `ConversationListScreen` import; APK and unit tests were skipped.
-- **A003 — pending:** The import now names `conversationListScreen`, matching the actual lowercase composable definition and call site.
-- **Scope boundary:** Creating, renaming, deleting, and opening a selected conversation remain in T0144. This screen does not imply that message delivery or peer transport is implemented.
-- **Dependency review:** T0142→T0143 is validated as a database compatibility contract; T0138→T0143 is validated as sequencing-only. Evidence and rationale are retained in the graph.
-- **Acceptance rule:** Do not mark T0143 done until exact-head CI passes Kotlin lint, APK build, Android unit tests including the Room-backed ViewModel test, generated Protobuf verification and the Step Three quality gate.
+- **Final status:** `done`.
+- **Implementation commit:** [V 3.0.513 — c063ff766946b365a907776324cd8f646487a22e](https://github.com/artinrahimii/project/commit/c063ff766946b365a907776324cd8f646487a22e).
+- **Feature:** Added a Compose Conversations bottom-navigation route. `conversationListScreen()` obtains the application-scoped Room database and collects `ConversationDao.observeAll()` through `ConversationListViewModel`. It displays a real empty state and, for stored rows, titles and last-updated timestamps. No sample conversation data is used.
+- **Runtime test:** `ConversationListViewModelTest` passed as part of `testDebugUnitTest`. It checks the initial empty list, inserts two entities into an in-memory Room database, and asserts that the ViewModel emits the persisted conversations in the DAO-defined sort order.
+- **Navigation test:** Updated and passed `ClientDestinationTest` to assert the Conversations destination is included in bottom navigation.
+- **Attempt history:** A001 and A002 failed Kotlin lint and remain recorded; A003 fixed the issues and passed. No earlier failure was deleted.
+- **Final acceptance:**
+  - [Step Three quality gate 40846225141](https://github.com/artinrahimii/project/actions/runs/40846225141) — passed.
+  - [Android product workflow 40846225053](https://github.com/artinrahimii/project/actions/runs/40846225053) — passed: ktlint, debug APK assembly, `testDebugUnitTest`, generated Protobuf checks and Android APK upload.
+  - In the same product workflow, Windows WPF build, startup smoke, agent-tool restrictions/policy/capability and host-identity checks, and HostLifecycle unit/integration tests passed.
+- **Artifact:** [Android debug APK artifact](https://github.com/artinrahimii/project/actions/runs/40846225053/artifacts/12885471239).
+- **Privacy and scope boundary:** The screen explicitly labels history as device-local. It does not claim encryption at rest, request transport, or conversation-opening/edit/delete behavior. Those conversation actions remain in T0144; P2P transport remains a separate task.
+- **Dependency review:** T0142→T0143 was validated as a database compatibility contract; T0138→T0143 was validated as sequencing-only. The graph contains the evidence and rationale.
+- **Next logical task:** T0144, after checking its incoming edge classifications, actual prerequisites, and acceptance criteria.
