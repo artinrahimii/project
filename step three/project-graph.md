@@ -29357,8 +29357,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0140 و T0138 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "تکمیل‌شده",
       "actual_output_paths": [
         "src/Client.Android/build.gradle.kts",
         "src/Client.Android/app/build.gradle.kts",
@@ -29385,12 +29385,12 @@
         "src/Client.Android/app/src/main/java/com/whitep/client/data/RoomClientRequestRepository.kt",
         "step three/T0141/execution-report.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0141-A001 (2026-10-29): Added version-1 Room entities/DAOs for conversations, messages, request states and the current draft; added a Room-backed implementation of the existing request repository contract, database acceptance tests, and a local-storage privacy decision. T0138 -> T0141 was reviewed as sequencing_only after ADR-0020 explicitly resolved the local-persistence boundary; original type=blocks and edge order were preserved. Exact-candidate CI is pending; this task remains in_progress until the runtime tests and product build pass.\n\nT0141-A001 exact-head result (2026-10-29): quality gate passed and HostLifecycle tests passed, but Android ktlintTestSourceSetCheck failed in ClientDatabaseTest.kt and skipped APK/JUnit/Protobuf. A002 corrects only the test formatting from CI diagnostics; this is retained as a failed attempt.\n\nT0141-A002 exact-head result (2026-10-29): quality gate and HostLifecycle tests passed, but Android ktlint still rejected the multiline Room builder chain; APK/JUnit/Protobuf were skipped. The formatting failure remains in history; A003 applies the specific chain-format correction.\n\nT0141-A003 exact-head result (2026-10-29): formatted database test source passed, but main-source ktlint failed in ClientDatabase.kt and RoomClientRequestRepository.kt. The APK, JUnit and generated Protobuf steps were skipped. A004 addresses only the listed expression-body and method-chain formatting diagnostics.\n\nT0141-A004 exact-head result (2026-10-29): the repository and database-builder formatting errors were cleared; only one inline converter-expression formatting error remained in ClientDatabase.kt:15. The Android APK, JUnit and Protobuf steps were skipped. A005 fixes that one line; A004 remains a failed attempt.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0141-A001 (2026-10-29): Added version-1 Room entities/DAOs for conversations, messages, request states and the current draft; added a Room-backed implementation of the existing request repository contract, database acceptance tests, and a local-storage privacy decision. T0138 -> T0141 was reviewed as sequencing_only after ADR-0020 explicitly resolved the local-persistence boundary; original type=blocks and edge order were preserved. Exact-candidate CI is pending; this task remains in_progress until the runtime tests and product build pass.\n\nT0141-A001 exact-head result (2026-10-29): quality gate passed and HostLifecycle tests passed, but Android ktlintTestSourceSetCheck failed in ClientDatabaseTest.kt and skipped APK/JUnit/Protobuf. A002 corrects only the test formatting from CI diagnostics; this is retained as a failed attempt.\n\nT0141-A002 exact-head result (2026-10-29): quality gate and HostLifecycle tests passed, but Android ktlint still rejected the multiline Room builder chain; APK/JUnit/Protobuf were skipped. The formatting failure remains in history; A003 applies the specific chain-format correction.\n\nT0141-A003 exact-head result (2026-10-29): formatted database test source passed, but main-source ktlint failed in ClientDatabase.kt and RoomClientRequestRepository.kt. The APK, JUnit and generated Protobuf steps were skipped. A004 addresses only the listed expression-body and method-chain formatting diagnostics.\n\nT0141-A004 exact-head result (2026-10-29): the repository and database-builder formatting errors were cleared; only one inline converter-expression formatting error remained in ClientDatabase.kt:15. The Android APK, JUnit and Protobuf steps were skipped. A005 fixes that one line; A004 remains a failed attempt.\n\nT0141-A005 acceptance (2026-10-29): exact commit V 3.0.505 passed the Step Three quality gate (208 Python tests; graph guard 229 tasks/417 edges, 0 errors/1 preserved warning), Android ktlint, debug APK build, testDebugUnitTest, generated Java/Kotlin Protobuf checks, Windows WPF build/startup/security gates, and HostLifecycle tests. A001-A004 formatting failures remain preserved as failed attempts; no failure records were removed. T0141 is now done. This does not imply migration testing (T0142), at-rest encryption (T0184), or Android-to-Windows P2P runtime acceptance.",
       "execution_summary": {
         "attempt_count": 5,
         "failed_attempt_count": 4,
         "last_attempt_id": "T0141-A005",
-        "last_attempt_result": "in_progress",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Client.Android/build.gradle.kts",
           "src/Client.Android/app/build.gradle.kts",
@@ -29411,18 +29411,23 @@
           "c0a6bd5e6cdfbdf6065daf3e41228511c970839b",
           "1ba5858be67c465552d577d8a7ffeca52e481437",
           "e5239fa436e1e9b56f78011410e9efb3443ae2c5",
-          "822ee80620c56774cd20068a87deb5c45d082b85"
+          "822ee80620c56774cd20068a87deb5c45d082b85",
+          "882a73162acd26c0410b3863f65d39b211262a28"
         ],
         "tests_passed": [
-          "Step Three quality gates — V 3.0.501, V 3.0.502, V 3.0.503 and V 3.0.504.",
-          "HostLifecycle unit/integration — V 3.0.501, V 3.0.502, V 3.0.503 and V 3.0.504.",
-          "Android test-source ktlint — V 3.0.503; Android main-source ktlint not yet passed."
+          "Step Three quality gate — V 3.0.505: 208 Python tests passed; graph guard validated 229 tasks/417 edges, 0 errors and 1 preserved warning (https://github.com/artinrahimii/project/actions/runs/40840501577).",
+          "Android ktlintCheck — V 3.0.505 passed (https://github.com/artinrahimii/project/actions/runs/40840501606).",
+          "Android debug APK assembly — V 3.0.505 passed (https://github.com/artinrahimii/project/actions/runs/40840501606).",
+          "Android testDebugUnitTest — V 3.0.505 passed, including the new Room local-database tests (https://github.com/artinrahimii/project/actions/runs/40840501606).",
+          "Generated Java and Kotlin Protobuf source checks — V 3.0.505 passed (https://github.com/artinrahimii/project/actions/runs/40840501606).",
+          "Windows WPF build/startup and required policy checks — V 3.0.505 passed (https://github.com/artinrahimii/project/actions/runs/40840501606).",
+          "HostLifecycle unit/integration tests — V 3.0.505 passed (https://github.com/artinrahimii/project/actions/runs/40840501606)."
         ],
         "tests_failed": [
-          "V 3.0.501 Android test-source ktlint failure.",
-          "V 3.0.502 Android test-source ktlint failure.",
-          "V 3.0.503 Android main-source ktlint failure in ClientDatabase.kt and RoomClientRequestRepository.kt.",
-          "V 3.0.504 Android main-source ktlint failure in ClientDatabase.kt line 15; APK/JUnit/Protobuf skipped."
+          "V 3.0.501 Android test-source ktlint failed; APK/JUnit/Protobuf were skipped.",
+          "V 3.0.502 Android test-source ktlint failed on the Room builder formatting; APK/JUnit/Protobuf were skipped.",
+          "V 3.0.503 Android main-source ktlint failed on Room/database repository line wrapping; APK/JUnit/Protobuf were skipped.",
+          "V 3.0.504 Android main-source ktlint had one remaining converter-expression formatting failure; APK/JUnit/Protobuf were skipped."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -29635,24 +29640,67 @@
         {
           "attempt_id": "T0141-A005",
           "started_at": "2026-10-29T08:11:58.891Z",
-          "ended_at": null,
-          "result": "in_progress",
-          "summary": "Collapsed the last converter expression to the declaration line per exact V 3.0.504 ktlint diagnostics. No database semantics changed; exact-head Android and product checks are required before acceptance.",
+          "ended_at": "2026-10-29T08:15:16Z",
+          "result": "succeeded",
+          "summary": "Exact V 3.0.505 CI passed. Android ktlint, debug APK build, Android unit tests, generated Protobuf checks and APK upload passed; Windows WPF build/startup checks and HostLifecycle tests passed; Step Three quality gate passed (208 Python tests, graph validation 229 nodes/417 edges, zero errors and one preserved T0001 free-text dependency warning).",
           "changed_files": [
             "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientDatabase.kt",
             "step three/T0141/execution-report.md",
             "step three/project-graph.md"
           ],
           "related_commits": [
-            "c0a6bd5e6cdfbdf6065daf3e41228511c970839b"
+            "882a73162acd26c0410b3863f65d39b211262a28"
           ],
-          "commit_sha": null,
-          "tests": [],
+          "commit_sha": "882a73162acd26c0410b3863f65d39b211262a28",
+          "tests": [
+            {
+              "name": "Step Three quality gate — V 3.0.505",
+              "result": "passed",
+              "summary": "208 Python tests passed; Python syntax passed; graph guard validated 229 tasks/417 edges with zero errors and one preserved unmapped T0001 free-text prerequisite warning.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40840501577"
+            },
+            {
+              "name": "Android ktlintCheck — V 3.0.505",
+              "result": "passed",
+              "summary": "The Android source and test source formatting/lint gate passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40840501606"
+            },
+            {
+              "name": "Android assembleDebug — V 3.0.505",
+              "result": "passed",
+              "summary": "Debug APK assembled successfully.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40840501606"
+            },
+            {
+              "name": "Android testDebugUnitTest — V 3.0.505",
+              "result": "passed",
+              "summary": "Android unit-test task completed successfully, including the new Room database acceptance tests.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40840501606"
+            },
+            {
+              "name": "Generated Protobuf source check — V 3.0.505",
+              "result": "passed",
+              "summary": "Generated Java and Kotlin Protobuf source files were both located and verified.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40840501606"
+            },
+            {
+              "name": "Windows WPF build/startup — V 3.0.505",
+              "result": "passed",
+              "summary": "Windows format check, Release build, startup smoke and required host security/capability checks passed; job completed successfully.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40840501606"
+            },
+            {
+              "name": "HostLifecycle unit/integration — V 3.0.505",
+              "result": "passed",
+              "summary": "Host lifecycle unit and integration tests completed successfully.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40840501606"
+            }
+          ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Check the next exact-head CI result. Do not mark T0141 done until Android ktlint, APK, JUnit and generated Protobuf all pass."
+          "follow_up": "T0141 acceptance is complete for the initial Room schema and repository implementation. Continue with graph dependency order; T0142 owns schema migration tests, T0184 owns at-rest encryption, and Android-to-Windows P2P runtime gates remain separate."
         }
       ]
     },
@@ -41489,7 +41537,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-29T08:11:58.891Z",
+  "updated_at": "2026-10-29T08:15:16Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",
