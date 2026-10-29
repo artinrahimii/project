@@ -3,6 +3,7 @@ package com.whitep.client.ui.conversations
 import androidx.room.Room
 import com.whitep.client.data.ClientDatabase
 import com.whitep.client.data.ConversationEntity
+import com.whitep.client.domain.ConversationMessageValidator
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.junit.After
@@ -68,7 +69,30 @@ class ConversationMessagesViewModelTest {
         }
 
     @Test
-    fun rejectsBlankMessagesWithoutPersistingThem() =
+    fun rejectsOverLimitMessagesWithoutPersistingThem() =
+        runBlocking {
+            database.conversationDao().upsert(
+                ConversationEntity(
+                    conversationId = "conversation-too-long",
+                    title = "Test conversation",
+                    createdAtEpochMillis = 1L,
+                    updatedAtEpochMillis = 1L,
+                ),
+            )
+            val viewModel =
+                ConversationMessagesViewModel(
+                    conversationId = "conversation-too-long",
+                    messageDao = database.messageDao(),
+                )
+
+            val overLimit = "🙂".repeat(ConversationMessageValidator.MAX_MESSAGE_UTF8_BYTES / 4 + 1)
+            assertFalse(viewModel.sendMessage(overLimit))
+            assertTrue(viewModel.messages.first().isEmpty())
+            assertEquals(0, database.messageDao().countForConversation("conversation-too-long"))
+        }
+
+    @Test
+    fun rejectsBlankMessagesWithoutPersistingThem()
         runBlocking {
             database.conversationDao().upsert(
                 ConversationEntity(

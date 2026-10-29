@@ -30911,20 +30911,40 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0145 و T0138 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/domain/ConversationMessageValidator.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationMessagesViewModel.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/domain/ConversationMessageValidatorTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationMessagesViewModelTest.kt",
+        "tests/test_android_message_validation_contract.py",
+        "step three/T0146/execution-report.md",
+        "step three/T0146/evidence/verification.md",
+        "step three/project-graph.md"
+      ],
       "expected_output_paths": [
         "src/Client.Android/"
       ],
       "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0146-A001 (2026-10-29T11:22:00Z): Added a domain-level UTF-8 byte validator aligned with the canonical 8,192-byte prompt limit, applied it again before Room persistence, disabled the UI send action for invalid input, and added Android and Python regression tests. Dependency review validated T0145 → T0146 as a contract/interface dependency and T0138 → T0146 as sequencing-only; both conservative edges are retained. Exact-head CI is pending; keep this task in_progress until Android lint/build/unit tests and Step Three quality checks pass.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0146-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Client.Android/app/src/main/java/com/whitep/client/domain/ConversationMessageValidator.kt",
+          "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+          "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationMessagesViewModel.kt",
+          "src/Client.Android/app/src/test/java/com/whitep/client/domain/ConversationMessageValidatorTest.kt",
+          "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationMessagesViewModelTest.kt",
+          "tests/test_android_message_validation_contract.py",
+          "step three/T0146/execution-report.md",
+          "step three/T0146/evidence/verification.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
@@ -30934,10 +30954,66 @@
           "state": "not_required",
           "triggering_contracts": [],
           "affected_by_contract_changes": [],
-          "review_evidence": []
+          "review_evidence": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/domain/ConversationMessageValidator.kt",
+            "protocol/whitep/v1/messages.proto",
+            "src/Shared.Contracts/ProtocolMessageLimits.cs"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0146-A001",
+          "started_at": "2026-10-29T11:22:00Z",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Implemented UTF-8 byte-length validation in the domain and UI and added boundary/persistence regression coverage. Exact-head CI has not yet run on this implementation commit.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/domain/ConversationMessageValidator.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationMessagesViewModel.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/domain/ConversationMessageValidatorTest.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationMessagesViewModelTest.kt",
+            "tests/test_android_message_validation_contract.py",
+            "step three/T0146/execution-report.md",
+            "step three/T0146/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "command": "ConversationMessageValidatorTest (Android JVM unit tests)",
+              "result": "not_run",
+              "summary": "Pending exact-head Gradle testDebugUnitTest workflow."
+            },
+            {
+              "command": "ConversationMessagesViewModelTest oversized-message persistence test",
+              "result": "not_run",
+              "summary": "Pending exact-head Gradle testDebugUnitTest workflow."
+            },
+            {
+              "command": "tests/test_android_message_validation_contract.py",
+              "result": "not_run",
+              "summary": "Pending Step Three Python quality workflow."
+            },
+            {
+              "command": "Step Three graph guard",
+              "result": "not_run",
+              "summary": "Pending exact-head graph validation."
+            },
+            {
+              "command": "Android ktlintCheck and assembleDebug",
+              "result": "not_run",
+              "summary": "Pending exact-head product workflow."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect both exact-head workflows for V 3.0.527. Fix any failures before marking T0146 done; retain the edge to T0147 as unreviewed."
+        }
+      ]
     },
     {
       "id": "T0147",
@@ -38124,19 +38200,31 @@
       "from": "T0145",
       "to": "T0146",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0146 calls the existing ConversationMessagesViewModel.sendMessage(String) contract and validates the same content displayed by ConversationDetailScreen before MessageDao persistence. This is an actual UI/domain-interface dependency; classification is not inferred from type=blocks alone.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationMessagesViewModel.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/MessageEntity.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationMessagesViewModelTest.kt",
+        "step three/T0145/execution-report.md"
+      ]
     },
     {
       "from": "T0138",
       "to": "T0146",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0138 establishes the endpoint-visibility/privacy disclosure, but the new input validator and Room write path consume no T0138 API or schema and do not send content to a host. Preserve the existing blocks edge only as conservative execution ordering, consistent with previous Android-local task reviews.",
+      "validation_status": "validated",
+      "evidence": [
+        "docs/decisions/ADR-0019-host-visible-inference-content.md",
+        "step three/T0138/execution-report.md",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationMessagesViewModel.kt",
+        "docs/decisions/ADR-0020-android-client-local-conversation-storage.md"
+      ]
     },
     {
       "from": "T0146",
@@ -42723,9 +42811,45 @@
         "step three/T0138/execution-report.md"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "from": "T0145",
+      "to": "T0146",
+      "changed_at": "2026-10-29T11:22:00Z",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "old_validation_status": "unreviewed",
+      "new_validation_status": "validated",
+      "reason": "T0146 calls the existing ConversationMessagesViewModel.sendMessage(String) contract and validates the same content displayed by ConversationDetailScreen before MessageDao persistence. This is an actual UI/domain-interface dependency; classification is not inferred from type=blocks alone.",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationMessagesViewModel.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/MessageEntity.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationMessagesViewModelTest.kt",
+        "step three/T0145/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "from": "T0138",
+      "to": "T0146",
+      "changed_at": "2026-10-29T11:22:00Z",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "old_validation_status": "unreviewed",
+      "new_validation_status": "validated",
+      "reason": "T0138 establishes the endpoint-visibility/privacy disclosure, but the new input validator and Room write path consume no T0138 API or schema and do not send content to a host. Preserve the existing blocks edge only as conservative execution ordering, consistent with previous Android-local task reviews.",
+      "evidence": [
+        "docs/decisions/ADR-0019-host-visible-inference-content.md",
+        "step three/T0138/execution-report.md",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationMessagesViewModel.kt",
+        "docs/decisions/ADR-0020-android-client-local-conversation-storage.md"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-29T10:44:03Z",
+  "updated_at": "2026-10-29T11:22:00Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

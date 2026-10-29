@@ -28,6 +28,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.whitep.client.data.ClientDatabase
 import com.whitep.client.data.ConversationEntity
 import com.whitep.client.data.MessageEntity
+import com.whitep.client.domain.ConversationMessageValidationError
+import com.whitep.client.domain.ConversationMessageValidator
 import kotlinx.coroutines.launch
 
 private sealed class ConversationDetailUiState {
@@ -73,6 +75,9 @@ internal fun conversationDetailScreen(
     }
     var state by remember(conversationId) {
         mutableStateOf<ConversationDetailUiState>(ConversationDetailUiState.Loading)
+    }
+    val messageValidation = remember(draft) {
+        ConversationMessageValidator.validate(draft)
     }
 
     LaunchedEffect(conversationId, conversationListViewModel) {
@@ -133,6 +138,17 @@ internal fun conversationDetailScreen(
                     onValueChange = { draft = it },
                     modifier = Modifier.fillMaxWidth(),
                     label = { Text("Message") },
+                    isError = messageValidation.error == ConversationMessageValidationError.TOO_LONG,
+                    supportingText = {
+                        if (messageValidation.error == ConversationMessageValidationError.TOO_LONG) {
+                            Text("Message exceeds the 8,192 UTF-8 byte limit.")
+                        } else {
+                            Text(
+                                "${messageValidation.utf8ByteCount} / " +
+                                    "${ConversationMessageValidator.MAX_MESSAGE_UTF8_BYTES} UTF-8 bytes",
+                            )
+                        }
+                    },
                     minLines = 2,
                     maxLines = 5,
                 )
@@ -145,7 +161,7 @@ internal fun conversationDetailScreen(
                             }
                         }
                     },
-                    enabled = draft.isNotBlank(),
+                    enabled = messageValidation.isValid,
                     modifier = Modifier.fillMaxWidth(),
                 ) {
                     Text("Send")

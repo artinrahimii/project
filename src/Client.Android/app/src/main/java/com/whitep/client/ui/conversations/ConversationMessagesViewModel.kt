@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.whitep.client.data.MessageDao
 import com.whitep.client.data.MessageEntity
+import com.whitep.client.domain.ConversationMessageValidator
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import java.util.UUID
@@ -18,8 +19,8 @@ class ConversationMessagesViewModel(
     val messages: Flow<List<MessageEntity>> = messageDao.observeForConversation(conversationId)
 
     suspend fun sendMessage(content: String): Boolean {
-        val normalizedContent = content.trim()
-        if (normalizedContent.isEmpty()) return false
+        val validation = ConversationMessageValidator.validate(content)
+        val normalizedContent = validation.normalizedText ?: return false
 
         val previousTimestamp = messages.first().lastOrNull()?.createdAtEpochMillis
         val nextTimestamp =
