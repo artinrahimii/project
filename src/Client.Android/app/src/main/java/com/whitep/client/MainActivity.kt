@@ -106,7 +106,8 @@ private fun whitePClientApp() {
             }
             composable(
                 route = ClientDestination.CONVERSATION_DETAIL.route,
-                arguments = listOf(
+                arguments =
+                    listOf(
                     navArgument(ClientDestination.CONVERSATION_ID_ARGUMENT) {
                         type = NavType.StringType
                     },

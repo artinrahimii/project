@@ -30301,9 +30301,9 @@
       ],
       "notes": "T0144 implementation is committed for exact-head validation; do not mark done until Android ktlint, assembleDebug, testDebugUnitTest, Python source-contract tests, and graph guard pass on the actual commit.",
       "execution_summary": {
-        "attempt_count": 3,
-        "failed_attempt_count": 2,
-        "last_attempt_id": "T0144-A003",
+        "attempt_count": 4,
+        "failed_attempt_count": 3,
+        "last_attempt_id": "T0144-A004",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationListViewModel.kt",
@@ -30320,16 +30320,20 @@
           "step three/project-graph.md"
         ],
         "related_commits": [
+          "44c207018fb3c2232730722b59e3cd1249317bbd",
           "06b8dd63afa37902ea9b834e97abe80458f6375b",
-          "06b8dd63afa37902ea9b834e97abe80458f6375b"
+          "12b76f6f617c982b1353e8e6ec7cb7f5370bb6b3"
         ],
         "tests_passed": [
-          "Step Three quality gate — exact V 3.0.518: 218 Python tests passed and graph guard passed; https://github.com/artinrahimii/project/actions/runs/40851894119",
-          "Host lifecycle unit/integration — exact V 3.0.518: passed; https://github.com/artinrahimii/project/actions/runs/40851894117/job/123373165089"
+          "Step Three quality gate — V 3.0.518: 218 Python tests and graph guard passed.",
+          "Host lifecycle integration — V 3.0.518: passed.",
+          "Step Three quality gate — V 3.0.519: 218 Python tests and graph guard passed; https://github.com/artinrahimii/project/actions/runs/40852236710",
+          "Host lifecycle integration — V 3.0.519: passed; https://github.com/artinrahimii/project/actions/runs/40852236733"
         ],
         "tests_failed": [
-          "T0144-A001 / V 3.0.517: quality test 217/218 passed; one stale source-contract assertion failed.",
-          "T0144-A002 / V 3.0.518: Android ktlint failed on 3 remaining formatting errors; Android APK build and Android unit tests did not run."
+          "T0144-A001 / V 3.0.517: one of 218 Python tests failed because of an outdated formatting-specific assertion; Android ktlint failed.",
+          "T0144-A002 / V 3.0.518: Android ktlint failed on three format rules.",
+          "T0144-A003 / V 3.0.519: Android ktlint failed on one remaining multiline-expression rule; Android APK build and unit tests skipped."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -30428,8 +30432,8 @@
         {
           "attempt_id": "T0144-A003",
           "started_at": "2026-10-29T09:45:26.743Z",
-          "ended_at": "2026-10-29T09:45:26.743Z",
-          "result": "partial",
+          "ended_at": "2026-10-29T09:47:56.913Z",
+          "result": "failed",
           "summary": "Applied the three exact remaining formatting fixes observed in the V 3.0.518 Android lint log. Pending exact-head quality/product CI rerun.",
           "changed_files": [
             "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
@@ -30442,21 +30446,57 @@
           "commit_sha": null,
           "tests": [
             {
+              "command": "Step Three quality gate — run 40852236710",
+              "result": "passed",
+              "summary": "218 Python tests and graph validation passed on exact V 3.0.519. https://github.com/artinrahimii/project/actions/runs/40852236710"
+            },
+            {
+              "command": "Android ktlintCheck — run 40852236733 / job 123374313995",
+              "result": "failed",
+              "summary": "One remaining multiline-expression formatting issue at MainActivity.kt:109; later Android steps skipped. https://github.com/artinrahimii/project/actions/runs/40852236733"
+            },
+            {
+              "command": "Host lifecycle unit/integration — run 40852236733 / job 123374314359",
+              "result": "passed",
+              "summary": "Passed on exact V 3.0.519. https://github.com/artinrahimii/project/actions/runs/40852236733"
+            }
+          ],
+          "failure_details": "Exact V 3.0.519 Android ktlint check reported MainActivity.kt:109:29: 'A multiline expression should start on a new line' at the 'arguments = listOf(' expression of the conversation detail route. No APK build or Android unit tests ran because ktlint failed first.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Check exact-head CI for the next commit. Do not mark T0144 done before Kotlin lint, APK build, and Android unit tests pass."
+        },
+        {
+          "attempt_id": "T0144-A004",
+          "started_at": "2026-10-29T09:47:56.913Z",
+          "ended_at": "2026-10-29T09:47:56.913Z",
+          "result": "partial",
+          "summary": "Adjusted the argument-list expression for the Android conversation detail route to satisfy the exact remaining ktlint finding.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
+            "step three/T0144/execution-report.md",
+            "step three/T0144/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
               "command": "Step Three quality gate",
               "result": "not_run",
-              "summary": "Will run on the correction commit."
+              "summary": "Will execute after this correction is pushed."
             },
             {
               "command": "Android ktlintCheck, assembleDebug, testDebugUnitTest",
               "result": "not_run",
-              "summary": "Will run on the correction commit."
+              "summary": "Will execute after this correction is pushed."
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Check exact-head CI for the next commit. Do not mark T0144 done before Kotlin lint, APK build, and Android unit tests pass."
+          "follow_up": "Inspect all jobs for the next exact-head commit. If lint passes, confirm APK build and Android JVM tests also pass before completion."
         }
       ]
     },
@@ -42288,7 +42328,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-29T09:45:26.743Z",
+  "updated_at": "2026-10-29T09:47:56.913Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",
