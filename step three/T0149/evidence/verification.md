@@ -1,9 +1,9 @@
 # T0149 evidence ledger
 
-- `undefined` contains a disk-backed Room close/reopen test covering conversation details, ordered messages, persisted request statuses, attempt counts and error metadata.
-- V 3.0.542 quality [40874779599](https://github.com/artinrahimii/project/actions/runs/40874779599) passed 230 Python tests and graph/evidence validation.
-- V 3.0.541 quality [40874466336](https://github.com/artinrahimii/project/actions/runs/40874466336) failed a brittle multiline `Room.databaseBuilder(` assertion.
-- V 3.0.542 product [40874779588](https://github.com/artinrahimii/project/actions/runs/40874779588) failed Android ktlint on two wrapped DAO chains; APK/JVM tests skipped.
-- V 3.0.543 quality [40875172297](https://github.com/artinrahimii/project/actions/runs/40875172297) failed another source assertion that assumed `reopenedDatabase.messageDao()` was on one line.
-- V 3.0.544 updates the assertion to be line-wrap-insensitive; exact-head CI pending.
-- Runtime persistence is not yet proven until the Android JVM/Robolectric test succeeds.
+- **Accepted implementation revision:** [`V 3.0.544`](https://github.com/artinrahimii/project/commit/7f5aeb80ab8cc193cbe5881a5cdbb86ad18784ee).
+- **Quality CI:** [run 40875561030](https://github.com/artinrahimii/project/actions/runs/40875561030) passed 230 Python tests, syntax, graph structure and output/evidence checks; 229 tasks/417 edges, zero errors, one existing T0001 warning preserved.
+- **Android product:** [run 40875561094](https://github.com/artinrahimii/project/actions/runs/40875561094) passed ktlint, APK build, JVM unit tests including the file-backed Room close/reopen regression, generated Protobuf verification, and APK upload (11,875,220 bytes).
+- **Windows and host:** [product run 40875561094](https://github.com/artinrahimii/project/actions/runs/40875561094) passed WPF formatting/build/Protobuf/startup/security checks and artifact upload (14,254,944 bytes), plus HostLifecycle tests.
+- **Dependency reviews:** T0148 → T0149 and T0138 → T0149 are `sequencing_only`; original `blocks` edges remain. The outgoing T0149 → T0150 edge remains unreviewed.
+- **History:** Three failed attempts are preserved in the graph, along with their corrections and successful A008 verification.
+- **Acceptance boundary:** local Room persistence only. No P2P or at-rest encryption claim.

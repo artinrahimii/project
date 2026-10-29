@@ -31827,8 +31827,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0148 و T0138 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال انجام",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "src/Client.Android/app/src/test/java/com/whitep/client/data/ClientDatabaseTest.kt",
         "tests/test_android_conversation_detail_contract.py",
@@ -31846,16 +31846,18 @@
         "step three/T0149/evidence/verification.md",
         "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientDatabase.kt",
         "src/Client.Android/app/src/main/java/com/whitep/client/data/MessageEntity.kt",
-        "src/Client.Android/app/src/main/java/com/whitep/client/data/RequestStateEntity.kt"
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/RequestStateEntity.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+        "docs/decisions/ADR-0020-android-client-local-conversation-storage.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0149-A001 adds a file-backed Room close/reopen regression covering message ordering and persisted request states. Exact-head CI is pending; no acceptance claim until it passes.\nT0149-A002 records the V 3.0.541 quality assertion failure; T0149-A003 corrects the formatting-sensitive source assertion. The Room file-backed JVM test and product CI remain unverified.\nT0149-A004 records the V 3.0.542 ktlint failure in the new file-backed test chains. T0149-A005 adjusts only line wrapping; CI acceptance remains pending.\nT0149-A006 records a second format-sensitive Python assertion failure on V 3.0.543. T0149-A007 makes the assertion tolerant of the multiline Kotlin chain; exact-head CI pending.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0149-A001 adds a file-backed Room close/reopen regression covering message ordering and persisted request states. Exact-head CI is pending; no acceptance claim until it passes.\nT0149-A002 records the V 3.0.541 quality assertion failure; T0149-A003 corrects the formatting-sensitive source assertion. The Room file-backed JVM test and product CI remain unverified.\nT0149-A004 records the V 3.0.542 ktlint failure in the new file-backed test chains. T0149-A005 adjusts only line wrapping; CI acceptance remains pending.\nT0149-A006 records a second format-sensitive Python assertion failure on V 3.0.543. T0149-A007 makes the assertion tolerant of the multiline Kotlin chain; exact-head CI pending.\nT0149-A008 passed exact-head CI on V 3.0.544. The file-backed Room test executed as part of Android testDebugUnitTest after ktlint/build succeeded, and the Step Three quality/evidence gate passed. This validates local Room row recovery across database-instance close/reopen; it does not prove P2P delivery or at-rest encryption.",
       "execution_summary": {
-        "attempt_count": 7,
+        "attempt_count": 8,
         "failed_attempt_count": 3,
-        "last_attempt_id": "T0149-A007",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "T0149-A008",
+        "last_attempt_result": "succeeded",
         "changed_files": [
-          null,
+          "src/Client.Android/app/src/test/java/com/whitep/client/data/ClientDatabaseTest.kt",
           "tests/test_android_conversation_detail_contract.py",
           "step three/T0149/execution-report.md",
           "step three/T0149/evidence/verification.md",
@@ -31864,31 +31866,41 @@
         "related_commits": [
           "c619d3b1269357563ab2f2047ad6a7a2bf126d5b",
           "306dcfb5af796811857df5a38f6860385ae695ca",
-          "842c2def1cf3c89cb103af0f0487b067a03fe160"
+          "842c2def1cf3c89cb103af0f0487b067a03fe160",
+          "7f5aeb80ab8cc193cbe5881a5cdbb86ad18784ee"
         ],
         "tests_passed": [
-          "V 3.0.542 Step Three quality gate 40874779599 passed 230 Python tests and graph/evidence validation."
+          "Step Three quality gate — run 40875561030: 230 Python tests, syntax, graph structure and recorded-output/evidence validation passed; graph reported 229 tasks/417 edges, 0 errors, one preserved T0001 UNMAPPED_DEPENDENCY warning.",
+          "Android product run 40875561094: ktlintCheck passed.",
+          "Android product run 40875561094: assembleDebug passed.",
+          "Android product run 40875561094: testDebugUnitTest passed after executing the suite that includes messagesAndRequestStatusesSurviveClosingAndReopeningFileBackedDatabase.",
+          "Android product run 40875561094: generated Protobuf Java/Kotlin verification and APK upload passed; uploaded APK artifact 11,875,220 bytes.",
+          "Windows WPF job in product run 40875561094: C# formatting, Release build, generated Protobuf, startup smoke, agent-tool safety/security checks and artifact upload passed; Windows artifact archive 14,254,944 bytes.",
+          "HostLifecycle unit/integration job in product run 40875561094 passed."
         ],
         "tests_failed": [
-          "V 3.0.541 quality gate 40874466336: Python assertion expected Room.databaseBuilder( contiguously across Kotlin lines.",
-          "V 3.0.542 product workflow 40874779588: Android ktlint failed two DB call chain wrap findings; APK/JVM tests skipped.",
-          "V 3.0.543 quality gate 40875172297: source assertion expected reopenedDatabase.messageDao() on one line; graph/syntax steps skipped."
+          "V 3.0.541 quality run 40874466336: brittle source assertion for Room.databaseBuilder( failed; 230 tests ran.",
+          "V 3.0.542 product run 40874779588: Android ktlint failed two newline-before-dot chain formatting rules; APK/JVM skipped.",
+          "V 3.0.543 quality run 40875172297: brittle source assertion for reopenedDatabase.messageDao() failed; 230 tests ran."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "in_review",
+          "state": "passed",
           "triggering_contracts": [
-            "Room message/request-state persistence across database instance replacement"
+            "Room message ordering and request-state read contract across database close/reopen"
           ],
           "affected_by_contract_changes": [
             "src/Client.Android/app/src/test/java/com/whitep/client/data/ClientDatabaseTest.kt",
             "tests/test_android_conversation_detail_contract.py"
           ],
           "review_evidence": [
-            "src/Client.Android/app/src/test/java/com/whitep/client/data/ClientDatabaseTest.kt",
-            "tests/test_android_conversation_detail_contract.py",
-            "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientDatabase.kt"
+            "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientDatabase.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/data/MessageEntity.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/data/RequestStateEntity.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+            "https://github.com/artinrahimii/project/actions/runs/40875561030",
+            "https://github.com/artinrahimii/project/actions/runs/40875561094"
           ]
         }
       },
@@ -32131,6 +32143,70 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Inspect V 3.0.544 quality and product results. Do not close T0149 until the file-backed Room regression itself passes."
+        },
+        {
+          "attempt_id": "T0149-A008",
+          "started_at": "2026-10-29T12:42:50Z",
+          "ended_at": "2026-10-29T12:45:35Z",
+          "result": "succeeded",
+          "summary": "V 3.0.544 passed exact-head CI. Step Three quality passed 230 Python tests, syntax, graph structure and evidence gates (229 tasks/417 edges; zero errors, one T0001 warning preserved). Android ktlint, debug APK build, Android JVM tests including the new file-backed Room close/reopen regression, Protobuf verification and APK upload passed. Windows WPF build/format/Protobuf/startup/security checks/artifact upload and HostLifecycle integration tests passed. Persistence acceptance is local Room recovery only; no network/P2P or at-rest encryption claim.",
+          "changed_files": [
+            "src/Client.Android/app/src/test/java/com/whitep/client/data/ClientDatabaseTest.kt",
+            "tests/test_android_conversation_detail_contract.py",
+            "step three/T0149/execution-report.md",
+            "step three/T0149/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": "7f5aeb80ab8cc193cbe5881a5cdbb86ad18784ee",
+          "tests": [
+            {
+              "name": "Step Three quality gate — run 40875561030",
+              "result": "passed",
+              "summary": "230 Python tests, syntax, graph structure and output/evidence validation passed; 229 nodes/417 edges, zero errors, one preserved T0001 metadata warning.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40875561030"
+            },
+            {
+              "name": "Android ktlintCheck",
+              "result": "passed",
+              "summary": "Gradle ktlintCheck completed successfully.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40875561094"
+            },
+            {
+              "name": "Android assembleDebug",
+              "result": "passed",
+              "summary": "Debug APK built successfully.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40875561094"
+            },
+            {
+              "name": "Android testDebugUnitTest",
+              "result": "passed",
+              "summary": "The Android JVM test task completed with BUILD SUCCESSFUL; suite includes the file-backed messages/request-states close/reopen test.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40875561094"
+            },
+            {
+              "name": "Generated Protobuf verification and Android APK upload",
+              "result": "passed",
+              "summary": "Generated Java/Kotlin Protobuf sources verified; APK artifact uploaded (11,875,220 bytes).",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40875561094"
+            },
+            {
+              "name": "Windows WPF product job",
+              "result": "passed",
+              "summary": "C# formatting, Release build, generated Protobuf, startup smoke, agent-tool security checks and artifact upload passed (14,254,944 bytes).",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40875561094"
+            },
+            {
+              "name": "HostLifecycle unit/integration tests",
+              "result": "passed",
+              "summary": "Job completed successfully.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40875561094"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Next eligible task is T0150. Before changing it, review T0149 → T0150 and T0138 → T0150 against the actual repository/UI test contracts and privacy boundary; preserve the current edge class until evidence supports a change."
         }
       ]
     },
@@ -43980,7 +44056,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-29T12:42:12.898Z",
+  "updated_at": "2026-10-29T12:47:30.750Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",
