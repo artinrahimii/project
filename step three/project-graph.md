@@ -32412,8 +32412,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0150 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال انجام",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "src/Client.Android/app/src/main/java/com/whitep/client/context/ConversationContextCapsule.kt",
         "src/Client.Android/app/src/test/java/com/whitep/client/context/ConversationContextCapsuleTest.kt",
@@ -32436,12 +32436,12 @@
         "docs/requirements.md",
         "step three/T0150/execution-report.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0151-A001 introduces schemaVersion=1 and the goal/keyFacts/decisions/constraints/unresolvedItems model, strict UTF-8 JSON decoding, and the existing 4,096-byte hard protocol ceiling. Persistence and UI remain T0152/T0153. Exact-head CI pending.\nT0151-A002 exact-head CI: quality passed 234 Python tests and graph/evidence gates; product CI failed only Android test-source ktlint at ConversationContextCapsuleTest.kt:147:57 (single-expression helper body should remain on same line as signature), so APK/JVM tests did not run. Windows and HostLifecycle jobs passed. T0151-A003 fixes that expression wrapping; exact-head CI pending.\nT0151-A004 records V 3.0.549 Android main-source ktlint failure at ConversationContextCapsule.kt:166. T0151-A005 reformats that call/Elvis chain; behavior and schema contract are unchanged. Exact-head CI remains pending.\nT0151-A005 exact-head result: V 3.0.550 passed Android lint and APK assembly but the capsule JVM suite failed 6/36 tests in org.json-backed setup. A006 uses the repository's existing Robolectric dependency/runner convention; this is a test-environment correction, not an acceptance result until CI passes.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0151-A001 introduces schemaVersion=1 and the goal/keyFacts/decisions/constraints/unresolvedItems model, strict UTF-8 JSON decoding, and the existing 4,096-byte hard protocol ceiling. Persistence and UI remain T0152/T0153. Exact-head CI pending.\nT0151-A002 exact-head CI: quality passed 234 Python tests and graph/evidence gates; product CI failed only Android test-source ktlint at ConversationContextCapsuleTest.kt:147:57 (single-expression helper body should remain on same line as signature), so APK/JVM tests did not run. Windows and HostLifecycle jobs passed. T0151-A003 fixes that expression wrapping; exact-head CI pending.\nT0151-A004 records V 3.0.549 Android main-source ktlint failure at ConversationContextCapsule.kt:166. T0151-A005 reformats that call/Elvis chain; behavior and schema contract are unchanged. Exact-head CI remains pending.\nT0151-A005 exact-head result: V 3.0.550 passed Android lint and APK assembly but the capsule JVM suite failed 6/36 tests in org.json-backed setup. A006 uses the repository's existing Robolectric dependency/runner convention; this is a test-environment correction, not an acceptance result until CI passes.\nT0151-A006 acceptance verified by exact-head V 3.0.551 CI: the Step Three quality gate and all product jobs passed, including Android ktlintCheck, assembleDebug, testDebugUnitTest, generated Protobuf checks, Windows WPF and HostLifecycle. T0151 is now done; Room persistence/UI remain T0152/T0153.",
       "execution_summary": {
         "attempt_count": 6,
         "failed_attempt_count": 3,
         "last_attempt_id": "T0151-A006",
-        "last_attempt_result": "partial",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Client.Android/app/src/test/java/com/whitep/client/context/ConversationContextCapsuleTest.kt",
           "tests/test_android_context_capsule_contract.py",
@@ -32451,11 +32451,14 @@
         ],
         "related_commits": [
           "01e72c108e59d61da634b08dde8bef8df2622939",
-          "11597903295649f994ffad0b692fbf00220e9cbf"
+          "11597903295649f994ffad0b692fbf00220e9cbf",
+          "27e72d5e2d24dd5861a63ede1c8753facec54f95"
         ],
         "tests_passed": [
           "V 3.0.548 Step Three quality run 40881923866 passed 234 Python tests, syntax checks, graph/evidence validation, and graph guard (229 tasks/417 edges, zero errors, one preserved T0001 warning).",
-          "V 3.0.550 exact-head CI: Step Three quality run 40883740170 passed 234 Python tests and graph/evidence checks; product run 40883740159 passed Android ktlintCheck and assembleDebug, Windows WPF, and HostLifecycle jobs."
+          "V 3.0.550 exact-head CI: Step Three quality run 40883740170 passed 234 Python tests and graph/evidence checks; product run 40883740159 passed Android ktlintCheck and assembleDebug, Windows WPF, and HostLifecycle jobs.",
+          "V 3.0.551 quality run 40885453525 passed 235 Python tests, syntax checks and graph/output/evidence guards; graph guard reported 229 tasks/417 edges, zero errors and one preserved T0001 warning. https://github.com/artinrahimii/project/actions/runs/40885453525",
+          "V 3.0.551 product run 40885453676 passed all four jobs: Android ktlintCheck, assembleDebug, testDebugUnitTest, generated Protobuf verification and APK upload; Windows WPF and HostLifecycle checks passed. https://github.com/artinrahimii/project/actions/runs/40885453676"
         ],
         "tests_failed": [
           "V 3.0.548 product run 40881924197: Android ktlintTestSourceSetCheck failed at ConversationContextCapsuleTest.kt:147:57 because the body expression fits on the signature line. APK build and JVM tests were skipped. Windows WPF build/smoke/security checks and HostLifecycle tests passed.",
@@ -32465,7 +32468,7 @@
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "required",
+          "state": "passed",
           "triggering_contracts": [
             "ConversationContextCapsule schemaVersion and required JSON fields",
             "UTF-8 serialization/strict decoding",
@@ -32484,7 +32487,9 @@
             "src/Shared.Contracts/ProtocolMessageLimits.cs",
             "docs/requirements.md",
             "https://github.com/artinrahimii/project/actions/runs/40883740170",
-            "https://github.com/artinrahimii/project/actions/runs/40883740159"
+            "https://github.com/artinrahimii/project/actions/runs/40883740159",
+            "https://github.com/artinrahimii/project/actions/runs/40885453525",
+            "https://github.com/artinrahimii/project/actions/runs/40885453676"
           ]
         }
       },
@@ -32720,9 +32725,9 @@
         {
           "attempt_id": "T0151-A006",
           "started_at": "2026-10-29T13:43:00Z",
-          "ended_at": "2026-10-29T13:43:00Z",
-          "result": "partial",
-          "summary": "Diagnosed the exact-head Android runtime failures and added RobolectricTestRunner with SDK 35 to ConversationContextCapsuleTest, plus a Python regression check for the required runner. No local execution is claimed; exact-head CI will determine whether the fix resolves the six failing tests.",
+          "ended_at": "2026-10-29T13:51:51Z",
+          "result": "succeeded",
+          "summary": "Added RobolectricTestRunner with SDK 35 and a Python regression assertion. Exact-head V 3.0.551 CI passed all required quality and product gates; Android lint, APK assembly, capsule/JVM tests, generated Protobuf checks, Windows WPF and HostLifecycle all passed.",
           "changed_files": [
             "src/Client.Android/app/src/test/java/com/whitep/client/context/ConversationContextCapsuleTest.kt",
             "tests/test_android_context_capsule_contract.py",
@@ -32730,25 +32735,59 @@
             "step three/T0151/evidence/verification.md",
             "step three/project-graph.md"
           ],
-          "related_commits": [],
-          "commit_sha": null,
+          "related_commits": [
+            "27e72d5e2d24dd5861a63ede1c8753facec54f95"
+          ],
+          "commit_sha": "27e72d5e2d24dd5861a63ede1c8753facec54f95",
           "tests": [
             {
-              "name": "Android ktlintCheck, assembleDebug and testDebugUnitTest",
-              "result": "not_run",
-              "summary": "The correction is prepared; exact-head product CI has not run for this change."
+              "name": "Step Three quality — run 40885453525",
+              "result": "passed",
+              "summary": "235 Python tests passed. Python syntax, graph structure and recorded-output/evidence checks passed; graph guard reported 229 tasks/417 edges, zero errors and one preserved T0001 warning.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40885453525"
             },
             {
-              "name": "Step Three Python quality / graph / evidence checks",
-              "result": "not_run",
-              "summary": "The new regression assertion and updated execution history await exact-head CI."
+              "name": "Android ktlintCheck — product run 40885453676",
+              "result": "passed",
+              "summary": "Kotlin formatting/lint passed on the exact head.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40885453676"
+            },
+            {
+              "name": "Android assembleDebug — product run 40885453676",
+              "result": "passed",
+              "summary": "Debug APK built successfully.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40885453676"
+            },
+            {
+              "name": "Android testDebugUnitTest — product run 40885453676",
+              "result": "passed",
+              "summary": "The complete Android JVM test task passed, including all eight ConversationContextCapsuleTest cases that had failed under the default runner.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40885453676"
+            },
+            {
+              "name": "Generated Protobuf Java/Kotlin verification — product run 40885453676",
+              "result": "passed",
+              "summary": "Generated Java and Kotlin source checks passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40885453676"
+            },
+            {
+              "name": "Windows WPF product job — product run 40885453676",
+              "result": "passed",
+              "summary": "Formatting, Release build, startup smoke and safety/security checks passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40885453676"
+            },
+            {
+              "name": "HostLifecycle product job — product run 40885453676",
+              "result": "passed",
+              "summary": "Host lifecycle unit/integration tests passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40885453676"
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect the exact-head runs triggered by V 3.0.551. Only mark T0151 done after ktlintCheck, assembleDebug, testDebugUnitTest and Python/graph/evidence gates pass."
+          "follow_up": "T0151 is accepted. Before starting T0152, review the still-unreviewed T0150 → T0152 edge as required by the graph policy; preserve it until evidence justifies classification. Then persist the accepted v1 capsule contract in Room and add persistence tests."
         }
       ]
     },
@@ -44608,7 +44647,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-29T13:43:00Z",
+  "updated_at": "2026-10-29T13:51:51Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

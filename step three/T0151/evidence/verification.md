@@ -28,3 +28,11 @@
 - Product run [40883740159](https://github.com/artinrahimii/project/actions/runs/40883740159): Android lint and debug APK assembly passed; Android JVM tests failed 6 of 36 methods in `ConversationContextCapsuleTest` with `java.lang.RuntimeException` at JSON-backed setup/codec lines. Windows WPF and HostLifecycle jobs passed.
 - Full root-exception text was not included in the workflow's failure summary. The test source uses Android `org.json`; the class had no Robolectric runner despite Robolectric already being a project test dependency and being used by `ClientDatabaseTest`.
 - A006 adds the existing Robolectric runner configured for SDK 35 plus a source-contract assertion. This fix remains unverified until the next exact-head CI result; T0151 must remain in progress meanwhile.
+
+
+## Final acceptance — V 3.0.551
+
+- Quality gate [40885453525](https://github.com/artinrahimii/project/actions/runs/40885453525): 235 Python tests passed; graph/evidence checks passed with 229 tasks, 417 edges, zero errors and one preserved T0001 warning.
+- Product workflow [40885453676](https://github.com/artinrahimii/project/actions/runs/40885453676): Android lint, debug APK build, JVM unit tests, generated Protobuf verification, APK upload, Windows WPF and HostLifecycle jobs all passed.
+- The capsule-specific JVM suite passed after the class was configured with the existing Robolectric runner at SDK 35. The test runner is also asserted by a Python source-contract regression test.
+- Acceptance scope is limited to T0151's versioned domain model and strict UTF-8 JSON codec; conversation-scoped Room persistence and UI remain T0152/T0153.

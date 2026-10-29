@@ -53,3 +53,12 @@ Keep T0151 `in_progress` until the exact-head outcomes are inspected. Record and
 - The workflow summary did not expose the full root-exception message. The common runtime failure, direct use of Android `org.json`, and the repository's existing Robolectric-based `ClientDatabaseTest` indicate that this class needs to execute under Robolectric rather than the default JVM runner. The Robolectric dependency was already present; no new dependency is needed.
 - **T0151-A006** adds `@RunWith(RobolectricTestRunner::class)` and `@Config(sdk = [35])` to the capsule test class and adds a Python contract test to prevent regression. This is a targeted test-environment fix; no model API or JSON schema changed.
 - T0151 remains `in_progress` pending exact-head Android lint, APK build, JVM tests, and quality/graph/evidence checks. No local test execution is claimed.
+
+
+## Acceptance verified — V 3.0.551
+
+- Step Three quality [run 40885453525](https://github.com/artinrahimii/project/actions/runs/40885453525) passed **235 Python tests**, syntax checks, graph structure and output/evidence validation. The graph guard reported 229 tasks/417 edges, zero errors and one preserved T0001 unmapped-dependency warning.
+- Product CI [run 40885453676](https://github.com/artinrahimii/project/actions/runs/40885453676) passed all four jobs. Android `ktlintCheck`, `assembleDebug`, `testDebugUnitTest`, generated Protobuf Java/Kotlin verification, and APK artifact upload all passed. The Windows WPF build/startup/safety checks and HostLifecycle tests also passed.
+- With Robolectric SDK 35 enabled for the test class, the Android JVM test task passed, including the eight capsule-specific cases that failed under the default runner on V 3.0.550. The Python source-contract suite now also guards the runner configuration.
+- **T0151 is accepted and marked `done`** on the strength of these exact-head checks. The model remains a local domain/serialization contract; persistence and user-facing editing remain the separate T0152/T0153 tasks. This does not mean the entire product is complete.
+- The corrective implementation is commit [`27e72d5e2d24dd5861a63ede1c8753facec54f95`](https://github.com/artinrahimii/project/commit/27e72d5e2d24dd5861a63ede1c8753facec54f95); this report update records the verified outcome.
