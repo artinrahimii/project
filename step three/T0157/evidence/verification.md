@@ -10,3 +10,11 @@
 - Acceptance coverage added: local test keeps the saved goal and existing key fact unchanged until review; each conflict requires an explicit `KEEP_CURRENT` or `USE_SUGGESTION` choice before Save.
 - Heuristic boundary: checks explicit negation and a bounded lexicon of opposite terms; changing a nonblank goal always prompts. It does not claim to identify every natural-language contradiction.
 - Tests were not executed locally through the connected tool. Exact-head CI must establish outcomes before acceptance.
+
+
+## V 3.0.576 failed acceptance and corrective A003
+
+- Exact head: `b7b492a902a989dfeaeb10547af996ed7085bd0a` (`V 3.0.576`).
+- Quality run [40920502076](https://github.com/artinrahimii/project/actions/runs/40920502076): 253 tests ran; one failure because the source-contract test looked for `KEEP_CURRENT` in the ViewModel instead of the Compose UI.
+- Product run [40920502283](https://github.com/artinrahimii/project/actions/runs/40920502283): Android ktlint failed on formatting in the new conflict helper/resolver and two chained test expressions; APK/JVM tests did not execute. Windows host and HostLifecycle jobs passed.
+- The failure is retained as `T0157-A002`. A003 corrects the assertion location and formatting. No successful task acceptance is claimed until exact-head CI passes.

@@ -34114,7 +34114,9 @@
             "https://github.com/artinrahimii/project/actions/runs/40916608649",
             "https://github.com/artinrahimii/project/actions/runs/40916608612",
             "step three/T0156/execution-report.md",
-            "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt"
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+            "https://github.com/artinrahimii/project/actions/runs/40920502283",
+            "https://github.com/artinrahimii/project/actions/runs/40920502076"
           ]
         }
       },
@@ -34459,11 +34461,11 @@
         "step three/T0157/execution-report.md",
         "step three/T0157/evidence/verification.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0157-A001 implements a deterministic conflict-review layer for changed goals and a bounded set of explicit negation/opposite terms. Conflicts remain suggestions, the saved capsule is unchanged before Save, and each suggestion requires an explicit keep-current or use-suggestion decision. Exact-head CI pending; outgoing T0157→T0158 remains unreviewed.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0157-A001 implements a deterministic conflict-review layer for changed goals and a bounded set of explicit negation/opposite terms. Conflicts remain suggestions, the saved capsule is unchanged before Save, and each suggestion requires an explicit keep-current or use-suggestion decision. Exact-head CI pending; outgoing T0157→T0158 remains unreviewed.\nT0157-A002 failed exact-head acceptance: one Python source-contract assertion searched for KEEP_CURRENT in the wrong source layer and Android ktlint blocked APK/JVM tests. A003 moves the assertion to Compose and fixes the reported Kotlin formatting; CI pending.",
       "execution_summary": {
-        "attempt_count": 1,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "T0157-A001",
+        "attempt_count": 3,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "T0157-A003",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt",
@@ -34474,9 +34476,17 @@
           "step three/T0157/evidence/verification.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
-        "tests_failed": [],
+        "related_commits": [
+          "b7b492a902a989dfeaeb10547af996ed7085bd0a"
+        ],
+        "tests_passed": [
+          "Exact V 3.0.576 Windows WPF host build/startup/policy/DPAPI checks and artifact upload passed (product run 40920502283).",
+          "Exact V 3.0.576 HostLifecycle unit/integration tests passed (product run 40920502283)."
+        ],
+        "tests_failed": [
+          "Exact V 3.0.576 Step Three quality run 40920502076: 253 tests ran; one conflict-review source-contract assertion searched KEEP_CURRENT in the ViewModel rather than the Compose UI.",
+          "Exact V 3.0.576 Android ktlintCheck in product run 40920502283 failed Kotlin formatting in the conflict code and two test expressions; APK/JVM tests were skipped."
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -34515,8 +34525,10 @@
             "step three/T0157/evidence/verification.md",
             "step three/project-graph.md"
           ],
-          "related_commits": [],
-          "commit_sha": null,
+          "related_commits": [
+            "b7b492a902a989dfeaeb10547af996ed7085bd0a"
+          ],
+          "commit_sha": "b7b492a902a989dfeaeb10547af996ed7085bd0a",
           "tests": [
             {
               "name": "ConversationContextCapsuleViewModelTest.conflictingHistoryAnswersNeedAnExplicitChoiceBeforeSaving",
@@ -34546,6 +34558,98 @@
             "Adds an explicit conflict-review field and resolution API to the capsule UI state; persistence is gated on user decisions."
           ],
           "follow_up": "Inspect exact-head quality and product workflows. Fix failures without losing this attempt. Keep T0157 in_progress until Android lint/build/JVM tests and Python graph/evidence checks all pass."
+        },
+        {
+          "attempt_id": "T0157-A002",
+          "started_at": "2026-10-29T17:21:12Z",
+          "ended_at": "2026-10-29T17:21:52Z",
+          "result": "failed",
+          "summary": "The exact-head V 3.0.576 gates exposed two real test/style failures. The Step Three quality suite ran 253 Python tests and one source-contract assertion failed because it looked for the KEEP_CURRENT choice in the ViewModel instead of the UI callback. Android ktlint found formatting violations in the new conflict helper, reconciliation calls, save gate and two test assertions; Android APK and JVM tests were skipped.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModelTest.kt",
+            "tests/test_android_context_capsule_conflict_review_contract.py",
+            "step three/project-graph.md",
+            "step three/T0157/execution-report.md",
+            "step three/T0157/evidence/verification.md"
+          ],
+          "related_commits": [
+            "b7b492a902a989dfeaeb10547af996ed7085bd0a"
+          ],
+          "commit_sha": "b7b492a902a989dfeaeb10547af996ed7085bd0a",
+          "tests": [
+            {
+              "name": "Step Three quality gate — exact V 3.0.576",
+              "result": "failed",
+              "summary": "253 tests ran; one failure in AndroidContextCapsuleConflictReviewContractTests.test_view_model_keeps_current_values_and_gates_persistence. The assertion checked KEEP_CURRENT in the VM, although the explicit Keep current button is rendered by Compose and calls the resolver.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40920502076"
+            },
+            {
+              "name": "Android ktlintCheck — exact V 3.0.576",
+              "result": "failed",
+              "summary": "KtLint reported formatting and line-wrapping findings in ConversationContextCapsuleViewModel.kt and two chained expressions in ConversationContextCapsuleViewModelTest.kt. APK build and Android JVM tests were skipped.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40920502283"
+            },
+            {
+              "name": "Windows WPF host — exact V 3.0.576",
+              "result": "passed",
+              "summary": "Windows host build, configured smoke/policy/DPAPI checks and artifact upload passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40920502283"
+            },
+            {
+              "name": "HostLifecycle unit/integration — exact V 3.0.576",
+              "result": "passed",
+              "summary": "Host lifecycle tests completed successfully.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40920502283"
+            }
+          ],
+          "failure_details": "The graph quality assertion required KEEP_CURRENT to appear in ViewModel source; it belongs in the UI where the explicit choice is rendered. Android ktlint rejected enum constructor formatting, chain wrapping and long helper/save-gate calls, plus two chained Robolectric test expressions.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Move the source-contract assertion to the Compose screen and fix all reported KtLint findings. Rerun exact-head quality, Android lint/build/JVM, Windows and HostLifecycle gates before accepting T0157."
+        },
+        {
+          "attempt_id": "T0157-A003",
+          "started_at": "2026-10-29T17:27:20.853Z",
+          "ended_at": "2026-10-29T17:27:20.853Z",
+          "result": "partial",
+          "summary": "Corrected the conflict-review contract test to assert KEEP_CURRENT at the Compose UI boundary and reformatted Kotlin enum constructors, chains, merge calls, resolver updates and Robolectric test expressions. Exact-head CI for this corrective commit is pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModelTest.kt",
+            "tests/test_android_context_capsule_conflict_review_contract.py",
+            "step three/T0157/execution-report.md",
+            "step three/T0157/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "related_commits": [
+            "b7b492a902a989dfeaeb10547af996ed7085bd0a"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Python source-contract suite",
+              "result": "not_run",
+              "summary": "Assertion now targets the Compose layer where the explicit choice is rendered; exact-head quality workflow pending."
+            },
+            {
+              "name": "Android ktlintCheck",
+              "result": "not_run",
+              "summary": "Kotlin formatting corrections applied; exact-head lint pending."
+            },
+            {
+              "name": "Android assembleDebug / testDebugUnitTest",
+              "result": "not_run",
+              "summary": "Skipped on V 3.0.576 after lint failure; must run successfully on this corrective head."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect exact-head V 3.0.577 quality and product jobs. Preserve A002 as failed and keep T0157 in_progress until all required gates pass."
         }
       ]
     },
@@ -46383,7 +46487,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-29T17:18:41.899Z",
+  "updated_at": "2026-10-29T17:27:20.853Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

@@ -23,7 +23,9 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.util.Locale
 
-enum class ConversationContextCapsuleConflictField(val label: String) {
+enum class ConversationContextCapsuleConflictField(
+    val label: String,
+) {
     GOAL("Goal"),
     KEY_FACT("Key fact"),
     DECISION("Decision"),
@@ -31,7 +33,9 @@ enum class ConversationContextCapsuleConflictField(val label: String) {
     UNRESOLVED_ITEM("Unresolved item"),
 }
 
-enum class ConversationContextCapsuleConflictDecision(val label: String) {
+enum class ConversationContextCapsuleConflictDecision(
+    val label: String,
+) {
     KEEP_CURRENT("Keep current value"),
     USE_SUGGESTION("Use suggestion"),
 }
@@ -114,8 +118,16 @@ private fun directlyContradictsCapsuleValue(
     currentValue: String,
     proposedValue: String,
 ): Boolean {
-    val currentWords = capsuleConflictWordPattern.findAll(currentValue.lowercase(Locale.ROOT)).map { it.value }.toList()
-    val proposedWords = capsuleConflictWordPattern.findAll(proposedValue.lowercase(Locale.ROOT)).map { it.value }.toList()
+    val currentWords =
+        capsuleConflictWordPattern
+            .findAll(currentValue.lowercase(Locale.ROOT))
+            .map { it.value }
+            .toList()
+    val proposedWords =
+        capsuleConflictWordPattern
+            .findAll(proposedValue.lowercase(Locale.ROOT))
+            .map { it.value }
+            .toList()
     if (currentWords.isEmpty() || proposedWords.isEmpty()) return false
 
     val currentNegated = currentWords.any { it in capsuleConflictNegations }
@@ -195,9 +207,24 @@ private fun reconcileCapsuleConflicts(
         capsule =
             proposed.copy(
                 goal = safeGoal,
-                keyFacts = mergeField(ConversationContextCapsuleConflictField.KEY_FACT, current.keyFacts, proposed.keyFacts),
-                decisions = mergeField(ConversationContextCapsuleConflictField.DECISION, current.decisions, proposed.decisions),
-                constraints = mergeField(ConversationContextCapsuleConflictField.CONSTRAINT, current.constraints, proposed.constraints),
+                keyFacts =
+                    mergeField(
+                        ConversationContextCapsuleConflictField.KEY_FACT,
+                        current.keyFacts,
+                        proposed.keyFacts,
+                    ),
+                decisions =
+                    mergeField(
+                        ConversationContextCapsuleConflictField.DECISION,
+                        current.decisions,
+                        proposed.decisions,
+                    ),
+                constraints =
+                    mergeField(
+                        ConversationContextCapsuleConflictField.CONSTRAINT,
+                        current.constraints,
+                        proposed.constraints,
+                    ),
                 unresolvedItems =
                     mergeField(
                         ConversationContextCapsuleConflictField.UNRESOLVED_ITEM,
@@ -429,19 +456,35 @@ class ConversationContextCapsuleViewModel(
     ): ConversationContextCapsuleUiState {
         fun replaceLineItems(text: String): String {
             val items =
-                text.toItems()
-                    .filterNot { normalizeCapsuleConflictValue(it) == normalizeCapsuleConflictValue(fromValue) }
+                text
+                    .toItems()
+                    .filterNot {
+                        normalizeCapsuleConflictValue(it) == normalizeCapsuleConflictValue(fromValue)
+                    }
                     .toMutableList()
-            if (items.none { normalizeCapsuleConflictValue(it) == normalizeCapsuleConflictValue(toValue) }) {
+            if (
+                items.none {
+                    normalizeCapsuleConflictValue(it) == normalizeCapsuleConflictValue(toValue)
+                }
+            ) {
                 items.add(toValue)
             }
             return items.joinToString("\n")
         }
         return when (suggestion.field) {
             ConversationContextCapsuleConflictField.GOAL -> state.copy(goal = toValue)
-            ConversationContextCapsuleConflictField.KEY_FACT -> state.copy(keyFactsText = replaceLineItems(state.keyFactsText))
-            ConversationContextCapsuleConflictField.DECISION -> state.copy(decisionsText = replaceLineItems(state.decisionsText))
-            ConversationContextCapsuleConflictField.CONSTRAINT -> state.copy(constraintsText = replaceLineItems(state.constraintsText))
+            ConversationContextCapsuleConflictField.KEY_FACT ->
+                state.copy(
+                    keyFactsText = replaceLineItems(state.keyFactsText),
+                )
+            ConversationContextCapsuleConflictField.DECISION ->
+                state.copy(
+                    decisionsText = replaceLineItems(state.decisionsText),
+                )
+            ConversationContextCapsuleConflictField.CONSTRAINT ->
+                state.copy(
+                    constraintsText = replaceLineItems(state.constraintsText),
+                )
             ConversationContextCapsuleConflictField.UNRESOLVED_ITEM ->
                 state.copy(unresolvedItemsText = replaceLineItems(state.unresolvedItemsText))
         }
@@ -497,7 +540,7 @@ class ConversationContextCapsuleViewModel(
                     val reviews = reconciliation.suggestions.map { ConversationContextCapsuleConflictReview(it) }
                     val draftMessage =
                         if (reviews.isEmpty()) {
-                            "Draft prepared from " + result.sourceMessageCount + " local messages. Review and save to persist."
+                            "Draft from ${result.sourceMessageCount} local messages. Review and save to persist."
                         } else {
                             "Found " + reviews.size + " potential conflicts. Choose a value for each before saving."
                         }
@@ -557,7 +600,11 @@ class ConversationContextCapsuleViewModel(
         val current = _uiState.value
         if (current.isSaving || current.isDeleting || current.isUpdatingFromHistory) return false
         if (current.conflictReviews.any { it.decision == null }) {
-            _uiState.value = current.copy(message = null, errorMessage = "Review every potential conflict before saving.")
+            _uiState.value =
+                current.copy(
+                    message = null,
+                    errorMessage = "Review every potential conflict before saving.",
+                )
             return false
         }
         _uiState.value = current.copy(isSaving = true, message = null, errorMessage = null)

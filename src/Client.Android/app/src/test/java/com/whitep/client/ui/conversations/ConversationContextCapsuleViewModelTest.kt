@@ -165,7 +165,13 @@ class ConversationContextCapsuleViewModelTest {
             assertTrue(draft.isEditing)
             assertEquals("Original goal", draft.goal)
             assertEquals(1, draft.conflictReviews.size)
-            assertEquals("Ship a local release", draft.conflictReviews.single().suggestion.proposedValue)
+            assertEquals(
+                "Ship a local release",
+                draft.conflictReviews
+                    .single()
+                    .suggestion
+                    .proposedValue,
+            )
             assertTrue(draft.keyFactsText.contains("Existing fact"))
             assertTrue(draft.keyFactsText.contains("Uses on-device Room"))
             assertEquals("Keep data local", draft.decisionsText)
@@ -232,13 +238,22 @@ class ConversationContextCapsuleViewModelTest {
                 viewModel.resolveConflict(0, ConversationContextCapsuleConflictDecision.USE_SUGGESTION),
             )
             assertTrue(
-                viewModel.resolveConflict(1, ConversationContextCapsuleConflictDecision.KEEP_CURRENT),
+                viewModel.resolveConflict(
+                    1,
+                    ConversationContextCapsuleConflictDecision.KEEP_CURRENT,
+                ),
             )
             assertTrue(viewModel.save())
             val saved = repository.find("conversation-ui") as ConversationContextCapsuleLoadResult.Found
             assertEquals("Ship version two", saved.capsule.goal)
             assertEquals(listOf("Remote access is enabled"), saved.capsule.keyFacts)
-            assertTrue(viewModel.uiState.value.conflictReviews.isEmpty())
+            assertTrue(
+                viewModel
+                    .uiState
+                    .value
+                    .conflictReviews
+                    .isEmpty(),
+            )
         }
 
     @Test

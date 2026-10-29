@@ -14,3 +14,17 @@
 - **Local execution:** The connected GitHub tools do not provide a local Android/Gradle or Python execution environment; no local test run is claimed. Exact-head GitHub Actions are pending.
 - **Status:** `in_progress`, attempt `T0157-A001` is `partial` pending exact-head CI.
 - **Next action:** Inspect exact-head quality and product workflows. Fix any lint/test/build failures while preserving this attempt; do not mark T0157 done until the Android conflict-review test and all required gates pass.
+
+
+## Exact-head V 3.0.576 acceptance attempt A002 — failed
+
+- Step Three quality [run 40920502076](https://github.com/artinrahimii/project/actions/runs/40920502076): 253 tests ran; one new assertion failed because the source-contract test expected `KEEP_CURRENT` in the ViewModel, while the explicit Keep current choice is rendered in Compose and passed to the ViewModel resolver.
+- Android product [run 40920502283](https://github.com/artinrahimii/project/actions/runs/40920502283): Kotlin lint failed on constructor formatting, multiline chains and long helper/save-gate calls in `ConversationContextCapsuleViewModel.kt`, plus two chain-formatting findings in `ConversationContextCapsuleViewModelTest.kt`. APK build and Android JVM tests were skipped.
+- Windows WPF build and configured startup/policy/DPAPI checks passed; HostLifecycle unit/integration tests passed on the same head.
+- A002 is preserved as failed. It is not counted as acceptance for T0157.
+
+## Corrective attempt A003 — pending
+
+- Moved the `KEEP_CURRENT` source-contract assertion to the Compose UI where that choice is rendered; retained the `USE_SUGGESTION` and save-gate assertions for the ViewModel.
+- Reformatted the Kotlin enum constructors, conflict-token chains, merge calls, resolver helper, save gate, and two Robolectric test expressions cited by KtLint.
+- Exact-head `V 3.0.577` quality and product runs are pending; do not accept T0157 until they pass.

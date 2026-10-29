@@ -21,8 +21,10 @@ class AndroidContextCapsuleConflictReviewContractTests(unittest.TestCase):
         self.assertIn("reconcileCapsuleConflicts", source)
         self.assertIn("directlyContradictsCapsuleValue", source)
         self.assertIn("Review every potential conflict before saving.", source)
-        self.assertIn("ConversationContextCapsuleConflictDecision.KEEP_CURRENT", source)
         self.assertIn("ConversationContextCapsuleConflictDecision.USE_SUGGESTION", source)
+        screen = SCREEN.read_text(encoding="utf-8")
+        self.assertIn("ConversationContextCapsuleConflictDecision.KEEP_CURRENT", screen)
+        self.assertIn("ConversationContextCapsuleConflictDecision.USE_SUGGESTION", screen)
 
     def test_robolectric_covers_conflict_review_and_no_write_until_confirmation(self):
         source = KOTLIN_TEST.read_text(encoding="utf-8")
