@@ -14,3 +14,10 @@
 - **Regression guard:** `tests/test_android_context_capsule_persistence_contract.py` asserts critical schema, migration, repository and test contracts.
 - **Dependency evidence:** T0150 → T0152 validated as `sequencing_only`; T0151 → T0152 remains `contract_or_interface_dependency`. The `blocks` relation is retained.
 - **Not yet proven:** exact-head Android ktlint/build/JVM test results and post-change CI. This ledger will be amended with those results before T0152 can be marked done.
+
+
+## V 3.0.554 CI result and A003
+
+- [Quality run 40887843412](https://github.com/artinrahimii/project/actions/runs/40887843412) passed 239 Python tests and graph validation with zero errors.
+- [Product run 40887843362](https://github.com/artinrahimii/project/actions/runs/40887843362) failed Android ktlint at `ConversationContextCapsulePersistenceTest.kt:149–152` due to argument indentation; build/JVM stages were skipped.
+- A003 fixes the remaining indentation. No success is claimed until the exact-head product pipeline passes.

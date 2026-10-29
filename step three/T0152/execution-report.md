@@ -30,3 +30,10 @@
 ## Verification status
 
 The source changes and graph record are committed as `V 3.0.553`. Exact-head CI is pending; no local test execution is claimed. Keep T0152 `in_progress` until Android lint, APK build, Android JVM tests, generated Protobuf verification, Windows WPF/HostLifecycle jobs and graph/evidence guards pass.
+
+
+## Second exact-head CI result — V 3.0.554
+
+- Quality [run 40887843412](https://github.com/artinrahimii/project/actions/runs/40887843412) passed **239 Python tests** and graph validation (229 tasks/417 edges, zero errors, one preserved T0001 warning).
+- Product [run 40887843362](https://github.com/artinrahimii/project/actions/runs/40887843362) reached Android `ktlintTestSourceSetCheck` and failed four indentation findings at `ConversationContextCapsulePersistenceTest.kt:149–152`. APK build/JVM tests were skipped because lint failed.
+- **T0152-A002 is recorded as failed** for the remaining formatting issue. **T0152-A003** fixes the indentation; exact-head CI is still required.

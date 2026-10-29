@@ -32836,30 +32836,30 @@
         "step three/T0152/execution-report.md",
         "step three/T0152/evidence/verification.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0152-A001 adds conversation-scoped Room BLOB persistence using the accepted T0151 v1 codec, Room schema v3 migration, and Robolectric/Python tests. T0150 → T0152 was reviewed as sequencing_only and validated; its blocks edge remains. Exact-head CI is required before acceptance.\nT0152-A001 exact-head V 3.0.553 failed due to three stale Python schema-v2 assertions and two ktlint formatting findings. A002 updates the assertions to schema v3/migrations 1→2→3 and corrects the two test-source format findings; CI pending.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0152-A001 adds conversation-scoped Room BLOB persistence using the accepted T0151 v1 codec, Room schema v3 migration, and Robolectric/Python tests. T0150 → T0152 was reviewed as sequencing_only and validated; its blocks edge remains. Exact-head CI is required before acceptance.\nT0152-A001 exact-head V 3.0.553 failed due to three stale Python schema-v2 assertions and two ktlint formatting findings. A002 updates the assertions to schema v3/migrations 1→2→3 and corrects the two test-source format findings; CI pending.\nT0152-A002 exact-head V 3.0.554 passed the quality gate (239 tests) but Android ktlint failed four indentation findings in the capsule persistence test, so the task remains in progress. A003 corrects the arguments' indentation; CI is pending.",
       "execution_summary": {
-        "attempt_count": 2,
-        "failed_attempt_count": 1,
-        "last_attempt_id": "T0152-A002",
+        "attempt_count": 3,
+        "failed_attempt_count": 2,
+        "last_attempt_id": "T0152-A003",
         "last_attempt_result": "partial",
         "changed_files": [
-          "src/Client.Android/app/src/test/java/com/whitep/client/data/ClientDatabaseMigrationTest.kt",
           "src/Client.Android/app/src/test/java/com/whitep/client/data/ConversationContextCapsulePersistenceTest.kt",
-          "tests/test_android_database_migration_contract.py",
-          "tests/test_android_local_storage_boundary.py",
           "step three/T0152/execution-report.md",
           "step three/T0152/evidence/verification.md",
           "step three/project-graph.md"
         ],
         "related_commits": [
-          "a642943d0604d8e33a80ceeb47099b031617fe1a"
+          "a642943d0604d8e33a80ceeb47099b031617fe1a",
+          "bf5f2b5eb7985e6063c710e4539e133a4d00f839"
         ],
         "tests_passed": [
-          "V 3.0.553 HostLifecycle product job passed; this partial result does not override the failing quality/lint gates."
+          "V 3.0.553 HostLifecycle product job passed; this partial result does not override the failing quality/lint gates.",
+          "V 3.0.554 quality gate passed 239 Python tests and graph validation (229 tasks/417 edges, 0 errors, one T0001 warning). https://github.com/artinrahimii/project/actions/runs/40887843412"
         ],
         "tests_failed": [
           "V 3.0.553 quality run 40887316120 failed 3 existing Python contract assertions that still expected Room v2 / only migration 1→2. https://github.com/artinrahimii/project/actions/runs/40887316120",
-          "V 3.0.553 Android lint in product run 40887316116 failed two format findings in ClientDatabaseMigrationTest.kt:108 and ConversationContextCapsulePersistenceTest.kt:147; build/JVM stages were skipped. https://github.com/artinrahimii/project/actions/runs/40887316116"
+          "V 3.0.553 Android lint in product run 40887316116 failed two format findings in ClientDatabaseMigrationTest.kt:108 and ConversationContextCapsulePersistenceTest.kt:147; build/JVM stages were skipped. https://github.com/artinrahimii/project/actions/runs/40887316116",
+          "V 3.0.554 Android ktlint failed four indentation findings at ConversationContextCapsulePersistenceTest.kt:149–152; APK/JVM stages were skipped. https://github.com/artinrahimii/project/actions/runs/40887843362"
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -32886,7 +32886,9 @@
             "step three/T0151/execution-report.md",
             "src/Client.Android/app/src/test/java/com/whitep/client/data/ConversationContextCapsulePersistenceTest.kt",
             "https://github.com/artinrahimii/project/actions/runs/40887316120",
-            "https://github.com/artinrahimii/project/actions/runs/40887316116"
+            "https://github.com/artinrahimii/project/actions/runs/40887316116",
+            "https://github.com/artinrahimii/project/actions/runs/40887843412",
+            "https://github.com/artinrahimii/project/actions/runs/40887843362"
           ]
         }
       },
@@ -32956,9 +32958,9 @@
         {
           "attempt_id": "T0152-A002",
           "started_at": "2026-10-29T14:02:10Z",
-          "ended_at": "2026-10-29T14:02:10Z",
-          "result": "partial",
-          "summary": "Corrected legacy Python source-contract checks to expect Room schema v3 and both sequential migrations, and reformatted the two reported Kotlin test expressions. Exact-head CI is pending.",
+          "ended_at": "2026-10-29T14:04:58Z",
+          "result": "failed",
+          "summary": "Exact-head V 3.0.554 quality gate passed all 239 Python tests and the graph guard, but Android ktlint failed four indentation findings in ConversationContextCapsulePersistenceTest.kt:149–152. Android APK/JVM stages were skipped.",
           "changed_files": [
             "src/Client.Android/app/src/test/java/com/whitep/client/data/ClientDatabaseMigrationTest.kt",
             "src/Client.Android/app/src/test/java/com/whitep/client/data/ConversationContextCapsulePersistenceTest.kt",
@@ -32968,30 +32970,67 @@
             "step three/T0152/evidence/verification.md",
             "step three/project-graph.md"
           ],
+          "related_commits": [
+            "bf5f2b5eb7985e6063c710e4539e133a4d00f839"
+          ],
+          "commit_sha": "bf5f2b5eb7985e6063c710e4539e133a4d00f839",
+          "tests": [
+            {
+              "name": "Step Three quality gate — run 40887843412",
+              "result": "passed",
+              "summary": "239 Python tests passed; graph guard reported 229 tasks/417 edges, zero errors and one preserved T0001 warning.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40887843412"
+            },
+            {
+              "name": "Android ktlintCheck — product run 40887843362",
+              "result": "failed",
+              "summary": "Four indentation findings at ConversationContextCapsulePersistenceTest.kt:149–152; the previous formatting correction moved the call to a new line but did not indent all arguments to the expected level.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40887843362"
+            },
+            {
+              "name": "Android assembleDebug / testDebugUnitTest",
+              "result": "not_run",
+              "summary": "Skipped because ktlint failed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40887843362"
+            }
+          ],
+          "failure_details": "Product run 40887843362, Android job 123496250585: ktlintTestSourceSetCheck reported Unexpected indentation at ConversationContextCapsulePersistenceTest.kt lines 149–152 after A002 rewrapped the save call but did not indent its arguments. APK build and JVM tests were skipped.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Correct indentation of the repository.save call and arguments in ConversationContextCapsulePersistenceTest.kt, then rerun exact-head Android lint, build and JVM suite."
+        },
+        {
+          "attempt_id": "T0152-A003",
+          "started_at": "2026-10-29T14:04:58Z",
+          "ended_at": "2026-10-29T14:04:58Z",
+          "result": "partial",
+          "summary": "Corrected the remaining repository.save argument indentation reported by ktlint. Exact-head CI pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/test/java/com/whitep/client/data/ConversationContextCapsulePersistenceTest.kt",
+            "step three/T0152/execution-report.md",
+            "step three/T0152/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
           "related_commits": [],
           "commit_sha": null,
           "tests": [
             {
-              "name": "tests/test_android_database_migration_contract.py",
+              "name": "Android ktlintCheck",
               "result": "not_run",
-              "summary": "Source assertions updated for schema v3 and migrations 1→2→3; awaiting exact-head quality gate."
+              "summary": "The reported indentation is corrected in A003; exact-head CI pending."
             },
             {
-              "name": "tests/test_android_local_storage_boundary.py",
+              "name": "Android assembleDebug / testDebugUnitTest",
               "result": "not_run",
-              "summary": "Storage boundary assertions updated for schema v3 and registered migrations; awaiting exact-head quality gate."
-            },
-            {
-              "name": "Android ktlintCheck / assembleDebug / testDebugUnitTest",
-              "result": "not_run",
-              "summary": "Two formatting corrections prepared; Android build/test awaits exact-head CI."
+              "summary": "Waiting for lint to pass on the next exact head."
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect exact-head V 3.0.554 quality and product workflows. Address further failures without removing tests; accept T0152 only after the full chain passes."
+          "follow_up": "Check the full V 3.0.555 CI run. Do not mark T0152 done until all quality and product jobs pass."
         }
       ]
     },
@@ -44832,7 +44871,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-29T14:02:10Z",
+  "updated_at": "2026-10-29T14:04:58Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

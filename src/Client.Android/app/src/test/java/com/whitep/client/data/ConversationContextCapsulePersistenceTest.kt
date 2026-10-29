@@ -146,10 +146,10 @@ class ConversationContextCapsulePersistenceTest {
                 RoomConversationContextCapsuleRepository(database.conversationContextCapsuleDao())
             val rejected =
                 repository.save(
-                "valid-conversation",
-                ConversationContextCapsule(goal = "  "),
-                10L,
-            )
+                    "valid-conversation",
+                    ConversationContextCapsule(goal = "  "),
+                    10L,
+                )
             assertTrue(rejected is ConversationContextCapsuleSaveResult.Rejected)
             assertEquals(
                 ConversationContextCapsuleError.EMPTY_GOAL,
