@@ -19,8 +19,7 @@ class ClientDatabaseConverters {
     fun requestDraftStatusToString(value: RequestDraftStatus): String = value.name
 
     @TypeConverter
-    fun stringToRequestDraftStatus(value: String): RequestDraftStatus =
-        RequestDraftStatus.valueOf(value)
+    fun stringToRequestDraftStatus(value: String): RequestDraftStatus = RequestDraftStatus.valueOf(value)
 }
 
 @Database(
@@ -51,11 +50,13 @@ abstract class ClientDatabase : RoomDatabase() {
 
         fun getInstance(context: Context): ClientDatabase =
             instance ?: synchronized(this) {
-                instance ?: Room.databaseBuilder(
-                    context.applicationContext,
-                    ClientDatabase::class.java,
-                    DATABASE_NAME,
-                ).build().also { database -> instance = database }
+                instance ?: Room
+                    .databaseBuilder(
+                        context.applicationContext,
+                        ClientDatabase::class.java,
+                        DATABASE_NAME,
+                    ).build()
+                    .also { database -> instance = database }
             }
     }
 }

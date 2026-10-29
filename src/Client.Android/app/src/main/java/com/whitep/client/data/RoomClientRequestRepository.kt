@@ -26,17 +26,19 @@ class RoomClientRequestRepository(
     }
 
     override suspend fun prepareRequest(): RequestPreparationResult {
-        val current = dao.findById(DEFAULT_DRAFT_ID)
-            ?: ClientRequestDraftEntity(
-                draftId = DEFAULT_DRAFT_ID,
-                prompt = "",
-                status = RequestDraftStatus.NOT_SENT,
-            )
-        val status = if (current.prompt.isBlank()) {
-            RequestDraftStatus.EMPTY_PROMPT
-        } else {
-            RequestDraftStatus.TRANSPORT_UNAVAILABLE
-        }
+        val current =
+            dao.findById(DEFAULT_DRAFT_ID)
+                ?: ClientRequestDraftEntity(
+                    draftId = DEFAULT_DRAFT_ID,
+                    prompt = "",
+                    status = RequestDraftStatus.NOT_SENT,
+                )
+        val status =
+            if (current.prompt.isBlank()) {
+                RequestDraftStatus.EMPTY_PROMPT
+            } else {
+                RequestDraftStatus.TRANSPORT_UNAVAILABLE
+            }
         dao.upsert(current.copy(status = status))
         return if (status == RequestDraftStatus.EMPTY_PROMPT) {
             RequestPreparationResult.EMPTY_PROMPT

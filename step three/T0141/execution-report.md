@@ -1,12 +1,13 @@
-# T0141 execution report — second CI formatting failure recorded; A003 pending
+# T0141 execution report — main-source ktlint correction in progress
 
 - **Task:** Create the Android-local Room database for conversations, messages, and request status.
-- **A001 — V 3.0.501 failed:** Step Three quality gate passed; HostLifecycle passed; Android ktlint failed in `ClientDatabaseTest.kt`, so APK/JUnit/Protobuf were skipped. [Quality](https://github.com/artinrahimii/project/actions/runs/40839337539) · [Product](https://github.com/artinrahimii/project/actions/runs/40839337468).
-- **A002 — V 3.0.502 failed:** Step Three quality gate passed and HostLifecycle passed, but ktlint reported the Room builder expression should start on a new line, then rejected the standalone newline before `.allowMainThreadQueries()`. The Android APK/JUnit/Protobuf stages were skipped. [Quality](https://github.com/artinrahimii/project/actions/runs/40839605700) · [Product](https://github.com/artinrahimii/project/actions/runs/40839605690).
-- **A003 — current correction:** only the builder's Kotlin formatting has changed: the right-hand expression begins on a new line, the `Room` receiver and builder method follow ktlint's multiline convention, and `.build()` remains on a separate continuation line. No database logic or graph dependency has changed in this increment.
-- **Task status:** `in_progress`; this correction requires a successful exact-head Android lint/build/JUnit/Protobuf result before acceptance.
-- **Privacy and scope remain unchanged:** local Room stores conversations/messages/draft in app-private storage; request-state rows omit request content; deletion cascades; no at-rest encryption or Android-to-Windows delivery is claimed. T0142 owns migration tests and T0184 owns at-rest encryption work.
-- **Repository/tool limitation:** the connected GitHub API is available, but local `git ls-remote` failed at DNS resolution. No local Gradle or Kotlin/JUnit run is claimed.
+- **A001 — V 3.0.501 failed:** Step Three quality gate and HostLifecycle passed; Android test-source ktlint failed, so APK/JUnit/Protobuf were skipped. [Quality](https://github.com/artinrahimii/project/actions/runs/40839337539) · [Product](https://github.com/artinrahimii/project/actions/runs/40839337468).
+- **A002 — V 3.0.502 failed:** quality gate and HostLifecycle passed; Android test-source ktlint still failed on the database builder chain, so APK/JUnit/Protobuf were skipped. [Quality](https://github.com/artinrahimii/project/actions/runs/40839605700) · [Product](https://github.com/artinrahimii/project/actions/runs/40839605690).
+- **A003 — V 3.0.503 failed:** the formatted `ClientDatabaseTest.kt` passed its ktlint test-source stage, but main-source ktlint reported wrapping issues in `ClientDatabase.kt` and `RoomClientRequestRepository.kt`; APK/JUnit/Protobuf were skipped. [Quality](https://github.com/artinrahimii/project/actions/runs/40839863717) · [Product](https://github.com/artinrahimii/project/actions/runs/40839863583).
+- **A004 — current correction:** updated converter-expression line breaks, the Room database builder chain, and multiline expressions in the repository adapter exactly against the A003 diagnostics. No schema, query, status, or privacy policy was changed in this correction.
+- **Current status:** `in_progress`; no Android build/JUnit pass is claimed. The test file passed its lint stage in A003, but all Kotlin lint and runtime checks must pass together before task acceptance.
+- **Privacy scope:** Android app-private Room storage may retain conversations/messages and the current draft; request-state rows omit request content, deletion cascades, and this database is not encrypted at rest by T0141. T0142 owns migration tests and T0184 owns at-rest encryption work. ADR-0019 remains in force.
+- **Environment limitation:** local `git ls-remote` failed at hostname resolution, so no local Gradle build/test is claimed. GitHub Actions is the evidence source.
 
 ## Change inventory
 
