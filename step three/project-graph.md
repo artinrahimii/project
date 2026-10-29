@@ -29721,14 +29721,15 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0141 و T0138 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "تکمیل‌شده",
       "actual_output_paths": [
         "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientDatabase.kt",
         "src/Client.Android/app/src/main/java/com/whitep/client/data/RequestStateEntity.kt",
         "src/Client.Android/app/src/test/java/com/whitep/client/data/ClientDatabaseMigrationTest.kt",
         "src/Client.Android/app/src/test/resources/db/v1-schema.sql",
         "tests/test_android_database_migration_contract.py",
+        "tests/test_android_local_storage_boundary.py",
         "step three/T0142/execution-report.md",
         "step three/T0142/evidence/verification.md",
         "step three/project-graph.md"
@@ -29737,20 +29738,19 @@
         "src/Client.Android/"
       ],
       "evidence": [
-        "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientDatabase.kt",
-        "src/Client.Android/app/src/main/java/com/whitep/client/data/RequestStateEntity.kt",
         "src/Client.Android/app/src/test/java/com/whitep/client/data/ClientDatabaseMigrationTest.kt",
         "src/Client.Android/app/src/test/resources/db/v1-schema.sql",
         "tests/test_android_database_migration_contract.py",
+        "tests/test_android_local_storage_boundary.py",
         "step three/T0142/execution-report.md",
         "step three/T0142/evidence/verification.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0142-A001 adds a version-1-to-2 Room migration and runtime upgrade regression test; completion is pending exact-head CI.\nT0142-A001 did not pass exact-head CI; corrective attempt T0142-A002 fixes the stale database-version assertion and Kotlin formatting issues. Keep in_progress until rerun passes.\nT0142-A002 passed graph quality but failed Android ktlint; T0142-A003 applies two further CI-directed formatting corrections. Task remains in_progress pending Android build and migration test.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0142-A001 adds a version-1-to-2 Room migration and runtime upgrade regression test; completion is pending exact-head CI.\nT0142-A001 did not pass exact-head CI; corrective attempt T0142-A002 fixes the stale database-version assertion and Kotlin formatting issues. Keep in_progress until rerun passes.\nT0142-A002 passed graph quality but failed Android ktlint; T0142-A003 applies two further CI-directed formatting corrections. Task remains in_progress pending Android build and migration test.\nT0142 completed after exact-head CI passed on V 3.0.509: Step Three quality gate, Android lint/APK/unit tests/Protobuf checks, Windows WPF build/smoke/policy checks, and HostLifecycle tests.",
       "execution_summary": {
         "attempt_count": 3,
         "failed_attempt_count": 2,
         "last_attempt_id": "T0142-A003",
-        "last_attempt_result": "partial",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientDatabase.kt",
           "src/Client.Android/app/src/main/java/com/whitep/client/data/RequestStateEntity.kt",
@@ -29762,32 +29762,41 @@
           "step three/project-graph.md",
           "tests/test_android_local_storage_boundary.py"
         ],
-        "related_commits": [],
+        "related_commits": [
+          "55dbf0ac0a7429ecf5acf56bdd508a2de92a2af9",
+          "901ec7a702082310235f88ccd6d46959d6976e34",
+          "f1e730964d6392336a752f71e66d79d96889cc86"
+        ],
         "tests_passed": [
-          "Step Three quality gate run 40843247078 passed for V 3.0.508: automated tests, syntax, graph structure and output/evidence validation passed.",
-          "Host lifecycle unit/integration tests passed in product run 40843247158 for V 3.0.508."
+          "Step Three quality gate — run 40843594499 — 211 Python tests passed; syntax check passed; graph structural validation passed for 229 tasks / 417 edges with 0 errors and 1 preserved warning. (https://github.com/artinrahimii/project/actions/runs/40843594499)",
+          "Android ktlintCheck — product run 40843594209 — Kotlin formatting and lint passed on the exact implementation commit. (https://github.com/artinrahimii/project/actions/runs/40843594209)",
+          "Android assembleDebug — product run 40843594209 — Debug APK assembled successfully. (https://github.com/artinrahimii/project/actions/runs/40843594209)",
+          "Android testDebugUnitTest — product run 40843594209 — Gradle testDebugUnitTest completed successfully, including ClientDatabaseMigrationTest with a version-1 database fixture, preserved conversation/message/request-state/draft rows, schema version 2, and the new index. (https://github.com/artinrahimii/project/actions/runs/40843594209)",
+          "Android generated Protobuf source verification — product run 40843594209 — Generated Java and Kotlin Protobuf sources were found and verified. (https://github.com/artinrahimii/project/actions/runs/40843594209)",
+          "Windows WPF and policy build — product run 40843594209 — C# formatting, Release build, generated Protobuf C#, WPF startup smoke, agent-tool restrictions/rejection/capability, host identity/trust checks and artifact upload passed. (https://github.com/artinrahimii/project/actions/runs/40843594209)",
+          "Host lifecycle unit and integration tests — product run 40843594209 — HostLifecycle test job passed. (https://github.com/artinrahimii/project/actions/runs/40843594209)"
         ],
         "tests_failed": [
-          "Step Three quality gate run 40842236474 failed on a stale database version=1 assertion (V 3.0.507).",
-          "Android product run 40842236492 failed ktlint on migration test formatting (V 3.0.507).",
-          "Android product run 40843247158 failed ktlint in ClientDatabaseMigrationTest.kt chain wrapping and ClientDatabase.kt max line length (V 3.0.508); Android assemble/test skipped."
+          "Historical V 3.0.507 failure: stale Room version=1 assertion and ktlint issues; corrected and preserved in T0142-A001.",
+          "Historical V 3.0.508 failure: additional ktlint method-chain/max-line-length issues; corrected and preserved in T0142-A002."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "in_review",
+          "state": "passed",
           "triggering_contracts": [
             "T0141 Room schema version 1",
             "T0138 processing-host privacy disclosure"
           ],
           "affected_by_contract_changes": [
-            "Room schema version 1 to 2: additive request-state ordering index"
+            "Room schema version 1 to version 2; additive composite index on request_states(conversationId, createdAtEpochMillis, requestId)"
           ],
           "review_evidence": [
             "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientDatabase.kt",
             "src/Client.Android/app/src/main/java/com/whitep/client/data/RequestStateEntity.kt",
             "src/Client.Android/app/src/test/java/com/whitep/client/data/ClientDatabaseMigrationTest.kt",
-            "docs/decisions/ADR-0020-android-client-local-conversation-storage.md"
+            "src/Client.Android/app/src/test/resources/db/v1-schema.sql",
+            "https://github.com/artinrahimii/project/actions/runs/40843594209"
           ]
         }
       },
@@ -29883,9 +29892,9 @@
         {
           "attempt_id": "T0142-A003",
           "started_at": "2026-10-29T08:37:53.526Z",
-          "ended_at": "2026-10-29T08:37:53.526Z",
-          "result": "partial",
-          "summary": "Adjusted the migration test fluent-call wrapping to place the initial Room qualifier on its own continuation line and split the overlong SQL index name literal in ClientDatabase.kt. Exact-head CI pending.",
+          "ended_at": "2026-10-29T08:40:17Z",
+          "result": "succeeded",
+          "summary": "Applied the CI-directed method-chain and max-line-length corrections. Exact-head Step Three quality and the full White-P product build then passed, including Kotlin lint, Android APK build, Android unit tests, generated Protobuf verification, Windows WPF build/smoke/policy checks, and HostLifecycle tests.",
           "changed_files": [
             "src/Client.Android/app/src/test/java/com/whitep/client/data/ClientDatabaseMigrationTest.kt",
             "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientDatabase.kt",
@@ -29893,13 +29902,56 @@
             "step three/T0142/evidence/verification.md",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
-          "tests": [],
+          "commit_sha": "f1e730964d6392336a752f71e66d79d96889cc86",
+          "tests": [
+            {
+              "command": "Step Three quality gate — run 40843594499",
+              "result": "passed",
+              "summary": "211 Python tests passed; syntax check passed; graph structural validation passed for 229 tasks / 417 edges with 0 errors and 1 preserved warning.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40843594499"
+            },
+            {
+              "command": "Android ktlintCheck — product run 40843594209",
+              "result": "passed",
+              "summary": "Kotlin formatting and lint passed on the exact implementation commit.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40843594209"
+            },
+            {
+              "command": "Android assembleDebug — product run 40843594209",
+              "result": "passed",
+              "summary": "Debug APK assembled successfully.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40843594209"
+            },
+            {
+              "command": "Android testDebugUnitTest — product run 40843594209",
+              "result": "passed",
+              "summary": "Gradle testDebugUnitTest completed successfully, including ClientDatabaseMigrationTest with a version-1 database fixture, preserved conversation/message/request-state/draft rows, schema version 2, and the new index.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40843594209"
+            },
+            {
+              "command": "Android generated Protobuf source verification — product run 40843594209",
+              "result": "passed",
+              "summary": "Generated Java and Kotlin Protobuf sources were found and verified.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40843594209"
+            },
+            {
+              "command": "Windows WPF and policy build — product run 40843594209",
+              "result": "passed",
+              "summary": "C# formatting, Release build, generated Protobuf C#, WPF startup smoke, agent-tool restrictions/rejection/capability, host identity/trust checks and artifact upload passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40843594209"
+            },
+            {
+              "command": "Host lifecycle unit and integration tests — product run 40843594209",
+              "result": "passed",
+              "summary": "HostLifecycle test job passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40843594209"
+            }
+          ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Verify exact-head Step Three and all product workflow jobs. If ktlint succeeds, continue to APK assembly and Android unit tests; resolve any compile/runtime failures before marking done."
+          "follow_up": "T0142 is accepted after exact-head CI. Next: T0143, subject to a fresh dependency/evidence review; preserve the separate external-network blocker on T0121."
         }
       ]
     },
@@ -41737,7 +41789,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-29T08:37:53.526Z",
+  "updated_at": "2026-10-29T08:41:19.481Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",
