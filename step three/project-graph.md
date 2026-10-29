@@ -33477,27 +33477,30 @@
         "step three/T0154/execution-report.md",
         "step three/T0154/evidence/verification.md"
       ],
-      "notes": "خروجی‌های واقعی این تلاش در actual_output_paths ثبت شده‌اند؛ پذیرش نهایی منوط به CI است.\nT0154-A001 implements a persisted device-wide capsule size limit (512–4096 UTF-8 bytes in 256-byte steps), retains the fixed protocol ceiling, enforces the selected threshold during domain encoding/Room save, and exposes a Compose slider. Exact-head CI is pending; existing capsule decoding retains the fixed protocol ceiling.\nT0154-A001 exact-head V 3.0.562 result: Step Three quality passed; Android ktlint failed three multiline-expression formatting findings. APK/JVM stages skipped, while HostLifecycle and Windows WPF passed. A002 fixes formatting and awaits new CI.",
+      "notes": "خروجی‌های واقعی این تلاش در actual_output_paths ثبت شده‌اند؛ پذیرش نهایی منوط به CI است.\nT0154-A001 implements a persisted device-wide capsule size limit (512–4096 UTF-8 bytes in 256-byte steps), retains the fixed protocol ceiling, enforces the selected threshold during domain encoding/Room save, and exposes a Compose slider. Exact-head CI is pending; existing capsule decoding retains the fixed protocol ceiling.\nT0154-A001 exact-head V 3.0.562 result: Step Three quality passed; Android ktlint failed three multiline-expression formatting findings. APK/JVM stages skipped, while HostLifecycle and Windows WPF passed. A002 fixes formatting and awaits new CI.\nT0154-A002 exact-head result: main-source lint passed but test-source lint failed on chained assertion formatting at ConversationContextCapsuleViewModelTest.kt:138; APK/JVM skipped, HostLifecycle passed, WPF pending at the captured time. A003 uses a local error-message variable.",
       "execution_summary": {
-        "attempt_count": 2,
-        "failed_attempt_count": 1,
-        "last_attempt_id": "T0154-A002",
+        "attempt_count": 3,
+        "failed_attempt_count": 2,
+        "last_attempt_id": "T0154-A003",
         "last_attempt_result": "partial",
         "changed_files": [
-          "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt",
+          "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModelTest.kt",
           "step three/T0154/execution-report.md",
           "step three/T0154/evidence/verification.md",
           "step three/project-graph.md"
         ],
         "related_commits": [
-          "a8a0e7ed4c736b6191cc80dddf03d6a7f584a326"
+          "e878ecaa3c0805dc71ef61c29a1e6574164dad20"
         ],
         "tests_passed": [
           "V 3.0.562 Step Three quality gate passed: https://github.com/artinrahimii/project/actions/runs/40903639160",
-          "V 3.0.562 HostLifecycle and Windows WPF jobs passed: https://github.com/artinrahimii/project/actions/runs/40903639332"
+          "V 3.0.562 HostLifecycle and Windows WPF jobs passed: https://github.com/artinrahimii/project/actions/runs/40903639332",
+          "V 3.0.563 Step Three quality passed: https://github.com/artinrahimii/project/actions/runs/40904263570",
+          "V 3.0.563 main Kotlin source lint and HostLifecycle passed: https://github.com/artinrahimii/project/actions/runs/40904263586"
         ],
         "tests_failed": [
-          "V 3.0.562 Android ktlint failed three multiline-expression formatting findings; APK/JVM stages skipped: https://github.com/artinrahimii/project/actions/runs/40903639332"
+          "V 3.0.562 Android ktlint failed three multiline-expression formatting findings; APK/JVM stages skipped: https://github.com/artinrahimii/project/actions/runs/40903639332",
+          "V 3.0.563 test-source ktlint failed at ConversationContextCapsuleViewModelTest.kt:138; APK/JVM skipped: https://github.com/artinrahimii/project/actions/runs/40904263586"
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -33599,11 +33602,65 @@
         {
           "attempt_id": "T0154-A002",
           "started_at": "2026-10-29T15:42:05.021Z",
-          "ended_at": null,
-          "result": "partial",
-          "summary": "Corrected the three exact multiline-expression KtLint findings in the capsule size-limit ViewModel. The correction changes formatting only; exact-head CI is pending.",
+          "ended_at": "2026-10-29T15:43:01Z",
+          "result": "failed",
+          "summary": "The exact-head V 3.0.563 run passed main-source Kotlin lint, but test-source lint failed at ConversationContextCapsuleViewModelTest.kt:138 with 'Expected newline before .' for the errorMessage!!.contains(...) assertion. APK/JVM tasks were skipped. HostLifecycle passed; Windows WPF was still in progress at last inspection.",
           "changed_files": [
             "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt",
+            "step three/T0154/execution-report.md",
+            "step three/T0154/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "related_commits": [
+            "e878ecaa3c0805dc71ef61c29a1e6574164dad20"
+          ],
+          "commit_sha": "e878ecaa3c0805dc71ef61c29a1e6574164dad20",
+          "tests": [
+            {
+              "name": "Step Three quality gate — V 3.0.563",
+              "result": "passed",
+              "summary": "Python tests, syntax, graph structure and output/evidence checks passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40904263570"
+            },
+            {
+              "name": "Android main source Kotlin lint — V 3.0.563",
+              "result": "passed",
+              "summary": "The previous multiline-expression findings in the production ViewModel were cleared.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40904263586"
+            },
+            {
+              "name": "Android test source Kotlin lint — V 3.0.563",
+              "result": "failed",
+              "summary": "Expected newline before '.' at ConversationContextCapsuleViewModelTest.kt:138 on the chained errorMessage!!.contains(...) assertion.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40904263586"
+            },
+            {
+              "name": "Android APK build and JVM tests",
+              "result": "not_run",
+              "summary": "Skipped when test-source lint failed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40904263586"
+            },
+            {
+              "name": "HostLifecycle unit/integration tests",
+              "result": "passed",
+              "summary": "Job completed successfully.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40904263586"
+            }
+          ],
+          "failure_details": "ktlintTestSourceSetCheck failed at ConversationContextCapsuleViewModelTest.kt:138: Expected newline before '.' on errorMessage!!.contains(...).",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "A003 stores requireNotNull(uiState.value.errorMessage) in a local variable before checking contains(); then rerun exact-head CI."
+        },
+        {
+          "attempt_id": "T0154-A003",
+          "started_at": "2026-10-29T15:43:59.415Z",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Reworked the flagged test assertion to use requireNotNull in a local variable before calling contains. This is formatting-only and exact-head CI is pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModelTest.kt",
             "step three/T0154/execution-report.md",
             "step three/T0154/evidence/verification.md",
             "step three/project-graph.md"
@@ -33614,7 +33671,7 @@
             {
               "name": "Android ktlintCheck",
               "result": "not_run",
-              "summary": "Exact-head run for A002 pending."
+              "summary": "Exact-head CI pending."
             },
             {
               "name": "Android assembleDebug",
@@ -33629,14 +33686,14 @@
             {
               "name": "Step Three quality gate",
               "result": "not_run",
-              "summary": "Exact-head quality CI pending."
+              "summary": "Exact-head quality workflow pending."
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Check exact-head V 3.0.563 quality/product workflows; do not mark T0154 done until all required gates pass."
+          "follow_up": "Inspect exact-head V 3.0.564 quality/product CI; do not mark T0154 done until Android lint, APK, JVM and graph/evidence gates pass."
         }
       ]
     },
@@ -45477,7 +45534,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-29T15:42:05.021Z",
+  "updated_at": "2026-10-29T15:43:59.415Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

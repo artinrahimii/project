@@ -15,3 +15,10 @@
 - Quality [40903639160](https://github.com/artinrahimii/project/actions/runs/40903639160) passed Python tests, syntax, graph and output/evidence checks.
 - Product [40903639332](https://github.com/artinrahimii/project/actions/runs/40903639332) failed `ktlintMainSourceSetCheck` on three multiline-expression formatting findings in `ConversationContextCapsuleViewModel.kt`. APK and JVM tests were skipped; HostLifecycle and Windows WPF jobs passed.
 - A002 changes only the multiline assignment formatting. It is not accepted until a new exact-head product run completes lint, APK build and Android JVM tests.
+
+
+## V 3.0.563 test-source lint failure and A003 correction
+
+- Quality [40904263570](https://github.com/artinrahimii/project/actions/runs/40904263570) passed Python tests, syntax, graph and output/evidence validation.
+- Product [40904263586](https://github.com/artinrahimii/project/actions/runs/40904263586) passed main-source Kotlin lint but failed test-source lint at `ConversationContextCapsuleViewModelTest.kt:138` (“Expected newline before '.'”). APK/JVM stages were skipped; HostLifecycle passed and WPF was pending at last inspection.
+- A003 replaces the chained assertion with a `requireNotNull` local and a simple assertion. This is a test-formatting change, not an acceptance result; new exact-head CI is required.

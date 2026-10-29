@@ -135,7 +135,8 @@ class ConversationContextCapsuleViewModelTest {
             viewModel.updateGoal("x".repeat(700))
 
             assertFalse(viewModel.save())
-            assertTrue(viewModel.uiState.value.errorMessage!!.contains("selected size limit"))
+            val errorMessage = requireNotNull(viewModel.uiState.value.errorMessage)
+            assertTrue(errorMessage.contains("selected size limit"))
             assertEquals(ConversationContextCapsuleLoadResult.Missing, repository.find("conversation-ui"))
 
             viewModel.updateMaxSerializedBytes(1_024)

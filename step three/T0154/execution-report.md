@@ -30,3 +30,10 @@ No local Android build or test command was run in this connector execution. The 
 - Quality [run 40903639160](https://github.com/artinrahimii/project/actions/runs/40903639160) completed successfully. Automated Python tests, Python syntax, graph structure, and recorded-output/evidence checks passed.
 - Product [run 40903639332](https://github.com/artinrahimii/project/actions/runs/40903639332) completed with an Android lint failure and HostLifecycle and Windows WPF jobs successful. Android `ktlintMainSourceSetCheck` reported three instances of “A multiline expression should start on a new line” in `ConversationContextCapsuleViewModel.kt` at lines 146, 152, and 158. APK build and Android JVM tests did not run because lint failed.
 - **T0154-A001 is recorded as failed for the product lint gate**, not accepted. **T0154-A002** moves the three `_uiState.value.copy(...)` expressions onto continuation lines; behavior is unchanged. Exact-head CI remains pending.
+
+
+## Second exact-head CI result — V 3.0.563
+
+- Quality [run 40904263570](https://github.com/artinrahimii/project/actions/runs/40904263570) passed the Python tests, syntax, graph structure and recorded-output/evidence checks.
+- Product [run 40904263586](https://github.com/artinrahimii/project/actions/runs/40904263586): the main Kotlin source lint passed, then test-source lint failed at `ConversationContextCapsuleViewModelTest.kt:138` with “Expected newline before '.'” in the `.errorMessage!!.contains(...)` assertion. APK and Android JVM tests were skipped. HostLifecycle passed; Windows WPF was still in progress at last inspection.
+- **T0154-A002 is recorded as failed for test-source lint.** **T0154-A003** binds the error message to a local variable before asserting, avoiding the flagged chain formatting. The behavior is unchanged; exact-head CI is pending.
