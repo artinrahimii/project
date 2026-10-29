@@ -33742,31 +33742,37 @@
         "step three/T0155/execution-report.md",
         "step three/T0155/evidence/verification.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0155-A001 adds a replaceable suspend provider, a conservative local extractor and a schema/size validation boundary. Five Kotlin runtime tests and Python source-contract tests were added; exact-head CI is pending.\nT0155-A001 exact-head result: Step Three quality passed; Android Kotlin lint failed seven formatting findings and skipped APK/JVM; HostLifecycle passed, Windows WPF was still running at record time. A002 corrects the source formatting.\nT0155-A002 exact-head CI: quality and HostLifecycle passed; Android ktlint failed four chain formatting findings in the field-value expression and skipped APK/JVM. A003 splits normalization into independent statements; CI pending.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0155-A001 adds a replaceable suspend provider, a conservative local extractor and a schema/size validation boundary. Five Kotlin runtime tests and Python source-contract tests were added; exact-head CI is pending.\nT0155-A001 exact-head result: Step Three quality passed; Android Kotlin lint failed seven formatting findings and skipped APK/JVM; HostLifecycle passed, Windows WPF was still running at record time. A002 corrects the source formatting.\nT0155-A002 exact-head CI: quality and HostLifecycle passed; Android ktlint failed four chain formatting findings in the field-value expression and skipped APK/JVM. A003 splits normalization into independent statements; CI pending.\nT0155-A003 exact-head result: Step Three quality, Android lint, APK build, Windows WPF and HostLifecycle passed. Android JVM tests completed 51 tests with 3 failures caused during codec use in a test class lacking the established Robolectric runner. A004 configures Robolectric at SDK 35; acceptance pending.",
       "execution_summary": {
-        "attempt_count": 3,
-        "failed_attempt_count": 2,
-        "last_attempt_id": "T0155-A003",
+        "attempt_count": 4,
+        "failed_attempt_count": 3,
+        "last_attempt_id": "T0155-A004",
         "last_attempt_result": "partial",
         "changed_files": [
-          "src/Client.Android/app/src/main/java/com/whitep/client/context/ConversationContextCapsuleSummarizer.kt",
+          "src/Client.Android/app/src/test/java/com/whitep/client/context/ConversationContextCapsuleSummarizerTest.kt",
           "step three/T0155/execution-report.md",
           "step three/T0155/evidence/verification.md",
           "step three/project-graph.md"
         ],
         "related_commits": [
           "0f24fc97ba11612a96ff1b8b44692a023d95e061",
-          "a8995bae08aaea970ea9d035e6aa5a4b734b3659"
+          "a8995bae08aaea970ea9d035e6aa5a4b734b3659",
+          "7e882cd21ba470daebec8ee63d389e5429c625de"
         ],
         "tests_passed": [
           "V 3.0.565 Step Three quality passed (run 40909822726): https://github.com/artinrahimii/project/actions/runs/40909822726",
           "V 3.0.565 HostLifecycle passed (run 40909822388): https://github.com/artinrahimii/project/actions/runs/40909822388",
           "V 3.0.566 Step Three quality passed (run 40910278299): https://github.com/artinrahimii/project/actions/runs/40910278299",
-          "V 3.0.566 HostLifecycle passed (run 40910278198): https://github.com/artinrahimii/project/actions/runs/40910278198"
+          "V 3.0.566 HostLifecycle passed (run 40910278198): https://github.com/artinrahimii/project/actions/runs/40910278198",
+          "V 3.0.567 Step Three quality passed (run 40910752479): https://github.com/artinrahimii/project/actions/runs/40910752479",
+          "V 3.0.567 Android Kotlin lint passed and debug APK built (run 40910752935): https://github.com/artinrahimii/project/actions/runs/40910752935",
+          "V 3.0.567 Windows WPF build passed (run 40910752935): https://github.com/artinrahimii/project/actions/runs/40910752935",
+          "V 3.0.567 HostLifecycle passed (run 40910752935): https://github.com/artinrahimii/project/actions/runs/40910752935"
         ],
         "tests_failed": [
           "V 3.0.565 Android ktlintMainSourceSetCheck failed with seven source-format findings; APK/JVM stages skipped (run 40909822388): https://github.com/artinrahimii/project/actions/runs/40909822388",
-          "V 3.0.566 Android ktlintMainSourceSetCheck failed four chain-continuation findings; APK/JVM skipped (run 40910278198): https://github.com/artinrahimii/project/actions/runs/40910278198"
+          "V 3.0.566 Android ktlintMainSourceSetCheck failed four chain-continuation findings; APK/JVM skipped (run 40910278198): https://github.com/artinrahimii/project/actions/runs/40910278198",
+          "V 3.0.567 Android JVM tests: 51 completed, 3 failed in ConversationContextCapsuleSummarizerTest before Robolectric was configured; Protobuf/APK upload skipped (run 40910752935): https://github.com/artinrahimii/project/actions/runs/40910752935"
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -33885,11 +33891,68 @@
         {
           "attempt_id": "T0155-A003",
           "started_at": "2026-10-29T16:20:59.511Z",
-          "ended_at": "2026-10-29T16:20:59.511Z",
-          "result": "partial",
-          "summary": "Split field substring, trim, maximum-character truncation and final trim into separate statements to avoid ktlint chain-continuation errors without changing output semantics. Exact-head CI is pending.",
+          "ended_at": "2026-10-29T16:25:59.233Z",
+          "result": "failed",
+          "summary": "Exact-head V 3.0.567 passed Kotlin formatting/lint and built the debug APK, but testDebugUnitTest failed 3 of 51 tests: three methods in ConversationContextCapsuleSummarizerTest threw RuntimeException while using Android JSON codec code. The test class had no Robolectric runner, unlike the existing ConversationContextCapsuleTest. Protobuf verification and APK artifact upload were skipped after the test failure. Step Three quality, Windows WPF and HostLifecycle passed.",
           "changed_files": [
             "src/Client.Android/app/src/main/java/com/whitep/client/context/ConversationContextCapsuleSummarizer.kt",
+            "step three/T0155/execution-report.md",
+            "step three/T0155/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": "7e882cd21ba470daebec8ee63d389e5429c625de",
+          "tests": [
+            {
+              "name": "Step Three quality gate — V 3.0.567",
+              "result": "passed",
+              "summary": "Python tests, syntax, graph structure and output/evidence checks passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40910752479"
+            },
+            {
+              "name": "Android ktlintCheck — V 3.0.567",
+              "result": "passed",
+              "summary": "Kotlin formatting/lint passed after the method-chain correction.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40910752935"
+            },
+            {
+              "name": "Android assembleDebug — V 3.0.567",
+              "result": "passed",
+              "summary": "The debug APK built successfully.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40910752935"
+            },
+            {
+              "name": "Android testDebugUnitTest — V 3.0.567",
+              "result": "failed",
+              "summary": "51 tests completed, 3 failed in the new summarizer test class with RuntimeException during codec use; class lacked the Robolectric runner used by existing capsule tests.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40910752935"
+            },
+            {
+              "name": "Windows WPF build — V 3.0.567",
+              "result": "passed",
+              "summary": "Windows host build and configured checks passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40910752935"
+            },
+            {
+              "name": "HostLifecycle tests — V 3.0.567",
+              "result": "passed",
+              "summary": "Host lifecycle unit/integration job passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40910752935"
+            }
+          ],
+          "failure_details": "Exact-head V 3.0.567 passed Kotlin formatting/lint and built the debug APK, but testDebugUnitTest failed 3 of 51 tests: three methods in ConversationContextCapsuleSummarizerTest threw RuntimeException while using Android JSON codec code. The test class had no Robolectric runner, unlike the existing ConversationContextCapsuleTest. Protobuf verification and APK artifact upload were skipped after the test failure. Step Three quality, Windows WPF and HostLifecycle passed.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "A004 adds RobolectricTestRunner and SDK 35 to the summarizer test class, matching the existing ConversationContextCapsuleTest setup; rerun exact-head JVM tests."
+        },
+        {
+          "attempt_id": "T0155-A004",
+          "started_at": "2026-10-29T16:25:59.233Z",
+          "ended_at": "2026-10-29T16:25:59.233Z",
+          "result": "partial",
+          "summary": "Added RobolectricTestRunner and SDK 35 to the summarizer unit-test class, matching the established capsule codec test setup so Android JSON codec calls execute under a runtime implementation. Exact-head CI is pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/test/java/com/whitep/client/context/ConversationContextCapsuleSummarizerTest.kt",
             "step three/T0155/execution-report.md",
             "step three/T0155/evidence/verification.md",
             "step three/project-graph.md"
@@ -33897,31 +33960,26 @@
           "commit_sha": null,
           "tests": [
             {
-              "name": "Android ktlintCheck",
+              "name": "ConversationContextCapsuleSummarizerTest",
               "result": "not_run",
-              "summary": "Exact-head workflow pending."
+              "summary": "Retry with RobolectricTestRunner @Config(sdk=[35]) pending exact-head Android JVM job."
             },
             {
-              "name": "Android assembleDebug",
+              "name": "Android ktlintCheck / assembleDebug / testDebugUnitTest",
               "result": "not_run",
-              "summary": "Awaiting lint."
-            },
-            {
-              "name": "Android testDebugUnitTest",
-              "result": "not_run",
-              "summary": "Awaiting lint/build."
+              "summary": "Exact-head product workflow pending."
             },
             {
               "name": "Step Three quality gate",
               "result": "not_run",
-              "summary": "Exact-head workflow pending."
+              "summary": "Exact-head quality workflow pending."
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect exact-head V 3.0.567 quality and product workflows; mark T0155 done only after all required checks pass."
+          "follow_up": "Inspect exact-head V 3.0.568 quality and product results. Mark T0155 done only when the five new tests and all existing Android product tests pass."
         }
       ]
     },
@@ -45765,7 +45823,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-29T16:20:59.511Z",
+  "updated_at": "2026-10-29T16:25:59.233Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

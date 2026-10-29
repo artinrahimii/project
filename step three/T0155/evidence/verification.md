@@ -31,3 +31,10 @@
 - Step Three quality passed: [run 40910278299](https://github.com/artinrahimii/project/actions/runs/40910278299).
 - Android ktlint failed four chain-continuation findings in the marked-field value expression. APK/JVM steps were skipped: [run 40910278198](https://github.com/artinrahimii/project/actions/runs/40910278198).
 - HostLifecycle passed in run 40910278198. Windows WPF was still running when this record was updated. A003 replaces the chain with separate normalization statements; acceptance remains pending.
+
+
+## Exact-head V 3.0.567 verification
+
+- Step Three quality passed: [run 40910752479](https://github.com/artinrahimii/project/actions/runs/40910752479).
+- Android lint and APK build passed, but JVM tests had 3 failures out of 51 in the new summarizer test class during codec use. The class did not include the Robolectric runner used by existing codec tests; protobuf verification and artifact upload were skipped. [Product run 40910752935](https://github.com/artinrahimii/project/actions/runs/40910752935).
+- Windows WPF and HostLifecycle passed. A004 configures the existing Robolectric test harness and awaits verification.

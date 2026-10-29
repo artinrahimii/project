@@ -23,3 +23,10 @@
 - Step Three quality [run 40910278299](https://github.com/artinrahimii/project/actions/runs/40910278299) passed Python tests, syntax, graph structure and output/evidence checks.
 - Product [run 40910278198](https://github.com/artinrahimii/project/actions/runs/40910278198): Android `ktlintMainSourceSetCheck` failed four chain-continuation findings at the field-value expression on line 175. APK build and JVM tests were skipped. HostLifecycle passed; Windows WPF was still running at report time.
 - A002 is preserved as a failed attempt. A003 splits the string normalization sequence into independent statements and awaits new exact-head CI.
+
+
+## Exact-head V 3.0.567 CI result — attempt A003
+
+- Step Three quality [run 40910752479](https://github.com/artinrahimii/project/actions/runs/40910752479) passed.
+- Android Kotlin lint and debug APK build passed, but `testDebugUnitTest` failed 3 of 51 tests. The failures were in the new summarizer tests while using the Android JSON codec; the test class lacked the Robolectric runner configured by existing capsule tests. Protobuf verification and artifact upload were skipped: [product run 40910752935](https://github.com/artinrahimii/project/actions/runs/40910752935).
+- Windows WPF and HostLifecycle jobs passed in run 40910752935. A004 adds `RobolectricTestRunner` and SDK 35 to make codec testing use the same runtime arrangement as the established capsule tests.
