@@ -5,14 +5,21 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.whitep.client.context.ConversationContextCapsule
 import com.whitep.client.context.ConversationContextCapsuleError
+import com.whitep.client.context.ConversationContextCapsuleSummaryResult
+import com.whitep.client.context.ConversationContextSummaryMessage
+import com.whitep.client.context.ConversationContextSummaryRequest
+import com.whitep.client.context.ConversationContextSummaryRejectionReason
+import com.whitep.client.context.SchemaValidatedConversationContextCapsuleSummarizer
 import com.whitep.client.data.ConversationContextCapsuleLoadResult
 import com.whitep.client.data.ConversationContextCapsuleSaveResult
 import com.whitep.client.data.ConversationContextCapsuleSizeLimitStore
+import com.whitep.client.data.MessageDao
 import com.whitep.client.data.RoomConversationContextCapsuleRepository
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 data class ConversationContextCapsuleUiState(
@@ -28,6 +35,8 @@ data class ConversationContextCapsuleUiState(
     val unresolvedItemsText: String = "",
     val isSaving: Boolean = false,
     val isDeleting: Boolean = false,
+    val isUpdatingFromHistory: Boolean = false,
+    val summarySourceMessageCount: Int? = null,
     val message: String? = null,
     val errorMessage: String? = null,
 )
@@ -37,6 +46,9 @@ class ConversationContextCapsuleViewModel(
     private val conversationId: String,
     private val repository: RoomConversationContextCapsuleRepository,
     private val sizeLimitStore: ConversationContextCapsuleSizeLimitStore,
+    private val messageDao: MessageDao,
+    private val summarizer: SchemaValidatedConversationContextCapsuleSummarizer =
+        SchemaValidatedConversationContextCapsuleSummarizer(),
     private val clockMillis: () -> Long = System::currentTimeMillis,
 ) : ViewModel() {
     private val _uiState =
@@ -175,9 +187,106 @@ class ConversationContextCapsuleViewModel(
 
     fun updateUnresolvedItems(value: String) = updateDraft { it.copy(unresolvedItemsText = value) }
 
+
+    /**
+     * Builds a reviewable capsule draft from this conversation's local Room history.
+     * This operation does not send history to a host or network.
+     */
+    suspend fun updateFromLocalHistory(): Boolean {
+        val current = _uiState.value
+        if (current.isUpdatingFromHistory || current.isSaving || current.isDeleting) return false
+        _uiState.value = current.copy(isUpdatingFromHistory = true, message = null, errorMessage = null)
+
+        return try {
+            val localMessages =
+                messageDao
+                    .observeForConversation(conversationId)
+                    .first()
+                    .filter { it.content.isNotBlank() }
+                    .map { message ->
+                        ConversationContextSummaryMessage(
+                            messageId = message.messageId,
+                            authorRole = message.authorRole,
+                            content = message.content,
+                            createdAtEpochMillis = message.createdAtEpochMillis,
+                        )
+                    }
+            if (localMessages.isEmpty()) {
+                _uiState.value =
+                    _uiState.value.copy(
+                        isUpdatingFromHistory = false,
+                        errorMessage = "Add a non-empty local message before creating a capsule draft.",
+                    )
+                return false
+            }
+
+            val draftCapsule = current.toCapsuleDraftOrNull()
+            val result =
+                summarizer.summarize(
+                    ConversationContextSummaryRequest(
+                        messages = localMessages,
+                        existingCapsule = draftCapsule,
+                        maxSerializedBytes = current.maxSerializedBytes,
+                    ),
+                )
+            when (result) {
+                is ConversationContextCapsuleSummaryResult.Accepted -> {
+                    val capsule = result.capsule
+                    _uiState.value =
+                        _uiState.value.copy(
+                            isUpdatingFromHistory = false,
+                            isEditing = true,
+                            goal = capsule.goal,
+                            keyFactsText = capsule.keyFacts.joinToString("\n"),
+                            decisionsText = capsule.decisions.joinToString("\n"),
+                            constraintsText = capsule.constraints.joinToString("\n"),
+                            unresolvedItemsText = capsule.unresolvedItems.joinToString("\n"),
+                            summarySourceMessageCount = result.sourceMessageCount,
+                            message =
+                                "Draft prepared from ${result.sourceMessageCount} local messages. Review and save to persist.",
+                            errorMessage = null,
+                        )
+                    true
+                }
+                is ConversationContextCapsuleSummaryResult.Rejected -> {
+                    val errorMessage =
+                        when (result.reason) {
+                            ConversationContextSummaryRejectionReason.NO_USABLE_MESSAGES ->
+                                "Add a non-empty local message before creating a capsule draft."
+                            ConversationContextSummaryRejectionReason.INVALID_SIZE_LIMIT ->
+                                "The selected capsule size limit is invalid."
+                            ConversationContextSummaryRejectionReason.PROVIDER_FAILURE ->
+                                "Local capsule summarization failed. Your saved capsule was not changed."
+                            ConversationContextSummaryRejectionReason.INVALID_CAPSULE ->
+                                "The suggested capsule did not match the supported format."
+                            ConversationContextSummaryRejectionReason.SIZE_LIMIT_EXCEEDED ->
+                                "The suggested capsule exceeds the selected size limit. Shorten the history or raise the limit."
+                        }
+                    _uiState.value =
+                        _uiState.value.copy(
+                            isUpdatingFromHistory = false,
+                            errorMessage = errorMessage,
+                            message = null,
+                        )
+                    false
+                }
+            }
+        } catch (exception: CancellationException) {
+            _uiState.value = _uiState.value.copy(isUpdatingFromHistory = false)
+            throw exception
+        } catch (_: Exception) {
+            _uiState.value =
+                _uiState.value.copy(
+                    isUpdatingFromHistory = false,
+                    errorMessage = "Local conversation history could not be read. Your saved capsule was not changed.",
+                )
+            false
+        }
+    }
+
     suspend fun save(): Boolean {
         val current = _uiState.value
-        if (current.isSaving || current.isDeleting) return false
+        if (current.isSaving || current.isDeleting || current.isUpdatingFromHistory) return false
         _uiState.value = current.copy(isSaving = true, message = null, errorMessage = null)
         val capsule =
             ConversationContextCapsule(
@@ -230,7 +339,7 @@ class ConversationContextCapsuleViewModel(
 
     suspend fun delete(): Boolean {
         val current = _uiState.value
-        if (current.isDeleting || current.isSaving) return false
+        if (current.isDeleting || current.isSaving || current.isUpdatingFromHistory) return false
         _uiState.value = current.copy(isDeleting = true, message = null, errorMessage = null)
         return try {
             val deleted = repository.delete(conversationId) > 0
@@ -260,6 +369,18 @@ class ConversationContextCapsuleViewModel(
                 )
             false
         }
+    }
+
+
+    private fun ConversationContextCapsuleUiState.toCapsuleDraftOrNull(): ConversationContextCapsule? {
+        if (!isEditing || goal.isBlank()) return capsule
+        return ConversationContextCapsule(
+            goal = goal.trim(),
+            keyFacts = keyFactsText.toItems(),
+            decisions = decisionsText.toItems(),
+            constraints = constraintsText.toItems(),
+            unresolvedItems = unresolvedItemsText.toItems(),
+        )
     }
 
     private fun updateDraft(transform: (ConversationContextCapsuleUiState) -> ConversationContextCapsuleUiState) {
@@ -294,13 +415,14 @@ class ConversationContextCapsuleViewModel(
         private val conversationId: String,
         private val repository: RoomConversationContextCapsuleRepository,
         private val sizeLimitStore: ConversationContextCapsuleSizeLimitStore,
+        private val messageDao: MessageDao,
     ) : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             if (!modelClass.isAssignableFrom(ConversationContextCapsuleViewModel::class.java)) {
                 throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
             }
-            return ConversationContextCapsuleViewModel(conversationId, repository, sizeLimitStore) as T
+            return ConversationContextCapsuleViewModel(conversationId, repository, sizeLimitStore, messageDao) as T
         }
     }
 }

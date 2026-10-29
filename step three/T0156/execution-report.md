@@ -1,0 +1,10 @@
+# T0156 execution report
+
+- **Base revision:** `0287bb8181dbf123b72d52f49abf4e5bb6acd7ca` on `main` (V 3.0.569).
+- **Task:** Build a capsule draft using the local Room history for only the selected conversation; keep the full transcript out of any network payload.
+- **Prerequisites and edge review:** T0155 is done on exact-head V 3.0.568 and provides `SchemaValidatedConversationContextCapsuleSummarizer`; T0150 is done with an accepted create/send/reopen local Room workflow. Both incoming edges were reviewed against current source and tests and marked validated without deleting the conservative `blocks` relationships.
+- **Implementation:** The conversation capsule ViewModel reads `MessageDao.observeForConversation(conversationId)`, maps local rows into the existing summary request contract, and uses the configured UTF-8 byte limit. A successful summary fills the existing editor as a draft; it does not overwrite the saved record until the user presses Save. Empty history, invalid output, a provider failure, and size rejection keep the saved capsule unchanged.
+- **Privacy boundary:** The built-in extractive summarizer runs through the local domain contract. The operation contains no network client and the current Android client explicitly does not send requests to a processing host yet. Therefore no full-history network payload is constructed in this version; remote delivery remains unimplemented and is not claimed.
+- **Tests added:** A Robolectric test creates a saved capsule, inserts messages into two conversations, verifies only the selected conversation's history informs the proposed draft, and confirms persistence happens only after Save. A Python source-contract test checks the Room-scoped flow and the no-network/current-transport boundary.
+- **Local validation:** The connected GitHub tool session does not run Gradle or Python locally. No local test command is claimed. Exact-head GitHub Actions must pass before accepting this task.
+- **Status:** `in_progress`, attempt `T0156-A001` partial; lint, JVM and repository quality checks are pending.

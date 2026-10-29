@@ -73,11 +73,12 @@ internal fun conversationDetailScreen(
             SharedPreferencesConversationContextCapsuleSizeLimitStore(applicationContext)
         }
     val contextCapsuleFactory =
-        remember(conversationId, contextCapsuleRepository, contextCapsuleSizeLimitStore) {
+        remember(conversationId, contextCapsuleRepository, contextCapsuleSizeLimitStore, messageDao) {
             ConversationContextCapsuleViewModel.Factory(
                 conversationId,
                 contextCapsuleRepository,
                 contextCapsuleSizeLimitStore,
+                messageDao,
             )
         }
     val contextCapsuleViewModel: ConversationContextCapsuleViewModel =
@@ -169,6 +170,9 @@ internal fun conversationDetailScreen(
                     onUnresolvedItemsChange = contextCapsuleViewModel::updateUnresolvedItems,
                     onSave = { scope.launch { contextCapsuleViewModel.save() } },
                     onDelete = { scope.launch { contextCapsuleViewModel.delete() } },
+                    onUpdateFromHistory = {
+                        scope.launch { contextCapsuleViewModel.updateFromLocalHistory() }
+                    },
                 )
 
                 Text("Request status", style = MaterialTheme.typography.titleLarge)
@@ -248,6 +252,7 @@ private fun contextCapsuleSection(
     onUnresolvedItemsChange: (String) -> Unit,
     onSave: () -> Unit,
     onDelete: () -> Unit,
+    onUpdateFromHistory: () -> Unit,
 ) {
     var confirmDelete by remember { mutableStateOf(false) }
     val minSizeLimit = ConversationContextCapsule.MIN_CONFIGURABLE_SERIALIZED_BYTES
@@ -270,7 +275,7 @@ private fun contextCapsuleSection(
             onValueChange = { onMaxSerializedBytesChange(it.roundToInt()) },
             valueRange = minSizeLimit.toFloat()..maxSizeLimit.toFloat(),
             steps = sizeLimitSteps,
-            enabled = !state.isSaving && !state.isDeleting,
+            enabled = !state.isSaving && !state.isDeleting && !state.isUpdatingFromHistory,
             modifier = Modifier.fillMaxWidth(),
         )
         Text(
@@ -283,6 +288,7 @@ private fun contextCapsuleSection(
         } else if (state.isEditing) {
             OutlinedTextField(
                 value = state.goal,
+                enabled = !state.isUpdatingFromHistory,
                 onValueChange = onGoalChange,
                 modifier = Modifier.fillMaxWidth(),
                 label = { Text("Goal (required)") },
@@ -291,6 +297,7 @@ private fun contextCapsuleSection(
             )
             OutlinedTextField(
                 value = state.keyFactsText,
+                enabled = !state.isUpdatingFromHistory,
                 onValueChange = onKeyFactsChange,
                 modifier = Modifier.fillMaxWidth(),
                 label = { Text("Key facts — one per line") },
@@ -299,6 +306,7 @@ private fun contextCapsuleSection(
             )
             OutlinedTextField(
                 value = state.decisionsText,
+                enabled = !state.isUpdatingFromHistory,
                 onValueChange = onDecisionsChange,
                 modifier = Modifier.fillMaxWidth(),
                 label = { Text("Decisions — one per line") },
@@ -307,6 +315,7 @@ private fun contextCapsuleSection(
             )
             OutlinedTextField(
                 value = state.constraintsText,
+                enabled = !state.isUpdatingFromHistory,
                 onValueChange = onConstraintsChange,
                 modifier = Modifier.fillMaxWidth(),
                 label = { Text("Constraints — one per line") },
@@ -315,6 +324,7 @@ private fun contextCapsuleSection(
             )
             OutlinedTextField(
                 value = state.unresolvedItemsText,
+                enabled = !state.isUpdatingFromHistory,
                 onValueChange = onUnresolvedItemsChange,
                 modifier = Modifier.fillMaxWidth(),
                 label = { Text("Unresolved items — one per line") },
@@ -383,6 +393,25 @@ private fun contextCapsuleSection(
                     Text(if (state.isDeleting) "Deleting…" else "Delete capsule")
                 }
             }
+        }
+        if (!state.isLoading) {
+            OutlinedButton(
+                onClick = onUpdateFromHistory,
+                enabled = !state.isSaving && !state.isDeleting && !state.isUpdatingFromHistory,
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Text(
+                    when {
+                        state.isUpdatingFromHistory -> "Preparing draft…"
+                        state.isEditing -> "Refresh draft from local history"
+                        else -> "Suggest capsule from local history"
+                    },
+                )
+            }
+            Text(
+                "Uses only this conversation’s local messages. The draft is not sent automatically; review and save it to persist.",
+                style = MaterialTheme.typography.bodySmall,
+            )
         }
         state.errorMessage?.let { message ->
             Text(message, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)

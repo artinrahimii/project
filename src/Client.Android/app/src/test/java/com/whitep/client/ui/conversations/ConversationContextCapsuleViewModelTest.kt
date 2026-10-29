@@ -8,6 +8,7 @@ import com.whitep.client.context.ConversationContextCapsule
 import com.whitep.client.data.ClientDatabase
 import com.whitep.client.data.ConversationContextCapsuleLoadResult
 import com.whitep.client.data.ConversationEntity
+import com.whitep.client.data.MessageEntity
 import com.whitep.client.data.RoomConversationContextCapsuleRepository
 import com.whitep.client.data.SharedPreferencesConversationContextCapsuleSizeLimitStore
 import kotlinx.coroutines.runBlocking
@@ -108,6 +109,76 @@ class ConversationContextCapsuleViewModelTest {
             assertFalse(viewModel.uiState.value.isEditing)
         }
 
+
+    @Test
+    fun suggestsCapsuleFromOnlyThisConversationsLocalHistoryAndRequiresSave() =
+        runBlocking {
+            val original =
+                ConversationContextCapsule(
+                    goal = "Original goal",
+                    keyFacts = listOf("Existing fact"),
+                )
+            repository.save("conversation-ui", original, 10L)
+            database.conversationDao().upsert(
+                ConversationEntity(
+                    conversationId = "conversation-other",
+                    title = "Another conversation",
+                    createdAtEpochMillis = 1L,
+                    updatedAtEpochMillis = 1L,
+                ),
+            )
+            database.messageDao().upsert(
+                MessageEntity(
+                    messageId = "local-one",
+                    conversationId = "conversation-ui",
+                    authorRole = "user",
+                    content = "goal: Ship a local release\nfact: Uses on-device Room",
+                    createdAtEpochMillis = 20L,
+                ),
+            )
+            database.messageDao().upsert(
+                MessageEntity(
+                    messageId = "local-two",
+                    conversationId = "conversation-ui",
+                    authorRole = "assistant",
+                    content = "decision: Keep data local\nconstraint: At most four kilobytes",
+                    createdAtEpochMillis = 21L,
+                ),
+            )
+            database.messageDao().upsert(
+                MessageEntity(
+                    messageId = "other-secret",
+                    conversationId = "conversation-other",
+                    authorRole = "user",
+                    content = "goal: Unrelated private conversation",
+                    createdAtEpochMillis = 22L,
+                ),
+            )
+            shadowOf(Looper.getMainLooper()).idle()
+            val viewModel = createViewModel()
+
+            assertTrue(viewModel.updateFromLocalHistory())
+            val draft = viewModel.uiState.value
+            assertTrue(draft.isEditing)
+            assertEquals("Ship a local release", draft.goal)
+            assertTrue(draft.keyFactsText.contains("Existing fact"))
+            assertTrue(draft.keyFactsText.contains("Uses on-device Room"))
+            assertEquals("Keep data local", draft.decisionsText)
+            assertEquals("At most four kilobytes", draft.constraintsText)
+            assertEquals(2, draft.summarySourceMessageCount)
+            assertFalse(draft.goal.contains("Unrelated private conversation"))
+            assertEquals(
+                original,
+                (repository.find("conversation-ui") as ConversationContextCapsuleLoadResult.Found).capsule,
+            )
+
+            assertTrue(viewModel.save())
+            val saved = repository.find("conversation-ui") as ConversationContextCapsuleLoadResult.Found
+            assertEquals("Ship a local release", saved.capsule.goal)
+            assertTrue(saved.capsule.keyFacts.contains("Existing fact"))
+            assertTrue(saved.capsule.keyFacts.contains("Uses on-device Room"))
+        }
+
     @Test
     fun blankGoalShowsValidationAndDoesNotWriteARecord() =
         runBlocking {
@@ -156,6 +227,7 @@ class ConversationContextCapsuleViewModelTest {
             conversationId = "conversation-ui",
             repository = repository,
             sizeLimitStore = sizeLimitStore,
+            messageDao = database.messageDao(),
             clockMillis = { 50L },
         ).also {
             viewModelStore.put("context-capsule", it)

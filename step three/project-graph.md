@@ -34032,33 +34032,110 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0155 و T0150 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModelTest.kt",
+        "tests/test_android_context_capsule_history_update_contract.py",
+        "step three/T0156/execution-report.md",
+        "step three/T0156/evidence/verification.md"
+      ],
       "expected_output_paths": [
         "src/Client.Android/Context/ + tests/"
       ],
-      "evidence": [],
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/context/ConversationContextCapsuleSummarizer.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/MessageEntity.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModelTest.kt",
+        "tests/test_android_context_capsule_history_update_contract.py",
+        "step three/T0155/execution-report.md",
+        "step three/T0150/execution-report.md"
+      ],
       "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0156-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt",
+          "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+          "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModelTest.kt",
+          "tests/test_android_context_capsule_history_update_contract.py",
+          "step three/T0156/execution-report.md",
+          "step three/T0156/evidence/verification.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
+          "state": "in_review",
+          "triggering_contracts": [
+            "ConversationContextSummaryRequest/Accepted/Rejected contract",
+            "MessageDao.observeForConversation(conversationId) local history boundary",
+            "configured capsule serialized-byte cap"
+          ],
           "affected_by_contract_changes": [],
-          "review_evidence": []
+          "review_evidence": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/context/ConversationContextCapsuleSummarizer.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/data/MessageEntity.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationWorkflowAcceptanceTest.kt"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0156-A001",
+          "started_at": "2026-10-29T16:37:30.393Z",
+          "ended_at": "2026-10-29T16:41:30.389Z",
+          "result": "partial",
+          "summary": "Wired a local Room-history refresh action into the conversation capsule editor. The result is a reviewable draft and is not persisted until the user saves; cross-conversation isolation and manual-save behavior are covered by a new Robolectric test. Exact-head CI is pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModelTest.kt",
+            "tests/test_android_context_capsule_history_update_contract.py",
+            "step three/T0156/execution-report.md",
+            "step three/T0156/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "ConversationContextCapsuleViewModelTest.suggestsCapsuleFromOnlyThisConversationsLocalHistoryAndRequiresSave",
+              "result": "not_run",
+              "summary": "Added to the Android Robolectric/JVM suite; no local Gradle execution available in this connector session."
+            },
+            {
+              "name": "tests/test_android_context_capsule_history_update_contract.py",
+              "result": "not_run",
+              "summary": "Added source-contract assertions; no local Python execution available in this connector session."
+            },
+            {
+              "name": "Android ktlintCheck, assembleDebug, testDebugUnitTest",
+              "result": "not_run",
+              "summary": "Pending exact-head GitHub Actions after the online implementation commit."
+            },
+            {
+              "name": "Step Three quality, graph and recorded-output/evidence gates",
+              "result": "not_run",
+              "summary": "Pending exact-head GitHub Actions after the online implementation commit."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect GitHub Actions for the implementation commit. Accept T0156 only after Python/graph/evidence validation, Android lint/build/JVM tests, Windows WPF and HostLifecycle gates pass; resolve this attempt's commit SHA in the follow-up acceptance update."
+        }
+      ]
     },
     {
       "id": "T0157",
@@ -41082,19 +41159,29 @@
       "from": "T0155",
       "to": "T0156",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0156 invokes the accepted SchemaValidatedConversationContextCapsuleSummarizer using its ConversationContextSummaryRequest and consumes typed Accepted/Rejected results plus the configured byte limit. This is a direct API/contract dependency; retain blocks.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/context/ConversationContextCapsuleSummarizer.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/context/ConversationContextCapsuleSummarizerTest.kt",
+        "step three/T0155/execution-report.md"
+      ]
     },
     {
       "from": "T0150",
       "to": "T0156",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0156 consumes persisted per-conversation message rows via MessageDao.observeForConversation. T0150's accepted local workflow covers message writes and close/reopen history restoration; this DAO scope is the contract used by the summarizer. Retain blocks.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/MessageEntity.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationMessagesViewModel.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationWorkflowAcceptanceTest.kt",
+        "step three/T0150/execution-report.md"
+      ]
     },
     {
       "from": "T0156",
@@ -45853,9 +45940,43 @@
         "src/Client.Android/app/src/main/java/com/whitep/client/context/ConversationContextCapsuleSummarizer.kt"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "from": "T0155",
+      "to": "T0156",
+      "changed_at": "2026-10-29T16:41:30.389Z",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "old_validation_status": "unreviewed",
+      "new_validation_status": "validated",
+      "reason": "T0156 invokes the accepted SchemaValidatedConversationContextCapsuleSummarizer using its ConversationContextSummaryRequest and consumes typed Accepted/Rejected results plus the configured byte limit. This is a direct API/contract dependency; retain blocks.",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/context/ConversationContextCapsuleSummarizer.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/context/ConversationContextCapsuleSummarizerTest.kt",
+        "step three/T0155/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "from": "T0150",
+      "to": "T0156",
+      "changed_at": "2026-10-29T16:41:30.389Z",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "old_validation_status": "unreviewed",
+      "new_validation_status": "validated",
+      "reason": "T0156 consumes persisted per-conversation message rows via MessageDao.observeForConversation. T0150's accepted local workflow covers message writes and close/reopen history restoration; this DAO scope is the contract used by the summarizer. Retain blocks.",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/MessageEntity.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationMessagesViewModel.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationWorkflowAcceptanceTest.kt",
+        "step three/T0150/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-29T16:29:35.709Z",
+  "updated_at": "2026-10-29T16:41:30.389Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",
