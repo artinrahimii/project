@@ -6,8 +6,8 @@
 - **Gaps confirmed before edits:** Existing tests covered a configured limit below the ceiling, edit/delete, provenance, and explicit conflict review, but did not directly assert the exact 4,096-byte hard boundary and next byte, malformed/invalid-UTF-8 bytes already persisted in Room, or that refused unresolved-conflict saves do not append a history event.
 - **Implementation:** Added two Room-backed JVM acceptance tests. One calculates a JSON goal that encodes to exactly `MAX_SERIALIZED_BYTES`, then verifies the next byte is rejected without overwriting the accepted capsule or adding provenance. The other injects malformed JSON and invalid UTF-8 through the Room DAO, verifies `InvalidStoredCapsule` with the respective error code, and proves a later valid explicit save repairs the row. Extended ViewModel assertions for USER_EDIT provenance, edits, history cascade cleanup, and conflict rejection leaving history unchanged. Python source-contract coverage now requires both new runtime test names.
 - **Local execution:** No local Android/Gradle runtime is available through the connected GitHub tools. Results will be claimed only from exact-head GitHub Actions.
-- **Status:** `in_progress`; V 3.0.591 exact-head CI: Step Three quality passed 257 Python tests and graph/evidence validation; Android KtLint failed on one `Needless blank line(s)` at `ConversationContextCapsulePersistenceTest.kt:249`, so APK/JVM/Protobuf were skipped. Windows WPF and HostLifecycle passed. A002 removes the single extra blank line; V 3.0.592 CI is pending.
-- **Next action:** Check Kotlin lint, APK build, JVM persistence/migration tests, Protobuf, host checks and graph/evidence validation. Do not mark T0159 complete until all required gates pass.
+- **Status:** `done`; exact-head V 3.0.592 passed Step Three quality (257 Python tests and graph/evidence validation), Android KtLint, debug APK build, JVM unit tests, generated Protobuf verification and APK upload, Windows WPF build/startup/policy/security checks, and HostLifecycle integration tests. No local Gradle execution is claimed.
+- **Next action:** Review the incoming edges to T0160 and implement the request-payload acceptance test without claiming a live network transport that does not exist yet.
 
 
 ## Exact-head V 3.0.591 test outcomes
@@ -16,3 +16,11 @@
 - Android product build: FAIL at Kotlin lint with `Needless blank line(s)` at `ConversationContextCapsulePersistenceTest.kt:249`; APK/JVM/Protobuf were skipped, [workflow 40954025988](https://github.com/artinrahimii/project/actions/runs/40954025988).
 - Windows WPF formatting/build/startup/policy/security checks: PASS. HostLifecycle tests: PASS, [workflow 40954025988](https://github.com/artinrahimii/project/actions/runs/40954025988).
 - A002 removes the extra empty line before the first new persistence test; it does not alter test behavior. Exact-head V 3.0.592 CI is pending.
+
+
+## Exact-head V 3.0.592 acceptance results
+
+- Step Three quality gate: PASS, 257 Python tests, syntax checks, graph structure and evidence path validation, [workflow 40954472497](https://github.com/artinrahimii/project/actions/runs/40954472497).
+- Android product: PASS. Kotlin lint, debug APK build, `testDebugUnitTest`, generated Protobuf Java/Kotlin verification and artifact upload all succeeded, [workflow 40954472513](https://github.com/artinrahimii/project/actions/runs/40954472513). The JVM test task completed successfully after the added byte-boundary, corrupt-data and ViewModel provenance/conflict tests were committed.
+- Windows WPF host: PASS (formatting, Release build, Protobuf, startup smoke, process restrictions, policy rejection, model-capability gating, and DPAPI identity/peer-trust checks). HostLifecycle unit/integration: PASS, [workflow 40954472513](https://github.com/artinrahimii/project/actions/runs/40954472513).
+- These results apply to exact-head commit `8983e1b20bf2becb01c70618bb4f49c69d503e79` (`V 3.0.592`). No local Android/Gradle execution is claimed.

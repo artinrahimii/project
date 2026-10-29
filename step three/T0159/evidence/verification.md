@@ -18,3 +18,11 @@
 - Android KtLint reported one style error, `Needless blank line(s)`, at `ConversationContextCapsulePersistenceTest.kt:249`. APK/JVM/Protobuf steps were skipped, [workflow 40954025988](https://github.com/artinrahimii/project/actions/runs/40954025988).
 - Windows WPF build/startup/host policy/security checks and HostLifecycle unit/integration tests passed, [workflow 40954025988](https://github.com/artinrahimii/project/actions/runs/40954025988).
 - A002 removes that extra blank line only. V 3.0.592 validation is pending.
+
+
+## Exact-head V 3.0.592 verification
+
+- Step Three quality passed all 257 Python tests, syntax checks, graph validation, and recorded-output/evidence checks, [workflow 40954472497](https://github.com/artinrahimii/project/actions/runs/40954472497).
+- Android KtLint and debug APK build passed; `testDebugUnitTest` completed with `BUILD SUCCESSFUL`; generated Protobuf Java/Kotlin checks passed and the APK artifact uploaded successfully, [workflow 40954472513](https://github.com/artinrahimii/project/actions/runs/40954472513).
+- Windows WPF build/startup/policy/security checks and HostLifecycle unit/integration passed, [workflow 40954472513](https://github.com/artinrahimii/project/actions/runs/40954472513).
+- The exact-byte boundary, malformed stored JSON/invalid UTF-8 handling and recovery, ViewModel edit-provenance, cascade deletion and unresolved-conflict assertions are included in the test source at this head. No local Gradle run is claimed.

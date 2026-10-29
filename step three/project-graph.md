@@ -35392,8 +35392,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0158 و T0150 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "src/Client.Android/app/src/test/java/com/whitep/client/data/ConversationContextCapsulePersistenceTest.kt",
         "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModelTest.kt",
@@ -35417,12 +35417,12 @@
         "step three/T0159/execution-report.md",
         "step three/T0159/evidence/verification.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0159-A001 (2026-10-29T20:59:40Z): Added exact 4096/4097-byte boundary coverage, invalid stored JSON/UTF-8 recovery coverage, and stronger ViewModel provenance/cascade/conflict assertions. Updated the Python source-contract test. Exact-head V 3.0.591 CI pending.\nT0159-A002 (2026-10-29T21:02:43Z): Removed the single extra blank line flagged by exact-head V 3.0.591 KtLint. A001 quality gate passed, but Android APK/JVM/Protobuf did not run because of lint; Windows WPF and HostLifecycle passed. Exact-head V 3.0.592 CI pending.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0159-A001 (2026-10-29T20:59:40Z): Added exact 4096/4097-byte boundary coverage, invalid stored JSON/UTF-8 recovery coverage, and stronger ViewModel provenance/cascade/conflict assertions. Updated the Python source-contract test. Exact-head V 3.0.591 CI pending.\nT0159-A002 (2026-10-29T21:02:43Z): Removed the single extra blank line flagged by exact-head V 3.0.591 KtLint. A001 quality gate passed, but Android APK/JVM/Protobuf did not run because of lint; Windows WPF and HostLifecycle passed. Exact-head V 3.0.592 CI pending.\nT0159-A002 exact-head result (2026-10-29T21:08:10Z): succeeded on 8983e1b20bf2becb01c70618bb4f49c69d503e79. The added boundary/corruption tests and ViewModel edit/delete/conflict assertions passed within Android `testDebugUnitTest`; the quality gate, generated Protobuf checks, APK upload, Windows WPF and HostLifecycle all passed.",
       "execution_summary": {
         "attempt_count": 2,
         "failed_attempt_count": 1,
         "last_attempt_id": "T0159-A002",
-        "last_attempt_result": "partial",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Client.Android/app/src/test/java/com/whitep/client/data/ConversationContextCapsulePersistenceTest.kt",
           "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModelTest.kt",
@@ -35432,7 +35432,8 @@
           "step three/project-graph.md"
         ],
         "related_commits": [
-          "107c3527c7e991940c552da910530ea1de16dd61"
+          "107c3527c7e991940c552da910530ea1de16dd61",
+          "8983e1b20bf2becb01c70618bb4f49c69d503e79"
         ],
         "tests_passed": [
           {
@@ -35452,6 +35453,30 @@
             "result": "passed",
             "summary": "HostLifecycle tests passed.",
             "url": "https://github.com/artinrahimii/project/actions/runs/40954025988"
+          },
+          {
+            "name": "Step Three quality gate — V 3.0.592",
+            "result": "passed",
+            "summary": "257 Python tests and graph/evidence validation passed.",
+            "url": "https://github.com/artinrahimii/project/actions/runs/40954472497"
+          },
+          {
+            "name": "Android product — V 3.0.592",
+            "result": "passed",
+            "summary": "KtLint, APK, JVM tests, generated Protobuf verification and artifact upload passed.",
+            "url": "https://github.com/artinrahimii/project/actions/runs/40954472513"
+          },
+          {
+            "name": "Windows WPF host — V 3.0.592",
+            "result": "passed",
+            "summary": "Windows WPF formatting/build/startup/policy/security checks passed.",
+            "url": "https://github.com/artinrahimii/project/actions/runs/40954472513"
+          },
+          {
+            "name": "HostLifecycle — V 3.0.592",
+            "result": "passed",
+            "summary": "HostLifecycle tests passed.",
+            "url": "https://github.com/artinrahimii/project/actions/runs/40954472513"
           }
         ],
         "tests_failed": [
@@ -35465,7 +35490,7 @@
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "in_review",
+          "state": "passed",
           "triggering_contracts": [
             "ConversationContextCapsule byte ceiling and strict decoder",
             "Room capsule persistence/provenance transaction",
@@ -35481,7 +35506,11 @@
             "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModelTest.kt",
             "tests/test_android_context_capsule_persistence_contract.py",
             "step three/T0158/execution-report.md",
-            "step three/T0150/execution-report.md"
+            "step three/T0150/execution-report.md",
+            "src/Client.Android/app/src/main/java/com/whitep/client/context/ConversationContextCapsule.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/data/RoomConversationContextCapsuleRepository.kt",
+            "https://github.com/artinrahimii/project/actions/runs/40954472497",
+            "https://github.com/artinrahimii/project/actions/runs/40954472513"
           ]
         }
       },
@@ -35536,38 +35565,65 @@
         {
           "attempt_id": "T0159-A002",
           "started_at": "2026-10-29T21:02:43Z",
-          "ended_at": "2026-10-29T21:02:43Z",
-          "result": "partial",
-          "summary": "Removed the extra blank line identified by V 3.0.591 KtLint; updated task report/evidence and recorded the failing attempt without claiming the JVM tests ran. Exact-head V 3.0.592 CI is pending.",
+          "ended_at": "2026-10-29T21:08:10Z",
+          "result": "succeeded",
+          "summary": "Exact-head V 3.0.592 passed the Step Three quality gate, Android lint/APK/JVM/Protobuf checks and artifact upload, Windows WPF checks, and HostLifecycle integration tests. The added byte-boundary and corrupt-storage recovery tests are included in the successful JVM task.",
           "changed_files": [
             "src/Client.Android/app/src/test/java/com/whitep/client/data/ConversationContextCapsulePersistenceTest.kt",
             "step three/T0159/execution-report.md",
             "step three/T0159/evidence/verification.md",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "8983e1b20bf2becb01c70618bb4f49c69d503e79",
           "tests": [
             {
               "name": "Step Three quality gate — V 3.0.592",
-              "result": "not_run",
-              "summary": "Runs after commit."
+              "result": "passed",
+              "summary": "257 Python tests, syntax checks, graph structure and evidence path validation passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40954472497"
             },
             {
-              "name": "Android KtLint/APK/JVM/Protobuf/migration — V 3.0.592",
-              "result": "not_run",
-              "summary": "Runs after commit."
+              "name": "Android KtLint — V 3.0.592",
+              "result": "passed",
+              "summary": "Kotlin lint passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40954472513"
             },
             {
-              "name": "Windows WPF and HostLifecycle — V 3.0.592",
-              "result": "not_run",
-              "summary": "Runs after commit."
+              "name": "Android debug APK build — V 3.0.592",
+              "result": "passed",
+              "summary": "Debug APK build and artifact upload succeeded.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40954472513"
+            },
+            {
+              "name": "Android JVM unit tests — V 3.0.592",
+              "result": "passed",
+              "summary": "Gradle testDebugUnitTest completed with BUILD SUCCESSFUL, including the new exact-byte ceiling, stored-corruption recovery and ViewModel provenance/conflict assertions.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40954472513"
+            },
+            {
+              "name": "Generated Protobuf Java/Kotlin verification — V 3.0.592",
+              "result": "passed",
+              "summary": "Generated Protobuf sources verified successfully.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40954472513"
+            },
+            {
+              "name": "Windows WPF host — V 3.0.592",
+              "result": "passed",
+              "summary": "Formatting, Release build, Protobuf, startup smoke, policy and security checks passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40954472513"
+            },
+            {
+              "name": "HostLifecycle unit/integration — V 3.0.592",
+              "result": "passed",
+              "summary": "Host lifecycle unit/integration test job passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40954472513"
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect exact-head V 3.0.592 CI; fix any lint/compile/test failures before completing T0159."
+          "follow_up": "Review T0159 → T0160 and T0150 → T0160 according to actual code and keep `blocks` edges. Next task is T0160: add a request-payload acceptance test that asserts the selected current prompt and capsule bytes while excluding full message history; report that no live Android-to-host transport is currently wired."
         }
       ]
     },
@@ -42576,19 +42632,31 @@
       "from": "T0159",
       "to": "T0160",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0159 adds verified local codec/persistence acceptance cases, but T0160's payload contract can be exercised directly against the existing versioned InferenceRequest schema and its prompt/context_capsule fields without consuming a T0159-specific artifact. Retain the existing blocks edge as conservative execution order only; do not imply a live network transport exists.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/context/ConversationContextCapsule.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/protocol/ProtocolMessages.kt",
+        "protocol/whitep/v1/messages.proto",
+        "src/Client.Android/app/src/test/java/com/whitep/client/protocol/ProtoRoundTripTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/data/ConversationContextCapsulePersistenceTest.kt",
+        "step three/T0159/execution-report.md"
+      ]
     },
     {
       "from": "T0150",
       "to": "T0160",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0150 verifies the current conversation/message workflow, but T0160's protocol payload test can be constructed from one explicitly selected prompt and a capsule without querying or consuming the T0150 workflow output. Preserve blocks as sequencing order; the payload test must explicitly exclude full history.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/ConversationEntity.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationWorkflowAcceptanceTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/protocol/ProtoRoundTripTest.kt",
+        "protocol/whitep/v1/messages.proto"
+      ]
     },
     {
       "from": "T0160",
@@ -47371,9 +47439,41 @@
         "step three/T0150/execution-report.md"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-29T21:08:10Z",
+      "edge_from": "T0159",
+      "edge_to": "T0160",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "reason": "Reviewed the payload-test contract: T0159 supplies local capsule persistence/corruption regression coverage, while T0160 can build a protocol request from a selected prompt and capsule bytes without consuming a T0159-only artifact. Keep blocks as conservative order; no live transport claim.",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/context/ConversationContextCapsule.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/protocol/ProtocolMessages.kt",
+        "protocol/whitep/v1/messages.proto",
+        "src/Client.Android/app/src/test/java/com/whitep/client/protocol/ProtoRoundTripTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/data/ConversationContextCapsulePersistenceTest.kt",
+        "step three/T0159/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-29T21:08:10Z",
+      "edge_from": "T0150",
+      "edge_to": "T0160",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "reason": "Reviewed current-message workflow against the protocol payload test. T0160 can explicitly pass only the chosen prompt and capsule without loading the complete conversation history; T0150 is ordering context rather than a direct consumed artifact.",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/ConversationEntity.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationWorkflowAcceptanceTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/protocol/ProtoRoundTripTest.kt",
+        "protocol/whitep/v1/messages.proto"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-29T21:02:43Z",
+  "updated_at": "2026-10-29T21:08:10Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",
