@@ -28,3 +28,10 @@ No local tests are claimed. Exact-head CI must pass Android lint, debug APK buil
 - Quality [run 40898143390](https://github.com/artinrahimii/project/actions/runs/40898143390) passed **242 Python tests**, syntax checks, graph validation and output/evidence checks; the graph guard reported 229 tasks/417 edges, zero errors and one preserved T0001 metadata warning.
 - Product [run 40898143330](https://github.com/artinrahimii/project/actions/runs/40898143330) passed the HostLifecycle job. Android `ktlintMainSourceSetCheck` failed two findings: the unsupported-schema user message exceeded the 120-character limit in `ConversationContextCapsuleViewModel.kt:246`, and the delete-confirmation `Text` call needed multiline formatting in `ConversationDetailScreen.kt:364`. APK build and Android JVM tests were skipped. Windows WPF was still in progress at report time.
 - **T0153-A001 is recorded as failed**, not accepted. **T0153-A002** fixes those exact formatting findings without changing behavior; new exact-head CI is pending.
+
+
+## Second exact-head CI result — V 3.0.559
+
+- Quality [run 40898787440](https://github.com/artinrahimii/project/actions/runs/40898787440) passed **242 Python tests**, syntax, graph structure and output/evidence checks. The graph guard reported 229 tasks/417 edges, zero errors and one preserved T0001 warning.
+- Product [run 40898787349](https://github.com/artinrahimii/project/actions/runs/40898787349): main-source ktlint passed and HostLifecycle passed, but test-source ktlint failed due import ordering and an unused `ConversationContextCapsule` import in `ConversationContextCapsuleViewModelTest.kt`. APK build and Android JVM tests were skipped; Windows WPF was in progress at report time.
+- **T0153-A002 is recorded as failed** for this lint issue. **T0153-A003** sorts the imports and removes the unused import; exact-head CI is pending.

@@ -13,3 +13,10 @@
 - [Quality run 40898143390](https://github.com/artinrahimii/project/actions/runs/40898143390) passed 242 Python tests and graph/evidence guards (229 tasks / 417 edges, zero errors).
 - [Product run 40898143330](https://github.com/artinrahimii/project/actions/runs/40898143330) failed Android ktlint on the long schema-version error string and delete-dialog `Text` formatting. APK/JVM stages did not run; HostLifecycle passed; Windows WPF was still running when first checked.
 - A002 splits the long error string and formats the confirmation text as a multiline Compose call; behavior and repository interfaces are unchanged. T0153 remains in progress until exact-head CI passes.
+
+
+## V 3.0.559 CI failure and A003 correction
+
+- [Quality run 40898787440](https://github.com/artinrahimii/project/actions/runs/40898787440) passed 242 Python tests and graph/evidence checks (229 tasks / 417 edges, zero errors).
+- [Product run 40898787349](https://github.com/artinrahimii/project/actions/runs/40898787349) passed main-source Kotlin lint and HostLifecycle, but test-source lint failed on import order and one unused import in the new ViewModel test. APK/JVM tasks were skipped.
+- A003 sorts imports and removes the unused symbol. The task remains in progress until the next exact-head build and JVM suite pass.

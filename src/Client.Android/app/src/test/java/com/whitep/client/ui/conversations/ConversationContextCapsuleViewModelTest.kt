@@ -1,9 +1,8 @@
 package com.whitep.client.ui.conversations
 
 import android.os.Looper
-import androidx.room.Room
 import androidx.lifecycle.ViewModelStore
-import com.whitep.client.context.ConversationContextCapsule
+import androidx.room.Room
 import com.whitep.client.data.ClientDatabase
 import com.whitep.client.data.ConversationContextCapsuleLoadResult
 import com.whitep.client.data.ConversationEntity

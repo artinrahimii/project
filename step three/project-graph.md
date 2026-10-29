@@ -33167,27 +33167,29 @@
         "step three/T0153/execution-report.md",
         "step three/T0153/evidence/verification.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0153-A001 adds capsule view/edit/create/delete controls to the existing conversation detail screen and wires them to a Room-backed ViewModel/repository. Incoming T0152 edge was validated as contract_or_interface_dependency; T0150 edge as sequencing_only; both blocks edges remain. Exact-head CI is pending.\nT0153-A001 exact-head result: quality passed 242 Python tests and graph/evidence guards, but V 3.0.558 Android lint failed on one >120-character error string and delete-dialog Text formatting. A002 fixes those two reported lines; CI pending.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0153-A001 adds capsule view/edit/create/delete controls to the existing conversation detail screen and wires them to a Room-backed ViewModel/repository. Incoming T0152 edge was validated as contract_or_interface_dependency; T0150 edge as sequencing_only; both blocks edges remain. Exact-head CI is pending.\nT0153-A001 exact-head result: quality passed 242 Python tests and graph/evidence guards, but V 3.0.558 Android lint failed on one >120-character error string and delete-dialog Text formatting. A002 fixes those two reported lines; CI pending.\nT0153-A002 exact-head V 3.0.559: quality passed 242 Python tests and graph guards; main-source lint passed, but test-source lint failed due import order and one unused import. A003 sorts and cleans imports; CI pending.",
       "execution_summary": {
-        "attempt_count": 2,
-        "failed_attempt_count": 1,
-        "last_attempt_id": "T0153-A002",
+        "attempt_count": 3,
+        "failed_attempt_count": 2,
+        "last_attempt_id": "T0153-A003",
         "last_attempt_result": "partial",
         "changed_files": [
-          "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
-          "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt",
+          "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModelTest.kt",
           "step three/T0153/execution-report.md",
           "step three/T0153/evidence/verification.md",
           "step three/project-graph.md"
         ],
         "related_commits": [
-          "a9b213cef89f21fff4a88a7ac4c5142f3f8d636f"
+          "a9b213cef89f21fff4a88a7ac4c5142f3f8d636f",
+          "671fa1f5da4ec40fa0a1c3507b1c5f9b8000ca91"
         ],
         "tests_passed": [
-          "V 3.0.558 quality run 40898143390 passed 242 Python tests and graph/evidence checks. https://github.com/artinrahimii/project/actions/runs/40898143390"
+          "V 3.0.558 quality run 40898143390 passed 242 Python tests and graph/evidence checks. https://github.com/artinrahimii/project/actions/runs/40898143390",
+          "V 3.0.559 quality run 40898787440 passed 242 Python tests and graph/evidence validation; Android main-source lint passed. https://github.com/artinrahimii/project/actions/runs/40898787440"
         ],
         "tests_failed": [
-          "V 3.0.558 product run 40898143330 failed Android ktlint on the schema-version message length and delete-confirmation Text formatting; APK/JVM stages were skipped. https://github.com/artinrahimii/project/actions/runs/40898143330"
+          "V 3.0.558 product run 40898143330 failed Android ktlint on the schema-version message length and delete-confirmation Text formatting; APK/JVM stages were skipped. https://github.com/artinrahimii/project/actions/runs/40898143330",
+          "V 3.0.559 Android test-source lint failed import ordering plus one unused import in ConversationContextCapsuleViewModelTest.kt; APK/JVM tasks were skipped. https://github.com/artinrahimii/project/actions/runs/40898787349"
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -33213,7 +33215,9 @@
             "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationWorkflowAcceptanceTest.kt",
             "step three/T0150/execution-report.md",
             "https://github.com/artinrahimii/project/actions/runs/40898143390",
-            "https://github.com/artinrahimii/project/actions/runs/40898143330"
+            "https://github.com/artinrahimii/project/actions/runs/40898143330",
+            "https://github.com/artinrahimii/project/actions/runs/40898787440",
+            "https://github.com/artinrahimii/project/actions/runs/40898787349"
           ]
         }
       },
@@ -33280,12 +33284,72 @@
         {
           "attempt_id": "T0153-A002",
           "started_at": "2026-10-29T15:08:00Z",
-          "ended_at": "2026-10-29T15:08:00Z",
-          "result": "partial",
-          "summary": "Corrected the two exact ktlint findings from V 3.0.558 without changing UI behavior or the ViewModel contract. Exact-head CI is pending.",
+          "ended_at": "2026-10-29T15:10:53Z",
+          "result": "failed",
+          "summary": "V 3.0.559 quality passed all 242 Python tests and graph/evidence checks; Android main-source lint passed, but ktlintTestSourceSetCheck failed two findings in ConversationContextCapsuleViewModelTest.kt: imports were not lexicographically ordered and ConversationContextCapsule was unused. APK and JVM tasks were skipped. HostLifecycle passed; Windows WPF was still in progress at report time.",
           "changed_files": [
             "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
             "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt",
+            "step three/T0153/execution-report.md",
+            "step three/T0153/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "related_commits": [
+            "671fa1f5da4ec40fa0a1c3507b1c5f9b8000ca91"
+          ],
+          "commit_sha": "671fa1f5da4ec40fa0a1c3507b1c5f9b8000ca91",
+          "tests": [
+            {
+              "name": "Step Three quality gate — run 40898787440",
+              "result": "passed",
+              "summary": "242 Python tests passed; syntax, graph structure and output/evidence validation passed. Graph guard reported 229 tasks/417 edges, 0 errors and one preserved T0001 warning.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40898787440"
+            },
+            {
+              "name": "Android ktlint main source — product run 40898787349",
+              "result": "passed",
+              "summary": "Main Kotlin source lint passed after A002 corrections.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40898787349"
+            },
+            {
+              "name": "Android ktlint test source — product run 40898787349",
+              "result": "failed",
+              "summary": "Two findings in ConversationContextCapsuleViewModelTest.kt: import order was wrong and one imported ConversationContextCapsule symbol was unused.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40898787349"
+            },
+            {
+              "name": "Android assembleDebug / testDebugUnitTest",
+              "result": "not_run",
+              "summary": "Skipped after test-source lint failure.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40898787349"
+            },
+            {
+              "name": "HostLifecycle job — product run 40898787349",
+              "result": "passed",
+              "summary": "Host lifecycle unit/integration tests passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40898787349"
+            },
+            {
+              "name": "Windows WPF job — product run 40898787349",
+              "result": "not_run",
+              "summary": "Still in progress when this attempt was recorded.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40898787349"
+            }
+          ],
+          "failure_details": "Product run 40898787349, Android job 123535087205: ktlintTestSourceSetCheck failed import ordering at line 3 and an unused ConversationContextCapsule import at line 6. ktlintMainSourceSetCheck passed; APK/JVM tasks were skipped.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Sort the Android test imports lexicographically and remove the unused ConversationContextCapsule import; rerun exact-head CI."
+        },
+        {
+          "attempt_id": "T0153-A003",
+          "started_at": "2026-10-29T15:11:20Z",
+          "ended_at": "2026-10-29T15:11:20Z",
+          "result": "partial",
+          "summary": "Sorted ViewModel test imports and removed the unused ConversationContextCapsule import reported by ktlint. Exact-head CI is pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModelTest.kt",
             "step three/T0153/execution-report.md",
             "step three/T0153/evidence/verification.md",
             "step three/project-graph.md"
@@ -33296,24 +33360,24 @@
             {
               "name": "Android ktlintCheck",
               "result": "not_run",
-              "summary": "The two reported format violations were corrected; next exact-head lint result is pending."
+              "summary": "The exact import findings were corrected; next CI result is pending."
             },
             {
               "name": "Android assembleDebug / testDebugUnitTest",
               "result": "not_run",
-              "summary": "Awaiting lint and subsequent product steps on V 3.0.559."
+              "summary": "Awaiting lint and subsequent product stages on V 3.0.560."
             },
             {
               "name": "Step Three quality gate",
               "result": "not_run",
-              "summary": "The report and graph attempt history were updated; exact-head quality run pending."
+              "summary": "Updated attempt history and evidence report await exact-head validation."
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect V 3.0.559 quality and product CI and fix remaining issues without removing tests."
+          "follow_up": "Inspect V 3.0.560 exact-head CI. Fix further findings, then accept T0153 only after the UI ViewModel test and full product checks pass."
         }
       ]
     },
@@ -45155,7 +45219,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-29T15:08:00Z",
+  "updated_at": "2026-10-29T15:11:20Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",
