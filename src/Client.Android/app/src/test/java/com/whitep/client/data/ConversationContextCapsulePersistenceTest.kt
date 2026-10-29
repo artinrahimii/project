@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -22,7 +23,13 @@ class ConversationContextCapsulePersistenceTest {
     private val context = RuntimeEnvironment.getApplication()
     private var activeDatabase: ClientDatabase? = null
     private val testDatabaseNames =
-        listOf("t0152-capsule-persistence.db", "t0152-capsule-invalid.db", "t0158-capsule-history.db")
+        listOf(
+            "t0152-capsule-persistence.db",
+            "t0152-capsule-invalid.db",
+            "t0158-capsule-history.db",
+            "t0159-capsule-corrupt.db",
+            "t0159-capsule-boundary.db",
+        )
 
     @Before
     fun setUp() {
@@ -237,6 +244,116 @@ class ConversationContextCapsulePersistenceTest {
                 ConversationContextCapsuleLoadResult.Missing,
                 repository.find("missing-conversation"),
             )
+        }
+
+
+    @Test
+    fun acceptsExactByteCeilingAndRejectsNextByteWithoutReplacingSavedCapsule() =
+        runBlocking {
+            val database = openDatabase("t0159-capsule-boundary.db")
+            database.conversationDao().upsert(conversation("conversation-boundary"))
+            val repository =
+                RoomConversationContextCapsuleRepository(database.conversationContextCapsuleDao())
+            val oneCharacterByteCount =
+                requireNotNull(ConversationContextCapsule(goal = "x").encode().byteCount)
+            val exactGoalLength =
+                ConversationContextCapsule.MAX_SERIALIZED_BYTES - oneCharacterByteCount + 1
+            val exactLimitCapsule = ConversationContextCapsule(goal = "x".repeat(exactGoalLength))
+            val exactEncoding = exactLimitCapsule.encode()
+
+            assertTrue(exactEncoding.isValid)
+            assertEquals(
+                ConversationContextCapsule.MAX_SERIALIZED_BYTES,
+                requireNotNull(exactEncoding.byteCount),
+            )
+            val saved =
+                repository.save(
+                    "conversation-boundary",
+                    exactLimitCapsule,
+                    100L,
+                    maxSerializedBytes = ConversationContextCapsule.MAX_SERIALIZED_BYTES,
+                )
+            assertTrue(saved is ConversationContextCapsuleSaveResult.Saved)
+            assertEquals(
+                ConversationContextCapsule.MAX_SERIALIZED_BYTES,
+                (saved as ConversationContextCapsuleSaveResult.Saved).serializedByteCount,
+            )
+
+            val overLimitCapsule = ConversationContextCapsule(goal = "x".repeat(exactGoalLength + 1))
+            val overLimitEncoding = overLimitCapsule.encode()
+            assertFalse(overLimitEncoding.isValid)
+            assertEquals(ConversationContextCapsuleError.TOO_LARGE, overLimitEncoding.error)
+            assertEquals(
+                ConversationContextCapsule.MAX_SERIALIZED_BYTES + 1,
+                requireNotNull(overLimitEncoding.byteCount),
+            )
+            val rejected =
+                repository.save(
+                    "conversation-boundary",
+                    overLimitCapsule,
+                    200L,
+                    maxSerializedBytes = ConversationContextCapsule.MAX_SERIALIZED_BYTES,
+                )
+            assertTrue(rejected is ConversationContextCapsuleSaveResult.Rejected)
+            assertEquals(
+                ConversationContextCapsuleError.TOO_LARGE,
+                (rejected as ConversationContextCapsuleSaveResult.Rejected).error,
+            )
+            assertEquals(
+                exactLimitCapsule,
+                (repository.find("conversation-boundary") as ConversationContextCapsuleLoadResult.Found).capsule,
+            )
+            assertEquals(1, repository.changeHistory("conversation-boundary").size)
+        }
+
+    @Test
+    fun malformedAndInvalidUtf8StoredCapsulesStayInvalidUntilReplacedByValidSave() =
+        runBlocking {
+            val database = openDatabase("t0159-capsule-corrupt.db")
+            database.conversationDao().upsert(conversation("conversation-corrupt"))
+            val repository =
+                RoomConversationContextCapsuleRepository(database.conversationContextCapsuleDao())
+            val dao = database.conversationContextCapsuleDao()
+
+            dao.upsert(
+                ConversationContextCapsuleEntity(
+                    conversationId = "conversation-corrupt",
+                    serializedCapsule = "{not-json".toByteArray(Charsets.UTF_8),
+                    updatedAtEpochMillis = 10L,
+                ),
+            )
+            val malformed = repository.find("conversation-corrupt")
+            assertTrue(malformed is ConversationContextCapsuleLoadResult.InvalidStoredCapsule)
+            assertEquals(
+                ConversationContextCapsuleError.MALFORMED_JSON,
+                (malformed as ConversationContextCapsuleLoadResult.InvalidStoredCapsule).error,
+            )
+
+            dao.upsert(
+                ConversationContextCapsuleEntity(
+                    conversationId = "conversation-corrupt",
+                    serializedCapsule = byteArrayOf(0xC3.toByte(), 0x28.toByte()),
+                    updatedAtEpochMillis = 20L,
+                ),
+            )
+            val invalidUtf8 = repository.find("conversation-corrupt")
+            assertTrue(invalidUtf8 is ConversationContextCapsuleLoadResult.InvalidStoredCapsule)
+            assertEquals(
+                ConversationContextCapsuleError.INVALID_UTF8,
+                (invalidUtf8 as ConversationContextCapsuleLoadResult.InvalidStoredCapsule).error,
+            )
+
+            val recovered = ConversationContextCapsule(goal = "Recovered after corrupt local bytes")
+            val replacement = repository.save("conversation-corrupt", recovered, 30L)
+            assertTrue(replacement is ConversationContextCapsuleSaveResult.Saved)
+            assertEquals(
+                recovered,
+                (repository.find("conversation-corrupt") as ConversationContextCapsuleLoadResult.Found).capsule,
+            )
+            val history = repository.changeHistory("conversation-corrupt")
+            assertEquals(1, history.size)
+            assertEquals("USER_EDIT", history.single().source)
+            assertTrue(history.single().changedFieldsJson.contains("goal"))
         }
 
     private fun openDatabase(name: String): ClientDatabase =

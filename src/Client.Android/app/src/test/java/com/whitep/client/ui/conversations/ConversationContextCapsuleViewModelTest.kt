@@ -96,6 +96,10 @@ class ConversationContextCapsuleViewModelTest {
             assertEquals(listOf("Verify tablet layout"), first.capsule.unresolvedItems)
             assertFalse(viewModel.uiState.value.isEditing)
             assertNotNull(viewModel.uiState.value.message)
+            val firstHistory = repository.changeHistory("conversation-ui")
+            assertEquals(1, firstHistory.size)
+            assertEquals("USER_EDIT", firstHistory.single().source)
+            assertTrue(firstHistory.single().changedFieldsJson.contains("goal"))
 
             viewModel.beginEditing()
             viewModel.updateGoal("Updated local-first client goal")
@@ -105,10 +109,15 @@ class ConversationContextCapsuleViewModelTest {
                 repository.find("conversation-ui") as ConversationContextCapsuleLoadResult.Found
             assertEquals("Updated local-first client goal", updated.capsule.goal)
             assertEquals(listOf("Still stays on device"), updated.capsule.keyFacts)
+            val editedHistory = repository.changeHistory("conversation-ui")
+            assertEquals(2, editedHistory.size)
+            assertEquals("USER_EDIT", editedHistory.last().source)
+            assertTrue(editedHistory.last().changedFieldsJson.contains("goal"))
 
             assertTrue(viewModel.delete())
             assertEquals(ConversationContextCapsuleLoadResult.Missing, repository.find("conversation-ui"))
             assertEquals(null, viewModel.uiState.value.capsule)
+            assertTrue(repository.changeHistory("conversation-ui").isEmpty())
             assertFalse(viewModel.uiState.value.isEditing)
         }
 
@@ -232,6 +241,7 @@ class ConversationContextCapsuleViewModelTest {
             assertEquals(listOf("Remote access is enabled"), draft.keyFactsText.lines())
             assertEquals(2, draft.conflictReviews.size)
             assertFalse(viewModel.save())
+            assertEquals(1, repository.changeHistory("conversation-ui").size)
             assertEquals(
                 original,
                 (repository.find("conversation-ui") as ConversationContextCapsuleLoadResult.Found).capsule,

@@ -41,6 +41,8 @@ class AndroidContextCapsulePersistenceContractTests(unittest.TestCase):
         for marker in (
             "capsulesRemainIndependentAcrossConversationsAndDatabaseReopen",
             "invalidCapsuleIsRejectedAndForeignKeyPreventsOrphanRecords",
+            "acceptsExactByteCeilingAndRejectsNextByteWithoutReplacingSavedCapsule",
+            "malformedAndInvalidUtf8StoredCapsulesStayInvalidUntilReplacedByValidSave",
             "conversation-one",
             "conversation-two",
         ):

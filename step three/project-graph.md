@@ -35392,33 +35392,111 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0158 و T0150 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "src/Client.Android/app/src/test/java/com/whitep/client/data/ConversationContextCapsulePersistenceTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModelTest.kt",
+        "tests/test_android_context_capsule_persistence_contract.py",
+        "step three/T0159/execution-report.md",
+        "step three/T0159/evidence/verification.md",
+        "step three/project-graph.md"
+      ],
       "expected_output_paths": [
         "src/Client.Android/Context/ + tests/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "src/Client.Android/app/src/test/java/com/whitep/client/data/ConversationContextCapsulePersistenceTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModelTest.kt",
+        "tests/test_android_context_capsule_persistence_contract.py",
+        "src/Client.Android/app/src/main/java/com/whitep/client/context/ConversationContextCapsule.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/RoomConversationContextCapsuleRepository.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/ConversationContextCapsuleEntity.kt",
+        "step three/T0158/execution-report.md",
+        "step three/T0150/execution-report.md",
+        "step three/T0159/execution-report.md",
+        "step three/T0159/evidence/verification.md"
+      ],
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0159-A001 (2026-10-29T20:59:40Z): Added exact 4096/4097-byte boundary coverage, invalid stored JSON/UTF-8 recovery coverage, and stronger ViewModel provenance/cascade/conflict assertions. Updated the Python source-contract test. Exact-head V 3.0.591 CI pending.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0159-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Client.Android/app/src/test/java/com/whitep/client/data/ConversationContextCapsulePersistenceTest.kt",
+          "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModelTest.kt",
+          "tests/test_android_context_capsule_persistence_contract.py",
+          "step three/T0159/execution-report.md",
+          "step three/T0159/evidence/verification.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
-          "affected_by_contract_changes": [],
-          "review_evidence": []
+          "state": "in_review",
+          "triggering_contracts": [
+            "ConversationContextCapsule byte ceiling and strict decoder",
+            "Room capsule persistence/provenance transaction",
+            "ViewModel explicit conflict-review and save gate"
+          ],
+          "affected_by_contract_changes": [
+            "src/Client.Android/app/src/test/java/com/whitep/client/data/ConversationContextCapsulePersistenceTest.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModelTest.kt",
+            "tests/test_android_context_capsule_persistence_contract.py"
+          ],
+          "review_evidence": [
+            "src/Client.Android/app/src/test/java/com/whitep/client/data/ConversationContextCapsulePersistenceTest.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModelTest.kt",
+            "tests/test_android_context_capsule_persistence_contract.py",
+            "step three/T0158/execution-report.md",
+            "step three/T0150/execution-report.md"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0159-A001",
+          "started_at": "2026-10-29T20:59:40Z",
+          "ended_at": "2026-10-29T20:59:40Z",
+          "result": "partial",
+          "summary": "Added exact size-ceiling/over-limit tests, malformed stored JSON and invalid UTF-8 detection/recovery tests, plus ViewModel provenance/cascade/conflict-gate assertions. The Python source-contract test requires both new JVM test names. Exact-head CI is pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/test/java/com/whitep/client/data/ConversationContextCapsulePersistenceTest.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModelTest.kt",
+            "tests/test_android_context_capsule_persistence_contract.py",
+            "step three/T0159/execution-report.md",
+            "step three/T0159/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Step Three quality gate — V 3.0.591",
+              "result": "not_run",
+              "summary": "Runs after commit."
+            },
+            {
+              "name": "Android KtLint/APK/JVM/Protobuf/migration — V 3.0.591",
+              "result": "not_run",
+              "summary": "Runs after commit."
+            },
+            {
+              "name": "Windows WPF and HostLifecycle — V 3.0.591",
+              "result": "not_run",
+              "summary": "Runs after commit."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect exact-head V 3.0.591 CI, fix any failures, and do not mark T0159 done until all required acceptance gates pass."
+        }
+      ]
     },
     {
       "id": "T0160",
@@ -47222,7 +47300,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-29T20:56:06Z",
+  "updated_at": "2026-10-29T20:59:40Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",
