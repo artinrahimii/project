@@ -172,7 +172,10 @@ class ExtractiveConversationContextCapsuleSummaryProvider : ConversationContextC
         val separator = line.indexOf(':')
         if (separator <= 0 || separator == line.lastIndex) return null
         val label = line.substring(0, separator).trim().lowercase(Locale.ROOT)
-        val value = line.substring(separator + 1).trim().take(MAX_EXTRACTED_ITEM_CHARACTERS).trim()
+        val valueAfterSeparator = line.substring(separator + 1)
+        val trimmedValue = valueAfterSeparator.trim()
+        val cappedValue = trimmedValue.take(MAX_EXTRACTED_ITEM_CHARACTERS)
+        val value = cappedValue.trim()
         if (value.isBlank()) return null
         val category =
             when (label) {

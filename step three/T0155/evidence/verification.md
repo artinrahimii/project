@@ -24,3 +24,10 @@
 - Step Three quality passed: [run 40909822726](https://github.com/artinrahimii/project/actions/runs/40909822726), including Python tests, syntax, graph structure, and evidence checks.
 - Android product gate failed `ktlintMainSourceSetCheck` with seven formatting findings. APK/JVM steps were skipped: [run 40909822388](https://github.com/artinrahimii/project/actions/runs/40909822388).
 - HostLifecycle passed in run 40909822388. Windows WPF was still in progress at this evidence update. A002 fixes the reported formatting only; the task remains unaccepted pending a successful exact-head product gate.
+
+
+## Exact-head V 3.0.566 verification
+
+- Step Three quality passed: [run 40910278299](https://github.com/artinrahimii/project/actions/runs/40910278299).
+- Android ktlint failed four chain-continuation findings in the marked-field value expression. APK/JVM steps were skipped: [run 40910278198](https://github.com/artinrahimii/project/actions/runs/40910278198).
+- HostLifecycle passed in run 40910278198. Windows WPF was still running when this record was updated. A003 replaces the chain with separate normalization statements; acceptance remains pending.

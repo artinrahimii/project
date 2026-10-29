@@ -16,3 +16,10 @@
 - Step Three quality [run 40909822726](https://github.com/artinrahimii/project/actions/runs/40909822726) passed automated Python tests, Python syntax, graph structure and recorded-output/evidence validation.
 - Product [run 40909822388](https://github.com/artinrahimii/project/actions/runs/40909822388): Android `ktlintMainSourceSetCheck` failed seven formatting findings in this source; APK build and Android JVM tests were skipped. HostLifecycle passed. Windows WPF was still running when this report was updated.
 - A001 is a failed implementation attempt for the Android gate; it is not accepted. A002 changes only formatting and must pass a new exact-head CI run before task completion.
+
+
+## Exact-head V 3.0.566 CI result — attempt A002
+
+- Step Three quality [run 40910278299](https://github.com/artinrahimii/project/actions/runs/40910278299) passed Python tests, syntax, graph structure and output/evidence checks.
+- Product [run 40910278198](https://github.com/artinrahimii/project/actions/runs/40910278198): Android `ktlintMainSourceSetCheck` failed four chain-continuation findings at the field-value expression on line 175. APK build and JVM tests were skipped. HostLifecycle passed; Windows WPF was still running at report time.
+- A002 is preserved as a failed attempt. A003 splits the string normalization sequence into independent statements and awaits new exact-head CI.
