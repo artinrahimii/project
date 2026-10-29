@@ -1,7 +1,10 @@
 # T0150 evidence ledger
 
-- **New integration test:** `src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationWorkflowAcceptanceTest.kt` tests create → send → close/reopen file-backed Room → restore conversation/message/request-state data using production ViewModels and DAO implementations.
-- **UI/repository source contract:** `tests/test_android_conversation_detail_contract.py` verifies the Compose list screen's create/open actions, detail screen's persisted message flow and send action, and the workflow test.
-- **Incoming-edge review:** T0149 → T0150 is `contract_or_interface_dependency`; T0138 → T0150 is `sequencing_only`. Both original `blocks` edges remain; rationale/evidence is recorded in graph edge-change log.
-- **Not yet proven:** Kotlin lint/compile, file-backed workflow JVM/Robolectric test, APK build, Python suite and graph/evidence guards. Exact-head CI pending.
-- **Boundary:** the flow under test is local-only and does not imply Android-to-Windows message delivery or host secrecy.
+- **Accepted implementation:** [`V 3.0.546`](https://github.com/artinrahimii/project/commit/c3030cd33b9d0d8f78e22c3cb31bdb75e420b48b).
+- **Workflow integration test:** `src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationWorkflowAcceptanceTest.kt` uses production ViewModels and DAO APIs to create a conversation, send two messages, persist a request state, close/reopen a file-backed Room database and verify restored history/status.
+- **Python source-contract coverage:** `tests/test_android_conversation_detail_contract.py` covers Compose list/detail wiring and the integration test's local-only boundary.
+- **Quality:** [run 40877312783](https://github.com/artinrahimii/project/actions/runs/40877312783) passed 231 Python tests, syntax, graph structure and output/evidence checks (229 tasks/417 edges; zero errors; one preserved T0001 metadata warning).
+- **Android product:** [run 40877312857](https://github.com/artinrahimii/project/actions/runs/40877312857) passed Kotlin lint, debug APK build, JVM suite, Protobuf generated-source checks and APK archive upload (11,875,219 bytes).
+- **Windows/host product:** [run 40877312857](https://github.com/artinrahimii/project/actions/runs/40877312857) passed Windows WPF build/startup/security/Protobuf checks and artifact upload (14,254,980 bytes), plus HostLifecycle tests.
+- **Dependency review:** T0149 → T0150 = `contract_or_interface_dependency`; T0138 → T0150 = `sequencing_only`. Original `blocks` edges retained and rationale/evidence recorded in graph history.
+- **Boundary:** local Room + ViewModel flow only; no P2P delivery or at-rest encryption claim.

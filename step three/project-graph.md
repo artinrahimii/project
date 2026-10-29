@@ -32227,8 +32227,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0149 و T0138 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال انجام",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationWorkflowAcceptanceTest.kt",
         "tests/test_android_conversation_detail_contract.py",
@@ -32252,12 +32252,12 @@
         "step three/T0149/execution-report.md",
         "docs/decisions/ADR-0019-host-visible-inference-content.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0150-A001 adds a disk-backed Android repository/ViewModel workflow test for create → send → close/reopen → restore history and request-state rows, plus Python source-contract coverage of Compose UI wiring. Exact-head CI is pending.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0150-A001 adds a disk-backed Android repository/ViewModel workflow test for create → send → close/reopen → restore history and request-state rows, plus Python source-contract coverage of Compose UI wiring. Exact-head CI is pending.\nT0150-A002 exact-head acceptance verified on V 3.0.546 (c3030cd33b9d0d8f78e22c3cb31bdb75e420b48b). Step Three quality passed 231 Python tests, syntax, graph structure and evidence validation (229 tasks/417 edges; zero errors and one preserved T0001 metadata warning). Product CI passed Android ktlint, debug APK build, Android JVM unit tests including ConversationWorkflowAcceptanceTest, generated Protobuf checks and APK artifact upload; Windows WPF build/startup/security checks and artifact upload; and HostLifecycle tests. This validates the local UI/Room flow only, not network delivery or host privacy beyond the documented contract.",
       "execution_summary": {
-        "attempt_count": 1,
+        "attempt_count": 2,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0150-A001",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "T0150-A002",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationWorkflowAcceptanceTest.kt",
           "tests/test_android_conversation_detail_contract.py",
@@ -32265,13 +32265,23 @@
           "step three/T0150/evidence/verification.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
+        "related_commits": [
+          "c3030cd33b9d0d8f78e22c3cb31bdb75e420b48b"
+        ],
+        "tests_passed": [
+          "Step Three quality run 40877312783: 231 Python tests passed; syntax, graph structure and output/evidence checks passed; graph guard reported 229 nodes/417 edges, zero errors and one preserved T0001 warning.",
+          "Android product run 40877312857: ktlintCheck passed.",
+          "Android product run 40877312857: assembleDebug passed and debug APK artifact was uploaded (11,875,219 bytes).",
+          "Android product run 40877312857: testDebugUnitTest passed, including the ConversationWorkflowAcceptanceTest integration suite for create/send/close/reopen/restore.",
+          "Android product run 40877312857: generated Protobuf Java/Kotlin verification passed.",
+          "Windows WPF product job 40877312857: C# formatting, Release build, Protobuf, startup smoke, agent-tool safety/security checks and artifact upload passed (14,254,980 bytes).",
+          "HostLifecycle job in product run 40877312857 passed."
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "required",
+          "state": "passed",
           "triggering_contracts": [
             "ConversationListViewModel create/lookup API",
             "ConversationMessagesViewModel sendMessage/ordered-flow contract",
@@ -32282,11 +32292,10 @@
             "tests/test_android_conversation_detail_contract.py"
           ],
           "review_evidence": [
+            "https://github.com/artinrahimii/project/actions/runs/40877312783",
+            "https://github.com/artinrahimii/project/actions/runs/40877312857",
             "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationWorkflowAcceptanceTest.kt",
-            "tests/test_android_conversation_detail_contract.py",
-            "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationListScreen.kt",
-            "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
-            "step three/T0149/execution-report.md"
+            "tests/test_android_conversation_detail_contract.py"
           ]
         }
       },
@@ -32332,6 +32341,58 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Inspect exact-head quality/product workflows. Close T0150 only after the integration test, Android lint/build/JVM suite, Python suite, graph guard and repository-backed evidence checks pass. Preserve any failed attempt and correct it before acceptance."
+        },
+        {
+          "attempt_id": "T0150-A002",
+          "started_at": "2026-10-29T12:53:41.061Z",
+          "ended_at": "2026-10-29T13:15:57.108Z",
+          "result": "succeeded",
+          "summary": "Exact-head V 3.0.546 CI accepted the conversation workflow test. Step Three quality passed 231 Python tests, Python syntax, graph guard and output/evidence validation (229 tasks/417 edges; zero errors and one preserved T0001 metadata warning). Android lint, APK build, JVM test task including the new workflow acceptance test, generated Protobuf verification and APK upload passed; Windows WPF build/startup/security checks and artifact upload passed; HostLifecycle tests passed. Acceptance is limited to the tested local Compose/ViewModel/Room workflow and does not claim P2P delivery.",
+          "changed_files": [
+            "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationWorkflowAcceptanceTest.kt",
+            "tests/test_android_conversation_detail_contract.py",
+            "step three/T0150/execution-report.md",
+            "step three/T0150/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": "c3030cd33b9d0d8f78e22c3cb31bdb75e420b48b",
+          "tests": [
+            {
+              "name": "Step Three quality gate — run 40877312783",
+              "result": "passed",
+              "summary": "231 Python tests and syntax passed; graph/evidence gates passed with 229 tasks/417 edges, zero errors and one preserved T0001 warning.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40877312783"
+            },
+            {
+              "name": "Android ktlintCheck / assembleDebug / testDebugUnitTest",
+              "result": "passed",
+              "summary": "All Android lint, build and JVM test steps passed; the new ConversationWorkflowAcceptanceTest is included in the testDebugUnitTest suite.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40877312857"
+            },
+            {
+              "name": "Generated Protobuf and APK artifact",
+              "result": "passed",
+              "summary": "Java/Kotlin generated sources verified and the 11,875,219-byte Android debug APK archive uploaded.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40877312857"
+            },
+            {
+              "name": "Windows WPF build/security and artifact",
+              "result": "passed",
+              "summary": "C# formatting, Release build, Protobuf, startup smoke, agent-tool policy/process safety checks and 14,254,980-byte Windows artifact upload passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40877312857"
+            },
+            {
+              "name": "HostLifecycle unit/integration tests",
+              "result": "passed",
+              "summary": "Job completed successfully.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/40877312857"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Next eligible tasks are T0151–T0160. Inspect their actual dependencies before selection; the outgoing edges from T0150 were left unreviewed."
         }
       ]
     },
@@ -44186,7 +44247,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-29T12:53:50.711Z",
+  "updated_at": "2026-10-29T13:15:57.108Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",
