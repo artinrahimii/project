@@ -68,3 +68,16 @@
 - **Finding:** The structural graph guard passed, but the repository-root recorded-output guard reported four `MISSING_EVIDENCE_FILE` errors. The cause was four GitHub Actions URLs stored inside `T0161.evidence`; this field is interpreted strictly as repository-relative file paths.
 - **Correction:** Removed the four URLs from `evidence`. The same workflow URLs remain in `execution_summary.tests_passed` and this report. All remaining evidence entries were checked against the exact V 3.0.605 repository tree and exist.
 - **History:** A007 records the reopen; A001–A006 remain unchanged. Task status is `in_progress` until exact-head V 3.0.606 graph and recorded-output validation both pass.
+
+
+## A008 — final exact-head acceptance result
+
+- **Verified revision:** `V 3.0.606`, commit `ca183ad6c7761c7bffe21de5f174a887e221fd3d` on `main`.
+- **Quality:** 264 Python tests passed, including four DistributedRequest source-contract tests; `compileall` passed. Both graph guard modes passed for 229 tasks/417 edges with zero errors and one preserved T0001 unmapped-dependency metadata warning.
+- **Android:** `ktlintCheck`, `assembleDebug`, `testDebugUnitTest` (including six `DistributedRequestTest` cases), generated Protobuf Java/Kotlin verification and APK upload passed. APK artifact `whitep-android-debug-apk.zip`: 11,968,321 bytes, artifact 12962305165.
+- **Windows:** WPF formatting/build/Protobuf/startup smoke and agent-tool process/policy/capability plus DPAPI host identity/peer-trust checks passed. Windows artifact `whitep-windows-host.zip`: 14,254,942 bytes, artifact 12961488955.
+- **HostLifecycle:** Unit/integration checks passed.
+- **Workflows:** [Product build 41021360045](https://github.com/artinrahimii/project/actions/runs/41021360045) and [quality gate 41021360076](https://github.com/artinrahimii/project/actions/runs/41021360076) both completed successfully.
+- **Evidence schema:** `evidence` contains repository file paths only; workflow URLs remain in the execution summary and report so the repo-root guard can resolve evidence paths without treating URLs as files.
+- **Final task status:** `done`. Eight attempts are retained: A001 and A005 failed; A002 partial; A003 succeeded; A004 and A007 reopened by graph-guard findings; A006 and A008 succeeded after corrections. The T0160 → T0161 edge remains validated as `contract_or_interface_dependency`; T0161 → T0162 remains `unreviewed` and unchanged.
+- **Scope boundary:** T0161 implements and tests the request-domain value object only. Host selection, request dispatch, retries, deadline scheduling, response handling, persistence and live peer transport remain later tasks.

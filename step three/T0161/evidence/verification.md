@@ -80,3 +80,15 @@
 - The repo-root evidence check failed because four Actions URLs were placed in `T0161.evidence`, which graph_guard resolves as local repository paths.
 - Those URLs remain in the `tests_passed` records and narrative reports; the evidence list is now restricted to file paths that exist in the exact V 3.0.605 repository tree.
 - T0161 is reopened pending exact-head V 3.0.606 graph and evidence validation.
+
+
+## A008 — final exact-head V 3.0.606 verification
+
+- **Commit:** `ca183ad6c7761c7bffe21de5f174a887e221fd3d` on `main`.
+- **Python quality:** 264 tests passed, including four supplementary source-contract tests; compileall passed.
+- **Graph/evidence:** both graph_guard runs passed for 229 tasks and 417 edges, zero errors and one preserved T0001 metadata warning. The evidence array contains only resolvable repository file paths; CI URLs remain in test records and the report.
+- **Android:** KtLint, debug APK build, JVM tests (including six DistributedRequest tests), generated Protobuf Java/Kotlin checks and APK upload passed. APK artifact: 11,968,321 bytes, ID 12962305165.
+- **Windows:** formatting, Release build, generated Protobuf, startup smoke, agent-tool restrictions/policy/capability checks, DPAPI host identity and peer-trust checks passed. Artifact: 14,254,942 bytes, ID 12961488955.
+- **HostLifecycle:** Unit/integration checks passed.
+- **CI:** [Product build 41021360045](https://github.com/artinrahimii/project/actions/runs/41021360045) · [Quality gate 41021360076](https://github.com/artinrahimii/project/actions/runs/41021360076).
+- **Result:** T0161 acceptance criteria are met. The model carries a transient request-scoped UUID, positive absolute Unix-millisecond deadline, positive maxRounds and lifecycle status. No live network dispatch is claimed.

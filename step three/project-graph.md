@@ -36227,8 +36227,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0160 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "src/Client.Android/app/src/main/java/com/whitep/client/requests/DistributedRequest.kt",
         "src/Client.Android/app/src/test/java/com/whitep/client/requests/DistributedRequestTest.kt",
@@ -36250,12 +36250,12 @@
         "step three/T0161/evidence/verification.md",
         "tests/test_android_distributed_request_contract.py"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0161-A001 (2026-10-30T07:18:31.437Z): Added DistributedRequest and six JVM unit tests. Reviewed T0160->T0161 as contract_or_interface_dependency because the transient requestId and absolute deadline align with the verified InferenceRequestPayloadBuilder and canonical InferenceRequest fields. The task remains in_progress pending exact-head CI; T0161->T0162 remains unreviewed.\nT0161-A002 (2026-10-30T07:20:42.701Z): Corrected the exact V 3.0.600 KtLint failure by placing the java.util.UUID import after the org.junit imports, preserving the six JVM tests. Exact-head V 3.0.601 CI pending.\nT0161-A003 (2026-10-30T07:21:06Z–07:23:27Z): Exact-head V 3.0.601 verification passed. KtLint, Android debug APK build, all Android JVM unit tests (including six DistributedRequestTest cases), generated Protobuf Java/Kotlin verification and APK artifact upload passed. Windows WPF build/startup/security/DPAPI checks, Windows artifact upload and HostLifecycle tests passed. The quality gate passed 260 Python tests, compileall and graph/evidence checks with zero errors and one preserved T0001 metadata warning. T0161 is complete; T0161->T0162 remains unreviewed.\nT0161-A004 (2026-10-30T07:26:12Z): The V 3.0.602 exact-head quality workflow ran all 260 Python tests and compileall successfully but graph_guard rejected the done state with DONE_WITHOUT_TEST_FILE_EVIDENCE because the Kotlin JVM test path starts with src/Client.Android/ rather than tests/. The V 3.0.601 product/JVM test evidence remains valid. Added an explicit Python source-contract test under tests/ to satisfy the graph guard's documented path rule without replacing the six real Kotlin JVM tests. Task reopened as in_progress pending V 3.0.603 CI.\nT0161-A005 (2026-10-30T07:29:33Z): V 3.0.603 quality workflow ran 264 Python tests; 263 passed and one new source-contract assertion failed because a regex attempted to cross a newline in a Kotlin comment. The failure is in the supplemental Python contract test, not the production model or Android JVM tests. Replaced the multiline regex with an exact substring assertion. Exact-head V 3.0.604 CI pending.\nT0161-A006 (2026-10-30T07:31:47Z–07:34:39Z): Fixed the supplementary source-contract test by replacing a newline-sensitive regex with a literal assertion. Exact-head V 3.0.604 CI passed: all 264 Python tests; compileall; graph structure/output evidence validation (229 nodes, 417 edges, zero errors and one preserved T0001 metadata warning); Android KtLint, debug APK build, JVM tests and generated Protobuf Java/Kotlin checks; Windows WPF build/startup/security/DPAPI checks; HostLifecycle; and both platform artifact uploads. T0161 completion restored with all six attempts retained. T0161->T0162 and T0160->T0162 remain unreviewed.\nT0161-A007 (2026-10-30T07:36:42Z): V 3.0.605 graph structure validation passed but the repo-root evidence validator rejected four workflow URLs placed in the evidence array as if they were repository file paths (MISSING_EVIDENCE_FILE). Removed only those URLs from evidence; the URLs remain in tests_passed and reports. All remaining evidence paths were checked against the exact V 3.0.605 repository tree. Task reopened pending V 3.0.606 CI.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0161-A001 (2026-10-30T07:18:31.437Z): Added DistributedRequest and six JVM unit tests. Reviewed T0160->T0161 as contract_or_interface_dependency because the transient requestId and absolute deadline align with the verified InferenceRequestPayloadBuilder and canonical InferenceRequest fields. The task remains in_progress pending exact-head CI; T0161->T0162 remains unreviewed.\nT0161-A002 (2026-10-30T07:20:42.701Z): Corrected the exact V 3.0.600 KtLint failure by placing the java.util.UUID import after the org.junit imports, preserving the six JVM tests. Exact-head V 3.0.601 CI pending.\nT0161-A003 (2026-10-30T07:21:06Z–07:23:27Z): Exact-head V 3.0.601 verification passed. KtLint, Android debug APK build, all Android JVM unit tests (including six DistributedRequestTest cases), generated Protobuf Java/Kotlin verification and APK artifact upload passed. Windows WPF build/startup/security/DPAPI checks, Windows artifact upload and HostLifecycle tests passed. The quality gate passed 260 Python tests, compileall and graph/evidence checks with zero errors and one preserved T0001 metadata warning. T0161 is complete; T0161->T0162 remains unreviewed.\nT0161-A004 (2026-10-30T07:26:12Z): The V 3.0.602 exact-head quality workflow ran all 260 Python tests and compileall successfully but graph_guard rejected the done state with DONE_WITHOUT_TEST_FILE_EVIDENCE because the Kotlin JVM test path starts with src/Client.Android/ rather than tests/. The V 3.0.601 product/JVM test evidence remains valid. Added an explicit Python source-contract test under tests/ to satisfy the graph guard's documented path rule without replacing the six real Kotlin JVM tests. Task reopened as in_progress pending V 3.0.603 CI.\nT0161-A005 (2026-10-30T07:29:33Z): V 3.0.603 quality workflow ran 264 Python tests; 263 passed and one new source-contract assertion failed because a regex attempted to cross a newline in a Kotlin comment. The failure is in the supplemental Python contract test, not the production model or Android JVM tests. Replaced the multiline regex with an exact substring assertion. Exact-head V 3.0.604 CI pending.\nT0161-A006 (2026-10-30T07:31:47Z–07:34:39Z): Fixed the supplementary source-contract test by replacing a newline-sensitive regex with a literal assertion. Exact-head V 3.0.604 CI passed: all 264 Python tests; compileall; graph structure/output evidence validation (229 nodes, 417 edges, zero errors and one preserved T0001 metadata warning); Android KtLint, debug APK build, JVM tests and generated Protobuf Java/Kotlin checks; Windows WPF build/startup/security/DPAPI checks; HostLifecycle; and both platform artifact uploads. T0161 completion restored with all six attempts retained. T0161->T0162 and T0160->T0162 remain unreviewed.\nT0161-A007 (2026-10-30T07:36:42Z): V 3.0.605 graph structure validation passed but the repo-root evidence validator rejected four workflow URLs placed in the evidence array as if they were repository file paths (MISSING_EVIDENCE_FILE). Removed only those URLs from evidence; the URLs remain in tests_passed and reports. All remaining evidence paths were checked against the exact V 3.0.605 repository tree. Task reopened pending V 3.0.606 CI.\nT0161-A008 (2026-10-30T07:36:35Z–07:40:57Z): Exact-head V 3.0.606 verification passed. The file-only evidence list fixed repo-root guard parsing: both graph_guard modes passed with zero errors and one preserved T0001 metadata warning. All 264 Python tests and compileall passed. Android KtLint, APK build, JVM tests (including all six DistributedRequest tests), generated Protobuf Java/Kotlin checks and APK artifact upload passed. Windows WPF build/startup/security/DPAPI checks, Windows artifact upload and HostLifecycle passed. T0161 is complete; T0161->T0162 remains unreviewed.",
       "execution_summary": {
-        "attempt_count": 7,
+        "attempt_count": 8,
         "failed_attempt_count": 2,
-        "last_attempt_id": "T0161-A007",
-        "last_attempt_result": "reopened",
+        "last_attempt_id": "T0161-A008",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/requests/DistributedRequest.kt",
           "src/Client.Android/app/src/test/java/com/whitep/client/requests/DistributedRequestTest.kt",
@@ -36269,7 +36269,8 @@
           "9f6d1920165d2a1c1d897626886f70f3cd39e2f4",
           "e41f90241806db85bdf95c0a6dfdf5ead85c6a4b",
           "9ff44141b06ae40be00821a8d3794f9924d664ac",
-          "79449e5f0a4c81a2082bff29f3d637a16742e695"
+          "79449e5f0a4c81a2082bff29f3d637a16742e695",
+          "ca183ad6c7761c7bffe21de5f174a887e221fd3d"
         ],
         "tests_passed": [
           {
@@ -36391,6 +36392,78 @@
             "result": "passed",
             "summary": "HostLifecycle unit/integration job completed successfully.",
             "url": "https://github.com/artinrahimii/project/actions/runs/41020640994"
+          },
+          {
+            "name": "Step Three automated tests — V 3.0.606",
+            "result": "passed",
+            "summary": "264 Python tests passed, including four DistributedRequest source-contract tests.",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41021360076"
+          },
+          {
+            "name": "Step Three compileall — V 3.0.606",
+            "result": "passed",
+            "summary": "python -m compileall -q tools tests completed successfully.",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41021360076"
+          },
+          {
+            "name": "Step Three graph/evidence validation — V 3.0.606",
+            "result": "passed",
+            "summary": "Both graph_guard invocations passed for 229 tasks/417 edges with zero errors and one preserved T0001 metadata warning.",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41021360076"
+          },
+          {
+            "name": "Android KtLint — V 3.0.606",
+            "result": "passed",
+            "summary": "gradle --no-daemon ktlintCheck completed successfully.",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41021360045"
+          },
+          {
+            "name": "Android debug APK — V 3.0.606",
+            "result": "passed",
+            "summary": "gradle --no-daemon assembleDebug completed successfully.",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41021360045"
+          },
+          {
+            "name": "Android JVM unit tests — V 3.0.606",
+            "result": "passed",
+            "summary": "gradle --no-daemon testDebugUnitTest completed successfully, including all six DistributedRequest JVM tests.",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41021360045"
+          },
+          {
+            "name": "Generated Android Protobuf Java/Kotlin verification — V 3.0.606",
+            "result": "passed",
+            "summary": "Generated Java and Kotlin Protobuf source files were found and verified.",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41021360045"
+          },
+          {
+            "name": "Android debug APK artifact — V 3.0.606",
+            "result": "passed",
+            "summary": "whitep-android-debug-apk.zip uploaded successfully; 11,968,321 bytes; artifact 12962305165.",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41021360045"
+          },
+          {
+            "name": "Windows WPF host — V 3.0.606",
+            "result": "passed",
+            "summary": "C# formatting, Release build, generated Protobuf verification and WPF startup smoke test passed.",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41021360045"
+          },
+          {
+            "name": "Windows agent-tool and DPAPI checks — V 3.0.606",
+            "result": "passed",
+            "summary": "Process restrictions, policy rejection, backend/model capability, current-user DPAPI host identity and peer-trust storage checks passed.",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41021360045"
+          },
+          {
+            "name": "Windows host artifact — V 3.0.606",
+            "result": "passed",
+            "summary": "whitep-windows-host.zip uploaded successfully; 14,254,942 bytes; artifact 12961488955.",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41021360045"
+          },
+          {
+            "name": "HostLifecycle unit/integration — V 3.0.606",
+            "result": "passed",
+            "summary": "Host lifecycle unit and integration job completed successfully.",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41021360045"
           }
         ],
         "tests_failed": [
@@ -36440,7 +36513,9 @@
             "https://github.com/artinrahimii/project/actions/runs/41019550381",
             "tests/test_android_distributed_request_contract.py",
             "https://github.com/artinrahimii/project/actions/runs/41020640994",
-            "https://github.com/artinrahimii/project/actions/runs/41020640807"
+            "https://github.com/artinrahimii/project/actions/runs/41020640807",
+            "https://github.com/artinrahimii/project/actions/runs/41021360045",
+            "https://github.com/artinrahimii/project/actions/runs/41021360076"
           ]
         }
       },
@@ -36737,6 +36812,98 @@
           "reopened_reason": "Evidence array must contain only existing repository file paths; workflow URLs belong in tests_passed and reports.",
           "contract_changes": [],
           "follow_up": "Run exact-head V 3.0.606 quality gate. If both graph and recorded-output validation pass, restore T0161 done and append a successful attempt."
+        },
+        {
+          "attempt_id": "T0161-A008",
+          "started_at": "2026-10-30T07:36:35Z",
+          "ended_at": "2026-10-30T07:40:57Z",
+          "result": "succeeded",
+          "summary": "Exact-head V 3.0.606 quality and product workflows passed. Both graph guard modes succeeded; 264 Python tests, compileall, Android KtLint/APK/JVM/generated Protobuf/artifact, Windows WPF build/startup/security/DPAPI/artifact and HostLifecycle all passed.",
+          "changed_files": [
+            "step three/project-graph.md",
+            "step three/T0161/execution-report.md",
+            "step three/T0161/evidence/verification.md"
+          ],
+          "commit_sha": "ca183ad6c7761c7bffe21de5f174a887e221fd3d",
+          "tests": [
+            {
+              "name": "Step Three automated tests — V 3.0.606",
+              "result": "passed",
+              "summary": "264 Python tests passed, including four DistributedRequest source-contract tests.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41021360076"
+            },
+            {
+              "name": "Step Three compileall — V 3.0.606",
+              "result": "passed",
+              "summary": "python -m compileall -q tools tests completed successfully.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41021360076"
+            },
+            {
+              "name": "Step Three graph/evidence validation — V 3.0.606",
+              "result": "passed",
+              "summary": "Both graph_guard invocations passed for 229 tasks/417 edges with zero errors and one preserved T0001 metadata warning.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41021360076"
+            },
+            {
+              "name": "Android KtLint — V 3.0.606",
+              "result": "passed",
+              "summary": "gradle --no-daemon ktlintCheck completed successfully.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41021360045"
+            },
+            {
+              "name": "Android debug APK — V 3.0.606",
+              "result": "passed",
+              "summary": "gradle --no-daemon assembleDebug completed successfully.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41021360045"
+            },
+            {
+              "name": "Android JVM unit tests — V 3.0.606",
+              "result": "passed",
+              "summary": "gradle --no-daemon testDebugUnitTest completed successfully, including all six DistributedRequest JVM tests.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41021360045"
+            },
+            {
+              "name": "Generated Android Protobuf Java/Kotlin verification — V 3.0.606",
+              "result": "passed",
+              "summary": "Generated Java and Kotlin Protobuf source files were found and verified.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41021360045"
+            },
+            {
+              "name": "Android debug APK artifact — V 3.0.606",
+              "result": "passed",
+              "summary": "whitep-android-debug-apk.zip uploaded successfully; 11,968,321 bytes; artifact 12962305165.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41021360045"
+            },
+            {
+              "name": "Windows WPF host — V 3.0.606",
+              "result": "passed",
+              "summary": "C# formatting, Release build, generated Protobuf verification and WPF startup smoke test passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41021360045"
+            },
+            {
+              "name": "Windows agent-tool and DPAPI checks — V 3.0.606",
+              "result": "passed",
+              "summary": "Process restrictions, policy rejection, backend/model capability, current-user DPAPI host identity and peer-trust storage checks passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41021360045"
+            },
+            {
+              "name": "Windows host artifact — V 3.0.606",
+              "result": "passed",
+              "summary": "whitep-windows-host.zip uploaded successfully; 14,254,942 bytes; artifact 12961488955.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41021360045"
+            },
+            {
+              "name": "HostLifecycle unit/integration — V 3.0.606",
+              "result": "passed",
+              "summary": "Host lifecycle unit and integration job completed successfully.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41021360045"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "T0161 is complete. Before T0162, review both incoming edges T0161->T0162 and T0160->T0162 against its host-selection contract; preserve any unreviewed edge until the evidence is reviewed."
         }
       ]
     },
@@ -48503,7 +48670,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-30T07:38:02.338Z",
+  "updated_at": "2026-10-30T07:41:33.772Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",
