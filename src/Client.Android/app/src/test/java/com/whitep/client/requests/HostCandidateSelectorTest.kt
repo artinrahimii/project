@@ -1,0 +1,213 @@
+package com.whitep.client.requests
+
+import com.google.protobuf.ByteString
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
+import org.junit.Test
+import org.whitep.shared.contracts.v1.HostRuntimeState
+import org.whitep.shared.contracts.v1.InferenceRequest
+import org.whitep.shared.contracts.v1.hostAnnouncement
+import org.whitep.shared.contracts.v1.hostCapabilities
+import org.whitep.shared.contracts.v1.hostStatus
+import org.whitep.shared.contracts.v1.inferenceRequest
+import org.whitep.shared.contracts.v1.modelCapability
+
+class HostCandidateSelectorTest {
+    @Test
+    fun selectsAtMostThreeDistinctCompatibleReadyHostsInStableOrder() {
+        val candidates =
+            listOf(
+                candidate("host-z"),
+                candidate("host-c"),
+                candidate("host-a"),
+                candidate("host-d"),
+                candidate("host-b"),
+            )
+
+        val selected = HostCandidateSelector.select(validRequest(), candidates)
+
+        assertEquals(
+            listOf("host-a", "host-b", "host-c"),
+            selected.map { it.announcement.ephemeralHostId },
+        )
+        assertEquals(HostCandidateSelector.MAX_HOSTS_PER_ROUND, selected.size)
+    }
+
+    @Test
+    fun rejectsHostsThatAreNotReadyOrHaveNoAvailableConcurrency() {
+        val candidates =
+            listOf(
+                candidate("starting", state = HostRuntimeState.HOST_RUNTIME_STATE_STARTING),
+                candidate("busy", state = HostRuntimeState.HOST_RUNTIME_STATE_BUSY),
+                candidate("stopping", state = HostRuntimeState.HOST_RUNTIME_STATE_STOPPING),
+                candidate("unavailable", state = HostRuntimeState.HOST_RUNTIME_STATE_UNAVAILABLE),
+                candidate("full", activeRequests = 1, maxConcurrentRequests = 1),
+            )
+
+        assertTrue(HostCandidateSelector.select(validRequest(), candidates).isEmpty())
+    }
+
+    @Test
+    fun rejectsInconsistentPeerIdentityAndProtocolSnapshots() {
+        val candidates =
+            listOf(
+                candidate("nested-id", capabilitiesHostId = "different-peer"),
+                candidate("status-id", statusHostId = "different-peer"),
+                candidate(
+                    "announcement-version",
+                    announcementProtocolVersion = "2.0.0",
+                    capabilitiesProtocolVersion = "2.0.0",
+                ),
+                candidate(
+                    "capabilities-version",
+                    capabilitiesProtocolVersion = "2.0.0",
+                ),
+            )
+
+        assertTrue(HostCandidateSelector.select(validRequest(), candidates).isEmpty())
+    }
+
+    @Test
+    fun requiresTheRequestedModelInBothAnnouncementAndLiveStatus() {
+        val candidates =
+            listOf(
+                candidate("not-announced", announcementModelId = "another-model"),
+                candidate("not-loaded", statusModelId = "another-model"),
+                candidate("small-announcement-model", announcementMaxOutputTokens = 64L),
+                candidate("small-runtime-model", statusMaxOutputTokens = 64L),
+            )
+
+        assertTrue(HostCandidateSelector.select(validRequest(), candidates).isEmpty())
+    }
+
+    @Test
+    fun rejectsCandidatesWhosePromptCapsuleOrOutputLimitsAreTooSmall() {
+        val candidates =
+            listOf(
+                candidate("small-prompt", maxPromptBytes = 2L),
+                candidate("small-capsule", maxContextCapsuleBytes = 4L),
+                candidate("small-output-announcement", announcementMaxOutputTokens = 64L),
+                candidate("small-output-status", statusMaxOutputTokens = 64L),
+            )
+
+        assertTrue(HostCandidateSelector.select(validRequest(), candidates).isEmpty())
+    }
+
+    @Test
+    fun rejectsLocallyInvalidOrOversizedInferenceRequests() {
+        val candidate = candidate("host-a")
+        val invalidRequests =
+            listOf(
+                validRequest(modelId = " "),
+                validRequest(protocolVersion = " "),
+                validRequest(prompt = " "),
+                validRequest(prompt = "p".repeat(InferenceRequestPayloadBuilder.MAX_PROMPT_BYTES + 1)),
+                validRequest(
+                    capsuleBytes = InferenceRequestPayloadBuilder.MAX_CONTEXT_CAPSULE_BYTES + 1,
+                ),
+                validRequest(requestId = "r".repeat(InferenceRequestPayloadBuilder.MAX_SERIALIZED_REQUEST_BYTES)),
+            )
+
+        invalidRequests.forEach { request ->
+            assertTrue(HostCandidateSelector.select(request, listOf(candidate)).isEmpty())
+        }
+    }
+
+    @Test
+    fun excludesAmbiguousDuplicatePeerIdentities() {
+        val selected =
+            HostCandidateSelector.select(
+                validRequest(),
+                listOf(candidate("duplicate"), candidate("duplicate"), candidate("unique")),
+            )
+
+        assertEquals(listOf("unique"), selected.map { it.announcement.ephemeralHostId })
+    }
+
+    @Test
+    fun doesNotSelectAHostWhenTheRequestedProtocolIsNotAdvertised() {
+        val request = validRequest(protocolVersion = "2.0.0")
+
+        assertTrue(HostCandidateSelector.select(request, listOf(candidate("host-a"))).isEmpty())
+    }
+
+    private fun validRequest(
+        requestId: String = "request-001",
+        modelId: String = MODEL_ID,
+        prompt: String = "A short prompt for a compatible host.",
+        protocolVersion: String = PROTOCOL_VERSION,
+        capsuleBytes: Int = 32,
+    ): InferenceRequest =
+        inferenceRequest {
+            this.requestId = requestId
+            attemptId = "attempt-001"
+            this.modelId = modelId
+            this.prompt = prompt
+            deadlineUnixMs = 4_102_444_800_000L
+            maxOutputTokens = 128
+            contextCapsule = ByteString.copyFrom(ByteArray(capsuleBytes) { 1 })
+            this.protocolVersion = protocolVersion
+        }
+
+    private fun candidate(
+        hostId: String,
+        state: HostRuntimeState = HostRuntimeState.HOST_RUNTIME_STATE_READY,
+        activeRequests: Int = 0,
+        maxConcurrentRequests: Int = 2,
+        capabilitiesHostId: String = hostId,
+        statusHostId: String = hostId,
+        announcementProtocolVersion: String = PROTOCOL_VERSION,
+        capabilitiesProtocolVersion: String = announcementProtocolVersion,
+        announcementModelId: String = MODEL_ID,
+        statusModelId: String = MODEL_ID,
+        announcementMaxOutputTokens: Long = 1024L,
+        statusMaxOutputTokens: Long = 1024L,
+        maxPromptBytes: Long = 8192L,
+        maxContextCapsuleBytes: Long = 4096L,
+    ): HostCandidate {
+        val advertisedModel =
+            modelCapability {
+                modelId = announcementModelId
+                displayName = "Test model"
+                maxContextTokens = 8192L
+                maxOutputTokens = announcementMaxOutputTokens
+            }
+        val runtimeModel =
+            modelCapability {
+                modelId = statusModelId
+                displayName = "Test model"
+                maxContextTokens = 8192L
+                maxOutputTokens = statusMaxOutputTokens
+            }
+        val capabilities =
+            hostCapabilities {
+                ephemeralHostId = capabilitiesHostId
+                protocolVersion = capabilitiesProtocolVersion
+                models += advertisedModel
+                this.maxConcurrentRequests = maxConcurrentRequests
+                this.maxContextCapsuleBytes = maxContextCapsuleBytes
+                this.maxPromptBytes = maxPromptBytes
+            }
+        val announcement =
+            hostAnnouncement {
+                ephemeralHostId = hostId
+                protocolVersion = announcementProtocolVersion
+                this.capabilities = capabilities
+                announcedAtUnixMs = 1_798_000_000_000L
+            }
+        val status =
+            hostStatus {
+                ephemeralHostId = statusHostId
+                this.state = state
+                this.activeRequests = activeRequests
+                observedAtUnixMs = 1_798_000_000_000L
+                models += runtimeModel
+            }
+        return HostCandidate(announcement = announcement, status = status)
+    }
+
+    private companion object {
+        const val MODEL_ID = "local/model-1"
+        const val PROTOCOL_VERSION = "1.0.0"
+    }
+}
