@@ -311,3 +311,24 @@
 - **Scope:** formatting only; no transport, trust, framing, PeerId or response-correlation behavior changed.
 - **Local execution:** Gradle unavailable; no local test pass claimed.
 - **Verification:** exact V 3.0.651 CI pending. T0163 remains `in_progress`.
+
+
+## Attempt T0163-A027 — exact V 3.0.651 product CI result
+
+- **Commit:** `d8881e5a3d425db036c838463e55709b898c0ae9` (`V 3.0.651`) on `main`.
+- **Step Three quality gate:** PASS — [run 41112330489](https://github.com/artinrahimii/project/actions/runs/41112330489).
+- **Android KtLint:** PASS for main and test source sets.
+- **Android compile:** FAILED — [product workflow 41112330441](https://github.com/artinrahimii/project/actions/runs/41112330441), Android job 124257462788, `compileDebugKotlin` at `Libp2pInferenceRequestTransport.kt:369:20`: declared `CompletableFuture<Void>`, inferred `CompletableFuture<Unit!>` from the `whenComplete` return expression.
+- **Skipped:** Android APK completion, JVM tests, generated Protobuf verification and artifact upload. No Android build/JVM pass is claimed for V 3.0.651.
+- **Windows WPF:** PASS — job 124257462250.
+- **HostLifecycle:** PASS — job 124257462880.
+- **Outcome:** A027 is finalized as failed product verification. Evidence: `step three/T0163/evidence/v3.0.651-ci-failure.md`.
+
+## Attempt T0163-A028 — preserve the asynchronous send future type
+
+- **Base:** `d8881e5a3d425db036c838463e55709b898c0ae9` (`V 3.0.651`).
+- **Production correction:** `InferencePeerMessageController.sendRequest` now stores `writeAndFlush` in an explicit `CompletableFuture<Void>`, attaches frame zeroing as a separate completion callback, and returns the original typed future.
+- **Scope:** compile-contract correction only; framing, payload, callback timing, authentication, trust and correlation rules are unchanged.
+- **Local execution:** Gradle is unavailable in this connected source-editing runtime; no local KtLint, compile or JVM success is claimed.
+- **Verification:** exact-head V 3.0.652 GitHub Actions is pending. T0163 remains `in_progress`.
+- **Evidence:** `step three/T0163/evidence/v3.0.652-send-future-type-fix.md`.
