@@ -122,7 +122,13 @@ object HostCandidateSelector {
         request: InferenceRequest,
     ): Boolean {
         val matchingModels = models.filter { model -> model.modelId == request.modelId }
-        return matchingModels.size == 1 &&
-            matchingModels.single().maxOutputTokens >= request.maxOutputTokens.toLong()
+        if (matchingModels.size != 1) {
+            return false
+        }
+
+        val matchingModel = matchingModels.single()
+        val supportedMaxOutputTokens = matchingModel.maxOutputTokens
+        val requestedMaxOutputTokens = request.maxOutputTokens.toLong()
+        return supportedMaxOutputTokens >= requestedMaxOutputTokens
     }
 }

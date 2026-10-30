@@ -12,3 +12,15 @@
 - **Scope boundary:** this is a pure selection policy over supplied announcement/status snapshots. It does not implement discovery, query a remote host, open a peer connection, dispatch inference, schedule retries, or prove Android-to-Windows delivery.
 - **Execution status:** implementation and tests have been added, but they have not been run locally in this tool session. Exact-commit GitHub Actions checks are pending; task remains `in_progress` until the Android and Step Three workflows both pass.
 - **Next:** inspect the exact `V 3.0.609` workflow results and repair any real compile, lint, runtime-test or graph-guard failure before completing T0162.
+
+
+
+## T0162-A001 — exact V 3.0.609 CI exposed a KtLint formatting failure
+
+- **Implementation commit:** `2388d218e5622dd545ddd9296fb3a866059f2715` (`V 3.0.609`).
+- **Step Three quality gate — PASS:** https://github.com/artinrahimii/project/actions/runs/41039680210. Automated tests, Python syntax, graph structure and repository-backed output/evidence validation all completed successfully.
+- **HostLifecycle — PASS:** https://github.com/artinrahimii/project/actions/runs/41039680143 (job 124009119312).
+- **Android — FAILED at KtLint:** https://github.com/artinrahimii/project/actions/runs/41039680143 (job 124009118998). KtLint flagged chained property access on the `supportsModel` return line at `HostCandidateSelector.kt:106` (`Expected newline before '.'`, three reports). APK build, Android JVM tests, generated Protobuf verification and artifact upload were skipped after the lint failure.
+- **Windows WPF:** the job was still in progress at the time of this correction; no success or failure is inferred from that incomplete observation.
+- **Correction:** split the chained expression into named local values and an explicit single-model check. The selection behavior and contract remain unchanged.
+- **Outcome:** preserve this failed attempt; T0162 remains `in_progress`. Exact-head V 3.0.610 CI is required before acceptance.
