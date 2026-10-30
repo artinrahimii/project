@@ -32,6 +32,7 @@ ADR15_PARTICIPATION_LIFECYCLE = (ROOT / "docs/decisions/ADR-0015-fail-closed-par
 ADR16_CRYPTO_TRANSPORT = (ROOT / "docs/decisions/ADR-0016-maintained-libp2p-cryptographic-transport.md").read_text(encoding="utf-8")
 ADR17_HOST_IDENTITY = (ROOT / "docs/decisions/ADR-0017-windows-user-scoped-host-identity-storage.md").read_text(encoding="utf-8")
 ADR18_EXPLICIT_PEER_TRUST = (ROOT / "docs/decisions/ADR-0018-explicit-peer-trust-and-identity-verification.md").read_text(encoding="utf-8")
+ADR21_ANDROID_LIBP2P = (ROOT / "docs/decisions/ADR-0021-android-libp2p-peer-transport.md").read_text(encoding="utf-8")
 
 
 class DecisionTraceabilityTests(unittest.TestCase):
@@ -649,9 +650,12 @@ class DecisionTraceabilityTests(unittest.TestCase):
         self.assertIn('Include="../../protocol/whitep/v1/messages.proto"', shared_project)
         self.assertIn('ProtoRoot="../../protocol"', shared_project)
         self.assertIn('srcDir("../../../protocol")', android_build)
-        self.assertIn('create("java") { option("lite") }', android_build)
-        self.assertIn('create("kotlin") { option("lite") }', android_build)
-        self.assertIn('implementation("com.google.protobuf:protobuf-kotlin-lite:4.36.2")', android_build)
+        self.assertIn('create("java")', android_build)
+        self.assertIn('create("kotlin")', android_build)
+        self.assertIn('implementation("com.google.protobuf:protobuf-java:4.36.2")', android_build)
+        self.assertIn('implementation("com.google.protobuf:protobuf-kotlin:4.36.2")', android_build)
+        self.assertIn("io.libp2p:jvm-libp2p:1.3.7-RELEASE", android_build)
+        self.assertNotIn("protobuf-javalite", android_build)
         self.assertIn('public const string CurrentVersion = "1.0.0";', version_policy)
         self.assertIn('AssertProtoRoundTrip("InferenceRequest"', csharp_round_trip)
         self.assertIn('assertRoundTrip("InferenceRequest"', kotlin_round_trip)
@@ -659,7 +663,7 @@ class DecisionTraceabilityTests(unittest.TestCase):
         self.assertIn("FindRepositoryFile", csharp_round_trip)
         self.assertIn("InferenceRequest", fixtures)
         self.assertIn("Base64(wire bytes)", fixtures)
-        self.assertIn("test_android_generates_java_and_kotlin_lite_from_the_same_repository_schema", proto_tests)
+        self.assertIn("test_android_generates_java_and_kotlin_full_runtime_from_the_same_repository_schema", proto_tests)
         self.assertIn("test_canonical_schema_remains_the_only_source_proto", layout_tests)
         self.assertIn("Verify generated Protobuf C# sources", workflow)
         self.assertIn("Verify generated Protobuf Java and Kotlin sources", workflow)
@@ -865,6 +869,34 @@ class DecisionTraceabilityTests(unittest.TestCase):
         for phrase in ("DataProtectionScope.CurrentUser", "at-rest protection", "AC-P2P-01", "NOT RUN"):
             with self.subTest(phrase=phrase):
                 self.assertIn(phrase.lower(), ADR17_HOST_IDENTITY.lower())
+
+    def test_android_libp2p_transport_decision_maps_to_peer_identity_trust_and_wire_acceptance(self):
+        paths = (
+            "docs/decisions/ADR-0021-android-libp2p-peer-transport.md",
+            "src/Client.Android/app/src/main/java/com/whitep/client/network/AndroidPeerIdentityStore.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/network/AndroidPeerTrustStore.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/network/AndroidPeerIdentityStoreTest.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/network/AndroidPeerTrustStoreTest.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/network/Libp2pInferenceRequestTransportTest.kt",
+            "tests/test_android_libp2p_transport_contract.py",
+            "protocol/whitep/v1/messages.proto",
+            ".github/workflows/product-build.yml",
+        )
+        for relative_path in paths:
+            with self.subTest(path=relative_path):
+                self.assertTrue((ROOT / relative_path).is_file(), relative_path)
+                self.assertIn(Path(relative_path).name, REGISTER)
+                if relative_path != paths[0]:
+                    self.assertIn(relative_path, ADR21_ANDROID_LIBP2P)
+
+        android_build = (ROOT / "src/Client.Android/app/build.gradle.kts").read_text(encoding="utf-8")
+        self.assertIn("io.libp2p:jvm-libp2p:1.3.7-RELEASE", android_build)
+        self.assertIn("protobuf-java:4.36.2", android_build)
+        self.assertNotIn("protobuf-javalite", android_build)
+        self.assertIn("AndroidKeyStore", (ROOT / paths[1]).read_text(encoding="utf-8"))
+        self.assertIn("trustPeerAfterExplicitConfirmation", (ROOT / paths[2]).read_text(encoding="utf-8"))
+        self.assertIn("/white-p/peer-message/1.0.0", (ROOT / paths[3]).read_text(encoding="utf-8"))
 
     def test_explicit_peer_trust_decision_maps_to_persistent_store_transport_gate_and_acceptance(self):
         paths = (

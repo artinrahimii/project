@@ -34,3 +34,11 @@
 ## Graph metadata correction (follow-up V 3.0.108)
 - V 3.0.106 quality run [39844000042](https://github.com/artinrahimii/project/actions/runs/39844000042) failed graph guard because T0036 `execution_history` was serialized as a single object, so the validator saw zero successful entries.
 - The original successful T0036-A001 record from `0052b09a36b26a16286dece3b004eb6675f03807` is preserved and wrapped as an array. No prior execution evidence was discarded.
+
+
+## Android Protobuf runtime interoperability revalidation (T0163 integration)
+
+- The Android P2P transport dependency uses the full Protobuf Java runtime; it cannot safely share the app's former Lite runtime because the artifacts overlap in `com.google.protobuf` classes and the libp2p-generated classes use the full runtime.
+- Reconfigured the Android generator and runtime to use `protobuf-java:4.36.2` and `protobuf-kotlin:4.36.2` without changing the canonical schema, field numbers, generated Kotlin DSL usage or shared wire fixtures.
+- Updated `tests/test_proto_contract.py` and `tests/test_decision_traceability.py` to guard the single full runtime and the existing Java/Kotlin round-trip suites.
+- This is a compatibility-driven runtime change for the new Android libp2p consumer, not a schema or wire-format change. The original A001 evidence remains append-only; the exact current CI result must be appended after verification.

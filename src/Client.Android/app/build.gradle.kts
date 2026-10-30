@@ -43,14 +43,28 @@ android {
     testOptions {
         unitTests.isIncludeAndroidResources = true
     }
+    packaging {
+        resources {
+            excludes += setOf(
+                "META-INF/io.netty.versions.properties",
+                "META-INF/INDEX.LIST",
+                "META-INF/versions/9/OSGI-INF/MANIFEST.MF",
+                "META-INF/native-image/io.netty/netty-codec-native-quic/jni-config.json",
+                "META-INF/native-image/io.netty/netty-codec-native-quic/reflect-config.json",
+                "META-INF/native-image/io.netty/netty-codec-native-quic/resource-config.json",
+                "META-INF/native-image/io.netty/netty-codec-native-quic/native-image.properties",
+                "META-INF/license/*",
+            )
+        }
+    }
 }
 protobuf {
     protoc { artifact = "com.google.protobuf:protoc:4.36.2" }
     generateProtoTasks {
         all().configureEach {
             builtins {
-                create("java") { option("lite") }
-                create("kotlin") { option("lite") }
+                create("java")
+                create("kotlin")
             }
         }
     }
@@ -61,8 +75,15 @@ kapt {
     }
 }
 dependencies {
-    implementation("com.google.protobuf:protobuf-javalite:4.36.2")
-    implementation("com.google.protobuf:protobuf-kotlin-lite:4.36.2")
+    // jvm-libp2p exposes the full Protobuf runtime. Keep one runtime on Android to avoid
+    // duplicate com.google.protobuf classes from mixing protobuf-java and protobuf-javalite.
+    implementation("com.google.protobuf:protobuf-java:4.36.2")
+    implementation("com.google.protobuf:protobuf-kotlin:4.36.2")
+    implementation("io.libp2p:jvm-libp2p:1.3.7-RELEASE") {
+        // This client currently dials direct TCP + Noise; native QUIC/TLS transports are not used.
+        exclude(group = "io.netty", module = "netty-codec-native-quic")
+        exclude(group = "io.netty", module = "netty-tcnative-boringssl-static")
+    }
     implementation("androidx.core:core-ktx:1.17.0")
     implementation("androidx.activity:activity-compose:1.11.0")
     implementation("androidx.navigation:navigation-compose:2.9.8")

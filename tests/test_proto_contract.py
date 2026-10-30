@@ -146,16 +146,18 @@ class ProtoContractTests(unittest.TestCase):
         self.assertIn('PackageReference Include="Google.Protobuf" Version="3.36.2"', SHARED_CSPROJ)
         self.assertIn('PackageReference Include="Grpc.Tools" Version="2.84.0"', SHARED_CSPROJ)
 
-    def test_android_generates_java_and_kotlin_lite_from_the_same_repository_schema(self):
+    def test_android_generates_java_and_kotlin_full_runtime_from_the_same_repository_schema(self):
         self.assertIn('id("com.google.protobuf") version "0.10.0" apply false', ANDROID_ROOT)
         self.assertIn('id("com.google.protobuf")', ANDROID_APP)
         self.assertIn("import com.google.protobuf.gradle.*", ANDROID_APP)
         self.assertIn('srcDir("../../../protocol")', ANDROID_APP)
         self.assertIn('com.google.protobuf:protoc:4.36.2', ANDROID_APP)
-        self.assertIn('com.google.protobuf:protobuf-javalite:4.36.2', ANDROID_APP)
-        self.assertIn('create("java") { option("lite") }', ANDROID_APP)
-        self.assertIn('create("kotlin") { option("lite") }', ANDROID_APP)
-        self.assertIn('implementation("com.google.protobuf:protobuf-kotlin-lite:4.36.2")', ANDROID_APP)
+        self.assertIn('implementation("com.google.protobuf:protobuf-java:4.36.2")', ANDROID_APP)
+        self.assertIn('implementation("com.google.protobuf:protobuf-kotlin:4.36.2")', ANDROID_APP)
+        self.assertNotIn("protobuf-javalite", ANDROID_APP)
+        self.assertNotIn("protobuf-kotlin-lite", ANDROID_APP)
+        self.assertNotIn('option("lite")', ANDROID_APP)
+        self.assertIn("io.libp2p:jvm-libp2p:1.3.7-RELEASE", ANDROID_APP)
         self.assertIn('generated/sources/proto/debug/kotlin', ANDROID_APP)
         self.assertIn('generated/sources/proto/release/kotlin', ANDROID_APP)
         self.assertIn("Verify generated Protobuf Java and Kotlin sources", PRODUCT_WORKFLOW)
