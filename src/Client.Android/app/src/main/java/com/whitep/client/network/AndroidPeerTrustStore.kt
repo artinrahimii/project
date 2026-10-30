@@ -28,12 +28,17 @@ class AndroidPeerTrustStore internal constructor(
     private val preferences: SharedPreferences =
         context.applicationContext.getSharedPreferences(TRUST_PREFERENCES, Context.MODE_PRIVATE)
 
-    override fun isTrusted(peerId: String): Boolean = synchronized(TRUST_LOCK) {
+    override fun isTrusted(peerId: String): Boolean =
+        synchronized(TRUST_LOCK) {
         val canonical = validatePeerId(peerId)
         return loadTrustedPeers().contains(canonical)
     }
 
-    fun trustPeerAfterExplicitConfirmation(peerId: String, explicitlyConfirmed: Boolean) = synchronized(TRUST_LOCK) {
+    fun trustPeerAfterExplicitConfirmation(
+        peerId: String,
+        explicitlyConfirmed: Boolean,
+    ) =
+        synchronized(TRUST_LOCK) {
         if (!explicitlyConfirmed) {
             throw SecurityException("Peer trust requires explicit user confirmation.")
         }
@@ -49,7 +54,8 @@ class AndroidPeerTrustStore internal constructor(
         saveTrustedPeers(peers)
     }
 
-    fun revokeTrust(peerId: String) = synchronized(TRUST_LOCK) {
+    fun revokeTrust(peerId: String) =
+        synchronized(TRUST_LOCK) {
         val canonical = validatePeerId(peerId)
         val peers = loadTrustedPeers().toMutableSet()
         if (peers.remove(canonical)) {
@@ -59,12 +65,14 @@ class AndroidPeerTrustStore internal constructor(
 
     private fun loadTrustedPeers(): Set<String> {
         val stored = preferences.getString(TRUST_ENVELOPE_KEY, null) ?: return emptySet()
-        val envelope = try {
+        val envelope =
+            try {
             Base64.decode(stored, Base64.NO_WRAP)
         } catch (exception: IllegalArgumentException) {
             throw IllegalStateException("The Android peer trust envelope is malformed.", exception)
         }
-        val cleartext = try {
+        val cleartext =
+            try {
             protector.unprotect(envelope)
         } catch (exception: Exception) {
             throw IllegalStateException("The Android peer trust record could not be authenticated.", exception)
@@ -114,7 +122,8 @@ class AndroidPeerTrustStore internal constructor(
         if (peerId.isBlank() || peerId != peerId.trim() || peerId.any(Char::isISOControl)) {
             throw IllegalArgumentException("A normalized libp2p PeerId is required.")
         }
-        val canonical = try {
+        val canonical =
+            try {
             PeerId.fromBase58(peerId).toBase58()
         } catch (exception: Exception) {
             throw IllegalArgumentException("The supplied value is not a valid libp2p PeerId.", exception)

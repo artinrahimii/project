@@ -71,17 +71,17 @@ internal class AndroidKeyStoreProtectedBlobProtector(
             return existing
         }
         val generator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, ANDROID_KEY_STORE)
-        generator.init(
-            KeyGenParameterSpec.Builder(
-                keyAlias,
-                KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT,
-            )
-                .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
+        val keySpec =
+            KeyGenParameterSpec
+                .Builder(
+                    keyAlias,
+                    KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT,
+                ).setBlockModes(KeyProperties.BLOCK_MODE_GCM)
                 .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
                 .setRandomizedEncryptionRequired(true)
                 .setKeySize(256)
-                .build(),
-        )
+                .build()
+        generator.init(keySpec)
         return generator.generateKey()
     }
 
@@ -121,11 +121,13 @@ class AndroidPeerIdentityStore internal constructor(
     private val preferences: SharedPreferences =
         context.applicationContext.getSharedPreferences(IDENTITY_PREFERENCES, Context.MODE_PRIVATE)
 
-    fun loadOrCreate(): PrivKey = synchronized(IDENTITY_LOCK) {
+    fun loadOrCreate(): PrivKey =
+        synchronized(IDENTITY_LOCK) {
         val stored = preferences.getString(IDENTITY_ENVELOPE_KEY, null)
         if (stored != null) {
             val envelope = decodeStoredEnvelope(stored)
-            val cleartext = try {
+            val cleartext =
+                try {
                 protector.unprotect(envelope)
             } catch (exception: Exception) {
                 throw IllegalStateException("The stored Android peer identity could not be authenticated.", exception)
@@ -143,7 +145,8 @@ class AndroidPeerIdentityStore internal constructor(
 
         val generated = generateKeyPair(KeyType.ED25519).first
         val cleartext = generated.bytes()
-        val envelope = try {
+        val envelope =
+            try {
             protector.protect(cleartext)
         } finally {
             Arrays.fill(cleartext, 0)

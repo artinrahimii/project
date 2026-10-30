@@ -46,7 +46,8 @@ class Libp2pInferenceRequestTransport(
     private val trustVerifier: PeerTrustVerifier,
     private val clock: Clock = Clock.systemUTC(),
     private val connectionTimeout: Duration = DEFAULT_CONNECTION_TIMEOUT,
-) : InferenceRequestTransport, Closeable {
+)
+    : InferenceRequestTransport, Closeable {
     private data class AttemptKey(
         val requestId: String,
         val attemptId: String,
@@ -104,7 +105,8 @@ class Libp2pInferenceRequestTransport(
             return InferenceTransportSubmission.REJECTED
         }
 
-        val explicitlyTrusted = try {
+        val explicitlyTrusted =
+            try {
             trustVerifier.isTrusted(ephemeralHostId)
         } catch (_: Exception) {
             false
@@ -118,7 +120,8 @@ class Libp2pInferenceRequestTransport(
             return InferenceTransportSubmission.REJECTED
         }
 
-        val remotePeerId = try {
+        val remotePeerId =
+            try {
             PeerId.fromBase58(endpoint.peerId)
         } catch (_: IllegalArgumentException) {
             return InferenceTransportSubmission.REJECTED
@@ -127,7 +130,8 @@ class Libp2pInferenceRequestTransport(
             return InferenceTransportSubmission.REJECTED
         }
 
-        val addresses = try {
+        val addresses =
+            try {
             endpoint.tcpMultiaddresses.map { address ->
                 require(address.endsWith("/p2p/${endpoint.peerId}")) {
                     "The direct multiaddress must end with the announced PeerId."
@@ -158,22 +162,27 @@ class Libp2pInferenceRequestTransport(
 
             try {
                 ensureHostStarted()
-                val promise = libp2pHost.newStream<InferencePeerMessageController>(
+                val promise =
+                    libp2pHost.newStream<InferencePeerMessageController>(
                     listOf(PROTOCOL_ID),
                     remotePeerId,
                     *addresses.toTypedArray(),
                 )
                 val timeoutSeconds = connectionTimeout.toSeconds().coerceAtLeast(1L)
-                val stream = withContext(Dispatchers.IO) {
+                val stream =
+                    withContext(Dispatchers.IO) {
                     promise.stream.get(timeoutSeconds, TimeUnit.SECONDS)
                 }
-                val controller = withContext(Dispatchers.IO) {
+                val controller =
+                    withContext(Dispatchers.IO) {
                     promise.controller.get(timeoutSeconds, TimeUnit.SECONDS)
                 }
 
                 val authenticatedPeerId = stream.remotePeerId().toBase58()
                 if (authenticatedPeerId != endpoint.peerId) {
-                    throw SecurityException("The authenticated libp2p PeerId did not match the trusted directory identity.")
+                    throw SecurityException(
+                        "The authenticated libp2p PeerId did not match the trusted directory identity.",
+                    )
                 }
 
                 pending.controller = controller
@@ -187,7 +196,9 @@ class Libp2pInferenceRequestTransport(
                 pending.controller?.closeStream()
                 throw cancellation
             } catch (_: Exception) {
-                pending.response.completeExceptionally(IOException("The authenticated peer request could not be submitted."))
+                pending.response.completeExceptionally(
+                    IOException("The authenticated peer request could not be submitted."),
+                )
                 pendingAttempts.remove(key, pending)
                 pending.controller?.closeStream()
                 return InferenceTransportSubmission.REJECTED
@@ -211,7 +222,11 @@ class Libp2pInferenceRequestTransport(
         }
         require(!timeout.isNegative && !timeout.isZero) { "The response timeout must be positive." }
         val key = AttemptKey(requestId, attemptId)
-        val pending = pendingAttempts[key] ?: throw IllegalStateException("No submitted attempt matches these identifiers.")
+        val pending =
+            pendingAttempts[key]
+                ?: throw IllegalStateException(
+                    "No submitted attempt matches these identifiers.",
+                )
         try {
             return withTimeout(timeout.toMillis().coerceAtLeast(1L)) {
                 pending.response.await()
@@ -239,7 +254,10 @@ class Libp2pInferenceRequestTransport(
         }
     }
 
-    private fun onIncomingFrame(authenticatedPeerId: String, payload: ByteArray) {
+    private fun onIncomingFrame(
+        authenticatedPeerId: String,
+        payload: ByteArray,
+    ) {
         val response = try {
             InferenceResponse.parseFrom(payload)
         } catch (_: Exception) {
@@ -278,8 +296,7 @@ class Libp2pInferenceRequestTransport(
     }
 
     @Suppress("UNCHECKED_CAST")
-    private fun protocolBindingForHost(): ProtocolBinding<Any> =
-        protocolBinding as ProtocolBinding<Any>
+    private fun protocolBindingForHost(): ProtocolBinding<Any> = protocolBinding as ProtocolBinding<Any>
 
     override fun close() {
         if (!closed.compareAndSet(false, true)) {
