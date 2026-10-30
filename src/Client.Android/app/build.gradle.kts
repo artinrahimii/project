@@ -76,7 +76,7 @@ kapt {
 }
 dependencies {
     // jvm-libp2p exposes the full Protobuf runtime. Keep one runtime on Android to avoid
-    // duplicate com.google.protobuf classes from mixing protobuf-java and protobuf-javalite.
+    // duplicate com.google.protobuf classes from mixing the Lite and full runtimes.
     implementation("com.google.protobuf:protobuf-java:4.36.2")
     implementation("com.google.protobuf:protobuf-kotlin:4.36.2")
     implementation("io.libp2p:jvm-libp2p:1.3.7-RELEASE") {
