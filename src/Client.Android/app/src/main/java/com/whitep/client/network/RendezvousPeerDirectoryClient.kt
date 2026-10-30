@@ -1,5 +1,7 @@
 package com.whitep.client.network
 
+import org.json.JSONArray
+import org.json.JSONException
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.io.InputStream
@@ -17,8 +19,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
-import org.json.JSONArray
-import org.json.JSONException
 
 /**
  * A metadata-only peer directory entry returned by the Windows rendezvous service.
@@ -66,15 +66,17 @@ class RendezvousPeerDirectoryClient(
         require(serviceBaseUri.isAbsolute && !serviceBaseUri.isOpaque) {
             "An absolute rendezvous service URI is required."
         }
-        require(serviceBaseUri.userInfo == null &&
-            serviceBaseUri.query == null &&
-            serviceBaseUri.fragment == null
+        require(
+            serviceBaseUri.userInfo == null &&
+                serviceBaseUri.query == null &&
+                serviceBaseUri.fragment == null,
         ) {
             "The rendezvous URI must not contain credentials, query parameters or a fragment."
         }
         val scheme = serviceBaseUri.scheme.lowercase(Locale.ROOT)
-        val host = serviceBaseUri.host?.lowercase(Locale.ROOT)
-            ?: throw IllegalArgumentException("The rendezvous URI must include a host.")
+        val host =
+            serviceBaseUri.host?.lowercase(Locale.ROOT)
+                ?: throw IllegalArgumentException("The rendezvous URI must include a host.")
         require(
             scheme == "https" ||
                 (scheme == "http" && isLoopbackHost(host))
@@ -82,16 +84,18 @@ class RendezvousPeerDirectoryClient(
             "Rendezvous requires HTTPS except for loopback-only tests."
         }
 
-        val normalizedPath = serviceBaseUri.normalize().path.orEmpty().trimEnd('/')
-        requestUrl = URI(
-            scheme,
-            null,
-            host,
-            serviceBaseUri.port,
-            "$normalizedPath/v1/peers",
-            "capability=inference.v1",
-            null,
-        ).toURL()
+        val normalizedPath =
+            serviceBaseUri.normalize().path.orEmpty().trimEnd('/')
+        requestUrl =
+            URI(
+                scheme,
+                null,
+                host,
+                serviceBaseUri.port,
+                "$normalizedPath/v1/peers",
+                "capability=inference.v1",
+                null,
+            ).toURL()
     }
 
     /**
@@ -108,19 +112,21 @@ class RendezvousPeerDirectoryClient(
         return cacheMutex.withLock {
             val now = clock.instant()
             if (!now.isBefore(cacheExpiresAt)) {
-                val freshPeers = withContext(Dispatchers.IO) {
-                    fetchDirectory(now)
-                }
+                val freshPeers =
+                    withContext(Dispatchers.IO) {
+                        fetchDirectory(now)
+                    }
                 cachedPeers = freshPeers
                 val earliestPeerExpiry = freshPeers.values.minOfOrNull { it.expiresAtUtc }
                 val requestedCacheExpiry = now.plus(cacheDuration)
-                cacheExpiresAt = if (earliestPeerExpiry == null ||
-                    requestedCacheExpiry.isBefore(earliestPeerExpiry)
-                ) {
-                    requestedCacheExpiry
-                } else {
-                    earliestPeerExpiry
-                }
+                cacheExpiresAt =
+                    if (earliestPeerExpiry == null ||
+                        requestedCacheExpiry.isBefore(earliestPeerExpiry)
+                    ) {
+                        requestedCacheExpiry
+                    } else {
+                        earliestPeerExpiry
+                    }
             }
 
             cachedPeers[ephemeralHostId]?.takeIf { endpoint ->
@@ -146,16 +152,20 @@ class RendezvousPeerDirectoryClient(
                 throw IOException("Rendezvous directory request failed with HTTP status $status.")
             }
 
-            val body = connection.inputStream.use { input ->
-                readBounded(input, MAXIMUM_DIRECTORY_BYTES)
-            }
+            val body =
+                connection.inputStream.use { input ->
+                    readBounded(input, MAXIMUM_DIRECTORY_BYTES)
+                }
             return RendezvousPeerDirectoryParser.parse(body, now)
         } finally {
             connection.disconnect()
         }
     }
 
-    private fun readBounded(input: InputStream, maximumBytes: Int): String {
+    private fun readBounded(
+        input: InputStream,
+        maximumBytes: Int,
+    ): String {
         val output = ByteArrayOutputStream()
         val buffer = ByteArray(DEFAULT_READ_BUFFER_BYTES)
         while (true) {
@@ -194,26 +204,31 @@ internal object RendezvousPeerDirectoryParser {
     private const val REQUIRED_CAPABILITY = "inference.v1"
 
     private val peerIdPattern = Regex("^[1-9A-HJ-NP-Za-km-z]{20,128}$")
-    private val capabilityPattern = Regex("^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$")
-    private val tcpAddressPattern = Regex(
-        "^/(ip4|ip6)/([^/]+)/tcp/([0-9]{1,5})/p2p/([1-9A-HJ-NP-Za-km-z]{20,128})$",
-    )
-    private val quicAddressPattern = Regex(
-        "^/(ip4|ip6)/([^/]+)/udp/([0-9]{1,5})/quic-v1/p2p/([1-9A-HJ-NP-Za-km-z]{20,128})$",
-    )
+    private val tcpAddressPattern =
+        Regex(
+            "^/(ip4|ip6)/([^/]+)/tcp/([0-9]{1,5})/p2p/([1-9A-HJ-NP-Za-km-z]{20,128})$",
+        )
+    private val quicAddressPattern =
+        Regex(
+            "^/(ip4|ip6)/([^/]+)/udp/([0-9]{1,5})/quic-v1/p2p/([1-9A-HJ-NP-Za-km-z]{20,128})$",
+        )
 
     fun isValidPeerId(peerId: String): Boolean = peerIdPattern.matches(peerId)
 
-    fun parse(json: String, now: Instant): Map<String, RendezvousPeerEndpoint> {
+    fun parse(
+        json: String,
+        now: Instant,
+    ): Map<String, RendezvousPeerEndpoint> {
         require(json.toByteArray(StandardCharsets.UTF_8).size <= 16 * 1024) {
             "The rendezvous directory response exceeds the size limit."
         }
 
-        val announcements = try {
-            JSONArray(json)
-        } catch (exception: JSONException) {
-            throw IllegalArgumentException("The rendezvous directory response is not a JSON array.", exception)
-        }
+        val announcements =
+            try {
+                JSONArray(json)
+            } catch (exception: JSONException) {
+                throw IllegalArgumentException("The rendezvous directory response is not a JSON array.", exception)
+            }
         require(announcements.length() <= MAXIMUM_PEERS) {
             "The rendezvous directory contains too many peers."
         }
@@ -230,38 +245,44 @@ internal object RendezvousPeerDirectoryParser {
                 "The rendezvous directory contains a duplicate PeerId."
             }
 
-            val expiresAtUtc = try {
-                OffsetDateTime.parse(announcement.getString("expiresAtUtc")).toInstant()
-            } catch (exception: Exception) {
-                throw IllegalArgumentException("The peer announcement expiry is invalid.", exception)
-            }
-            require(!expiresAtUtc.isAfter(now.plus(Duration.ofHours(MAXIMUM_ANNOUNCEMENT_LIFETIME_HOURS)))) {
+            val expiresAtUtc =
+                try {
+                    OffsetDateTime.parse(announcement.getString("expiresAtUtc")).toInstant()
+                } catch (exception: Exception) {
+                    throw IllegalArgumentException("The peer announcement expiry is invalid.", exception)
+                }
+            require(
+                !expiresAtUtc.isAfter(now.plus(Duration.ofHours(MAXIMUM_ANNOUNCEMENT_LIFETIME_HOURS))),
+            ) {
                 "The peer announcement expiry exceeds the allowed lifetime."
             }
             if (!expiresAtUtc.isAfter(now)) {
                 continue
             }
 
-            val capabilities = readUniqueStrings(
-                announcement.getJSONArray("capabilities"),
-                MAXIMUM_CAPABILITIES,
-                "capabilities",
-            )
+            val capabilities =
+                readUniqueStrings(
+                    announcement.getJSONArray("capabilities"),
+                    MAXIMUM_CAPABILITIES,
+                    "capabilities",
+                )
             if (REQUIRED_CAPABILITY !in capabilities) {
                 continue
             }
 
-            val announcedAddresses = readUniqueStrings(
-                announcement.getJSONArray("addresses"),
-                MAXIMUM_ADDRESSES,
-                "addresses",
-            )
+            val announcedAddresses =
+                readUniqueStrings(
+                    announcement.getJSONArray("addresses"),
+                    MAXIMUM_ADDRESSES,
+                    "addresses",
+                )
             val tcpAddresses = ArrayList<String>()
             for (address in announcedAddresses) {
                 val tcpMatch = tcpAddressPattern.matchEntire(address)
                 val quicMatch = quicAddressPattern.matchEntire(address)
-                val match = tcpMatch ?: quicMatch
-                    ?: throw IllegalArgumentException("The peer announcement contains a non-direct address.")
+                val match =
+                    tcpMatch ?: quicMatch
+                        ?: throw IllegalArgumentException("The peer announcement contains a non-direct address.")
                 val groups = match.groupValues
                 val family = groups[1]
                 val host = groups[2]
@@ -283,11 +304,12 @@ internal object RendezvousPeerDirectoryParser {
                 }
             }
 
-            result[peerId] = RendezvousPeerEndpoint(
-                peerId = peerId,
-                tcpMultiaddresses = tcpAddresses.toList(),
-                expiresAtUtc = expiresAtUtc,
-            )
+            result[peerId] =
+                RendezvousPeerEndpoint(
+                    peerId = peerId,
+                    tcpMultiaddresses = tcpAddresses.toList(),
+                    expiresAtUtc = expiresAtUtc,
+                )
         }
         return result
     }
@@ -297,14 +319,18 @@ internal object RendezvousPeerDirectoryParser {
         maximumCount: Int,
         fieldName: String,
     ): List<String> {
-        require(values.length() in 1..maximumCount) {
+        require(
+            values.length() in 1..maximumCount,
+        ) {
             "The peer announcement has an invalid $fieldName count."
         }
         val result = ArrayList<String>(values.length())
         val seen = HashSet<String>()
         for (index in 0 until values.length()) {
             val value = values.getString(index)
-            require(value.isNotBlank() && seen.add(value)) {
+            require(
+                value.isNotBlank() && seen.add(value),
+            ) {
                 "The peer announcement contains an empty or duplicate $fieldName value."
             }
             result.add(value)
@@ -312,16 +338,20 @@ internal object RendezvousPeerDirectoryParser {
         return result
     }
 
-    private fun isValidIpLiteral(family: String, host: String): Boolean =
+    private fun isValidIpLiteral(
+        family: String,
+        host: String,
+    ): Boolean =
         when (family) {
             "ip4" -> {
                 val octets = host.split('.')
-                octets.size == 4 && octets.all { octet ->
-                    octet.isNotEmpty() &&
-                        octet.length <= 3 &&
-                        octet.all(Char::isDigit) &&
-                        octet.toIntOrNull()?.let { it in 0..255 } == true
-                }
+                octets.size == 4 &&
+                    octets.all { octet ->
+                        octet.isNotEmpty() &&
+                            octet.length <= 3 &&
+                            octet.all(Char::isDigit) &&
+                            octet.toIntOrNull()?.let { it in 0..255 } == true
+                    }
             }
             "ip6" -> {
                 if (!host.contains(':') || !Regex("^[0-9A-Fa-f:]+$").matches(host)) {

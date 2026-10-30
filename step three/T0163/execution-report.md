@@ -80,3 +80,21 @@
 - **Android permission:** declared `android.permission.INTERNET`.
 - **Tests added:** six Android JVM/Robolectric cases and three Python source-contract assertions. Exact-head CI is pending; local Gradle/Python execution was unavailable because this runtime could not resolve `github.com`. No test pass is claimed in this attempt record.
 - **Result:** partial subcomponent; T0163 remains `in_progress`. This does not yet implement a libp2p TCP/Noise client, authenticated PeerId dial, request submission or Windows response reception. T0164 remains not started.
+
+
+## Attempt T0163-A014 — exact V 3.0.630 CI result
+
+- **Commit:** `27e5bce9451902928998612c895d33a86931fd45` (`V 3.0.630`) on `main`.
+- **Step Three quality gate:** PASS — run 41082397110; automated tests, compileall, graph structure and recorded-output/evidence validation succeeded.
+- **Android product job:** FAILED at `ktlintMainSourceSetCheck` and `ktlintTestSourceSetCheck` (job 124154630309). The findings were import ordering and multiline-expression / line-break formatting in `RendezvousPeerDirectoryClient.kt` and `RendezvousPeerDirectoryClientTest.kt`.
+- **Skipped Android work:** `assembleDebug`, `testDebugUnitTest`, generated Protobuf verification and APK artifact upload were skipped because KtLint failed. No Android compile or JVM test result is claimed.
+- **Windows WPF:** PASS — job 124154631048 completed formatting, Release build, Protobuf, startup smoke, security/policy/DPAPI checks and artifact upload.
+- **HostLifecycle:** PASS — job 124154630769 completed the lifecycle unit/integration tests.
+- **Outcome:** A014 is a failed verification attempt, not a completed task. The quality, Windows and HostLifecycle successes do not override the Android lint failure. The exact failure is retained in `evidence/v3.0.630-ci-failure.md`.
+
+## Attempt T0163-A015 — KtLint corrections; exact-head CI pending
+
+- **Base revision:** `main` commit `27e5bce9451902928998612c895d33a86931fd45` (`V 3.0.630`).
+- **Changes:** corrected import ordering, multiline assignments/conditions/function signatures and the JSON test fixture's chained builder layout in the two new Kotlin files. The request-directory behavior and acceptance scope were not intentionally changed; no KtLint disablement or test removal was introduced.
+- **Verification:** local Gradle execution is unavailable in this runtime. Exact V 3.0.631 GitHub Actions is pending; no lint/build/JVM pass is claimed yet.
+- **Task status:** `in_progress`. Even after directory-client CI passes, T0163 still needs an authenticated Android libp2p TCP/Noise connection, request submission, response reception and correlation validation. T0164 remains `not_started`.
