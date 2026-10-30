@@ -363,6 +363,10 @@ internal class InferencePeerMessageController(
         authenticatedPeerId = stream.remotePeerId().toBase58()
     }
 
+    override fun streamActive(ctx: ChannelHandlerContext) {
+        this.ctx = ctx
+    }
+
     override fun messageReceived(
         ctx: ChannelHandlerContext,
         msg: ByteBuf,

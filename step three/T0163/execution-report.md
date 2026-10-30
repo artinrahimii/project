@@ -418,3 +418,26 @@
 - **Local execution:** no local Python run is available in this connected editing runtime.
 - **Verification:** exact-head V3.0.656 quality/product CI pending. T0163 remains `in_progress`.
 - **Evidence:** `step three/T0163/evidence/v3.0.656-artifact-contract-correction.md`.
+
+
+## Attempt T0163-A032 — exact V 3.0.656 CI result and root cause
+
+- **Commit:** `9f0dc56cff0817bce8d428c30ebf042f134e06da` (`V 3.0.656`) on `main`.
+- **Step Three quality:** PASS — [run 41117546642](https://github.com/artinrahimii/project/actions/runs/41117546642): 282 Python tests, compileall and graph/evidence validation (229 tasks / 417 edges, zero errors, one preserved T0001 warning).
+- **Android KtLint and debug APK:** PASS — source lint, Kotlin compilation and `assembleDebug`.
+- **Android JVM tests:** FAIL — 103 tests completed, one failed in the authenticated Noise/TCP loopback.
+- **Exact JUnit root cause:** report artifact 13007715008 (43,374 bytes) says `Direct submission should be accepted; diagnostic=write_request_frame:UninitializedPropertyAccessException`. The inherited `SimpleClientHandler.writeAndFlush` reads `lateinit ctx`; neither the production controller nor the test responder assigned it via `streamActive(ctx)`.
+- **Skipped:** generated Protobuf verification and APK artifact upload because JVM tests failed.
+- **Windows WPF and HostLifecycle:** PASS — [product run 41117546520](https://github.com/artinrahimii/project/actions/runs/41117546520).
+- **Outcome:** A032 is finalized failed. The uninitialized stream-handler context is proven; T0163 remains `in_progress`.
+- **Evidence:** `step three/T0163/evidence/v3.0.656-ci-failure.md`.
+
+## Attempt T0163-A033 — initialize SimpleClientHandler context before writes
+
+- **Base:** `9f0dc56cff0817bce8d428c30ebf042f134e06da` (`V 3.0.656`).
+- **Production fix:** `InferencePeerMessageController.streamActive(ctx)` now stores the active Netty channel context in inherited `ctx` before `sendRequest` invokes `writeAndFlush`.
+- **Test peer fix:** `LoopbackInferenceResponder.streamActive(ctx)` does the same before its response write.
+- **Acceptance:** the Noise/TCP stream, authenticated PeerId validation, frame limit and request/attempt/model/host response correlation remain unchanged.
+- **Local verification:** Gradle unavailable in the connected editing runtime; no local Kotlin/Gradle pass is claimed.
+- **Exact-head verification:** pending V3.0.657 CI. T0163 remains `in_progress`.
+- **Evidence:** `step three/T0163/evidence/v3.0.657-stream-context-initialization.md`.

@@ -136,6 +136,10 @@ class Libp2pInferenceRequestTransportTest {
         private val decoder = PeerMessageFrameDecoder()
         val requestReceived = CompletableDeferred<InferenceRequest>()
 
+        override fun streamActive(ctx: io.netty.channel.ChannelHandlerContext) {
+            this.ctx = ctx
+        }
+
         override fun messageReceived(
             ctx: io.netty.channel.ChannelHandlerContext,
             msg: ByteBuf,
