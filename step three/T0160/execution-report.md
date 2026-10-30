@@ -10,3 +10,15 @@
 - **Transport limitation:** This task verifies payload construction and protocol boundary only. It does not implement socket/QUIC/WebRTC transport or claim Android-to-Windows delivery.
 - **Status:** `in_progress`; V 3.0.596 Step Three quality failed in two new Python tests (258/260 passed). The product workflow was still running at A004 preparation. A004 corrects the regex expressions; exact-head V 3.0.597 CI is pending.
 - **Next action:** Inspect exact-head V 3.0.597 CI. If all required checks pass, record the successful attempt and complete T0160; otherwise fix actual failures and retain the task as incomplete.
+
+
+## A006 — exact-head verification and final result
+
+- **Verification target:** `V 3.0.598`, commit `b52946919122be39e9bcb0e7687901c329b40241` on `main`.
+- **Result:** All T0160 acceptance checks passed. The production `InferenceRequestPayloadBuilder` output and its JVM tests exist in the actual Android source tree. The test now uses `RobolectricTestRunner` with SDK 35, matching the existing `ConversationContextCapsuleTest` setup required by the Android `org.json` codec.
+- **Android CI:** `ktlintCheck`, `assembleDebug`, `testDebugUnitTest`, generated Protobuf Java/Kotlin verification, and APK upload passed. The APK artifact `whitep-android-debug-apk.zip` was uploaded at 11,965,862 bytes (artifact 12959356073). [Product workflow](https://github.com/artinrahimii/project/actions/runs/41014428574).
+- **Windows CI:** WPF Release build, generated Protobuf verification, startup smoke test, agent-tool process restrictions, policy rejection, backend/model capability gate, current-user DPAPI host identity and peer-trust storage checks passed. The Windows artifact `whitep-windows-host.zip` was uploaded at 14,254,978 bytes (artifact 12959371027). [Product workflow](https://github.com/artinrahimii/project/actions/runs/41014428574).
+- **HostLifecycle:** Unit/integration checks passed in the same product workflow.
+- **Quality gate:** 260 tests passed; Python compileall and graph/evidence validation passed. [Quality workflow](https://github.com/artinrahimii/project/actions/runs/41014428583).
+- **Final task status:** `done`; six attempts recorded, three failed attempts retained in history, and the latest verification succeeded. The incoming T0159/T0150 edges remain validated as `sequencing_only`; all 17 outgoing edges remain `unreviewed` and unchanged.
+- **Scope boundary:** This completes the selected-current-message plus context-capsule payload construction/serialization test. It does not implement live peer transport or claim Android-to-Windows socket/QUIC/WebRTC delivery.

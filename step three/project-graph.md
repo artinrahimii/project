@@ -35644,8 +35644,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0159 و T0150 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "src/Client.Android/app/src/main/java/com/whitep/client/protocol/InferenceRequestPayloadBuilder.kt",
         "src/Client.Android/app/src/test/java/com/whitep/client/protocol/InferenceRequestPayloadBuilderTest.kt",
@@ -35671,12 +35671,12 @@
         "step three/T0160/evidence/verification.md",
         "tests/test_android_inference_request_payload_builder_contract.py"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0160-A001 (2026-10-29T21:11:45Z): Added the real generated-Protobuf payload builder and four JVM tests for selected-message/capsule composition, no history/permanent conversation ID, UTF-8 prompt byte limit, invalid capsule rejection, and 16 KiB serialized cap. This does not claim a live network send; exact-head V 3.0.594 CI pending.\nT0160-A002 (2026-10-29T21:15:15Z): Applied exact KtLint formatting to the result data classes and replaced the test's byte-array text conversion with the standard String constructor. V 3.0.594 had a passing quality gate but failed Android lint; APK/JVM/Protobuf did not run. Exact-head V 3.0.595 CI pending.\nT0160-A003 (2026-10-30T06:23:36.296Z): Removed the invalid full-runtime descriptorForType assertion because the Android Protobuf code generation is explicitly lite. Added a Python contract test for the canonical InferenceRequest field set and production builder parameter contract; exact-head V 3.0.596 CI pending.\nT0160-A004 (2026-10-30T06:26:44.355Z): Corrected the double-escaped regular expressions in the Python schema/API contract test. V 3.0.596 quality ran 260 tests, 258 passed and two new contract tests failed. Exact-head V 3.0.597 CI pending.\nT0160-A005 (2026-10-30T06:29:32.088Z): Configured the payload JVM test with RobolectricTestRunner and SDK 35 to exercise the Android org.json codec, matching ConversationContextCapsuleTest. V 3.0.598 exact-head CI pending.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0160-A001 (2026-10-29T21:11:45Z): Added the real generated-Protobuf payload builder and four JVM tests for selected-message/capsule composition, no history/permanent conversation ID, UTF-8 prompt byte limit, invalid capsule rejection, and 16 KiB serialized cap. This does not claim a live network send; exact-head V 3.0.594 CI pending.\nT0160-A002 (2026-10-29T21:15:15Z): Applied exact KtLint formatting to the result data classes and replaced the test's byte-array text conversion with the standard String constructor. V 3.0.594 had a passing quality gate but failed Android lint; APK/JVM/Protobuf did not run. Exact-head V 3.0.595 CI pending.\nT0160-A003 (2026-10-30T06:23:36.296Z): Removed the invalid full-runtime descriptorForType assertion because the Android Protobuf code generation is explicitly lite. Added a Python contract test for the canonical InferenceRequest field set and production builder parameter contract; exact-head V 3.0.596 CI pending.\nT0160-A004 (2026-10-30T06:26:44.355Z): Corrected the double-escaped regular expressions in the Python schema/API contract test. V 3.0.596 quality ran 260 tests, 258 passed and two new contract tests failed. Exact-head V 3.0.597 CI pending.\nT0160-A005 (2026-10-30T06:29:32.088Z): Configured the payload JVM test with RobolectricTestRunner and SDK 35 to exercise the Android org.json codec, matching ConversationContextCapsuleTest. V 3.0.598 exact-head CI pending.\nT0160-A006 (2026-10-30T06:30:00Z–06:32:02Z): Exact-head V 3.0.598 verification succeeded. RobolectricTestRunner/SDK 35 resolved the Android org.json test runtime requirement: ktlintCheck, assembleDebug, testDebugUnitTest (including InferenceRequestPayloadBuilderTest), generated Protobuf Java/Kotlin verification and APK artifact upload all passed. Windows WPF build/startup, agent-tool process/policy/capability checks, DPAPI host identity/peer-trust checks and artifact upload passed; HostLifecycle passed. Step Three quality passed 260 tests, compileall and graph/evidence validation. This completes T0160's selected-message + capsule payload boundary acceptance only; it does not implement or claim live peer socket/QUIC/WebRTC delivery.",
       "execution_summary": {
-        "attempt_count": 5,
+        "attempt_count": 6,
         "failed_attempt_count": 3,
-        "last_attempt_id": "T0160-A005",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "T0160-A006",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/protocol/InferenceRequestPayloadBuilder.kt",
           "src/Client.Android/app/src/test/java/com/whitep/client/protocol/InferenceRequestPayloadBuilderTest.kt",
@@ -35689,7 +35689,8 @@
           "d4a998eec098b85d64579e0df58b21397791d271",
           "7c649ce339ad78ad49a92dadd92fbda6f8423332",
           "f8c51785622452ca46b83ae5f2a8f82f93b4e903",
-          "fafb68135507f7404b10dfa8c74d93b01e782e30"
+          "fafb68135507f7404b10dfa8c74d93b01e782e30",
+          "b52946919122be39e9bcb0e7687901c329b40241"
         ],
         "tests_passed": [
           {
@@ -35763,6 +35764,66 @@
             "result": "passed",
             "summary": "260 tests, compileall and graph/evidence validation passed with zero errors and one warning.",
             "url": "https://github.com/artinrahimii/project/actions/runs/41014157296"
+          },
+          {
+            "name": "Step Three quality gate — V 3.0.598",
+            "result": "passed",
+            "summary": "260 Python tests passed; compileall, graph structure and execution evidence validation passed.",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41014428583"
+          },
+          {
+            "name": "Android KtLint — V 3.0.598",
+            "result": "passed",
+            "summary": "gradle --no-daemon ktlintCheck completed successfully.",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41014428574"
+          },
+          {
+            "name": "Android debug APK — V 3.0.598",
+            "result": "passed",
+            "summary": "gradle --no-daemon assembleDebug completed successfully.",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41014428574"
+          },
+          {
+            "name": "Android JVM unit tests — V 3.0.598",
+            "result": "passed",
+            "summary": "gradle --no-daemon testDebugUnitTest completed successfully; includes InferenceRequestPayloadBuilderTest with Robolectric SDK 35.",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41014428574"
+          },
+          {
+            "name": "Generated Android Protobuf Java/Kotlin verification — V 3.0.598",
+            "result": "passed",
+            "summary": "Both generated source files were found and verified after JVM tests.",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41014428574"
+          },
+          {
+            "name": "Android debug APK artifact — V 3.0.598",
+            "result": "passed",
+            "summary": "whitep-android-debug-apk.zip uploaded successfully; 11,965,862 bytes; artifact 12959356073.",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41014428574"
+          },
+          {
+            "name": "Windows WPF host — V 3.0.598",
+            "result": "passed",
+            "summary": "C# formatting, Release build, generated Protobuf verification and WPF startup smoke test passed.",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41014428574"
+          },
+          {
+            "name": "Windows agent-tool and DPAPI security checks — V 3.0.598",
+            "result": "passed",
+            "summary": "Process restriction, policy rejection, backend/model capability, current-user DPAPI host identity and peer-trust storage checks passed.",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41014428574"
+          },
+          {
+            "name": "Windows host artifact — V 3.0.598",
+            "result": "passed",
+            "summary": "whitep-windows-host.zip uploaded successfully; 14,254,978 bytes; artifact 12959371027.",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41014428574"
+          },
+          {
+            "name": "HostLifecycle unit/integration tests — V 3.0.598",
+            "result": "passed",
+            "summary": "Host lifecycle unit and integration job completed successfully.",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41014428574"
           }
         ],
         "tests_failed": [
@@ -35794,7 +35855,7 @@
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "in_review",
+          "state": "passed",
           "triggering_contracts": [
             "InferenceRequest protobuf wire fields",
             "ConversationContextCapsule UTF-8 JSON codec and 4096-byte ceiling",
@@ -35811,7 +35872,10 @@
             "src/Client.Android/app/src/main/java/com/whitep/client/context/ConversationContextCapsule.kt",
             "src/Client.Android/app/src/test/java/com/whitep/client/protocol/ProtoRoundTripTest.kt",
             "docs/decisions/ADR-0002-direct-p2p-data-path.md",
-            "tests/test_android_inference_request_payload_builder_contract.py"
+            "tests/test_android_inference_request_payload_builder_contract.py",
+            "https://github.com/artinrahimii/project/actions/runs/41014428583",
+            "https://github.com/artinrahimii/project/actions/runs/41014428574",
+            "src/Client.Android/app/src/test/java/com/whitep/client/context/ConversationContextCapsuleTest.kt"
           ]
         }
       },
@@ -36064,6 +36128,86 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Inspect exact-head V 3.0.598 CI; complete T0160 only after every required gate passes."
+        },
+        {
+          "attempt_id": "T0160-A006",
+          "started_at": "2026-10-30T06:30:00Z",
+          "ended_at": "2026-10-30T06:32:02Z",
+          "result": "succeeded",
+          "summary": "Exact-head V 3.0.598 CI passed all T0160 acceptance checks. Robolectric configured payload tests passed; Android lint, debug APK build, all JVM tests, generated Protobuf verification and APK upload passed. Windows WPF build/startup/security/DPAPI checks, Windows artifact upload, HostLifecycle and Step Three quality (260 tests plus graph/evidence validation) passed.",
+          "changed_files": [
+            "step three/T0160/execution-report.md",
+            "step three/T0160/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": "b52946919122be39e9bcb0e7687901c329b40241",
+          "tests": [
+            {
+              "name": "Step Three quality gate — V 3.0.598",
+              "result": "passed",
+              "summary": "260 Python tests passed; compileall, graph structure and execution evidence validation passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41014428583"
+            },
+            {
+              "name": "Android KtLint — V 3.0.598",
+              "result": "passed",
+              "summary": "gradle --no-daemon ktlintCheck completed successfully.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41014428574"
+            },
+            {
+              "name": "Android debug APK — V 3.0.598",
+              "result": "passed",
+              "summary": "gradle --no-daemon assembleDebug completed successfully.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41014428574"
+            },
+            {
+              "name": "Android JVM unit tests — V 3.0.598",
+              "result": "passed",
+              "summary": "gradle --no-daemon testDebugUnitTest completed successfully; includes InferenceRequestPayloadBuilderTest with Robolectric SDK 35.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41014428574"
+            },
+            {
+              "name": "Generated Android Protobuf Java/Kotlin verification — V 3.0.598",
+              "result": "passed",
+              "summary": "Both generated source files were found and verified after JVM tests.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41014428574"
+            },
+            {
+              "name": "Android debug APK artifact — V 3.0.598",
+              "result": "passed",
+              "summary": "whitep-android-debug-apk.zip uploaded successfully; 11,965,862 bytes; artifact 12959356073.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41014428574"
+            },
+            {
+              "name": "Windows WPF host — V 3.0.598",
+              "result": "passed",
+              "summary": "C# formatting, Release build, generated Protobuf verification and WPF startup smoke test passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41014428574"
+            },
+            {
+              "name": "Windows agent-tool and DPAPI security checks — V 3.0.598",
+              "result": "passed",
+              "summary": "Process restriction, policy rejection, backend/model capability, current-user DPAPI host identity and peer-trust storage checks passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41014428574"
+            },
+            {
+              "name": "Windows host artifact — V 3.0.598",
+              "result": "passed",
+              "summary": "whitep-windows-host.zip uploaded successfully; 14,254,978 bytes; artifact 12959371027.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41014428574"
+            },
+            {
+              "name": "HostLifecycle unit/integration tests — V 3.0.598",
+              "result": "passed",
+              "summary": "Host lifecycle unit and integration job completed successfully.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41014428574"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "T0160 is complete for payload construction and serialization boundary. Before starting T0161–T0177, validate their incoming dependency edges; all 17 outgoing T0160 edges remain unreviewed."
         }
       ]
     },
@@ -47868,7 +48012,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-30T06:29:32.088Z",
+  "updated_at": "2026-10-30T06:32:02Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",
