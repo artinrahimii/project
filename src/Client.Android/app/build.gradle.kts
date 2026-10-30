@@ -47,15 +47,15 @@ android {
         resources {
             excludes +=
                 setOf(
-                "META-INF/io.netty.versions.properties",
-                "META-INF/INDEX.LIST",
-                "META-INF/versions/9/OSGI-INF/MANIFEST.MF",
-                "META-INF/native-image/io.netty/netty-codec-native-quic/jni-config.json",
-                "META-INF/native-image/io.netty/netty-codec-native-quic/reflect-config.json",
-                "META-INF/native-image/io.netty/netty-codec-native-quic/resource-config.json",
-                "META-INF/native-image/io.netty/netty-codec-native-quic/native-image.properties",
-                "META-INF/license/*",
-            )
+                    "META-INF/io.netty.versions.properties",
+                    "META-INF/INDEX.LIST",
+                    "META-INF/versions/9/OSGI-INF/MANIFEST.MF",
+                    "META-INF/native-image/io.netty/netty-codec-native-quic/jni-config.json",
+                    "META-INF/native-image/io.netty/netty-codec-native-quic/reflect-config.json",
+                    "META-INF/native-image/io.netty/netty-codec-native-quic/resource-config.json",
+                    "META-INF/native-image/io.netty/netty-codec-native-quic/native-image.properties",
+                    "META-INF/license/*",
+                )
         }
     }
 }
