@@ -1,6 +1,7 @@
 package com.whitep.client.requests
 
 import com.google.protobuf.ByteString
+import com.whitep.client.protocol.InferenceRequestPayloadBuilder
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test

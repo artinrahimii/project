@@ -15,8 +15,10 @@ class AndroidHostCandidateSelectorContractTests(unittest.TestCase):
         self.assertIn("request.modelId", source)
         self.assertIn("request.protocolVersion", source)
         self.assertIn("request.maxOutputTokens", source)
-        self.assertIn("request.prompt.toByteArray(Charsets.UTF_8)", source)
-        self.assertIn("request.contextCapsule.size()", source)
+        self.assertIn("val prompt = request.prompt", source)
+        self.assertIn("prompt.toByteArray(Charsets.UTF_8)", source)
+        self.assertIn("val contextCapsule = request.contextCapsule", source)
+        self.assertIn("contextCapsule.size()", source)
 
     def test_selector_fails_closed_on_readiness_identity_and_capacity(self):
         source = SELECTOR.read_text(encoding="utf-8")

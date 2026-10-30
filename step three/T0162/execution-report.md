@@ -35,3 +35,16 @@
 - **Android — FAILED at KtLint:** https://github.com/artinrahimii/project/actions/runs/41040016495 (job 124010229140). The first formatting correction resolved the `supportsModel` expression but the same lint rule then identified a separate chained UTF-8 prompt/capsule size expression at `HostCandidateSelector.kt:106`. APK/JVM/Protobuf checks were skipped.
 - **Correction:** split prompt byte-array creation, byte counting, capsule size, and serialized request size into separate local values in both local request validation and host compatibility checks. Selection semantics are unchanged.
 - **Outcome:** preserve the second failed attempt. T0162 remains `in_progress`; exact V 3.0.611 Android and quality CI are pending.
+
+
+## T0162-A003 — exact V 3.0.611 exposed two test-harness contract mismatches
+
+- **Candidate:** `d0b02ae8f4e927ba2b373567b2b1c39d184970ea` (`V 3.0.611`).
+- **Graph integrity:** the graph was fetched from the exact commit tree as Blob `279534dbbd6fdc36d3950d2cdb542f67b8c70d65`; 2,973,531 UTF-8 bytes; recomputed Git Blob SHA-1 matched; 229 nodes and 417 edges parsed.
+- **Step Three quality gate — FAILED:** https://github.com/artinrahimii/project/actions/runs/41040367408. The Python suite ran 268 tests; 267 passed and one source-contract assertion failed because it expected a direct `request.prompt.toByteArray(...)` expression after the production code had intentionally split it into `prompt` and `promptBytesArray`.
+- **HostLifecycle — PASS:** https://github.com/artinrahimii/project/actions/runs/41040367617 (job 124011378288).
+- **Android KtLint — PASS; debug APK — PASS:** https://github.com/artinrahimii/project/actions/runs/41040367617 (job 124011378514).
+- **Android JVM tests — FAILED at compile:** the test file referenced `InferenceRequestPayloadBuilder` constants without importing that type; Kotlin reported unresolved references at lines 106 and 108. Protobuf verification and APK artifact upload were skipped.
+- **Windows WPF — PASS:** https://github.com/artinrahimii/project/actions/runs/41040367617 (job 124011378610), including formatting, Release build, Protobuf, startup smoke, agent-tool policy/capability and DPAPI identity/trust checks.
+- **Correction:** update the Python source-contract assertions to verify the actual local-variable contract (`prompt`, UTF-8 byte array, `contextCapsule`) rather than a discarded direct expression; add the missing import to the JVM test. No production behavior or shared wire contract changes.
+- **Outcome:** preserve this failed attempt. T0162 remains `in_progress`; exact V 3.0.612 quality and Android JVM/Protobuf verification are pending.
