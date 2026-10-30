@@ -21,7 +21,8 @@ import org.whitep.shared.contracts.v1.modelCapability
 @Config(sdk = [35])
 class InferenceAttemptDispatcherTest {
     @Test
-    fun dispatchesCorrelatableAttemptPerSelectedHost() = runBlocking {
+    fun dispatchesCorrelatableAttemptPerSelectedHost() =
+        runBlocking {
         val candidates =
             HostCandidateSelector.select(
                 validRequest(),
@@ -82,7 +83,8 @@ class InferenceAttemptDispatcherTest {
     }
 
     @Test
-    fun rejectsDuplicateHostIdentityBeforeSubmitting() = runBlocking {
+    fun rejectsDuplicateHostIdentityBeforeSubmitting() =
+        runBlocking {
         val transport = RecordingTransport()
         val result =
             dispatcher(transport).dispatchRound(
@@ -105,7 +107,8 @@ class InferenceAttemptDispatcherTest {
     }
 
     @Test
-    fun rejectsMoreThanThreeHostsBeforeSubmitting() = runBlocking {
+    fun rejectsMoreThanThreeHostsBeforeSubmitting() =
+        runBlocking {
         val transport = RecordingTransport()
         val result =
             dispatcher(transport).dispatchRound(
@@ -133,7 +136,8 @@ class InferenceAttemptDispatcherTest {
     }
 
     @Test
-    fun rejectsInvalidPayloadBeforeSubmittingAnyHost() = runBlocking {
+    fun rejectsInvalidPayloadBeforeSubmittingAnyHost() =
+        runBlocking {
         val transport = RecordingTransport()
         val result =
             dispatcher(transport).dispatchRound(
@@ -155,7 +159,8 @@ class InferenceAttemptDispatcherTest {
     }
 
     @Test
-    fun rejectsTerminalRequestBeforeSubmitting() = runBlocking {
+    fun rejectsTerminalRequestBeforeSubmitting() =
+        runBlocking {
         val transport = RecordingTransport()
         val request = distributedRequest(status = DistributedRequestStatus.CANCELLED)
         val result =
@@ -179,28 +184,30 @@ class InferenceAttemptDispatcherTest {
     }
 
     @Test
-    fun keepsSubmittingOtherHostsAfterTransportRejectsOrThrows() = runBlocking {
+    fun keepsSubmittingOtherHostsAfterTransportRejectsOrThrows() =
+        runBlocking {
         val transport =
             RecordingTransport(
                 submission = { hostId, _ ->
-                when (hostId) {
-                    "host-a" -> InferenceTransportSubmission.REJECTED
-                    "host-b" -> error("simulated transport fault")
-                    else -> InferenceTransportSubmission.QUEUED
-                }
+                    when (hostId) {
+                        "host-a" -> InferenceTransportSubmission.REJECTED
+                        "host-b" -> error("simulated transport fault")
+                        else -> InferenceTransportSubmission.QUEUED
+                    }
                 },
             )
         val attemptIds = listOf("attempt-a", "attempt-b", "attempt-c").iterator()
+        val attemptDispatcher = dispatcher(transport, attemptIds::next)
         val result =
-            dispatcher(transport, attemptIds::next).dispatchRound(
-                    distributedRequest(),
-                    listOf(candidate("host-a"), candidate("host-b"), candidate("host-c")),
-                    MODEL_ID,
-                    "message",
-                    capsule(),
-                    64,
-                    PROTOCOL_VERSION,
-                )
+            attemptDispatcher.dispatchRound(
+                distributedRequest(),
+                listOf(candidate("host-a"), candidate("host-b"), candidate("host-c")),
+                MODEL_ID,
+                "message",
+                capsule(),
+                64,
+                PROTOCOL_VERSION,
+            )
 
         assertTrue(result is InferenceRoundDispatchResult.Dispatched)
         assertEquals(
@@ -215,7 +222,8 @@ class InferenceAttemptDispatcherTest {
     }
 
     @Test
-    fun rejectsDuplicateAttemptIdsBeforeSubmitting() = runBlocking {
+    fun rejectsDuplicateAttemptIdsBeforeSubmitting() =
+        runBlocking {
         val transport = RecordingTransport()
         val dispatcher =
             InferenceAttemptDispatcher(
@@ -245,13 +253,11 @@ class InferenceAttemptDispatcherTest {
     private fun dispatcher(
         transport: InferenceRequestTransport,
         attemptIdGenerator: () -> String = { "attempt-one" },
-    ): InferenceAttemptDispatcher {
-        return InferenceAttemptDispatcher(transport, attemptIdGenerator)
-    }
+    ): InferenceAttemptDispatcher =
+        InferenceAttemptDispatcher(transport, attemptIdGenerator)
 
-    private fun distributedRequest(
-        status: DistributedRequestStatus = DistributedRequestStatus.QUEUED,
-    ) = DistributedRequest(
+    private fun distributedRequest(status: DistributedRequestStatus = DistributedRequestStatus.QUEUED) =
+        DistributedRequest(
         requestId = "ephemeral-request-42",
         deadlineUnixMs = 1_798_000_000_000L,
         maxRounds = 3,
