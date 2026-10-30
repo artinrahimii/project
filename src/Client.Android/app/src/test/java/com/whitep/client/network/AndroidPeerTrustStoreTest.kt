@@ -27,7 +27,8 @@ class AndroidPeerTrustStoreTest {
     @Before
     fun setUp() {
         context = RuntimeEnvironment.getApplication()
-        context.getSharedPreferences(AndroidPeerTrustStore.TRUST_PREFERENCES, Context.MODE_PRIVATE)
+        context
+            .getSharedPreferences(AndroidPeerTrustStore.TRUST_PREFERENCES, Context.MODE_PRIVATE)
             .edit()
             .clear()
             .commit()
@@ -62,7 +63,8 @@ class AndroidPeerTrustStoreTest {
         assertFalse(store.isTrusted(peerId))
         assertFalse(AndroidPeerTrustStore(context, protector).isTrusted(peerId))
         assertFalse(
-            context.getSharedPreferences(AndroidPeerTrustStore.TRUST_PREFERENCES, Context.MODE_PRIVATE)
+            context
+                .getSharedPreferences(AndroidPeerTrustStore.TRUST_PREFERENCES, Context.MODE_PRIVATE)
                 .contains(AndroidPeerTrustStore.TRUST_ENVELOPE_KEY),
         )
     }

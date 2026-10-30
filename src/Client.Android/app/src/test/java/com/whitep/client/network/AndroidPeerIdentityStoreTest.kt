@@ -25,7 +25,8 @@ class AndroidPeerIdentityStoreTest {
     @Before
     fun setUp() {
         context = RuntimeEnvironment.getApplication()
-        context.getSharedPreferences(AndroidPeerIdentityStore.IDENTITY_PREFERENCES, Context.MODE_PRIVATE)
+        context
+            .getSharedPreferences(AndroidPeerIdentityStore.IDENTITY_PREFERENCES, Context.MODE_PRIVATE)
             .edit()
             .clear()
             .commit()
@@ -42,13 +43,13 @@ class AndroidPeerIdentityStoreTest {
 
     @Test
     fun corruptExistingIdentityFailsClosedInsteadOfRotatingIt() {
-        context.getSharedPreferences(AndroidPeerIdentityStore.IDENTITY_PREFERENCES, Context.MODE_PRIVATE)
+        context
+            .getSharedPreferences(AndroidPeerIdentityStore.IDENTITY_PREFERENCES, Context.MODE_PRIVATE)
             .edit()
             .putString(
                 AndroidPeerIdentityStore.IDENTITY_ENVELOPE_KEY,
                 Base64.encodeToString(byteArrayOf(0x01, 0x02, 0x03), Base64.NO_WRAP),
-            )
-            .commit()
+            ).commit()
 
         assertThrows(IllegalStateException::class.java) {
             AndroidPeerIdentityStore(context, protector).loadOrCreate()

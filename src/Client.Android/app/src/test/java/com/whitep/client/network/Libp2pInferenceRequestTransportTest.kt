@@ -26,57 +26,57 @@ class Libp2pInferenceRequestTransportTest {
     @Test
     fun sendsAndReceivesCorrelatedResponseOverAuthenticatedNoiseTcpStream() =
         runBlocking {
-        val serverIdentity = generateKeyPair(KeyType.ED25519).first
-        val expectedServerPeerId = PeerId.fromPubKey(serverIdentity.publicKey()).toBase58()
-        val serverBinding =
-            createSimpleBinding(PROTOCOL_ID) {
-            LoopbackInferenceResponder(expectedServerPeerId)
-        }
-        val server = createHost(serverIdentity, serverBinding)
-        server.start().get(15, TimeUnit.SECONDS)
+            val serverIdentity = generateKeyPair(KeyType.ED25519).first
+            val expectedServerPeerId = PeerId.fromPubKey(serverIdentity.publicKey()).toBase58()
+            val serverBinding =
+                createSimpleBinding(PROTOCOL_ID) {
+                    LoopbackInferenceResponder(expectedServerPeerId)
+                }
+            val server = createHost(serverIdentity, serverBinding)
+            server.start().get(15, TimeUnit.SECONDS)
 
-        val serverPeerId = server.peerId.toBase58()
-        assertEquals(expectedServerPeerId, serverPeerId)
-        val address = server.listenAddresses().first { it.toString().contains("/tcp/") }.toString()
-        val endpoint =
-            RendezvousPeerEndpoint(
-            peerId = serverPeerId,
-            tcpMultiaddresses = listOf(address),
-            expiresAtUtc = Instant.now().plusSeconds(120),
-        )
+            val serverPeerId = server.peerId.toBase58()
+            assertEquals(expectedServerPeerId, serverPeerId)
+            val address = server.listenAddresses().first { it.toString().contains("/tcp/") }.toString()
+            val endpoint =
+                RendezvousPeerEndpoint(
+                    peerId = serverPeerId,
+                    tcpMultiaddresses = listOf(address),
+                    expiresAtUtc = Instant.now().plusSeconds(120),
+                )
 
-        val clientIdentity = generateKeyPair(KeyType.ED25519).first
-        val client =
-            Libp2pInferenceRequestTransport(
-            localIdentity = clientIdentity,
-            resolveEndpoint = { requestedPeerId -> endpoint.takeIf { it.peerId == requestedPeerId } },
-            trustVerifier = PeerTrustVerifier { trustedPeerId -> trustedPeerId == serverPeerId },
-            connectionTimeout = Duration.ofSeconds(15),
-        )
-        try {
-            val request = createRequest()
-            assertEquals(
-                com.whitep.client.requests.InferenceTransportSubmission.QUEUED,
-                client.submit(serverPeerId, request),
-            )
-            val response =
-                client.awaitResponse(
-                requestId = request.requestId,
-                attemptId = request.attemptId,
-                timeout = Duration.ofSeconds(20),
-            )
-            assertNotNull(response)
-            assertEquals(request.requestId, response.requestId)
-            assertEquals(request.attemptId, response.attemptId)
-            assertEquals(request.modelId, response.modelId)
-            assertEquals(serverPeerId, response.ephemeralHostId)
-            assertEquals("loopback-response", response.outputText)
-            assertEquals(InferenceOutcome.INFERENCE_OUTCOME_SUCCEEDED, response.outcome)
-        } finally {
-            client.close()
-            server.stop().get(10, TimeUnit.SECONDS)
+            val clientIdentity = generateKeyPair(KeyType.ED25519).first
+            val client =
+                Libp2pInferenceRequestTransport(
+                    localIdentity = clientIdentity,
+                    resolveEndpoint = { requestedPeerId -> endpoint.takeIf { it.peerId == requestedPeerId } },
+                    trustVerifier = PeerTrustVerifier { trustedPeerId -> trustedPeerId == serverPeerId },
+                    connectionTimeout = Duration.ofSeconds(15),
+                )
+            try {
+                val request = createRequest()
+                assertEquals(
+                    com.whitep.client.requests.InferenceTransportSubmission.QUEUED,
+                    client.submit(serverPeerId, request),
+                )
+                val response =
+                    client.awaitResponse(
+                        requestId = request.requestId,
+                        attemptId = request.attemptId,
+                        timeout = Duration.ofSeconds(20),
+                    )
+                assertNotNull(response)
+                assertEquals(request.requestId, response.requestId)
+                assertEquals(request.attemptId, response.attemptId)
+                assertEquals(request.modelId, response.modelId)
+                assertEquals(serverPeerId, response.ephemeralHostId)
+                assertEquals("loopback-response", response.outputText)
+                assertEquals(InferenceOutcome.INFERENCE_OUTCOME_SUCCEEDED, response.outcome)
+            } finally {
+                client.close()
+                server.stop().get(10, TimeUnit.SECONDS)
+            }
         }
-    }
 
     private fun createHost(
         identity: PrivKey,
@@ -96,7 +96,8 @@ class Libp2pInferenceRequestTransportTest {
         }
 
     private fun createRequest(): InferenceRequest =
-        InferenceRequest.newBuilder()
+        InferenceRequest
+            .newBuilder()
             .setProtocolVersion("1.0.0")
             .setRequestId("req_00112233445566778899aabbccddeeff")
             .setAttemptId("attempt_android_libp2p_test")
@@ -120,16 +121,17 @@ class Libp2pInferenceRequestTransportTest {
             decoder.feed(chunk).forEach { payload ->
                 val request = InferenceRequest.parseFrom(payload)
                 val response =
-                    InferenceResponse.newBuilder()
-                    .setRequestId(request.requestId)
-                    .setAttemptId(request.attemptId)
-                    .setEphemeralHostId(localPeerId)
-                    .setOutcome(InferenceOutcome.INFERENCE_OUTCOME_SUCCEEDED)
-                    .setOutputText("loopback-response")
-                    .setCompletedAtUnixMs(System.currentTimeMillis())
-                    .setModelId(request.modelId)
-                    .setErrorMessage("")
-                    .build()
+                    InferenceResponse
+                        .newBuilder()
+                        .setRequestId(request.requestId)
+                        .setAttemptId(request.attemptId)
+                        .setEphemeralHostId(localPeerId)
+                        .setOutcome(InferenceOutcome.INFERENCE_OUTCOME_SUCCEEDED)
+                        .setOutputText("loopback-response")
+                        .setCompletedAtUnixMs(System.currentTimeMillis())
+                        .setModelId(request.modelId)
+                        .setErrorMessage("")
+                        .build()
                 writeAndFlush(Unpooled.wrappedBuffer(PeerMessageFrameCodec.encode(response.toByteArray())))
             }
         }
