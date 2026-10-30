@@ -11,16 +11,15 @@ KOTLIN_TEST = ROOT / "src/Client.Android/app/src/test/java/com/whitep/client/pro
 class AndroidInferenceRequestPayloadContractTests(unittest.TestCase):
     def test_inference_request_schema_contains_only_the_explicit_payload_fields(self):
         proto = PROTO.read_text(encoding="utf-8")
-        match = re.search(r"\\bmessage\\s+InferenceRequest\\s*\\{([^}]*)\\}", proto, re.DOTALL)
+        match = re.search(r"\bmessage\s+InferenceRequest\s*\{([^}]*)\}", proto, re.DOTALL)
         self.assertIsNotNone(match, "InferenceRequest message must exist in the canonical Protobuf schema")
 
-        fields = dict(
-            re.findall(
-                r"^\\s*(?:optional\\s+|repeated\\s+)?([A-Za-z_][A-Za-z0-9_.]*)\\s+([A-Za-z_][A-Za-z0-9_]*)\\s*=\\s*\\d+\\s*;",
-                match.group(1),
-                re.MULTILINE,
-            )
+        field_matches = re.findall(
+            r"^\s*(?:optional\s+|repeated\s+)?([A-Za-z_][A-Za-z0-9_.]*)\s+([A-Za-z_][A-Za-z0-9_]*)\s*=\s*\d+\s*;",
+            match.group(1),
+            re.MULTILINE,
         )
+        fields = {name: field_type for field_type, name in field_matches}
         expected = {
             "request_id": "string",
             "attempt_id": "string",
@@ -38,12 +37,12 @@ class AndroidInferenceRequestPayloadContractTests(unittest.TestCase):
     def test_payload_builder_accepts_one_selected_message_not_a_history_or_conversation_identity(self):
         source = BUILDER.read_text(encoding="utf-8")
         match = re.search(
-            r"\\bfun\\s+build\\s*\\((.*?)\\)\\s*:\\s*InferenceRequestPayloadBuildResult",
+            r"\bfun\s+build\s*\((.*?)\)\s*:\s*InferenceRequestPayloadBuildResult",
             source,
             re.DOTALL,
         )
         self.assertIsNotNone(match, "Production payload builder API must be present")
-        parameters = re.findall(r"^\\s*([A-Za-z_][A-Za-z0-9_]*)\\s*:", match.group(1), re.MULTILINE)
+        parameters = re.findall(r"^\s*([A-Za-z_][A-Za-z0-9_]*)\s*:", match.group(1), re.MULTILINE)
         self.assertEqual(
             [
                 "requestId",
