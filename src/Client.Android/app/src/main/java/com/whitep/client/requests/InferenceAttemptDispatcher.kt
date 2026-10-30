@@ -3,8 +3,9 @@ package com.whitep.client.requests
 import com.whitep.client.context.ConversationContextCapsule
 import com.whitep.client.protocol.InferenceRequestPayloadBuildResult
 import com.whitep.client.protocol.InferenceRequestPayloadBuilder
-import org.whitep.shared.contracts.v1.InferenceRequest
+import com.whitep.client.protocol.InferenceRequestPayloadRejection
 import kotlinx.coroutines.CancellationException
+import org.whitep.shared.contracts.v1.InferenceRequest
 import java.util.UUID
 
 /**
@@ -57,7 +58,7 @@ sealed interface InferenceRoundDispatchResult {
 
     data class Rejected(
         val reason: InferenceRoundDispatchRejection,
-        val payloadRejection: com.whitep.client.protocol.InferenceRequestPayloadRejection? = null,
+        val payloadRejection: InferenceRequestPayloadRejection? = null,
     ) : InferenceRoundDispatchResult
 }
 

@@ -37322,18 +37322,17 @@
         "step three/T0160/execution-report.md",
         "step three/T0162/execution-report.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0163-A001 (2026-10-30T10:49:33.270Z): Reviewed both incoming edges against the actual T0160 InferenceRequest builder/Protobuf contract and T0162 HostCandidateSelector output; classified them as validated contract_or_interface_dependency while preserving type=blocks and execution order. Added InferenceAttemptDispatcher, seven JVM tests, and a repository-level source-contract test. The dispatcher creates a shared request ID and distinct per-host attempt IDs, validates the complete round before submission, and invokes an explicitly injected transport port. No concrete Android-to-host adapter or routable authenticated peer resolution exists yet; local Android/Gradle tests were not run in this tool session. Record this as partial/in_progress, not done, pending exact-head CI and real transport integration.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0163-A001 (2026-10-30T10:49:33.270Z): Reviewed both incoming edges against the actual T0160 InferenceRequest builder/Protobuf contract and T0162 HostCandidateSelector output; classified them as validated contract_or_interface_dependency while preserving type=blocks and execution order. Added InferenceAttemptDispatcher, seven JVM tests, and a repository-level source-contract test. The dispatcher creates a shared request ID and distinct per-host attempt IDs, validates the complete round before submission, and invokes an explicitly injected transport port. No concrete Android-to-host adapter or routable authenticated peer resolution exists yet; local Android/Gradle tests were not run in this tool session. Record this as partial/in_progress, not done, pending exact-head CI and real transport integration.\n\nT0163-A002 (2026-10-30T10:52:15.334Z): Corrected all KtLint issues reported by exact V 3.0.614 CI in the production dispatcher and its JVM test source: import ordering, unused import, multiline property initializer and lambda formatting, argument wrapping and trailing commas. V 3.0.614 Step Three quality and HostLifecycle workflows passed; Android lint failed and therefore APK/JVM/Protobuf steps were skipped. No Android test success is claimed. Exact V 3.0.615 CI is pending. T0163 remains in_progress because the production Android-to-host transport adapter and routable peer-address resolution are not present.",
       "execution_summary": {
-        "attempt_count": 1,
+        "attempt_count": 2,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0163-A001",
+        "last_attempt_id": "T0163-A002",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceAttemptDispatcher.kt",
           "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt",
-          "tests/test_android_inference_attempt_dispatcher_contract.py",
           "step three/T0163/execution-report.md",
-          "step three/T0163/evidence/verification.md",
+          "step three/T0163/evidence/v3.0.614-ci-failure.md",
           "step three/project-graph.md"
         ],
         "related_commits": [],
@@ -37376,6 +37375,52 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Inspect exact-head GitHub Actions results after V 3.0.614. Then implement and wire authenticated peer address resolution and a concrete Android-to-host transport before claiming T0163 complete."
+        },
+        {
+          "attempt_id": "T0163-A002",
+          "started_at": "2026-10-30T10:52:15.334Z",
+          "ended_at": "2026-10-30T10:52:15.334Z",
+          "result": "partial",
+          "summary": "Corrected the exact KtLint findings from V 3.0.614: ordered imports, removed the unused import, expanded multiline Kotlin lambdas/calls and applied standard trailing-comma layout. This is a formatting-only correction; product behavior is unchanged. Exact-head V 3.0.615 CI is pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceAttemptDispatcher.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt",
+            "step three/T0163/execution-report.md",
+            "step three/T0163/evidence/v3.0.614-ci-failure.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "V 3.0.614 Step Three quality gate",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41043613877",
+              "summary": "All Step Three quality job steps passed."
+            },
+            {
+              "name": "V 3.0.614 HostLifecycle unit/integration",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41043613856",
+              "summary": "HostLifecycle job 124022157864 completed successfully."
+            },
+            {
+              "name": "V 3.0.614 Android ktlintCheck",
+              "result": "failed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41043613856",
+              "summary": "KtLint formatting/import violations in the new dispatcher and test source; Android build, JVM tests and Protobuf verification were skipped."
+            },
+            {
+              "name": "V 3.0.615 exact-head Android and Windows product checks",
+              "result": "pending",
+              "url": "https://github.com/artinrahimii/project/actions",
+              "summary": "Pending after correction commit."
+            }
+          ],
+          "failure_details": "V 3.0.614 Android KtLint failed with import ordering, one unused import, multiline initializer formatting, argument line breaks and trailing comma violations. The lint gate prevented Android APK/JVM/Protobuf steps from running.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect exact-head V 3.0.615 quality and product jobs. Fix any real compiler/test failure; keep T0163 in_progress until concrete peer transport/address resolution is implemented and integrated."
         }
       ]
     },
@@ -49134,7 +49179,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-30T10:49:33.270Z",
+  "updated_at": "2026-10-30T10:52:15.334Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",
