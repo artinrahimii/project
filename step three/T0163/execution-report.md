@@ -58,3 +58,14 @@
 - **Correction:** Removed `private` from the codec's `MAXIMUM_VARINT_BYTES` constant so the adjacent decoder in the same Android module can read the shared five-byte varint bound. The constant value, encoder, decoder algorithm, frame format and tests are unchanged.
 - **Local execution:** Kotlin/Gradle and Python tests were not run locally. Exact-head GitHub Actions for `V 3.0.627` is pending.
 - **Task status:** `in_progress`; A013 is `partial` pending compile, APK, JVM and product workflow results. Authenticated Android libp2p connectivity and peer identity/address mapping remain unimplemented.
+
+
+## Attempt T0163-A013 — exact V 3.0.627 final verification
+
+- **Commit:** `651d8981f53ea07e0d08b2ff53eb048d09f22c5f` (`V 3.0.627`) on `main`.
+- **Step Three quality:** PASS — 273 Python tests, compileall, 229 task nodes / 417 edges, zero errors and one preserved T0001 metadata warning. [Workflow](https://github.com/artinrahimii/project/actions/runs/41071009584).
+- **Android:** KtLint, debug APK build, `testDebugUnitTest`, generated Protobuf Java/Kotlin verification and APK artifact upload all passed. Seven frame-codec test methods are part of the successful JVM task; no exact JVM test total is claimed because the workflow log does not expose one.
+- **Windows:** WPF formatting/build, Protobuf generation, startup smoke, agent-tool process/policy/capability checks, current-user DPAPI host identity and peer-trust checks, and Windows artifact upload passed.
+- **HostLifecycle:** PASS — the unit/integration job completed successfully.
+- **Artifacts:** Android `12985795018` (11,983,947 bytes; SHA-256 `9022525f189e859257c8465424e63f4b28dcb57a5ae10bfb554cf39008e205ec`); Windows `12984128915` (14,254,921 bytes; SHA-256 `c34fb7e3037bac297fde153df013bc98cfaeec2ede33c1619c5ecfd146ee684e`). Detailed evidence: `evidence/v3.0.627-ci-final.md`.
+- **Outcome:** A013 succeeded for the Android peer-frame encoder/decoder and its automated JVM coverage. The overall T0163 node remains `in_progress`: Android still lacks a concrete authenticated libp2p client wired to `InferenceAttemptDispatcher` and a trusted mapping from `ephemeralHostId` to canonical PeerId/direct multiaddress. No remote inference delivery is claimed.
