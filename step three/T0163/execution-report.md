@@ -511,3 +511,17 @@
 - **Local execution:** not run. The connected editing runtime still cannot obtain a clean Git clone due to DNS resolution failure; exact-head GitHub Actions is the verification path.
 - **Verification:** exact-head `V 3.0.664` quality and product CI pending. No pass is claimed in this attempt record.
 - **Remaining task boundary:** the Android UI still uses the draft-only `RequestViewModel`; the rendezvous JSON currently exposes peer IDs/addresses/capability tokens but not the model/status snapshots needed by `HostCandidateSelector`. Therefore this composition is not yet wired to a user-visible send action and no Android-to-Windows .NET inference response is claimed. T0163 remains `in_progress`.
+
+## Attempt T0163-A039 — exact V 3.0.664 quality result
+
+- **Step Three quality:** FAILED — run 41128578071, 283/284 Python tests passed. The single failure was a literal string mismatch in `test_android_libp2p_transport_contract.py`, not a runtime assertion.
+- **Product CI:** run 41128578070 was still in progress at the inspection time. No Android/Windows/HostLifecycle result is inferred from the pending jobs.
+- **Source review corrections:** the new Kotlin runtime also had one unused import and two companion-object declarations; these are corrected in A040 before claiming compilation.
+- **Outcome:** A039 is finalized as failed verification. See `evidence/v3.0.664-runtime-composition.md`.
+
+## Attempt T0163-A040 — source-contract and Kotlin compile corrections (`V 3.0.665`)
+
+- **Changes:** corrected the source-contract assertion to the actual wording; removed the unused `DistributedRequestStatus` import; merged the runtime defaults and factory into the class's single companion object.
+- **Behavioral scope:** no changes to identity persistence, explicit trust, rendezvous address resolution, authenticated libp2p transport, attempt IDs, payload validation or response correlation.
+- **Verification:** exact-head V 3.0.665 Step Three quality, Android lint/build/JVM/Protobuf, Windows WPF and HostLifecycle workflows pending. No pass is claimed.
+- **Task status:** `T0163` remains `in_progress`. The production UI is not yet connected to the runtime, and the rendezvous directory does not yet provide host model/readiness snapshots needed to construct honest `HostCandidate` values.

@@ -2,7 +2,6 @@ package com.whitep.client.requests
 
 import android.content.Context
 import com.whitep.client.context.ConversationContextCapsule
-import com.whitep.client.data.DistributedRequestStatus
 import com.whitep.client.network.AndroidPeerIdentityStore
 import com.whitep.client.network.AndroidPeerTrustStore
 import com.whitep.client.network.Libp2pInferenceRequestTransport
@@ -51,6 +50,9 @@ class AndroidInferenceRequestRuntime private constructor(
      * The caller must pass the HTTPS rendezvous service URL configured by the user/operator.
      */
     companion object {
+        private val DEFAULT_CONNECTION_TIMEOUT: Duration = Duration.ofSeconds(15)
+        private val DEFAULT_RESPONSE_TIMEOUT: Duration = Duration.ofSeconds(60)
+
         fun create(
             context: Context,
             rendezvousServiceBaseUri: URI,
@@ -124,9 +126,4 @@ class AndroidInferenceRequestRuntime private constructor(
             ?: throw IllegalStateException(
                 "Peer-trust changes require the application-scoped AndroidInferenceRequestRuntime.",
             )
-
-    private companion object {
-        val DEFAULT_CONNECTION_TIMEOUT: Duration = Duration.ofSeconds(15)
-        val DEFAULT_RESPONSE_TIMEOUT: Duration = Duration.ofSeconds(60)
-    }
 }

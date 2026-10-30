@@ -73,7 +73,7 @@ class AndroidLibp2pTransportContractTests(unittest.TestCase):
         self.assertIn("trustPeerAfterExplicitConfirmation", source)
         self.assertIn("suspend fun dispatchRound(", source)
         self.assertIn("suspend fun awaitResponse(", source)
-        self.assertIn("The caller must supply HostCandidate values", source)
+        self.assertIn("Callers must supply HostCandidate values", source)
 
     def test_three_host_noise_integration_exercises_the_application_runtime(self):
         source = TRANSPORT_TEST.read_text(encoding="utf-8")
