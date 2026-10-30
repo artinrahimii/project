@@ -2,6 +2,7 @@ package com.whitep.client.requests
 
 import com.google.protobuf.ByteString
 import com.whitep.client.context.ConversationContextCapsule
+import com.whitep.client.protocol.InferenceRequestPayloadRejection
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue

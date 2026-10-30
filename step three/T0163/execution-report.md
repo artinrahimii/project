@@ -32,3 +32,14 @@
 - **HostLifecycle:** PASS — product workflow 41044526799, job 124025244547.
 - **Android:** FAILED at `ktlintTestSourceSetCheck`, job 124025244202. The exact log identified eight trailing-whitespace lines in the new test source (lines 49, 60, 99, 128, 152, 176, 211 and 243). All indentation and expression formatting findings from A003 were resolved. Android APK, JVM tests and Protobuf checks were skipped.
 - **A005 correction:** Remove trailing spaces from the Android JVM test source; mark A001's final CI result as failed so `failed_attempt_count` equals the number of failed history records. No behavior changes. Exact-head `V 3.0.618` CI is pending.
+
+
+## A005 exact-head CI result and A006 correction
+
+- **Verified revision:** `V 3.0.618`, commit `a338ae30d39fa5088ab6c78787504da9a946f256` on `main`.
+- **Step Three quality gate:** PASS — workflow 41044870891. All 271 Python tests, compileall, graph structure validation and repository-backed output/evidence validation passed.
+- **HostLifecycle:** PASS — workflow 41044870997, job 124026396423.
+- **Windows WPF:** PASS — workflow 41044870997, job 124026396660. Formatting, Release build, Protobuf C# verification, startup smoke, agent-tool process/policy/capability checks, DPAPI host identity/peer trust storage and artifact upload all passed.
+- **Android:** KtLint and `assembleDebug` passed. `compileDebugUnitTestKotlin` failed at `InferenceAttemptDispatcherTest.kt:155` because `InferenceRequestPayloadRejection` was referenced without its package import. Android JVM test execution did not begin; generated Protobuf verification and APK artifact upload were skipped.
+- **A006 correction:** Added the missing `com.whitep.client.protocol.InferenceRequestPayloadRejection` import. No test behavior or production source changed. Exact-head `V 3.0.619` CI is pending.
+- **Task status:** `in_progress`; the seven JVM tests remain unverified until the next exact-head CI run succeeds. The actual authenticated Android-to-host transport adapter is still absent.
