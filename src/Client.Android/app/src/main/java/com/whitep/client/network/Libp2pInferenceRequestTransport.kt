@@ -46,8 +46,7 @@ class Libp2pInferenceRequestTransport(
     private val trustVerifier: PeerTrustVerifier,
     private val clock: Clock = Clock.systemUTC(),
     private val connectionTimeout: Duration = DEFAULT_CONNECTION_TIMEOUT,
-)
-    : InferenceRequestTransport, Closeable {
+) : InferenceRequestTransport, Closeable {
     private data class AttemptKey(
         val requestId: String,
         val attemptId: String,

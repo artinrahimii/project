@@ -37,7 +37,7 @@ class AndroidPeerTrustStore internal constructor(
     fun trustPeerAfterExplicitConfirmation(
         peerId: String,
         explicitlyConfirmed: Boolean,
-    ) =
+    ) {
         synchronized(TRUST_LOCK) {
             if (!explicitlyConfirmed) {
                 throw SecurityException("Peer trust requires explicit user confirmation.")
@@ -53,6 +53,7 @@ class AndroidPeerTrustStore internal constructor(
             peers.add(canonical)
             saveTrustedPeers(peers)
         }
+    }
 
     fun revokeTrust(peerId: String) =
         synchronized(TRUST_LOCK) {
@@ -106,11 +107,12 @@ class AndroidPeerTrustStore internal constructor(
             return
         }
         val cleartext = peers.sorted().joinToString("\n").toByteArray(StandardCharsets.UTF_8)
-        val envelope = try {
-            protector.protect(cleartext)
-        } finally {
-            Arrays.fill(cleartext, 0)
-        }
+        val envelope =
+            try {
+                protector.protect(cleartext)
+            } finally {
+                Arrays.fill(cleartext, 0)
+            }
         val encoded = Base64.encodeToString(envelope, Base64.NO_WRAP)
         Arrays.fill(envelope, 0)
         if (!preferences.edit().putString(TRUST_ENVELOPE_KEY, encoded).commit()) {

@@ -257,3 +257,23 @@
 - **Scope:** whitespace/layout only; trust semantics, canonical PeerId checks, fail-closed errors and AES-GCM protected persistence are unchanged.
 - **Verification:** no local Gradle run is claimed. Exact V 3.0.648 CI must check KtLint, Android compilation/APK, JVM tests, generated Protobuf and artifact upload.
 - **Task status:** `in_progress`; A024 remains partial until exact-head CI and cross-runtime integration are verified.
+
+
+## Attempt T0163-A024 — exact V 3.0.648 Android product result
+
+- **Commit:** `5366ae99b116341ee025b10ba5edbe64cd3fe70e` (`V 3.0.648`).
+- **Step Three quality gate:** PASS — run 41108321119.
+- **Android test-source KtLint:** PASS.
+- **Android main-source KtLint:** FAILED — job 124243873909 in run 41108321074; two style findings in `AndroidPeerTrustStore.kt` and one class declaration style finding in `Libp2pInferenceRequestTransport.kt`.
+- **Skipped:** Android APK build, JVM tests, generated Protobuf verification and artifact upload. No Android compile/test pass is claimed.
+- **HostLifecycle:** PASS — job 124243873848.
+- **Windows WPF:** PASS — job 124243873486.
+- **Outcome:** A024 is finalized as failed product verification; its trust-store indentation correction is retained. A025 corrects the newly exposed remaining Kotlin source style findings.
+
+## Attempt T0163-A025 — three Android main-source KtLint corrections; exact-head CI pending
+
+- **Base revision:** `5366ae99b116341ee025b10ba5edbe64cd3fe70e` (`V 3.0.648`).
+- **Corrections:** converted the synchronized trust grant expression body to an ordinary body, moved the multiline protected-envelope initializer to the following line, and placed the libp2p adapter inheritance colon on its constructor parameter line.
+- **Scope:** syntax/layout only; request framing, trust decisions, canonical PeerId validation, cryptographic protection and correlated response behavior are unchanged.
+- **Verification:** no local Gradle command was run. Exact V 3.0.649 quality/product CI must confirm KtLint, Kotlin compilation, APK, JVM tests, Protobuf generation and artifact upload.
+- **Task status:** `in_progress`. The Android dispatcher is still not wired into the conversation screen; explicit pairing and .NET/Android interoperability are not yet proven.
