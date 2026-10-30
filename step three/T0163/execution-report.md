@@ -441,3 +441,33 @@
 - **Local verification:** Gradle unavailable in the connected editing runtime; no local Kotlin/Gradle pass is claimed.
 - **Exact-head verification:** pending V3.0.657 CI. T0163 remains `in_progress`.
 - **Evidence:** `step three/T0163/evidence/v3.0.657-stream-context-initialization.md`.
+
+
+## Attempt T0163-A034 — three-peer dispatcher / libp2p integration test (V 3.0.658)
+
+- **Commit:** `2daa0fa226ce21f73e93f01eb8e2d0e74edbde4f` (`V 3.0.658`) on `main`.
+- **Implementation:** added `dispatchesOneSharedRequestWithDistinctAttemptsOverAuthenticatedPeerStreams` to `Libp2pInferenceRequestTransportTest.kt`. The test starts three separate loopback libp2p TCP peers with distinct Ed25519 identities, injects the real `Libp2pInferenceRequestTransport` into the real `InferenceAttemptDispatcher`, and asserts one shared request ID, three unique attempt IDs, receipt by all three peers, and a response correlated to each peer/attempt.
+- **CI:** Step Three quality passed (run 41119833967); Windows WPF and HostLifecycle jobs passed. Android test-source KtLint failed at line 3 on import ordering (product run 41119834076, job 124283444265). The Android APK, JVM tests and Protobuf verification were skipped. The integration test did not execute in this revision.
+- **Outcome:** A034 failed exact-head product verification. Evidence: `evidence/v3.0.658-three-peer-dispatcher-ci-failure.md`.
+
+## Attempt T0163-A035 — first import-order correction (V 3.0.659)
+
+- **Commit:** `496347c02a16388c5e20ee52a9552e43e5640dda` (`V 3.0.659`).
+- **Correction:** reordered the test import block. The first generic sorting approach did not match KtLint's package ordering.
+- **CI:** Step Three quality passed (run 41120039139); Android test-source KtLint failed again at line 3 with the same lexicographic import-order finding (product run 41120039094, job 124284134210). APK/JVM/Protobuf were skipped. Windows WPF and HostLifecycle passed.
+- **Outcome:** A035 failed exact-head product verification; no Kotlin test execution is claimed. Evidence: `evidence/v3.0.659-import-order-ci-failure.md`.
+
+## Attempt T0163-A036 — repository-compatible import order (V 3.0.660)
+
+- **Commit:** `7167dcc9e4d94fe4869dcfc93e927d080c0b6323` (`V 3.0.660`).
+- **Correction:** sorted project/third-party imports first and `java` imports last, matching the ordering in existing Android tests.
+- **CI:** Step Three quality passed (run 41120149196); Android KtLint and `assembleDebug` passed. The Android JVM task failed at `compileDebugUnitTestKotlin`: no inferred type for `runBlocking` at line 117, undefined `MODEL_ID` / `PROTOCOL_VERSION`, and missing `assertTrue` import. Therefore no JVM test case ran; Protobuf verification and APK artifact upload were skipped. Windows WPF and HostLifecycle passed.
+- **Outcome:** A036 failed exact-head product verification. Exact compiler output is preserved in product run 41120149322, job 124284512376. Evidence: `evidence/v3.0.660-unit-test-compile-failure.md`.
+
+## Attempt T0163-A037 — correct Android test compilation (V 3.0.661)
+
+- **Commit:** `2652d0655ea41fe9672826865dd25537f58bc612` (`V 3.0.661`).
+- **Correction:** added the missing `org.junit.Assert.assertTrue` import; defined test-local `MODEL_ID` and `PROTOCOL_VERSION` constants in the companion object; and specified `runBlocking<Unit>` for the new integration test.
+- **CI at report time:** exact-head Step Three quality run 41120697264 and product run 41120697218 were created but queued. No KtLint, Android compilation, JVM, Protobuf, Windows WPF or HostLifecycle pass is claimed for this revision.
+- **Outcome:** partial / pending exact-head CI. Keep T0163 `in_progress` until the results are checked and the production Android request workflow plus independent Android-to-Windows .NET interoperability are addressed.
+- **Evidence:** `evidence/v3.0.661-recompile-pending.md`.
