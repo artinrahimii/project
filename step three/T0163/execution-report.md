@@ -185,3 +185,19 @@
 - **Scope:** import ordering only; trust-store behavior and assertions are unchanged.
 - **Verification:** no local Gradle execution is claimed. Exact V 3.0.644 GitHub Actions must verify KtLint, Android compilation/APK, JVM tests, generated Protobuf and artifact upload.
 - **Outcome at commit preparation:** `partial`; T0163 remains `in_progress` until the exact-head workflow and the remaining runtime/integration gates are checked.
+
+
+## Attempt T0163-A020 — exact V 3.0.644 quality result
+
+- **Commit:** `11a8051ef2c6b2fc751681503446782a8c6f8e48` (`V 3.0.644`).
+- **Source correction:** the misplaced `io.libp2p.core.PeerId` import in `AndroidPeerTrustStoreTest.kt` was moved before the `io.libp2p.core.crypto.*` imports.
+- **Quality gate:** FAILED — graph guard reported `ATTEMPT_COUNT_MISMATCH: T0163: summary=20, history=19` (run 41106370523). The A020 history item had been omitted from the node's append-only history array while the summary count had already been incremented.
+- **Interpretation:** this is a graph-ledger validation failure, not an Android compile or runtime test result. The V 3.0.644 product workflow 41106370583 was still running when this record was created; its results remain pending and are not claimed.
+- **Outcome:** A020 is finalized as `failed` for the graph quality gate. No previous task history has been removed.
+
+## Attempt T0163-A021 — append-only execution-ledger reconciliation
+
+- **Base revision:** `11a8051ef2c6b2fc751681503446782a8c6f8e48` (`V 3.0.644`).
+- **Correction:** appended the missing A020 history record with its actual failed quality-gate result, and added A021 as the current partial ledger-reconciliation attempt. The summary attempt count is set to 21 to match the 21 history records; failed-attempt count is 17 (15 earlier failures + A019 + A020). T0163 remains `in_progress`.
+- **Evidence:** `evidence/v3.0.644-quality-ledger-failure.md`.
+- **Verification:** graph ledger is reconciled before exact-head V 3.0.645 CI; no quality pass is claimed yet.
