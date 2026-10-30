@@ -49,6 +49,24 @@ class AndroidPeerTrustStoreTest {
         assertTrue(AndroidPeerTrustStore(context, protector).isTrusted(peerId))
     }
 
+    @Test
+    fun revokingTheLastPeerRemovesThePersistedRecord() {
+        val peerId = PeerId.fromPubKey(generateKeyPair(KeyType.ED25519).second).toBase58()
+        val store = AndroidPeerTrustStore(context, protector)
+
+        store.trustPeerAfterExplicitConfirmation(peerId, explicitlyConfirmed = true)
+        assertTrue(store.isTrusted(peerId))
+
+        store.revokeTrust(peerId)
+
+        assertFalse(store.isTrusted(peerId))
+        assertFalse(AndroidPeerTrustStore(context, protector).isTrusted(peerId))
+        assertFalse(
+            context.getSharedPreferences(AndroidPeerTrustStore.TRUST_PREFERENCES, Context.MODE_PRIVATE)
+                .contains(AndroidPeerTrustStore.TRUST_ENVELOPE_KEY),
+        )
+    }
+
     private class TestProtector : ProtectedBlobProtector {
         private val key = SecretKeySpec(ByteArray(32) { index -> (index + 9).toByte() }, "AES")
 

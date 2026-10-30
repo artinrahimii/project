@@ -45,7 +45,8 @@ android {
     }
     packaging {
         resources {
-            excludes += setOf(
+            excludes +=
+                setOf(
                 "META-INF/io.netty.versions.properties",
                 "META-INF/INDEX.LIST",
                 "META-INF/versions/9/OSGI-INF/MANIFEST.MF",

@@ -91,6 +91,12 @@ class AndroidPeerTrustStore internal constructor(
     }
 
     private fun saveTrustedPeers(peers: Set<String>) {
+        if (peers.isEmpty()) {
+            if (!preferences.edit().remove(TRUST_ENVELOPE_KEY).commit()) {
+                throw IllegalStateException("The Android peer trust decision could not be removed.")
+            }
+            return
+        }
         val cleartext = peers.sorted().joinToString("\n").toByteArray(StandardCharsets.UTF_8)
         val envelope = try {
             protector.protect(cleartext)
