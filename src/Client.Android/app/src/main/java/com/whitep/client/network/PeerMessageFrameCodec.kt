@@ -11,7 +11,7 @@ import java.io.EOFException
  */
 internal object PeerMessageFrameCodec {
     const val DEFAULT_MAXIMUM_MESSAGE_BYTES = 4 * 1024 * 1024
-    private const val MAXIMUM_VARINT_BYTES = 5
+    const val MAXIMUM_VARINT_BYTES = 5
 
     fun encode(
         message: ByteArray,

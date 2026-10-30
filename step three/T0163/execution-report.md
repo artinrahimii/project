@@ -40,3 +40,21 @@
 - **Scope:** Formatting-only correction; production codec behavior, frame format, maximum size, and acceptance cases are unchanged.
 - **Local execution:** Kotlin/Gradle and Python tests were not run locally. Exact-head GitHub Actions for `V 3.0.626` is pending.
 - **Task status:** `in_progress`; this attempt is `partial` pending KtLint, APK, JVM and product workflow results. The missing authenticated libp2p client and trusted rendezvous identity/address mapping remain unresolved.
+
+
+## Attempt T0163-A012 — exact V 3.0.626 result
+
+- **Commit:** `4ee49fe8ad30559b39431b9d410503846b930700` (`V 3.0.626`) on `main`.
+- **Step Three quality:** PASS — 273 Python tests, compileall and graph validation (zero errors; one preserved T0001 warning). [Workflow](https://github.com/artinrahimii/project/actions/runs/41070306301).
+- **Android KtLint:** PASS — production and test source sets.
+- **Android Kotlin compilation:** FAILED — `PeerMessageFrameDecoder` referenced `PeerMessageFrameCodec.MAXIMUM_VARINT_BYTES`, which was inaccessible because the object property was `private`. The compiler reported lines 119 and 126 in `PeerMessageFrameCodec.kt`. [Product workflow](https://github.com/artinrahimii/project/actions/runs/41070306202).
+- **Skipped:** Android debug APK completion, JVM tests, Protobuf verification and APK upload. No Android runtime test result is claimed.
+- **HostLifecycle:** PASS. Windows WPF was still running when this record was prepared.
+- **Outcome:** A012 is finalized as a failed verification attempt; T0163 remains `in_progress`.
+
+## Attempt T0163-A013 — module visibility correction; exact-head CI pending
+
+- **Recorded:** 2026-10-30T14:19:38.620Z; base commit `4ee49fe8ad30559b39431b9d410503846b930700` (`V 3.0.626`).
+- **Correction:** Removed `private` from the codec's `MAXIMUM_VARINT_BYTES` constant so the adjacent decoder in the same Android module can read the shared five-byte varint bound. The constant value, encoder, decoder algorithm, frame format and tests are unchanged.
+- **Local execution:** Kotlin/Gradle and Python tests were not run locally. Exact-head GitHub Actions for `V 3.0.627` is pending.
+- **Task status:** `in_progress`; A013 is `partial` pending compile, APK, JVM and product workflow results. Authenticated Android libp2p connectivity and peer identity/address mapping remain unimplemented.
