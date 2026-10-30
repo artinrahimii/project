@@ -525,3 +525,25 @@
 - **Behavioral scope:** no changes to identity persistence, explicit trust, rendezvous address resolution, authenticated libp2p transport, attempt IDs, payload validation or response correlation.
 - **Verification:** exact-head V 3.0.665 Step Three quality, Android lint/build/JVM/Protobuf, Windows WPF and HostLifecycle workflows pending. No pass is claimed.
 - **Task status:** `T0163` remains `in_progress`. The production UI is not yet connected to the runtime, and the rendezvous directory does not yet provide host model/readiness snapshots needed to construct honest `HostCandidate` values.
+
+## Attempt T0163-A039 — exact V 3.0.664 CI outcome
+
+- Step Three quality failed one of 284 Python tests due to the literal source-contract mismatch; 283 passed (run 41128578071).
+- Android product job failed at KtLint test-source import ordering in `Libp2pInferenceRequestTransportTest.kt:3`; Android APK, JVM, Protobuf and artifact stages were skipped.
+- Windows WPF and HostLifecycle passed. Exact product run: 41128578070.
+- A039 is finalized as failed; see `evidence/v3.0.664-runtime-composition.md`.
+
+## Attempt T0163-A040 — exact V 3.0.665 CI outcome
+
+- Step Three quality gate passed (run 41128967479).
+- Android product job failed at KtLint test-source import ordering in `Libp2pInferenceRequestTransportTest.kt:3`; APK build, JVM, Protobuf and APK artifact stages were skipped.
+- HostLifecycle passed. Windows WPF was still in progress when recorded. Exact product run: 41128967675.
+- A040 is finalized as failed; the Android runtime class source fixes and Python source-contract correction are retained. A041 fixes the reported test import order only.
+- Evidence: `evidence/v3.0.665-runtime-composition-corrections.md`.
+
+## Attempt T0163-A041 — test import order correction (`V 3.0.666`)
+
+- Moved `AndroidInferenceRequestRuntime` before `DistributedRequest` and `HostCandidate` in the Kotlin test import group, matching the exact repository KtLint finding.
+- No test/assertion, production behavior, protocol contract or security gate was changed.
+- Exact-head V 3.0.666 quality and product workflows pending; no pass is claimed.
+- T0163 remains `in_progress`.
