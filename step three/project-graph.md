@@ -35671,11 +35671,11 @@
         "step three/T0160/evidence/verification.md",
         "tests/test_android_inference_request_payload_builder_contract.py"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0160-A001 (2026-10-29T21:11:45Z): Added the real generated-Protobuf payload builder and four JVM tests for selected-message/capsule composition, no history/permanent conversation ID, UTF-8 prompt byte limit, invalid capsule rejection, and 16 KiB serialized cap. This does not claim a live network send; exact-head V 3.0.594 CI pending.\nT0160-A002 (2026-10-29T21:15:15Z): Applied exact KtLint formatting to the result data classes and replaced the test's byte-array text conversion with the standard String constructor. V 3.0.594 had a passing quality gate but failed Android lint; APK/JVM/Protobuf did not run. Exact-head V 3.0.595 CI pending.\nT0160-A003 (2026-10-30T06:23:36.296Z): Removed the invalid full-runtime descriptorForType assertion because the Android Protobuf code generation is explicitly lite. Added a Python contract test for the canonical InferenceRequest field set and production builder parameter contract; exact-head V 3.0.596 CI pending.\nT0160-A004 (2026-10-30T06:26:44.355Z): Corrected the double-escaped regular expressions in the Python schema/API contract test. V 3.0.596 quality ran 260 tests, 258 passed and two new contract tests failed. Exact-head V 3.0.597 CI pending.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0160-A001 (2026-10-29T21:11:45Z): Added the real generated-Protobuf payload builder and four JVM tests for selected-message/capsule composition, no history/permanent conversation ID, UTF-8 prompt byte limit, invalid capsule rejection, and 16 KiB serialized cap. This does not claim a live network send; exact-head V 3.0.594 CI pending.\nT0160-A002 (2026-10-29T21:15:15Z): Applied exact KtLint formatting to the result data classes and replaced the test's byte-array text conversion with the standard String constructor. V 3.0.594 had a passing quality gate but failed Android lint; APK/JVM/Protobuf did not run. Exact-head V 3.0.595 CI pending.\nT0160-A003 (2026-10-30T06:23:36.296Z): Removed the invalid full-runtime descriptorForType assertion because the Android Protobuf code generation is explicitly lite. Added a Python contract test for the canonical InferenceRequest field set and production builder parameter contract; exact-head V 3.0.596 CI pending.\nT0160-A004 (2026-10-30T06:26:44.355Z): Corrected the double-escaped regular expressions in the Python schema/API contract test. V 3.0.596 quality ran 260 tests, 258 passed and two new contract tests failed. Exact-head V 3.0.597 CI pending.\nT0160-A005 (2026-10-30T06:29:32.088Z): Configured the payload JVM test with RobolectricTestRunner and SDK 35 to exercise the Android org.json codec, matching ConversationContextCapsuleTest. V 3.0.598 exact-head CI pending.",
       "execution_summary": {
-        "attempt_count": 4,
+        "attempt_count": 5,
         "failed_attempt_count": 3,
-        "last_attempt_id": "T0160-A004",
+        "last_attempt_id": "T0160-A005",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/protocol/InferenceRequestPayloadBuilder.kt",
@@ -35688,7 +35688,8 @@
         "related_commits": [
           "d4a998eec098b85d64579e0df58b21397791d271",
           "7c649ce339ad78ad49a92dadd92fbda6f8423332",
-          "f8c51785622452ca46b83ae5f2a8f82f93b4e903"
+          "f8c51785622452ca46b83ae5f2a8f82f93b4e903",
+          "fafb68135507f7404b10dfa8c74d93b01e782e30"
         ],
         "tests_passed": [
           {
@@ -35756,6 +35757,12 @@
             "result": "passed",
             "summary": "Unit/integration tests passed.",
             "url": "https://github.com/artinrahimii/project/actions/runs/41013853757"
+          },
+          {
+            "name": "Step Three quality gate — V 3.0.597",
+            "result": "passed",
+            "summary": "260 tests, compileall and graph/evidence validation passed with zero errors and one warning.",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41014157296"
           }
         ],
         "tests_failed": [
@@ -35776,6 +35783,12 @@
             "result": "failed",
             "summary": "260 tests: two new regex-based contract tests failed; 258 passed.",
             "url": "https://github.com/artinrahimii/project/actions/runs/41013853810"
+          },
+          {
+            "name": "Android JVM unit tests — V 3.0.596",
+            "result": "failed",
+            "summary": "60 tests completed; two payload tests failed with RuntimeException at lines 25 and 99. Source review found the test uses Android org.json without Robolectric.",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41013853757"
           }
         ],
         "blocked_reason": null,
@@ -35919,7 +35932,7 @@
             {
               "name": "Step Three quality gate — V 3.0.596",
               "result": "failed",
-              "summary": "260 tests run; 258 passed; two new contract tests failed due to over-escaped regex patterns.",
+              "summary": "260 tests; two contract regex tests failed because the raw regex strings were double-escaped (258 passed).",
               "url": "https://github.com/artinrahimii/project/actions/runs/41013853810"
             },
             {
@@ -35936,14 +35949,14 @@
             },
             {
               "name": "Android JVM unit tests — V 3.0.596",
-              "result": "in_progress",
-              "summary": "JVM unit-test step was running when A004 was prepared.",
+              "result": "failed",
+              "summary": "60 tests completed; two payload tests failed with RuntimeException at test lines 25 and 99. Protobuf verification and APK upload were skipped.",
               "url": "https://github.com/artinrahimii/project/actions/runs/41013853757"
             },
             {
               "name": "Windows WPF host — V 3.0.596",
               "result": "passed",
-              "summary": "Windows host build and policy/security checks passed.",
+              "summary": "Windows WPF build and startup/policy/security checks passed.",
               "url": "https://github.com/artinrahimii/project/actions/runs/41013853757"
             },
             {
@@ -35953,18 +35966,18 @@
               "url": "https://github.com/artinrahimii/project/actions/runs/41013853757"
             }
           ],
-          "failure_details": "Step Three quality on V 3.0.596 ran 260 tests: 258 passed and two new contract tests failed because the regex strings were double-escaped and did not match the canonical InferenceRequest message or Kotlin builder signature. Product workflow was still running at this report update. Quality workflow: https://github.com/artinrahimii/project/actions/runs/41013853810.",
+          "failure_details": "The V 3.0.596 Step Three quality run failed two new regex-based contract tests (258/260 passed). The product build then passed KtLint and APK build, but two Android JVM tests failed with RuntimeException at InferenceRequestPayloadBuilderTest.kt lines 25 and 99 (60 tests total). Source inspection found the test calls ConversationContextCapsule.encode(), which uses Android org.json, without the Robolectric runner used by the existing ConversationContextCapsuleTest; the job log did not include the deeper exception stack. Protobuf source verification and APK artifact upload were skipped. Windows WPF and HostLifecycle passed.",
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "A004 replaces the double-escaped regular expressions with correctly escaped raw patterns; rerun exact-head quality and product workflows."
+          "follow_up": "A004 corrects regexes; A005 applies the existing Robolectric runner and SDK 35 configuration to the new JVM test. Re-run exact-head checks."
         },
         {
           "attempt_id": "T0160-A004",
           "started_at": "2026-10-30T06:26:44.355Z",
           "ended_at": "2026-10-30T06:26:44.355Z",
           "result": "partial",
-          "summary": "Corrected the double-escaped schema and builder-signature regex patterns in the Python payload-contract test after V 3.0.596 reported two regex-only failures (258/260 tests passed). Exact-head V 3.0.597 CI pending.",
+          "summary": "Corrected the double-escaped schema/API regex patterns. V 3.0.597 Step Three quality passed all 260 tests, compileall and graph/evidence checks. Android lint and APK build passed; Android JVM tests and Windows WPF checks were still in progress at A005 preparation; HostLifecycle passed.",
           "changed_files": [
             "tests/test_android_inference_request_payload_builder_contract.py",
             "step three/T0160/execution-report.md",
@@ -35975,16 +35988,73 @@
           "tests": [
             {
               "name": "Step Three quality gate — V 3.0.597",
+              "result": "passed",
+              "summary": "260 Python tests passed; compileall passed; graph/evidence validation 229 tasks/417 edges, zero errors, one warning.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41014157296"
+            },
+            {
+              "name": "Android KtLint — V 3.0.597",
+              "result": "passed",
+              "summary": "Kotlin lint passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41014157187"
+            },
+            {
+              "name": "Android debug APK — V 3.0.597",
+              "result": "passed",
+              "summary": "Debug APK build passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41014157187"
+            },
+            {
+              "name": "Android JVM unit tests — V 3.0.597",
+              "result": "in_progress",
+              "summary": "Still running at A005 preparation; the earlier V 3.0.596 attempt had two payload runtime-test failures.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41014157187"
+            },
+            {
+              "name": "Windows WPF host — V 3.0.597",
+              "result": "in_progress",
+              "summary": "Build and startup checks had passed; agent-tool policy verification was still running at A005 preparation.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41014157187"
+            },
+            {
+              "name": "HostLifecycle — V 3.0.597",
+              "result": "passed",
+              "summary": "Unit/integration tests passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41014157187"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "A005 applies RobolectricTestRunner and SDK 35 configuration to the payload JVM test because it invokes the Android org.json-based capsule codec; inspect exact-head V 3.0.598 CI."
+        },
+        {
+          "attempt_id": "T0160-A005",
+          "started_at": "2026-10-30T06:29:32.088Z",
+          "ended_at": "2026-10-30T06:29:32.088Z",
+          "result": "partial",
+          "summary": "Applied RobolectricTestRunner and @Config(sdk = [35]) to the payload builder JVM test because the test invokes ConversationContextCapsule.encode(), which uses Android org.json; the existing capsule JVM tests use the same Robolectric setup. Exact-head V 3.0.598 CI pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/test/java/com/whitep/client/protocol/InferenceRequestPayloadBuilderTest.kt",
+            "step three/T0160/execution-report.md",
+            "step three/T0160/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Step Three quality gate — V 3.0.598",
               "result": "not_run",
               "summary": "Runs after commit."
             },
             {
-              "name": "Android KtLint/APK/JVM/Protobuf — V 3.0.597",
+              "name": "Android KtLint/APK/JVM/Protobuf — V 3.0.598",
               "result": "not_run",
               "summary": "Runs after commit."
             },
             {
-              "name": "Windows WPF and HostLifecycle — V 3.0.597",
+              "name": "Windows WPF and HostLifecycle — V 3.0.598",
               "result": "not_run",
               "summary": "Runs after commit."
             }
@@ -35993,7 +36063,7 @@
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect exact-head V 3.0.597 CI. Complete T0160 only if all required quality, Android, Windows and HostLifecycle checks pass."
+          "follow_up": "Inspect exact-head V 3.0.598 CI; complete T0160 only after every required gate passes."
         }
       ]
     },
@@ -47798,7 +47868,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-30T06:26:44.355Z",
+  "updated_at": "2026-10-30T06:29:32.088Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",
