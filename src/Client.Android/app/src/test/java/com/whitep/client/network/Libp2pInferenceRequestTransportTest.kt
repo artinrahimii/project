@@ -24,6 +24,9 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 import org.whitep.shared.contracts.v1.HostRuntimeState
 import org.whitep.shared.contracts.v1.InferenceOutcome
 import org.whitep.shared.contracts.v1.InferenceRequest
@@ -37,6 +40,8 @@ import java.time.Instant
 import java.util.Arrays
 import java.util.concurrent.TimeUnit
 
+@RunWith(RobolectricTestRunner::class)
+@Config(sdk = [35])
 class Libp2pInferenceRequestTransportTest {
     @Test
     fun sendsAndReceivesCorrelatedResponseOverAuthenticatedNoiseTcpStream() =

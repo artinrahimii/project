@@ -471,3 +471,23 @@
 - **CI at report time:** exact-head Step Three quality run 41120697264 and product run 41120697218 were created but queued. No KtLint, Android compilation, JVM, Protobuf, Windows WPF or HostLifecycle pass is claimed for this revision.
 - **Outcome:** partial / pending exact-head CI. Keep T0163 `in_progress` until the results are checked and the production Android request workflow plus independent Android-to-Windows .NET interoperability are addressed.
 - **Evidence:** `evidence/v3.0.661-recompile-pending.md`.
+
+## Attempt T0163-A037 — exact V 3.0.661 CI outcome
+
+- **Commit:** `2652d0655ea41fe9672826865dd25537f58bc612` (`V 3.0.661`).
+- **Step Three quality:** PASS — run 41120697264; exact-head graph/Python gate completed successfully.
+- **Android lint and APK:** PASS — KtLint and debug APK build both completed.
+- **Android JVM tests:** FAILED — 104 tests completed, 1 failed. The passing two-peer authenticated Noise/TCP test remained green. The three-peer dispatcher test failed before networking: `ConversationContextCapsule.encode()` called `org.json.JSONObject.put`, but the plain Android mock implementation throws `Method put ... not mocked`.
+- **JUnit evidence:** report artifact 13008292861 (43,436 bytes), downloaded and inspected. The stack identifies `ConversationContextCapsule.kt:59`, `InferenceRequestPayloadBuilder.kt:96`, and `InferenceAttemptDispatcher.kt:138`.
+- **Windows WPF and HostLifecycle:** PASS. Generated Protobuf verification and APK artifact upload were skipped after the JVM test failure.
+- **Outcome:** A037 is finalized as `failed`. The Android transport test did not pass as a whole; no three-peer transport acceptance is claimed.
+
+## Attempt T0163-A038 — Robolectric-backed Android JSON runtime (`V 3.0.663`)
+
+- **Base:** exact `main` head `2403c861dae9ff05e668cf320dc729f17efe6f4c` (`V 3.0.662`).
+- **Evidence-led correction:** the new three-peer integration test exercises the real payload builder, which serializes the context capsule through Android `org.json`. The existing `InferenceRequestPayloadBuilderTest` already runs under `RobolectricTestRunner` with SDK 35. The transport test class now uses that same runner and SDK so the real Android JSON methods are available in JVM tests.
+- **Scope:** test-runtime configuration only. No production implementation, wire contract, trust check, request/attempt correlation assertion, or acceptance assertion was removed or weakened.
+- **Local execution:** not run. A clean `git clone` was attempted but the editing runtime could not resolve `github.com`; the exact-head GitHub Actions run is the verification path.
+- **Verification:** exact-head quality and product CI are pending for `V 3.0.663`. No pass is claimed in this attempt record.
+- **Graph integrity for this run:** the path and Blob SHA were read from the tree for `2403c861...`; GitHub's Blob API returned 3,025,816 text characters and the fenced JSON parsed completely as 229 nodes and 417 edges. The tree reports 3,148,930 bytes; character count is not compared directly with byte size. A local Git clone was unavailable, so no independent local Git Blob hash recomputation is claimed.
+- **Task status:** `T0163` remains `in_progress`. After the multi-peer test passes, production Android request composition and independent Android-to-Windows .NET interoperability still need implementation and evidence.
