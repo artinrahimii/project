@@ -137,41 +137,41 @@ class InferenceAttemptDispatcherTest {
         }
 
     @Test
-    fun rejectsInvalidPayloadBeforeSubmittingAnyHost() =
+    fun rejectsBlankPromptWithRejectedResult() =
         runBlocking {
             val transport = RecordingTransport()
-            val result =
-                dispatcher(transport).dispatchRound(
-                    distributedRequest(),
-                    listOf(candidate("host-a"), candidate("host-b")),
-                    MODEL_ID,
-                    " ",
-                    capsule(),
-                    64,
-                    PROTOCOL_VERSION,
-                )
+            val result = dispatchBlankPrompt(transport)
 
-            assertTrue(
-                "Expected a rejected result, received: " + result,
-                result is InferenceRoundDispatchResult.Rejected,
-            )
-            val rejected = result as InferenceRoundDispatchResult.Rejected
-            assertEquals(
-                "Expected payload-level rejection, received: " + rejected,
-                InferenceRoundDispatchRejection.PAYLOAD_REJECTED,
-                rejected.reason,
-            )
-            assertEquals(
-                "Expected EMPTY_PROMPT payload rejection, received: " + rejected,
-                InferenceRequestPayloadRejection.EMPTY_PROMPT,
-                rejected.payloadRejection,
-            )
-            assertTrue(
-                "Invalid payload must be rejected before transport; hosts=" + transport.hostIds,
-                transport.requests.isEmpty(),
-            )
+            assertTrue(result is InferenceRoundDispatchResult.Rejected)
         }
 
+    @Test
+    fun classifiesBlankPromptAsPayloadRejection() =
+        runBlocking {
+            val result = dispatchBlankPrompt(RecordingTransport())
+            val rejected = result as InferenceRoundDispatchResult.Rejected
+
+            assertEquals(InferenceRoundDispatchRejection.PAYLOAD_REJECTED, rejected.reason)
+        }
+
+    @Test
+    fun identifiesEmptyPromptAsPayloadRejectionCause() =
+        runBlocking {
+            val result = dispatchBlankPrompt(RecordingTransport())
+            val rejected = result as InferenceRoundDispatchResult.Rejected
+
+            assertEquals(InferenceRequestPayloadRejection.EMPTY_PROMPT, rejected.payloadRejection)
+        }
+
+    @Test
+    fun doesNotSubmitAnyHostWhenPromptIsBlank() =
+        runBlocking {
+            val transport = RecordingTransport()
+
+            dispatchBlankPrompt(transport)
+
+            assertTrue(transport.requests.isEmpty())
+        }
     @Test
     fun rejectsTerminalRequestBeforeSubmitting() =
         runBlocking {
@@ -264,6 +264,18 @@ class InferenceAttemptDispatcherTest {
             assertTrue(transport.requests.isEmpty())
         }
 
+    private suspend fun dispatchBlankPrompt(
+        transport: RecordingTransport,
+    ): InferenceRoundDispatchResult =
+        dispatcher(transport).dispatchRound(
+            distributedRequest(),
+            listOf(candidate("host-a"), candidate("host-b")),
+            MODEL_ID,
+            " ",
+            capsule(),
+            64,
+            PROTOCOL_VERSION,
+        )
     private fun dispatcher(
         transport: InferenceRequestTransport,
         attemptIdGenerator: () -> String = { "attempt-one" },
