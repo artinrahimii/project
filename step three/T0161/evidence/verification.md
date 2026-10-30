@@ -61,3 +61,14 @@
 - V 3.0.603 quality automated tests ran 264 tests: 263 passed, one failed in the new Python test because a normal regex dot did not span a newline within a Kotlin documentation comment.
 - The failing check is source-level only; it does not change the six Android JVM tests or the production model.
 - A006 will use a direct substring assertion for the privacy statement and rerun the exact-head checks.
+
+
+## A006 — exact-head V 3.0.604 final verification
+
+- **Graph and source revision:** V 3.0.604, `79449e5f0a4c81a2082bff29f3d637a16742e695`; current graph was retrieved from the exact commit tree and its Git SHA-1 Blob ID matched the tree entry.
+- **Python quality:** 264 tests passed; compileall passed; graph guard validated 229 tasks and 417 edges with zero errors and one preserved T0001 metadata warning. The output/evidence guard also passed.
+- **Android:** KtLint, debug APK build and all JVM tests passed; generated Protobuf Java and Kotlin outputs were both verified. Artifact: `whitep-android-debug-apk.zip`, 11,968,326 bytes, ID 12961343214.
+- **Windows:** WPF build, Protobuf, startup smoke, agent-tool process/policy/capability checks, DPAPI host identity and peer-trust persistence/tamper checks passed. Artifact: `whitep-windows-host.zip`, 14,254,988 bytes, ID 12960509884.
+- **HostLifecycle:** Unit/integration job passed.
+- **Workflows:** [Product 41020640994](https://github.com/artinrahimii/project/actions/runs/41020640994) and [Quality 41020640807](https://github.com/artinrahimii/project/actions/runs/41020640807) completed successfully.
+- **Outcome:** T0161 acceptance criteria satisfied; no live peer transport capability is implied.

@@ -47,3 +47,16 @@
 - **Scope:** This is a failure in the supplementary Python source-contract test. It does not indicate a production-model defect; the V 3.0.601 Android JVM suite, APK build and product workflow previously passed.
 - **Correction:** A006 changes the fragile multiline regex to a direct assertion for the exact privacy sentence. No production Kotlin or JVM test code is changed.
 - **Current status:** `in_progress`, pending exact-head V 3.0.604 CI.
+
+
+## A006 — successful correction and final acceptance
+
+- **Verified revision:** `V 3.0.604`, commit `79449e5f0a4c81a2082bff29f3d637a16742e695` on `main`.
+- **Correction:** Replaced the newline-sensitive Python regex in `tests/test_android_distributed_request_contract.py` with a direct substring assertion for the existing privacy statement. No production Kotlin or JVM test logic changed.
+- **Quality gate:** All 264 Python tests passed; Python compileall passed; graph validation reported 229 tasks, 417 edges, zero errors and one preserved T0001 metadata warning; the recorded-output/evidence check passed. [Quality workflow 41020640807](https://github.com/artinrahimii/project/actions/runs/41020640807).
+- **Android:** KtLint, `assembleDebug`, `testDebugUnitTest`, and generated Protobuf Java/Kotlin verification all passed. The APK artifact `whitep-android-debug-apk.zip` uploaded at 11,968,326 bytes (artifact 12961343214).
+- **Windows:** WPF Release build, generated Protobuf verification, startup smoke, process-policy checks, backend/model capability gate, current-user DPAPI host identity and peer-trust checks all passed. The artifact `whitep-windows-host.zip` uploaded at 14,254,988 bytes (artifact 12960509884).
+- **HostLifecycle:** Unit/integration checks passed.
+- **Product workflow:** [Product build 41020640994](https://github.com/artinrahimii/project/actions/runs/41020640994) completed successfully.
+- **Final state:** T0161 is `done`. Six attempts are retained: A001 and A005 failed; A002 was partial; A003 succeeded; A004 reopened the task because the graph's test-evidence path rule was not met; A006 corrected the supplemental test and passed exact-head CI. The T0160 → T0161 edge remains validated as `contract_or_interface_dependency`; the outgoing T0161 → T0162 edge remains `unreviewed`.
+- **Scope boundary:** This task delivers the Android domain model and deterministic tests only. Host selection, round scheduling/timers, request dispatch, response collection, persistence and live transport are not claimed as part of T0161.
