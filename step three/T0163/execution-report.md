@@ -155,3 +155,16 @@
 - **Local execution:** Gradle is unavailable in this runtime; no local KtLint, compile or JVM test success is claimed.
 - **Verification:** exact V 3.0.634 GitHub Actions must validate Android lint, APK compilation, JVM tests, Protobuf output and the Step Three quality gate.
 - **Status:** partial; T0163 remains `in_progress` until authenticated Android libp2p transport, correlated request submission, validated Windows response reception and real-host acceptance are proven.
+
+
+## Attempt T0163-A018 — exact V 3.0.634 CI result
+
+- **Implementation commit:** `ca765f5ae4af3a7547749c99c85c4d831a798483` (`V 3.0.634`) on `main`.
+- **Step Three quality gate:** PASS — 276 Python tests; syntax, graph and execution-evidence validation; 229 tasks / 417 edges, zero errors and one preserved T0001 metadata warning. [Run 41087656942](https://github.com/artinrahimii/project/actions/runs/41087656942).
+- **Android:** KtLint, `assembleDebug`, `testDebugUnitTest`, generated Protobuf Java/Kotlin verification and debug APK artifact upload passed.
+- **Android artifact:** ID `12991793446`, size 11,994,184 bytes, SHA-256 `6411b6b892f75d5adc4bef0cf93e13c4ef671b1f68bb3d2ebaa966820d9f67e8`. [Artifact](https://github.com/artinrahimii/project/actions/runs/41087656934/artifacts/12991793446).
+- **Windows WPF:** Release build, Protobuf, startup smoke, agent-tool process/policy/capability and DPAPI checks, and artifact upload passed.
+- **HostLifecycle:** unit/integration tests passed.
+- **Product workflow:** all three jobs passed — [run 41087656934](https://github.com/artinrahimii/project/actions/runs/41087656934).
+- **Outcome:** A018 is finalized as `succeeded` for its compile-blocker correction and invalid-PeerId regression test. T0163 remains `in_progress`, because authenticated Android libp2p TCP/Noise transport, dispatcher wiring, correlated Windows response reception and independent-host delivery acceptance are still missing. T0164 remains `not_started`.
+- **Local execution:** Gradle was unavailable in this runtime; verification above comes from exact-head GitHub Actions.
