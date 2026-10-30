@@ -151,12 +151,25 @@ class InferenceAttemptDispatcherTest {
                     PROTOCOL_VERSION,
                 )
 
-            assertTrue(result is InferenceRoundDispatchResult.Rejected)
-            assertEquals(
-                InferenceRequestPayloadRejection.EMPTY_PROMPT,
-                (result as InferenceRoundDispatchResult.Rejected).payloadRejection,
+            assertTrue(
+                "Expected a rejected result, received: " + result,
+                result is InferenceRoundDispatchResult.Rejected,
             )
-            assertTrue(transport.requests.isEmpty())
+            val rejected = result as InferenceRoundDispatchResult.Rejected
+            assertEquals(
+                "Expected payload-level rejection, received: " + rejected,
+                InferenceRoundDispatchRejection.PAYLOAD_REJECTED,
+                rejected.reason,
+            )
+            assertEquals(
+                "Expected EMPTY_PROMPT payload rejection, received: " + rejected,
+                InferenceRequestPayloadRejection.EMPTY_PROMPT,
+                rejected.payloadRejection,
+            )
+            assertTrue(
+                "Invalid payload must be rejected before transport; hosts=" + transport.hostIds,
+                transport.requests.isEmpty(),
+            )
         }
 
     @Test

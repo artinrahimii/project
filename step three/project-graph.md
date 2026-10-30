@@ -37305,7 +37305,8 @@
         "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt",
         "tests/test_android_inference_attempt_dispatcher_contract.py",
         "step three/T0163/execution-report.md",
-        "step three/T0163/evidence/verification.md"
+        "step three/T0163/evidence/verification.md",
+        "step three/T0163/evidence/v3.0.619-ci-failure.md"
       ],
       "expected_output_paths": [
         "src/Client.Android/Requests/ + tests/"
@@ -37320,45 +37321,44 @@
         "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
         "protocol/whitep/v1/messages.proto",
         "step three/T0160/execution-report.md",
-        "step three/T0162/execution-report.md"
+        "step three/T0162/execution-report.md",
+        "step three/T0163/evidence/v3.0.619-ci-failure.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0163-A001 (2026-10-30T10:49:33.270Z): Reviewed both incoming edges against the actual T0160 InferenceRequest builder/Protobuf contract and T0162 HostCandidateSelector output; classified them as validated contract_or_interface_dependency while preserving type=blocks and execution order. Added InferenceAttemptDispatcher, seven JVM tests, and a repository-level source-contract test. The dispatcher creates a shared request ID and distinct per-host attempt IDs, validates the complete round before submission, and invokes an explicitly injected transport port. No concrete Android-to-host adapter or routable authenticated peer resolution exists yet; local Android/Gradle tests were not run in this tool session. Record this as partial/in_progress, not done, pending exact-head CI and real transport integration.\n\nT0163-A002 (2026-10-30T10:52:15.334Z): Corrected all KtLint issues reported by exact V 3.0.614 CI in the production dispatcher and its JVM test source: import ordering, unused import, multiline property initializer and lambda formatting, argument wrapping and trailing commas. V 3.0.614 Step Three quality and HostLifecycle workflows passed; Android lint failed and therefore APK/JVM/Protobuf steps were skipped. No Android test success is claimed. Exact V 3.0.615 CI is pending. T0163 remains in_progress because the production Android-to-host transport adapter and routable peer-address resolution are not present.\n\nT0163-A003 (2026-10-30T10:54:35.251Z): Applied the remaining exact V 3.0.615 KtLint corrections in InferenceAttemptDispatcherTest.kt: moved multiline runBlocking bodies to the next line after '=', corrected RecordingTransport lambda indentation, extracted the dispatch helper before the method call, and converted the helper to an expression body with the project-compatible signature layout. V 3.0.615 quality gate and HostLifecycle passed, but Android KtLint still failed and its build/JVM/Protobuf stages were skipped. Exact V 3.0.616 CI is pending. T0163 remains in_progress; no remote transport adapter is claimed.\n\nT0163-A003 exact-head V 3.0.616 outcome (2026-10-30): Step Three quality 41044231304 and HostLifecycle job 124024230799 passed. Android KtLint failed only in the test file due to runBlocking body indentation, the dispatcher helper expression layout and distributedRequest constructor indentation; Android APK/JVM/Protobuf were skipped. Exact details are in evidence/v3.0.616-ci-failure.md. A004 corrects the formatting; task remains in_progress.\n\n\nT0163-A004 exact-head V 3.0.617 outcome (2026-10-30): Step Three graph_guard failed with FAILED_ATTEMPT_COUNT_MISMATCH (summary=3, failed history records=2). Exact Blob inspection of the same commit confirmed four history records, two failed; A001 was still recorded partial despite the V 3.0.614 Android lint failure. A005 corrects A001 to failed and sets failed_attempt_count=4 to match history. HostLifecycle passed. Android KtLint then reported only eight trailing whitespace lines in test source; no APK/JVM/Protobuf checks ran. A005 strips trailing whitespace. T0163 remains in_progress.\n\n\nT0163-A005 exact-head V 3.0.618 result (2026-10-30): Step Three quality (41044870891), HostLifecycle and Windows WPF product jobs (41044870997) passed. Windows artifact upload passed. Android KtLint and debug APK build passed; Android JVM test compilation then failed at InferenceAttemptDispatcherTest.kt:155 because InferenceRequestPayloadRejection was not imported. JVM tests did not execute, generated Protobuf verification and APK artifact upload were skipped. A006 adds the missing import; task remains in_progress.\n",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0163-A001 (2026-10-30T10:49:33.270Z): Reviewed both incoming edges against the actual T0160 InferenceRequest builder/Protobuf contract and T0162 HostCandidateSelector output; classified them as validated contract_or_interface_dependency while preserving type=blocks and execution order. Added InferenceAttemptDispatcher, seven JVM tests, and a repository-level source-contract test. The dispatcher creates a shared request ID and distinct per-host attempt IDs, validates the complete round before submission, and invokes an explicitly injected transport port. No concrete Android-to-host adapter or routable authenticated peer resolution exists yet; local Android/Gradle tests were not run in this tool session. Record this as partial/in_progress, not done, pending exact-head CI and real transport integration.\n\nT0163-A002 (2026-10-30T10:52:15.334Z): Corrected all KtLint issues reported by exact V 3.0.614 CI in the production dispatcher and its JVM test source: import ordering, unused import, multiline property initializer and lambda formatting, argument wrapping and trailing commas. V 3.0.614 Step Three quality and HostLifecycle workflows passed; Android lint failed and therefore APK/JVM/Protobuf steps were skipped. No Android test success is claimed. Exact V 3.0.615 CI is pending. T0163 remains in_progress because the production Android-to-host transport adapter and routable peer-address resolution are not present.\n\nT0163-A003 (2026-10-30T10:54:35.251Z): Applied the remaining exact V 3.0.615 KtLint corrections in InferenceAttemptDispatcherTest.kt: moved multiline runBlocking bodies to the next line after '=', corrected RecordingTransport lambda indentation, extracted the dispatch helper before the method call, and converted the helper to an expression body with the project-compatible signature layout. V 3.0.615 quality gate and HostLifecycle passed, but Android KtLint still failed and its build/JVM/Protobuf stages were skipped. Exact V 3.0.616 CI is pending. T0163 remains in_progress; no remote transport adapter is claimed.\n\nT0163-A003 exact-head V 3.0.616 outcome (2026-10-30): Step Three quality 41044231304 and HostLifecycle job 124024230799 passed. Android KtLint failed only in the test file due to runBlocking body indentation, the dispatcher helper expression layout and distributedRequest constructor indentation; Android APK/JVM/Protobuf were skipped. Exact details are in evidence/v3.0.616-ci-failure.md. A004 corrects the formatting; task remains in_progress.\n\n\nT0163-A004 exact-head V 3.0.617 outcome (2026-10-30): Step Three graph_guard failed with FAILED_ATTEMPT_COUNT_MISMATCH (summary=3, failed history records=2). Exact Blob inspection of the same commit confirmed four history records, two failed; A001 was still recorded partial despite the V 3.0.614 Android lint failure. A005 corrects A001 to failed and sets failed_attempt_count=4 to match history. HostLifecycle passed. Android KtLint then reported only eight trailing whitespace lines in test source; no APK/JVM/Protobuf checks ran. A005 strips trailing whitespace. T0163 remains in_progress.\n\n\nT0163-A005 exact-head V 3.0.618 result (2026-10-30): Step Three quality (41044870891), HostLifecycle and Windows WPF product jobs (41044870997) passed. Windows artifact upload passed. Android KtLint and debug APK build passed; Android JVM test compilation then failed at InferenceAttemptDispatcherTest.kt:155 because InferenceRequestPayloadRejection was not imported. JVM tests did not execute, generated Protobuf verification and APK artifact upload were skipped. A006 adds the missing import; task remains in_progress.\n\n\nT0163-A007 (2026-10-30T11:09:54.931Z): Exact V 3.0.619 CI passed the Step Three quality gate, Android KtLint, APK build, Windows WPF/security/DPAPI/artifact and HostLifecycle; the Android JVM suite ran 81 tests with 80 passed and one AssertionError in rejectsInvalidPayloadBeforeSubmittingAnyHost. The CI log pointed at the runBlocking start line and omitted which assertion failed. Split that test into explicit diagnostic assertions for result type, rejection category, EMPTY_PROMPT, and zero transport calls. Exact V 3.0.620 CI pending. Task remains in_progress and no concrete peer transport is claimed.",
       "execution_summary": {
-        "attempt_count": 6,
-        "failed_attempt_count": 5,
-        "last_attempt_id": "T0163-A006",
+        "attempt_count": 7,
+        "failed_attempt_count": 6,
+        "last_attempt_id": "T0163-A007",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt",
           "step three/T0163/execution-report.md",
-          "step three/T0163/evidence/v3.0.615-ci-failure.md",
-          "step three/project-graph.md",
-          "step three/T0163/evidence/v3.0.616-ci-failure.md",
-          "step three/T0163/evidence/v3.0.617-ci-failure.md",
-          "step three/T0163/evidence/v3.0.618-ci-failure.md"
+          "step three/T0163/evidence/v3.0.619-ci-failure.md",
+          "step three/project-graph.md"
         ],
-        "related_commits": [],
+        "related_commits": [
+          "83d74c783c576b6b994e1bfa4235150cec9c2c86",
+          "75f996b801a6b80b8634c3ca002a18c96753cab5",
+          "edfd75ce4bdb36a02b37b6fc1bab9e6ba3d7b7bd",
+          "e4ada9fa25f3e25ddbc437f0ceeb70596a02907a",
+          "a338ae30d39fa5088ab6c78787504da9a946f256",
+          "5c1a3997810040dcb22b00ac80080d33269122fc"
+        ],
         "tests_passed": [
-          "V 3.0.614 Step Three quality passed",
-          "V 3.0.614 HostLifecycle passed",
-          "V 3.0.615 Step Three quality passed",
-          "V 3.0.615 HostLifecycle passed",
-          "V 3.0.616 Step Three quality passed",
-          "V 3.0.616 HostLifecycle passed",
-          "V 3.0.617 HostLifecycle passed",
-          "V 3.0.618 Step Three quality passed",
-          "V 3.0.618 HostLifecycle passed",
-          "V 3.0.618 Windows WPF build/startup/security passed",
-          "V 3.0.618 Android KtLint passed",
-          "V 3.0.618 Android Debug APK build passed"
+          "V 3.0.614 Step Three quality, HostLifecycle, Windows WPF/security/DPAPI/artifact passed",
+          "V 3.0.615 Step Three quality, HostLifecycle, Windows WPF/security/DPAPI/artifact passed",
+          "V 3.0.616 Step Three quality, HostLifecycle, Windows WPF/security/DPAPI/artifact and Android main-source KtLint passed",
+          "V 3.0.617 Python tests 271 passed; compileall passed; HostLifecycle passed",
+          "V 3.0.618 Step Three quality (271 Python tests), graph/evidence guard, compileall, Android KtLint and APK build, Windows WPF/security/DPAPI/artifact, HostLifecycle passed",
+          "V 3.0.619 Step Three quality, Android KtLint and APK build, Windows WPF/security/DPAPI/artifact, HostLifecycle passed"
         ],
         "tests_failed": [
-          "V 3.0.614 Android KtLint failed; Android build/JVM/Protobuf skipped",
-          "V 3.0.615 Android KtLint failed; Android build/JVM/Protobuf skipped",
-          "V 3.0.616 Android KtLint failed; Android build/JVM/Protobuf skipped",
-          "V 3.0.617 Step Three graph validation failed on stale A001 failed-attempt status; corrected in V 3.0.618",
-          "V 3.0.617 Android KtLint failed on trailing whitespace; APK/JVM/Protobuf skipped",
-          "V 3.0.618 Android JVM test compilation failed on missing InferenceRequestPayloadRejection import; Protobuf/upload skipped"
+          "V 3.0.614 Android KtLint failed; APK/JVM/Protobuf skipped",
+          "V 3.0.615 Android KtLint failed; APK/JVM/Protobuf skipped",
+          "V 3.0.616 Android test-source KtLint failed; APK/JVM/Protobuf skipped",
+          "V 3.0.617 graph validation failed: FAILED_ATTEMPT_COUNT_MISMATCH; Android test-source KtLint failed",
+          "V 3.0.618 Android JVM test compilation failed due missing InferenceRequestPayloadRejection import; Protobuf/APK upload skipped",
+          "V 3.0.619 Android JVM tests: 80 passed, 1 failed in rejectsInvalidPayloadBeforeSubmittingAnyHost; Protobuf/APK upload skipped"
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -37595,8 +37595,8 @@
         {
           "attempt_id": "T0163-A006",
           "started_at": "2026-10-30T11:04:03.068Z",
-          "ended_at": "2026-10-30T11:04:03.068Z",
-          "result": "partial",
+          "ended_at": "2026-10-30T11:09:54.931Z",
+          "result": "failed",
           "summary": "Added the missing InferenceRequestPayloadRejection import to InferenceAttemptDispatcherTest.kt after exact V 3.0.618 CI showed a Kotlin compilation error at line 155. The production source, Kotlin lint and Android debug APK build already passed; the JVM tests had not executed. Exact-head V 3.0.619 CI is pending.",
           "changed_files": [
             "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt",
@@ -37607,16 +37607,98 @@
           "commit_sha": null,
           "tests": [
             {
-              "name": "Android JVM tests, Protobuf verification and APK artifact upload",
+              "name": "V 3.0.619 Step Three quality gate",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41045421123",
+              "summary": "Quality tests, compileall, graph and output/evidence validation passed."
+            },
+            {
+              "name": "V 3.0.619 Android KtLint",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41045421054",
+              "summary": "Production and test Kotlin lint passed."
+            },
+            {
+              "name": "V 3.0.619 Android debug APK build",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41045421054",
+              "summary": "Debug APK build succeeded."
+            },
+            {
+              "name": "V 3.0.619 Android JVM tests",
+              "result": "failed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41045421054",
+              "summary": "81 tests ran; 80 passed and one failed: rejectsInvalidPayloadBeforeSubmittingAnyHost. Reported as AssertionError at line 141; exact assertion/expected value was not printed."
+            },
+            {
+              "name": "V 3.0.619 Windows WPF/security",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41045421054",
+              "summary": "WPF formatting/build/Protobuf/startup/security/DPAPI and Windows artifact upload passed."
+            },
+            {
+              "name": "V 3.0.619 HostLifecycle",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41045421054",
+              "summary": "HostLifecycle unit/integration passed."
+            }
+          ],
+          "failure_details": "V 3.0.619 Step Three quality gate passed. Android KtLint and debug APK build passed; Windows WPF/security/DPAPI/artifact and HostLifecycle passed. Android JVM suite ran 81 tests and failed one case: rejectsInvalidPayloadBeforeSubmittingAnyHost (AssertionError, test line 141). The CI log did not print the failing assertion's expected/actual values; generated Protobuf verification and APK artifact upload were skipped.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect exact V 3.0.619 Android JVM test results, generated Protobuf validation and APK artifact upload. T0163 stays in_progress until real authenticated peer transport is also implemented and verified."
+        },
+        {
+          "attempt_id": "T0163-A007",
+          "started_at": "2026-10-30T11:09:54.931Z",
+          "ended_at": "2026-10-30T11:09:54.931Z",
+          "result": "partial",
+          "summary": "Split the V 3.0.619 invalid-payload JVM test into separate assertions with diagnostic messages for result type, rejection category, payload-level reason and zero transport calls. This is diagnostic test refinement, not an acceptance relaxation. Exact V 3.0.620 CI is pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt",
+            "step three/T0163/execution-report.md",
+            "step three/T0163/evidence/v3.0.619-ci-failure.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "V 3.0.619 Step Three quality",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41045421123",
+              "summary": "Graph and repository quality validation passed."
+            },
+            {
+              "name": "V 3.0.619 Android KtLint and APK",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41045421054",
+              "summary": "KtLint and debug APK build passed."
+            },
+            {
+              "name": "V 3.0.619 Android JVM",
+              "result": "failed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41045421054",
+              "summary": "81 tests: one assertion failed in rejectsInvalidPayloadBeforeSubmittingAnyHost. Exact sub-assertion not reported."
+            },
+            {
+              "name": "V 3.0.619 Windows/HostLifecycle",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41045421054",
+              "summary": "Both Windows and HostLifecycle jobs passed."
+            },
+            {
+              "name": "V 3.0.620 exact-head workflows",
               "result": "pending",
-              "summary": "Awaiting exact-head V 3.0.619 product CI after the missing import correction."
+              "url": "https://github.com/artinrahimii/project/actions",
+              "summary": "Pending after diagnostic test commit."
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect exact V 3.0.619 Android JVM test results, generated Protobuf validation and APK artifact upload. T0163 stays in_progress until real authenticated peer transport is also implemented and verified."
+          "follow_up": "Use the diagnostic failure message in exact V 3.0.620 test output to identify whether result type, rejection category, payload reason or the no-send invariant is wrong. Correct implementation or test according to actual evidence. Keep T0163 in_progress until concrete authenticated peer transport/address resolution and real delivery are implemented."
         }
       ]
     },
@@ -49375,7 +49457,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-30T11:04:03.068Z",
+  "updated_at": "2026-10-30T11:09:54.931Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",
