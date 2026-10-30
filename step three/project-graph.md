@@ -37298,20 +37298,44 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0162 و T0160 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceAttemptDispatcher.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt",
+        "tests/test_android_inference_attempt_dispatcher_contract.py",
+        "step three/T0163/execution-report.md",
+        "step three/T0163/evidence/verification.md"
+      ],
       "expected_output_paths": [
         "src/Client.Android/Requests/ + tests/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceAttemptDispatcher.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt",
+        "tests/test_android_inference_attempt_dispatcher_contract.py",
+        "step three/T0163/execution-report.md",
+        "step three/T0163/evidence/verification.md",
+        "src/Client.Android/app/src/main/java/com/whitep/client/protocol/InferenceRequestPayloadBuilder.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
+        "protocol/whitep/v1/messages.proto",
+        "step three/T0160/execution-report.md",
+        "step three/T0162/execution-report.md"
+      ],
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0163-A001 (2026-10-30T10:49:33.270Z): Reviewed both incoming edges against the actual T0160 InferenceRequest builder/Protobuf contract and T0162 HostCandidateSelector output; classified them as validated contract_or_interface_dependency while preserving type=blocks and execution order. Added InferenceAttemptDispatcher, seven JVM tests, and a repository-level source-contract test. The dispatcher creates a shared request ID and distinct per-host attempt IDs, validates the complete round before submission, and invokes an explicitly injected transport port. No concrete Android-to-host adapter or routable authenticated peer resolution exists yet; local Android/Gradle tests were not run in this tool session. Record this as partial/in_progress, not done, pending exact-head CI and real transport integration.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0163-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceAttemptDispatcher.kt",
+          "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt",
+          "tests/test_android_inference_attempt_dispatcher_contract.py",
+          "step three/T0163/execution-report.md",
+          "step three/T0163/evidence/verification.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
@@ -37324,7 +37348,36 @@
           "review_evidence": []
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0163-A001",
+          "started_at": "2026-10-30T10:49:33.270Z",
+          "ended_at": "2026-10-30T10:49:33.270Z",
+          "result": "partial",
+          "summary": "Added an Android per-host inference attempt dispatcher that builds a canonical InferenceRequest with a shared ephemeral request ID and distinct attempt ID per selected peer, validates all payloads before submission, and invokes an explicitly injected transport port. Added seven JVM tests and a repository-level source-contract test. A concrete Android-to-host transport adapter/address-resolution path is absent, so remote delivery is not claimed and the task remains in_progress.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceAttemptDispatcher.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt",
+            "tests/test_android_inference_attempt_dispatcher_contract.py",
+            "step three/T0163/execution-report.md",
+            "step three/T0163/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "command": "Android KtLint, debug APK, JVM unit tests, generated Protobuf verification, and Step Three quality GitHub Actions",
+              "result": "pending",
+              "summary": "Not executed locally; exact-head workflow verification is pending the online version commit."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect exact-head GitHub Actions results after V 3.0.614. Then implement and wire authenticated peer address resolution and a concrete Android-to-host transport before claiming T0163 complete."
+        }
+      ]
     },
     {
       "id": "T0164",
@@ -44228,19 +44281,27 @@
       "from": "T0162",
       "to": "T0163",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0162 produces the selected HostCandidate values that this dispatcher consumes. The dispatcher routes one request payload to each candidate using HostCandidate.announcement.ephemeralHostId and validates that the outer announcement, nested capabilities, and observed status identify the same peer. This is a direct producer/consumer data contract, not an inference from type=blocks.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt",
+        "step three/T0162/execution-report.md"
+      ]
     },
     {
       "from": "T0160",
       "to": "T0163",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0160 defines the canonical InferenceRequest payload builder and Protobuf fields request_id and attempt_id. T0163 consumes that builder for every host submission, reuses one DistributedRequest.requestId across the round, and assigns a distinct attemptId to each selected host. This is a direct payload-interface dependency, not an inference from type=blocks.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/protocol/InferenceRequestPayloadBuilder.kt",
+        "protocol/whitep/v1/messages.proto",
+        "step three/T0160/execution-report.md"
+      ]
     },
     {
       "from": "T0163",
@@ -49043,9 +49104,37 @@
         "step three/T0162/execution-report.md"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-30T10:49:33.270Z",
+      "edge_from": "T0162",
+      "edge_to": "T0163",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "reason": "T0162 produces the selected HostCandidate values that this dispatcher consumes. The dispatcher routes one request payload to each candidate using HostCandidate.announcement.ephemeralHostId and validates that the outer announcement, nested capabilities, and observed status identify the same peer. This is a direct producer/consumer data contract, not an inference from type=blocks.",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt",
+        "step three/T0162/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-30T10:49:33.270Z",
+      "edge_from": "T0160",
+      "edge_to": "T0163",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "reason": "T0160 defines the canonical InferenceRequest payload builder and Protobuf fields request_id and attempt_id. T0163 consumes that builder for every host submission, reuses one DistributedRequest.requestId across the round, and assigns a distinct attemptId to each selected host. This is a direct payload-interface dependency, not an inference from type=blocks.",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/protocol/InferenceRequestPayloadBuilder.kt",
+        "protocol/whitep/v1/messages.proto",
+        "step three/T0160/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-30T10:30:54.000Z",
+  "updated_at": "2026-10-30T10:49:33.270Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",
