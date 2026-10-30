@@ -399,3 +399,22 @@
 - **Local verification:** Gradle is unavailable in this connected editing runtime; no local lint/build/test pass is claimed.
 - **Exact-head verification:** pending V 3.0.655 CI, including the report artifact. T0163 remains `in_progress`; T0164 remains `not_started`.
 - **Evidence:** `step three/T0163/evidence/v3.0.655-loopback-diagnostic-and-ci-report.md`.
+
+
+## Attempt T0163-A031 — exact V 3.0.655 quality-gate result
+
+- **Commit:** `7c7c2dc0f3592f5fd2e29d620b5b92719a705cbe` (`V 3.0.655`) on `main`.
+- **Failure:** Step Three quality run [41117198895](https://github.com/artinrahimii/project/actions/runs/41117198895) ran 282 Python tests; one failed in `test_product_builds_publish_real_artifacts_and_fail_if_missing`. The contract test expected two `actions/upload-artifact@v4` steps, while the intentional new Android test-report artifact brings the actual workflow count to three.
+- **Skipped:** syntax, graph structure and recorded-output/evidence validation were not reached after unittest failed.
+- **HostLifecycle:** PASS in product run 41117198888. Windows and Android product jobs were still running when A031 was first recorded.
+- **Outcome:** A031 is finalized failed for the quality gate; no quality pass is claimed.
+- **Evidence:** `step three/T0163/evidence/v3.0.655-quality-contract-failure.md`.
+
+## Attempt T0163-A032 — correct the stale CI artifact-count contract
+
+- **Base:** `7c7c2dc0f3592f5fd2e29d620b5b92719a705cbe` (`V 3.0.655`).
+- **Correction:** update `tests/test_reproducible_build_contract.py` to expect three upload artifacts, retain exactly two mandatory `if-no-files-found: error` product artifacts, and assert the always-upload Android JVM report artifact's name, report path, missing-report policy and seven-day retention.
+- **Acceptance preserved:** Windows and Android product packages remain mandatory; the new report artifact is diagnostic-only and may be absent if an earlier build step fails.
+- **Local execution:** no local Python run is available in this connected editing runtime.
+- **Verification:** exact-head V3.0.656 quality/product CI pending. T0163 remains `in_progress`.
+- **Evidence:** `step three/T0163/evidence/v3.0.656-artifact-contract-correction.md`.
