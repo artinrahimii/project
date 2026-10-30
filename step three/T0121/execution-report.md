@@ -176,3 +176,19 @@ The current V 3.0.435 graph was re-read before T0130 work. Repository transport 
 - **Independent-network acceptance — NOT RUN:** no configured production HTTPS rendezvous endpoint or peer on an independent network was available. Loopback tests and CI do not establish external reachability.
 - **Result:** `T0121` remains `blocked`; `T0122` remains `not_started`; `AC-P2P-01` remains **NOT RUN**. No implementation code or dependency edge changed; this records completed CI evidence, not product implementation progress.
 - **Next:** deploy/configure the HTTPS rendezvous endpoint and verify advertised TCP/UDP reachability from a separate peer network before re-evaluating T0121.
+
+
+## T0121-A019 — exact V 3.0.607 current-head revalidation; external reachability still blocked
+
+Revalidated T0121 against the exact online main head V 3.0.607. The full graph Blob SHA-1 matches the exact tree entry and parses as 229 tasks / 417 edges. Current-head GitHub Actions pass: Step Three quality gate; HostLifecycle integration including PeerAnnouncementClientAcceptanceTests; Windows WPF Release/startup/security; Android lint/APK/unit tests. The WPF participation toggle is wired to PeerAnnouncementHostLifecycle and requests HTTPS rendezvous plus operator-confirmed advertised address. No production rendezvous endpoint or independent-network peer is available in this execution context, so real external TCP/UDP reachability remains NOT RUN. No product source changed; T0121 stays blocked and T0122 stays not_started.
+
+- Exact online main head: `ee74f6d0135049bf97ba3d155674892b833b313a` (`V 3.0.607`).
+- Graph blob: `f5a5c72a11f5ff08c4d8760b3a12072c1fa0efcd`; 2,953,201 UTF-8 bytes; recomputed Git Blob SHA-1 matched; full fenced JSON parsed as 229 nodes / 417 edges.
+- Step Three quality gate PASS: https://github.com/artinrahimii/project/actions/runs/41021718017 (job 123950320641).
+- HostLifecycle unit/integration PASS: https://github.com/artinrahimii/project/actions/runs/41021717940 (job 123950320671).
+- Windows WPF build/startup/security PASS: https://github.com/artinrahimii/project/actions/runs/41021717940 (job 123950320733).
+- Android APK/lint/unit tests PASS: https://github.com/artinrahimii/project/actions/runs/41021717940 (job 123950320438).
+- Source review confirms participation-toggle lifecycle wiring, HTTPS rendezvous validation, and an explicit remote-address operator attestation. The application itself does not verify public reachability.
+- Independent-network TCP/UDP acceptance: NOT RUN; no configured production rendezvous endpoint or separate peer was available.
+- Outcome: T0121 remains blocked; T0122 remains not_started. No product implementation or edge classification changed. This update is evidence synchronization, not implementation progress.
+- Follow-up: configure the production endpoint and perform remote reachability verification from a peer on a separate network.
