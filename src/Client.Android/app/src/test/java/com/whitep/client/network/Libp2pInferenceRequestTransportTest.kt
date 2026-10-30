@@ -24,10 +24,12 @@ import java.util.concurrent.TimeUnit
 
 class Libp2pInferenceRequestTransportTest {
     @Test
-    fun sendsAndReceivesCorrelatedResponseOverAuthenticatedNoiseTcpStream() = runBlocking {
+    fun sendsAndReceivesCorrelatedResponseOverAuthenticatedNoiseTcpStream() =
+        runBlocking {
         val serverIdentity = generateKeyPair(KeyType.ED25519).first
         val expectedServerPeerId = PeerId.fromPubKey(serverIdentity.publicKey()).toBase58()
-        val serverBinding = createSimpleBinding(PROTOCOL_ID) {
+        val serverBinding =
+            createSimpleBinding(PROTOCOL_ID) {
             LoopbackInferenceResponder(expectedServerPeerId)
         }
         val server = createHost(serverIdentity, serverBinding)
@@ -36,14 +38,16 @@ class Libp2pInferenceRequestTransportTest {
         val serverPeerId = server.peerId.toBase58()
         assertEquals(expectedServerPeerId, serverPeerId)
         val address = server.listenAddresses().first { it.toString().contains("/tcp/") }.toString()
-        val endpoint = RendezvousPeerEndpoint(
+        val endpoint =
+            RendezvousPeerEndpoint(
             peerId = serverPeerId,
             tcpMultiaddresses = listOf(address),
             expiresAtUtc = Instant.now().plusSeconds(120),
         )
 
         val clientIdentity = generateKeyPair(KeyType.ED25519).first
-        val client = Libp2pInferenceRequestTransport(
+        val client =
+            Libp2pInferenceRequestTransport(
             localIdentity = clientIdentity,
             resolveEndpoint = { requestedPeerId -> endpoint.takeIf { it.peerId == requestedPeerId } },
             trustVerifier = PeerTrustVerifier { trustedPeerId -> trustedPeerId == serverPeerId },
@@ -55,7 +59,8 @@ class Libp2pInferenceRequestTransportTest {
                 com.whitep.client.requests.InferenceTransportSubmission.QUEUED,
                 client.submit(serverPeerId, request),
             )
-            val response = client.awaitResponse(
+            val response =
+                client.awaitResponse(
                 requestId = request.requestId,
                 attemptId = request.attemptId,
                 timeout = Duration.ofSeconds(20),
@@ -114,7 +119,8 @@ class Libp2pInferenceRequestTransportTest {
             msg.readBytes(chunk)
             decoder.feed(chunk).forEach { payload ->
                 val request = InferenceRequest.parseFrom(payload)
-                val response = InferenceResponse.newBuilder()
+                val response =
+                    InferenceResponse.newBuilder()
                     .setRequestId(request.requestId)
                     .setAttemptId(request.attemptId)
                     .setEphemeralHostId(localPeerId)
