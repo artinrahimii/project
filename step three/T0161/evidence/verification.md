@@ -72,3 +72,11 @@
 - **HostLifecycle:** Unit/integration job passed.
 - **Workflows:** [Product 41020640994](https://github.com/artinrahimii/project/actions/runs/41020640994) and [Quality 41020640807](https://github.com/artinrahimii/project/actions/runs/41020640807) completed successfully.
 - **Outcome:** T0161 acceptance criteria satisfied; no live peer transport capability is implied.
+
+
+## A007 — recorded-output evidence schema finding
+
+- V 3.0.605 structure validation passed: 229 tasks, 417 edges, zero errors and one preserved T0001 metadata warning.
+- The repo-root evidence check failed because four Actions URLs were placed in `T0161.evidence`, which graph_guard resolves as local repository paths.
+- Those URLs remain in the `tests_passed` records and narrative reports; the evidence list is now restricted to file paths that exist in the exact V 3.0.605 repository tree.
+- T0161 is reopened pending exact-head V 3.0.606 graph and evidence validation.

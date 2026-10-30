@@ -60,3 +60,11 @@
 - **Product workflow:** [Product build 41020640994](https://github.com/artinrahimii/project/actions/runs/41020640994) completed successfully.
 - **Final state:** T0161 is `done`. Six attempts are retained: A001 and A005 failed; A002 was partial; A003 succeeded; A004 reopened the task because the graph's test-evidence path rule was not met; A006 corrected the supplemental test and passed exact-head CI. The T0160 → T0161 edge remains validated as `contract_or_interface_dependency`; the outgoing T0161 → T0162 edge remains `unreviewed`.
 - **Scope boundary:** This task delivers the Android domain model and deterministic tests only. Host selection, round scheduling/timers, request dispatch, response collection, persistence and live transport are not claimed as part of T0161.
+
+
+## A007 — evidence schema correction
+
+- **Exact revision:** `V 3.0.605`, commit `4d0d9ebf43a054e2b4dd250c4fa0a3bbe5c67221`.
+- **Finding:** The structural graph guard passed, but the repository-root recorded-output guard reported four `MISSING_EVIDENCE_FILE` errors. The cause was four GitHub Actions URLs stored inside `T0161.evidence`; this field is interpreted strictly as repository-relative file paths.
+- **Correction:** Removed the four URLs from `evidence`. The same workflow URLs remain in `execution_summary.tests_passed` and this report. All remaining evidence entries were checked against the exact V 3.0.605 repository tree and exist.
+- **History:** A007 records the reopen; A001–A006 remain unchanged. Task status is `in_progress` until exact-head V 3.0.606 graph and recorded-output validation both pass.

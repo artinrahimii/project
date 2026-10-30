@@ -36227,8 +36227,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0160 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "done",
-      "status_fa": "انجام‌شده",
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
       "actual_output_paths": [
         "src/Client.Android/app/src/main/java/com/whitep/client/requests/DistributedRequest.kt",
         "src/Client.Android/app/src/test/java/com/whitep/client/requests/DistributedRequestTest.kt",
@@ -36248,18 +36248,14 @@
         "step three/T0160/execution-report.md",
         "step three/T0161/execution-report.md",
         "step three/T0161/evidence/verification.md",
-        "https://github.com/artinrahimii/project/actions/runs/41019550415",
-        "https://github.com/artinrahimii/project/actions/runs/41019550381",
-        "tests/test_android_distributed_request_contract.py",
-        "https://github.com/artinrahimii/project/actions/runs/41020640994",
-        "https://github.com/artinrahimii/project/actions/runs/41020640807"
+        "tests/test_android_distributed_request_contract.py"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0161-A001 (2026-10-30T07:18:31.437Z): Added DistributedRequest and six JVM unit tests. Reviewed T0160->T0161 as contract_or_interface_dependency because the transient requestId and absolute deadline align with the verified InferenceRequestPayloadBuilder and canonical InferenceRequest fields. The task remains in_progress pending exact-head CI; T0161->T0162 remains unreviewed.\nT0161-A002 (2026-10-30T07:20:42.701Z): Corrected the exact V 3.0.600 KtLint failure by placing the java.util.UUID import after the org.junit imports, preserving the six JVM tests. Exact-head V 3.0.601 CI pending.\nT0161-A003 (2026-10-30T07:21:06Z–07:23:27Z): Exact-head V 3.0.601 verification passed. KtLint, Android debug APK build, all Android JVM unit tests (including six DistributedRequestTest cases), generated Protobuf Java/Kotlin verification and APK artifact upload passed. Windows WPF build/startup/security/DPAPI checks, Windows artifact upload and HostLifecycle tests passed. The quality gate passed 260 Python tests, compileall and graph/evidence checks with zero errors and one preserved T0001 metadata warning. T0161 is complete; T0161->T0162 remains unreviewed.\nT0161-A004 (2026-10-30T07:26:12Z): The V 3.0.602 exact-head quality workflow ran all 260 Python tests and compileall successfully but graph_guard rejected the done state with DONE_WITHOUT_TEST_FILE_EVIDENCE because the Kotlin JVM test path starts with src/Client.Android/ rather than tests/. The V 3.0.601 product/JVM test evidence remains valid. Added an explicit Python source-contract test under tests/ to satisfy the graph guard's documented path rule without replacing the six real Kotlin JVM tests. Task reopened as in_progress pending V 3.0.603 CI.\nT0161-A005 (2026-10-30T07:29:33Z): V 3.0.603 quality workflow ran 264 Python tests; 263 passed and one new source-contract assertion failed because a regex attempted to cross a newline in a Kotlin comment. The failure is in the supplemental Python contract test, not the production model or Android JVM tests. Replaced the multiline regex with an exact substring assertion. Exact-head V 3.0.604 CI pending.\nT0161-A006 (2026-10-30T07:31:47Z–07:34:39Z): Fixed the supplementary source-contract test by replacing a newline-sensitive regex with a literal assertion. Exact-head V 3.0.604 CI passed: all 264 Python tests; compileall; graph structure/output evidence validation (229 nodes, 417 edges, zero errors and one preserved T0001 metadata warning); Android KtLint, debug APK build, JVM tests and generated Protobuf Java/Kotlin checks; Windows WPF build/startup/security/DPAPI checks; HostLifecycle; and both platform artifact uploads. T0161 completion restored with all six attempts retained. T0161->T0162 and T0160->T0162 remain unreviewed.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0161-A001 (2026-10-30T07:18:31.437Z): Added DistributedRequest and six JVM unit tests. Reviewed T0160->T0161 as contract_or_interface_dependency because the transient requestId and absolute deadline align with the verified InferenceRequestPayloadBuilder and canonical InferenceRequest fields. The task remains in_progress pending exact-head CI; T0161->T0162 remains unreviewed.\nT0161-A002 (2026-10-30T07:20:42.701Z): Corrected the exact V 3.0.600 KtLint failure by placing the java.util.UUID import after the org.junit imports, preserving the six JVM tests. Exact-head V 3.0.601 CI pending.\nT0161-A003 (2026-10-30T07:21:06Z–07:23:27Z): Exact-head V 3.0.601 verification passed. KtLint, Android debug APK build, all Android JVM unit tests (including six DistributedRequestTest cases), generated Protobuf Java/Kotlin verification and APK artifact upload passed. Windows WPF build/startup/security/DPAPI checks, Windows artifact upload and HostLifecycle tests passed. The quality gate passed 260 Python tests, compileall and graph/evidence checks with zero errors and one preserved T0001 metadata warning. T0161 is complete; T0161->T0162 remains unreviewed.\nT0161-A004 (2026-10-30T07:26:12Z): The V 3.0.602 exact-head quality workflow ran all 260 Python tests and compileall successfully but graph_guard rejected the done state with DONE_WITHOUT_TEST_FILE_EVIDENCE because the Kotlin JVM test path starts with src/Client.Android/ rather than tests/. The V 3.0.601 product/JVM test evidence remains valid. Added an explicit Python source-contract test under tests/ to satisfy the graph guard's documented path rule without replacing the six real Kotlin JVM tests. Task reopened as in_progress pending V 3.0.603 CI.\nT0161-A005 (2026-10-30T07:29:33Z): V 3.0.603 quality workflow ran 264 Python tests; 263 passed and one new source-contract assertion failed because a regex attempted to cross a newline in a Kotlin comment. The failure is in the supplemental Python contract test, not the production model or Android JVM tests. Replaced the multiline regex with an exact substring assertion. Exact-head V 3.0.604 CI pending.\nT0161-A006 (2026-10-30T07:31:47Z–07:34:39Z): Fixed the supplementary source-contract test by replacing a newline-sensitive regex with a literal assertion. Exact-head V 3.0.604 CI passed: all 264 Python tests; compileall; graph structure/output evidence validation (229 nodes, 417 edges, zero errors and one preserved T0001 metadata warning); Android KtLint, debug APK build, JVM tests and generated Protobuf Java/Kotlin checks; Windows WPF build/startup/security/DPAPI checks; HostLifecycle; and both platform artifact uploads. T0161 completion restored with all six attempts retained. T0161->T0162 and T0160->T0162 remain unreviewed.\nT0161-A007 (2026-10-30T07:36:42Z): V 3.0.605 graph structure validation passed but the repo-root evidence validator rejected four workflow URLs placed in the evidence array as if they were repository file paths (MISSING_EVIDENCE_FILE). Removed only those URLs from evidence; the URLs remain in tests_passed and reports. All remaining evidence paths were checked against the exact V 3.0.605 repository tree. Task reopened pending V 3.0.606 CI.",
       "execution_summary": {
-        "attempt_count": 6,
+        "attempt_count": 7,
         "failed_attempt_count": 2,
-        "last_attempt_id": "T0161-A006",
-        "last_attempt_result": "succeeded",
+        "last_attempt_id": "T0161-A007",
+        "last_attempt_result": "reopened",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/requests/DistributedRequest.kt",
           "src/Client.Android/app/src/test/java/com/whitep/client/requests/DistributedRequestTest.kt",
@@ -36415,10 +36411,16 @@
             "result": "failed",
             "summary": "264 Python tests ran; one new DistributedRequest source-contract test failed because a regex did not match a Kotlin comment across a newline (263 passed). The failure is in the supplemental Python test, not the production model or six Android JVM tests. Python compileall and graph_guard did not run after the unit-test failure.",
             "url": "https://github.com/artinrahimii/project/actions/runs/41020396711"
+          },
+          {
+            "name": "Step Three recorded-output evidence validation — V 3.0.605",
+            "result": "failed",
+            "summary": "Graph structure validation passed, but the repo-root validator treated four GitHub Actions URLs in T0161.evidence as repository-relative paths and reported MISSING_EVIDENCE_FILE. Repository file evidence paths were present.",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41021127143"
           }
         ],
         "blocked_reason": null,
-        "reopened_reason": null,
+        "reopened_reason": "V 3.0.605 recorded-output validation treats every evidence item as a repository path; four workflow URLs were incorrectly stored in the evidence array. The URLs remain in tests_passed and the execution report; evidence now contains only existing repository paths.",
         "contract_revalidation": {
           "state": "passed",
           "triggering_contracts": [
@@ -36709,6 +36711,32 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "T0161 is complete. Before T0162, validate both incoming edges (T0161->T0162 and T0160->T0162) against the actual host-selection contract and artifacts. Keep unreviewed edges unchanged until that review."
+        },
+        {
+          "attempt_id": "T0161-A007",
+          "started_at": "2026-10-30T07:36:42Z",
+          "ended_at": "2026-10-30T07:36:42Z",
+          "result": "reopened",
+          "summary": "V 3.0.605 graph structural validation passed, but the recorded-output validator treats evidence entries as local repository paths. Four workflow URLs in evidence were incorrectly interpreted as files. Removed the URLs from evidence only; retained all URLs in tests_passed and reports.",
+          "changed_files": [
+            "step three/project-graph.md",
+            "step three/T0161/execution-report.md",
+            "step three/T0161/evidence/verification.md"
+          ],
+          "commit_sha": "4d0d9ebf43a054e2b4dd250c4fa0a3bbe5c67221",
+          "tests": [
+            {
+              "name": "Step Three recorded-output evidence validation — V 3.0.605",
+              "result": "failed",
+              "summary": "0 graph errors in structural validation; four MISSING_EVIDENCE_FILE errors because URLs were in the evidence path array.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41021127143"
+            }
+          ],
+          "failure_details": "The repo-root branch of graph_guard.py resolves each evidence string as a repository-relative path and checks it exists. Four GitHub Actions URL strings in T0161.evidence were incorrectly treated as local paths.",
+          "blocked_reason": null,
+          "reopened_reason": "Evidence array must contain only existing repository file paths; workflow URLs belong in tests_passed and reports.",
+          "contract_changes": [],
+          "follow_up": "Run exact-head V 3.0.606 quality gate. If both graph and recorded-output validation pass, restore T0161 done and append a successful attempt."
         }
       ]
     },
@@ -48475,7 +48503,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-30T07:35:56.142Z",
+  "updated_at": "2026-10-30T07:38:02.338Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",
