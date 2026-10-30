@@ -123,41 +123,47 @@ class AndroidPeerIdentityStore internal constructor(
 
     fun loadOrCreate(): PrivKey =
         synchronized(IDENTITY_LOCK) {
-        val stored = preferences.getString(IDENTITY_ENVELOPE_KEY, null)
-        if (stored != null) {
-            val envelope = decodeStoredEnvelope(stored)
-            val cleartext =
-                try {
-                protector.unprotect(envelope)
-            } catch (exception: Exception) {
-                throw IllegalStateException("The stored Android peer identity could not be authenticated.", exception)
-            } finally {
-                Arrays.fill(envelope, 0)
+            val stored = preferences.getString(IDENTITY_ENVELOPE_KEY, null)
+            if (stored != null) {
+                val envelope = decodeStoredEnvelope(stored)
+                val cleartext =
+                    try {
+                        protector.unprotect(envelope)
+                    } catch (exception: Exception) {
+                        throw IllegalStateException(
+                            "The stored Android peer identity could not be authenticated.",
+                            exception,
+                        )
+                    } finally {
+                        Arrays.fill(envelope, 0)
+                    }
+                return try {
+                    unmarshalPrivateKey(cleartext)
+                } catch (exception: Exception) {
+                    throw IllegalStateException(
+                        "The authenticated Android peer identity is malformed.",
+                        exception,
+                    )
+                } finally {
+                    Arrays.fill(cleartext, 0)
+                }
             }
-            return try {
-                unmarshalPrivateKey(cleartext)
-            } catch (exception: Exception) {
-                throw IllegalStateException("The authenticated Android peer identity is malformed.", exception)
-            } finally {
-                Arrays.fill(cleartext, 0)
-            }
-        }
 
-        val generated = generateKeyPair(KeyType.ED25519).first
-        val cleartext = generated.bytes()
-        val envelope =
-            try {
-            protector.protect(cleartext)
-        } finally {
-            Arrays.fill(cleartext, 0)
+            val generated = generateKeyPair(KeyType.ED25519).first
+            val cleartext = generated.bytes()
+            val envelope =
+                try {
+                    protector.protect(cleartext)
+                } finally {
+                    Arrays.fill(cleartext, 0)
+                }
+            val encoded = Base64.encodeToString(envelope, Base64.NO_WRAP)
+            Arrays.fill(envelope, 0)
+            if (!preferences.edit().putString(IDENTITY_ENVELOPE_KEY, encoded).commit()) {
+                throw IllegalStateException("The new Android peer identity could not be saved.")
+            }
+            return generated
         }
-        val encoded = Base64.encodeToString(envelope, Base64.NO_WRAP)
-        Arrays.fill(envelope, 0)
-        if (!preferences.edit().putString(IDENTITY_ENVELOPE_KEY, encoded).commit()) {
-            throw IllegalStateException("The new Android peer identity could not be saved.")
-        }
-        return generated
-    }
 
     fun loadOrCreatePeerId(): String = PeerId.fromPubKey(loadOrCreate().publicKey()).toBase58()
 

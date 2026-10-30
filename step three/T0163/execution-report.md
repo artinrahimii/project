@@ -219,3 +219,21 @@
 - **Scope:** test-import formatting only; no assertion or production behavior changed.
 - **Local Gradle:** not available/executed in this tool session. Exact V 3.0.646 CI must verify KtLint, Android compile/APK, JVM tests, generated Protobuf and artifact upload.
 - **Task status:** `in_progress`; this attempt is partial pending exact-head CI and remaining product integration.
+
+
+## Attempt T0163-A022 — exact V 3.0.646 Android lint result
+
+- **Commit:** `64c5c220079ed047fbf5741f5e672dc75b646206` (`V 3.0.646`).
+- **Step Three quality gate:** PASS — run 41107178011.
+- **Android test-source KtLint:** PASS — the static JUnit imports in `AndroidPeerTrustStoreTest.kt` now passed.
+- **Android main-source KtLint:** FAILED — run 41107177985, Android job 124239963439; four indentation errors in `AndroidPeerIdentityStore.kt` lines 126–129. The test-source correction exposed this previously unreported main-source formatting issue.
+- **Skipped:** Android APK, JVM tests, generated Protobuf verification and APK artifact upload. Windows WPF and HostLifecycle jobs were still running at the time this report was first assembled; final exact job states are in the workflow link.
+- **Outcome:** A022 is finalized as failed product verification. The import-order correction itself is retained. A023 fixes the identity-store indentation only.
+
+## Attempt T0163-A023 — identity-store indentation correction; exact-head CI pending
+
+- **Base revision:** `64c5c220079ed047fbf5741f5e672dc75b646206` (`V 3.0.646`).
+- **Correction:** normalized indentation through `AndroidPeerIdentityStore.loadOrCreate()`, including the synchronized body and nested `try/catch/finally` blocks, to satisfy the exact KtLint line findings.
+- **Scope:** formatting-only. No encryption, identity persistence, fail-closed policy or error mapping behavior changed.
+- **Verification:** no local Gradle execution is claimed. Exact V 3.0.647 KtLint and product workflows must check subsequent compile, APK, JVM, Protobuf and artifact stages.
+- **Task status:** `in_progress`; A023 is partial pending exact-head CI and cross-platform product integration.
