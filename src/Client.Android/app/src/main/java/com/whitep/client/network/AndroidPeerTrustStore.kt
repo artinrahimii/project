@@ -30,55 +30,55 @@ class AndroidPeerTrustStore internal constructor(
 
     override fun isTrusted(peerId: String): Boolean =
         synchronized(TRUST_LOCK) {
-        val canonical = validatePeerId(peerId)
-        return loadTrustedPeers().contains(canonical)
-    }
+            val canonical = validatePeerId(peerId)
+            loadTrustedPeers().contains(canonical)
+        }
 
     fun trustPeerAfterExplicitConfirmation(
         peerId: String,
         explicitlyConfirmed: Boolean,
     ) =
         synchronized(TRUST_LOCK) {
-        if (!explicitlyConfirmed) {
-            throw SecurityException("Peer trust requires explicit user confirmation.")
+            if (!explicitlyConfirmed) {
+                throw SecurityException("Peer trust requires explicit user confirmation.")
+            }
+            val canonical = validatePeerId(peerId)
+            val peers = loadTrustedPeers().toMutableSet()
+            if (canonical in peers) {
+                return
+            }
+            if (peers.size >= MAXIMUM_TRUSTED_PEERS) {
+                throw IllegalStateException("The Android peer trust list has reached its configured limit.")
+            }
+            peers.add(canonical)
+            saveTrustedPeers(peers)
         }
-        val canonical = validatePeerId(peerId)
-        val peers = loadTrustedPeers().toMutableSet()
-        if (canonical in peers) {
-            return
-        }
-        if (peers.size >= MAXIMUM_TRUSTED_PEERS) {
-            throw IllegalStateException("The Android peer trust list has reached its configured limit.")
-        }
-        peers.add(canonical)
-        saveTrustedPeers(peers)
-    }
 
     fun revokeTrust(peerId: String) =
         synchronized(TRUST_LOCK) {
-        val canonical = validatePeerId(peerId)
-        val peers = loadTrustedPeers().toMutableSet()
-        if (peers.remove(canonical)) {
-            saveTrustedPeers(peers)
+            val canonical = validatePeerId(peerId)
+            val peers = loadTrustedPeers().toMutableSet()
+            if (peers.remove(canonical)) {
+                saveTrustedPeers(peers)
+            }
         }
-    }
 
     private fun loadTrustedPeers(): Set<String> {
         val stored = preferences.getString(TRUST_ENVELOPE_KEY, null) ?: return emptySet()
         val envelope =
             try {
-            Base64.decode(stored, Base64.NO_WRAP)
-        } catch (exception: IllegalArgumentException) {
-            throw IllegalStateException("The Android peer trust envelope is malformed.", exception)
-        }
+                Base64.decode(stored, Base64.NO_WRAP)
+            } catch (exception: IllegalArgumentException) {
+                throw IllegalStateException("The Android peer trust envelope is malformed.", exception)
+            }
         val cleartext =
             try {
-            protector.unprotect(envelope)
-        } catch (exception: Exception) {
-            throw IllegalStateException("The Android peer trust record could not be authenticated.", exception)
-        } finally {
-            Arrays.fill(envelope, 0)
-        }
+                protector.unprotect(envelope)
+            } catch (exception: Exception) {
+                throw IllegalStateException("The Android peer trust record could not be authenticated.", exception)
+            } finally {
+                Arrays.fill(envelope, 0)
+            }
         try {
             if (cleartext.size > MAXIMUM_TRUST_RECORD_BYTES) {
                 throw IllegalStateException("The Android peer trust record exceeds its size limit.")
@@ -124,10 +124,10 @@ class AndroidPeerTrustStore internal constructor(
         }
         val canonical =
             try {
-            PeerId.fromBase58(peerId).toBase58()
-        } catch (exception: Exception) {
-            throw IllegalArgumentException("The supplied value is not a valid libp2p PeerId.", exception)
-        }
+                PeerId.fromBase58(peerId).toBase58()
+            } catch (exception: Exception) {
+                throw IllegalArgumentException("The supplied value is not a valid libp2p PeerId.", exception)
+            }
         if (canonical != peerId) {
             throw IllegalArgumentException("The supplied PeerId is not in canonical base58 form.")
         }

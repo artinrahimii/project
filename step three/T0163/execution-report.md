@@ -237,3 +237,23 @@
 - **Scope:** formatting-only. No encryption, identity persistence, fail-closed policy or error mapping behavior changed.
 - **Verification:** no local Gradle execution is claimed. Exact V 3.0.647 KtLint and product workflows must check subsequent compile, APK, JVM, Protobuf and artifact stages.
 - **Task status:** `in_progress`; A023 is partial pending exact-head CI and cross-platform product integration.
+
+
+## Attempt T0163-A023 — exact V 3.0.647 Android product result
+
+- **Commit:** `08b5293be5522e0f65dd6451baa7a63417652538` (`V 3.0.647`).
+- **Step Three quality gate:** PASS — run 41107626419.
+- **Android test-source KtLint:** PASS.
+- **Android main-source KtLint:** FAILED — job 124241505342 in run 41107626400; three indentation findings in `AndroidPeerTrustStore.kt:33–35`.
+- **Skipped:** Android APK build, JVM tests, generated Protobuf verification and artifact upload. No Android compile/test pass is claimed.
+- **Windows WPF:** PASS — job 124241505420.
+- **HostLifecycle:** PASS — job 124241505066.
+- **Outcome:** A023 is finalized as failed product verification; the prior AndroidPeerIdentityStore indentation changes are retained. A024 corrects the remaining trust-store formatting.
+
+## Attempt T0163-A024 — Android peer-trust source indentation correction; exact-head CI pending
+
+- **Base revision:** `08b5293be5522e0f65dd6451baa7a63417652538` (`V 3.0.647`).
+- **Correction:** normalized indentation throughout the synchronized trust/verify/revoke operations and nested protected-record decode/decrypt/identity-validation blocks in `AndroidPeerTrustStore.kt`.
+- **Scope:** whitespace/layout only; trust semantics, canonical PeerId checks, fail-closed errors and AES-GCM protected persistence are unchanged.
+- **Verification:** no local Gradle run is claimed. Exact V 3.0.648 CI must check KtLint, Android compilation/APK, JVM tests, generated Protobuf and artifact upload.
+- **Task status:** `in_progress`; A024 remains partial until exact-head CI and cross-runtime integration are verified.
