@@ -294,3 +294,20 @@
 - **Behavioral scope:** formatting only. No request serialization, trust decision, identity validation, frame format or response correlation logic was intentionally altered.
 - **Local execution:** Gradle is not available in this tool runtime; no local KtLint, compile or JVM pass is claimed.
 - **Verification:** exact-head V 3.0.650 CI is pending. T0163 remains `in_progress`; a successful build would not itself demonstrate .NET/Android interoperability or production app composition.
+
+
+## Attempt T0163-A026 — exact V 3.0.650 CI result
+
+- **Commit:** `0d39f12d299a5e103107d3b2f42bc349f4f2247c` (`V 3.0.650`) on `main`.
+- **Step Three quality gate:** PASS — [run 41111396335](https://github.com/artinrahimii/project/actions/runs/41111396335).
+- **Android test-source KtLint:** PASS. **Android main-source KtLint:** FAILED — [product run 41111396187](https://github.com/artinrahimii/project/actions/runs/41111396187), Android job 124254248118. Only two class-supertype layout findings remained at line 50: the first type must follow the colon after one space; the second must start on a continuation line. Previous nested try / withContext / stream / parser indentation errors are cleared. APK build, JVM tests, Protobuf checks and APK artifact upload were skipped.
+- **Windows WPF and HostLifecycle:** PASS on the exact product run.
+- **Outcome:** A026 finalized as `failed`; T0163 remains `in_progress`.
+
+## Attempt T0163-A027 — final class-supertype KtLint correction; exact-head CI pending
+
+- **Recorded:** 2026-10-30T19:04:13.032Z; base `0d39f12d299a5e103107d3b2f42bc349f4f2247c` (`V 3.0.650`).
+- **Correction:** first supertype follows the colon on the class signature line; second supertype wraps to its own continuation line, matching both exact KtLint diagnostics.
+- **Scope:** formatting only; no transport, trust, framing, PeerId or response-correlation behavior changed.
+- **Local execution:** Gradle unavailable; no local test pass claimed.
+- **Verification:** exact V 3.0.651 CI pending. T0163 remains `in_progress`.
