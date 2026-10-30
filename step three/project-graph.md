@@ -36227,33 +36227,76 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0160 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/DistributedRequest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/DistributedRequestTest.kt",
+        "step three/T0161/execution-report.md",
+        "step three/T0161/evidence/verification.md",
+        "step three/project-graph.md"
+      ],
       "expected_output_paths": [
         "src/Client.Android/Requests/ + tests/"
       ],
       "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0161-A001 (2026-10-30T07:18:31.437Z): Added DistributedRequest and six JVM unit tests. Reviewed T0160->T0161 as contract_or_interface_dependency because the transient requestId and absolute deadline align with the verified InferenceRequestPayloadBuilder and canonical InferenceRequest fields. The task remains in_progress pending exact-head CI; T0161->T0162 remains unreviewed.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0161-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Client.Android/app/src/main/java/com/whitep/client/requests/DistributedRequest.kt",
+          "src/Client.Android/app/src/test/java/com/whitep/client/requests/DistributedRequestTest.kt",
+          "step three/T0161/execution-report.md",
+          "step three/T0161/evidence/verification.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
-          "affected_by_contract_changes": [],
-          "review_evidence": []
+          "state": "in_review",
+          "triggering_contracts": [
+            "InferenceRequest.request_id request-scope semantics",
+            "InferenceRequest.deadline_unix_ms absolute deadline semantics",
+            "request lifecycle state vocabulary"
+          ],
+          "affected_by_contract_changes": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/requests/DistributedRequest.kt"
+          ],
+          "review_evidence": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/protocol/InferenceRequestPayloadBuilder.kt",
+            "protocol/whitep/v1/messages.proto",
+            "step three/T0160/execution-report.md",
+            "step three/T0160/evidence/verification.md"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0161-A001",
+          "started_at": "2026-10-30T07:18:31.437Z",
+          "ended_at": "2026-10-30T07:18:31.439Z",
+          "result": "partial",
+          "summary": "Implemented the DistributedRequest domain value object and six JVM tests. Reviewed T0160->T0161 as a validated contract/interface dependency based on matching requestId and deadline fields. Exact-head Android and quality CI pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/requests/DistributedRequest.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/requests/DistributedRequestTest.kt",
+            "step three/T0161/execution-report.md",
+            "step three/T0161/evidence/verification.md"
+          ],
+          "commit_sha": null,
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect exact-head V 3.0.600 CI. If all required checks pass, record the verified run and complete T0161; otherwise fix the actual failing check and retain the failed attempt."
+        }
+      ]
     },
     {
       "id": "T0162",
@@ -43201,10 +43244,16 @@
       "from": "T0160",
       "to": "T0161",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0160's verified InferenceRequestPayloadBuilder accepts requestId and deadlineUnixMs, and the canonical InferenceRequest Protobuf message defines the corresponding request_id and deadline_unix_ms fields. T0161's DistributedRequest aggregate owns this same ephemeral request-scoped identifier and absolute deadline for the subsequent distributed rounds. This is a contract/interface dependency, not a hard compile-time dependency: T0161 does not import or wrap the T0160 builder.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/protocol/InferenceRequestPayloadBuilder.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/protocol/InferenceRequestPayloadBuilderTest.kt",
+        "protocol/whitep/v1/messages.proto",
+        "step three/T0160/execution-report.md",
+        "step three/T0160/evidence/verification.md"
+      ]
     },
     {
       "from": "T0161",
@@ -48012,7 +48061,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-30T06:32:02Z",
+  "updated_at": "2026-10-30T07:18:31.439Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",
