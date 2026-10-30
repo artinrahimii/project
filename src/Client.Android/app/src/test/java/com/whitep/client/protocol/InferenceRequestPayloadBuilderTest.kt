@@ -3,7 +3,6 @@ package com.whitep.client.protocol
 import com.whitep.client.context.ConversationContextCapsule
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.whitep.shared.contracts.v1.InferenceRequest
@@ -39,12 +38,6 @@ class InferenceRequestPayloadBuilderTest {
             unrelatedHistory.none { oldMessage ->
                 request.prompt.contains(oldMessage) ||
                     String(request.toByteArray(), Charsets.UTF_8).contains(oldMessage)
-            },
-        )
-        assertFalse(
-            request.descriptorForType.fields.any { field ->
-                field.name.contains("history", ignoreCase = true) ||
-                    field.name.contains("conversation_id", ignoreCase = true)
             },
         )
         val decoded = InferenceRequest.parseFrom(request.toByteArray())
