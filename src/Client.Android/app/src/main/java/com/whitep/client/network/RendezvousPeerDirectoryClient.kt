@@ -1,5 +1,9 @@
 package com.whitep.client.network
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withContext
 import org.json.JSONArray
 import org.json.JSONException
 import java.io.ByteArrayOutputStream
@@ -15,10 +19,6 @@ import java.time.Duration
 import java.time.Instant
 import java.time.OffsetDateTime
 import java.util.Locale
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
-import kotlinx.coroutines.withContext
 
 /**
  * A metadata-only peer directory entry returned by the Windows rendezvous service.
@@ -79,13 +79,17 @@ class RendezvousPeerDirectoryClient(
                 ?: throw IllegalArgumentException("The rendezvous URI must include a host.")
         require(
             scheme == "https" ||
-                (scheme == "http" && isLoopbackHost(host))
+                (scheme == "http" && isLoopbackHost(host)),
         ) {
             "Rendezvous requires HTTPS except for loopback-only tests."
         }
 
         val normalizedPath =
-            serviceBaseUri.normalize().path.orEmpty().trimEnd('/')
+            serviceBaseUri
+                .normalize()
+                .path
+                .orEmpty()
+                .trimEnd('/')
         requestUrl =
             URI(
                 scheme,

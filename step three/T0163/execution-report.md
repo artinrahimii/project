@@ -116,3 +116,22 @@
 - **Changes:** the one-parameter test helper now has a single-line declaration; the client factory and coroutine resolve helpers use expression bodies. No assertion, test case or production behavior was removed.
 - **Verification:** local Gradle execution is unavailable in this runtime. Exact-head V 3.0.632 CI is pending; no lint, compile or JVM pass is claimed.
 - **Task status:** `in_progress`. T0163 still needs the Android libp2p TCP/Noise peer connection, actual correlated inference request submission, validated response reception and real-host integration evidence. T0164 remains `not_started`.
+
+
+## Attempt T0163-A016 — exact V 3.0.632 CI result
+
+- **Commit:** `84a1482c01dd6db6ebebe7130985fed09014d499` (`V 3.0.632`) on `main`.
+- **Step Three quality gate:** PASS — run 41085597161; automated tests, compileall, graph structure and recorded-output/evidence validation passed.
+- **Android product job:** FAILED in `ktlintMainSourceSetCheck` — job 124165802889. The test source set passed KtLint. The remaining three main-source findings were import order, a missing trailing comma in the HTTPS/loopback `require` condition, and URI normalization/path chaining that must wrap before each dot.
+- **Skipped Android work:** `assembleDebug`, `testDebugUnitTest`, Protobuf verification and APK artifact upload were skipped. No Android compile or JVM test result is claimed.
+- **Windows WPF:** PASS — job 124165803248 completed successfully.
+- **HostLifecycle:** PASS — job 124165803136 completed lifecycle unit/integration tests.
+- **Outcome:** A016 is a failed verification attempt; the three KtLint findings are preserved in `evidence/v3.0.632-ci-failure.md`.
+
+## Attempt T0163-A017 — main-source KtLint corrections; CI pending
+
+- **Base revision:** `main` commit `84a1482c01dd6db6ebebe7130985fed09014d499` (`V 3.0.632`).
+- **Changes:** placed coroutine imports before JSON / platform imports according to the repository's KtLint rule; added the required trailing comma to the multi-line URI security condition; and split normalization, path extraction and trimming into separate chained lines.
+- **Behavioral scope:** formatting only; the HTTPS/loopback policy, request URL, PeerId/address checks, timeouts, size limits, cache and tests are unchanged.
+- **Verification:** local Gradle execution unavailable. Exact V 3.0.633 Actions is pending; no KtLint/build/JVM pass is claimed yet.
+- **Task status:** `in_progress`; actual Android authenticated libp2p connection, request submission, response reception and independent-host acceptance remain outstanding. T0164 remains `not_started`.
