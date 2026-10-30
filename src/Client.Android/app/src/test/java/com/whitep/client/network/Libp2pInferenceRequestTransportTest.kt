@@ -1,5 +1,11 @@
 package com.whitep.client.network
 
+import com.whitep.client.context.ConversationContextCapsule
+import com.whitep.client.requests.DistributedRequest
+import com.whitep.client.requests.HostCandidate
+import com.whitep.client.requests.InferenceAttemptDispatcher
+import com.whitep.client.requests.InferenceAttemptSubmissionStatus
+import com.whitep.client.requests.InferenceRoundDispatchResult
 import io.libp2p.core.Host
 import io.libp2p.core.PeerId
 import io.libp2p.core.crypto.KeyType
@@ -20,6 +26,11 @@ import org.junit.Test
 import org.whitep.shared.contracts.v1.InferenceOutcome
 import org.whitep.shared.contracts.v1.InferenceRequest
 import org.whitep.shared.contracts.v1.InferenceResponse
+import org.whitep.shared.contracts.v1.modelCapability
+import org.whitep.shared.contracts.v1.hostStatus
+import org.whitep.shared.contracts.v1.hostCapabilities
+import org.whitep.shared.contracts.v1.hostAnnouncement
+import org.whitep.shared.contracts.v1.HostRuntimeState
 import java.time.Duration
 import java.time.Instant
 import java.util.Arrays
@@ -100,6 +111,176 @@ class Libp2pInferenceRequestTransportTest {
                 server.stop().get(10, TimeUnit.SECONDS)
             }
         }
+
+    @Test
+    fun dispatchesOneSharedRequestWithDistinctAttemptsOverAuthenticatedPeerStreams() =
+        runBlocking {
+            val servers = mutableListOf<Host>()
+            val responders = mutableListOf<LoopbackInferenceResponder>()
+            val endpoints = linkedMapOf<String, RendezvousPeerEndpoint>()
+            try {
+                repeat(3) {
+                    val serverIdentity = generateKeyPair(KeyType.ED25519).first
+                    val expectedServerPeerId = PeerId.fromPubKey(serverIdentity.publicKey()).toBase58()
+                    val responder = LoopbackInferenceResponder(expectedServerPeerId)
+                    val binding =
+                        createSimpleBinding(PROTOCOL_ID) {
+                            responder
+                        }
+                    val server = createHost(serverIdentity, binding)
+                    servers += server
+                    responders += responder
+                    server.start().get(15, TimeUnit.SECONDS)
+
+                    val serverPeerId = server.peerId.toBase58()
+                    assertEquals(expectedServerPeerId, serverPeerId)
+                    val listenAddress = server.listenAddresses().first { it.toString().contains("/tcp/") }.toString()
+                    val suffix = "/p2p/$serverPeerId"
+                    val address =
+                        when {
+                            listenAddress.endsWith(suffix) -> listenAddress
+                            !listenAddress.contains("/p2p/") -> "$listenAddress$suffix"
+                            else -> error("The server listen address contains a different PeerId.")
+                        }
+                    endpoints[serverPeerId] =
+                        RendezvousPeerEndpoint(
+                            peerId = serverPeerId,
+                            tcpMultiaddresses = listOf(address),
+                            expiresAtUtc = Instant.now().plusSeconds(120),
+                        )
+                }
+
+                val client =
+                    Libp2pInferenceRequestTransport(
+                        localIdentity = generateKeyPair(KeyType.ED25519).first,
+                        resolveEndpoint = { requestedPeerId -> endpoints[requestedPeerId] },
+                        trustVerifier = PeerTrustVerifier { trustedPeerId -> trustedPeerId in endpoints },
+                        connectionTimeout = Duration.ofSeconds(15),
+                    )
+                try {
+                    val attemptIds = listOf("attempt-host-a", "attempt-host-b", "attempt-host-c").iterator()
+                    val dispatcher =
+                        InferenceAttemptDispatcher(
+                            transport = client,
+                            attemptIdGenerator = { attemptIds.next() },
+                        )
+                    val requestId = "round-three-host-request"
+                    val now = System.currentTimeMillis()
+                    val result =
+                        dispatcher.dispatchRound(
+                            distributedRequest =
+                                DistributedRequest(
+                                    requestId = requestId,
+                                    deadlineUnixMs = now + 60_000L,
+                                    maxRounds = 1,
+                                ),
+                            selectedHosts = endpoints.keys.map(::candidate),
+                            modelId = MODEL_ID,
+                            currentMessage = "one request, three authenticated host attempts",
+                            capsule = ConversationContextCapsule(goal = "Correlate every host attempt"),
+                            maxOutputTokens = 8,
+                            protocolVersion = PROTOCOL_VERSION,
+                        )
+
+                    assertTrue(result is InferenceRoundDispatchResult.Dispatched)
+                    val attempts = (result as InferenceRoundDispatchResult.Dispatched).attempts
+                    assertEquals(3, attempts.size)
+                    assertEquals(3, attempts.map { it.ephemeralHostId }.toSet().size)
+                    assertEquals(3, attempts.map { it.attemptId }.toSet().size)
+                    assertEquals(
+                        listOf(
+                            InferenceAttemptSubmissionStatus.QUEUED,
+                            InferenceAttemptSubmissionStatus.QUEUED,
+                            InferenceAttemptSubmissionStatus.QUEUED,
+                        ),
+                        attempts.map { it.submissionStatus },
+                    )
+
+                    val receivedRequests =
+                        responders.map { responder ->
+                            withTimeout(10_000L) {
+                                responder.requestReceived.await()
+                            }
+                        }
+                    assertEquals(
+                        listOf(requestId, requestId, requestId),
+                        receivedRequests.map { it.requestId },
+                    )
+                    assertEquals(
+                        attempts.map { it.attemptId }.toSet(),
+                        receivedRequests.map { it.attemptId }.toSet(),
+                    )
+                    assertTrue(
+                        receivedRequests.all {
+                            it.prompt == "one request, three authenticated host attempts"
+                        },
+                    )
+
+                    val responses =
+                        attempts.map { attempt ->
+                            client.awaitResponse(
+                                requestId = requestId,
+                                attemptId = attempt.attemptId,
+                                timeout = Duration.ofSeconds(20),
+                            )
+                        }
+                    assertEquals(
+                        attempts.map { it.ephemeralHostId }.toSet(),
+                        responses.map { it.ephemeralHostId }.toSet(),
+                    )
+                    assertEquals(
+                        attempts.map { it.attemptId }.toSet(),
+                        responses.map { it.attemptId }.toSet(),
+                    )
+                    assertTrue(responses.all { it.outcome == InferenceOutcome.INFERENCE_OUTCOME_SUCCEEDED })
+                } finally {
+                    client.close()
+                }
+            } finally {
+                servers.asReversed().forEach { server ->
+                    runCatching {
+                        server.stop().get(10, TimeUnit.SECONDS)
+                    }
+                }
+            }
+        }
+
+    private fun candidate(peerId: String): HostCandidate {
+        val model =
+            modelCapability {
+                modelId = MODEL_ID
+                displayName = "Loopback model"
+                maxContextTokens = 8192L
+                maxOutputTokens = 128L
+            }
+        val capabilities =
+            hostCapabilities {
+                ephemeralHostId = peerId
+                protocolVersion = PROTOCOL_VERSION
+                models += model
+                maxConcurrentRequests = 1
+                maxContextCapsuleBytes = 4096L
+                maxPromptBytes = 8192L
+            }
+        val now = System.currentTimeMillis()
+        return HostCandidate(
+            announcement =
+                hostAnnouncement {
+                    ephemeralHostId = peerId
+                    protocolVersion = PROTOCOL_VERSION
+                    this.capabilities = capabilities
+                    announcedAtUnixMs = now
+                },
+            status =
+                hostStatus {
+                    ephemeralHostId = peerId
+                    state = HostRuntimeState.HOST_RUNTIME_STATE_READY
+                    activeRequests = 0
+                    observedAtUnixMs = now
+                    models += model
+                },
+        )
+    }
 
     private fun createHost(
         identity: PrivKey,
