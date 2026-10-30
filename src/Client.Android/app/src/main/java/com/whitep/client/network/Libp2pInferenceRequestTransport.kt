@@ -46,7 +46,8 @@ class Libp2pInferenceRequestTransport(
     private val trustVerifier: PeerTrustVerifier,
     private val clock: Clock = Clock.systemUTC(),
     private val connectionTimeout: Duration = DEFAULT_CONNECTION_TIMEOUT,
-) : InferenceRequestTransport, Closeable {
+) :
+    InferenceRequestTransport, Closeable {
     private data class AttemptKey(
         val requestId: String,
         val attemptId: String,
@@ -106,10 +107,10 @@ class Libp2pInferenceRequestTransport(
 
         val explicitlyTrusted =
             try {
-            trustVerifier.isTrusted(ephemeralHostId)
-        } catch (_: Exception) {
-            false
-        }
+                trustVerifier.isTrusted(ephemeralHostId)
+            } catch (_: Exception) {
+                false
+            }
         if (!explicitlyTrusted) {
             return InferenceTransportSubmission.REJECTED
         }
@@ -121,28 +122,28 @@ class Libp2pInferenceRequestTransport(
 
         val remotePeerId =
             try {
-            PeerId.fromBase58(endpoint.peerId)
-        } catch (_: IllegalArgumentException) {
-            return InferenceTransportSubmission.REJECTED
-        }
+                PeerId.fromBase58(endpoint.peerId)
+            } catch (_: IllegalArgumentException) {
+                return InferenceTransportSubmission.REJECTED
+            }
         if (remotePeerId.toBase58() != endpoint.peerId) {
             return InferenceTransportSubmission.REJECTED
         }
 
         val addresses =
             try {
-            endpoint.tcpMultiaddresses.map { address ->
-                require(address.endsWith("/p2p/${endpoint.peerId}")) {
-                    "The direct multiaddress must end with the announced PeerId."
+                endpoint.tcpMultiaddresses.map { address ->
+                    require(address.endsWith("/p2p/${endpoint.peerId}")) {
+                        "The direct multiaddress must end with the announced PeerId."
+                    }
+                    require(address.contains("/tcp/") && !address.contains("/p2p-circuit")) {
+                        "Only direct TCP multiaddresses are supported by this Android transport."
+                    }
+                    Multiaddr.fromString(address)
                 }
-                require(address.contains("/tcp/") && !address.contains("/p2p-circuit")) {
-                    "Only direct TCP multiaddresses are supported by this Android transport."
-                }
-                Multiaddr.fromString(address)
+            } catch (_: Exception) {
+                return InferenceTransportSubmission.REJECTED
             }
-        } catch (_: Exception) {
-            return InferenceTransportSubmission.REJECTED
-        }
         if (addresses.isEmpty()) {
             return InferenceTransportSubmission.REJECTED
         }
@@ -163,19 +164,19 @@ class Libp2pInferenceRequestTransport(
                 ensureHostStarted()
                 val promise =
                     libp2pHost.newStream<InferencePeerMessageController>(
-                    listOf(PROTOCOL_ID),
-                    remotePeerId,
-                    *addresses.toTypedArray(),
-                )
+                        listOf(PROTOCOL_ID),
+                        remotePeerId,
+                        *addresses.toTypedArray(),
+                    )
                 val timeoutSeconds = connectionTimeout.toSeconds().coerceAtLeast(1L)
                 val stream =
                     withContext(Dispatchers.IO) {
-                    promise.stream.get(timeoutSeconds, TimeUnit.SECONDS)
-                }
+                        promise.stream.get(timeoutSeconds, TimeUnit.SECONDS)
+                    }
                 val controller =
                     withContext(Dispatchers.IO) {
-                    promise.controller.get(timeoutSeconds, TimeUnit.SECONDS)
-                }
+                        promise.controller.get(timeoutSeconds, TimeUnit.SECONDS)
+                    }
 
                 val authenticatedPeerId = stream.remotePeerId().toBase58()
                 if (authenticatedPeerId != endpoint.peerId) {
@@ -257,12 +258,13 @@ class Libp2pInferenceRequestTransport(
         authenticatedPeerId: String,
         payload: ByteArray,
     ) {
-        val response = try {
-            InferenceResponse.parseFrom(payload)
-        } catch (_: Exception) {
-            failPendingAttemptsForPeer(authenticatedPeerId)
-            return
-        }
+        val response =
+            try {
+                InferenceResponse.parseFrom(payload)
+            } catch (_: Exception) {
+                failPendingAttemptsForPeer(authenticatedPeerId)
+                return
+            }
 
         val key = AttemptKey(response.requestId, response.attemptId)
         val pending = pendingAttempts[key] ?: return

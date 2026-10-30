@@ -277,3 +277,20 @@
 - **Scope:** syntax/layout only; request framing, trust decisions, canonical PeerId validation, cryptographic protection and correlated response behavior are unchanged.
 - **Verification:** no local Gradle command was run. Exact V 3.0.649 quality/product CI must confirm KtLint, Kotlin compilation, APK, JVM tests, Protobuf generation and artifact upload.
 - **Task status:** `in_progress`. The Android dispatcher is still not wired into the conversation screen; explicit pairing and .NET/Android interoperability are not yet proven.
+
+
+## Attempt T0163-A025 — exact V 3.0.649 CI result
+
+- **Commit:** `fd667ea57e80fb73e3d078a9a051d45fac626741` (`V 3.0.649`) on `main`.
+- **Step Three quality gate:** PASS — [run 41109180457](https://github.com/artinrahimii/project/actions/runs/41109180457).
+- **Android test-source KtLint:** PASS. **Android main-source KtLint:** FAILED — [product run 41109180348](https://github.com/artinrahimii/project/actions/runs/41109180348), Android job 124246815855. Remaining findings: supertype layout and nested indentation / multiline initializer in `Libp2pInferenceRequestTransport.kt`. Android APK compilation, JVM tests, generated Protobuf checks and artifact upload were skipped.
+- **Windows WPF and HostLifecycle:** PASS on the exact product run.
+- **Outcome:** A025 is finalized as `failed`; T0163 remains `in_progress`.
+
+## Attempt T0163-A026 — residual transport KtLint correction; exact-head CI pending
+
+- **Recorded:** 2026-10-30T18:57:35.718Z; base revision `fd667ea57e80fb73e3d078a9a051d45fac626741` (`V 3.0.649`).
+- **Correction:** placed the inherited interface list on its own continuation line after the colon; corrected nested indentation within the trust and endpoint checks, libp2p stream creation, stream/controller future awaits and response parser initializer.
+- **Behavioral scope:** formatting only. No request serialization, trust decision, identity validation, frame format or response correlation logic was intentionally altered.
+- **Local execution:** Gradle is not available in this tool runtime; no local KtLint, compile or JVM pass is claimed.
+- **Verification:** exact-head V 3.0.650 CI is pending. T0163 remains `in_progress`; a successful build would not itself demonstrate .NET/Android interoperability or production app composition.
