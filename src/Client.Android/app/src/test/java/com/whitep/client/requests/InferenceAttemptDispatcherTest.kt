@@ -46,7 +46,7 @@ class InferenceAttemptDispatcherTest {
                     deadlineUnixMs = 1_798_000_000_000L,
                     maxRounds = 3,
                 )
-    
+
             val result =
                 dispatcher.dispatchRound(
                     distributedRequest = distributedRequest,
@@ -57,7 +57,7 @@ class InferenceAttemptDispatcherTest {
                     maxOutputTokens = 128,
                     protocolVersion = PROTOCOL_VERSION,
                 )
-    
+
             assertTrue(result is InferenceRoundDispatchResult.Dispatched)
             val dispatched = (result as InferenceRoundDispatchResult.Dispatched).attempts
             assertEquals(listOf("host-a", "host-b", "host-c"), transport.hostIds)
@@ -96,7 +96,7 @@ class InferenceAttemptDispatcherTest {
                     64,
                     PROTOCOL_VERSION,
                 )
-    
+
             assertEquals(
                 InferenceRoundDispatchResult.Rejected(
                     InferenceRoundDispatchRejection.DUPLICATE_HOST_IDENTITY,
@@ -125,7 +125,7 @@ class InferenceAttemptDispatcherTest {
                     64,
                     PROTOCOL_VERSION,
                 )
-    
+
             assertEquals(
                 InferenceRoundDispatchResult.Rejected(
                     InferenceRoundDispatchRejection.TOO_MANY_HOSTS,
@@ -149,7 +149,7 @@ class InferenceAttemptDispatcherTest {
                     64,
                     PROTOCOL_VERSION,
                 )
-    
+
             assertTrue(result is InferenceRoundDispatchResult.Rejected)
             assertEquals(
                 InferenceRequestPayloadRejection.EMPTY_PROMPT,
@@ -173,7 +173,7 @@ class InferenceAttemptDispatcherTest {
                     64,
                     PROTOCOL_VERSION,
                 )
-    
+
             assertEquals(
                 InferenceRoundDispatchResult.Rejected(
                     InferenceRoundDispatchRejection.TERMINAL_REQUEST,
@@ -208,7 +208,7 @@ class InferenceAttemptDispatcherTest {
                     64,
                     PROTOCOL_VERSION,
                 )
-    
+
             assertTrue(result is InferenceRoundDispatchResult.Dispatched)
             assertEquals(
                 listOf(
@@ -240,7 +240,7 @@ class InferenceAttemptDispatcherTest {
                     64,
                     PROTOCOL_VERSION,
                 )
-    
+
             assertEquals(
                 InferenceRoundDispatchResult.Rejected(
                     InferenceRoundDispatchRejection.DUPLICATE_ATTEMPT_ID,

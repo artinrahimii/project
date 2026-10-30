@@ -23,3 +23,12 @@
 - **Android:** KtLint failed only in test-source formatting (job 124024230961). All seven `runBlocking` bodies were under-indented after conversion to multiline expression bodies; KtLint also required different indentation for the body of `distributedRequest` and the dispatcher helper expression on the signature line. The production dispatcher passed KtLint. APK/JVM/Protobuf steps were skipped.
 - **A004 correction:** Applied the exact indentation and expression-body formatting requested by the log. No test logic or production behavior changed. Exact-head `V 3.0.617` CI is pending.
 - **Task status:** `in_progress`; no Android acceptance is claimed until KtLint, APK build, JVM tests and Protobuf all pass; real transport wiring is still absent.
+
+
+## A004 exact-head CI outcome and A005 correction
+
+- **Verified revision:** `V 3.0.617`, commit `e4ada9fa25f3e25ddbc437f0ceeb70596a02907a` on `main`.
+- **Step Three quality:** FAILED — workflow 41044526810. All 271 Python tests and compileall passed; graph validation reported `FAILED_ATTEMPT_COUNT_MISMATCH: T0163: summary=3, history=2`. The immutable V 3.0.617 graph Blob was independently reread and shows four total attempts, with two history entries marked `failed`; the summary count of three therefore exposed that A001's recorded result had remained `partial` even though its Android KtLint job failed. A005 corrects A001's final attempt result to `failed`, preserving the event history and aligning the summary with all failed attempts.
+- **HostLifecycle:** PASS — product workflow 41044526799, job 124025244547.
+- **Android:** FAILED at `ktlintTestSourceSetCheck`, job 124025244202. The exact log identified eight trailing-whitespace lines in the new test source (lines 49, 60, 99, 128, 152, 176, 211 and 243). All indentation and expression formatting findings from A003 were resolved. Android APK, JVM tests and Protobuf checks were skipped.
+- **A005 correction:** Remove trailing spaces from the Android JVM test source; mark A001's final CI result as failed so `failed_attempt_count` equals the number of failed history records. No behavior changes. Exact-head `V 3.0.618` CI is pending.
