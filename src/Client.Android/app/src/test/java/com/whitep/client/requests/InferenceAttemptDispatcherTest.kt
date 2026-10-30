@@ -172,6 +172,7 @@ class InferenceAttemptDispatcherTest {
 
             assertTrue(transport.requests.isEmpty())
         }
+
     @Test
     fun rejectsTerminalRequestBeforeSubmitting() =
         runBlocking {
@@ -264,9 +265,7 @@ class InferenceAttemptDispatcherTest {
             assertTrue(transport.requests.isEmpty())
         }
 
-    private suspend fun dispatchBlankPrompt(
-        transport: RecordingTransport,
-    ): InferenceRoundDispatchResult =
+    private suspend fun dispatchBlankPrompt(transport: RecordingTransport): InferenceRoundDispatchResult =
         dispatcher(transport).dispatchRound(
             distributedRequest(),
             listOf(candidate("host-a"), candidate("host-b")),
@@ -276,6 +275,7 @@ class InferenceAttemptDispatcherTest {
             64,
             PROTOCOL_VERSION,
         )
+
     private fun dispatcher(
         transport: InferenceRequestTransport,
         attemptIdGenerator: () -> String = { "attempt-one" },
