@@ -3,7 +3,7 @@ package com.whitep.client.network
 import com.whitep.client.context.ConversationContextCapsule
 import com.whitep.client.requests.DistributedRequest
 import com.whitep.client.requests.HostCandidate
-import com.whitep.client.requests.InferenceAttemptDispatcher
+import com.whitep.client.requests.AndroidInferenceRequestRuntime
 import com.whitep.client.requests.InferenceAttemptSubmissionStatus
 import com.whitep.client.requests.InferenceRoundDispatchResult
 import io.libp2p.core.Host
@@ -157,7 +157,7 @@ class Libp2pInferenceRequestTransportTest {
                 }
 
                 val client =
-                    Libp2pInferenceRequestTransport(
+                    AndroidInferenceRequestRuntime(
                         localIdentity = generateKeyPair(KeyType.ED25519).first,
                         resolveEndpoint = { requestedPeerId -> endpoints[requestedPeerId] },
                         trustVerifier = PeerTrustVerifier { trustedPeerId -> trustedPeerId in endpoints },
@@ -165,15 +165,10 @@ class Libp2pInferenceRequestTransportTest {
                     )
                 try {
                     val attemptIds = listOf("attempt-host-a", "attempt-host-b", "attempt-host-c").iterator()
-                    val dispatcher =
-                        InferenceAttemptDispatcher(
-                            transport = client,
-                            attemptIdGenerator = { attemptIds.next() },
-                        )
                     val requestId = "round-three-host-request"
                     val now = System.currentTimeMillis()
                     val result =
-                        dispatcher.dispatchRound(
+                        client.dispatchRound(
                             distributedRequest =
                                 DistributedRequest(
                                     requestId = requestId,

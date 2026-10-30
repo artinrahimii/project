@@ -491,3 +491,23 @@
 - **Verification:** exact-head quality and product CI are pending for `V 3.0.663`. No pass is claimed in this attempt record.
 - **Graph integrity for this run:** the path and Blob SHA were read from the tree for `2403c861...`; GitHub's Blob API returned 3,025,816 text characters and the fenced JSON parsed completely as 229 nodes and 417 edges. The tree reports 3,148,930 bytes; character count is not compared directly with byte size. A local Git clone was unavailable, so no independent local Git Blob hash recomputation is claimed.
 - **Task status:** `T0163` remains `in_progress`. After the multi-peer test passes, production Android request composition and independent Android-to-Windows .NET interoperability still need implementation and evidence.
+
+## Attempt T0163-A038 — exact V 3.0.663 CI outcome
+
+- **Commit:** `8790947985b4178ceb55dab7bb676f8d7e4b57be` (`V 3.0.663`).
+- **Step Three quality:** PASS — run 41127596960.
+- **Android:** KtLint PASS; debug APK PASS; `testDebugUnitTest` PASS; generated Protobuf Java/Kotlin verification PASS; APK artifact upload PASS.
+- **JUnit artifact:** 13010684840, 41,947 bytes. The downloaded HTML report records **104 tests, 0 failures, 0 ignored** (100% successful).
+- **Windows WPF and HostLifecycle:** PASS — both exact-head product jobs completed successfully in run 41127597196.
+- **Outcome:** A038 succeeded for the Robolectric test-runtime correction. This proves the Android three-peer dispatcher/libp2p loopback test executes and passes; it does not prove Android-to-Windows .NET interoperability or production UI composition.
+
+## Attempt T0163-A039 — production Android request-runtime composition (`V 3.0.664`)
+
+- **Base revision:** exact `main` head `8790947985b4178ceb55dab7bb676f8d7e4b57be` (`V 3.0.663`).
+- **Implementation:** added `AndroidInferenceRequestRuntime` as the Android composition root. Its production factory loads the persistent Android Keystore-backed peer identity, uses the explicit Android peer-trust store, resolves direct TCP addresses through the configured rendezvous directory, constructs the concrete libp2p TCP/Noise transport, and injects it into `InferenceAttemptDispatcher`.
+- **Trust behavior:** peer trust remains an explicit user-confirmed action; the runtime does not auto-approve directory entries. The runtime requires the caller to supply real `HostCandidate` snapshots and does not manufacture model readiness or capability data from a directory lease.
+- **Integration test:** the existing three-host Noise/TCP test now exercises `AndroidInferenceRequestRuntime.dispatchRound` and `awaitResponse`, rather than constructing the dispatcher independently from the transport. It still asserts one shared request ID, three unique attempt IDs, three authenticated peers, actual receipt by all three loopback peers, and correlated responses.
+- **Additional quality gate:** expanded `tests/test_android_libp2p_transport_contract.py` to verify that the production factory composes identity, explicit trust, rendezvous resolution, real transport and dispatcher.
+- **Local execution:** not run. The connected editing runtime still cannot obtain a clean Git clone due to DNS resolution failure; exact-head GitHub Actions is the verification path.
+- **Verification:** exact-head `V 3.0.664` quality and product CI pending. No pass is claimed in this attempt record.
+- **Remaining task boundary:** the Android UI still uses the draft-only `RequestViewModel`; the rendezvous JSON currently exposes peer IDs/addresses/capability tokens but not the model/status snapshots needed by `HostCandidateSelector`. Therefore this composition is not yet wired to a user-visible send action and no Android-to-Windows .NET inference response is claimed. T0163 remains `in_progress`.

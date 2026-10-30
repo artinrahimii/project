@@ -8,6 +8,7 @@ IDENTITY = ROOT / "src/Client.Android/app/src/main/java/com/whitep/client/networ
 TRUST = ROOT / "src/Client.Android/app/src/main/java/com/whitep/client/network/AndroidPeerTrustStore.kt"
 TRANSPORT = ROOT / "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt"
 TRANSPORT_TEST = ROOT / "src/Client.Android/app/src/test/java/com/whitep/client/network/Libp2pInferenceRequestTransportTest.kt"
+RUNTIME = ROOT / "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt"
 
 
 class AndroidLibp2pTransportContractTests(unittest.TestCase):
@@ -60,6 +61,26 @@ class AndroidLibp2pTransportContractTests(unittest.TestCase):
         self.assertIn("client.awaitResponse", source)
         self.assertIn("response.requestId", source)
         self.assertIn("response.attemptId", source)
+
+    def test_application_runtime_composes_persistent_identity_explicit_trust_directory_and_real_dispatcher(self):
+        source = RUNTIME.read_text(encoding="utf-8")
+        self.assertIn("AndroidPeerIdentityStore(applicationContext).loadOrCreate()", source)
+        self.assertIn("AndroidPeerTrustStore(applicationContext)", source)
+        self.assertIn("RendezvousPeerDirectoryClient(rendezvousServiceBaseUri)", source)
+        self.assertIn("resolveEndpoint = directory::resolve", source)
+        self.assertIn("trustVerifier = trustStore", source)
+        self.assertIn("InferenceAttemptDispatcher(transport)", source)
+        self.assertIn("trustPeerAfterExplicitConfirmation", source)
+        self.assertIn("suspend fun dispatchRound(", source)
+        self.assertIn("suspend fun awaitResponse(", source)
+        self.assertIn("The caller must supply HostCandidate values", source)
+
+    def test_three_host_noise_integration_exercises_the_application_runtime(self):
+        source = TRANSPORT_TEST.read_text(encoding="utf-8")
+        self.assertIn("AndroidInferenceRequestRuntime(", source)
+        self.assertIn("client.dispatchRound(", source)
+        self.assertIn("client.awaitResponse(", source)
+        self.assertIn("dispatchesOneSharedRequestWithDistinctAttemptsOverAuthenticatedPeerStreams", source)
 
 
 if __name__ == "__main__":
