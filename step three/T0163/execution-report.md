@@ -69,3 +69,14 @@
 - **HostLifecycle:** PASS — the unit/integration job completed successfully.
 - **Artifacts:** Android `12985795018` (11,983,947 bytes; SHA-256 `9022525f189e859257c8465424e63f4b28dcb57a5ae10bfb554cf39008e205ec`); Windows `12984128915` (14,254,921 bytes; SHA-256 `c34fb7e3037bac297fde153df013bc98cfaeec2ede33c1619c5ecfd146ee684e`). Detailed evidence: `evidence/v3.0.627-ci-final.md`.
 - **Outcome:** A013 succeeded for the Android peer-frame encoder/decoder and its automated JVM coverage. The overall T0163 node remains `in_progress`: Android still lacks a concrete authenticated libp2p client wired to `InferenceAttemptDispatcher` and a trusted mapping from `ephemeralHostId` to canonical PeerId/direct multiaddress. No remote inference delivery is claimed.
+
+
+## Attempt T0163-A014 — metadata-only rendezvous client; exact-head CI pending
+
+- **Recorded:** 2026-10-30T15:36:42.839Z.
+- **Base revision:** `main` commit `3cb25d52f336dd4a3033bd02eb643851cb75be53` (`V 3.0.629`).
+- **Reviewed Windows contract:** the rendezvous API returns metadata from `GET /v1/peers?capability=inference.v1`; the Windows `PeerAnnouncement` uses `LocalPeerIdentity` for both `PeerId` and the direct multiaddress suffix. The HTTP directory is only the discovery/control plane and does not carry inference prompts or responses.
+- **Implementation:** added an Android metadata-only `RendezvousPeerDirectoryClient` with HTTPS-only policy except loopback tests, bounded 16 KiB responses, 10-second timeouts, redirects disabled, a five-second in-memory cache, expiry checks, duplicate/shape validation and exact PeerId-to-multiaddress owner validation. Only direct TCP addresses are exposed to the current Android client; QUIC entries are validated but not selected.
+- **Android permission:** declared `android.permission.INTERNET`.
+- **Tests added:** six Android JVM/Robolectric cases and three Python source-contract assertions. Exact-head CI is pending; local Gradle/Python execution was unavailable because this runtime could not resolve `github.com`. No test pass is claimed in this attempt record.
+- **Result:** partial subcomponent; T0163 remains `in_progress`. This does not yet implement a libp2p TCP/Noise client, authenticated PeerId dial, request submission or Windows response reception. T0164 remains not started.
