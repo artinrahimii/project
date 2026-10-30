@@ -73,8 +73,7 @@ class AndroidInferenceRequestRuntime private constructor(
         }
     }
 
-    fun isPeerTrusted(peerId: String): Boolean =
-        requirePeerTrustStore().isTrusted(peerId)
+    fun isPeerTrusted(peerId: String): Boolean = requirePeerTrustStore().isTrusted(peerId)
 
     fun trustPeerAfterExplicitConfirmation(
         peerId: String,

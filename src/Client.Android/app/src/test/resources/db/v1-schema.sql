@@ -1,6 +1,0 @@
-CREATE TABLE IF NOT EXISTS conversations (conversationId TEXT NOT NULL, title TEXT NOT NULL, createdAtEpochMillis INTEGER NOT NULL, updatedAtEpochMillis INTEGER NOT NULL, PRIMARY KEY(conversationId));
-CREATE TABLE IF NOT EXISTS messages (messageId TEXT NOT NULL, conversationId TEXT NOT NULL, authorRole TEXT NOT NULL, content TEXT NOT NULL, createdAtEpochMillis INTEGER NOT NULL, PRIMARY KEY(messageId), FOREIGN KEY(conversationId) REFERENCES conversations(conversationId) ON UPDATE NO ACTION ON DELETE CASCADE);
-CREATE INDEX IF NOT EXISTS index_messages_conversationId_createdAtEpochMillis ON messages (conversationId, createdAtEpochMillis);
-CREATE TABLE IF NOT EXISTS request_states (requestId TEXT NOT NULL, conversationId TEXT NOT NULL, status TEXT NOT NULL, createdAtEpochMillis INTEGER NOT NULL, updatedAtEpochMillis INTEGER NOT NULL, attemptNumber INTEGER NOT NULL, errorCode TEXT, PRIMARY KEY(requestId), FOREIGN KEY(conversationId) REFERENCES conversations(conversationId) ON UPDATE NO ACTION ON DELETE CASCADE);
-CREATE INDEX IF NOT EXISTS index_request_states_conversationId_updatedAtEpochMillis ON request_states (conversationId, updatedAtEpochMillis);
-CREATE TABLE IF NOT EXISTS request_drafts (draftId TEXT NOT NULL, prompt TEXT NOT NULL, status TEXT NOT NULL, PRIMARY KEY(draftId));

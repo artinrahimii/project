@@ -547,3 +547,18 @@
 - No test/assertion, production behavior, protocol contract or security gate was changed.
 - Exact-head V 3.0.666 quality and product workflows pending; no pass is claimed.
 - T0163 remains `in_progress`.
+
+## Attempt T0163-A041 — exact V 3.0.666 CI outcome
+
+- Step Three quality passed (run 41129526216).
+- Android test-source KtLint passed after the import-order correction.
+- Android main-source KtLint failed at `AndroidInferenceRequestRuntime.kt:76:49`: the `isPeerTrusted` expression body should be placed on the same line as its function signature. APK, JVM, Protobuf and APK artifact steps were skipped.
+- Windows WPF and HostLifecycle passed. Exact product run: 41129526294.
+- A041 is finalized as failed; see `evidence/v3.0.666-import-order-correction.md`.
+
+## Attempt T0163-A042 — expression-body formatting correction (`V 3.0.667`)
+
+- Moved the `isPeerTrusted` expression body to the same line as the function signature to satisfy the exact KtLint finding.
+- No runtime behavior, peer-trust semantics, payload construction, request correlation or acceptance assertion changed.
+- Exact-head V 3.0.667 quality and product CI pending; no pass is claimed.
+- T0163 remains `in_progress`.
