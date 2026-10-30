@@ -332,3 +332,24 @@
 - **Local execution:** Gradle is unavailable in this connected source-editing runtime; no local KtLint, compile or JVM success is claimed.
 - **Verification:** exact-head V 3.0.652 GitHub Actions is pending. T0163 remains `in_progress`.
 - **Evidence:** `step three/T0163/evidence/v3.0.652-send-future-type-fix.md`.
+
+
+## Attempt T0163-A028 — exact V 3.0.652 product CI result
+
+- **Commit:** `3414506126b32ff11b9dba4ddd258b767f5b74d7` (`V 3.0.652`) on `main`.
+- **Step Three quality gate:** PASS — [run 41114690900](https://github.com/artinrahimii/project/actions/runs/41114690900): 282 Python tests; graph validation 229 tasks / 417 edges, zero errors and one preserved T0001 warning.
+- **Android KtLint:** PASS for main and test source sets.
+- **Android compile:** FAILED — [product workflow 41114691125](https://github.com/artinrahimii/project/actions/runs/41114691125), Android job 124265723114, `compileDebugKotlin` at `Libp2pInferenceRequestTransport.kt:369:55`: explicit `CompletableFuture<Void>` initializer received `CompletableFuture<Unit>` from `SimpleClientHandler.writeAndFlush`.
+- **Skipped:** Android APK completion, JVM tests, generated Protobuf verification and artifact upload. No Android build/JVM pass is claimed for V 3.0.652.
+- **Windows WPF:** PASS — job 124265723094.
+- **HostLifecycle:** PASS — job 124265722709.
+- **Outcome:** A028 is finalized as failed product verification. Evidence: `step three/T0163/evidence/v3.0.652-ci-failure.md`.
+
+## Attempt T0163-A029 — use the actual Kotlin write-completion type
+
+- **Base:** `3414506126b32ff11b9dba4ddd258b767f5b74d7` (`V 3.0.652`).
+- **Production correction:** changed the internal `sendRequest` return type from `CompletableFuture<Void>` to `CompletableFuture<Unit>`, matching the actual `SimpleClientHandler.writeAndFlush` helper contract; the existing completion callback still zeroes the frame buffer after the asynchronous write completes.
+- **Scope:** type-contract alignment only; the wire format, payload, trust/identity checks and response correlation are unchanged.
+- **Local execution:** Gradle is unavailable in this connected source-editing runtime; no local KtLint, compile or JVM success is claimed.
+- **Verification:** exact-head V 3.0.653 GitHub Actions is pending. T0163 remains `in_progress`.
+- **Evidence:** `step three/T0163/evidence/v3.0.653-unit-future-type-alignment.md`.

@@ -363,14 +363,12 @@ internal class InferencePeerMessageController(
         authenticatedPeerId?.let(onClosed)
     }
 
-    fun sendRequest(payload: ByteArray): CompletableFuture<Void> {
+    fun sendRequest(payload: ByteArray): CompletableFuture<Unit> {
         val frame = PeerMessageFrameCodec.encode(payload)
         try {
-            val completion: CompletableFuture<Void> = writeAndFlush(Unpooled.wrappedBuffer(frame))
-            completion.whenComplete { _, _ ->
+            return writeAndFlush(Unpooled.wrappedBuffer(frame)).whenComplete { _, _ ->
                 Arrays.fill(frame, 0)
             }
-            return completion
         } catch (exception: Exception) {
             Arrays.fill(frame, 0)
             throw exception
