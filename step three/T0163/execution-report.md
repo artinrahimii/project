@@ -377,3 +377,25 @@
 - **Scope:** test-fixture correction only; production transport, trust policy, protocol framing and request/response correlation are unchanged.
 - **Local verification:** Gradle/Kotlin tests were not run locally because the execution container cannot resolve `github.com`; no local pass is claimed.
 - **Exact-head verification:** pending V 3.0.654 GitHub Actions. Keep T0163 `in_progress`; do not start T0164 or claim remote delivery until Android JVM tests and the remaining app-composition/independent-host acceptance are verified.
+
+
+## Attempt T0163-A030 — exact V 3.0.654 CI result
+
+- **Commit:** `76a0280eb22ddc468237e81296f119454e778d89` (`V 3.0.654`) on `main`.
+- **Step Three quality:** PASS — [run 41116392977](https://github.com/artinrahimii/project/actions/runs/41116392977).
+- **Android KtLint and debug APK:** PASS — production/test lint, Kotlin compilation and `assembleDebug` all passed.
+- **Android JVM tests:** FAILED — 103 tests completed, one failed in `Libp2pInferenceRequestTransportTest.sendsAndReceivesCorrelatedResponseOverAuthenticatedNoiseTcpStream`, reported at the enclosing `runBlocking` line 28. The A030 fixture change to append the exact `/p2p/{serverPeerId}` suffix did not resolve the test failure.
+- **Skipped:** generated Protobuf verification and APK artifact upload after the failed JVM suite.
+- **Windows WPF and HostLifecycle:** PASS — the WPF Release/startup/security/DPAPI/artifact and lifecycle unit/integration jobs passed.
+- **Outcome:** A030 is finalized as failed product verification. The fixture correction alone is insufficient; T0163 remains `in_progress`.
+- **Evidence:** `step three/T0163/evidence/v3.0.654-ci-failure.md`.
+
+## Attempt T0163-A031 — expose transport stage and preserve JUnit failure reports
+
+- **Base:** `76a0280eb22ddc468237e81296f119454e778d89` (`V 3.0.654`).
+- **Android transport diagnostics:** add an internal volatile type-only diagnostic for policy rejection and failure stage. It records no exception messages, request/response content, Protobuf payload bytes, peer addresses or URLs.
+- **Loopback test:** assert that the remote responder received the request and its original requestId/attemptId before waiting for a response; include the safe transport diagnostic in the submission assertion and keep all response correlation checks.
+- **CI diagnostics:** add an `if: always()` artifact step for Gradle `testDebugUnitTest` HTML/XML reports. This preserves exact JUnit expected/actual/stack information after a failing test, rather than relying only on the one-line Gradle summary.
+- **Local verification:** Gradle is unavailable in this connected editing runtime; no local lint/build/test pass is claimed.
+- **Exact-head verification:** pending V 3.0.655 CI, including the report artifact. T0163 remains `in_progress`; T0164 remains `not_started`.
+- **Evidence:** `step three/T0163/evidence/v3.0.655-loopback-diagnostic-and-ci-report.md`.

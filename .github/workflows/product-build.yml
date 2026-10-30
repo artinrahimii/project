@@ -103,6 +103,14 @@ jobs:
       - name: Run Android JVM unit tests
         working-directory: src/Client.Android
         run: gradle --no-daemon testDebugUnitTest
+      - name: Upload Android unit-test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: whitep-android-unit-test-reports
+          path: src/Client.Android/app/build/reports/tests/testDebugUnitTest/
+          if-no-files-found: ignore
+          retention-days: 7
       - name: Verify generated Protobuf Java and Kotlin sources
         working-directory: src/Client.Android
         shell: bash

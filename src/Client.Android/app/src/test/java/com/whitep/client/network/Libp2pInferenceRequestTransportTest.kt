@@ -11,7 +11,9 @@ import io.libp2p.etc.SimpleClientHandler
 import io.libp2p.etc.createSimpleBinding
 import io.netty.buffer.ByteBuf
 import io.netty.buffer.Unpooled
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withTimeout
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Test
@@ -20,6 +22,7 @@ import org.whitep.shared.contracts.v1.InferenceRequest
 import org.whitep.shared.contracts.v1.InferenceResponse
 import java.time.Duration
 import java.time.Instant
+import java.util.Arrays
 import java.util.concurrent.TimeUnit
 
 class Libp2pInferenceRequestTransportTest {
@@ -28,15 +31,16 @@ class Libp2pInferenceRequestTransportTest {
         runBlocking {
             val serverIdentity = generateKeyPair(KeyType.ED25519).first
             val expectedServerPeerId = PeerId.fromPubKey(serverIdentity.publicKey()).toBase58()
+            val responder = LoopbackInferenceResponder(expectedServerPeerId)
             val serverBinding =
                 createSimpleBinding(PROTOCOL_ID) {
-                    LoopbackInferenceResponder(expectedServerPeerId)
+                    responder
                 }
             val server = createHost(serverIdentity, serverBinding)
             server.start().get(15, TimeUnit.SECONDS)
 
             val serverPeerId = server.peerId.toBase58()
-            assertEquals(expectedServerPeerId, serverPeerId)
+            assertEquals("The server PeerId must match its supplied identity.", expectedServerPeerId, serverPeerId)
             val listenAddress = server.listenAddresses().first { it.toString().contains("/tcp/") }.toString()
             val peerIdentitySuffix = "/p2p/$serverPeerId"
             val address =
@@ -62,16 +66,28 @@ class Libp2pInferenceRequestTransportTest {
                 )
             try {
                 val request = createRequest()
+                val submission = client.submit(serverPeerId, request)
                 assertEquals(
+                    "Direct submission should be accepted; diagnostic=${client.lastSubmissionFailure}",
                     com.whitep.client.requests.InferenceTransportSubmission.QUEUED,
-                    client.submit(serverPeerId, request),
+                    submission,
                 )
+                val receivedRequest =
+                    withTimeout(5_000L) {
+                        responder.requestReceived.await()
+                    }
+                assertEquals("Responder must receive the request ID.", request.requestId, receivedRequest.requestId)
+                assertEquals("Responder must receive the attempt ID.", request.attemptId, receivedRequest.attemptId)
                 val response =
-                    client.awaitResponse(
-                        requestId = request.requestId,
-                        attemptId = request.attemptId,
-                        timeout = Duration.ofSeconds(20),
-                    )
+                    try {
+                        client.awaitResponse(
+                            requestId = request.requestId,
+                            attemptId = request.attemptId,
+                            timeout = Duration.ofSeconds(20),
+                        )
+                    } catch (exception: Exception) {
+                        throw AssertionError("The authenticated peer did not return a correlated response.", exception)
+                    }
                 assertNotNull(response)
                 assertEquals(request.requestId, response.requestId)
                 assertEquals(request.attemptId, response.attemptId)
@@ -118,6 +134,7 @@ class Libp2pInferenceRequestTransportTest {
         private val localPeerId: String,
     ) : SimpleClientHandler() {
         private val decoder = PeerMessageFrameDecoder()
+        val requestReceived = CompletableDeferred<InferenceRequest>()
 
         override fun messageReceived(
             ctx: io.netty.channel.ChannelHandlerContext,
@@ -125,21 +142,30 @@ class Libp2pInferenceRequestTransportTest {
         ) {
             val chunk = ByteArray(msg.readableBytes())
             msg.readBytes(chunk)
-            decoder.feed(chunk).forEach { payload ->
-                val request = InferenceRequest.parseFrom(payload)
-                val response =
-                    InferenceResponse
-                        .newBuilder()
-                        .setRequestId(request.requestId)
-                        .setAttemptId(request.attemptId)
-                        .setEphemeralHostId(localPeerId)
-                        .setOutcome(InferenceOutcome.INFERENCE_OUTCOME_SUCCEEDED)
-                        .setOutputText("loopback-response")
-                        .setCompletedAtUnixMs(System.currentTimeMillis())
-                        .setModelId(request.modelId)
-                        .setErrorMessage("")
-                        .build()
-                writeAndFlush(Unpooled.wrappedBuffer(PeerMessageFrameCodec.encode(response.toByteArray())))
+            try {
+                decoder.feed(chunk).forEach { payload ->
+                    try {
+                        val request = InferenceRequest.parseFrom(payload)
+                        requestReceived.complete(request)
+                        val response =
+                            InferenceResponse
+                                .newBuilder()
+                                .setRequestId(request.requestId)
+                                .setAttemptId(request.attemptId)
+                                .setEphemeralHostId(localPeerId)
+                                .setOutcome(InferenceOutcome.INFERENCE_OUTCOME_SUCCEEDED)
+                                .setOutputText("loopback-response")
+                                .setCompletedAtUnixMs(System.currentTimeMillis())
+                                .setModelId(request.modelId)
+                                .setErrorMessage("")
+                                .build()
+                        writeAndFlush(Unpooled.wrappedBuffer(PeerMessageFrameCodec.encode(response.toByteArray())))
+                    } finally {
+                        Arrays.fill(payload, 0)
+                    }
+                }
+            } finally {
+                Arrays.fill(chunk, 0)
             }
         }
     }

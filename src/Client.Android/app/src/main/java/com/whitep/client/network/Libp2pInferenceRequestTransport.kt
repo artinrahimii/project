@@ -67,6 +67,10 @@ class Libp2pInferenceRequestTransport(
     private val startMutex = Mutex()
     private val pendingAttempts = ConcurrentHashMap<AttemptKey, PendingAttempt>()
     private var hostStarted = false
+
+    @Volatile
+    internal var lastSubmissionFailure: String? = null
+        private set
     private val protocolBinding =
         createSimpleBinding(PROTOCOL_ID) {
             InferencePeerMessageController(::onIncomingFrame, ::onPeerClosed)
@@ -96,12 +100,14 @@ class Libp2pInferenceRequestTransport(
         ephemeralHostId: String,
         request: InferenceRequest,
     ): InferenceTransportSubmission {
+        lastSubmissionFailure = null
         if (closed.get() ||
             ephemeralHostId.isBlank() ||
             request.requestId.isBlank() ||
             request.attemptId.isBlank() ||
             request.modelId.isBlank()
         ) {
+            lastSubmissionFailure = "invalid_request_or_closed_transport"
             return InferenceTransportSubmission.REJECTED
         }
 
@@ -109,14 +115,23 @@ class Libp2pInferenceRequestTransport(
             try {
                 trustVerifier.isTrusted(ephemeralHostId)
             } catch (_: Exception) {
+                lastSubmissionFailure = "peer_trust_lookup_failed"
                 false
             }
         if (!explicitlyTrusted) {
+            if (lastSubmissionFailure == null) {
+                lastSubmissionFailure = "peer_not_explicitly_trusted"
+            }
             return InferenceTransportSubmission.REJECTED
         }
 
-        val endpoint = resolveEndpoint(ephemeralHostId) ?: return InferenceTransportSubmission.REJECTED
+        val endpoint = resolveEndpoint(ephemeralHostId)
+        if (endpoint == null) {
+            lastSubmissionFailure = "directory_peer_not_found"
+            return InferenceTransportSubmission.REJECTED
+        }
         if (endpoint.peerId != ephemeralHostId || !endpoint.expiresAtUtc.isAfter(clock.instant())) {
+            lastSubmissionFailure = "directory_peer_identity_or_expiry_mismatch"
             return InferenceTransportSubmission.REJECTED
         }
 
@@ -124,6 +139,7 @@ class Libp2pInferenceRequestTransport(
             try {
                 PeerId.fromBase58(endpoint.peerId)
             } catch (_: IllegalArgumentException) {
+                lastSubmissionFailure = "directory_peer_id_is_not_canonical"
                 return InferenceTransportSubmission.REJECTED
             }
         if (remotePeerId.toBase58() != endpoint.peerId) {
@@ -141,27 +157,33 @@ class Libp2pInferenceRequestTransport(
                     }
                     Multiaddr.fromString(address)
                 }
-            } catch (_: Exception) {
+            } catch (exception: Exception) {
+                lastSubmissionFailure = "directory_address_rejected:${exception.javaClass.simpleName}"
                 return InferenceTransportSubmission.REJECTED
             }
         if (addresses.isEmpty()) {
+            lastSubmissionFailure = "directory_has_no_direct_tcp_address"
             return InferenceTransportSubmission.REJECTED
         }
 
         val requestWire = request.toByteArray()
         try {
             if (requestWire.size > PeerMessageFrameCodec.DEFAULT_MAXIMUM_MESSAGE_BYTES) {
+                lastSubmissionFailure = "request_frame_exceeds_transport_limit"
                 return InferenceTransportSubmission.REJECTED
             }
 
             val key = AttemptKey(request.requestId, request.attemptId)
             val pending = PendingAttempt(endpoint.peerId, request.modelId)
             if (pendingAttempts.putIfAbsent(key, pending) != null) {
+                lastSubmissionFailure = "duplicate_pending_request_and_attempt_id"
                 return InferenceTransportSubmission.REJECTED
             }
 
+            var failureStage = "start_local_libp2p_host"
             try {
                 ensureHostStarted()
+                failureStage = "open_authenticated_peer_stream"
                 val promise =
                     libp2pHost.newStream<InferencePeerMessageController>(
                         listOf(PROTOCOL_ID),
@@ -169,15 +191,18 @@ class Libp2pInferenceRequestTransport(
                         *addresses.toTypedArray(),
                     )
                 val timeoutSeconds = connectionTimeout.toSeconds().coerceAtLeast(1L)
+                failureStage = "await_peer_stream"
                 val stream =
                     withContext(Dispatchers.IO) {
                         promise.stream.get(timeoutSeconds, TimeUnit.SECONDS)
                     }
+                failureStage = "await_peer_protocol_controller"
                 val controller =
                     withContext(Dispatchers.IO) {
                         promise.controller.get(timeoutSeconds, TimeUnit.SECONDS)
                     }
 
+                failureStage = "verify_authenticated_remote_peer_id"
                 val authenticatedPeerId = stream.remotePeerId().toBase58()
                 if (authenticatedPeerId != endpoint.peerId) {
                     throw SecurityException(
@@ -186,6 +211,7 @@ class Libp2pInferenceRequestTransport(
                 }
 
                 pending.controller = controller
+                failureStage = "write_request_frame"
                 withContext(Dispatchers.IO) {
                     controller.sendRequest(requestWire).get(timeoutSeconds, TimeUnit.SECONDS)
                 }
@@ -195,7 +221,8 @@ class Libp2pInferenceRequestTransport(
                 pendingAttempts.remove(key, pending)
                 pending.controller?.closeStream()
                 throw cancellation
-            } catch (_: Exception) {
+            } catch (exception: Exception) {
+                lastSubmissionFailure = "$failureStage:${exception.javaClass.simpleName}"
                 pending.response.completeExceptionally(
                     IOException("The authenticated peer request could not be submitted."),
                 )
