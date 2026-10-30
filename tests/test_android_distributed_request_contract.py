@@ -29,10 +29,7 @@ class AndroidDistributedRequestContractTests(unittest.TestCase):
         self.assertRegex(source, r"import\s+java\.util\.UUID")
         self.assertIn("fun create(", source)
         self.assertIn("requestId = UUID.randomUUID().toString()", source)
-        self.assertRegex(
-            source,
-            r"requestId.{0,240}must not be reused as a conversation or user identifier",
-        )
+        self.assertIn("must not be reused as a conversation or user identifier", source)
 
     def test_lifecycle_statuses_match_the_existing_request_state_vocabulary(self):
         source = MODEL.read_text(encoding="utf-8")

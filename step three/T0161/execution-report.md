@@ -39,3 +39,11 @@
 - **Product/test result retained:** The V 3.0.601 product workflow passed Android KtLint, APK build, JVM tests (including six DistributedRequest cases), generated Protobuf verification, Windows WPF/security/DPAPI checks and HostLifecycle. This evidence is unchanged and remains in the history.
 - **Correction:** Added `tests/test_android_distributed_request_contract.py`, a four-case Python source-contract test that verifies the production model's required fields/validation, UUID factory, seven lifecycle statuses and the six real JVM test methods. This is additional guard evidence, not a replacement for the Android JVM tests.
 - **Status:** `in_progress` pending exact-head V 3.0.603 quality validation and the full product workflow. The V 3.0.602 graph-guard failure is preserved as attempt A004; no successful graph-validation claim is made for V 3.0.602.
+
+
+## A005 — supplemental test assertion failure
+
+- **Exact-head CI:** V 3.0.603 Step Three automated tests ran 264 tests; 263 passed and one new contract test failed. The failing assertion at `tests/test_android_distributed_request_contract.py:32` used a regex whose dot did not span a newline in the Kotlin documentation comment. [Quality workflow 41020396711](https://github.com/artinrahimii/project/actions/runs/41020396711).
+- **Scope:** This is a failure in the supplementary Python source-contract test. It does not indicate a production-model defect; the V 3.0.601 Android JVM suite, APK build and product workflow previously passed.
+- **Correction:** A006 changes the fragile multiline regex to a direct assertion for the exact privacy sentence. No production Kotlin or JVM test code is changed.
+- **Current status:** `in_progress`, pending exact-head V 3.0.604 CI.

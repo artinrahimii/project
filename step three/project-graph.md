@@ -36252,12 +36252,12 @@
         "https://github.com/artinrahimii/project/actions/runs/41019550381",
         "tests/test_android_distributed_request_contract.py"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0161-A001 (2026-10-30T07:18:31.437Z): Added DistributedRequest and six JVM unit tests. Reviewed T0160->T0161 as contract_or_interface_dependency because the transient requestId and absolute deadline align with the verified InferenceRequestPayloadBuilder and canonical InferenceRequest fields. The task remains in_progress pending exact-head CI; T0161->T0162 remains unreviewed.\nT0161-A002 (2026-10-30T07:20:42.701Z): Corrected the exact V 3.0.600 KtLint failure by placing the java.util.UUID import after the org.junit imports, preserving the six JVM tests. Exact-head V 3.0.601 CI pending.\nT0161-A003 (2026-10-30T07:21:06Z–07:23:27Z): Exact-head V 3.0.601 verification passed. KtLint, Android debug APK build, all Android JVM unit tests (including six DistributedRequestTest cases), generated Protobuf Java/Kotlin verification and APK artifact upload passed. Windows WPF build/startup/security/DPAPI checks, Windows artifact upload and HostLifecycle tests passed. The quality gate passed 260 Python tests, compileall and graph/evidence checks with zero errors and one preserved T0001 metadata warning. T0161 is complete; T0161->T0162 remains unreviewed.\nT0161-A004 (2026-10-30T07:26:12Z): The V 3.0.602 exact-head quality workflow ran all 260 Python tests and compileall successfully but graph_guard rejected the done state with DONE_WITHOUT_TEST_FILE_EVIDENCE because the Kotlin JVM test path starts with src/Client.Android/ rather than tests/. The V 3.0.601 product/JVM test evidence remains valid. Added an explicit Python source-contract test under tests/ to satisfy the graph guard's documented path rule without replacing the six real Kotlin JVM tests. Task reopened as in_progress pending V 3.0.603 CI.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0161-A001 (2026-10-30T07:18:31.437Z): Added DistributedRequest and six JVM unit tests. Reviewed T0160->T0161 as contract_or_interface_dependency because the transient requestId and absolute deadline align with the verified InferenceRequestPayloadBuilder and canonical InferenceRequest fields. The task remains in_progress pending exact-head CI; T0161->T0162 remains unreviewed.\nT0161-A002 (2026-10-30T07:20:42.701Z): Corrected the exact V 3.0.600 KtLint failure by placing the java.util.UUID import after the org.junit imports, preserving the six JVM tests. Exact-head V 3.0.601 CI pending.\nT0161-A003 (2026-10-30T07:21:06Z–07:23:27Z): Exact-head V 3.0.601 verification passed. KtLint, Android debug APK build, all Android JVM unit tests (including six DistributedRequestTest cases), generated Protobuf Java/Kotlin verification and APK artifact upload passed. Windows WPF build/startup/security/DPAPI checks, Windows artifact upload and HostLifecycle tests passed. The quality gate passed 260 Python tests, compileall and graph/evidence checks with zero errors and one preserved T0001 metadata warning. T0161 is complete; T0161->T0162 remains unreviewed.\nT0161-A004 (2026-10-30T07:26:12Z): The V 3.0.602 exact-head quality workflow ran all 260 Python tests and compileall successfully but graph_guard rejected the done state with DONE_WITHOUT_TEST_FILE_EVIDENCE because the Kotlin JVM test path starts with src/Client.Android/ rather than tests/. The V 3.0.601 product/JVM test evidence remains valid. Added an explicit Python source-contract test under tests/ to satisfy the graph guard's documented path rule without replacing the six real Kotlin JVM tests. Task reopened as in_progress pending V 3.0.603 CI.\nT0161-A005 (2026-10-30T07:29:33Z): V 3.0.603 quality workflow ran 264 Python tests; 263 passed and one new source-contract assertion failed because a regex attempted to cross a newline in a Kotlin comment. The failure is in the supplemental Python contract test, not the production model or Android JVM tests. Replaced the multiline regex with an exact substring assertion. Exact-head V 3.0.604 CI pending.",
       "execution_summary": {
-        "attempt_count": 4,
-        "failed_attempt_count": 1,
-        "last_attempt_id": "T0161-A004",
-        "last_attempt_result": "reopened",
+        "attempt_count": 5,
+        "failed_attempt_count": 2,
+        "last_attempt_id": "T0161-A005",
+        "last_attempt_result": "failed",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/requests/DistributedRequest.kt",
           "src/Client.Android/app/src/test/java/com/whitep/client/requests/DistributedRequestTest.kt",
@@ -36345,6 +36345,12 @@
             "result": "failed",
             "summary": "260 Python tests and compileall passed; graph_guard failed with DONE_WITHOUT_TEST_FILE_EVIDENCE because T0161 evidence contained no path beginning with tests/ or test/. Recorded JVM test path is under src/Client.Android/.",
             "url": "https://github.com/artinrahimii/project/actions/runs/41020070602"
+          },
+          {
+            "name": "Step Three quality gate — V 3.0.603",
+            "result": "failed",
+            "summary": "264 Python tests ran; one new DistributedRequest source-contract test failed because a regex did not match a Kotlin comment across a newline (263 passed). The failure is in the supplemental Python test, not the production model or six Android JVM tests. Python compileall and graph_guard did not run after the unit-test failure.",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41020396711"
           }
         ],
         "blocked_reason": null,
@@ -36535,6 +36541,30 @@
           "reopened_reason": "The exact-head V 3.0.602 graph guard rejected the completion evidence path; add a tests/-prefixed source-level contract test and rerun.",
           "contract_changes": [],
           "follow_up": "Run the new Python contract test through the Step Three quality workflow and retain done only after graph_guard validates it."
+        },
+        {
+          "attempt_id": "T0161-A005",
+          "started_at": "2026-10-30T07:29:33Z",
+          "ended_at": "2026-10-30T07:29:33Z",
+          "result": "failed",
+          "summary": "The V 3.0.603 Step Three unit suite ran 264 tests; 263 passed and the new UUID/privacy comment assertion failed because its regex could not span a newline. Fix the assertion with a direct substring check.",
+          "changed_files": [
+            "tests/test_android_distributed_request_contract.py"
+          ],
+          "commit_sha": "9ff44141b06ae40be00821a8d3794f9924d664ac",
+          "tests": [
+            {
+              "name": "Step Three automated tests — V 3.0.603",
+              "result": "failed",
+              "summary": "264 tests; one source-contract assertion failed, 263 passed. The faulty assertion used a non-DOTALL regex across a Kotlin comment line break.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41020396711"
+            }
+          ],
+          "failure_details": "tests/test_android_distributed_request_contract.py:32 used requestId.{0,240}...; the Kotlin model comment has a newline between the requestId reference and the privacy sentence, so regex dot did not match. The production Kotlin source and Android JVM tests are unchanged.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "A006 replaces the multiline regex with a direct substring assertion and reruns exact-head quality and product CI."
         }
       ]
     },
@@ -48301,7 +48331,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-30T07:28:46.410Z",
+  "updated_at": "2026-10-30T07:30:56.974Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

@@ -54,3 +54,10 @@
 - Added `tests/test_android_distributed_request_contract.py` with four Python source-contract checks for the production model fields/validation, UUID factory, lifecycle enum and all six real JVM test methods.
 - The Android JVM tests remain the execution proof. The Python file is supplementary graph-guard contract evidence only.
 - T0161 is reopened as `in_progress` until exact-head V 3.0.603 CI confirms the evidence requirement and the product checks remain successful.
+
+
+## A005 — supplemental source-contract test failure and correction
+
+- V 3.0.603 quality automated tests ran 264 tests: 263 passed, one failed in the new Python test because a normal regex dot did not span a newline within a Kotlin documentation comment.
+- The failing check is source-level only; it does not change the six Android JVM tests or the production model.
+- A006 will use a direct substring assertion for the privacy statement and rerun the exact-head checks.
