@@ -24,3 +24,14 @@
 - **Windows WPF:** the job was still in progress at the time of this correction; no success or failure is inferred from that incomplete observation.
 - **Correction:** split the chained expression into named local values and an explicit single-model check. The selection behavior and contract remain unchanged.
 - **Outcome:** preserve this failed attempt; T0162 remains `in_progress`. Exact-head V 3.0.610 CI is required before acceptance.
+
+
+## T0162-A002 — exact V 3.0.610 exposed remaining chained byte-size expressions
+
+- **Correction candidate:** `55905b330d178885a13fdf0bc46981960f38e97f` (`V 3.0.610`).
+- **Step Three quality gate — PASS:** https://github.com/artinrahimii/project/actions/runs/41040016565. Automated tests, Python syntax, graph structure and repository-backed output/evidence validation passed.
+- **HostLifecycle — PASS:** https://github.com/artinrahimii/project/actions/runs/41040016495 (job 124010228954).
+- **Windows WPF:** formatting, Release build, generated Protobuf validation and startup smoke passed. Later Windows process/policy/DPAPI steps were still running at the time inspected; no complete Windows job conclusion is claimed.
+- **Android — FAILED at KtLint:** https://github.com/artinrahimii/project/actions/runs/41040016495 (job 124010229140). The first formatting correction resolved the `supportsModel` expression but the same lint rule then identified a separate chained UTF-8 prompt/capsule size expression at `HostCandidateSelector.kt:106`. APK/JVM/Protobuf checks were skipped.
+- **Correction:** split prompt byte-array creation, byte counting, capsule size, and serialized request size into separate local values in both local request validation and host compatibility checks. Selection semantics are unchanged.
+- **Outcome:** preserve the second failed attempt. T0162 remains `in_progress`; exact V 3.0.611 Android and quality CI are pending.

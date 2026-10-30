@@ -54,17 +54,24 @@ object HostCandidateSelector {
     }
 
     private fun isLocallyValidRequest(request: InferenceRequest): Boolean {
-        val promptBytes = request.prompt.toByteArray(Charsets.UTF_8).size
+        val prompt = request.prompt
+        val promptBytesArray = prompt.toByteArray(Charsets.UTF_8)
+        val promptBytes = promptBytesArray.size
+        val contextCapsule = request.contextCapsule
+        val capsuleBytes = contextCapsule.size()
+        val serializedRequest = request.toByteArray()
+        val serializedRequestBytes = serializedRequest.size
+
         return request.requestId.isNotBlank() &&
             request.attemptId.isNotBlank() &&
             request.modelId.isNotBlank() &&
-            request.prompt.isNotBlank() &&
+            prompt.isNotBlank() &&
             request.protocolVersion.isNotBlank() &&
             request.deadlineUnixMs > 0L &&
             request.maxOutputTokens > 0 &&
             promptBytes <= InferenceRequestPayloadBuilder.MAX_PROMPT_BYTES &&
-            request.contextCapsule.size() <= InferenceRequestPayloadBuilder.MAX_CONTEXT_CAPSULE_BYTES &&
-            request.toByteArray().size <= InferenceRequestPayloadBuilder.MAX_SERIALIZED_REQUEST_BYTES
+            capsuleBytes <= InferenceRequestPayloadBuilder.MAX_CONTEXT_CAPSULE_BYTES &&
+            serializedRequestBytes <= InferenceRequestPayloadBuilder.MAX_SERIALIZED_REQUEST_BYTES
     }
 
     private fun isCompatibleAndReady(
@@ -103,8 +110,13 @@ object HostCandidateSelector {
             return false
         }
 
-        val promptBytes = request.prompt.toByteArray(Charsets.UTF_8).size.toLong()
-        val capsuleBytes = request.contextCapsule.size().toLong()
+        val prompt = request.prompt
+        val promptBytesArray = prompt.toByteArray(Charsets.UTF_8)
+        val promptByteCount = promptBytesArray.size
+        val promptBytes = promptByteCount.toLong()
+        val contextCapsule = request.contextCapsule
+        val capsuleByteCount = contextCapsule.size()
+        val capsuleBytes = capsuleByteCount.toLong()
         if (capabilities.maxPromptBytes <= 0L ||
             promptBytes > capabilities.maxPromptBytes ||
             capabilities.maxContextCapsuleBytes <= 0L ||
