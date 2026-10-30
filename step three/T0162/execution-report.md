@@ -1,50 +1,40 @@
-# T0162 execution report — implementation committed; exact-head CI pending
+# T0162 execution report — completed and verified
 
-- **Task:** Select at most three distinct, ready Android-side host candidates that support the current inference request.
-- **Baseline:** `f4848a6b0a5358ab76e2fa8a1257f18016c9e610` (`V 3.0.608`) on `main`.
-- **Graph baseline:** `step three/project-graph.md`, Blob `e7686c879b890d3b78fe36dc3e620d803523aaae`; retrieved via Git Blob API from the exact baseline tree and cryptographically matched before editing.
-- **Dependency review:**
-  - `T0160 → T0162`: validated as `contract_or_interface_dependency`. The selector consumes the generated `InferenceRequest` contract, reading model ID, protocol version, max output tokens, prompt bytes and capsule bytes to compare them with host capabilities.
-  - `T0161 → T0162`: validated as `sequencing_only`. `DistributedRequest` carries temporary request ID, deadline, maximum rounds and lifecycle status; the selector does not import or consume it. Deadline and round orchestration remain separate later tasks.
-  - Both original `type: blocks` edges and the existing execution order are preserved. No other edge was changed.
-- **Production implementation:** added `HostCandidate` and `HostCandidateSelector` under the Android app's `requests` package. The selector requires matching outer/nested/observed ephemeral peer identities; exact protocol-version match; READY runtime state; available concurrency; requested model in both advertised capabilities and live status; adequate output, prompt and context-capsule bounds; and a locally bounded request. It rejects ambiguous duplicate peer identities, sorts candidates by ephemeral ID for deterministic behavior and returns no more than three.
-- **Tests added:** eight Android JVM tests cover stable three-peer selection, non-ready/full peers, identity/protocol mismatch, advertised/runtime model availability, output/prompt/capsule limits, malformed/oversized requests, duplicate identities and protocol mismatch. A repository-root Python contract test protects the source-to-test/evidence traceability required by the graph guard.
-- **Scope boundary:** this is a pure selection policy over supplied announcement/status snapshots. It does not implement discovery, query a remote host, open a peer connection, dispatch inference, schedule retries, or prove Android-to-Windows delivery.
-- **Execution status:** implementation and tests have been added, but they have not been run locally in this tool session. Exact-commit GitHub Actions checks are pending; task remains `in_progress` until the Android and Step Three workflows both pass.
-- **Next:** inspect the exact `V 3.0.609` workflow results and repair any real compile, lint, runtime-test or graph-guard failure before completing T0162.
+- **Task:** Select no more than three distinct, ready hosts that support the current inference request.
+- **Acceptance revision:** `main` commit `e52b563e310d0e7115b0f612ee77ef819985462b` (`V 3.0.612`).
+- **Task result:** `done`. Four attempts are retained; three earlier attempts failed and were corrected without deleting their audit history.
+- **Graph integrity at acceptance revision:** `step three/project-graph.md`, exact-tree Blob `8566966ac26b6cb9c7dbbbf6eb90657f9bc84c7f`; 2,979,601 UTF-8 bytes; 2,856,791 JavaScript string code units; recomputed Git Blob SHA-1 matched; full fenced JSON parsed as 229 task nodes and 417 edges, with 229 unique IDs and no dangling edge references.
 
+## Dependency review
 
+- `T0160 → T0162`: validated as `contract_or_interface_dependency`. The selector consumes the canonical generated `InferenceRequest` contract produced by the T0160 payload boundary, including model ID, exact protocol version, output-token requirement, prompt bytes and capsule bytes.
+- `T0161 → T0162`: validated as `sequencing_only`. `DistributedRequest` contains temporary request identity, deadline, maximum rounds and lifecycle state; the selector does not import or consume this type. Deadline and round orchestration belong to later request workflow tasks.
+- Both graph edges retain their original `type: blocks` and execution order. No unrelated or unreviewed edge was changed.
 
-## T0162-A001 — exact V 3.0.609 CI exposed a KtLint formatting failure
+## Production implementation
 
-- **Implementation commit:** `2388d218e5622dd545ddd9296fb3a866059f2715` (`V 3.0.609`).
-- **Step Three quality gate — PASS:** https://github.com/artinrahimii/project/actions/runs/41039680210. Automated tests, Python syntax, graph structure and repository-backed output/evidence validation all completed successfully.
-- **HostLifecycle — PASS:** https://github.com/artinrahimii/project/actions/runs/41039680143 (job 124009119312).
-- **Android — FAILED at KtLint:** https://github.com/artinrahimii/project/actions/runs/41039680143 (job 124009118998). KtLint flagged chained property access on the `supportsModel` return line at `HostCandidateSelector.kt:106` (`Expected newline before '.'`, three reports). APK build, Android JVM tests, generated Protobuf verification and artifact upload were skipped after the lint failure.
-- **Windows WPF:** the job was still in progress at the time of this correction; no success or failure is inferred from that incomplete observation.
-- **Correction:** split the chained expression into named local values and an explicit single-model check. The selection behavior and contract remain unchanged.
-- **Outcome:** preserve this failed attempt; T0162 remains `in_progress`. Exact-head V 3.0.610 CI is required before acceptance.
+- `src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt` adds `HostCandidate` and a deterministic `HostCandidateSelector`.
+- Selection requires matching ephemeral identities across the outer announcement, nested capabilities and observed host status; an exact protocol-version match; READY runtime state; spare advertised concurrency; exactly one matching model entry in both advertised capabilities and live status; sufficient output-token, prompt and context-capsule limits; and a locally bounded request.
+- Ambiguous duplicate peer identities are excluded. Eligible candidates are sorted deterministically by ephemeral host ID and capped at three.
+- Eight Android JVM tests in `HostCandidateSelectorTest.kt` cover three-host deterministic selection, non-ready/full hosts, identity/protocol mismatch, model support, size/output bounds, invalid requests, duplicate identities and unsupported protocol versions.
+- `tests/test_android_host_candidate_selector_contract.py` adds four repository-root source-contract checks for production API use, fail-closed readiness/identity/capacity, the deterministic three-host bound and JVM-test coverage.
 
+## Exact V 3.0.612 verification
 
-## T0162-A002 — exact V 3.0.610 exposed remaining chained byte-size expressions
+All required workflows completed successfully on the exact candidate commit `e52b563e310d0e7115b0f612ee77ef819985462b`:
 
-- **Correction candidate:** `55905b330d178885a13fdf0bc46981960f38e97f` (`V 3.0.610`).
-- **Step Three quality gate — PASS:** https://github.com/artinrahimii/project/actions/runs/41040016565. Automated tests, Python syntax, graph structure and repository-backed output/evidence validation passed.
-- **HostLifecycle — PASS:** https://github.com/artinrahimii/project/actions/runs/41040016495 (job 124010228954).
-- **Windows WPF:** formatting, Release build, generated Protobuf validation and startup smoke passed. Later Windows process/policy/DPAPI steps were still running at the time inspected; no complete Windows job conclusion is claimed.
-- **Android — FAILED at KtLint:** https://github.com/artinrahimii/project/actions/runs/41040016495 (job 124010229140). The first formatting correction resolved the `supportsModel` expression but the same lint rule then identified a separate chained UTF-8 prompt/capsule size expression at `HostCandidateSelector.kt:106`. APK/JVM/Protobuf checks were skipped.
-- **Correction:** split prompt byte-array creation, byte counting, capsule size, and serialized request size into separate local values in both local request validation and host compatibility checks. Selection semantics are unchanged.
-- **Outcome:** preserve the second failed attempt. T0162 remains `in_progress`; exact V 3.0.611 Android and quality CI are pending.
+- **Step Three quality gate — PASS:** https://github.com/artinrahimii/project/actions/runs/41040959242 (job 124013340256). Python tests, Python syntax, graph structure and repository-backed recorded-output/evidence checks passed.
+- **Android — PASS:** https://github.com/artinrahimii/project/actions/runs/41040959393 (job 124013340727). KtLint, debug APK build, Android JVM tests, generated Protobuf Java/Kotlin verification and APK artifact upload all passed.
+- **Windows WPF — PASS:** https://github.com/artinrahimii/project/actions/runs/41040959393 (job 124013340458). Formatting, Release build, Protobuf, startup smoke, agent-tool restrictions/policy/capability, DPAPI identity/peer-trust checks and artifact upload passed.
+- **HostLifecycle — PASS:** https://github.com/artinrahimii/project/actions/runs/41040959393 (job 124013340790). Unit/integration job passed.
 
+## Preserved correction history
 
-## T0162-A003 — exact V 3.0.611 exposed two test-harness contract mismatches
+- **A001 / V 3.0.609:** Android KtLint failed on chained-property formatting; Android build/JVM/Protobuf steps were skipped.
+- **A002 / V 3.0.610:** KtLint identified additional chained prompt/capsule byte-size expressions; Android build/JVM/Protobuf steps were skipped.
+- **A003 / V 3.0.611:** KtLint and APK build passed, but the Python source-contract test still expected the old prompt expression and Android JVM compilation lacked the `InferenceRequestPayloadBuilder` import. HostLifecycle and Windows checks passed.
+- **A004 / V 3.0.612:** corrected the source-contract assertions and Kotlin test import. All exact-head quality and product jobs passed; this attempt is recorded as succeeded.
 
-- **Candidate:** `d0b02ae8f4e927ba2b373567b2b1c39d184970ea` (`V 3.0.611`).
-- **Graph integrity:** the graph was fetched from the exact commit tree as Blob `279534dbbd6fdc36d3950d2cdb542f67b8c70d65`; 2,973,531 UTF-8 bytes; recomputed Git Blob SHA-1 matched; 229 nodes and 417 edges parsed.
-- **Step Three quality gate — FAILED:** https://github.com/artinrahimii/project/actions/runs/41040367408. The Python suite ran 268 tests; 267 passed and one source-contract assertion failed because it expected a direct `request.prompt.toByteArray(...)` expression after the production code had intentionally split it into `prompt` and `promptBytesArray`.
-- **HostLifecycle — PASS:** https://github.com/artinrahimii/project/actions/runs/41040367617 (job 124011378288).
-- **Android KtLint — PASS; debug APK — PASS:** https://github.com/artinrahimii/project/actions/runs/41040367617 (job 124011378514).
-- **Android JVM tests — FAILED at compile:** the test file referenced `InferenceRequestPayloadBuilder` constants without importing that type; Kotlin reported unresolved references at lines 106 and 108. Protobuf verification and APK artifact upload were skipped.
-- **Windows WPF — PASS:** https://github.com/artinrahimii/project/actions/runs/41040367617 (job 124011378610), including formatting, Release build, Protobuf, startup smoke, agent-tool policy/capability and DPAPI identity/trust checks.
-- **Correction:** update the Python source-contract assertions to verify the actual local-variable contract (`prompt`, UTF-8 byte array, `contextCapsule`) rather than a discarded direct expression; add the missing import to the JVM test. No production behavior or shared wire contract changes.
-- **Outcome:** preserve this failed attempt. T0162 remains `in_progress`; exact V 3.0.612 quality and Android JVM/Protobuf verification are pending.
+## Scope boundary
+
+This task completes deterministic selection over supplied `HostAnnouncement` and `HostStatus` snapshots only. It does **not** implement discovery, remote status polling, public reachability probing, peer connection establishment, inference dispatch, timers, retries, response collection, or Android-to-Windows end-to-end inference. Those remain separate tasks and acceptance gates. In particular, the independent public-reachability condition in T0121 remains blocked and was not bypassed by this task.
