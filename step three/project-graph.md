@@ -37322,21 +37322,33 @@
         "step three/T0160/execution-report.md",
         "step three/T0162/execution-report.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0163-A001 (2026-10-30T10:49:33.270Z): Reviewed both incoming edges against the actual T0160 InferenceRequest builder/Protobuf contract and T0162 HostCandidateSelector output; classified them as validated contract_or_interface_dependency while preserving type=blocks and execution order. Added InferenceAttemptDispatcher, seven JVM tests, and a repository-level source-contract test. The dispatcher creates a shared request ID and distinct per-host attempt IDs, validates the complete round before submission, and invokes an explicitly injected transport port. No concrete Android-to-host adapter or routable authenticated peer resolution exists yet; local Android/Gradle tests were not run in this tool session. Record this as partial/in_progress, not done, pending exact-head CI and real transport integration.\n\nT0163-A002 (2026-10-30T10:52:15.334Z): Corrected all KtLint issues reported by exact V 3.0.614 CI in the production dispatcher and its JVM test source: import ordering, unused import, multiline property initializer and lambda formatting, argument wrapping and trailing commas. V 3.0.614 Step Three quality and HostLifecycle workflows passed; Android lint failed and therefore APK/JVM/Protobuf steps were skipped. No Android test success is claimed. Exact V 3.0.615 CI is pending. T0163 remains in_progress because the production Android-to-host transport adapter and routable peer-address resolution are not present.\n\nT0163-A003 (2026-10-30T10:54:35.251Z): Applied the remaining exact V 3.0.615 KtLint corrections in InferenceAttemptDispatcherTest.kt: moved multiline runBlocking bodies to the next line after '=', corrected RecordingTransport lambda indentation, extracted the dispatch helper before the method call, and converted the helper to an expression body with the project-compatible signature layout. V 3.0.615 quality gate and HostLifecycle passed, but Android KtLint still failed and its build/JVM/Protobuf stages were skipped. Exact V 3.0.616 CI is pending. T0163 remains in_progress; no remote transport adapter is claimed.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0163-A001 (2026-10-30T10:49:33.270Z): Reviewed both incoming edges against the actual T0160 InferenceRequest builder/Protobuf contract and T0162 HostCandidateSelector output; classified them as validated contract_or_interface_dependency while preserving type=blocks and execution order. Added InferenceAttemptDispatcher, seven JVM tests, and a repository-level source-contract test. The dispatcher creates a shared request ID and distinct per-host attempt IDs, validates the complete round before submission, and invokes an explicitly injected transport port. No concrete Android-to-host adapter or routable authenticated peer resolution exists yet; local Android/Gradle tests were not run in this tool session. Record this as partial/in_progress, not done, pending exact-head CI and real transport integration.\n\nT0163-A002 (2026-10-30T10:52:15.334Z): Corrected all KtLint issues reported by exact V 3.0.614 CI in the production dispatcher and its JVM test source: import ordering, unused import, multiline property initializer and lambda formatting, argument wrapping and trailing commas. V 3.0.614 Step Three quality and HostLifecycle workflows passed; Android lint failed and therefore APK/JVM/Protobuf steps were skipped. No Android test success is claimed. Exact V 3.0.615 CI is pending. T0163 remains in_progress because the production Android-to-host transport adapter and routable peer-address resolution are not present.\n\nT0163-A003 (2026-10-30T10:54:35.251Z): Applied the remaining exact V 3.0.615 KtLint corrections in InferenceAttemptDispatcherTest.kt: moved multiline runBlocking bodies to the next line after '=', corrected RecordingTransport lambda indentation, extracted the dispatch helper before the method call, and converted the helper to an expression body with the project-compatible signature layout. V 3.0.615 quality gate and HostLifecycle passed, but Android KtLint still failed and its build/JVM/Protobuf stages were skipped. Exact V 3.0.616 CI is pending. T0163 remains in_progress; no remote transport adapter is claimed.\n\nT0163-A003 exact-head V 3.0.616 outcome (2026-10-30): Step Three quality 41044231304 and HostLifecycle job 124024230799 passed. Android KtLint failed only in the test file due to runBlocking body indentation, the dispatcher helper expression layout and distributedRequest constructor indentation; Android APK/JVM/Protobuf were skipped. Exact details are in evidence/v3.0.616-ci-failure.md. A004 corrects the formatting; task remains in_progress.\n",
       "execution_summary": {
-        "attempt_count": 3,
-        "failed_attempt_count": 1,
-        "last_attempt_id": "T0163-A003",
+        "attempt_count": 4,
+        "failed_attempt_count": 3,
+        "last_attempt_id": "T0163-A004",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt",
           "step three/T0163/execution-report.md",
           "step three/T0163/evidence/v3.0.615-ci-failure.md",
-          "step three/project-graph.md"
+          "step three/project-graph.md",
+          "step three/T0163/evidence/v3.0.616-ci-failure.md"
         ],
         "related_commits": [],
-        "tests_passed": [],
-        "tests_failed": [],
+        "tests_passed": [
+          "V 3.0.614 Step Three quality passed",
+          "V 3.0.614 HostLifecycle passed",
+          "V 3.0.615 Step Three quality passed",
+          "V 3.0.615 HostLifecycle passed",
+          "V 3.0.616 Step Three quality passed",
+          "V 3.0.616 HostLifecycle passed"
+        ],
+        "tests_failed": [
+          "V 3.0.614 Android KtLint failed; Android build/JVM/Protobuf skipped",
+          "V 3.0.615 Android KtLint failed; Android build/JVM/Protobuf skipped",
+          "V 3.0.616 Android KtLint failed; Android build/JVM/Protobuf skipped"
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -37430,8 +37442,8 @@
         {
           "attempt_id": "T0163-A003",
           "started_at": "2026-10-30T10:54:35.251Z",
-          "ended_at": "2026-10-30T10:54:35.251Z",
-          "result": "partial",
+          "ended_at": "2026-10-30T10:56:56.967Z",
+          "result": "failed",
           "summary": "Applied the specific remaining KtLint corrections reported by V 3.0.615: move multiline runBlocking bodies to a new line after the expression operator, correct the injected transport lambda indentation, avoid a multiline chained-call initializer, and use the required expression-body syntax for the helper. This is formatting-only. Exact V 3.0.616 CI is pending.",
           "changed_files": [
             "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt",
@@ -37442,35 +37454,55 @@
           "commit_sha": null,
           "tests": [
             {
-              "name": "V 3.0.615 Step Three quality gate",
+              "name": "V 3.0.616 Step Three quality",
               "result": "passed",
-              "url": "https://github.com/artinrahimii/project/actions/runs/41043948552",
-              "summary": "All quality and graph/evidence validation steps passed."
+              "url": "https://github.com/artinrahimii/project/actions/runs/41044231304",
+              "summary": "All graph and Python quality checks passed."
             },
             {
-              "name": "V 3.0.615 HostLifecycle",
+              "name": "V 3.0.616 HostLifecycle",
               "result": "passed",
-              "url": "https://github.com/artinrahimii/project/actions/runs/41043948733",
-              "summary": "HostLifecycle job 124023274572 passed."
+              "url": "https://github.com/artinrahimii/project/actions/runs/41044231238",
+              "summary": "Host lifecycle integration job passed."
             },
             {
-              "name": "V 3.0.615 Android KtLint",
+              "name": "V 3.0.616 Android KtLint",
               "result": "failed",
-              "url": "https://github.com/artinrahimii/project/actions/runs/41043948733",
-              "summary": "Formatting findings remained; Android APK/JVM/Protobuf checks were skipped."
-            },
+              "url": "https://github.com/artinrahimii/project/actions/runs/41044231238",
+              "summary": "Main production source passed, but test source had under-indented runBlocking bodies and constructor/helper formatting violations; Android APK/JVM/Protobuf skipped."
+            }
+          ],
+          "failure_details": "KtLint reported widespread unexpected indentation in the seven runBlocking test bodies, the distributedRequest constructor arguments and closing delimiter, plus an expression-body layout issue in the dispatcher helper.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "A004 corrects all indentation and expression-body issues; check exact-head V 3.0.617 lint and product workflow."
+        },
+        {
+          "attempt_id": "T0163-A004",
+          "started_at": "2026-10-30T10:56:56.967Z",
+          "ended_at": "2026-10-30T10:56:56.967Z",
+          "result": "partial",
+          "summary": "Corrected the exact V 3.0.616 KtLint test-source indentation/layout findings: indented all seven runBlocking bodies and their nested expressions, aligned the distributedRequest constructor arguments, and placed the dispatcher helper expression on its signature line. No test logic changed. Exact-head V 3.0.617 CI is pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt",
+            "step three/T0163/execution-report.md",
+            "step three/T0163/evidence/v3.0.616-ci-failure.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
             {
-              "name": "V 3.0.616 exact-head workflows",
+              "name": "Android KtLint, APK, JVM and generated Protobuf checks",
               "result": "pending",
-              "url": "https://github.com/artinrahimii/project/actions",
-              "summary": "Pending after correction commit."
+              "summary": "Not available locally; exact-head V 3.0.617 CI pending."
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect exact V 3.0.616 KtLint, Android build/JVM/Protobuf, Windows and HostLifecycle results. Keep task in_progress pending concrete host transport integration."
+          "follow_up": "Inspect exact V 3.0.617 quality and Android lint/build/JVM/Protobuf results. T0163 remains in_progress until a real authenticated Android-to-host transport and remote-delivery acceptance are implemented."
         }
       ]
     },
@@ -49229,7 +49261,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-30T10:54:35.251Z",
+  "updated_at": "2026-10-30T10:56:56.967Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

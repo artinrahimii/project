@@ -13,3 +13,13 @@
 - **Local execution limitation:** Android/Gradle tasks were not run locally in this connected GitHub tool session; exact-head GitHub Actions supplies the build/test evidence.
 - **Integration boundary:** No concrete Android-to-Windows transport adapter or routable peer-address resolution exists at this revision. The dispatcher invokes a required transport port and does not provide a fake/default transport. Remote delivery, authenticated peer connection, inference execution, and end-to-end Android-to-Windows request/response are therefore not proven.
 - **Task status:** `in_progress`, not `done`. Implement and wire authenticated host address resolution and a concrete Android-to-host transport, then verify remote delivery against a real host and exact-head CI.
+
+
+## A003 exact-head CI failure and A004 correction
+
+- **Verified revision:** `V 3.0.616`, commit `edfd75ce4bdb36a02b37b6fc1bab9e6ba3d7b7bd` on `main`.
+- **Step Three quality gate:** PASS — workflow 41044231304.
+- **HostLifecycle unit/integration:** PASS — job 124024230799.
+- **Android:** KtLint failed only in test-source formatting (job 124024230961). All seven `runBlocking` bodies were under-indented after conversion to multiline expression bodies; KtLint also required different indentation for the body of `distributedRequest` and the dispatcher helper expression on the signature line. The production dispatcher passed KtLint. APK/JVM/Protobuf steps were skipped.
+- **A004 correction:** Applied the exact indentation and expression-body formatting requested by the log. No test logic or production behavior changed. Exact-head `V 3.0.617` CI is pending.
+- **Task status:** `in_progress`; no Android acceptance is claimed until KtLint, APK build, JVM tests and Protobuf all pass; real transport wiring is still absent.

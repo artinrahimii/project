@@ -23,246 +23,245 @@ class InferenceAttemptDispatcherTest {
     @Test
     fun dispatchesCorrelatableAttemptPerSelectedHost() =
         runBlocking {
-        val candidates =
-            HostCandidateSelector.select(
-                validRequest(),
-                listOf(candidate("host-c"), candidate("host-a"), candidate("host-b")),
+            val candidates =
+                HostCandidateSelector.select(
+                    validRequest(),
+                    listOf(candidate("host-c"), candidate("host-a"), candidate("host-b")),
+                )
+            val transport = RecordingTransport()
+            val ids = listOf("attempt-a", "attempt-b", "attempt-c").iterator()
+            val dispatcher =
+                InferenceAttemptDispatcher(
+                    transport = transport,
+                    attemptIdGenerator = { ids.next() },
+                )
+            val capsule =
+                ConversationContextCapsule(
+                    goal = "Run one local inference request",
+                    keyFacts = listOf("Only the selected message is sent"),
+                )
+            val distributedRequest =
+                DistributedRequest(
+                    requestId = "ephemeral-request-42",
+                    deadlineUnixMs = 1_798_000_000_000L,
+                    maxRounds = 3,
+                )
+    
+            val result =
+                dispatcher.dispatchRound(
+                    distributedRequest = distributedRequest,
+                    selectedHosts = candidates,
+                    modelId = MODEL_ID,
+                    currentMessage = "Use the current message",
+                    capsule = capsule,
+                    maxOutputTokens = 128,
+                    protocolVersion = PROTOCOL_VERSION,
+                )
+    
+            assertTrue(result is InferenceRoundDispatchResult.Dispatched)
+            val dispatched = (result as InferenceRoundDispatchResult.Dispatched).attempts
+            assertEquals(listOf("host-a", "host-b", "host-c"), transport.hostIds)
+            assertEquals(3, dispatched.size)
+            assertEquals(
+                listOf("attempt-a", "attempt-b", "attempt-c"),
+                dispatched.map { it.attemptId },
             )
-        val transport = RecordingTransport()
-        val ids = listOf("attempt-a", "attempt-b", "attempt-c").iterator()
-        val dispatcher =
-            InferenceAttemptDispatcher(
-                transport = transport,
-                attemptIdGenerator = { ids.next() },
+            assertEquals(3, dispatched.map { it.attemptId }.toSet().size)
+            assertEquals(
+                listOf("ephemeral-request-42", "ephemeral-request-42", "ephemeral-request-42"),
+                transport.requests.map { it.requestId },
             )
-        val capsule =
-            ConversationContextCapsule(
-                goal = "Run one local inference request",
-                keyFacts = listOf("Only the selected message is sent"),
+            assertEquals(dispatched.map { it.attemptId }, transport.requests.map { it.attemptId })
+            assertTrue(transport.requests.all { it.prompt == "Use the current message" })
+            val encodedCapsule = requireNotNull(capsule.encode().bytes)
+            assertTrue(
+                transport.requests.all {
+                    it.contextCapsule == ByteString.copyFrom(encodedCapsule)
+                },
             )
-        val distributedRequest =
-            DistributedRequest(
-                requestId = "ephemeral-request-42",
-                deadlineUnixMs = 1_798_000_000_000L,
-                maxRounds = 3,
-            )
-
-        val result =
-            dispatcher.dispatchRound(
-                distributedRequest = distributedRequest,
-                selectedHosts = candidates,
-                modelId = MODEL_ID,
-                currentMessage = "Use the current message",
-                capsule = capsule,
-                maxOutputTokens = 128,
-                protocolVersion = PROTOCOL_VERSION,
-            )
-
-        assertTrue(result is InferenceRoundDispatchResult.Dispatched)
-        val dispatched = (result as InferenceRoundDispatchResult.Dispatched).attempts
-        assertEquals(listOf("host-a", "host-b", "host-c"), transport.hostIds)
-        assertEquals(3, dispatched.size)
-        assertEquals(
-            listOf("attempt-a", "attempt-b", "attempt-c"),
-            dispatched.map { it.attemptId },
-        )
-        assertEquals(3, dispatched.map { it.attemptId }.toSet().size)
-        assertEquals(
-            listOf("ephemeral-request-42", "ephemeral-request-42", "ephemeral-request-42"),
-            transport.requests.map { it.requestId },
-        )
-        assertEquals(dispatched.map { it.attemptId }, transport.requests.map { it.attemptId })
-        assertTrue(transport.requests.all { it.prompt == "Use the current message" })
-        val encodedCapsule = requireNotNull(capsule.encode().bytes)
-        assertTrue(
-            transport.requests.all {
-                it.contextCapsule == ByteString.copyFrom(encodedCapsule)
-            },
-        )
-        assertTrue(dispatched.all { it.submissionStatus == InferenceAttemptSubmissionStatus.QUEUED })
-    }
+            assertTrue(dispatched.all { it.submissionStatus == InferenceAttemptSubmissionStatus.QUEUED })
+        }
 
     @Test
     fun rejectsDuplicateHostIdentityBeforeSubmitting() =
         runBlocking {
-        val transport = RecordingTransport()
-        val result =
-            dispatcher(transport).dispatchRound(
-                distributedRequest(),
-                listOf(candidate("same-host"), candidate("same-host")),
-                MODEL_ID,
-                "message",
-                capsule(),
-                64,
-                PROTOCOL_VERSION,
+            val transport = RecordingTransport()
+            val result =
+                dispatcher(transport).dispatchRound(
+                    distributedRequest(),
+                    listOf(candidate("same-host"), candidate("same-host")),
+                    MODEL_ID,
+                    "message",
+                    capsule(),
+                    64,
+                    PROTOCOL_VERSION,
+                )
+    
+            assertEquals(
+                InferenceRoundDispatchResult.Rejected(
+                    InferenceRoundDispatchRejection.DUPLICATE_HOST_IDENTITY,
+                ),
+                result,
             )
-
-        assertEquals(
-            InferenceRoundDispatchResult.Rejected(
-                InferenceRoundDispatchRejection.DUPLICATE_HOST_IDENTITY,
-            ),
-            result,
-        )
-        assertTrue(transport.requests.isEmpty())
-    }
+            assertTrue(transport.requests.isEmpty())
+        }
 
     @Test
     fun rejectsMoreThanThreeHostsBeforeSubmitting() =
         runBlocking {
-        val transport = RecordingTransport()
-        val result =
-            dispatcher(transport).dispatchRound(
-                distributedRequest(),
-                listOf(
-                    candidate("host-a"),
-                    candidate("host-b"),
-                    candidate("host-c"),
-                    candidate("host-d"),
+            val transport = RecordingTransport()
+            val result =
+                dispatcher(transport).dispatchRound(
+                    distributedRequest(),
+                    listOf(
+                        candidate("host-a"),
+                        candidate("host-b"),
+                        candidate("host-c"),
+                        candidate("host-d"),
+                    ),
+                    MODEL_ID,
+                    "message",
+                    capsule(),
+                    64,
+                    PROTOCOL_VERSION,
+                )
+    
+            assertEquals(
+                InferenceRoundDispatchResult.Rejected(
+                    InferenceRoundDispatchRejection.TOO_MANY_HOSTS,
                 ),
-                MODEL_ID,
-                "message",
-                capsule(),
-                64,
-                PROTOCOL_VERSION,
+                result,
             )
-
-        assertEquals(
-            InferenceRoundDispatchResult.Rejected(
-                InferenceRoundDispatchRejection.TOO_MANY_HOSTS,
-            ),
-            result,
-        )
-        assertTrue(transport.requests.isEmpty())
-    }
+            assertTrue(transport.requests.isEmpty())
+        }
 
     @Test
     fun rejectsInvalidPayloadBeforeSubmittingAnyHost() =
         runBlocking {
-        val transport = RecordingTransport()
-        val result =
-            dispatcher(transport).dispatchRound(
-                distributedRequest(),
-                listOf(candidate("host-a"), candidate("host-b")),
-                MODEL_ID,
-                " ",
-                capsule(),
-                64,
-                PROTOCOL_VERSION,
+            val transport = RecordingTransport()
+            val result =
+                dispatcher(transport).dispatchRound(
+                    distributedRequest(),
+                    listOf(candidate("host-a"), candidate("host-b")),
+                    MODEL_ID,
+                    " ",
+                    capsule(),
+                    64,
+                    PROTOCOL_VERSION,
+                )
+    
+            assertTrue(result is InferenceRoundDispatchResult.Rejected)
+            assertEquals(
+                InferenceRequestPayloadRejection.EMPTY_PROMPT,
+                (result as InferenceRoundDispatchResult.Rejected).payloadRejection,
             )
-
-        assertTrue(result is InferenceRoundDispatchResult.Rejected)
-        assertEquals(
-            InferenceRequestPayloadRejection.EMPTY_PROMPT,
-            (result as InferenceRoundDispatchResult.Rejected).payloadRejection,
-        )
-        assertTrue(transport.requests.isEmpty())
-    }
+            assertTrue(transport.requests.isEmpty())
+        }
 
     @Test
     fun rejectsTerminalRequestBeforeSubmitting() =
         runBlocking {
-        val transport = RecordingTransport()
-        val request = distributedRequest(status = DistributedRequestStatus.CANCELLED)
-        val result =
-            dispatcher(transport).dispatchRound(
-                request,
-                listOf(candidate("host-a")),
-                MODEL_ID,
-                "message",
-                capsule(),
-                64,
-                PROTOCOL_VERSION,
+            val transport = RecordingTransport()
+            val request = distributedRequest(status = DistributedRequestStatus.CANCELLED)
+            val result =
+                dispatcher(transport).dispatchRound(
+                    request,
+                    listOf(candidate("host-a")),
+                    MODEL_ID,
+                    "message",
+                    capsule(),
+                    64,
+                    PROTOCOL_VERSION,
+                )
+    
+            assertEquals(
+                InferenceRoundDispatchResult.Rejected(
+                    InferenceRoundDispatchRejection.TERMINAL_REQUEST,
+                ),
+                result,
             )
-
-        assertEquals(
-            InferenceRoundDispatchResult.Rejected(
-                InferenceRoundDispatchRejection.TERMINAL_REQUEST,
-            ),
-            result,
-        )
-        assertTrue(transport.requests.isEmpty())
-    }
+            assertTrue(transport.requests.isEmpty())
+        }
 
     @Test
     fun keepsSubmittingOtherHostsAfterTransportRejectsOrThrows() =
         runBlocking {
-        val transport =
-            RecordingTransport(
-                submission = { hostId, _ ->
-                    when (hostId) {
-                        "host-a" -> InferenceTransportSubmission.REJECTED
-                        "host-b" -> error("simulated transport fault")
-                        else -> InferenceTransportSubmission.QUEUED
-                    }
-                },
+            val transport =
+                RecordingTransport(
+                    submission = { hostId, _ ->
+                        when (hostId) {
+                            "host-a" -> InferenceTransportSubmission.REJECTED
+                            "host-b" -> error("simulated transport fault")
+                            else -> InferenceTransportSubmission.QUEUED
+                        }
+                    },
+                )
+            val attemptIds = listOf("attempt-a", "attempt-b", "attempt-c").iterator()
+            val attemptDispatcher = dispatcher(transport, attemptIds::next)
+            val result =
+                attemptDispatcher.dispatchRound(
+                    distributedRequest(),
+                    listOf(candidate("host-a"), candidate("host-b"), candidate("host-c")),
+                    MODEL_ID,
+                    "message",
+                    capsule(),
+                    64,
+                    PROTOCOL_VERSION,
+                )
+    
+            assertTrue(result is InferenceRoundDispatchResult.Dispatched)
+            assertEquals(
+                listOf(
+                    InferenceAttemptSubmissionStatus.REJECTED,
+                    InferenceAttemptSubmissionStatus.FAILED,
+                    InferenceAttemptSubmissionStatus.QUEUED,
+                ),
+                (result as InferenceRoundDispatchResult.Dispatched).attempts.map { it.submissionStatus },
             )
-        val attemptIds = listOf("attempt-a", "attempt-b", "attempt-c").iterator()
-        val attemptDispatcher = dispatcher(transport, attemptIds::next)
-        val result =
-            attemptDispatcher.dispatchRound(
-                distributedRequest(),
-                listOf(candidate("host-a"), candidate("host-b"), candidate("host-c")),
-                MODEL_ID,
-                "message",
-                capsule(),
-                64,
-                PROTOCOL_VERSION,
-            )
-
-        assertTrue(result is InferenceRoundDispatchResult.Dispatched)
-        assertEquals(
-            listOf(
-                InferenceAttemptSubmissionStatus.REJECTED,
-                InferenceAttemptSubmissionStatus.FAILED,
-                InferenceAttemptSubmissionStatus.QUEUED,
-            ),
-            (result as InferenceRoundDispatchResult.Dispatched).attempts.map { it.submissionStatus },
-        )
-        assertEquals(3, transport.requests.size)
-    }
+            assertEquals(3, transport.requests.size)
+        }
 
     @Test
     fun rejectsDuplicateAttemptIdsBeforeSubmitting() =
         runBlocking {
-        val transport = RecordingTransport()
-        val dispatcher =
-            InferenceAttemptDispatcher(
-                transport = transport,
-                attemptIdGenerator = { "same-attempt" },
+            val transport = RecordingTransport()
+            val dispatcher =
+                InferenceAttemptDispatcher(
+                    transport = transport,
+                    attemptIdGenerator = { "same-attempt" },
+                )
+            val result =
+                dispatcher.dispatchRound(
+                    distributedRequest(),
+                    listOf(candidate("host-a"), candidate("host-b")),
+                    MODEL_ID,
+                    "message",
+                    capsule(),
+                    64,
+                    PROTOCOL_VERSION,
+                )
+    
+            assertEquals(
+                InferenceRoundDispatchResult.Rejected(
+                    InferenceRoundDispatchRejection.DUPLICATE_ATTEMPT_ID,
+                ),
+                result,
             )
-        val result =
-            dispatcher.dispatchRound(
-                distributedRequest(),
-                listOf(candidate("host-a"), candidate("host-b")),
-                MODEL_ID,
-                "message",
-                capsule(),
-                64,
-                PROTOCOL_VERSION,
-            )
-
-        assertEquals(
-            InferenceRoundDispatchResult.Rejected(
-                InferenceRoundDispatchRejection.DUPLICATE_ATTEMPT_ID,
-            ),
-            result,
-        )
-        assertTrue(transport.requests.isEmpty())
-    }
+            assertTrue(transport.requests.isEmpty())
+        }
 
     private fun dispatcher(
         transport: InferenceRequestTransport,
         attemptIdGenerator: () -> String = { "attempt-one" },
-    ): InferenceAttemptDispatcher =
-        InferenceAttemptDispatcher(transport, attemptIdGenerator)
+    ): InferenceAttemptDispatcher = InferenceAttemptDispatcher(transport, attemptIdGenerator)
 
     private fun distributedRequest(status: DistributedRequestStatus = DistributedRequestStatus.QUEUED) =
         DistributedRequest(
-        requestId = "ephemeral-request-42",
-        deadlineUnixMs = 1_798_000_000_000L,
-        maxRounds = 3,
-        status = status,
-    )
+            requestId = "ephemeral-request-42",
+            deadlineUnixMs = 1_798_000_000_000L,
+            maxRounds = 3,
+            status = status,
+        )
 
     private fun capsule() = ConversationContextCapsule(goal = "Run one local inference request")
 
