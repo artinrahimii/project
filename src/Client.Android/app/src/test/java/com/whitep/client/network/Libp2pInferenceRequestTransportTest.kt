@@ -6,35 +6,35 @@ import com.whitep.client.requests.HostCandidate
 import com.whitep.client.requests.InferenceAttemptDispatcher
 import com.whitep.client.requests.InferenceAttemptSubmissionStatus
 import com.whitep.client.requests.InferenceRoundDispatchResult
-import io.libp2p.core.Host
-import io.libp2p.core.PeerId
+import io.libp2p.core.crypto.generateKeyPair
 import io.libp2p.core.crypto.KeyType
 import io.libp2p.core.crypto.PrivKey
-import io.libp2p.core.crypto.generateKeyPair
 import io.libp2p.core.dsl.host
+import io.libp2p.core.Host
 import io.libp2p.core.multistream.ProtocolBinding
-import io.libp2p.etc.SimpleClientHandler
+import io.libp2p.core.PeerId
 import io.libp2p.etc.createSimpleBinding
+import io.libp2p.etc.SimpleClientHandler
 import io.netty.buffer.ByteBuf
 import io.netty.buffer.Unpooled
+import java.time.Duration
+import java.time.Instant
+import java.util.Arrays
+import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Test
+import org.whitep.shared.contracts.v1.hostAnnouncement
+import org.whitep.shared.contracts.v1.hostCapabilities
+import org.whitep.shared.contracts.v1.HostRuntimeState
+import org.whitep.shared.contracts.v1.hostStatus
 import org.whitep.shared.contracts.v1.InferenceOutcome
 import org.whitep.shared.contracts.v1.InferenceRequest
 import org.whitep.shared.contracts.v1.InferenceResponse
 import org.whitep.shared.contracts.v1.modelCapability
-import org.whitep.shared.contracts.v1.hostStatus
-import org.whitep.shared.contracts.v1.hostCapabilities
-import org.whitep.shared.contracts.v1.hostAnnouncement
-import org.whitep.shared.contracts.v1.HostRuntimeState
-import java.time.Duration
-import java.time.Instant
-import java.util.Arrays
-import java.util.concurrent.TimeUnit
 
 class Libp2pInferenceRequestTransportTest {
     @Test
