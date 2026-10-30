@@ -2,8 +2,8 @@ package com.whitep.client.network
 
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
 import org.junit.Assert.assertThrows
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.io.EOFException
 
@@ -39,9 +39,10 @@ class PeerMessageFrameCodecTest {
     fun decodesMultipleFramesAndAnEmptyMessageFromOneChunk() {
         val first = byteArrayOf(1, 2, 3)
         val second = byteArrayOf(9, 8)
-        val combined = PeerMessageFrameCodec.encode(first) +
-            PeerMessageFrameCodec.encode(ByteArray(0)) +
-            PeerMessageFrameCodec.encode(second)
+        val combined =
+            PeerMessageFrameCodec.encode(first) +
+                PeerMessageFrameCodec.encode(ByteArray(0)) +
+                PeerMessageFrameCodec.encode(second)
         val decoder = PeerMessageFrameDecoder()
 
         val decoded = decoder.feed(combined)

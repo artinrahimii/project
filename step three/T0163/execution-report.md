@@ -22,3 +22,21 @@
 - **Local execution:** Kotlin/Gradle and Python tests were not run in this tool session. A local repository clone could not be obtained because the runtime could not resolve `github.com`; exact-head GitHub Actions is the verification path after the online commit.
 - **Scope boundary:** This is the real Android framing component only. It does not create a libp2p host, open TCP/QUIC sockets, authenticate a remote PeerId, map `ephemeralHostId` to PeerId/multiaddress, bind the dispatcher to a concrete transport, or prove remote receipt/inference. No claim of end-to-end Android-to-Windows delivery is made.
 - **Task status:** `in_progress`; this attempt is `partial`, not `done`. The next required integration is authenticated Android libp2p session establishment plus verified directory identity/address resolution, followed by cross-platform loopback and independent-host acceptance.
+
+
+## Attempt T0163-A011 — exact V 3.0.625 CI result
+
+- **Commit:** `0cb19f09f9f7d424f0abec59d087bfacffb704c6` (`V 3.0.625`) on `main`.
+- **Step Three quality gate:** PASS — 273 Python tests; compileall; graph guard 229 tasks / 417 edges, zero errors and one preserved T0001 metadata warning. [Workflow](https://github.com/artinrahimii/project/actions/runs/41069596957).
+- **Android KtLint:** FAILED — import ordering in `PeerMessageFrameCodecTest.kt:3` and multiline expression layout at line 42. [Product workflow](https://github.com/artinrahimii/project/actions/runs/41069596909).
+- **Skipped:** Android APK build, Android JVM tests, generated Protobuf check and APK artifact upload were skipped by the lint gate. No Android JVM result is claimed.
+- **Windows WPF and HostLifecycle:** PASS — C# formatting/build/security/startup checks and lifecycle unit/integration step completed successfully.
+- **Outcome:** The code and test sources are retained, but A011 is recorded as a failed verification attempt. T0163 remains `in_progress`.
+
+## Attempt T0163-A012 — KtLint corrections; exact-head CI pending
+
+- **Recorded:** 2026-10-30T14:14:17.184Z; base commit `0cb19f09f9f7d424f0abec59d087bfacffb704c6` (`V 3.0.625`).
+- **Correction:** Reordered the new JVM test imports to the repository's required lexicographic order and moved the concatenated-frame expression to the expected multiline initializer layout.
+- **Scope:** Formatting-only correction; production codec behavior, frame format, maximum size, and acceptance cases are unchanged.
+- **Local execution:** Kotlin/Gradle and Python tests were not run locally. Exact-head GitHub Actions for `V 3.0.626` is pending.
+- **Task status:** `in_progress`; this attempt is `partial` pending KtLint, APK, JVM and product workflow results. The missing authenticated libp2p client and trusted rendezvous identity/address mapping remain unresolved.
