@@ -36240,21 +36240,31 @@
         "src/Client.Android/Requests/ + tests/"
       ],
       "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0161-A001 (2026-10-30T07:18:31.437Z): Added DistributedRequest and six JVM unit tests. Reviewed T0160->T0161 as contract_or_interface_dependency because the transient requestId and absolute deadline align with the verified InferenceRequestPayloadBuilder and canonical InferenceRequest fields. The task remains in_progress pending exact-head CI; T0161->T0162 remains unreviewed.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0161-A001 (2026-10-30T07:18:31.437Z): Added DistributedRequest and six JVM unit tests. Reviewed T0160->T0161 as contract_or_interface_dependency because the transient requestId and absolute deadline align with the verified InferenceRequestPayloadBuilder and canonical InferenceRequest fields. The task remains in_progress pending exact-head CI; T0161->T0162 remains unreviewed.\nT0161-A002 (2026-10-30T07:20:42.701Z): Corrected the exact V 3.0.600 KtLint failure by placing the java.util.UUID import after the org.junit imports, preserving the six JVM tests. Exact-head V 3.0.601 CI pending.",
       "execution_summary": {
-        "attempt_count": 1,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "T0161-A001",
+        "attempt_count": 2,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "T0161-A002",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/requests/DistributedRequest.kt",
           "src/Client.Android/app/src/test/java/com/whitep/client/requests/DistributedRequestTest.kt",
           "step three/T0161/execution-report.md",
-          "step three/T0161/evidence/verification.md"
+          "step three/T0161/evidence/verification.md",
+          "step three/project-graph.md"
         ],
-        "related_commits": [],
+        "related_commits": [
+          "e170212de294defe3042ac0969ffb231f1b2084e"
+        ],
         "tests_passed": [],
-        "tests_failed": [],
+        "tests_failed": [
+          {
+            "name": "Android KtLint — V 3.0.600",
+            "result": "failed",
+            "summary": "DistributedRequestTest.kt:3:1 import ordering violation; APK build and all later Android checks were skipped.",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41019320157"
+          }
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -36280,7 +36290,7 @@
           "attempt_id": "T0161-A001",
           "started_at": "2026-10-30T07:18:31.437Z",
           "ended_at": "2026-10-30T07:18:31.439Z",
-          "result": "partial",
+          "result": "failed",
           "summary": "Implemented the DistributedRequest domain value object and six JVM tests. Reviewed T0160->T0161 as a validated contract/interface dependency based on matching requestId and deadline fields. Exact-head Android and quality CI pending.",
           "changed_files": [
             "src/Client.Android/app/src/main/java/com/whitep/client/requests/DistributedRequest.kt",
@@ -36289,12 +36299,51 @@
             "step three/T0161/evidence/verification.md"
           ],
           "commit_sha": null,
+          "tests": [
+            {
+              "name": "Android KtLint — V 3.0.600",
+              "result": "failed",
+              "summary": "Import ordering violation in DistributedRequestTest.kt:3:1; the new test's java.util.UUID import preceded org.junit imports.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41019320157"
+            },
+            {
+              "name": "Android debug APK — V 3.0.600",
+              "result": "skipped",
+              "summary": "Skipped because ktlintCheck failed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41019320157"
+            },
+            {
+              "name": "Android JVM unit tests — V 3.0.600",
+              "result": "skipped",
+              "summary": "Skipped because ktlintCheck failed; no JVM test result is claimed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41019320157"
+            }
+          ],
+          "failure_details": "The exact-head V 3.0.600 Android KtLint step failed before APK build or JVM tests. It reported DistributedRequestTest.kt:3:1: imports must be ordered lexicographically; java.util.UUID was placed before org.junit imports. APK build, JVM tests, Protobuf verification and APK upload were skipped. The production model source passed its KtLint check.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "A002 reorders the test imports to match the repository's KtLint rule; re-run the exact-head product and quality workflows."
+        },
+        {
+          "attempt_id": "T0161-A002",
+          "started_at": "2026-10-30T07:20:42.701Z",
+          "ended_at": "2026-10-30T07:20:42.701Z",
+          "result": "partial",
+          "summary": "Corrected the KtLint import-order failure in DistributedRequestTest.kt. The model code itself passed KtLint. Exact-head Android build/JVM and quality CI pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/test/java/com/whitep/client/requests/DistributedRequestTest.kt",
+            "step three/T0161/execution-report.md",
+            "step three/T0161/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
           "tests": [],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect exact-head V 3.0.600 CI. If all required checks pass, record the verified run and complete T0161; otherwise fix the actual failing check and retain the failed attempt."
+          "follow_up": "Inspect exact-head V 3.0.601 CI. If all relevant Android and quality checks pass, record the successful result and complete T0161; otherwise correct the actual failure."
         }
       ]
     },
@@ -48061,7 +48110,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-30T07:18:31.439Z",
+  "updated_at": "2026-10-30T07:20:42.701Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

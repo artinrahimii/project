@@ -11,3 +11,10 @@
 - **Scope boundary:** This commit adds the domain value object and deterministic unit-test coverage. It does not add host selection, request dispatch, response processing, timers, persistence, or live peer transport.
 - **Status:** \`in_progress\` pending the exact-head Android KtLint, APK build, Android JVM tests, Protobuf verification, and Step Three quality gate.
 - **Next action:** Inspect exact-head CI. Complete T0161 only after all relevant checks pass; otherwise fix the actual failure and retain the attempt history.
+
+
+## A001 result and A002 correction
+
+- **A001 exact-head CI:** The Step Three quality gate passed all 260 Python tests and graph/evidence validation. Android KtLint failed on one import-ordering violation at `DistributedRequestTest.kt:3:1`: `java.util.UUID` appeared before `org.junit`. The production model source passed its lint check. APK build, JVM tests, Protobuf verification and APK upload were skipped; no Android test success is claimed. [Product workflow 41019320157](https://github.com/artinrahimii/project/actions/runs/41019320157) · [Quality workflow 41019320244](https://github.com/artinrahimii/project/actions/runs/41019320244).
+- **A002 correction:** Reordered the `java.util.UUID` import after the `org.junit` imports. The production model and six JVM tests are otherwise unchanged. Exact-head `V 3.0.601` CI is pending.
+- **Current status:** `in_progress`; one failed attempt is retained in history. Do not mark complete until Android lint, APK build, JVM tests, generated Protobuf verification, Windows/HostLifecycle product checks, and the Step Three quality gate pass.

@@ -23,3 +23,10 @@
 - Tests: \`src/Client.Android/app/src/test/java/com/whitep/client/requests/DistributedRequestTest.kt\`.
 - JVM tests use JUnit only; the model has no Android framework dependency.
 - CI evidence for this implementation is pending on the implementation commit. No test is marked passed before execution.
+
+
+## A001 CI failure and A002 correction
+
+- Exact-head `V 3.0.600` Android KtLint failed only on import order in `DistributedRequestTest.kt:3:1`: the `java.util.UUID` import was before `org.junit`. No compiler or JVM result was obtained because subsequent Android workflow steps were skipped.
+- The production `DistributedRequest.kt` passed the KtLint source check in that run.
+- A002 changes only import order in the unit test; exact-head `V 3.0.601` CI must validate it.
