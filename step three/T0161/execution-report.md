@@ -29,5 +29,13 @@
 - **HostLifecycle:** Unit and integration checks passed.
 - **Step Three quality:** 260 Python tests passed; compileall and graph/evidence validation passed. The guard reported 229 tasks and 417 edges, zero errors and one pre-existing T0001 unmapped-dependency metadata warning.
 - **Workflows:** [Product build 41019550415](https://github.com/artinrahimii/project/actions/runs/41019550415) and [quality gate 41019550381](https://github.com/artinrahimii/project/actions/runs/41019550381) both completed successfully.
-- **Final task status:** `done`. Three attempts are preserved: A001 failed on import ordering; A002 corrected the import order; A003 passed the exact-head product and quality checks. The T0160 → T0161 edge remains validated as `contract_or_interface_dependency`; T0161 → T0162 remains `unreviewed` and unchanged.
+- **A003 result at that revision:** `done` after V 3.0.601 product and quality CI passed. The subsequent V 3.0.602 graph guard reopened the ledger status; see A004 below. The T0160 → T0161 edge remains validated as `contract_or_interface_dependency`; T0161 → T0162 remains `unreviewed` and unchanged.
 - **Scope boundary:** T0161 now has a real Android domain value object. It does not implement host selection, round timers, request dispatch, response handling, persistence or live peer transport; those remain later tasks.
+
+
+## A004 — graph evidence-path correction
+
+- **Exact-head validation:** V 3.0.602 quality workflow ran all 260 Python tests and `compileall` successfully, then `graph_guard.py` failed with `DONE_WITHOUT_TEST_FILE_EVIDENCE`. The validator explicitly requires a referenced test source path beginning with `tests/` or `test/`; the existing Kotlin JVM test is under `src/Client.Android/app/src/test/`.
+- **Product/test result retained:** The V 3.0.601 product workflow passed Android KtLint, APK build, JVM tests (including six DistributedRequest cases), generated Protobuf verification, Windows WPF/security/DPAPI checks and HostLifecycle. This evidence is unchanged and remains in the history.
+- **Correction:** Added `tests/test_android_distributed_request_contract.py`, a four-case Python source-contract test that verifies the production model's required fields/validation, UUID factory, seven lifecycle statuses and the six real JVM test methods. This is additional guard evidence, not a replacement for the Android JVM tests.
+- **Status:** `in_progress` pending exact-head V 3.0.603 quality validation and the full product workflow. The V 3.0.602 graph-guard failure is preserved as attempt A004; no successful graph-validation claim is made for V 3.0.602.

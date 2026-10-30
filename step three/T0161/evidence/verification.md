@@ -46,3 +46,11 @@
 - **Quality:** 260 Python tests passed; compileall and graph/evidence guards passed with 0 errors and 1 preserved T0001 metadata warning.
 - **CI:** [Product build 41019550415](https://github.com/artinrahimii/project/actions/runs/41019550415) · [Quality gate 41019550381](https://github.com/artinrahimii/project/actions/runs/41019550381).
 - **Result:** T0161 acceptance criteria are satisfied. The model carries a transient request-scoped ID, absolute Unix-millisecond deadline, positive maxRounds and lifecycle status. No live transport behavior is claimed.
+
+
+## A004 — graph guard finding and additional contract test
+
+- V 3.0.602 quality: 260 Python tests and compileall passed, but graph validation failed with `DONE_WITHOUT_TEST_FILE_EVIDENCE`. The guard requires a path starting with `tests/` or `test/`; the actual Kotlin JVM tests live under `src/Client.Android/app/src/test/`.
+- Added `tests/test_android_distributed_request_contract.py` with four Python source-contract checks for the production model fields/validation, UUID factory, lifecycle enum and all six real JVM test methods.
+- The Android JVM tests remain the execution proof. The Python file is supplementary graph-guard contract evidence only.
+- T0161 is reopened as `in_progress` until exact-head V 3.0.603 CI confirms the evidence requirement and the product checks remain successful.
