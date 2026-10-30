@@ -17,6 +17,7 @@ import org.whitep.shared.contracts.v1.hostCapabilities
 import org.whitep.shared.contracts.v1.hostStatus
 import org.whitep.shared.contracts.v1.inferenceRequest
 import org.whitep.shared.contracts.v1.modelCapability
+import java.util.UUID
 
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [35])
@@ -278,7 +279,7 @@ class InferenceAttemptDispatcherTest {
 
     private fun dispatcher(
         transport: InferenceRequestTransport,
-        attemptIdGenerator: () -> String = { "attempt-one" },
+        attemptIdGenerator: () -> String = { UUID.randomUUID().toString() },
     ): InferenceAttemptDispatcher = InferenceAttemptDispatcher(transport, attemptIdGenerator)
 
     private fun distributedRequest(status: DistributedRequestStatus = DistributedRequestStatus.QUEUED) =
