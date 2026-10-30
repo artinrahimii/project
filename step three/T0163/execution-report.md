@@ -353,3 +353,27 @@
 - **Local execution:** Gradle is unavailable in this connected source-editing runtime; no local KtLint, compile or JVM success is claimed.
 - **Verification:** exact-head V 3.0.653 GitHub Actions is pending. T0163 remains `in_progress`.
 - **Evidence:** `step three/T0163/evidence/v3.0.653-unit-future-type-alignment.md`.
+
+
+## Attempt T0163-A029 — exact V 3.0.653 CI result
+
+- **Exact online commit:** `6132c483f762249240a354b5a78f36c634bf2cb0` (`V 3.0.653`) on `main`.
+- **Step Three quality gate:** PASS — run 41115236744, job 124267619725. The graph/Python quality workflow completed successfully.
+- **Android KtLint:** PASS for the production and test source sets.
+- **Android debug APK build:** PASS — the APK build step completed successfully.
+- **Android JVM tests:** FAILED — job 124267619218 in product run 41115236594. 103 tests completed; one failed: `Libp2pInferenceRequestTransportTest.sendsAndReceivesCorrelatedResponseOverAuthenticatedNoiseTcpStream`, reported at `Libp2pInferenceRequestTransportTest.kt:28` (the assertion expects `QUEUED` from `client.submit`). The workflow log did not expose the actual assertion values or the swallowed transport exception, so the precise runtime cause is not yet proven.
+- **Skipped:** generated Protobuf verification and APK artifact upload were skipped after the JVM test failure.
+- **Windows WPF:** PASS — job 124267619386 completed successfully.
+- **HostLifecycle:** PASS — job 124267619435 completed successfully.
+- **Outcome:** A029 is finalized as `failed` for exact-head product acceptance. The prior Android send future type correction compiled and reached the JVM test stage; T0163 remains `in_progress`.
+
+
+## Attempt T0163-A030 — normalize the loopback peer multiaddress in the transport acceptance fixture
+
+- **Base:** `6132c483f762249240a354b5a78f36c634bf2cb0` (`V 3.0.653`).
+- **Observed failure:** the exact V 3.0.653 Android job reached all 103 JVM tests and failed the authenticated Noise/TCP transport acceptance at the first submission assertion. The log reports the assertion line but not the actual result or suppressed transport exception.
+- **Contract review:** `Libp2pInferenceRequestTransport.submit` rejects any direct TCP address that does not end with the exact `/p2p/{endpoint.peerId}` suffix. `RendezvousPeerDirectoryParser` enforces the same identity-bearing address shape. The test previously copied `server.listenAddresses()` directly into `RendezvousPeerEndpoint` without normalizing or asserting that suffix. The Windows host's production transport explicitly appends its own PeerId to raw listen addresses before publishing them. This is a concrete fixture/contract mismatch and a plausible cause of the early `REJECTED` result; the exact cause remains subject to the rerun because the failed assertion output omitted actual values.
+- **Correction:** the Android loopback fixture now appends `/p2p/{serverPeerId}` only when the listen address does not already contain a PeerId component. If a different PeerId component is present, the fixture fails immediately instead of testing an invalid endpoint.
+- **Scope:** test-fixture correction only; production transport, trust policy, protocol framing and request/response correlation are unchanged.
+- **Local verification:** Gradle/Kotlin tests were not run locally because the execution container cannot resolve `github.com`; no local pass is claimed.
+- **Exact-head verification:** pending V 3.0.654 GitHub Actions. Keep T0163 `in_progress`; do not start T0164 or claim remote delivery until Android JVM tests and the remaining app-composition/independent-host acceptance are verified.

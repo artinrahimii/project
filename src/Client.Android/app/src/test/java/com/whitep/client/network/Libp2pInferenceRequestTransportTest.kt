@@ -37,7 +37,14 @@ class Libp2pInferenceRequestTransportTest {
 
             val serverPeerId = server.peerId.toBase58()
             assertEquals(expectedServerPeerId, serverPeerId)
-            val address = server.listenAddresses().first { it.toString().contains("/tcp/") }.toString()
+            val listenAddress = server.listenAddresses().first { it.toString().contains("/tcp/") }.toString()
+            val peerIdentitySuffix = "/p2p/$serverPeerId"
+            val address =
+                when {
+                    listenAddress.endsWith(peerIdentitySuffix) -> listenAddress
+                    !listenAddress.contains("/p2p/") -> "$listenAddress$peerIdentitySuffix"
+                    else -> error("The server listen address contains a different PeerId.")
+                }
             val endpoint =
                 RendezvousPeerEndpoint(
                     peerId = serverPeerId,
