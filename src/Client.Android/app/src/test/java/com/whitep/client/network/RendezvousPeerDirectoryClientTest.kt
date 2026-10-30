@@ -58,6 +58,23 @@ class RendezvousPeerDirectoryClientTest {
     }
 
     @Test
+    fun rejectsAnInvalidEphemeralHostIdBeforeFetchingTheDirectory() {
+        val calls = AtomicInteger()
+        val client =
+            client { url ->
+                calls.incrementAndGet()
+                StubConnection(url, HttpURLConnection.HTTP_OK, JSONArray().toString())
+            }
+
+        assertThrows(
+            IllegalArgumentException::class.java,
+        ) {
+            runBlockingResolve(client, "invalid-peer-id")
+        }
+        assertEquals(0, calls.get())
+    }
+
+    @Test
     fun cachesOneDirectoryFetchForSeveralHostLookupsInTheSameRound() {
         val secondPeer = "QmYwAPJzv5CZsnAzt8auVTLa"
         val body = JSONArray()

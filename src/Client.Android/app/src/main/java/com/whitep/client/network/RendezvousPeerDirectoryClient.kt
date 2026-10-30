@@ -109,7 +109,7 @@ class RendezvousPeerDirectoryClient(
      * directory's peerId must match the requested value exactly. No identifier is synthesized.
      */
     suspend fun resolve(ephemeralHostId: String): RendezvousPeerEndpoint? {
-        require(PeerAnnouncementDirectoryParser.isValidPeerId(ephemeralHostId)) {
+        require(RendezvousPeerDirectoryParser.isValidPeerId(ephemeralHostId)) {
             "A normalized libp2p PeerId is required."
         }
 

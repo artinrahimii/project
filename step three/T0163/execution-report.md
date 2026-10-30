@@ -135,3 +135,23 @@
 - **Behavioral scope:** formatting only; the HTTPS/loopback policy, request URL, PeerId/address checks, timeouts, size limits, cache and tests are unchanged.
 - **Verification:** local Gradle execution unavailable. Exact V 3.0.633 Actions is pending; no KtLint/build/JVM pass is claimed yet.
 - **Task status:** `in_progress`; actual Android authenticated libp2p connection, request submission, response reception and independent-host acceptance remain outstanding. T0164 remains `not_started`.
+
+
+## Attempt T0163-A017 — exact V 3.0.633 verification result
+
+- **Commit:** `bd12c76c1ff875663be282aed299f908b031cd4a` (`V 3.0.633`) on `main`.
+- **Step Three quality gate:** PASS — run 41086188864; graph, evidence, Python tests and syntax checks passed.
+- **Android KtLint:** PASS for both source sets.
+- **Android product build:** FAILED — job 124167847626, at `compileDebugKotlin`; `RendezvousPeerDirectoryClient.kt:112` referenced the nonexistent `PeerAnnouncementDirectoryParser` instead of the in-file `RendezvousPeerDirectoryParser`.
+- **Skipped:** Android JVM tests, generated Protobuf verification and APK artifact upload. No APK or Android JVM pass is claimed.
+- **Windows WPF and HostLifecycle:** PASS. Detailed failure evidence is in `evidence/v3.0.633-ci-failure.md`.
+- **Outcome:** A017 is finalized as a failed verification attempt; T0163 remains `in_progress`.
+
+## Attempt T0163-A018 — PeerId validator symbol correction; CI pending
+
+- **Base revision:** `bd12c76c1ff875663be282aed299f908b031cd4a` (`V 3.0.633`).
+- **Production change:** corrected the unresolved validator reference to `RendezvousPeerDirectoryParser.isValidPeerId`.
+- **Regression test:** added a test asserting that an invalid ephemeral host ID is rejected before any directory HTTP request is opened.
+- **Local execution:** Gradle is unavailable in this runtime; no local KtLint, compile or JVM test success is claimed.
+- **Verification:** exact V 3.0.634 GitHub Actions must validate Android lint, APK compilation, JVM tests, Protobuf output and the Step Three quality gate.
+- **Status:** partial; T0163 remains `in_progress` until authenticated Android libp2p transport, correlated request submission, validated Windows response reception and real-host acceptance are proven.
