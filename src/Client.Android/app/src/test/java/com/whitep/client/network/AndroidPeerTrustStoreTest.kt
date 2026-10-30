@@ -5,8 +5,8 @@ import io.libp2p.core.PeerId
 import io.libp2p.core.crypto.KeyType
 import io.libp2p.core.crypto.generateKeyPair
 import org.junit.Assert.assertFalse
-import org.junit.Assert.assertTrue
 import org.junit.Assert.assertThrows
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith

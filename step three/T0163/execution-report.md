@@ -201,3 +201,21 @@
 - **Correction:** appended the missing A020 history record with its actual failed quality-gate result, and added A021 as the current partial ledger-reconciliation attempt. The summary attempt count is set to 21 to match the 21 history records; failed-attempt count is 17 (15 earlier failures + A019 + A020). T0163 remains `in_progress`.
 - **Evidence:** `evidence/v3.0.644-quality-ledger-failure.md`.
 - **Verification:** graph ledger is reconciled before exact-head V 3.0.645 CI; no quality pass is claimed yet.
+
+
+## Attempt T0163-A021 — V 3.0.645 ledger reconciliation and product CI result
+
+- **Commit:** `d814bce157868ca67a5b32413637ccc6ceb1a696` (`V 3.0.645`).
+- **Step Three quality gate:** PASS — run 41106677890. The prior `ATTEMPT_COUNT_MISMATCH` was resolved: T0163 summary count and append-only history both contain 21 records.
+- **Android product job:** FAILED — job 124238214614 in run 41106677895. KtLint still rejected the test import block at `AndroidPeerTrustStoreTest.kt:3:1`; APK/JVM/Protobuf/artifact stages were skipped.
+- **Other product jobs:** HostLifecycle job 124238214115 PASS; Windows WPF job 124238214697 PASS.
+- **Cause of remaining lint failure:** the static JUnit imports were ordered `assertFalse`, `assertTrue`, `assertThrows`; A022 orders them `assertFalse`, `assertThrows`, `assertTrue`.
+- **Outcome:** A021 is finalized as failed for the product acceptance workflow, despite its successful graph-ledger quality check. The T0163 task remains `in_progress`.
+
+## Attempt T0163-A022 — second JUnit import-order correction; exact-head CI pending
+
+- **Base revision:** `d814bce157868ca67a5b32413637ccc6ceb1a696` (`V 3.0.645`).
+- **Correction:** ordered the three static JUnit imports as `assertFalse`, `assertThrows`, `assertTrue`. The earlier PeerId-versus-crypto import order is retained.
+- **Scope:** test-import formatting only; no assertion or production behavior changed.
+- **Local Gradle:** not available/executed in this tool session. Exact V 3.0.646 CI must verify KtLint, Android compile/APK, JVM tests, generated Protobuf and artifact upload.
+- **Task status:** `in_progress`; this attempt is partial pending exact-head CI and remaining product integration.
