@@ -22,6 +22,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.whitep.shared.contracts.v1.HostRuntimeState
 import org.whitep.shared.contracts.v1.InferenceOutcome
@@ -114,7 +115,7 @@ class Libp2pInferenceRequestTransportTest {
 
     @Test
     fun dispatchesOneSharedRequestWithDistinctAttemptsOverAuthenticatedPeerStreams() =
-        runBlocking {
+        runBlocking<Unit> {
             val servers = mutableListOf<Host>()
             val responders = mutableListOf<LoopbackInferenceResponder>()
             val endpoints = linkedMapOf<String, RendezvousPeerEndpoint>()
@@ -356,6 +357,8 @@ class Libp2pInferenceRequestTransportTest {
     }
 
     private companion object {
+        const val MODEL_ID = "loopback-model"
+        const val PROTOCOL_VERSION = "1.0.0"
         const val PROTOCOL_ID = "/white-p/peer-message/1.0.0"
     }
 }
