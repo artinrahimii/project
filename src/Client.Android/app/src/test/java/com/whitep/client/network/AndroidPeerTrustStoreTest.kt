@@ -1,9 +1,9 @@
 package com.whitep.client.network
 
 import android.content.Context
+import io.libp2p.core.PeerId
 import io.libp2p.core.crypto.KeyType
 import io.libp2p.core.crypto.generateKeyPair
-import io.libp2p.core.PeerId
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Assert.assertThrows

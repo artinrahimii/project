@@ -168,3 +168,20 @@
 - **Product workflow:** all three jobs passed — [run 41087656934](https://github.com/artinrahimii/project/actions/runs/41087656934).
 - **Outcome:** A018 is finalized as `succeeded` for its compile-blocker correction and invalid-PeerId regression test. T0163 remains `in_progress`, because authenticated Android libp2p TCP/Noise transport, dispatcher wiring, correlated Windows response reception and independent-host delivery acceptance are still missing. T0164 remains `not_started`.
 - **Local execution:** Gradle was unavailable in this runtime; verification above comes from exact-head GitHub Actions.
+
+
+## Attempt T0163-A019 — review of V 3.0.643 Android libp2p integration; exact product CI failed
+
+- **Base revision:** `main` commit `8eb150c960f24f38a42cacae67002b3e8c0f0478` (`V 3.0.643`).
+- **New implementation reviewed:** Android Keystore-backed Ed25519 identity; explicit PeerId trust store; HTTPS rendezvous resolution; a JVM libp2p TCP/NoiseXX/Mplex adapter for the Windows `/white-p/peer-message/1.0.0` protocol; Protobuf request framing and correlated response matching; same-library two-peer loopback test. Exact source paths and scope findings are recorded in `evidence/v3.0.643-android-transport-review.md`.
+- **Exact-head CI:** Step Three quality gate run 41099969127 **passed**. HostLifecycle job 124215439001 **passed**. Windows WPF job 124215439077 **passed**. Android product job 124215438697 **failed** at KtLint because imports in `AndroidPeerTrustStoreTest.kt` were not lexicographically ordered. Android APK build, JVM tests, Protobuf verification and artifact upload were skipped. Details: `evidence/v3.0.643-ci-failure.md`.
+- **Outcome:** A019 is finalized as `failed` verification. The code added to main is retained. T0163 remains `in_progress`.
+- **Remaining product integration:** No production composition/call site was found for `Libp2pInferenceRequestTransport` or `InferenceAttemptDispatcher`; Android and Windows explicit-enrollment UI is incomplete; same-library JVM loopback is not cross-runtime .NET/Android interoperability; physical Android Keystore and independent-host acceptance remain unverified.
+
+## Attempt T0163-A020 — exact KtLint import-order correction; exact-head CI pending
+
+- **Base revision:** `main` commit `8eb150c960f24f38a42cacae67002b3e8c0f0478` (`V 3.0.643`).
+- **Correction:** moved the `io.libp2p.core.PeerId` import before the `io.libp2p.core.crypto.*` imports in `AndroidPeerTrustStoreTest.kt`, matching the exact V 3.0.643 KtLint finding.
+- **Scope:** import ordering only; trust-store behavior and assertions are unchanged.
+- **Verification:** no local Gradle execution is claimed. Exact V 3.0.644 GitHub Actions must verify KtLint, Android compilation/APK, JVM tests, generated Protobuf and artifact upload.
+- **Outcome at commit preparation:** `partial`; T0163 remains `in_progress` until the exact-head workflow and the remaining runtime/integration gates are checked.
