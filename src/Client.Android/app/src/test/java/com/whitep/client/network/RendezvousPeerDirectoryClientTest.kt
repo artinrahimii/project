@@ -156,24 +156,20 @@ class RendezvousPeerDirectoryClientTest {
         }
     }
 
-    private fun client(
-        factory: (URL) -> HttpURLConnection,
-    ): RendezvousPeerDirectoryClient {
-        return RendezvousPeerDirectoryClient(
+    private fun client(factory: (URL) -> HttpURLConnection): RendezvousPeerDirectoryClient =
+        RendezvousPeerDirectoryClient(
             serviceBaseUri = URI("https://rendezvous.example/prefix"),
             connectionFactory = factory,
             clock = clock,
         )
-    }
 
     private fun runBlockingResolve(
         client: RendezvousPeerDirectoryClient,
         id: String,
-    ): RendezvousPeerEndpoint? {
-        return kotlinx.coroutines.runBlocking {
+    ): RendezvousPeerEndpoint? =
+        kotlinx.coroutines.runBlocking {
             client.resolve(id)
         }
-    }
 
     private fun directoryJson(
         peerId: String,

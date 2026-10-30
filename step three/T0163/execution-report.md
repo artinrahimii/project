@@ -98,3 +98,21 @@
 - **Changes:** corrected import ordering, multiline assignments/conditions/function signatures and the JSON test fixture's chained builder layout in the two new Kotlin files. The request-directory behavior and acceptance scope were not intentionally changed; no KtLint disablement or test removal was introduced.
 - **Verification:** local Gradle execution is unavailable in this runtime. Exact V 3.0.631 GitHub Actions is pending; no lint/build/JVM pass is claimed yet.
 - **Task status:** `in_progress`. Even after directory-client CI passes, T0163 still needs an authenticated Android libp2p TCP/Noise connection, request submission, response reception and correlation validation. T0164 remains `not_started`.
+
+
+## Attempt T0163-A015 — exact V 3.0.631 CI result
+
+- **Commit:** `d960423165cd4193ba95ac986633d1415a561e8b` (`V 3.0.631`) on `main`.
+- **Step Three quality gate:** PASS — run 41084978342; automated tests, compileall, graph structure and output/evidence checks passed.
+- **Android product job:** FAILED at KtLint — job 124163639772. The remaining four findings were confined to the new test helpers at lines 160–172: a short one-parameter helper declaration had been expanded unnecessarily, and two small helper functions used block bodies instead of expression bodies.
+- **Skipped Android work:** `assembleDebug`, `testDebugUnitTest`, generated Protobuf verification and artifact upload were skipped. No Android compile or JVM test result is claimed.
+- **Windows WPF:** PASS — job 124163639836 completed successfully.
+- **HostLifecycle:** PASS — job 124163639410 completed unit/integration tests.
+- **Outcome:** A015 is a failed verification attempt; the remaining formatting findings are preserved in `evidence/v3.0.631-ci-failure.md`.
+
+## Attempt T0163-A016 — final test-helper KtLint corrections; CI pending
+
+- **Base revision:** `main` commit `d960423165cd4193ba95ac986633d1415a561e8b` (`V 3.0.631`).
+- **Changes:** the one-parameter test helper now has a single-line declaration; the client factory and coroutine resolve helpers use expression bodies. No assertion, test case or production behavior was removed.
+- **Verification:** local Gradle execution is unavailable in this runtime. Exact-head V 3.0.632 CI is pending; no lint, compile or JVM pass is claimed.
+- **Task status:** `in_progress`. T0163 still needs the Android libp2p TCP/Noise peer connection, actual correlated inference request submission, validated response reception and real-host integration evidence. T0164 remains `not_started`.
