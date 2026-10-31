@@ -1,29 +1,37 @@
 # T0168 — execution report
 
-## Task and dependency review
-- Continue receiving additional valid host responses after the first valid response, through the shared round-response window.
-- T0167 → T0168 remains validated `sequencing_only`; T0160 → T0168 remains validated `contract_or_interface_dependency`. Both original `blocks` edges remain. T0168 → T0169 remains unreviewed.
+## Task
+Continue receiving other valid host responses after the first valid response, until the shared round-response window ends.
+
+## Dependency review
+- `T0167 → T0168`: `blocks`, validated `sequencing_only`. The response collector does not consume the Compose response-card component.
+- `T0160 → T0168`: `blocks`, validated `contract_or_interface_dependency`. The same absolute request deadline and shared round timer are used.
+- Both edges were retained without removing conservative execution order.
+- Outgoing `T0168 → T0169` is still `unreviewed`; it is not silently changed. It must be inspected before T0169 starts.
 
 ## Implementation
-- `InferenceRoundResponseCollector` concurrently awaits all dispatched attempts and records per-host response/failure results.
-- `AndroidInferenceRequestRuntime.awaitRoundResponses` uses the round window stored for each attempt and delegates through the existing authenticated and correlated response transport.
-- First success does not cancel sibling waiters; peer failures/timeouts are isolated, non-queued submissions are not awaited, and caller cancellation propagates.
-- Five Kotlin JVM regression tests and the Python source-contract suite are present.
+- Added `InferenceRoundResponseCollector` to await every dispatched attempt concurrently.
+- Added `AndroidInferenceRequestRuntime.awaitRoundResponses`, binding every queued attempt to the same dispatch-created `InferenceRoundTimer.Window` and the existing authenticated/correlated transport response path.
+- The first valid response does not cancel other queued waiters. Per-host timeout/failure is isolated; rejected/failed/timed-out submissions are not awaited; caller cancellation propagates.
+- Five Kotlin JVM regression tests cover first-response continuation, independent timeout, non-queued submission outcomes, expired shared window and caller cancellation.
+- Added Python source-contract coverage for the runtime integration and collector behavior.
 
-## CI history
-- V 3.0.702: Step Three quality, Windows WPF and HostLifecycle passed; Android KtLint failed.
-- V 3.0.703: 307/308 Python tests passed; one source assertion was formatting-sensitive; Android KtLint failed; Windows WPF/HostLifecycle passed.
-- V 3.0.704: all 308 Python tests passed; Android KtLint failed; HostLifecycle passed.
-- V 3.0.705: 307/308 Python tests passed; KtLint found lambda indentation; Windows WPF/HostLifecycle passed.
-- V 3.0.706: all 308 Python tests passed; Windows WPF/HostLifecycle passed; Android KtLint failed on blank-line whitespace and long failure-call formatting.
-- V 3.0.707: all 308 Python tests and syntax passed; graph guard failed because counters were 7/6 but history was 6/5; Windows WPF/HostLifecycle passed; KtLint failed on final failure-call wrapping.
-- V 3.0.708: all 308 Python tests and syntax passed; graph guard failed because counters were 6/5 but history was 7/6; Windows WPF/HostLifecycle passed; KtLint had two final indentation findings only.
-- V 3.0.709 A008 corrects the final two indentation levels and aligns counters to eight attempts/seven failed attempts. Exact-head CI pending.
-- Local Gradle execution is unavailable through the GitHub connector.
-- T0168 remains `in_progress` until exact-head graph guard, Android KtLint/APK/JVM/Protobuf, Windows WPF and HostLifecycle all pass.
+## Final exact-head verification
+<badge>PASS</badge> **V 3.0.709** — commit `492c786b4ca67dd2b1639f471618d5644d443de8`.
 
-## A008 changed paths
-- `src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceRoundResponseCollector.kt`
-- `step three/T0168/execution-report.md`
-- `step three/T0168/evidence/verification.md`
-- `step three/project-graph.md`
+- Step Three quality [run 41207315632](https://github.com/artinrahimii/project/actions/runs/41207315632): 308 Python tests passed; Python syntax compilation, graph structure and evidence-path validation passed.
+- Android KtLint passed.
+- Android debug APK `assembleDebug` passed.
+- Android `testDebugUnitTest` passed; report artifact ID `13044164653` (45,724 bytes).
+- Generated Protobuf Java and Kotlin source verification passed.
+- Android debug APK artifact ID `13045195732` (19,449,970 bytes).
+- Windows WPF: 15/15 steps passed, including C# formatting, Release build, Protobuf, startup smoke, process/policy/capability and DPAPI checks; artifact ID `13045051464` (14,255,816 bytes).
+- HostLifecycle: 8/8 steps passed.
+- Product workflow [run 41207315560](https://github.com/artinrahimii/project/actions/runs/41207315560): all jobs succeeded.
+- Local Android Gradle was not run in the GitHub connector environment; verification above is from the exact-head GitHub Actions workflows.
+
+## Attempts
+Eight attempts are retained in the graph. A001–A007 record the actual intermediate KtLint/source-contract/graph-counter failures. A008 succeeded on exact commit `492c786b4ca67dd2b1639f471618d5644d443de8`. No earlier failure record was deleted.
+
+## Status
+`done`. Acceptance is supported by the production runtime integration, five JVM regressions, Python contract checks and successful exact-head Android/Windows/quality workflows. This does not claim the entire White-P product is complete.

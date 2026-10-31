@@ -42092,8 +42092,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0167 و T0160 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceRoundResponseCollector.kt",
         "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
@@ -42114,12 +42114,12 @@
         "step three/T0168/execution-report.md",
         "step three/T0168/evidence/verification.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nIncoming dependency review (2026-10-31T16:43:00+03:30): T0167 -> T0168 validated as sequencing_only because T0168's response collection runs in the runtime/dispatcher and consumes no Compose UI. T0160 -> T0168 validated as contract_or_interface_dependency because the receive window is capped by DistributedRequest.deadlineUnixMs originating in the request contract; InferenceRoundTimer/AndroidInferenceRequestRuntime use that same budget. Both blocks edges remain intact; reasons and evidence are recorded in edge_change_log.\n\nT0168-A001: incoming edges were validated on V 3.0.701: T0167 -> T0168 sequencing_only; T0160 -> T0168 contract_or_interface_dependency. Both original blocks edges remain. Added concurrent per-attempt response collection bounded by each attempt's stored shared round window; exact-head CI pending.\nT0168-A001 exact-head V 3.0.702: quality, Windows WPF and HostLifecycle passed; Android KtLint failed on three formatting findings in the response collector (lines 49, 51, 68). Android APK/JVM/Protobuf were skipped. A002 applies only the reported formatting correction; task remains in_progress.\n\nT0168-A002 exact-head V 3.0.703: Gradle KtLint formatting corrections were committed. Step Three quality ran 308 tests; 307 passed and one new source-contract assertion failed because it expected the old same-line `}.awaitAll()` spelling. At the time of review the product workflow had not yet reached KtLint; HostLifecycle passed. A003 changes only that brittle assertion; task remains in_progress.\n\nT0168-A003 exact-head V 3.0.704: Python quality gate passed all 308 tests; Android KtLint failed on the production collector's single-argument data class constructors and map/awaitAll chain. HostLifecycle passed; Windows WPF was still running at observation. A004 corrects those exact KtLint constructs; status remains in_progress.\n\nT0168-A004 exact-head V 3.0.705: Step Three quality still failed 1 of 308 tests because the Python source-contract check expected `attempts.map` on one line; Android KtLint reported the map lambda body was under-indented by four spaces after the method chain was split. Windows WPF and HostLifecycle passed. A005 corrects the indentation and the source-contract expectation only; runtime behavior remains unchanged.\n\nT0168-A005 exact-head V 3.0.706: Python quality passed; Windows WPF and HostLifecycle passed; Android interop fixture passed; KtLint failed on trailing whitespace at lines 84/89/94 and long nested attempt.failure calls at lines 99/113/117. APK/JVM/Protobuf skipped. A006 removes whitespace and wraps the four remaining nested failure calls, without behavior change.\nT0168-A006 exact-head V 3.0.707: all 308 Python tests and Python syntax compilation passed. The graph guard failed because execution_summary had attempt_count=7/failed_attempt_count=6 but history contained six records/five failed records. Windows WPF and HostLifecycle passed. KtLint reported one remaining long RESPONSE_FAILED attempt.failure call at line 131. A007 fixes that call and reconciles counters to six attempts/five failed.\n\nT0168-A007 exact-head V 3.0.708: 308 Python tests and Python syntax passed; graph guard failed because execution_summary counters (6 attempts/5 failed) lagged the seven history records (six failed). Windows WPF and HostLifecycle passed. Android KtLint reported only two indentation findings at lines 132–133 in the final RESPONSE_FAILED call. A008 sets counters for eight total records/seven failed attempts and adjusts those two indentation levels.\n",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nIncoming dependency review (2026-10-31T16:43:00+03:30): T0167 -> T0168 validated as sequencing_only because T0168's response collection runs in the runtime/dispatcher and consumes no Compose UI. T0160 -> T0168 validated as contract_or_interface_dependency because the receive window is capped by DistributedRequest.deadlineUnixMs originating in the request contract; InferenceRoundTimer/AndroidInferenceRequestRuntime use that same budget. Both blocks edges remain intact; reasons and evidence are recorded in edge_change_log.\n\nT0168-A001: incoming edges were validated on V 3.0.701: T0167 -> T0168 sequencing_only; T0160 -> T0168 contract_or_interface_dependency. Both original blocks edges remain. Added concurrent per-attempt response collection bounded by each attempt's stored shared round window; exact-head CI pending.\nT0168-A001 exact-head V 3.0.702: quality, Windows WPF and HostLifecycle passed; Android KtLint failed on three formatting findings in the response collector (lines 49, 51, 68). Android APK/JVM/Protobuf were skipped. A002 applies only the reported formatting correction; task remains in_progress.\n\nT0168-A002 exact-head V 3.0.703: Gradle KtLint formatting corrections were committed. Step Three quality ran 308 tests; 307 passed and one new source-contract assertion failed because it expected the old same-line `}.awaitAll()` spelling. At the time of review the product workflow had not yet reached KtLint; HostLifecycle passed. A003 changes only that brittle assertion; task remains in_progress.\n\nT0168-A003 exact-head V 3.0.704: Python quality gate passed all 308 tests; Android KtLint failed on the production collector's single-argument data class constructors and map/awaitAll chain. HostLifecycle passed; Windows WPF was still running at observation. A004 corrects those exact KtLint constructs; status remains in_progress.\n\nT0168-A004 exact-head V 3.0.705: Step Three quality still failed 1 of 308 tests because the Python source-contract check expected `attempts.map` on one line; Android KtLint reported the map lambda body was under-indented by four spaces after the method chain was split. Windows WPF and HostLifecycle passed. A005 corrects the indentation and the source-contract expectation only; runtime behavior remains unchanged.\n\nT0168-A005 exact-head V 3.0.706: Python quality passed; Windows WPF and HostLifecycle passed; Android interop fixture passed; KtLint failed on trailing whitespace at lines 84/89/94 and long nested attempt.failure calls at lines 99/113/117. APK/JVM/Protobuf skipped. A006 removes whitespace and wraps the four remaining nested failure calls, without behavior change.\nT0168-A006 exact-head V 3.0.707: all 308 Python tests and Python syntax compilation passed. The graph guard failed because execution_summary had attempt_count=7/failed_attempt_count=6 but history contained six records/five failed records. Windows WPF and HostLifecycle passed. KtLint reported one remaining long RESPONSE_FAILED attempt.failure call at line 131. A007 fixes that call and reconciles counters to six attempts/five failed.\n\nT0168-A007 exact-head V 3.0.708: 308 Python tests and Python syntax passed; graph guard failed because execution_summary counters (6 attempts/5 failed) lagged the seven history records (six failed). Windows WPF and HostLifecycle passed. Android KtLint reported only two indentation findings at lines 132–133 in the final RESPONSE_FAILED call. A008 sets counters for eight total records/seven failed attempts and adjusts those two indentation levels.\n\nT0168-A008 completed on exact main commit 492c786b4ca67dd2b1639f471618d5644d443de8 (V 3.0.709): Step Three quality passed all 308 tests, syntax, graph and evidence checks; Android KtLint, debug APK, JVM unit tests, generated Protobuf Java/Kotlin verification, unit-test report/APK artifact uploads, Windows WPF 15/15 and HostLifecycle 8/8 all passed. T0168 acceptance is verified; the task is done. T0168 → T0169 edge remains unreviewed and must be validated before T0169 starts.\n",
       "execution_summary": {
         "attempt_count": 8,
         "failed_attempt_count": 7,
         "last_attempt_id": "T0168-A008",
-        "last_attempt_result": "partial",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceRoundResponseCollector.kt",
           "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
@@ -42136,7 +42136,8 @@
           "740a2b3ed343f5ef2f2229d7d25c7f0ad28d66ce",
           "6a7592a4ff7c4826d6818e61cc17e56ab9fe3c3e",
           "9536345abecb643163f564673211990dc33de1b1",
-          "e9a9406d63d68d14ab1f7a52fb31c19df7dd2e90"
+          "e9a9406d63d68d14ab1f7a52fb31c19df7dd2e90",
+          "492c786b4ca67dd2b1639f471618d5644d443de8"
         ],
         "tests_passed": [
           {
@@ -42258,6 +42259,60 @@
             "result": "passed",
             "url": "https://github.com/artinrahimii/project/actions/runs/41207049509",
             "summary": "Host lifecycle unit/integration job passed."
+          },
+          {
+            "name": "Step Three quality gate — V 3.0.709",
+            "result": "passed",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41207315632",
+            "summary": "All 308 Python tests passed; Python syntax compilation, graph structure and recorded-output/evidence checks passed."
+          },
+          {
+            "name": "Android .NET peer interoperability fixture build — V 3.0.709",
+            "result": "passed",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41207315560",
+            "summary": "Windows .NET peer interoperability fixture built successfully for the Android product workflow."
+          },
+          {
+            "name": "Android KtLint — V 3.0.709",
+            "result": "passed",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41207315560",
+            "summary": "Kotlin formatting/lint passed."
+          },
+          {
+            "name": "Android debug APK build — V 3.0.709",
+            "result": "passed",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41207315560",
+            "summary": "assembleDebug completed successfully."
+          },
+          {
+            "name": "Android JVM unit tests — V 3.0.709",
+            "result": "passed",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41207315560",
+            "summary": "testDebugUnitTest completed successfully; uploaded JUnit/report artifact 13044164653 (45,724 bytes)."
+          },
+          {
+            "name": "Generated Android Protobuf Java/Kotlin verification — V 3.0.709",
+            "result": "passed",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41207315560",
+            "summary": "Generated Protobuf Java and Kotlin sources were found and verified."
+          },
+          {
+            "name": "Android debug APK artifact — V 3.0.709",
+            "result": "passed",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41207315560/artifacts/13045195732",
+            "summary": "Uploaded whitep-android-debug-apk.zip; 19,449,970 bytes; artifact ID 13045195732."
+          },
+          {
+            "name": "Windows WPF host — V 3.0.709",
+            "result": "passed",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41207315560",
+            "summary": "All 15/15 workflow steps passed: format, Release build, Protobuf, startup smoke, process/policy/capability, DPAPI identity/trust and artifact upload; Windows artifact 13045051464 (14,255,816 bytes)."
+          },
+          {
+            "name": "HostLifecycle — V 3.0.709",
+            "result": "passed",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41207315560",
+            "summary": "All 8/8 lifecycle unit/integration workflow steps passed."
           }
         ],
         "tests_failed": [
@@ -42715,38 +42770,77 @@
         {
           "attempt_id": "T0168-A008",
           "started_at": "2026-10-31T17:14:44+03:30",
-          "ended_at": null,
-          "result": "partial",
-          "summary": "Corrected the two KtLint-reported indentation levels in the final RESPONSE_FAILED call and reconciled graph counters with history: eight attempts and seven failed records. Exact-head V 3.0.709 CI pending.",
+          "ended_at": "2026-10-31T17:24:29+03:30",
+          "result": "succeeded",
+          "summary": "Exact-head V 3.0.709 quality and product workflows passed. The final Kotlin indentation correction passed KtLint; Android debug APK, JVM tests, generated Protobuf Java/Kotlin verification and both Android artifacts succeeded. Windows WPF and HostLifecycle also passed.",
           "changed_files": [
             "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceRoundResponseCollector.kt",
             "step three/T0168/execution-report.md",
             "step three/T0168/evidence/verification.md",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "492c786b4ca67dd2b1639f471618d5644d443de8",
           "tests": [
             {
-              "name": "Final KtLint indentation correction",
-              "result": "pending",
-              "summary": "The final nested failure argument and closing parenthesis were shifted to the exact indentation required by KtLint."
+              "name": "Step Three quality gate — V 3.0.709",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41207315632",
+              "summary": "All 308 Python tests passed; Python syntax compilation, graph structure and recorded-output/evidence checks passed."
             },
             {
-              "name": "Graph attempt counter validation",
-              "result": "pending",
-              "summary": "attempt_count set to 8 and failed_attempt_count set to 7 to match execution history."
+              "name": "Android .NET peer interoperability fixture build — V 3.0.709",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41207315560",
+              "summary": "Windows .NET peer interoperability fixture built successfully for the Android product workflow."
             },
             {
-              "name": "Exact-head Step Three and product gates",
-              "result": "pending",
-              "summary": "V 3.0.709 Python quality, Android lint/APK/JVM/Protobuf, Windows WPF and HostLifecycle pending."
+              "name": "Android KtLint — V 3.0.709",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41207315560",
+              "summary": "Kotlin formatting/lint passed."
+            },
+            {
+              "name": "Android debug APK build — V 3.0.709",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41207315560",
+              "summary": "assembleDebug completed successfully."
+            },
+            {
+              "name": "Android JVM unit tests — V 3.0.709",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41207315560",
+              "summary": "testDebugUnitTest completed successfully; uploaded JUnit/report artifact 13044164653 (45,724 bytes)."
+            },
+            {
+              "name": "Generated Android Protobuf Java/Kotlin verification — V 3.0.709",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41207315560",
+              "summary": "Generated Protobuf Java and Kotlin sources were found and verified."
+            },
+            {
+              "name": "Android debug APK artifact — V 3.0.709",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41207315560/artifacts/13045195732",
+              "summary": "Uploaded whitep-android-debug-apk.zip; 19,449,970 bytes; artifact ID 13045195732."
+            },
+            {
+              "name": "Windows WPF host — V 3.0.709",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41207315560",
+              "summary": "All 15/15 workflow steps passed: format, Release build, Protobuf, startup smoke, process/policy/capability, DPAPI identity/trust and artifact upload; Windows artifact 13045051464 (14,255,816 bytes)."
+            },
+            {
+              "name": "HostLifecycle — V 3.0.709",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41207315560",
+              "summary": "All 8/8 lifecycle unit/integration workflow steps passed."
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Check exact-head V 3.0.709 graph guard and KtLint; continue to APK/JVM/Protobuf only if lint passes."
+          "follow_up": "T0168 is complete. Next task is T0169; validate its incoming edges, especially T0168 → T0169, before starting implementation."
         }
       ]
     },
@@ -54461,7 +54555,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-31T17:14:44+03:30",
+  "updated_at": "2026-10-31T17:24:29+03:30",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",
