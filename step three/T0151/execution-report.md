@@ -1,0 +1,64 @@
+# T0151 execution report
+
+- **Task:** Define a versioned `ConversationContextCapsule` for goal, key facts, decisions, constraints and unresolved items.
+- **Status:** `in_progress`; implementation and tests are committed with exact-head CI pending.
+- **Baseline:** `main` at [`V 3.0.547`](https://github.com/artinrahimii/project/commit/796a612c4ba224eaf4750cf9c7f86f4169ba73f4).
+- **Attempt:** `T0151-A001`.
+- **Protocol boundary:** the canonical Protobuf contract contains opaque `bytes context_capsule = 7` with a 4,096-byte maximum. The Windows shared policy agrees on that hard ceiling. The Android model uses local UTF-8 JSON; no Protobuf wire fields were changed.
+
+## Dependency review
+
+- **T0150 → T0151:** validated as `sequencing_only`. The accepted conversation create/send/reopen workflow does not expose or consume a capsule API. The original `blocks` edge remains as conservative sequence.
+- **T0151 → T0152:** validated as `contract_or_interface_dependency`. T0152 stores capsule data as a conversation-scoped Room record and depends on this model's versioned fields and serialization contract. The original `blocks` edge remains.
+- Both reviews and evidence paths were appended to graph `edge_change_log`. Other outgoing edges remain unreviewed.
+
+## Implementation
+
+- Added `src/Client.Android/app/src/main/java/com/whitep/client/context/ConversationContextCapsule.kt` in the idiomatic Kotlin package `com.whitep.client.context`.
+- The model defines `schemaVersion`, `goal`, `keyFacts`, `decisions`, `constraints`, and `unresolvedItems`.
+- Added UTF-8 JSON encoding/decoding with a strict field allowlist, unsupported-version rejection, malformed-JSON and invalid-UTF-8 rejection, typed validation results, blank-value checks and a 4,096-byte hard ceiling measured on encoded bytes.
+- No new dependency was added; the Android `org.json` API is used.
+- Added `src/Client.Android/app/src/test/java/com/whitep/client/context/ConversationContextCapsuleTest.kt` with eight JVM/Robolectric tests and `tests/test_android_context_capsule_contract.py` with three source-contract tests.
+- Persistence and UI are explicitly out of scope here (T0152/T0153). This code makes no P2P-delivery or at-rest-encryption claim.
+
+## Verification status
+
+No local test execution is claimed. Exact-head CI is pending for:
+- eight `ConversationContextCapsuleTest` JVM/Robolectric tests;
+- Python tests, syntax, graph structure and evidence-path guards;
+- Android `ktlintCheck`, `assembleDebug` and `testDebugUnitTest`;
+- other repository product checks.
+
+Keep T0151 `in_progress` until the exact-head outcomes are inspected. Record and fix any lint/compiler/test failure before acceptance.
+
+
+## Exact-head correction history
+
+- **V 3.0.548 quality** [40881923866](https://github.com/artinrahimii/project/actions/runs/40881923866) passed 234 Python tests, Python syntax, graph structure and recorded-output/evidence validation. Graph guard reported 229 tasks/417 edges, zero errors and one preserved T0001 warning.
+- **V 3.0.548 product** [40881924197](https://github.com/artinrahimii/project/actions/runs/40881924197): Windows WPF and HostLifecycle jobs passed. Android lint failed at `ConversationContextCapsuleTest.kt:147:57` because `JSONArray.toStringList()` had its single-expression body on a second line; APK assembly and JVM tests did not run.
+- **T0151-A002** records that failure. **T0151-A003** corrects only the helper's line wrapping. No Kotlin behavior or model contract changed; exact-head CI is still pending.
+
+
+## Exact-head correction history — V 3.0.549
+
+- **Quality** [run 40882506760](https://github.com/artinrahimii/project/actions/runs/40882506760) passed 234 Python tests, syntax checks, graph structure and output/evidence validation (229 tasks/417 edges, zero errors; one preserved T0001 metadata warning).
+- **Product** [run 40882506722](https://github.com/artinrahimii/project/actions/runs/40882506722): Windows WPF and HostLifecycle jobs passed. Android lint failed in the model source at `ConversationContextCapsule.kt:166`: the long `unresolvedItems` assignment needed multiline formatting. APK build and Android JVM tests were skipped.
+- **T0151-A004** records that observed failure. **T0151-A005** wraps the property assignment, JSON-array argument, closing parenthesis and Elvis fallback across lines, without changing the model schema or decoding rules. Exact-head CI is pending.
+
+
+## Exact-head runtime failure — V 3.0.550
+
+- Step Three quality [run 40883740170](https://github.com/artinrahimii/project/actions/runs/40883740170) passed: 234 Python tests, syntax, graph structure and recorded-output/evidence checks; the graph guard reported 229 tasks/417 edges, zero errors and one preserved T0001 warning.
+- Product CI [run 40883740159](https://github.com/artinrahimii/project/actions/runs/40883740159) passed Android `ktlintCheck` and `assembleDebug`, and also passed the Windows WPF and HostLifecycle jobs. The Android JVM test stage then failed: 36 tests completed and 6 failed in `ConversationContextCapsuleTest`, each reported as `java.lang.RuntimeException` at JSON-related setup/encode/decode lines (23, 73, 84, 106, 118 and 138). The APK build succeeded, but this does not satisfy the task's test acceptance criterion.
+- The workflow summary did not expose the full root-exception message. The common runtime failure, direct use of Android `org.json`, and the repository's existing Robolectric-based `ClientDatabaseTest` indicate that this class needs to execute under Robolectric rather than the default JVM runner. The Robolectric dependency was already present; no new dependency is needed.
+- **T0151-A006** adds `@RunWith(RobolectricTestRunner::class)` and `@Config(sdk = [35])` to the capsule test class and adds a Python contract test to prevent regression. This is a targeted test-environment fix; no model API or JSON schema changed.
+- T0151 remains `in_progress` pending exact-head Android lint, APK build, JVM tests, and quality/graph/evidence checks. No local test execution is claimed.
+
+
+## Acceptance verified — V 3.0.551
+
+- Step Three quality [run 40885453525](https://github.com/artinrahimii/project/actions/runs/40885453525) passed **235 Python tests**, syntax checks, graph structure and output/evidence validation. The graph guard reported 229 tasks/417 edges, zero errors and one preserved T0001 unmapped-dependency warning.
+- Product CI [run 40885453676](https://github.com/artinrahimii/project/actions/runs/40885453676) passed all four jobs. Android `ktlintCheck`, `assembleDebug`, `testDebugUnitTest`, generated Protobuf Java/Kotlin verification, and APK artifact upload all passed. The Windows WPF build/startup/safety checks and HostLifecycle tests also passed.
+- With Robolectric SDK 35 enabled for the test class, the Android JVM test task passed, including the eight capsule-specific cases that failed under the default runner on V 3.0.550. The Python source-contract suite now also guards the runner configuration.
+- **T0151 is accepted and marked `done`** on the strength of these exact-head checks. The model remains a local domain/serialization contract; persistence and user-facing editing remain the separate T0152/T0153 tasks. This does not mean the entire product is complete.
+- The corrective implementation is commit [`27e72d5e2d24dd5861a63ede1c8753facec54f95`](https://github.com/artinrahimii/project/commit/27e72d5e2d24dd5861a63ede1c8753facec54f95); this report update records the verified outcome.

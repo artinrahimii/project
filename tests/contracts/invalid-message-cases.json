@@ -1,0 +1,19 @@
+{
+  "cases": [
+    {
+      "id": "zero-tag",
+      "wireBase64": "AA==",
+      "expectedErrorCode": "PROTOCOL_ERROR_CODE_INVALID_MESSAGE"
+    },
+    {
+      "id": "truncated-varint",
+      "wireBase64": "CA==",
+      "expectedErrorCode": "PROTOCOL_ERROR_CODE_INVALID_MESSAGE"
+    },
+    {
+      "id": "truncated-length-delimited-field",
+      "wireBase64": "IgVB",
+      "expectedErrorCode": "PROTOCOL_ERROR_CODE_INVALID_MESSAGE"
+    }
+  ]
+}

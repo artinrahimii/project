@@ -1,0 +1,42 @@
+# T0018 — execution report
+
+## Attempt T0018-A001 — local llama.cpp backend
+- Implemented a real HTTP client for `GET /health` and OpenAI-compatible `POST /v1/chat/completions`, bounded output tokens, deadlines/cancellation, and per-instance request serialization.
+- Product-build run [39681349154](https://github.com/artinrahimii/project/actions/runs/39681349154) passed for the backend implementation commit.
+- Review found that the backend class existed but the Windows UI still displayed a preview-only message and did not call it.
+
+## Attempt T0018-A002 — connect the backend to the Windows host UI
+- **Status: partial; exact-commit CI pending.**
+- Added `HostInferenceSession` for connection/readiness, busy/ready/error transitions, and local generation.
+- Replaced the preview-only WPF window with controls for local server URL, model ID, health connection, prompt entry, and generated output.
+- Extended the backend interface with health and generation methods and added host-session lifecycle tests.
+- Updated README to remove the stale statement that the UI was not connected to live inference.
+- Dependency review remains unchanged: `T0017 → T0018` is a validated contract/interface dependency; `T0010 → T0018` is sequencing-only.
+- **Runtime limitation:** llama.cpp and a model must be installed separately. CI verifies build and controlled tests, not a live inference session on a target machine.
+- **Prior CI issue:** quality gate run [39681738413](https://github.com/artinrahimii/project/actions/runs/39681738413) failed because the previous graph entry marked T0018 done without a `succeeded` history result or test-source evidence. This attempt records T0018 as in progress until new exact-commit checks pass.
+
+## Next
+Run the quality gate and product build for this exact integration commit. If both pass, record a successful attempt and mark T0018 done; then review the T0018 → T0019 edge before starting T0019.
+
+
+## Attempt T0018-A003 — repair CI regressions
+- The exact-commit quality gate [39733805458](https://github.com/artinrahimii/project/actions/runs/39733805458) failed because `tests/test_claims_audit.py` still expected the old preview-only title and explanatory text after the UI became functional.
+- The product-build run [39733805441](https://github.com/artinrahimii/project/actions/runs/39733805441) failed in lifecycle tests because the unconfigured-backend message no longer included the established phrase `not configured`.
+- Updated the audit to verify the new endpoint/model fields, connect action, prompt control, and generation action; restored the explicit unconfigured-backend reason. These are compatibility fixes, not evidence of live inference success.
+- **Status remains in progress** until a new exact-commit quality gate and product build pass.
+
+
+## Attempt T0018-A004 — exact-commit CI verification
+- **Result: succeeded for the backend/UI integration acceptance at task scope.** Commit [1d4760ae30c340144a95f8c29a9cabd724295b04](https://github.com/artinrahimii/project/commit/1d4760ae30c340144a95f8c29a9cabd724295b04) passed the exact-commit quality gate [39733953285](https://github.com/artinrahimii/project/actions/runs/39733953285) and product build [39733953294](https://github.com/artinrahimii/project/actions/runs/39733953294).
+- Quality job passed automated Python tests, Python syntax compilation, graph structure validation, and recorded-output/evidence validation.
+- Product jobs passed the Windows WPF Release build, the Android debug APK build and artifact upload, and host lifecycle unit/integration tests.
+- **Task-level outcome:** the real `LlamaCppServerBackend` is integrated with the Windows UI for endpoint configuration, health checks, prompts, and returned text; T0018 can be marked done against this evidence.
+- **Explicit limits:** the server and model are installed separately. CI did not run a live model on the target machine, did not prove single-active inference under overlapping live requests, and did not pass AC-LOCAL-01/AC-LOCAL-02 as product runtime gates. P2P remains separate.
+
+## Next
+T0019 may now be executed after reviewing its incoming edges. Keep runtime local-model and network acceptance gates separate from task completion.
+
+
+## Graph metadata correction after T0018-A004
+- Quality run [39735812127](https://github.com/artinrahimii/project/actions/runs/39735812127) passed all 54 Python tests, syntax compilation, and graph structure validation, then failed the repository-root evidence pass because the graph's `evidence` array included two workflow URLs.
+- This is a graph evidence-schema issue, not an application/runtime failure. The workflow links remain in this report and `execution_summary.tests_passed`; `T0018.evidence` is restricted to tracked, inspectable repository paths so graph_guard can validate it.

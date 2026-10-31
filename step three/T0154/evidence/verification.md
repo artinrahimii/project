@@ -1,0 +1,33 @@
+# T0154 evidence ledger
+
+- **Domain policy:** `src/Client.Android/app/src/main/java/com/whitep/client/context/ConversationContextCapsule.kt` defines the 512–4,096-byte configurable range, 256-byte steps and fixed 4,096-byte protocol ceiling. Encoding compares serialized UTF-8 byte length with the selected limit.
+- **Persistence:** `src/Client.Android/app/src/main/java/com/whitep/client/data/ConversationContextCapsuleSizeLimitStore.kt` saves the device-wide limit in Android SharedPreferences, rejects invalid writes and normalizes corrupted persisted values without exceeding the hard ceiling.
+- **Save path:** `src/Client.Android/app/src/main/java/com/whitep/client/data/RoomConversationContextCapsuleRepository.kt` accepts a max-byte parameter with a backward-compatible default; `src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt` passes the persisted UI setting to the repository/domain codec.
+- **UI:** `src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt` exposes a slider, shows the selected limit and clarifies that lowering it does not delete existing capsules.
+- **Runtime tests:** `src/Client.Android/app/src/test/java/com/whitep/client/context/ConversationContextCapsuleTest.kt` covers a lower limit and invalid values; `src/Client.Android/app/src/test/java/com/whitep/client/data/ConversationContextCapsuleSizeLimitStoreTest.kt` covers defaults, persistence across store instances, invalid writes and corrupt-value normalization; `src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModelTest.kt` checks rejection at 512 bytes and a successful save after raising the limit.
+- **Python contract checks:** `tests/test_android_context_capsule_contract.py`, `tests/test_android_context_capsule_persistence_contract.py` and `tests/test_android_context_capsule_ui_contract.py` assert size enforcement, the repository contract, persistence, and UI wiring.
+- **Compatibility:** decoding and the default codec entry point keep the fixed 4,096-byte protocol ceiling so a reduced preference does not invalidate an older saved capsule.
+- **Pending:** exact-head CI. No test is reported as passed until CI confirms it.
+
+
+## V 3.0.562 lint failure and A002 correction
+
+- Quality [40903639160](https://github.com/artinrahimii/project/actions/runs/40903639160) passed Python tests, syntax, graph and output/evidence checks.
+- Product [40903639332](https://github.com/artinrahimii/project/actions/runs/40903639332) failed `ktlintMainSourceSetCheck` on three multiline-expression formatting findings in `ConversationContextCapsuleViewModel.kt`. APK and JVM tests were skipped; HostLifecycle and Windows WPF jobs passed.
+- A002 changes only the multiline assignment formatting. It is not accepted until a new exact-head product run completes lint, APK build and Android JVM tests.
+
+
+## V 3.0.563 test-source lint failure and A003 correction
+
+- Quality [40904263570](https://github.com/artinrahimii/project/actions/runs/40904263570) passed Python tests, syntax, graph and output/evidence validation.
+- Product [40904263586](https://github.com/artinrahimii/project/actions/runs/40904263586) passed main-source Kotlin lint but failed test-source lint at `ConversationContextCapsuleViewModelTest.kt:138` (“Expected newline before '.'”). APK/JVM stages were skipped; HostLifecycle passed and WPF was pending at last inspection.
+- A003 replaces the chained assertion with a `requireNotNull` local and a simple assertion. This is a test-formatting change, not an acceptance result; new exact-head CI is required.
+
+
+## Final verification — V 3.0.564
+
+- Exact tested main commit: `76245201996af722cacc95ffd77c27d9e3c2942a`.
+- Step Three quality job passed: [run 40904612498](https://github.com/artinrahimii/project/actions/runs/40904612498), job 123555851100.
+- Android product job passed Kotlin lint, APK build, Android JVM tests, Protobuf checks and artifact upload: [run 40904612247](https://github.com/artinrahimii/project/actions/runs/40904612247), job 123555854816.
+- Windows WPF passed (job 123555854685) and HostLifecycle passed (job 123555853926) in product run 40904612247.
+- No local Gradle or Python execution is claimed; acceptance is based on linked exact-head GitHub Actions results.

@@ -1,0 +1,163 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "White-P Model Catalog v1",
+  "description": "Versioned metadata schema for models that may be presented by the host. This is a schema, not a claim that any model is bundled or licensed for redistribution.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": {
+      "const": 1,
+      "description": "Catalog format version; increment when a non-backward-compatible schema is introduced."
+    },
+    "models": {
+      "type": "array",
+      "description": "Model records. The parser must separately reject duplicate model IDs; JSON Schema uniqueItems compares complete objects, not individual IDs.",
+      "items": {
+        "$ref": "#/$defs/model"
+      }
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "models"
+  ],
+  "$defs": {
+    "model": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Metadata only. The parser must confirm source URL allowlisting, uniqueness, license review status, and that the backend identifier is supported before showing or installing a model.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-z0-9][a-z0-9._-]*$",
+          "description": "Stable catalog-local identifier, not a download URL."
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "format": {
+          "type": "string",
+          "enum": [
+            "GGUF"
+          ],
+          "description": "Only GGUF is represented in v1 because it is the format exercised by the current local llama.cpp path."
+        },
+        "sizeBytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "checksum": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "algorithm": {
+              "const": "sha256"
+            },
+            "value": {
+              "type": "string",
+              "pattern": "^[A-Fa-f0-9]{64}$"
+            }
+          },
+          "required": [
+            "algorithm",
+            "value"
+          ]
+        },
+        "backend": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "enum": [
+              "llama.cpp"
+            ]
+          },
+          "description": "Compatible backend IDs. The v1 allowlist contains only the currently implemented llama.cpp backend."
+        },
+        "sourceUrl": {
+          "type": "string",
+          "maxLength": 2048,
+          "format": "uri",
+          "pattern": "^https://[^\\s]+$",
+          "description": "HTTPS source location only. T0069 must additionally enforce the trusted host allowlist and reject unsafe URL forms."
+        },
+        "license": {
+          "type": "object",
+          "default": {
+            "status": "review_required"
+          },
+          "description": "Optional to allow unverified upstream metadata to be represented honestly. If missing, the parser must label the model review_required; omission is never permission to redistribute.",
+          "additionalProperties": false,
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "verified",
+                "review_required",
+                "unknown"
+              ]
+            },
+            "classification": {
+              "type": "string",
+              "enum": [
+                "open_source",
+                "restricted",
+                "unknown"
+              ],
+              "default": "unknown",
+              "description": "Catalog-declared usage classification only. open_source remains an unverified claim; restricted must never be presented as open source; missing classification is unknown and must not imply open-source status or redistribution permission."
+            },
+            "identifier": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            "url": {
+              "type": "string",
+              "maxLength": 2048,
+              "format": "uri",
+              "pattern": "^https://[^\\s]+$"
+            }
+          },
+          "required": [
+            "status"
+          ],
+          "allOf": [
+            {
+              "if": {
+                "properties": {
+                  "status": {
+                    "const": "verified"
+                  }
+                },
+                "required": [
+                  "status"
+                ]
+              },
+              "then": {
+                "required": [
+                  "identifier",
+                  "url"
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "format",
+        "sizeBytes",
+        "checksum",
+        "backend",
+        "sourceUrl"
+      ]
+    }
+  }
+}

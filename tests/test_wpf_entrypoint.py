@@ -1,0 +1,156 @@
+"""Repository guards for the real WPF startup path and its Windows-runner smoke test."""
+import unittest
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+APP_XAML = (ROOT / "src/Host.Windows/App.xaml").read_text(encoding="utf-8")
+APP_CODE = (ROOT / "src/Host.Windows/App.xaml.cs").read_text(encoding="utf-8")
+WINDOW_XAML = (ROOT / "src/Host.Windows/MainWindow.xaml").read_text(encoding="utf-8")
+WINDOW_CODE = (ROOT / "src/Host.Windows/MainWindow.xaml.cs").read_text(encoding="utf-8")
+PROJECT = (ROOT / "src/Host.Windows/WhiteP.Host.Windows.csproj").read_text(encoding="utf-8")
+WORKFLOW = (ROOT / ".github/workflows/product-build.yml").read_text(encoding="utf-8")
+
+
+class WpfEntryPointTests(unittest.TestCase):
+    def test_application_uses_the_real_wpf_entrypoint_and_startup_uri(self):
+        self.assertIn('<Application x:Class="WhiteP.Host.Windows.App"', APP_XAML)
+        self.assertIn('StartupUri="MainWindow.xaml"', APP_XAML)
+        self.assertIn("<OutputType>WinExe</OutputType>", PROJECT)
+        self.assertIn("<TargetFramework>net10.0-windows</TargetFramework>", PROJECT)
+        self.assertIn("<UseWPF>true</UseWPF>", PROJECT)
+
+    def test_main_window_has_required_operational_controls_and_cleanup(self):
+        for name in ("ServerUrl", "ModelId", "ConnectButton", "LifecycleState", "CpuStatus", "MemoryStatus", "CapacityStatus", "PromptInput", "OutputText", "GenerateButton", "ChatMessages"):
+            with self.subTest(control=name):
+                self.assertIn(f'x:Name="{name}"', WINDOW_XAML)
+                self.assertIn(f'window.FindName("{name}")', APP_CODE)
+        self.assertIn("InitializeComponent();", WINDOW_CODE)
+        self.assertIn("RenderStatus(_session.Status);", WINDOW_CODE)
+        self.assertIn("_session.Dispose();", WINDOW_CODE)
+        self.assertIn('Content="Send message"', WINDOW_XAML)
+        self.assertIn("AppendConversationMessage(ConversationMessageRole.User, prompt);", WINDOW_CODE)
+        self.assertIn("AppendConversationMessage(ConversationMessageRole.Assistant, response);", WINDOW_CODE)
+        self.assertIn("_session.GenerateAsync(prompt, 1024", WINDOW_CODE)
+        self.assertIn('KeyDown="PromptInput_KeyDown"', WINDOW_XAML)
+        self.assertIn("ModifierKeys.Shift", WINDOW_CODE)
+        self.assertIn("GenerateButton_Click(sender, new RoutedEventArgs());", WINDOW_CODE)
+
+    def test_smoke_mode_waits_for_loaded_visible_main_window_then_exits(self):
+        for marker in (
+            '"--smoke-test"',
+            "DispatcherPriority.ApplicationIdle",
+            "window.IsLoaded",
+            "window.IsVisible",
+            "ShutdownMode.OnExplicitShutdown",
+            "window.Close();",
+            "ExitAfterWindowCleanup(window, 0);",
+            "ExitAfterWindowCleanup(MainWindow, 1);",
+            "window.Closed += closedHandler;",
+            "window.Closed -= closedHandler;",
+            "Shutdown(exitCode);",
+            "Dispatcher.BeginInvoke(",
+        ):
+            with self.subTest(marker=marker):
+                self.assertIn(marker, APP_CODE)
+
+    def test_windows_ci_runs_a_bounded_process_startup_smoke_test(self):
+        for marker in (
+            "Smoke test WPF application startup",
+            "WhiteP.Host.Windows.exe",
+            '-ArgumentList "--smoke-test"',
+            "WaitForExit(30000)",
+            "$process.Kill()",
+            "$process.ExitCode -ne 0",
+            "PASS: WPF entry point displayed MainWindow",
+        ):
+            with self.subTest(marker=marker):
+                self.assertIn(marker, WORKFLOW)
+
+    def test_status_panel_uses_live_backend_state_and_discloses_p2p_limit(self):
+        self.assertIn('x:Name="NetworkState"', WINDOW_XAML)
+        self.assertIn("HostStatusPresentation.FormatBackendStatus(status)", WINDOW_CODE)
+        self.assertIn("HostStatusPresentation.FormatNetworkStatus(status)", WINDOW_CODE)
+        self.assertIn('x:Name="GpuStatus"', WINDOW_XAML)
+        self.assertIn('x:Name="BackendCapabilityStatus"', WINDOW_XAML)
+        self.assertIn("Connect will test the configured local llama.cpp endpoint", WINDOW_CODE)
+        self.assertIn("status.State switch", WINDOW_CODE)
+        self.assertIn("var connectTask = _session.ConnectAsync", WINDOW_CODE)
+        self.assertIn("var generationTask = _session.GenerateAsync", WINDOW_CODE)
+        presenter = (ROOT / "src/Host.Application/HostStatusPresentation.cs").read_text(encoding="utf-8")
+        self.assertIn("Direct peer-to-peer transport: not implemented in this build.", presenter)
+
+    def test_user_visible_errors_use_safe_mapping_not_exception_details(self):
+        self.assertIn("HostErrorPresentation.ToUserMessage(exception)", WINDOW_CODE)
+        self.assertNotIn('LifecycleState.Text = $"Error — {exception.Message}"', WINDOW_CODE)
+        self.assertNotIn('OutputText.Text = exception.Message', WINDOW_CODE)
+        presenter = (ROOT / "src/Host.Application/HostErrorPresentation.cs").read_text(encoding="utf-8")
+        self.assertIn("Details are hidden to protect local paths and sensitive data.", presenter)
+        self.assertIn("HttpRequestException", presenter)
+        self.assertIn("OperationCanceledException", presenter)
+
+    def test_inference_failures_are_system_messages_not_assistant_responses(self):
+        generate_method = WINDOW_CODE.split("private async void GenerateButton_Click", 1)[1].split(
+            "private void AppendConversationMessage", 1
+        )[0]
+
+        await_index = generate_method.index("var response = await generationTask;")
+        assistant_index = generate_method.index(
+            "AppendConversationMessage(ConversationMessageRole.Assistant, response);"
+        )
+        self.assertLess(await_index, assistant_index)
+
+        cancellation_start = generate_method.index("catch (OperationCanceledException)")
+        cancellation_end = generate_method.index("catch (Exception exception)", cancellation_start)
+        cancellation_path = generate_method[cancellation_start:cancellation_end]
+        self.assertIn(
+            'AppendConversationMessage(ConversationMessageRole.System, "Inference cancelled. Reconnect before the next request.");',
+            cancellation_path,
+        )
+        self.assertNotIn("ConversationMessageRole.Assistant", cancellation_path)
+
+        failure_start = generate_method.index("catch (Exception exception)")
+        failure_end = generate_method.index("finally", failure_start)
+        failure_path = generate_method[failure_start:failure_end]
+        self.assertIn(
+            "AppendConversationMessage(ConversationMessageRole.System, HostErrorPresentation.ToUserMessage(exception));",
+            failure_path,
+        )
+        self.assertNotIn("ConversationMessageRole.Assistant", failure_path)
+        self.assertNotIn("OutputText.Text", failure_path)
+
+    def test_chat_messages_are_backed_by_an_ordered_in_memory_conversation(self):
+        conversation = (ROOT / "src/Host.Application/Chat/ChatConversation.cs").read_text(encoding="utf-8")
+        lifecycle_tests = (ROOT / "tests/HostLifecycle.Tests/ChatConversationAcceptanceTests.cs").read_text(encoding="utf-8")
+        self.assertIn("private readonly ChatConversation _conversation = new();", WINDOW_CODE)
+        self.assertIn("AppendConversationMessage(ConversationMessageRole.User, prompt);", WINDOW_CODE)
+        self.assertIn("AppendConversationMessage(ConversationMessageRole.Assistant, response);", WINDOW_CODE)
+        self.assertIn("_conversation.Add(role, content)", WINDOW_CODE)
+        self.assertIn("_messages.AsReadOnly()", conversation)
+        self.assertIn("_nextSequence++", conversation)
+        self.assertIn("deterministically", lifecycle_tests.lower())
+        self.assertIn("preserve insertion order", lifecycle_tests.lower())
+
+
+    def test_clear_session_suppresses_late_generation_errors(self):
+        clear_method = WINDOW_CODE.split("private void ClearSessionButton_Click", 1)[1].split(
+            "private void CancelGenerationButton_Click", 1
+        )[0]
+        generate_method = WINDOW_CODE.split("private async void GenerateButton_Click", 1)[1].split(
+            "private void AppendConversationMessage", 1
+        )[0]
+        self.assertIn("_operationCancellation?.Cancel();", clear_method)
+        self.assertIn("catch (Exception exception)", generate_method)
+        catch_block = generate_method.split("catch (Exception exception)", 1)[1].split("finally", 1)[0]
+        self.assertIn("if (!_clearSessionRequested)", catch_block)
+        self.assertIn(
+            "AppendConversationMessage(ConversationMessageRole.System, HostErrorPresentation.ToUserMessage(exception));",
+            catch_block,
+        )
+
+    def test_window_status_starts_without_connecting_to_a_backend(self):
+        self.assertIn('Text="Stopped — connect to a local backend."', WINDOW_XAML)
+        self.assertNotIn(".ConnectAsync(", APP_CODE)
+
+
+if __name__ == "__main__":
+    unittest.main()

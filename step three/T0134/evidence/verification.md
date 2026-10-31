@@ -1,0 +1,108 @@
+# T0134 verification evidence
+
+## Exact revision and graph integrity
+
+- Base head reviewed: `c49edacbc89498ce35a3ba906b463ce305c5136a` (`V 3.0.458`).
+- Implementation/test commit: `234b79b9248f38a037febba07c55a265b2e0fc31` (`V 3.0.459`).
+- Reviewed graph Blob at base: `4e7891ec268b973e7aaba74c270043427ed7c599`, 2,259,671 bytes. Retrieved via exact commit tree and Blob API; Git SHA-1 matched and fenced JSON parsed fully (229 nodes, 422 active edges).
+- Quality gate passed for the implementation commit: https://github.com/artinrahimii/project/actions/runs/40717445979
+- HostLifecycle job passed for the implementation commit: https://github.com/artinrahimii/project/actions/runs/40717445528/job/122918865305
+
+## Observed negative-test output
+
+The HostLifecycle job log includes:
+- `PASS: shared peer identity policy rejects malformed input and delegates PeerId parsing to libp2p.`
+- `PASS: peer trust is explicit, persisted, canonical-PeerId-bound and fail-closed for unknown or corrupt identities.`
+- `PASS: host identity store serializes concurrent creation, preserves PeerId on reload and rejects corrupt envelopes, unsupported identity versions and malformed private keys.`
+
+The runner's `Program.cs` also has test assertions that missing/malformed and unsupported application protocol versions are rejected. This is **application protocol** validation, not a direct negative integration test of Noise/TLS secure-channel version negotiation.
+
+## Graph edges
+
+- `T0133 → T0134` is now `contract_or_interface_dependency`, `validated`.
+- `T0128 → T0134` is `sequencing_only`, `validated`, and removed from active edges. Reason and evidence remain append-only in `edge_change_log`.
+- `T0128` remains `not_started`; no two-machine/independent-network test was run or claimed.
+
+## Outstanding acceptance gap
+
+A direct failing-handshake test for unsupported libp2p Noise/TLS secure-channel negotiation or invalid secure-channel certificate has not yet been run. No custom crypto implementation was added. T0134 remains `in_progress` pending that evidence.
+
+
+## New negative-test attempt — not yet verified
+
+- Code commit: [V 3.0.461](https://github.com/artinrahimii/project/commit/a9ab827ab2d2a767825085e7185eba655fafbe29).
+- Added test: `VerifySecureChannelRejectsUnexpectedPeerIdentityAsync` in `tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs`.
+- The test deliberately makes the address PeerId match the dialer's expected PeerId, while the listening endpoint's actual cryptographic identity is different. This is intended to pass the application's pre-dial address/pinned-ID consistency check and exercise the libp2p authentication boundary rather than only testing a local string mismatch.
+- Verification state: **pending CI**. No local .NET execution was performed; the combined commit-status lookup returned an empty status list. There is no successful test output for this new case yet.
+- Until CI logs prove that the case ran and passed, this is implementation evidence only, not acceptance evidence. The test targets remote authenticated identity/certificate mismatch; unsupported Noise/TLS protocol-version negotiation is not independently claimed as tested.
+
+
+## T0134-A004: secure-channel downgrade negative case
+
+- Test source commit: [V 3.0.465](https://github.com/artinrahimii/project/commit/e0512ece82f900e2a3f4586a6c286454eac994a2).
+- Added `VerifyRejectsPlaintextOnlyPeerAsync`: it creates a local libp2p server using `WithPlaintextEnforced()`, trusts the server's actual PeerId on the client, and attempts a connection with the production transport that offers secure Noise/TLS rather than plaintext. Expected behavior is rejection without publishing an authenticated connection. The setup uses the existing `Nethermind.Libp2p` API; no custom cryptographic code is introduced.
+- The earlier `VerifySecureChannelRejectsUnexpectedPeerIdentityAsync` remains in the same acceptance suite and tests a trusted-but-wrong advertised PeerId against a live listener's actual identity.
+- **Verification state: pending CI.** The current environment has no .NET SDK/runtime command available, so no local test was executed. The available GitHub combined-status API returned an empty status list, and the available workflow-run lookup does not expose push-triggered runs. No pass/fail conclusion is inferred from these empty responses.
+- This is implementation evidence only until the exact-commit HostLifecycle job's logs confirm that both tests actually ran and passed. A plaintext-only mismatch test does not by itself prove every unsupported Noise/TLS protocol version is rejected.
+
+
+## T0134-A005: first confirmed secure-channel CI failure
+
+- Exact test revision: [V 3.0.465](https://github.com/artinrahimii/project/commit/e0512ece82f900e2a3f4586a6c286454eac994a2).
+- Run: [White-P product build 40722598672](https://github.com/artinrahimii/project/actions/runs/40722598672), HostLifecycle job 122937219297.
+- Observed result: **failed** at `VerifySecureChannelRejectsUnexpectedPeerIdentityAsync`. The actual libp2p dial surfaced `PeerConnectionException`; the test only caught `AuthenticationException`, `IOException`, `SocketException`, and `InvalidOperationException`, so the expected failed connection escaped as an unhandled exception.
+- This is an observed test-harness failure, not a passing security assertion. The plaintext-only negative case wasn't reached in this run.
+
+## T0134-A006: reproduced on latest main
+
+- Latest graph revision tested: [V 3.0.468](https://github.com/artinrahimii/project/commit/6776cebc6d4f578bb16f672b9db05d6a4abe2984).
+- Run: [White-P product build 40723019009](https://github.com/artinrahimii/project/actions/runs/40723019009), HostLifecycle job 122938717256. It reproduced the same unhandled `PeerConnectionException`; the Android and Windows build jobs succeeded. [Step Three quality gate 40723018973](https://github.com/artinrahimii/project/actions/runs/40723018973) passed graph/evidence validation.
+- Result for the secure-channel test suite: **failed**. No passing result is inferred from the successful quality gate.
+
+## T0134-A007: corrective change, pending CI
+
+- Source: `tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs`.
+- Change: add `PeerConnectionException` to the existing expected-failure filter, using the exception type explicitly named by the CI stack trace. Keep the post-failure assertions that no connection or authenticated remote identity is published.
+- Verification: not yet run on the corrective revision. This evidence is pending CI; don't mark the test or T0134 as passed until logs show the test completed and the plaintext-only test also executed successfully. A direct unsupported Noise/TLS protocol-version test may remain necessary.
+
+
+## T0134-A008 — correction confirmed by exact-commit CI
+
+- Commit: [V 3.0.469](https://github.com/artinrahimii/project/commit/782be7fbd75edba6160f9e93f5c8323976764df6).
+- [HostLifecycle job 122949971717](https://github.com/artinrahimii/project/actions/runs/40726185754) completed successfully. Its log explicitly reports PASS for the unexpected remote identity test and the plaintext-only peer rejection test. The same White-P product workflow passed its Android APK and Windows WPF jobs.
+- [Real local inference integration](https://github.com/artinrahimii/project/actions/runs/40726185709) passed, and [Step Three quality gate](https://github.com/artinrahimii/project/actions/runs/40726185483) passed.
+- This verifies the A007 catch-filter correction and the two negative cases previously failing/not reached. It is not evidence of a dedicated unsupported secure-channel version test.
+
+## T0134-A009 — unsupported libp2p secure-channel protocol ID/version (pending CI)
+
+- Added `VerifyRejectsUnsupportedSecureChannelProtocolVersionAsync` using an actual local libp2p peer factory whose stream encryption stack advertises only `/tls/999.0.0`. The production dialer uses the regular registered Noise/TLS stack and should fail negotiation because no secure-channel protocol ID is shared.
+- The assertion requires rejection and that `client.IsConnected` stays false and `client.RemotePeerIdentity` remains null. The test fixture implements only the IProtocol ID marker and does not implement or replace cryptographic algorithms.
+- No result is claimed yet for the new test; its exact-commit CI must show the output line and the entire HostLifecycle job must pass before acceptance status is reconsidered.
+
+
+## T0134-A009 address-construction review
+
+The first revision of `VerifyRejectsUnsupportedSecureChannelProtocolVersionAsync` had an interpolation typo which would have prefixed a literal dollar sign to the multiaddress. This was detected during source review; that revision is not acceptance evidence and no test pass is inferred from it. The address expression is corrected in [V 3.0.471](https://github.com/artinrahimii/project/commit/406baaec426819380fe6e7588b297df3ad6f39de) before acceptance is evaluated.
+
+## T0134-A010 — corrected unsupported secure-channel ID/version case
+
+- The test builds a live local libp2p peer whose encryption stack advertises only `/tls/999.0.0` and dials it through the production secure transport.
+- Corrected address construction now appends `/p2p/{serverPeerIdentity}` without a stray prefix when necessary.
+- Expected behavior remains fail-closed negotiation with no connected state and no authenticated remote identity. CI for the corrective revision is pending; this isn't yet a test pass.
+
+
+## Final verified acceptance for T0134-A010
+
+- Source commit: [V 3.0.471](https://github.com/artinrahimii/project/commit/406baaec426819380fe6e7588b297df3ad6f39de).
+- [White-P product build 40727866470](https://github.com/artinrahimii/project/actions/runs/40727866470), HostLifecycle job 122955900543 completed successfully. Exact log output includes:
+  - `PASS: libp2p secure-channel authentication rejects a remote identity that does not match the pinned PeerId.`
+  - `PASS: secure libp2p dialing rejects a plaintext-only peer and does not downgrade to an insecure connection.`
+  - `PASS: secure libp2p negotiation rejects an unsupported secure-channel protocol ID/version without an insecure connection.`
+- The corrected server address was tested against the actual unsupported-version fixture. This is independent of the V3.0.470 draft, whose output was conservatively not counted after review found the interpolation defect.
+- Android APK and Windows WPF jobs passed in run 40727866470; [real local inference integration 40727866362](https://github.com/artinrahimii/project/actions/runs/40727866362) and [Step Three quality gate 40727866237](https://github.com/artinrahimii/project/actions/runs/40727866237) also passed.
+- Acceptance decision: all current T0134 criteria are evidenced. The graph task status is `done`; this does not claim every TLS wire-level compatibility permutation has been tested.
+
+
+## Graph guard correction for V 3.0.472
+
+The graph quality gate [run 40728705601](https://github.com/artinrahimii/project/actions/runs/40728705601) failed because a completed node must carry explicit `evidence` entries, including at least one path under `tests/`; `T0134.evidence` had not yet been populated. The 191 Python tests and Python syntax check preceding graph validation passed; graph validation reported `DONE_WITHOUT_EVIDENCE` and `DONE_WITHOUT_TEST_FILE_EVIDENCE`. The V 3.0.473 graph now lists the real test source files and the task's report/evidence files. No new test pass is inferred from this metadata correction.

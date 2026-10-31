@@ -1,0 +1,220 @@
+"""Contract checks for the shared versioned Protobuf schema and build-time generators."""
+import re
+import unittest
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+SCHEMA_PATH = ROOT / "protocol/whitep/v1/messages.proto"
+SCHEMA = SCHEMA_PATH.read_text(encoding="utf-8")
+CSPROJ = (ROOT / "src/Host.Windows/WhiteP.Host.Windows.csproj").read_text(encoding="utf-8")
+SHARED_CSPROJ = (ROOT / "src/Shared.Contracts/WhiteP.Shared.Contracts.csproj").read_text(encoding="utf-8")
+ANDROID_ROOT = (ROOT / "src/Client.Android/build.gradle.kts").read_text(encoding="utf-8")
+ANDROID_APP_PATH = ROOT / "src/Client.Android/app/build.gradle.kts"
+ANDROID_APP = ANDROID_APP_PATH.read_text(encoding="utf-8")
+README = (ROOT / "README.md").read_text(encoding="utf-8")
+PRODUCT_WORKFLOW_PATH = ROOT / ".github/workflows/product-build.yml"
+PRODUCT_WORKFLOW = PRODUCT_WORKFLOW_PATH.read_text(encoding="utf-8")
+CSHARP_TEST_PROJECT_PATH = ROOT / "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj"
+CSHARP_TEST_PROJECT = CSHARP_TEST_PROJECT_PATH.read_text(encoding="utf-8")
+CSHARP_ROUND_TRIP_PATH = ROOT / "tests/HostLifecycle.Tests/Program.cs"
+CSHARP_ROUND_TRIP = CSHARP_ROUND_TRIP_PATH.read_text(encoding="utf-8")
+KOTLIN_ROUND_TRIP_PATH = ROOT / "src/Client.Android/app/src/test/java/com/whitep/client/protocol/ProtoRoundTripTest.kt"
+KOTLIN_ROUND_TRIP = KOTLIN_ROUND_TRIP_PATH.read_text(encoding="utf-8")
+SHARED_FIXTURE_PATH = ROOT / "tests/contracts/protobuf-wire-fixtures.txt"
+SHARED_FIXTURE_TEXT = SHARED_FIXTURE_PATH.read_text(encoding="utf-8")
+VERSION_POLICY_PATH = ROOT / "src/Shared.Contracts/ProtocolVersionPolicy.cs"
+VERSION_POLICY = VERSION_POLICY_PATH.read_text(encoding="utf-8")
+
+
+class ProtoContractTests(unittest.TestCase):
+    def test_schema_is_versioned_and_contains_required_wire_messages(self):
+        self.assertIn('syntax = "proto3";', SCHEMA)
+        self.assertIn("package whitep.protocol.v1;", SCHEMA)
+        for name in (
+            "ModelCapability", "HostCapabilities", "InferenceRequest",
+            "InferenceResponse", "CancelRequest", "HostStatusRequest",
+            "HostStatus", "ProtocolError",
+        ):
+            with self.subTest(message=name):
+                self.assertRegex(SCHEMA, rf"message\s+{name}\s*\{{")
+        for enum_name in ("HostRuntimeState", "InferenceOutcome", "ProtocolErrorCode"):
+            with self.subTest(enum=enum_name):
+                self.assertRegex(SCHEMA, rf"enum\s+{enum_name}\s*\{{")
+
+    def test_inference_request_includes_ephemeral_id_prompt_capsule_limits_and_deadline(self):
+        match = re.search(r"message\s+InferenceRequest\s*\{([^{}]*)\}", SCHEMA, re.S)
+        self.assertIsNotNone(match)
+        body = match.group(1)
+        for declaration in (
+            r"string\s+request_id\s*=\s*1\s*;",
+            r"string\s+attempt_id\s*=\s*2\s*;",
+            r"string\s+prompt\s*=\s*4\s*;",
+            r"uint64\s+deadline_unix_ms\s*=\s*5\s*;",
+            r"uint32\s+max_output_tokens\s*=\s*6\s*;",
+            r"bytes\s+context_capsule\s*=\s*7\s*;",
+            r"string\s+protocol_version\s*=\s*8\s*;",
+        ):
+            with self.subTest(field=declaration):
+                self.assertRegex(body, declaration)
+
+    def test_inference_response_includes_status_output_displayable_error_and_completion_time(self):
+        match = re.search(r"message\s+InferenceResponse\s*\{([^{}]*)\}", SCHEMA, re.S)
+        self.assertIsNotNone(match)
+        body = match.group(1)
+        for declaration in (
+            r"string\s+request_id\s*=\s*1\s*;",
+            r"InferenceOutcome\s+outcome\s*=\s*4\s*;",
+            r"string\s+output_text\s*=\s*5\s*;",
+            r"uint64\s+completed_at_unix_ms\s*=\s*6\s*;",
+            r"string\s+error_message\s*=\s*8\s*;",
+        ):
+            with self.subTest(field=declaration):
+                self.assertRegex(body, declaration)
+
+
+    def test_host_announcement_and_capabilities_expose_only_ephemeral_discovery_metadata(self):
+        announcement = re.search(r"message\s+HostAnnouncement\s*\{([^{}]*)\}", SCHEMA, re.S)
+        capabilities = re.search(r"message\s+HostCapabilities\s*\{([^{}]*)\}", SCHEMA, re.S)
+        self.assertIsNotNone(announcement)
+        self.assertIsNotNone(capabilities)
+        announcement_body = announcement.group(1)
+        capabilities_body = capabilities.group(1)
+        for declaration in (
+            r"string\s+ephemeral_host_id\s*=\s*1\s*;",
+            r"string\s+protocol_version\s*=\s*2\s*;",
+            r"HostCapabilities\s+capabilities\s*=\s*3\s*;",
+            r"uint64\s+announced_at_unix_ms\s*=\s*4\s*;",
+        ):
+            with self.subTest(announcement_field=declaration):
+                self.assertRegex(announcement_body, declaration)
+        for declaration in (
+            r"string\s+ephemeral_host_id\s*=\s*1\s*;",
+            r"repeated\s+ModelCapability\s+models\s*=\s*3\s*;",
+            r"uint32\s+max_concurrent_requests\s*=\s*4\s*;",
+        ):
+            with self.subTest(capability_field=declaration):
+                self.assertRegex(capabilities_body, declaration)
+        self.assertNotRegex(announcement_body, r"(?i)\b(?:prompt|request_text|user_id|permanent_user_id|account_id)\b")
+        self.assertNotRegex(capabilities_body, r"(?i)\b(?:prompt|request_text|user_id|permanent_user_id|account_id)\b")
+
+
+    def test_cancellation_busy_unsupported_model_and_protocol_error_messages_have_required_fields(self):
+        expected_fields = {
+            "CancelRequest": (
+                r"string\s+request_id\s*=\s*1\s*;",
+                r"string\s+attempt_id\s*=\s*2\s*;",
+                r"string\s+reason\s*=\s*3\s*;",
+            ),
+            "HostBusy": (
+                r"string\s+request_id\s*=\s*1\s*;",
+                r"string\s+ephemeral_host_id\s*=\s*2\s*;",
+                r"uint64\s+retry_after_unix_ms\s*=\s*3\s*;",
+                r"string\s+message\s*=\s*4\s*;",
+            ),
+            "UnsupportedModel": (
+                r"string\s+request_id\s*=\s*1\s*;",
+                r"string\s+model_id\s*=\s*2\s*;",
+                r"string\s+message\s*=\s*3\s*;",
+            ),
+            "ProtocolError": (
+                r"ProtocolErrorCode\s+code\s*=\s*1\s*;",
+                r"string\s+message\s*=\s*2\s*;",
+                r"string\s+request_id\s*=\s*3\s*;",
+                r"bool\s+retryable\s*=\s*4\s*;",
+            ),
+        }
+        for message_name, declarations in expected_fields.items():
+            match = re.search(rf"message\s+{message_name}\s*\{{([^{{}}]*)\}}", SCHEMA, re.S)
+            with self.subTest(message=message_name):
+                self.assertIsNotNone(match)
+                for declaration in declarations:
+                    with self.subTest(field=declaration):
+                        self.assertRegex(match.group(1), declaration)
+
+    def test_field_numbers_are_unique_inside_each_message_and_enum(self):
+        blocks = re.findall(r"\b(?:message|enum)\s+\w+\s*\{([^{}]*)\}", SCHEMA, re.S)
+        self.assertGreaterEqual(len(blocks), 11)
+        for block in blocks:
+            numbers = re.findall(r"=\s*(\d+)\s*;", block)
+            with self.subTest(block=block[:60]):
+                self.assertEqual(len(numbers), len(set(numbers)), "duplicate field/enum number")
+
+    def test_windows_build_generates_csharp_from_the_shared_schema(self):
+        self.assertIn('Include="../../protocol/whitep/v1/messages.proto"', SHARED_CSPROJ)
+        self.assertIn('ProtoRoot="../../protocol"', SHARED_CSPROJ)
+        self.assertIn('GrpcServices="None"', SHARED_CSPROJ)
+        self.assertIn('PackageReference Include="Google.Protobuf" Version="3.36.2"', SHARED_CSPROJ)
+        self.assertIn('PackageReference Include="Grpc.Tools" Version="2.84.0"', SHARED_CSPROJ)
+
+    def test_android_generates_java_and_kotlin_full_runtime_from_the_same_repository_schema(self):
+        self.assertIn('id("com.google.protobuf") version "0.10.0" apply false', ANDROID_ROOT)
+        self.assertIn('id("com.google.protobuf")', ANDROID_APP)
+        self.assertIn("import com.google.protobuf.gradle.*", ANDROID_APP)
+        self.assertIn('srcDir("../../../protocol")', ANDROID_APP)
+        self.assertIn('com.google.protobuf:protoc:4.36.2', ANDROID_APP)
+        self.assertIn('implementation("com.google.protobuf:protobuf-java:4.36.2")', ANDROID_APP)
+        self.assertIn('implementation("com.google.protobuf:protobuf-kotlin:4.36.2")', ANDROID_APP)
+        self.assertNotIn("protobuf-javalite", ANDROID_APP)
+        self.assertNotIn("protobuf-kotlin-lite", ANDROID_APP)
+        self.assertNotIn('option("lite")', ANDROID_APP)
+        self.assertIn("io.libp2p:jvm-libp2p:1.3.7-RELEASE", ANDROID_APP)
+        self.assertIn('generated/sources/proto/debug/kotlin', ANDROID_APP)
+        self.assertIn('generated/sources/proto/release/kotlin', ANDROID_APP)
+        self.assertIn("Verify generated Protobuf Java and Kotlin sources", PRODUCT_WORKFLOW)
+        self.assertEqual((ANDROID_APP_PATH.parent / "../../../protocol").resolve(), SCHEMA_PATH.parent.parent.parent.resolve())
+
+    def test_round_trip_suites_cover_every_primary_message_in_both_languages(self):
+        message_names = re.findall(r"message\s+(\w+)\s*\{", SCHEMA)
+        self.assertEqual(
+            11,
+            len(message_names),
+            "Update this test when the canonical schema adds/removes a primary message.",
+        )
+        for name in message_names:
+            with self.subTest(message=name):
+                self.assertIn(f'AssertProtoRoundTrip("{name}"', CSHARP_ROUND_TRIP)
+                self.assertIn(f'assertRoundTrip("{name}"', KOTLIN_ROUND_TRIP)
+        self.assertIn('<PackageReference Include="Google.Protobuf" Version="3.36.2" />', CSHARP_TEST_PROJECT)
+        self.assertNotIn('<Protobuf Include="../../protocol/whitep/v1/messages.proto"', CSHARP_TEST_PROJECT)
+        self.assertIn('<ProjectReference Include="../../src/Shared.Contracts/WhiteP.Shared.Contracts.csproj" />', CSHARP_TEST_PROJECT)
+        self.assertIn('testImplementation("junit:junit:4.13.2")', ANDROID_APP)
+        self.assertIn("gradle --no-daemon testDebugUnitTest", PRODUCT_WORKFLOW)
+
+    def test_shared_wire_fixtures_cover_every_primary_message_in_both_languages(self):
+        self.assertTrue(SHARED_FIXTURE_PATH.is_file())
+        fixture_names = [line.split(chr(9), 1)[0] for line in SHARED_FIXTURE_TEXT.splitlines()
+                         if line.strip() and not line.startswith("#")]
+        schema_names = re.findall(r"message\s+(\w+)\s*\{", SCHEMA)
+        self.assertEqual(schema_names, fixture_names)
+        self.assertIn("FindRepositoryFile", CSHARP_ROUND_TRIP)
+        self.assertIn('findRepositoryFile("tests/contracts/protobuf-wire-fixtures.txt")', KOTLIN_ROUND_TRIP)
+        for name in schema_names:
+            with self.subTest(message=name):
+                self.assertIn(f'"{name}" =>', CSHARP_ROUND_TRIP)
+                self.assertIn(f'"{name}" ->', KOTLIN_ROUND_TRIP)
+        self.assertEqual(len(fixture_names), len(set(fixture_names)))
+
+    def test_kotlin_protocol_helper_uses_generated_contract_types(self):
+        helper_path = ROOT / "src/Client.Android/app/src/main/java/com/whitep/client/protocol/ProtocolMessages.kt"
+        helper = helper_path.read_text(encoding="utf-8")
+        self.assertIn("import org.whitep.shared.contracts.v1.HostAnnouncement", helper)
+        self.assertIn("import org.whitep.shared.contracts.v1.hostAnnouncement", helper)
+        self.assertIn("HostAnnouncement.parseFrom(bytes)", helper)
+        self.assertIn("message.toByteArray()", helper)
+
+    def test_protocol_version_policy_maps_rejections_to_wire_error_codes(self):
+        self.assertIn('public const string CurrentVersion = "1.0.0";', VERSION_POLICY)
+        self.assertIn('public const string InvalidMessageErrorCode = "PROTOCOL_ERROR_CODE_INVALID_MESSAGE";', VERSION_POLICY)
+        self.assertIn('public const string UnsupportedVersionErrorCode = "PROTOCOL_ERROR_CODE_UNSUPPORTED_VERSION";', VERSION_POLICY)
+        self.assertIn("PROTOCOL_ERROR_CODE_INVALID_MESSAGE", SCHEMA)
+        self.assertIn("PROTOCOL_ERROR_CODE_UNSUPPORTED_VERSION", SCHEMA)
+        self.assertIn("ProtocolVersionPolicy.Evaluate", (ROOT / "tests/HostLifecycle.Tests/Program.cs").read_text(encoding="utf-8"))
+
+    def test_readme_distinguishes_shared_schema_from_unimplemented_transport(self):
+        self.assertIn("protocol/whitep/v1/messages.proto", README)
+        self.assertIn("انتقال شبکه", README)
+        self.assertIn("هنوز پیاده‌سازی نشده‌اند", README)
+
+
+if __name__ == "__main__":
+    unittest.main()
