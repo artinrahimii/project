@@ -16,6 +16,10 @@ public static class PeerResponseCorrelationValidator
         ArgumentNullException.ThrowIfNull(response);
 
         if (string.IsNullOrWhiteSpace(expectedHostIdentity) ||
+            string.IsNullOrWhiteSpace(request.RoundId) ||
+            !StringComparer.Ordinal.Equals(request.RoundId, response.RoundId) ||
+            request.DeadlineUnixMs == 0 ||
+            response.CompletedAtUnixMs > request.DeadlineUnixMs ||
             !StringComparer.Ordinal.Equals(request.RequestId, response.RequestId) ||
             !StringComparer.Ordinal.Equals(request.AttemptId, response.AttemptId) ||
             !StringComparer.Ordinal.Equals(request.ModelId, response.ModelId) ||

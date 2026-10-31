@@ -138,6 +138,7 @@ class InferenceAttemptDispatcher(
         }
 
         // Prepare and validate every payload before sending any of them.
+        val roundId = UUID.randomUUID().toString()
         val payloads = ArrayList<InferenceRequest>(selectedHosts.size)
         for (attemptId in attemptIds) {
             when (
@@ -145,6 +146,7 @@ class InferenceAttemptDispatcher(
                     InferenceRequestPayloadBuilder.build(
                         requestId = distributedRequest.requestId,
                         attemptId = attemptId,
+                        roundId = roundId,
                         modelId = modelId,
                         currentMessage = currentMessage,
                         capsule = capsule,

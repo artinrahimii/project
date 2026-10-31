@@ -58,6 +58,8 @@ class Libp2pInferenceRequestTransport(
     private class PendingAttempt(
         val peerId: String,
         val modelId: String,
+        val roundId: String,
+        val deadlineUnixMs: Long,
     ) {
         val response = CompletableDeferred<InferenceResponse>()
 
@@ -114,7 +116,9 @@ class Libp2pInferenceRequestTransport(
             ephemeralHostId.isBlank() ||
             request.requestId.isBlank() ||
             request.attemptId.isBlank() ||
-            request.modelId.isBlank()
+            request.roundId.isBlank() ||
+            request.modelId.isBlank() ||
+            request.deadlineUnixMs <= clock.millis()
         ) {
             lastSubmissionFailure = "invalid_request_or_closed_transport"
             return InferenceTransportSubmission.REJECTED
@@ -183,7 +187,12 @@ class Libp2pInferenceRequestTransport(
             }
 
             val key = AttemptKey(request.requestId, request.attemptId)
-            val pending = PendingAttempt(endpoint.peerId, request.modelId)
+            val pending = PendingAttempt(
+                endpoint.peerId,
+                request.modelId,
+                request.roundId,
+                request.deadlineUnixMs,
+            )
             if (pendingAttempts.putIfAbsent(key, pending) != null) {
                 lastSubmissionFailure = "duplicate_pending_request_and_attempt_id"
                 return InferenceTransportSubmission.REJECTED
@@ -304,11 +313,16 @@ class Libp2pInferenceRequestTransport(
 
         val key = AttemptKey(response.requestId, response.attemptId)
         val pending = pendingAttempts[key] ?: return
-        if (pending.peerId != authenticatedPeerId ||
-            response.ephemeralHostId != authenticatedPeerId ||
-            response.modelId != pending.modelId ||
-            response.completedAtUnixMs <= 0L ||
-            response.outcomeValue !in 1..5
+        if (!InferenceResponseCorrelationValidator.matches(
+                response = response,
+                expectedRequestId = key.requestId,
+                expectedAttemptId = key.attemptId,
+                expectedRoundId = pending.roundId,
+                expectedHostId = pending.peerId,
+                expectedModelId = pending.modelId,
+                requestDeadlineUnixMs = pending.deadlineUnixMs,
+                receivedAtUnixMs = clock.millis(),
+            ) || authenticatedPeerId != pending.peerId
         ) {
             pending.response.completeExceptionally(
                 SecurityException("The response did not match its authenticated peer or request correlation."),

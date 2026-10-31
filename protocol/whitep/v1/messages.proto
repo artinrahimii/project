@@ -73,6 +73,8 @@ message InferenceRequest {
   bytes context_capsule = 7;
   // Required exact protocol version; incompatible request versions are rejected.
   string protocol_version = 8;
+  // Ephemeral identifier shared by all host attempts in one dispatch round.
+  string round_id = 9;
 }
 
 message InferenceResponse {
@@ -86,6 +88,8 @@ message InferenceResponse {
   string model_id = 7;
   // Safe, user-displayable error detail; empty when outcome is successful.
   string error_message = 8;
+  // Must echo the request's ephemeral dispatch round identifier.
+  string round_id = 9;
 }
 
 message CancelRequest {

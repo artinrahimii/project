@@ -53,6 +53,7 @@ class ProtoContractTests(unittest.TestCase):
             r"uint32\s+max_output_tokens\s*=\s*6\s*;",
             r"bytes\s+context_capsule\s*=\s*7\s*;",
             r"string\s+protocol_version\s*=\s*8\s*;",
+            r"string\s+round_id\s*=\s*9\s*;",
         ):
             with self.subTest(field=declaration):
                 self.assertRegex(body, declaration)
@@ -67,6 +68,7 @@ class ProtoContractTests(unittest.TestCase):
             r"string\s+output_text\s*=\s*5\s*;",
             r"uint64\s+completed_at_unix_ms\s*=\s*6\s*;",
             r"string\s+error_message\s*=\s*8\s*;",
+            r"string\s+round_id\s*=\s*9\s*;",
         ):
             with self.subTest(field=declaration):
                 self.assertRegex(body, declaration)

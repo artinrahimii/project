@@ -116,6 +116,7 @@ class Libp2pInferenceRequestTransportTest {
                 assertNotNull(response)
                 assertEquals(request.requestId, response.requestId)
                 assertEquals(request.attemptId, response.attemptId)
+                assertEquals(request.roundId, response.roundId)
                 assertEquals(request.modelId, response.modelId)
                 assertEquals(serverPeerId, response.ephemeralHostId)
                 assertEquals("loopback-response", response.outputText)
@@ -219,6 +220,7 @@ class Libp2pInferenceRequestTransportTest {
                         attempts.map { it.attemptId }.toSet(),
                         receivedRequests.map { it.attemptId }.toSet(),
                     )
+                    assertEquals(1, receivedRequests.map { it.roundId }.toSet().size)
                     assertTrue(
                         receivedRequests.all {
                             it.prompt == "one request, three authenticated host attempts"
@@ -241,6 +243,7 @@ class Libp2pInferenceRequestTransportTest {
                         attempts.map { it.attemptId }.toSet(),
                         responses.map { it.attemptId }.toSet(),
                     )
+                    assertTrue(responses.all { it.roundId == receivedRequests.first().roundId })
                     assertTrue(responses.all { it.outcome == InferenceOutcome.INFERENCE_OUTCOME_SUCCEEDED })
                 } finally {
                     client.close()
@@ -517,6 +520,7 @@ class Libp2pInferenceRequestTransportTest {
             .setProtocolVersion("1.0.0")
             .setRequestId("req_00112233445566778899aabbccddeeff")
             .setAttemptId("attempt_android_libp2p_test")
+            .setRoundId("round-android-test")
             .setModelId("loopback-model")
             .setPrompt("protocol acceptance")
             .setDeadlineUnixMs(System.currentTimeMillis() + 30_000L)
@@ -549,6 +553,7 @@ class Libp2pInferenceRequestTransportTest {
                                 .newBuilder()
                                 .setRequestId(request.requestId)
                                 .setAttemptId(request.attemptId)
+                                .setRoundId(request.roundId)
                                 .setEphemeralHostId(localPeerId)
                                 .setOutcome(InferenceOutcome.INFERENCE_OUTCOME_SUCCEEDED)
                                 .setOutputText("loopback-response")

@@ -40854,33 +40854,168 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0164 و T0160 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
-      "expected_output_paths": [
-        "src/Client.Android/Requests/ + tests/"
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "protocol/whitep/v1/messages.proto",
+        "src/Client.Android/app/src/main/java/com/whitep/client/protocol/InferenceRequestPayloadBuilder.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceAttemptDispatcher.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
+        "src/Host.Windows/Networking/PeerResponseCorrelationValidator.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs",
+        "tests/HostLifecycle.Tests/AndroidInteropPeerServer.cs",
+        "tests/HostLifecycle.Tests/PeerMessageSecurityAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs",
+        "src/Client.Android/app/src/test/java/com/whitep/client/network/Libp2pInferenceRequestTransportTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/protocol/InferenceRequestPayloadBuilderTest.kt",
+        "tests/test_proto_contract.py",
+        "tests/test_android_inference_request_payload_builder_contract.py",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/InferenceResponseCorrelationValidator.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/network/InferenceResponseCorrelationValidatorTest.kt",
+        "tests/test_android_inference_response_correlation_contract.py"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nDependency review (2026-10-31): T0164 -> T0165 and T0160 -> T0165 are validated contract_or_interface_dependency edges. Contract gap to resolve during implementation: protocol/whitep/v1/messages.proto currently defines no explicit round_id/round_number field on InferenceRequest or InferenceResponse. Do not claim remote round validation from requestId/attemptId alone; decide and test a compatible round-correlation contract.",
+      "expected_output_paths": [
+        "protocol/whitep/v1/messages.proto",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/ + network/",
+        "src/Host.Windows/Networking/ + MainWindow.xaml.cs",
+        "tests/"
+      ],
+      "evidence": [
+        "protocol/whitep/v1/messages.proto",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/InferenceResponseCorrelationValidator.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/network/InferenceResponseCorrelationValidatorTest.kt",
+        "src/Host.Windows/Networking/PeerResponseCorrelationValidator.cs",
+        "tests/HostLifecycle.Tests/PeerMessageSecurityAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/AndroidInteropPeerServer.cs",
+        "tests/test_android_inference_response_correlation_contract.py",
+        "step three/T0165/execution-report.md",
+        "step three/T0165/evidence/round-response-correlation.md"
+      ],
+      "notes": "Round correlation is now represented by additive round_id fields in both Protobuf request and response messages. Exact-head CI is pending; preserve in_progress until Android/Windows builds and all acceptance tests pass. Older peers without round_id are intentionally rejected by the new Android response validator.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
-        "related_commits": [],
+        "last_attempt_id": "T0165-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "protocol/whitep/v1/messages.proto",
+          "src/Client.Android/app/src/main/java/com/whitep/client/protocol/InferenceRequestPayloadBuilder.kt",
+          "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceAttemptDispatcher.kt",
+          "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
+          "src/Host.Windows/Networking/PeerResponseCorrelationValidator.cs",
+          "src/Host.Windows/MainWindow.xaml.cs",
+          "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs",
+          "tests/HostLifecycle.Tests/AndroidInteropPeerServer.cs",
+          "tests/HostLifecycle.Tests/PeerMessageSecurityAcceptanceTests.cs",
+          "tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs",
+          "src/Client.Android/app/src/test/java/com/whitep/client/network/Libp2pInferenceRequestTransportTest.kt",
+          "src/Client.Android/app/src/test/java/com/whitep/client/protocol/InferenceRequestPayloadBuilderTest.kt",
+          "tests/test_proto_contract.py",
+          "tests/test_android_inference_request_payload_builder_contract.py",
+          "src/Client.Android/app/src/main/java/com/whitep/client/network/InferenceResponseCorrelationValidator.kt",
+          "src/Client.Android/app/src/test/java/com/whitep/client/network/InferenceResponseCorrelationValidatorTest.kt",
+          "tests/test_android_inference_response_correlation_contract.py",
+          "step three/T0165/execution-report.md",
+          "step three/T0165/evidence/round-response-correlation.md",
+          "step three/project-graph.md"
+        ],
+        "related_commits": [
+          "54799becc9c6288ccfc698603e6ab70e7d895d4b"
+        ],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
-          "affected_by_contract_changes": [],
-          "review_evidence": []
+          "state": "pending",
+          "triggering_contracts": [
+            "InferenceRequest.round_id",
+            "InferenceResponse.round_id",
+            "InferenceResponse.completed_at_unix_ms <= InferenceRequest.deadline_unix_ms"
+          ],
+          "affected_by_contract_changes": [
+            "protocol/whitep/v1/messages.proto",
+            "src/Client.Android/app/src/main/java/com/whitep/client/protocol/InferenceRequestPayloadBuilder.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
+            "src/Host.Windows/Networking/PeerResponseCorrelationValidator.cs"
+          ],
+          "review_evidence": [
+            "src/Client.Android/app/src/test/java/com/whitep/client/network/InferenceResponseCorrelationValidatorTest.kt",
+            "tests/HostLifecycle.Tests/PeerMessageSecurityAcceptanceTests.cs",
+            "tests/test_android_inference_response_correlation_contract.py"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0165-A001",
+          "started_at": "2026-10-31T11:28:00.000Z",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Implemented additive round_id fields for requests/responses; generated one ID per dispatch; bound round, peer, model and deadline to Android pending attempts; added Android completion/arrival deadline validation and Windows request-response round/deadline validation. Source review completed; exact-head CI is pending.",
+          "changed_files": [
+            "protocol/whitep/v1/messages.proto",
+            "src/Client.Android/app/src/main/java/com/whitep/client/protocol/InferenceRequestPayloadBuilder.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceAttemptDispatcher.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
+            "src/Host.Windows/Networking/PeerResponseCorrelationValidator.cs",
+            "src/Host.Windows/MainWindow.xaml.cs",
+            "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs",
+            "tests/HostLifecycle.Tests/AndroidInteropPeerServer.cs",
+            "tests/HostLifecycle.Tests/PeerMessageSecurityAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs",
+            "src/Client.Android/app/src/test/java/com/whitep/client/network/Libp2pInferenceRequestTransportTest.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/protocol/InferenceRequestPayloadBuilderTest.kt",
+            "tests/test_proto_contract.py",
+            "tests/test_android_inference_request_payload_builder_contract.py",
+            "src/Client.Android/app/src/main/java/com/whitep/client/network/InferenceResponseCorrelationValidator.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/network/InferenceResponseCorrelationValidatorTest.kt",
+            "tests/test_android_inference_response_correlation_contract.py",
+            "step three/T0165/execution-report.md",
+            "step three/T0165/evidence/round-response-correlation.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Source and contract diff review",
+              "result": "passed",
+              "summary": "The new request/response field numbers are additive and unique; request round ID is shared across one dispatch; response matching is bound to authenticated peer and absolute deadline."
+            },
+            {
+              "name": "Local Gradle/JVM",
+              "result": "not_run",
+              "summary": "No local Android/Gradle toolchain is available through the repository connector."
+            },
+            {
+              "name": "Local .NET/HostLifecycle",
+              "result": "not_run",
+              "summary": "No local Windows/.NET toolchain is available through the repository connector."
+            },
+            {
+              "name": "Local Python quality suite",
+              "result": "not_run",
+              "summary": "No local checkout/runtime is available through the repository connector."
+            },
+            {
+              "name": "V 3.0.689 exact-head Step Three and product CI",
+              "result": "pending",
+              "summary": "Must pass Python quality, graph/evidence checks, Android lint/APK/JVM/Protobuf, Windows WPF, HostLifecycle and native Android-to-.NET peer interoperability."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "Added InferenceRequest.round_id = 9 and InferenceResponse.round_id = 9 without renumbering existing fields.",
+            "Android now requires the response round ID to match the dispatch round and requires both response completion and local receive times to be within the absolute request deadline.",
+            "Windows echoes round_id and rejects mismatched round IDs or response completion after the request deadline.",
+            "Older peers that omit round_id are rejected by the new Android response path; coordinated rollout is required."
+          ],
+          "follow_up": "Inspect exact-head V 3.0.689 CI. Keep T0165 in_progress until all required quality, Android, Windows, HostLifecycle and cross-runtime interop checks pass."
+        }
+      ]
     },
     {
       "id": "T0166",
@@ -52604,7 +52739,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-31T11:22:00.000Z",
+  "updated_at": "2026-10-31T11:28:00.000Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

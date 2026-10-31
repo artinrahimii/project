@@ -37,6 +37,7 @@ class InferenceRequestPayloadBuilderTest {
         assertArrayEquals(encodedCapsule, request.contextCapsule.toByteArray())
         assertEquals("request-001", request.requestId)
         assertEquals("attempt-001", request.attemptId)
+        assertEquals("round-001", request.roundId)
         assertEquals("local/model-1", request.modelId)
         assertEquals("1.0.0", request.protocolVersion)
         assertTrue(
@@ -79,6 +80,14 @@ class InferenceRequestPayloadBuilderTest {
     }
 
     @Test
+    fun rejectsBlankRoundIdentifier() {
+        assertEquals(
+            InferenceRequestPayloadBuildResult.Rejected(InferenceRequestPayloadRejection.EMPTY_ROUND_ID),
+            build(roundId = " "),
+        )
+    }
+
+    @Test
     fun rejectsSerializedRequestThatExceedsSixteenKiB() {
         val result = build(requestId = "r".repeat(InferenceRequestPayloadBuilder.MAX_SERIALIZED_REQUEST_BYTES))
 
@@ -93,6 +102,7 @@ class InferenceRequestPayloadBuilderTest {
     private fun build(
         requestId: String = "request-001",
         attemptId: String = "attempt-001",
+        roundId: String = "round-001",
         modelId: String = "local/model-1",
         currentMessage: String = "Current message only",
         capsule: ConversationContextCapsule =
@@ -104,6 +114,7 @@ class InferenceRequestPayloadBuilderTest {
         InferenceRequestPayloadBuilder.build(
             requestId = requestId,
             attemptId = attemptId,
+            roundId = roundId,
             modelId = modelId,
             currentMessage = currentMessage,
             capsule = capsule,

@@ -207,6 +207,7 @@ internal static class PeerAnnouncementClientAcceptanceTests
                 {
                     RequestId = requestMessage.RequestId,
                     AttemptId = requestMessage.AttemptId,
+                    RoundId = requestMessage.RoundId,
                     EphemeralHostId = hostPeerId,
                     Outcome = InferenceOutcome.Succeeded,
                     OutputText = "loopback-inference-result",
@@ -251,6 +252,7 @@ internal static class PeerAnnouncementClientAcceptanceTests
             ProtocolVersion = ProtocolVersionPolicy.CurrentVersion,
             RequestId = SecureRequestIdGenerator.CreateRequestId(),
             AttemptId = "attempt-loopback-001",
+            RoundId = "round-loopback-001",
             ModelId = "fixture-model",
             Prompt = "peer security acceptance request",
             DeadlineUnixMs = (ulong)DateTimeOffset.UtcNow.AddMinutes(2).ToUnixTimeMilliseconds(),
@@ -263,6 +265,7 @@ internal static class PeerAnnouncementClientAcceptanceTests
         var response = InferenceResponse.Parser.ParseFrom(responseWire);
         Assert(response.RequestId == requestMessage.RequestId &&
                response.AttemptId == requestMessage.AttemptId &&
+               response.RoundId == requestMessage.RoundId &&
                response.EphemeralHostId == hostPeerId &&
                response.Outcome == InferenceOutcome.Succeeded &&
                response.OutputText == "loopback-inference-result",

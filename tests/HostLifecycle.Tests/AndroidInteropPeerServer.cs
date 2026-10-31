@@ -69,6 +69,7 @@ internal static class AndroidInteropPeerServer
         {
             RequestId = request.RequestId,
             AttemptId = request.AttemptId,
+            RoundId = request.RoundId,
             EphemeralHostId = server.LocalPeerIdentity,
             Outcome = InferenceOutcome.Succeeded,
             OutputText = "dotnet-host-response",

@@ -8,6 +8,7 @@ import org.whitep.shared.contracts.v1.inferenceRequest
 enum class InferenceRequestPayloadRejection {
     EMPTY_REQUEST_ID,
     EMPTY_ATTEMPT_ID,
+    EMPTY_ROUND_ID,
     EMPTY_MODEL_ID,
     EMPTY_PROMPT,
     PROMPT_TOO_LARGE,
@@ -43,6 +44,7 @@ object InferenceRequestPayloadBuilder {
     fun build(
         requestId: String,
         attemptId: String,
+        roundId: String,
         modelId: String,
         currentMessage: String,
         capsule: ConversationContextCapsule,
@@ -58,6 +60,11 @@ object InferenceRequestPayloadBuilder {
         if (attemptId.isBlank()) {
             return InferenceRequestPayloadBuildResult.Rejected(
                 InferenceRequestPayloadRejection.EMPTY_ATTEMPT_ID,
+            )
+        }
+        if (roundId.isBlank()) {
+            return InferenceRequestPayloadBuildResult.Rejected(
+                InferenceRequestPayloadRejection.EMPTY_ROUND_ID,
             )
         }
         if (modelId.isBlank()) {
@@ -107,6 +114,7 @@ object InferenceRequestPayloadBuilder {
             inferenceRequest {
                 this.requestId = requestId
                 this.attemptId = attemptId
+                this.roundId = roundId
                 this.modelId = modelId
                 this.prompt = currentMessage
                 this.deadlineUnixMs = deadlineUnixMs

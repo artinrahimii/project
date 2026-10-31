@@ -1,0 +1,12 @@
+# T0165 execution report
+
+## Attempt T0165-A001 — request/round/host/deadline response correlation
+
+- **Base:** `54799becc9c6288ccfc698603e6ab70e7d895d4b` (`V 3.0.688`), branch `main`.
+- **Reviewed dependencies:** `T0164 -> T0165` and `T0160 -> T0165` were already validated in the graph as `contract_or_interface_dependency`. T0164 supplies the per-dispatch timer window and attempt association; T0160 supplies the canonical absolute request deadline.
+- **Implementation:** Added the additive `round_id = 9` Protobuf field to both `InferenceRequest` and `InferenceResponse`. `InferenceAttemptDispatcher` creates one fresh round ID per dispatch call and includes it in every host payload. The Android transport binds expected round ID, authenticated peer identity, model and request deadline to the pending attempt. The response validator now requires exact request/attempt/round/peer/model correlation, a positive completion timestamp no later than the request deadline, and local receipt no later than the same deadline.
+- **Windows behavior:** The WPF peer handler rejects a request with no round ID before inference; generated responses and replay rejections echo the original round ID. `PeerResponseCorrelationValidator` checks the round ID and enforces `completed_at_unix_ms <= deadline_unix_ms` before transmission.
+- **Tests added/updated:** Android unit tests cover a valid response, wrong-round response, completion after deadline and arrival after deadline. The authenticated loopback and three-native-.NET-peer transport tests now assert round-ID echo and shared-round correlation. The C# security acceptance suite checks a forged round and a late response. Python schema/builder regression guards cover field 9 and the new payload parameter.
+- **Compatibility:** This is a backward-compatible Protobuf field addition at the wire-number level. A new Android client intentionally rejects an older peer's response if it does not echo `round_id`; mixed-version peer deployments therefore require coordinated rollout. The protocol version string remains `1.0.0`; compatibility behavior is fail-closed, not implicit downgrade.
+- **Local execution:** No local Gradle/.NET/Python toolchain is available through the repository connector. No local test pass is claimed. Exact-head GitHub Actions must run after this commit.
+- **Status:** `in_progress`; exact-head CI pending. The task will not be marked done until all relevant gates pass.

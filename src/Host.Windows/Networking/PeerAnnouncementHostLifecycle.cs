@@ -331,6 +331,7 @@ public sealed class PeerAnnouncementHostLifecycle : IAsyncDisposable
         {
             RequestId = request.RequestId,
             AttemptId = request.AttemptId,
+            RoundId = request.RoundId,
             EphemeralHostId = LocalPeerIdentity,
             Outcome = InferenceOutcome.Rejected,
             OutputText = string.Empty,

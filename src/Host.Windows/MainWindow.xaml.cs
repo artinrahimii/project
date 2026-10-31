@@ -902,6 +902,9 @@ public partial class MainWindow : Window
             throw new InvalidDataException("The peer sent a malformed or invalid inference request.");
 
         var request = parsed.Message;
+        if (string.IsNullOrWhiteSpace(request.RoundId))
+            throw new InvalidDataException("The peer request is missing its dispatch round identifier.");
+
         var currentService = _peerParticipationService
             ?? throw new InvalidOperationException("Peer hosting is no longer active.");
 
@@ -968,6 +971,7 @@ public partial class MainWindow : Window
         {
             RequestId = request.RequestId,
             AttemptId = request.AttemptId,
+            RoundId = request.RoundId,
             EphemeralHostId = localPeerIdentity,
             Outcome = outcome,
             OutputText = outputText,
@@ -976,18 +980,7 @@ public partial class MainWindow : Window
             ErrorMessage = errorMessage
         };
 
-        var validation = ProtocolMessageValidator.ValidateInferenceResponse(
-            response.RequestId,
-            response.AttemptId,
-            response.EphemeralHostId,
-            (int)response.Outcome,
-            response.OutputText,
-            response.CompletedAtUnixMs,
-            response.ModelId,
-            response.ErrorMessage,
-            response.CalculateSize());
-        if (!validation.IsValid)
-            throw new InvalidDataException("The generated peer inference response did not satisfy the wire contract.");
+        PeerResponseCorrelationValidator.Validate(request, response, localPeerIdentity);
 
         return response;
     }

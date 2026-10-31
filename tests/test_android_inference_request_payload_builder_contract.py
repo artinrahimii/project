@@ -23,6 +23,7 @@ class AndroidInferenceRequestPayloadContractTests(unittest.TestCase):
         expected = {
             "request_id": "string",
             "attempt_id": "string",
+            "round_id": "string",
             "model_id": "string",
             "prompt": "string",
             "deadline_unix_ms": "uint64",
@@ -47,6 +48,7 @@ class AndroidInferenceRequestPayloadContractTests(unittest.TestCase):
             [
                 "requestId",
                 "attemptId",
+                "roundId",
                 "modelId",
                 "currentMessage",
                 "capsule",

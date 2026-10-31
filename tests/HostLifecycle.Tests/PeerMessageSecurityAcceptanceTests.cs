@@ -64,6 +64,7 @@ internal static class PeerMessageSecurityAcceptanceTests
         {
             RequestId = request.RequestId,
             AttemptId = request.AttemptId,
+            RoundId = request.RoundId,
             EphemeralHostId = "authenticated-local-host",
             Outcome = InferenceOutcome.Succeeded,
             OutputText = "verified-result",
@@ -88,6 +89,14 @@ internal static class PeerMessageSecurityAcceptanceTests
         var wrongModel = valid.Clone();
         wrongModel.ModelId = "different-model";
         ExpectInvalidData(() => PeerResponseCorrelationValidator.Validate(request, wrongModel, "authenticated-local-host"));
+
+        var wrongRound = valid.Clone();
+        wrongRound.RoundId = "round-forged";
+        ExpectInvalidData(() => PeerResponseCorrelationValidator.Validate(request, wrongRound, "authenticated-local-host"));
+
+        var lateResponse = valid.Clone();
+        lateResponse.CompletedAtUnixMs = request.DeadlineUnixMs + 1UL;
+        ExpectInvalidData(() => PeerResponseCorrelationValidator.Validate(request, lateResponse, "authenticated-local-host"));
     }
 
     private static InferenceRequest CreateRequest() => new()
@@ -95,6 +104,7 @@ internal static class PeerMessageSecurityAcceptanceTests
         ProtocolVersion = ProtocolVersionPolicy.CurrentVersion,
         RequestId = "req_00112233445566778899aabbccddeeff",
         AttemptId = "attempt-001",
+        RoundId = "round-001",
         ModelId = "fixture-model",
         Prompt = "non-sensitive security test prompt",
         DeadlineUnixMs = (ulong)DateTimeOffset.UtcNow.AddMinutes(2).ToUnixTimeMilliseconds(),
