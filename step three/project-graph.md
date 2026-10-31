@@ -42861,8 +42861,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0168 و T0160 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "تکمیل‌شده",
       "actual_output_paths": [
         "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
         "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt",
@@ -42885,12 +42885,12 @@
         "step three/T0169/execution-report.md",
         "step three/T0169/evidence/verification.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0169-A001 (2026-10-31T14:51:46.890Z): Reviewed T0168 -> T0169 and T0160 -> T0169 against the completed response-collection result and canonical InferenceRequest contract. Both existing blocks edges are retained and validated as contract_or_interface_dependency; evidence and rationale are in edge_change_log. Added an excluded-host set to HostCandidateSelector and a response-gated selectNextRound API: any valid prior response suppresses retry; a completed no-response round excludes every prior attempt host and chooses up to three next compatible hosts. Added three JVM regressions and extended the Python source contract. Exact-head CI pending; status remains in_progress.\n\nT0169-A001 exact-head V 3.0.711 CI: Step Three quality, HostLifecycle and all Windows WPF format/build/Protobuf/startup/security/DPAPI checks passed. Android KtLint failed only on three missing line-break-before-dot findings in HostCandidateSelectorTest.kt lines 214, 222 and 234; Android APK/JVM/Protobuf were skipped. A002 changes only those three test-source formatting locations; no runtime behavior or interface change.\n\nT0169-A002 exact-head V 3.0.712 CI: Step Three quality, all Windows WPF checks and HostLifecycle passed. Android KtLint still found three formatting issues in the new chained assertions: the selector receiver requires a leading-dot continuation, while `.isEmpty()` must remain attached to the closing invocation line. APK/JVM/Protobuf were skipped. A003 applies exactly this fluent-call layout; runtime logic is unchanged.\n\nT0169-A003 exact-head V 3.0.713 CI: Step Three quality, HostLifecycle and all Windows WPF checks passed. Android KtLint accepted leading-dot method chaining but reported three selector-call argument/close blocks under-indented by four spaces. APK/JVM/Protobuf were skipped. A004 adds the required four-space indentation to these test-only blocks.\n\nT0169-A004 exact-head V 3.0.714 CI: Step Three quality, HostLifecycle and all Windows WPF checks passed. Android KtLint accepted receiver chaining and argument indentation, and reported only three close-paren lines over-indented (20 spaces instead of 16) at lines 220, 233 and 243. APK/JVM/Protobuf skipped. A005 reduces only those three close-line indents.\n",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0169-A001 (2026-10-31T14:51:46.890Z): Reviewed T0168 -> T0169 and T0160 -> T0169 against the completed response-collection result and canonical InferenceRequest contract. Both existing blocks edges are retained and validated as contract_or_interface_dependency; evidence and rationale are in edge_change_log. Added an excluded-host set to HostCandidateSelector and a response-gated selectNextRound API: any valid prior response suppresses retry; a completed no-response round excludes every prior attempt host and chooses up to three next compatible hosts. Added three JVM regressions and extended the Python source contract. Exact-head CI pending; status remains in_progress.\n\nT0169-A001 exact-head V 3.0.711 CI: Step Three quality, HostLifecycle and all Windows WPF format/build/Protobuf/startup/security/DPAPI checks passed. Android KtLint failed only on three missing line-break-before-dot findings in HostCandidateSelectorTest.kt lines 214, 222 and 234; Android APK/JVM/Protobuf were skipped. A002 changes only those three test-source formatting locations; no runtime behavior or interface change.\n\nT0169-A002 exact-head V 3.0.712 CI: Step Three quality, all Windows WPF checks and HostLifecycle passed. Android KtLint still found three formatting issues in the new chained assertions: the selector receiver requires a leading-dot continuation, while `.isEmpty()` must remain attached to the closing invocation line. APK/JVM/Protobuf were skipped. A003 applies exactly this fluent-call layout; runtime logic is unchanged.\n\nT0169-A003 exact-head V 3.0.713 CI: Step Three quality, HostLifecycle and all Windows WPF checks passed. Android KtLint accepted leading-dot method chaining but reported three selector-call argument/close blocks under-indented by four spaces. APK/JVM/Protobuf were skipped. A004 adds the required four-space indentation to these test-only blocks.\n\nT0169-A004 exact-head V 3.0.714 CI: Step Three quality, HostLifecycle and all Windows WPF checks passed. Android KtLint accepted receiver chaining and argument indentation, and reported only three close-paren lines over-indented (20 spaces instead of 16) at lines 220, 233 and 243. APK/JVM/Protobuf skipped. A005 reduces only those three close-line indents.\n\nT0169-A005 (V 3.0.715, 2026-10-31T15:14:41.561Z): Exact-head CI passed. Android ktlintCheck, assembleDebug, testDebugUnitTest all passed. Android JVM report artifact 13047157673 independently inspected: 128 tests, zero failures, zero ignored; HostCandidateSelectorTest has 11 tests and all three added T0169 regressions passed. Generated Protobuf Java and Kotlin validation and Android APK/test report uploads passed. Windows WPF full build/startup/process/policy/capability/DPAPI checks and artifact upload passed; HostLifecycle passed; Step Three Python/graph quality passed. T0169 status changed to done with evidence. The API implements next-batch selection at HostCandidateSelector boundary; it does not assert that AndroidInferenceRequestRuntime already owns a complete automatic multi-round orchestration loop. T0170 remains the next dependent task and its own round/total-host limits must be reviewed independently.\n",
       "execution_summary": {
         "attempt_count": 5,
         "failed_attempt_count": 3,
         "last_attempt_id": "T0169-A005",
-        "last_attempt_result": "partial",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
           "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt",
@@ -42903,7 +42903,8 @@
           "bf49308e0688f2394e7fe6f8bcf929e571bef590",
           "f00b15bfdac6f29580e0e8e4aa9198b57801bd07",
           "83077e92225e64b56d113c407709bbfdeea434da",
-          "b57d0d8096c8c6430fd0a737b550b1a852904b8b"
+          "b57d0d8096c8c6430fd0a737b550b1a852904b8b",
+          "8dc7354faa421b54e26318fcf944e58586e39562"
         ],
         "tests_passed": [
           {
@@ -42977,6 +42978,54 @@
             "result": "passed",
             "url": "https://github.com/artinrahimii/project/actions/runs/41213016243",
             "summary": "HostLifecycle tests passed."
+          },
+          {
+            "name": "Android Kotlin formatting and lint (ktlintCheck)",
+            "result": "passed",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41213276566",
+            "summary": "Gradle ktlintCheck completed successfully."
+          },
+          {
+            "name": "Android debug APK (assembleDebug)",
+            "result": "passed",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41213276566",
+            "summary": "assembleDebug completed successfully; APK artifact uploaded as whitep-android-debug-apk (artifact 13047152756)."
+          },
+          {
+            "name": "Android JVM unit tests (testDebugUnitTest)",
+            "result": "passed",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41213276566",
+            "summary": "128 tests, 0 failures, 0 ignored. HostCandidateSelectorTest: 11 tests, 0 failures; all three new T0169 regressions passed."
+          },
+          {
+            "name": "Generated Protobuf Java and Kotlin source validation",
+            "result": "passed",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41213276566",
+            "summary": "Generated-source directory and both generated Java and Kotlin source files verified; validation Gradle command passed."
+          },
+          {
+            "name": "Android test report artifact upload",
+            "result": "passed",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41213276566",
+            "summary": "Artifact whitep-android-unit-test-reports uploaded (artifact 13047157673, 45,794 bytes); report independently inspected."
+          },
+          {
+            "name": "Windows WPF host workflow",
+            "result": "passed",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41213276566",
+            "summary": "C# formatting, Release build, generated Protobuf, application startup, process restrictions, policy rejection, backend/model capability gate, DPAPI identity/trust and host artifact upload all passed."
+          },
+          {
+            "name": "HostLifecycle unit and integration tests",
+            "result": "passed",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41213276566",
+            "summary": "The HostLifecycle job completed successfully."
+          },
+          {
+            "name": "Step Three graph and Python quality gate",
+            "result": "passed",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41213276595",
+            "summary": "Python tests, syntax compilation, graph structure, output paths and evidence checks all passed on the same exact commit."
           }
         ],
         "tests_failed": [
@@ -43029,7 +43078,7 @@
             "step three/T0169/evidence/verification.md",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "bf49308e0688f2394e7fe6f8bcf929e571bef590",
           "tests": [
             {
               "name": "Step Three quality gate — V 3.0.711",
@@ -43074,7 +43123,7 @@
             "step three/T0169/evidence/verification.md",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "f00b15bfdac6f29580e0e8e4aa9198b57801bd07",
           "tests": [
             {
               "name": "Step Three quality gate — V 3.0.712",
@@ -43119,7 +43168,7 @@
             "step three/T0169/evidence/verification.md",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "83077e92225e64b56d113c407709bbfdeea434da",
           "tests": [
             {
               "name": "Step Three quality gate — V 3.0.713",
@@ -43164,7 +43213,7 @@
             "step three/T0169/evidence/verification.md",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "b57d0d8096c8c6430fd0a737b550b1a852904b8b",
           "tests": [
             {
               "name": "Step Three quality gate — V 3.0.714",
@@ -43200,38 +43249,71 @@
         {
           "attempt_id": "T0169-A005",
           "started_at": "2026-10-31T15:05:44.997Z",
-          "ended_at": "2026-10-31T15:05:44.997Z",
-          "result": "partial",
-          "summary": "Reduced only the indentation of the three .isEmpty() closing lines from 20 to 16 spaces, matching exact-head V 3.0.714 KtLint output. No selector logic or API changed. V 3.0.715 exact-head verification pending.",
+          "ended_at": "2026-10-31T15:14:41.561Z",
+          "result": "succeeded",
+          "summary": "Exact-head V 3.0.715 verification passed end-to-end. Android KtLint, assembleDebug, testDebugUnitTest (128 total JVM tests, 0 failures, 0 ignored; all 11 HostCandidateSelectorTest cases passed including the three new T0169 regressions), generated Java/Kotlin Protobuf source validation and APK/test-report artifact uploads all succeeded. Windows WPF formatting, Release build, Protobuf, startup, process/policy/capability, DPAPI identity/trust and artifact upload passed. HostLifecycle and Step Three Python/graph quality passed. No test failure remains on this revision.",
           "changed_files": [
             "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt",
             "step three/T0169/execution-report.md",
             "step three/T0169/evidence/verification.md",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "8dc7354faa421b54e26318fcf944e58586e39562",
           "tests": [
             {
-              "name": "Android KtLint — V 3.0.715",
-              "result": "pending",
-              "summary": "Verify the final three close-line indentation corrections."
+              "name": "Android Kotlin formatting and lint (ktlintCheck)",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41213276566",
+              "summary": "Gradle ktlintCheck completed successfully."
             },
             {
-              "name": "Android APK, JVM tests and generated Protobuf — V 3.0.715",
-              "result": "pending",
-              "summary": "Run after KtLint passes."
+              "name": "Android debug APK (assembleDebug)",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41213276566",
+              "summary": "assembleDebug completed successfully; APK artifact uploaded as whitep-android-debug-apk (artifact 13047152756)."
             },
             {
-              "name": "Step Three quality gate, Windows WPF and HostLifecycle — V 3.0.715",
-              "result": "pending",
-              "summary": "Exact-head workflows rerun for this test-only formatting edit."
+              "name": "Android JVM unit tests (testDebugUnitTest)",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41213276566",
+              "summary": "128 tests, 0 failures, 0 ignored. HostCandidateSelectorTest: 11 tests, 0 failures; all three new T0169 regressions passed."
+            },
+            {
+              "name": "Generated Protobuf Java and Kotlin source validation",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41213276566",
+              "summary": "Generated-source directory and both generated Java and Kotlin source files verified; validation Gradle command passed."
+            },
+            {
+              "name": "Android test report artifact upload",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41213276566",
+              "summary": "Artifact whitep-android-unit-test-reports uploaded (artifact 13047157673, 45,794 bytes); report independently inspected."
+            },
+            {
+              "name": "Windows WPF host workflow",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41213276566",
+              "summary": "C# formatting, Release build, generated Protobuf, application startup, process restrictions, policy rejection, backend/model capability gate, DPAPI identity/trust and host artifact upload all passed."
+            },
+            {
+              "name": "HostLifecycle unit and integration tests",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41213276566",
+              "summary": "The HostLifecycle job completed successfully."
+            },
+            {
+              "name": "Step Three graph and Python quality gate",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41213276595",
+              "summary": "Python tests, syntax compilation, graph structure, output paths and evidence checks all passed on the same exact commit."
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect exact-head V 3.0.715 Actions. Do not declare T0169 complete until all acceptance checks pass."
+          "follow_up": "T0169 completed. Continue with T0170 after independently reviewing its dependencies and acceptance criteria."
         }
       ]
     },
@@ -54947,7 +55029,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-31T15:05:44.997Z",
+  "updated_at": "2026-10-31T15:14:41.561Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",
