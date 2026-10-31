@@ -128,3 +128,21 @@
 - **Regression guard:** added a Python source-contract assertion that enforces the same ordering.
 - No runtime, transport, response-correlation, persistence or Protobuf contract changed.
 - Exact-head `V 3.0.698` CI is pending; T0166 remains `in_progress` until Android KtLint, APK, JVM, Protobuf and the relevant product/quality gates pass.
+
+
+## Attempt T0166-A006 — exact-head acceptance passed
+
+- **Verification target:** `V 3.0.698`, commit `00c042890f959e1f1e0dc74666f8d3c037d8d12e` on `main`.
+- Step Three quality gate passed: [run 41203195603](https://github.com/artinrahimii/project/actions/runs/41203195603).
+- Android interop fixture, KtLint, debug APK build, JVM tests, generated Protobuf Java/Kotlin verification and artifacts passed in [Android job 124542949303](https://github.com/artinrahimii/project/actions/runs/41203195523/job/124542949303).
+- `testDebugUnitTest` completed successfully, including response-card ViewModel cases for distinct host/attempt entries, duplicate attempt rejection, mismatched identity rejection and clearing ephemeral state.
+- APK artifact [13043795269](https://github.com/artinrahimii/project/actions/runs/41203195523/artifacts/13043795269): 19,441,811 bytes. JVM reports [13043765302](https://github.com/artinrahimii/project/actions/runs/41203195523/artifacts/13043765302): 44,519 bytes.
+- Windows WPF Release/build/startup/security/DPAPI and host artifact passed: [job 124542949496](https://github.com/artinrahimii/project/actions/runs/41203195523/job/124542949496); Windows artifact [13043169078](https://github.com/artinrahimii/project/actions/runs/41203195523/artifacts/13043169078): 14,255,753 bytes. HostLifecycle passed: [job 124542949486](https://github.com/artinrahimii/project/actions/runs/41203195523/job/124542949486).
+- Product workflow `41203195523` completed with `conclusion=success` on the exact main commit. A001–A005 remain recorded as failed attempts; A006 is the successful sixth attempt. Contract revalidation passed.
+- **Final task status:** `done`. The scope is ephemeral per-attempt response state and separate Compose cards; the preview still does not initiate a live request, so end-to-end Android-to-host inference is not claimed.
+
+## T0167 incoming dependency review
+
+- `T0166 → T0167`: validated `contract_or_interface_dependency`. The no-auto-merge task consumes T0166's per-attempt response state and Compose card interface. Evidence: `RequestViewModel.kt`, `HostResponseCards.kt`, `RequestViewModelTest.kt` and this report.
+- `T0160 → T0167`: validated `sequencing_only`. The renderer consumes response-card state, not `InferenceRequestPayloadBuilder`; evidence: `InferenceRequestPayloadBuilder.kt`, `HostResponseCards.kt` and the T0160 execution report.
+- Both original `blocks` edges remain unchanged; classifications and evidence are recorded in `edge_change_log`. T0167 is now eligible to start because T0166 and T0160 are done.

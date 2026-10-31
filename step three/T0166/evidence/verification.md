@@ -74,3 +74,19 @@
 - Reorder the two imports in `MainActivity.kt` as `RequestViewModel` followed by `hostResponseCards`.
 - Add a Python regression assertion for this exact relative ordering.
 - No production behavior or protocol change. Exact-head V 3.0.698 CI is pending.
+
+
+## Sixth exact-head CI run — V 3.0.698 (acceptance passed)
+
+- Step Three quality passed: [41203195603](https://github.com/artinrahimii/project/actions/runs/41203195603).
+- Android interop fixture, KtLint, `assembleDebug`, `testDebugUnitTest`, generated Protobuf Java/Kotlin verification and artifact uploads passed in [job 124542949303](https://github.com/artinrahimii/project/actions/runs/41203195523/job/124542949303).
+- Android JVM report artifact [13043765302](https://github.com/artinrahimii/project/actions/runs/41203195523/artifacts/13043765302) uploaded (44,519 bytes); debug APK artifact [13043795269](https://github.com/artinrahimii/project/actions/runs/41203195523/artifacts/13043795269) uploaded (19,441,811 bytes).
+- Windows WPF Release build, Protobuf, startup, process/policy/capability, DPAPI and artifact upload passed: [job 124542949496](https://github.com/artinrahimii/project/actions/runs/41203195523/job/124542949496). Windows artifact [13043169078](https://github.com/artinrahimii/project/actions/runs/41203195523/artifacts/13043169078) uploaded (14,255,753 bytes). HostLifecycle passed: [job 124542949486](https://github.com/artinrahimii/project/actions/runs/41203195523/job/124542949486).
+- Product workflow completed successfully on exact main commit `00c042890f959e1f1e0dc74666f8d3c037d8d12e`. All earlier failed attempts remain preserved; A006 is successful and T0166 is `done`.
+- Scope boundary: preview request submission remains unwired; no end-to-end peer inference is claimed.
+
+## T0167 incoming dependency review
+
+- T0166 → T0167 validated as `contract_or_interface_dependency`: T0167 consumes the independent `HostResponseCardState` list and card-rendering interface.
+- T0160 → T0167 validated as `sequencing_only`: the renderer does not consume the request payload builder; retain its existing `blocks` order only.
+- Both validations and evidence are recorded in `edge_change_log`; no edge type or execution-order entry was removed.
