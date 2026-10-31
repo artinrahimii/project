@@ -2,7 +2,7 @@
 
 ## Task outcome
 
-Status: `in_progress`. Request-wide round and host ceilings are implemented across the model, selector, dispatcher and runtime. A001–A006 are now recorded with their exact online commit SHAs and observed CI outcomes. A006 cleared KtLint and built the APK, but Android JVM test compilation exposed a missing import in the cross-package network test. A007 adds that import and a guard against its regression. Exact-head CI for A007 is pending; T0170 is not complete.
+Status: `done`. Request-wide round and host ceilings are implemented across the model, selector, dispatcher and runtime. A001–A006 retain their exact failures. A007 added the missing cross-package import and a source-contract guard; exact-head V 3.0.723 CI then passed, including Android JVM tests and generated-Protobuf checks.
 
 The source requirement does not specify numeric ceilings. The explicit first-release policy is **3 rounds maximum**, **3 hosts per round**, and **9 total host attempts per request**. A request may configure lower limits; invalid or over-cap configurations are rejected.
 
@@ -46,3 +46,15 @@ The source requirement does not specify numeric ceilings. The explicit first-rel
 - Local Gradle/Python execution was not available in this connected GitHub session.
 - T0169 selector contract revalidation remains `in_review` until the exact-head Android JVM suite passes.
 - Inspect Android KtLint, APK build, JVM tests, Protobuf, Windows WPF, HostLifecycle and Step Three quality for A007 before marking T0170 `done`.
+
+
+## A007 — exact-head verification (V 3.0.723)
+
+Verified on exact online `main` commit `166ac6aa0aee8f9c8ea08bac32b2e1f35f6e9b7d`:
+
+- Step Three quality gate — PASS: [run 41225742266](https://github.com/artinrahimii/project/actions/runs/41225742266). Automated Python tests, Python syntax compilation, graph structure and recorded-output/evidence validation passed.
+- Android Kotlin formatting/lint (`ktlintCheck`) — PASS; Android debug APK (`assembleDebug`) — PASS; Android JVM tests (`testDebugUnitTest`) — PASS; generated Protobuf Java/Kotlin validation — PASS; [product workflow 41225742219](https://github.com/artinrahimii/project/actions/runs/41225742219), Android job 124609392086.
+- Windows WPF Release build, generated Protobuf, startup smoke, policy/capability and DPAPI checks — PASS; product job 124609392152.
+- HostLifecycle unit/integration tests — PASS; product job 124609391994.
+
+The Android job log confirms `testDebugUnitTest` completed with `BUILD SUCCESSFUL`; generated Java and Kotlin Protobuf sources were both found and validated. The missing import no longer prevents test compilation. T0170 acceptance is satisfied. Local Gradle execution was not available in this connected GitHub session; these are exact-head CI results.

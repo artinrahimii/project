@@ -43059,7 +43059,8 @@
         "contract_revalidation": {
           "state": "in_review",
           "triggering_contracts": [
-            "HostCandidateSelector.selectNextRound now receives DistributedRequest and DistributedRequestProgress to enforce first-release budgets."
+            "HostCandidateSelector.selectNextRound now receives DistributedRequest and DistributedRequestProgress to enforce first-release budgets.",
+            "T0171 requires cumulative DistributedRequestProgress history and verifies that previous-round attempts are the exact suffix of that history."
           ],
           "affected_by_contract_changes": [
             "T0170",
@@ -43069,7 +43070,9 @@
             "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt",
             "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt",
             "tests/test_android_host_candidate_selector_contract.py",
-            "tests/test_android_inference_attempt_dispatcher_contract.py"
+            "tests/test_android_inference_attempt_dispatcher_contract.py",
+            "src/Client.Android/app/src/main/java/com/whitep/client/requests/DistributedRequest.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt"
           ]
         }
       },
@@ -43344,8 +43347,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0169 و T0160 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال انجام",
+      "status": "done",
+      "status_fa": "تکمیل‌شده",
       "actual_output_paths": [
         "src/Client.Android/app/src/main/java/com/whitep/client/requests/DistributedRequest.kt",
         "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
@@ -43388,10 +43391,10 @@
       ],
       "notes": "A001 adds first-release request limits of at most 3 rounds, 3 hosts per round and 9 total host attempts. The requirement specified no numeric values; this decision is documented. Budget progress is in-memory per Android runtime instance and is reserved conservatively across cancellation. No automatic retry loop, persistent cross-process ledger or all-round duplicate-host rule is claimed. T0169 selector contract revalidation remains in_review pending exact-head CI. A001 quality gate failed on one pre-existing source-string guard; A002 restores the exact expression and records the failure append-only. Exact A002 CI is pending. A002 passed Step Three quality but Android KtLint again failed at the same helper signature/body layout; A003 moves DistributedRequest construction onto the signature line and awaits exact-head CI. A003 Step Three quality and HostLifecycle passed; Android KtLint then exposed incorrect indentation at lines 436–441, fixed in A004. APK/JVM/Protobuf have not yet run. A004 exact-head quality, Windows WPF and HostLifecycle passed; Android KtLint found five production-source formatting violations, corrected in A005 without intended contract changes. A005 (V 3.0.721) exact-head CI left one KtLint function-argument formatting error in DistributedRequest.create; A006 splits the minOf arguments. All earlier attempt-to-commit associations have been filled with the verified online SHA values. A006 CI is pending. A006 (V 3.0.722) passed KtLint and APK build but failed Android JVM test compilation because the network-package test lacked an import for DistributedRequestProgress. A007 adds the explicit import and a Python contract guard; CI is pending.",
       "execution_summary": {
-        "attempt_count": 7,
+        "attempt_count": 8,
         "failed_attempt_count": 6,
-        "last_attempt_id": "T0170-A007",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "T0170-A007-verification",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/requests/DistributedRequest.kt",
           "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
@@ -43415,9 +43418,41 @@
           "62d844488bf9d81c00683963943c251c3de8f3de",
           "ce0e6ebdfefbff004a9be0f754e55d653cffaee4",
           "e708e8da220078cf783d1610286d793b8ff8f77c",
-          "5acdd3bf7d5ade6a4a23ca8da036f77b80c541a8"
+          "5acdd3bf7d5ade6a4a23ca8da036f77b80c541a8",
+          "166ac6aa0aee8f9c8ea08bac32b2e1f35f6e9b7d"
         ],
-        "tests_passed": [],
+        "tests_passed": [
+          {
+            "name": "Step Three quality gate — exact V 3.0.723",
+            "result": "passed",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41225742266",
+            "summary": "Python tests, syntax compilation, graph structure and recorded-output/evidence validation passed."
+          },
+          {
+            "name": "Android KtLint, debug APK and JVM tests — exact V 3.0.723",
+            "result": "passed",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41225742219",
+            "summary": "Android job 124609392086: ktlintCheck, assembleDebug and testDebugUnitTest passed."
+          },
+          {
+            "name": "Generated Protobuf Java/Kotlin source validation — exact V 3.0.723",
+            "result": "passed",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41225742219",
+            "summary": "Both generated Java and Kotlin source files were found and the validation command passed."
+          },
+          {
+            "name": "Windows WPF Release/startup/security — exact V 3.0.723",
+            "result": "passed",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41225742219",
+            "summary": "Product job 124609392152 passed."
+          },
+          {
+            "name": "HostLifecycle unit/integration — exact V 3.0.723",
+            "result": "passed",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41225742219",
+            "summary": "Product job 124609391994 passed."
+          }
+        ],
         "tests_failed": [
           {
             "name": "Android JVM test compilation — V 3.0.722",
@@ -43431,22 +43466,17 @@
         "contract_revalidation": {
           "state": "in_review",
           "triggering_contracts": [
-            "DistributedRequest maxRounds/maxTotalHosts and DistributedRequestProgress",
-            "HostCandidateSelector.selectFirstRound/selectNextRound progress-aware contract",
-            "InferenceAttemptDispatcher.dispatchRound budget-progress contract",
-            "AndroidInferenceRequestRuntime in-memory dispatchProgress contract"
+            "T0171 extends DistributedRequestProgress with cumulative ordered peer-attempt history and changes selectNextRound exclusion semantics."
           ],
           "affected_by_contract_changes": [
             "T0169",
             "T0171"
           ],
           "review_evidence": [
-            "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt",
-            "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt",
-            "src/Client.Android/app/src/test/java/com/whitep/client/network/Libp2pInferenceRequestTransportTest.kt",
-            "tests/test_android_host_candidate_selector_contract.py",
-            "tests/test_android_inference_attempt_dispatcher_contract.py",
-            "tests/test_android_libp2p_transport_contract.py"
+            "src/Client.Android/app/src/main/java/com/whitep/client/requests/DistributedRequest.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt"
           ]
         }
       },
@@ -43793,6 +43823,37 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Inspect exact-head V 3.0.723. Require all Android JVM tests and generated-Protobuf validation to pass before closing T0169 contract revalidation or marking T0170 complete."
+        },
+        {
+          "attempt_id": "T0170-A007-verification",
+          "started_at": "2026-10-31T18:26:00Z",
+          "ended_at": "2026-10-31T18:26:00Z",
+          "result": "succeeded",
+          "summary": "Inspected exact-head V 3.0.723 GitHub Actions. The missing cross-package DistributedRequestProgress import compiled; Android KtLint, debug APK, JVM tests and generated Protobuf Java/Kotlin validation passed, together with Windows WPF, HostLifecycle and Step Three quality.",
+          "changed_files": [],
+          "commit_sha": "166ac6aa0aee8f9c8ea08bac32b2e1f35f6e9b7d",
+          "tests": [
+            {
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41225742266"
+            },
+            {
+              "name": "Android KtLint/APK/JVM/Protobuf",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41225742219"
+            },
+            {
+              "name": "Windows WPF and HostLifecycle",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41225742219"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "T0170 acceptance verified. T0171 extends the progress-history contract; revalidate T0169/T0170 consumer tests on T0171 exact-head CI."
         }
       ]
     },
@@ -43813,33 +43874,134 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0170 و T0160 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال انجام",
+      "actual_output_paths": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/DistributedRequest.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/DistributedRequestTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/network/Libp2pInferenceRequestTransportTest.kt",
+        "tests/test_android_libp2p_transport_contract.py",
+        "step three/T0171/execution-report.md",
+        "step three/T0171/evidence/verification.md"
+      ],
       "expected_output_paths": [
         "src/Client.Android/Requests/ + tests/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود. Before execution, review the progress-aware HostCandidateSelector.selectNextRound API introduced by T0170. The T0170→T0171 edge remains unreviewed.",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/DistributedRequest.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/DistributedRequestTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/network/Libp2pInferenceRequestTransportTest.kt",
+        "tests/test_android_libp2p_transport_contract.py",
+        "step three/T0171/execution-report.md",
+        "step three/T0171/evidence/verification.md"
+      ],
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود. Before execution, review the progress-aware HostCandidateSelector.selectNextRound API introduced by T0170. The T0170→T0171 edge remains unreviewed.\nT0171-A001 adds ordered request-scoped peer-attempt history. All previously attempted IDs are excluded from next-round selection by default; a prior peer can be selected again only via the explicit per-call retryableEphemeralHostIds allowlist. Exact-head CI pending.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0171-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Client.Android/app/src/main/java/com/whitep/client/requests/DistributedRequest.kt",
+          "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
+          "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
+          "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt",
+          "src/Client.Android/app/src/test/java/com/whitep/client/requests/DistributedRequestTest.kt",
+          "src/Client.Android/app/src/test/java/com/whitep/client/network/Libp2pInferenceRequestTransportTest.kt",
+          "tests/test_android_libp2p_transport_contract.py",
+          "step three/T0170/execution-report.md",
+          "step three/T0170/evidence/verification.md",
+          "step three/T0171/execution-report.md",
+          "step three/T0171/evidence/verification.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
-          "affected_by_contract_changes": [],
-          "review_evidence": []
+          "state": "in_review",
+          "triggering_contracts": [
+            "DistributedRequestProgress now carries ordered peer-attempt history; HostCandidateSelector.selectNextRound consumes the history and supports explicit per-call retry allowlisting."
+          ],
+          "affected_by_contract_changes": [
+            "T0160",
+            "T0169",
+            "T0170"
+          ],
+          "review_evidence": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/requests/DistributedRequest.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/requests/DistributedRequestTest.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/network/Libp2pInferenceRequestTransportTest.kt"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0171-A001",
+          "started_at": "2026-10-31T18:26:00Z",
+          "ended_at": "2026-10-31T18:26:00Z",
+          "result": "partial",
+          "summary": "Implemented cumulative ordered peer-attempt history and explicit retry allowlisting. Runtime now records peer IDs; next-round selection excludes the full previous history by default and validates the previous-round suffix. Added Kotlin/JVM regression tests and updated the runtime source-contract guard. Exact-head CI pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/requests/DistributedRequest.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/requests/DistributedRequestTest.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/network/Libp2pInferenceRequestTransportTest.kt",
+            "tests/test_android_libp2p_transport_contract.py",
+            "step three/T0170/execution-report.md",
+            "step three/T0170/evidence/verification.md",
+            "step three/T0171/execution-report.md",
+            "step three/T0171/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Android KtLint, assembleDebug, testDebugUnitTest and generated Protobuf",
+              "result": "pending"
+            },
+            {
+              "name": "Step Three Python/graph quality gate",
+              "result": "pending"
+            },
+            {
+              "name": "Windows WPF and HostLifecycle",
+              "result": "pending"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            {
+              "path": "src/Client.Android/app/src/main/java/com/whitep/client/requests/DistributedRequest.kt",
+              "detail": "Added ordered attemptedEphemeralHostIds to DistributedRequestProgress and an ID-based afterDispatch overload."
+            },
+            {
+              "path": "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
+              "detail": "selectNextRound excludes cumulative attempted peer IDs unless explicitly allowlisted for this selection."
+            },
+            {
+              "path": "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
+              "detail": "Runtime reservation and successful dispatch state now retain actual peer IDs."
+            }
+          ],
+          "follow_up": "Inspect exact-head CI and correct any failures; after the Android JVM and Step Three checks pass, finalize T0171 and revalidate T0169/T0170."
+        }
+      ]
     },
     {
       "id": "T0172",
@@ -50618,19 +50780,29 @@
       "from": "T0170",
       "to": "T0171",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0170 provides request-scoped DistributedRequestProgress via AndroidInferenceRequestRuntime.dispatchProgress. T0171 extends that producer/consumer interface with an ordered list of all attempted ephemeral peer IDs; the selector consumes the list to exclude historic peers. This is a direct progress-data contract dependency, not inferred from type=blocks.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/DistributedRequest.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
+        "step three/T0170/execution-report.md"
+      ]
     },
     {
       "from": "T0160",
       "to": "T0171",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0160 defines the canonical generated InferenceRequest.request_id contract. T0171 requires request.requestId to equal DistributedRequest.requestId before applying request-scoped peer history, preventing reuse of another request's attempted-host list. This is a direct identity/interface dependency, not inferred from type=blocks.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/protocol/InferenceRequestPayloadBuilder.kt",
+        "protocol/whitep/v1/messages.proto",
+        "step three/T0160/execution-report.md"
+      ]
     },
     {
       "from": "T0171",
@@ -55505,9 +55677,39 @@
         "step three/T0160/execution-report.md"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-31T18:26:00Z",
+      "edge_from": "T0170",
+      "edge_to": "T0171",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "reason": "T0170 provides request-scoped DistributedRequestProgress via AndroidInferenceRequestRuntime.dispatchProgress. T0171 extends that producer/consumer interface with an ordered list of all attempted ephemeral peer IDs; the selector consumes the list to exclude historic peers. This is a direct progress-data contract dependency, not inferred from type=blocks.",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/DistributedRequest.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
+        "step three/T0170/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-31T18:26:00Z",
+      "edge_from": "T0160",
+      "edge_to": "T0171",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "reason": "T0160 defines the canonical generated InferenceRequest.request_id contract. T0171 requires request.requestId to equal DistributedRequest.requestId before applying request-scoped peer history, preventing reuse of another request's attempted-host list. This is a direct identity/interface dependency, not inferred from type=blocks.",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/protocol/InferenceRequestPayloadBuilder.kt",
+        "protocol/whitep/v1/messages.proto",
+        "step three/T0160/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-31T17:40:10.586Z",
+  "updated_at": "2026-10-31T18:26:00Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

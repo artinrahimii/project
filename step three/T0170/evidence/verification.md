@@ -66,3 +66,15 @@
 - Exact-head Step Three and product workflows are pending.
 - No Android JVM or Protobuf pass is claimed for A007 until the new run completes.
 - No task-wide acceptance or product-release completion is claimed.
+
+
+## A007 — exact-head V 3.0.723 verification
+
+The A007 correction is present in commit `166ac6aa0aee8f9c8ea08bac32b2e1f35f6e9b7d` on `main`. Exact-head GitHub Actions outcomes:
+
+- Step Three quality gate [41225742266](https://github.com/artinrahimii/project/actions/runs/41225742266): automated tests, compileall, graph validation and recorded-output/evidence validation passed.
+- Android product job [124609392086](https://github.com/artinrahimii/project/actions/runs/41225742219): `ktlintCheck`, `assembleDebug`, `testDebugUnitTest`, generated Protobuf Java/Kotlin validation and artifact uploads all passed.
+- Windows WPF job [124609392152](https://github.com/artinrahimii/project/actions/runs/41225742219): Release build, formatting, generated Protobuf, startup smoke and policy/DPAPI checks passed.
+- HostLifecycle job [124609391994](https://github.com/artinrahimii/project/actions/runs/41225742219): unit and integration test step passed.
+
+The Android log contains `BUILD SUCCESSFUL` for `testDebugUnitTest` and the generated-source validation command. The previous A006 compile failure is resolved; earlier failed attempts remain preserved in this evidence history.

@@ -1,0 +1,27 @@
+# T0171 — verification evidence
+
+## Reviewed base
+
+- Branch: `main`
+- Base commit: `166ac6aa0aee8f9c8ea08bac32b2e1f35f6e9b7d` (`V 3.0.723`)
+- The large `step three/project-graph.md` was read from its exact base-commit Blob; its UTF-8 byte count and computed Git Blob ID matched the tree entry before task selection.
+
+## Dependency evidence
+
+- T0170: `DistributedRequestProgress`, `AndroidInferenceRequestRuntime.dispatchProgress`, and runtime dispatch produce the request-scoped progress contract extended here.
+- T0160: the generated `InferenceRequest.request_id` and payload-builder contract provide the canonical request identity matched against `DistributedRequest.requestId`.
+- The two incoming T0171 edges were inspected against those real interfaces, reclassified to `contract_or_interface_dependency`, and recorded in the graph edge-change log. Their `blocks` type and ordering remain unchanged.
+
+## Implemented behavior
+
+- Every successful runtime dispatch records the ordered ephemeral peer IDs for that request.
+- All previously attempted peers are excluded from next-round selection by default, including hosts seen in earlier-than-immediately-previous rounds.
+- Retry exceptions are explicit per-selection allowlists and are rejected if they name an unrecorded host.
+- Incomplete multi-round history fails closed; the legacy counter-only overload is limited to first-round compatibility.
+- Kotlin/JVM regression tests and the existing runtime integration test were updated. Exact-head CI is still pending; no test pass is claimed here.
+
+## Pending exact-head checks
+
+- Android KtLint, `assembleDebug`, `testDebugUnitTest`, generated Protobuf Java/Kotlin validation.
+- Step Three Python tests, syntax, graph, output-path and evidence checks.
+- Windows WPF build/startup/security checks and HostLifecycle integration tests.

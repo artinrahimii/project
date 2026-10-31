@@ -26,6 +26,29 @@ class DistributedRequestTest {
     }
 
     @Test
+    fun progressRetainsOrderedHostHistoryAcrossRoundsAndExplicitRetries() {
+        val firstRound = DistributedRequestProgress().afterDispatch(listOf("host-a", "host-b", "host-c"))
+        val secondRound = firstRound.afterDispatch(listOf("host-d", "host-a"))
+
+        assertEquals(2, secondRound.roundsDispatched)
+        assertEquals(5, secondRound.hostsAttempted)
+        assertEquals(
+            listOf("host-a", "host-b", "host-c", "host-d", "host-a"),
+            secondRound.attemptedEphemeralHostIds,
+        )
+    }
+
+    @Test(expected = IllegalArgumentException::class)
+    fun rejectsBlankPeerIdsWhenRecordingADispatch() {
+        DistributedRequestProgress().afterDispatch(listOf("host-a", " "))
+    }
+
+    @Test(expected = IllegalArgumentException::class)
+    fun rejectsDuplicatePeerIdsWithinOneDispatchedRound() {
+        DistributedRequestProgress().afterDispatch(listOf("host-a", "host-a"))
+    }
+
+    @Test
     fun createGeneratesDistinctUuidRequestIdsAndStartsQueued() {
         val first = DistributedRequest.create(deadlineUnixMs = 1_798_000_000_000L, maxRounds = 2)
         val second = DistributedRequest.create(deadlineUnixMs = 1_798_000_000_000L, maxRounds = 2)

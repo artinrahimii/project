@@ -94,7 +94,9 @@ class AndroidLibp2pTransportContractTests(unittest.TestCase):
         self.assertIn("fun dispatchProgress(requestId: String)", source)
         self.assertIn("requestBudgetStates", source)
         self.assertIn("requestBudgetLocks.computeIfAbsent(requestId) { Mutex() }", source)
-        self.assertIn("progress.afterDispatch(result.attempts.size)", source)
+        self.assertIn("val selectedHostIds = selectedHosts.map", source)
+        self.assertIn("progress.afterDispatch(selectedHostIds)", source)
+        self.assertIn("progress.afterDispatch(result.attempts.map { attempt -> attempt.ephemeralHostId })", source)
         self.assertIn("suspend fun awaitResponse(", source)
         self.assertIn("Callers must supply HostCandidate values", source)
 

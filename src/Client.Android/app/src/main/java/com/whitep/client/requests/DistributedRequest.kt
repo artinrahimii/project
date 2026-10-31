@@ -13,16 +13,48 @@ object FirstReleaseInferenceLimits {
     const val MAX_TOTAL_HOSTS = MAX_ROUNDS * MAX_HOSTS_PER_ROUND
 }
 
-/** Immutable process-local progress for one request's dispatch budget. */
+/**
+ * Immutable process-local budget and ordered peer-attempt history for one request.
+ * Repeated IDs remain in the list so an explicitly permitted retry is still a distinct attempt.
+ */
 data class DistributedRequestProgress(
     val roundsDispatched: Int = 0,
     val hostsAttempted: Int = 0,
+    val attemptedEphemeralHostIds: List<String> = emptyList(),
 ) {
     init {
         require(roundsDispatched >= 0) { "roundsDispatched must not be negative" }
         require(hostsAttempted >= 0) { "hostsAttempted must not be negative" }
+        require(attemptedEphemeralHostIds.size <= hostsAttempted) {
+            "The recorded peer history cannot exceed the host-attempt count"
+        }
+        require(attemptedEphemeralHostIds.none { hostId -> hostId.isBlank() }) {
+            "The peer-attempt history must not contain blank IDs"
+        }
     }
 
+    fun afterDispatch(hostIds: Collection<String>): DistributedRequestProgress {
+        require(hostIds.size in 1..FirstReleaseInferenceLimits.MAX_HOSTS_PER_ROUND) {
+            "A dispatched round must contain one to three host attempts"
+        }
+        require(hostIds.none { hostId -> hostId.isBlank() }) {
+            "A dispatched round must not contain blank peer IDs"
+        }
+        require(hostIds.toSet().size == hostIds.size) {
+            "A dispatched round must contain distinct peer IDs"
+        }
+        return copy(
+            roundsDispatched = Math.addExact(roundsDispatched, 1),
+            hostsAttempted = Math.addExact(hostsAttempted, hostIds.size),
+            attemptedEphemeralHostIds = attemptedEphemeralHostIds + hostIds,
+        )
+    }
+
+    /**
+     * Counter-only compatibility for legacy first-round callers. Because it records no peer
+     * identities, selectNextRound fails closed after more than one round unless full history exists.
+     */
+    @Deprecated("Use afterDispatch(hostIds) to retain the peer history required for later rounds.")
     fun afterDispatch(hostCount: Int): DistributedRequestProgress {
         require(hostCount in 1..FirstReleaseInferenceLimits.MAX_HOSTS_PER_ROUND) {
             "A dispatched round must contain one to three host attempts"

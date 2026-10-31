@@ -86,6 +86,7 @@ object HostCandidateSelector {
         previousRoundAttempts: List<InferenceHostAttempt>,
         previousRoundResponses: InferenceRoundResponseCollection,
         progress: DistributedRequestProgress,
+        retryableEphemeralHostIds: Set<String> = emptySet(),
     ): List<HostCandidate> {
         if (request.requestId != distributedRequest.requestId ||
             previousRoundResponses.responses.isNotEmpty() ||
@@ -107,10 +108,37 @@ object HostCandidateSelector {
             return emptyList()
         }
 
+        val recordedHistory = progress.attemptedEphemeralHostIds
+        val cumulativeHostHistory =
+            if (recordedHistory.isEmpty() && progress.roundsDispatched == 1) {
+                // Safe legacy fallback: with only one completed round, the preceding attempt list
+                // is the complete history. Counter-only state is unsafe for later rounds.
+                previouslyAttemptedHostIds
+            } else {
+                recordedHistory
+            }
+        if (cumulativeHostHistory.size != progress.hostsAttempted ||
+            cumulativeHostHistory.takeLast(previouslyAttemptedHostIds.size) != previouslyAttemptedHostIds
+        ) {
+            return emptyList()
+        }
+
+        val attemptedHostIdSet =
+            if (recordedHistory.isEmpty()) {
+                previouslyAttemptedHostIds.toSet()
+            } else {
+                recordedHistory.toSet()
+            }
+        if (retryableEphemeralHostIds.any { hostId -> hostId.isBlank() || hostId !in attemptedHostIdSet }) {
+            return emptyList()
+        }
+
+        // Every historic peer stays excluded unless the caller explicitly allowlists it
+        // for this selection. The allowlist has no effect on later selections.
         return select(
             request = request,
             candidates = candidates,
-            excludedEphemeralHostIds = previouslyAttemptedHostIds.toSet(),
+            excludedEphemeralHostIds = attemptedHostIdSet - retryableEphemeralHostIds,
             maxHosts =
                 minOf(
                     MAX_HOSTS_PER_ROUND,

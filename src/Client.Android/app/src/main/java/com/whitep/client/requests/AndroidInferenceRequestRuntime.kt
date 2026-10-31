@@ -154,12 +154,16 @@ class AndroidInferenceRequestRuntime private constructor(
             val progress = previousState?.progress ?: DistributedRequestProgress()
             // Reserve before suspending in transport: cancellation after a partial send must fail
             // closed rather than allowing the same request to exceed its host-attempt ceiling.
-            if (selectedHosts.size in 1..HostCandidateSelector.MAX_HOSTS_PER_ROUND) {
+            val selectedHostIds = selectedHosts.map { candidate -> candidate.announcement.ephemeralHostId }
+            if (selectedHosts.size in 1..HostCandidateSelector.MAX_HOSTS_PER_ROUND &&
+                selectedHostIds.none { hostId -> hostId.isBlank() } &&
+                selectedHostIds.toSet().size == selectedHostIds.size
+            ) {
                 requestBudgetStates[requestId] =
                     RequestBudgetState(
                         maxRounds = distributedRequest.maxRounds,
                         maxTotalHosts = distributedRequest.maxTotalHosts,
-                        progress = progress.afterDispatch(selectedHosts.size),
+                        progress = progress.afterDispatch(selectedHostIds),
                     )
             }
 
@@ -186,7 +190,7 @@ class AndroidInferenceRequestRuntime private constructor(
                     RequestBudgetState(
                         maxRounds = distributedRequest.maxRounds,
                         maxTotalHosts = distributedRequest.maxTotalHosts,
-                        progress = progress.afterDispatch(result.attempts.size),
+                        progress = progress.afterDispatch(result.attempts.map { attempt -> attempt.ephemeralHostId }),
                     )
                 result.attempts
                     .filter { attempt -> attempt.submissionStatus == InferenceAttemptSubmissionStatus.QUEUED }
