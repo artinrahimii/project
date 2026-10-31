@@ -129,8 +129,8 @@ internal class InferenceRoundResponseCollector {
                                             } catch (_: Exception) {
                                                 AttemptOutcome.Failed(
                                                     attempt.failure(
-                                                    InferenceRoundResponseFailureReason.RESPONSE_FAILED,
-                                                ),
+                                                        InferenceRoundResponseFailureReason.RESPONSE_FAILED,
+                                                    ),
                                                 )
                                             }
                                         }
