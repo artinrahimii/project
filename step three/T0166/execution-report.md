@@ -89,3 +89,22 @@
 - Removed the unused `com.whitep.client.ui.request.HostResponseCards` import from `MainActivity.kt`; the screen already invokes `hostResponseCards`.
 - No runtime behavior, response-correlation contract or protocol field changed.
 - Exact-head `V 3.0.696` CI is pending. Task remains `in_progress`.
+
+## Attempt T0166-A004 — exact-head CI outcome
+
+- **Verification target:** `V 3.0.696`, commit `2f558dc011c6044af638c6e6ea094a0782e4cce4` on `main`.
+- Step Three quality gate passed: [run 41199928844](https://github.com/artinrahimii/project/actions/runs/41199928844).
+- Windows WPF build/startup/security and HostLifecycle integration passed in [product run 41199929005](https://github.com/artinrahimii/project/actions/runs/41199929005).
+- Android KtLint passed, confirming the previous unused-import diagnostics were corrected.
+- Android debug APK failed during Kotlin compilation: `MainActivity.kt:233:9 Unresolved reference 'hostResponseCards'`. The earlier uppercase import had been removed, but the correctly renamed lowercase Composable had not been imported. See [Android job log](https://github.com/artinrahimii/project/actions/runs/41199929005/job/124533545646).
+- Android JVM tests, generated Protobuf verification and APK upload were skipped after compilation failed. No Android build/JVM/Protobuf acceptance pass is claimed for V 3.0.696.
+- A004 is therefore recorded as a failed verification attempt; task status remains `in_progress`.
+
+## Attempt T0166-A005
+
+- **Base revision:** `2f558dc011c6044af638c6e6ea094a0782e4cce4` on `main` (`V 3.0.696`).
+- **Start:** 2026-10-31T16:15:00+03:30.
+- **Correction:** imported `com.whitep.client.ui.request.hostResponseCards` in `MainActivity.kt`, matching the lowercase `@Composable` declaration.
+- **Regression guard:** strengthened `test_android_host_response_cards_contract.py` to require the exact import so future renames cannot silently break the Android compile.
+- No runtime behavior, response-correlation contract, persistence boundary or protocol field changed.
+- Exact-head `V 3.0.697` CI is pending; T0166 remains `in_progress` until Android APK, JVM, generated Protobuf and relevant product/quality gates pass.

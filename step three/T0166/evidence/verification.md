@@ -44,3 +44,18 @@
 - HostLifecycle job passed: [41199685198](https://github.com/artinrahimii/project/actions/runs/41199685198).
 - Android main-source KtLint failed with one unused import at `MainActivity.kt:42:1` (`HostResponseCards`). Android APK, JVM tests and Protobuf verification were skipped: [41199685198](https://github.com/artinrahimii/project/actions/runs/41199685198).
 - A004 removes that unused import. Exact-head CI is pending.
+
+
+## Fourth exact-head CI run — V 3.0.696
+
+- Step Three quality passed: [41199928844](https://github.com/artinrahimii/project/actions/runs/41199928844).
+- Windows WPF and HostLifecycle jobs passed in [product run 41199929005](https://github.com/artinrahimii/project/actions/runs/41199929005).
+- Android KtLint passed.
+- Android debug APK compilation failed at `MainActivity.kt:233:9`: `Unresolved reference 'hostResponseCards'`. The A004 cleanup removed the old import but omitted the lowercase function import after the Composable rename. [Android job log](https://github.com/artinrahimii/project/actions/runs/41199929005/job/124533545646).
+- Android JVM tests, Protobuf verification and APK upload were skipped; no Android acceptance pass is claimed for this commit.
+
+## Fifth attempt — A005 correction
+
+- Add `import com.whitep.client.ui.request.hostResponseCards` to `MainActivity.kt`.
+- Add a Python regression assertion for the correct import in `test_android_host_response_cards_contract.py`.
+- No transport/runtime behavior or protocol contract changes. Exact-head V 3.0.697 CI is pending.

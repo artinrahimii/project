@@ -30,6 +30,7 @@ class AndroidHostResponseCardsContractTests(unittest.TestCase):
         self.assertNotIn("joinToString", source)
         activity = MAIN_ACTIVITY.read_text(encoding="utf-8")
         self.assertIn("hostResponseCards(responses = requestState.hostResponses)", activity)
+        self.assertIn("import com.whitep.client.ui.request.hostResponseCards", activity)
 
     def test_jvm_tests_cover_distinct_hosts_duplicate_attempts_and_rejection(self):
         source = VIEW_MODEL_TEST.read_text(encoding="utf-8")
