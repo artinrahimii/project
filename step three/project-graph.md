@@ -41247,11 +41247,11 @@
         "protocol/whitep/v1/messages.proto",
         "step three/T0166/evidence/verification.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0166-A001 (2026-10-31T15:23:00+03:30): Added an in-memory response-card state keyed by (requestId, attemptId), strict expected request/attempt/host/model/round checks, duplicate-attempt rejection, and one Compose card per attempt. Added JVM and Python source-contract tests. Incoming T0165 -> T0166 and T0160 -> T0166 edges were validated as contract_or_interface_dependency from the concrete response-correlation and payload identity contracts. No response body is persisted. Exact-head CI pending; request initiation from the preview UI remains for later UI/runtime integration.\nT0166-A001 exact-head V 3.0.693 CI: Step Three quality, Windows WPF and HostLifecycle passed. Android KtLint failed at RequestViewModelTest.kt:77:57 (Expected newline before '.') and consequently APK/JVM/Protobuf were skipped. A002 applies the one-line formatting correction; CI is pending. The response-card implementation remains in_progress.\nT0166-A002 exact-head V 3.0.694 CI: Step Three quality and HostLifecycle passed. Android main-source KtLint failed at HostResponseCards.kt:16:14 (uppercase function name) and RequestViewModel.kt:14:1 (unused import); Android APK/JVM/Protobuf were skipped. A003 applies those exact fixes and updates the UI/test references. The task remains in_progress.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0166-A001 (2026-10-31T15:23:00+03:30): Added an in-memory response-card state keyed by (requestId, attemptId), strict expected request/attempt/host/model/round checks, duplicate-attempt rejection, and one Compose card per attempt. Added JVM and Python source-contract tests. Incoming T0165 -> T0166 and T0160 -> T0166 edges were validated as contract_or_interface_dependency from the concrete response-correlation and payload identity contracts. No response body is persisted. Exact-head CI pending; request initiation from the preview UI remains for later UI/runtime integration.\nT0166-A001 exact-head V 3.0.693 CI: Step Three quality, Windows WPF and HostLifecycle passed. Android KtLint failed at RequestViewModelTest.kt:77:57 (Expected newline before '.') and consequently APK/JVM/Protobuf were skipped. A002 applies the one-line formatting correction; CI is pending. The response-card implementation remains in_progress.\nT0166-A002 exact-head V 3.0.694 CI: Step Three quality and HostLifecycle passed. Android main-source KtLint failed at HostResponseCards.kt:16:14 (uppercase function name) and RequestViewModel.kt:14:1 (unused import); Android APK/JVM/Protobuf were skipped. A003 applies those exact fixes and updates the UI/test references. The task remains in_progress.\nT0166-A003 exact-head V 3.0.695 CI: Step Three quality and HostLifecycle passed. Android main-source KtLint failed because MainActivity.kt retained the obsolete HostResponseCards import after the Composable rename; Android APK/JVM/Protobuf were skipped. A004 removes that unused import; the task remains in_progress.",
       "execution_summary": {
-        "attempt_count": 3,
-        "failed_attempt_count": 2,
-        "last_attempt_id": "T0166-A003",
+        "attempt_count": 4,
+        "failed_attempt_count": 3,
+        "last_attempt_id": "T0166-A004",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt",
@@ -41265,7 +41265,8 @@
         ],
         "related_commits": [
           "89f9badabc5a5f7d11739a53f578b47f5f561154",
-          "1113a2d3e6b67620b5a6d74e6cce899e4146eacf"
+          "1113a2d3e6b67620b5a6d74e6cce899e4146eacf",
+          "71d4468d04d79b95a0905e949be5b293290f30e6"
         ],
         "tests_passed": [
           {
@@ -41297,6 +41298,18 @@
             "result": "passed",
             "summary": "Unit and integration tests passed.",
             "url": "https://github.com/artinrahimii/project/actions/runs/41199481700"
+          },
+          {
+            "name": "Step Three quality gate — V 3.0.695",
+            "result": "passed",
+            "summary": "Automated Python tests, compileall, graph and evidence guards all passed.",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41199685219"
+          },
+          {
+            "name": "HostLifecycle — V 3.0.695",
+            "result": "passed",
+            "summary": "Unit and integration tests passed.",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41199685198"
           }
         ],
         "tests_failed": [
@@ -41311,6 +41324,12 @@
             "result": "failed",
             "summary": "One composable function naming issue and one unused import; APK/JVM/Protobuf skipped.",
             "url": "https://github.com/artinrahimii/project/actions/runs/41199481700"
+          },
+          {
+            "name": "Android KtLint — V 3.0.695",
+            "result": "failed",
+            "summary": "One unused import in MainActivity.kt:42:1; APK/JVM/Protobuf skipped.",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41199685198"
           }
         ],
         "blocked_reason": null,
@@ -41443,9 +41462,9 @@
         {
           "attempt_id": "T0166-A003",
           "started_at": "2026-10-31T15:37:00+03:30",
-          "ended_at": null,
-          "result": "partial",
-          "summary": "Renamed the composable to the lowercase project convention, updated its UI call site and Python source-contract assertion, and removed the unused map import. Exact-head CI pending.",
+          "ended_at": "2026-10-31T15:39:00+03:30",
+          "result": "failed",
+          "summary": "The composable was renamed and the RequestViewModel unused import was removed, but main-source KtLint then identified one remaining unused import in MainActivity.kt:42. Android APK/JVM/Protobuf stages were skipped.",
           "changed_files": [
             "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/HostResponseCards.kt",
             "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt",
@@ -41455,12 +41474,57 @@
             "step three/T0166/evidence/verification.md",
             "step three/project-graph.md"
           ],
+          "commit_sha": "71d4468d04d79b95a0905e949be5b293290f30e6",
+          "tests": [
+            {
+              "name": "Step Three quality gate — V 3.0.695",
+              "result": "passed",
+              "summary": "Python automated tests, Python syntax, graph structure and recorded evidence checks passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41199685219"
+            },
+            {
+              "name": "HostLifecycle — V 3.0.695",
+              "result": "passed",
+              "summary": "HostLifecycle unit and integration test job passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41199685198"
+            },
+            {
+              "name": "Android KtLint — V 3.0.695",
+              "result": "failed",
+              "summary": "Main-source KtLint found an unused import in MainActivity.kt:42:1: com.whitep.client.ui.request.HostResponseCards.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41199685198"
+            },
+            {
+              "name": "Android APK/JVM/Protobuf — V 3.0.695",
+              "result": "skipped",
+              "summary": "Android APK build, JVM tests and Protobuf generated-source verification were skipped after KtLint failed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41199685198"
+            }
+          ],
+          "failure_details": "Android KtLint failed at src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt:42:1 with an unused import: com.whitep.client.ui.request.HostResponseCards. APK, JVM tests and generated Protobuf verification were skipped.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "A004 removes the now-unused HostResponseCards import from MainActivity.kt. No runtime behavior changes. Re-run exact-head KtLint, APK/JVM/Protobuf, Windows WPF, HostLifecycle and quality CI."
+        },
+        {
+          "attempt_id": "T0166-A004",
+          "started_at": "2026-10-31T15:40:00+03:30",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Removed the import for the previous uppercase composable name after renaming the composable and its call site to hostResponseCards. This is a lint-only cleanup; exact-head CI pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
+            "step three/T0166/execution-report.md",
+            "step three/T0166/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
           "commit_sha": null,
           "tests": [
             {
               "name": "CI failure review",
               "result": "passed",
-              "summary": "Both exact KtLint diagnostics were read from the V 3.0.694 Android workflow job log."
+              "summary": "The exact unused-import diagnostic was read from the V 3.0.695 Android job log."
             },
             {
               "name": "Local Gradle/KtLint/JVM",
@@ -41468,16 +41532,16 @@
               "summary": "No local Android build toolchain is available through this GitHub editing connection."
             },
             {
-              "name": "V 3.0.695 exact-head CI",
+              "name": "V 3.0.696 exact-head CI",
               "result": "pending",
-              "summary": "Android KtLint/APK/JVM/Protobuf and quality/product gates must pass."
+              "summary": "All relevant quality and product workflow gates must pass."
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect exact-head V 3.0.695 CI; keep T0166 in_progress until the Android and full product acceptance gates pass."
+          "follow_up": "Inspect V 3.0.696 workflow results. Keep T0166 in_progress until the exact-head Android and full product gates pass."
         }
       ]
     },
@@ -53202,7 +53266,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-31T15:37:00+03:30",
+  "updated_at": "2026-10-31T15:40:00+03:30",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

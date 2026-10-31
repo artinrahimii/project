@@ -39,7 +39,6 @@ import com.whitep.client.ui.conversations.conversationDetailScreen
 import com.whitep.client.ui.conversations.conversationListScreen
 import com.whitep.client.ui.navigation.ClientDestination
 import com.whitep.client.ui.navigation.ClientNavigation
-import com.whitep.client.ui.request.HostResponseCards
 import com.whitep.client.ui.request.RequestViewModel
 
 class MainActivity : ComponentActivity() {

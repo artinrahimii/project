@@ -73,3 +73,19 @@
 - Updated the Python source-contract assertion to the new Composable name.
 - No runtime behavior, response-correlation contract or protocol field changed.
 - Exact-head `V 3.0.695` CI is pending. Task remains `in_progress` until all required gates pass.
+
+
+## Attempt T0166-A003 — exact-head CI outcome
+
+- Step Three quality gate passed: [run 41199685219](https://github.com/artinrahimii/project/actions/runs/41199685219).
+- HostLifecycle unit/integration job passed: [run 41199685198](https://github.com/artinrahimii/project/actions/runs/41199685198).
+- Android KtLint failed at `MainActivity.kt:42:1` because the old `HostResponseCards` import remained after the Composable rename. APK, JVM and generated Protobuf checks were skipped: [product workflow](https://github.com/artinrahimii/project/actions/runs/41199685198).
+- Windows WPF was still running when this correction was prepared; no final outcome for that job is claimed.
+- A003 is recorded as failed verification.
+
+## Attempt T0166-A004
+
+- **Start:** 2026-10-31T15:40:00+03:30.
+- Removed the unused `com.whitep.client.ui.request.HostResponseCards` import from `MainActivity.kt`; the screen already invokes `hostResponseCards`.
+- No runtime behavior, response-correlation contract or protocol field changed.
+- Exact-head `V 3.0.696` CI is pending. Task remains `in_progress`.
