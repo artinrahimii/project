@@ -41859,22 +41859,50 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0166 و T0160 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/HostResponseCards.kt",
+        "tests/test_android_multi_host_response_rendering_contract.py",
+        "step three/T0167/execution-report.md",
+        "step three/T0167/evidence/verification.md",
+        "step three/project-graph.md"
+      ],
       "expected_output_paths": [
         "src/Client.Android/Requests/ + tests/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nIncoming dependency review (2026-10-31T16:29:30+03:30): T0166 -> T0167 validated as contract_or_interface_dependency because the no-auto-merge renderer consumes T0166's per-attempt response-card state/UI; T0160 -> T0167 validated as sequencing_only because the response renderer does not consume the request payload builder. Both original blocks edges remain intact; review evidence and classifications are recorded in edge_change_log.\n",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/HostResponseCards.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
+        "tests/test_android_multi_host_response_rendering_contract.py",
+        "step three/T0167/evidence/verification.md"
+      ],
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nIncoming dependency review (2026-10-31T16:29:30+03:30): T0166 -> T0167 validated as contract_or_interface_dependency because the no-auto-merge renderer consumes T0166's per-attempt response-card state/UI; T0160 -> T0167 validated as sequencing_only because the response renderer does not consume the request payload builder. Both original blocks edges remain intact; review evidence and classifications are recorded in edge_change_log.\n\nT0167-A001 (2026-10-31T16:31:00+03:30): Reuses the verified T0166 response-card list and strengthens each Compose item with a stable key `(requestId, attemptId)`, preserving distinct UI subtrees for multiple hosts and retries. Adds a dedicated Python source-contract regression for the per-response Card and no-concatenation behavior, with the existing successful two-host JVM test as behavioral state evidence. No runtime transport, protocol, persistence or external dependency change. Exact-head CI pending; task remains in_progress.\n",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0167-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/HostResponseCards.kt",
+          "tests/test_android_multi_host_response_rendering_contract.py",
+          "step three/T0167/execution-report.md",
+          "step three/T0167/evidence/verification.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
-        "tests_passed": [],
+        "tests_passed": [
+          {
+            "name": "Prerequisite/edge review",
+            "result": "passed",
+            "summary": "T0166 and T0160 are done; both incoming edges are validated and original blocks ordering is retained."
+          },
+          {
+            "name": "Existing multi-host ViewModel behavior review",
+            "result": "passed",
+            "summary": "The existing test asserts two host entries, independent output strings and distinct attempt IDs; exact V 3.0.698 CI passed the suite."
+          }
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -41882,10 +41910,56 @@
           "state": "not_required",
           "triggering_contracts": [],
           "affected_by_contract_changes": [],
-          "review_evidence": []
+          "review_evidence": [
+            "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
+            "step three/T0166/execution-report.md"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0167-A001",
+          "started_at": "2026-10-31T16:31:00+03:30",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Wrapped each host response Card with Compose key(requestId, attemptId) and added a dedicated Python regression checking stable per-attempt UI identity, one Card per response, per-response text and absence of automatic output concatenation. The existing ViewModel JVM test supplies two-host/distinct-output evidence.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/HostResponseCards.kt",
+            "tests/test_android_multi_host_response_rendering_contract.py",
+            "step three/T0167/execution-report.md",
+            "step three/T0167/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Source review of existing response-card renderer",
+              "result": "passed",
+              "summary": "Renderer loops over each response and displays host, attempt and text in a separate Material Card; no string aggregation is present."
+            },
+            {
+              "name": "Existing two-host ViewModel JVM test",
+              "result": "passed",
+              "summary": "The exact V 3.0.698 CI product workflow passed the test asserting two distinct outputs and attempt IDs."
+            },
+            {
+              "name": "Local Python/Kotlin/Gradle",
+              "result": "not_run",
+              "summary": "No local checkout/build environment is available through the GitHub editing connection."
+            },
+            {
+              "name": "Exact-head V 3.0.700 CI",
+              "result": "pending",
+              "summary": "Step Three quality and Android KtLint/APK/JVM/Protobuf plus Windows and HostLifecycle gates must pass."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect exact-head V 3.0.700 CI and keep T0167 in_progress until the dedicated regression and product build gates pass."
+        }
+      ]
     },
     {
       "id": "T0168",
@@ -53601,7 +53675,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-31T16:29:30+03:30",
+  "updated_at": "2026-10-31T16:31:00+03:30",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

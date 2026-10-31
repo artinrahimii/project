@@ -8,6 +8,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.key
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
@@ -23,38 +24,40 @@ internal fun hostResponseCards(responses: List<HostResponseCardState>) {
             )
         } else {
             responses.forEach { response ->
-                Card(modifier = Modifier.fillMaxWidth()) {
-                    Column(
-                        modifier = Modifier.padding(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(6.dp),
-                    ) {
-                        Text(
-                            "Host: ${response.hostId}",
-                            style = MaterialTheme.typography.titleMedium,
-                        )
-                        Text(
-                            "Outcome: ${response.outcome.name.lowercase().replace('_', ' ')}",
-                            style = MaterialTheme.typography.labelLarge,
-                        )
-                        Text("Model: ${response.modelId}", style = MaterialTheme.typography.bodySmall)
-                        Text("Request: ${response.requestId}", style = MaterialTheme.typography.bodySmall)
-                        Text("Attempt: ${response.attemptId}", style = MaterialTheme.typography.bodySmall)
-                        Text("Response", style = MaterialTheme.typography.labelLarge)
-                        Text(
-                            response.outputText.ifBlank { "This host returned no response text." },
-                            style = MaterialTheme.typography.bodyLarge,
-                        )
-                        if (response.errorMessage.isNotBlank()) {
+                key(response.requestId, response.attemptId) {
+                    Card(modifier = Modifier.fillMaxWidth()) {
+                        Column(
+                            modifier = Modifier.padding(16.dp),
+                            verticalArrangement = Arrangement.spacedBy(6.dp),
+                        ) {
                             Text(
-                                response.errorMessage,
-                                color = MaterialTheme.colorScheme.error,
+                                "Host: ${response.hostId}",
+                                style = MaterialTheme.typography.titleMedium,
+                            )
+                            Text(
+                                "Outcome: ${response.outcome.name.lowercase().replace('_', ' ')}",
+                                style = MaterialTheme.typography.labelLarge,
+                            )
+                            Text("Model: ${response.modelId}", style = MaterialTheme.typography.bodySmall)
+                            Text("Request: ${response.requestId}", style = MaterialTheme.typography.bodySmall)
+                            Text("Attempt: ${response.attemptId}", style = MaterialTheme.typography.bodySmall)
+                            Text("Response", style = MaterialTheme.typography.labelLarge)
+                            Text(
+                                response.outputText.ifBlank { "This host returned no response text." },
+                                style = MaterialTheme.typography.bodyLarge,
+                            )
+                            if (response.errorMessage.isNotBlank()) {
+                                Text(
+                                    response.errorMessage,
+                                    color = MaterialTheme.colorScheme.error,
+                                    style = MaterialTheme.typography.bodySmall,
+                                )
+                            }
+                            Text(
+                                "Completed at: ${response.completedAtUnixMs} ms UTC",
                                 style = MaterialTheme.typography.bodySmall,
                             )
                         }
-                        Text(
-                            "Completed at: ${response.completedAtUnixMs} ms UTC",
-                            style = MaterialTheme.typography.bodySmall,
-                        )
                     }
                 }
             }
