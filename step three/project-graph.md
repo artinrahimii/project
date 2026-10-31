@@ -42092,22 +42092,54 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0167 و T0160 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceRoundResponseCollector.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceRoundResponseCollectorTest.kt",
+        "tests/test_android_inference_round_response_collector_contract.py",
+        "step three/T0168/execution-report.md",
+        "step three/T0168/evidence/verification.md",
+        "step three/project-graph.md"
+      ],
       "expected_output_paths": [
         "src/Client.Android/Requests/ + tests/"
       ],
       "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nIncoming dependency review (2026-10-31T16:43:00+03:30): T0167 -> T0168 validated as sequencing_only because T0168's response collection runs in the runtime/dispatcher and consumes no Compose UI. T0160 -> T0168 validated as contract_or_interface_dependency because the receive window is capped by DistributedRequest.deadlineUnixMs originating in the request contract; InferenceRoundTimer/AndroidInferenceRequestRuntime use that same budget. Both blocks edges remain intact; reasons and evidence are recorded in edge_change_log.\n",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nIncoming dependency review (2026-10-31T16:43:00+03:30): T0167 -> T0168 validated as sequencing_only because T0168's response collection runs in the runtime/dispatcher and consumes no Compose UI. T0160 -> T0168 validated as contract_or_interface_dependency because the receive window is capped by DistributedRequest.deadlineUnixMs originating in the request contract; InferenceRoundTimer/AndroidInferenceRequestRuntime use that same budget. Both blocks edges remain intact; reasons and evidence are recorded in edge_change_log.\n\nT0168-A001: incoming edges were validated on V 3.0.701: T0167 -> T0168 sequencing_only; T0160 -> T0168 contract_or_interface_dependency. Both original blocks edges remain. Added concurrent per-attempt response collection bounded by each attempt's stored shared round window; exact-head CI pending.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0168-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceRoundResponseCollector.kt",
+          "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
+          "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceRoundResponseCollectorTest.kt",
+          "tests/test_android_inference_round_response_collector_contract.py",
+          "step three/T0168/execution-report.md",
+          "step three/T0168/evidence/verification.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
-        "tests_passed": [],
+        "tests_passed": [
+          {
+            "name": "T0167 → T0168 edge review",
+            "result": "passed",
+            "summary": "Validated as sequencing_only in V 3.0.701; the collector does not call the Compose renderer and the blocks edge is retained."
+          },
+          {
+            "name": "T0160 → T0168 edge review",
+            "result": "passed",
+            "summary": "Validated as contract_or_interface_dependency in V 3.0.701 through request/attempt identity and the shared absolute deadline."
+          },
+          {
+            "name": "Source architecture review",
+            "result": "passed",
+            "summary": "The runtime stores one shared InferenceRoundTimer.Window for each queued attempt and uses the authenticated transport's correlation-validating awaitResponse path."
+          }
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -42115,10 +42147,62 @@
           "state": "not_required",
           "triggering_contracts": [],
           "affected_by_contract_changes": [],
-          "review_evidence": []
+          "review_evidence": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceAttemptDispatcher.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceRoundTimer.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/protocol/InferenceRequestPayloadBuilder.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/network/InferenceResponseCorrelationValidator.kt",
+            "protocol/whitep/v1/messages.proto"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0168-A001",
+          "started_at": "2026-10-31T13:23:57.839Z",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Added an Android round-response collector wired into AndroidInferenceRequestRuntime. It starts one waiter per queued host attempt, applies its remaining shared round window, waits for every waiter instead of returning on the first success, isolates timeout/failure per host, and preserves caller cancellation. Added JVM tests for first-success continuation, sibling survival after timeout, non-queued submissions, expired windows and caller cancellation, plus a Python source-contract test. Exact-head CI is pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceRoundResponseCollector.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceRoundResponseCollectorTest.kt",
+            "tests/test_android_inference_round_response_collector_contract.py",
+            "step three/T0168/execution-report.md",
+            "step three/T0168/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "T0167 → T0168 dependency review",
+              "result": "passed",
+              "summary": "Sequencing-only; collector does not call the UI renderer."
+            },
+            {
+              "name": "T0160 → T0168 dependency review",
+              "result": "passed",
+              "summary": "Contract/interface dependency on request/attempt identity and shared deadline."
+            },
+            {
+              "name": "Local Android Gradle/JVM",
+              "result": "not_run",
+              "summary": "No local checkout/build runtime is available through the GitHub editing connector."
+            },
+            {
+              "name": "Exact-head V 3.0.702 CI",
+              "result": "pending",
+              "summary": "Run Step Three quality and the full Android, Windows WPF and HostLifecycle product gates."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect exact-head V 3.0.702 CI. Keep T0168 in_progress until KtLint, APK, JVM, generated Protobuf, Windows WPF, HostLifecycle and Step Three quality gates pass."
+        }
+      ]
     },
     {
       "id": "T0169",
@@ -53831,7 +53915,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-31T16:43:00+03:30",
+  "updated_at": "2026-10-31T13:23:57.839Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

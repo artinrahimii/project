@@ -39,6 +39,7 @@ class AndroidInferenceRequestRuntime private constructor(
     )
 
     private val dispatcher = InferenceAttemptDispatcher(transport)
+    private val responseCollector = InferenceRoundResponseCollector()
     private val attemptRoundWindows = ConcurrentHashMap<AttemptKey, InferenceRoundTimer.Window>()
 
     /** Test-safe, payload-free reason for the most recent failed transport submission. */
@@ -172,6 +173,29 @@ class AndroidInferenceRequestRuntime private constructor(
         } finally {
             attemptRoundWindows.remove(key, roundWindow)
         }
+    }
+
+    /**
+     * Awaits every queued response from one dispatched round.
+     *
+     * All queued attempts share the round window created by dispatchRound. A response from one
+     * host does not end collection for the remaining hosts; each is awaited concurrently until
+     * it responds or the common round deadline expires.
+     */
+    suspend fun awaitRoundResponses(
+        requestId: String,
+        attempts: List<InferenceHostAttempt>,
+    ): InferenceRoundResponseCollection {
+        require(requestId.isNotBlank()) { "requestId must not be blank." }
+        return responseCollector.collect(
+            attempts = attempts,
+            roundWindowFor = { attempt ->
+                attemptRoundWindows[AttemptKey(requestId, attempt.attemptId)]
+            },
+            awaitResponse = { attempt, timeout ->
+                awaitResponse(requestId, attempt.attemptId, timeout)
+            },
+        )
     }
 
     override fun close() {
