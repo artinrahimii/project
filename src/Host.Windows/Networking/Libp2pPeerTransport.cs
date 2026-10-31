@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Security.Authentication;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Multiformats.Address;
 using Nethermind.Libp2p;
 using Nethermind.Libp2p.Core;
@@ -42,7 +43,8 @@ public sealed class Libp2pPeerTransport : IPeerTransport
         string? expectedRemotePeerIdentity = null,
         Identity? localIdentity = null,
         int maximumMessageBytes = DefaultMaximumMessageBytes,
-        int inboundQueueCapacity = DefaultInboundQueueCapacity)
+        int inboundQueueCapacity = DefaultInboundQueueCapacity,
+        ILoggerProvider? diagnosticLoggerProvider = null)
     {
         ArgumentNullException.ThrowIfNull(peerTrustStore);
         _peerTrustStore = peerTrustStore;
@@ -57,7 +59,14 @@ public sealed class Libp2pPeerTransport : IPeerTransport
         _expectedRemotePeerIdentity = expectedRemotePeerIdentity;
         _protocol = new Libp2pPeerMessageProtocol(maximumMessageBytes, inboundQueueCapacity);
         _services = new ServiceCollection()
-            .AddLogging()
+            .AddLogging(logging =>
+            {
+                if (diagnosticLoggerProvider is not null)
+                {
+                    logging.SetMinimumLevel(LogLevel.Debug);
+                    logging.AddProvider(diagnosticLoggerProvider);
+                }
+            })
             .AddLibp2p(builder => builder.WithQuic().AddProtocol(_protocol))
             .BuildServiceProvider();
         try

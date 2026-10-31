@@ -684,3 +684,20 @@
 - **Local verification:** not run; this connected session has no local checkout with the Android/Windows build toolchains. No local test pass is claimed.
 - **Exact-head V 3.0.678 CI:** pending at commit creation.
 - **Next:** require Step Three quality, KtLint, debug APK, all Android JVM tests, native Android-to-.NET three-peer response correlation, Windows WPF and HostLifecycle to pass. Keep T0163 in progress until all three correlated responses pass.
+
+## Exact V 3.0.678 result — A052 reconciliation
+
+- Step Three quality: [run 41174402613](https://github.com/artinrahimii/project/actions/runs/41174402613) passed with 287 Python tests, compileall, and graph guard (229 nodes, 417 edges, zero errors and one preserved T0001 metadata warning).
+- Product workflow: [V 3.0.678](https://github.com/artinrahimii/project/actions/runs/41174402629) completed with failure in Android JVM tests. Android KtLint, debug APK build, Windows WPF and HostLifecycle passed.
+- JUnit artifact `13032169023` (43,348 bytes) reports 105 tests, 104 passed and one failed: `dispatchesRoundToThreeNativeDotNetLibp2pHosts`. The READY record was parsed correctly and all three submissions reached `QUEUED`; all three .NET processes remained alive but emitted only `WAITING_FOR_REMOTE_SESSION`, with no `SESSION_AUTHENTICATED`, `APPLICATION_PROTOCOL_READY`, `RECEIVED`, `VALIDATED` or `SENT` marker. The timeout occurred while waiting for a correlated response. The two JVM↔JVM authenticated-stream tests passed.
+- A052 fixed the READY delimiter defect but did not satisfy T0163 acceptance. It remains `partial`; T0163 remains `in_progress`.
+
+## Attempt A053 — payload-free .NET libp2p negotiation diagnostics
+
+- Base commit: `0426585c492a50448816b2ee5e85510bf9a2f6dc` (`V 3.0.678`).
+- Added an optional `ILoggerProvider` injection point to `Libp2pPeerTransport`; default product callers retain the existing no-provider behavior.
+- The interop fixture records only logger category, level, event ID, static `{OriginalFormat}` message template and exception type. It does not render message text or structured argument values. Output is capped at 80 diagnostic records per peer.
+- The Android test reader captures a bounded number of `P2P_DIAG` records alongside existing fixed phase markers. A Python source-contract test guards the payload-free logging boundary and per-peer cap.
+- A047 already configured Yamux ahead of Mplex. Current upstream docs describe Yamux support but also identify the JVM implementation's Yamux implementation as beta; this is a compatibility risk, not proof of current failure. References: https://github.com/NethermindEth/dotnet-libp2p and https://github.com/libp2p/jvm-libp2p/blob/develop/README.md.
+- No local .NET or Android Gradle test was run in this connected session. Exact-head V 3.0.679 CI is required to compile and exercise the diagnostics.
+- Acceptance unchanged: all three real .NET peers must receive the request and return responses correlated by request ID, attempt ID, model ID and authenticated PeerId. T0163 remains `in_progress`.

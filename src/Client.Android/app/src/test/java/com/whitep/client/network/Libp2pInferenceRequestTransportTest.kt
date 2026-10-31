@@ -303,6 +303,15 @@ class Libp2pInferenceRequestTransportTest {
                                     when {
                                         line.startsWith("READY\t") -> readyLineFuture.complete(line)
                                         line in allowedMarkers -> serverOutput.add("peer-" + serverNumber + ":" + line)
+                                        line.startsWith("P2P_DIAG\t") -> {
+                                            val fields = line.split('\t', limit = 6)
+                                            if (fields.size == 6 && serverOutput.size < 240) {
+                                                serverOutput.add(
+                                                    "peer-" + serverNumber + ":libp2p:" +
+                                                        fields.drop(1).joinToString(separator = ":"),
+                                                )
+                                            }
+                                        }
                                     }
                                 }
                             },

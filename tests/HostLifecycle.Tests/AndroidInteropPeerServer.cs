@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Nethermind.Libp2p.Core;
 using WhiteP.Host.Infrastructure;
 using WhiteP.Host.Windows.Networking;
@@ -29,7 +30,8 @@ internal static class AndroidInteropPeerServer
         await using var server = new Libp2pPeerTransport(
             trustFixture.Store,
             expectedRemotePeerIdentity: expectedAndroidPeerId,
-            localIdentity: localIdentity);
+            localIdentity: localIdentity,
+            diagnosticLoggerProvider: new InteropDiagnosticLoggerProvider());
 
         using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(60));
         await server.StartListeningAsync(IPAddress.Loopback, port, timeout.Token).ConfigureAwait(false);
@@ -82,5 +84,47 @@ internal static class AndroidInteropPeerServer
         Console.WriteLine("SENT");
         Console.WriteLine("PASS");
         Console.Out.Flush();
+    }
+    private sealed class InteropDiagnosticLoggerProvider : ILoggerProvider
+    {
+        private int _written;
+
+        public ILogger CreateLogger(string categoryName) => new InteropDiagnosticLogger(categoryName);
+
+        public void Dispose()
+        {
+        }
+
+        private sealed class InteropDiagnosticLogger(string categoryName) : ILogger
+        {
+            public IDisposable? BeginScope<TState>(TState state)
+                where TState : notnull => null;
+
+            public bool IsEnabled(LogLevel logLevel) => logLevel >= LogLevel.Debug;
+
+            public void Log<TState>(
+                LogLevel logLevel,
+                EventId eventId,
+                TState state,
+                Exception? exception,
+                Func<TState, Exception?, string> formatter)
+            {
+                if (!IsEnabled(logLevel) || Interlocked.Increment(ref _written) > 80)
+                    return;
+
+                string template =
+                    state is IEnumerable<KeyValuePair<string, object?>> values
+                        ? values.FirstOrDefault(static item => item.Key == "{OriginalFormat}").Value?.ToString()
+                            ?? eventId.Name
+                            ?? "<no-template>"
+                        : eventId.Name ?? "<no-template>";
+                string safeCategory = categoryName.Replace('\t', ' ').Replace('\r', ' ').Replace('\n', ' ');
+                string safeTemplate = template.Replace('\t', ' ').Replace('\r', ' ').Replace('\n', ' ');
+
+                Console.WriteLine(
+                    $"P2P_DIAG\t{safeCategory}\t{logLevel}\t{eventId.Id}\t{safeTemplate}\t{exception?.GetType().Name ?? "none"}");
+                Console.Out.Flush();
+            }
+        }
     }
 }

@@ -135,5 +135,17 @@ class AndroidLibp2pTransportContractTests(unittest.TestCase):
 
 
 
+    def test_dotnet_interop_diagnostics_log_templates_without_structured_values(self):
+        transport = (ROOT / "src/Host.Windows/Networking/Libp2pPeerTransport.cs").read_text(encoding="utf-8")
+        fixture = (ROOT / "tests/HostLifecycle.Tests/AndroidInteropPeerServer.cs").read_text(encoding="utf-8")
+        test_source = TRANSPORT_TEST.read_text(encoding="utf-8")
+        self.assertIn("ILoggerProvider? diagnosticLoggerProvider", transport)
+        self.assertIn("logging.AddProvider(diagnosticLoggerProvider)", transport)
+        self.assertIn('values.FirstOrDefault(static item => item.Key == "{OriginalFormat}")', fixture)
+        self.assertIn("exception?.GetType().Name", fixture)
+        self.assertIn("Interlocked.Increment(ref _written) > 80", fixture)
+        self.assertNotIn("formatter(state, exception)", fixture)
+        self.assertIn('line.startsWith("P2P_DIAG\\t")', test_source)
+
 if __name__ == "__main__":
     unittest.main()
