@@ -5,6 +5,7 @@ import com.whitep.client.protocol.InferenceRequestPayloadBuildResult
 import com.whitep.client.protocol.InferenceRequestPayloadBuilder
 import com.whitep.client.protocol.InferenceRequestPayloadRejection
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.withTimeoutOrNull
 import org.whitep.shared.contracts.v1.InferenceRequest
 import java.util.UUID
 
@@ -32,6 +33,7 @@ enum class InferenceAttemptSubmissionStatus {
     QUEUED,
     REJECTED,
     FAILED,
+    TIMED_OUT,
 }
 
 data class InferenceHostAttempt(
@@ -42,6 +44,7 @@ data class InferenceHostAttempt(
 
 enum class InferenceRoundDispatchRejection {
     TERMINAL_REQUEST,
+    ROUND_TIMEOUT,
     NO_SELECTED_HOSTS,
     TOO_MANY_HOSTS,
     INVALID_HOST_IDENTITY,
@@ -83,11 +86,15 @@ class InferenceAttemptDispatcher(
         capsule: ConversationContextCapsule,
         maxOutputTokens: Int,
         protocolVersion: String,
+        roundWindow: InferenceRoundTimer.Window? = null,
     ): InferenceRoundDispatchResult {
         if (distributedRequest.status in TERMINAL_STATUSES) {
             return InferenceRoundDispatchResult.Rejected(
                 InferenceRoundDispatchRejection.TERMINAL_REQUEST,
             )
+        }
+        if (roundWindow?.isExpired() == true) {
+            return InferenceRoundDispatchResult.Rejected(InferenceRoundDispatchRejection.ROUND_TIMEOUT)
         }
         if (selectedHosts.isEmpty()) {
             return InferenceRoundDispatchResult.Rejected(
@@ -160,7 +167,19 @@ class InferenceAttemptDispatcher(
             val hostId = hostIds[index]
             val submissionStatus =
                 try {
-                    when (transport.submit(hostId, payloads[index])) {
+                    val remainingMillis = roundWindow?.remainingTimeoutMillis()
+                    val submission: InferenceTransportSubmission? =
+                        if (remainingMillis == null) {
+                            transport.submit(hostId, payloads[index])
+                        } else if (remainingMillis == 0L) {
+                            null
+                        } else {
+                            withTimeoutOrNull(remainingMillis) {
+                                transport.submit(hostId, payloads[index])
+                            }
+                        }
+                    when (submission) {
+                        null -> InferenceAttemptSubmissionStatus.TIMED_OUT
                         InferenceTransportSubmission.QUEUED -> InferenceAttemptSubmissionStatus.QUEUED
                         InferenceTransportSubmission.REJECTED -> InferenceAttemptSubmissionStatus.REJECTED
                     }
