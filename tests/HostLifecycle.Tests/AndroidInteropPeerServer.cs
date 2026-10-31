@@ -6,6 +6,7 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using Nethermind.Libp2p.Core;
+using WhiteP.Host.Infrastructure;
 using WhiteP.Host.Windows.Networking;
 using WhiteP.Shared.Contracts;
 using WhiteP.Shared.Contracts.V1;

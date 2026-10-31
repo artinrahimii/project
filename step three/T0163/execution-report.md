@@ -572,3 +572,14 @@
 - **CI:** The Android JVM job now installs the .NET 10 SDK and MsQuic, builds the .NET test fixture, and sets `WHITEP_INTEROP_SERVER_DLL` so the cross-runtime test is executed rather than skipped. Local Android unit runs without the fixture environment skip only this integration test.
 - **Security boundary:** The reversible trust protector is the existing explicitly test-only `TestPeerTrustStoreFixture`; no production trust or identity settings were changed. The fixture binds to loopback and emits no request prompt, capsule or response payload to stdout.
 - **Verification at authoring time:** Pending exact-head CI for `V 3.0.669`. Do not mark T0163 complete until the cross-runtime test and its Android JVM suite pass.
+
+
+## Reconciliation — T0163-A043 exact-head CI result
+
+- **Commit tested:** `e37fd4e872ac21af1facc15e1f566d7a0d080c15` (`V 3.0.669`).
+- **Step Three quality:** PASS — run [41166548104](https://github.com/artinrahimii/project/actions/runs/41166548104); graph structure and Python contract checks passed.
+- **.NET fixture build:** FAILED — product run [41166548099](https://github.com/artinrahimii/project/actions/runs/41166548099), Android job failed compiling `AndroidInteropPeerServer.cs` with CS0103 because `ProtocolMessageParser` is declared in `WhiteP.Host.Infrastructure` and that namespace was not imported.
+- **HostLifecycle build/test:** FAILED at the same compiler error before any lifecycle tests executed — job 124435245943 in run 41166548099.
+- **Android test execution:** Not reached. The fixture build step failed before KtLint, APK and JVM tests, so no cross-runtime pass is claimed.
+- **Correction in A044:** Added the missing `using WhiteP.Host.Infrastructure;` to the fixture. No production transport or protocol behavior was changed.
+- **Next gate:** exact-head `V 3.0.670` CI must compile the fixture and run the three-peer Android-to-.NET test successfully before T0163 can be considered complete.
