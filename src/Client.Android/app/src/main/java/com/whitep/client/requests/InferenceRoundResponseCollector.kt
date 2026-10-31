@@ -57,10 +57,14 @@ internal class InferenceRoundResponseCollector {
         awaitResponse: suspend (InferenceHostAttempt, Duration) -> InferenceResponse,
     ): InferenceRoundResponseCollection =
         coroutineScope {
-            require(attempts.all { it.ephemeralHostId.isNotBlank() && it.attemptId.isNotBlank() }) {
+            require(
+                attempts.all { it.ephemeralHostId.isNotBlank() && it.attemptId.isNotBlank() },
+            ) {
                 "Every host attempt must have a non-blank host and attempt ID."
             }
-            require(attempts.map { it.attemptId }.toSet().size == attempts.size) {
+            require(
+                attempts.map { it.attemptId }.toSet().size == attempts.size,
+            ) {
                 "Host attempt IDs must be unique within a response collection."
             }
 
@@ -119,7 +123,8 @@ internal class InferenceRoundResponseCollector {
                             }
                         }
                     }
-                }.awaitAll()
+                }
+                    .awaitAll()
 
             InferenceRoundResponseCollection(
                 responses = outcomes.mapNotNull { (it as? AttemptOutcome.Received)?.response },

@@ -42106,12 +42106,19 @@
       "expected_output_paths": [
         "src/Client.Android/Requests/ + tests/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nIncoming dependency review (2026-10-31T16:43:00+03:30): T0167 -> T0168 validated as sequencing_only because T0168's response collection runs in the runtime/dispatcher and consumes no Compose UI. T0160 -> T0168 validated as contract_or_interface_dependency because the receive window is capped by DistributedRequest.deadlineUnixMs originating in the request contract; InferenceRoundTimer/AndroidInferenceRequestRuntime use that same budget. Both blocks edges remain intact; reasons and evidence are recorded in edge_change_log.\n\nT0168-A001: incoming edges were validated on V 3.0.701: T0167 -> T0168 sequencing_only; T0160 -> T0168 contract_or_interface_dependency. Both original blocks edges remain. Added concurrent per-attempt response collection bounded by each attempt's stored shared round window; exact-head CI pending.",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceRoundResponseCollector.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceRoundResponseCollectorTest.kt",
+        "tests/test_android_inference_round_response_collector_contract.py",
+        "step three/T0168/execution-report.md",
+        "step three/T0168/evidence/verification.md"
+      ],
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nIncoming dependency review (2026-10-31T16:43:00+03:30): T0167 -> T0168 validated as sequencing_only because T0168's response collection runs in the runtime/dispatcher and consumes no Compose UI. T0160 -> T0168 validated as contract_or_interface_dependency because the receive window is capped by DistributedRequest.deadlineUnixMs originating in the request contract; InferenceRoundTimer/AndroidInferenceRequestRuntime use that same budget. Both blocks edges remain intact; reasons and evidence are recorded in edge_change_log.\n\nT0168-A001: incoming edges were validated on V 3.0.701: T0167 -> T0168 sequencing_only; T0160 -> T0168 contract_or_interface_dependency. Both original blocks edges remain. Added concurrent per-attempt response collection bounded by each attempt's stored shared round window; exact-head CI pending.\nT0168-A001 exact-head V 3.0.702: quality, Windows WPF and HostLifecycle passed; Android KtLint failed on three formatting findings in the response collector (lines 49, 51, 68). Android APK/JVM/Protobuf were skipped. A002 applies only the reported formatting correction; task remains in_progress.\n",
       "execution_summary": {
-        "attempt_count": 1,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "T0168-A001",
+        "attempt_count": 2,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "T0168-A002",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceRoundResponseCollector.kt",
@@ -42122,7 +42129,9 @@
           "step three/T0168/evidence/verification.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
+        "related_commits": [
+          "a506c8a894aeaf49dc636fdcac560126eb767777"
+        ],
         "tests_passed": [
           {
             "name": "T0167 → T0168 edge review",
@@ -42138,9 +42147,34 @@
             "name": "Source architecture review",
             "result": "passed",
             "summary": "The runtime stores one shared InferenceRoundTimer.Window for each queued attempt and uses the authenticated transport's correlation-validating awaitResponse path."
+          },
+          {
+            "name": "Step Three quality gate — V 3.0.702",
+            "result": "passed",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41205485597",
+            "summary": "Python tests, syntax compilation, graph structure and recorded-output/evidence checks passed on exact HEAD."
+          },
+          {
+            "name": "Windows WPF host — V 3.0.702",
+            "result": "passed",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41205485629",
+            "summary": "Formatting, Release build, generated Protobuf, startup smoke, policy/capability, DPAPI identity/trust and artifact upload passed."
+          },
+          {
+            "name": "HostLifecycle — V 3.0.702",
+            "result": "passed",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41205485629",
+            "summary": "Host lifecycle unit/integration workflow passed."
           }
         ],
-        "tests_failed": [],
+        "tests_failed": [
+          {
+            "name": "Android KtLint — V 3.0.702",
+            "result": "failed",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41205485629",
+            "summary": "KtLint reported multiline require wrapping at lines 49/51 and newline before .awaitAll() at line 68 of InferenceRoundResponseCollector.kt."
+          }
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -42162,9 +42196,9 @@
         {
           "attempt_id": "T0168-A001",
           "started_at": "2026-10-31T13:23:57.839Z",
-          "ended_at": null,
-          "result": "partial",
-          "summary": "Added an Android round-response collector wired into AndroidInferenceRequestRuntime. It starts one waiter per queued host attempt, applies its remaining shared round window, waits for every waiter instead of returning on the first success, isolates timeout/failure per host, and preserves caller cancellation. Added JVM tests for first-success continuation, sibling survival after timeout, non-queued submissions, expired windows and caller cancellation, plus a Python source-contract test. Exact-head CI is pending.",
+          "ended_at": "2026-10-31T16:57:15+03:30",
+          "result": "failed",
+          "summary": "Exact-head V 3.0.702 Step Three quality, Windows WPF and HostLifecycle passed. Android product validation stopped at three formatting-only KtLint findings; APK/JVM/Protobuf were skipped.",
           "changed_files": [
             "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceRoundResponseCollector.kt",
             "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
@@ -42174,33 +42208,88 @@
             "step three/T0168/evidence/verification.md",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "a506c8a894aeaf49dc636fdcac560126eb767777",
           "tests": [
             {
               "name": "T0167 → T0168 dependency review",
               "result": "passed",
-              "summary": "Sequencing-only; collector does not call the UI renderer."
+              "summary": "Validated sequencing_only; original blocks edge retained."
             },
             {
               "name": "T0160 → T0168 dependency review",
               "result": "passed",
-              "summary": "Contract/interface dependency on request/attempt identity and shared deadline."
+              "summary": "Validated contract_or_interface_dependency; original blocks edge retained."
             },
             {
-              "name": "Local Android Gradle/JVM",
+              "name": "Step Three quality gate — V 3.0.702",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41205485597",
+              "summary": "Python tests, syntax compilation, graph structure and recorded-output/evidence checks passed on exact HEAD."
+            },
+            {
+              "name": "Windows WPF host — V 3.0.702",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41205485629",
+              "summary": "Formatting, Release build, generated Protobuf, startup smoke, policy/capability, DPAPI identity/trust and artifact upload passed."
+            },
+            {
+              "name": "HostLifecycle — V 3.0.702",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41205485629",
+              "summary": "Host lifecycle unit/integration workflow passed."
+            },
+            {
+              "name": "Android KtLint — V 3.0.702",
+              "result": "failed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41205485629",
+              "summary": "KtLint reported multiline require wrapping at lines 49/51 and newline before .awaitAll() at line 68 of InferenceRoundResponseCollector.kt."
+            },
+            {
+              "name": "Android APK/JVM/Protobuf — V 3.0.702",
               "result": "not_run",
-              "summary": "No local checkout/build runtime is available through the GitHub editing connector."
+              "summary": "Skipped because KtLint failed; assembleDebug, testDebugUnitTest and generated Protobuf verification did not run."
+            }
+          ],
+          "failure_details": "KtLint reported newline wrapping findings in InferenceRoundResponseCollector.kt at lines 49, 51 and 68. The Android build and unit-test stages did not run.",
+          "blocked_reason": null,
+          "contract_changes": [],
+          "follow_up": "A002 changes only the three reported formatting points and reruns exact-head CI."
+        },
+        {
+          "attempt_id": "T0168-A002",
+          "started_at": "2026-10-31T16:57:15+03:30",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Applied only the three exact KtLint formatting corrections. Exact-head V 3.0.703 CI pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceRoundResponseCollector.kt",
+            "step three/T0168/execution-report.md",
+            "step three/T0168/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Targeted KtLint correction",
+              "result": "pending",
+              "summary": "Reformatted the two require argument lists and awaitAll chain; exact-head Gradle KtLint rerun pending."
             },
             {
-              "name": "Exact-head V 3.0.702 CI",
+              "name": "Android APK/JVM/Protobuf",
               "result": "pending",
-              "summary": "Run Step Three quality and the full Android, Windows WPF and HostLifecycle product gates."
+              "summary": "These gates run after KtLint passes."
+            },
+            {
+              "name": "Step Three quality, Windows WPF and HostLifecycle",
+              "result": "pending",
+              "summary": "Exact-head V 3.0.703 results pending."
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
+          "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect exact-head V 3.0.702 CI. Keep T0168 in_progress until KtLint, APK, JVM, generated Protobuf, Windows WPF, HostLifecycle and Step Three quality gates pass."
+          "follow_up": "Check exact-head V 3.0.703 CI; keep T0168 in_progress until every required gate passes."
         }
       ]
     },
@@ -53915,7 +54004,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-31T13:23:57.839Z",
+  "updated_at": "2026-10-31T16:57:15+03:30",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",
