@@ -595,3 +595,13 @@
 - **JUnit artifact:** `13029750456`, `whitep-android-unit-test-reports`, 43,032 bytes. The report confirms exact test and line but does not contain an explanatory assertion message.
 - **A045:** Added an internal diagnostic exposing only the last transport failure stage and exception type to the failing test message. No request payload or secret is logged.
 - **Next:** inspect the exact V 3.0.671 assertion message and fix the observed rejection stage; keep T0163 in progress until the three Android-to-.NET response correlations pass.
+
+
+## Reconciliation — V 3.0.671 exact-head CI and attempt A046
+
+- **Commit:** `88d6ef6238e6954f4e21360376e4b2b7c529d9a5` (`V 3.0.671`).
+- **Step Three quality:** PASS — run 41167387429.
+- **.NET peer fixture build:** PASS; **Windows WPF:** PASS; **HostLifecycle:** PASS.
+- **Android KtLint:** FAILED — `AndroidInferenceRequestRuntime.kt:32:5` requires a blank line before the documented diagnostic property; `:36:1` has an extra blank line. APK/JVM did not execute.
+- **A046:** Applied only the two exact whitespace corrections; no runtime behavior changed.
+- **Next:** exact-head `V 3.0.672` KtLint/APK/JVM run. If JVM reaches the three-peer assertion, its new message exposes the payload-free last transport failure stage and exception type.

@@ -29,10 +29,10 @@ class AndroidInferenceRequestRuntime private constructor(
     private val peerTrustStore: AndroidPeerTrustStore?,
 ) : Closeable {
     private val dispatcher = InferenceAttemptDispatcher(transport)
+
     /** Test-safe, payload-free reason for the most recent failed transport submission. */
     internal val lastSubmissionFailure: String?
         get() = transport.lastSubmissionFailure
-
 
     internal constructor(
         localIdentity: PrivKey,
