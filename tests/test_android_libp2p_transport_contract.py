@@ -94,9 +94,22 @@ class AndroidLibp2pTransportContractTests(unittest.TestCase):
         self.assertIn('"--interop-peer-server"', program)
         self.assertIn("new Libp2pPeerTransport(", fixture)
         self.assertIn("PeerResponseCorrelationValidator.Validate", fixture)
-        for phase in ("CONNECTED", "RECEIVED", "VALIDATED", "SENT"):
+        for phase in (
+            "WAITING_FOR_REMOTE_SESSION",
+            "SESSION_AUTHENTICATED",
+            "APPLICATION_PROTOCOL_READY",
+            "RECEIVED",
+            "VALIDATED",
+            "SENT",
+        ):
             self.assertIn(f'Console.WriteLine("{phase}")', fixture)
+            self.assertIn(f'"{phase}"', transport_test)
         self.assertIn("ConcurrentLinkedQueue<String>()", transport_test)
+        self.assertIn("CompletableFuture<String>()", transport_test)
+        self.assertIn("readyLineFuture.get(", transport_test)
+        self.assertIn("val reader = process.inputStream.bufferedReader()", transport_test)
+        self.assertIn("outputReader.start()", transport_test)
+        self.assertIn("line in allowedMarkers", transport_test)
         phase_capture = transport_test.split("val phases =", 1)[1].split("val processStates =", 1)[0]
         self.assertIn("serverOutput", phase_capture)
         self.assertIn(".toList()", phase_capture)

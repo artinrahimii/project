@@ -39,9 +39,20 @@ internal static class AndroidInteropPeerServer
         Console.WriteLine($"READY\t{server.LocalPeerIdentity}\t{tcpAddress}");
         Console.Out.Flush();
 
+        Console.WriteLine("WAITING_FOR_REMOTE_SESSION");
+        Console.Out.Flush();
+        while (!timeout.IsCancellationRequested && server.RemotePeerIdentity is null)
+            await Task.Delay(TimeSpan.FromMilliseconds(25), timeout.Token).ConfigureAwait(false);
+        if (server.RemotePeerIdentity is null)
+            throw new TimeoutException("The Android peer did not establish an authenticated libp2p session.");
+        Console.WriteLine("SESSION_AUTHENTICATED");
+        Console.Out.Flush();
+
         while (!timeout.IsCancellationRequested && !server.IsConnected)
             await Task.Delay(TimeSpan.FromMilliseconds(25), timeout.Token).ConfigureAwait(false);
-        Console.WriteLine("CONNECTED");
+        if (!server.IsConnected)
+            throw new TimeoutException("The Android peer did not negotiate the White-P application protocol.");
+        Console.WriteLine("APPLICATION_PROTOCOL_READY");
         Console.Out.Flush();
 
         byte[] requestWire = await server.ReceiveMessageAsync(timeout.Token).ConfigureAwait(false);

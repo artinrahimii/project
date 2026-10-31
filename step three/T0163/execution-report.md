@@ -652,3 +652,15 @@
 - **A049:** The exact KtLint chain formatting fix was incomplete and the quality contract still expected the old one-line source. A049 finalized as failed verification.
 - **A050:** corrected the lambda-chain closing-brace formatting and changed the Python contract to check the semantic multiline chain rather than contiguous text. No runtime behavior or acceptance assertion changed. Exact V 3.0.676 CI pending.
 - **Evidence:** `step three/T0163/evidence/v3.0.676-ktlint-and-contract-assertion-fix.md`.
+
+
+## Reconciliation — V 3.0.676 exact-head results and attempt A051
+
+- **Commit:** `94b27bd889450ea02f9aa3571ea5519a09d5bfff` (`V 3.0.676`).
+- **Step Three quality:** PASS — run [41169864071](https://github.com/artinrahimii/project/actions/runs/41169864071). Python quality, syntax, graph and evidence validation passed.
+- **Android:** native .NET fixture build PASS, KtLint PASS, debug APK PASS. JVM suite: 105 tests, 104 passed, one failed in `dispatchesRoundToThreeNativeDotNetLibp2pHosts`; all three request submissions reached `QUEUED`, then `awaitResponse` timed out after 30 seconds. JUnit artifact `13030532838` (43,315 bytes) showed `phases=` empty and all three child processes alive. Both Android↔Android transport tests passed.
+- **Windows WPF:** PASS — Release build, Protobuf, startup, process/policy/capability and DPAPI checks; host artifact `13030940902` uploaded. **HostLifecycle:** PASS.
+- **Generated Android Protobuf verification and Android debug APK artifact upload:** skipped after JVM failure.
+- **A050 assessment:** source contract, KtLint, APK and quality passed, but the response trace remained empty and did not identify the stage preventing .NET responses; A050 is finalized as failed diagnostics acceptance.
+- **A051:** make one background reader the sole owner of each process output stream from process start; use a future to await the READY line; capture only a fixed allowlist of phase markers; distinguish remote authenticated-session establishment from White-P application-protocol readiness. No runtime transport or three-host acceptance assertion is weakened.
+- **Evidence:** `step three/T0163/evidence/v3.0.677-dotnet-session-phase-diagnostics.md`.

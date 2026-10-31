@@ -44,6 +44,7 @@ import java.time.Duration
 import java.time.Instant
 import java.util.Arrays
 import java.util.UUID
+import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.TimeUnit
 
@@ -283,34 +284,26 @@ class Libp2pInferenceRequestTransportTest {
                             port.toString(),
                         ).redirectErrorStream(true).start()
                     processes += process
-                    val reader = process.inputStream.bufferedReader()
-
-                    val readyLine =
-                        withContext(Dispatchers.IO) {
-                            withTimeout(30_000L) {
-                                var ready: String? = null
-                                while (ready == null) {
-                                    val line = reader.readLine() ?: break
-                                    if (line.startsWith("READY\t")) {
-                                        ready = line
-                                    }
-                                }
-                                ready
-                            }
-                        } ?: throw AssertionError(
-                            "The .NET peer fixture exited before publishing its ready address.",
-                        )
-
+                    val readyLineFuture = CompletableFuture<String>()
                     val outputReader =
                         Thread(
                             {
-                                var lineCount = 0
+                                val reader = process.inputStream.bufferedReader()
+                                val allowedMarkers =
+                                    setOf(
+                                        "WAITING_FOR_REMOTE_SESSION",
+                                        "SESSION_AUTHENTICATED",
+                                        "APPLICATION_PROTOCOL_READY",
+                                        "RECEIVED",
+                                        "VALIDATED",
+                                        "SENT",
+                                    )
                                 while (true) {
                                     val line = runCatching { reader.readLine() }.getOrNull() ?: break
-                                    if (lineCount < 40) {
-                                        serverOutput.add("peer-" + serverNumber + ":" + line)
+                                    when {
+                                        line.startsWith("READY\\t") -> readyLineFuture.complete(line)
+                                        line in allowedMarkers -> serverOutput.add("peer-" + serverNumber + ":" + line)
                                     }
-                                    lineCount += 1
                                 }
                             },
                             "whitep-dotnet-peer-" + serverNumber + "-output",
@@ -318,6 +311,12 @@ class Libp2pInferenceRequestTransportTest {
                     outputReaders += outputReader
                     outputReader.start()
 
+                    val readyLine =
+                        withContext(Dispatchers.IO) {
+                            withTimeout(30_000L) {
+                                readyLineFuture.get(30, TimeUnit.SECONDS)
+                            }
+                        }
                     val readyFields = readyLine.split('\t')
                     assertEquals(
                         "The .NET fixture must announce a ready endpoint.",
