@@ -433,12 +433,12 @@ class InferenceAttemptDispatcherTest {
         maxRounds: Int = 3,
         maxTotalHosts: Int = 9,
     ) = DistributedRequest(
-            requestId = "ephemeral-request-42",
-            deadlineUnixMs = 1_798_000_000_000L,
-            maxRounds = maxRounds,
-            maxTotalHosts = maxTotalHosts,
-            status = status,
-        )
+        requestId = "ephemeral-request-42",
+        deadlineUnixMs = 1_798_000_000_000L,
+        maxRounds = maxRounds,
+        maxTotalHosts = maxTotalHosts,
+        status = status,
+    )
 
     private fun capsule() = ConversationContextCapsule(goal = "Run one local inference request")
 
