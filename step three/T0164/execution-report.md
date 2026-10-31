@@ -40,3 +40,14 @@
 - Android KtLint [41186743095](https://github.com/artinrahimii/project/actions/runs/41186743095) still failed only in InferenceAttemptDispatcherTest.kt: import order and argument indentation for the two added dispatchRound calls. APK, JVM and Protobuf were skipped.
 - Windows WPF and HostLifecycle passed in the same product workflow.
 - A005 fixes the final two KtLint findings only.
+
+## Attempt T0164-A005 — V 3.0.687 final exact-head result
+
+- Final source-fix commit: c73c64e284347a4ebc7ca77594be64fd9522dd17 (`V 3.0.687`).
+- Step Three quality workflow [41187096865](https://github.com/artinrahimii/project/actions/runs/41187096865) completed successfully. The automated Python tests, Python syntax check, graph validation and recorded-output/evidence guards passed.
+- Product workflow [41187096859](https://github.com/artinrahimii/project/actions/runs/41187096859) completed successfully. Android KtLint, debug APK build, Android JVM unit tests, generated Protobuf checks and artifact uploads passed.
+- The Windows WPF Release build, C# formatting, Protobuf, startup, process/policy/capability and DPAPI identity/peer-trust checks passed.
+- HostLifecycle unit and integration tests passed.
+- This is exact-head evidence for `c73c64e284347a4ebc7ca77594be64fd9522dd17`, not a result copied from an earlier commit. Local Gradle was not run in this editing session; GitHub CI executed the actual build and tests.
+- All acceptance criteria for T0164 are now verified. Status: **done**. Four earlier attempts failed and remain in the preserved history; A005 is the successful fifth attempt.
+

@@ -40478,8 +40478,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0163 و T0160 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "تکمیل‌شده",
       "actual_output_paths": [
         "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceRoundTimer.kt",
         "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceAttemptDispatcher.kt",
@@ -40508,12 +40508,12 @@
         "step three/T0163/execution-report.md",
         "step three/T0164/evidence/v3.0.683-injectable-round-timer.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "notes": "پیاده‌سازی واقعی در مسیرهای actual_output_paths موجود است. معیار پذیرش پس از اجرای موفق CI دقیقاً روی commit c73c64e284347a4ebc7ca77594be64fd9522dd17 (V 3.0.687) احراز شد؛ مسیرهای expected_output_paths صرفاً مسیرهای توصیفی گراف هستند و مسیرهای واقعی کد در actual_output_paths ثبت شده‌اند.",
       "execution_summary": {
         "attempt_count": 5,
         "failed_attempt_count": 4,
         "last_attempt_id": "T0164-A005",
-        "last_attempt_result": "partial",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceRoundTimer.kt",
           "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceAttemptDispatcher.kt",
@@ -40525,8 +40525,39 @@
           "step three/T0164/evidence/v3.0.683-injectable-round-timer.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
+        "related_commits": [
+          "2bfd334ff891e4e03493877ef70635b6cefde664",
+          "b824a09ae662d622ab788929d9afc7a3a363ef85",
+          "becb232deac57537957576ea33d42e822739619f",
+          "15bf5a42536867b9344e618f3c2ee9a41f7eb009",
+          "c73c64e284347a4ebc7ca77594be64fd9522dd17"
+        ],
+        "tests_passed": [
+          {
+            "name": "Step Three quality gate — V 3.0.687",
+            "result": "passed",
+            "summary": "The exact-head Python quality suite, Python syntax, graph structure, recorded-output and evidence checks all passed.",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41187096865"
+          },
+          {
+            "name": "Android KtLint, debug APK, JVM tests and Protobuf — V 3.0.687",
+            "result": "passed",
+            "summary": "Kotlin lint, Android debug APK build, Android JVM unit tests, generated Protobuf checks and test/APK artifact upload all passed.",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41187096859"
+          },
+          {
+            "name": "Windows WPF host build and acceptance — V 3.0.687",
+            "result": "passed",
+            "summary": "Release build, C# formatting, generated Protobuf, WPF startup, process restrictions, policy rejection, capability gate, user-scoped DPAPI identity and peer-trust checks all passed.",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41187096859"
+          },
+          {
+            "name": "HostLifecycle unit and integration tests — V 3.0.687",
+            "result": "passed",
+            "summary": "Host lifecycle unit and integration test job passed.",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41187096859"
+          }
+        ],
         "tests_failed": [
           {
             "name": "Python quality suite — V 3.0.683",
@@ -40752,36 +40783,57 @@
         {
           "attempt_id": "T0164-A005",
           "started_at": "2026-10-31T09:01:28.271Z",
-          "ended_at": null,
-          "result": "partial",
-          "summary": "Corrected the remaining V 3.0.686 KtLint findings: placed kotlinx.coroutines.runBlocking before org.* imports to match the accepted repository pattern, and indented the two multiline dispatchRound call argument lists by four spaces relative to the call. No runtime/test semantics changed. Exact-head V 3.0.687 CI pending.",
+          "ended_at": "2026-10-31T09:06:17.000Z",
+          "result": "succeeded",
+          "summary": "Corrected the final V 3.0.686 KtLint import-order and multiline-call indentation findings. Exact-head V 3.0.687 CI then passed the Step Three quality gate and all product jobs: Android KtLint, debug APK, JVM tests, Protobuf, Windows WPF and HostLifecycle. No runtime/test semantics changed in A005; T0164 now satisfies its acceptance criteria.",
           "changed_files": [
             "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt",
-            "step three/project-graph.md"
+            "step three/project-graph.md",
+            "step three/T0164/execution-report.md",
+            "step three/T0164/evidence/v3.0.683-injectable-round-timer.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "c73c64e284347a4ebc7ca77594be64fd9522dd17",
           "tests": [
             {
               "name": "Source diff review",
               "result": "passed",
-              "summary": "Only import order and two argument indentation blocks changed."
+              "summary": "Only import order and the two dispatchRound argument-indentation blocks changed in A005."
             },
             {
               "name": "Local Gradle/KtLint/JVM",
               "result": "not_run",
-              "summary": "No local checkout/build toolchain is available in this session."
+              "summary": "Not run in this editing session because no local checkout/build toolchain was available; the exact-head GitHub CI ran the actual Android build and tests."
             },
             {
-              "name": "V 3.0.687 exact-head CI",
-              "result": "pending",
-              "summary": "Must pass quality, lint, APK, JVM tests, Protobuf, Windows WPF and HostLifecycle."
+              "name": "Step Three quality gate — V 3.0.687",
+              "result": "passed",
+              "summary": "The exact-head Python quality suite, Python syntax, graph structure, recorded-output and evidence checks all passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41187096865"
+            },
+            {
+              "name": "Android KtLint, debug APK, JVM tests and Protobuf — V 3.0.687",
+              "result": "passed",
+              "summary": "Kotlin lint, Android debug APK build, Android JVM unit tests, generated Protobuf checks and test/APK artifact upload all passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41187096859"
+            },
+            {
+              "name": "Windows WPF host build and acceptance — V 3.0.687",
+              "result": "passed",
+              "summary": "Release build, C# formatting, generated Protobuf, WPF startup, process restrictions, policy rejection, capability gate, user-scoped DPAPI identity and peer-trust checks all passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41187096859"
+            },
+            {
+              "name": "HostLifecycle unit and integration tests — V 3.0.687",
+              "result": "passed",
+              "summary": "Host lifecycle unit and integration test job passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41187096859"
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect V 3.0.687 exact-head CI; keep T0164 in_progress until all required checks pass."
+          "follow_up": "T0164 is complete. T0165 is the next graph task; its incoming dependency edges have been reviewed and the missing explicit round identifier in the current Protobuf request/response contract is recorded in the T0165 notes."
         }
       ]
     },
@@ -40809,7 +40861,7 @@
         "src/Client.Android/Requests/ + tests/"
       ],
       "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nDependency review (2026-10-31): T0164 -> T0165 and T0160 -> T0165 are validated contract_or_interface_dependency edges. Contract gap to resolve during implementation: protocol/whitep/v1/messages.proto currently defines no explicit round_id/round_number field on InferenceRequest or InferenceResponse. Do not claim remote round validation from requestId/attemptId alone; decide and test a compatible round-correlation contract.",
       "execution_summary": {
         "attempt_count": 0,
         "failed_attempt_count": 0,
@@ -47701,19 +47753,30 @@
       "from": "T0164",
       "to": "T0165",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0164 creates one InferenceRoundTimer.Window per dispatch round and retains that same window for each QUEUED attempt under the (requestId, attemptId) key. T0165 must consume this per-attempt round association to reject stale or late responses against the correct round budget; this is a concrete runtime/interface dependency, not an inference from type=blocks. The current Protobuf response has no explicit round_id, which remains an implementation gap to resolve in T0165.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceRoundTimer.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceAttemptDispatcher.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt"
+      ]
     },
     {
       "from": "T0160",
       "to": "T0165",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0160 defines DistributedRequest.deadlineUnixMs and serializes that canonical absolute deadline as InferenceRequest.deadline_unix_ms. T0165 must validate response completion time against the same request deadline, so this is a direct cross-component deadline contract dependency, not an inference from type=blocks.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/DistributedRequest.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/protocol/InferenceRequestPayloadBuilder.kt",
+        "protocol/whitep/v1/messages.proto",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/DistributedRequestTest.kt",
+        "step three/T0160/execution-report.md"
+      ]
     },
     {
       "from": "T0165",
@@ -52508,9 +52571,40 @@
         "step three/T0160/execution-report.md"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-31T11:22:00.000Z",
+      "edge_from": "T0164",
+      "edge_to": "T0165",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "reason": "T0164 creates one InferenceRoundTimer.Window per dispatch round and retains that same window for each QUEUED attempt under the (requestId, attemptId) key. T0165 must consume this per-attempt round association to reject stale or late responses against the correct round budget; this is a concrete runtime/interface dependency, not an inference from type=blocks. The current Protobuf response has no explicit round_id, which remains an implementation gap to resolve in T0165.",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceRoundTimer.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceAttemptDispatcher.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-31T11:22:00.000Z",
+      "edge_from": "T0160",
+      "edge_to": "T0165",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "reason": "T0160 defines DistributedRequest.deadlineUnixMs and serializes that canonical absolute deadline as InferenceRequest.deadline_unix_ms. T0165 must validate response completion time against the same request deadline, so this is a direct cross-component deadline contract dependency, not an inference from type=blocks.",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/DistributedRequest.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/protocol/InferenceRequestPayloadBuilder.kt",
+        "protocol/whitep/v1/messages.proto",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/DistributedRequestTest.kt",
+        "step three/T0160/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-31T09:01:28.271Z",
+  "updated_at": "2026-10-31T11:22:00.000Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",
