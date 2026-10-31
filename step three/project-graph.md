@@ -40510,9 +40510,9 @@
       ],
       "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
       "execution_summary": {
-        "attempt_count": 2,
-        "failed_attempt_count": 1,
-        "last_attempt_id": "T0164-A002",
+        "attempt_count": 3,
+        "failed_attempt_count": 2,
+        "last_attempt_id": "T0164-A003",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceRoundTimer.kt",
@@ -40533,6 +40533,12 @@
             "result": "failed",
             "summary": "295 tests; one timer-contract test expected a non-null member invocation while the source correctly used a nullable-safe call.",
             "url": "https://github.com/artinrahimii/project/actions/runs/41185790866"
+          },
+          {
+            "name": "Android KtLint — V 3.0.684",
+            "result": "failed",
+            "summary": "Line-length and declaration-format violations in the newly added round timer/test Kotlin files; APK/JVM not run.",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41186026207"
           }
         ],
         "blocked_reason": null,
@@ -40587,9 +40593,9 @@
         {
           "attempt_id": "T0164-A002",
           "started_at": "2026-10-31T08:46:24.590Z",
-          "ended_at": null,
-          "result": "partial",
-          "summary": "Corrected the Python contract assertion to match the dispatcher's nullable-safe roundWindow?.remainingTimeoutMillis() call. Exact-head V 3.0.684 CI pending.",
+          "ended_at": "2026-10-31T08:51:40.762Z",
+          "result": "failed",
+          "summary": "Exact-head V 3.0.684 Step Three quality passed, but Android KtLint failed before APK/JVM execution. The report identified formatting violations in InferenceAttemptDispatcherTest.kt (long assertion, mutable clock and RecordingTransport declarations), InferenceRoundTimerTest.kt (mutable clock declaration), and InferenceRoundTimer.kt (long exception constructor).",
           "changed_files": [
             "tests/test_android_inference_round_timer_contract.py",
             "step three/T0164/execution-report.md",
@@ -40599,26 +40605,71 @@
           "commit_sha": null,
           "tests": [
             {
-              "name": "Patch invariant review",
+              "name": "Step Three quality gate — V 3.0.684",
               "result": "passed",
-              "summary": "The new expected expression now matches the actual Kotlin source."
+              "summary": "295 Python tests passed, compileall and graph/evidence validation passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41186026119"
             },
             {
-              "name": "Local Python/Gradle/JVM tests",
+              "name": "Android KtLint — V 3.0.684",
+              "result": "failed",
+              "summary": "KtLint reported source formatting violations in the two JVM test files and the timer production file; APK/JVM/Protobuf stages were skipped.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41186026207"
+            },
+            {
+              "name": "HostLifecycle — V 3.0.684",
+              "result": "passed",
+              "summary": "Host lifecycle unit/integration job passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41186026207"
+            },
+            {
+              "name": "Windows WPF — V 3.0.684",
+              "result": "pending_at_recording",
+              "summary": "Windows Release build and startup/security checks were still running when first inspected.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41186026207"
+            }
+          ],
+          "failure_details": "KtLint: InferenceAttemptDispatcherTest.kt line 270 line-length/newline; lines 403-411 MutableClock and RecordingTransport formatting; InferenceRoundTimerTest.kt lines 67-71 MutableClock formatting; InferenceRoundTimer.kt line 55 long IllegalArgumentException constructor. No Android JVM test result is claimed because lint failed before test execution.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "A003 reformats only the reported Kotlin lines and reruns exact-head CI."
+        },
+        {
+          "attempt_id": "T0164-A003",
+          "started_at": "2026-10-31T08:51:40.762Z",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Applied the exact KtLint formatting corrections reported by V 3.0.684: multiline long assertion, multiline MutableClock declarations with blank lines between members, properly separated RecordingTransport constructor parameters, and multiline IllegalArgumentException construction. No behavior changes intended. Exact-head V 3.0.685 CI pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceRoundTimerTest.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceRoundTimer.kt",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Source diff review",
+              "result": "passed",
+              "summary": "Changes restricted to formatting of the exact KtLint-reported lines."
+            },
+            {
+              "name": "Local Gradle/KtLint/JVM",
               "result": "not_run",
-              "summary": "No local checkout or toolchain is available in this editing session."
+              "summary": "No local Android build toolchain or repository checkout in this session."
             },
             {
-              "name": "V 3.0.684 exact-head CI",
+              "name": "V 3.0.685 exact-head CI",
               "result": "pending",
-              "summary": "Must pass Python tests and graph guards plus Android KtLint/APK/JVM/Protobuf, Windows WPF and HostLifecycle."
+              "summary": "Re-run quality, Kotlin lint, APK, JVM timer/dispatcher tests, Protobuf, WPF and HostLifecycle."
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect V 3.0.684 exact-head CI and resolve any remaining real source/build/JVM failure before completing T0164."
+          "follow_up": "Inspect V 3.0.685 exact-head CI; complete T0164 only after every relevant check passes."
         }
       ]
     },
@@ -52347,7 +52398,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-31T08:46:24.590Z",
+  "updated_at": "2026-10-31T08:51:40.762Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

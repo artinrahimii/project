@@ -64,10 +64,17 @@ class InferenceRoundTimerTest {
         InferenceRoundTimer(MutableClock(start), Duration.ZERO)
     }
 
-    private class MutableClock(private var current: Instant) : Clock() {
+    private class MutableClock(
+        private var current: Instant,
+    ) : Clock() {
         override fun getZone(): ZoneId = ZoneOffset.UTC
+
         override fun withZone(zone: ZoneId): Clock = this
+
         override fun instant(): Instant = current
-        fun advance(duration: Duration) { current = current.plus(duration) }
+
+        fun advance(duration: Duration) {
+            current = current.plus(duration)
+        }
     }
 }

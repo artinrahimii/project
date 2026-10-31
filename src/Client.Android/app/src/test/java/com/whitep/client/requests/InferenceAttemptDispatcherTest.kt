@@ -267,7 +267,11 @@ class InferenceAttemptDispatcherTest {
             assertTrue(result is InferenceRoundDispatchResult.Dispatched)
             assertEquals(listOf("host-a"), transport.hostIds)
             assertEquals(
-                listOf(InferenceAttemptSubmissionStatus.QUEUED, InferenceAttemptSubmissionStatus.TIMED_OUT, InferenceAttemptSubmissionStatus.TIMED_OUT),
+                listOf(
+                    InferenceAttemptSubmissionStatus.QUEUED,
+                    InferenceAttemptSubmissionStatus.TIMED_OUT,
+                    InferenceAttemptSubmissionStatus.TIMED_OUT,
+                ),
                 (result as InferenceRoundDispatchResult.Dispatched).attempts.map { it.submissionStatus },
             )
         }
@@ -400,14 +404,22 @@ class InferenceAttemptDispatcherTest {
         )
     }
 
-    private class MutableClock(private var current: Instant) : Clock() {
+    private class MutableClock(
+        private var current: Instant,
+    ) : Clock() {
         override fun getZone(): ZoneId = ZoneOffset.UTC
+
         override fun withZone(zone: ZoneId): Clock = this
+
         override fun instant(): Instant = current
-        fun advance(duration: Duration) { current = current.plus(duration) }
+
+        fun advance(duration: Duration) {
+            current = current.plus(duration)
+        }
     }
 
-    private class RecordingTransport(        private val submission: suspend (String, InferenceRequest) -> InferenceTransportSubmission =
+    private class RecordingTransport(
+        private val submission: suspend (String, InferenceRequest) -> InferenceTransportSubmission =
             { _, _ -> InferenceTransportSubmission.QUEUED },
     ) : InferenceRequestTransport {
         val hostIds = mutableListOf<String>()

@@ -16,3 +16,8 @@
 - Step Three quality workflow [41185790866](https://github.com/artinrahimii/project/actions/runs/41185790866) failed: 295 tests ran, 294 passed and one new source-contract assertion failed. The test expected `roundWindow.remainingTimeoutMillis()` but the dispatcher correctly uses the nullable-safe `roundWindow?.remainingTimeoutMillis()`.
 - HostLifecycle passed in product workflow [41185790885](https://github.com/artinrahimii/project/actions/runs/41185790885). Android fixture compilation and Windows build were still running when the quality failure was recorded.
 - The failure is in the new Python expectation, not evidence of a Kotlin/runtime failure. Attempt A002 corrects only the assertion and reruns full CI.
+## Attempt T0164-A002 — V 3.0.684 exact-head result
+
+- Step Three quality [41186026119](https://github.com/artinrahimii/project/actions/runs/41186026119) passed all 295 Python tests, compileall and graph/evidence guards.
+- Product workflow [41186026207](https://github.com/artinrahimii/project/actions/runs/41186026207): HostLifecycle passed. Android KtLint failed before APK/JVM/Protobuf tests. KtLint identified formatting issues in InferenceAttemptDispatcherTest.kt (long status assertion; MutableClock and RecordingTransport declarations), InferenceRoundTimerTest.kt (MutableClock declaration), and InferenceRoundTimer.kt (long IllegalArgumentException constructor). No Android JVM result is claimed for V 3.0.684.
+- A003 applies only the exact reported formatting changes and schedules the full exact-head CI again.

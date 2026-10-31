@@ -52,7 +52,10 @@ class InferenceRoundTimer(
             try {
                 startedAt.plus(timeout)
             } catch (exception: Exception) {
-                throw IllegalArgumentException("The configured round timeout is outside the supported clock range.", exception)
+                throw IllegalArgumentException(
+                    "The configured round timeout is outside the supported clock range.",
+                    exception,
+                )
             }
         val requestDeadline = Instant.ofEpochMilli(requestDeadlineUnixMs)
         return Window(startedAt, minOf(configuredDeadline, requestDeadline), clock)
