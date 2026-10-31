@@ -43386,11 +43386,11 @@
         "step three/T0170/execution-report.md",
         "step three/T0170/evidence/verification.md"
       ],
-      "notes": "A001 adds first-release request limits of at most 3 rounds, 3 hosts per round and 9 total host attempts. The requirement specified no numeric values; this decision is documented. Budget progress is in-memory per Android runtime instance and is reserved conservatively across cancellation. No automatic retry loop, persistent cross-process ledger or all-round duplicate-host rule is claimed. T0169 selector contract revalidation remains in_review pending exact-head CI. A001 quality gate failed on one pre-existing source-string guard; A002 restores the exact expression and records the failure append-only. Exact A002 CI is pending. A002 passed Step Three quality but Android KtLint again failed at the same helper signature/body layout; A003 moves DistributedRequest construction onto the signature line and awaits exact-head CI. A003 Step Three quality and HostLifecycle passed; Android KtLint then exposed incorrect indentation at lines 436–441, fixed in A004. APK/JVM/Protobuf have not yet run. A004 exact-head quality, Windows WPF and HostLifecycle passed; Android KtLint found five production-source formatting violations, corrected in A005 without intended contract changes.",
+      "notes": "A001 adds first-release request limits of at most 3 rounds, 3 hosts per round and 9 total host attempts. The requirement specified no numeric values; this decision is documented. Budget progress is in-memory per Android runtime instance and is reserved conservatively across cancellation. No automatic retry loop, persistent cross-process ledger or all-round duplicate-host rule is claimed. T0169 selector contract revalidation remains in_review pending exact-head CI. A001 quality gate failed on one pre-existing source-string guard; A002 restores the exact expression and records the failure append-only. Exact A002 CI is pending. A002 passed Step Three quality but Android KtLint again failed at the same helper signature/body layout; A003 moves DistributedRequest construction onto the signature line and awaits exact-head CI. A003 Step Three quality and HostLifecycle passed; Android KtLint then exposed incorrect indentation at lines 436–441, fixed in A004. APK/JVM/Protobuf have not yet run. A004 exact-head quality, Windows WPF and HostLifecycle passed; Android KtLint found five production-source formatting violations, corrected in A005 without intended contract changes. A005 (V 3.0.721) exact-head CI left one KtLint function-argument formatting error in DistributedRequest.create; A006 splits the minOf arguments. All earlier attempt-to-commit associations have been filled with the verified online SHA values. A006 CI is pending.",
       "execution_summary": {
-        "attempt_count": 5,
-        "failed_attempt_count": 4,
-        "last_attempt_id": "T0170-A005",
+        "attempt_count": 6,
+        "failed_attempt_count": 5,
+        "last_attempt_id": "T0170-A006",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/requests/DistributedRequest.kt",
@@ -43409,60 +43409,20 @@
           "step three/T0170/evidence/verification.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
-        "tests_passed": [
-          {
-            "name": "Step Three quality gate — V 3.0.718",
-            "result": "passed",
-            "url": "https://github.com/artinrahimii/project/actions/runs/41217032620"
-          },
-          {
-            "name": "Step Three quality gate — V 3.0.719",
-            "result": "passed",
-            "url": "https://github.com/artinrahimii/project/actions/runs/41217272330"
-          },
-          {
-            "name": "Step Three quality gate — V 3.0.720",
-            "result": "passed",
-            "url": "https://github.com/artinrahimii/project/actions/runs/41217532369"
-          },
-          {
-            "name": "Windows WPF — V 3.0.720",
-            "result": "passed",
-            "url": "https://github.com/artinrahimii/project/actions/runs/41217532383"
-          },
-          {
-            "name": "HostLifecycle — V 3.0.720",
-            "result": "passed",
-            "url": "https://github.com/artinrahimii/project/actions/runs/41217532383"
-          }
+        "related_commits": [
+          "17077b464d0946d28789d0a4f8378f80bee09845",
+          "63be6aa51b229ecf4f9d49565bee04e9c0a8a4d8",
+          "62d844488bf9d81c00683963943c251c3de8f3de",
+          "ce0e6ebdfefbff004a9be0f754e55d653cffaee4",
+          "e708e8da220078cf783d1610286d793b8ff8f77c"
         ],
+        "tests_passed": [],
         "tests_failed": [
           {
-            "name": "Step Three quality gate — V 3.0.717",
+            "name": "Android KtLint — V 3.0.721",
             "result": "failed",
-            "url": "https://github.com/artinrahimii/project/actions/runs/41216834757"
-          },
-          {
-            "name": "Android KtLint — V 3.0.717",
-            "result": "failed",
-            "url": "https://github.com/artinrahimii/project/actions/runs/41216834811"
-          },
-          {
-            "name": "Android KtLint — V 3.0.718",
-            "result": "failed",
-            "url": "https://github.com/artinrahimii/project/actions/runs/41217032694"
-          },
-          {
-            "name": "Android KtLint — V 3.0.719",
-            "result": "failed",
-            "url": "https://github.com/artinrahimii/project/actions/runs/41217272243"
-          },
-          {
-            "name": "Android KtLint — V 3.0.720",
-            "result": "failed",
-            "url": "https://github.com/artinrahimii/project/actions/runs/41217532383",
-            "summary": "Five multiline-expression / parenthesis-layout findings in production source; downstream APK/JVM/Protobuf skipped."
+            "url": "https://github.com/artinrahimii/project/actions/runs/41217933725",
+            "summary": "One remaining function-argument multiline formatting failure at DistributedRequest.kt:78; dependent APK/JVM/Protobuf checks skipped."
           }
         ],
         "blocked_reason": null,
@@ -43513,7 +43473,7 @@
             "step three/T0170/evidence/verification.md",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "17077b464d0946d28789d0a4f8378f80bee09845",
           "tests": [
             {
               "name": "Step Three quality gate — V 3.0.717",
@@ -43563,7 +43523,7 @@
             "step three/T0170/evidence/verification.md",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "63be6aa51b229ecf4f9d49565bee04e9c0a8a4d8",
           "tests": [
             {
               "name": "Step Three quality gate — V 3.0.718",
@@ -43608,7 +43568,7 @@
             "step three/T0170/evidence/verification.md",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "62d844488bf9d81c00683963943c251c3de8f3de",
           "tests": [
             {
               "name": "Step Three quality gate — V 3.0.719",
@@ -43653,7 +43613,7 @@
             "step three/T0170/evidence/verification.md",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "ce0e6ebdfefbff004a9be0f754e55d653cffaee4",
           "tests": [
             {
               "name": "Step Three quality gate — V 3.0.720",
@@ -43689,9 +43649,9 @@
         {
           "attempt_id": "T0170-A005",
           "started_at": "2026-10-31T16:04:21.132Z",
-          "ended_at": "2026-10-31T16:04:21.132Z",
-          "result": "partial",
-          "summary": "Fixed five production-source KtLint findings from A004 by adjusting the multiline default expressions, selector maxHosts argument and runtime boolean guard. Logic/contracts unchanged; exact-head CI pending.",
+          "ended_at": "2026-10-31T16:07:06Z",
+          "result": "failed",
+          "summary": "Fixed four of the five production-source KtLint findings from A004. Exact-head KtLint on V 3.0.721 then isolated one remaining multiline minOf argument-formatting issue in DistributedRequest.create. Quality, Windows WPF and HostLifecycle passed; APK/JVM/Protobuf were skipped because KtLint failed.",
           "changed_files": [
             "src/Client.Android/app/src/main/java/com/whitep/client/requests/DistributedRequest.kt",
             "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
@@ -43700,29 +43660,74 @@
             "step three/T0170/evidence/verification.md",
             "step three/project-graph.md"
           ],
+          "commit_sha": "e708e8da220078cf783d1610286d793b8ff8f77c",
+          "tests": [
+            {
+              "name": "Step Three quality gate — V 3.0.721",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41217933594",
+              "summary": "Python tests, graph structure, syntax and evidence validation passed."
+            },
+            {
+              "name": "Android KtLint — V 3.0.721",
+              "result": "failed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41217933725",
+              "summary": "One remaining source-formatting finding at DistributedRequest.kt:78. KtLint required minOf call arguments on separate lines; assembleDebug, Android JVM tests and generated Protobuf checks were skipped."
+            },
+            {
+              "name": "Windows WPF — V 3.0.721",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41217933725",
+              "summary": "Windows WPF build and validation job passed."
+            },
+            {
+              "name": "HostLifecycle — V 3.0.721",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41217933725",
+              "summary": "Host lifecycle unit and integration tests passed."
+            }
+          ],
+          "failure_details": "Android ktlintMainSourceSetCheck failed only at DistributedRequest.kt:78. Exact log findings: function-call arguments must be on separate lines, closing parenthesis must start a new line, and the default-expression line exceeded the maximum length. APK/JVM/Protobuf were skipped as dependent steps.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "A006 splits the two minOf arguments onto separate lines and retains the product's existing round/total host policy. Inspect exact-head V 3.0.722 actions."
+        },
+        {
+          "attempt_id": "T0170-A006",
+          "started_at": "2026-10-31T17:33:29.743Z",
+          "ended_at": "2026-10-31T17:33:29.743Z",
+          "result": "partial",
+          "summary": "Corrected the one remaining KtLint finding from A005 by splitting the minOf arguments and closing parenthesis onto separate lines in DistributedRequest.create. No budget behavior or interface changed; exact-head CI is pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/requests/DistributedRequest.kt",
+            "step three/T0170/execution-report.md",
+            "step three/T0170/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
           "commit_sha": null,
           "tests": [
             {
-              "name": "Android KtLint / assembleDebug / testDebugUnitTest / generated Protobuf",
+              "name": "Step Three quality gate — V 3.0.722",
               "result": "pending",
-              "summary": "Awaiting exact A005 product workflow."
+              "summary": "Awaiting exact-head CI."
             },
             {
-              "name": "Step Three quality gate",
+              "name": "Android KtLint / assembleDebug / testDebugUnitTest / generated Protobuf — V 3.0.722",
               "result": "pending",
-              "summary": "Awaiting exact A005 quality run."
+              "summary": "Awaiting exact-head CI."
             },
             {
-              "name": "Windows WPF and HostLifecycle",
+              "name": "Windows WPF and HostLifecycle — V 3.0.722",
               "result": "pending",
-              "summary": "Awaiting exact A005 product workflow."
+              "summary": "Awaiting exact-head CI."
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect A005 exact-head actions. Require Android KtLint, APK, JVM tests, Protobuf, Windows, HostLifecycle and Step Three gate to pass before completing T0170."
+          "follow_up": "Inspect the V 3.0.722 exact-head Actions runs. Do not complete T0170 or close T0169 contract revalidation until Android KtLint, APK, all JVM tests, generated Protobuf, Step Three quality, Windows WPF and HostLifecycle pass."
         }
       ]
     },
@@ -55437,7 +55442,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-31T16:04:21.132Z",
+  "updated_at": "2026-10-31T17:33:29.743Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

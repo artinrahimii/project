@@ -75,7 +75,10 @@ data class DistributedRequest(
             deadlineUnixMs: Long,
             maxRounds: Int,
             maxTotalHosts: Int =
-                minOf(maxRounds, FirstReleaseInferenceLimits.MAX_ROUNDS) * FirstReleaseInferenceLimits.MAX_HOSTS_PER_ROUND,
+                minOf(
+                    maxRounds,
+                    FirstReleaseInferenceLimits.MAX_ROUNDS,
+                ) * FirstReleaseInferenceLimits.MAX_HOSTS_PER_ROUND,
         ): DistributedRequest =
             DistributedRequest(
                 requestId = UUID.randomUUID().toString(),
