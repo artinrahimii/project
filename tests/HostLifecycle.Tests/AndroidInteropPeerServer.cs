@@ -89,13 +89,14 @@ internal static class AndroidInteropPeerServer
     {
         private int _written;
 
-        public ILogger CreateLogger(string categoryName) => new InteropDiagnosticLogger(categoryName);
+        public ILogger CreateLogger(string categoryName) =>
+            new InteropDiagnosticLogger(categoryName, () => Interlocked.Increment(ref _written) <= 80);
 
         public void Dispose()
         {
         }
 
-        private sealed class InteropDiagnosticLogger(string categoryName) : ILogger
+        private sealed class InteropDiagnosticLogger(string categoryName, Func<bool> allowWrite) : ILogger
         {
             public IDisposable? BeginScope<TState>(TState state)
                 where TState : notnull => null;
@@ -109,7 +110,7 @@ internal static class AndroidInteropPeerServer
                 Exception? exception,
                 Func<TState, Exception?, string> formatter)
             {
-                if (!IsEnabled(logLevel) || Interlocked.Increment(ref _written) > 80)
+                if (!IsEnabled(logLevel) || !allowWrite())
                     return;
 
                 string template =

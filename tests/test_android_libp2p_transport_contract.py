@@ -143,7 +143,9 @@ class AndroidLibp2pTransportContractTests(unittest.TestCase):
         self.assertIn("logging.AddProvider(diagnosticLoggerProvider)", transport)
         self.assertIn('values.FirstOrDefault(static item => item.Key == "{OriginalFormat}")', fixture)
         self.assertIn("exception?.GetType().Name", fixture)
-        self.assertIn("Interlocked.Increment(ref _written) > 80", fixture)
+        self.assertIn("() => Interlocked.Increment(ref _written) <= 80", fixture)
+        self.assertIn("Func<bool> allowWrite", fixture)
+        self.assertIn("!allowWrite()", fixture)
         self.assertNotIn("formatter(state, exception)", fixture)
         self.assertIn('line.startsWith("P2P_DIAG\\t")', test_source)
 

@@ -701,3 +701,19 @@
 - A047 already configured Yamux ahead of Mplex. Current upstream docs describe Yamux support but also identify the JVM implementation's Yamux implementation as beta; this is a compatibility risk, not proof of current failure. References: https://github.com/NethermindEth/dotnet-libp2p and https://github.com/libp2p/jvm-libp2p/blob/develop/README.md.
 - No local .NET or Android Gradle test was run in this connected session. Exact-head V 3.0.679 CI is required to compile and exercise the diagnostics.
 - Acceptance unchanged: all three real .NET peers must receive the request and return responses correlated by request ID, attempt ID, model ID and authenticated PeerId. T0163 remains `in_progress`.
+
+## Exact V 3.0.679 result — A053 reconciliation
+
+- Step Three quality: [run 41175800600](https://github.com/artinrahimii/project/actions/runs/41175800600) passed with 288 Python tests, compileall, and graph guard (229 tasks, 417 edges, zero errors and one preserved T0001 metadata warning).
+- Product workflow: [run 41175800629](https://github.com/artinrahimii/project/actions/runs/41175800629) failed because the .NET peer fixture did not compile. Exact compiler error: `CS0120` at `AndroidInteropPeerServer.cs(112,71)`; the nested diagnostic logger tried to access provider instance field `_written` without an instance. Android KtLint, APK and JVM tests were skipped.
+- HostLifecycle and the real local-inference workflow also stopped at that shared C# compile error. WPF formatting/build/Protobuf/startup checks passed; its process-restriction step could not compile the shared HostLifecycle test project.
+- A053 is finalized as failed verification. It yielded no runtime evidence about TCP, multistream, Noise/TLS or Yamux negotiation.
+
+## Attempt A054 — pass diagnostic counter through an instance callback
+
+- Base commit: `389ba82e0512c46e5bbd3289df7c409475ee9863` (`V 3.0.679`).
+- `InteropDiagnosticLoggerProvider.CreateLogger` now passes a callback that increments its own `_written` counter and allows no more than 80 diagnostic records. The nested logger receives `Func<bool> allowWrite` and no longer accesses an outer instance field.
+- The payload-free logging boundary remains unchanged: category, level, event ID, static message template and exception type only; formatted messages and structured argument values are not emitted.
+- Added a source-contract assertion for provider-scope counter increment and nested logger callback invocation.
+- Local .NET and Android Gradle commands were not run in this session. Exact-head V 3.0.680 CI is pending.
+- T0163 remains `in_progress`; the three-peer correlated request/response acceptance criterion is unchanged.
