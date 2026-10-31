@@ -13,7 +13,7 @@ import androidx.compose.ui.unit.dp
 
 /** Renders each correlated host attempt independently; response bodies are never concatenated. */
 @Composable
-internal fun HostResponseCards(responses: List<HostResponseCardState>) {
+internal fun hostResponseCards(responses: List<HostResponseCardState>) {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Text("Host responses", style = MaterialTheme.typography.titleLarge)
         if (responses.isEmpty()) {

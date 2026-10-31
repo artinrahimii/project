@@ -55,3 +55,21 @@
 - Restored the original named `text =` arguments in `MainActivity.kt`; this removes two unintended formatting-only changes from the previous diff.
 - No runtime behavior, response-correlation contract or protocol field changed.
 - Exact-head `V 3.0.694` CI is pending. Task remains `in_progress` until all required gates pass.
+
+
+## Attempt T0166-A002 — exact-head CI outcome
+
+- Step Three quality gate passed: [run 41199481762](https://github.com/artinrahimii/project/actions/runs/41199481762).
+- HostLifecycle unit/integration job passed: [run 41199481700](https://github.com/artinrahimii/project/actions/runs/41199481700).
+- Android KtLint failed with two main-source findings: `HostResponseCards.kt:16:14` (Composable function name must start lowercase) and `RequestViewModel.kt:14:1` (unused import). Android APK build, JVM tests and Protobuf verification were skipped: [product workflow](https://github.com/artinrahimii/project/actions/runs/41199481700).
+- Windows WPF job was still running when this correction attempt was prepared; no final Windows result is claimed for V 3.0.694.
+- A002 is recorded as failed verification; no Android build/test pass is claimed.
+
+## Attempt T0166-A003
+
+- **Start:** 2026-10-31T15:37:00+03:30.
+- Renamed the Composable declaration and UI call to `hostResponseCards` to follow the repository's lowercase function convention.
+- Removed the unused `kotlinx.coroutines.flow.map` import.
+- Updated the Python source-contract assertion to the new Composable name.
+- No runtime behavior, response-correlation contract or protocol field changed.
+- Exact-head `V 3.0.695` CI is pending. Task remains `in_progress` until all required gates pass.

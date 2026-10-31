@@ -231,7 +231,7 @@ private fun requestScreen(
             Text("Prepare request")
         }
         Text("Status: ${requestState.statusMessage}", style = MaterialTheme.typography.bodyMedium)
-        HostResponseCards(responses = requestState.hostResponses)
+        hostResponseCards(responses = requestState.hostResponses)
         OutlinedButton(onClick = onBack, modifier = Modifier.fillMaxWidth()) {
             Text("Back")
         }
