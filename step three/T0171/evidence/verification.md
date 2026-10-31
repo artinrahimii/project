@@ -25,3 +25,12 @@
 - Android KtLint, `assembleDebug`, `testDebugUnitTest`, generated Protobuf Java/Kotlin validation.
 - Step Three Python tests, syntax, graph, output-path and evidence checks.
 - Windows WPF build/startup/security checks and HostLifecycle integration tests.
+
+
+## A001 — V 3.0.724 exact-head CI finding
+
+Step Three quality workflow 41230294822 passed; HostLifecycle job 124622910470 passed; Windows WPF job 124622910280 passed all format/build/Protobuf/startup/process/policy/capability/DPAPI/artifact steps. Android job 124622910620 failed at `ktlintTestSourceSetCheck`. The exact violations were seven formatting findings in `HostCandidateSelectorTest.kt`: five `DistributedRequestProgress` argument layouts and two multiline-expression layout findings. The APK, JVM tests and generated Protobuf checks were skipped. This is recorded as a failed verification, not as a Kotlin test failure or product pass.
+
+## A002 — formatting correction
+
+The five progress arguments were expanded to KtLint-compliant multiline constructor calls, and the two multiline expressions were moved to the required continuation layout. The fix is awaiting a new exact-head CI run.

@@ -38,3 +38,12 @@ Status: `in_progress`. The next-round selector now excludes every peer ID in the
 ## Verification
 
 No local Gradle execution is claimed from this connected GitHub session. Exact-head CI is pending for this implementation commit. Required checks: Android KtLint, debug APK build, Android JVM tests, generated Protobuf Java/Kotlin validation, Step Three Python/graph/evidence quality, Windows WPF and HostLifecycle. T0171 and the affected T0169/T0170 contract revalidation will remain in progress until those checks pass.
+
+
+## A001 — exact-head V 3.0.724 CI result
+
+- Step Three quality gate [41230294822](https://github.com/artinrahimii/project/actions/runs/41230294822): PASS. Python automated tests, syntax, graph structure and recorded-output/evidence validation all succeeded.
+- HostLifecycle job 124622910470 in [product workflow 41230294791](https://github.com/artinrahimii/project/actions/runs/41230294791): PASS.
+- Windows WPF job 124622910280: C# formatting, Release build, generated Protobuf, startup smoke, agent-tool process/policy/capability checks, DPAPI identity/trust storage and artifact upload all passed.
+- Android job 124622910620: KtLint failed in `HostCandidateSelectorTest.kt` only. The log reported five inline `DistributedRequestProgress` argument layouts at lines 195, 217, 237, 257 and 288, plus multiline-expression indentation at lines 357 and 410. The Android APK, JVM tests and generated Protobuf checks were skipped because KtLint is an earlier gate. No Android test success is claimed for V 3.0.724.
+- A002 fixes only those reported test-source formatting violations. A fresh product workflow must pass KtLint, APK assembly, JVM tests and generated Java/Kotlin Protobuf checks before T0171 is complete.

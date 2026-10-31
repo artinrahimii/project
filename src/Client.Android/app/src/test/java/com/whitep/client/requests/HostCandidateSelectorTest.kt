@@ -192,7 +192,12 @@ class HostCandidateSelectorTest {
                 candidates = candidates,
                 previousRoundAttempts = previousAttempts,
                 previousRoundResponses = completedRound,
-                progress = DistributedRequestProgress(roundsDispatched = 1, hostsAttempted = 3, attemptedEphemeralHostIds = listOf("host-a", "host-b", "host-c")),
+                progress =
+                    DistributedRequestProgress(
+                        roundsDispatched = 1,
+                        hostsAttempted = 3,
+                        attemptedEphemeralHostIds = listOf("host-a", "host-b", "host-c"),
+                    ),
             )
 
         assertEquals(listOf("host-d", "host-e", "host-f"), selected.map { it.announcement.ephemeralHostId })
@@ -214,7 +219,12 @@ class HostCandidateSelectorTest {
                 candidates = listOf(candidate("host-d")),
                 previousRoundAttempts = attempts,
                 previousRoundResponses = InferenceRoundResponseCollection(emptyList(), emptyList()),
-                progress = DistributedRequestProgress(roundsDispatched = 1, hostsAttempted = 3, attemptedEphemeralHostIds = listOf("host-a", "host-b", "host-c")),
+                progress =
+                    DistributedRequestProgress(
+                        roundsDispatched = 1,
+                        hostsAttempted = 3,
+                        attemptedEphemeralHostIds = listOf("host-a", "host-b", "host-c"),
+                    ),
             )
         assertTrue(selected.isEmpty())
     }
@@ -234,7 +244,12 @@ class HostCandidateSelectorTest {
                 candidates = listOf(candidate("host-d"), candidate("host-e")),
                 previousRoundAttempts = attempts,
                 previousRoundResponses = InferenceRoundResponseCollection(emptyList(), emptyList()),
-                progress = DistributedRequestProgress(roundsDispatched = 1, hostsAttempted = 3, attemptedEphemeralHostIds = listOf("host-a", "host-b", "host-c")),
+                progress =
+                    DistributedRequestProgress(
+                        roundsDispatched = 1,
+                        hostsAttempted = 3,
+                        attemptedEphemeralHostIds = listOf("host-a", "host-b", "host-c"),
+                    ),
             )
         assertEquals(listOf("host-d"), selected.map { it.announcement.ephemeralHostId })
     }
@@ -254,7 +269,12 @@ class HostCandidateSelectorTest {
                 candidates = listOf(candidate("host-d")),
                 previousRoundAttempts = attempts,
                 previousRoundResponses = InferenceRoundResponseCollection(emptyList(), emptyList()),
-                progress = DistributedRequestProgress(roundsDispatched = 1, hostsAttempted = 3, attemptedEphemeralHostIds = listOf("host-a", "host-b", "host-c")),
+                progress =
+                    DistributedRequestProgress(
+                        roundsDispatched = 1,
+                        hostsAttempted = 3,
+                        attemptedEphemeralHostIds = listOf("host-a", "host-b", "host-c"),
+                    ),
             )
         assertTrue(selected.isEmpty())
     }
@@ -285,7 +305,12 @@ class HostCandidateSelectorTest {
                 candidates = listOf(candidate("host-b"), candidate("host-c")),
                 previousRoundAttempts = previousAttempts,
                 previousRoundResponses = completedRound,
-                progress = DistributedRequestProgress(roundsDispatched = 1, hostsAttempted = 1, attemptedEphemeralHostIds = listOf("host-a")),
+                progress =
+                    DistributedRequestProgress(
+                        roundsDispatched = 1,
+                        hostsAttempted = 1,
+                        attemptedEphemeralHostIds = listOf("host-a"),
+                    ),
             )
 
         assertTrue(selected.isEmpty())
@@ -354,8 +379,9 @@ class HostCandidateSelectorTest {
             HostCandidateSelector.selectNextRound(
                 distributedRequest = distributedRequest(),
                 request = validRequest(),
-                candidates = listOf(
-                    candidate("host-a"),
+                candidates =
+                    listOf(
+                        candidate("host-a"),
                     candidate("host-d"),
                     candidate("host-g"),
                     candidate("host-h"),
@@ -407,9 +433,10 @@ class HostCandidateSelectorTest {
                 candidates = listOf(candidate("host-a"), candidate("host-b")),
                 previousRoundAttempts = previousAttempts,
                 previousRoundResponses = InferenceRoundResponseCollection(emptyList(), emptyList()),
-                progress = DistributedRequestProgress(
-                    roundsDispatched = 1,
-                    hostsAttempted = 1,
+                progress =
+                    DistributedRequestProgress(
+                        roundsDispatched = 1,
+                        hostsAttempted = 1,
                     attemptedEphemeralHostIds = listOf("host-a"),
                 ),
                 retryableEphemeralHostIds = setOf("never-attempted"),

@@ -43903,9 +43903,9 @@
       ],
       "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود. Before execution, review the progress-aware HostCandidateSelector.selectNextRound API introduced by T0170. The T0170→T0171 edge remains unreviewed.\nT0171-A001 adds ordered request-scoped peer-attempt history. All previously attempted IDs are excluded from next-round selection by default; a prior peer can be selected again only via the explicit per-call retryableEphemeralHostIds allowlist. Exact-head CI pending.",
       "execution_summary": {
-        "attempt_count": 1,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "T0171-A001",
+        "attempt_count": 3,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "T0171-A002",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/requests/DistributedRequest.kt",
@@ -43922,8 +43922,34 @@
           "step three/project-graph.md"
         ],
         "related_commits": [],
-        "tests_passed": [],
-        "tests_failed": [],
+        "tests_passed": [
+          {
+            "name": "Step Three quality gate — V 3.0.724",
+            "result": "passed",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41230294822",
+            "summary": "Python tests, syntax, graph validation and recorded-output/evidence checks passed."
+          },
+          {
+            "name": "HostLifecycle — V 3.0.724",
+            "result": "passed",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41230294791",
+            "summary": "HostLifecycle unit/integration job 124622910470 passed."
+          },
+          {
+            "name": "Windows WPF host — V 3.0.724",
+            "result": "passed",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41230294791",
+            "summary": "Windows Release build, Protobuf, startup, process/policy/capability, DPAPI and artifact checks passed."
+          }
+        ],
+        "tests_failed": [
+          {
+            "name": "Android KtLint — V 3.0.724",
+            "result": "failed",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41230294791",
+            "summary": "ktlintTestSourceSetCheck found five long inline progress constructors and two multiline-expression layout violations in HostCandidateSelectorTest.kt. APK/JVM/Protobuf steps were skipped."
+          }
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -44000,6 +44026,71 @@
             }
           ],
           "follow_up": "Inspect exact-head CI and correct any failures; after the Android JVM and Step Three checks pass, finalize T0171 and revalidate T0169/T0170."
+        },
+        {
+          "attempt_id": "T0171-A001-verification",
+          "started_at": "2026-10-31T18:37:07Z",
+          "ended_at": "2026-10-31T18:38:48Z",
+          "result": "failed",
+          "summary": "Exact-head V 3.0.724 CI: Step Three quality, HostLifecycle and all Windows WPF checks passed. Android KtLint failed on seven formatting findings in HostCandidateSelectorTest.kt; Android APK/JVM/Protobuf stages were skipped.",
+          "changed_files": [],
+          "commit_sha": "882903ce910fa96a71cde4655ca383802044fe32",
+          "tests": [
+            {
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41230294822"
+            },
+            {
+              "name": "HostLifecycle and Windows WPF",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41230294791"
+            },
+            {
+              "name": "Android KtLint",
+              "result": "failed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41230294791",
+              "summary": "Seven style findings in HostCandidateSelectorTest.kt; downstream Android build/tests skipped."
+            }
+          ],
+          "failure_details": "Five DistributedRequestProgress argument layout findings and two multiline-expression layout findings in HostCandidateSelectorTest.kt.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Apply the KtLint layout correction and rerun the product workflow on the new exact main commit."
+        },
+        {
+          "attempt_id": "T0171-A002",
+          "started_at": "2026-10-31T18:38:48Z",
+          "ended_at": "2026-10-31T18:38:48Z",
+          "result": "partial",
+          "summary": "Corrected the five reported inline progress constructor layouts and the two multiline-expression continuation layouts in HostCandidateSelectorTest.kt. No behavioral code changed. Exact-head CI is pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt",
+            "step three/T0171/execution-report.md",
+            "step three/T0171/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Android KtLint, assembleDebug, testDebugUnitTest and generated Protobuf",
+              "result": "pending"
+            },
+            {
+              "name": "Step Three quality gate",
+              "result": "pending"
+            },
+            {
+              "name": "Windows WPF and HostLifecycle",
+              "result": "pending"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Check exact-head V 3.0.725. If KtLint passes, require APK build, JVM tests and generated-source checks to pass as well."
         }
       ]
     },
@@ -55709,7 +55800,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-31T18:26:00Z",
+  "updated_at": "2026-10-31T18:38:48Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",
