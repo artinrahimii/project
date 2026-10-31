@@ -11,6 +11,7 @@ import io.libp2p.core.multistream.ProtocolBinding
 import io.libp2p.core.mux.StreamMuxerProtocol
 import io.libp2p.etc.SimpleClientHandler
 import io.libp2p.etc.createSimpleBinding
+import io.libp2p.protocol.Identify
 import io.netty.buffer.ByteBuf
 import io.netty.buffer.Unpooled
 import io.netty.channel.ChannelHandlerContext
@@ -88,6 +89,8 @@ class Libp2pInferenceRequestTransport(
                 +StreamMuxerProtocol.Mplex
             }
             protocols {
+                // The .NET peer completes Identify before reporting its authenticated session as connected.
+                add(Identify())
                 add(protocolBindingForHost())
             }
         }

@@ -159,5 +159,16 @@ class AndroidLibp2pTransportContractTests(unittest.TestCase):
         self.assertNotIn("formatter(state, exception)", fixture)
         self.assertIn('line.startsWith("P2P_DIAG\\t")', test_source)
 
+    def test_android_registers_standard_identify_for_dotnet_session_initialization(self):
+        source = TRANSPORT.read_text(encoding="utf-8")
+        self.assertIn("import io.libp2p.protocol.Identify", source)
+        protocol_block = source.split("protocols {", 1)[1].split("}", 1)[0]
+        self.assertIn("add(Identify())", protocol_block)
+        self.assertIn("add(protocolBindingForHost())", protocol_block)
+        self.assertLess(
+            protocol_block.index("add(Identify())"),
+            protocol_block.index("add(protocolBindingForHost())"),
+        )
+
 if __name__ == "__main__":
     unittest.main()
