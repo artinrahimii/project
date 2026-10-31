@@ -33,7 +33,10 @@ class AndroidInferenceRequestRuntime private constructor(
     private val peerTrustStore: AndroidPeerTrustStore?,
     private val roundTimer: InferenceRoundTimer,
 ) : Closeable {
-    private data class AttemptKey(val requestId: String, val attemptId: String)
+    private data class AttemptKey(
+        val requestId: String,
+        val attemptId: String,
+    )
 
     private val dispatcher = InferenceAttemptDispatcher(transport)
     private val attemptRoundWindows = ConcurrentHashMap<AttemptKey, InferenceRoundTimer.Window>()
@@ -143,11 +146,14 @@ class AndroidInferenceRequestRuntime private constructor(
         timeout: Duration = DEFAULT_RESPONSE_TIMEOUT,
     ): InferenceResponse {
         val key = AttemptKey(requestId, attemptId)
-        val roundWindow = attemptRoundWindows[key] ?: return transport.awaitResponse(
-            requestId = requestId,
-            attemptId = attemptId,
-            timeout = timeout,
-        )
+        val roundWindow = attemptRoundWindows[key]
+        if (roundWindow == null) {
+            return transport.awaitResponse(
+                requestId = requestId,
+                attemptId = attemptId,
+                timeout = timeout,
+            )
+        }
         val boundedTimeout = roundTimer.boundedTimeout(roundWindow, timeout)
         if (boundedTimeout.isZero) {
             attemptRoundWindows.remove(key, roundWindow)

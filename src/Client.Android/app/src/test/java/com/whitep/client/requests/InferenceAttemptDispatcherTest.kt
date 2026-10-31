@@ -3,12 +3,6 @@ package com.whitep.client.requests
 import com.google.protobuf.ByteString
 import com.whitep.client.context.ConversationContextCapsule
 import com.whitep.client.protocol.InferenceRequestPayloadRejection
-import kotlinx.coroutines.runBlocking
-import java.time.Clock
-import java.time.Duration
-import java.time.Instant
-import java.time.ZoneId
-import java.time.ZoneOffset
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -22,6 +16,12 @@ import org.whitep.shared.contracts.v1.hostCapabilities
 import org.whitep.shared.contracts.v1.hostStatus
 import org.whitep.shared.contracts.v1.inferenceRequest
 import org.whitep.shared.contracts.v1.modelCapability
+import kotlinx.coroutines.runBlocking
+import java.time.Clock
+import java.time.Duration
+import java.time.Instant
+import java.time.ZoneId
+import java.time.ZoneOffset
 import java.util.UUID
 
 @RunWith(RobolectricTestRunner::class)
@@ -246,14 +246,19 @@ class InferenceAttemptDispatcherTest {
     fun stopsSubmittingFurtherHostsWhenTheRoundWindowExpires() =
         runBlocking {
             val clock = MutableClock(Instant.parse("2026-10-31T07:00:00Z"))
-            val roundWindow = InferenceRoundTimer(clock, Duration.ofSeconds(30))
-                .startRound(clock.instant().plusSeconds(90).toEpochMilli())
-            val transport = RecordingTransport(submission = { hostId, _ ->
-                if (hostId == "host-a") clock.advance(Duration.ofSeconds(31))
-                InferenceTransportSubmission.QUEUED
-            })
+            val timer = InferenceRoundTimer(clock, Duration.ofSeconds(30))
+            val roundWindow = timer.startRound(clock.instant().plusSeconds(90).toEpochMilli())
+            val transport =
+                RecordingTransport { hostId, _ ->
+                    if (hostId == "host-a") {
+                        clock.advance(Duration.ofSeconds(31))
+                    }
+                    InferenceTransportSubmission.QUEUED
+                }
             val ids = listOf("attempt-a", "attempt-b", "attempt-c").iterator()
-            val result = InferenceAttemptDispatcher(transport, ids::next).dispatchRound(
+            val attemptDispatcher = InferenceAttemptDispatcher(transport, ids::next)
+            val result =
+                attemptDispatcher.dispatchRound(
                 distributedRequest(),
                 listOf(candidate("host-a"), candidate("host-b"), candidate("host-c")),
                 MODEL_ID,
@@ -280,10 +285,12 @@ class InferenceAttemptDispatcherTest {
     fun rejectsAnAlreadyExpiredRoundBeforeSubmitting() =
         runBlocking {
             val clock = MutableClock(Instant.parse("2026-10-31T07:00:00Z"))
-            val roundWindow = InferenceRoundTimer(clock, Duration.ofSeconds(30))
-                .startRound(clock.instant().minusSeconds(1).toEpochMilli())
+            val timer = InferenceRoundTimer(clock, Duration.ofSeconds(30))
+            val roundWindow = timer.startRound(clock.instant().minusSeconds(1).toEpochMilli())
             val transport = RecordingTransport()
-            val result = InferenceAttemptDispatcher(transport).dispatchRound(
+            val attemptDispatcher = InferenceAttemptDispatcher(transport)
+            val result =
+                attemptDispatcher.dispatchRound(
                 distributedRequest(),
                 listOf(candidate("host-a")),
                 MODEL_ID,

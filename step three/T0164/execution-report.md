@@ -21,3 +21,16 @@
 - Step Three quality [41186026119](https://github.com/artinrahimii/project/actions/runs/41186026119) passed all 295 Python tests, compileall and graph/evidence guards.
 - Product workflow [41186026207](https://github.com/artinrahimii/project/actions/runs/41186026207): HostLifecycle passed. Android KtLint failed before APK/JVM/Protobuf tests. KtLint identified formatting issues in InferenceAttemptDispatcherTest.kt (long status assertion; MutableClock and RecordingTransport declarations), InferenceRoundTimerTest.kt (MutableClock declaration), and InferenceRoundTimer.kt (long IllegalArgumentException constructor). No Android JVM result is claimed for V 3.0.684.
 - A003 applies only the exact reported formatting changes and schedules the full exact-head CI again.
+## Attempt T0164-A002 — V 3.0.684 exact-head result
+
+- Step Three quality [41186026119](https://github.com/artinrahimii/project/actions/runs/41186026119) passed all 295 Python tests, compileall and graph/evidence guards.
+- Product workflow [41186026207](https://github.com/artinrahimii/project/actions/runs/41186026207): HostLifecycle passed. Android KtLint failed before APK/JVM/Protobuf tests. Reported formatting violations were limited to the new timer-related Kotlin files. No Android JVM result is claimed.
+- A003 applied the exact KtLint fixes and reran the full workflow.
+
+## Attempt T0164-A003 — V 3.0.685 exact-head result
+
+- Step Three quality [41186430811](https://github.com/artinrahimii/project/actions/runs/41186430811) passed 295 Python tests, compileall and graph/evidence guards.
+- Android KtLint failed with import-order and multiline-expression violations in InferenceAttemptDispatcherTest.kt and InferenceRoundTimerTest.kt, plus two formatting violations in AndroidInferenceRequestRuntime.kt.
+- Because KtLint failed, the Android APK build, JVM tests and generated Protobuf checks were skipped. No Android test result is claimed for V 3.0.685.
+- Windows WPF Release/build/Protobuf/startup/security/DPAPI passed. HostLifecycle unit/integration passed. Product run: [41186430719](https://github.com/artinrahimii/project/actions/runs/41186430719).
+- A004 fixes only the lint-reported import and multiline-expression formatting.
