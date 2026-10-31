@@ -140,10 +140,12 @@ class AndroidInferenceRequestRuntime private constructor(
         val lock = requestBudgetLocks.computeIfAbsent(requestId) { Mutex() }
         return lock.withLock {
             val previousState = requestBudgetStates[requestId]
-            if (previousState != null &&
-                (previousState.maxRounds != distributedRequest.maxRounds ||
-                    previousState.maxTotalHosts != distributedRequest.maxTotalHosts)
-            ) {
+            val hasChangedLimits =
+                previousState?.let { state ->
+                    state.maxRounds != distributedRequest.maxRounds ||
+                        state.maxTotalHosts != distributedRequest.maxTotalHosts
+                } == true
+            if (hasChangedLimits) {
                 return@withLock InferenceRoundDispatchResult.Rejected(
                     InferenceRoundDispatchRejection.INVALID_BUDGET_STATE,
                 )

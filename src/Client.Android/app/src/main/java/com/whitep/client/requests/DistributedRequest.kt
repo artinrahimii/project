@@ -46,8 +46,8 @@ data class DistributedRequest(
     val requestId: String,
     val deadlineUnixMs: Long,
     val maxRounds: Int,
-    val maxTotalHosts: Int = minOf(maxRounds, FirstReleaseInferenceLimits.MAX_ROUNDS) *
-        FirstReleaseInferenceLimits.MAX_HOSTS_PER_ROUND,
+    val maxTotalHosts: Int =
+        minOf(maxRounds, FirstReleaseInferenceLimits.MAX_ROUNDS) * FirstReleaseInferenceLimits.MAX_HOSTS_PER_ROUND,
     val status: DistributedRequestStatus = DistributedRequestStatus.QUEUED,
 ) {
     init {
@@ -74,8 +74,8 @@ data class DistributedRequest(
         fun create(
             deadlineUnixMs: Long,
             maxRounds: Int,
-            maxTotalHosts: Int = minOf(maxRounds, FirstReleaseInferenceLimits.MAX_ROUNDS) *
-                FirstReleaseInferenceLimits.MAX_HOSTS_PER_ROUND,
+            maxTotalHosts: Int =
+                minOf(maxRounds, FirstReleaseInferenceLimits.MAX_ROUNDS) * FirstReleaseInferenceLimits.MAX_HOSTS_PER_ROUND,
         ): DistributedRequest =
             DistributedRequest(
                 requestId = UUID.randomUUID().toString(),

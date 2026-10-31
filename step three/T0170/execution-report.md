@@ -2,43 +2,45 @@
 
 ## Task outcome
 
-Status: `in_progress`. The request-wide budget is implemented in the model, selector, dispatcher and Android runtime. Three exact-head CI attempts have exposed source-contract/KtLint issues and each has been retained in the execution history. A004 corrects the remaining KtLint indentation; exact-head CI is pending. The task is not complete yet.
+Status: `in_progress`. Request-wide round and host ceilings are implemented across the model, selector, dispatcher and runtime. Four CI attempts exposed test-contract or KtLint issues. A005 now corrects the five production-source KtLint findings reported on A004; exact-head CI for A005 is pending. The task is not marked complete.
 
-The source requirement does not set numeric ceilings. The explicit first-release policy is therefore **3 rounds maximum**, **3 hosts per round**, and **9 total host attempts per request**. A request may select lower ceilings; invalid or over-cap configurations are rejected.
+The source requirement does not specify numeric ceilings. The explicit first-release policy is **3 rounds maximum**, **3 hosts per round**, and **9 total host attempts per request**. A request may configure lower limits; invalid or over-cap configurations are rejected.
 
 ## Dependency review
 
-- `T0169 → T0170`: the original `blocks` edge was retained and validated as `contract_or_interface_dependency`. T0170 extends the next-round selector contract delivered by T0169 to take request-wide progress, while continuing to consume its canonical request, previous-round attempts and completed response collection. Evidence is listed in the graph edge and in `evidence/verification.md`.
-- `T0160 → T0170`: the original `blocks` edge was retained and validated as `contract_or_interface_dependency`. The bounded selector/dispatcher continue to consume the canonical generated `InferenceRequest` and payload-builder contract from T0160; no Protobuf wire-schema change was made.
-- `T0170 → T0171` remains `unreviewed`. Its type and execution-order placement were not changed.
+- `T0169 → T0170`: the original `blocks` edge is retained and validated as `contract_or_interface_dependency`. T0170 extends T0169's next-round selector contract with request-wide progress while continuing to consume the canonical request, previous-round attempts and completed response collection.
+- `T0160 → T0170`: the original `blocks` edge is retained and validated as `contract_or_interface_dependency`. The bounded selector/dispatcher continue to consume T0160's canonical generated `InferenceRequest` and payload-builder contract; no Protobuf wire-schema change is made.
+- `T0170 → T0171` remains `unreviewed`; its type and execution order are unchanged.
 
 ## Implementation
 
-- Added first-release constants and validated per-request `maxRounds` / `maxTotalHosts` ceilings to `DistributedRequest`.
+- Added first-release ceilings and per-request `maxRounds` / `maxTotalHosts` validation to `DistributedRequest`.
 - Added immutable `DistributedRequestProgress` for dispatched rounds and selected host-attempt counts.
-- Added bounded first-round and next-round host selection; next-round selection requires matching request identity, an empty completed response set, valid progress, and remaining round/host budgets.
-- Added dispatcher rejection results for exhausted rounds, exhausted total-host capacity and inconsistent budget state before any transport submission.
-- Added serialized per-request dispatch accounting in `AndroidInferenceRequestRuntime`. Reservations are retained conservatively through cancellation; ordinary rejected dispatches restore the prior budget state.
-- This task does not claim an autonomous retry loop, persistent cross-process budget ledger or the cross-round duplicate-host policy assigned to T0171. Callers must pass runtime progress to the next-round selector.
+- Added bounded first-round and next-round selection; later selection requires matching request identity, an empty completed response set, valid progress, and remaining round/host budget.
+- Added dispatcher rejection results for exhausted rounds, exhausted total-host capacity and inconsistent budget state before transport submission.
+- Added serialized per-request dispatch accounting in `AndroidInferenceRequestRuntime`. Reservations remain conservative through cancellation; normal rejected dispatches restore the previous state.
+- No autonomous retry loop, persistent cross-process budget ledger or T0171 cross-round duplicate-host policy is claimed. Callers must pass runtime progress to next-round selection.
 
 ## CI findings and corrections
 
-- **A001 / V 3.0.717:** Step Three quality gate failed (run [41216834757](https://github.com/artinrahimii/project/actions/runs/41216834757)): 308 Python tests ran and one source-contract assertion failed because an existing test expected the explicit `distributedRequest.requestId` key expression. Android KtLint also failed at the new `distributedRequest` helper in `InferenceAttemptDispatcherTest.kt`; APK/JVM/Protobuf steps were skipped. Windows WPF and HostLifecycle passed.
-- **A002 / V 3.0.718:** Step Three quality gate passed (run [41217032620](https://github.com/artinrahimii/project/actions/runs/41217032620)); HostLifecycle passed. Android KtLint reported that the helper body expression should be on the signature line. APK/JVM/Protobuf steps were skipped.
-- **A003 / V 3.0.719:** Step Three quality gate passed (run [41217272330](https://github.com/artinrahimii/project/actions/runs/41217272330)); HostLifecycle passed. KtLint accepted the signature/body placement but identified argument indentation at `InferenceAttemptDispatcherTest.kt:436–441`. APK/JVM/Protobuf steps were skipped.
-- **A004 correction:** aligned the helper constructor arguments and closing parenthesis with the required four-space body indentation. The exact-head Android/product and quality checks are pending; no pass is claimed yet.
+- **A001 / V 3.0.717:** Step Three quality gate failed (run [41216834757](https://github.com/artinrahimii/project/actions/runs/41216834757)): 308 Python tests, one source-contract assertion failure. Android KtLint failed; APK/JVM/Protobuf were skipped. Windows WPF and HostLifecycle passed.
+- **A002 / V 3.0.718:** Step Three quality gate passed (run [41217032620](https://github.com/artinrahimii/project/actions/runs/41217032620)); Android KtLint failed at the helper's signature/body placement. HostLifecycle and Windows WPF passed; APK/JVM/Protobuf were skipped.
+- **A003 / V 3.0.719:** Step Three quality gate passed (run [41217272330](https://github.com/artinrahimii/project/actions/runs/41217272330)); Android KtLint failed on excess indentation in the same helper. HostLifecycle and Windows WPF passed; APK/JVM/Protobuf were skipped.
+- **A004 / V 3.0.720:** Step Three quality gate passed (run [41217532369](https://github.com/artinrahimii/project/actions/runs/41217532369)); HostLifecycle and Windows WPF passed. Android KtLint identified five production-source formatting violations: two multiline default expressions in `DistributedRequest.kt`, the `maxHosts` expression in `HostCandidateSelector.kt`, and the boolean expression in `AndroidInferenceRequestRuntime.kt`. APK/JVM/Protobuf were skipped.
+- **A005 correction:** adjusted those expressions to KtLint's multiline layout without changing the budget policy or request/transport contracts. Exact-head A005 CI remains pending.
 
 ## Changed files
 
 - Four Android production Kotlin files under `src/Client.Android/app/src/main/java/com/whitep/client/requests/`.
-- Four Android JVM tests, four Python source-contract tests, and T0170 report/evidence.
-- Runtime contract-string compatibility was restored in A002; test helper KtLint line placement and indentation were corrected in A003/A004.
-- No Protobuf wire schema was changed.
+- Four Android JVM tests and four Python source-contract tests.
+- `step three/T0170/execution-report.md`, `step three/T0170/evidence/verification.md`, and `step three/project-graph.md`.
+- A002 restored the literal expression required by an existing source contract; A003/A004 fixed helper layout; A005 fixes five KtLint formatting rules in production code.
 
 ## Verification
 
-- Regression tests cover upper bounds, reduced configured limits, partial final host batches, exhausted budgets, request-ID mismatch and invalid progress.
-- Exact-head quality gates passed for A002 and A003. Android compile and JVM tests have not yet run because KtLint stopped the workflow on those revisions.
+- Regression tests cover upper bounds, reduced per-request limits, partial final batches, exhausted budgets, request-ID mismatch and invalid progress.
+- Exact-head Step Three quality gates passed for A002, A003 and A004. Windows WPF and HostLifecycle also passed for A004.
+- Android KtLint has failed on A001–A004; consequently `assembleDebug`, `testDebugUnitTest` and Protobuf validation were skipped on those revisions.
 - Local Gradle/Python execution was not available in this connected GitHub session.
-- T0169's selector contract revalidation remains `in_review` until the exact-head Android JVM suite passes.
-- Inspect KtLint, assembleDebug, testDebugUnitTest, generated Protobuf, Windows WPF, HostLifecycle and the Step Three quality gate for A004 before marking T0170 `done`.
+- T0169 selector contract revalidation remains `in_review` until the exact-head Android JVM suite passes.
+- Inspect KtLint, APK build, JVM tests, Protobuf, Windows WPF, HostLifecycle and Step Three quality for A005 before marking T0170 `done`.

@@ -111,10 +111,11 @@ object HostCandidateSelector {
             request = request,
             candidates = candidates,
             excludedEphemeralHostIds = previouslyAttemptedHostIds.toSet(),
-            maxHosts = minOf(
-                MAX_HOSTS_PER_ROUND,
-                distributedRequest.maxTotalHosts - progress.hostsAttempted,
-            ),
+            maxHosts =
+                minOf(
+                    MAX_HOSTS_PER_ROUND,
+                    distributedRequest.maxTotalHosts - progress.hostsAttempted,
+                ),
         )
     }
 
