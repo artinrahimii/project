@@ -629,3 +629,14 @@
 - **A047 assessment:** the Yamux+Mplex configuration clears the previously observed stream-open/submit rejection, but does not yet prove end-to-end .NET response delivery; A047 is recorded as failed acceptance pending the remaining response phase.
 - **A048:** added bounded, payload-free .NET server phase markers and per-process output capture to the Android integration-test assertion. Exact-head V 3.0.674 CI pending; T0163 remains in progress.
 - **Evidence:** `step three/T0163/evidence/v3.0.674-dotnet-response-phase-diagnostics.md`.
+
+
+## Reconciliation — V 3.0.674 KtLint result and attempt A049
+
+- **Commit:** `28a6ceba5d48a073c2eaab380ea7a49d62243b6e` (`V 3.0.674`).
+- **Step Three quality:** PASS — run [41169401363](https://github.com/artinrahimii/project/actions/runs/41169401363).
+- **.NET interop fixture compilation:** PASS (the product log reports build succeeded, 0 warnings and 0 errors).
+- **Android KtLint:** FAIL — `Libp2pInferenceRequestTransportTest.kt:400:42 Expected newline before '.'`. Android APK/JVM did not run.
+- **Windows WPF:** PASS; **HostLifecycle:** PASS.
+- **A049:** Applied the exact multiline-chain formatting correction. No behavior, network protocol or acceptance assertion changed. Exact V 3.0.675 CI pending.
+- **Evidence:** `step three/T0163/evidence/v3.0.675-ktlint-chain-format-correction.md`.
