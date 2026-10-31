@@ -81,28 +81,32 @@ internal class InferenceRoundResponseCollector {
                                     AttemptOutcome.Failed(
                                         attempt.failure(InferenceRoundResponseFailureReason.SUBMISSION_REJECTED),
                                     )
-    
+
                                 InferenceAttemptSubmissionStatus.FAILED ->
                                     AttemptOutcome.Failed(
                                         attempt.failure(InferenceRoundResponseFailureReason.SUBMISSION_FAILED),
                                     )
-    
+
                                 InferenceAttemptSubmissionStatus.TIMED_OUT ->
                                     AttemptOutcome.Failed(
                                         attempt.failure(InferenceRoundResponseFailureReason.SUBMISSION_TIMED_OUT),
                                     )
-    
+
                                 InferenceAttemptSubmissionStatus.QUEUED -> {
                                     val roundWindow = roundWindowFor(attempt)
                                     if (roundWindow == null) {
                                         AttemptOutcome.Failed(
-                                            attempt.failure(InferenceRoundResponseFailureReason.ROUND_WINDOW_UNAVAILABLE),
+                                            attempt.failure(
+                                                InferenceRoundResponseFailureReason.ROUND_WINDOW_UNAVAILABLE,
+                                            ),
                                         )
                                     } else {
                                         val remaining = roundWindow.remaining()
                                         if (remaining.isZero) {
                                             AttemptOutcome.Failed(
-                                                attempt.failure(InferenceRoundResponseFailureReason.RESPONSE_TIMED_OUT),
+                                                attempt.failure(
+                                                    InferenceRoundResponseFailureReason.RESPONSE_TIMED_OUT,
+                                                ),
                                             )
                                         } else {
                                             try {
@@ -110,11 +114,15 @@ internal class InferenceRoundResponseCollector {
                                             } catch (_: TimeoutCancellationException) {
                                                 currentCoroutineContext().ensureActive()
                                                 AttemptOutcome.Failed(
-                                                    attempt.failure(InferenceRoundResponseFailureReason.RESPONSE_TIMED_OUT),
+                                                    attempt.failure(
+                                                        InferenceRoundResponseFailureReason.RESPONSE_TIMED_OUT,
+                                                    ),
                                                 )
                                             } catch (_: TimeoutException) {
                                                 AttemptOutcome.Failed(
-                                                    attempt.failure(InferenceRoundResponseFailureReason.RESPONSE_TIMED_OUT),
+                                                    attempt.failure(
+                                                        InferenceRoundResponseFailureReason.RESPONSE_TIMED_OUT,
+                                                    ),
                                                 )
                                             } catch (cancellation: CancellationException) {
                                                 throw cancellation

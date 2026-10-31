@@ -25,3 +25,19 @@
 - `step three/T0168/execution-report.md`
 - `step three/T0168/evidence/verification.md`
 - `step three/project-graph.md`
+
+
+## Attempt T0168-A005 — exact-head V 3.0.706
+
+- Step Three quality passed: [run 41206426969](https://github.com/artinrahimii/project/actions/runs/41206426969).
+- Windows WPF and HostLifecycle passed in [product run 41206426645](https://github.com/artinrahimii/project/actions/runs/41206426645).
+- Android .NET interop fixture passed.
+- Android KtLint failed at collector lines 84, 89 and 94 for trailing spaces; lines 99, 113 and 117 also require multiline `attempt.failure` argument layout. Android APK/JVM/Protobuf were skipped. [Android job](https://github.com/artinrahimii/project/actions/runs/41206426645/job/124552310881).
+- A005 is recorded as failed; T0168 remains `in_progress`.
+
+## Attempt T0168-A006
+
+- **Base:** `6a7592a4ff7c4826d6818e61cc17e56ab9fe3c3e` on `main` (`V 3.0.706`).
+- **Correction:** remove whitespace-only blank-line suffixes and wrap the four remaining nested `attempt.failure` calls for `ROUND_WINDOW_UNAVAILABLE` and `RESPONSE_TIMED_OUT` across multiple lines.
+- No runtime behavior, response identity, timeout semantics or protocol contract changed.
+- Exact-head `V 3.0.707` CI is pending.
