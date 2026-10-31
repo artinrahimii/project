@@ -80,12 +80,15 @@ class AndroidLibp2pTransportContractTests(unittest.TestCase):
         program = (ROOT / "tests/HostLifecycle.Tests/Program.cs").read_text(encoding="utf-8")
         fixture = (ROOT / "tests/HostLifecycle.Tests/AndroidInteropPeerServer.cs").read_text(encoding="utf-8")
         transport_test = TRANSPORT_TEST.read_text(encoding="utf-8")
+        runtime = RUNTIME.read_text(encoding="utf-8")
         self.assertIn("WHITEP_INTEROP_SERVER_DLL", workflow)
         self.assertIn("Build Windows .NET peer interoperability fixture", workflow)
         self.assertIn('"--interop-peer-server"', program)
         self.assertIn("new Libp2pPeerTransport(", fixture)
         self.assertIn("PeerResponseCorrelationValidator.Validate", fixture)
         self.assertIn("dispatchesRoundToThreeNativeDotNetLibp2pHosts", transport_test)
+        self.assertIn("internal val lastSubmissionFailure: String?", runtime)
+        self.assertIn("attemptStatusSummary", transport_test)
 
     def test_three_host_noise_integration_exercises_the_application_runtime(self):
         source = TRANSPORT_TEST.read_text(encoding="utf-8")

@@ -353,7 +353,13 @@ class Libp2pInferenceRequestTransportTest {
                 assertEquals(3, attempts.size)
                 assertEquals(3, attempts.map { attempt -> attempt.ephemeralHostId }.toSet().size)
                 assertEquals(3, attempts.map { attempt -> attempt.attemptId }.toSet().size)
+                val attemptStatusSummary =
+                    attempts.joinToString(separator = ", ") { attempt ->
+                        "${attempt.ephemeralHostId}:${attempt.submissionStatus}"
+                    }
                 assertTrue(
+                    "Expected three QUEUED .NET submissions; attempts=$attemptStatusSummary; " +
+                        "lastSubmissionFailure=${runtimeClient.lastSubmissionFailure ?: "none"}",
                     attempts.all { attempt ->
                         attempt.submissionStatus == InferenceAttemptSubmissionStatus.QUEUED
                     },

@@ -583,3 +583,15 @@
 - **Android test execution:** Not reached. The fixture build step failed before KtLint, APK and JVM tests, so no cross-runtime pass is claimed.
 - **Correction in A044:** Added the missing `using WhiteP.Host.Infrastructure;` to the fixture. No production transport or protocol behavior was changed.
 - **Next gate:** exact-head `V 3.0.670` CI must compile the fixture and run the three-peer Android-to-.NET test successfully before T0163 can be considered complete.
+
+
+## Reconciliation — V 3.0.670 exact-head CI and attempt A045
+
+- **Commit:** `68ff9aa1189c834b22a1e41176a5bd1bd610289c` (`V 3.0.670`).
+- **Step Three quality:** PASS — run 41166759390.
+- **.NET peer fixture build:** PASS; **Android KtLint:** PASS; **Android APK:** PASS.
+- **Windows WPF:** PASS; **HostLifecycle:** PASS; **real llama.cpp/GGUF inference:** PASS.
+- **Android JVM:** FAILED — 105 tests, 104 passed, 1 failed. The failed test is `dispatchesRoundToThreeNativeDotNetLibp2pHosts`, line 356, at the assertion that all three Android submissions are `QUEUED`. No response-correlation assertion was reached.
+- **JUnit artifact:** `13029750456`, `whitep-android-unit-test-reports`, 43,032 bytes. The report confirms exact test and line but does not contain an explanatory assertion message.
+- **A045:** Added an internal diagnostic exposing only the last transport failure stage and exception type to the failing test message. No request payload or secret is logged.
+- **Next:** inspect the exact V 3.0.671 assertion message and fix the observed rejection stage; keep T0163 in progress until the three Android-to-.NET response correlations pass.
