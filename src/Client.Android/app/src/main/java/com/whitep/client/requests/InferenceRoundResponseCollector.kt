@@ -75,60 +75,60 @@ internal class InferenceRoundResponseCollector {
             val outcomes =
                 attempts
                     .map { attempt ->
-                    async {
-                        when (attempt.submissionStatus) {
-                            InferenceAttemptSubmissionStatus.REJECTED ->
-                                AttemptOutcome.Failed(
-                                    attempt.failure(InferenceRoundResponseFailureReason.SUBMISSION_REJECTED),
-                                )
-
-                            InferenceAttemptSubmissionStatus.FAILED ->
-                                AttemptOutcome.Failed(
-                                    attempt.failure(InferenceRoundResponseFailureReason.SUBMISSION_FAILED),
-                                )
-
-                            InferenceAttemptSubmissionStatus.TIMED_OUT ->
-                                AttemptOutcome.Failed(
-                                    attempt.failure(InferenceRoundResponseFailureReason.SUBMISSION_TIMED_OUT),
-                                )
-
-                            InferenceAttemptSubmissionStatus.QUEUED -> {
-                                val roundWindow = roundWindowFor(attempt)
-                                if (roundWindow == null) {
+                        async {
+                            when (attempt.submissionStatus) {
+                                InferenceAttemptSubmissionStatus.REJECTED ->
                                     AttemptOutcome.Failed(
-                                        attempt.failure(InferenceRoundResponseFailureReason.ROUND_WINDOW_UNAVAILABLE),
+                                        attempt.failure(InferenceRoundResponseFailureReason.SUBMISSION_REJECTED),
                                     )
-                                } else {
-                                    val remaining = roundWindow.remaining()
-                                    if (remaining.isZero) {
+    
+                                InferenceAttemptSubmissionStatus.FAILED ->
+                                    AttemptOutcome.Failed(
+                                        attempt.failure(InferenceRoundResponseFailureReason.SUBMISSION_FAILED),
+                                    )
+    
+                                InferenceAttemptSubmissionStatus.TIMED_OUT ->
+                                    AttemptOutcome.Failed(
+                                        attempt.failure(InferenceRoundResponseFailureReason.SUBMISSION_TIMED_OUT),
+                                    )
+    
+                                InferenceAttemptSubmissionStatus.QUEUED -> {
+                                    val roundWindow = roundWindowFor(attempt)
+                                    if (roundWindow == null) {
                                         AttemptOutcome.Failed(
-                                            attempt.failure(InferenceRoundResponseFailureReason.RESPONSE_TIMED_OUT),
+                                            attempt.failure(InferenceRoundResponseFailureReason.ROUND_WINDOW_UNAVAILABLE),
                                         )
                                     } else {
-                                        try {
-                                            AttemptOutcome.Received(awaitResponse(attempt, remaining))
-                                        } catch (_: TimeoutCancellationException) {
-                                            currentCoroutineContext().ensureActive()
+                                        val remaining = roundWindow.remaining()
+                                        if (remaining.isZero) {
                                             AttemptOutcome.Failed(
                                                 attempt.failure(InferenceRoundResponseFailureReason.RESPONSE_TIMED_OUT),
                                             )
-                                        } catch (_: TimeoutException) {
-                                            AttemptOutcome.Failed(
-                                                attempt.failure(InferenceRoundResponseFailureReason.RESPONSE_TIMED_OUT),
-                                            )
-                                        } catch (cancellation: CancellationException) {
-                                            throw cancellation
-                                        } catch (_: Exception) {
-                                            AttemptOutcome.Failed(
-                                                attempt.failure(InferenceRoundResponseFailureReason.RESPONSE_FAILED),
-                                            )
+                                        } else {
+                                            try {
+                                                AttemptOutcome.Received(awaitResponse(attempt, remaining))
+                                            } catch (_: TimeoutCancellationException) {
+                                                currentCoroutineContext().ensureActive()
+                                                AttemptOutcome.Failed(
+                                                    attempt.failure(InferenceRoundResponseFailureReason.RESPONSE_TIMED_OUT),
+                                                )
+                                            } catch (_: TimeoutException) {
+                                                AttemptOutcome.Failed(
+                                                    attempt.failure(InferenceRoundResponseFailureReason.RESPONSE_TIMED_OUT),
+                                                )
+                                            } catch (cancellation: CancellationException) {
+                                                throw cancellation
+                                            } catch (_: Exception) {
+                                                AttemptOutcome.Failed(
+                                                    attempt.failure(InferenceRoundResponseFailureReason.RESPONSE_FAILED),
+                                                )
+                                            }
                                         }
                                     }
                                 }
                             }
                         }
-                    }
-                }.awaitAll()
+                    }.awaitAll()
 
             InferenceRoundResponseCollection(
                 responses = outcomes.mapNotNull { (it as? AttemptOutcome.Received)?.response },

@@ -18,7 +18,7 @@ class AndroidInferenceRoundResponseCollectorContractTests(unittest.TestCase):
 
     def test_collector_waits_for_all_queued_attempts_and_isolates_failures(self):
         source = COLLECTOR.read_text(encoding="utf-8")
-        self.assertIn("attempts.map { attempt ->", source)
+        self.assertIn(".map { attempt ->", source)
         self.assertIn("async {", source)
         self.assertIn(".awaitAll()", source)
         self.assertIn("roundWindow.remaining()", source)

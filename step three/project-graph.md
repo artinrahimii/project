@@ -42114,11 +42114,11 @@
         "step three/T0168/execution-report.md",
         "step three/T0168/evidence/verification.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nIncoming dependency review (2026-10-31T16:43:00+03:30): T0167 -> T0168 validated as sequencing_only because T0168's response collection runs in the runtime/dispatcher and consumes no Compose UI. T0160 -> T0168 validated as contract_or_interface_dependency because the receive window is capped by DistributedRequest.deadlineUnixMs originating in the request contract; InferenceRoundTimer/AndroidInferenceRequestRuntime use that same budget. Both blocks edges remain intact; reasons and evidence are recorded in edge_change_log.\n\nT0168-A001: incoming edges were validated on V 3.0.701: T0167 -> T0168 sequencing_only; T0160 -> T0168 contract_or_interface_dependency. Both original blocks edges remain. Added concurrent per-attempt response collection bounded by each attempt's stored shared round window; exact-head CI pending.\nT0168-A001 exact-head V 3.0.702: quality, Windows WPF and HostLifecycle passed; Android KtLint failed on three formatting findings in the response collector (lines 49, 51, 68). Android APK/JVM/Protobuf were skipped. A002 applies only the reported formatting correction; task remains in_progress.\n\nT0168-A002 exact-head V 3.0.703: Gradle KtLint formatting corrections were committed. Step Three quality ran 308 tests; 307 passed and one new source-contract assertion failed because it expected the old same-line `}.awaitAll()` spelling. At the time of review the product workflow had not yet reached KtLint; HostLifecycle passed. A003 changes only that brittle assertion; task remains in_progress.\n\nT0168-A003 exact-head V 3.0.704: Python quality gate passed all 308 tests; Android KtLint failed on the production collector's single-argument data class constructors and map/awaitAll chain. HostLifecycle passed; Windows WPF was still running at observation. A004 corrects those exact KtLint constructs; status remains in_progress.\n",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nIncoming dependency review (2026-10-31T16:43:00+03:30): T0167 -> T0168 validated as sequencing_only because T0168's response collection runs in the runtime/dispatcher and consumes no Compose UI. T0160 -> T0168 validated as contract_or_interface_dependency because the receive window is capped by DistributedRequest.deadlineUnixMs originating in the request contract; InferenceRoundTimer/AndroidInferenceRequestRuntime use that same budget. Both blocks edges remain intact; reasons and evidence are recorded in edge_change_log.\n\nT0168-A001: incoming edges were validated on V 3.0.701: T0167 -> T0168 sequencing_only; T0160 -> T0168 contract_or_interface_dependency. Both original blocks edges remain. Added concurrent per-attempt response collection bounded by each attempt's stored shared round window; exact-head CI pending.\nT0168-A001 exact-head V 3.0.702: quality, Windows WPF and HostLifecycle passed; Android KtLint failed on three formatting findings in the response collector (lines 49, 51, 68). Android APK/JVM/Protobuf were skipped. A002 applies only the reported formatting correction; task remains in_progress.\n\nT0168-A002 exact-head V 3.0.703: Gradle KtLint formatting corrections were committed. Step Three quality ran 308 tests; 307 passed and one new source-contract assertion failed because it expected the old same-line `}.awaitAll()` spelling. At the time of review the product workflow had not yet reached KtLint; HostLifecycle passed. A003 changes only that brittle assertion; task remains in_progress.\n\nT0168-A003 exact-head V 3.0.704: Python quality gate passed all 308 tests; Android KtLint failed on the production collector's single-argument data class constructors and map/awaitAll chain. HostLifecycle passed; Windows WPF was still running at observation. A004 corrects those exact KtLint constructs; status remains in_progress.\n\nT0168-A004 exact-head V 3.0.705: Step Three quality still failed 1 of 308 tests because the Python source-contract check expected `attempts.map` on one line; Android KtLint reported the map lambda body was under-indented by four spaces after the method chain was split. Windows WPF and HostLifecycle passed. A005 corrects the indentation and the source-contract expectation only; runtime behavior remains unchanged.\n",
       "execution_summary": {
-        "attempt_count": 4,
-        "failed_attempt_count": 3,
-        "last_attempt_id": "T0168-A004",
+        "attempt_count": 5,
+        "failed_attempt_count": 4,
+        "last_attempt_id": "T0168-A005",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceRoundResponseCollector.kt",
@@ -42132,7 +42132,8 @@
         "related_commits": [
           "a506c8a894aeaf49dc636fdcac560126eb767777",
           "96020152eb8144620eb0f697ac2e249373a022e8",
-          "f2dc22c45497c0aaf2617291d9f66dfb57ca2326"
+          "f2dc22c45497c0aaf2617291d9f66dfb57ca2326",
+          "740a2b3ed343f5ef2f2229d7d25c7f0ad28d66ce"
         ],
         "tests_passed": [
           {
@@ -42176,6 +42177,18 @@
             "result": "passed",
             "url": "https://github.com/artinrahimii/project/actions/runs/41205947681",
             "summary": "Lifecycle unit/integration tests passed."
+          },
+          {
+            "name": "HostLifecycle — V 3.0.705",
+            "result": "passed",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41206168538",
+            "summary": "Lifecycle unit/integration job passed."
+          },
+          {
+            "name": "Windows WPF host — V 3.0.705",
+            "result": "passed",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41206168538",
+            "summary": "Windows Release build, Protobuf, startup smoke, policy/security/DPAPI and artifact upload passed."
           }
         ],
         "tests_failed": [
@@ -42202,6 +42215,18 @@
             "result": "failed",
             "url": "https://github.com/artinrahimii/project/actions/runs/41205947681",
             "summary": "The production collector source was unchanged from V 3.0.703, and exact-head KtLint repeated the data class constructor line 49/51 and map/awaitAll chain line 72/127 violations."
+          },
+          {
+            "name": "Step Three quality gate — V 3.0.705",
+            "result": "failed",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41206168528",
+            "summary": "307/308 tests passed; one source-contract assertion expected `attempts.map { attempt ->` and did not accept the split method chain."
+          },
+          {
+            "name": "Android KtLint — V 3.0.705",
+            "result": "failed",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41206168538",
+            "summary": "Indentation within the attempts.map lambda at collector lines 78–131 was four spaces short after moving `.map` to its own line."
           }
         ],
         "blocked_reason": null,
@@ -42377,11 +42402,55 @@
         {
           "attempt_id": "T0168-A004",
           "started_at": "2026-10-31T17:02:57+03:30",
-          "ended_at": null,
-          "result": "partial",
-          "summary": "Reformatted AttemptOutcome.Received/Failed constructors to multiline parameter lists and corrected chain layout to start `.map` on its own line and attach `.awaitAll()` to the lambda close. Exact-head V 3.0.705 CI pending.",
+          "ended_at": "2026-10-31T17:06:36+03:30",
+          "result": "failed",
+          "summary": "V 3.0.705 Step Three quality still had one brittle Python source-contract assertion expecting `attempts.map` adjacency after the KtLint-compliant chain split. Android KtLint then reported indentation inside the multiline map lambda: its async/body/closing lines needed one additional four-space nesting level. HostLifecycle passed.",
           "changed_files": [
             "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceRoundResponseCollector.kt",
+            "tests/test_android_inference_round_response_collector_contract.py",
+            "step three/T0168/execution-report.md",
+            "step three/T0168/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": "740a2b3ed343f5ef2f2229d7d25c7f0ad28d66ce",
+          "tests": [
+            {
+              "name": "Step Three quality gate — V 3.0.705",
+              "result": "failed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41206168528",
+              "summary": "307/308 tests passed; one source-contract assertion expected `attempts.map { attempt ->` and did not accept the split method chain."
+            },
+            {
+              "name": "Android KtLint — V 3.0.705",
+              "result": "failed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41206168538",
+              "summary": "Indentation within the attempts.map lambda at collector lines 78–131 was four spaces short after moving `.map` to its own line."
+            },
+            {
+              "name": "HostLifecycle — V 3.0.705",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41206168538",
+              "summary": "Lifecycle unit/integration job passed."
+            },
+            {
+              "name": "Windows WPF host — V 3.0.705",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41206168538",
+              "summary": "Formatting, Release build, generated Protobuf, startup smoke, policy/security/DPAPI and artifact upload passed."
+            }
+          ],
+          "failure_details": "Python source contract at test_android_inference_round_response_collector_contract.py still required `attempts.map { attempt ->`. Android KtLint required four additional spaces in the body of the map lambda after `.map` moved to a continuation line; error span collector lines 78–131.",
+          "follow_up": "A005 updates the Python contract to accept the leading-dot method continuation and adds four spaces to the map lambda body. No runtime behavior changes."
+        },
+        {
+          "attempt_id": "T0168-A005",
+          "started_at": "2026-10-31T17:06:36+03:30",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Adjusted the Python contract to recognize `.map { attempt ->` on the continuation line and corrected the map-lambda indentation to match KtLint's required nesting. No runtime behavior changed; exact-head V 3.0.706 CI pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceRoundResponseCollector.kt",
+            "tests/test_android_inference_round_response_collector_contract.py",
             "step three/T0168/execution-report.md",
             "step three/T0168/evidence/verification.md",
             "step three/project-graph.md"
@@ -42389,26 +42458,26 @@
           "commit_sha": null,
           "tests": [
             {
-              "name": "Targeted KtLint source correction",
+              "name": "Targeted Python source-contract correction",
               "result": "pending",
-              "summary": "Exact constructs reported by V 3.0.702–V 3.0.704 logs were reformatted; exact-head Gradle KtLint pending."
+              "summary": "Test now checks the chain method call regardless of the receiver line."
             },
             {
-              "name": "Step Three quality gate",
+              "name": "Targeted KtLint correction",
               "result": "pending",
-              "summary": "Python suite passed on V 3.0.704; V 3.0.705 exact-head rerun pending."
+              "summary": "All statements in the attempts map lambda were shifted four spaces to the expected nesting level."
             },
             {
-              "name": "Android APK/JVM/Protobuf, Windows WPF and HostLifecycle",
+              "name": "Exact-head Step Three and product CI",
               "result": "pending",
-              "summary": "Exact-head product workflow pending."
+              "summary": "V 3.0.706 quality, Android KtLint/APK/JVM/Protobuf, Windows WPF and HostLifecycle pending."
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect V 3.0.705 KtLint first, then APK/JVM/Protobuf and all product/quality workflows. Mark T0168 done only after exact-head passes."
+          "follow_up": "Inspect exact-head V 3.0.706 CI. Keep T0168 in_progress unless all relevant gates pass."
         }
       ]
     },
@@ -54123,7 +54192,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-31T17:02:57+03:30",
+  "updated_at": "2026-10-31T17:06:36+03:30",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",
