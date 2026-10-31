@@ -266,7 +266,8 @@ class Libp2pInferenceRequestTransportTest {
             val clientIdentity = generateKeyPair(KeyType.ED25519).first
             val clientPeerId = PeerId.fromPubKey(clientIdentity.publicKey()).toBase58()
             val processes = mutableListOf<Process>()
-            val serverOutput = ConcurrentLinkedQueue<String>()
+            val phaseOutput = ConcurrentLinkedQueue<String>()
+            val diagnosticOutput = ConcurrentLinkedQueue<String>()
             val outputReaders = mutableListOf<Thread>()
             val endpoints = linkedMapOf<String, RendezvousPeerEndpoint>()
             var runtime: AndroidInferenceRequestRuntime? = null
@@ -302,11 +303,11 @@ class Libp2pInferenceRequestTransportTest {
                                     val line = runCatching { reader.readLine() }.getOrNull() ?: break
                                     when {
                                         line.startsWith("READY\t") -> readyLineFuture.complete(line)
-                                        line in allowedMarkers -> serverOutput.add("peer-" + serverNumber + ":" + line)
+                                        line in allowedMarkers -> phaseOutput.add("peer-" + serverNumber + ":" + line)
                                         line.startsWith("P2P_DIAG\t") -> {
                                             val fields = line.split('\t', limit = 6)
-                                            if (fields.size == 6 && serverOutput.size < 240) {
-                                                serverOutput.add(
+                                            if (fields.size == 6 && diagnosticOutput.size < 240) {
+                                                diagnosticOutput.add(
                                                     "peer-" + serverNumber + ":libp2p:" +
                                                         fields.drop(1).joinToString(separator = ":"),
                                                 )
@@ -404,7 +405,11 @@ class Libp2pInferenceRequestTransportTest {
                             )
                         } catch (exception: Exception) {
                             val phases =
-                                serverOutput
+                                phaseOutput
+                                    .toList()
+                                    .joinToString(separator = " | ")
+                            val diagnostics =
+                                diagnosticOutput
                                     .toList()
                                     .takeLast(60)
                                     .joinToString(separator = " | ")
@@ -414,7 +419,7 @@ class Libp2pInferenceRequestTransportTest {
                                         "peer-" + (index + 1) + ":alive=" + process.isAlive
                                     }.joinToString(separator = ", ")
                             throw AssertionError(
-                                "The .NET peer did not return a correlated response; phases=$phases; $processStates",
+                                "The .NET peer did not return a correlated response; phases=$phases; diagnostics=$diagnostics; $processStates",
                                 exception,
                             )
                         }

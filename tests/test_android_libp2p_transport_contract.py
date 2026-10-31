@@ -110,11 +110,21 @@ class AndroidLibp2pTransportContractTests(unittest.TestCase):
         self.assertIn("val reader = process.inputStream.bufferedReader()", transport_test)
         self.assertIn("outputReader.start()", transport_test)
         self.assertIn("line in allowedMarkers", transport_test)
-        phase_capture = transport_test.split("val phases =", 1)[1].split("val processStates =", 1)[0]
-        self.assertIn("serverOutput", phase_capture)
+        self.assertIn("val phaseOutput = ConcurrentLinkedQueue<String>()", transport_test)
+        self.assertIn("val diagnosticOutput = ConcurrentLinkedQueue<String>()", transport_test)
+        self.assertIn("phaseOutput.add(", transport_test)
+        self.assertIn("diagnosticOutput.add(", transport_test)
+        error_capture = transport_test.split("val phases =", 1)[1].split("val processStates =", 1)[0]
+        phase_capture = error_capture.split("val diagnostics =", 1)[0]
+        diagnostic_capture = error_capture.split("val diagnostics =", 1)[1]
+        self.assertIn("phaseOutput", phase_capture)
         self.assertIn(".toList()", phase_capture)
-        self.assertIn(".takeLast(60)", phase_capture)
-        self.assertIn('.joinToString(separator = " | ")', phase_capture)
+        self.assertNotIn(".takeLast(", phase_capture)
+        self.assertIn("diagnosticOutput", diagnostic_capture)
+        self.assertIn(".takeLast(60)", diagnostic_capture)
+        self.assertIn("diagnostics=$diagnostics", transport_test)
+        self.assertNotIn("serverOutput", transport_test)
+        self.assertIn('.joinToString(separator = " | ")', error_capture)
         self.assertIn("dispatchesRoundToThreeNativeDotNetLibp2pHosts", transport_test)
         self.assertIn("internal val lastSubmissionFailure: String?", runtime)
         self.assertIn("attemptStatusSummary", transport_test)

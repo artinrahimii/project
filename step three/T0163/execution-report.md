@@ -717,3 +717,18 @@
 - Added a source-contract assertion for provider-scope counter increment and nested logger callback invocation.
 - Local .NET and Android Gradle commands were not run in this session. Exact-head V 3.0.680 CI is pending.
 - T0163 remains `in_progress`; the three-peer correlated request/response acceptance criterion is unchanged.
+
+
+## Attempt A055 — preserve lifecycle markers independently from diagnostic volume
+
+- **Started:** 2026-10-31T06:52:30.174Z.
+- **Base commit:** `c2b6f68dff668cdca8279275e9cd9421ef9b042d` (`V 3.0.680`).
+- **Observed baseline:** exact-head product run [41176392991](https://github.com/artinrahimii/project/actions/runs/41176392991) completed with one Android JVM failure out of 105 tests. The failing test was `dispatchesRoundToThreeNativeDotNetLibp2pHosts`; the assertion reported that the .NET peer did not return a correlated response. The Android KtLint, .NET fixture compilation, debug APK build, Windows WPF and HostLifecycle jobs passed; the remaining two Android transport JVM tests passed.
+- **Evidence review:** downloaded Android JVM report artifact `13033665980` (44,126 bytes; SHA-256 `0ae2659afd8439dca681b4d0eec9ecb50e8a8ab33c79ab909c1bca6f90ebb5ef`). The test mixed its six fixed lifecycle markers with up to 240 payload-free `P2P_DIAG` records in one queue, then displayed only the last 60 entries on failure. Thus high-volume diagnostics could hide earlier phase transitions; this does not establish which transport phase is actually failing.
+- **Implementation:** separated the Android test's fixed lifecycle markers into `phaseOutput` and its bounded payload-free diagnostics into `diagnosticOutput`. Failure output now retains every fixed phase marker and shows only the last 60 diagnostic records separately. The assertion still requires three native .NET peers to return fully correlated responses.
+- **Safety and compatibility:** no production transport, protocol, trust, peer identity, request payload, response-correlation rule or security policy was changed. No diagnostic structured values or payloads are exposed.
+- **Files changed:** `src/Client.Android/app/src/test/java/com/whitep/client/network/Libp2pInferenceRequestTransportTest.kt`, `tests/test_android_libp2p_transport_contract.py`, `step three/T0163/execution-report.md`, `step three/T0163/evidence/v3.0.681-phase-marker-retention.md`, and `step three/project-graph.md`.
+- **Local verification:** local Android Gradle, .NET and Python test commands were not run; this connected editing session has no checked-out working tree/toolchain. Only source-diff invariants were checked before preparing the Git objects.
+- **Exact-head `V 3.0.681` CI:** pending at commit creation. No pass is claimed for this attempt.
+- **Task result:** partial. `T0163` remains `in_progress`; the three-peer correlated request/response acceptance criterion is unchanged.
+- **Follow-up:** inspect the separately retained per-peer phase markers from exact-head CI and address the first missing transition. Do not mark `T0163` done until all three real .NET peers receive the request and return responses matching request ID, attempt ID, model ID and authenticated PeerId.
