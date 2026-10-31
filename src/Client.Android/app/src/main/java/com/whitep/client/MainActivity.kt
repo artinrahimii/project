@@ -39,6 +39,7 @@ import com.whitep.client.ui.conversations.conversationDetailScreen
 import com.whitep.client.ui.conversations.conversationListScreen
 import com.whitep.client.ui.navigation.ClientDestination
 import com.whitep.client.ui.navigation.ClientNavigation
+import com.whitep.client.ui.request.HostResponseCards
 import com.whitep.client.ui.request.RequestViewModel
 
 class MainActivity : ComponentActivity() {
@@ -230,6 +231,7 @@ private fun requestScreen(
             Text("Prepare request")
         }
         Text("Status: ${requestState.statusMessage}", style = MaterialTheme.typography.bodyMedium)
+        HostResponseCards(responses = requestState.hostResponses)
         OutlinedButton(onClick = onBack, modifier = Modifier.fillMaxWidth()) {
             Text("Back")
         }
@@ -266,12 +268,12 @@ private fun privacyScreen() {
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 Text(
-                    text = "The processing host can read your prompt and context capsule after channel decryption.",
+                    "The processing host can read your prompt and context capsule after channel decryption.",
                     style = MaterialTheme.typography.bodyLarge,
                 )
                 Text("Transport encryption protects data in transit, not from the receiving host.")
                 Text(
-                    text = "Only share content you are willing to disclose to the host you choose.",
+                    "Only share content you are willing to disclose to the host you choose.",
                 )
                 Text(
                     text =

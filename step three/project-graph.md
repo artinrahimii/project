@@ -41221,33 +41221,118 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0165 و T0160 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/HostResponseCards.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
+        "tests/test_android_host_response_cards_contract.py",
+        "step three/T0166/execution-report.md",
+        "step three/T0166/evidence/verification.md",
+        "step three/project-graph.md"
+      ],
       "expected_output_paths": [
         "src/Client.Android/Requests/ + tests/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/HostResponseCards.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
+        "tests/test_android_host_response_cards_contract.py",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/InferenceResponseCorrelationValidator.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/protocol/InferenceRequestPayloadBuilder.kt",
+        "protocol/whitep/v1/messages.proto",
+        "step three/T0166/evidence/verification.md"
+      ],
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0166-A001 (2026-10-31T15:23:00+03:30): Added an in-memory response-card state keyed by (requestId, attemptId), strict expected request/attempt/host/model/round checks, duplicate-attempt rejection, and one Compose card per attempt. Added JVM and Python source-contract tests. Incoming T0165 -> T0166 and T0160 -> T0166 edges were validated as contract_or_interface_dependency from the concrete response-correlation and payload identity contracts. No response body is persisted. Exact-head CI pending; request initiation from the preview UI remains for later UI/runtime integration.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0166-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt",
+          "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/HostResponseCards.kt",
+          "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
+          "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
+          "tests/test_android_host_response_cards_contract.py",
+          "step three/T0166/execution-report.md",
+          "step three/T0166/evidence/verification.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
+          "state": "pending",
+          "triggering_contracts": [
+            "InferenceRequest.request_id",
+            "InferenceRequest.attempt_id",
+            "InferenceRequest.model_id",
+            "InferenceRequest.deadline_unix_ms",
+            "InferenceResponse correlation tuple and authenticated host identity"
+          ],
           "affected_by_contract_changes": [],
-          "review_evidence": []
+          "review_evidence": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/HostResponseCards.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
+            "tests/test_android_host_response_cards_contract.py",
+            "src/Client.Android/app/src/main/java/com/whitep/client/network/InferenceResponseCorrelationValidator.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/protocol/InferenceRequestPayloadBuilder.kt",
+            "protocol/whitep/v1/messages.proto",
+            "step three/T0166/evidence/verification.md"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0166-A001",
+          "started_at": "2026-10-31T15:23:00+03:30",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Validated both incoming contract edges and implemented independent in-memory response-card state, request/attempt/host/model/round checks and one Compose card per attempt. Added JVM and Python source-contract tests. Exact-head CI is pending; no local build/test run or live UI-to-runtime submission is claimed.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/HostResponseCards.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
+            "tests/test_android_host_response_cards_contract.py",
+            "step three/T0166/execution-report.md",
+            "step three/T0166/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Source and dependency-contract review",
+              "result": "passed",
+              "summary": "Reviewed T0165 response validation/awaitResponse and T0160 payload identity/deadline contracts against exact base-commit sources."
+            },
+            {
+              "name": "Android KtLint and JVM tests",
+              "result": "pending",
+              "summary": "Exact-head product CI must run after commit."
+            },
+            {
+              "name": "Step Three Python quality and graph/evidence guards",
+              "result": "pending",
+              "summary": "Exact-head quality workflow must run after commit."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect exact-head quality and Android CI. If all required checks pass, record their run URLs and complete T0166; otherwise preserve the failure and correct the implementation."
+        }
+      ]
     },
     {
       "id": "T0167",
@@ -48104,19 +48189,31 @@
       "from": "T0165",
       "to": "T0166",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0165's Android response path completes awaitResponse only after InferenceResponseCorrelationValidator matches the pending request ID, attempt ID, round ID, authenticated PeerId, model ID, host completion deadline and local receive deadline. T0166 consumes only those transport-validated responses and stores them under the corresponding request/attempt identity while checking the expected host/model tuple. This is a concrete producer/consumer response contract, not an inference from type=blocks.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/InferenceResponseCorrelationValidator.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/network/InferenceResponseCorrelationValidatorTest.kt",
+        "step three/T0165/evidence/v3.0.691-ci-final.md"
+      ]
     },
     {
       "from": "T0160",
       "to": "T0166",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0160 defines the InferenceRequest request_id, attempt_id, model_id and absolute deadline_unix_ms contract. T0166 uses the dispatch request/attempt/host/model tuple to validate each returned response and uses (requestId, attemptId) as the independent card identity, preserving distinct retry attempts. This is a direct payload/identity interface dependency, not an inference from type=blocks.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/protocol/InferenceRequestPayloadBuilder.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/DistributedRequest.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceAttemptDispatcher.kt",
+        "protocol/whitep/v1/messages.proto",
+        "src/Client.Android/app/src/test/java/com/whitep/client/protocol/InferenceRequestPayloadBuilderTest.kt",
+        "step three/T0160/execution-report.md"
+      ]
     },
     {
       "from": "T0166",
@@ -52924,9 +53021,41 @@
         "step three/T0160/execution-report.md"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-31T15:23:00+03:30",
+      "edge_from": "T0165",
+      "edge_to": "T0166",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "reason": "T0165's Android response path completes awaitResponse only after InferenceResponseCorrelationValidator matches the pending request ID, attempt ID, round ID, authenticated PeerId, model ID, host completion deadline and local receive deadline. T0166 consumes only those transport-validated responses and stores them under the corresponding request/attempt identity while checking the expected host/model tuple. This is a concrete producer/consumer response contract, not an inference from type=blocks.",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/InferenceResponseCorrelationValidator.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/network/InferenceResponseCorrelationValidatorTest.kt",
+        "step three/T0165/evidence/v3.0.691-ci-final.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-31T15:23:00+03:30",
+      "edge_from": "T0160",
+      "edge_to": "T0166",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "reason": "T0160 defines the InferenceRequest request_id, attempt_id, model_id and absolute deadline_unix_ms contract. T0166 uses the dispatch request/attempt/host/model tuple to validate each returned response and uses (requestId, attemptId) as the independent card identity, preserving distinct retry attempts. This is a direct payload/identity interface dependency, not an inference from type=blocks.",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/protocol/InferenceRequestPayloadBuilder.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/DistributedRequest.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceAttemptDispatcher.kt",
+        "protocol/whitep/v1/messages.proto",
+        "src/Client.Android/app/src/test/java/com/whitep/client/protocol/InferenceRequestPayloadBuilderTest.kt",
+        "step three/T0160/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-31T11:48:00.000Z",
+  "updated_at": "2026-10-31T15:23:00+03:30",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",
