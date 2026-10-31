@@ -43386,11 +43386,11 @@
         "step three/T0170/execution-report.md",
         "step three/T0170/evidence/verification.md"
       ],
-      "notes": "A001 adds first-release request limits of at most 3 rounds, 3 hosts per round and 9 total host attempts. The requirement specified no numeric values; this decision is documented. Budget progress is in-memory per Android runtime instance and is reserved conservatively across cancellation. No automatic retry loop, persistent cross-process ledger or all-round duplicate-host rule is claimed. T0169 selector contract revalidation remains in_review pending exact-head CI. A001 quality gate failed on one pre-existing source-string guard; A002 restores the exact expression and records the failure append-only. Exact A002 CI is pending. A002 passed Step Three quality but Android KtLint again failed at the same helper signature/body layout; A003 moves DistributedRequest construction onto the signature line and awaits exact-head CI. A003 Step Three quality and HostLifecycle passed; Android KtLint then exposed incorrect indentation at lines 436–441, fixed in A004. APK/JVM/Protobuf have not yet run. A004 exact-head quality, Windows WPF and HostLifecycle passed; Android KtLint found five production-source formatting violations, corrected in A005 without intended contract changes. A005 (V 3.0.721) exact-head CI left one KtLint function-argument formatting error in DistributedRequest.create; A006 splits the minOf arguments. All earlier attempt-to-commit associations have been filled with the verified online SHA values. A006 CI is pending.",
+      "notes": "A001 adds first-release request limits of at most 3 rounds, 3 hosts per round and 9 total host attempts. The requirement specified no numeric values; this decision is documented. Budget progress is in-memory per Android runtime instance and is reserved conservatively across cancellation. No automatic retry loop, persistent cross-process ledger or all-round duplicate-host rule is claimed. T0169 selector contract revalidation remains in_review pending exact-head CI. A001 quality gate failed on one pre-existing source-string guard; A002 restores the exact expression and records the failure append-only. Exact A002 CI is pending. A002 passed Step Three quality but Android KtLint again failed at the same helper signature/body layout; A003 moves DistributedRequest construction onto the signature line and awaits exact-head CI. A003 Step Three quality and HostLifecycle passed; Android KtLint then exposed incorrect indentation at lines 436–441, fixed in A004. APK/JVM/Protobuf have not yet run. A004 exact-head quality, Windows WPF and HostLifecycle passed; Android KtLint found five production-source formatting violations, corrected in A005 without intended contract changes. A005 (V 3.0.721) exact-head CI left one KtLint function-argument formatting error in DistributedRequest.create; A006 splits the minOf arguments. All earlier attempt-to-commit associations have been filled with the verified online SHA values. A006 CI is pending. A006 (V 3.0.722) passed KtLint and APK build but failed Android JVM test compilation because the network-package test lacked an import for DistributedRequestProgress. A007 adds the explicit import and a Python contract guard; CI is pending.",
       "execution_summary": {
-        "attempt_count": 6,
-        "failed_attempt_count": 5,
-        "last_attempt_id": "T0170-A006",
+        "attempt_count": 7,
+        "failed_attempt_count": 6,
+        "last_attempt_id": "T0170-A007",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/requests/DistributedRequest.kt",
@@ -43414,15 +43414,16 @@
           "63be6aa51b229ecf4f9d49565bee04e9c0a8a4d8",
           "62d844488bf9d81c00683963943c251c3de8f3de",
           "ce0e6ebdfefbff004a9be0f754e55d653cffaee4",
-          "e708e8da220078cf783d1610286d793b8ff8f77c"
+          "e708e8da220078cf783d1610286d793b8ff8f77c",
+          "5acdd3bf7d5ade6a4a23ca8da036f77b80c541a8"
         ],
         "tests_passed": [],
         "tests_failed": [
           {
-            "name": "Android KtLint — V 3.0.721",
+            "name": "Android JVM test compilation — V 3.0.722",
             "result": "failed",
-            "url": "https://github.com/artinrahimii/project/actions/runs/41217933725",
-            "summary": "One remaining function-argument multiline formatting failure at DistributedRequest.kt:78; dependent APK/JVM/Protobuf checks skipped."
+            "url": "https://github.com/artinrahimii/project/actions/runs/41225183725",
+            "summary": "Unresolved DistributedRequestProgress reference at Libp2pInferenceRequestTransportTest.kt:199 and :392; JVM tests did not run."
           }
         ],
         "blocked_reason": null,
@@ -43696,11 +43697,75 @@
         {
           "attempt_id": "T0170-A006",
           "started_at": "2026-10-31T17:33:29.743Z",
-          "ended_at": "2026-10-31T17:33:29.743Z",
-          "result": "partial",
-          "summary": "Corrected the one remaining KtLint finding from A005 by splitting the minOf arguments and closing parenthesis onto separate lines in DistributedRequest.create. No budget behavior or interface changed; exact-head CI is pending.",
+          "ended_at": "2026-10-31T17:36:52.599Z",
+          "result": "failed",
+          "summary": "A006 cleared the remaining KtLint issue and produced the Android debug APK, but Android JVM test compilation failed because Libp2pInferenceRequestTransportTest.kt referenced DistributedRequestProgress from a different package without importing it. JVM test execution and generated-Protobuf validation were therefore skipped. Step Three quality, Windows WPF and HostLifecycle passed.",
           "changed_files": [
             "src/Client.Android/app/src/main/java/com/whitep/client/requests/DistributedRequest.kt",
+            "step three/T0170/execution-report.md",
+            "step three/T0170/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": "5acdd3bf7d5ade6a4a23ca8da036f77b80c541a8",
+          "tests": [
+            {
+              "name": "Step Three quality gate — V 3.0.722",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41225183751",
+              "summary": "Python tests, graph structure, syntax and evidence validation passed."
+            },
+            {
+              "name": "Android Kotlin formatting and lint — V 3.0.722",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41225183725",
+              "summary": "ktlintCheck passed."
+            },
+            {
+              "name": "Android debug APK — V 3.0.722",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41225183725",
+              "summary": "assembleDebug completed successfully."
+            },
+            {
+              "name": "Android JVM unit tests — V 3.0.722",
+              "result": "failed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41225183725",
+              "summary": "testDebugUnitTest failed at compileDebugUnitTestKotlin: unresolved DistributedRequestProgress at Libp2pInferenceRequestTransportTest.kt lines 199 and 392; no JVM tests executed."
+            },
+            {
+              "name": "Generated Protobuf validation — V 3.0.722",
+              "result": "skipped",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41225183725",
+              "summary": "Dependent validation step skipped after JVM test compilation failed."
+            },
+            {
+              "name": "Windows WPF — V 3.0.722",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41225183725",
+              "summary": "Windows WPF build and validation job passed."
+            },
+            {
+              "name": "HostLifecycle — V 3.0.722",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41225183725",
+              "summary": "Host lifecycle unit and integration tests passed."
+            }
+          ],
+          "failure_details": "Android test Kotlin compilation failed at Libp2pInferenceRequestTransportTest.kt:199 and :392 because DistributedRequestProgress is defined in com.whitep.client.requests but the network-package test had not imported it. KtLint and APK build were successful; Protobuf verification was skipped due to the earlier test compilation failure.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "A007 adds the missing DistributedRequestProgress import and a source-contract assertion so the package boundary is checked. Rerun exact-head Android JVM and Protobuf checks."
+        },
+        {
+          "attempt_id": "T0170-A007",
+          "started_at": "2026-10-31T17:40:10.586Z",
+          "ended_at": "2026-10-31T17:40:10.586Z",
+          "result": "partial",
+          "summary": "Added the missing DistributedRequestProgress import to Libp2pInferenceRequestTransportTest.kt, which resides in a different package, and added a Python source-contract assertion to protect the import. No runtime behavior or Protobuf schema changed; exact-head CI is pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/test/java/com/whitep/client/network/Libp2pInferenceRequestTransportTest.kt",
+            "tests/test_android_libp2p_transport_contract.py",
             "step three/T0170/execution-report.md",
             "step three/T0170/evidence/verification.md",
             "step three/project-graph.md"
@@ -43708,17 +43773,17 @@
           "commit_sha": null,
           "tests": [
             {
-              "name": "Step Three quality gate — V 3.0.722",
+              "name": "Step Three quality gate — V 3.0.723",
               "result": "pending",
               "summary": "Awaiting exact-head CI."
             },
             {
-              "name": "Android KtLint / assembleDebug / testDebugUnitTest / generated Protobuf — V 3.0.722",
+              "name": "Android KtLint / assembleDebug / testDebugUnitTest / generated Protobuf — V 3.0.723",
               "result": "pending",
               "summary": "Awaiting exact-head CI."
             },
             {
-              "name": "Windows WPF and HostLifecycle — V 3.0.722",
+              "name": "Windows WPF and HostLifecycle — V 3.0.723",
               "result": "pending",
               "summary": "Awaiting exact-head CI."
             }
@@ -43727,7 +43792,7 @@
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect the V 3.0.722 exact-head Actions runs. Do not complete T0170 or close T0169 contract revalidation until Android KtLint, APK, all JVM tests, generated Protobuf, Step Three quality, Windows WPF and HostLifecycle pass."
+          "follow_up": "Inspect exact-head V 3.0.723. Require all Android JVM tests and generated-Protobuf validation to pass before closing T0169 contract revalidation or marking T0170 complete."
         }
       ]
     },
@@ -55442,7 +55507,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-31T17:33:29.743Z",
+  "updated_at": "2026-10-31T17:40:10.586Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

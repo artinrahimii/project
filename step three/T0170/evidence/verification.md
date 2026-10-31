@@ -8,7 +8,8 @@
 - A003: `62d844488bf9d81c00683963943c251c3de8f3de` (`V 3.0.719`).
 - A004: `ce0e6ebdfefbff004a9be0f754e55d653cffaee4` (`V 3.0.720`).
 - A005: `e708e8da220078cf783d1610286d793b8ff8f77c` (`V 3.0.721`).
-- A006: version/commit pending; parent expected to be A005 after a fresh head check.
+- A006: `5acdd3bf7d5ade6a4a23ca8da036f77b80c541a8` (`V 3.0.722`).
+- A007: commit pending.
 
 ## Dependency and source evidence
 
@@ -21,39 +22,47 @@
 
 ### A001 — V 3.0.717
 
-- Step Three quality: failed, run [41216834757](https://github.com/artinrahimii/project/actions/runs/41216834757), one Python source-contract failure among 308 tests.
-- Android KtLint: failed, product run [41216834811](https://github.com/artinrahimii/project/actions/runs/41216834811); APK/JVM/Protobuf skipped.
+- Step Three quality failed, run [41216834757](https://github.com/artinrahimii/project/actions/runs/41216834757): one Python source-contract failure among 308 tests.
+- Android KtLint failed, product run [41216834811](https://github.com/artinrahimii/project/actions/runs/41216834811); APK/JVM/Protobuf skipped.
 - Windows WPF and HostLifecycle passed.
 
 ### A002 — V 3.0.718
 
-- Step Three quality: passed, run [41217032620](https://github.com/artinrahimii/project/actions/runs/41217032620).
-- Android KtLint: failed, product run [41217032694](https://github.com/artinrahimii/project/actions/runs/41217032694); helper signature/body placement. APK/JVM/Protobuf skipped.
+- Step Three quality passed, run [41217032620](https://github.com/artinrahimii/project/actions/runs/41217032620).
+- Android KtLint failed, product run [41217032694](https://github.com/artinrahimii/project/actions/runs/41217032694); helper signature/body placement. APK/JVM/Protobuf skipped.
 - HostLifecycle and Windows WPF passed.
 
 ### A003 — V 3.0.719
 
-- Step Three quality: passed, run [41217272330](https://github.com/artinrahimii/project/actions/runs/41217272330).
-- Android KtLint: failed, product run [41217272243](https://github.com/artinrahimii/project/actions/runs/41217272243); helper argument indentation. APK/JVM/Protobuf skipped.
+- Step Three quality passed, run [41217272330](https://github.com/artinrahimii/project/actions/runs/41217272330).
+- Android KtLint failed, product run [41217272243](https://github.com/artinrahimii/project/actions/runs/41217272243); helper argument indentation. APK/JVM/Protobuf skipped.
 - HostLifecycle and Windows WPF passed.
 
 ### A004 — V 3.0.720
 
-- Step Three quality: passed, run [41217532369](https://github.com/artinrahimii/project/actions/runs/41217532369).
-- Android KtLint: failed, product run [41217532383](https://github.com/artinrahimii/project/actions/runs/41217532383); five production-source formatting findings. APK/JVM/Protobuf skipped.
+- Step Three quality passed, run [41217532369](https://github.com/artinrahimii/project/actions/runs/41217532369).
+- Android KtLint failed, product run [41217532383](https://github.com/artinrahimii/project/actions/runs/41217532383); five production-source formatting findings. APK/JVM/Protobuf skipped.
 - Windows WPF and HostLifecycle passed.
 
 ### A005 — V 3.0.721
 
-- Step Three quality: passed, run [41217933594](https://github.com/artinrahimii/project/actions/runs/41217933594).
-- Android KtLint: failed, product run [41217933725](https://github.com/artinrahimii/project/actions/runs/41217933725), at `DistributedRequest.kt:78`. KtLint required the `minOf` call arguments and close parenthesis to be split onto separate lines; the remaining expression also exceeded the line-length limit.
+- Step Three quality passed, run [41217933594](https://github.com/artinrahimii/project/actions/runs/41217933594).
+- Android KtLint failed, product run [41217933725](https://github.com/artinrahimii/project/actions/runs/41217933725), at `DistributedRequest.kt:78`; APK/JVM/Protobuf skipped.
 - Windows WPF and HostLifecycle passed.
-- Because KtLint failed, `assembleDebug`, `testDebugUnitTest` and generated Protobuf verification were skipped.
 
-### A006 — pending
+### A006 — V 3.0.722
 
-- Changed only the multiline formatting of the `DistributedRequest.create` default argument; numeric policy and API behavior are unchanged.
-- Exact-head quality and product workflows are pending.
-- Android KtLint, `assembleDebug`, `testDebugUnitTest`, generated Protobuf, Windows WPF and HostLifecycle are not confirmed for A006.
-- Local Gradle/build execution was not run in this connected GitHub session.
+- Step Three quality passed, run [41225183751](https://github.com/artinrahimii/project/actions/runs/41225183751).
+- Android KtLint passed.
+- Android debug APK `assembleDebug` passed.
+- Android JVM compilation failed in run [41225183725](https://github.com/artinrahimii/project/actions/runs/41225183725): unresolved `DistributedRequestProgress` at lines 199 and 392 of `Libp2pInferenceRequestTransportTest.kt`. The file's package is `com.whitep.client.network`; the type belongs to `com.whitep.client.requests` and was not imported.
+- Because test compilation failed, no JVM tests executed and the generated-Protobuf verification step was skipped.
+- Windows WPF and HostLifecycle passed.
+
+### A007 — pending
+
+- Added `import com.whitep.client.requests.DistributedRequestProgress` to the network test.
+- Added a Python source-contract assertion for the explicit import.
+- Exact-head Step Three and product workflows are pending.
+- No Android JVM or Protobuf pass is claimed for A007 until the new run completes.
 - No task-wide acceptance or product-release completion is claimed.

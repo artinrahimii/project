@@ -149,6 +149,7 @@ class AndroidLibp2pTransportContractTests(unittest.TestCase):
         self.assertIn("AndroidInferenceRequestRuntime(", source)
         self.assertIn("client.dispatchRound(", source)
         self.assertIn("client.dispatchProgress(requestId)", source)
+        self.assertIn("import com.whitep.client.requests.DistributedRequestProgress", source)
         self.assertIn("runtimeClient.dispatchProgress(requestId)", source)
         self.assertIn("client.awaitResponse(", source)
         self.assertIn("dispatchesOneSharedRequestWithDistinctAttemptsOverAuthenticatedPeerStreams", source)

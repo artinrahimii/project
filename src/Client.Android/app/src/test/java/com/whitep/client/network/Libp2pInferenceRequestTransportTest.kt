@@ -3,6 +3,7 @@ package com.whitep.client.network
 import com.whitep.client.context.ConversationContextCapsule
 import com.whitep.client.requests.AndroidInferenceRequestRuntime
 import com.whitep.client.requests.DistributedRequest
+import com.whitep.client.requests.DistributedRequestProgress
 import com.whitep.client.requests.HostCandidate
 import com.whitep.client.requests.InferenceAttemptSubmissionStatus
 import com.whitep.client.requests.InferenceRoundDispatchResult
