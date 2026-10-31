@@ -1,19 +1,10 @@
 # T0168 — response collection verification
 
-- Production entry point: `AndroidInferenceRequestRuntime.awaitRoundResponses`.
-- All queued attempts use the stored shared `InferenceRoundTimer.Window`.
-- Collector concurrently awaits all attempts and returns per-host response/failure outcomes; first success does not end the collection.
-- Existing authenticated PeerId and request/attempt/round/model/deadline correlation validation remains intact.
-- Five JVM regression tests cover first response continuation, isolated timeout, unqueued submissions, expired window and caller cancellation.
-- V 3.0.702–V 3.0.705 exact CI records are retained in the task execution history; the failures were KtLint layout and brittle source-contract assertions. Windows WPF/HostLifecycle passed in V 3.0.705.
-- V 3.0.706 A005 changes only chain indentation and the related Python assertion. Exact-head CI pending.
-- Local Gradle execution unavailable. Keep T0168 in_progress until all exact-head gates pass.
-
-
-## Exact-head V 3.0.706 verification
-
-- Step Three quality: passed (308 Python tests, syntax, graph and evidence checks).
-- Windows WPF and HostLifecycle: passed.
-- Android interop fixture: passed.
-- Android KtLint: failed on trailing spaces at collector lines 84/89/94 and nested `attempt.failure` line wrapping at lines 99/113/117. APK/JVM/Protobuf were skipped.
-- A006 removes whitespace-only suffixes and wraps the flagged nested calls. V 3.0.707 exact-head CI pending.
+- Runtime API: `AndroidInferenceRequestRuntime.awaitRoundResponses`.
+- Collector concurrently awaits all submitted attempts on their dispatch-created shared `InferenceRoundTimer.Window`.
+- First valid response does not cancel other queued waits; per-host failures/timeouts are isolated; rejected/failed/timed-out submissions are not awaited; parent cancellation propagates.
+- Authenticated peer identity and request/attempt/round/model/deadline correlation checks remain in the existing transport.
+- Five JVM regressions cover first response continuation, sibling survival after timeout, non-queued outcomes, expired window and caller cancellation.
+- V 3.0.707: all 308 Python tests and syntax passed, but graph guard failed because summary counters were 7/6 versus six history records/five failed. KtLint flagged the last long RESPONSE_FAILED call. Windows WPF and HostLifecycle passed.
+- V 3.0.708 A007 aligns graph counters with preserved history and reformats that call. Exact-head CI pending.
+- Local Gradle cannot be executed in this connected GitHub context; T0168 remains in_progress.
