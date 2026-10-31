@@ -52,3 +52,17 @@ Step Three quality workflow 41230929453 passed. HostLifecycle job 124624805496 p
 ## A005 — one-line formatting correction
 
 Moved the closing delimiter of the multi-round candidate `listOf` from 16 to 20 spaces, matching the continuation indentation reported by KtLint. No production code or behavior changed. Exact-head CI remains pending.
+
+
+## A005 — V 3.0.727 final verification evidence
+
+Exact online implementation/verification commit: `2590ff32c1e4340672374dceb8930b566c6c0f7b` (`V 3.0.727`), branch `main`.
+
+- Step Three quality gate [41231116594](https://github.com/artinrahimii/project/actions/runs/41231116594): succeeded.
+- Android product job [124625362340](https://github.com/artinrahimii/project/actions/runs/41231116520): succeeded. `ktlintCheck`, `assembleDebug`, `testDebugUnitTest`, generated Protobuf Java/Kotlin validation, unit-test report upload and debug APK upload all completed successfully.
+- Android log: `BUILD SUCCESSFUL` after `ktlintCheck`, `assembleDebug`, `testDebugUnitTest` and generated-source validation. Generated Java: `InferenceResponseOrBuilder.java`; generated Kotlin: `CancelRequestKt.kt`.
+- Windows WPF product job [124625362256](https://github.com/artinrahimii/project/actions/runs/41231116520): succeeded. C# formatting, Release build, Protobuf, startup smoke, process/policy/capability, DPAPI identity/trust and artifact upload passed.
+- HostLifecycle job [124625362448](https://github.com/artinrahimii/project/actions/runs/41231116520): succeeded.
+- Local Gradle execution is not claimed; the exact-head online CI is the test evidence.
+
+Three earlier KtLint failures are retained in the graph and execution history. V 3.0.727 proves the corrected source and test suite pass.

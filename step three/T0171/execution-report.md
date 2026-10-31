@@ -65,3 +65,17 @@ No local Gradle execution is claimed from this connected GitHub session. Exact-h
 - Android job 124624805452: KtLint failed on one remaining indentation finding at `HostCandidateSelectorTest.kt:389:1`: the closing delimiter of the multi-round candidate `listOf` was at 16 spaces but required 20. Android APK, JVM tests and generated Protobuf checks were skipped. No Android test pass is claimed for V 3.0.726.
 - The Windows WPF job was still running when this correction was prepared; its final result will be recorded separately after workflow completion.
 - A005 moves only the reported list-closing delimiter to the required indentation. T0171 remains in progress until Android lint, APK, JVM and Protobuf checks pass.
+
+
+## A005 — exact-head V 3.0.727 acceptance
+
+T0171 acceptance is satisfied on exact online `main` commit `2590ff32c1e4340672374dceb8930b566c6c0f7b`:
+
+- Step Three quality gate [41231116594](https://github.com/artinrahimii/project/actions/runs/41231116594): PASS — automated Python tests, syntax compilation, graph structure and recorded-output/evidence validation.
+- Android KtLint: PASS; `assembleDebug`: PASS; `testDebugUnitTest`: PASS. The Android job ended successfully in [product workflow 41231116520](https://github.com/artinrahimii/project/actions/runs/41231116520). The log records `BUILD SUCCESSFUL` for all three Gradle commands.
+- Generated Protobuf Java and Kotlin validation: PASS. The generated Java `InferenceResponseOrBuilder.java` and Kotlin `CancelRequestKt.kt` were both present and validated.
+- Windows WPF: PASS — C# formatting, Release build, generated Protobuf, startup smoke, process restrictions, policy rejection, backend/model capability, DPAPI identity/trust and artifact upload.
+- HostLifecycle unit/integration tests: PASS.
+- Android debug APK and unit-test report artifacts were uploaded by CI.
+
+Three failed KtLint attempts remain in execution history (V 3.0.724, V 3.0.725 and V 3.0.726). The successful V 3.0.727 run closes the formatting gap; those historical failures remain preserved. T0171 is complete; the T0169/T0170 consumer-contract revalidation is passed.

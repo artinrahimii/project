@@ -35929,7 +35929,9 @@
             "tests/test_android_inference_request_payload_builder_contract.py",
             "https://github.com/artinrahimii/project/actions/runs/41014428583",
             "https://github.com/artinrahimii/project/actions/runs/41014428574",
-            "src/Client.Android/app/src/test/java/com/whitep/client/context/ConversationContextCapsuleTest.kt"
+            "src/Client.Android/app/src/test/java/com/whitep/client/context/ConversationContextCapsuleTest.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt"
           ]
         }
       },
@@ -43057,7 +43059,7 @@
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "in_review",
+          "state": "passed",
           "triggering_contracts": [
             "HostCandidateSelector.selectNextRound now receives DistributedRequest and DistributedRequestProgress to enforce first-release budgets.",
             "T0171 requires cumulative DistributedRequestProgress history and verifies that previous-round attempts are the exact suffix of that history."
@@ -43072,7 +43074,10 @@
             "tests/test_android_host_candidate_selector_contract.py",
             "tests/test_android_inference_attempt_dispatcher_contract.py",
             "src/Client.Android/app/src/main/java/com/whitep/client/requests/DistributedRequest.kt",
-            "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt"
+            "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/requests/DistributedRequestTest.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/network/Libp2pInferenceRequestTransportTest.kt"
           ]
         }
       },
@@ -43464,7 +43469,7 @@
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "in_review",
+          "state": "passed",
           "triggering_contracts": [
             "T0171 extends DistributedRequestProgress with cumulative ordered peer-attempt history and changes selectNextRound exclusion semantics."
           ],
@@ -43476,7 +43481,9 @@
             "src/Client.Android/app/src/main/java/com/whitep/client/requests/DistributedRequest.kt",
             "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
             "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
-            "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt"
+            "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/requests/DistributedRequestTest.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/network/Libp2pInferenceRequestTransportTest.kt"
           ]
         }
       },
@@ -43874,8 +43881,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0170 و T0160 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال انجام",
+      "status": "done",
+      "status_fa": "تکمیل‌شده",
       "actual_output_paths": [
         "src/Client.Android/app/src/main/java/com/whitep/client/requests/DistributedRequest.kt",
         "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
@@ -43903,10 +43910,10 @@
       ],
       "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود. Before execution, review the progress-aware HostCandidateSelector.selectNextRound API introduced by T0170. The T0170→T0171 edge remains unreviewed.\nT0171-A001 adds ordered request-scoped peer-attempt history. All previously attempted IDs are excluded from next-round selection by default; a prior peer can be selected again only via the explicit per-call retryableEphemeralHostIds allowlist. Exact-head CI pending.",
       "execution_summary": {
-        "attempt_count": 7,
+        "attempt_count": 8,
         "failed_attempt_count": 3,
-        "last_attempt_id": "T0171-A004",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "T0171-A004-verification",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/requests/DistributedRequest.kt",
           "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
@@ -43921,7 +43928,10 @@
           "step three/T0171/evidence/verification.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
+        "related_commits": [
+          "5944cf48a2157343aafac069ccb3a78a3229208c",
+          "2590ff32c1e4340672374dceb8930b566c6c0f7b"
+        ],
         "tests_passed": [
           {
             "name": "Step Three quality gate — V 3.0.724",
@@ -43970,6 +43980,48 @@
             "result": "passed",
             "url": "https://github.com/artinrahimii/project/actions/runs/41230929279",
             "summary": "HostLifecycle job 124624805496 passed."
+          },
+          {
+            "name": "Step Three quality gate — V 3.0.727",
+            "result": "passed",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41231116594",
+            "summary": "Python automated tests, syntax compilation, graph structure and recorded-output/evidence validation passed."
+          },
+          {
+            "name": "Android KtLint — V 3.0.727",
+            "result": "passed",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41231116520",
+            "summary": "ktlintCheck passed after the final continuation-indentation correction."
+          },
+          {
+            "name": "Android Debug APK — V 3.0.727",
+            "result": "passed",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41231116520",
+            "summary": "assembleDebug completed with BUILD SUCCESSFUL; debug APK uploaded."
+          },
+          {
+            "name": "Android JVM unit tests — V 3.0.727",
+            "result": "passed",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41231116520",
+            "summary": "testDebugUnitTest completed with BUILD SUCCESSFUL; unit-test reports uploaded."
+          },
+          {
+            "name": "Generated Protobuf Java and Kotlin — V 3.0.727",
+            "result": "passed",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41231116520",
+            "summary": "Generated InferenceResponseOrBuilder.java and CancelRequestKt.kt were both present and validated."
+          },
+          {
+            "name": "Windows WPF build/security — V 3.0.727",
+            "result": "passed",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41231116520",
+            "summary": "Formatting, Release build, Protobuf, startup, process/policy/capability, DPAPI identity/trust and artifact steps passed."
+          },
+          {
+            "name": "HostLifecycle — V 3.0.727",
+            "result": "passed",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41231116520",
+            "summary": "Host lifecycle integration job passed."
           }
         ],
         "tests_failed": [
@@ -43995,9 +44047,9 @@
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "in_review",
+          "state": "passed",
           "triggering_contracts": [
-            "DistributedRequestProgress now carries ordered peer-attempt history; HostCandidateSelector.selectNextRound consumes the history and supports explicit per-call retry allowlisting."
+            "The Android runtime tracks all request-scoped peer attempts in order. The selector excludes the full attempt history unless a specific prior peer is expressly allowlisted for this selection."
           ],
           "affected_by_contract_changes": [
             "T0160",
@@ -44266,6 +44318,60 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Inspect exact-head V 3.0.727 CI. Complete T0171 only after all Android and product validations pass."
+        },
+        {
+          "attempt_id": "T0171-A004-verification",
+          "started_at": "2026-10-31T18:47:00Z",
+          "ended_at": "2026-10-31T18:51:01Z",
+          "result": "succeeded",
+          "summary": "Exact-head V 3.0.727 CI passed end-to-end: Android KtLint, assembleDebug, testDebugUnitTest, generated Protobuf Java/Kotlin checks and artifact uploads; Windows WPF Release build, Protobuf, startup, process/policy/capability, DPAPI and artifact checks; HostLifecycle and Step Three quality gates. T0171 acceptance criteria are satisfied.",
+          "changed_files": [],
+          "commit_sha": "2590ff32c1e4340672374dceb8930b566c6c0f7b",
+          "tests": [
+            {
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41231116594"
+            },
+            {
+              "name": "Android KtLint",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41231116520"
+            },
+            {
+              "name": "Android assembleDebug",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41231116520",
+              "summary": "BUILD SUCCESSFUL."
+            },
+            {
+              "name": "Android testDebugUnitTest",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41231116520",
+              "summary": "BUILD SUCCESSFUL."
+            },
+            {
+              "name": "Generated Protobuf Java/Kotlin",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41231116520",
+              "summary": "Both generated language source files found and validated."
+            },
+            {
+              "name": "Windows WPF build/startup/security",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41231116520"
+            },
+            {
+              "name": "HostLifecycle unit/integration",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41231116520"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Proceed to the next eligible graph node after checking its dependencies and acceptance criteria."
         }
       ]
     },
@@ -55975,7 +56081,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-31T18:46:27Z",
+  "updated_at": "2026-10-31T18:51:01Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",
