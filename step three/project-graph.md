@@ -40854,8 +40854,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0164 و T0160 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "protocol/whitep/v1/messages.proto",
         "src/Client.Android/app/src/main/java/com/whitep/client/protocol/InferenceRequestPayloadBuilder.kt",
@@ -40873,7 +40873,8 @@
         "tests/test_android_inference_request_payload_builder_contract.py",
         "src/Client.Android/app/src/main/java/com/whitep/client/network/InferenceResponseCorrelationValidator.kt",
         "src/Client.Android/app/src/test/java/com/whitep/client/network/InferenceResponseCorrelationValidatorTest.kt",
-        "tests/test_android_inference_response_correlation_contract.py"
+        "tests/test_android_inference_response_correlation_contract.py",
+        "step three/T0165/evidence/v3.0.691-ci-final.md"
       ],
       "expected_output_paths": [
         "protocol/whitep/v1/messages.proto",
@@ -40890,14 +40891,15 @@
         "tests/HostLifecycle.Tests/AndroidInteropPeerServer.cs",
         "tests/test_android_inference_response_correlation_contract.py",
         "step three/T0165/execution-report.md",
-        "step three/T0165/evidence/round-response-correlation.md"
+        "step three/T0165/evidence/round-response-correlation.md",
+        "step three/T0165/evidence/v3.0.691-ci-final.md"
       ],
-      "notes": "Round correlation is implemented with additive request/response round_id fields and response/deadline checks. A001 failed one Python location assertion and two Kotlin lint formatting checks; Windows WPF, HostLifecycle and live local inference passed. A002 quality passed (300/300 Python tests). A003 applies only the two exact KtLint formatting corrections. Keep in_progress until exact-head A003 CI passes Android APK/JVM/Protobuf and all other gates.",
+      "notes": "Round correlation is implemented with additive request/response round_id fields and response/deadline checks. A001 failed one Python location assertion and two Kotlin lint formatting checks; Windows WPF, HostLifecycle and live local inference passed. A002 quality passed (300/300 Python tests). A003 applies only the two exact KtLint formatting corrections. Keep in_progress until exact-head A003 CI passes Android APK/JVM/Protobuf and all other gates.\nA004 exact-head acceptance verified on V 3.0.691 (503b3ea21f69af048959c96fda0e1e34b18c0544): Step Three quality, Android KtLint/APK/JVM/Protobuf, Windows WPF, and HostLifecycle jobs all completed successfully. T0165 is now done. Earlier failed/partial attempts remain in append-only history. Older peers without round_id remain intentionally rejected; rollout must keep Android and Windows peers compatible.",
       "execution_summary": {
-        "attempt_count": 3,
+        "attempt_count": 4,
         "failed_attempt_count": 1,
-        "last_attempt_id": "T0165-A003",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "T0165-A004",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "protocol/whitep/v1/messages.proto",
           "src/Client.Android/app/src/main/java/com/whitep/client/protocol/InferenceRequestPayloadBuilder.kt",
@@ -40919,10 +40921,12 @@
           "step three/T0165/execution-report.md",
           "step three/T0165/evidence/round-response-correlation.md",
           "step three/project-graph.md",
-          "tests/test_android_libp2p_transport_contract.py"
+          "tests/test_android_libp2p_transport_contract.py",
+          "step three/T0165/evidence/v3.0.691-ci-final.md"
         ],
         "related_commits": [
-          "54799becc9c6288ccfc698603e6ab70e7d895d4b"
+          "54799becc9c6288ccfc698603e6ab70e7d895d4b",
+          "503b3ea21f69af048959c96fda0e1e34b18c0544"
         ],
         "tests_passed": [
           {
@@ -40948,6 +40952,30 @@
             "result": "passed",
             "summary": "Real llama.cpp CPU inference using the pinned GGUF model completed successfully.",
             "url": "https://github.com/artinrahimii/project/actions/runs/41197710914"
+          },
+          {
+            "name": "V 3.0.691 Step Three quality gate",
+            "result": "passed",
+            "summary": "Exact-head workflow completed successfully: automated tests, Python syntax, graph structure, and repository-backed outputs/evidence checks all passed.",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41198060147/job/124528146670"
+          },
+          {
+            "name": "V 3.0.691 HostLifecycle unit and integration tests",
+            "result": "passed",
+            "summary": "The complete HostLifecycle unit/integration job completed successfully on the exact main commit.",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41198060181/job/124528146715"
+          },
+          {
+            "name": "V 3.0.691 Windows WPF host",
+            "result": "passed",
+            "summary": "C# formatting, Release build, generated Protobuf validation, WPF startup, process restrictions, policy, capability gate, and DPAPI peer-trust checks all passed.",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41198060181/job/124528146830"
+          },
+          {
+            "name": "V 3.0.691 Android client",
+            "result": "passed",
+            "summary": "KtLint, debug APK build, Android JVM unit tests, generated Protobuf validation, and artifact uploads all passed.",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41198060181/job/124528146868"
           }
         ],
         "tests_failed": [
@@ -40967,7 +40995,7 @@
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "pending",
+          "state": "passed_exact_commit_ci",
           "triggering_contracts": [
             "InferenceRequest.round_id",
             "InferenceResponse.round_id",
@@ -40982,9 +41010,11 @@
           "review_evidence": [
             "src/Client.Android/app/src/test/java/com/whitep/client/network/InferenceResponseCorrelationValidatorTest.kt",
             "tests/HostLifecycle.Tests/PeerMessageSecurityAcceptanceTests.cs",
-            "tests/test_android_inference_response_correlation_contract.py"
+            "tests/test_android_inference_response_correlation_contract.py",
+            "step three/T0165/evidence/v3.0.691-ci-final.md"
           ]
-        }
+        },
+        "follow_up": "T0166 is the next task in this subgraph. Before starting it, review the still-unreviewed T0165 -> T0166 and T0160 -> T0166 edges against the actual response-card UI and request contract; preserve their current classifications until evidence supports a validated classification."
       },
       "execution_history": [
         {
@@ -41127,6 +41157,50 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Inspect exact-head V 3.0.691 CI. Keep T0165 in_progress until all required gates pass."
+        },
+        {
+          "attempt_id": "T0165-A004",
+          "started_at": "2026-10-31T15:18:00+03:30",
+          "ended_at": "2026-10-31T15:18:00+03:30",
+          "result": "succeeded",
+          "summary": "Reviewed all exact-head V 3.0.691 CI jobs against T0165 acceptance. Step Three quality, Windows WPF, Android KtLint/APK/JVM/Protobuf, and HostLifecycle unit/integration all completed successfully. The implementation and test output files were verified in the exact main tree; no local build execution is claimed.",
+          "changed_files": [
+            "step three/T0165/execution-report.md",
+            "step three/T0165/evidence/v3.0.691-ci-final.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": "503b3ea21f69af048959c96fda0e1e34b18c0544",
+          "tests": [
+            {
+              "name": "V 3.0.691 Step Three quality gate",
+              "result": "passed",
+              "summary": "Exact-head workflow completed successfully: automated tests, Python syntax, graph structure, and repository-backed outputs/evidence checks all passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41198060147/job/124528146670"
+            },
+            {
+              "name": "V 3.0.691 HostLifecycle unit and integration tests",
+              "result": "passed",
+              "summary": "The complete HostLifecycle unit/integration job completed successfully on the exact main commit.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41198060181/job/124528146715"
+            },
+            {
+              "name": "V 3.0.691 Windows WPF host",
+              "result": "passed",
+              "summary": "C# formatting, Release build, generated Protobuf validation, WPF startup, process restrictions, policy, capability gate, and DPAPI peer-trust checks all passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41198060181/job/124528146830"
+            },
+            {
+              "name": "V 3.0.691 Android client",
+              "result": "passed",
+              "summary": "KtLint, debug APK build, Android JVM unit tests, generated Protobuf validation, and artifact uploads all passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41198060181/job/124528146868"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "T0166 is the next task in this subgraph. Before starting it, review the still-unreviewed T0165 -> T0166 and T0160 -> T0166 edges against the actual response-card UI and request contract; preserve their current classifications until evidence supports a validated classification."
         }
       ]
     },
@@ -52852,7 +52926,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-31T11:45:00.000Z",
+  "updated_at": "2026-10-31T11:48:00.000Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

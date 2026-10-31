@@ -40,3 +40,18 @@
 - Corrected the two exact KtLint findings in `Libp2pInferenceRequestTransport.kt`: multiline `PendingAttempt` expression start and multiline condition operand placement.
 - No runtime behavior or wire contract was changed by A003.
 - Exact-head V 3.0.691 CI is pending. T0165 remains `in_progress`.
+
+
+## Attempt T0165-A004 — exact-head acceptance passed
+
+- **Start/end:** 2026-10-31T15:18:00+03:30.
+- **Verified implementation commit:** `503b3ea21f69af048959c96fda0e1e34b18c0544` (`V 3.0.691`) on `main`.
+- **Dependency recheck:** T0160 and T0164 are both done; their incoming edges to T0165 remain validated contract/interface dependencies with evidence.
+- **Step Three quality:** [Run 41198060147, job 124528146670](https://github.com/artinrahimii/project/actions/runs/41198060147/job/124528146670) completed successfully. Automated tests, Python syntax, graph structure, and repository-backed output/evidence checks passed.
+- **HostLifecycle:** [Run 41198060181, job 124528146715](https://github.com/artinrahimii/project/actions/runs/41198060181/job/124528146715) completed successfully.
+- **Windows WPF:** [Run 41198060181, job 124528146830](https://github.com/artinrahimii/project/actions/runs/41198060181/job/124528146830) completed successfully, including Release build, formatting, Protobuf, startup, process/policy/capability and DPAPI peer-trust checks.
+- **Android:** [Run 41198060181, job 124528146868](https://github.com/artinrahimii/project/actions/runs/41198060181/job/124528146868) completed successfully, including KtLint, debug APK, Android JVM tests and generated Protobuf checks.
+- The exact-head product jobs exercised the previously corrected correlation implementation. Kotlin validator tests cover accepted matching responses, wrong-round responses, completion after deadline, and receive after deadline; native .NET peer interoperability and host security acceptance also passed.
+- Previous failures and partial attempts remain preserved. Local Gradle/.NET execution was not available in this connected editing session; results above are from exact-head GitHub Actions.
+- **Acceptance verified. T0165 is now done.** No new runtime behavior was added in A004; this attempt closes acceptance verification and records its evidence.
+- Rollout limitation remains: older peers that do not echo `round_id` are rejected. Deploy compatible Android and Windows builds together.
