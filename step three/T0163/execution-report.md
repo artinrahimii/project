@@ -605,3 +605,14 @@
 - **Android KtLint:** FAILED — `AndroidInferenceRequestRuntime.kt:32:5` requires a blank line before the documented diagnostic property; `:36:1` has an extra blank line. APK/JVM did not execute.
 - **A046:** Applied only the two exact whitespace corrections; no runtime behavior changed.
 - **Next:** exact-head `V 3.0.672` KtLint/APK/JVM run. If JVM reaches the three-peer assertion, its new message exposes the payload-free last transport failure stage and exception type.
+
+
+## Reconciliation — V 3.0.672 exact-head results and attempt A047
+
+- **Commit:** `7859b54e953c2a2de2fe5df5bedc19da492351a8` (`V 3.0.672`).
+- **Step Three quality:** PASS — run [41167652671](https://github.com/artinrahimii/project/actions/runs/41167652671).
+- **Android:** KtLint and debug APK build passed; JVM report artifact `13030160630` uploaded (43,215 bytes). Two tests passed: Android↔Android three-peer dispatch and authenticated Noise/TCP round trip. The native .NET three-peer test failed; all three attempts were rejected with `await_peer_stream:ExecutionException`. The test did not reach response-correlation checks.
+- **Windows WPF/security/DPAPI/artifact:** PASS; **HostLifecycle:** PASS — product run [41167652765](https://github.com/artinrahimii/project/actions/runs/41167652765).
+- **A047 root-cause review:** the pinned Android jvm-libp2p 1.3.7 Standard builder defaults to Mplex when no muxer is explicitly configured. The Windows .NET libp2p builder offers Yamux for stream multiplexing. There is no common muxer between these two defaults, explaining the native cross-runtime stream-open failure.
+- **A047 implementation:** explicitly offer Yamux first and Mplex second on Android; add a Python source-contract check. Existing three-native-.NET-peer request/response acceptance is retained without weakening. No local Gradle pass claimed; exact V 3.0.673 CI pending.
+- **Evidence:** `step three/T0163/evidence/v3.0.673-yamux-multiplexer-interoperability-fix.md`.

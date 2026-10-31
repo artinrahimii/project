@@ -34,6 +34,14 @@ class AndroidLibp2pTransportContractTests(unittest.TestCase):
         self.assertIn("fails closed", source)
         self.assertNotIn("MODE_WORLD_READABLE", source)
 
+    def test_android_offers_yamux_for_dotnet_and_mplex_for_jvm_compatibility(self):
+        source = TRANSPORT.read_text(encoding="utf-8")
+        self.assertIn("import io.libp2p.core.mux.StreamMuxerProtocol", source)
+        self.assertIn("muxers {", source)
+        yamux = source.index("+StreamMuxerProtocol.getYamux()")
+        mplex = source.index("+StreamMuxerProtocol.Mplex")
+        self.assertLess(yamux, mplex)
+
     def test_remote_peer_must_be_explicitly_trusted_before_dial(self):
         trust = TRUST.read_text(encoding="utf-8")
         transport = TRANSPORT.read_text(encoding="utf-8")

@@ -8,6 +8,7 @@ import io.libp2p.core.crypto.PrivKey
 import io.libp2p.core.dsl.host
 import io.libp2p.core.multiformats.Multiaddr
 import io.libp2p.core.multistream.ProtocolBinding
+import io.libp2p.core.mux.StreamMuxerProtocol
 import io.libp2p.etc.SimpleClientHandler
 import io.libp2p.etc.createSimpleBinding
 import io.netty.buffer.ByteBuf
@@ -80,6 +81,11 @@ class Libp2pInferenceRequestTransport(
         host {
             identity {
                 factory = { localIdentity }
+            }
+            muxers {
+                // The Windows .NET host offers Yamux; retain Mplex for existing JVM peers.
+                +StreamMuxerProtocol.getYamux()
+                +StreamMuxerProtocol.Mplex
             }
             protocols {
                 add(protocolBindingForHost())
