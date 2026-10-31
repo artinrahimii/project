@@ -40510,9 +40510,9 @@
       ],
       "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
       "execution_summary": {
-        "attempt_count": 4,
-        "failed_attempt_count": 3,
-        "last_attempt_id": "T0164-A004",
+        "attempt_count": 5,
+        "failed_attempt_count": 4,
+        "last_attempt_id": "T0164-A005",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceRoundTimer.kt",
@@ -40545,6 +40545,12 @@
             "result": "failed",
             "summary": "Import ordering and multiline-expression/declaration formatting violations in the new timer-related Kotlin test and runtime files; APK/JVM skipped.",
             "url": "https://github.com/artinrahimii/project/actions/runs/41186430719"
+          },
+          {
+            "name": "Android KtLint — V 3.0.686",
+            "result": "failed",
+            "summary": "Only the new InferenceAttemptDispatcherTest import order and two call argument indentation blocks remained in violation; APK/JVM skipped.",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41186743095"
           }
         ],
         "blocked_reason": null,
@@ -40695,9 +40701,9 @@
         {
           "attempt_id": "T0164-A004",
           "started_at": "2026-10-31T08:56:32.812Z",
-          "ended_at": null,
-          "result": "partial",
-          "summary": "Applied the exact V 3.0.685 KtLint corrections: moved Java/Kotlin imports to the repository-required trailing import block, split the clock/timer and dispatcher chained expressions into separate statements, used a trailing lambda for the recording transport, and expanded the runtime AttemptKey declaration and nullable awaitResponse branch. No intended behavior change. Exact-head V 3.0.686 CI pending.",
+          "ended_at": "2026-10-31T09:01:28.271Z",
+          "result": "failed",
+          "summary": "Exact-head V 3.0.686 Android KtLint still failed only in InferenceAttemptDispatcherTest.kt: import ordering (kotlinx.coroutines must precede org.junit/org.robolectric imports) and 17 indentation findings in the two newly added dispatchRound call argument lists. The production runtime and timer test passed KtLint. APK, JVM and Protobuf were skipped due to lint failure.",
           "changed_files": [
             "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt",
             "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceRoundTimerTest.kt",
@@ -40707,26 +40713,75 @@
           "commit_sha": null,
           "tests": [
             {
+              "name": "Step Three quality — V 3.0.686",
+              "result": "passed",
+              "summary": "Python quality suite, compileall and graph/evidence checks passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41186743157"
+            },
+            {
+              "name": "Android KtLint — V 3.0.686",
+              "result": "failed",
+              "summary": "Only InferenceAttemptDispatcherTest.kt remained failing: import order and argument indentation for two new dispatchRound calls.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41186743095"
+            },
+            {
+              "name": "Android APK/JVM/Protobuf — V 3.0.686",
+              "result": "skipped",
+              "summary": "Skipped because Android KtLint failed. No Android unit test result is claimed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41186743095"
+            },
+            {
+              "name": "Windows WPF — V 3.0.686",
+              "result": "passed",
+              "summary": "Release build, generated Protobuf, WPF startup, policy/capability and DPAPI checks passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41186743095"
+            },
+            {
+              "name": "HostLifecycle — V 3.0.686",
+              "result": "passed",
+              "summary": "Unit/integration tests passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41186743095"
+            }
+          ],
+          "failure_details": "KtLint's only remaining file was InferenceAttemptDispatcherTest.kt. Import ordering required kotlinx.coroutines.runBlocking before org.* imports, matching Libp2pInferenceRequestTransportTest.kt. The arguments of two multiline `attemptDispatcher.dispatchRound` calls were indented 16 spaces instead of the required 20. APK, JVM and Protobuf stages were skipped.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "A005 changes only the dispatcher test import order and continuation indentation, then reruns exact-head CI."
+        },
+        {
+          "attempt_id": "T0164-A005",
+          "started_at": "2026-10-31T09:01:28.271Z",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Corrected the remaining V 3.0.686 KtLint findings: placed kotlinx.coroutines.runBlocking before org.* imports to match the accepted repository pattern, and indented the two multiline dispatchRound call argument lists by four spaces relative to the call. No runtime/test semantics changed. Exact-head V 3.0.687 CI pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
               "name": "Source diff review",
               "result": "passed",
-              "summary": "Changes are limited to KtLint-reported import and multiline-expression formatting; timeout behavior is unchanged."
+              "summary": "Only import order and two argument indentation blocks changed."
             },
             {
-              "name": "Local Kotlin/Gradle/Python",
+              "name": "Local Gradle/KtLint/JVM",
               "result": "not_run",
-              "summary": "No local checkout and Android build toolchain available in this session."
+              "summary": "No local checkout/build toolchain is available in this session."
             },
             {
-              "name": "V 3.0.686 exact-head CI",
+              "name": "V 3.0.687 exact-head CI",
               "result": "pending",
-              "summary": "Must pass all quality checks, KtLint, APK, JVM timer/dispatch tests, Protobuf, Windows WPF and HostLifecycle."
+              "summary": "Must pass quality, lint, APK, JVM tests, Protobuf, Windows WPF and HostLifecycle."
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect V 3.0.686 exact-head CI; do not mark T0164 done until every required gate succeeds."
+          "follow_up": "Inspect V 3.0.687 exact-head CI; keep T0164 in_progress until all required checks pass."
         }
       ]
     },
@@ -52455,7 +52510,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-31T08:56:32.812Z",
+  "updated_at": "2026-10-31T09:01:28.271Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

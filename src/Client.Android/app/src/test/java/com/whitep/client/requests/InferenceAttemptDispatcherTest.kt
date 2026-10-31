@@ -3,6 +3,7 @@ package com.whitep.client.requests
 import com.google.protobuf.ByteString
 import com.whitep.client.context.ConversationContextCapsule
 import com.whitep.client.protocol.InferenceRequestPayloadRejection
+import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -16,7 +17,6 @@ import org.whitep.shared.contracts.v1.hostCapabilities
 import org.whitep.shared.contracts.v1.hostStatus
 import org.whitep.shared.contracts.v1.inferenceRequest
 import org.whitep.shared.contracts.v1.modelCapability
-import kotlinx.coroutines.runBlocking
 import java.time.Clock
 import java.time.Duration
 import java.time.Instant
@@ -259,15 +259,15 @@ class InferenceAttemptDispatcherTest {
             val attemptDispatcher = InferenceAttemptDispatcher(transport, ids::next)
             val result =
                 attemptDispatcher.dispatchRound(
-                distributedRequest(),
-                listOf(candidate("host-a"), candidate("host-b"), candidate("host-c")),
-                MODEL_ID,
-                "message",
-                capsule(),
-                64,
-                PROTOCOL_VERSION,
-                roundWindow = roundWindow,
-            )
+                    distributedRequest(),
+                    listOf(candidate("host-a"), candidate("host-b"), candidate("host-c")),
+                    MODEL_ID,
+                    "message",
+                    capsule(),
+                    64,
+                    PROTOCOL_VERSION,
+                    roundWindow = roundWindow,
+                )
 
             assertTrue(result is InferenceRoundDispatchResult.Dispatched)
             assertEquals(listOf("host-a"), transport.hostIds)
@@ -291,15 +291,15 @@ class InferenceAttemptDispatcherTest {
             val attemptDispatcher = InferenceAttemptDispatcher(transport)
             val result =
                 attemptDispatcher.dispatchRound(
-                distributedRequest(),
-                listOf(candidate("host-a")),
-                MODEL_ID,
-                "message",
-                capsule(),
-                64,
-                PROTOCOL_VERSION,
-                roundWindow = roundWindow,
-            )
+                    distributedRequest(),
+                    listOf(candidate("host-a")),
+                    MODEL_ID,
+                    "message",
+                    capsule(),
+                    64,
+                    PROTOCOL_VERSION,
+                    roundWindow = roundWindow,
+                )
 
             assertEquals(
                 InferenceRoundDispatchResult.Rejected(InferenceRoundDispatchRejection.ROUND_TIMEOUT),

@@ -34,3 +34,9 @@
 - Because KtLint failed, the Android APK build, JVM tests and generated Protobuf checks were skipped. No Android test result is claimed for V 3.0.685.
 - Windows WPF Release/build/Protobuf/startup/security/DPAPI passed. HostLifecycle unit/integration passed. Product run: [41186430719](https://github.com/artinrahimii/project/actions/runs/41186430719).
 - A004 fixes only the lint-reported import and multiline-expression formatting.
+## Attempt T0164-A004 — V 3.0.686 exact-head result
+
+- Step Three quality [41186743157](https://github.com/artinrahimii/project/actions/runs/41186743157) passed.
+- Android KtLint [41186743095](https://github.com/artinrahimii/project/actions/runs/41186743095) still failed only in InferenceAttemptDispatcherTest.kt: import order and argument indentation for the two added dispatchRound calls. APK, JVM and Protobuf were skipped.
+- Windows WPF and HostLifecycle passed in the same product workflow.
+- A005 fixes the final two KtLint findings only.
