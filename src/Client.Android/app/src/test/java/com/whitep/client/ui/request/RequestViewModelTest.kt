@@ -79,6 +79,26 @@ class RequestViewModelTest {
     }
 
     @Test
+    fun rejectsAResponseFromPreviousRequestWhenANewRequestIsExpected() {
+        val staleResponse =
+            response(ATTEMPT_A, HOST_A, "late response from previous request")
+                .toBuilder()
+                .setRequestId("request-old")
+                .build()
+
+        assertFalse(
+            viewModel.recordValidatedResponse(
+                expectedRequestId = "request-new",
+                expectedAttemptId = ATTEMPT_A,
+                expectedHostId = HOST_A,
+                expectedModelId = MODEL_ID,
+                response = staleResponse,
+            ),
+        )
+        assertTrue(viewModel.hostResponses.value.isEmpty())
+    }
+
+    @Test
     fun clearsOnlyTheEphemeralResponseCards() {
         val result = response(ATTEMPT_A, HOST_A, "temporary answer")
         assertTrue(viewModel.recordValidatedResponse(REQUEST_ID, ATTEMPT_A, HOST_A, MODEL_ID, result))

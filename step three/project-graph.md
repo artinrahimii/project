@@ -44392,33 +44392,105 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0171 و T0160 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال انجام",
+      "actual_output_paths": [
+        "src/Client.Android/app/src/test/java/com/whitep/client/network/InferenceResponseCorrelationValidatorTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
+        "tests/test_android_inference_response_correlation_contract.py",
+        "step three/T0172/execution-report.md",
+        "step three/T0172/evidence/verification.md"
+      ],
       "expected_output_paths": [
         "src/Client.Android/Requests/ + tests/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "src/Client.Android/app/src/test/java/com/whitep/client/network/InferenceResponseCorrelationValidatorTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
+        "tests/test_android_inference_response_correlation_contract.py",
+        "step three/T0172/execution-report.md",
+        "step three/T0172/evidence/verification.md",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/InferenceResponseCorrelationValidator.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/protocol/InferenceRequestPayloadBuilder.kt",
+        "protocol/whitep/v1/messages.proto",
+        "step three/T0165/execution-report.md",
+        "step three/T0165/evidence/round-response-correlation.md"
+      ],
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود. T0172-A001 confirms existing production deadline/correlation protection from T0165 and adds request-to-request stale-response JVM regressions plus Python guards. Production runtime is unchanged; exact-head CI pending.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0172-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Client.Android/app/src/test/java/com/whitep/client/network/InferenceResponseCorrelationValidatorTest.kt",
+          "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
+          "tests/test_android_inference_response_correlation_contract.py",
+          "step three/T0172/execution-report.md",
+          "step three/T0172/evidence/verification.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
-          "affected_by_contract_changes": [],
-          "review_evidence": []
+          "state": "in_review",
+          "triggering_contracts": [
+            "New tests exercise request/attempt correlation, pending-entry lifecycle and absolute deadline checks implemented by the T0165 response-correlation contract."
+          ],
+          "affected_by_contract_changes": [
+            "T0160",
+            "T0165"
+          ],
+          "review_evidence": [
+            "src/Client.Android/app/src/test/java/com/whitep/client/network/InferenceResponseCorrelationValidatorTest.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
+            "tests/test_android_inference_response_correlation_contract.py",
+            "src/Client.Android/app/src/main/java/com/whitep/client/network/InferenceResponseCorrelationValidator.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0172-A001",
+          "started_at": "2026-10-31T19:00:00Z",
+          "ended_at": "2026-10-31T19:00:00Z",
+          "result": "partial",
+          "summary": "Reviewed existing T0165 production response-correlation code; it already rejects late completion/receipt and keys pending responses by request/attempt. Added validator and ViewModel regressions for a previous request's response within a newer request's time window, plus Python guards for exact ID matching and pending-entry lifecycle. Exact-head CI pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/test/java/com/whitep/client/network/InferenceResponseCorrelationValidatorTest.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
+            "tests/test_android_inference_response_correlation_contract.py",
+            "step three/T0172/execution-report.md",
+            "step three/T0172/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "InferenceResponseCorrelationValidatorTest",
+              "result": "pending"
+            },
+            {
+              "name": "RequestViewModelTest",
+              "result": "pending"
+            },
+            {
+              "name": "Step Three Python quality gate",
+              "result": "pending"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Commit focused regression coverage as V 3.0.729, inspect exact-head Step Three and Android product CI, fix any failures and close T0172 only after acceptance."
+        }
+      ]
     },
     {
       "id": "T0173",
@@ -51180,19 +51252,31 @@
       "from": "T0171",
       "to": "T0172",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0171's cumulative attemptedEphemeralHostIds history and retry allowlist are not consumed by the late-response correlation path. T0172 uses the request/attempt pending key, peer/round/model bindings and absolute deadline. The graph edge is retained as conservative execution ordering, not a direct technical interface dependency.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/DistributedRequest.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/InferenceResponseCorrelationValidator.kt",
+        "step three/T0171/execution-report.md"
+      ]
     },
     {
       "from": "T0160",
       "to": "T0172",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0160 defines the canonical generated InferenceRequest request_id and deadline_unix_ms via InferenceRequestPayloadBuilder. T0172 consumes these request-scoped values to key pending responses and reject stale request/attempt identity or completion/receipt after the absolute deadline.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/protocol/InferenceRequestPayloadBuilder.kt",
+        "protocol/whitep/v1/messages.proto",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/InferenceResponseCorrelationValidator.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
+        "step three/T0165/execution-report.md",
+        "step three/T0165/evidence/round-response-correlation.md"
+      ]
     },
     {
       "from": "T0172",
@@ -56079,9 +56163,41 @@
         "step three/T0160/execution-report.md"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-31T19:00:00Z",
+      "edge_from": "T0171",
+      "edge_to": "T0172",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "reason": "T0171's cumulative attemptedEphemeralHostIds history and retry allowlist are not consumed by the late-response correlation path. T0172 uses the request/attempt pending key, peer/round/model bindings and absolute deadline. The graph edge is retained as conservative execution ordering, not a direct technical interface dependency.",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/DistributedRequest.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/InferenceResponseCorrelationValidator.kt",
+        "step three/T0171/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-31T19:00:00Z",
+      "edge_from": "T0160",
+      "edge_to": "T0172",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "reason": "T0160 defines the canonical generated InferenceRequest request_id and deadline_unix_ms via InferenceRequestPayloadBuilder. T0172 consumes these request-scoped values to key pending responses and reject stale request/attempt identity or completion/receipt after the absolute deadline.",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/protocol/InferenceRequestPayloadBuilder.kt",
+        "protocol/whitep/v1/messages.proto",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/InferenceResponseCorrelationValidator.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
+        "step three/T0165/execution-report.md",
+        "step three/T0165/evidence/round-response-correlation.md"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-31T18:51:01Z",
+  "updated_at": "2026-10-31T19:00:00Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

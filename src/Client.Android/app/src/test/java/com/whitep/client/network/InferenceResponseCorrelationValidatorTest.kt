@@ -27,6 +27,30 @@ class InferenceResponseCorrelationValidatorTest {
     }
 
     @Test
+    fun rejectsAResponseFromPreviousRequestWithinTheNewRequestWindow() {
+        val previousResponse =
+            validResponse()
+                .toBuilder()
+                .setRequestId("request-old")
+                .setAttemptId("attempt-old")
+                .setRoundId("round-old")
+                .build()
+
+        assertFalse(
+            InferenceResponseCorrelationValidator.matches(
+                response = previousResponse,
+                expectedRequestId = "request-new",
+                expectedAttemptId = "attempt-new",
+                expectedRoundId = "round-new",
+                expectedHostId = HOST_ID,
+                expectedModelId = MODEL_ID,
+                requestDeadlineUnixMs = DEADLINE + 5_000L,
+                receivedAtUnixMs = DEADLINE + 1L,
+            ),
+        )
+    }
+
+    @Test
     fun rejectsResponseFromAnotherRound() {
         val response = validResponse().toBuilder().setRoundId("round-old").build()
 

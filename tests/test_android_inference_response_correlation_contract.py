@@ -8,6 +8,8 @@ DISPATCHER = (ROOT / "src/Client.Android/app/src/main/java/com/whitep/client/req
 TRANSPORT = (ROOT / "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt").read_text(encoding="utf-8")
 VALIDATOR = (ROOT / "src/Client.Android/app/src/main/java/com/whitep/client/network/InferenceResponseCorrelationValidator.kt").read_text(encoding="utf-8")
 WINDOWS_VALIDATOR = (ROOT / "src/Host.Windows/Networking/PeerResponseCorrelationValidator.cs").read_text(encoding="utf-8")
+VALIDATOR_TEST = (ROOT / "src/Client.Android/app/src/test/java/com/whitep/client/network/InferenceResponseCorrelationValidatorTest.kt").read_text(encoding="utf-8")
+VIEW_MODEL_TEST = (ROOT / "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt").read_text(encoding="utf-8")
 HOST = (ROOT / "src/Host.Windows/MainWindow.xaml.cs").read_text(encoding="utf-8")
 INTEROP = (ROOT / "tests/HostLifecycle.Tests/AndroidInteropPeerServer.cs").read_text(encoding="utf-8")
 
@@ -34,6 +36,22 @@ class InferenceResponseRoundCorrelationContractTests(unittest.TestCase):
         self.assertIn("response.roundId == expectedRoundId", VALIDATOR)
         self.assertIn("response.completedAtUnixMs <= requestDeadlineUnixMs", VALIDATOR)
         self.assertIn("receivedAtUnixMs <= requestDeadlineUnixMs", VALIDATOR)
+
+    def test_android_does_not_correlate_a_previous_request_response_to_a_new_request(self):
+        self.assertIn("response.requestId == expectedRequestId", VALIDATOR)
+        self.assertIn("response.attemptId == expectedAttemptId", VALIDATOR)
+        self.assertIn("val key = AttemptKey(response.requestId, response.attemptId)", TRANSPORT)
+        self.assertIn("val pending = pendingAttempts[key] ?: return", TRANSPORT)
+        self.assertIn("pendingAttempts.remove(key, pending)", TRANSPORT)
+        self.assertIn("receivedAtUnixMs = clock.millis()", TRANSPORT)
+        self.assertIn(
+            "fun rejectsAResponseFromPreviousRequestWithinTheNewRequestWindow()",
+            VALIDATOR_TEST,
+        )
+        self.assertIn(
+            "fun rejectsAResponseFromPreviousRequestWhenANewRequestIsExpected()",
+            VIEW_MODEL_TEST,
+        )
 
     def test_windows_echoes_and_validates_round_and_request_deadline(self):
         self.assertIn("RoundId = request.RoundId", HOST)
