@@ -562,3 +562,13 @@
 - No runtime behavior, peer-trust semantics, payload construction, request correlation or acceptance assertion changed.
 - Exact-head V 3.0.667 quality and product CI pending; no pass is claimed.
 - T0163 remains `in_progress`.
+
+
+
+## T0163-A043 — native Android ↔ Windows .NET peer interoperability harness
+
+- **Implementation:** Added a test-only .NET peer process that runs the repository's production `Libp2pPeerTransport` and `Libp2pPeerMessageProtocol`, pins the Android client's actual Ed25519-derived PeerId in the test trust store, receives a generated `InferenceRequest`, validates it, and returns a correlated Protobuf `InferenceResponse` after `PeerResponseCorrelationValidator` checks the request/attempt/model/host identifiers.
+- **Android test:** Added `dispatchesRoundToThreeNativeDotNetLibp2pHosts`. It launches three independent .NET peer processes, builds three endpoint snapshots, sends one shared request through `AndroidInferenceRequestRuntime`, and asserts distinct attempt IDs, three unique ephemeral host IDs, successful submission and three matching responses.
+- **CI:** The Android JVM job now installs the .NET 10 SDK and MsQuic, builds the .NET test fixture, and sets `WHITEP_INTEROP_SERVER_DLL` so the cross-runtime test is executed rather than skipped. Local Android unit runs without the fixture environment skip only this integration test.
+- **Security boundary:** The reversible trust protector is the existing explicitly test-only `TestPeerTrustStoreFixture`; no production trust or identity settings were changed. The fixture binds to loopback and emits no request prompt, capsule or response payload to stdout.
+- **Verification at authoring time:** Pending exact-head CI for `V 3.0.669`. Do not mark T0163 complete until the cross-runtime test and its Android JVM suite pass.

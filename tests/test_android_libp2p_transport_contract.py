@@ -75,6 +75,18 @@ class AndroidLibp2pTransportContractTests(unittest.TestCase):
         self.assertIn("suspend fun awaitResponse(", source)
         self.assertIn("Callers must supply HostCandidate values", source)
 
+    def test_native_dotnet_peer_interoperability_is_wired_into_android_ci(self):
+        workflow = (ROOT / ".github/workflows/product-build.yml").read_text(encoding="utf-8")
+        program = (ROOT / "tests/HostLifecycle.Tests/Program.cs").read_text(encoding="utf-8")
+        fixture = (ROOT / "tests/HostLifecycle.Tests/AndroidInteropPeerServer.cs").read_text(encoding="utf-8")
+        transport_test = TRANSPORT_TEST.read_text(encoding="utf-8")
+        self.assertIn("WHITEP_INTEROP_SERVER_DLL", workflow)
+        self.assertIn("Build Windows .NET peer interoperability fixture", workflow)
+        self.assertIn('"--interop-peer-server"', program)
+        self.assertIn("new Libp2pPeerTransport(", fixture)
+        self.assertIn("PeerResponseCorrelationValidator.Validate", fixture)
+        self.assertIn("dispatchesRoundToThreeNativeDotNetLibp2pHosts", transport_test)
+
     def test_three_host_noise_integration_exercises_the_application_runtime(self):
         source = TRANSPORT_TEST.read_text(encoding="utf-8")
         self.assertIn("AndroidInferenceRequestRuntime(", source)

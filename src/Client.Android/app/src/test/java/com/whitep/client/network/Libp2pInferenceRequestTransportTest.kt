@@ -18,11 +18,14 @@ import io.libp2p.etc.createSimpleBinding
 import io.netty.buffer.ByteBuf
 import io.netty.buffer.Unpooled
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
+import org.junit.Assume.assumeTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -35,9 +38,12 @@ import org.whitep.shared.contracts.v1.hostAnnouncement
 import org.whitep.shared.contracts.v1.hostCapabilities
 import org.whitep.shared.contracts.v1.hostStatus
 import org.whitep.shared.contracts.v1.modelCapability
+import java.io.File
+import java.net.ServerSocket
 import java.time.Duration
 import java.time.Instant
 import java.util.Arrays
+import java.util.UUID
 import java.util.concurrent.TimeUnit
 
 @RunWith(RobolectricTestRunner::class)
@@ -242,6 +248,154 @@ class Libp2pInferenceRequestTransportTest {
                     runCatching {
                         server.stop().get(10, TimeUnit.SECONDS)
                     }
+                }
+            }
+        }
+
+    @Test
+    fun dispatchesRoundToThreeNativeDotNetLibp2pHosts() =
+        runBlocking<Unit> {
+            val serverDll = System.getenv("WHITEP_INTEROP_SERVER_DLL")
+            assumeTrue(
+                "The cross-runtime .NET peer fixture is enabled only by the CI interop job.",
+                !serverDll.isNullOrBlank() && File(serverDll).isFile,
+            )
+
+            val clientIdentity = generateKeyPair(KeyType.ED25519).first
+            val clientPeerId = PeerId.fromPubKey(clientIdentity.publicKey()).toBase58()
+            val processes = mutableListOf<Process>()
+            val endpoints = linkedMapOf<String, RendezvousPeerEndpoint>()
+            var runtime: AndroidInferenceRequestRuntime? = null
+
+            try {
+                repeat(3) {
+                    val port = ServerSocket(0).use { socket -> socket.localPort }
+                    val process =
+                        ProcessBuilder(
+                            "dotnet",
+                            serverDll!!,
+                            "--interop-peer-server",
+                            clientPeerId,
+                            port.toString(),
+                        ).redirectErrorStream(true).start()
+                    processes += process
+
+                    val readyLine =
+                        withContext(Dispatchers.IO) {
+                            withTimeout(30_000L) {
+                                val reader = process.inputStream.bufferedReader()
+                                var ready: String? = null
+                                while (ready == null) {
+                                    val line = reader.readLine() ?: break
+                                    if (line.startsWith("READY\t")) {
+                                        ready = line
+                                    }
+                                }
+                                ready
+                            }
+                        } ?: throw AssertionError(
+                            "The .NET peer fixture exited before publishing its ready address.",
+                        )
+
+                    val readyFields = readyLine.split('\t')
+                    assertEquals(
+                        "The .NET fixture must announce a ready endpoint.",
+                        "READY",
+                        readyFields.firstOrNull(),
+                    )
+                    assertEquals(
+                        "The .NET fixture ready record must contain the PeerId and TCP address.",
+                        3,
+                        readyFields.size,
+                    )
+
+                    val peerId = readyFields[1]
+                    endpoints[peerId] =
+                        RendezvousPeerEndpoint(
+                            peerId = peerId,
+                            tcpMultiaddresses = listOf(readyFields[2]),
+                            expiresAtUtc = Instant.now().plusSeconds(120),
+                        )
+                }
+
+                val runtimeClient =
+                    AndroidInferenceRequestRuntime(
+                        localIdentity = clientIdentity,
+                        resolveEndpoint = { requestedPeerId -> endpoints[requestedPeerId] },
+                        trustVerifier = PeerTrustVerifier { trustedPeerId -> trustedPeerId in endpoints },
+                        connectionTimeout = Duration.ofSeconds(20),
+                    )
+                runtime = runtimeClient
+
+                val requestId = "interop-${UUID.randomUUID()}"
+                val now = System.currentTimeMillis()
+                val dispatch =
+                    runtimeClient.dispatchRound(
+                        distributedRequest =
+                            DistributedRequest(
+                                requestId = requestId,
+                                deadlineUnixMs = now + 60_000L,
+                                maxRounds = 1,
+                            ),
+                        selectedHosts = endpoints.keys.map(::candidate),
+                        modelId = MODEL_ID,
+                        currentMessage = "Cross-runtime request to three .NET peers",
+                        capsule =
+                            ConversationContextCapsule(
+                                goal = "Verify Android and Windows .NET libp2p interoperability",
+                            ),
+                        maxOutputTokens = 8,
+                        protocolVersion = PROTOCOL_VERSION,
+                    )
+
+                assertTrue(dispatch is InferenceRoundDispatchResult.Dispatched)
+                val attempts = (dispatch as InferenceRoundDispatchResult.Dispatched).attempts
+                assertEquals(3, attempts.size)
+                assertEquals(3, attempts.map { attempt -> attempt.ephemeralHostId }.toSet().size)
+                assertEquals(3, attempts.map { attempt -> attempt.attemptId }.toSet().size)
+                assertTrue(
+                    attempts.all { attempt ->
+                        attempt.submissionStatus == InferenceAttemptSubmissionStatus.QUEUED
+                    },
+                )
+
+                val responses =
+                    attempts.map { attempt ->
+                        runtimeClient.awaitResponse(
+                            requestId = requestId,
+                            attemptId = attempt.attemptId,
+                            timeout = Duration.ofSeconds(30),
+                        )
+                    }
+
+                assertEquals(3, responses.size)
+                assertEquals(endpoints.keys, responses.map { response -> response.ephemeralHostId }.toSet())
+                assertEquals(attempts.map { it.attemptId }.toSet(), responses.map { it.attemptId }.toSet())
+                assertTrue(
+                    responses.all { response ->
+                        response.requestId == requestId &&
+                            response.modelId == MODEL_ID &&
+                            response.outputText == "dotnet-host-response" &&
+                            response.outcome == InferenceOutcome.INFERENCE_OUTCOME_SUCCEEDED
+                    },
+                )
+
+                processes.forEach { process ->
+                    val processExited = process.waitFor(15, TimeUnit.SECONDS)
+                    assertTrue(
+                        "The .NET peer fixture must finish after one correlated response.",
+                        processExited,
+                    )
+                    assertEquals(0, process.exitValue())
+                }
+            } finally {
+                runtime?.close()
+                processes.forEach { process ->
+                    if (process.isAlive) {
+                        process.destroyForcibly()
+                        process.waitFor(5, TimeUnit.SECONDS)
+                    }
+                    process.inputStream.close()
                 }
             }
         }

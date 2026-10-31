@@ -12,6 +12,16 @@ using WhiteP.Host.Windows.Inference;
 using WhiteP.Host.Windows.Models.Catalog;
 using WhiteP.Shared.Contracts;
 
+if (args.Length > 0 && args[0] == "--interop-peer-server")
+{
+    if (args.Length != 3)
+        throw new ArgumentException("The interop server requires a remote PeerId and a TCP port.");
+    if (!int.TryParse(args[2], System.Globalization.NumberStyles.None, System.Globalization.CultureInfo.InvariantCulture, out var interopPort))
+        throw new ArgumentException("The interop server TCP port is invalid.");
+    await AndroidInteropPeerServer.RunAsync(args[1], interopPort);
+    return;
+}
+
 if (args.Contains("--test-host-identity-store", StringComparer.Ordinal))
 {
     WindowsHostIdentityStoreAcceptanceTests.Run();

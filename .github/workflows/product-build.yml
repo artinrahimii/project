@@ -65,9 +65,12 @@ jobs:
   android-client:
     name: Build Android client APK
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -94,6 +97,18 @@ jobs:
         shell: bash
         run: |
           "$SDKMANAGER" --sdk_root="$ANDROID_HOME" --install "platforms;android-36" "build-tools;36.0.0" "platform-tools"
+      - name: Install MsQuic runtime for Android/.NET peer interoperability
+        shell: bash
+        run: |
+          set -euo pipefail
+          . /etc/os-release
+          curl -fsSL "https://packages.microsoft.com/config/ubuntu/${VERSION_ID}/packages-microsoft-prod.deb" -o /tmp/packages-microsoft-prod.deb
+          sudo dpkg -i /tmp/packages-microsoft-prod.deb
+          rm /tmp/packages-microsoft-prod.deb
+          sudo apt-get update
+          sudo apt-get install --yes libmsquic
+      - name: Build Windows .NET peer interoperability fixture
+        run: dotnet build tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj --configuration Release
       - name: Verify Kotlin formatting and lint
         working-directory: src/Client.Android
         run: gradle --no-daemon ktlintCheck
@@ -102,6 +117,8 @@ jobs:
         run: gradle --no-daemon assembleDebug
       - name: Run Android JVM unit tests
         working-directory: src/Client.Android
+        env:
+          WHITEP_INTEROP_SERVER_DLL: ${{ github.workspace }}/tests/HostLifecycle.Tests/bin/Release/net10.0/HostLifecycle.Tests.dll
         run: gradle --no-daemon testDebugUnitTest
       - name: Upload Android unit-test reports
         if: always()
