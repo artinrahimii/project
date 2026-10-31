@@ -46,9 +46,13 @@ data class InferenceRoundResponseCollection(
  */
 internal class InferenceRoundResponseCollector {
     private sealed interface AttemptOutcome {
-        data class Received(val response: InferenceResponse) : AttemptOutcome
+        data class Received(
+            val response: InferenceResponse,
+        ) : AttemptOutcome
 
-        data class Failed(val failure: InferenceRoundResponseFailure) : AttemptOutcome
+        data class Failed(
+            val failure: InferenceRoundResponseFailure,
+        ) : AttemptOutcome
     }
 
     suspend fun collect(
@@ -69,7 +73,8 @@ internal class InferenceRoundResponseCollector {
             }
 
             val outcomes =
-                attempts.map { attempt ->
+                attempts
+                    .map { attempt ->
                     async {
                         when (attempt.submissionStatus) {
                             InferenceAttemptSubmissionStatus.REJECTED ->
@@ -123,8 +128,7 @@ internal class InferenceRoundResponseCollector {
                             }
                         }
                     }
-                }
-                    .awaitAll()
+                }.awaitAll()
 
             InferenceRoundResponseCollection(
                 responses = outcomes.mapNotNull { (it as? AttemptOutcome.Received)?.response },

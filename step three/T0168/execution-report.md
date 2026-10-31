@@ -1,24 +1,27 @@
 # T0168 — execution report
 
 ## Task and prerequisites
-- Continue collecting other valid responses after the first valid response, within one shared round-response window.
-- Prerequisites T0167 and T0160 are complete. `T0167 → T0168` remains validated `sequencing_only`; `T0160 → T0168` remains validated `contract_or_interface_dependency`. Both `blocks` edges are retained. `T0168 → T0169` is still unreviewed.
+- Continue collecting additional valid host responses after the first valid response, bounded by one shared round window.
+- T0167 and T0160 are complete. Incoming edges: `T0167 → T0168` is validated `sequencing_only`; `T0160 → T0168` is validated `contract_or_interface_dependency`. Both `blocks` edges remain. `T0168 → T0169` remains unreviewed.
 
 ## Implementation
-- `InferenceRoundResponseCollector` concurrently awaits each dispatched attempt and returns response/failure outcomes separately.
-- Runtime binds each queued attempt to the round window created at dispatch; the remaining duration is passed to the existing authenticated `awaitResponse` path.
-- First success does not cancel sibling waits. Per-host failures/timeouts are isolated. Non-queued submissions are represented as failures without response waiters. Caller cancellation propagates.
-- Five JVM regression tests and a Python source-contract suite cover this behavior.
+- Added `InferenceRoundResponseCollector`, connected through `AndroidInferenceRequestRuntime.awaitRoundResponses`.
+- All submitted attempts are resolved concurrently; queued attempts use the remaining time of their stored shared `InferenceRoundTimer.Window`.
+- The first valid response does not cancel siblings. Per-host errors/timeouts are retained independently; rejected/failed/timed-out submissions are not awaited. Parent cancellation propagates.
+- Existing authenticated peer and request/attempt/round/model/deadline response validation is unchanged.
+- Added five JVM regression tests and Python source-contract checks.
 
-## Exact-head verification
-- V 3.0.702: Step Three quality PASS; Windows WPF PASS; HostLifecycle PASS. Android KtLint FAILED on formatting only; APK/JVM/Protobuf were skipped.
-- V 3.0.703: Step Three quality ran 308 tests: 307 passed, one source-contract assertion failed because it required the exact same-line spelling `}.awaitAll()`. The Kotlin source had been reformatted to the KtLint-compliant multiline chain. HostLifecycle passed; product workflow was still in progress and had not yet reached Android KtLint at the time recorded.
-- V 3.0.704 A003 updates only the brittle Python assertion to look for `.awaitAll()` independent of line wrapping. Production Kotlin code is unchanged.
-- Local Android Gradle execution is unavailable in the GitHub editing context.
-- T0168 remains `in_progress` until exact-head Python quality, Android KtLint/APK/JVM/Protobuf, Windows WPF and HostLifecycle gates pass.
+## CI results and fixes
+- V 3.0.702: Step Three quality PASS; Windows WPF PASS; HostLifecycle PASS; Android KtLint FAIL. Android build/JVM/Protobuf skipped.
+- V 3.0.703: 307/308 Python tests passed; one assertion incorrectly required same-line `}.awaitAll()`. Android KtLint still failed; Windows WPF and HostLifecycle passed.
+- V 3.0.704: all 308 Python tests and graph/evidence validation passed; HostLifecycle passed; Android KtLint still failed with the same production-source formatting findings. Windows WPF was in progress at observation.
+- The actual KtLint findings are in `InferenceRoundResponseCollector.kt`: multiline constructor style for `AttemptOutcome.Received/Failed` at lines 49/51; chain layout for `attempts.map` and `.awaitAll()` at lines 72/127.
+- A004 changes only those Kotlin constructs. Exact-head V 3.0.705 CI is pending.
+- Local Gradle is unavailable in this GitHub editing context. No local Android pass is claimed.
+- **T0168 remains `in_progress`** until KtLint, APK, JVM, Protobuf, Windows WPF, HostLifecycle and quality gates pass on an exact commit.
 
-## A003 changed paths
-- `tests/test_android_inference_round_response_collector_contract.py`
+## A004 changed paths
+- `src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceRoundResponseCollector.kt`
 - `step three/T0168/execution-report.md`
 - `step three/T0168/evidence/verification.md`
 - `step three/project-graph.md`

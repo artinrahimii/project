@@ -1,11 +1,12 @@
-# T0168 — round response collection verification
+# T0168 — response collection verification
 
-- Runtime entry point: `AndroidInferenceRequestRuntime.awaitRoundResponses`.
-- All queued attempts share the dispatch-created `InferenceRoundTimer.Window`; each uses its remaining duration.
-- Collector waits for every queued attempt, preserves later valid responses after the first success, and records timeout/failure per attempt.
-- Existing authenticated-peer and request/attempt/round/model/deadline validation remains in the transport path.
-- JVM coverage includes late second response, a sibling surviving an independent timeout, non-queued submission outcomes, expired shared window and caller cancellation.
-- V 3.0.702 Android KtLint failed on three style rules; V 3.0.703 corrected those style rules but its Python quality suite exposed one brittle assertion requiring same-line `}.awaitAll()`. 307/308 Python tests passed.
-- V 3.0.703 HostLifecycle passed; product Android/Windows work was still running at the recorded observation.
-- V 3.0.704 updates the assertion only; exact-head gates pending.
-- Task remains in_progress until all product and quality gates pass.
+- Runtime integration: `AndroidInferenceRequestRuntime.awaitRoundResponses`.
+- All queued attempts share the round window registered at dispatch; the remaining window is passed to the authenticated transport awaiter.
+- Collector awaits all outcomes and isolates failures/timeouts per host; first success never cancels other waiters.
+- Transport peer authentication and request/attempt/round/model/deadline correlation remain unchanged.
+- Five JVM tests cover first-response continuation, timeout isolation, non-queued outcomes, expired deadline and caller cancellation.
+- V 3.0.702: Python quality, Windows WPF and HostLifecycle passed; KtLint failed.
+- V 3.0.703: 307/308 Python passed; a source assertion was too strict; KtLint still failed; Windows and HostLifecycle passed.
+- V 3.0.704: all 308 Python tests passed; KtLint still failed on single-argument data class constructors and map/awaitAll chain layout; HostLifecycle passed.
+- A004 applies the exact Kotlin formatting corrections reported by CI. V 3.0.705 exact-head validation pending.
+- Local Gradle execution unavailable. T0168 remains in_progress until all exact-head gates pass.
