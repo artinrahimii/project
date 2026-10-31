@@ -1,27 +1,24 @@
 # T0168 — execution report
 
 ## Task and prerequisites
-- Task: Continue receiving other valid host responses after the first valid response, within the shared round response window.
-- Base: `a506c8a894aeaf49dc636fdcac560126eb767777` on `main` (`V 3.0.702`).
-- T0167 → T0168 is validated `sequencing_only`; T0160 → T0168 is validated `contract_or_interface_dependency`. Both original `blocks` edges remain; T0168 → T0169 remains unreviewed.
+- Continue collecting other valid responses after the first valid response, within one shared round-response window.
+- Prerequisites T0167 and T0160 are complete. `T0167 → T0168` remains validated `sequencing_only`; `T0160 → T0168` remains validated `contract_or_interface_dependency`. Both `blocks` edges are retained. `T0168 → T0169` is still unreviewed.
 
 ## Implementation
-- `InferenceRoundResponseCollector` starts concurrent waiters for queued attempts and awaits all outcomes.
-- Every waiter receives the remaining duration from the same stored `InferenceRoundTimer.Window`.
-- First response does not short-circuit sibling waits; peer timeout/failure remains isolated. Rejected/failed/timed-out submissions are recorded without waiting. Caller cancellation propagates.
-- `AndroidInferenceRequestRuntime.awaitRoundResponses` provides the runtime integration and retains the existing authenticated response-correlation boundary.
-- Five JVM regression tests and one Python source-contract suite were added.
+- `InferenceRoundResponseCollector` concurrently awaits each dispatched attempt and returns response/failure outcomes separately.
+- Runtime binds each queued attempt to the round window created at dispatch; the remaining duration is passed to the existing authenticated `awaitResponse` path.
+- First success does not cancel sibling waits. Per-host failures/timeouts are isolated. Non-queued submissions are represented as failures without response waiters. Caller cancellation propagates.
+- Five JVM regression tests and a Python source-contract suite cover this behavior.
 
-## Verification
-- V 3.0.702 Step Three quality: PASS, [41205485597](https://github.com/artinrahimii/project/actions/runs/41205485597).
-- V 3.0.702 Windows WPF and HostLifecycle: PASS, [41205485629](https://github.com/artinrahimii/project/actions/runs/41205485629).
-- V 3.0.702 Android KtLint: FAIL. Logs show formatting findings at collector lines 49, 51 and 68. APK/JVM/Protobuf stages did not run.
-- A002 changes only those formatting points. V 3.0.703 exact-head CI pending.
-- Local Gradle execution is unavailable in this GitHub-only environment; no local pass is claimed.
-- Task status remains `in_progress` until Android lint, APK, JVM, Protobuf and exact-head quality/product gates all pass.
+## Exact-head verification
+- V 3.0.702: Step Three quality PASS; Windows WPF PASS; HostLifecycle PASS. Android KtLint FAILED on formatting only; APK/JVM/Protobuf were skipped.
+- V 3.0.703: Step Three quality ran 308 tests: 307 passed, one source-contract assertion failed because it required the exact same-line spelling `}.awaitAll()`. The Kotlin source had been reformatted to the KtLint-compliant multiline chain. HostLifecycle passed; product workflow was still in progress and had not yet reached Android KtLint at the time recorded.
+- V 3.0.704 A003 updates only the brittle Python assertion to look for `.awaitAll()` independent of line wrapping. Production Kotlin code is unchanged.
+- Local Android Gradle execution is unavailable in the GitHub editing context.
+- T0168 remains `in_progress` until exact-head Python quality, Android KtLint/APK/JVM/Protobuf, Windows WPF and HostLifecycle gates pass.
 
-## Changed paths in A002
-- `src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceRoundResponseCollector.kt`
+## A003 changed paths
+- `tests/test_android_inference_round_response_collector_contract.py`
 - `step three/T0168/execution-report.md`
 - `step three/T0168/evidence/verification.md`
 - `step three/project-graph.md`

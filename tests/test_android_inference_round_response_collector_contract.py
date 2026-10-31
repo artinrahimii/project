@@ -20,7 +20,7 @@ class AndroidInferenceRoundResponseCollectorContractTests(unittest.TestCase):
         source = COLLECTOR.read_text(encoding="utf-8")
         self.assertIn("attempts.map { attempt ->", source)
         self.assertIn("async {", source)
-        self.assertIn("}.awaitAll()", source)
+        self.assertIn(".awaitAll()", source)
         self.assertIn("roundWindow.remaining()", source)
         self.assertIn("RESPONSE_TIMED_OUT", source)
         self.assertIn("RESPONSE_FAILED", source)

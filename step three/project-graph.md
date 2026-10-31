@@ -42114,11 +42114,11 @@
         "step three/T0168/execution-report.md",
         "step three/T0168/evidence/verification.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nIncoming dependency review (2026-10-31T16:43:00+03:30): T0167 -> T0168 validated as sequencing_only because T0168's response collection runs in the runtime/dispatcher and consumes no Compose UI. T0160 -> T0168 validated as contract_or_interface_dependency because the receive window is capped by DistributedRequest.deadlineUnixMs originating in the request contract; InferenceRoundTimer/AndroidInferenceRequestRuntime use that same budget. Both blocks edges remain intact; reasons and evidence are recorded in edge_change_log.\n\nT0168-A001: incoming edges were validated on V 3.0.701: T0167 -> T0168 sequencing_only; T0160 -> T0168 contract_or_interface_dependency. Both original blocks edges remain. Added concurrent per-attempt response collection bounded by each attempt's stored shared round window; exact-head CI pending.\nT0168-A001 exact-head V 3.0.702: quality, Windows WPF and HostLifecycle passed; Android KtLint failed on three formatting findings in the response collector (lines 49, 51, 68). Android APK/JVM/Protobuf were skipped. A002 applies only the reported formatting correction; task remains in_progress.\n",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nIncoming dependency review (2026-10-31T16:43:00+03:30): T0167 -> T0168 validated as sequencing_only because T0168's response collection runs in the runtime/dispatcher and consumes no Compose UI. T0160 -> T0168 validated as contract_or_interface_dependency because the receive window is capped by DistributedRequest.deadlineUnixMs originating in the request contract; InferenceRoundTimer/AndroidInferenceRequestRuntime use that same budget. Both blocks edges remain intact; reasons and evidence are recorded in edge_change_log.\n\nT0168-A001: incoming edges were validated on V 3.0.701: T0167 -> T0168 sequencing_only; T0160 -> T0168 contract_or_interface_dependency. Both original blocks edges remain. Added concurrent per-attempt response collection bounded by each attempt's stored shared round window; exact-head CI pending.\nT0168-A001 exact-head V 3.0.702: quality, Windows WPF and HostLifecycle passed; Android KtLint failed on three formatting findings in the response collector (lines 49, 51, 68). Android APK/JVM/Protobuf were skipped. A002 applies only the reported formatting correction; task remains in_progress.\n\nT0168-A002 exact-head V 3.0.703: Gradle KtLint formatting corrections were committed. Step Three quality ran 308 tests; 307 passed and one new source-contract assertion failed because it expected the old same-line `}.awaitAll()` spelling. At the time of review the product workflow had not yet reached KtLint; HostLifecycle passed. A003 changes only that brittle assertion; task remains in_progress.\n",
       "execution_summary": {
-        "attempt_count": 2,
-        "failed_attempt_count": 1,
-        "last_attempt_id": "T0168-A002",
+        "attempt_count": 3,
+        "failed_attempt_count": 2,
+        "last_attempt_id": "T0168-A003",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceRoundResponseCollector.kt",
@@ -42130,7 +42130,8 @@
           "step three/project-graph.md"
         ],
         "related_commits": [
-          "a506c8a894aeaf49dc636fdcac560126eb767777"
+          "a506c8a894aeaf49dc636fdcac560126eb767777",
+          "96020152eb8144620eb0f697ac2e249373a022e8"
         ],
         "tests_passed": [
           {
@@ -42173,6 +42174,12 @@
             "result": "failed",
             "url": "https://github.com/artinrahimii/project/actions/runs/41205485629",
             "summary": "KtLint reported multiline require wrapping at lines 49/51 and newline before .awaitAll() at line 68 of InferenceRoundResponseCollector.kt."
+          },
+          {
+            "name": "Python source-contract test — V 3.0.703",
+            "result": "failed",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41205787603",
+            "summary": "308 tests ran; one assertion expected `}.awaitAll()` adjacency, while KtLint-correct source puts `.awaitAll()` on its own line. Kotlin behavior was not tested by this quality job."
           }
         ],
         "blocked_reason": null,
@@ -42258,11 +42265,55 @@
         {
           "attempt_id": "T0168-A002",
           "started_at": "2026-10-31T16:57:15+03:30",
-          "ended_at": null,
-          "result": "partial",
-          "summary": "Applied only the three exact KtLint formatting corrections. Exact-head V 3.0.703 CI pending.",
+          "ended_at": "2026-10-31T17:00:22+03:30",
+          "result": "failed",
+          "summary": "V 3.0.703 Step Three quality ran 308 tests; 307 passed and one new source-contract assertion failed because it expected the pre-KtLint chained spelling `}.awaitAll()`. The product workflow had not yet reached Android KtLint; HostLifecycle passed.",
           "changed_files": [
             "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceRoundResponseCollector.kt",
+            "step three/T0168/execution-report.md",
+            "step three/T0168/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": "96020152eb8144620eb0f697ac2e249373a022e8",
+          "tests": [
+            {
+              "name": "Step Three quality gate — V 3.0.703",
+              "result": "failed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41205787603",
+              "summary": "Only the new round-response source-contract assertion failed; the other 307 Python tests passed before the job exited."
+            },
+            {
+              "name": "Python source-contract test — V 3.0.703",
+              "result": "failed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41205787603",
+              "summary": "308 tests ran; one assertion expected `}.awaitAll()` adjacency, while KtLint-correct source puts `.awaitAll()` on its own line. Kotlin behavior was not tested by this quality job."
+            },
+            {
+              "name": "HostLifecycle — V 3.0.703",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41205787605",
+              "summary": "Host lifecycle unit/integration job completed successfully."
+            },
+            {
+              "name": "Android KtLint / Windows WPF — V 3.0.703",
+              "result": "pending",
+              "summary": "At 17:00:22+03:30 the Android job was still building its .NET fixture before KtLint; Windows Release build remained in progress."
+            }
+          ],
+          "failure_details": "tests/test_android_inference_round_response_collector_contract.py asserted `}.awaitAll()` after the Kotlin source had been reformatted by A002 to place `.awaitAll()` on a separate line. 307 of 308 Python tests passed.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "A003 loosens the source-contract assertion to require the `.awaitAll()` operation without assuming whitespace/line adjacency; keep the implementation formatting unchanged."
+        },
+        {
+          "attempt_id": "T0168-A003",
+          "started_at": "2026-10-31T17:00:22+03:30",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Relaxed the Python source-contract assertion to detect `.awaitAll()` without requiring it to share a line with the closing brace. Production implementation and Kotlin formatting are unchanged; exact-head V 3.0.704 CI pending.",
+          "changed_files": [
+            "tests/test_android_inference_round_response_collector_contract.py",
             "step three/T0168/execution-report.md",
             "step three/T0168/evidence/verification.md",
             "step three/project-graph.md"
@@ -42270,26 +42321,26 @@
           "commit_sha": null,
           "tests": [
             {
-              "name": "Targeted KtLint correction",
+              "name": "Python source-contract assertion update",
               "result": "pending",
-              "summary": "Reformatted the two require argument lists and awaitAll chain; exact-head Gradle KtLint rerun pending."
+              "summary": "Assertion now checks `.awaitAll()` as an operation, independent of KtLint whitespace formatting; exact-head suite pending."
             },
             {
-              "name": "Android APK/JVM/Protobuf",
+              "name": "Android KtLint/APK/JVM/Protobuf",
               "result": "pending",
-              "summary": "These gates run after KtLint passes."
+              "summary": "V 3.0.703 product workflow was still running at update time; V 3.0.704 exact-head product rerun pending."
             },
             {
-              "name": "Step Three quality, Windows WPF and HostLifecycle",
+              "name": "Step Three quality gate",
               "result": "pending",
-              "summary": "Exact-head V 3.0.703 results pending."
+              "summary": "Exact-head V 3.0.704 quality rerun pending."
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Check exact-head V 3.0.703 CI; keep T0168 in_progress until every required gate passes."
+          "follow_up": "Review V 3.0.704 Step Three quality and product-build runs. Resolve any remaining failure before marking T0168 done."
         }
       ]
     },
@@ -54004,7 +54055,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-31T16:57:15+03:30",
+  "updated_at": "2026-10-31T17:00:22+03:30",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",
