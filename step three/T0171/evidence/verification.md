@@ -43,3 +43,12 @@ Step Three quality workflow 41230521477 passed. HostLifecycle job 124623603658 p
 ## A004 — continuation-indentation correction
 
 The five multi-round candidate entries now use the indentation required by KtLint, and the nested `attemptedEphemeralHostIds` argument and progress-constructor close are aligned with the constructor. No production source or runtime behavior changed. Exact-head CI remains pending.
+
+
+## A004 — V 3.0.726 exact-head CI result
+
+Step Three quality workflow 41230929453 passed. HostLifecycle job 124624805496 passed. Android job 124624805452 failed at `ktlintTestSourceSetCheck` with one finding: `HostCandidateSelectorTest.kt:389:1 Unexpected indentation (16) (should be 20)`. The Android APK, JVM suite and generated Java/Kotlin Protobuf checks were skipped. The Windows WPF job was still running at the time of this record and is not marked passed here.
+
+## A005 — one-line formatting correction
+
+Moved the closing delimiter of the multi-round candidate `listOf` from 16 to 20 spaces, matching the continuation indentation reported by KtLint. No production code or behavior changed. Exact-head CI remains pending.

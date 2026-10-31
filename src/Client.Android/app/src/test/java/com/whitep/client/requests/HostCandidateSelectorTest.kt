@@ -386,7 +386,7 @@ class HostCandidateSelectorTest {
                         candidate("host-g"),
                         candidate("host-h"),
                         candidate("host-i"),
-                ),
+                    ),
                 previousRoundAttempts = previousAttempts,
                 previousRoundResponses = InferenceRoundResponseCollection(emptyList(), emptyList()),
                 progress = progress,

@@ -56,3 +56,12 @@ No local Gradle execution is claimed from this connected GitHub session. Exact-h
 - Windows WPF job 124623603615: C# formatting, Release build, generated Protobuf C#, startup smoke, process/policy/capability checks, DPAPI identity/trust and artifact upload all passed.
 - Android job 124623603397: KtLint failed with seven continuation-indentation findings in `HostCandidateSelectorTest.kt` lines 385–389 and 440–441. APK, JVM tests and generated Protobuf checks were skipped. No Android test pass is claimed for V 3.0.725.
 - A004 corrects only those reported indentation findings. A new exact-head product run is required before completing T0171.
+
+
+## A004 — exact-head V 3.0.726 CI result
+
+- Step Three quality gate [41230929453](https://github.com/artinrahimii/project/actions/runs/41230929453): PASS. Python automated tests, syntax, graph structure and recorded-output/evidence validation passed.
+- HostLifecycle job 124624805496 in [product workflow 41230929279](https://github.com/artinrahimii/project/actions/runs/41230929279): PASS.
+- Android job 124624805452: KtLint failed on one remaining indentation finding at `HostCandidateSelectorTest.kt:389:1`: the closing delimiter of the multi-round candidate `listOf` was at 16 spaces but required 20. Android APK, JVM tests and generated Protobuf checks were skipped. No Android test pass is claimed for V 3.0.726.
+- The Windows WPF job was still running when this correction was prepared; its final result will be recorded separately after workflow completion.
+- A005 moves only the reported list-closing delimiter to the required indentation. T0171 remains in progress until Android lint, APK, JVM and Protobuf checks pass.
