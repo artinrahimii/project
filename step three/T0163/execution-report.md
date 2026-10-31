@@ -616,3 +616,16 @@
 - **A047 root-cause review:** the pinned Android jvm-libp2p 1.3.7 Standard builder defaults to Mplex when no muxer is explicitly configured. The Windows .NET libp2p builder offers Yamux for stream multiplexing. There is no common muxer between these two defaults, explaining the native cross-runtime stream-open failure.
 - **A047 implementation:** explicitly offer Yamux first and Mplex second on Android; add a Python source-contract check. Existing three-native-.NET-peer request/response acceptance is retained without weakening. No local Gradle pass claimed; exact V 3.0.673 CI pending.
 - **Evidence:** `step three/T0163/evidence/v3.0.673-yamux-multiplexer-interoperability-fix.md`.
+
+
+## Reconciliation — V 3.0.673 exact-head product results and attempt A048
+
+- **Commit:** `6d6a135bb7fe8a80f275b013c8b691e8b9acc328` (`V 3.0.673`).
+- **Step Three quality gate:** PASS — run [41168841017](https://github.com/artinrahimii/project/actions/runs/41168841017), including Python automated tests, syntax, graph structure and output/evidence validation.
+- **Android .NET fixture compilation, KtLint and debug APK:** PASS — product run [41168851631](https://github.com/artinrahimii/project/actions/runs/41168851631).
+- **Android JVM:** 105 tests, 104 passed, 1 failed. JUnit artifact `13030586508` (42,570 bytes). The three-native-.NET test passes the three `QUEUED` submission assertions, but then times out after 30 seconds in `awaitResponse` (test line 370). The Android↔Android three-peer test and authenticated Noise/TCP loopback both pass.
+- **Windows WPF:** PASS — Release build, generated Protobuf, startup, process/policy/capability and DPAPI identity/trust checks, and host artifact upload.
+- **HostLifecycle:** PASS.
+- **A047 assessment:** the Yamux+Mplex configuration clears the previously observed stream-open/submit rejection, but does not yet prove end-to-end .NET response delivery; A047 is recorded as failed acceptance pending the remaining response phase.
+- **A048:** added bounded, payload-free .NET server phase markers and per-process output capture to the Android integration-test assertion. Exact-head V 3.0.674 CI pending; T0163 remains in progress.
+- **Evidence:** `step three/T0163/evidence/v3.0.674-dotnet-response-phase-diagnostics.md`.

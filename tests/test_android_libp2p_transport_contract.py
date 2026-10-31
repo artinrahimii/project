@@ -94,6 +94,10 @@ class AndroidLibp2pTransportContractTests(unittest.TestCase):
         self.assertIn('"--interop-peer-server"', program)
         self.assertIn("new Libp2pPeerTransport(", fixture)
         self.assertIn("PeerResponseCorrelationValidator.Validate", fixture)
+        for phase in ("CONNECTED", "RECEIVED", "VALIDATED", "SENT"):
+            self.assertIn(f'Console.WriteLine("{phase}")', fixture)
+        self.assertIn("ConcurrentLinkedQueue<String>()", transport_test)
+        self.assertIn("serverOutput.toList()", transport_test)
         self.assertIn("dispatchesRoundToThreeNativeDotNetLibp2pHosts", transport_test)
         self.assertIn("internal val lastSubmissionFailure: String?", runtime)
         self.assertIn("attemptStatusSummary", transport_test)

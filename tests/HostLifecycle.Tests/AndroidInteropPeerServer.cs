@@ -41,8 +41,12 @@ internal static class AndroidInteropPeerServer
 
         while (!timeout.IsCancellationRequested && !server.IsConnected)
             await Task.Delay(TimeSpan.FromMilliseconds(25), timeout.Token).ConfigureAwait(false);
+        Console.WriteLine("CONNECTED");
+        Console.Out.Flush();
 
         byte[] requestWire = await server.ReceiveMessageAsync(timeout.Token).ConfigureAwait(false);
+        Console.WriteLine("RECEIVED");
+        Console.Out.Flush();
         var parsed = ProtocolMessageParser.ParseInferenceRequest(requestWire);
         if (!parsed.IsValid || parsed.Message is null)
             throw new InvalidDataException("The Android peer sent an invalid inference request.");
@@ -60,9 +64,12 @@ internal static class AndroidInteropPeerServer
             ErrorMessage = string.Empty
         };
         PeerResponseCorrelationValidator.Validate(request, response, server.LocalPeerIdentity);
+        Console.WriteLine("VALIDATED");
+        Console.Out.Flush();
 
         await server.SendMessageAsync(response.ToByteArray(), timeout.Token).ConfigureAwait(false);
-        Console.WriteLine($"PASS\t{request.RequestId}\t{request.AttemptId}");
+        Console.WriteLine("SENT");
+        Console.WriteLine("PASS");
         Console.Out.Flush();
     }
 }

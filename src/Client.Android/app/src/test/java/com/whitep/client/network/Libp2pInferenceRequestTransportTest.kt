@@ -44,6 +44,7 @@ import java.time.Duration
 import java.time.Instant
 import java.util.Arrays
 import java.util.UUID
+import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.TimeUnit
 
 @RunWith(RobolectricTestRunner::class)
@@ -264,11 +265,14 @@ class Libp2pInferenceRequestTransportTest {
             val clientIdentity = generateKeyPair(KeyType.ED25519).first
             val clientPeerId = PeerId.fromPubKey(clientIdentity.publicKey()).toBase58()
             val processes = mutableListOf<Process>()
+            val serverOutput = ConcurrentLinkedQueue<String>()
+            val outputReaders = mutableListOf<Thread>()
             val endpoints = linkedMapOf<String, RendezvousPeerEndpoint>()
             var runtime: AndroidInferenceRequestRuntime? = null
 
             try {
                 repeat(3) {
+                    val serverNumber = processes.size + 1
                     val port = ServerSocket(0).use { socket -> socket.localPort }
                     val process =
                         ProcessBuilder(
@@ -279,11 +283,11 @@ class Libp2pInferenceRequestTransportTest {
                             port.toString(),
                         ).redirectErrorStream(true).start()
                     processes += process
+                    val reader = process.inputStream.bufferedReader()
 
                     val readyLine =
                         withContext(Dispatchers.IO) {
                             withTimeout(30_000L) {
-                                val reader = process.inputStream.bufferedReader()
                                 var ready: String? = null
                                 while (ready == null) {
                                     val line = reader.readLine() ?: break
@@ -296,6 +300,23 @@ class Libp2pInferenceRequestTransportTest {
                         } ?: throw AssertionError(
                             "The .NET peer fixture exited before publishing its ready address.",
                         )
+
+                    val outputReader =
+                        Thread(
+                            {
+                                var lineCount = 0
+                                while (true) {
+                                    val line = runCatching { reader.readLine() }.getOrNull() ?: break
+                                    if (lineCount < 40) {
+                                        serverOutput.add("peer-" + serverNumber + ":" + line)
+                                    }
+                                    lineCount += 1
+                                }
+                            },
+                            "whitep-dotnet-peer-" + serverNumber + "-output",
+                        ).apply { isDaemon = true }
+                    outputReaders += outputReader
+                    outputReader.start()
 
                     val readyFields = readyLine.split('\t')
                     assertEquals(
@@ -367,11 +388,23 @@ class Libp2pInferenceRequestTransportTest {
 
                 val responses =
                     attempts.map { attempt ->
-                        runtimeClient.awaitResponse(
-                            requestId = requestId,
-                            attemptId = attempt.attemptId,
-                            timeout = Duration.ofSeconds(30),
-                        )
+                        try {
+                            runtimeClient.awaitResponse(
+                                requestId = requestId,
+                                attemptId = attempt.attemptId,
+                                timeout = Duration.ofSeconds(30),
+                            )
+                        } catch (exception: Exception) {
+                            val phases = serverOutput.toList().takeLast(60).joinToString(separator = " | ")
+                            val processStates =
+                                processes.mapIndexed { index, process ->
+                                    "peer-" + (index + 1) + ":alive=" + process.isAlive
+                                }.joinToString(separator = ", ")
+                            throw AssertionError(
+                                "The .NET peer did not return a correlated response; phases=$phases; $processStates",
+                                exception,
+                            )
+                        }
                     }
 
                 assertEquals(3, responses.size)
