@@ -59,3 +59,18 @@
 - Add `import com.whitep.client.ui.request.hostResponseCards` to `MainActivity.kt`.
 - Add a Python regression assertion for the correct import in `test_android_host_response_cards_contract.py`.
 - No transport/runtime behavior or protocol contract changes. Exact-head V 3.0.697 CI is pending.
+
+
+## Fifth exact-head CI run — V 3.0.697
+
+- Step Three quality passed: [41202877855](https://github.com/artinrahimii/project/actions/runs/41202877855).
+- Windows WPF and HostLifecycle jobs passed in [product run 41202877958](https://github.com/artinrahimii/project/actions/runs/41202877958).
+- Android .NET peer interoperability fixture preparation passed.
+- Android KtLint failed at `MainActivity.kt:3:1` because import order is lexicographic. The lowercase `hostResponseCards` import was placed before uppercase `RequestViewModel`; the required order is the reverse. [Android job](https://github.com/artinrahimii/project/actions/runs/41202877958/job/124542018744).
+- Android APK build, JVM tests, generated Protobuf verification and artifact upload were not run because lint failed. No Android acceptance pass is claimed for V 3.0.697.
+
+## Sixth attempt — A006 correction
+
+- Reorder the two imports in `MainActivity.kt` as `RequestViewModel` followed by `hostResponseCards`.
+- Add a Python regression assertion for this exact relative ordering.
+- No production behavior or protocol change. Exact-head V 3.0.698 CI is pending.

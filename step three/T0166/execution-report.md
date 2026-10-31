@@ -108,3 +108,23 @@
 - **Regression guard:** strengthened `test_android_host_response_cards_contract.py` to require the exact import so future renames cannot silently break the Android compile.
 - No runtime behavior, response-correlation contract, persistence boundary or protocol field changed.
 - Exact-head `V 3.0.697` CI is pending; T0166 remains `in_progress` until Android APK, JVM, generated Protobuf and relevant product/quality gates pass.
+
+
+## Attempt T0166-A005 — exact-head CI outcome
+
+- **Verification target:** `V 3.0.697`, commit `c434443f0d9f764b87b725ac78867575eee811d6` on `main`.
+- Step Three quality passed: [run 41202877855](https://github.com/artinrahimii/project/actions/runs/41202877855).
+- Windows WPF build/startup/security and HostLifecycle integration passed in [product run 41202877958](https://github.com/artinrahimii/project/actions/runs/41202877958).
+- Android's Windows .NET peer interoperability fixture build passed.
+- Android KtLint failed at `MainActivity.kt:3:1`: imports must be lexicographically ordered. The new lowercase `hostResponseCards` import was placed above uppercase `RequestViewModel`; the correct order is `RequestViewModel`, then `hostResponseCards`. [Android job](https://github.com/artinrahimii/project/actions/runs/41202877958/job/124542018744).
+- Android APK, JVM tests and generated Protobuf verification were skipped after KtLint failed. No Android build/JVM/Protobuf acceptance pass is claimed for V 3.0.697.
+- A005 is recorded as a failed verification attempt; it was included in online commit `c434443f0d9f764b87b725ac78867575eee811d6` (`V 3.0.697`). Task status remains `in_progress`.
+
+## Attempt T0166-A006
+
+- **Base revision:** `c434443f0d9f764b87b725ac78867575eee811d6` on `main` (`V 3.0.697`).
+- **Start:** 2026-10-31T16:23:02+03:30.
+- **Correction:** reordered the imports in `MainActivity.kt` so `RequestViewModel` precedes the lowercase `hostResponseCards`, satisfying the exact KtLint lexicographic-order diagnostic without changing either imported symbol.
+- **Regression guard:** added a Python source-contract assertion that enforces the same ordering.
+- No runtime, transport, response-correlation, persistence or Protobuf contract changed.
+- Exact-head `V 3.0.698` CI is pending; T0166 remains `in_progress` until Android KtLint, APK, JVM, Protobuf and the relevant product/quality gates pass.

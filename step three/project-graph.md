@@ -41249,9 +41249,9 @@
       ],
       "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0166-A001 (2026-10-31T15:23:00+03:30): Added an in-memory response-card state keyed by (requestId, attemptId), strict expected request/attempt/host/model/round checks, duplicate-attempt rejection, and one Compose card per attempt. Added JVM and Python source-contract tests. Incoming T0165 -> T0166 and T0160 -> T0166 edges were validated as contract_or_interface_dependency from the concrete response-correlation and payload identity contracts. No response body is persisted. Exact-head CI pending; request initiation from the preview UI remains for later UI/runtime integration.\nT0166-A001 exact-head V 3.0.693 CI: Step Three quality, Windows WPF and HostLifecycle passed. Android KtLint failed at RequestViewModelTest.kt:77:57 (Expected newline before '.') and consequently APK/JVM/Protobuf were skipped. A002 applies the one-line formatting correction; CI is pending. The response-card implementation remains in_progress.\nT0166-A002 exact-head V 3.0.694 CI: Step Three quality and HostLifecycle passed. Android main-source KtLint failed at HostResponseCards.kt:16:14 (uppercase function name) and RequestViewModel.kt:14:1 (unused import); Android APK/JVM/Protobuf were skipped. A003 applies those exact fixes and updates the UI/test references. The task remains in_progress.\nT0166-A003 exact-head V 3.0.695 CI: Step Three quality and HostLifecycle passed. Android main-source KtLint failed because MainActivity.kt retained the obsolete HostResponseCards import after the Composable rename; Android APK/JVM/Protobuf were skipped. A004 removes that unused import; the task remains in_progress.\nT0166-A004 exact-head V 3.0.696 (2026-10-31T15:42:27+03:30): Step Three quality, Windows WPF, HostLifecycle and Android KtLint passed. Android APK compile failed at MainActivity.kt:233:9 because hostResponseCards was unresolved after A004 removed the old composable import. Android JVM and generated Protobuf checks were skipped. The exact compiler diagnostic is recorded in execution-report.md and evidence/verification.md.\nT0166-A005: add the correctly named hostResponseCards import to MainActivity.kt and assert the import in the Python UI source-contract test. No runtime or protocol contract change.",
       "execution_summary": {
-        "attempt_count": 5,
-        "failed_attempt_count": 4,
-        "last_attempt_id": "T0166-A005",
+        "attempt_count": 6,
+        "failed_attempt_count": 5,
+        "last_attempt_id": "T0166-A006",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt",
@@ -41266,7 +41266,8 @@
         "related_commits": [
           "89f9badabc5a5f7d11739a53f578b47f5f561154",
           "1113a2d3e6b67620b5a6d74e6cce899e4146eacf",
-          "71d4468d04d79b95a0905e949be5b293290f30e6"
+          "71d4468d04d79b95a0905e949be5b293290f30e6",
+          "c434443f0d9f764b87b725ac78867575eee811d6"
         ],
         "tests_passed": [
           {
@@ -41334,6 +41335,24 @@
             "result": "passed",
             "url": "https://github.com/artinrahimii/project/actions/runs/41199929005/job/124533545646",
             "summary": "Android formatting and lint passed."
+          },
+          {
+            "name": "Step Three quality gate — V 3.0.697",
+            "result": "passed",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41202877855",
+            "summary": "Python tests, syntax, graph and evidence checks passed."
+          },
+          {
+            "name": "Windows WPF host — V 3.0.697",
+            "result": "passed",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41202877958/job/124542018681",
+            "summary": "Windows product checks passed."
+          },
+          {
+            "name": "HostLifecycle — V 3.0.697",
+            "result": "passed",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41202877958/job/124542018737",
+            "summary": "Lifecycle unit and integration passed."
           }
         ],
         "tests_failed": [
@@ -41360,6 +41379,12 @@
             "result": "failed",
             "url": "https://github.com/artinrahimii/project/actions/runs/41199929005/job/124533545646",
             "summary": "Android debug APK build failed at :app:compileDebugKotlin: MainActivity.kt:233:9 Unresolved reference 'hostResponseCards'. Android JVM unit tests and generated Protobuf verification were skipped because compilation failed."
+          },
+          {
+            "name": "Android KtLint — V 3.0.697",
+            "result": "failed",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41202877958/job/124542018744",
+            "summary": "Android KtLint failed in :app:ktlintMainSourceSetCheck at MainActivity.kt:3:1: imports must be ordered lexicographically. The newly added lowercase hostResponseCards import was placed before RequestViewModel; the uppercase RequestViewModel import must precede the lowercase hostResponseCards import. Android APK build, JVM tests and generated Protobuf checks were skipped after lint failure."
           }
         ],
         "blocked_reason": null,
@@ -41602,9 +41627,66 @@
         {
           "attempt_id": "T0166-A005",
           "started_at": "2026-10-31T16:15:00+03:30",
+          "ended_at": "2026-10-31T16:21:53+03:30",
+          "result": "failed",
+          "summary": "The exact-head V 3.0.697 Step Three quality gate, Windows WPF and HostLifecycle jobs passed. Android's Windows .NET interop fixture build passed, but KtLint failed because the newly added lowercase hostResponseCards import was not lexicographically ordered relative to RequestViewModel. Android APK, JVM tests and generated Protobuf checks were skipped.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
+            "tests/test_android_host_response_cards_contract.py",
+            "step three/T0166/execution-report.md",
+            "step three/T0166/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": "c434443f0d9f764b87b725ac78867575eee811d6",
+          "tests": [
+            {
+              "name": "Step Three quality gate — V 3.0.697",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41202877855",
+              "summary": "Automated Python tests, Python syntax, graph structure and repository-backed outputs/evidence checks passed."
+            },
+            {
+              "name": "HostLifecycle — V 3.0.697",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41202877958/job/124542018737",
+              "summary": "Unit and integration tests passed."
+            },
+            {
+              "name": "Windows WPF host — V 3.0.697",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41202877958/job/124542018681",
+              "summary": "Windows format, build, startup, security/DPAPI checks and artifact upload passed."
+            },
+            {
+              "name": "Android interop fixture — V 3.0.697",
+              "result": "passed",
+              "summary": "The Windows .NET peer interoperability fixture built successfully before the KtLint gate."
+            },
+            {
+              "name": "Android KtLint — V 3.0.697",
+              "result": "failed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41202877958/job/124542018744",
+              "summary": "Android KtLint failed in :app:ktlintMainSourceSetCheck at MainActivity.kt:3:1: imports must be ordered lexicographically. The newly added lowercase hostResponseCards import was placed before RequestViewModel; the uppercase RequestViewModel import must precede the lowercase hostResponseCards import. Android APK build, JVM tests and generated Protobuf checks were skipped after lint failure."
+            },
+            {
+              "name": "Android debug APK/JVM/Protobuf — V 3.0.697",
+              "result": "skipped",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41202877958/job/124542018744",
+              "summary": "The KtLint failure prevented APK compilation, JVM tests and generated Protobuf validation."
+            }
+          ],
+          "failure_details": "Android KtLint failed in :app:ktlintMainSourceSetCheck at MainActivity.kt:3:1: imports must be ordered lexicographically. The newly added lowercase hostResponseCards import was placed before RequestViewModel; the uppercase RequestViewModel import must precede the lowercase hostResponseCards import. Android APK build, JVM tests and generated Protobuf checks were skipped after lint failure.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "A006 reorders RequestViewModel before hostResponseCards in MainActivity.kt and adds a source-contract check for that ordering. Re-run exact-head Android KtLint, APK, JVM, Protobuf, Windows, HostLifecycle and quality gates."
+        },
+        {
+          "attempt_id": "T0166-A006",
+          "started_at": "2026-10-31T16:23:02+03:30",
           "ended_at": null,
           "result": "partial",
-          "summary": "Added the correctly named hostResponseCards import to MainActivity.kt and strengthened the Python source-contract test to require it. No runtime or protocol behavior changed; exact-head CI is pending.",
+          "summary": "Reordered the two request-screen imports into lexicographic order after exact-head V 3.0.697 KtLint reported the import-order violation. Added a source-contract assertion for their relative ordering. No runtime, transport, persistence or protocol behavior changed; exact-head CI is pending.",
           "changed_files": [
             "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
             "tests/test_android_host_response_cards_contract.py",
@@ -41615,9 +41697,9 @@
           "commit_sha": null,
           "tests": [
             {
-              "name": "Exact V 3.0.696 Android product log review",
+              "name": "Exact V 3.0.697 KtLint log review",
               "result": "passed",
-              "summary": "Confirmed compileDebugKotlin failed solely because hostResponseCards was unresolved at MainActivity.kt:233:9."
+              "summary": "Confirmed import lexicographic ordering was the Android failure at MainActivity.kt:3:1."
             },
             {
               "name": "Local Android Gradle/KtLint/JVM",
@@ -41625,16 +41707,16 @@
               "summary": "No local Android build toolchain is available through the GitHub editing connection."
             },
             {
-              "name": "Exact-head V 3.0.697 CI",
+              "name": "Exact-head V 3.0.698 CI",
               "result": "pending",
-              "summary": "Android APK/JVM/Protobuf, Windows WPF, HostLifecycle and Step Three quality gates must run."
+              "summary": "Android KtLint, APK/JVM/Protobuf, Windows WPF, HostLifecycle and Step Three quality gates must run."
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect the exact V 3.0.697 product and quality workflow results. Keep T0166 in_progress until Android APK, JVM, Protobuf and the other required product/quality gates pass."
+          "follow_up": "Inspect the exact V 3.0.698 product and quality workflow results. Keep T0166 in_progress until all Android and cross-platform acceptance gates pass."
         }
       ]
     },
@@ -53359,7 +53441,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-31T16:15:00+03:30",
+  "updated_at": "2026-10-31T16:23:02+03:30",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",
