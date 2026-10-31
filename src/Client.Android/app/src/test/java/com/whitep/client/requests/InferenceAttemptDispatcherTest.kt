@@ -432,8 +432,7 @@ class InferenceAttemptDispatcherTest {
         status: DistributedRequestStatus = DistributedRequestStatus.QUEUED,
         maxRounds: Int = 3,
         maxTotalHosts: Int = 9,
-    ) =
-        DistributedRequest(
+    ) = DistributedRequest(
             requestId = "ephemeral-request-42",
             deadlineUnixMs = 1_798_000_000_000L,
             maxRounds = maxRounds,

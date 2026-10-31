@@ -43386,11 +43386,11 @@
         "step three/T0170/execution-report.md",
         "step three/T0170/evidence/verification.md"
       ],
-      "notes": "A001 adds first-release request limits of at most 3 rounds, 3 hosts per round and 9 total host attempts. The requirement specified no numeric values; this decision is documented. Budget progress is in-memory per Android runtime instance and is reserved conservatively across cancellation. No automatic retry loop, persistent cross-process ledger or all-round duplicate-host rule is claimed. T0169 selector contract revalidation remains in_review pending exact-head CI. A001 quality gate failed on one pre-existing source-string guard; A002 restores the exact expression and records the failure append-only. Exact A002 CI is pending.",
+      "notes": "A001 adds first-release request limits of at most 3 rounds, 3 hosts per round and 9 total host attempts. The requirement specified no numeric values; this decision is documented. Budget progress is in-memory per Android runtime instance and is reserved conservatively across cancellation. No automatic retry loop, persistent cross-process ledger or all-round duplicate-host rule is claimed. T0169 selector contract revalidation remains in_review pending exact-head CI. A001 quality gate failed on one pre-existing source-string guard; A002 restores the exact expression and records the failure append-only. Exact A002 CI is pending. A002 passed Step Three quality but Android KtLint again failed at the same helper signature/body layout; A003 moves DistributedRequest construction onto the signature line and awaits exact-head CI.",
       "execution_summary": {
-        "attempt_count": 2,
-        "failed_attempt_count": 1,
-        "last_attempt_id": "T0170-A002",
+        "attempt_count": 3,
+        "failed_attempt_count": 2,
+        "last_attempt_id": "T0170-A003",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/requests/DistributedRequest.kt",
@@ -43410,13 +43410,47 @@
           "step three/project-graph.md"
         ],
         "related_commits": [],
-        "tests_passed": [],
+        "tests_passed": [
+          {
+            "name": "Step Three quality gate — V 3.0.718",
+            "result": "passed",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41217032620",
+            "summary": "Python/graph/evidence validation passed on exact A002 commit."
+          },
+          {
+            "name": "HostLifecycle — V 3.0.717",
+            "result": "passed",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41216834811"
+          },
+          {
+            "name": "Windows WPF — V 3.0.717",
+            "result": "passed",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41216834811"
+          },
+          {
+            "name": "HostLifecycle — V 3.0.718",
+            "result": "passed",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41217032694"
+          }
+        ],
         "tests_failed": [
           {
             "name": "Step Three quality gate — V 3.0.717",
             "result": "failed",
             "url": "https://github.com/artinrahimii/project/actions/runs/41216834757",
-            "summary": "308 Python tests, one source-contract assertion failure in test_android_inference_round_timer_contract."
+            "summary": "One of 308 tests failed due to a pre-existing exact-string guard."
+          },
+          {
+            "name": "Android KtLint — V 3.0.717",
+            "result": "failed",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41216834811",
+            "summary": "One formatting issue at InferenceAttemptDispatcherTest.kt:435."
+          },
+          {
+            "name": "Android KtLint — V 3.0.718",
+            "result": "failed",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41217032694",
+            "summary": "Same helper expression layout issue; corrected in A003."
           }
         ],
         "blocked_reason": null,
@@ -43473,16 +43507,28 @@
               "name": "Step Three quality gate — V 3.0.717",
               "result": "failed",
               "url": "https://github.com/artinrahimii/project/actions/runs/41216834757",
-              "summary": "308 Python tests ran; one failed in test_android_inference_round_timer_contract because a source-string guard expected the explicit distributedRequest.requestId expression."
+              "summary": "308 Python tests ran; one failed because the existing round-timer source contract expected the explicit distributedRequest.requestId key expression."
             },
             {
-              "name": "White-P product build — V 3.0.717",
-              "result": "pending",
+              "name": "Android KtLint — V 3.0.717",
+              "result": "failed",
               "url": "https://github.com/artinrahimii/project/actions/runs/41216834811",
-              "summary": "Android APK, Windows WPF and HostLifecycle jobs were still in progress at inspection time."
+              "summary": "KtLint reported InferenceAttemptDispatcherTest.kt:435; APK/JVM/Protobuf checks were skipped."
+            },
+            {
+              "name": "Windows WPF — V 3.0.717",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41216834811",
+              "summary": "Windows WPF job succeeded."
+            },
+            {
+              "name": "HostLifecycle — V 3.0.717",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41216834811",
+              "summary": "Host lifecycle tests succeeded."
             }
           ],
-          "failure_details": "The Step Three quality gate failed because the existing test_android_inference_round_timer_contract.py assertion expected the literal expression AttemptKey(distributedRequest.requestId, attempt.attemptId), while the implementation used the equivalent local requestId. Corrected in A002 by restoring the explicit property expression; rerun on A002 is required.",
+          "failure_details": "Step Three quality failed one Python source-string contract; Android KtLint failed at the new distributedRequest helper. Both failures were recorded and addressed in subsequent attempts.",
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [
@@ -43491,13 +43537,13 @@
             "Added per-request serialized in-memory budget accounting in AndroidInferenceRequestRuntime.",
             "No Protobuf or wire-schema change."
           ],
-          "follow_up": "Re-run both exact-head workflows after A002 and inspect all Android, Windows, HostLifecycle and Step Three checks before task completion."
+          "follow_up": "A002 corrected the request-property expression; A003 corrects the KtLint helper layout."
         },
         {
           "attempt_id": "T0170-A002",
           "started_at": "2026-10-31T15:53:20.766Z",
-          "ended_at": "2026-10-31T15:53:20.766Z",
-          "result": "partial",
+          "ended_at": "2026-10-31T15:55:04.042Z",
+          "result": "failed",
           "summary": "Corrected the exact source expression required by the pre-existing round-timer contract test after A001 quality gate exposed a text-guard mismatch. Updated execution and evidence records; exact-head CI rerun is pending.",
           "changed_files": [
             "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
@@ -43509,20 +43555,70 @@
           "tests": [
             {
               "name": "Step Three quality gate — V 3.0.718",
-              "result": "pending",
-              "summary": "Awaiting exact-head rerun."
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41217032620",
+              "summary": "Python, graph structure, syntax and recorded evidence validations passed."
             },
             {
-              "name": "White-P product build — V 3.0.718",
+              "name": "Android KtLint — V 3.0.718",
+              "result": "failed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41217032694",
+              "summary": "KtLint reported InferenceAttemptDispatcherTest.kt:435: first line of body expression fits on same line as function signature; APK/JVM/Protobuf checks were skipped."
+            },
+            {
+              "name": "HostLifecycle — V 3.0.718",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41217032694",
+              "summary": "Host lifecycle tests succeeded."
+            },
+            {
+              "name": "Windows WPF — V 3.0.718",
               "result": "pending",
-              "summary": "Awaiting exact-head rerun."
+              "url": "https://github.com/artinrahimii/project/actions/runs/41217032694",
+              "summary": "Still running at the time of this report update."
+            }
+          ],
+          "failure_details": "The Android KtLint check failed because the DistributedRequest helper's expression body started on the next line instead of the closing function-signature line. This was corrected in A003.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect the A003 exact-head workflows; APK/JVM/Protobuf must run after KtLint passes."
+        },
+        {
+          "attempt_id": "T0170-A003",
+          "started_at": "2026-10-31T15:56:24.319Z",
+          "ended_at": "2026-10-31T15:56:24.319Z",
+          "result": "partial",
+          "summary": "Fixed the KtLint function-signature/body-layout issue reported by both A001 and A002 by putting DistributedRequest construction on the closing signature line. Updated the task report and evidence. Exact-head CI is pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt",
+            "step three/T0170/execution-report.md",
+            "step three/T0170/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Android KtLint / assembleDebug / testDebugUnitTest / generated Protobuf",
+              "result": "pending",
+              "summary": "Awaiting exact A003 product workflow."
+            },
+            {
+              "name": "Step Three quality gate",
+              "result": "pending",
+              "summary": "Awaiting exact A003 quality run."
+            },
+            {
+              "name": "Windows WPF and HostLifecycle",
+              "result": "pending",
+              "summary": "Awaiting exact A003 product workflow."
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect the exact V 3.0.718 Actions runs. Resolve any failures, then mark T0170 done only after the acceptance tests and T0169 contract revalidation pass."
+          "follow_up": "Inspect A003 exact-head Actions. If KtLint passes, require APK/JVM/Protobuf tests to run and pass before marking T0170 done."
         }
       ]
     },
@@ -55237,7 +55333,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-31T15:53:20.766Z",
+  "updated_at": "2026-10-31T15:56:24.319Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",
