@@ -41859,8 +41859,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0166 و T0160 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "تکمیل‌شده",
       "actual_output_paths": [
         "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/HostResponseCards.kt",
         "tests/test_android_multi_host_response_rendering_contract.py",
@@ -41877,12 +41877,12 @@
         "tests/test_android_multi_host_response_rendering_contract.py",
         "step three/T0167/evidence/verification.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nIncoming dependency review (2026-10-31T16:29:30+03:30): T0166 -> T0167 validated as contract_or_interface_dependency because the no-auto-merge renderer consumes T0166's per-attempt response-card state/UI; T0160 -> T0167 validated as sequencing_only because the response renderer does not consume the request payload builder. Both original blocks edges remain intact; review evidence and classifications are recorded in edge_change_log.\n\nT0167-A001 (2026-10-31T16:31:00+03:30): Reuses the verified T0166 response-card list and strengthens each Compose item with a stable key `(requestId, attemptId)`, preserving distinct UI subtrees for multiple hosts and retries. Adds a dedicated Python source-contract regression for the per-response Card and no-concatenation behavior, with the existing successful two-host JVM test as behavioral state evidence. No runtime transport, protocol, persistence or external dependency change. Exact-head CI pending; task remains in_progress.\n",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nIncoming dependency review (2026-10-31T16:29:30+03:30): T0166 -> T0167 validated as contract_or_interface_dependency because the no-auto-merge renderer consumes T0166's per-attempt response-card state/UI; T0160 -> T0167 validated as sequencing_only because the response renderer does not consume the request payload builder. Both original blocks edges remain intact; review evidence and classifications are recorded in edge_change_log.\n\nT0167-A001 (2026-10-31T16:31:00+03:30): Reuses the verified T0166 response-card list and strengthens each Compose item with a stable key `(requestId, attemptId)`, preserving distinct UI subtrees for multiple hosts and retries. Adds a dedicated Python source-contract regression for the per-response Card and no-concatenation behavior, with the existing successful two-host JVM test as behavioral state evidence. No runtime transport, protocol, persistence or external dependency change. Exact-head CI pending; task remains in_progress.\n\nT0167-A001 exact-head V 3.0.700 (commit 7e775f71f857fd10999c31397200f44051cf5ef0): Step Three quality gate including new Python rendering guard passed; Android interop fixture, KtLint, assembleDebug, JVM unit tests, generated Protobuf Java/Kotlin and artifacts passed. Windows WPF build, Protobuf, startup, process/policy/capability, DPAPI and host artifact passed; HostLifecycle passed. Artifact sizes: Android JVM reports 44,447 bytes (13043651529), Android APK 19,441,958 bytes (13044190781), Windows host 14,255,799 bytes (13044465085). Stable Compose key `(requestId, attemptId)` verified by exact-head CI. T0167 is done; no live end-to-end peer inference is claimed.\n",
       "execution_summary": {
         "attempt_count": 1,
         "failed_attempt_count": 0,
         "last_attempt_id": "T0167-A001",
-        "last_attempt_result": "partial",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/HostResponseCards.kt",
           "tests/test_android_multi_host_response_rendering_contract.py",
@@ -41890,7 +41890,9 @@
           "step three/T0167/evidence/verification.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
+        "related_commits": [
+          "7e775f71f857fd10999c31397200f44051cf5ef0"
+        ],
         "tests_passed": [
           {
             "name": "Prerequisite/edge review",
@@ -41901,6 +41903,72 @@
             "name": "Existing multi-host ViewModel behavior review",
             "result": "passed",
             "summary": "The existing test asserts two host entries, independent output strings and distinct attempt IDs; exact V 3.0.698 CI passed the suite."
+          },
+          {
+            "name": "Step Three quality gate — V 3.0.700",
+            "result": "passed",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41204091924",
+            "summary": "Python automated suite including the T0167 no-auto-merge regression, syntax compilation, graph and evidence checks passed."
+          },
+          {
+            "name": "Android peer interoperability fixture — V 3.0.700",
+            "result": "passed",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41204092083/job/124545531910",
+            "summary": "Windows .NET interoperability fixture built."
+          },
+          {
+            "name": "Android KtLint — V 3.0.700",
+            "result": "passed",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41204092083/job/124545531910",
+            "summary": "Kotlin format and lint checks passed."
+          },
+          {
+            "name": "Android debug APK — V 3.0.700",
+            "result": "passed",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41204092083/job/124545531910",
+            "summary": "assembleDebug completed successfully."
+          },
+          {
+            "name": "Android JVM unit tests — V 3.0.700",
+            "result": "passed",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41204092083/job/124545531910",
+            "summary": "testDebugUnitTest completed successfully."
+          },
+          {
+            "name": "Generated Android Protobuf Java/Kotlin verification — V 3.0.700",
+            "result": "passed",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41204092083/job/124545531910",
+            "summary": "Generated Java and Kotlin sources were found and verified."
+          },
+          {
+            "name": "Android JVM test reports — V 3.0.700",
+            "result": "passed",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41204092083/artifacts/13043651529",
+            "summary": "Uploaded whitep-android-unit-test-reports.zip; 44,447 bytes; artifact ID 13043651529."
+          },
+          {
+            "name": "Android debug APK artifact — V 3.0.700",
+            "result": "passed",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41204092083/artifacts/13044190781",
+            "summary": "Uploaded whitep-android-debug-apk.zip; 19,441,958 bytes; artifact ID 13044190781."
+          },
+          {
+            "name": "Windows WPF host — V 3.0.700",
+            "result": "passed",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41204092083/job/124545532034",
+            "summary": "Release build, Protobuf, startup, agent-tool process/policy/capability, DPAPI identity/trust and artifact upload passed."
+          },
+          {
+            "name": "Windows host artifact — V 3.0.700",
+            "result": "passed",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41204092083/artifacts/13044465085",
+            "summary": "Uploaded whitep-windows-host.zip; 14,255,799 bytes; artifact ID 13044465085."
+          },
+          {
+            "name": "HostLifecycle unit/integration — V 3.0.700",
+            "result": "passed",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41204092083/job/124545532019",
+            "summary": "Host lifecycle unit and integration tests passed."
           }
         ],
         "tests_failed": [],
@@ -41920,9 +41988,9 @@
         {
           "attempt_id": "T0167-A001",
           "started_at": "2026-10-31T16:31:00+03:30",
-          "ended_at": null,
-          "result": "partial",
-          "summary": "Wrapped each host response Card with Compose key(requestId, attemptId) and added a dedicated Python regression checking stable per-attempt UI identity, one Card per response, per-response text and absence of automatic output concatenation. The existing ViewModel JVM test supplies two-host/distinct-output evidence.",
+          "ended_at": "2026-10-31T16:40:49+03:30",
+          "result": "succeeded",
+          "summary": "Exact-head V 3.0.700 CI passed. Step Three quality included the dedicated Python regression; Android KtLint, debug APK, JVM tests, generated Protobuf Java/Kotlin verification and Android artifacts succeeded. Windows WPF build/startup/security/DPAPI and host artifact, plus HostLifecycle, also passed.",
           "changed_files": [
             "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/HostResponseCards.kt",
             "tests/test_android_multi_host_response_rendering_contract.py",
@@ -41930,34 +41998,80 @@
             "step three/T0167/evidence/verification.md",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "7e775f71f857fd10999c31397200f44051cf5ef0",
           "tests": [
             {
-              "name": "Source review of existing response-card renderer",
+              "name": "Step Three quality gate — V 3.0.700",
               "result": "passed",
-              "summary": "Renderer loops over each response and displays host, attempt and text in a separate Material Card; no string aggregation is present."
+              "url": "https://github.com/artinrahimii/project/actions/runs/41204091924",
+              "summary": "Python automated suite including the T0167 no-auto-merge regression, syntax compilation, graph and evidence checks passed."
             },
             {
-              "name": "Existing two-host ViewModel JVM test",
+              "name": "Android peer interoperability fixture — V 3.0.700",
               "result": "passed",
-              "summary": "The exact V 3.0.698 CI product workflow passed the test asserting two distinct outputs and attempt IDs."
+              "url": "https://github.com/artinrahimii/project/actions/runs/41204092083/job/124545531910",
+              "summary": "Windows .NET interoperability fixture built."
             },
             {
-              "name": "Local Python/Kotlin/Gradle",
-              "result": "not_run",
-              "summary": "No local checkout/build environment is available through the GitHub editing connection."
+              "name": "Android KtLint — V 3.0.700",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41204092083/job/124545531910",
+              "summary": "Kotlin format and lint checks passed."
             },
             {
-              "name": "Exact-head V 3.0.700 CI",
-              "result": "pending",
-              "summary": "Step Three quality and Android KtLint/APK/JVM/Protobuf plus Windows and HostLifecycle gates must pass."
+              "name": "Android debug APK — V 3.0.700",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41204092083/job/124545531910",
+              "summary": "assembleDebug completed successfully."
+            },
+            {
+              "name": "Android JVM unit tests — V 3.0.700",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41204092083/job/124545531910",
+              "summary": "testDebugUnitTest completed successfully."
+            },
+            {
+              "name": "Generated Android Protobuf Java/Kotlin verification — V 3.0.700",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41204092083/job/124545531910",
+              "summary": "Generated Java and Kotlin sources were found and verified."
+            },
+            {
+              "name": "Android JVM test reports — V 3.0.700",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41204092083/artifacts/13043651529",
+              "summary": "Uploaded whitep-android-unit-test-reports.zip; 44,447 bytes; artifact ID 13043651529."
+            },
+            {
+              "name": "Android debug APK artifact — V 3.0.700",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41204092083/artifacts/13044190781",
+              "summary": "Uploaded whitep-android-debug-apk.zip; 19,441,958 bytes; artifact ID 13044190781."
+            },
+            {
+              "name": "Windows WPF host — V 3.0.700",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41204092083/job/124545532034",
+              "summary": "Release build, Protobuf, startup, agent-tool process/policy/capability, DPAPI identity/trust and artifact upload passed."
+            },
+            {
+              "name": "Windows host artifact — V 3.0.700",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41204092083/artifacts/13044465085",
+              "summary": "Uploaded whitep-windows-host.zip; 14,255,799 bytes; artifact ID 13044465085."
+            },
+            {
+              "name": "HostLifecycle unit/integration — V 3.0.700",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41204092083/job/124545532019",
+              "summary": "Host lifecycle unit and integration tests passed."
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect exact-head V 3.0.700 CI and keep T0167 in_progress until the dedicated regression and product build gates pass."
+          "follow_up": "T0167 is complete. T0168 is the next eligible task; its T0167→T0168 sequencing-only and T0160→T0168 deadline-contract edges have been validated."
         }
       ]
     },
@@ -41985,7 +42099,7 @@
         "src/Client.Android/Requests/ + tests/"
       ],
       "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nIncoming dependency review (2026-10-31T16:43:00+03:30): T0167 -> T0168 validated as sequencing_only because T0168's response collection runs in the runtime/dispatcher and consumes no Compose UI. T0160 -> T0168 validated as contract_or_interface_dependency because the receive window is capped by DistributedRequest.deadlineUnixMs originating in the request contract; InferenceRoundTimer/AndroidInferenceRequestRuntime use that same budget. Both blocks edges remain intact; reasons and evidence are recorded in edge_change_log.\n",
       "execution_summary": {
         "attempt_count": 0,
         "failed_attempt_count": 0,
@@ -48828,19 +48942,30 @@
       "from": "T0167",
       "to": "T0168",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0168 implements round-window receive behavior in AndroidInferenceRequestRuntime/dispatcher and does not consume the Compose response-card component. T0167 is a presentation layer only. Preserve the current blocks edge as conservative execution order, not as a technical runtime dependency.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/HostResponseCards.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceAttemptDispatcher.kt",
+        "step three/T0167/execution-report.md"
+      ]
     },
     {
       "from": "T0160",
       "to": "T0168",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "The response-window runtime starts InferenceRoundTimer with DistributedRequest.deadlineUnixMs, and InferenceRoundTimer.startRound caps the configured window at that absolute deadline. AndroidInferenceRequestRuntime stores the same Window per queued (requestId, attemptId) and uses its remaining time to bound awaitResponse. T0168's continued collection must use this same per-round deadline budget, which is the request deadline contract produced by T0160. This is a real contract/interface dependency, not inferred from blocks.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/DistributedRequest.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceRoundTimer.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
+        "step three/T0164/execution-report.md",
+        "step three/T0160/execution-report.md"
+      ]
     },
     {
       "from": "T0168",
@@ -53673,9 +53798,40 @@
         "step three/T0160/execution-report.md"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-31T16:43:00+03:30",
+      "edge_from": "T0167",
+      "edge_to": "T0168",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "reason": "T0168 implements round-window receive behavior in AndroidInferenceRequestRuntime/dispatcher and does not consume the Compose response-card component. T0167 is a presentation layer only. Preserve the current blocks edge as conservative execution order, not as a technical runtime dependency.",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/HostResponseCards.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceAttemptDispatcher.kt",
+        "step three/T0167/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-31T16:43:00+03:30",
+      "edge_from": "T0160",
+      "edge_to": "T0168",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "reason": "The response-window runtime starts InferenceRoundTimer with DistributedRequest.deadlineUnixMs, and InferenceRoundTimer.startRound caps the configured window at that absolute deadline. AndroidInferenceRequestRuntime stores the same Window per queued (requestId, attemptId) and uses its remaining time to bound awaitResponse. T0168's continued collection must use this same per-round deadline budget, which is the request deadline contract produced by T0160. This is a real contract/interface dependency, not inferred from blocks.",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/DistributedRequest.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceRoundTimer.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
+        "step three/T0164/execution-report.md",
+        "step three/T0160/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-31T16:31:00+03:30",
+  "updated_at": "2026-10-31T16:43:00+03:30",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",
