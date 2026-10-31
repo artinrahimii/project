@@ -97,7 +97,11 @@ class AndroidLibp2pTransportContractTests(unittest.TestCase):
         for phase in ("CONNECTED", "RECEIVED", "VALIDATED", "SENT"):
             self.assertIn(f'Console.WriteLine("{phase}")', fixture)
         self.assertIn("ConcurrentLinkedQueue<String>()", transport_test)
-        self.assertIn("serverOutput.toList()", transport_test)
+        phase_capture = transport_test.split("val phases =", 1)[1].split("val processStates =", 1)[0]
+        self.assertIn("serverOutput", phase_capture)
+        self.assertIn(".toList()", phase_capture)
+        self.assertIn(".takeLast(60)", phase_capture)
+        self.assertIn('.joinToString(separator = " | ")', phase_capture)
         self.assertIn("dispatchesRoundToThreeNativeDotNetLibp2pHosts", transport_test)
         self.assertIn("internal val lastSubmissionFailure: String?", runtime)
         self.assertIn("attemptStatusSummary", transport_test)

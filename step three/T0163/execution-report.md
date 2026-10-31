@@ -640,3 +640,15 @@
 - **Windows WPF:** PASS; **HostLifecycle:** PASS.
 - **A049:** Applied the exact multiline-chain formatting correction. No behavior, network protocol or acceptance assertion changed. Exact V 3.0.675 CI pending.
 - **Evidence:** `step three/T0163/evidence/v3.0.675-ktlint-chain-format-correction.md`.
+
+
+## Reconciliation — V 3.0.675 exact-head results and attempt A050
+
+- **Commit:** `828637f97e41046fc6375b3fe77e8f2ba839324b` (`V 3.0.675`).
+- **Step Three quality:** FAILED — run [41169618372](https://github.com/artinrahimii/project/actions/runs/41169618372). 286 Python tests ran; one failed in `test_native_dotnet_peer_interoperability_is_wired_into_android_ci` because the assertion expected contiguous `serverOutput.toList()` rather than a formatted multiline chain.
+- **Android KtLint:** FAILED — product run [41169618417](https://github.com/artinrahimii/project/actions/runs/41169618417), `Libp2pInferenceRequestTransportTest.kt:408:37 Unexpected newline before '.'` in the `mapIndexed(...).joinToString(...)` expression.
+- **Android:** .NET fixture compilation passed; Android lint blocked APK/JVM execution.
+- **Windows WPF:** PASS (Release build, Protobuf, startup, security/process/policy/capability/DPAPI); **HostLifecycle:** PASS — product run [41169618417](https://github.com/artinrahimii/project/actions/runs/41169618417).
+- **A049:** The exact KtLint chain formatting fix was incomplete and the quality contract still expected the old one-line source. A049 finalized as failed verification.
+- **A050:** corrected the lambda-chain closing-brace formatting and changed the Python contract to check the semantic multiline chain rather than contiguous text. No runtime behavior or acceptance assertion changed. Exact V 3.0.676 CI pending.
+- **Evidence:** `step three/T0163/evidence/v3.0.676-ktlint-and-contract-assertion-fix.md`.

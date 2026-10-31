@@ -404,8 +404,7 @@ class Libp2pInferenceRequestTransportTest {
                                 processes
                                     .mapIndexed { index, process ->
                                         "peer-" + (index + 1) + ":alive=" + process.isAlive
-                                    }
-                                    .joinToString(separator = ", ")
+                                    }.joinToString(separator = ", ")
                             throw AssertionError(
                                 "The .NET peer did not return a correlated response; phases=$phases; $processStates",
                                 exception,
