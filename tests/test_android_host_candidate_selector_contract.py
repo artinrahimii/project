@@ -15,6 +15,10 @@ class AndroidHostCandidateSelectorContractTests(unittest.TestCase):
         self.assertIn("request.modelId", source)
         self.assertIn("request.protocolVersion", source)
         self.assertIn("request.maxOutputTokens", source)
+        self.assertIn("excludedEphemeralHostIds: Set<String>", source)
+        self.assertIn("fun selectNextRound(", source)
+        self.assertIn("previousRoundResponses.responses.isNotEmpty()", source)
+        self.assertIn("previouslyAttemptedHostIds.toSet()", source)
         self.assertIn("val prompt = request.prompt", source)
         self.assertIn("prompt.toByteArray(Charsets.UTF_8)", source)
         self.assertIn("val contextCapsule = request.contextCapsule", source)
@@ -47,6 +51,9 @@ class AndroidHostCandidateSelectorContractTests(unittest.TestCase):
             "rejectsLocallyInvalidOrOversizedInferenceRequests",
             "excludesAmbiguousDuplicatePeerIdentities",
             "doesNotSelectAHostWhenTheRequestedProtocolIsNotAdvertised",
+            "selectsNextThreeDistinctHostsWhenThePreviousRoundHasNoValidResponse",
+            "doesNotSelectAnotherRoundWhenThePreviousRoundContainsAValidResponse",
+            "failsClosedWhenPreviousRoundAttemptsCannotDefineASafeExclusionSet",
         )
         for test_name in expected_tests:
             with self.subTest(test_name=test_name):

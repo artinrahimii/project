@@ -11,6 +11,7 @@ import org.whitep.shared.contracts.v1.hostAnnouncement
 import org.whitep.shared.contracts.v1.hostCapabilities
 import org.whitep.shared.contracts.v1.hostStatus
 import org.whitep.shared.contracts.v1.inferenceRequest
+import org.whitep.shared.contracts.v1.inferenceResponse
 import org.whitep.shared.contracts.v1.modelCapability
 
 class HostCandidateSelectorTest {
@@ -130,6 +131,114 @@ class HostCandidateSelectorTest {
         val request = validRequest(protocolVersion = "2.0.0")
 
         assertTrue(HostCandidateSelector.select(request, listOf(candidate("host-a"))).isEmpty())
+    }
+
+    @Test
+    fun selectsNextThreeDistinctHostsWhenThePreviousRoundHasNoValidResponse() {
+        val previousAttempts =
+            listOf(
+                InferenceHostAttempt("host-a", "attempt-a", InferenceAttemptSubmissionStatus.QUEUED),
+                InferenceHostAttempt("host-b", "attempt-b", InferenceAttemptSubmissionStatus.QUEUED),
+                InferenceHostAttempt("host-c", "attempt-c", InferenceAttemptSubmissionStatus.FAILED),
+            )
+        val completedRound =
+            InferenceRoundResponseCollection(
+                responses = emptyList(),
+                failures =
+                    previousAttempts.map { attempt ->
+                        InferenceRoundResponseFailure(
+                            ephemeralHostId = attempt.ephemeralHostId,
+                            attemptId = attempt.attemptId,
+                            reason = InferenceRoundResponseFailureReason.RESPONSE_TIMED_OUT,
+                        )
+                    },
+            )
+        val candidates =
+            listOf(
+                candidate("host-f"),
+                candidate("host-c"),
+                candidate("host-e"),
+                candidate("host-a"),
+                candidate("host-d"),
+                candidate("host-b"),
+            )
+
+        val selected =
+            HostCandidateSelector.selectNextRound(
+                request = validRequest(),
+                candidates = candidates,
+                previousRoundAttempts = previousAttempts,
+                previousRoundResponses = completedRound,
+            )
+
+        assertEquals(listOf("host-d", "host-e", "host-f"), selected.map { it.announcement.ephemeralHostId })
+        assertEquals(HostCandidateSelector.MAX_HOSTS_PER_ROUND, selected.size)
+    }
+
+    @Test
+    fun doesNotSelectAnotherRoundWhenThePreviousRoundContainsAValidResponse() {
+        val previousAttempts =
+            listOf(InferenceHostAttempt("host-a", "attempt-a", InferenceAttemptSubmissionStatus.QUEUED))
+        val completedRound =
+            InferenceRoundResponseCollection(
+                responses =
+                    listOf(
+                        inferenceResponse {
+                            requestId = "request-001"
+                            attemptId = "attempt-a"
+                            roundId = "round-001"
+                            ephemeralHostId = "host-a"
+                            modelId = MODEL_ID
+                        },
+                    ),
+                failures = emptyList(),
+            )
+
+        val selected =
+            HostCandidateSelector.selectNextRound(
+                request = validRequest(),
+                candidates = listOf(candidate("host-b"), candidate("host-c")),
+                previousRoundAttempts = previousAttempts,
+                previousRoundResponses = completedRound,
+            )
+
+        assertTrue(selected.isEmpty())
+    }
+
+    @Test
+    fun failsClosedWhenPreviousRoundAttemptsCannotDefineASafeExclusionSet() {
+        val candidates = listOf(candidate("host-a"), candidate("host-b"), candidate("host-c"))
+        val completedRound = InferenceRoundResponseCollection(responses = emptyList(), failures = emptyList())
+
+        assertTrue(
+            HostCandidateSelector.selectNextRound(
+                request = validRequest(),
+                candidates = candidates,
+                previousRoundAttempts = emptyList(),
+                previousRoundResponses = completedRound,
+            ).isEmpty(),
+        )
+        assertTrue(
+            HostCandidateSelector.selectNextRound(
+                request = validRequest(),
+                candidates = candidates,
+                previousRoundAttempts =
+                    listOf(
+                        InferenceHostAttempt("host-a", "attempt-a", InferenceAttemptSubmissionStatus.QUEUED),
+                        InferenceHostAttempt("host-a", "attempt-b", InferenceAttemptSubmissionStatus.QUEUED),
+                    ),
+                previousRoundResponses = completedRound,
+            ).isEmpty(),
+        )
+        assertTrue(
+            HostCandidateSelector.selectNextRound(
+                request = validRequest(),
+                candidates = candidates,
+                previousRoundAttempts =
+                    listOf(InferenceHostAttempt(" ", "attempt-a", InferenceAttemptSubmissionStatus.QUEUED)),
+                previousRoundResponses = completedRound,
+            ).isEmpty(),
+        )
     }
 
     private fun validRequest(

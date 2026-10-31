@@ -42861,20 +42861,44 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0168 و T0160 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt",
+        "tests/test_android_host_candidate_selector_contract.py",
+        "step three/T0169/execution-report.md",
+        "step three/T0169/evidence/verification.md",
+        "step three/project-graph.md"
+      ],
       "expected_output_paths": [
         "src/Client.Android/Requests/ + tests/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt",
+        "tests/test_android_host_candidate_selector_contract.py",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceRoundResponseCollector.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/protocol/InferenceRequestPayloadBuilder.kt",
+        "protocol/whitep/v1/messages.proto",
+        "step three/T0169/execution-report.md",
+        "step three/T0169/evidence/verification.md"
+      ],
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0169-A001 (2026-10-31T14:51:46.890Z): Reviewed T0168 -> T0169 and T0160 -> T0169 against the completed response-collection result and canonical InferenceRequest contract. Both existing blocks edges are retained and validated as contract_or_interface_dependency; evidence and rationale are in edge_change_log. Added an excluded-host set to HostCandidateSelector and a response-gated selectNextRound API: any valid prior response suppresses retry; a completed no-response round excludes every prior attempt host and chooses up to three next compatible hosts. Added three JVM regressions and extended the Python source contract. Exact-head CI pending; status remains in_progress.\n",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0169-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
+          "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt",
+          "tests/test_android_host_candidate_selector_contract.py",
+          "step three/T0169/execution-report.md",
+          "step three/T0169/evidence/verification.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
@@ -42887,7 +42911,46 @@
           "review_evidence": []
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0169-A001",
+          "started_at": "2026-10-31T14:51:46.890Z",
+          "ended_at": "2026-10-31T14:51:46.890Z",
+          "result": "partial",
+          "summary": "Implemented response-gated next-round host selection with exclusion of every host attempted in the completed prior round. Added three JVM regression cases and a Python source-contract check. Exact-head CI is pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt",
+            "tests/test_android_host_candidate_selector_contract.py",
+            "step three/T0169/execution-report.md",
+            "step three/T0169/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "HostCandidateSelectorTest — next-round JVM regressions",
+              "result": "pending",
+              "summary": "Three new tests cover no-response next-batch selection, suppression when a valid response exists, and fail-closed invalid prior-round identities."
+            },
+            {
+              "name": "Step Three quality gate",
+              "result": "pending",
+              "summary": "Python tests, syntax, graph structure and evidence validation will run on the exact commit."
+            },
+            {
+              "name": "Android product workflow",
+              "result": "pending",
+              "summary": "KtLint, debug APK, JVM tests, generated Protobuf checks, Windows WPF and HostLifecycle will run on the exact commit."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Commit the implementation to main, then inspect exact-head GitHub Actions results. Mark done only after all required gates pass."
+        }
+      ]
     },
     {
       "id": "T0170",
@@ -49695,19 +49758,32 @@
       "from": "T0168",
       "to": "T0169",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0168 produces InferenceRoundResponseCollection only after InferenceRoundResponseCollector.collect has awaited all queued attempts against the shared round window. T0169 consumes that completed result: any validated response suppresses another selection; an empty response list permits selecting a subsequent batch while excluding the just-completed attempts. This is a direct producer/consumer result contract, not inferred from type=blocks.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceRoundResponseCollector.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceRoundResponseCollectorTest.kt",
+        "step three/T0168/execution-report.md",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt"
+      ]
     },
     {
       "from": "T0160",
       "to": "T0169",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0169 continues to use HostCandidateSelector with the canonical generated InferenceRequest built under T0160's payload contract. Compatibility filtering reads the request's model ID, protocol version, prompt and context-capsule payload limits; the next-round operation changes only the excluded host set and retains those contract checks. This is a direct data/interface dependency, not inferred from type=blocks.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/protocol/InferenceRequestPayloadBuilder.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/protocol/InferenceRequestPayloadBuilderTest.kt",
+        "protocol/whitep/v1/messages.proto",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt",
+        "step three/T0160/execution-report.md"
+      ]
     },
     {
       "from": "T0169",
@@ -54553,9 +54629,42 @@
         "step three/T0160/execution-report.md"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-31T14:51:46.890Z",
+      "edge_from": "T0168",
+      "edge_to": "T0169",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "reason": "T0168 produces InferenceRoundResponseCollection only after InferenceRoundResponseCollector.collect has awaited all queued attempts against the shared round window. T0169 consumes that completed result: any validated response suppresses another selection; an empty response list permits selecting a subsequent batch while excluding the just-completed attempts. This is a direct producer/consumer result contract, not inferred from type=blocks.",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceRoundResponseCollector.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceRoundResponseCollectorTest.kt",
+        "step three/T0168/execution-report.md",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-31T14:51:46.890Z",
+      "edge_from": "T0160",
+      "edge_to": "T0169",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "reason": "T0169 continues to use HostCandidateSelector with the canonical generated InferenceRequest built under T0160's payload contract. Compatibility filtering reads the request's model ID, protocol version, prompt and context-capsule payload limits; the next-round operation changes only the excluded host set and retains those contract checks. This is a direct data/interface dependency, not inferred from type=blocks.",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/protocol/InferenceRequestPayloadBuilder.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/protocol/InferenceRequestPayloadBuilderTest.kt",
+        "protocol/whitep/v1/messages.proto",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt",
+        "step three/T0160/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-31T17:24:29+03:30",
+  "updated_at": "2026-10-31T14:51:46.890Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

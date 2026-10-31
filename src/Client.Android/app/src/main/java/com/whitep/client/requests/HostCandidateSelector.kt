@@ -31,6 +31,7 @@ object HostCandidateSelector {
     fun select(
         request: InferenceRequest,
         candidates: Collection<HostCandidate>,
+        excludedEphemeralHostIds: Set<String> = emptySet(),
     ): List<HostCandidate> {
         if (!isLocallyValidRequest(request)) {
             return emptyList()
@@ -47,10 +48,43 @@ object HostCandidateSelector {
 
         return uniqueCandidates
             .asSequence()
+            .filter { candidate -> candidate.announcement.ephemeralHostId !in excludedEphemeralHostIds }
             .filter { candidate -> isCompatibleAndReady(request, candidate) }
             .sortedBy { candidate -> candidate.announcement.ephemeralHostId }
             .take(MAX_HOSTS_PER_ROUND)
             .toList()
+    }
+
+    /**
+     * Selects a new host batch only after the previous response window has completed.
+     *
+     * A valid response suppresses another round. When no valid response arrived, every host
+     * attempted in that round is excluded, including rejected, failed, and timed-out submissions.
+     * The completed collection must be the result of InferenceRoundResponseCollector.collect.
+     */
+    fun selectNextRound(
+        request: InferenceRequest,
+        candidates: Collection<HostCandidate>,
+        previousRoundAttempts: List<InferenceHostAttempt>,
+        previousRoundResponses: InferenceRoundResponseCollection,
+    ): List<HostCandidate> {
+        if (previousRoundResponses.responses.isNotEmpty() || previousRoundAttempts.isEmpty()) {
+            return emptyList()
+        }
+
+        val previouslyAttemptedHostIds =
+            previousRoundAttempts.map { attempt -> attempt.ephemeralHostId }
+        if (previouslyAttemptedHostIds.any { hostId -> hostId.isBlank() } ||
+            previouslyAttemptedHostIds.toSet().size != previouslyAttemptedHostIds.size
+        ) {
+            return emptyList()
+        }
+
+        return select(
+            request = request,
+            candidates = candidates,
+            excludedEphemeralHostIds = previouslyAttemptedHostIds.toSet(),
+        )
     }
 
     private fun isLocallyValidRequest(request: InferenceRequest): Boolean {
