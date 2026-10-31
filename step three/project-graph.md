@@ -43386,11 +43386,11 @@
         "step three/T0170/execution-report.md",
         "step three/T0170/evidence/verification.md"
       ],
-      "notes": "A001 adds first-release request limits of at most 3 rounds, 3 hosts per round and 9 total host attempts. The requirement specified no numeric values; this decision is documented. Budget progress is in-memory per Android runtime instance and is reserved conservatively across cancellation. No automatic retry loop, persistent cross-process ledger or all-round duplicate-host rule is claimed. T0169 selector contract revalidation remains in_review pending exact-head CI.",
+      "notes": "A001 adds first-release request limits of at most 3 rounds, 3 hosts per round and 9 total host attempts. The requirement specified no numeric values; this decision is documented. Budget progress is in-memory per Android runtime instance and is reserved conservatively across cancellation. No automatic retry loop, persistent cross-process ledger or all-round duplicate-host rule is claimed. T0169 selector contract revalidation remains in_review pending exact-head CI. A001 quality gate failed on one pre-existing source-string guard; A002 restores the exact expression and records the failure append-only. Exact A002 CI is pending.",
       "execution_summary": {
-        "attempt_count": 1,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "T0170-A001",
+        "attempt_count": 2,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "T0170-A002",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/requests/DistributedRequest.kt",
@@ -43411,7 +43411,14 @@
         ],
         "related_commits": [],
         "tests_passed": [],
-        "tests_failed": [],
+        "tests_failed": [
+          {
+            "name": "Step Three quality gate — V 3.0.717",
+            "result": "failed",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41216834757",
+            "summary": "308 Python tests, one source-contract assertion failure in test_android_inference_round_timer_contract."
+          }
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -43440,8 +43447,8 @@
         {
           "attempt_id": "T0170-A001",
           "started_at": "2026-10-31T15:49:40.209Z",
-          "ended_at": "2026-10-31T15:49:40.209Z",
-          "result": "partial",
+          "ended_at": "2026-10-31T15:51:35.205Z",
+          "result": "failed",
           "summary": "Implemented first-release per-request round and total-host ceilings in the Android request model, selector, dispatcher and runtime. Added JVM/Python regression coverage and task evidence. Exact-head CI remains pending, so acceptance is not yet confirmed.",
           "changed_files": [
             "src/Client.Android/app/src/main/java/com/whitep/client/requests/DistributedRequest.kt",
@@ -43463,22 +43470,19 @@
           "commit_sha": null,
           "tests": [
             {
-              "name": "Android KtLint / assembleDebug / testDebugUnitTest / generated Protobuf",
-              "result": "pending",
-              "summary": "Not yet run on the new exact main commit."
+              "name": "Step Three quality gate — V 3.0.717",
+              "result": "failed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41216834757",
+              "summary": "308 Python tests ran; one failed in test_android_inference_round_timer_contract because a source-string guard expected the explicit distributedRequest.requestId expression."
             },
             {
-              "name": "Step Three Python and graph quality gate",
+              "name": "White-P product build — V 3.0.717",
               "result": "pending",
-              "summary": "Not yet run on the new exact main commit."
-            },
-            {
-              "name": "Windows WPF and HostLifecycle workflow",
-              "result": "pending",
-              "summary": "Not yet run on the new exact main commit."
+              "url": "https://github.com/artinrahimii/project/actions/runs/41216834811",
+              "summary": "Android APK, Windows WPF and HostLifecycle jobs were still in progress at inspection time."
             }
           ],
-          "failure_details": null,
+          "failure_details": "The Step Three quality gate failed because the existing test_android_inference_round_timer_contract.py assertion expected the literal expression AttemptKey(distributedRequest.requestId, attempt.attemptId), while the implementation used the equivalent local requestId. Corrected in A002 by restoring the explicit property expression; rerun on A002 is required.",
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [
@@ -43487,7 +43491,38 @@
             "Added per-request serialized in-memory budget accounting in AndroidInferenceRequestRuntime.",
             "No Protobuf or wire-schema change."
           ],
-          "follow_up": "Commit this partial implementation to main as V 3.0.717, inspect all Actions runs for that exact commit SHA, fix any failures, and only then mark T0170 done or append a further attempt."
+          "follow_up": "Re-run both exact-head workflows after A002 and inspect all Android, Windows, HostLifecycle and Step Three checks before task completion."
+        },
+        {
+          "attempt_id": "T0170-A002",
+          "started_at": "2026-10-31T15:53:20.766Z",
+          "ended_at": "2026-10-31T15:53:20.766Z",
+          "result": "partial",
+          "summary": "Corrected the exact source expression required by the pre-existing round-timer contract test after A001 quality gate exposed a text-guard mismatch. Updated execution and evidence records; exact-head CI rerun is pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
+            "step three/T0170/execution-report.md",
+            "step three/T0170/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Step Three quality gate — V 3.0.718",
+              "result": "pending",
+              "summary": "Awaiting exact-head rerun."
+            },
+            {
+              "name": "White-P product build — V 3.0.718",
+              "result": "pending",
+              "summary": "Awaiting exact-head rerun."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect the exact V 3.0.718 Actions runs. Resolve any failures, then mark T0170 done only after the acceptance tests and T0169 contract revalidation pass."
         }
       ]
     },
@@ -55202,7 +55237,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-31T15:49:40.209Z",
+  "updated_at": "2026-10-31T15:53:20.766Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

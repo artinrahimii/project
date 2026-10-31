@@ -2,8 +2,8 @@
 
 ## Base revision and scope
 
-- Branch: `main`
-- Base commit: `6338ed92c0c7508a9b07b3ee0eafd3a1abaff20a` (`V 3.0.716`)
+- Initial base: `6338ed92c0c7508a9b07b3ee0eafd3a1abaff20a` (`V 3.0.716`), branch `main`.
+- A001 implementation commit: `17077b464d0946d28789d0a4f8378f80bee09845` (`V 3.0.717`).
 - Task: cap per-request round count and total attempted hosts at first-release limits.
 
 ## Reviewed source evidence
@@ -15,9 +15,17 @@
 - `InferenceRequestPayloadBuilder.kt` and its tests provide the canonical generated `InferenceRequest` contract consumed by selection and dispatch. T0170 does not change the Protobuf wire schema.
 - `step three/T0169/execution-report.md` bounded T0169 to the selector boundary and did not claim a complete automatic multi-round coordinator.
 
-## Verification status
+## Exact-head CI evidence: A001
 
-- Request-model, selector, dispatcher and runtime regression tests: added; awaiting exact-head CI.
-- Python source-contract tests: updated; awaiting exact-head quality gate.
-- Local Gradle/build execution: not run; this session did not have a checked-out repository or working Git network access.
+- Step Three quality gate: **FAILED**, run [41216834757](https://github.com/artinrahimii/project/actions/runs/41216834757), job 124583012254.
+- 308 Python tests ran; 1 failed. The failed regression expected the previous literal source expression for the request/attempt map key while the runtime had used the equivalent local `requestId` variable.
+- Corrected in A002 by restoring the exact property expression. A001 failure is retained in T0170 execution history.
+- White-P product workflow run [41216834811](https://github.com/artinrahimii/project/actions/runs/41216834811) had Android, Windows and HostLifecycle jobs in progress when first inspected; no success is inferred from that state.
+
+## A002 verification
+
+- Runtime source compatibility correction: committed separately in the A002 version after the A001 quality-gate failure.
+- Exact-head Step Three quality and product workflows: pending after A002 push.
+- Android KtLint, assembleDebug, testDebugUnitTest, generated Protobuf, Windows WPF and HostLifecycle have not yet been confirmed for A002.
+- Local Gradle/build execution: not run; this connected session has no checked-out repository with a working Git network path.
 - No task-wide acceptance or product-release completion is claimed at this stage.

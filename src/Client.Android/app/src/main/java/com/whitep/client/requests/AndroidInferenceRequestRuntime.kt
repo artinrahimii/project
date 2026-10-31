@@ -189,7 +189,7 @@ class AndroidInferenceRequestRuntime private constructor(
                 result.attempts
                     .filter { attempt -> attempt.submissionStatus == InferenceAttemptSubmissionStatus.QUEUED }
                     .forEach { attempt ->
-                        attemptRoundWindows[AttemptKey(requestId, attempt.attemptId)] = roundWindow
+                        attemptRoundWindows[AttemptKey(distributedRequest.requestId, attempt.attemptId)] = roundWindow
                     }
             } else if (previousState == null) {
                 requestBudgetStates.remove(requestId)
