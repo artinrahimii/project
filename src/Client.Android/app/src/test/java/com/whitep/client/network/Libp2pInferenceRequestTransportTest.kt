@@ -195,6 +195,10 @@ class Libp2pInferenceRequestTransportTest {
                     assertTrue(result is InferenceRoundDispatchResult.Dispatched)
                     val attempts = (result as InferenceRoundDispatchResult.Dispatched).attempts
                     assertEquals(3, attempts.size)
+                    assertEquals(
+                        DistributedRequestProgress(roundsDispatched = 1, hostsAttempted = 3),
+                        client.dispatchProgress(requestId),
+                    )
                     assertEquals(3, attempts.map { it.ephemeralHostId }.toSet().size)
                     assertEquals(3, attempts.map { it.attemptId }.toSet().size)
                     assertEquals(
@@ -384,6 +388,10 @@ class Libp2pInferenceRequestTransportTest {
                 assertTrue(dispatch is InferenceRoundDispatchResult.Dispatched)
                 val attempts = (dispatch as InferenceRoundDispatchResult.Dispatched).attempts
                 assertEquals(3, attempts.size)
+                assertEquals(
+                    DistributedRequestProgress(roundsDispatched = 1, hostsAttempted = 3),
+                    runtimeClient.dispatchProgress(requestId),
+                )
                 assertEquals(3, attempts.map { attempt -> attempt.ephemeralHostId }.toSet().size)
                 assertEquals(3, attempts.map { attempt -> attempt.attemptId }.toSet().size)
                 val attemptStatusSummary =

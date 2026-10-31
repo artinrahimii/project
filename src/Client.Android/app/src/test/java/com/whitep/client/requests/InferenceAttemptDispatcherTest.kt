@@ -63,6 +63,7 @@ class InferenceAttemptDispatcherTest {
                     capsule = capsule,
                     maxOutputTokens = 128,
                     protocolVersion = PROTOCOL_VERSION,
+                    progress = DistributedRequestProgress(),
                 )
 
             assertTrue(result is InferenceRoundDispatchResult.Dispatched)
@@ -102,6 +103,7 @@ class InferenceAttemptDispatcherTest {
                     capsule(),
                     64,
                     PROTOCOL_VERSION,
+                    progress = DistributedRequestProgress(),
                 )
 
             assertEquals(
@@ -131,12 +133,79 @@ class InferenceAttemptDispatcherTest {
                     capsule(),
                     64,
                     PROTOCOL_VERSION,
+                    progress = DistributedRequestProgress(),
                 )
 
             assertEquals(
                 InferenceRoundDispatchResult.Rejected(
                     InferenceRoundDispatchRejection.TOO_MANY_HOSTS,
                 ),
+                result,
+            )
+            assertTrue(transport.requests.isEmpty())
+        }
+
+    @Test
+    fun rejectsRoundAfterTheConfiguredMaximumBeforeSubmitting() =
+        runBlocking {
+            val transport = RecordingTransport()
+            val result =
+                dispatcher(transport).dispatchRound(
+                    distributedRequest(maxRounds = 1, maxTotalHosts = 3),
+                    listOf(candidate("host-a")),
+                    MODEL_ID,
+                    "message",
+                    capsule(),
+                    64,
+                    PROTOCOL_VERSION,
+                    progress = DistributedRequestProgress(roundsDispatched = 1, hostsAttempted = 1),
+                )
+            assertEquals(
+                InferenceRoundDispatchResult.Rejected(InferenceRoundDispatchRejection.ROUND_LIMIT_REACHED),
+                result,
+            )
+            assertTrue(transport.requests.isEmpty())
+        }
+
+    @Test
+    fun rejectsBatchLargerThanRemainingTotalHostBudgetBeforeSubmitting() =
+        runBlocking {
+            val transport = RecordingTransport()
+            val result =
+                dispatcher(transport).dispatchRound(
+                    distributedRequest(maxRounds = 3, maxTotalHosts = 2),
+                    listOf(candidate("host-a"), candidate("host-b"), candidate("host-c")),
+                    MODEL_ID,
+                    "message",
+                    capsule(),
+                    64,
+                    PROTOCOL_VERSION,
+                    progress = DistributedRequestProgress(),
+                )
+            assertEquals(
+                InferenceRoundDispatchResult.Rejected(InferenceRoundDispatchRejection.TOTAL_HOST_LIMIT_REACHED),
+                result,
+            )
+            assertTrue(transport.requests.isEmpty())
+        }
+
+    @Test
+    fun rejectsInconsistentRequestProgressBeforeSubmitting() =
+        runBlocking {
+            val transport = RecordingTransport()
+            val result =
+                dispatcher(transport).dispatchRound(
+                    distributedRequest(),
+                    listOf(candidate("host-a")),
+                    MODEL_ID,
+                    "message",
+                    capsule(),
+                    64,
+                    PROTOCOL_VERSION,
+                    progress = DistributedRequestProgress(roundsDispatched = 2, hostsAttempted = 1),
+                )
+            assertEquals(
+                InferenceRoundDispatchResult.Rejected(InferenceRoundDispatchRejection.INVALID_BUDGET_STATE),
                 result,
             )
             assertTrue(transport.requests.isEmpty())
@@ -193,6 +262,7 @@ class InferenceAttemptDispatcherTest {
                     capsule(),
                     64,
                     PROTOCOL_VERSION,
+                    progress = DistributedRequestProgress(),
                 )
 
             assertEquals(
@@ -228,6 +298,7 @@ class InferenceAttemptDispatcherTest {
                     capsule(),
                     64,
                     PROTOCOL_VERSION,
+                    progress = DistributedRequestProgress(),
                 )
 
             assertTrue(result is InferenceRoundDispatchResult.Dispatched)
@@ -267,6 +338,7 @@ class InferenceAttemptDispatcherTest {
                     64,
                     PROTOCOL_VERSION,
                     roundWindow = roundWindow,
+                    progress = DistributedRequestProgress(),
                 )
 
             assertTrue(result is InferenceRoundDispatchResult.Dispatched)
@@ -299,6 +371,7 @@ class InferenceAttemptDispatcherTest {
                     64,
                     PROTOCOL_VERSION,
                     roundWindow = roundWindow,
+                    progress = DistributedRequestProgress(),
                 )
 
             assertEquals(
@@ -326,6 +399,7 @@ class InferenceAttemptDispatcherTest {
                     capsule(),
                     64,
                     PROTOCOL_VERSION,
+                    progress = DistributedRequestProgress(),
                 )
 
             assertEquals(
@@ -346,6 +420,7 @@ class InferenceAttemptDispatcherTest {
             capsule(),
             64,
             PROTOCOL_VERSION,
+            progress = DistributedRequestProgress(),
         )
 
     private fun dispatcher(
@@ -353,11 +428,16 @@ class InferenceAttemptDispatcherTest {
         attemptIdGenerator: () -> String = { UUID.randomUUID().toString() },
     ): InferenceAttemptDispatcher = InferenceAttemptDispatcher(transport, attemptIdGenerator)
 
-    private fun distributedRequest(status: DistributedRequestStatus = DistributedRequestStatus.QUEUED) =
+    private fun distributedRequest(
+        status: DistributedRequestStatus = DistributedRequestStatus.QUEUED,
+        maxRounds: Int = 3,
+        maxTotalHosts: Int = 9,
+    ) =
         DistributedRequest(
             requestId = "ephemeral-request-42",
             deadlineUnixMs = 1_798_000_000_000L,
-            maxRounds = 3,
+            maxRounds = maxRounds,
+            maxTotalHosts = maxTotalHosts,
             status = status,
         )
 

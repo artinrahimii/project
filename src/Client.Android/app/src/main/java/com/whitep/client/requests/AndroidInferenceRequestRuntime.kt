@@ -9,6 +9,9 @@ import com.whitep.client.network.PeerTrustVerifier
 import com.whitep.client.network.RendezvousPeerDirectoryClient
 import com.whitep.client.network.RendezvousPeerEndpoint
 import io.libp2p.core.crypto.PrivKey
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withTimeoutOrNull
 import org.whitep.shared.contracts.v1.InferenceResponse
 import java.io.Closeable
@@ -38,6 +41,14 @@ class AndroidInferenceRequestRuntime private constructor(
         val attemptId: String,
     )
 
+    private data class RequestBudgetState(
+        val maxRounds: Int,
+        val maxTotalHosts: Int,
+        val progress: DistributedRequestProgress,
+    )
+
+    private val requestBudgetStates = ConcurrentHashMap<String, RequestBudgetState>()
+    private val requestBudgetLocks = ConcurrentHashMap<String, Mutex>()
     private val dispatcher = InferenceAttemptDispatcher(transport)
     private val responseCollector = InferenceRoundResponseCollector()
     private val attemptRoundWindows = ConcurrentHashMap<AttemptKey, InferenceRoundTimer.Window>()
@@ -110,6 +121,12 @@ class AndroidInferenceRequestRuntime private constructor(
         requirePeerTrustStore().revokeTrust(peerId)
     }
 
+    /** Current in-memory budget progress, for the request's next selection decision. */
+    fun dispatchProgress(requestId: String): DistributedRequestProgress {
+        require(requestId.isNotBlank()) { "requestId must not be blank." }
+        return requestBudgetStates[requestId]?.progress ?: DistributedRequestProgress()
+    }
+
     suspend fun dispatchRound(
         distributedRequest: DistributedRequest,
         selectedHosts: List<HostCandidate>,
@@ -119,26 +136,68 @@ class AndroidInferenceRequestRuntime private constructor(
         maxOutputTokens: Int,
         protocolVersion: String,
     ): InferenceRoundDispatchResult {
-        val roundWindow = roundTimer.startRound(distributedRequest.deadlineUnixMs)
-        val result =
-            dispatcher.dispatchRound(
-                distributedRequest = distributedRequest,
-                selectedHosts = selectedHosts,
-                modelId = modelId,
-                currentMessage = currentMessage,
-                capsule = capsule,
-                maxOutputTokens = maxOutputTokens,
-                protocolVersion = protocolVersion,
-                roundWindow = roundWindow,
-            )
-        if (result is InferenceRoundDispatchResult.Dispatched) {
-            result.attempts
-                .filter { attempt -> attempt.submissionStatus == InferenceAttemptSubmissionStatus.QUEUED }
-                .forEach { attempt ->
-                    attemptRoundWindows[AttemptKey(distributedRequest.requestId, attempt.attemptId)] = roundWindow
+        val requestId = distributedRequest.requestId
+        val lock = requestBudgetLocks.computeIfAbsent(requestId) { Mutex() }
+        return lock.withLock {
+            val previousState = requestBudgetStates[requestId]
+            if (previousState != null &&
+                (previousState.maxRounds != distributedRequest.maxRounds ||
+                    previousState.maxTotalHosts != distributedRequest.maxTotalHosts)
+            ) {
+                return@withLock InferenceRoundDispatchResult.Rejected(
+                    InferenceRoundDispatchRejection.INVALID_BUDGET_STATE,
+                )
+            }
+
+            val progress = previousState?.progress ?: DistributedRequestProgress()
+            // Reserve before suspending in transport: cancellation after a partial send must fail
+            // closed rather than allowing the same request to exceed its host-attempt ceiling.
+            if (selectedHosts.size in 1..HostCandidateSelector.MAX_HOSTS_PER_ROUND) {
+                requestBudgetStates[requestId] =
+                    RequestBudgetState(
+                        maxRounds = distributedRequest.maxRounds,
+                        maxTotalHosts = distributedRequest.maxTotalHosts,
+                        progress = progress.afterDispatch(selectedHosts.size),
+                    )
+            }
+
+            val roundWindow = roundTimer.startRound(distributedRequest.deadlineUnixMs)
+            val result =
+                try {
+                    dispatcher.dispatchRound(
+                        distributedRequest = distributedRequest,
+                        selectedHosts = selectedHosts,
+                        modelId = modelId,
+                        currentMessage = currentMessage,
+                        capsule = capsule,
+                        maxOutputTokens = maxOutputTokens,
+                        protocolVersion = protocolVersion,
+                        progress = progress,
+                        roundWindow = roundWindow,
+                    )
+                } catch (cancellation: CancellationException) {
+                    throw cancellation
                 }
+
+            if (result is InferenceRoundDispatchResult.Dispatched) {
+                requestBudgetStates[requestId] =
+                    RequestBudgetState(
+                        maxRounds = distributedRequest.maxRounds,
+                        maxTotalHosts = distributedRequest.maxTotalHosts,
+                        progress = progress.afterDispatch(result.attempts.size),
+                    )
+                result.attempts
+                    .filter { attempt -> attempt.submissionStatus == InferenceAttemptSubmissionStatus.QUEUED }
+                    .forEach { attempt ->
+                        attemptRoundWindows[AttemptKey(requestId, attempt.attemptId)] = roundWindow
+                    }
+            } else if (previousState == null) {
+                requestBudgetStates.remove(requestId)
+            } else {
+                requestBudgetStates[requestId] = previousState
+            }
+            result
         }
-        return result
     }
 
     suspend fun awaitResponse(
@@ -200,6 +259,8 @@ class AndroidInferenceRequestRuntime private constructor(
 
     override fun close() {
         attemptRoundWindows.clear()
+        requestBudgetStates.clear()
+        requestBudgetLocks.clear()
         transport.close()
     }
 

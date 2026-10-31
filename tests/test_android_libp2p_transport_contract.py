@@ -91,6 +91,10 @@ class AndroidLibp2pTransportContractTests(unittest.TestCase):
         self.assertIn("InferenceAttemptDispatcher(transport)", source)
         self.assertIn("trustPeerAfterExplicitConfirmation", source)
         self.assertIn("suspend fun dispatchRound(", source)
+        self.assertIn("fun dispatchProgress(requestId: String)", source)
+        self.assertIn("requestBudgetStates", source)
+        self.assertIn("requestBudgetLocks.computeIfAbsent(requestId) { Mutex() }", source)
+        self.assertIn("progress.afterDispatch(result.attempts.size)", source)
         self.assertIn("suspend fun awaitResponse(", source)
         self.assertIn("Callers must supply HostCandidate values", source)
 
@@ -144,6 +148,8 @@ class AndroidLibp2pTransportContractTests(unittest.TestCase):
         source = TRANSPORT_TEST.read_text(encoding="utf-8")
         self.assertIn("AndroidInferenceRequestRuntime(", source)
         self.assertIn("client.dispatchRound(", source)
+        self.assertIn("client.dispatchProgress(requestId)", source)
+        self.assertIn("runtimeClient.dispatchProgress(requestId)", source)
         self.assertIn("client.awaitResponse(", source)
         self.assertIn("dispatchesOneSharedRequestWithDistinctAttemptsOverAuthenticatedPeerStreams", source)
 

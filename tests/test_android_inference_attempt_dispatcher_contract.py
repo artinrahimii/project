@@ -23,6 +23,11 @@ class AndroidInferenceAttemptDispatcherContractTests(unittest.TestCase):
         source = DISPATCHER.read_text(encoding="utf-8")
 
         self.assertIn("HostCandidateSelector.MAX_HOSTS_PER_ROUND", source)
+        self.assertIn("progress.roundsDispatched >= distributedRequest.maxRounds", source)
+        self.assertIn("InferenceRoundDispatchRejection.ROUND_LIMIT_REACHED", source)
+        self.assertIn("InferenceRoundDispatchRejection.TOTAL_HOST_LIMIT_REACHED", source)
+        self.assertIn("InferenceRoundDispatchRejection.INVALID_BUDGET_STATE", source)
+        self.assertIn("selectedHosts.size > distributedRequest.maxTotalHosts - progress.hostsAttempted", source)
         self.assertIn("DUPLICATE_HOST_IDENTITY", source)
         self.assertIn("DUPLICATE_ATTEMPT_ID", source)
         self.assertIn("INVALID_HOST_IDENTITY", source)
@@ -42,6 +47,9 @@ class AndroidInferenceAttemptDispatcherContractTests(unittest.TestCase):
             "rejectsTerminalRequestBeforeSubmitting",
             "keepsSubmittingOtherHostsAfterTransportRejectsOrThrows",
             "rejectsDuplicateAttemptIdsBeforeSubmitting",
+            "rejectsRoundAfterTheConfiguredMaximumBeforeSubmitting",
+            "rejectsBatchLargerThanRemainingTotalHostBudgetBeforeSubmitting",
+            "rejectsInconsistentRequestProgressBeforeSubmitting",
         )
         for test_name in expected_tests:
             with self.subTest(test_name=test_name):

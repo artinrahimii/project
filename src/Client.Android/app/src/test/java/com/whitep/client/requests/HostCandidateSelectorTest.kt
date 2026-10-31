@@ -134,6 +134,28 @@ class HostCandidateSelectorTest {
     }
 
     @Test
+    fun selectFirstRoundHonorsTheTotalHostBudget() {
+        val selected =
+            HostCandidateSelector.selectFirstRound(
+                distributedRequest = distributedRequest(maxRounds = 3, maxTotalHosts = 1),
+                request = validRequest(),
+                candidates = listOf(candidate("host-c"), candidate("host-a"), candidate("host-b")),
+            )
+        assertEquals(listOf("host-a"), selected.map { it.announcement.ephemeralHostId })
+    }
+
+    @Test
+    fun rejectsFirstRoundWhenRequestIdentityDoesNotMatch() {
+        val selected =
+            HostCandidateSelector.selectFirstRound(
+                distributedRequest = distributedRequest(requestId = "different-request"),
+                request = validRequest(),
+                candidates = listOf(candidate("host-a")),
+            )
+        assertTrue(selected.isEmpty())
+    }
+
+    @Test
     fun selectsNextThreeDistinctHostsWhenThePreviousRoundHasNoValidResponse() {
         val previousAttempts =
             listOf(
@@ -165,14 +187,76 @@ class HostCandidateSelectorTest {
 
         val selected =
             HostCandidateSelector.selectNextRound(
+                distributedRequest = distributedRequest(),
                 request = validRequest(),
                 candidates = candidates,
                 previousRoundAttempts = previousAttempts,
                 previousRoundResponses = completedRound,
+                progress = DistributedRequestProgress(roundsDispatched = 1, hostsAttempted = 3),
             )
 
         assertEquals(listOf("host-d", "host-e", "host-f"), selected.map { it.announcement.ephemeralHostId })
         assertEquals(HostCandidateSelector.MAX_HOSTS_PER_ROUND, selected.size)
+    }
+
+    @Test
+    fun doesNotSelectAnotherRoundAfterTheConfiguredRoundLimit() {
+        val attempts =
+            listOf(
+                InferenceHostAttempt("host-a", "attempt-a", InferenceAttemptSubmissionStatus.QUEUED),
+                InferenceHostAttempt("host-b", "attempt-b", InferenceAttemptSubmissionStatus.FAILED),
+                InferenceHostAttempt("host-c", "attempt-c", InferenceAttemptSubmissionStatus.TIMED_OUT),
+            )
+        val selected =
+            HostCandidateSelector.selectNextRound(
+                distributedRequest = distributedRequest(maxRounds = 1, maxTotalHosts = 3),
+                request = validRequest(),
+                candidates = listOf(candidate("host-d")),
+                previousRoundAttempts = attempts,
+                previousRoundResponses = InferenceRoundResponseCollection(emptyList(), emptyList()),
+                progress = DistributedRequestProgress(roundsDispatched = 1, hostsAttempted = 3),
+            )
+        assertTrue(selected.isEmpty())
+    }
+
+    @Test
+    fun capsNextBatchAtTheRemainingTotalHostBudget() {
+        val attempts =
+            listOf(
+                InferenceHostAttempt("host-a", "attempt-a", InferenceAttemptSubmissionStatus.QUEUED),
+                InferenceHostAttempt("host-b", "attempt-b", InferenceAttemptSubmissionStatus.FAILED),
+                InferenceHostAttempt("host-c", "attempt-c", InferenceAttemptSubmissionStatus.TIMED_OUT),
+            )
+        val selected =
+            HostCandidateSelector.selectNextRound(
+                distributedRequest = distributedRequest(maxRounds = 3, maxTotalHosts = 4),
+                request = validRequest(),
+                candidates = listOf(candidate("host-d"), candidate("host-e")),
+                previousRoundAttempts = attempts,
+                previousRoundResponses = InferenceRoundResponseCollection(emptyList(), emptyList()),
+                progress = DistributedRequestProgress(roundsDispatched = 1, hostsAttempted = 3),
+            )
+        assertEquals(listOf("host-d"), selected.map { it.announcement.ephemeralHostId })
+    }
+
+    @Test
+    fun doesNotSelectAnotherBatchWhenTheTotalHostBudgetIsExhausted() {
+        val attempts =
+            listOf(
+                InferenceHostAttempt("host-a", "attempt-a", InferenceAttemptSubmissionStatus.QUEUED),
+                InferenceHostAttempt("host-b", "attempt-b", InferenceAttemptSubmissionStatus.FAILED),
+                InferenceHostAttempt("host-c", "attempt-c", InferenceAttemptSubmissionStatus.TIMED_OUT),
+            )
+        val selected =
+            HostCandidateSelector.selectNextRound(
+                distributedRequest = distributedRequest(maxRounds = 3, maxTotalHosts = 3),
+                request = validRequest(),
+                candidates = listOf(candidate("host-d")),
+                previousRoundAttempts = attempts,
+                previousRoundResponses = InferenceRoundResponseCollection(emptyList(), emptyList()),
+                progress = DistributedRequestProgress(roundsDispatched = 1, hostsAttempted = 3),
+            )
+        assertTrue(selected.isEmpty())
     }
 
     @Test
@@ -196,10 +280,12 @@ class HostCandidateSelectorTest {
 
         val selected =
             HostCandidateSelector.selectNextRound(
+                distributedRequest = distributedRequest(),
                 request = validRequest(),
                 candidates = listOf(candidate("host-b"), candidate("host-c")),
                 previousRoundAttempts = previousAttempts,
                 previousRoundResponses = completedRound,
+                progress = DistributedRequestProgress(roundsDispatched = 1, hostsAttempted = 1),
             )
 
         assertTrue(selected.isEmpty())
@@ -213,15 +299,18 @@ class HostCandidateSelectorTest {
         assertTrue(
             HostCandidateSelector
                 .selectNextRound(
+                    distributedRequest = distributedRequest(),
                     request = validRequest(),
                     candidates = candidates,
                     previousRoundAttempts = emptyList(),
                     previousRoundResponses = completedRound,
+                    progress = DistributedRequestProgress(roundsDispatched = 1, hostsAttempted = 1),
                 ).isEmpty(),
         )
         assertTrue(
             HostCandidateSelector
                 .selectNextRound(
+                    distributedRequest = distributedRequest(),
                     request = validRequest(),
                     candidates = candidates,
                     previousRoundAttempts =
@@ -230,19 +319,34 @@ class HostCandidateSelectorTest {
                             InferenceHostAttempt("host-a", "attempt-b", InferenceAttemptSubmissionStatus.QUEUED),
                         ),
                     previousRoundResponses = completedRound,
+                    progress = DistributedRequestProgress(roundsDispatched = 1, hostsAttempted = 2),
                 ).isEmpty(),
         )
         assertTrue(
             HostCandidateSelector
                 .selectNextRound(
+                    distributedRequest = distributedRequest(),
                     request = validRequest(),
                     candidates = candidates,
                     previousRoundAttempts =
                         listOf(InferenceHostAttempt(" ", "attempt-a", InferenceAttemptSubmissionStatus.QUEUED)),
                     previousRoundResponses = completedRound,
+                    progress = DistributedRequestProgress(roundsDispatched = 1, hostsAttempted = 1),
                 ).isEmpty(),
         )
     }
+
+    private fun distributedRequest(
+        requestId: String = "request-001",
+        maxRounds: Int = 3,
+        maxTotalHosts: Int = 9,
+    ): DistributedRequest =
+        DistributedRequest(
+            requestId = requestId,
+            deadlineUnixMs = 4_102_444_800_000L,
+            maxRounds = maxRounds,
+            maxTotalHosts = maxTotalHosts,
+        )
 
     private fun validRequest(
         requestId: String = "request-001",

@@ -42885,7 +42885,7 @@
         "step three/T0169/execution-report.md",
         "step three/T0169/evidence/verification.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0169-A001 (2026-10-31T14:51:46.890Z): Reviewed T0168 -> T0169 and T0160 -> T0169 against the completed response-collection result and canonical InferenceRequest contract. Both existing blocks edges are retained and validated as contract_or_interface_dependency; evidence and rationale are in edge_change_log. Added an excluded-host set to HostCandidateSelector and a response-gated selectNextRound API: any valid prior response suppresses retry; a completed no-response round excludes every prior attempt host and chooses up to three next compatible hosts. Added three JVM regressions and extended the Python source contract. Exact-head CI pending; status remains in_progress.\n\nT0169-A001 exact-head V 3.0.711 CI: Step Three quality, HostLifecycle and all Windows WPF format/build/Protobuf/startup/security/DPAPI checks passed. Android KtLint failed only on three missing line-break-before-dot findings in HostCandidateSelectorTest.kt lines 214, 222 and 234; Android APK/JVM/Protobuf were skipped. A002 changes only those three test-source formatting locations; no runtime behavior or interface change.\n\nT0169-A002 exact-head V 3.0.712 CI: Step Three quality, all Windows WPF checks and HostLifecycle passed. Android KtLint still found three formatting issues in the new chained assertions: the selector receiver requires a leading-dot continuation, while `.isEmpty()` must remain attached to the closing invocation line. APK/JVM/Protobuf were skipped. A003 applies exactly this fluent-call layout; runtime logic is unchanged.\n\nT0169-A003 exact-head V 3.0.713 CI: Step Three quality, HostLifecycle and all Windows WPF checks passed. Android KtLint accepted leading-dot method chaining but reported three selector-call argument/close blocks under-indented by four spaces. APK/JVM/Protobuf were skipped. A004 adds the required four-space indentation to these test-only blocks.\n\nT0169-A004 exact-head V 3.0.714 CI: Step Three quality, HostLifecycle and all Windows WPF checks passed. Android KtLint accepted receiver chaining and argument indentation, and reported only three close-paren lines over-indented (20 spaces instead of 16) at lines 220, 233 and 243. APK/JVM/Protobuf skipped. A005 reduces only those three close-line indents.\n\nT0169-A005 (V 3.0.715, 2026-10-31T15:14:41.561Z): Exact-head CI passed. Android ktlintCheck, assembleDebug, testDebugUnitTest all passed. Android JVM report artifact 13047157673 independently inspected: 128 tests, zero failures, zero ignored; HostCandidateSelectorTest has 11 tests and all three added T0169 regressions passed. Generated Protobuf Java and Kotlin validation and Android APK/test report uploads passed. Windows WPF full build/startup/process/policy/capability/DPAPI checks and artifact upload passed; HostLifecycle passed; Step Three Python/graph quality passed. T0169 status changed to done with evidence. The API implements next-batch selection at HostCandidateSelector boundary; it does not assert that AndroidInferenceRequestRuntime already owns a complete automatic multi-round orchestration loop. T0170 remains the next dependent task and its own round/total-host limits must be reviewed independently.\n",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0169-A001 (2026-10-31T14:51:46.890Z): Reviewed T0168 -> T0169 and T0160 -> T0169 against the completed response-collection result and canonical InferenceRequest contract. Both existing blocks edges are retained and validated as contract_or_interface_dependency; evidence and rationale are in edge_change_log. Added an excluded-host set to HostCandidateSelector and a response-gated selectNextRound API: any valid prior response suppresses retry; a completed no-response round excludes every prior attempt host and chooses up to three next compatible hosts. Added three JVM regressions and extended the Python source contract. Exact-head CI pending; status remains in_progress.\n\nT0169-A001 exact-head V 3.0.711 CI: Step Three quality, HostLifecycle and all Windows WPF format/build/Protobuf/startup/security/DPAPI checks passed. Android KtLint failed only on three missing line-break-before-dot findings in HostCandidateSelectorTest.kt lines 214, 222 and 234; Android APK/JVM/Protobuf were skipped. A002 changes only those three test-source formatting locations; no runtime behavior or interface change.\n\nT0169-A002 exact-head V 3.0.712 CI: Step Three quality, all Windows WPF checks and HostLifecycle passed. Android KtLint still found three formatting issues in the new chained assertions: the selector receiver requires a leading-dot continuation, while `.isEmpty()` must remain attached to the closing invocation line. APK/JVM/Protobuf were skipped. A003 applies exactly this fluent-call layout; runtime logic is unchanged.\n\nT0169-A003 exact-head V 3.0.713 CI: Step Three quality, HostLifecycle and all Windows WPF checks passed. Android KtLint accepted leading-dot method chaining but reported three selector-call argument/close blocks under-indented by four spaces. APK/JVM/Protobuf were skipped. A004 adds the required four-space indentation to these test-only blocks.\n\nT0169-A004 exact-head V 3.0.714 CI: Step Three quality, HostLifecycle and all Windows WPF checks passed. Android KtLint accepted receiver chaining and argument indentation, and reported only three close-paren lines over-indented (20 spaces instead of 16) at lines 220, 233 and 243. APK/JVM/Protobuf skipped. A005 reduces only those three close-line indents.\n\nT0169-A005 (V 3.0.715, 2026-10-31T15:14:41.561Z): Exact-head CI passed. Android ktlintCheck, assembleDebug, testDebugUnitTest all passed. Android JVM report artifact 13047157673 independently inspected: 128 tests, zero failures, zero ignored; HostCandidateSelectorTest has 11 tests and all three added T0169 regressions passed. Generated Protobuf Java and Kotlin validation and Android APK/test report uploads passed. Windows WPF full build/startup/process/policy/capability/DPAPI checks and artifact upload passed; HostLifecycle passed; Step Three Python/graph quality passed. T0169 status changed to done with evidence. The API implements next-batch selection at HostCandidateSelector boundary; it does not assert that AndroidInferenceRequestRuntime already owns a complete automatic multi-round orchestration loop. T0170 remains the next dependent task and its own round/total-host limits must be reviewed independently.\n T0170 extends the selector API with request budget progress. T0169's selector regression suite must be rerun on T0170's exact commit; contract revalidation is in_review until CI confirms it.",
       "execution_summary": {
         "attempt_count": 5,
         "failed_attempt_count": 3,
@@ -43057,10 +43057,20 @@
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
-          "affected_by_contract_changes": [],
-          "review_evidence": []
+          "state": "in_review",
+          "triggering_contracts": [
+            "HostCandidateSelector.selectNextRound now receives DistributedRequest and DistributedRequestProgress to enforce first-release budgets."
+          ],
+          "affected_by_contract_changes": [
+            "T0170",
+            "T0171"
+          ],
+          "review_evidence": [
+            "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt",
+            "tests/test_android_host_candidate_selector_contract.py",
+            "tests/test_android_inference_attempt_dispatcher_contract.py"
+          ]
         }
       },
       "execution_history": [
@@ -43334,33 +43344,152 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0169 و T0160 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال انجام",
+      "actual_output_paths": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/DistributedRequest.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceAttemptDispatcher.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/DistributedRequestTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/network/Libp2pInferenceRequestTransportTest.kt",
+        "tests/test_android_distributed_request_contract.py",
+        "tests/test_android_host_candidate_selector_contract.py",
+        "tests/test_android_inference_attempt_dispatcher_contract.py",
+        "tests/test_android_libp2p_transport_contract.py",
+        "step three/T0170/execution-report.md",
+        "step three/T0170/evidence/verification.md",
+        "step three/project-graph.md"
+      ],
       "expected_output_paths": [
         "src/Client.Android/Requests/ + tests/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "step one/V1.0.md",
+        "step three/T0160/execution-report.md",
+        "step three/T0161/execution-report.md",
+        "step three/T0169/execution-report.md",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/DistributedRequest.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceAttemptDispatcher.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/DistributedRequestTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/network/Libp2pInferenceRequestTransportTest.kt",
+        "tests/test_android_distributed_request_contract.py",
+        "tests/test_android_host_candidate_selector_contract.py",
+        "tests/test_android_inference_attempt_dispatcher_contract.py",
+        "tests/test_android_libp2p_transport_contract.py",
+        "step three/T0170/execution-report.md",
+        "step three/T0170/evidence/verification.md"
+      ],
+      "notes": "A001 adds first-release request limits of at most 3 rounds, 3 hosts per round and 9 total host attempts. The requirement specified no numeric values; this decision is documented. Budget progress is in-memory per Android runtime instance and is reserved conservatively across cancellation. No automatic retry loop, persistent cross-process ledger or all-round duplicate-host rule is claimed. T0169 selector contract revalidation remains in_review pending exact-head CI.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0170-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Client.Android/app/src/main/java/com/whitep/client/requests/DistributedRequest.kt",
+          "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
+          "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceAttemptDispatcher.kt",
+          "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
+          "src/Client.Android/app/src/test/java/com/whitep/client/requests/DistributedRequestTest.kt",
+          "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt",
+          "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt",
+          "src/Client.Android/app/src/test/java/com/whitep/client/network/Libp2pInferenceRequestTransportTest.kt",
+          "tests/test_android_distributed_request_contract.py",
+          "tests/test_android_host_candidate_selector_contract.py",
+          "tests/test_android_inference_attempt_dispatcher_contract.py",
+          "tests/test_android_libp2p_transport_contract.py",
+          "step three/T0170/execution-report.md",
+          "step three/T0170/evidence/verification.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
-          "affected_by_contract_changes": [],
-          "review_evidence": []
+          "state": "in_review",
+          "triggering_contracts": [
+            "DistributedRequest maxRounds/maxTotalHosts and DistributedRequestProgress",
+            "HostCandidateSelector.selectFirstRound/selectNextRound progress-aware contract",
+            "InferenceAttemptDispatcher.dispatchRound budget-progress contract",
+            "AndroidInferenceRequestRuntime in-memory dispatchProgress contract"
+          ],
+          "affected_by_contract_changes": [
+            "T0169",
+            "T0171"
+          ],
+          "review_evidence": [
+            "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/network/Libp2pInferenceRequestTransportTest.kt",
+            "tests/test_android_host_candidate_selector_contract.py",
+            "tests/test_android_inference_attempt_dispatcher_contract.py",
+            "tests/test_android_libp2p_transport_contract.py"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0170-A001",
+          "started_at": "2026-10-31T15:49:40.209Z",
+          "ended_at": "2026-10-31T15:49:40.209Z",
+          "result": "partial",
+          "summary": "Implemented first-release per-request round and total-host ceilings in the Android request model, selector, dispatcher and runtime. Added JVM/Python regression coverage and task evidence. Exact-head CI remains pending, so acceptance is not yet confirmed.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/requests/DistributedRequest.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceAttemptDispatcher.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/requests/DistributedRequestTest.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/network/Libp2pInferenceRequestTransportTest.kt",
+            "tests/test_android_distributed_request_contract.py",
+            "tests/test_android_host_candidate_selector_contract.py",
+            "tests/test_android_inference_attempt_dispatcher_contract.py",
+            "tests/test_android_libp2p_transport_contract.py",
+            "step three/T0170/execution-report.md",
+            "step three/T0170/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Android KtLint / assembleDebug / testDebugUnitTest / generated Protobuf",
+              "result": "pending",
+              "summary": "Not yet run on the new exact main commit."
+            },
+            {
+              "name": "Step Three Python and graph quality gate",
+              "result": "pending",
+              "summary": "Not yet run on the new exact main commit."
+            },
+            {
+              "name": "Windows WPF and HostLifecycle workflow",
+              "result": "pending",
+              "summary": "Not yet run on the new exact main commit."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "Added first-release caps for maxRounds and maxTotalHosts.",
+            "Added DistributedRequestProgress and progress-aware selector/dispatcher contracts.",
+            "Added per-request serialized in-memory budget accounting in AndroidInferenceRequestRuntime.",
+            "No Protobuf or wire-schema change."
+          ],
+          "follow_up": "Commit this partial implementation to main as V 3.0.717, inspect all Actions runs for that exact commit SHA, fix any failures, and only then mark T0170 done or append a further attempt."
+        }
+      ]
     },
     {
       "id": "T0171",
@@ -43386,7 +43515,7 @@
         "src/Client.Android/Requests/ + tests/"
       ],
       "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود. Before execution, review the progress-aware HostCandidateSelector.selectNextRound API introduced by T0170. The T0170→T0171 edge remains unreviewed.",
       "execution_summary": {
         "attempt_count": 0,
         "failed_attempt_count": 0,
@@ -50154,19 +50283,31 @@
       "from": "T0169",
       "to": "T0170",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "The next-round selector API from T0169 is the direct contract extended by T0170. This edge is validated by the canonical request, completed response collection and previous-round attempts consumed by the progress-aware selector.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceRoundResponseCollector.kt",
+        "step three/T0169/execution-report.md"
+      ]
     },
     {
       "from": "T0160",
       "to": "T0170",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0170 bounds selection and dispatch while retaining T0160's canonical generated InferenceRequest and payload-builder interfaces. The selector validates those request fields and dispatcher builds payloads through the builder; no wire-schema change is made.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/protocol/InferenceRequestPayloadBuilder.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/protocol/InferenceRequestPayloadBuilderTest.kt",
+        "protocol/whitep/v1/messages.proto",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceAttemptDispatcher.kt",
+        "step three/T0160/execution-report.md"
+      ]
     },
     {
       "from": "T0170",
@@ -55027,9 +55168,41 @@
         "step three/T0160/execution-report.md"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-31T15:49:40.209Z",
+      "edge_from": "T0169",
+      "edge_to": "T0170",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "reason": "The next-round selector API from T0169 is the direct contract extended by T0170. This edge is validated by the canonical request, completed response collection and previous-round attempts consumed by the progress-aware selector.",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceRoundResponseCollector.kt",
+        "step three/T0169/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-10-31T15:49:40.209Z",
+      "edge_from": "T0160",
+      "edge_to": "T0170",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "reason": "T0170 bounds selection and dispatch while retaining T0160's canonical generated InferenceRequest and payload-builder interfaces. The selector validates those request fields and dispatcher builds payloads through the builder; no wire-schema change is made.",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/protocol/InferenceRequestPayloadBuilder.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/protocol/InferenceRequestPayloadBuilderTest.kt",
+        "protocol/whitep/v1/messages.proto",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceAttemptDispatcher.kt",
+        "step three/T0160/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-31T15:14:41.561Z",
+  "updated_at": "2026-10-31T15:49:40.209Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

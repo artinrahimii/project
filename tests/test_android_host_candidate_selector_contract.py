@@ -35,10 +35,17 @@ class AndroidHostCandidateSelectorContractTests(unittest.TestCase):
     def test_selector_returns_at_most_three_unique_hosts_deterministically(self):
         source = SELECTOR.read_text(encoding="utf-8")
 
-        self.assertIn("const val MAX_HOSTS_PER_ROUND = 3", source)
+        self.assertIn(
+            "const val MAX_HOSTS_PER_ROUND = FirstReleaseInferenceLimits.MAX_HOSTS_PER_ROUND",
+            source,
+        )
         self.assertIn(".groupBy { candidate -> candidate.announcement.ephemeralHostId }", source)
         self.assertIn(".sortedBy { candidate -> candidate.announcement.ephemeralHostId }", source)
-        self.assertIn(".take(MAX_HOSTS_PER_ROUND)", source)
+        self.assertIn(".take(maxHosts)", source)
+        self.assertIn("fun selectFirstRound(", source)
+        self.assertIn("progress.roundsDispatched !in 1 until distributedRequest.maxRounds", source)
+        self.assertIn("distributedRequest.maxTotalHosts - progress.hostsAttempted", source)
+        self.assertIn("previousRoundAttempts.size > MAX_HOSTS_PER_ROUND", source)
 
     def test_jvm_suite_covers_selection_rejection_and_bounds(self):
         source = JVM_TEST.read_text(encoding="utf-8")
@@ -54,6 +61,11 @@ class AndroidHostCandidateSelectorContractTests(unittest.TestCase):
             "selectsNextThreeDistinctHostsWhenThePreviousRoundHasNoValidResponse",
             "doesNotSelectAnotherRoundWhenThePreviousRoundContainsAValidResponse",
             "failsClosedWhenPreviousRoundAttemptsCannotDefineASafeExclusionSet",
+            "selectFirstRoundHonorsTheTotalHostBudget",
+            "rejectsFirstRoundWhenRequestIdentityDoesNotMatch",
+            "doesNotSelectAnotherRoundAfterTheConfiguredRoundLimit",
+            "capsNextBatchAtTheRemainingTotalHostBudget",
+            "doesNotSelectAnotherBatchWhenTheTotalHostBudgetIsExhausted",
         )
         for test_name in expected_tests:
             with self.subTest(test_name=test_name):

@@ -44,6 +44,9 @@ data class InferenceHostAttempt(
 
 enum class InferenceRoundDispatchRejection {
     TERMINAL_REQUEST,
+    ROUND_LIMIT_REACHED,
+    TOTAL_HOST_LIMIT_REACHED,
+    INVALID_BUDGET_STATE,
     ROUND_TIMEOUT,
     NO_SELECTED_HOSTS,
     TOO_MANY_HOSTS,
@@ -86,11 +89,32 @@ class InferenceAttemptDispatcher(
         capsule: ConversationContextCapsule,
         maxOutputTokens: Int,
         protocolVersion: String,
+        progress: DistributedRequestProgress,
         roundWindow: InferenceRoundTimer.Window? = null,
     ): InferenceRoundDispatchResult {
         if (distributedRequest.status in TERMINAL_STATUSES) {
             return InferenceRoundDispatchResult.Rejected(
                 InferenceRoundDispatchRejection.TERMINAL_REQUEST,
+            )
+        }
+        if (progress.roundsDispatched >= distributedRequest.maxRounds) {
+            return InferenceRoundDispatchResult.Rejected(
+                InferenceRoundDispatchRejection.ROUND_LIMIT_REACHED,
+            )
+        }
+        if (progress.hostsAttempted < progress.roundsDispatched ||
+            progress.hostsAttempted > distributedRequest.maxTotalHosts ||
+            (progress.roundsDispatched == 0 && progress.hostsAttempted != 0)
+        ) {
+            return InferenceRoundDispatchResult.Rejected(
+                InferenceRoundDispatchRejection.INVALID_BUDGET_STATE,
+            )
+        }
+        if (progress.hostsAttempted >= distributedRequest.maxTotalHosts ||
+            selectedHosts.size > distributedRequest.maxTotalHosts - progress.hostsAttempted
+        ) {
+            return InferenceRoundDispatchResult.Rejected(
+                InferenceRoundDispatchRejection.TOTAL_HOST_LIMIT_REACHED,
             )
         }
         if (roundWindow?.isExpired() == true) {

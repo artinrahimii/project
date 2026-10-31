@@ -26,14 +26,15 @@ data class HostCandidate(
  * It does not perform discovery, network I/O, retries, deadline scheduling, or dispatch.
  */
 object HostCandidateSelector {
-    const val MAX_HOSTS_PER_ROUND = 3
+    const val MAX_HOSTS_PER_ROUND = FirstReleaseInferenceLimits.MAX_HOSTS_PER_ROUND
 
     fun select(
         request: InferenceRequest,
         candidates: Collection<HostCandidate>,
         excludedEphemeralHostIds: Set<String> = emptySet(),
+        maxHosts: Int = MAX_HOSTS_PER_ROUND,
     ): List<HostCandidate> {
-        if (!isLocallyValidRequest(request)) {
+        if (!isLocallyValidRequest(request) || maxHosts !in 1..MAX_HOSTS_PER_ROUND) {
             return emptyList()
         }
 
@@ -51,8 +52,24 @@ object HostCandidateSelector {
             .filter { candidate -> candidate.announcement.ephemeralHostId !in excludedEphemeralHostIds }
             .filter { candidate -> isCompatibleAndReady(request, candidate) }
             .sortedBy { candidate -> candidate.announcement.ephemeralHostId }
-            .take(MAX_HOSTS_PER_ROUND)
+            .take(maxHosts)
             .toList()
+    }
+
+    /** Selects the first batch under the request-scoped first-release host ceiling. */
+    fun selectFirstRound(
+        distributedRequest: DistributedRequest,
+        request: InferenceRequest,
+        candidates: Collection<HostCandidate>,
+    ): List<HostCandidate> {
+        if (request.requestId != distributedRequest.requestId) {
+            return emptyList()
+        }
+        return select(
+            request = request,
+            candidates = candidates,
+            maxHosts = minOf(MAX_HOSTS_PER_ROUND, distributedRequest.maxTotalHosts),
+        )
     }
 
     /**
@@ -63,12 +80,22 @@ object HostCandidateSelector {
      * The completed collection must be the result of InferenceRoundResponseCollector.collect.
      */
     fun selectNextRound(
+        distributedRequest: DistributedRequest,
         request: InferenceRequest,
         candidates: Collection<HostCandidate>,
         previousRoundAttempts: List<InferenceHostAttempt>,
         previousRoundResponses: InferenceRoundResponseCollection,
+        progress: DistributedRequestProgress,
     ): List<HostCandidate> {
-        if (previousRoundResponses.responses.isNotEmpty() || previousRoundAttempts.isEmpty()) {
+        if (request.requestId != distributedRequest.requestId ||
+            previousRoundResponses.responses.isNotEmpty() ||
+            previousRoundAttempts.isEmpty() ||
+            previousRoundAttempts.size > MAX_HOSTS_PER_ROUND ||
+            progress.roundsDispatched !in 1 until distributedRequest.maxRounds ||
+            progress.hostsAttempted < progress.roundsDispatched ||
+            progress.hostsAttempted < previousRoundAttempts.size ||
+            progress.hostsAttempted >= distributedRequest.maxTotalHosts
+        ) {
             return emptyList()
         }
 
@@ -84,6 +111,10 @@ object HostCandidateSelector {
             request = request,
             candidates = candidates,
             excludedEphemeralHostIds = previouslyAttemptedHostIds.toSet(),
+            maxHosts = minOf(
+                MAX_HOSTS_PER_ROUND,
+                distributedRequest.maxTotalHosts - progress.hostsAttempted,
+            ),
         )
     }
 
