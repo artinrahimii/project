@@ -42885,11 +42885,11 @@
         "step three/T0169/execution-report.md",
         "step three/T0169/evidence/verification.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0169-A001 (2026-10-31T14:51:46.890Z): Reviewed T0168 -> T0169 and T0160 -> T0169 against the completed response-collection result and canonical InferenceRequest contract. Both existing blocks edges are retained and validated as contract_or_interface_dependency; evidence and rationale are in edge_change_log. Added an excluded-host set to HostCandidateSelector and a response-gated selectNextRound API: any valid prior response suppresses retry; a completed no-response round excludes every prior attempt host and chooses up to three next compatible hosts. Added three JVM regressions and extended the Python source contract. Exact-head CI pending; status remains in_progress.\n\nT0169-A001 exact-head V 3.0.711 CI: Step Three quality, HostLifecycle and all Windows WPF format/build/Protobuf/startup/security/DPAPI checks passed. Android KtLint failed only on three missing line-break-before-dot findings in HostCandidateSelectorTest.kt lines 214, 222 and 234; Android APK/JVM/Protobuf were skipped. A002 changes only those three test-source formatting locations; no runtime behavior or interface change.\n\nT0169-A002 exact-head V 3.0.712 CI: Step Three quality, all Windows WPF checks and HostLifecycle passed. Android KtLint still found three formatting issues in the new chained assertions: the selector receiver requires a leading-dot continuation, while `.isEmpty()` must remain attached to the closing invocation line. APK/JVM/Protobuf were skipped. A003 applies exactly this fluent-call layout; runtime logic is unchanged.\n\nT0169-A003 exact-head V 3.0.713 CI: Step Three quality, HostLifecycle and all Windows WPF checks passed. Android KtLint accepted leading-dot method chaining but reported three selector-call argument/close blocks under-indented by four spaces. APK/JVM/Protobuf were skipped. A004 adds the required four-space indentation to these test-only blocks.\n",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0169-A001 (2026-10-31T14:51:46.890Z): Reviewed T0168 -> T0169 and T0160 -> T0169 against the completed response-collection result and canonical InferenceRequest contract. Both existing blocks edges are retained and validated as contract_or_interface_dependency; evidence and rationale are in edge_change_log. Added an excluded-host set to HostCandidateSelector and a response-gated selectNextRound API: any valid prior response suppresses retry; a completed no-response round excludes every prior attempt host and chooses up to three next compatible hosts. Added three JVM regressions and extended the Python source contract. Exact-head CI pending; status remains in_progress.\n\nT0169-A001 exact-head V 3.0.711 CI: Step Three quality, HostLifecycle and all Windows WPF format/build/Protobuf/startup/security/DPAPI checks passed. Android KtLint failed only on three missing line-break-before-dot findings in HostCandidateSelectorTest.kt lines 214, 222 and 234; Android APK/JVM/Protobuf were skipped. A002 changes only those three test-source formatting locations; no runtime behavior or interface change.\n\nT0169-A002 exact-head V 3.0.712 CI: Step Three quality, all Windows WPF checks and HostLifecycle passed. Android KtLint still found three formatting issues in the new chained assertions: the selector receiver requires a leading-dot continuation, while `.isEmpty()` must remain attached to the closing invocation line. APK/JVM/Protobuf were skipped. A003 applies exactly this fluent-call layout; runtime logic is unchanged.\n\nT0169-A003 exact-head V 3.0.713 CI: Step Three quality, HostLifecycle and all Windows WPF checks passed. Android KtLint accepted leading-dot method chaining but reported three selector-call argument/close blocks under-indented by four spaces. APK/JVM/Protobuf were skipped. A004 adds the required four-space indentation to these test-only blocks.\n\nT0169-A004 exact-head V 3.0.714 CI: Step Three quality, HostLifecycle and all Windows WPF checks passed. Android KtLint accepted receiver chaining and argument indentation, and reported only three close-paren lines over-indented (20 spaces instead of 16) at lines 220, 233 and 243. APK/JVM/Protobuf skipped. A005 reduces only those three close-line indents.\n",
       "execution_summary": {
-        "attempt_count": 4,
-        "failed_attempt_count": 2,
-        "last_attempt_id": "T0169-A004",
+        "attempt_count": 5,
+        "failed_attempt_count": 3,
+        "last_attempt_id": "T0169-A005",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
@@ -42902,7 +42902,8 @@
         "related_commits": [
           "bf49308e0688f2394e7fe6f8bcf929e571bef590",
           "f00b15bfdac6f29580e0e8e4aa9198b57801bd07",
-          "83077e92225e64b56d113c407709bbfdeea434da"
+          "83077e92225e64b56d113c407709bbfdeea434da",
+          "b57d0d8096c8c6430fd0a737b550b1a852904b8b"
         ],
         "tests_passed": [
           {
@@ -42958,6 +42959,24 @@
             "result": "passed",
             "url": "https://github.com/artinrahimii/project/actions/runs/41212749042",
             "summary": "HostLifecycle tests passed."
+          },
+          {
+            "name": "Step Three quality gate — V 3.0.714",
+            "result": "passed",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41213016276",
+            "summary": "Python tests, syntax, graph structure and evidence validation passed."
+          },
+          {
+            "name": "Windows WPF host — V 3.0.714",
+            "result": "passed",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41213016243",
+            "summary": "Windows WPF formatting/build/Protobuf/startup/security/DPAPI/artifact checks passed."
+          },
+          {
+            "name": "HostLifecycle — V 3.0.714",
+            "result": "passed",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41213016243",
+            "summary": "HostLifecycle tests passed."
           }
         ],
         "tests_failed": [
@@ -42978,6 +42997,12 @@
             "result": "failed",
             "url": "https://github.com/artinrahimii/project/actions/runs/41212749042",
             "summary": "Three leading-dot selector-call argument blocks were under-indented by four spaces; APK/JVM/Protobuf skipped."
+          },
+          {
+            "name": "Android KtLint — V 3.0.714",
+            "result": "failed",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41213016243",
+            "summary": "The three close-paren lines in new assertions had 20 spaces instead of expected 16; all other KtLint issues resolved."
           }
         ],
         "blocked_reason": null,
@@ -43131,8 +43156,8 @@
           "attempt_id": "T0169-A004",
           "started_at": "2026-10-31T15:02:56.751Z",
           "ended_at": "2026-10-31T15:02:56.751Z",
-          "result": "partial",
-          "summary": "Applied the four-space indentation increase across all three selectNextRound argument blocks and closing .isEmpty() expressions as indicated by V 3.0.713 KtLint. No production behavior changed. V 3.0.714 exact-head CI pending.",
+          "result": "failed",
+          "summary": "Exact-head V 3.0.714 quality gate, HostLifecycle and Windows WPF workflow passed. Android KtLint accepted the receiver chaining and parameter indentation; it reported only that the three closing `).isEmpty(),` lines were indented 20 spaces instead of 16. APK/JVM/Protobuf were skipped. A005 corrects only these close-line indents.",
           "changed_files": [
             "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt",
             "step three/T0169/execution-report.md",
@@ -43142,26 +43167,71 @@
           "commit_sha": null,
           "tests": [
             {
-              "name": "Android KtLint — V 3.0.714",
-              "result": "pending",
-              "summary": "Validate exact continuation indentation and chained selector invocation."
+              "name": "Step Three quality gate — V 3.0.714",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41213016276",
+              "summary": "Python tests, syntax compilation, graph structure and evidence validation passed."
             },
             {
-              "name": "Android APK, JVM tests and generated Protobuf — V 3.0.714",
+              "name": "Android KtLint — V 3.0.714",
+              "result": "failed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41213016243",
+              "summary": "Only the three close-paren lines at HostCandidateSelectorTest.kt 220, 233 and 243 were over-indented (20 spaces; expected 16). APK/JVM/Protobuf skipped."
+            },
+            {
+              "name": "Windows WPF — V 3.0.714",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41213016243",
+              "summary": "All Windows WPF checks passed."
+            },
+            {
+              "name": "HostLifecycle — V 3.0.714",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41213016243",
+              "summary": "HostLifecycle tests passed."
+            }
+          ],
+          "failure_details": "KtLint only reported Unexpected indentation (20) should be 16 on lines 220, 233 and 243 of HostCandidateSelectorTest.kt. All other prior KtLint findings were resolved.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "A005 decreases the indentation of only the three `).isEmpty(),` closing lines from 20 to 16 spaces."
+        },
+        {
+          "attempt_id": "T0169-A005",
+          "started_at": "2026-10-31T15:05:44.997Z",
+          "ended_at": "2026-10-31T15:05:44.997Z",
+          "result": "partial",
+          "summary": "Reduced only the indentation of the three .isEmpty() closing lines from 20 to 16 spaces, matching exact-head V 3.0.714 KtLint output. No selector logic or API changed. V 3.0.715 exact-head verification pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt",
+            "step three/T0169/execution-report.md",
+            "step three/T0169/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Android KtLint — V 3.0.715",
+              "result": "pending",
+              "summary": "Verify the final three close-line indentation corrections."
+            },
+            {
+              "name": "Android APK, JVM tests and generated Protobuf — V 3.0.715",
               "result": "pending",
               "summary": "Run after KtLint passes."
             },
             {
-              "name": "Step Three quality gate, Windows WPF and HostLifecycle — V 3.0.714",
+              "name": "Step Three quality gate, Windows WPF and HostLifecycle — V 3.0.715",
               "result": "pending",
-              "summary": "Exact-head workflow checks rerun for this test-source correction."
+              "summary": "Exact-head workflows rerun for this test-only formatting edit."
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect exact-head V 3.0.714 Actions; do not mark T0169 done unless all acceptance checks pass."
+          "follow_up": "Inspect exact-head V 3.0.715 Actions. Do not declare T0169 complete until all acceptance checks pass."
         }
       ]
     },
@@ -54877,7 +54947,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-31T15:02:56.751Z",
+  "updated_at": "2026-10-31T15:05:44.997Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

@@ -217,7 +217,7 @@ class HostCandidateSelectorTest {
                     candidates = candidates,
                     previousRoundAttempts = emptyList(),
                     previousRoundResponses = completedRound,
-                    ).isEmpty(),
+                ).isEmpty(),
         )
         assertTrue(
             HostCandidateSelector
@@ -230,7 +230,7 @@ class HostCandidateSelectorTest {
                             InferenceHostAttempt("host-a", "attempt-b", InferenceAttemptSubmissionStatus.QUEUED),
                         ),
                     previousRoundResponses = completedRound,
-                    ).isEmpty(),
+                ).isEmpty(),
         )
         assertTrue(
             HostCandidateSelector
@@ -240,7 +240,7 @@ class HostCandidateSelectorTest {
                     previousRoundAttempts =
                         listOf(InferenceHostAttempt(" ", "attempt-a", InferenceAttemptSubmissionStatus.QUEUED)),
                     previousRoundResponses = completedRound,
-                    ).isEmpty(),
+                ).isEmpty(),
         )
     }
 
