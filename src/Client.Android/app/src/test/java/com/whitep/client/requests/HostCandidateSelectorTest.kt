@@ -213,34 +213,34 @@ class HostCandidateSelectorTest {
         assertTrue(
             HostCandidateSelector
                 .selectNextRound(
-                request = validRequest(),
-                candidates = candidates,
-                previousRoundAttempts = emptyList(),
-                previousRoundResponses = completedRound,
-                ).isEmpty(),
+                    request = validRequest(),
+                    candidates = candidates,
+                    previousRoundAttempts = emptyList(),
+                    previousRoundResponses = completedRound,
+                    ).isEmpty(),
         )
         assertTrue(
             HostCandidateSelector
                 .selectNextRound(
-                request = validRequest(),
-                candidates = candidates,
-                previousRoundAttempts =
-                    listOf(
-                        InferenceHostAttempt("host-a", "attempt-a", InferenceAttemptSubmissionStatus.QUEUED),
-                        InferenceHostAttempt("host-a", "attempt-b", InferenceAttemptSubmissionStatus.QUEUED),
-                    ),
-                previousRoundResponses = completedRound,
-                ).isEmpty(),
+                    request = validRequest(),
+                    candidates = candidates,
+                    previousRoundAttempts =
+                        listOf(
+                            InferenceHostAttempt("host-a", "attempt-a", InferenceAttemptSubmissionStatus.QUEUED),
+                            InferenceHostAttempt("host-a", "attempt-b", InferenceAttemptSubmissionStatus.QUEUED),
+                        ),
+                    previousRoundResponses = completedRound,
+                    ).isEmpty(),
         )
         assertTrue(
             HostCandidateSelector
                 .selectNextRound(
-                request = validRequest(),
-                candidates = candidates,
-                previousRoundAttempts =
-                    listOf(InferenceHostAttempt(" ", "attempt-a", InferenceAttemptSubmissionStatus.QUEUED)),
-                previousRoundResponses = completedRound,
-                ).isEmpty(),
+                    request = validRequest(),
+                    candidates = candidates,
+                    previousRoundAttempts =
+                        listOf(InferenceHostAttempt(" ", "attempt-a", InferenceAttemptSubmissionStatus.QUEUED)),
+                    previousRoundResponses = completedRound,
+                    ).isEmpty(),
         )
     }
 

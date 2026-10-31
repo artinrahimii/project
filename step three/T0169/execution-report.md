@@ -17,9 +17,10 @@ If the completed round response window contains no valid response, select the ne
 - Added three JVM regression methods and extended the repository Python source-contract test.
 
 ## Verification history
-- **V 3.0.711:** Step Three quality, HostLifecycle and all Windows WPF checks passed. Android KtLint failed on three method-chain formatting findings in the new JVM test; APK/JVM/Protobuf were skipped.
-- **V 3.0.712:** Step Three quality, HostLifecycle and all Windows WPF checks passed. Android KtLint still failed because the receiver method needed a leading-dot continuation while `.isEmpty()` had to remain on the closing invocation line; APK/JVM/Protobuf were skipped.
-- **V 3.0.713:** changed the three test expressions to the required layout: `HostCandidateSelector` followed by a leading-dot `.selectNextRound(...).isEmpty()` chain. This is formatting-only; exact-head verification is pending.
+- **V 3.0.711:** Step Three quality, HostLifecycle and all Windows WPF checks passed. Android KtLint failed on method-chain layout in the new JVM test; APK/JVM/Protobuf were skipped.
+- **V 3.0.712:** Step Three quality, HostLifecycle and all Windows WPF checks passed. Android KtLint still failed because the receiver method needed a leading-dot continuation and the terminal `.isEmpty()` needed to remain on the close line; APK/JVM/Protobuf were skipped.
+- **V 3.0.713:** Step Three quality, HostLifecycle and all Windows WPF checks passed. KtLint accepted the leading-dot receiver but reported the three argument blocks and close lines under-indented by four spaces; APK/JVM/Protobuf were skipped.
+- **V 3.0.714:** added four spaces to the complete argument/close blocks of all three test calls; exact-head verification is pending.
 - A local Gradle build was not run because this environment cannot resolve `github.com` for a repository clone. GitHub Actions is used for exact-head verification.
 
 ## Status
