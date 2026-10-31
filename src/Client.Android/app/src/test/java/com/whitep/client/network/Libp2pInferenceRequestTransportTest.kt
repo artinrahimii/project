@@ -301,7 +301,7 @@ class Libp2pInferenceRequestTransportTest {
                                 while (true) {
                                     val line = runCatching { reader.readLine() }.getOrNull() ?: break
                                     when {
-                                        line.startsWith("READY\\t") -> readyLineFuture.complete(line)
+                                        line.startsWith("READY\t") -> readyLineFuture.complete(line)
                                         line in allowedMarkers -> serverOutput.add("peer-" + serverNumber + ":" + line)
                                     }
                                 }

@@ -664,3 +664,23 @@
 - **A050 assessment:** source contract, KtLint, APK and quality passed, but the response trace remained empty and did not identify the stage preventing .NET responses; A050 is finalized as failed diagnostics acceptance.
 - **A051:** make one background reader the sole owner of each process output stream from process start; use a future to await the READY line; capture only a fixed allowlist of phase markers; distinguish remote authenticated-session establishment from White-P application-protocol readiness. No runtime transport or three-host acceptance assertion is weakened.
 - **Evidence:** `step three/T0163/evidence/v3.0.677-dotnet-session-phase-diagnostics.md`.
+
+
+## Reconciliation — V 3.0.677 exact-head result and attempt A051
+
+- **Commit:** \`408ada2a7e9da5e60e4be361f29bb2e85f49733d\` (\`V 3.0.677\`).
+- **Step Three quality gate:** PASS — [run 41170474667](https://github.com/artinrahimii/project/actions/runs/41170474667).
+- **Real local inference integration:** PASS — [run 41170474647](https://github.com/artinrahimii/project/actions/runs/41170474647).
+- **Windows WPF host:** PASS, including Release build, generated Protobuf, startup, process/policy/capability, DPAPI and HostLifecycle checks — [product run 41170474534](https://github.com/artinrahimii/project/actions/runs/41170474534).
+- **Android:** KtLint and debug APK build PASS; JVM suite FAILED with 104/105 tests. The failing test timed out awaiting the .NET fixture's READY record before dispatch or response-correlation assertions. The unit-test artifact was \`13030772643\`.
+- **Root cause from exact source inspection:** the .NET fixture writes an actual tab after \`READY\` (\`Console.WriteLine($"READY\\t...")\`), but the Android test searched for the two-character literal backslash-plus-\`t\` because its Kotlin source contained \`"READY\\\\t"\`. Consequently, the background reader never completed \`readyLineFuture\`; the timeout occurred before any peer request was dispatched. This explains the absent phase output and is a test-harness delimiter mismatch, not evidence that the remote-session protocol failed.
+- **A051 outcome:** finalized as failed verification (diagnostic instrumentation alone did not complete the readiness handshake). No production protocol or security assertion is weakened.
+
+## Attempt A052 — align Android READY parsing with the .NET tab-delimited record
+
+- **Base:** \`408ada2a7e9da5e60e4be361f29bb2e85f49733d\` (\`V 3.0.677\`).
+- **Implementation:** changed the Android reader to match the actual tab escape in the Kotlin string literal, retained tab splitting for the PeerId/address fields, and added a Python source-contract regression test that rejects the double-escaped form.
+- **Acceptance remains unchanged:** three distinct .NET peers must still receive one shared request ID with unique attempt IDs and return three correlated responses; session authentication, application protocol, frame receipt, request validation and response send markers are still required. No peer identity, exception text, inference payload or secret is added to logs.
+- **Local verification:** not run; this connected session has no local checkout with the Android/Windows build toolchains. No local test pass is claimed.
+- **Exact-head V 3.0.678 CI:** pending at commit creation.
+- **Next:** require Step Three quality, KtLint, debug APK, all Android JVM tests, native Android-to-.NET three-peer response correlation, Windows WPF and HostLifecycle to pass. Keep T0163 in progress until all three correlated responses pass.

@@ -127,5 +127,13 @@ class AndroidLibp2pTransportContractTests(unittest.TestCase):
         self.assertIn("dispatchesOneSharedRequestWithDistinctAttemptsOverAuthenticatedPeerStreams", source)
 
 
+    def test_dotnet_ready_record_uses_matching_tab_delimiters(self):
+        source = TRANSPORT_TEST.read_text(encoding="utf-8")
+        self.assertIn('line.startsWith("READY\\t")', source)
+        self.assertNotIn('line.startsWith("READY\\\\t")', source)
+        self.assertIn("readyLine.split('\\t')", source)
+
+
+
 if __name__ == "__main__":
     unittest.main()
