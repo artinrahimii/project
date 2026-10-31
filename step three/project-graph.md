@@ -42885,11 +42885,11 @@
         "step three/T0169/execution-report.md",
         "step three/T0169/evidence/verification.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0169-A001 (2026-10-31T14:51:46.890Z): Reviewed T0168 -> T0169 and T0160 -> T0169 against the completed response-collection result and canonical InferenceRequest contract. Both existing blocks edges are retained and validated as contract_or_interface_dependency; evidence and rationale are in edge_change_log. Added an excluded-host set to HostCandidateSelector and a response-gated selectNextRound API: any valid prior response suppresses retry; a completed no-response round excludes every prior attempt host and chooses up to three next compatible hosts. Added three JVM regressions and extended the Python source contract. Exact-head CI pending; status remains in_progress.\n\nT0169-A001 exact-head V 3.0.711 CI: Step Three quality, HostLifecycle and all Windows WPF format/build/Protobuf/startup/security/DPAPI checks passed. Android KtLint failed only on three missing line-break-before-dot findings in HostCandidateSelectorTest.kt lines 214, 222 and 234; Android APK/JVM/Protobuf were skipped. A002 changes only those three test-source formatting locations; no runtime behavior or interface change.\n",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0169-A001 (2026-10-31T14:51:46.890Z): Reviewed T0168 -> T0169 and T0160 -> T0169 against the completed response-collection result and canonical InferenceRequest contract. Both existing blocks edges are retained and validated as contract_or_interface_dependency; evidence and rationale are in edge_change_log. Added an excluded-host set to HostCandidateSelector and a response-gated selectNextRound API: any valid prior response suppresses retry; a completed no-response round excludes every prior attempt host and chooses up to three next compatible hosts. Added three JVM regressions and extended the Python source contract. Exact-head CI pending; status remains in_progress.\n\nT0169-A001 exact-head V 3.0.711 CI: Step Three quality, HostLifecycle and all Windows WPF format/build/Protobuf/startup/security/DPAPI checks passed. Android KtLint failed only on three missing line-break-before-dot findings in HostCandidateSelectorTest.kt lines 214, 222 and 234; Android APK/JVM/Protobuf were skipped. A002 changes only those three test-source formatting locations; no runtime behavior or interface change.\n\nT0169-A002 exact-head V 3.0.712 CI: Step Three quality, all Windows WPF checks and HostLifecycle passed. Android KtLint still found three formatting issues in the new chained assertions: the selector receiver requires a leading-dot continuation, while `.isEmpty()` must remain attached to the closing invocation line. APK/JVM/Protobuf were skipped. A003 applies exactly this fluent-call layout; runtime logic is unchanged.\n",
       "execution_summary": {
-        "attempt_count": 2,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "T0169-A002",
+        "attempt_count": 3,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "T0169-A003",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
@@ -42900,7 +42900,8 @@
           "step three/project-graph.md"
         ],
         "related_commits": [
-          "bf49308e0688f2394e7fe6f8bcf929e571bef590"
+          "bf49308e0688f2394e7fe6f8bcf929e571bef590",
+          "f00b15bfdac6f29580e0e8e4aa9198b57801bd07"
         ],
         "tests_passed": [
           {
@@ -42916,9 +42917,27 @@
             "summary": "All Windows WPF format/build/Protobuf/startup/security/DPAPI checks passed."
           },
           {
-            "name": "HostLifecycle unit and integration — V 3.0.711",
+            "name": "HostLifecycle — V 3.0.711",
             "result": "passed",
             "url": "https://github.com/artinrahimii/project/actions/runs/41212118181",
+            "summary": "HostLifecycle tests passed."
+          },
+          {
+            "name": "Step Three quality gate — V 3.0.712",
+            "result": "passed",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41212484859",
+            "summary": "Python tests, syntax compilation, graph structure and evidence validation passed."
+          },
+          {
+            "name": "Windows WPF host — V 3.0.712",
+            "result": "passed",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41212484885",
+            "summary": "All Windows WPF build/startup/security/DPAPI steps passed."
+          },
+          {
+            "name": "HostLifecycle — V 3.0.712",
+            "result": "passed",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41212484885",
             "summary": "HostLifecycle tests passed."
           }
         ],
@@ -42927,7 +42946,13 @@
             "name": "Android KtLint — V 3.0.711",
             "result": "failed",
             "url": "https://github.com/artinrahimii/project/actions/runs/41212118181",
-            "summary": "Three Expected newline before '.' findings in the new test-source .isEmpty() chains; Android APK/JVM/Protobuf were skipped."
+            "summary": "Three line-break-before-dot violations in the new HostCandidateSelectorTest.kt assertions."
+          },
+          {
+            "name": "Android KtLint — V 3.0.712",
+            "result": "failed",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41212484885",
+            "summary": "Three selector invocation chains and their .isEmpty() continuation layout still violated KtLint; downstream APK/JVM/Protobuf were skipped."
           }
         ],
         "blocked_reason": null,
@@ -42991,8 +43016,8 @@
           "attempt_id": "T0169-A002",
           "started_at": "2026-10-31T14:56:34.701Z",
           "ended_at": "2026-10-31T14:56:34.701Z",
-          "result": "partial",
-          "summary": "Applied the three KtLint continuation-line corrections identified by exact-head V 3.0.711. No production selector behavior or contract changed. Exact-head V 3.0.712 verification pending.",
+          "result": "failed",
+          "summary": "Exact-head V 3.0.712 Step Three quality, Windows WPF and HostLifecycle passed. Android KtLint still failed: the three new assertTrue calls need a line break before the .selectNextRound selector, while .isEmpty() must remain on the closing call line. APK/JVM/Protobuf were skipped. A003 applies the KtLint-required fluent-call layout only.",
           "changed_files": [
             "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt",
             "step three/T0169/execution-report.md",
@@ -43002,26 +43027,71 @@
           "commit_sha": null,
           "tests": [
             {
+              "name": "Step Three quality gate — V 3.0.712",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41212484859",
+              "summary": "Python tests, syntax compilation, graph structure and evidence validation passed."
+            },
+            {
               "name": "Android KtLint — V 3.0.712",
-              "result": "pending",
-              "summary": "Rerun after moving three chained .isEmpty() calls to continuation lines."
+              "result": "failed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41212484885",
+              "summary": "KtLint reported Expected newline before '.' at the HostCandidateSelector.selectNextRound receiver and Unexpected newline/indentation for .isEmpty() at the three new assertions; APK/JVM/Protobuf were skipped."
             },
             {
-              "name": "Android debug APK, JVM tests and generated Protobuf — V 3.0.712",
-              "result": "pending",
-              "summary": "Run after KtLint passes."
+              "name": "Windows WPF host — V 3.0.712",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41212484885",
+              "summary": "All Windows WPF format/build/Protobuf/startup/process/policy/capability/DPAPI and artifact upload steps passed."
             },
             {
-              "name": "Step Three quality gate, Windows WPF and HostLifecycle — V 3.0.712",
+              "name": "HostLifecycle unit and integration — V 3.0.712",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41212484885",
+              "summary": "HostLifecycle lifecycle tests passed."
+            }
+          ],
+          "failure_details": "Android KtLint findings in HostCandidateSelectorTest.kt: line 214 column 34 Expected newline before '.'; line 220 indentation (20, should be 16) and Unexpected newline before '.'; line 223 column 34 Expected newline before '.'; line 233 indentation (20, should be 16) and Unexpected newline before '.'; line 236 column 34 Expected newline before '.'; line 243 indentation (20, should be 16) and Unexpected newline before '.'.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "A003 puts HostCandidateSelector.selectNextRound on a leading-dot continuation line in each of the three assertTrue expressions while keeping .isEmpty() attached to the closing parenthesis line."
+        },
+        {
+          "attempt_id": "T0169-A003",
+          "started_at": "2026-10-31T14:59:49.819Z",
+          "ended_at": "2026-10-31T14:59:49.819Z",
+          "result": "partial",
+          "summary": "Adjusted the three nested selector calls to the KtLint-required leading-dot continuation form and attached .isEmpty() to the closing invocation line. No production behavior or API changed. Exact-head V 3.0.713 verification pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt",
+            "step three/T0169/execution-report.md",
+            "step three/T0169/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Android KtLint — V 3.0.713",
               "result": "pending",
-              "summary": "Exact-head workflows will rerun for the correction commit."
+              "summary": "Validate corrected continuation layout."
+            },
+            {
+              "name": "Android APK, JVM tests and generated Protobuf — V 3.0.713",
+              "result": "pending",
+              "summary": "Run once KtLint passes."
+            },
+            {
+              "name": "Step Three quality gate, Windows WPF and HostLifecycle — V 3.0.713",
+              "result": "pending",
+              "summary": "Exact-head checks rerun for this correction commit."
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect exact-head V 3.0.712 Actions; fix remaining failures before declaring T0169 done."
+          "follow_up": "Inspect exact-head V 3.0.713 results; do not mark T0169 done unless all acceptance checks pass."
         }
       ]
     },
@@ -54737,7 +54807,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-31T14:56:34.701Z",
+  "updated_at": "2026-10-31T14:59:49.819Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

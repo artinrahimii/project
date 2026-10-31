@@ -211,16 +211,17 @@ class HostCandidateSelectorTest {
         val completedRound = InferenceRoundResponseCollection(responses = emptyList(), failures = emptyList())
 
         assertTrue(
-            HostCandidateSelector.selectNextRound(
+            HostCandidateSelector
+                .selectNextRound(
                 request = validRequest(),
                 candidates = candidates,
                 previousRoundAttempts = emptyList(),
                 previousRoundResponses = completedRound,
-            )
-                    .isEmpty(),
+                ).isEmpty(),
         )
         assertTrue(
-            HostCandidateSelector.selectNextRound(
+            HostCandidateSelector
+                .selectNextRound(
                 request = validRequest(),
                 candidates = candidates,
                 previousRoundAttempts =
@@ -229,18 +230,17 @@ class HostCandidateSelectorTest {
                         InferenceHostAttempt("host-a", "attempt-b", InferenceAttemptSubmissionStatus.QUEUED),
                     ),
                 previousRoundResponses = completedRound,
-            )
-                    .isEmpty(),
+                ).isEmpty(),
         )
         assertTrue(
-            HostCandidateSelector.selectNextRound(
+            HostCandidateSelector
+                .selectNextRound(
                 request = validRequest(),
                 candidates = candidates,
                 previousRoundAttempts =
                     listOf(InferenceHostAttempt(" ", "attempt-a", InferenceAttemptSubmissionStatus.QUEUED)),
                 previousRoundResponses = completedRound,
-            )
-                    .isEmpty(),
+                ).isEmpty(),
         )
     }
 

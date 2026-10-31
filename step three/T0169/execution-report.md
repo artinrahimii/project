@@ -14,18 +14,13 @@ If the completed round response window contains no valid response, select the ne
 - The next selection excludes every host attempted in the previous round, including rejected, failed and timed-out submissions.
 - A valid response suppresses another round. Empty, blank or duplicate previous-round host identity data fails closed.
 - Existing deterministic ordering, compatibility checks, duplicate-candidate handling and the three-host per-round cap remain in force.
-
-## Automated acceptance coverage
-- Added JVM regressions for selecting the next three hosts after a no-response round, suppressing retry when a valid response exists, and failing closed when previous-round identities are missing or ambiguous.
-- Extended the repository Python source-contract test to require the production API and the new JVM regressions.
+- Added three JVM regression methods and extended the repository Python source-contract test.
 
 ## Verification history
-- **V 3.0.711 — Step Three quality:** passed; Python automated tests, syntax, graph structure and output/evidence validation.
-- **V 3.0.711 — HostLifecycle:** passed.
-- **V 3.0.711 — Windows WPF:** all steps passed, including formatting, Release build, generated Protobuf, startup smoke, process/policy/capability, DPAPI identity/trust and artifact upload.
-- **V 3.0.711 — Android:** KtLint failed on three missing line breaks before `.isEmpty()` in the new JVM test source (lines 214, 222 and 234). Android APK/JVM/Protobuf tasks were skipped.
-- **V 3.0.712:** corrected only those three formatting findings; exact-head quality and product workflows are pending.
-- A local Gradle build was not run because this execution environment cannot resolve `github.com` for a repository clone. GitHub Actions is used for exact-head verification.
+- **V 3.0.711:** Step Three quality, HostLifecycle and all Windows WPF checks passed. Android KtLint failed on three method-chain formatting findings in the new JVM test; APK/JVM/Protobuf were skipped.
+- **V 3.0.712:** Step Three quality, HostLifecycle and all Windows WPF checks passed. Android KtLint still failed because the receiver method needed a leading-dot continuation while `.isEmpty()` had to remain on the closing invocation line; APK/JVM/Protobuf were skipped.
+- **V 3.0.713:** changed the three test expressions to the required layout: `HostCandidateSelector` followed by a leading-dot `.selectNextRound(...).isEmpty()` chain. This is formatting-only; exact-head verification is pending.
+- A local Gradle build was not run because this environment cannot resolve `github.com` for a repository clone. GitHub Actions is used for exact-head verification.
 
 ## Status
-`in_progress`. T0169 is not accepted as complete until exact-head Android KtLint, APK, JVM tests, generated Protobuf checks, Windows WPF, HostLifecycle and Step Three quality all pass.
+`in_progress`. Do not mark T0169 complete until exact-head Android KtLint, APK, JVM tests, generated Protobuf checks, Windows WPF, HostLifecycle and Step Three quality all pass.

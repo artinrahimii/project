@@ -11,11 +11,11 @@
 - `doesNotSelectAnotherRoundWhenThePreviousRoundContainsAValidResponse`
 - `failsClosedWhenPreviousRoundAttemptsCannotDefineASafeExclusionSet`
 
-## Exact-head V 3.0.711
-- Step Three quality: passed — Python tests, syntax, graph structure and evidence validation.
-- HostLifecycle: passed.
-- Windows WPF: all workflow checks passed, including formatting, Release build, generated Protobuf, startup smoke, process/policy/capability and DPAPI identity/trust.
-- Android KtLint: failed — three continuation-line formatting findings in the newly-added test methods. APK/JVM/Protobuf were skipped.
+## Exact-head V 3.0.711 and V 3.0.712
+- Both Step Three quality gates passed.
+- Both HostLifecycle workflows passed.
+- All Windows WPF formatting, Release build, generated Protobuf, startup smoke, process/policy/capability, DPAPI identity/trust and artifact steps passed.
+- Android KtLint failed on test-source fluent-call layout in both revisions; the Android APK/JVM/Protobuf stages were skipped.
 
-## V 3.0.712 correction
-The three `.isEmpty()` chain calls were moved to the continuation line required by KtLint. No production behavior was changed. Exact-head verification is pending.
+## V 3.0.713 correction
+The three assertions now use the leading-dot continuation layout for `HostCandidateSelector.selectNextRound` and keep `.isEmpty()` on the same line as the close parenthesis. This is a formatting-only test-source change. Exact-head verification is pending.
