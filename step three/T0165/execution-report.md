@@ -10,3 +10,18 @@
 - **Compatibility:** This is a backward-compatible Protobuf field addition at the wire-number level. A new Android client intentionally rejects an older peer's response if it does not echo `round_id`; mixed-version peer deployments therefore require coordinated rollout. The protocol version string remains `1.0.0`; compatibility behavior is fail-closed, not implicit downgrade.
 - **Local execution:** No local Gradle/.NET/Python toolchain is available through the repository connector. No local test pass is claimed. Exact-head GitHub Actions must run after this commit.
 - **Status:** `in_progress`; exact-head CI pending. The task will not be marked done until all relevant gates pass.
+
+
+## Attempt T0165-A001 — V 3.0.689 quality failure
+
+- Step Three quality run [41197711090](https://github.com/artinrahimii/project/actions/runs/41197711090) executed 300 Python tests; 299 passed and one failed.
+- Failure: `AndroidLibp2pTransportContractTests.test_transport_uses_windows_protocol_and_checks_authenticated_correlation` still expected `response.ephemeralHostId` inside `Libp2pInferenceRequestTransport.kt`.
+- The production implementation deliberately extracts response matching to `InferenceResponseCorrelationValidator.kt`. The old static guard was asserting the previous code layout rather than the current component boundary. No assertion about the actual runtime behavior failed.
+- The product workflow [41197710998](https://github.com/artinrahimii/project/actions/runs/41197710998) and real local inference workflow [41197710914](https://github.com/artinrahimii/project/actions/runs/41197710914) were still running when this attempt was inspected; no results are inferred for those jobs.
+- A002 moves the field checks to the owning validator and asserts that the transport delegates to it with the pending round/deadline.
+
+## Attempt T0165-A002 — test ownership correction
+
+- Updated `tests/test_android_libp2p_transport_contract.py` to require the transport's call to `InferenceResponseCorrelationValidator.matches`, its pending round/deadline inputs, and the request/attempt/round/host/model/completion-time checks in the validator file.
+- This is a test-contract location correction only. No production code, acceptance behavior or security assertion was weakened.
+- Exact-head `V 3.0.690` CI is pending. T0165 remains `in_progress`.

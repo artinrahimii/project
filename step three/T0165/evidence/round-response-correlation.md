@@ -25,3 +25,8 @@
 ## Rollout limitation
 
 Older peer implementations do not populate `round_id`. The new Android response path fails closed for such responses. Deploy compatible Windows and Android builds together before expecting cross-version peer inference to succeed.
+
+
+## A001/A002 exact-head quality correction
+
+V 3.0.689 Step Three quality ran 300 tests; 299 passed and one stale static contract assertion failed because it expected the response host-identity check to remain inside the transport adapter. The implementation now delegates to the dedicated InferenceResponseCorrelationValidator. A002 updates the test to assert the call boundary and check each response field in the validator that owns the logic. This is not a production behavior change. Exact-head V 3.0.690 quality and product CI are pending; no completion is claimed.

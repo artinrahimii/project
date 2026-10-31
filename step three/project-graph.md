@@ -40892,11 +40892,11 @@
         "step three/T0165/execution-report.md",
         "step three/T0165/evidence/round-response-correlation.md"
       ],
-      "notes": "Round correlation is now represented by additive round_id fields in both Protobuf request and response messages. Exact-head CI is pending; preserve in_progress until Android/Windows builds and all acceptance tests pass. Older peers without round_id are intentionally rejected by the new Android response validator.",
+      "notes": "Round correlation is represented by additive round_id fields in both Protobuf request and response messages. A001 exposed one obsolete Python source-location assertion (299/300 Python tests passed); A002 updates that test to follow the extracted validator responsibility. Exact-head CI is pending; preserve in_progress until all Android/Windows and interop gates pass. Older peers without round_id are intentionally rejected.",
       "execution_summary": {
-        "attempt_count": 1,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "T0165-A001",
+        "attempt_count": 2,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "T0165-A002",
         "last_attempt_result": "partial",
         "changed_files": [
           "protocol/whitep/v1/messages.proto",
@@ -40918,13 +40918,21 @@
           "tests/test_android_inference_response_correlation_contract.py",
           "step three/T0165/execution-report.md",
           "step three/T0165/evidence/round-response-correlation.md",
-          "step three/project-graph.md"
+          "step three/project-graph.md",
+          "tests/test_android_libp2p_transport_contract.py"
         ],
         "related_commits": [
           "54799becc9c6288ccfc698603e6ab70e7d895d4b"
         ],
         "tests_passed": [],
-        "tests_failed": [],
+        "tests_failed": [
+          {
+            "name": "Step Three quality gate — V 3.0.689",
+            "result": "failed",
+            "summary": "299/300 Python tests passed; one stale assertion expected the old inline response validator location.",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41197711090"
+          }
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -40951,9 +40959,9 @@
         {
           "attempt_id": "T0165-A001",
           "started_at": "2026-10-31T11:28:00.000Z",
-          "ended_at": null,
-          "result": "partial",
-          "summary": "Implemented additive round_id fields for requests/responses; generated one ID per dispatch; bound round, peer, model and deadline to Android pending attempts; added Android completion/arrival deadline validation and Windows request-response round/deadline validation. Source review completed; exact-head CI is pending.",
+          "ended_at": "2026-10-31T11:38:54.533Z",
+          "result": "failed",
+          "summary": "Exact-head V 3.0.689 quality CI ran 300 Python tests and failed one obsolete static contract assertion. The test expected response.ephemeralHostId to remain inside Libp2pInferenceRequestTransport.kt, while the new implementation correctly delegates response-field validation to InferenceResponseCorrelationValidator.kt. The implementation itself was not implicated by this assertion; product build/HostLifecycle jobs were still running at the time.",
           "changed_files": [
             "protocol/whitep/v1/messages.proto",
             "src/Client.Android/app/src/main/java/com/whitep/client/protocol/InferenceRequestPayloadBuilder.kt",
@@ -40979,32 +40987,24 @@
           "commit_sha": null,
           "tests": [
             {
-              "name": "Source and contract diff review",
-              "result": "passed",
-              "summary": "The new request/response field numbers are additive and unique; request round ID is shared across one dispatch; response matching is bound to authenticated peer and absolute deadline."
+              "name": "Step Three quality gate — V 3.0.689",
+              "result": "failed",
+              "summary": "299 of 300 Python tests passed. One static contract test still looked for response.ephemeralHostId in the transport adapter instead of the extracted response-correlation validator.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41197711090"
             },
             {
-              "name": "Local Gradle/JVM",
-              "result": "not_run",
-              "summary": "No local Android/Gradle toolchain is available through the repository connector."
-            },
-            {
-              "name": "Local .NET/HostLifecycle",
-              "result": "not_run",
-              "summary": "No local Windows/.NET toolchain is available through the repository connector."
-            },
-            {
-              "name": "Local Python quality suite",
-              "result": "not_run",
-              "summary": "No local checkout/runtime is available through the repository connector."
-            },
-            {
-              "name": "V 3.0.689 exact-head Step Three and product CI",
+              "name": "White-P product build — V 3.0.689",
               "result": "pending",
-              "summary": "Must pass Python quality, graph/evidence checks, Android lint/APK/JVM/Protobuf, Windows WPF, HostLifecycle and native Android-to-.NET peer interoperability."
+              "summary": "Android lint/APK/JVM/Protobuf and Windows WPF/HostLifecycle jobs had not completed when the quality failure was inspected.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41197710998"
+            },
+            {
+              "name": "Local Gradle/.NET/Python",
+              "result": "not_run",
+              "summary": "No local checkout or build toolchain is available through the connected repository editing session."
             }
           ],
-          "failure_details": null,
+          "failure_details": "The only failed Python test was AndroidLibp2pTransportContractTests.test_transport_uses_windows_protocol_and_checks_authenticated_correlation. It still asserted response.ephemeralHostId in Libp2pInferenceRequestTransport.kt. Response matching was intentionally extracted to InferenceResponseCorrelationValidator.kt; update the contract test to assert transport wiring plus field checks in the owning validator.",
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [
@@ -41013,7 +41013,43 @@
             "Windows echoes round_id and rejects mismatched round IDs or response completion after the request deadline.",
             "Older peers that omit round_id are rejected by the new Android response path; coordinated rollout is required."
           ],
-          "follow_up": "Inspect exact-head V 3.0.689 CI. Keep T0165 in_progress until all required quality, Android, Windows, HostLifecycle and cross-runtime interop checks pass."
+          "follow_up": "A002 moves the field checks to the owning validator and asserts that the transport calls it with the pending round/deadline. Re-run all exact-head CI gates."
+        },
+        {
+          "attempt_id": "T0165-A002",
+          "started_at": "2026-10-31T11:42:00.000Z",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Corrected the stale source-contract test to inspect the dedicated InferenceResponseCorrelationValidator and verify that the libp2p transport passes pending round/deadline state into it. This changes test expectations only; production code and protocol semantics are unchanged. Exact-head V 3.0.690 CI is pending.",
+          "changed_files": [
+            "tests/test_android_libp2p_transport_contract.py",
+            "step three/T0165/execution-report.md",
+            "step three/T0165/evidence/round-response-correlation.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Source/test diff review",
+              "result": "passed",
+              "summary": "The source-contract test now follows the extracted validator responsibility without weakening round, peer, model or deadline assertions."
+            },
+            {
+              "name": "Local Python quality suite",
+              "result": "not_run",
+              "summary": "No local repository checkout/runtime is available in this connected session."
+            },
+            {
+              "name": "V 3.0.690 exact-head CI",
+              "result": "pending",
+              "summary": "Must pass all Python quality and graph/evidence guards plus Android, Windows, HostLifecycle and real local inference workflows."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect exact-head V 3.0.690 workflow runs; preserve A001 failure and keep T0165 in_progress until all acceptance gates pass."
         }
       ]
     },
@@ -52739,7 +52775,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-31T11:28:00.000Z",
+  "updated_at": "2026-10-31T11:42:00.000Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

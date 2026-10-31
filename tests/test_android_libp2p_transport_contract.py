@@ -9,6 +9,7 @@ TRUST = ROOT / "src/Client.Android/app/src/main/java/com/whitep/client/network/A
 TRANSPORT = ROOT / "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt"
 TRANSPORT_TEST = ROOT / "src/Client.Android/app/src/test/java/com/whitep/client/network/Libp2pInferenceRequestTransportTest.kt"
 RUNTIME = ROOT / "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt"
+RESPONSE_CORRELATION = ROOT / "src/Client.Android/app/src/main/java/com/whitep/client/network/InferenceResponseCorrelationValidator.kt"
 
 
 class AndroidLibp2pTransportContractTests(unittest.TestCase):
@@ -55,10 +56,20 @@ class AndroidLibp2pTransportContractTests(unittest.TestCase):
         self.assertIn('"/white-p/peer-message/1.0.0"', source)
         self.assertIn("PeerMessageFrameCodec.encode(payload)", source)
         self.assertIn("stream.remotePeerId().toBase58()", source)
-        self.assertIn("response.requestId", source)
-        self.assertIn("response.attemptId", source)
-        self.assertIn("response.ephemeralHostId", source)
-        self.assertIn("response.modelId", source)
+        correlation = RESPONSE_CORRELATION.read_text(encoding="utf-8")
+        self.assertIn("InferenceResponseCorrelationValidator.matches(", source)
+        self.assertIn("pending.roundId", source)
+        self.assertIn("pending.deadlineUnixMs", source)
+        for marker in (
+            "response.requestId",
+            "response.attemptId",
+            "response.roundId",
+            "response.ephemeralHostId",
+            "response.modelId",
+            "response.completedAtUnixMs",
+        ):
+            with self.subTest(marker=marker):
+                self.assertIn(marker, correlation)
         self.assertIn("awaitResponse", source)
 
     def test_real_tcp_noise_stream_loopback_acceptance_is_present(self):
