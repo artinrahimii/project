@@ -40510,9 +40510,9 @@
       ],
       "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
       "execution_summary": {
-        "attempt_count": 1,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "T0164-A001",
+        "attempt_count": 2,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "T0164-A002",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceRoundTimer.kt",
@@ -40527,7 +40527,14 @@
         ],
         "related_commits": [],
         "tests_passed": [],
-        "tests_failed": [],
+        "tests_failed": [
+          {
+            "name": "Python quality suite — V 3.0.683",
+            "result": "failed",
+            "summary": "295 tests; one timer-contract test expected a non-null member invocation while the source correctly used a nullable-safe call.",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41185790866"
+          }
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -40541,9 +40548,9 @@
         {
           "attempt_id": "T0164-A001",
           "started_at": "2026-10-31T08:42:30.500Z",
-          "ended_at": null,
-          "result": "partial",
-          "summary": "Added injectable Clock-based round deadline windows, configurable roundTimeout capped by DistributedRequest.deadlineUnixMs, bounded host submission and response waits, deterministic fake-clock JVM tests and Python contract checks. Exact-head V 3.0.683 CI pending.",
+          "ended_at": "2026-10-31T08:46:24.590Z",
+          "result": "failed",
+          "summary": "The exact-head V 3.0.683 quality run executed 295 Python tests and failed one new source-contract assertion: the implementation correctly uses the nullable-safe expression roundWindow?.remainingTimeoutMillis(), while the test expected roundWindow.remainingTimeoutMillis().",
           "changed_files": [
             "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceRoundTimer.kt",
             "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceAttemptDispatcher.kt",
@@ -40558,28 +40565,60 @@
           "commit_sha": null,
           "tests": [
             {
-              "name": "Source/graph dependency review",
+              "name": "Dependency and patch review",
               "result": "passed",
-              "summary": "Validated T0160->T0164 and T0163->T0164 as concrete deadline and dispatcher/runtime interface dependencies."
+              "summary": "T0160->T0164 and T0163->T0164 were validated as deadline and dispatcher/runtime contract dependencies."
             },
             {
-              "name": "Local Android/Python suites",
-              "result": "not_run",
-              "summary": "No local checkout or build toolchain available in this editing session."
-            },
-            {
-              "name": "V 3.0.683 exact-head CI",
-              "result": "pending",
-              "summary": "Must pass quality/graph guards, KtLint, APK, JVM tests, Protobuf, Windows WPF and HostLifecycle."
+              "name": "Python quality suite — V 3.0.683",
+              "result": "failed",
+              "summary": "295 tests ran; 294 passed and one contract assertion used a non-null member expression instead of the actual safe-call expression.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41185790866"
             }
           ],
-          "failure_details": null,
+          "failure_details": "tests/test_android_inference_round_timer_contract.py expected `roundWindow.remainingTimeoutMillis()` but the dispatcher correctly uses `roundWindow?.remainingTimeoutMillis()` because the round window is optional for source-compatible direct dispatcher callers. This is a test expectation mismatch, not a production implementation failure.",
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [
             "Added an optional roundWindow argument to the dispatcher; existing direct callers remain source-compatible."
           ],
-          "follow_up": "Inspect exact-head V 3.0.683 CI and leave T0164 in_progress until all required tests pass."
+          "follow_up": "A002 aligns the exact expected source expression with the Kotlin implementation and reruns the full quality and product CI."
+        },
+        {
+          "attempt_id": "T0164-A002",
+          "started_at": "2026-10-31T08:46:24.590Z",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Corrected the Python contract assertion to match the dispatcher's nullable-safe roundWindow?.remainingTimeoutMillis() call. Exact-head V 3.0.684 CI pending.",
+          "changed_files": [
+            "tests/test_android_inference_round_timer_contract.py",
+            "step three/T0164/execution-report.md",
+            "step three/T0164/evidence/v3.0.683-injectable-round-timer.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Patch invariant review",
+              "result": "passed",
+              "summary": "The new expected expression now matches the actual Kotlin source."
+            },
+            {
+              "name": "Local Python/Gradle/JVM tests",
+              "result": "not_run",
+              "summary": "No local checkout or toolchain is available in this editing session."
+            },
+            {
+              "name": "V 3.0.684 exact-head CI",
+              "result": "pending",
+              "summary": "Must pass Python tests and graph guards plus Android KtLint/APK/JVM/Protobuf, Windows WPF and HostLifecycle."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect V 3.0.684 exact-head CI and resolve any remaining real source/build/JVM failure before completing T0164."
         }
       ]
     },
@@ -52308,7 +52347,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-31T08:42:30.500Z",
+  "updated_at": "2026-10-31T08:46:24.590Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

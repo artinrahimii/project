@@ -24,7 +24,7 @@ class AndroidInferenceRoundTimerContractTests(unittest.TestCase):
         source = DISPATCHER.read_text(encoding="utf-8")
         self.assertIn("roundWindow: InferenceRoundTimer.Window? = null", source)
         self.assertIn("roundWindow?.isExpired() == true", source)
-        self.assertIn("roundWindow.remainingTimeoutMillis()", source)
+        self.assertIn("roundWindow?.remainingTimeoutMillis()", source)
         self.assertIn("withTimeoutOrNull(remainingMillis)", source)
         self.assertIn("InferenceAttemptSubmissionStatus.TIMED_OUT", source)
         self.assertIn("InferenceRoundDispatchRejection.ROUND_TIMEOUT", source)

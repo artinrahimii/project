@@ -11,3 +11,8 @@
 - Tests added: five timer JVM tests, two dispatcher timeout tests and six Python source-contract checks.
 - Local Gradle/JVM/Python execution was unavailable in this connected editing session. Exact-head CI is required before T0164 can be marked done.
 - Task status remains in_progress pending CI.
+## Attempt T0164-A001 — V 3.0.683 quality result
+
+- Step Three quality workflow [41185790866](https://github.com/artinrahimii/project/actions/runs/41185790866) failed: 295 tests ran, 294 passed and one new source-contract assertion failed. The test expected `roundWindow.remainingTimeoutMillis()` but the dispatcher correctly uses the nullable-safe `roundWindow?.remainingTimeoutMillis()`.
+- HostLifecycle passed in product workflow [41185790885](https://github.com/artinrahimii/project/actions/runs/41185790885). Android fixture compilation and Windows build were still running when the quality failure was recorded.
+- The failure is in the new Python expectation, not evidence of a Kotlin/runtime failure. Attempt A002 corrects only the assertion and reruns full CI.
