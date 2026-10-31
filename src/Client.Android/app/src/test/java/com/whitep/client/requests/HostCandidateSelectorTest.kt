@@ -382,10 +382,10 @@ class HostCandidateSelectorTest {
                 candidates =
                     listOf(
                         candidate("host-a"),
-                    candidate("host-d"),
-                    candidate("host-g"),
-                    candidate("host-h"),
-                    candidate("host-i"),
+                        candidate("host-d"),
+                        candidate("host-g"),
+                        candidate("host-h"),
+                        candidate("host-i"),
                 ),
                 previousRoundAttempts = previousAttempts,
                 previousRoundResponses = InferenceRoundResponseCollection(emptyList(), emptyList()),
@@ -437,8 +437,8 @@ class HostCandidateSelectorTest {
                     DistributedRequestProgress(
                         roundsDispatched = 1,
                         hostsAttempted = 1,
-                    attemptedEphemeralHostIds = listOf("host-a"),
-                ),
+                        attemptedEphemeralHostIds = listOf("host-a"),
+                    ),
                 retryableEphemeralHostIds = setOf("never-attempted"),
             )
 

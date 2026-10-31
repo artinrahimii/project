@@ -47,3 +47,12 @@ No local Gradle execution is claimed from this connected GitHub session. Exact-h
 - Windows WPF job 124622910280: C# formatting, Release build, generated Protobuf, startup smoke, agent-tool process/policy/capability checks, DPAPI identity/trust storage and artifact upload all passed.
 - Android job 124622910620: KtLint failed in `HostCandidateSelectorTest.kt` only. The log reported five inline `DistributedRequestProgress` argument layouts at lines 195, 217, 237, 257 and 288, plus multiline-expression indentation at lines 357 and 410. The Android APK, JVM tests and generated Protobuf checks were skipped because KtLint is an earlier gate. No Android test success is claimed for V 3.0.724.
 - A002 fixes only those reported test-source formatting violations. A fresh product workflow must pass KtLint, APK assembly, JVM tests and generated Java/Kotlin Protobuf checks before T0171 is complete.
+
+
+## A003 — exact-head V 3.0.725 CI result
+
+- Step Three quality gate [41230521477](https://github.com/artinrahimii/project/actions/runs/41230521477): PASS. Python automated tests, syntax, graph structure and recorded-output/evidence validation passed.
+- HostLifecycle job 124623603658 in [product workflow 41230521490](https://github.com/artinrahimii/project/actions/runs/41230521490): PASS.
+- Windows WPF job 124623603615: C# formatting, Release build, generated Protobuf C#, startup smoke, process/policy/capability checks, DPAPI identity/trust and artifact upload all passed.
+- Android job 124623603397: KtLint failed with seven continuation-indentation findings in `HostCandidateSelectorTest.kt` lines 385–389 and 440–441. APK, JVM tests and generated Protobuf checks were skipped. No Android test pass is claimed for V 3.0.725.
+- A004 corrects only those reported indentation findings. A new exact-head product run is required before completing T0171.

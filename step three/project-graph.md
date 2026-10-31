@@ -43903,9 +43903,9 @@
       ],
       "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود. Before execution, review the progress-aware HostCandidateSelector.selectNextRound API introduced by T0170. The T0170→T0171 edge remains unreviewed.\nT0171-A001 adds ordered request-scoped peer-attempt history. All previously attempted IDs are excluded from next-round selection by default; a prior peer can be selected again only via the explicit per-call retryableEphemeralHostIds allowlist. Exact-head CI pending.",
       "execution_summary": {
-        "attempt_count": 3,
-        "failed_attempt_count": 1,
-        "last_attempt_id": "T0171-A002",
+        "attempt_count": 5,
+        "failed_attempt_count": 2,
+        "last_attempt_id": "T0171-A003",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/requests/DistributedRequest.kt",
@@ -43940,6 +43940,24 @@
             "result": "passed",
             "url": "https://github.com/artinrahimii/project/actions/runs/41230294791",
             "summary": "Windows Release build, Protobuf, startup, process/policy/capability, DPAPI and artifact checks passed."
+          },
+          {
+            "name": "Step Three quality gate — V 3.0.725",
+            "result": "passed",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41230521477",
+            "summary": "Python tests, syntax, graph and recorded output/evidence checks passed."
+          },
+          {
+            "name": "HostLifecycle — V 3.0.725",
+            "result": "passed",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41230521490",
+            "summary": "HostLifecycle integration job 124623603658 passed."
+          },
+          {
+            "name": "Windows WPF — V 3.0.725",
+            "result": "passed",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41230521490",
+            "summary": "Windows job 124623603615 passed formatting/build/Protobuf/startup/security/DPAPI/artifact checks."
           }
         ],
         "tests_failed": [
@@ -43948,6 +43966,12 @@
             "result": "failed",
             "url": "https://github.com/artinrahimii/project/actions/runs/41230294791",
             "summary": "ktlintTestSourceSetCheck found five long inline progress constructors and two multiline-expression layout violations in HostCandidateSelectorTest.kt. APK/JVM/Protobuf steps were skipped."
+          },
+          {
+            "name": "Android KtLint — V 3.0.725",
+            "result": "failed",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41230521490",
+            "summary": "Seven continuation-indentation violations in HostCandidateSelectorTest.kt lines 385–389 and 440–441; downstream APK/JVM/Protobuf checks were skipped."
           }
         ],
         "blocked_reason": null,
@@ -44091,6 +44115,75 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Check exact-head V 3.0.725. If KtLint passes, require APK build, JVM tests and generated-source checks to pass as well."
+        },
+        {
+          "attempt_id": "T0171-A002-verification",
+          "started_at": "2026-10-31T18:40:15Z",
+          "ended_at": "2026-10-31T18:41:20Z",
+          "result": "failed",
+          "summary": "Exact-head V 3.0.725: Step Three quality, HostLifecycle and Windows WPF passed. Android KtLint failed on seven indentation findings in HostCandidateSelectorTest.kt; APK/JVM/Protobuf checks were skipped.",
+          "changed_files": [],
+          "commit_sha": "c654f534e235f141dd2cb8fcefca7eba617bf463",
+          "tests": [
+            {
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41230521477"
+            },
+            {
+              "name": "HostLifecycle",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41230521490"
+            },
+            {
+              "name": "Windows WPF",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41230521490"
+            },
+            {
+              "name": "Android KtLint",
+              "result": "failed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41230521490"
+            }
+          ],
+          "failure_details": "Seven KtLint continuation-indentation findings in HostCandidateSelectorTest.kt.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Correct the two reported multiline indentation blocks and rerun exact-head Android validation."
+        },
+        {
+          "attempt_id": "T0171-A003",
+          "started_at": "2026-10-31T18:41:20Z",
+          "ended_at": "2026-10-31T18:41:20Z",
+          "result": "partial",
+          "summary": "Aligned the five peer entries and list close in the cumulative-host selector test, and aligned the nested attemptedEphemeralHostIds argument and progress-constructor close in the invalid-retry test. No runtime behavior changed; exact-head CI pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt",
+            "step three/T0171/execution-report.md",
+            "step three/T0171/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Android KtLint, assembleDebug, JVM tests and generated Protobuf",
+              "result": "pending"
+            },
+            {
+              "name": "Step Three quality gate",
+              "result": "pending"
+            },
+            {
+              "name": "Windows WPF and HostLifecycle",
+              "result": "pending"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect V 3.0.726 exact-head CI. Require KtLint, assembleDebug, JVM and generated-source validations to pass before closing T0171."
         }
       ]
     },
@@ -55800,7 +55893,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-31T18:38:48Z",
+  "updated_at": "2026-10-31T18:41:20Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",
