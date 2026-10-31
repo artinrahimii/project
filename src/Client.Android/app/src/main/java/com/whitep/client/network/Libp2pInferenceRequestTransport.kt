@@ -187,12 +187,13 @@ class Libp2pInferenceRequestTransport(
             }
 
             val key = AttemptKey(request.requestId, request.attemptId)
-            val pending = PendingAttempt(
-                endpoint.peerId,
-                request.modelId,
-                request.roundId,
-                request.deadlineUnixMs,
-            )
+            val pending =
+                PendingAttempt(
+                    endpoint.peerId,
+                    request.modelId,
+                    request.roundId,
+                    request.deadlineUnixMs,
+                )
             if (pendingAttempts.putIfAbsent(key, pending) != null) {
                 lastSubmissionFailure = "duplicate_pending_request_and_attempt_id"
                 return InferenceTransportSubmission.REJECTED
@@ -313,7 +314,8 @@ class Libp2pInferenceRequestTransport(
 
         val key = AttemptKey(response.requestId, response.attemptId)
         val pending = pendingAttempts[key] ?: return
-        if (!InferenceResponseCorrelationValidator.matches(
+        if (authenticatedPeerId != pending.peerId ||
+            !InferenceResponseCorrelationValidator.matches(
                 response = response,
                 expectedRequestId = key.requestId,
                 expectedAttemptId = key.attemptId,
@@ -322,7 +324,7 @@ class Libp2pInferenceRequestTransport(
                 expectedModelId = pending.modelId,
                 requestDeadlineUnixMs = pending.deadlineUnixMs,
                 receivedAtUnixMs = clock.millis(),
-            ) || authenticatedPeerId != pending.peerId
+            )
         ) {
             pending.response.completeExceptionally(
                 SecurityException("The response did not match its authenticated peer or request correlation."),

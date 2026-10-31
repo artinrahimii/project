@@ -40892,11 +40892,11 @@
         "step three/T0165/execution-report.md",
         "step three/T0165/evidence/round-response-correlation.md"
       ],
-      "notes": "Round correlation is represented by additive round_id fields in both Protobuf request and response messages. A001 exposed one obsolete Python source-location assertion (299/300 Python tests passed); A002 updates that test to follow the extracted validator responsibility. Exact-head CI is pending; preserve in_progress until all Android/Windows and interop gates pass. Older peers without round_id are intentionally rejected.",
+      "notes": "Round correlation is implemented with additive request/response round_id fields and response/deadline checks. A001 failed one Python location assertion and two Kotlin lint formatting checks; Windows WPF, HostLifecycle and live local inference passed. A002 quality passed (300/300 Python tests). A003 applies only the two exact KtLint formatting corrections. Keep in_progress until exact-head A003 CI passes Android APK/JVM/Protobuf and all other gates.",
       "execution_summary": {
-        "attempt_count": 2,
+        "attempt_count": 3,
         "failed_attempt_count": 1,
-        "last_attempt_id": "T0165-A002",
+        "last_attempt_id": "T0165-A003",
         "last_attempt_result": "partial",
         "changed_files": [
           "protocol/whitep/v1/messages.proto",
@@ -40924,13 +40924,44 @@
         "related_commits": [
           "54799becc9c6288ccfc698603e6ab70e7d895d4b"
         ],
-        "tests_passed": [],
+        "tests_passed": [
+          {
+            "name": "Step Three quality gate — V 3.0.690",
+            "result": "passed",
+            "summary": "300 Python tests, Python syntax, graph and evidence guards passed.",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41197869530"
+          },
+          {
+            "name": "Windows WPF — V 3.0.689",
+            "result": "passed",
+            "summary": "Windows Release/build/startup/security and Protobuf checks passed.",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41197710998"
+          },
+          {
+            "name": "HostLifecycle — V 3.0.689",
+            "result": "passed",
+            "summary": "Unit and integration tests passed.",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41197710998"
+          },
+          {
+            "name": "Real local inference — V 3.0.689",
+            "result": "passed",
+            "summary": "Real llama.cpp CPU inference using the pinned GGUF model completed successfully.",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41197710914"
+          }
+        ],
         "tests_failed": [
           {
             "name": "Step Three quality gate — V 3.0.689",
             "result": "failed",
-            "summary": "299/300 Python tests passed; one stale assertion expected the old inline response validator location.",
+            "summary": "299/300 Python tests passed; one stale static check looked for response.ephemeralHostId in the old transport source location.",
             "url": "https://github.com/artinrahimii/project/actions/runs/41197711090"
+          },
+          {
+            "name": "Android KtLint — V 3.0.689",
+            "result": "failed",
+            "summary": "Two formatting violations in Libp2pInferenceRequestTransport.kt caused Android APK/JVM/Protobuf stages to be skipped.",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41197710998"
           }
         ],
         "blocked_reason": null,
@@ -40961,7 +40992,7 @@
           "started_at": "2026-10-31T11:28:00.000Z",
           "ended_at": "2026-10-31T11:38:54.533Z",
           "result": "failed",
-          "summary": "Exact-head V 3.0.689 quality CI ran 300 Python tests and failed one obsolete static contract assertion. The test expected response.ephemeralHostId to remain inside Libp2pInferenceRequestTransport.kt, while the new implementation correctly delegates response-field validation to InferenceResponseCorrelationValidator.kt. The implementation itself was not implicated by this assertion; product build/HostLifecycle jobs were still running at the time.",
+          "summary": "V 3.0.689 exact-head acceptance attempt failed: one Python static test was tied to the old inline validator layout and Android KtLint found two formatting-only violations. Windows WPF, HostLifecycle and the live local llama.cpp/GGUF inference workflow passed. Android APK/JVM/Protobuf were skipped after lint failure.",
           "changed_files": [
             "protocol/whitep/v1/messages.proto",
             "src/Client.Android/app/src/main/java/com/whitep/client/protocol/InferenceRequestPayloadBuilder.kt",
@@ -40989,22 +41020,35 @@
             {
               "name": "Step Three quality gate — V 3.0.689",
               "result": "failed",
-              "summary": "299 of 300 Python tests passed. One static contract test still looked for response.ephemeralHostId in the transport adapter instead of the extracted response-correlation validator.",
+              "summary": "299/300 Python tests passed; one obsolete static transport-layout assertion failed.",
               "url": "https://github.com/artinrahimii/project/actions/runs/41197711090"
             },
             {
-              "name": "White-P product build — V 3.0.689",
-              "result": "pending",
-              "summary": "Android lint/APK/JVM/Protobuf and Windows WPF/HostLifecycle jobs had not completed when the quality failure was inspected.",
+              "name": "Android KtLint — V 3.0.689",
+              "result": "failed",
+              "summary": "Two multiline formatting violations in Libp2pInferenceRequestTransport.kt (PendingAttempt construction and response-correlation condition). APK, JVM and generated Protobuf steps were skipped after lint failure.",
               "url": "https://github.com/artinrahimii/project/actions/runs/41197710998"
             },
             {
-              "name": "Local Gradle/.NET/Python",
-              "result": "not_run",
-              "summary": "No local checkout or build toolchain is available through the connected repository editing session."
+              "name": "Windows WPF — V 3.0.689",
+              "result": "passed",
+              "summary": "C# formatting, Windows Release build, generated Protobuf, WPF startup, policy/capability, process restrictions and DPAPI peer-trust checks passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41197710998"
+            },
+            {
+              "name": "HostLifecycle — V 3.0.689",
+              "result": "passed",
+              "summary": "Host lifecycle unit and integration tests passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41197710998"
+            },
+            {
+              "name": "Real local inference — V 3.0.689",
+              "result": "passed",
+              "summary": "The live CPU llama.cpp process loaded the pinned GGUF model and produced a real inference response.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41197710914"
             }
           ],
-          "failure_details": "The only failed Python test was AndroidLibp2pTransportContractTests.test_transport_uses_windows_protocol_and_checks_authenticated_correlation. It still asserted response.ephemeralHostId in Libp2pInferenceRequestTransport.kt. Response matching was intentionally extracted to InferenceResponseCorrelationValidator.kt; update the contract test to assert transport wiring plus field checks in the owning validator.",
+          "failure_details": "Two independent failures were found on V 3.0.689. Step Three quality: 299/300 Python tests passed; the one failing contract test expected response.ephemeralHostId inside Libp2pInferenceRequestTransport.kt instead of InferenceResponseCorrelationValidator.kt. Product build: KtLint reported (1) PendingAttempt multiline expression must start on a new line at line 190, and (2) response-correlation multiline condition must put the operand on a new line at line 325. APK, JVM tests and generated Protobuf checks were skipped. Windows WPF and HostLifecycle passed; the separate real local inference workflow passed.",
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [
@@ -41013,7 +41057,7 @@
             "Windows echoes round_id and rejects mismatched round IDs or response completion after the request deadline.",
             "Older peers that omit round_id are rejected by the new Android response path; coordinated rollout is required."
           ],
-          "follow_up": "A002 moves the field checks to the owning validator and asserts that the transport calls it with the pending round/deadline. Re-run all exact-head CI gates."
+          "follow_up": "A002 changes the stale Python test ownership and A003 fixes the two exact KtLint formatting findings. Re-run all exact-head quality, Android, Windows, HostLifecycle and real local inference gates."
         },
         {
           "attempt_id": "T0165-A002",
@@ -41030,26 +41074,59 @@
           "commit_sha": null,
           "tests": [
             {
-              "name": "Source/test diff review",
+              "name": "Step Three quality gate — V 3.0.690",
               "result": "passed",
-              "summary": "The source-contract test now follows the extracted validator responsibility without weakening round, peer, model or deadline assertions."
+              "summary": "All 300 Python tests, Python syntax, graph structure and recorded-output/evidence checks passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41197869530"
             },
             {
-              "name": "Local Python quality suite",
-              "result": "not_run",
-              "summary": "No local repository checkout/runtime is available in this connected session."
-            },
-            {
-              "name": "V 3.0.690 exact-head CI",
+              "name": "White-P product build — V 3.0.690",
               "result": "pending",
-              "summary": "Must pass all Python quality and graph/evidence guards plus Android, Windows, HostLifecycle and real local inference workflows."
+              "summary": "Windows WPF, HostLifecycle and Android build/test jobs were still running when A003 was prepared.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41197869462"
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect exact-head V 3.0.690 workflow runs; preserve A001 failure and keep T0165 in_progress until all acceptance gates pass."
+          "follow_up": "A003 corrects the two KtLint findings reported by V 3.0.689; then inspect exact-head V 3.0.691 CI."
+        },
+        {
+          "attempt_id": "T0165-A003",
+          "started_at": "2026-10-31T11:45:00.000Z",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Applied the two exact KtLint formatting corrections in Libp2pInferenceRequestTransport.kt: split the multiline PendingAttempt assignment and moved the response-correlation condition operand onto its own line. No runtime behavior or protocol contract changed. Exact-head V 3.0.691 CI pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
+            "step three/T0165/execution-report.md",
+            "step three/T0165/evidence/round-response-correlation.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Source diff review",
+              "result": "passed",
+              "summary": "Only whitespace/line-break formatting changed at the two KtLint-reported locations."
+            },
+            {
+              "name": "Local Gradle/KtLint/JVM",
+              "result": "not_run",
+              "summary": "No local Android build toolchain is available in this connected session."
+            },
+            {
+              "name": "V 3.0.691 exact-head CI",
+              "result": "pending",
+              "summary": "Must pass Python quality, KtLint, APK, Android JVM tests, Protobuf, Windows WPF and HostLifecycle."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect exact-head V 3.0.691 CI. Keep T0165 in_progress until all required gates pass."
         }
       ]
     },
@@ -52775,7 +52852,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-31T11:42:00.000Z",
+  "updated_at": "2026-10-31T11:45:00.000Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

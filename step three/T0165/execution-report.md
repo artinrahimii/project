@@ -25,3 +25,18 @@
 - Updated `tests/test_android_libp2p_transport_contract.py` to require the transport's call to `InferenceResponseCorrelationValidator.matches`, its pending round/deadline inputs, and the request/attempt/round/host/model/completion-time checks in the validator file.
 - This is a test-contract location correction only. No production code, acceptance behavior or security assertion was weakened.
 - Exact-head `V 3.0.690` CI is pending. T0165 remains `in_progress`.
+
+
+## A001 final V 3.0.689 product/quality outcomes
+
+- Step Three quality [41197711090](https://github.com/artinrahimii/project/actions/runs/41197711090) failed: 299/300 Python tests passed; one obsolete static check expected the response host identity comparison in the old transport file.
+- Android KtLint in [41197710998](https://github.com/artinrahimii/project/actions/runs/41197710998) failed at two formatting-only locations in `Libp2pInferenceRequestTransport.kt`. The Android APK, JVM and generated Protobuf stages were skipped because lint failed.
+- Windows WPF in the same product workflow passed Release build, formatting, Protobuf, startup, policy/capability and DPAPI checks. HostLifecycle unit/integration tests passed.
+- The separate real local inference workflow [41197710914](https://github.com/artinrahimii/project/actions/runs/41197710914) passed with an actual llama.cpp CPU process and pinned GGUF model.
+- A002 fixed the stale static contract test. Exact-head Step Three quality for V 3.0.690 [41197869530](https://github.com/artinrahimii/project/actions/runs/41197869530) passed all 300 Python tests and graph/evidence guards. The product workflow was still running when A003 was prepared.
+
+## Attempt T0165-A003 — KtLint corrections
+
+- Corrected the two exact KtLint findings in `Libp2pInferenceRequestTransport.kt`: multiline `PendingAttempt` expression start and multiline condition operand placement.
+- No runtime behavior or wire contract was changed by A003.
+- Exact-head V 3.0.691 CI is pending. T0165 remains `in_progress`.

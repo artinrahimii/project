@@ -30,3 +30,10 @@ Older peer implementations do not populate `round_id`. The new Android response 
 ## A001/A002 exact-head quality correction
 
 V 3.0.689 Step Three quality ran 300 tests; 299 passed and one stale static contract assertion failed because it expected the response host-identity check to remain inside the transport adapter. The implementation now delegates to the dedicated InferenceResponseCorrelationValidator. A002 updates the test to assert the call boundary and check each response field in the validator that owns the logic. This is not a production behavior change. Exact-head V 3.0.690 quality and product CI are pending; no completion is claimed.
+
+
+## A001/A002/A003 validation history
+
+- V 3.0.689: quality failed at 299/300 Python tests due to one stale static test. Android KtLint failed on two multiline-formatting lines, so APK/JVM/Protobuf were skipped. Windows WPF and HostLifecycle passed, and the separate real local inference acceptance passed.
+- V 3.0.690: Step Three quality passed all 300 Python tests and graph/evidence checks. Product workflow status was still running when A003 was started.
+- V 3.0.691 A003: only the two reported Kotlin formatting issues are corrected. Exact-head CI is pending; no Android build/JVM pass is claimed yet.
