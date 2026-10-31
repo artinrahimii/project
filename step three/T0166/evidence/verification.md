@@ -20,3 +20,11 @@
 - JVM tests added for two independent host responses, duplicate attempt rejection, correlation mismatch rejection and clearing ephemeral result state.
 - Python source-contract checks added for correlation checks, unique attempt identity, UI card iteration and test coverage.
 - CI result: pending exact-head workflow for this change. No test is marked passed before the workflow reports success.
+
+
+## First exact-head CI run — V 3.0.693
+
+- Step Three quality gate passed: [41199229262](https://github.com/artinrahimii/project/actions/runs/41199229262).
+- Windows WPF host and HostLifecycle jobs passed: [41199229209](https://github.com/artinrahimii/project/actions/runs/41199229209).
+- Android KtLint failed with `RequestViewModelTest.kt:77:57 Expected newline before '.'`. Android APK build, JVM tests and generated Protobuf verification were skipped: [41199229209](https://github.com/artinrahimii/project/actions/runs/41199229209).
+- A002 extracts a local variable to correct that exact formatting diagnostic. CI for the correction is pending; no acceptance pass is claimed yet.

@@ -268,12 +268,12 @@ private fun privacyScreen() {
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 Text(
-                    "The processing host can read your prompt and context capsule after channel decryption.",
+                    text = "The processing host can read your prompt and context capsule after channel decryption.",
                     style = MaterialTheme.typography.bodyLarge,
                 )
                 Text("Transport encryption protects data in transit, not from the receiving host.")
                 Text(
-                    "Only share content you are willing to disclose to the host you choose.",
+                    text = "Only share content you are willing to disclose to the host you choose.",
                 )
                 Text(
                     text =

@@ -74,7 +74,8 @@ class RequestViewModelTest {
         val mismatched = response(ATTEMPT_B, HOST_B, "must not be stored")
 
         assertFalse(viewModel.recordValidatedResponse(REQUEST_ID, ATTEMPT_A, HOST_A, MODEL_ID, mismatched))
-        assertTrue(viewModel.uiState.value.hostResponses.isEmpty())
+        val currentState = viewModel.uiState.value
+        assertTrue(currentState.hostResponses.isEmpty())
     }
 
     @Test

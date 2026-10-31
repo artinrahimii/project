@@ -4,7 +4,8 @@
 
 - **Base revision:** `334885968dd275f9b1178778b2b80527d5ad1751` on `main` (`V 3.0.692`).
 - **Start:** 2026-10-31T15:23:00+03:30.
-- **Status at commit preparation:** in progress; exact-head CI has not run yet.
+- **Status:** first exact-head CI attempt failed; correction attempt A002 is in progress.
+- **Online implementation commit:** `89f9badabc5a5f7d11739a53f578b47f5f561154` (`V 3.0.693`).
 - **Task:** retain each correlated host response independently and render a separate UI card for each attempt.
 
 ## Dependency review
@@ -37,3 +38,20 @@
 - Local Gradle/KtLint/JVM and Python execution were not available through the GitHub editing connection; no local test pass is claimed.
 - Exact-head Step Three quality and Android KtLint/APK/JVM CI are pending the implementation commit.
 - A live user-initiated Android request-to-host flow is not claimed by this task; the request UI still identifies the preview as not yet wired to the runtime.
+
+
+## Attempt T0166-A001 — exact-head CI outcome
+
+- Step Three quality passed: [run 41199229262](https://github.com/artinrahimii/project/actions/runs/41199229262).
+- Windows WPF build/startup/security/artifact job passed: [run 41199229209](https://github.com/artinrahimii/project/actions/runs/41199229209).
+- HostLifecycle unit/integration passed: [run 41199229209](https://github.com/artinrahimii/project/actions/runs/41199229209).
+- Android KtLint failed at `RequestViewModelTest.kt:77:57` with `Expected newline before '.'`. As a consequence, Android APK, JVM tests, Protobuf generation verification and APK upload were skipped. [Product workflow](https://github.com/artinrahimii/project/actions/runs/41199229209).
+- A001 is recorded as failed verification; no Android build/test pass is claimed.
+
+## Attempt T0166-A002
+
+- **Start:** 2026-10-31T15:34:00+03:30.
+- **Correction:** extracted `viewModel.uiState.value` into a local variable in the failing test before checking `hostResponses`, removing the chained property expression reported by KtLint.
+- Restored the original named `text =` arguments in `MainActivity.kt`; this removes two unintended formatting-only changes from the previous diff.
+- No runtime behavior, response-correlation contract or protocol field changed.
+- Exact-head `V 3.0.694` CI is pending. Task remains `in_progress` until all required gates pass.
