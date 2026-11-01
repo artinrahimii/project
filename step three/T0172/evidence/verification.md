@@ -27,3 +27,16 @@
 
 - No production code was changed because T0165 already implemented and CI-verified the fail-closed response path.
 - T0172 remains `in_progress` until exact-head CI executes the new Kotlin regressions and the Android/Python quality checks.
+
+
+## Exact-head acceptance verification
+
+- Verification date: 2026-11-01.
+- Branch: `main`.
+- Implementation commit: `3758c6a06bdc9b5fddd1409e3019afdd129e6267` (`V 3.0.729`).
+- Step Three quality gate: completed successfully; the graph, Python tests, Python syntax, and output/evidence guard passed — [run 41232429421](https://github.com/artinrahimii/project/actions/runs/41232429421).
+- Android client: KtLint, debug APK, JVM unit tests and generated Protobuf Java/Kotlin checks all passed — [job 124629217032](https://github.com/artinrahimii/project/actions/runs/41232429429/job/124629217032). This includes `InferenceResponseCorrelationValidatorTest.rejectsAResponseFromPreviousRequestWithinTheNewRequestWindow` and `RequestViewModelTest.rejectsAResponseFromPreviousRequestWhenANewRequestIsExpected`.
+- Windows WPF host build, startup smoke and policy/security checks passed — [job 124629217043](https://github.com/artinrahimii/project/actions/runs/41232429429/job/124629217043).
+- HostLifecycle unit and integration tests passed — [job 124629216988](https://github.com/artinrahimii/project/actions/runs/41232429429/job/124629216988).
+- Exact tested head for every listed workflow/job: `3758c6a06bdc9b5fddd1409e3019afdd129e6267`.
+- Result: T0172 acceptance criteria satisfied; task status may be set to `done`.

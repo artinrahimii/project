@@ -2,7 +2,7 @@
 
 ## Status
 
-`in_progress` pending exact-head CI. The production late-response protection already existed and was verified under T0165; this task does not duplicate or weaken it. T0172 adds explicit task-specific regression coverage for a response from a prior request arriving during a new request's time window and hardens the Python source-contract gate.
+`done`. The production late-response protection already existed and was verified under T0165; T0172 added explicit task-specific regression coverage for a response from a prior request arriving during a new request's time window and hardened the Python source-contract gate. Exact-head CI on V 3.0.729 passed all required Android, Windows, HostLifecycle and Step Three checks.
 
 ## Dependency review
 
@@ -36,7 +36,11 @@
 
 ## Verification
 
-- Exact `main` head and graph were inspected at `V 3.0.728`.
-- The 3,474,333-byte graph Blob's computed Git SHA-1 matched the tree Blob ID; all 229 nodes and 417 edges parsed.
-- Exact-head V 3.0.728 Step Three quality and product workflows succeeded before these regression changes.
-- The added Kotlin JVM and Python tests are awaiting exact-head CI. T0172 will not be closed until the new regressions, Android KtLint/JVM checks and Step Three quality gate pass on the implementation commit.
+- Verified on branch `main`, exact implementation commit `3758c6a06bdc9b5fddd1409e3019afdd129e6267` (`V 3.0.729`).
+- Step Three quality gate passed: graph structure, automated Python tests, Python syntax and recorded-output/evidence checks — [run 41232429421](https://github.com/artinrahimii/project/actions/runs/41232429421).
+- Android job passed: KtLint, debug APK build, JVM unit tests (including both new stale-response regressions), generated Protobuf Java/Kotlin validation — [job 124629217032](https://github.com/artinrahimii/project/actions/runs/41232429429/job/124629217032).
+- Windows WPF Release build, startup smoke, process/policy/capability and user-scoped identity checks passed — [job 124629217043](https://github.com/artinrahimii/project/actions/runs/41232429429/job/124629217043).
+- HostLifecycle unit/integration tests passed — [job 124629216988](https://github.com/artinrahimii/project/actions/runs/41232429429/job/124629216988).
+- Both reviewed dependency edges remain validated: T0171 → T0172 is sequencing-only; T0160 → T0172 is a contract/interface dependency. No edge was changed during closure.
+- No production runtime code change was needed: the fail-closed request/attempt/deadline path was already implemented and verified under T0165. T0172's actual contribution is regression coverage and source-contract protection.
+- Acceptance result: passed; the task is closed.

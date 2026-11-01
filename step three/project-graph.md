@@ -44392,8 +44392,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0171 و T0160 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال انجام",
+      "status": "done",
+      "status_fa": "تکمیل‌شده",
       "actual_output_paths": [
         "src/Client.Android/app/src/test/java/com/whitep/client/network/InferenceResponseCorrelationValidatorTest.kt",
         "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
@@ -44417,12 +44417,12 @@
         "step three/T0165/execution-report.md",
         "step three/T0165/evidence/round-response-correlation.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود. T0172-A001 confirms existing production deadline/correlation protection from T0165 and adds request-to-request stale-response JVM regressions plus Python guards. Production runtime is unchanged; exact-head CI pending.",
+      "notes": "T0172-A001 added request-to-request stale-response JVM regressions and Python source-contract guards. Exact-head CI on V 3.0.729 passed: Android KtLint, debug APK, JVM unit tests (including both regressions), generated Protobuf checks, Windows WPF build/startup/security checks, HostLifecycle tests, and the Step Three graph/Python quality gate. Existing production late-response protection from T0165 was retained; no production runtime change was needed.",
       "execution_summary": {
-        "attempt_count": 1,
+        "attempt_count": 2,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0172-A001",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "T0172-A002-verification",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Client.Android/app/src/test/java/com/whitep/client/network/InferenceResponseCorrelationValidatorTest.kt",
           "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
@@ -44431,13 +44431,20 @@
           "step three/T0172/evidence/verification.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
+        "related_commits": [
+          "3758c6a06bdc9b5fddd1409e3019afdd129e6267"
+        ],
+        "tests_passed": [
+          "Android KtLint, debug APK build, JVM unit tests and generated Protobuf Java/Kotlin validation — PASS on exact 3758c6a06bdc9b5fddd1409e3019afdd129e6267: https://github.com/artinrahimii/project/actions/runs/41232429429/job/124629217032",
+          "Windows WPF Release build, startup smoke and security/policy checks — PASS on exact 3758c6a06bdc9b5fddd1409e3019afdd129e6267: https://github.com/artinrahimii/project/actions/runs/41232429429/job/124629217043",
+          "Host lifecycle unit and integration tests — PASS on exact 3758c6a06bdc9b5fddd1409e3019afdd129e6267: https://github.com/artinrahimii/project/actions/runs/41232429429/job/124629216988",
+          "Step Three graph, Python automated tests/syntax, graph structure and output/evidence guard — PASS on exact 3758c6a06bdc9b5fddd1409e3019afdd129e6267: https://github.com/artinrahimii/project/actions/runs/41232429421"
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "in_review",
+          "state": "passed",
           "triggering_contracts": [
             "New tests exercise request/attempt correlation, pending-entry lifecycle and absolute deadline checks implemented by the T0165 response-correlation contract."
           ],
@@ -44489,6 +44496,42 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Commit focused regression coverage as V 3.0.729, inspect exact-head Step Three and Android product CI, fix any failures and close T0172 only after acceptance."
+        },
+        {
+          "attempt_id": "T0172-A002-verification",
+          "started_at": "2026-11-01T03:39:00Z",
+          "ended_at": "2026-11-01T03:39:00Z",
+          "result": "succeeded",
+          "summary": "Verified the exact V 3.0.729 main commit. Android KtLint, assembleDebug, testDebugUnitTest (including the new prior-request validator and ViewModel regressions), generated Protobuf checks, Windows WPF build/startup/security, HostLifecycle integration, and the Step Three graph/Python quality gate all completed successfully. T0172 acceptance criteria are satisfied.",
+          "changed_files": [],
+          "commit_sha": "3758c6a06bdc9b5fddd1409e3019afdd129e6267",
+          "tests": [
+            {
+              "name": "Android KtLint, assembleDebug, testDebugUnitTest and generated Protobuf Java/Kotlin",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41232429429/job/124629217032"
+            },
+            {
+              "name": "Windows WPF Release build, startup smoke and policy/security checks",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41232429429/job/124629217043"
+            },
+            {
+              "name": "Host lifecycle unit and integration tests",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41232429429/job/124629216988"
+            },
+            {
+              "name": "Step Three graph and Python quality gate",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41232429421"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Proceed to T0173; T0172 and T0160 are now verified prerequisites."
         }
       ]
     },
@@ -56197,7 +56240,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-10-31T19:00:00Z",
+  "updated_at": "2026-11-01T03:39:00Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",
