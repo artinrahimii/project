@@ -92,3 +92,25 @@ The current `MainActivity.requestScreen` is a preparation-only preview and expli
 - No production code or protocol behavior changed.
 - Exact-head Android test-source compilation, the cancellation JVM regression and generated Protobuf validation remain pending.
 - T0174 remains `in_progress`: the Android request UI is still a prepare-only preview without real dispatch/selected-attempt state, so there is no genuine click path to attach a Cancel button to.
+
+
+## Exact V 3.0.736 CI evidence — T0174-A012
+
+- Exact commit `339b1efb54449fe0a3d5d4dad3d26c096ad3d36d` (`V 3.0.736`).
+- Step Three quality gate: PASS — [run 41274355328](https://github.com/artinrahimii/project/actions/runs/41274355328).
+- Product workflow: SUCCESS — [run 41274355277](https://github.com/artinrahimii/project/actions/runs/41274355277).
+- Android job [124753390180](https://github.com/artinrahimii/project/actions/runs/41274355277/job/124753390180): KtLint, `assembleDebug`, `testDebugUnitTest`, generated Protobuf Java/Kotlin all succeeded.
+- Windows WPF [job 124753390376](https://github.com/artinrahimii/project/actions/runs/41274355277/job/124753390376): PASS.
+- HostLifecycle [job 124753390338](https://github.com/artinrahimii/project/actions/runs/41274355277/job/124753390338): PASS, including the Windows loopback CancelRequest/CANCELLED integration acceptance.
+- Android test report artifact `13070711776`: 150 tests, zero failures, zero ignored. All 4 `Libp2pInferenceRequestTransportTest` tests passed; `cancelAttemptsSendsCorrelatedCancelRequestsToEverySelectedAuthenticatedHost` passed in 6.055 seconds.
+- Android-JVM test results cover two authenticated JVM peers, not native .NET peers. Do not describe this as cross-runtime cancellation acceptance.
+
+## T0174-A013 — native Android/.NET cancellation interop test (pending)
+
+- The .NET test fixture can now run in `cancel` mode, validate the exact CancelRequest pair/reason and send a correlated CANCELLED response.
+- The new Android JVM test starts three separate native .NET peer processes, submits the shared request to each, waits for all three requests to arrive, sends cancellation for the selected attempts and validates the three returned CANCELLED outcomes.
+- Test source is committed as part of the next execution step, but has not yet run in CI. No pass is claimed for this new test until exact-head product CI succeeds.
+
+## Outstanding production UI integration
+
+The existing Android request screen is a prepare-only preview. It creates neither a live dispatch nor a retained list of selected `InferenceHostAttempt` values. No production call site invokes `cancelSelectedHosts`. A real Cancel button is therefore not yet implemented. T0174 remains `in_progress` despite the passing backend/JVM/Windows acceptance tests.

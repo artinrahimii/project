@@ -19,6 +19,7 @@ import io.libp2p.etc.createSimpleBinding
 import io.netty.buffer.ByteBuf
 import io.netty.buffer.Unpooled
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
@@ -365,6 +366,189 @@ class Libp2pInferenceRequestTransportTest {
                     runCatching {
                         server.stop().get(10, TimeUnit.SECONDS)
                     }
+                }
+            }
+        }
+
+    @Test
+    fun sendsCancellationToThreeNativeDotNetLibp2pHostsAndReceivesCancelledResponses() =
+        runBlocking<Unit> {
+            val serverDll = System.getenv("WHITEP_INTEROP_SERVER_DLL")
+            assumeTrue(
+                "The cross-runtime .NET peer fixture is enabled only by the CI interop job.",
+                !serverDll.isNullOrBlank() && File(serverDll).isFile,
+            )
+
+            val clientIdentity = generateKeyPair(KeyType.ED25519).first
+            val clientPeerId = PeerId.fromPubKey(clientIdentity.publicKey()).toBase58()
+            val processes = mutableListOf<Process>()
+            val phaseOutput = ConcurrentLinkedQueue<String>()
+            val diagnosticOutput = ConcurrentLinkedQueue<String>()
+            val outputReaders = mutableListOf<Thread>()
+            val endpoints = linkedMapOf<String, RendezvousPeerEndpoint>()
+            var runtime: AndroidInferenceRequestRuntime? = null
+
+            try {
+                repeat(3) {
+                    val serverNumber = processes.size + 1
+                    val port = ServerSocket(0).use { socket -> socket.localPort }
+                    val process =
+                        ProcessBuilder(
+                            "dotnet",
+                            serverDll!!,
+                            "--interop-peer-server",
+                            clientPeerId,
+                            port.toString(),
+                            "cancel",
+                        ).redirectErrorStream(true).start()
+                    processes += process
+                    val readyLineFuture = CompletableFuture<String>()
+                    val outputReader =
+                        Thread(
+                            {
+                                val reader = process.inputStream.bufferedReader()
+                                val allowedMarkers =
+                                    setOf(
+                                        "WAITING_FOR_REMOTE_SESSION",
+                                        "SESSION_AUTHENTICATED",
+                                        "APPLICATION_PROTOCOL_READY",
+                                        "RECEIVED",
+                                        "CANCEL_WAITING",
+                                        "CANCEL_RECEIVED",
+                                        "VALIDATED",
+                                        "SENT",
+                                        "PASS",
+                                    )
+                                while (true) {
+                                    val line = runCatching { reader.readLine() }.getOrNull() ?: break
+                                    when {
+                                        line.startsWith("READY\t") -> readyLineFuture.complete(line)
+                                        line in allowedMarkers -> phaseOutput.add("peer-" + serverNumber + ":" + line)
+                                        line.startsWith("P2P_DIAG\t") -> {
+                                            val fields = line.split('\t', limit = 6)
+                                            if (fields.size == 6 && diagnosticOutput.size < 240) {
+                                                diagnosticOutput.add(
+                                                    "peer-" + serverNumber + ":libp2p:" +
+                                                        fields.drop(1).joinToString(separator = ":"),
+                                                )
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "whitep-dotnet-cancel-peer-" + serverNumber + "-output",
+                        ).apply { isDaemon = true }
+                    outputReaders += outputReader
+                    outputReader.start()
+
+                    val readyLine =
+                        withContext(Dispatchers.IO) {
+                            withTimeout(30_000L) {
+                                readyLineFuture.get(30, TimeUnit.SECONDS)
+                            }
+                        }
+                    val readyFields = readyLine.split('\t')
+                    assertEquals("READY", readyFields.firstOrNull())
+                    assertEquals(3, readyFields.size)
+                    val peerId = readyFields[1]
+                    endpoints[peerId] =
+                        RendezvousPeerEndpoint(
+                            peerId = peerId,
+                            tcpMultiaddresses = listOf(readyFields[2]),
+                            expiresAtUtc = Instant.now().plusSeconds(120),
+                        )
+                }
+
+                val runtimeClient =
+                    AndroidInferenceRequestRuntime(
+                        localIdentity = clientIdentity,
+                        resolveEndpoint = { requestedPeerId -> endpoints[requestedPeerId] },
+                        trustVerifier = PeerTrustVerifier { trustedPeerId -> trustedPeerId in endpoints },
+                        connectionTimeout = Duration.ofSeconds(20),
+                    )
+                runtime = runtimeClient
+                val requestId = "interop-cancel-" + UUID.randomUUID()
+                val dispatch =
+                    runtimeClient.dispatchRound(
+                        distributedRequest =
+                            DistributedRequest(
+                                requestId = requestId,
+                                deadlineUnixMs = System.currentTimeMillis() + 60_000L,
+                                maxRounds = 1,
+                            ),
+                        selectedHosts = endpoints.keys.map(::candidate),
+                        modelId = MODEL_ID,
+                        currentMessage = "Cancel the active request on all selected Windows hosts",
+                        capsule = ConversationContextCapsule(goal = "Verify cross-runtime cancellation"),
+                        maxOutputTokens = 8,
+                        protocolVersion = PROTOCOL_VERSION,
+                    )
+                assertTrue(dispatch is InferenceRoundDispatchResult.Dispatched)
+                val attempts = (dispatch as InferenceRoundDispatchResult.Dispatched).attempts
+                assertEquals(3, attempts.size)
+                assertTrue(attempts.all { it.submissionStatus == InferenceAttemptSubmissionStatus.QUEUED })
+
+                withTimeout(15_000L) {
+                    while (phaseOutput.count { it.endsWith(":CANCEL_WAITING") } != 3) {
+                        delay(25L)
+                    }
+                }
+
+                val cancellationResults = runtimeClient.cancelSelectedHosts(requestId, attempts)
+                assertEquals(3, cancellationResults.size)
+                assertTrue(cancellationResults.all { it.cancellationSent })
+
+                val responses =
+                    attempts.map { attempt ->
+                        try {
+                            runtimeClient.awaitResponse(
+                                requestId = requestId,
+                                attemptId = attempt.attemptId,
+                                timeout = Duration.ofSeconds(20),
+                            )
+                        } catch (exception: Exception) {
+                            val phases = phaseOutput.toList().joinToString(separator = " | ")
+                            val diagnostics =
+                                diagnosticOutput
+                                    .toList()
+                                    .takeLast(60)
+                                    .joinToString(separator = " | ")
+                            throw AssertionError(
+                                "The Windows host did not return its correlated CANCELLED response; " +
+                                    "phases=$phases; diagnostics=$diagnostics",
+                                exception,
+                            )
+                        }
+                    }
+
+                assertEquals(3, responses.size)
+                assertEquals(endpoints.keys, responses.map { it.ephemeralHostId }.toSet())
+                assertEquals(attempts.map { it.attemptId }.toSet(), responses.map { it.attemptId }.toSet())
+                assertTrue(
+                    responses.all {
+                        it.requestId == requestId &&
+                            it.outcome == InferenceOutcome.INFERENCE_OUTCOME_CANCELLED &&
+                            it.outputText.isEmpty() &&
+                            it.errorMessage == "The request was cancelled by the remote client."
+                    },
+                )
+
+                processes.forEach { process ->
+                    assertTrue(
+                        "The .NET cancellation fixture should exit after its response.",
+                        process.waitFor(15, TimeUnit.SECONDS),
+                    )
+                    assertEquals(0, process.exitValue())
+                }
+                assertEquals(3, phaseOutput.count { it.endsWith(":CANCEL_RECEIVED") })
+            } finally {
+                runtime?.close()
+                processes.forEach { process ->
+                    if (process.isAlive) {
+                        process.destroyForcibly()
+                        process.waitFor(5, TimeUnit.SECONDS)
+                    }
+                    process.inputStream.close()
                 }
             }
         }

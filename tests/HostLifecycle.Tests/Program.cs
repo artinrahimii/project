@@ -14,11 +14,14 @@ using WhiteP.Shared.Contracts;
 
 if (args.Length > 0 && args[0] == "--interop-peer-server")
 {
-    if (args.Length != 3)
-        throw new ArgumentException("The interop server requires a remote PeerId and a TCP port.");
+    if (args.Length is < 3 or > 4)
+        throw new ArgumentException("The interop server requires a remote PeerId, TCP port, and optional cancel mode.");
     if (!int.TryParse(args[2], System.Globalization.NumberStyles.None, System.Globalization.CultureInfo.InvariantCulture, out var interopPort))
         throw new ArgumentException("The interop server TCP port is invalid.");
-    await AndroidInteropPeerServer.RunAsync(args[1], interopPort);
+    bool waitForCancellation = args.Length == 4 && args[3] == "cancel";
+    if (args.Length == 4 && !waitForCancellation)
+        throw new ArgumentException("The optional interop server mode must be 'cancel'.");
+    await AndroidInteropPeerServer.RunAsync(args[1], interopPort, waitForCancellation);
     return;
 }
 

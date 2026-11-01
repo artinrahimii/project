@@ -14,7 +14,7 @@ using WhiteP.Shared.Contracts.V1;
 
 internal static class AndroidInteropPeerServer
 {
-    public static async Task RunAsync(string expectedAndroidPeerId, int port)
+    public static async Task RunAsync(string expectedAndroidPeerId, int port, bool waitForCancellation = false)
     {
         if (string.IsNullOrWhiteSpace(expectedAndroidPeerId))
             throw new ArgumentException("The Android PeerId is required.", nameof(expectedAndroidPeerId));
@@ -65,18 +65,59 @@ internal static class AndroidInteropPeerServer
             throw new InvalidDataException("The Android peer sent an invalid inference request.");
 
         InferenceRequest request = parsed.Message;
-        var response = new InferenceResponse
+        InferenceResponse response;
+        if (waitForCancellation)
         {
-            RequestId = request.RequestId,
-            AttemptId = request.AttemptId,
-            RoundId = request.RoundId,
-            EphemeralHostId = server.LocalPeerIdentity,
-            Outcome = InferenceOutcome.Succeeded,
-            OutputText = "dotnet-host-response",
-            CompletedAtUnixMs = (ulong)Math.Max(1L, DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()),
-            ModelId = request.ModelId,
-            ErrorMessage = string.Empty
-        };
+            Console.WriteLine("CANCEL_WAITING");
+            Console.Out.Flush();
+            byte[] cancelWire = await server.ReceiveMessageAsync(timeout.Token).ConfigureAwait(false);
+            try
+            {
+                var parsedCancel = ProtocolMessageParser.ParseCancelRequest(cancelWire);
+                if (!parsedCancel.IsValid || parsedCancel.Message is null)
+                    throw new InvalidDataException("The Android peer sent an invalid CancelRequest.");
+
+                CancelRequest cancel = parsedCancel.Message!;
+                if (!StringComparer.Ordinal.Equals(cancel.RequestId, request.RequestId) ||
+                    !StringComparer.Ordinal.Equals(cancel.AttemptId, request.AttemptId) ||
+                    !StringComparer.Ordinal.Equals(cancel.Reason, ProtocolMessageValidator.UserCancellationReason))
+                    throw new InvalidDataException("The CancelRequest did not match the active Android request/attempt.");
+
+                response = new InferenceResponse
+                {
+                    RequestId = request.RequestId,
+                    AttemptId = request.AttemptId,
+                    RoundId = request.RoundId,
+                    EphemeralHostId = server.LocalPeerIdentity,
+                    Outcome = InferenceOutcome.Cancelled,
+                    OutputText = string.Empty,
+                    CompletedAtUnixMs = (ulong)Math.Max(1L, DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()),
+                    ModelId = request.ModelId,
+                    ErrorMessage = "The request was cancelled by the remote client."
+                };
+                Console.WriteLine("CANCEL_RECEIVED");
+            }
+            finally
+            {
+                Array.Clear(cancelWire, 0, cancelWire.Length);
+            }
+        }
+        else
+        {
+            response = new InferenceResponse
+            {
+                RequestId = request.RequestId,
+                AttemptId = request.AttemptId,
+                RoundId = request.RoundId,
+                EphemeralHostId = server.LocalPeerIdentity,
+                Outcome = InferenceOutcome.Succeeded,
+                OutputText = "dotnet-host-response",
+                CompletedAtUnixMs = (ulong)Math.Max(1L, DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()),
+                ModelId = request.ModelId,
+                ErrorMessage = string.Empty
+            };
+        }
+
         PeerResponseCorrelationValidator.Validate(request, response, server.LocalPeerIdentity);
         Console.WriteLine("VALIDATED");
         Console.Out.Flush();

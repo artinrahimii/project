@@ -107,3 +107,33 @@ No UI placeholder, mock dispatch, or fabricated selected-host list was introduce
 - T0174-A010 is recorded as a failed test-compilation attempt on exact commit `0391c10da301d876b549d6d23eb753e0b00c5dc4`.
 - T0174-A011 changes only the test fixture helper to a generic `<T : SimpleClientHandler>` binding. It permits both responder implementations while keeping the existing libp2p test-host setup unchanged. Runtime behavior is unchanged.
 - The next exact-head workflow must verify Android JVM compilation and then execute the two-host cancellation test; T0174 remains `in_progress` and the user-facing Cancel action is still not wired to a live request screen.
+
+
+## Exact V 3.0.736 verification — T0174-A012
+
+- Exact tested commit: `339b1efb54449fe0a3d5d4dad3d26c096ad3d36d` (`V 3.0.736`) on `main`.
+- Step Three quality gate: PASS — [run 41274355328](https://github.com/artinrahimii/project/actions/runs/41274355328).
+- Product workflow: SUCCESS — [run 41274355277](https://github.com/artinrahimii/project/actions/runs/41274355277).
+- Android job [124753390180](https://github.com/artinrahimii/project/actions/runs/41274355277/job/124753390180): KtLint, debug APK build, JVM unit tests and generated Protobuf Java/Kotlin all passed.
+- Windows WPF job [124753390376](https://github.com/artinrahimii/project/actions/runs/41274355277/job/124753390376): passed.
+- HostLifecycle job [124753390338](https://github.com/artinrahimii/project/actions/runs/41274355277/job/124753390338): passed, including the actual Windows host loopback cancellation acceptance scenario.
+- Android unit-test report artifact `13070711776`: 150 tests, 0 failures, 0 ignored. The `Libp2pInferenceRequestTransportTest` class had 4/4 passing tests. Its `cancelAttemptsSendsCorrelatedCancelRequestsToEverySelectedAuthenticatedHost` test passed in 6.055 seconds. This exercises the Android runtime API over two authenticated JVM libp2p peer streams.
+- This exact-head evidence validates Android runtime cancellation and the Windows host cancellation loopback path. It does not, by itself, establish Android-to-native-.NET CancelRequest interoperability or a production UI click path.
+
+## T0174-A013 — Android-to-native-.NET cancellation interoperability test (pending)
+
+- `tests/HostLifecycle.Tests/Program.cs` now accepts an optional `cancel` interop mode and passes it into the native .NET peer fixture.
+- `tests/HostLifecycle.Tests/AndroidInteropPeerServer.cs` supports that mode: after receiving the inference request it waits for a second frame, parses and validates the CancelRequest's exact request ID, attempt ID and `user_cancelled` reason, then sends the matching `CANCELLED` InferenceResponse on the same authenticated libp2p stream.
+- Android test `sendsCancellationToThreeNativeDotNetLibp2pHostsAndReceivesCancelledResponses` starts three independent native .NET processes, dispatches one round to all three, waits until each peer confirms receipt, calls `cancelSelectedHosts`, and checks for three correlated CANCELLED responses.
+- The existing success-mode Android↔.NET request/response test remains unchanged.
+- This is a newly authored integration test. It has not yet run on an exact commit; no cross-runtime cancellation pass is claimed.
+
+## Remaining UI acceptance requirement
+
+The production Android application still has no live request dispatch call site. Search of current production sources finds no Activity, screen or ViewModel invoking `cancelSelectedHosts`. `MainActivity.requestScreen` still explicitly describes a prepare-only preview and has no active request ID or selected `InferenceHostAttempt` state. Therefore no nonfunctional Cancel button has been added. T0174 stays `in_progress` until a real user action is wired to a live dispatched request and its selected hosts.
+
+## Current continuation point
+
+- Backend contract, Android runtime transport cancellation and Windows host cancellation behavior: verified by exact V 3.0.736 CI.
+- Android-to-.NET three-host cancellation interop test: added in A013; exact-head CI pending.
+- Real Android UI Cancel action and dispatch lifecycle: outstanding.
