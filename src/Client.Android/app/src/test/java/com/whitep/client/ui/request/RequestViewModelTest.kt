@@ -1,6 +1,5 @@
 package com.whitep.client.ui.request
 
-import android.content.Context
 import com.whitep.client.context.ConversationContextCapsule
 import com.whitep.client.data.InMemoryClientRequestRepository
 import com.whitep.client.data.RequestDraftStatus
@@ -236,7 +235,7 @@ class RequestViewModelTest {
             )
 
         activeViewModel.discoverPeers(
-            context = RuntimeEnvironment.getApplication<Context>(),
+            context = RuntimeEnvironment.getApplication(),
             rendezvousServiceUrl = "https://directory.example.test",
         )
         assertEquals(1, activeViewModel.uiState.value.discoveredPeers.size)

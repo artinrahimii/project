@@ -278,3 +278,11 @@ The exact V 3.0.768 Android/Windows/HostLifecycle/Step Three/Rendezvous workflow
 - Android debug APK compile — FAIL at `:app:compileDebugKotlin`: `MainActivity.kt:357-358` because `connectionsScreen()` invokes the composable `appPage()` but was not declared `@Composable`. Android JVM tests and generated Protobuf Java/Kotlin checks were skipped.
 - Source review confirms `privacyScreen()` and `requestScreen()` already carry `@Composable`; only `connectionsScreen()` lacked it. V 3.0.794 adds this annotation and leaves runtime behavior unchanged.
 - T0126 remains `in_progress` until the exact V 3.0.794 Android APK, JVM and Protobuf stages pass.
+## T0126-A012 — V 3.0.794 Robolectric JVM test compilation failure and V 3.0.795 correction
+
+- Exact tested commit: `d63bf1ba2b01a0ba29aa51cc06db6a549146ad88` (`V 3.0.794`).
+- Android production/test KtLint — PASS; debug APK build — PASS. Windows WPF build, generated C# Protobuf, startup/security/DPAPI checks and artifact upload — PASS. HostLifecycle — PASS. Rendezvous container/HTTP smoke — PASS. Step Three quality gate — PASS.
+- Android JVM test compilation failed at `RequestViewModelTest.kt:239:56`: `RuntimeEnvironment.getApplication<Context>()` supplies type arguments to a non-generic Robolectric method. The JVM test suite did not execute, and the subsequent generated Android Protobuf Java/Kotlin checks were skipped.
+- Source review found `android.content.Context` was referenced only by the obsolete type argument; the import is removed and the call is changed to `RuntimeEnvironment.getApplication()`.
+- V 3.0.795 contains this one-line test fix plus import cleanup; no production/runtime behavior changes.
+- T0126 remains `in_progress` pending exact-head Android JVM/Protobuf and complete quality/product verification.

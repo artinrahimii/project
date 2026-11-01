@@ -27448,9 +27448,9 @@
       ],
       "notes": "The expected Shared.Networking/Windows path is not the actual consumer in this repository: candidate selection and dispatch live in the Android app, and the user-facing request state/Compose screen lives under com.whitep.client.ui.request. Implement at those real boundaries. Policy: one or two validated hosts remain usable with an exact shortage warning; zero hosts is a no-send NO_SELECTED_HOSTS outcome. The MainActivity request screen is still a prepare-only preview and has no production caller for the new runtime feedback method; therefore keep this task in_progress until live discovery/dispatch feeds the UI. Do not claim a working end-to-end user notification yet.\n\nT0126-A001 (2026-11-01): Exact V 3.0.767 CI was inspected. Android KtLint and assembleDebug passed; JVM test compilation failed because RequestViewModelTest.kt omitted the HostSelectionFeedback import, so T0126 unit assertions and generated Protobuf verification did not run. Step Three's 312 Python tests and syntax check passed, but graph_guard failed because completed T0125 evidence lacked a tests/ source path. Windows WPF, HostLifecycle and Rendezvous container smoke passed. A002 adds the missing import and records test-source evidence for T0125. T0126 remains in_progress until repaired exact-head tests pass and a real request UI caller feeds live selection feedback.\n\nT0126-A002 exact V 3.0.768 CI result (2026-11-01): Android main/test KtLint, assembleDebug, compileDebugUnitTestKotlin, testDebugUnitTest and generated Protobuf Java/Kotlin verification passed; Windows WPF build/startup/security/DPAPI and policy/capability checks passed; HostLifecycle tests passed; the Step Three quality gate passed (312 Python tests, compileall and graph/evidence guard); Rendezvous container build/HTTP smoke passed. The missing import and T0125 evidence repairs are therefore verified on exact main V 3.0.768. T0126 remains in_progress: MainActivity.requestScreen is still prepare-only, Connections still says peer discovery is unavailable, and no production caller passes complete HostAnnouncement snapshots to selection/dispatch and then records the feedback. No live underfilled-host notification is claimed.\n\nT0126-A003 (2026-11-01T13:21:18.320Z): Exact V 3.0.769 source audit confirmed the remaining production integration blocker. MainActivity.requestScreen only invokes prepareRequest; no production caller invokes selectReachableHostsWithFeedback or recordHostSelectionFeedback. RendezvousPeerDirectoryClient returns metadata-only peerId/address/expiry; PeerAnnouncementHostLifecycle publishes only inference.v1. MainWindow.GetPeerRuntimeStatusAsync sets HostStatus state and activeRequests but omits models. HostCandidateSelector requires full HostAnnouncement capabilities and a fresh HostStatus with the matching model. No fabricated snapshot was introduced; task is blocked pending a real discovery/capability producer and request-screen integration.\n\nT0126-A004 (2026-11-01): Added a live model-capability source on the Windows host. LlamaCppServerBackend verifies the configured model from /v1/models and reads its actual n_ctx from GET /props; HostInferenceSession returns that snapshot only after a fresh Ready/readiness check; MainWindow reports protocol_version and includes the model only when verified. Added HostLifecycle tests. T0126 remains blocked: Android discovery and request-screen selection/dispatch integration are still missing.\nT0126-A005 (2026-11-01): Added RendezvousPeerDirectoryClient.discoverAll() to enumerate every unexpired metadata endpoint with a direct TCP route in stable PeerId order. It shares the existing bounded 16 KiB parser/cache and fail-closed refresh; resolve() now uses the same cache-refresh helper. Added a Robolectric/JVM regression proving stable discovery order, omission of a QUIC-only endpoint for this TCP client, and reuse of one directory fetch across discoverAll() and resolve(). This is a real directory API output but not yet a typed HostAnnouncement/capability source or a production request-screen caller. Exact-head Android KtLint/APK/JVM/Protobuf and product CI are pending. T0126 remains blocked.\nT0126-A005 exact V 3.0.779 CI reconciliation (2026-11-01): Android KtLint, assembleDebug, testDebugUnitTest (including discoversFreshPeersInStableIdentityOrderAndExcludesPeersWithoutTcpRoute), generated Protobuf Java/Kotlin, Windows WPF build/startup/security/DPAPI, HostLifecycle unit/integration, Step Three quality gate and Rendezvous container build/smoke all passed on exact main commit ee9692a3d34543dd159f48ca4ef72e29f5981db8. Android APK artifact 13087940513 uploaded. This validates the metadata directory API and test only; T0126 remains blocked until typed host capability/status, production request UI discovery/selection/dispatch and shortage feedback are integrated.\nT0126-A006: added the real authenticated discovery-to-candidate API and six focused JVM tests. Exact-head CI is pending; the task remains blocked because the Compose request UI still has no production discovery/dispatch/feedback caller.\nT0126-A007: corrected the two KtLint chain-method line breaks identified by the exact V 3.0.781 Android workflow. The full request UI/dispatch path remains absent; T0126 stays blocked.\nThe V 3.0.782 graph guard identified a counter/history mismatch: A006 is partial (one sub-check failed), not a fully failed attempt. failed_attempt_count was reconciled to the one historical result=failed.\nT0126-A008: replaced chained Protobuf Java builders in the new JVM test helpers with the repository's existing generated Protobuf Kotlin DSL style, addressing the four test-source KtLint findings. The behavioral assertions are unchanged.\nT0126-A009: removed the single unused ModelCapability import identified by exact V 3.0.784 test-source KtLint; no test logic or production code changed.\n\nT0126-A009 exact V 3.0.785 CI reconciliation: Android production/test KtLint, assembleDebug, testDebugUnitTest, generated Protobuf Java/Kotlin, Windows WPF build/startup/security/DPAPI, HostLifecycle, Step Three quality gate and Rendezvous container smoke all passed on 82bcc0d3ea50dc8bdaa64552273c45ffb979c562. This verifies the test-import repair only; A009 remained partial because the request-screen integration was still missing.\n\nT0126-A010 (2026-11-01T15:23:27.495Z): Implemented the missing Compose-to-runtime request path using an explicit HTTPS directory URL, metadata-only peer listing, user-confirmed trust/revoke, payload validation, fresh authenticated status-based selection, no-send when no candidate is selected, bounded dispatch and correlated response collection. Added injected-gateway ViewModel tests. A010 remains partial pending exact-head CI; tests have not yet run on this revision.\n\nExact V 3.0.787 A010 CI findings: Android KtLint parser failed at RequestViewModel.kt:201:90 due to a trailing comma after the final expression in an else block; Android APK/JVM/Protobuf checks were not reached. Step Three quality gate ran 317 Python tests and seven stale source-contract assertions failed because they expected the old prepare-only preview. Graph/syntax/evidence steps were skipped. Windows WPF, HostLifecycle and Rendezvous workflows passed. Corrected Kotlin syntax and replaced the seven obsolete preview assertions with checks for explicit trust, configured direct-peer requests, no-send on zero candidates, per-attempt response handling and the continuing privacy boundary. V 3.0.788 rerun pending.\n\nExact V 3.0.788 CI: 317 Python tests, Python syntax, graph structure and output/evidence validation all passed. Android main-source KtLint passed; test-source KtLint found 14 formatting diagnostics in RequestViewModelTest.kt (import order, chain-call line wrapping and one extra blank line). APK/JVM/Protobuf checks were not reached. Windows .NET interop fixture, WPF build/startup/security/DPAPI, HostLifecycle and Rendezvous passed. The fake-gateway tests were reformatted; V 3.0.789 rerun pending.\n\nExact V 3.0.789 CI: all 317 Python tests, syntax, graph and evidence passed. Android KtLint failed import order in five production Kotlin files and chain wrapping in RequestViewModel.kt:500; Android APK/JVM/Protobuf were not reached. Windows WPF build/startup/security/DPAPI, HostLifecycle and Rendezvous passed. Imports now follow case-sensitive lexicographic order with the java/javax/kotlin group last, chain expressions wrapped, source-contract import assertion fixed, and legacy expected ViewModel status aligned with current state. V 3.0.790 rerun pending.",
       "execution_summary": {
-        "attempt_count": 11,
+        "attempt_count": 12,
         "failed_attempt_count": 1,
-        "last_attempt_id": "T0126-A011-android-request-flow-lint-repair",
+        "last_attempt_id": "T0126-A012-android-robolectric-test-compile-fix",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/network/RendezvousPeerDirectoryClient.kt",
@@ -27487,7 +27487,8 @@
           "c893ace7d4b34aaffd82b61a693773d4582f6970",
           "05354729bf2a36aa3c45ed26ff0329fcd3fd3db7",
           "30065ac8b367d2639cb5faea2363ba852e34f05a",
-          "073fed66bd7c1e0e0361ab4f2fa6e074d5de402d"
+          "073fed66bd7c1e0e0361ab4f2fa6e074d5de402d",
+          "d63bf1ba2b01a0ba29aa51cc06db6a549146ad88"
         ],
         "tests_passed": [
           "Exact V 3.0.768 Android main/test KtLint — PASS — https://github.com/artinrahimii/project/actions/runs/41309472601/job/124856640138",
@@ -27559,7 +27560,13 @@
           "Exact V 3.0.793 HostLifecycle unit/integration — PASS — product workflow 41337094356, job 124939107641",
           "Exact V 3.0.793 Windows WPF Release build, C# formatting, generated Protobuf, startup, agent security/policy/capability checks and DPAPI identity/trust storage — PASS — product workflow 41337094356, job 124939107743",
           "Exact V 3.0.793 Windows host artifact upload — PASS — product workflow 41337094356, job 124939107743",
-          "Exact V 3.0.793 Rendezvous production container build and HTTP smoke — PASS — https://github.com/artinrahimii/project/actions/runs/41337094383"
+          "Exact V 3.0.793 Rendezvous production container build and HTTP smoke — PASS — https://github.com/artinrahimii/project/actions/runs/41337094383",
+          "Exact V 3.0.794 Android main/test KtLint — PASS — product workflow 41337446670, job 124940152270",
+          "Exact V 3.0.794 Android debug APK build — PASS — product workflow 41337446670, job 124940152270",
+          "Exact V 3.0.794 Windows WPF Release build, generated Protobuf C#, startup, agent security/policy/capability, user-scoped DPAPI identity/trust and artifact upload — PASS — product workflow 41337446670, job 124940152494",
+          "Exact V 3.0.794 HostLifecycle unit/integration — PASS — product workflow 41337446670, job 124940152565",
+          "Exact V 3.0.794 Rendezvous production container/HTTP smoke — PASS — https://github.com/artinrahimii/project/actions/runs/41337446693",
+          "Exact V 3.0.794 Step Three Python/graph/syntax/evidence quality gate — PASS — https://github.com/artinrahimii/project/actions/runs/41337446555"
         ],
         "tests_failed": [
           "Exact V 3.0.767 Android JVM unit-test compilation failed at RequestViewModelTest.kt:47,58,69 because HostSelectionFeedback import was missing; tests and generated Protobuf verification did not run.",
@@ -27575,7 +27582,8 @@
           "Exact V 3.0.790 Android product job — FAIL at ktlintMainSourceSetCheck: RequestViewModel.kt lines 168–169 and 488–490; assembleDebug, testDebugUnitTest and generated Protobuf Java/Kotlin verification were skipped — https://github.com/artinrahimii/project/actions/runs/41323436382",
           "Exact V 3.0.791 Android KtLint main source set — FAIL: multiline URI condition wrapped with leading || operators and three multiline assignments not started on a new line; Android APK, JVM unit tests and generated Protobuf checks were skipped — https://github.com/artinrahimii/project/actions/runs/41336524479",
           "Exact V 3.0.792 Android main-source KtLint — FAIL: three multiline expressions in RequestViewModel.kt required continuation-body indentation, and the revoke-trust discoveredPeers map remained inline; assembleDebug, JVM unit tests and generated Protobuf checks were skipped — https://github.com/artinrahimii/project/actions/runs/41336799515",
-          "Exact V 3.0.793 Android debug APK compile — FAIL at :app:compileDebugKotlin: MainActivity.kt:357-358 calls the @Composable appPage from connectionsScreen, which lacks the @Composable annotation. Android JVM tests and generated Protobuf Java/Kotlin checks were skipped — https://github.com/artinrahimii/project/actions/runs/41337094356"
+          "Exact V 3.0.793 Android debug APK compile — FAIL at :app:compileDebugKotlin: MainActivity.kt:357-358 calls the @Composable appPage from connectionsScreen, which lacks the @Composable annotation. Android JVM tests and generated Protobuf Java/Kotlin checks were skipped — https://github.com/artinrahimii/project/actions/runs/41337094356",
+          "Exact V 3.0.794 Android JVM test compilation — FAIL: RequestViewModelTest.kt:239:56 passes a type argument to non-generic RuntimeEnvironment.getApplication(); compileDebugUnitTestKotlin stopped before JVM tests and generated Protobuf Java/Kotlin verification was skipped — https://github.com/artinrahimii/project/actions/runs/41337446670"
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -27600,15 +27608,15 @@
             "step three/T0115/execution-report.md"
           ]
         },
-        "follow_up": "Verify exact V 3.0.794: Android lint, APK compilation, JVM tests (including newly added zero/one-host feedback assertions), generated Protobuf checks, Windows WPF/HostLifecycle, Rendezvous smoke and Step Three quality. Keep T0126 open until all relevant checks pass.",
+        "follow_up": "Run exact V 3.0.795 Android test-source KtLint, compileDebugUnitTestKotlin/testDebugUnitTest and generated Protobuf checks; verify the new zero-host and one-host UI feedback assertions. Then reconcile all exact-head CI and keep T0126 open until all acceptance checks pass.",
         "contract_changes": [
           "Added RendezvousPeerDirectoryClient.discoverAll(): bounded enumeration of unexpired metadata-only direct-TCP peer endpoints in stable PeerId order, sharing the existing strict cache refresh; no HostAnnouncement model/capability contract or production UI wiring is claimed."
         ],
         "tests_pending": [
-          "Exact V 3.0.794 Android production/test KtLint, debug APK compile, JVM unit tests including zero/one-host feedback assertions, and generated Protobuf Java/Kotlin verification.",
-          "Exact V 3.0.794 Step Three graph/Python/syntax/evidence, Windows WPF/HostLifecycle and Rendezvous build/smoke."
+          "Exact V 3.0.795 Android test-source KtLint, compileDebugUnitTestKotlin/testDebugUnitTest including the zero/one-host feedback assertions, generated Protobuf Java/Kotlin checks and APK upload.",
+          "Exact V 3.0.795 Step Three graph/Python/syntax/evidence, Windows WPF/HostLifecycle and Rendezvous container smoke."
         ],
-        "failure_details": "V 3.0.793: Android KtLint (main/test) passed and the debug APK build began, but Kotlin compilation failed because MainActivity.connectionsScreen was not annotated @Composable although it invokes the @Composable appPage. This earlier latent compile issue became visible only after KtLint passed. Android JVM and Protobuf checks were skipped. Windows WPF build/security/DPAPI/artifact upload, HostLifecycle, Rendezvous smoke and Step Three quality passed. V 3.0.794 adds the missing annotation only."
+        "failure_details": "Exact V 3.0.794: Android main/test KtLint and debug APK build passed. JVM test compilation failed at RequestViewModelTest.kt:239:56 because Robolectric RuntimeEnvironment.getApplication() is not generic in the selected version. Android JVM test execution and generated Protobuf Java/Kotlin verification were skipped. Windows WPF build/security/DPAPI/artifact upload, HostLifecycle, Rendezvous smoke and Step Three quality passed. V 3.0.795 removes only the obsolete type argument and now-unused Context import."
       },
       "execution_history": [
         {
@@ -28509,6 +28517,76 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Run exact V 3.0.794 Android lint/APK/JVM/Protobuf and full quality/product validation before marking T0126 done."
+        },
+        {
+          "attempt_id": "T0126-A012-android-robolectric-test-compile-fix",
+          "started_at": "2026-11-01T18:39:52.206Z",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "V 3.0.794 passed Android main/test KtLint and debug APK, plus Windows WPF/security/DPAPI, HostLifecycle, Rendezvous and Step Three quality. Android JVM test compilation failed because RequestViewModelTest used RuntimeEnvironment.getApplication<Context>() although this Robolectric API is non-generic. Removed the unused Context import and changed the call to RuntimeEnvironment.getApplication(); exact V 3.0.795 Android JVM/Protobuf verification is pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
+            "step three/T0126/execution-report.md",
+            "step three/T0126/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "related_commits": [
+            "d63bf1ba2b01a0ba29aa51cc06db6a549146ad88"
+          ],
+          "tests": [
+            {
+              "command": "V 3.0.794 Android main/test KtLint",
+              "result": "passed",
+              "summary": "Both Android source-set lint checks passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41337446670"
+            },
+            {
+              "command": "V 3.0.794 Android debug APK",
+              "result": "passed",
+              "summary": "assembleDebug completed successfully.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41337446670"
+            },
+            {
+              "command": "V 3.0.794 Android JVM test compile",
+              "result": "failed",
+              "summary": "RuntimeEnvironment.getApplication<Context>() is invalid because getApplication() is non-generic; compilation stopped before JVM tests.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41337446670"
+            },
+            {
+              "command": "V 3.0.794 Windows WPF/security/DPAPI",
+              "result": "passed",
+              "summary": "Release build, generated C# Protobuf, startup/security/capability and DPAPI checks passed; artifact uploaded.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41337446670"
+            },
+            {
+              "command": "V 3.0.794 HostLifecycle",
+              "result": "passed",
+              "summary": "Host lifecycle unit and integration checks passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41337446670"
+            },
+            {
+              "command": "V 3.0.794 Rendezvous",
+              "result": "passed",
+              "summary": "Production container and HTTP smoke passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41337446693"
+            },
+            {
+              "command": "V 3.0.794 Step Three quality",
+              "result": "passed",
+              "summary": "Graph/Python/syntax/output-evidence gate passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41337446555"
+            },
+            {
+              "command": "V 3.0.795 Android JVM and Protobuf",
+              "result": "pending",
+              "summary": "Re-run after removing the non-generic API type argument."
+            }
+          ],
+          "failure_details": "RequestViewModelTest.kt:239:56 uses RuntimeEnvironment.getApplication<Context>(), but the Robolectric RuntimeEnvironment.getApplication() method is non-generic. compileDebugUnitTestKotlin fails; no Android JVM test or generated Protobuf pass is claimed.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Run exact V 3.0.795 KtLint, Android JVM tests, generated Protobuf checks and all other product/quality workflows."
         }
       ],
       "blocked_reason": null,
@@ -60331,7 +60409,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-11-01T18:34:58.381Z",
+  "updated_at": "2026-11-01T18:39:52.206Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

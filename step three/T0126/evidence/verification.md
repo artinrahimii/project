@@ -231,3 +231,9 @@ The live acceptance gap remains: `MainActivity.requestScreen` is prepare-only, a
 - Windows WPF build, generated Protobuf C#, startup/security/DPAPI checks and artifact upload — PASS.
 - HostLifecycle, Rendezvous container/HTTP smoke and Step Three quality — PASS.
 - Android JVM and generated Protobuf Java/Kotlin checks were skipped after compile failure. V 3.0.794 adds the missing annotation; exact-head verification is pending.
+## Exact V 3.0.794 / A012 follow-up
+
+- Android main/test KtLint — PASS; debug APK build — PASS.
+- Android JVM test compilation — FAIL at RequestViewModelTest.kt:239:56 because the type argument is invalid for the non-generic Robolectric `RuntimeEnvironment.getApplication()` method; the tests and generated Protobuf Java/Kotlin verification did not run.
+- Windows WPF build/security/DPAPI/artifact upload, HostLifecycle, Rendezvous container/HTTP smoke and Step Three quality — PASS.
+- V 3.0.795 removes the obsolete Context type argument and its now-unused import. Exact-head verification is pending.
