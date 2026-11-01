@@ -25,6 +25,21 @@ class ExtractTests(unittest.TestCase):
 class ValidateTests(unittest.TestCase):
     def test_valid_graph(self):
         self.assertEqual(validate_graph(graph_fixture()), [])
+
+    def test_deferred_final_requires_explicit_final_stage_metadata(self):
+        g = graph_fixture()
+        g["nodes"][0]["status"] = "deferred_final"
+        codes = {x.code for x in validate_graph(g)}
+        self.assertIn("DEFERRED_FINAL_WITHOUT_METADATA", codes)
+
+    def test_valid_deferred_final_is_accepted_without_counting_as_done(self):
+        g = graph_fixture()
+        g["nodes"][0].update({"status": "deferred_final", "deferral": {
+            "reason": "Needs a public external endpoint.",
+            "start_condition": "After implementation and CI.",
+            "final_stage": "Final operational acceptance."
+        }})
+        self.assertEqual(validate_graph(g), [])
     def test_duplicate_ids(self):
         g=graph_fixture(); g["nodes"][1]["id"]="T0001"
         self.assertIn("DUPLICATE_NODE_ID", {x.code for x in validate_graph(g)})

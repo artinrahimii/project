@@ -6,7 +6,7 @@ from collections import defaultdict, deque
 from dataclasses import dataclass
 from pathlib import Path
 
-NODE_STATUSES = {"not_started", "in_progress", "done", "blocked"}
+NODE_STATUSES = {"not_started", "in_progress", "done", "blocked", "deferred_final"}
 SUCCESSFUL_ATTEMPT_RESULTS = {"succeeded", "passed"}
 EDGE_CLASSES = {"hard_dependency", "contract_or_interface_dependency", "sequencing_only", "unreviewed"}
 EDGE_STATES = {"unreviewed", "validated", "disputed"}
@@ -70,6 +70,11 @@ def validate_graph(graph: dict, repo_root: Path | None = None) -> list[Finding]:
         for dep in _list(deps):
             if isinstance(dep, str) and dep not in known:
                 out.append(Finding("WARNING", "UNMAPPED_DEPENDENCY", f"{tid}: {dep!r} is not a task ID; preserved as metadata."))
+        if status == "deferred_final":
+            deferral = n.get("deferral")
+            required_deferral_fields = ("reason", "start_condition", "final_stage")
+            if not isinstance(deferral, dict) or any(not isinstance(deferral.get(field), str) or not deferral[field].strip() for field in required_deferral_fields):
+                out.append(Finding("ERROR", "DEFERRED_FINAL_WITHOUT_METADATA", f"{tid} is deferred_final but lacks deferral.reason, deferral.start_condition or deferral.final_stage."))
         if status == "done":
             paths, evidence = _list(n.get("actual_output_paths")), _list(n.get("evidence"))
             tests = _list(summary.get("tests_passed"))
