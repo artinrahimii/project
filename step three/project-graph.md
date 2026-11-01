@@ -27760,14 +27760,13 @@
         "step three/T0127/evidence/verification.md",
         "tests/test_android_network_failure_acceptance.py"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0127-A001 (2026-11-01): Added Android regression cases for duplicate directory PeerIds, cache expiry followed by a network interruption (fail closed without returning the cached route), and all authenticated peer status probes failing followed by NO_SELECTED_HOSTS/no inference send. Existing expired-announcement, duplicate selector/dispatcher and empty-host coverage remains. Both incoming edges were reviewed as sequencing_only and validated; original blocks labels and order remain. Exact-head CI pending; do not mark done before Android JVM/build and graph quality checks pass.\nT0127-A002 (2026-11-01): Exact V 3.0.773 CI Step Three quality, HostLifecycle and Rendezvous container checks passed; Android KtLint failed nine formatting findings in the new test files, so APK, JVM tests and generated Protobuf verification were skipped. The failure is preserved in execution_history. T0127-A003 applies formatting-only corrections; exact CI pending.\nT0127-A004 (2026-11-01): Exact V 3.0.774 CI passed Android KtLint, assembleDebug, testDebugUnitTest (171 tests; 0 failures; 0 ignored), generated Protobuf Java/Kotlin, Windows WPF, HostLifecycle, Step Three quality and Rendezvous container smoke. The JUnit HTML artifact explicitly records all three new T0127 tests as passed. T0127 is done. The V 3.0.773 lint failure remains in attempt history and failed_attempt_count=1.\nT0127-A005 (2026-11-01): Exact V 3.0.775 Step Three quality gate passed all 312 Python tests but graph_guard flagged DONE_WITHOUT_TEST_FILE_EVIDENCE because Android JVM source files are nested under src/.../src/test rather than top-level tests/. Added tests/test_android_network_failure_acceptance.py to verify the specific passing Android regression methods and relevant production fail-closed boundaries; added it to actual_output_paths/evidence. T0127 remains done based on V 3.0.774 Android JUnit acceptance; V 3.0.776 graph guard rerun pending.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0127-A001 (2026-11-01): Added Android regression cases for duplicate directory PeerIds, cache expiry followed by a network interruption (fail closed without returning the cached route), and all authenticated peer status probes failing followed by NO_SELECTED_HOSTS/no inference send. Existing expired-announcement, duplicate selector/dispatcher and empty-host coverage remains. Both incoming edges were reviewed as sequencing_only and validated; original blocks labels and order remain. Exact-head CI pending; do not mark done before Android JVM/build and graph quality checks pass.\nT0127-A002 (2026-11-01): Exact V 3.0.773 CI Step Three quality, HostLifecycle and Rendezvous container checks passed; Android KtLint failed nine formatting findings in the new test files, so APK, JVM tests and generated Protobuf verification were skipped. The failure is preserved in execution_history. T0127-A003 applies formatting-only corrections; exact CI pending.\nT0127-A004 (2026-11-01): Exact V 3.0.774 CI passed Android KtLint, assembleDebug, testDebugUnitTest (171 tests; 0 failures; 0 ignored), generated Protobuf Java/Kotlin, Windows WPF, HostLifecycle, Step Three quality and Rendezvous container smoke. The JUnit HTML artifact explicitly records all three new T0127 tests as passed. T0127 is done. The V 3.0.773 lint failure remains in attempt history and failed_attempt_count=1.\nT0127-A005 (2026-11-01): Exact V 3.0.775 Step Three quality gate passed all 312 Python tests but graph_guard flagged DONE_WITHOUT_TEST_FILE_EVIDENCE because Android JVM source files are nested under src/.../src/test rather than top-level tests/. Added tests/test_android_network_failure_acceptance.py to verify the specific passing Android regression methods and relevant production fail-closed boundaries; added it to actual_output_paths/evidence. T0127 remains done based on V 3.0.774 Android JUnit acceptance; V 3.0.776 graph guard rerun pending.\nT0127-A006 (2026-11-01): Exact V 3.0.776 workflows all passed. Step Three quality: 317 Python tests passed, compileall passed, graph_guard passed with 0 errors and the pre-existing T0001 unmapped-dependency warning; repo-root evidence validation passed. Product: Android KtLint, assembleDebug, testDebugUnitTest (171 tests; 0 failures; 0 ignored; 39.690s), generated Protobuf, Windows WPF/startup/security/DPAPI and HostLifecycle all passed. Rendezvous container build/smoke passed. The top-level tests/test_android_network_failure_acceptance.py is an actual output/evidence path and its five checks passed. T0127 remains done; V 3.0.773 lint failure remains in history.",
       "execution_summary": {
-        "attempt_count": 5,
+        "attempt_count": 6,
         "failed_attempt_count": 1,
-        "last_attempt_id": "T0127-A005-graph-guard-test-evidence",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "T0127-A006-exact-V3.0.776-full-CI-acceptance",
+        "last_attempt_result": "succeeded",
         "changed_files": [
-          "tests/test_android_network_failure_acceptance.py",
           "step three/T0127/execution-report.md",
           "step three/T0127/evidence/verification.md",
           "step three/project-graph.md"
@@ -27775,24 +27774,24 @@
         "related_commits": [
           "0642a754745de9082d5f6c0c24835975227a5942",
           "98560c02287a028f6e8eb867e5cf0c058b7a12c1",
-          "9572cdd557cd1a81a0b626b6f49b483638e392a4"
+          "9572cdd557cd1a81a0b626b6f49b483638e392a4",
+          "412ffb701f434670f8092bb9e4e70232143b9acd"
         ],
         "tests_passed": [
-          "Android KtLint — PASS — https://github.com/artinrahimii/project/actions/runs/41313804544 (Exact V 3.0.774 test-source formatting and Kotlin lint passed.)",
-          "Android assembleDebug — PASS — https://github.com/artinrahimii/project/actions/runs/41313804544 (Exact V 3.0.774 debug APK build passed; artifact 13086661382 was uploaded.)",
-          "Android testDebugUnitTest — PASS — https://github.com/artinrahimii/project/actions/runs/41313804544 (JUnit report: 171 tests, 0 failures, 0 ignored, 38.113 seconds; report artifact 13086322646.)",
-          "RendezvousPeerDirectoryClientTest.rejectsDuplicatePeerIdsInOneDirectorySnapshot — PASS — https://github.com/artinrahimii/project/actions/runs/41313804544 (The duplicate PeerId directory snapshot was rejected.)",
-          "RendezvousPeerDirectoryClientTest.doesNotReturnCachedPeerWhenNetworkFailsAfterDirectoryCacheExpiry — PASS — https://github.com/artinrahimii/project/actions/runs/41313804544 (After cache TTL expired, a simulated refresh network interruption propagated and the stale route was not returned.)",
-          "InferenceAttemptDispatcherTest.sendsNothingWhenEveryDiscoveredPeerDisconnectsBeforeAuthenticatedStatusProbe — PASS — https://github.com/artinrahimii/project/actions/runs/41313804544 (All peer status probes failed, selected candidate list was empty, dispatch returned NO_SELECTED_HOSTS and the transport submitted no inference requests.)",
-          "Existing expired announcement, duplicate selector/dispatcher and empty-host no-send tests — PASS — https://github.com/artinrahimii/project/actions/runs/41313804544 (All related pre-existing regressions remained green in the same 171-test JVM suite.)",
-          "Generated Protobuf Java and Kotlin verification — PASS — https://github.com/artinrahimii/project/actions/runs/41313804544 (Generated Java/Kotlin source verification completed successfully.)",
-          "Windows WPF host build/startup/security — PASS — https://github.com/artinrahimii/project/actions/runs/41313804544 (The Windows WPF job completed successfully.)",
-          "HostLifecycle unit and integration tests — PASS — https://github.com/artinrahimii/project/actions/runs/41313804544 (The full HostLifecycle unit/integration job completed successfully.)",
-          "Step Three quality gate — PASS — https://github.com/artinrahimii/project/actions/runs/41313804501 (Graph, evidence and repository quality gate passed.)",
-          "Rendezvous container build and HTTP smoke — PASS — https://github.com/artinrahimii/project/actions/runs/41313804672 (Production container build and HTTP smoke passed.)"
+          "Step Three Python quality suite — PASS — https://github.com/artinrahimii/project/actions/runs/41314739020 (317 Python tests passed, including all five checks in tests/test_android_network_failure_acceptance.py.)",
+          "Python compileall — PASS — https://github.com/artinrahimii/project/actions/runs/41314739020 (python -m compileall -q tools tests completed successfully.)",
+          "Graph guard and repository evidence validation — PASS — https://github.com/artinrahimii/project/actions/runs/41314739020 (230 tasks, 421 edges, 0 errors; one pre-existing T0001 UNMAPPED_DEPENDENCY warning preserved. --repo-root validation passed.)",
+          "Android KtLint — PASS — https://github.com/artinrahimii/project/actions/runs/41314738931 (Kotlin source and test lint passed.)",
+          "Android assembleDebug — PASS — https://github.com/artinrahimii/project/actions/runs/41314738931 (APK build passed; artifact 13087355587 uploaded.)",
+          "Android testDebugUnitTest — PASS — https://github.com/artinrahimii/project/actions/runs/41314738931 (JUnit artifact 13086841823: 171 tests, 0 failures, 0 ignored, 39.690 seconds.)",
+          "All three T0127 Android regression tests — PASS — https://github.com/artinrahimii/project/actions/runs/41314738931 (Duplicate directory PeerId, stale-cache/network failure and authenticated-status-disconnect/no-send cases passed.)",
+          "Generated Protobuf Java/Kotlin — PASS — https://github.com/artinrahimii/project/actions/runs/41314738931 (Generated Java and Kotlin verification passed.)",
+          "Windows WPF build/startup/security/DPAPI — PASS — https://github.com/artinrahimii/project/actions/runs/41314738931 (Windows build, startup smoke, policy/capability and DPAPI peer storage passed.)",
+          "HostLifecycle unit/integration — PASS — https://github.com/artinrahimii/project/actions/runs/41314738931 (Full lifecycle test job passed.)",
+          "Rendezvous container build and HTTP smoke — PASS — https://github.com/artinrahimii/project/actions/runs/41314739082 (Container build and HTTP smoke passed.)"
         ],
         "tests_failed": [
-          "Exact V 3.0.773 Android ktlintTestSourceSetCheck failed nine formatting findings in the two new test files; Android APK/JVM/Protobuf steps were skipped on that attempt. Formatting was corrected in V 3.0.774, where the complete Android suite passed."
+          "Historical attempt T0127-A002 on exact V 3.0.773: Android KtLint failed nine whitespace/layout findings and skipped APK/JVM/Protobuf. Fixed in V 3.0.774; exact Android product CI subsequently passed."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -28047,6 +28046,92 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Run exact V 3.0.776 Step Three quality gate and product workflow; only record this supplementary test as passed after CI completes."
+        },
+        {
+          "attempt_id": "T0127-A006-exact-V3.0.776-full-CI-acceptance",
+          "started_at": "2026-11-01T14:16:54.126Z",
+          "ended_at": "2026-11-01T14:16:54.126Z",
+          "result": "succeeded",
+          "summary": "Exact V 3.0.776 CI passed all 317 Python quality tests, compileall, graph_guard and repository evidence-path checks (0 errors, 1 preserved T0001 warning); Android KtLint, assembleDebug, all 171 JVM tests (0 failures, 0 ignored), generated Protobuf Java/Kotlin, Windows WPF/security/DPAPI, HostLifecycle and Rendezvous container smoke all passed. The five newly added top-level test-evidence checks passed and the graph guard now recognizes the T0127 test source evidence.",
+          "changed_files": [
+            "step three/T0127/execution-report.md",
+            "step three/T0127/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": "412ffb701f434670f8092bb9e4e70232143b9acd",
+          "tests": [
+            {
+              "name": "Step Three Python quality suite",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41314739020",
+              "summary": "317 Python tests passed, including all five checks in tests/test_android_network_failure_acceptance.py."
+            },
+            {
+              "name": "Python compileall",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41314739020",
+              "summary": "python -m compileall -q tools tests completed successfully."
+            },
+            {
+              "name": "Graph guard and repository evidence validation",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41314739020",
+              "summary": "230 tasks, 421 edges, 0 errors; one pre-existing T0001 UNMAPPED_DEPENDENCY warning preserved. --repo-root validation passed."
+            },
+            {
+              "name": "Android KtLint",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41314738931",
+              "summary": "Kotlin source and test lint passed."
+            },
+            {
+              "name": "Android assembleDebug",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41314738931",
+              "summary": "APK build passed; artifact 13087355587 uploaded."
+            },
+            {
+              "name": "Android testDebugUnitTest",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41314738931",
+              "summary": "JUnit artifact 13086841823: 171 tests, 0 failures, 0 ignored, 39.690 seconds."
+            },
+            {
+              "name": "All three T0127 Android regression tests",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41314738931",
+              "summary": "Duplicate directory PeerId, stale-cache/network failure and authenticated-status-disconnect/no-send cases passed."
+            },
+            {
+              "name": "Generated Protobuf Java/Kotlin",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41314738931",
+              "summary": "Generated Java and Kotlin verification passed."
+            },
+            {
+              "name": "Windows WPF build/startup/security/DPAPI",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41314738931",
+              "summary": "Windows build, startup smoke, policy/capability and DPAPI peer storage passed."
+            },
+            {
+              "name": "HostLifecycle unit/integration",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41314738931",
+              "summary": "Full lifecycle test job passed."
+            },
+            {
+              "name": "Rendezvous container build and HTTP smoke",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41314739082",
+              "summary": "Container build and HTTP smoke passed."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "T0127 is complete. Resume the live Android discovery/request UI flow required to unblock T0126 and T0174; T0175 depends on T0174 and must remain not_started until that prerequisite is done."
         }
       ]
     },
@@ -59374,7 +59459,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-11-01T14:08:09.142Z",
+  "updated_at": "2026-11-01T14:16:54.126Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",
