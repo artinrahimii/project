@@ -154,3 +154,26 @@ The production Android application still has no live request dispatch call site.
 ## Acceptance boundary unchanged
 
 The production Android UI still exposes no live dispatch or selected-attempt lifecycle, and no production call site invokes `cancelSelectedHosts`. Therefore T0174 remains `in_progress` even if the new cross-runtime test passes; the user-facing Cancel button must still be connected to a real in-flight request.
+
+
+## T0174-A016 — exact V 3.0.738 CI and Android/.NET cancellation interoperability
+
+- Exact tested commit: `34db50f1e11de7ee034fb1082b7f901ffc1134d9` (`V 3.0.738`) on `main`.
+- Product workflow: SUCCESS — [run 41275610857](https://github.com/artinrahimii/project/actions/runs/41275610857).
+- Step Three quality gate: SUCCESS — [run 41275610846](https://github.com/artinrahimii/project/actions/runs/41275610846).
+- Android job: SUCCESS — [job 124757067197](https://github.com/artinrahimii/project/actions/runs/41275610857/job/124757067197). KtLint, debug APK build, JVM unit tests and generated Protobuf Java/Kotlin checks all passed.
+- The Android JVM report artifact [13071167147](https://github.com/artinrahimii/project/actions/runs/41275610857/artifacts/13071167147) contains 151 tests, 0 failures and 0 ignored. The `Libp2pInferenceRequestTransportTest` class has 5/5 passing tests. In particular, `sendsCancellationToThreeNativeDotNetLibp2pHostsAndReceivesCancelledResponses` passed in 3.808 seconds; `cancelAttemptsSendsCorrelatedCancelRequestsToEverySelectedAuthenticatedHost` passed in 6.053 seconds.
+- Windows HostLifecycle unit/integration job: SUCCESS — [job 124757066927](https://github.com/artinrahimii/project/actions/runs/41275610857/job/124757066927). This includes the trusted loopback CancelRequest path introduced in T0174.
+- Windows WPF Release build/startup/security job: SUCCESS — [job 124757067131](https://github.com/artinrahimii/project/actions/runs/41275610857/job/124757067131).
+- The V 3.0.738 Android/.NET test starts three separate native .NET peer processes, sends one inference request to each authenticated peer, sends CancelRequest for the selected request/attempt pairs, and verifies three correlated CANCELLED responses. This is cross-runtime acceptance evidence, not just a JVM-only mock.
+- The V 3.0.738 graph remains 229 tasks/417 edges; T0174 remains `in_progress`. The two incoming edges remain validated contract/interface dependencies. The outgoing T0174 → T0175 edge remains `unreviewed`.
+
+## Remaining user-facing acceptance boundary
+
+The production Android request screen still only prepares prompt text and explicitly states it does not dispatch to a host. The Connections screen says peer discovery is unavailable. `AndroidInferenceRequestRuntime` deliberately requires the caller to supply HostCandidate values from a separately validated discovery/status source; the metadata-only rendezvous client explicitly does not prove host readiness and the app currently has no production caller for `dispatchRound` or `cancelSelectedHosts`.
+
+No inert Cancel button or invented HostStatus values were added. The backend, Android runtime, Windows cancellation path and Android-to-native-.NET wire behavior now pass exact-head CI; the actual visible Cancel button remains incomplete until the product has a live request dispatch/selected-host state and readiness source. T0174 therefore stays `in_progress`.
+
+- Attempt ID: `T0174-A016-v3.0.738-exact-head-ci`
+- Result: `partial` (all implemented backend/cross-runtime checks passed; production UI integration remains outstanding).
+- Follow-up: implement or complete a real Android discovery/status and dispatch UI path before connecting a Cancel button. Do not close T0174 until the button cancels every selected queued host attempt from an actual live request.

@@ -44751,11 +44751,11 @@
         "tests/HostLifecycle.Tests/Program.cs",
         "tests/HostLifecycle.Tests/AndroidInteropPeerServer.cs"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0174-A001 (2026-11-01): Added bounded CancelRequest parsing/validation with an explicit user_cancelled reason; Android authenticated-stream cancellation for each queued attempt and per-attempt results; Windows bounded concurrent request handling so the receive loop can accept a cancellation frame and signal only the matching (requestId, attemptId) token; correlated deadline-bounded CANCELLED response; Android two-peer transport test; Windows trusted-loopback end-to-end cancellation test; protocol negative tests. The existing Android request screen remains preparation-only and has no live dispatch/discovery state, so no fake Cancel button was added. Keep in_progress pending exact-head CI and later real UI wiring.\nT0174-A002 (2026-11-01): Exact-head V 3.0.732 Step Three quality gate failed one obsolete source-contract assertion expecting the former inline _requestHandler(requestWire, cancellationToken) call. The production implementation had deliberately moved handler execution to ProcessRequestAndRespondAsync to keep the receive loop available for CancelRequest. T0174-A003 updates the Python source guard to assert concurrent handler dispatch, exact request/attempt cancellation lookup, bounded parser and allowlisted reason. Product build and real-inference workflow for V 3.0.732 were still running when this correction was recorded.\nT0174-A010 (2026-11-01): Exact V 3.0.735 product CI passed Android lint and APK build, but compileDebugUnitTestKotlin failed at test helper type mismatch: createHost required ProtocolBinding<LoopbackInferenceResponder> and received ProtocolBinding<LoopbackCancellationResponder>. Android JVM tests did not execute. Exact V 3.0.735 Step Three quality, Windows WPF, and HostLifecycle tests passed. T0174-A011 fixes createHost to accept ProtocolBinding<T> for T : SimpleClientHandler; task stays in_progress pending a new exact-head Android JVM pass and real UI cancellation integration.\nT0174-A012 (2026-11-01): Exact V 3.0.736 product and Step Three workflows passed. Android KtLint, debug APK, all 150 JVM tests (0 failures/0 ignored), generated Protobuf Java/Kotlin, Windows WPF and HostLifecycle passed. The four Libp2pInferenceRequestTransportTest cases passed; the two-host cancellation test completed in 6.055 seconds. The Windows HostLifecycle loopback CancelRequest→CANCELLED integration test passed. This verifies runtime/transport and host cancellation, not cross-runtime Android→.NET cancellation nor a production UI click path.\nT0174-A013 (2026-11-01): Added native Android-to-.NET three-host cancellation interop acceptance: .NET peer fixture optional cancel mode receives and validates CancelRequest then returns correlated CANCELLED; Android JVM test dispatches to three independent .NET processes, waits for all to receive requests, cancels all selected attempts and checks all three responses. Exact-head CI is pending. No production UI call site currently invokes cancelSelectedHosts; task remains in_progress.\nT0174-A014 (2026-11-01): Exact V 3.0.737 Step Three quality, Windows WPF build/startup/security, HostLifecycle and real local inference all passed. Android KtLint failed one test-source import-order rule at Libp2pInferenceRequestTransportTest.kt:3:1 because the newly added kotlinx.coroutines.delay import was placed before Dispatchers. Android APK/JVM/Protobuf stages were skipped; the new three-native-.NET cancellation test did not execute. T0174-A015 moves delay after Dispatchers; exact-head CI pending.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0174-A001 (2026-11-01): Added bounded CancelRequest parsing/validation with an explicit user_cancelled reason; Android authenticated-stream cancellation for each queued attempt and per-attempt results; Windows bounded concurrent request handling so the receive loop can accept a cancellation frame and signal only the matching (requestId, attemptId) token; correlated deadline-bounded CANCELLED response; Android two-peer transport test; Windows trusted-loopback end-to-end cancellation test; protocol negative tests. The existing Android request screen remains preparation-only and has no live dispatch/discovery state, so no fake Cancel button was added. Keep in_progress pending exact-head CI and later real UI wiring.\nT0174-A002 (2026-11-01): Exact-head V 3.0.732 Step Three quality gate failed one obsolete source-contract assertion expecting the former inline _requestHandler(requestWire, cancellationToken) call. The production implementation had deliberately moved handler execution to ProcessRequestAndRespondAsync to keep the receive loop available for CancelRequest. T0174-A003 updates the Python source guard to assert concurrent handler dispatch, exact request/attempt cancellation lookup, bounded parser and allowlisted reason. Product build and real-inference workflow for V 3.0.732 were still running when this correction was recorded.\nT0174-A010 (2026-11-01): Exact V 3.0.735 product CI passed Android lint and APK build, but compileDebugUnitTestKotlin failed at test helper type mismatch: createHost required ProtocolBinding<LoopbackInferenceResponder> and received ProtocolBinding<LoopbackCancellationResponder>. Android JVM tests did not execute. Exact V 3.0.735 Step Three quality, Windows WPF, and HostLifecycle tests passed. T0174-A011 fixes createHost to accept ProtocolBinding<T> for T : SimpleClientHandler; task stays in_progress pending a new exact-head Android JVM pass and real UI cancellation integration.\nT0174-A012 (2026-11-01): Exact V 3.0.736 product and Step Three workflows passed. Android KtLint, debug APK, all 150 JVM tests (0 failures/0 ignored), generated Protobuf Java/Kotlin, Windows WPF and HostLifecycle passed. The four Libp2pInferenceRequestTransportTest cases passed; the two-host cancellation test completed in 6.055 seconds. The Windows HostLifecycle loopback CancelRequest→CANCELLED integration test passed. This verifies runtime/transport and host cancellation, not cross-runtime Android→.NET cancellation nor a production UI click path.\nT0174-A013 (2026-11-01): Added native Android-to-.NET three-host cancellation interop acceptance: .NET peer fixture optional cancel mode receives and validates CancelRequest then returns correlated CANCELLED; Android JVM test dispatches to three independent .NET processes, waits for all to receive requests, cancels all selected attempts and checks all three responses. Exact-head CI is pending. No production UI call site currently invokes cancelSelectedHosts; task remains in_progress.\nT0174-A014 (2026-11-01): Exact V 3.0.737 Step Three quality, Windows WPF build/startup/security, HostLifecycle and real local inference all passed. Android KtLint failed one test-source import-order rule at Libp2pInferenceRequestTransportTest.kt:3:1 because the newly added kotlinx.coroutines.delay import was placed before Dispatchers. Android APK/JVM/Protobuf stages were skipped; the new three-native-.NET cancellation test did not execute. T0174-A015 moves delay after Dispatchers; exact-head CI pending.\nT0174-A016 (2026-11-01): Exact V 3.0.738 CI passed. Android KtLint/APK/JVM/Protobuf, 151 JVM tests (0 failures/0 ignored), including sendsCancellationToThreeNativeDotNetLibp2pHostsAndReceivesCancelledResponses (3 native .NET peers, 3.808s) and the two-peer cancellation API test (6.053s), Windows WPF, HostLifecycle, and Step Three quality all passed. No production Cancel button was added: MainActivity remains a prepare-only preview, Connections has no discovery, and AndroidInferenceRequestRuntime deliberately requires independently validated HostCandidate status snapshots. T0174 remains in_progress pending real discovery/dispatch UI and click-path acceptance.",
       "execution_summary": {
-        "attempt_count": 15,
+        "attempt_count": 16,
         "failed_attempt_count": 6,
-        "last_attempt_id": "T0174-A015-import-order-correction",
+        "last_attempt_id": "T0174-A016-v3.0.738-exact-head-ci",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Host.Infrastructure/ProtocolMessageParser.cs",
@@ -44779,7 +44779,8 @@
           "9ca3cafca1c3c93ae9319b70956d0cb3ee55005f",
           "0391c10da301d876b549d6d23eb753e0b00c5dc4",
           "339b1efb54449fe0a3d5d4dad3d26c096ad3d36d",
-          "cd1b1b67cd6ce1a500da0c120c52dc321de36ac4"
+          "cd1b1b67cd6ce1a500da0c120c52dc321de36ac4",
+          "34db50f1e11de7ee034fb1082b7f901ffc1134d9"
         ],
         "tests_passed": [
           "Windows WPF Release build/startup/security checks — PASS on exact V 3.0.732: https://github.com/artinrahimii/project/actions/runs/41271523252/job/124745099788",
@@ -44801,7 +44802,12 @@
           "Step Three quality gate PASS on exact V 3.0.737: https://github.com/artinrahimii/project/actions/runs/41275179422",
           "Windows WPF Release/build/startup/security PASS on exact V 3.0.737: https://github.com/artinrahimii/project/actions/runs/41275179435/job/124755825167",
           "HostLifecycle unit/integration PASS on exact V 3.0.737: https://github.com/artinrahimii/project/actions/runs/41275179435/job/124755825154",
-          "Real local inference integration PASS on exact V 3.0.737: https://github.com/artinrahimii/project/actions/runs/41275179495"
+          "Real local inference integration PASS on exact V 3.0.737: https://github.com/artinrahimii/project/actions/runs/41275179495",
+          "Exact V 3.0.738 Android KtLint, APK, JVM and generated Protobuf job passed — https://github.com/artinrahimii/project/actions/runs/41275610857/job/124757067197",
+          "Exact V 3.0.738 Android JVM report: 151 tests, 0 failures, 0 ignored; cancellation with three native .NET peers passed in 3.808s; two-peer cancellation test passed in 6.053s — https://github.com/artinrahimii/project/actions/runs/41275610857/artifacts/13071167147",
+          "Exact V 3.0.738 Windows HostLifecycle integration passed — https://github.com/artinrahimii/project/actions/runs/41275610857/job/124757066927",
+          "Exact V 3.0.738 Windows WPF Release build/startup/security passed — https://github.com/artinrahimii/project/actions/runs/41275610857/job/124757067131",
+          "Exact V 3.0.738 Step Three quality gate passed — https://github.com/artinrahimii/project/actions/runs/41275610846"
         ],
         "tests_failed": [
           "V 3.0.732 Step Three quality gate: one obsolete HostContentVisibilityTests assertion expected the old inline _requestHandler call; corrected in T0174-A003.",
@@ -44839,8 +44845,7 @@
           ]
         },
         "tests_pending": [
-          "Exact-head Android lint, APK, JVM suite and generated Protobuf verification for the A015 import-order correction, including sendsCancellationToThreeNativeDotNetLibp2pHostsAndReceivesCancelledResponses.",
-          "Production Android Cancel button wired to live dispatch state and selected InferenceHostAttempt list; no production call site currently exists."
+          "Production Android request UI must gain a real discovery/status source and a live dispatch lifecycle, then expose a visible Cancel action that calls cancelSelectedHosts with the actual selected queued attempts and displays per-attempt cancellation outcomes."
         ]
       },
       "execution_history": [
@@ -45296,6 +45301,65 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Commit as V 3.0.738 and inspect exact-head Android/Windows/HostLifecycle/quality workflows. Keep T0174 in_progress until real UI cancellation is integrated."
+        },
+        {
+          "attempt_id": "T0174-A016-v3.0.738-exact-head-ci",
+          "started_at": "2026-11-01T05:10:20Z",
+          "ended_at": "2026-11-01T05:10:20Z",
+          "result": "partial",
+          "summary": "Verified the exact V 3.0.738 main commit. Product and Step Three workflows passed. Android KtLint, APK, JVM, generated Protobuf and 151/151 JVM tests passed; both Android two-peer and three-native-.NET cancellation tests passed. Windows WPF and HostLifecycle jobs passed. Cross-runtime CancelRequest behavior is now evidenced; the real production Android discovery/dispatch UI and visible Cancel click path still do not exist, so T0174 remains in_progress.",
+          "changed_files": [
+            "step three/T0174/execution-report.md",
+            "step three/T0174/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": "34db50f1e11de7ee034fb1082b7f901ffc1134d9",
+          "tests": [
+            {
+              "name": "Android KtLint, debug APK, JVM tests and generated Protobuf Java/Kotlin",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41275610857/job/124757067197",
+              "summary": "Exact V 3.0.738 product CI job passed."
+            },
+            {
+              "name": "Android JVM unit report",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41275610857/artifacts/13071167147",
+              "summary": "151 tests; 0 failures; 0 ignored."
+            },
+            {
+              "name": "Android-to-native-.NET three-peer CancelRequest integration",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41275610857/artifacts/13071167147",
+              "summary": "sendsCancellationToThreeNativeDotNetLibp2pHostsAndReceivesCancelledResponses passed in 3.808 seconds."
+            },
+            {
+              "name": "Android two-peer cancellation transport test",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41275610857/artifacts/13071167147",
+              "summary": "cancelAttemptsSendsCorrelatedCancelRequestsToEverySelectedAuthenticatedHost passed in 6.053 seconds."
+            },
+            {
+              "name": "Windows HostLifecycle integration",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41275610857/job/124757066927"
+            },
+            {
+              "name": "Windows WPF Release build/startup/security",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41275610857/job/124757067131"
+            },
+            {
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41275610846"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Implement validated discovery/status and live Android request dispatch UI, then connect a real Cancel button to cancelSelectedHosts using the actual selected queued host attempts. Do not mark T0174 done before UI acceptance."
         }
       ],
       "updated_at": "2026-11-01T05:04:11.199Z"
@@ -57001,7 +57065,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-11-01T05:04:11.199Z",
+  "updated_at": "2026-11-01T05:10:20Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

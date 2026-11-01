@@ -130,3 +130,27 @@ The existing Android request screen is a prepare-only preview. It creates neithe
 - Moved `import kotlinx.coroutines.delay` after `import kotlinx.coroutines.Dispatchers`.
 - Only the test-source import order changed. Production code, C# fixture and protocol behavior are unchanged.
 - Exact-head CI for A015 remains pending. T0174 stays `in_progress`.
+
+
+## T0174-A016 — exact V 3.0.738 acceptance evidence
+
+- Exact tested `main` commit: `34db50f1e11de7ee034fb1082b7f901ffc1134d9` (`V 3.0.738`).
+- Product workflow SUCCESS: [41275610857](https://github.com/artinrahimii/project/actions/runs/41275610857).
+- Step Three graph/Python quality workflow SUCCESS: [41275610846](https://github.com/artinrahimii/project/actions/runs/41275610846).
+- Android CI job SUCCESS: [124757067197](https://github.com/artinrahimii/project/actions/runs/41275610857/job/124757067197); KtLint, `assembleDebug`, `testDebugUnitTest` and generated Protobuf Java/Kotlin verification passed.
+- Android test report artifact: [whitep-android-unit-test-reports]( https://github.com/artinrahimii/project/actions/runs/41275610857/artifacts/13071167147 ). The extracted Gradle report shows 151 tests, 0 failures, 0 ignored. The transport test class contains 5 tests, all passing:
+  - `cancelAttemptsSendsCorrelatedCancelRequestsToEverySelectedAuthenticatedHost` — PASS, 6.053 seconds.
+  - `sendsCancellationToThreeNativeDotNetLibp2pHostsAndReceivesCancelledResponses` — PASS, 3.808 seconds.
+  - The existing Android request/response, three-host dispatch and response-correlation tests also passed.
+- Windows HostLifecycle job SUCCESS: [124757066927](https://github.com/artinrahimii/project/actions/runs/41275610857/job/124757066927).
+- Windows WPF Release build/startup/security job SUCCESS: [124757067131](https://github.com/artinrahimii/project/actions/runs/41275610857/job/124757067131).
+- Product CI proves the Android cancellation message interoperates with three independent native .NET peer processes and yields three correctly correlated `CANCELLED` responses.
+- Graph Blob from the exact V 3.0.738 tree: `e2a9429213736a69786d886739f92e2700049128`; full UTF-8 source content was 3,538,870 bytes and the locally recomputed Git Blob SHA-1 matched. The original graph structure parsed as 229 tasks and 417 edges.
+
+## User-facing UI still not accepted
+
+- `MainActivity.requestScreen` is still a preparation-only preview: no live host discovery, no real dispatch call, and no active selected-attempt state.
+- `MainActivity.connectionsScreen` explicitly reports discovery unavailable and performs no connection attempt.
+- `AndroidInferenceRequestRuntime` requires caller-provided `HostCandidate` snapshots from a separately validated discovery/status source; it deliberately does not invent readiness from metadata-only rendezvous announcements.
+- No production Android call site invokes `dispatchRound` or `cancelSelectedHosts`.
+- Therefore the visible Cancel button acceptance criterion is still unmet; T0174 remains `in_progress`, despite passing Android↔native-.NET cancellation interoperability.
