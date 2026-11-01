@@ -26519,9 +26519,9 @@
       ],
       "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
       "execution_summary": {
-        "attempt_count": 5,
-        "failed_attempt_count": 4,
-        "last_attempt_id": "T0123-A005-android-production-ktlint",
+        "attempt_count": 6,
+        "failed_attempt_count": 5,
+        "last_attempt_id": "T0123-A006-fix-peer-controller-close-callback",
         "last_attempt_result": "in_progress",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
@@ -26533,7 +26533,8 @@
           "03792d1a958cb1edf552092f0d7d371d8b8e5b47",
           "d38558244b9bcff6b2a1c42c1421d086872d3f27",
           "d5858762bb9f1e6d672c2d9f861a81a1187dcbea",
-          "fdf51f72fa9d389aeed11709db8a870c036fac2f"
+          "fdf51f72fa9d389aeed11709db8a870c036fac2f",
+          "9b6b1e9e87bb7e1c0ff6c321dbd81d65565961b9"
         ],
         "tests_passed": [
           "Exact V 3.0.754 HostLifecycle authenticated HostStatusRequest/HostStatus loopback acceptance — PASS — https://github.com/artinrahimii/project/actions/runs/41302568558/job/124836380905",
@@ -26547,13 +26548,18 @@
           "Exact V 3.0.756 HostLifecycle unit/integration suite — PASS — https://github.com/artinrahimii/project/actions/runs/41303131592/job/124838033151",
           "Exact V 3.0.756 Android test-source KtLint — PASS — https://github.com/artinrahimii/project/actions/runs/41303131592/job/124838033394",
           "Exact V 3.0.756 Step Three quality gate — PASS — https://github.com/artinrahimii/project/actions/runs/41303131602",
-          "Exact V 3.0.756 Rendezvous container build/smoke — PASS — https://github.com/artinrahimii/project/actions/runs/41303131595"
+          "Exact V 3.0.756 Rendezvous container build/smoke — PASS — https://github.com/artinrahimii/project/actions/runs/41303131595",
+          "Exact V 3.0.757 Android production and test KtLint — PASS — https://github.com/artinrahimii/project/actions/runs/41303424789",
+          "Exact V 3.0.757 Android .NET peer interoperability fixture — PASS — https://github.com/artinrahimii/project/actions/runs/41303424789",
+          "Exact V 3.0.757 HostLifecycle unit/integration — PASS — https://github.com/artinrahimii/project/actions/runs/41303424789",
+          "Exact V 3.0.757 Windows WPF build/startup/security/DPAPI — PASS — https://github.com/artinrahimii/project/actions/runs/41303424789"
         ],
         "tests_failed": [
           "Exact V 3.0.753 HostLifecycle compile — FAILED CS0136 — https://github.com/artinrahimii/project/actions/runs/41302359549/job/124835779036",
           "Exact V 3.0.754 Android KtLint — FAILED formatting in main and test source sets; APK/JVM skipped — https://github.com/artinrahimii/project/actions/runs/41302568558/job/124836380819",
           "Exact V 3.0.755 Android JVM test source KtLint — FAILED on builder chain and indentation in Libp2pInferenceRequestTransportTest.kt; APK/JVM skipped — https://github.com/artinrahimii/project/actions/runs/41302871481",
-          "Exact V 3.0.756 Android production-source KtLint — FAILED on continuation indentation/member-chain layout in Libp2pInferenceRequestTransport.kt; APK/JVM skipped — https://github.com/artinrahimii/project/actions/runs/41303131592"
+          "Exact V 3.0.756 Android production-source KtLint — FAILED on continuation indentation/member-chain layout in Libp2pInferenceRequestTransport.kt; APK/JVM skipped — https://github.com/artinrahimii/project/actions/runs/41303131592",
+          "Exact V 3.0.757 Android APK compilation — FAILED at Libp2pInferenceRequestTransport.kt:650:22 (missing onClosed callback p2); Android JVM tests skipped — https://github.com/artinrahimii/project/actions/runs/41303424789"
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -26569,7 +26575,7 @@
             "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt"
           ]
         },
-        "follow_up": "Run exact-head product workflow. Require Android production/test KtLint, debug APK and JVM transport round-trip all pass; keep T0123 in_progress until then."
+        "follow_up": "Run exact-head product workflow. Require Android lint, APK compilation, Android JVM status transport tests and HostLifecycle/WPF regression all pass before T0123 is marked done."
       },
       "execution_history": [
         {
@@ -26777,9 +26783,59 @@
         {
           "attempt_id": "T0123-A005-android-production-ktlint",
           "started_at": "2026-11-01T11:44:40Z",
+          "ended_at": "2026-11-01T11:50:16Z",
+          "result": "failed",
+          "summary": "The exact V 3.0.757 CI passed KtLint for both production and test source sets, and the Android .NET peer fixture, HostLifecycle suite, Windows WPF and security checks all passed. APK compilation then failed at Libp2pInferenceRequestTransport.kt:650 because the onClosed callback is defined with two parameters but the catch branch supplied only the authenticated PeerId. The Android JVM test was skipped.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
+            "step three/T0123/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": "9b6b1e9e87bb7e1c0ff6c321dbd81d65565961b9",
+          "tests": [
+            {
+              "name": "Android production and test KtLint — exact V 3.0.757",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41303424789",
+              "summary": "Both Kotlin source sets passed formatting/lint."
+            },
+            {
+              "name": "Android .NET peer interoperability fixture — exact V 3.0.757",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41303424789",
+              "summary": "Shared Windows/.NET peer fixture compiled."
+            },
+            {
+              "name": "HostLifecycle unit/integration — exact V 3.0.757",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41303424789",
+              "summary": "Complete HostLifecycle test suite passed."
+            },
+            {
+              "name": "Windows WPF build/startup/security/DPAPI — exact V 3.0.757",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41303424789",
+              "summary": "Windows build and all configured smoke/security checks passed."
+            },
+            {
+              "name": "Android debug APK compile — exact V 3.0.757",
+              "result": "failed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41303424789",
+              "summary": "Kotlin compile failed at Libp2pInferenceRequestTransport.kt:650:22: No value passed for parameter p2. The onClosed callback requires both PeerId and controller; Android JVM tests were skipped."
+            }
+          ],
+          "failure_details": "The exact V 3.0.757 product workflow passed Android KtLint and the shared .NET interop fixture, but the APK compile stopped at Libp2pInferenceRequestTransport.kt:650:22 with `No value passed for parameter 'p2'`. InferencePeerMessageController declares `onClosed: (String, InferencePeerMessageController) -> Unit`; the exception branch called `onClosed(peerId)` without passing `this`. The Android JVM tests and Protobuf verification did not run.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "A006 passes the current controller instance to onClosed(peerId, this), preserving the existing two-parameter lifecycle contract. Rerun exact-head APK and Android JVM tests with HostLifecycle and WPF regressions."
+        },
+        {
+          "attempt_id": "T0123-A006-fix-peer-controller-close-callback",
+          "started_at": "2026-11-01T11:50:30Z",
           "ended_at": null,
           "result": "in_progress",
-          "summary": "Applied continuation indentation and member-chain layout corrections to the Android production HostStatus probe and receive branch, addressing the exact KtLint diagnostics from V 3.0.756. Test-source formatting had passed and was retained. Runtime semantics were not intentionally modified. Exact-head product workflow is pending.",
+          "summary": "Corrected the Android peer stream exception branch to call onClosed(peerId, this), matching the existing callback type (PeerId plus InferencePeerMessageController). This also ensures the failing controller instance is identified for pending request cleanup. Exact-head CI is pending.",
           "changed_files": [
             "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
             "step three/T0123/execution-report.md",
@@ -26791,7 +26847,7 @@
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Run exact-head product workflow. Require Android production/test KtLint, debug APK and JVM transport round-trip all pass; keep T0123 in_progress until then."
+          "follow_up": "Run exact-head product workflow. Require Android lint, APK compilation, Android JVM status transport tests and HostLifecycle/WPF regression all pass before T0123 is marked done."
         }
       ]
     },
@@ -58206,7 +58262,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-11-01T11:44:40Z",
+  "updated_at": "2026-11-01T11:50:30Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

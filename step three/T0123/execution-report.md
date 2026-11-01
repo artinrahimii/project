@@ -69,3 +69,18 @@
 - **Base:** exact online `main` commit `fdf51f72fa9d389aeed11709db8a870c036fac2f` (`V 3.0.756`).
 - **Changes:** corrected only Kotlin continuation indentation and member-chain layout in `probeHostStatus` and the HostStatus receive branch. No runtime or protocol behavior is intentionally changed. The JVM test formatting from A004 is retained.
 - **Validation:** pending exact-head product workflow. T0123 remains `in_progress` until Kotlin lint, debug APK build and Android JVM transport acceptance pass together with HostLifecycle and WPF checks.
+
+
+## T0123-A005 — exact V 3.0.757 CI result
+
+- **Commit:** `9b6b1e9e87bb7e1c0ff6c321dbd81d65565961b9`.
+- **Passed:** Android production/test KtLint; Android .NET peer interoperability fixture; HostLifecycle unit/integration suite; Windows WPF build, startup, security and DPAPI checks.
+- **Failed:** APK compilation at `Libp2pInferenceRequestTransport.kt:650:22` — `No value passed for parameter 'p2'`. The controller close callback is a two-parameter function `(PeerId, InferencePeerMessageController) -> Unit`, but the exception branch passed only the peer ID. Android JVM tests and generated Protobuf verification were skipped.
+- **Exact evidence:** [Product workflow 41303424789](https://github.com/artinrahimii/project/actions/runs/41303424789).
+- **Task state:** T0123 remains `in_progress`; A005 is failed because the Android APK did not compile.
+
+## T0123-A006 — peer controller close-callback correction
+
+- **Base:** exact online `main` commit `9b6b1e9e87bb7e1c0ff6c321dbd81d65565961b9` (`V 3.0.757`).
+- **Change:** changed the exception path to call `onClosed(peerId, this)`, satisfying the existing two-parameter callback contract and retaining the controller identity needed for stream cleanup.
+- **Validation:** pending exact-head Android APK and JVM CI. T0123 remains `in_progress`.

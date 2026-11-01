@@ -647,7 +647,7 @@ internal class InferencePeerMessageController(
                 }
             }
         } catch (_: Exception) {
-            onClosed(peerId)
+            onClosed(peerId, this)
             stream.reset()
         } finally {
             Arrays.fill(bytes, 0)
