@@ -251,3 +251,15 @@ Revalidated T0121 against the exact online main head V 3.0.607. The full graph B
 - **Dependency review:** the validated edges `T0120 → T0121`, `T0115 → T0121`, and `T0121 → T0122` remain unchanged. The first and third are contract/interface dependencies; the second is sequencing-only.
 - **Outcome:** `T0121` remains `blocked`; `T0122` remains `not_started`. No product source, tests, or dependency edges changed. This is exact-head CI evidence synchronization, not implementation progress.
 - **Next:** deploy/configure a production HTTPS rendezvous endpoint and run advertised TCP/UDP reachability acceptance from a peer on a separate network before re-evaluating `T0121`.
+
+
+## T0121-A025 — exact V 3.0.746 CI passed; public reachability remains blocked (2026-11-01)
+
+- **Exact online baseline:** [`V 3.0.746`](https://github.com/artinrahimii/project/commit/8407c362c61446dd7dc835ef492c702b75888166) (`8407c362c61446dd7dc835ef492c702b75888166`).
+- **Exact-head Step Three quality gate — PASS:** [run 41291144159](https://github.com/artinrahimii/project/actions/runs/41291144159); automated tests, Python syntax, graph integrity, and recorded output/evidence checks succeeded.
+- **Exact-head HostLifecycle unit/integration — PASS:** [job 124802499244](https://github.com/artinrahimii/project/actions/runs/41291144174/job/124802499244).
+- **Exact-head Windows WPF build/startup/security — PASS:** [job 124802499636](https://github.com/artinrahimii/project/actions/runs/41291144174/job/124802499636); formatting, build, generated Protobuf, startup smoke, policy/process and DPAPI checks completed successfully.
+- **Exact-head Android — PASS:** [job 124802499379](https://github.com/artinrahimii/project/actions/runs/41291144174/job/124802499379); Kotlin lint, APK, JVM, peer-interoperability, generated Protobuf and artifact upload steps completed successfully.
+- **External acceptance — NOT RUN:** the repository tree contains no deployment descriptor or deployment workflow for a production Rendezvous endpoint, and no independently networked peer/production HTTPS endpoint was available in this execution. CI and loopback tests do not prove advertised public TCP/UDP reachability.
+- **Dependency outcome:** T0121 remains `blocked`; T0122 remains `not_started`. No product source or test code changed. This is exact-head CI evidence synchronization, not implementation progress.
+- **Next:** provision/deploy a production HTTPS Rendezvous endpoint and test the advertised host address from an independent network before re-evaluating T0121.
