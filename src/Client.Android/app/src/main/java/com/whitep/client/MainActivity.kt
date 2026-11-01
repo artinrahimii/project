@@ -354,6 +354,7 @@ private fun requestScreen(
     }
 }
 
+@Composable
 private fun connectionsScreen() {
     appPage(
         title = "Connections",

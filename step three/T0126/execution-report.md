@@ -271,3 +271,10 @@ The exact V 3.0.768 Android/Windows/HostLifecycle/Step Three/Rendezvous workflow
 - Android main-source KtLint failed on three multiline expression body-indent findings at the peer-discovery and trust-map expressions and one remaining inline `discoveredPeers` map in the revoke-trust path. Android APK, JVM and Protobuf steps were skipped.
 - V 3.0.793 corrects only the reported indentation and moves the revoke-trust map to its own continuation line. Request/selection runtime semantics and the A011 assertions are unchanged.
 - T0126 stays `in_progress`; exact V 3.0.793 CI must verify Android main/test lint, APK, JVM tests and generated Protobuf.
+## T0126-A011 — V 3.0.793 APK compile failure and V 3.0.794 correction
+
+- Exact commit: `073fed66bd7c1e0e0361ab4f2fa6e074d5de402d` (`V 3.0.793`).
+- Android main/test KtLint — PASS. HostLifecycle — PASS. Windows WPF Release build, C# formatting, generated Protobuf, startup, agent-tool restrictions/policy/capability checks, user-scoped DPAPI identity/trust checks and Windows artifact upload — PASS. Rendezvous container/HTTP smoke — PASS. Step Three graph/Python/syntax/evidence — PASS.
+- Android debug APK compile — FAIL at `:app:compileDebugKotlin`: `MainActivity.kt:357-358` because `connectionsScreen()` invokes the composable `appPage()` but was not declared `@Composable`. Android JVM tests and generated Protobuf Java/Kotlin checks were skipped.
+- Source review confirms `privacyScreen()` and `requestScreen()` already carry `@Composable`; only `connectionsScreen()` lacked it. V 3.0.794 adds this annotation and leaves runtime behavior unchanged.
+- T0126 remains `in_progress` until the exact V 3.0.794 Android APK, JVM and Protobuf stages pass.

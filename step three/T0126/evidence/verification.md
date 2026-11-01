@@ -225,3 +225,9 @@ The live acceptance gap remains: `MainActivity.requestScreen` is prepare-only, a
 - Rendezvous container/HTTP smoke: PASS — 41336799520.
 - Android test-source KtLint: PASS; main-source KtLint: FAIL on indentation/line-break findings in `RequestViewModel.kt`. APK/JVM/Protobuf were not reached.
 - V 3.0.793 contains the corresponding formatting correction only; exact-head verification is pending.
+## Exact V 3.0.793 / A011 follow-up
+
+- Android production/test KtLint — PASS; APK compile — FAIL because `connectionsScreen` invokes the composable `appPage` without `@Composable`.
+- Windows WPF build, generated Protobuf C#, startup/security/DPAPI checks and artifact upload — PASS.
+- HostLifecycle, Rendezvous container/HTTP smoke and Step Three quality — PASS.
+- Android JVM and generated Protobuf Java/Kotlin checks were skipped after compile failure. V 3.0.794 adds the missing annotation; exact-head verification is pending.
