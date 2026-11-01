@@ -201,10 +201,10 @@ class RequestViewModel(
                         discoveredPeers = peers,
                         message =
                             if (peers.isEmpty()) {
-                            "The directory returned no unexpired direct TCP peers."
-                        } else {
-                            "Found ${peers.size} peer(s). None is trusted automatically."
-                        },
+                                "The directory returned no unexpired direct TCP peers."
+                            } else {
+                                "Found ${peers.size} peer(s). None is trusted automatically."
+                            },
                     )
             } catch (cancellation: CancellationException) {
                 throw cancellation
@@ -239,8 +239,8 @@ class RequestViewModel(
                     mutableNetworkState.value.copy(
                         discoveredPeers =
                             mutableNetworkState.value.discoveredPeers.map { peer ->
-                            if (peer.peerId == peerId) peer.copy(isTrusted = true) else peer
-                        },
+                                if (peer.peerId == peerId) peer.copy(isTrusted = true) else peer
+                            },
                         message = "Peer trust saved. This host may receive prompts and context you send to it.",
                     )
             } catch (exception: Exception) {
@@ -257,9 +257,10 @@ class RequestViewModel(
                 gateway.revokePeerTrust(peerId)
                 mutableNetworkState.value =
                     mutableNetworkState.value.copy(
-                        discoveredPeers = mutableNetworkState.value.discoveredPeers.map { peer ->
-                            if (peer.peerId == peerId) peer.copy(isTrusted = false) else peer
-                        },
+                        discoveredPeers =
+                            mutableNetworkState.value.discoveredPeers.map { peer ->
+                                if (peer.peerId == peerId) peer.copy(isTrusted = false) else peer
+                            },
                         message = "Peer trust revoked.",
                     )
             } catch (exception: Exception) {

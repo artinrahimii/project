@@ -264,3 +264,10 @@ The exact V 3.0.768 Android/Windows/HostLifecycle/Step Three/Rendezvous workflow
 - Android APK, JVM tests and generated Protobuf Java/Kotlin checks were skipped after main-source KtLint failed. No Android build or JVM test pass is claimed for V 3.0.791.
 - V 3.0.792 changes only those source-formatting layouts. The previously added zero-host no-send and one-host shortage ViewModel assertions remain unchanged.
 - T0126 remains `in_progress`; exact V 3.0.792 Android and full quality/product workflow results are pending.
+## T0126-A011 — exact V 3.0.792 findings and V 3.0.793 correction
+
+- Exact tested commit: `30065ac8b367d2639cb5faea2363ba852e34f05a` (`V 3.0.792`).
+- Step Three quality — PASS — [run 41336799535](https://github.com/artinrahimii/project/actions/runs/41336799535). HostLifecycle — PASS — product [run 41336799515](https://github.com/artinrahimii/project/actions/runs/41336799515). Rendezvous container/HTTP smoke — PASS — [run 41336799520](https://github.com/artinrahimii/project/actions/runs/41336799520). Android test-source KtLint passed.
+- Android main-source KtLint failed on three multiline expression body-indent findings at the peer-discovery and trust-map expressions and one remaining inline `discoveredPeers` map in the revoke-trust path. Android APK, JVM and Protobuf steps were skipped.
+- V 3.0.793 corrects only the reported indentation and moves the revoke-trust map to its own continuation line. Request/selection runtime semantics and the A011 assertions are unchanged.
+- T0126 stays `in_progress`; exact V 3.0.793 CI must verify Android main/test lint, APK, JVM tests and generated Protobuf.
