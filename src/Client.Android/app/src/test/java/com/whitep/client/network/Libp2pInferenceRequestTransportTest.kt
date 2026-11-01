@@ -18,6 +18,15 @@ import io.libp2p.etc.SimpleClientHandler
 import io.libp2p.etc.createSimpleBinding
 import io.netty.buffer.ByteBuf
 import io.netty.buffer.Unpooled
+import java.io.File
+import java.net.ServerSocket
+import java.time.Duration
+import java.time.Instant
+import java.util.Arrays
+import java.util.UUID
+import java.util.concurrent.CompletableFuture
+import java.util.concurrent.ConcurrentLinkedQueue
+import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
@@ -31,8 +40,8 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
-import org.whitep.shared.contracts.v1.HostRuntimeState
 import org.whitep.shared.contracts.v1.CancelRequest
+import org.whitep.shared.contracts.v1.HostRuntimeState
 import org.whitep.shared.contracts.v1.InferenceOutcome
 import org.whitep.shared.contracts.v1.InferenceRequest
 import org.whitep.shared.contracts.v1.InferenceResponse
@@ -40,15 +49,6 @@ import org.whitep.shared.contracts.v1.hostAnnouncement
 import org.whitep.shared.contracts.v1.hostCapabilities
 import org.whitep.shared.contracts.v1.hostStatus
 import org.whitep.shared.contracts.v1.modelCapability
-import java.io.File
-import java.net.ServerSocket
-import java.time.Duration
-import java.time.Instant
-import java.util.Arrays
-import java.util.UUID
-import java.util.concurrent.CompletableFuture
-import java.util.concurrent.ConcurrentLinkedQueue
-import java.util.concurrent.TimeUnit
 
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [35])
@@ -106,7 +106,8 @@ class Libp2pInferenceRequestTransportTest {
                     val attemptIds = clientsByHost.values.toList()
                     selectedHostIds.forEachIndexed { index, hostId ->
                         val request =
-                            baseRequest.toBuilder()
+                            baseRequest
+                                .toBuilder()
                                 .setAttemptId(attemptIds[index])
                                 .build()
                         assertEquals(
@@ -679,7 +680,8 @@ class Libp2pInferenceRequestTransportTest {
                             cancelReceived.complete(cancel)
 
                             val response =
-                                InferenceResponse.newBuilder()
+                                InferenceResponse
+                                    .newBuilder()
                                     .setRequestId(request.requestId)
                                     .setAttemptId(request.attemptId)
                                     .setRoundId(request.roundId)

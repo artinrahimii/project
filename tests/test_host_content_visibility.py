@@ -26,9 +26,27 @@ class HostContentVisibilityTests(unittest.TestCase):
     def test_host_parses_request_and_passes_it_to_local_inference_session(self):
         self.assertIn("Transport encryption and peer authentication are provided by the", TRANSPORT)
         self.assertIn("ProtocolMessageParser.ParseInferenceRequest(requestWire)", PEER_HOST)
-        self.assertIn("_requestHandler(requestWire, cancellationToken)", PEER_HOST)
+        self.assertIn("ProcessRequestAndRespondAsync(", PEER_HOST)
+        self.assertIn("_requestHandler(requestWire, requestCancellation.Token)", PEER_HOST)
+        self.assertIn("ProtocolMessageParser.ParseCancelRequest(requestWire)", PEER_HOST)
+        self.assertIn("new RequestAttemptKey(cancel.RequestId, cancel.AttemptId)", PEER_HOST)
+        self.assertIn("_activeRequestCancellations.TryGetValue(cancelKey, out var activeCancellation)", PEER_HOST)
+        self.assertIn("activeCancellation.Cancel()", PEER_HOST)
+        self.assertIn("CreateCancelledResponse(request)", PEER_HOST)
+        self.assertIn("MaximumConcurrentRequestHandlers = 8", PEER_HOST)
         self.assertIn("ProtocolMessageParser.ParseInferenceRequest(wireBytes)", WINDOW)
         self.assertIn("_session.GenerateAsync(request, token)", WINDOW)
+
+    def test_cancel_request_is_bounded_and_reason_is_allowlisted(self):
+        parser = (ROOT / "src/Host.Infrastructure/ProtocolMessageParser.cs").read_text(encoding="utf-8")
+        validator = (ROOT / "src/Shared.Contracts/ProtocolMessageValidator.cs").read_text(encoding="utf-8")
+        self.assertIn("ParseCancelRequest(byte[]? wireBytes)", parser)
+        self.assertIn("ProtocolMessageLimits.ValidateControlMessageBytes(wireBytes.LongLength)", parser)
+        self.assertIn("ProtocolMessageValidator.ValidateCancelRequest(", parser)
+        self.assertIn('UserCancellationReason = "user_cancelled"', validator)
+        self.assertIn("IsValidRequestIdentifier(requestId)", validator)
+        self.assertIn("IsValidRequestIdentifier(attemptId)", validator)
+        self.assertIn("string.Equals(reason, UserCancellationReason, StringComparison.Ordinal)", validator)
 
     def test_readme_requirements_and_adr_disclose_endpoint_visibility(self):
         for phrase in (

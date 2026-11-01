@@ -66,3 +66,14 @@ No UI placeholder, mock dispatch, or fabricated selected-host list was introduce
 - New task evidence: `step three/T0174/execution-report.md`, `step three/T0174/evidence/verification.md`.
 - Commit association: will be recorded after the online commit is created and verified.
 - Follow-up: run exact-head CI, fix compiler/test failures with append-only attempts, then integrate the real Cancel control only when the request screen has a real dispatched request and selected-attempt state.
+
+
+## Second exact-head CI correction
+
+- Exact V 3.0.732 product workflow: [41271523252](https://github.com/artinrahimii/project/actions/runs/41271523252).
+- Windows WPF build/startup/security: PASS — [job 124745099788](https://github.com/artinrahimii/project/actions/runs/41271523252/job/124745099788).
+- HostLifecycle unit/integration, including the trusted loopback cancellation acceptance test: PASS — [job 124745100081](https://github.com/artinrahimii/project/actions/runs/41271523252/job/124745100081).
+- Real local llama.cpp/GGUF inference: PASS — [run 41271523283](https://github.com/artinrahimii/project/actions/runs/41271523283).
+- Android KtLint failed before APK/JVM/Protobuf stages on three style findings in `Libp2pInferenceRequestTransportTest.kt`: import ordering and two chained-call continuation lines. No Android test result is claimed for this attempt.
+- T0174-A005 sorts the imports and adjusts both method-chain layouts; exact-head Android CI is pending.
+- T0174 remains open because the Android request screen still has no live dispatch/discovery state and no real user-facing Cancel button.

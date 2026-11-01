@@ -44716,7 +44716,8 @@
         "src/Client.Android/app/src/test/java/com/whitep/client/network/Libp2pInferenceRequestTransportTest.kt",
         "step three/T0174/execution-report.md",
         "step three/T0174/evidence/verification.md",
-        "step three/project-graph.md"
+        "step three/project-graph.md",
+        "tests/test_host_content_visibility.py"
       ],
       "expected_output_paths": [
         "src/Client.Android/Requests/ + tests/"
@@ -44743,13 +44744,14 @@
         "step three/T0173/execution-report.md",
         "step three/T0173/evidence/verification.md",
         "step three/T0174/execution-report.md",
-        "step three/T0174/evidence/verification.md"
+        "step three/T0174/evidence/verification.md",
+        "tests/test_host_content_visibility.py"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0174-A001 (2026-11-01): Added bounded CancelRequest parsing/validation with an explicit user_cancelled reason; Android authenticated-stream cancellation for each queued attempt and per-attempt results; Windows bounded concurrent request handling so the receive loop can accept a cancellation frame and signal only the matching (requestId, attemptId) token; correlated deadline-bounded CANCELLED response; Android two-peer transport test; Windows trusted-loopback end-to-end cancellation test; protocol negative tests. The existing Android request screen remains preparation-only and has no live dispatch/discovery state, so no fake Cancel button was added. Keep in_progress pending exact-head CI and later real UI wiring.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0174-A001 (2026-11-01): Added bounded CancelRequest parsing/validation with an explicit user_cancelled reason; Android authenticated-stream cancellation for each queued attempt and per-attempt results; Windows bounded concurrent request handling so the receive loop can accept a cancellation frame and signal only the matching (requestId, attemptId) token; correlated deadline-bounded CANCELLED response; Android two-peer transport test; Windows trusted-loopback end-to-end cancellation test; protocol negative tests. The existing Android request screen remains preparation-only and has no live dispatch/discovery state, so no fake Cancel button was added. Keep in_progress pending exact-head CI and later real UI wiring.\nT0174-A002 (2026-11-01): Exact-head V 3.0.732 Step Three quality gate failed one obsolete source-contract assertion expecting the former inline _requestHandler(requestWire, cancellationToken) call. The production implementation had deliberately moved handler execution to ProcessRequestAndRespondAsync to keep the receive loop available for CancelRequest. T0174-A003 updates the Python source guard to assert concurrent handler dispatch, exact request/attempt cancellation lookup, bounded parser and allowlisted reason. Product build and real-inference workflow for V 3.0.732 were still running when this correction was recorded.",
       "execution_summary": {
-        "attempt_count": 1,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "T0174-A001",
+        "attempt_count": 5,
+        "failed_attempt_count": 2,
+        "last_attempt_id": "T0174-A005",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Host.Infrastructure/ProtocolMessageParser.cs",
@@ -44762,11 +44764,21 @@
           "src/Client.Android/app/src/test/java/com/whitep/client/network/Libp2pInferenceRequestTransportTest.kt",
           "step three/T0174/execution-report.md",
           "step three/T0174/evidence/verification.md",
-          "step three/project-graph.md"
+          "step three/project-graph.md",
+          "tests/test_host_content_visibility.py"
         ],
-        "related_commits": [],
-        "tests_passed": [],
-        "tests_failed": [],
+        "related_commits": [
+          "657f0ef5669b63991ed708ed92e125f171616ca3"
+        ],
+        "tests_passed": [
+          "Windows WPF Release build/startup/security checks — PASS on exact V 3.0.732: https://github.com/artinrahimii/project/actions/runs/41271523252/job/124745099788",
+          "HostLifecycle unit and integration tests, including the trusted loopback peer test — PASS on exact V 3.0.732: https://github.com/artinrahimii/project/actions/runs/41271523252/job/124745100081",
+          "Real local llama.cpp/GGUF inference integration — PASS on exact V 3.0.732: https://github.com/artinrahimii/project/actions/runs/41271523283"
+        ],
+        "tests_failed": [
+          "V 3.0.732 Step Three quality gate: one obsolete HostContentVisibilityTests assertion expected the old inline _requestHandler call; corrected in T0174-A003.",
+          "V 3.0.732 Android KtLint: import ordering and two chained-call newline violations in Libp2pInferenceRequestTransportTest.kt; corrected in T0174-A005."
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -44847,6 +44859,116 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Run exact-head CI, repair all concrete failures, then wire the Cancel control only after the Android screen has real host discovery and dispatch state. Keep T0174 in_progress until both backend acceptance and real user-facing cancellation are verified."
+        },
+        {
+          "attempt_id": "T0174-A002",
+          "started_at": "2026-11-01T04:02:58Z",
+          "ended_at": "2026-11-01T04:03:00Z",
+          "result": "failed",
+          "summary": "Exact-head V 3.0.732 Step Three quality gate ran 309 Python tests and failed one source-contract test that still expected the pre-concurrency direct _requestHandler(requestWire, cancellationToken) call. The implementation now runs requests through ProcessRequestAndRespondAsync and passes requestCancellation.Token so the receive loop can concurrently process cancellation frames.",
+          "changed_files": [],
+          "commit_sha": "657f0ef5669b63991ed708ed92e125f171616ca3",
+          "tests": [
+            {
+              "name": "HostContentVisibilityTests.test_host_parses_request_and_passes_it_to_local_inference_session",
+              "result": "failed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41271523298",
+              "summary": "Obsolete source assertion; failure is a test/implementation contract mismatch, not a reported runtime test failure."
+            }
+          ],
+          "failure_details": "AssertionError: '_requestHandler(requestWire, cancellationToken)' not found in PeerAnnouncementHostLifecycle.cs. New call is _requestHandler(requestWire, requestCancellation.Token) inside ProcessRequestAndRespondAsync.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Update source-contract guard to assert the new concurrent handler/cancel parser/attempt-scoped cancellation boundary and rerun exact-head quality and product CI."
+        },
+        {
+          "attempt_id": "T0174-A003",
+          "started_at": "2026-11-01T04:04:23.395Z",
+          "ended_at": "2026-11-01T04:04:23.395Z",
+          "result": "partial",
+          "summary": "Updated tests/test_host_content_visibility.py so it validates the new real architecture: independent request handler tasks, exact request/attempt cancellation lookup and token signalling, CANCELLED response creation, bounded concurrent handler slots, bounded CancelRequest parsing and allowlisted reason. Exact-head CI for the corrected guard is pending.",
+          "changed_files": [
+            "tests/test_host_content_visibility.py",
+            "step three/T0174/execution-report.md",
+            "step three/T0174/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "HostContentVisibilityTests.test_host_parses_request_and_passes_it_to_local_inference_session",
+              "result": "pending"
+            },
+            {
+              "name": "HostContentVisibilityTests.test_cancel_request_is_bounded_and_reason_is_allowlisted",
+              "result": "pending"
+            },
+            {
+              "name": "Step Three Python/graph quality gate",
+              "result": "pending"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Run exact-head V 3.0.733 Step Three quality and product workflows; correct any further real CI failures. T0174 remains in_progress until real user-facing dispatch/cancel integration is possible and acceptance is verified."
+        },
+        {
+          "attempt_id": "T0174-A004",
+          "started_at": "2026-11-01T04:04:14Z",
+          "ended_at": "2026-11-01T04:04:16Z",
+          "result": "failed",
+          "summary": "Exact-head V 3.0.732 Android product job stopped at ktlintTestSourceSetCheck. KtLint reported import ordering and two Expected newline before '.' findings in Libp2pInferenceRequestTransportTest.kt. APK/JVM/Protobuf stages were skipped.",
+          "changed_files": [],
+          "commit_sha": "657f0ef5669b63991ed708ed92e125f171616ca3",
+          "tests": [
+            {
+              "name": "Android ktlintTestSourceSetCheck",
+              "result": "failed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41271523252",
+              "summary": "Import ordering at line 3; chained call continuation at lines 109 and 682."
+            }
+          ],
+          "failure_details": "Import order: CancelRequest should sort before HostRuntimeState and java imports must be in lexicographic position; two method chains require a newline before the leading dot.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Sort the imports and move method-chain dots to the required continuation lines; rerun the exact Android KtLint/APK/JVM/Protobuf job."
+        },
+        {
+          "attempt_id": "T0174-A005",
+          "started_at": "2026-11-01T04:06:15.624Z",
+          "ended_at": "2026-11-01T04:06:15.624Z",
+          "result": "partial",
+          "summary": "Corrected the Android transport test import order and both chained-call continuation layouts exactly where V 3.0.732 KtLint reported violations. No product logic changed. The updated Android lint, APK and JVM tests are pending exact-head CI.",
+          "changed_files": [
+            "src/Client.Android/app/src/test/java/com/whitep/client/network/Libp2pInferenceRequestTransportTest.kt",
+            "step three/T0174/execution-report.md",
+            "step three/T0174/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Android ktlintTestSourceSetCheck",
+              "result": "pending"
+            },
+            {
+              "name": "Android assembleDebug and testDebugUnitTest",
+              "result": "pending"
+            },
+            {
+              "name": "Generated Protobuf Java/Kotlin validation",
+              "result": "pending"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Run V 3.0.733 exact-head quality/product workflows and resolve any remaining compile or acceptance failures. T0174 remains in_progress until real Cancel control integration exists."
         }
       ]
     },
@@ -56551,7 +56673,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-11-01T04:01:43.250Z",
+  "updated_at": "2026-11-01T04:06:15.624Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

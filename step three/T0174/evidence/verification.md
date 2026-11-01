@@ -47,3 +47,12 @@ The current `MainActivity.requestScreen` is a preparation-only preview and expli
 ## Attempt result
 
 `T0174-A001` is `partial`: real transport/runtime/host cancellation paths and integration tests were added; exact-head CI and user-facing control integration remain outstanding.
+
+
+## Android KtLint failure and formatting correction (append-only)
+
+- Exact V 3.0.732 Android product job: [41271523252](https://github.com/artinrahimii/project/actions/runs/41271523252), job [124745099617](https://github.com/artinrahimii/project/actions/runs/41271523252/job/124745099617).
+- KtLint findings: imports were not in lexicographic order (generated CancelRequest import / java imports); two chained calls needed the newline before the dot at the request builder and CANCELLED response builder.
+- The APK build, JVM tests and generated Protobuf validation were skipped because lint failed first.
+- T0174-A005 reorders the full import list and adjusts both call-chain continuation layouts. No runtime behavior changed. The exact V 3.0.733 Android workflow will verify the correction.
+- Independent checks on V 3.0.732 succeeded: Windows WPF [job 124745099788](https://github.com/artinrahimii/project/actions/runs/41271523252/job/124745099788), HostLifecycle [job 124745100081](https://github.com/artinrahimii/project/actions/runs/41271523252/job/124745100081), real local inference [run 41271523283](https://github.com/artinrahimii/project/actions/runs/41271523283).
