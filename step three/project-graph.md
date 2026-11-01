@@ -27032,10 +27032,7 @@
         "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
         "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt",
         "tests/test_android_host_candidate_selector_contract.py",
-        "step three/T0124/execution-report.md",
-        "https://github.com/artinrahimii/project/actions/runs/41305839553",
-        "https://github.com/artinrahimii/project/actions/runs/41305839501",
-        "https://github.com/artinrahimii/project/actions/runs/41305839606"
+        "step three/T0124/execution-report.md"
       ],
       "notes": "T0162 already supplies deterministic selection over caller-provided HostAnnouncement/HostStatus snapshots. T0124 completes the missing online reachability stage in the Android request runtime: it filters static announcement compatibility before probing, obtains fresh authenticated HostStatus through T0123, and selects only READY peers with remaining advertised concurrency and matching model/output capability. The implementation is located in the Android app because that is the existing consumer of the libp2p transport. Scope boundary: the caller must supply validated HostAnnouncement capability snapshots; the current Rendezvous HTTP directory still publishes routing metadata rather than the full model/capacity snapshot, the request UI is not yet wired to this method (tracked separately), and no independent public-Internet reachability is claimed.",
       "execution_summary": {
@@ -27053,7 +27050,8 @@
         "related_commits": [
           "910ef405225cede0292303d369a02dfd776023cc",
           "2ad34f147a0517736f62893a52b0083f45ebb469",
-          "8e949a2733731af0d96035e8cecda7f21536fb2f"
+          "8e949a2733731af0d96035e8cecda7f21536fb2f",
+          "5e4861680c2779f897ec5e4a9d9d14a41f0a04a0"
         ],
         "tests_passed": [
           "Exact V 3.0.763 Step Three quality gate — PASS — https://github.com/artinrahimii/project/actions/runs/41305547585",
@@ -27071,7 +27069,8 @@
         ],
         "tests_failed": [
           "Exact V 3.0.762 Step Three quality gate — FAILED one source-contract test because refactored source no longer contained status.activeRequests >= capabilities.maxConcurrentRequests — https://github.com/artinrahimii/project/actions/runs/41305388502",
-          "Exact V 3.0.763 Android main-source KtLint — FAILED on chained prompt/capsule size conversions; APK/JVM skipped — https://github.com/artinrahimii/project/actions/runs/41305547591"
+          "Exact V 3.0.763 Android main-source KtLint — FAILED on chained prompt/capsule size conversions; APK/JVM skipped — https://github.com/artinrahimii/project/actions/runs/41305547591",
+          "Exact V 3.0.765 Step Three recorded-output gate — FAILED because GitHub workflow URLs were mistakenly placed in the repo-relative evidence[] field and treated as missing local files; 312 Python tests passed and graph structure was valid — https://github.com/artinrahimii/project/actions/runs/41306401420"
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -27262,21 +27261,39 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0124 و T0115 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceAttemptDispatcher.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt",
+        "step three/T0125/execution-report.md"
+      ],
       "expected_output_paths": [
         "src/Shared.Networking/ یا src/Host.Windows/Networking/ + tests/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nDependency/code review (2026-11-01): HostCandidateSelector.select already groups candidates by announcement.ephemeralHostId and drops ambiguous duplicate identity groups; HostCandidateSelectorTest covers at-most-three distinct candidates and duplicate identity rejection. This is existing helper-level behavior only: HostCandidateSelector explicitly consumes externally supplied snapshots and does not perform discovery/network I/O. T0124's live discovery/status input remains unfinished, so T0125 stays not_started and is not counted done until the full upstream-to-selection path is integrated and accepted.",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceAttemptDispatcher.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt",
+        "step three/T0125/execution-report.md"
+      ],
+      "notes": "T0162 already supplied uniqueness for caller-provided candidates; T0124 now supplies the live reachability/readiness candidate list. Existing dispatch code independently rejects duplicate PeerIds and more than three hosts before any send. T0125 adds an explicit regression for exactly three distinct hosts through the live selector path and revalidates the dispatch boundary. This API remains fed by caller-supplied HostAnnouncement snapshots; it does not claim the Rendezvous HTTP directory or request UI is already wired to provide those snapshots.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
-        "related_commits": [],
+        "last_attempt_id": "T0125-A001-three-distinct-live-hosts",
+        "last_attempt_result": "in_progress",
+        "changed_files": [
+          "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt",
+          "step three/T0125/execution-report.md",
+          "step three/project-graph.md"
+        ],
+        "related_commits": [
+          "5e4861680c2779f897ec5e4a9d9d14a41f0a04a0"
+        ],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
@@ -27286,9 +27303,30 @@
           "triggering_contracts": [],
           "affected_by_contract_changes": [],
           "review_evidence": []
-        }
+        },
+        "follow_up": "Run exact-head Android main/test KtLint, debug APK and JVM unit tests. Require the new selectReachable three-distinct-peers regression and existing dispatcher duplicate/over-three guards to pass, plus Step Three quality."
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0125-A001-three-distinct-live-hosts",
+          "started_at": "2026-11-01T12:26:00Z",
+          "ended_at": null,
+          "result": "in_progress",
+          "summary": "Reviewed existing selection and dispatch guards: HostCandidateSelector filters duplicate announcement PeerIds, selects in stable order and caps a round at three; InferenceAttemptDispatcher rejects mismatched/repeated PeerIds and >3 candidates before sending. Added a focused live-selector JVM regression that supplies four unordered announcements and verifies exactly the first three distinct peers are probed/selected. Exact-head CI is pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt",
+            "step three/T0125/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Run exact-head Android main/test KtLint, APK build, JVM selector and dispatcher tests and Step Three graph-quality checks. Mark done only after all relevant acceptance evidence passes."
+        }
+      ]
     },
     {
       "id": "T0126",
@@ -52166,10 +52204,17 @@
       "from": "T0124",
       "to": "T0125",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0125 consumes the HostCandidate list produced by T0124's live reachability selector. The producer returns a bounded, stable list with duplicate announcement PeerIds removed; the consumer-side dispatch contract rechecks peer/capability/status identity, rejects repeated PeerIds with DUPLICATE_HOST_IDENTITY, and rejects more than three hosts before submitting any payload. This is a real HostCandidate/PeerId contract dependency, not an inference from the blocks label alone.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceAttemptDispatcher.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt",
+        "step three/T0124/execution-report.md"
+      ]
     },
     {
       "from": "T0115",
@@ -58611,7 +58656,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-11-01T12:22:11Z",
+  "updated_at": "2026-11-01T12:26:00Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

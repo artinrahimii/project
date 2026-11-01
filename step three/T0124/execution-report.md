@@ -65,3 +65,11 @@
 - **Windows/.NET:** HostLifecycle integration tests, WPF build, generated Protobuf C# verification, startup, process/policy/capability restrictions, DPAPI identity/trust checks and artifact upload passed.
 - **Final result:** T0124 is `done`. The two earlier failures remain preserved in A001/A002 history; A003 succeeded and did not change selection semantics.
 - **Scope boundary:** the API accepts validated `HostAnnouncement` capability snapshots and obtains live authenticated `HostStatus` through T0123 before selecting. The current Rendezvous HTTP directory still exposes routing metadata, not the complete model/capacity snapshot, and the request UI is not yet wired to this method. This result does not claim independent public-Internet reachability or a user-visible end-to-end dispatch path.
+
+
+## T0124 post-commit graph-evidence correction
+
+- **V 3.0.765 commit:** `5e4861680c2779f897ec5e4a9d9d14a41f0a04a0`.
+- **Quality gate result:** the Step Three Python suite ran 312 tests and all passed. The first graph guard reported 0 errors and 1 pre-existing metadata warning. The repo-root recorded-output check then failed because three GitHub Actions URLs had been placed in the graph's repo-relative `evidence` array and were interpreted as local file paths.
+- **Correction:** `evidence` now contains only actual repository paths. CI URLs remain in `execution_summary.tests_passed` and this execution report, where they are traceable without violating the graph's local-file evidence contract.
+- **Task result:** T0124's implementation acceptance remains successful at V 3.0.764. The V 3.0.765 failure was a graph evidence-field shape error, not an Android source/build/test regression.

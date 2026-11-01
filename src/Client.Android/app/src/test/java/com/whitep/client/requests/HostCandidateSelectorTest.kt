@@ -502,6 +502,33 @@ class HostCandidateSelectorTest {
         }
 
     @Test
+    fun selectReachableSelectsThreeDistinctHostsInStablePeerIdOrder() =
+        runBlocking {
+            val probes = mutableListOf<String>()
+            val selected =
+                HostCandidateSelector.selectReachable(
+                    request = validRequest(),
+                    announcements =
+                        listOf(
+                            candidate("host-c").announcement,
+                            candidate("host-a").announcement,
+                            candidate("host-d").announcement,
+                            candidate("host-b").announcement,
+                        ),
+                    statusProbe = { hostId ->
+                        probes.add(hostId)
+                        candidate(hostId).status
+                    },
+                )
+
+            val selectedIds = selected.map { it.announcement.ephemeralHostId }
+            assertEquals(listOf("host-a", "host-b", "host-c"), probes)
+            assertEquals(probes, selectedIds)
+            assertEquals(HostCandidateSelector.MAX_HOSTS_PER_ROUND, selected.size)
+            assertEquals(selected.size, selectedIds.toSet().size)
+        }
+
+    @Test
     fun selectReachableRejectsDuplicatePeerIdsBeforeProbingAndHonorsExclusions() =
         runBlocking {
             val probes = mutableListOf<String>()
