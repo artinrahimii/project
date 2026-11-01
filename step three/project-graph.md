@@ -44552,33 +44552,139 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0172 و T0160 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "done",
+      "status_fa": "تکمیل‌شده",
+      "actual_output_paths": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/HostResponseCards.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
+        "tests/test_android_host_response_cards_contract.py",
+        "step three/T0166/execution-report.md",
+        "step three/T0166/evidence/verification.md",
+        "step three/T0173/execution-report.md",
+        "step three/T0173/evidence/verification.md",
+        "step three/project-graph.md"
+      ],
       "expected_output_paths": [
         "src/Client.Android/Requests/ + tests/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/HostResponseCards.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceAttemptDispatcher.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/protocol/InferenceRequestPayloadBuilder.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/InferenceResponseCorrelationValidator.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
+        "tests/test_android_host_response_cards_contract.py",
+        "protocol/whitep/v1/messages.proto",
+        "step three/T0160/execution-report.md",
+        "step three/T0172/execution-report.md",
+        "step three/T0166/execution-report.md",
+        "step three/T0166/evidence/verification.md",
+        "step three/T0173/execution-report.md",
+        "step three/T0173/evidence/verification.md"
+      ],
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0173-A001 (2026-11-01): The requirement overlaps the already implemented T0166 response-card behavior. Verified RequestViewModel's synchronized (requestId, attemptId) duplicate guard, separate Compose response cards, terminal-request dispatch rejection, and the existing JVM regression that rejects replay without adding a card. Exact-head T0166 V 3.0.698 and current unchanged-source V 3.0.729 Android CI passed. Closed as already implemented; no duplicate source change was made. T0172→T0173 and T0160→T0173 were validated as contract_or_interface_dependency; original blocks types retained. The outgoing T0173→T0174 edge remains unreviewed.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
-        "related_commits": [],
-        "tests_passed": [],
+        "last_attempt_id": "T0173-A001-verification",
+        "last_attempt_result": "succeeded",
+        "changed_files": [
+          "step three/T0173/execution-report.md",
+          "step three/T0173/evidence/verification.md",
+          "step three/project-graph.md"
+        ],
+        "related_commits": [
+          "89f9badabc5a5f7d11739a53f578b47f5f561154",
+          "00c042890f959e1f1e0dc74666f8d3c037d8d12e",
+          "3758c6a06bdc9b5fddd1409e3019afdd129e6267"
+        ],
+        "tests_passed": [
+          {
+            "name": "T0166 Android KtLint, assembleDebug, testDebugUnitTest and generated Protobuf Java/Kotlin",
+            "result": "passed",
+            "summary": "Includes RequestViewModelTest response-card coverage; exact V 3.0.698",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41203195523/job/124542949303"
+          },
+          {
+            "name": "T0166 Windows WPF and HostLifecycle",
+            "result": "passed",
+            "summary": "Exact V 3.0.698 product workflow passed",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41203195523"
+          },
+          {
+            "name": "Current RequestViewModelTest and Android JVM suite",
+            "result": "passed",
+            "summary": "Exact V 3.0.729 Android job passed with unchanged RequestViewModel implementation and duplicate-response regression",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41232429429/job/124629217032"
+          },
+          {
+            "name": "Step Three quality gate",
+            "result": "passed",
+            "summary": "Exact V 3.0.729 Python/graph/output-evidence checks passed",
+            "url": "https://github.com/artinrahimii/project/actions/runs/41232429421"
+          }
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
+          "state": "passed",
+          "triggering_contracts": [
+            "request_id/attempt_id identity produced by the T0160 protocol builder",
+            "request/attempt correlation and expected-response validation established by T0172"
+          ],
           "affected_by_contract_changes": [],
-          "review_evidence": []
+          "review_evidence": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/protocol/InferenceRequestPayloadBuilder.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/network/InferenceResponseCorrelationValidator.kt"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0173-A001-verification",
+          "started_at": "2026-11-01T07:16:53+03:30",
+          "ended_at": "2026-11-01T07:16:53+03:30",
+          "result": "succeeded",
+          "summary": "Audited T0173 against current production source and found its exact idempotent response-card behavior was already implemented and verified under T0166. Confirmed synchronized request/attempt de-duplication, separate cards per attempt, terminal request dispatch rejection, and the existing duplicate-response JVM regression. Exact-head T0166 V 3.0.698 and V 3.0.729 Android CI passed. Validated both incoming dependency edges; no redundant production code was added.",
+          "changed_files": [
+            "step three/T0173/execution-report.md",
+            "step three/T0173/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "RequestViewModelTest.keepsEachCorrelatedHostAttemptAsAnIndependentResponseCard",
+              "result": "passed",
+              "summary": "Two different attempts remain as two cards; replay of the first request/attempt pair returns false and does not increase the card count.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41232429429/job/124629217032"
+            },
+            {
+              "name": "Android KtLint, APK, JVM unit tests and generated Protobuf",
+              "result": "passed",
+              "summary": "Exact V 3.0.729 Android job succeeded.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41232429429/job/124629217032"
+            },
+            {
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "summary": "Exact V 3.0.729 graph/Python/output-evidence checks succeeded.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41232429421"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Proceed to T0174; review T0173→T0174 and T0160→T0174 before changing cancellation/request delivery behavior."
+        }
+      ]
     },
     {
       "id": "T0174",
@@ -51325,19 +51431,30 @@
       "from": "T0172",
       "to": "T0173",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0172 verifies the expected request_id/attempt_id correlation boundary for a response before it reaches response-card state. T0173 consumes that same request/attempt identity pair as its idempotency key in RequestViewModel.recordValidatedResponse; the dependency is at the response-identity contract, not inferred from the blocks label.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/InferenceResponseCorrelationValidator.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
+        "step three/T0172/execution-report.md"
+      ]
     },
     {
       "from": "T0160",
       "to": "T0173",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0160 builds the canonical InferenceRequest request_id and per-attempt identity through the generated protocol contract. T0173's de-duplication key is precisely the request_id/attempt_id pair carried through the builder and dispatcher; this is a direct identity-contract dependency.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/protocol/InferenceRequestPayloadBuilder.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceAttemptDispatcher.kt",
+        "protocol/whitep/v1/messages.proto",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt",
+        "step three/T0160/execution-report.md"
+      ]
     },
     {
       "from": "T0173",
@@ -56238,9 +56355,40 @@
         "step three/T0165/evidence/round-response-correlation.md"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-11-01T07:16:53+03:30",
+      "edge_from": "T0172",
+      "edge_to": "T0173",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "reason": "T0172 verifies the expected request_id/attempt_id correlation boundary for a response before it reaches response-card state. T0173 consumes that same request/attempt identity pair as its idempotency key in RequestViewModel.recordValidatedResponse; the dependency is at the response-identity contract, not inferred from the blocks label.",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/InferenceResponseCorrelationValidator.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
+        "step three/T0172/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-11-01T07:16:53+03:30",
+      "edge_from": "T0160",
+      "edge_to": "T0173",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "reason": "T0160 builds the canonical InferenceRequest request_id and per-attempt identity through the generated protocol contract. T0173's de-duplication key is precisely the request_id/attempt_id pair carried through the builder and dispatcher; this is a direct identity-contract dependency.",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/protocol/InferenceRequestPayloadBuilder.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceAttemptDispatcher.kt",
+        "protocol/whitep/v1/messages.proto",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt",
+        "step three/T0160/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-11-01T03:39:00Z",
+  "updated_at": "2026-11-01T07:16:53+03:30",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",
