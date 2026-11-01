@@ -12,12 +12,15 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import java.io.ByteArrayInputStream
+import java.io.IOException
 import java.io.InputStream
 import java.net.HttpURLConnection
 import java.net.URI
 import java.net.URL
 import java.time.Clock
+import java.time.Duration
 import java.time.Instant
+import java.time.ZoneId
 import java.time.ZoneOffset
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -138,6 +141,51 @@ class RendezvousPeerDirectoryClientTest {
         }
     }
 
+
+    @Test
+    fun rejectsDuplicatePeerIdsInOneDirectorySnapshot() {
+        val address = "/ip4/127.0.0.1/tcp/41000/p2p/" + peerId
+        val duplicateDirectory = JSONArray()
+        val duplicate = announcement(peerId, listOf(address), now.plusSeconds(300))
+        duplicateDirectory.put(duplicate)
+        duplicateDirectory.put(duplicate)
+
+        assertThrows(IllegalArgumentException::class.java) {
+            RendezvousPeerDirectoryParser.parse(duplicateDirectory.toString(), now)
+        }
+    }
+
+    @Test
+    fun doesNotReturnCachedPeerWhenNetworkFailsAfterDirectoryCacheExpiry() {
+        val mutableClock = MutableClock(now)
+        val calls = AtomicInteger()
+        val body = directoryJson(
+            peerId = peerId,
+            addresses = listOf("/ip4/127.0.0.1/tcp/41000/p2p/" + peerId),
+            expiresAt = now.plusSeconds(300),
+        )
+        val client = RendezvousPeerDirectoryClient(
+            serviceBaseUri = URI("https://rendezvous.example/prefix"),
+            connectionFactory = { url ->
+                if (calls.incrementAndGet() == 1) {
+                    StubConnection(url, HttpURLConnection.HTTP_OK, body)
+                } else {
+                    throw IOException("Simulated directory network interruption.")
+                }
+            },
+            clock = mutableClock,
+            cacheDuration = Duration.ofSeconds(1),
+        )
+
+        assertNotNull(runBlockingResolve(client, peerId))
+        mutableClock.advance(Duration.ofSeconds(2))
+
+        assertThrows(IOException::class.java) {
+            runBlockingResolve(client, peerId)
+        }
+        assertEquals(2, calls.get())
+    }
+
     @Test
     fun rejectsPublicHttpAndAllowsLoopbackOnlyHttp() {
         assertThrows(
@@ -214,6 +262,23 @@ class RendezvousPeerDirectoryClientTest {
         result.put("expiresAtUtc", expiresAt.toString())
         return result
     }
+
+
+    private class MutableClock(initialInstant: Instant) : Clock() {
+        @Volatile
+        private var currentInstant: Instant = initialInstant
+
+        override fun getZone(): ZoneId = ZoneOffset.UTC
+
+        override fun withZone(zone: ZoneId): Clock = this
+
+        override fun instant(): Instant = currentInstant
+
+        fun advance(duration: Duration) {
+            currentInstant = currentInstant.plus(duration)
+        }
+    }
+
 
     private class StubConnection(
         url: URL,

@@ -17,6 +17,7 @@ import org.whitep.shared.contracts.v1.hostCapabilities
 import org.whitep.shared.contracts.v1.hostStatus
 import org.whitep.shared.contracts.v1.inferenceRequest
 import org.whitep.shared.contracts.v1.modelCapability
+import java.io.IOException
 import java.time.Clock
 import java.time.Duration
 import java.time.Instant
@@ -148,6 +149,37 @@ class InferenceAttemptDispatcherTest {
                     progress = DistributedRequestProgress(),
                 )
 
+            assertEquals(
+                InferenceRoundDispatchResult.Rejected(InferenceRoundDispatchRejection.NO_SELECTED_HOSTS),
+                result,
+            )
+            assertTrue(transport.requests.isEmpty())
+        }
+
+
+    @Test
+    fun sendsNothingWhenEveryDiscoveredPeerDisconnectsBeforeAuthenticatedStatusProbe() =
+        runBlocking {
+            val selected =
+                HostCandidateSelector.selectReachable(
+                    request = validRequest(),
+                    announcements = listOf(candidate("host-a").announcement, candidate("host-b").announcement),
+                    statusProbe = { throw IOException("Simulated peer disconnect.") },
+                )
+            val transport = RecordingTransport()
+            val result =
+                dispatcher(transport).dispatchRound(
+                    distributedRequest(),
+                    selected,
+                    MODEL_ID,
+                    "message",
+                    capsule(),
+                    64,
+                    PROTOCOL_VERSION,
+                    progress = DistributedRequestProgress(),
+                )
+
+            assertTrue(selected.isEmpty())
             assertEquals(
                 InferenceRoundDispatchResult.Rejected(InferenceRoundDispatchRejection.NO_SELECTED_HOSTS),
                 result,

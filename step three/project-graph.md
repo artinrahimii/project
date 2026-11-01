@@ -27742,20 +27742,35 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0126 و T0115 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال انجام",
+      "actual_output_paths": [
+        "src/Client.Android/app/src/test/java/com/whitep/client/network/RendezvousPeerDirectoryClientTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt",
+        "step three/T0127/execution-report.md",
+        "step three/T0127/evidence/verification.md"
+      ],
       "expected_output_paths": [
         "src/Shared.Networking/ یا src/Host.Windows/Networking/ + tests/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "src/Client.Android/app/src/test/java/com/whitep/client/network/RendezvousPeerDirectoryClientTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt",
+        "step three/T0127/evidence/verification.md"
+      ],
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0127-A001 (2026-11-01): Added Android regression cases for duplicate directory PeerIds, cache expiry followed by a network interruption (fail closed without returning the cached route), and all authenticated peer status probes failing followed by NO_SELECTED_HOSTS/no inference send. Existing expired-announcement, duplicate selector/dispatcher and empty-host coverage remains. Both incoming edges were reviewed as sequencing_only and validated; original blocks labels and order remain. Exact-head CI pending; do not mark done before Android JVM/build and graph quality checks pass.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0127-A001-network-expiry-duplicate-and-no-host-regressions",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Client.Android/app/src/test/java/com/whitep/client/network/RendezvousPeerDirectoryClientTest.kt",
+          "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt",
+          "step three/T0127/execution-report.md",
+          "step three/T0127/evidence/verification.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
@@ -27768,7 +27783,50 @@
           "review_evidence": []
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0127-A001-network-expiry-duplicate-and-no-host-regressions",
+          "started_at": "2026-11-01T13:54:25.218Z",
+          "ended_at": "2026-11-01T13:54:25.218Z",
+          "result": "partial",
+          "summary": "Added directory duplicate rejection, cache-expiry/network-failure fail-closed regression, and authenticated-status network loss to no-host/no-send integration coverage. Reviewed both incoming edges as validated sequencing-only while preserving their original blocks labels and order. Exact-head CI pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/test/java/com/whitep/client/network/RendezvousPeerDirectoryClientTest.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt",
+            "step three/T0127/execution-report.md",
+            "step three/T0127/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "RendezvousPeerDirectoryClientTest.rejectsDuplicatePeerIdsInOneDirectorySnapshot",
+              "result": "pending",
+              "summary": "Duplicate PeerIds in one directory snapshot must be rejected."
+            },
+            {
+              "name": "RendezvousPeerDirectoryClientTest.doesNotReturnCachedPeerWhenNetworkFailsAfterDirectoryCacheExpiry",
+              "result": "pending",
+              "summary": "An expired cache must not be returned when a refresh fails due to network interruption."
+            },
+            {
+              "name": "InferenceAttemptDispatcherTest.sendsNothingWhenEveryDiscoveredPeerDisconnectsBeforeAuthenticatedStatusProbe",
+              "result": "pending",
+              "summary": "All failed authenticated status probes must produce no candidates and no inference submission."
+            },
+            {
+              "name": "Existing expiry, duplicate selector/dispatcher and empty-host no-send regressions",
+              "result": "pending",
+              "summary": "Must remain green in exact-head Android JVM tests."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Run exact V 3.0.773 Android KtLint, assembleDebug, testDebugUnitTest, generated Protobuf checks and Step Three quality gate. Only then record T0127 as done."
+        }
+      ]
     },
     {
       "id": "T0128",
@@ -52642,19 +52700,34 @@
       "from": "T0126",
       "to": "T0127",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0127 verifies failure/expiry/duplicate/no-host behavior at the Rendezvous parser/cache, authenticated status selector and dispatcher boundaries. It consumes the HostCandidateSelector and InferenceAttemptDispatcher contracts from T0124/T0125, but it does not consume T0126's user-facing HostSelectionFeedback producer or RequestViewModel/Compose integration. The conservative order remains useful, but T0126's live UI output is not a technical input to these tests.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostSelectionFeedback.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceAttemptDispatcher.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt",
+        "step three/T0126/execution-report.md"
+      ]
     },
     {
       "from": "T0115",
       "to": "T0127",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0115 exercises the legacy Windows ParticipationGatedNetworkListener and its length-prefixed TCP frame lifecycle. T0127's tested paths are the Android HTTP Rendezvous directory/cache, libp2p authenticated status probes, candidate selection and dispatch. They do not consume T0115's listener, frame reader or callback interface; the ordering edge is retained only as a conservative sequence.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs",
+        "src/Host.Windows/Networking/NetworkInferenceRequestFrameReader.cs",
+        "tests/HostLifecycle.Tests/NetworkInferenceRequestFrameAcceptanceTests.cs",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/RendezvousPeerDirectoryClient.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/network/RendezvousPeerDirectoryClientTest.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt"
+      ]
     },
     {
       "from": "T0127",
@@ -59042,9 +59115,44 @@
         "src/Host.Windows/Networking/Libp2pPeerTransport.cs"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-11-01T13:54:25.218Z",
+      "edge_from": "T0126",
+      "edge_to": "T0127",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "reason": "T0127 verifies failure/expiry/duplicate/no-host behavior at the Rendezvous parser/cache, authenticated status selector and dispatcher boundaries. It consumes the HostCandidateSelector and InferenceAttemptDispatcher contracts from T0124/T0125, but it does not consume T0126's user-facing HostSelectionFeedback producer or RequestViewModel/Compose integration. The conservative order remains useful, but T0126's live UI output is not a technical input to these tests.",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostSelectionFeedback.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceAttemptDispatcher.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt",
+        "step three/T0126/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-11-01T13:54:25.218Z",
+      "edge_from": "T0115",
+      "edge_to": "T0127",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "reason": "T0115 exercises the legacy Windows ParticipationGatedNetworkListener and its length-prefixed TCP frame lifecycle. T0127's tested paths are the Android HTTP Rendezvous directory/cache, libp2p authenticated status probes, candidate selection and dispatch. They do not consume T0115's listener, frame reader or callback interface; the ordering edge is retained only as a conservative sequence.",
+      "evidence": [
+        "src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs",
+        "src/Host.Windows/Networking/NetworkInferenceRequestFrameReader.cs",
+        "tests/HostLifecycle.Tests/NetworkInferenceRequestFrameAcceptanceTests.cs",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/RendezvousPeerDirectoryClient.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/network/RendezvousPeerDirectoryClientTest.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-11-01T13:21:18.320Z",
+  "updated_at": "2026-11-01T13:54:25.218Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",
