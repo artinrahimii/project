@@ -27244,7 +27244,7 @@
         }
       ]
     },
-    {
+        {
       "id": "T0125",
       "title": "انتخاب سه میزبان را با سه هویت گرهٔ متمایز تضمین کن.",
       "section": "12. معماری P2P و کشف میزبان",
@@ -27261,8 +27261,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0124 و T0115 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "تکمیل‌شده",
       "actual_output_paths": [
         "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
         "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceAttemptDispatcher.kt",
@@ -27271,7 +27271,10 @@
         "step three/T0125/execution-report.md"
       ],
       "expected_output_paths": [
-        "src/Shared.Networking/ یا src/Host.Windows/Networking/ + tests/"
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceAttemptDispatcher.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt"
       ],
       "evidence": [
         "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
@@ -27285,16 +27288,23 @@
         "attempt_count": 1,
         "failed_attempt_count": 0,
         "last_attempt_id": "T0125-A001-three-distinct-live-hosts",
-        "last_attempt_result": "in_progress",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt",
           "step three/T0125/execution-report.md",
           "step three/project-graph.md"
         ],
         "related_commits": [
-          "5e4861680c2779f897ec5e4a9d9d14a41f0a04a0"
+          "5e4861680c2779f897ec5e4a9d9d14a41f0a04a0",
+          "bd2a3deecfaa0798709177fa04db4606f62c4755"
         ],
-        "tests_passed": [],
+        "tests_passed": [
+          "Exact V 3.0.766 Step Three quality gate — PASS — https://github.com/artinrahimii/project/actions/runs/41306879405",
+          "Exact V 3.0.766 Android main/test KtLint, debug APK build/upload, testDebugUnitTest and generated Protobuf Java/Kotlin verification — PASS — https://github.com/artinrahimii/project/actions/runs/41306879392/job/124848980523",
+          "Exact V 3.0.766 Windows WPF build/startup/security/DPAPI — PASS — https://github.com/artinrahimii/project/actions/runs/41306879392/job/124848980688",
+          "Exact V 3.0.766 HostLifecycle unit/integration — PASS — https://github.com/artinrahimii/project/actions/runs/41306879392/job/124848980711",
+          "Exact V 3.0.766 Rendezvous container build and HTTP smoke — PASS — https://github.com/artinrahimii/project/actions/runs/41306879360"
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -27304,31 +27314,62 @@
           "affected_by_contract_changes": [],
           "review_evidence": []
         },
-        "follow_up": "Run exact-head Android main/test KtLint, debug APK and JVM unit tests. Require the new selectReachable three-distinct-peers regression and existing dispatcher duplicate/over-three guards to pass, plus Step Three quality."
+        "follow_up": "Proceed to T0126. Review both incoming dependency edges before implementation, allow one/two validated hosts to continue, and ensure the empty-host case is a typed no-send outcome. Keep live request-screen integration claims separate because the request UI remains prepare-only."
       },
       "execution_history": [
         {
           "attempt_id": "T0125-A001-three-distinct-live-hosts",
           "started_at": "2026-11-01T12:26:00Z",
-          "ended_at": null,
-          "result": "in_progress",
-          "summary": "Reviewed existing selection and dispatch guards: HostCandidateSelector filters duplicate announcement PeerIds, selects in stable order and caps a round at three; InferenceAttemptDispatcher rejects mismatched/repeated PeerIds and >3 candidates before sending. Added a focused live-selector JVM regression that supplies four unordered announcements and verifies exactly the first three distinct peers are probed/selected. Exact-head CI is pending.",
+          "ended_at": "2026-11-01T12:35:28Z",
+          "result": "succeeded",
+          "summary": "Exact V 3.0.766 CI passed the T0125 acceptance contract. The four-distinct-announcement selector regression ran under Android testDebugUnitTest; main/test KtLint, debug APK, generated Protobuf Java/Kotlin checks, Windows WPF, HostLifecycle, Rendezvous smoke and Step Three quality all passed. T0125 is done. This does not claim that the request screen is already wired to live host discovery.",
           "changed_files": [
             "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt",
             "step three/T0125/execution-report.md",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
-          "tests": [],
+          "commit_sha": "bd2a3deecfaa0798709177fa04db4606f62c4755",
+          "tests": [
+            {
+              "name": "HostCandidateSelectorTest.selectReachableSelectsThreeDistinctHostsInStablePeerIdOrder",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41306879392/job/124848980523"
+            },
+            {
+              "name": "Android main/test KtLint and assembleDebug",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41306879392/job/124848980523"
+            },
+            {
+              "name": "Android testDebugUnitTest and generated Protobuf Java/Kotlin verification",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41306879392/job/124848980523"
+            },
+            {
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41306879405"
+            },
+            {
+              "name": "Windows WPF build/startup/security/DPAPI and HostLifecycle",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41306879392"
+            },
+            {
+              "name": "Rendezvous container build/HTTP smoke",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41306879360"
+            }
+          ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Run exact-head Android main/test KtLint, APK build, JVM selector and dispatcher tests and Step Three graph-quality checks. Mark done only after all relevant acceptance evidence passes."
+          "follow_up": "Proceed to T0126. Review both incoming dependency edges before implementation, allow one/two validated hosts to continue, and ensure the empty-host case is a typed no-send outcome. Keep live request-screen integration claims separate because the request UI remains prepare-only."
         }
       ]
     },
-    {
+        {
       "id": "T0126",
       "title": "وقتی کمتر از سه میزبان معتبر وجود دارد، رفتار تعریف‌شده را اجرا و کمبود را به کاربر اعلام کن.",
       "section": "12. معماری P2P و کشف میزبان",
@@ -27345,33 +27386,143 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0125 و T0115 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
-      "expected_output_paths": [
-        "src/Shared.Networking/ یا src/Host.Windows/Networking/ + tests/"
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostSelectionFeedback.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostSelectionFeedbackTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
+        "step three/T0126/execution-report.md",
+        "step three/T0126/evidence/verification.md"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "expected_output_paths": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostSelectionFeedback.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostSelectionFeedbackTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt"
+      ],
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostSelectionFeedback.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostSelectionFeedbackTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
+        "step three/T0126/evidence/verification.md"
+      ],
+      "notes": "The expected Shared.Networking/Windows path is not the actual consumer in this repository: candidate selection and dispatch live in the Android app, and the user-facing request state/Compose screen lives under com.whitep.client.ui.request. Implement at those real boundaries. Policy: one or two validated hosts remain usable with an exact shortage warning; zero hosts is a no-send NO_SELECTED_HOSTS outcome. The MainActivity request screen is still a prepare-only preview and has no production caller for the new runtime feedback method; therefore keep this task in_progress until live discovery/dispatch feeds the UI. Do not claim a working end-to-end user notification yet.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0126-A001-underfilled-host-selection-feedback",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostSelectionFeedback.kt",
+          "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
+          "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt",
+          "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
+          "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostSelectionFeedbackTest.kt",
+          "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt",
+          "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
+          "step three/T0126/execution-report.md",
+          "step three/T0126/evidence/verification.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
-          "affected_by_contract_changes": [],
-          "review_evidence": []
-        }
+          "state": "passed",
+          "triggering_contracts": [
+            "T0125 validated HostCandidate selection and dispatch contract",
+            "T0115 legacy framed-listener lifecycle acceptance and sequencing constraint"
+          ],
+          "affected_by_contract_changes": [
+            "T0126 derives shortage only from the final post-probe compatible/reachable candidate list.",
+            "The existing dispatch interface continues with one or two distinct hosts and rejects an empty list as NO_SELECTED_HOSTS before submission.",
+            "The Android request state renders feedback only when supplied by a caller; current request screen remains prepare-only."
+          ],
+          "review_evidence": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceAttemptDispatcher.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
+            "step three/T0125/execution-report.md",
+            "step three/T0115/execution-report.md"
+          ]
+        },
+        "follow_up": "Inspect exact-head Android KtLint, APK, JVM, generated Protobuf and Step Three quality results. Fix any failures. Then connect selectReachableHostsWithFeedback and RequestViewModel.recordHostSelectionFeedback to a real request caller when the blocked T0174 request UI/discovery integration becomes executable. Do not mark T0126 done or claim live notification until that caller path is implemented and verified."
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0126-A001-underfilled-host-selection-feedback",
+          "started_at": "2026-11-01T12:49:51.204Z",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Reviewed both incoming edges, preserved their blocks labels and validated T0125 as a contract/interface dependency and T0115 as sequencing-only. Added a typed post-probe host-count feedback result, a runtime wrapper, transient RequestViewModel feedback state, conditional Compose rendering, and tests for 0/1/2/3 hosts and partial/zero dispatch behaviour. Exact-head CI is pending. The request screen remains prepare-only and has no production caller for live host selection, so the task remains in_progress.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostSelectionFeedback.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostSelectionFeedbackTest.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
+            "step three/T0126/execution-report.md",
+            "step three/T0126/evidence/verification.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "HostSelectionFeedbackTest — zero, one, two, three candidates and invalid count",
+              "result": "pending",
+              "summary": "Checks exact shortage messages and the zero-host no-dispatch decision."
+            },
+            {
+              "name": "InferenceAttemptDispatcherTest.continuesWithTwoAvailableDistinctHostsAndSubmitsBoth",
+              "result": "pending",
+              "summary": "Checks a two-host underfilled round still submits both valid hosts."
+            },
+            {
+              "name": "InferenceAttemptDispatcherTest.continuesWithOneAvailableHostAndSubmitsIt",
+              "result": "pending",
+              "summary": "Checks a one-host underfilled round still submits that valid host."
+            },
+            {
+              "name": "InferenceAttemptDispatcherTest.rejectsZeroAvailableHostsWithoutSubmittingAnyRequest",
+              "result": "pending",
+              "summary": "Checks empty selection returns NO_SELECTED_HOSTS and does not call transport."
+            },
+            {
+              "name": "RequestViewModelTest host shortage feedback tests",
+              "result": "pending",
+              "summary": "Checks the message reaches transient UI state without recording PeerIds."
+            },
+            {
+              "name": "Exact-head Android KtLint/APK/JVM/Protobuf and Step Three quality",
+              "result": "pending",
+              "summary": "Run on the versioned main commit after push."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "Added HostSelectionFeedback and HostSelectionResult; exposed selectReachableHostsWithFeedback; added transient UI feedback state and conditional Compose text."
+          ],
+          "follow_up": "Inspect exact-head CI and then wire the feedback producer into the real request flow when production discovery/request UI integration is available."
+        }
+      ]
     },
     {
       "id": "T0127",
@@ -52232,23 +52383,32 @@
         "step three/T0115/execution-report.md"
       ]
     },
-    {
+        {
       "from": "T0125",
       "to": "T0126",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0126 consumes the validated selected HostCandidate list and dispatch semantics produced by T0125. The selected host count determines the underfilled-round feedback, while the dispatch contract accepts one to three distinct peers and returns NO_SELECTED_HOSTS without sending when the list is empty. This is a concrete output/interface dependency; the original blocks edge is retained.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceAttemptDispatcher.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt",
+        "step three/T0125/execution-report.md"
+      ]
     },
-    {
+        {
       "from": "T0115",
       "to": "T0126",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0115's output is an acceptance suite for the legacy length-framed TCP listener lifecycle (disconnect, invalid frame, sequential connections and shutdown). T0126 computes feedback from the selected HostCandidate list and invokes the existing dispatch contract; it does not consume the T0115 listener or frame-reader API. Preserve the original blocks edge as conservative execution order without claiming a technical prerequisite.",
+      "validation_status": "validated",
+      "evidence": [
+        "tests/HostLifecycle.Tests/NetworkInferenceRequestFrameAcceptanceTests.cs",
+        "step three/T0115/execution-report.md",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceAttemptDispatcher.kt"
+      ]
     },
     {
       "from": "T0126",

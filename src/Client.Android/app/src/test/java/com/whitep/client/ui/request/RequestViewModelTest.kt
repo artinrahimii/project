@@ -43,6 +43,39 @@ class RequestViewModelTest {
     }
 
     @Test
+    fun reportsWhenTwoOfThreeReachableHostsAreAvailableWithoutStoringPeerMetadata() {
+        viewModel.recordHostSelectionFeedback(HostSelectionFeedback(availableHostCount = 2))
+
+        assertEquals(
+            "Only 2 of 3 compatible, reachable hosts are currently available. Continuing with 2 hosts.",
+            viewModel.uiState.value.hostAvailabilityMessage,
+        )
+        assertEquals("", viewModel.uiState.value.prompt)
+    }
+
+    @Test
+    fun reportsOneAvailableHostAndAllowsTheRequestToContinue() {
+        val feedback = HostSelectionFeedback(availableHostCount = 1)
+
+        assertTrue(feedback.canContinue)
+        assertEquals(
+            "Only 1 of 3 compatible, reachable hosts are currently available. Continuing with 1 host.",
+            feedback.message,
+        )
+    }
+
+    @Test
+    fun reportsNoAvailableHostAndExplainsThatNothingWasSent() {
+        val feedback = HostSelectionFeedback(availableHostCount = 0)
+
+        assertFalse(feedback.canContinue)
+        assertEquals(
+            "No compatible, reachable hosts are currently available. The request was not sent.",
+            feedback.message,
+        )
+    }
+
+    @Test
     fun clearingTheDraftRestoresInitialUiState() {
         viewModel.updatePrompt("temporary")
         viewModel.clearDraft()

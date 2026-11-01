@@ -91,6 +91,71 @@ class InferenceAttemptDispatcherTest {
         }
 
     @Test
+    fun continuesWithTwoAvailableDistinctHostsAndSubmitsBoth() =
+        runBlocking {
+            val transport = RecordingTransport()
+            val result =
+                dispatcher(transport).dispatchRound(
+                    distributedRequest(),
+                    listOf(candidate("host-a"), candidate("host-b")),
+                    MODEL_ID,
+                    "message",
+                    capsule(),
+                    64,
+                    PROTOCOL_VERSION,
+                    progress = DistributedRequestProgress(),
+                )
+
+            assertTrue(result is InferenceRoundDispatchResult.Dispatched)
+            assertEquals(listOf("host-a", "host-b"), transport.hostIds)
+            assertEquals(2, (result as InferenceRoundDispatchResult.Dispatched).attempts.size)
+        }
+
+    @Test
+    fun continuesWithOneAvailableHostAndSubmitsIt() =
+        runBlocking {
+            val transport = RecordingTransport()
+            val result =
+                dispatcher(transport).dispatchRound(
+                    distributedRequest(),
+                    listOf(candidate("host-a")),
+                    MODEL_ID,
+                    "message",
+                    capsule(),
+                    64,
+                    PROTOCOL_VERSION,
+                    progress = DistributedRequestProgress(),
+                )
+
+            assertTrue(result is InferenceRoundDispatchResult.Dispatched)
+            assertEquals(listOf("host-a"), transport.hostIds)
+            assertEquals(1, (result as InferenceRoundDispatchResult.Dispatched).attempts.size)
+        }
+
+    @Test
+    fun rejectsZeroAvailableHostsWithoutSubmittingAnyRequest() =
+        runBlocking {
+            val transport = RecordingTransport()
+            val result =
+                dispatcher(transport).dispatchRound(
+                    distributedRequest(),
+                    emptyList(),
+                    MODEL_ID,
+                    "message",
+                    capsule(),
+                    64,
+                    PROTOCOL_VERSION,
+                    progress = DistributedRequestProgress(),
+                )
+
+            assertEquals(
+                InferenceRoundDispatchResult.Rejected(InferenceRoundDispatchRejection.NO_SELECTED_HOSTS),
+                result,
+            )
+            assertTrue(transport.requests.isEmpty())
+        }
+
+    @Test
     fun rejectsDuplicateHostIdentityBeforeSubmitting() =
         runBlocking {
             val transport = RecordingTransport()

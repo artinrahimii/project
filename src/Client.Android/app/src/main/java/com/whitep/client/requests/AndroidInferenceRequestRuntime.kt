@@ -140,6 +140,28 @@ class AndroidInferenceRequestRuntime private constructor(
             maxHosts = maxHosts,
         )
 
+    /**
+     * Performs live selection and returns explicit shortage feedback for the request UI.
+     * One or two compatible peers remain dispatchable; an empty result must not be dispatched.
+     */
+    suspend fun selectReachableHostsWithFeedback(
+        request: InferenceRequest,
+        announcements: Collection<HostAnnouncement>,
+        excludedEphemeralHostIds: Set<String> = emptySet(),
+    ): HostSelectionResult {
+        val candidates =
+            selectReachableHosts(
+                request = request,
+                announcements = announcements,
+                excludedEphemeralHostIds = excludedEphemeralHostIds,
+                maxHosts = FirstReleaseInferenceLimits.MAX_HOSTS_PER_ROUND,
+            )
+        return HostSelectionResult(
+            candidates = candidates,
+            feedback = HostSelectionFeedback(availableHostCount = candidates.size),
+        )
+    }
+
     fun trustPeerAfterExplicitConfirmation(
         peerId: String,
         explicitlyConfirmed: Boolean,

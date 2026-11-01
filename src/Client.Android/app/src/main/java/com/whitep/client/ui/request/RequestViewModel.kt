@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.whitep.client.data.ClientRequestRepository
 import com.whitep.client.data.InMemoryClientRequestRepository
 import com.whitep.client.data.RequestDraftStatus
+import com.whitep.client.requests.HostSelectionFeedback
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -42,6 +43,7 @@ data class RequestUiState(
     val prompt: String = "",
     val status: RequestDraftStatus = RequestDraftStatus.NOT_SENT,
     val hostResponses: List<HostResponseCardState> = emptyList(),
+    val hostAvailabilityMessage: String? = null,
 ) {
     val statusMessage: String
         get() =
@@ -69,14 +71,20 @@ class RequestViewModel(
 
     private val mutableHostResponses = MutableStateFlow<List<HostResponseCardState>>(emptyList())
     val hostResponses: StateFlow<List<HostResponseCardState>> = mutableHostResponses.asStateFlow()
+    private val mutableHostAvailabilityMessage = MutableStateFlow<String?>(null)
     private val responseLock = Any()
 
     val uiState: StateFlow<RequestUiState> =
-        combine(repository.draft, mutableHostResponses) { draft, responses ->
+        combine(
+            repository.draft,
+            mutableHostResponses,
+            mutableHostAvailabilityMessage,
+        ) { draft, responses, hostAvailabilityMessage ->
             RequestUiState(
                 prompt = draft.prompt,
                 status = draft.status,
                 hostResponses = responses,
+                hostAvailabilityMessage = hostAvailabilityMessage,
             )
         }.stateIn(
             scope = commandsScope,
@@ -85,15 +93,27 @@ class RequestViewModel(
         )
 
     fun updatePrompt(prompt: String) {
+        mutableHostAvailabilityMessage.value = null
         commandsScope.launch { repository.updatePrompt(prompt) }
     }
 
     fun prepareRequest() {
+        mutableHostAvailabilityMessage.value = null
         commandsScope.launch { repository.prepareRequest() }
     }
 
     fun clearDraft() {
+        mutableHostAvailabilityMessage.value = null
         commandsScope.launch { repository.clearDraft() }
+    }
+
+    /** Updates the UI with the post-probe candidate count; peer metadata is never persisted. */
+    fun recordHostSelectionFeedback(feedback: HostSelectionFeedback) {
+        mutableHostAvailabilityMessage.value = feedback.message
+    }
+
+    fun clearHostSelectionFeedback() {
+        mutableHostAvailabilityMessage.value = null
     }
 
     /**
