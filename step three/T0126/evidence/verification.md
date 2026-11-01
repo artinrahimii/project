@@ -97,3 +97,14 @@ The live acceptance gap remains: `MainActivity.requestScreen` is prepare-only, a
 - The method reuses the bounded parser, shared cache lock, TTL/announcement-expiry limit and fail-closed refresh path; `resolve()` also uses the extracted common refresh helper.
 - Added Robolectric/JVM test `discoversFreshPeersInStableIdentityOrderAndExcludesPeersWithoutTcpRoute`, covering all-peer enumeration, deterministic order, QUIC-only exclusion and cache reuse.
 - This does not produce typed HostAnnouncement model/capability data and is not yet called by the production request screen. T0126 remains blocked. Exact-head CI results are pending.
+
+
+## T0126-A005 — exact V 3.0.779 verification results
+
+- Exact tested commit: `ee9692a3d34543dd159f48ca4ef72e29f5981db8` (`V 3.0.779`).
+- Android KtLint, debug APK build and JVM testDebugUnitTest passed. The JVM run includes `discoversFreshPeersInStableIdentityOrderAndExcludesPeersWithoutTcpRoute`. APK artifact: `13087940513`.
+- Generated Protobuf Java/Kotlin verification passed.
+- Windows WPF build/startup/security/DPAPI and HostLifecycle unit/integration passed.
+- Step Three quality gate and Rendezvous container build/HTTP smoke passed.
+- Workflow references: [product](https://github.com/artinrahimii/project/actions/runs/41316384983), [quality](https://github.com/artinrahimii/project/actions/runs/41316384981), [Rendezvous](https://github.com/artinrahimii/project/actions/runs/41316385018).
+- These results validate discoverAll and its metadata-only contract, not production Android inference request UI integration. T0126 remains blocked.

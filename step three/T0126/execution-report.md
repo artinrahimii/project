@@ -123,3 +123,16 @@ The exact V 3.0.768 Android/Windows/HostLifecycle/Step Three/Rendezvous workflow
 - Exact V 3.0.779 Android KtLint, APK/JVM/Protobuf, Windows/HostLifecycle, Step Three and Rendezvous CI are pending at authoring time. No test pass is claimed until exact-head workflows finish.
 - **Outcome:** partial implementation; T0126 remains `blocked` because production candidate construction and request-screen integration are outstanding.
 - **Follow-up:** implement the typed capability/status-to-candidate path and connect discovery, explicit trust, live selection, dispatch and feedback to the real Android request UI. Verify 0/1/2/3 peers and no-send on zero before unblocking T0126.
+
+
+## T0126-A005 — exact V 3.0.779 CI reconciliation
+
+- **Exact tested online main commit:** `ee9692a3d34543dd159f48ca4ef72e29f5981db8` (`V 3.0.779`). All listed runs target this exact SHA.
+- **Android KtLint and build:** PASS — [product workflow 41316384983](https://github.com/artinrahimii/project/actions/runs/41316384983). Kotlin main/test lint passed and `assembleDebug` succeeded; debug APK artifact `13087940513` (19,480,629 bytes) was uploaded.
+- **Android JVM tests:** PASS — [product workflow 41316384983](https://github.com/artinrahimii/project/actions/runs/41316384983). `testDebugUnitTest` completed successfully, including the new `discoversFreshPeersInStableIdentityOrderAndExcludesPeersWithoutTcpRoute` regression.
+- **Generated Protobuf Java/Kotlin:** PASS — [product workflow 41316384983](https://github.com/artinrahimii/project/actions/runs/41316384983).
+- **Windows WPF:** PASS — [product workflow 41316384983](https://github.com/artinrahimii/project/actions/runs/41316384983). C# formatting, Release build, generated Protobuf C#, startup smoke, agent process/policy/capability restrictions and DPAPI peer identity/trust checks passed.
+- **HostLifecycle:** PASS — [product workflow 41316384983](https://github.com/artinrahimii/project/actions/runs/41316384983). Unit and integration job completed successfully.
+- **Step Three quality gate:** PASS — [workflow 41316384981](https://github.com/artinrahimii/project/actions/runs/41316384981).
+- **Rendezvous:** PASS — [container/smoke workflow 41316385018](https://github.com/artinrahimii/project/actions/runs/41316385018).
+- **Outcome:** A005's bounded metadata directory API and its JVM regression are verified on exact V 3.0.779. T0126 remains `blocked`, not `done`: no typed model/capacity HostAnnouncement contract or production Android request UI flow (authenticated status → selection → dispatch → feedback) exists yet.
