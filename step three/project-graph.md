@@ -26362,23 +26362,52 @@
         "خروجی قابل بررسی مربوط به «میزبان منقضی یا قطع‌شده را از فهرست قابل‌انتخاب حذف کن.» در مسیر src/Shared.Networking/ یا src/Host.Windows/Networking/ + tests/؛ همراه با آزمون/شاهد پذیرش متناسب."
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0121 و T0115 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
-      "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "acceptance": "سرویس Rendezvous هنگام discovery، اعلان‌هایی را که ExpiresAtUtc آن‌ها رسیده یا گذشته است از نتایج قابل‌انتخاب حذف کند؛ قطع یا failure نشست peer باعث توقف availability میزبان و تمدید lease شود و پس از پایان آخرین TTL میزبان از discovery برنگردد؛ کلاینت اندروید نیز اعلان منقضی را parse/resolve نکند و cache را از زمان انقضای زودتر peer فراتر نبرد. آزمون‌های دقیق HostLifecycle و Android JVM روی commit مشخص باید موفق باشند. heartbeat و readiness مستقل در T0123 و پذیرش شبکهٔ عمومی در T0230/T0128 باقی می‌مانند.",
+      "status": "done",
+      "status_fa": "انجام‌شده",
+      "actual_output_paths": [
+        "src/Rendezvous.Service/PeerAnnouncementDirectory.cs",
+        "src/Rendezvous.Service/PeerAnnouncementServiceHost.cs",
+        "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs",
+        "src/Host.Windows/Networking/PeerAnnouncementLeasePublisher.cs",
+        "src/Shared.Contracts/Networking/PeerAnnouncement.cs",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/RendezvousPeerDirectoryClient.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/network/RendezvousPeerDirectoryClientTest.kt",
+        "tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs",
+        "step three/T0122/execution-report.md"
+      ],
       "expected_output_paths": [
         "src/Shared.Networking/ یا src/Host.Windows/Networking/ + tests/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nDependency review (2026-10-27): T0121 -> T0122 was validated as contract_or_interface_dependency because expiry-safe discovery relies on the announcement TTL contract and stopped renewals eventually expiring. T0115 -> T0122 was validated as sequencing_only because its local TCP frame lifecycle tests provide no runtime API consumed by metadata-directory expiry filtering. Both original type=blocks edges remain intact; T0122 stays not_started until T0121 is completed.",
+      "evidence": [
+        "src/Rendezvous.Service/PeerAnnouncementDirectory.cs",
+        "src/Client.Android/app/src/test/java/com/whitep/client/network/RendezvousPeerDirectoryClientTest.kt",
+        "tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs",
+        "step three/T0121/execution-report.md",
+        "step three/T0122/execution-report.md"
+      ],
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nDependency review (2026-10-27): T0121 -> T0122 was validated as contract_or_interface_dependency because expiry-safe discovery relies on the announcement TTL contract and stopped renewals eventually expiring. T0115 -> T0122 was validated as sequencing_only because its local TCP frame lifecycle tests provide no runtime API consumed by metadata-directory expiry filtering. Both original type=blocks edges remain intact; T0122 stays not_started until T0121 is completed.\n\nT0122-A001 (2026-11-01): Verified exact main V 3.0.751 implementation and CI. Rendezvous discovery lazily removes expired PeerAnnouncement entries before returning selectable metadata; Android's strict parser ignores expired entries and resolve re-checks expiry/cache; a disconnected peer stops the WPF host lifecycle and lease renewal, after which the final TTL expires and discovery omits that peer. Android JVM test `excludesExpiredPeersFromTheReturnedDirectory`, HostLifecycle tests `PeriodicLeaseRenewalRefreshesTtlAndStopsAsync` and `PeerHostLifecyclePublishesAndServesTrustedPeerAsync` passed on exact V 3.0.751. T0122 is `done` for lease-expiry/discovery filtering. This does not claim live heartbeat/readiness (T0123) or public independent-network acceptance (final-only T0230/T0128). No new production source code was needed; the accepted implementation was already present and verified.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
-        "related_commits": [],
-        "tests_passed": [],
+        "last_attempt_id": "T0122-A001-expiry-and-disconnect-filtering",
+        "last_attempt_result": "succeeded",
+        "changed_files": [
+          "step three/T0122/execution-report.md",
+          "step three/project-graph.md"
+        ],
+        "related_commits": [
+          "6f83ec3755485e38ba4576107fefc09d463cf307"
+        ],
+        "tests_passed": [
+          "Android JVM — RendezvousPeerDirectoryClientTest.excludesExpiredPeersFromTheReturnedDirectory — exact V 3.0.751 — PASS — https://github.com/artinrahimii/project/actions/runs/41299223644/job/124826493366",
+          "HostLifecycle — PeriodicLeaseRenewalRefreshesTtlAndStopsAsync — exact V 3.0.751 — PASS — https://github.com/artinrahimii/project/actions/runs/41299223644/job/124826493348",
+          "HostLifecycle — PeerHostLifecyclePublishesAndServesTrustedPeerAsync (disconnect stops renewal; expired peer removed from discovery) — exact V 3.0.751 — PASS — https://github.com/artinrahimii/project/actions/runs/41299223644/job/124826493348",
+          "Windows WPF Release build/startup/security — exact V 3.0.751 — PASS — https://github.com/artinrahimii/project/actions/runs/41299223644/job/124826493223",
+          "Android lint/APK/JVM/Protobuf — exact V 3.0.751 — PASS — https://github.com/artinrahimii/project/actions/runs/41299223644/job/124826493366",
+          "Step Three quality gate — exact V 3.0.751 — PASS — https://github.com/artinrahimii/project/actions/runs/41299223631",
+          "Rendezvous container build and HTTP smoke — exact V 3.0.751 — PASS — https://github.com/artinrahimii/project/actions/runs/41299223751"
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -26386,10 +26415,67 @@
           "state": "not_required",
           "triggering_contracts": [],
           "affected_by_contract_changes": [],
-          "review_evidence": []
-        }
+          "review_evidence": [
+            "src/Rendezvous.Service/PeerAnnouncementDirectory.cs",
+            "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs",
+            "src/Client.Android/app/src/main/java/com/whitep/client/network/RendezvousPeerDirectoryClient.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/network/RendezvousPeerDirectoryClientTest.kt",
+            "tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs"
+          ]
+        },
+        "follow_up": "Proceed with T0123: implement and validate real heartbeat/status freshness; do not infer READY/online state solely from unexpired metadata. Do not revisit public deployment here; T0230 and T0128 remain final-only."
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0122-A001-expiry-and-disconnect-filtering",
+          "started_at": "2026-11-01T10:50:21Z",
+          "ended_at": "2026-11-01T10:53:07Z",
+          "result": "succeeded",
+          "summary": "Verified the existing production expiry filter at the Rendezvous directory, Android parser/resolver and host disconnect/lease lifecycle. Exact V 3.0.751 CI passed the Android expired-announcement JVM test and HostLifecycle tests proving renewal stops on peer disconnect and the expired peer is omitted from capability discovery. No production code change was needed in this task attempt; T0122's existing code output and tests satisfy its lease-expiry/discovery-filtering scope.",
+          "changed_files": [
+            "step three/T0122/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Android JVM — RendezvousPeerDirectoryClientTest.excludesExpiredPeersFromTheReturnedDirectory",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41299223644/job/124826493366",
+              "summary": "Expired metadata announcement is not returned by resolve."
+            },
+            {
+              "name": "HostLifecycle — PeriodicLeaseRenewalRefreshesTtlAndStopsAsync",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41299223644/job/124826493348",
+              "summary": "Renewal extends expiry; after publisher stop and last TTL expiry, directory discovery returns no peer."
+            },
+            {
+              "name": "HostLifecycle — PeerHostLifecyclePublishesAndServesTrustedPeerAsync",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41299223644/job/124826493348",
+              "summary": "Peer disconnect stops host availability and lease renewal; expired peer is absent from discovery after 2.2 seconds. Loopback integration only."
+            },
+            {
+              "name": "Step Three quality gate — exact V 3.0.751",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41299223631",
+              "summary": "Graph, recorded evidence and automated checks passed on exact main commit."
+            },
+            {
+              "name": "Rendezvous container build and HTTP smoke — exact V 3.0.751",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41299223751",
+              "summary": "Container and HTTP contract workflow passed on exact main commit."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Proceed with T0123. Heartbeat/readiness is separate and must not be inferred from the lease expiry filter. Public deployment/independent-network acceptance remains final-only T0230 then T0128."
+        }
+      ]
     },
     {
       "id": "T0123",
@@ -57847,7 +57933,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-11-01T14:03:00+03:30",
+  "updated_at": "2026-11-01T10:53:07Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",
