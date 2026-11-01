@@ -36,3 +36,18 @@
 - **Base:** exact online `main` commit `910ef405225cede0292303d369a02dfd776023cc` (`V 3.0.762`).
 - **Change:** use `candidate.announcement.capabilities` as the local `capabilities` and preserve `status.activeRequests >= capabilities.maxConcurrentRequests`. The lower-bound check for negative active counts and all live-probe logic remain unchanged.
 - **Validation:** pending exact-head Step Three and product workflows.
+
+
+## T0124-A002 — exact V 3.0.763 CI result
+
+- **Commit:** `2ad34f147a0517736f62893a52b0083f45ebb469`.
+- **Passed:** [Step Three quality gate 41305547585](https://github.com/artinrahimii/project/actions/runs/41305547585), [Rendezvous container smoke 41305547544](https://github.com/artinrahimii/project/actions/runs/41305547544), HostLifecycle and Android .NET peer interoperability fixture within [product workflow 41305547591](https://github.com/artinrahimii/project/actions/runs/41305547591).
+- **Failed:** Android KtLint main source set reported three dot/newline violations at `HostCandidateSelector.kt:251` in the prompt/capsule size conversions. APK, Android JVM and generated Protobuf checks were skipped. The Windows WPF job had passed build/startup and early policy checks but was still in its final checks when the result was recorded.
+- **Correction in A003:** use intermediate values for UTF-8 prompt bytes and capsule bytes, matching the style already used in the same file. No behavior is changed.
+- **Task state:** T0124 remains `in_progress`; A002 is retained as failed.
+
+## T0124-A003 — Kotlin size-chain formatting correction
+
+- **Base:** exact online `main` commit `2ad34f147a0517736f62893a52b0083f45ebb469` (`V 3.0.763`).
+- **Change:** replaced the two KtLint-rejected chained size conversions with explicit prompt byte-array and capsule size intermediates. The comparisons and accepted byte limits remain unchanged.
+- **Validation:** exact-head CI is pending; no APK/JVM pass is claimed for A003 yet.

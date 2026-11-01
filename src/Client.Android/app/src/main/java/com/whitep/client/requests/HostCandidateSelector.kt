@@ -248,8 +248,12 @@ object HostCandidateSelector {
             return false
         }
 
-        val promptBytes = request.prompt.toByteArray(Charsets.UTF_8).size.toLong()
-        val capsuleBytes = request.contextCapsule.size().toLong()
+        val promptBytesArray = request.prompt.toByteArray(Charsets.UTF_8)
+        val promptByteCount = promptBytesArray.size
+        val promptBytes = promptByteCount.toLong()
+        val contextCapsule = request.contextCapsule
+        val capsuleByteCount = contextCapsule.size()
+        val capsuleBytes = capsuleByteCount.toLong()
         if (capabilities.maxPromptBytes <= 0L ||
             promptBytes > capabilities.maxPromptBytes ||
             capabilities.maxContextCapsuleBytes <= 0L ||

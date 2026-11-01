@@ -27029,9 +27029,9 @@
       "evidence": [],
       "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود. T0162 already provides deterministic selection over caller-supplied snapshots. T0124 extends that existing Android selection path with live authenticated reachability probing; it does not duplicate T0162 or change its scope.",
       "execution_summary": {
-        "attempt_count": 2,
-        "failed_attempt_count": 1,
-        "last_attempt_id": "T0124-A002-preserve-capacity-source-contract",
+        "attempt_count": 3,
+        "failed_attempt_count": 2,
+        "last_attempt_id": "T0124-A003-ktlint-size-chain-format",
         "last_attempt_result": "in_progress",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
@@ -27041,11 +27041,18 @@
           "step three/project-graph.md"
         ],
         "related_commits": [
-          "910ef405225cede0292303d369a02dfd776023cc"
+          "910ef405225cede0292303d369a02dfd776023cc",
+          "2ad34f147a0517736f62893a52b0083f45ebb469"
         ],
-        "tests_passed": [],
+        "tests_passed": [
+          "Exact V 3.0.763 Step Three quality gate — PASS — https://github.com/artinrahimii/project/actions/runs/41305547585",
+          "Exact V 3.0.763 Rendezvous container build/smoke — PASS — https://github.com/artinrahimii/project/actions/runs/41305547544",
+          "Exact V 3.0.763 HostLifecycle suite — PASS — https://github.com/artinrahimii/project/actions/runs/41305547591",
+          "Exact V 3.0.763 Android .NET peer interop fixture — PASS — https://github.com/artinrahimii/project/actions/runs/41305547591"
+        ],
         "tests_failed": [
-          "Exact V 3.0.762 Step Three quality gate — FAILED one source-contract test because refactored source no longer contained status.activeRequests >= capabilities.maxConcurrentRequests — https://github.com/artinrahimii/project/actions/runs/41305388502"
+          "Exact V 3.0.762 Step Three quality gate — FAILED one source-contract test because refactored source no longer contained status.activeRequests >= capabilities.maxConcurrentRequests — https://github.com/artinrahimii/project/actions/runs/41305388502",
+          "Exact V 3.0.763 Android main-source KtLint — FAILED on chained prompt/capsule size conversions; APK/JVM skipped — https://github.com/artinrahimii/project/actions/runs/41305547591"
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -27068,7 +27075,7 @@
             "step three/T0162/execution-report.md"
           ]
         },
-        "follow_up": "Re-run exact-head workflows. Do not mark T0124 done until all selector JVM and product acceptance checks pass."
+        "follow_up": "Run exact-head Step Three gate, Android main/test KtLint, debug APK and JVM selector/live-status tests, generated Protobuf check, HostLifecycle, Windows WPF and Rendezvous smoke."
       },
       "execution_history": [
         {
@@ -27102,9 +27109,59 @@
         {
           "attempt_id": "T0124-A002-preserve-capacity-source-contract",
           "started_at": "2026-11-01T12:13:10Z",
+          "ended_at": "2026-11-01T12:16:06Z",
+          "result": "failed",
+          "summary": "The established capacity source-contract expression was restored, and the exact V 3.0.763 Step Three quality gate passed. The Android .NET interoperability fixture and HostLifecycle suite also passed. Android KtLint then failed the main source set on chained prompt/capsule byte-size conversions; APK/JVM were skipped. The Windows WPF job had passed build/startup and early policy checks but was still completing final checks at report time.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
+            "step three/T0124/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": "2ad34f147a0517736f62893a52b0083f45ebb469",
+          "tests": [
+            {
+              "name": "Step Three quality gate — exact V 3.0.763",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41305547585",
+              "summary": "Graph/Python quality passed, including the previously failing selector source-contract assertion."
+            },
+            {
+              "name": "Rendezvous container build/smoke — exact V 3.0.763",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41305547544",
+              "summary": "Container build and smoke passed."
+            },
+            {
+              "name": "HostLifecycle unit/integration — exact V 3.0.763",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41305547591",
+              "summary": "HostLifecycle job passed."
+            },
+            {
+              "name": "Android .NET peer interoperability fixture — exact V 3.0.763",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41305547591",
+              "summary": "Shared .NET peer interoperability fixture compiled."
+            },
+            {
+              "name": "Android production KtLint — exact V 3.0.763",
+              "result": "failed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41305547591",
+              "summary": "Main source set failed on chained prompt/capsule byte-size conversions; APK and JVM were skipped."
+            }
+          ],
+          "failure_details": "Product workflow 41305547591: KtLint main source reported Expected newline before '.' at HostCandidateSelector.kt:251:41, :251:69 and :251:74, caused by `request.prompt.toByteArray(Charsets.UTF_8).size.toLong()` and `request.contextCapsule.size().toLong()`. Android APK, JVM and generated Protobuf checks were skipped.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "A003 replaces the chained size conversions with intermediate byte-array and capsule-size values in the same style already used by the selector."
+        },
+        {
+          "attempt_id": "T0124-A003-ktlint-size-chain-format",
+          "started_at": "2026-11-01T12:16:10Z",
           "ended_at": null,
           "result": "in_progress",
-          "summary": "Restored the existing `capabilities` local and exact `status.activeRequests >= capabilities.maxConcurrentRequests` source expression so the repository's source-contract test remains compatible. The condition is semantically unchanged. Re-run exact-head Step Three quality, Android KtLint/APK/JVM, HostLifecycle/WPF and Rendezvous workflows.",
+          "summary": "Reformatted prompt/capsule byte-size calculations using intermediate byte-array and ByteString size variables, matching the established KtLint-compatible style already used in HostCandidateSelector. No selection semantics changed. Exact-head CI is pending.",
           "changed_files": [
             "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
             "step three/T0124/execution-report.md",
@@ -27116,7 +27173,7 @@
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Re-run exact-head workflows. Do not mark T0124 done until all selector JVM and product acceptance checks pass."
+          "follow_up": "Run exact-head Step Three gate, Android main/test KtLint, debug APK and JVM selector/live-status tests, generated Protobuf check, HostLifecycle, Windows WPF and Rendezvous smoke."
         }
       ]
     },
@@ -58486,7 +58543,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-11-01T12:13:10Z",
+  "updated_at": "2026-11-01T12:16:10Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",
