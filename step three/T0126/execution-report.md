@@ -149,3 +149,14 @@ The exact V 3.0.768 Android/Windows/HostLifecycle/Step Three/Rendezvous workflow
 - **Current boundary:** this adds and tests the real discovery-to-candidate API, but the Compose request screen still has no user-configured Rendezvous URL, explicit peer-trust interaction, or production caller that dispatches and records feedback. T0126 therefore remains blocked/partial; no inference request or prompt is sent by this new API. T0174 remains blocked on the complete request UI flow.
 - **Tests:** pending exact-head GitHub Actions verification for this commit. No test pass is claimed before the workflow result is inspected.
 - **Next:** connect configured service URL and explicit trust confirmation to the request UI, construct the payload from the user's actual request, call authenticated discovery/selection, dispatch only when one or more candidates exist, display the feedback, and collect correlated responses. Verify this full path before marking T0126 done.
+
+
+## Exact V 3.0.781 CI reconciliation and T0126-A007 correction
+
+- The online commit was `175962bded9e8942bf040c253f0b9765149a267a` (`V 3.0.781`) on `main`.
+- **Android lint failed** in `AuthenticatedHostDiscovery.kt` at lines 109 and 118. KtLint required a newline before each chained `.newBuilder()`. This was a real style failure; it was not reported as a passing build.
+- Because lint stopped the Android job, `assembleDebug`, `testDebugUnitTest`, and generated Android Protobuf Java/Kotlin verification were **not run** on V 3.0.781. No Android APK or JVM pass is claimed for that commit.
+- The separate Windows WPF job passed C# formatting, Release build, generated Protobuf C#, startup, process/policy/capability and DPAPI identity/trust checks. HostLifecycle unit/integration tests passed. Step Three graph/Python quality gate passed. Rendezvous production container build and HTTP smoke passed.
+- **T0126-A007** applies only the two KtLint-required chain-call line breaks in `AuthenticatedHostDiscovery.kt`. The discovery behavior and acceptance scope are unchanged. Android lint/build/JVM/Protobuf checks are pending rerun on the corrected commit.
+- T0126 remains blocked: the Compose request screen still does not connect user-configured Rendezvous, explicit peer trust, payload construction, dispatch, shortage feedback and correlated response collection.
+

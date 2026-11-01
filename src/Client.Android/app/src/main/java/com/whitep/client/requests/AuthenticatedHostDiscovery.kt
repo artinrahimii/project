@@ -106,7 +106,8 @@ internal class AuthenticatedHostDiscovery(
         // HostInferenceSession serializes inference and backend transitions through one operation
         // gate; MainWindow reports one active request while Busy. These are not guessed settings.
         val capabilities =
-            HostCapabilities.newBuilder()
+            HostCapabilities
+                .newBuilder()
                 .setEphemeralHostId(endpoint.peerId)
                 .setProtocolVersion(status.protocolVersion)
                 .addAllModels(status.modelsList)
@@ -115,7 +116,8 @@ internal class AuthenticatedHostDiscovery(
                 .setMaxContextCapsuleBytes(ConversationContextCapsule.MAX_SERIALIZED_BYTES.toLong())
                 .build()
         val announcement =
-            HostAnnouncement.newBuilder()
+            HostAnnouncement
+                .newBuilder()
                 .setEphemeralHostId(endpoint.peerId)
                 .setProtocolVersion(status.protocolVersion)
                 .setCapabilities(capabilities)

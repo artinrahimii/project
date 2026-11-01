@@ -117,3 +117,13 @@ The live acceptance gap remains: `MainActivity.requestScreen` is prepare-only, a
 - It converts the returned HostStatus model list into the local HostCapabilities candidate required by the existing selector. Fixed request limits are tied to `InferenceRequestPayloadBuilder.MAX_PROMPT_BYTES` (8,192) and `ConversationContextCapsule.MAX_SERIALIZED_BYTES` (4,096); concurrency is one, matching the Windows `HostInferenceSession` single-operation gate and MainWindow active-request status.
 - Added `src/Client.Android/app/src/test/java/com/whitep/client/requests/AuthenticatedHostDiscoveryTest.kt`. Six tests exercise deterministic three-host selection, 0/1/2/3 feedback counts, expired/untrusted/busy/stale/incompatible peers, duplicate identities, cancellation, and status identity mismatch.
 - Exact-head build, lint and JVM test results remain pending until GitHub Actions runs against the resulting commit. The task is not complete until the request UI calls this API and dispatch/feedback are verified end-to-end.
+
+
+## T0126-A006 exact CI result
+
+- Commit: `175962bded9e8942bf040c253f0b9765149a267a` (`V 3.0.781`).
+- Android main-source KtLint failed on the two chained `newBuilder()` line breaks in `AuthenticatedHostDiscovery.kt` (lines 109 and 118).
+- Android APK build, Android JVM tests and generated Android Protobuf verification were not reached on that commit.
+- Windows WPF formatting/build/startup/security/DPAPI checks passed; HostLifecycle tests passed; Step Three graph/Python quality gate passed; Rendezvous container build and HTTP smoke passed.
+- A007 changes only those two Kotlin line breaks. The Android checks must be rerun on A007's commit before they can be recorded as passing.
+
