@@ -204,3 +204,14 @@ Revalidated T0121 against the exact online main head V 3.0.607. The full graph B
 - **Dependency review:** `T0121 → T0122` remains validated as `contract_or_interface_dependency` with the existing `ExpiresAtUtc` / renewable-lease evidence. No edge was changed. T0122 must remain not_started until T0121's end-to-end lease lifecycle acceptance is satisfied.
 - **Outcome:** no product source or test code changed in this revalidation. T0121 remains `blocked`; the next action remains deployment/configuration of the production HTTPS rendezvous service and independent-network reachability verification.
 - **This attempt is evidence synchronization only, not software implementation progress.**
+
+## T0121-A021 — exact V 3.0.742 CI finalization; external acceptance remains blocked
+
+- **Exact online baseline:** `main` at [`64b913dc65921b6fba0f8491883dea5b10fc4f91`](https://github.com/artinrahimii/project/commit/64b913dc65921b6fba0f8491883dea5b10fc4f91), message `V 3.0.742`.
+- **Graph integrity:** exact-tree Blob `67b88a4f333bda145ac077b189407d7c3e6f6b44` was fetched via Git Blob API. Its full content is 3,565,300 UTF-8 bytes (3,441,579 text characters); recomputed Git Blob SHA-1 matched, and the complete fenced JSON parsed as 229 task nodes / 418 edges / 22 sections.
+- **Exact-head CI inspected:** [Step Three quality gate — PASS](https://github.com/artinrahimii/project/actions/runs/41280266301); [product workflow — PASS](https://github.com/artinrahimii/project/actions/runs/41280266207), including HostLifecycle unit/integration, Windows WPF Release build/startup/security, and Android lint, debug APK, JVM unit tests, generated Protobuf checks and artifact upload. All three product jobs completed successfully on the exact V 3.0.742 commit.
+- **Independent-network acceptance:** **NOT RUN**. No deployed production HTTPS rendezvous endpoint or second peer on an independent network was available in this execution context. CI and loopback integration do not prove advertised public TCP/UDP reachability.
+- **Dependency review:** `T0121 → T0122` remains validated as `contract_or_interface_dependency`; no edge was changed. `T0122` remains `not_started` until T0121's external lease/reachability acceptance is satisfied.
+- **Outcome:** T0121 remains `blocked`; its attempt count is now 21. The Android CI state recorded as pending in A020 is now finalized as passed. No product source or test code changed, and no implementation-progress credit is added. This is evidence synchronization only.
+- **Next:** provide/deploy a production HTTPS rendezvous endpoint and run advertised TCP/UDP reachability acceptance from a peer on a separate network before re-evaluating T0121.
+
