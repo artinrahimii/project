@@ -10,7 +10,6 @@ import org.junit.Test
 import org.whitep.shared.contracts.v1.HostRuntimeState
 import org.whitep.shared.contracts.v1.HostStatus
 import org.whitep.shared.contracts.v1.InferenceRequest
-import org.whitep.shared.contracts.v1.ModelCapability
 import org.whitep.shared.contracts.v1.hostStatus
 import org.whitep.shared.contracts.v1.inferenceRequest
 import org.whitep.shared.contracts.v1.modelCapability

@@ -179,3 +179,13 @@ The exact V 3.0.768 Android/Windows/HostLifecycle/Step Three/Rendezvous workflow
 - Replaced the nested Protobuf Java builder chains in the new fixture helpers with the repository's already-used generated Protobuf Kotlin DSL (`hostStatus { }`, `modelCapability { }`, `inferenceRequest { }`). This is a formatting/API-style correction only; assertions and behavior were not changed.
 - A008 remains partial pending exact-head lint/build/JVM/Protobuf and graph-gate reruns. T0126 remains blocked because the Compose request screen still does not invoke discovery, explicit trust, dispatch and response collection.
 
+
+
+## T0126-A009 — remove the final unused test import
+
+- Exact V 3.0.784 Windows WPF Release build, generated C# Protobuf, startup, process/policy/capability and DPAPI checks passed. HostLifecycle tests passed. Step Three quality gate and Rendezvous container smoke also passed.
+- Android main production-source KtLint passed, including `AuthenticatedHostDiscovery.kt`.
+- Android test-source KtLint failed only on one unused import: `org.whitep.shared.contracts.v1.ModelCapability` at `AuthenticatedHostDiscoveryTest.kt:13`. No Android APK, JVM unit tests or generated Android Protobuf checks ran because lint stopped first.
+- A009 removes only that unused import. The test logic, fixtures and production code are unchanged. All Android verification is pending on the next exact-head commit.
+- T0126 remains blocked because the Compose request screen still does not connect configured Rendezvous, explicit peer trust, actual request construction, dispatch, shortage feedback and correlated response collection.
+

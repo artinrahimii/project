@@ -145,3 +145,13 @@ The live acceptance gap remains: `MainActivity.requestScreen` is prepare-only, a
 - A008 replaces those nested builder chains with the generated Kotlin DSL already used in `HostCandidateSelectorTest.kt`. Test cases and their behavioral assertions are unchanged.
 - Re-run all Android checks on the new commit before recording any pass.
 
+
+
+## T0126-A008 exact CI reconciliation and A009 fix
+
+- Exact V 3.0.784: production-source KtLint passed.
+- Test-source KtLint failed only on unused import `ModelCapability` at `AuthenticatedHostDiscoveryTest.kt:13`.
+- Android APK build, JVM tests and generated Android Protobuf verification were not reached. They are not counted as passes.
+- Windows WPF build/startup/security/DPAPI, HostLifecycle tests, Step Three quality gate, and Rendezvous container smoke all passed on the exact V 3.0.784 commit.
+- A009 removes that unused import only; its resulting commit must still pass a new exact-head CI run before Android verification can be marked successful.
+
