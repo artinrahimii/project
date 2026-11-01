@@ -112,3 +112,14 @@ The exact V 3.0.768 Android/Windows/HostLifecycle/Step Three/Rendezvous workflow
 - **Real local inference:** PASS — pinned llama.cpp CPU binary, validated GGUF model and a real local inference response — [run 41312296077](https://github.com/artinrahimii/project/actions/runs/41312296077).
 - **Still pending at reconciliation:** Android `assembleDebug`, `testDebugUnitTest`, generated Protobuf Java/Kotlin verification and APK artifact upload. No result is claimed for those pending steps.
 - **Task status:** `blocked`. These CI checks do not establish Android live discovery, request-screen selection/dispatch or user-visible shortage handling.
+
+
+## T0126-A005 — bounded Rendezvous discover-all API (partial)
+
+- **Exact base:** `main` commit `513df9233b703a1f7f2da945ca9a7c0cfc0af3a9` (`V 3.0.778`).
+- Added `RendezvousPeerDirectoryClient.discoverAll()`, returning all unexpired metadata endpoints with direct TCP routes in stable PeerId order. It uses the existing strict parser, maximum 16 KiB response bound, shared mutex/cache refresh and fail-closed network-refresh behavior. `resolve(ephemeralHostId)` now uses the same private refresh helper, preventing the two entry points from drifting in cache semantics.
+- Added JVM/Robolectric regression `discoversFreshPeersInStableIdentityOrderAndExcludesPeersWithoutTcpRoute`: it verifies stable PeerId ordering, omission of a QUIC-only endpoint for this TCP transport client, and one network fetch shared by `discoverAll()` and a subsequent `resolve()`.
+- This is a real directory API and test addition. It still returns metadata-only `RendezvousPeerEndpoint` values, not typed model/capacity `HostAnnouncement` values. It does not authenticate peers, invoke HostStatus probes, instantiate `AndroidInferenceRequestRuntime`, dispatch inference, or connect the Request screen. No UI flow is claimed.
+- Exact V 3.0.779 Android KtLint, APK/JVM/Protobuf, Windows/HostLifecycle, Step Three and Rendezvous CI are pending at authoring time. No test pass is claimed until exact-head workflows finish.
+- **Outcome:** partial implementation; T0126 remains `blocked` because production candidate construction and request-screen integration are outstanding.
+- **Follow-up:** implement the typed capability/status-to-candidate path and connect discovery, explicit trust, live selection, dispatch and feedback to the real Android request UI. Verify 0/1/2/3 peers and no-send on zero before unblocking T0126.

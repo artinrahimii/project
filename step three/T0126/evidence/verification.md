@@ -89,3 +89,11 @@ The live acceptance gap remains: `MainActivity.requestScreen` is prepare-only, a
 - Android KtLint — PASS: [41312296076](https://github.com/artinrahimii/project/actions/runs/41312296076).
 - Live local llama.cpp/GGUF inference — PASS: [41312296077](https://github.com/artinrahimii/project/actions/runs/41312296077).
 - Android APK build, JVM unit tests and generated Protobuf verification were still pending; no pass is claimed for them here.
+
+
+## T0126-A005 — bounded directory enumeration (partial; CI pending)
+
+- Added `RendezvousPeerDirectoryClient.discoverAll()` to expose all unexpired direct-TCP metadata endpoints in stable PeerId order.
+- The method reuses the bounded parser, shared cache lock, TTL/announcement-expiry limit and fail-closed refresh path; `resolve()` also uses the extracted common refresh helper.
+- Added Robolectric/JVM test `discoversFreshPeersInStableIdentityOrderAndExcludesPeersWithoutTcpRoute`, covering all-peer enumeration, deterministic order, QUIC-only exclusion and cache reuse.
+- This does not produce typed HostAnnouncement model/capability data and is not yet called by the production request screen. T0126 remains blocked. Exact-head CI results are pending.

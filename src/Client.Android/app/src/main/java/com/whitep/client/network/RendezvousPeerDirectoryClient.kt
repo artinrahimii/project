@@ -114,29 +114,54 @@ class RendezvousPeerDirectoryClient(
         }
 
         return cacheMutex.withLock {
-            val now = clock.instant()
-            if (!now.isBefore(cacheExpiresAt)) {
-                val freshPeers =
-                    withContext(Dispatchers.IO) {
-                        fetchDirectory(now)
-                    }
-                cachedPeers = freshPeers
-                val earliestPeerExpiry = freshPeers.values.minOfOrNull { it.expiresAtUtc }
-                val requestedCacheExpiry = now.plus(cacheDuration)
-                cacheExpiresAt =
-                    if (earliestPeerExpiry == null ||
-                        requestedCacheExpiry.isBefore(earliestPeerExpiry)
-                    ) {
-                        requestedCacheExpiry
-                    } else {
-                        earliestPeerExpiry
-                    }
-            }
-
+            refreshCacheIfExpiredLocked()
             cachedPeers[ephemeralHostId]?.takeIf { endpoint ->
                 endpoint.tcpMultiaddresses.isNotEmpty() &&
                     endpoint.expiresAtUtc.isAfter(clock.instant())
             }
+        }
+    }
+
+    /**
+     * Returns a stable snapshot of every unexpired peer with a direct TCP route.
+     *
+     * This enumerates metadata only. Callers must still authenticate each peer and obtain a
+     * fresh HostStatus before constructing a selectable inference candidate.
+     */
+    suspend fun discoverAll(): List<RendezvousPeerEndpoint> =
+        cacheMutex.withLock {
+            refreshCacheIfExpiredLocked()
+            val now = clock.instant()
+            cachedPeers.values
+                .filter { endpoint ->
+                    endpoint.tcpMultiaddresses.isNotEmpty() &&
+                        endpoint.expiresAtUtc.isAfter(now)
+                }.sortedBy { endpoint -> endpoint.peerId }
+        }
+
+    /**
+     * Refreshes the shared directory cache while [cacheMutex] is held.
+     *
+     * A failed refresh propagates to the caller; stale entries are never returned as a fallback.
+     */
+    private suspend fun refreshCacheIfExpiredLocked() {
+        val now = clock.instant()
+        if (!now.isBefore(cacheExpiresAt)) {
+            val freshPeers =
+                withContext(Dispatchers.IO) {
+                    fetchDirectory(now)
+                }
+            cachedPeers = freshPeers
+            val earliestPeerExpiry = freshPeers.values.minOfOrNull { it.expiresAtUtc }
+            val requestedCacheExpiry = now.plus(cacheDuration)
+            cacheExpiresAt =
+                if (earliestPeerExpiry == null ||
+                    requestedCacheExpiry.isBefore(earliestPeerExpiry)
+                ) {
+                    requestedCacheExpiry
+                } else {
+                    earliestPeerExpiry
+                }
         }
     }
 

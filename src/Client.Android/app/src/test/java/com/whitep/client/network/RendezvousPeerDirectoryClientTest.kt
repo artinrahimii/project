@@ -109,6 +109,54 @@ class RendezvousPeerDirectoryClientTest {
     }
 
     @Test
+    fun discoversFreshPeersInStableIdentityOrderAndExcludesPeersWithoutTcpRoute() {
+        val secondPeer = "QmYwAPJzv5CZsnAzt8auVTLa"
+        val quicOnlyPeer = "QmYwAPJzv5CZsnAzt8auVTLb"
+        val body = JSONArray()
+        body.put(
+            announcement(
+                peerId,
+                listOf("/ip4/127.0.0.1/tcp/41000/p2p/" + peerId),
+                now.plusSeconds(300),
+            ),
+        )
+        body.put(
+            announcement(
+                secondPeer,
+                listOf("/ip4/127.0.0.2/tcp/41001/p2p/" + secondPeer),
+                now.plusSeconds(300),
+            ),
+        )
+        body.put(
+            announcement(
+                quicOnlyPeer,
+                listOf("/ip4/127.0.0.3/udp/41002/quic-v1/p2p/" + quicOnlyPeer),
+                now.plusSeconds(300),
+            ),
+        )
+        val calls = AtomicInteger()
+        val client =
+            client { url ->
+                calls.incrementAndGet()
+                StubConnection(url, HttpURLConnection.HTTP_OK, body.toString())
+            }
+
+        val endpoints =
+            kotlinx.coroutines.runBlocking {
+                client.discoverAll()
+            }
+
+        assertEquals(2, endpoints.size)
+        assertEquals(
+            listOf(peerId, secondPeer).sorted(),
+            endpoints.map { endpoint -> endpoint.peerId },
+        )
+        assertTrue(endpoints.all { endpoint -> endpoint.tcpMultiaddresses.isNotEmpty() })
+        assertNotNull(runBlockingResolve(client, peerId))
+        assertEquals(1, calls.get())
+    }
+
+    @Test
     fun excludesExpiredPeersFromTheReturnedDirectory() {
         val body =
             directoryJson(
