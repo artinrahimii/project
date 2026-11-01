@@ -50869,37 +50869,62 @@
       "from": "T0122",
       "to": "T0123",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0123 must obtain a real heartbeat/status only for currently valid peer announcements. T0122 supplies the filtered, non-expired candidate set based on the announcement ExpiresAtUtc contract; using stale/expired directory entries would waste probes and could leave stale candidates in the online-state pipeline. This is an input/data-contract dependency, not inferred from type=blocks.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Rendezvous.Service/PeerAnnouncementDirectory.cs",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/RendezvousPeerDirectoryClient.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/network/RendezvousPeerDirectoryClientTest.kt",
+        "src/Host.Windows/Networking/PeerAnnouncementLeasePublisher.cs",
+        "protocol/whitep/v1/messages.proto",
+        "step three/T0121/execution-report.md"
+      ]
     },
     {
       "from": "T0115",
       "to": "T0123",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0115 tests the legacy TCP inference-frame listener's disconnect, malformed-frame, sequential-client and shutdown behavior. The heartbeat/status contract uses peer announcements and HostStatusRequest/HostStatus over the authenticated peer path and consumes none of T0115's frame-reader/listener APIs or test output. Keep the existing blocks edge as conservative order only.",
+      "validation_status": "validated",
+      "evidence": [
+        "tests/HostLifecycle.Tests/NetworkInferenceRequestFrameAcceptanceTests.cs",
+        "src/Host.Windows/Networking/NetworkInferenceRequestFrameReader.cs",
+        "src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs",
+        "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs",
+        "step three/T0115/evidence/verification.md"
+      ]
     },
     {
       "from": "T0123",
       "to": "T0124",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0124's HostCandidate selection consumes HostStatus snapshots and uses state == READY, observedAtUnixMs freshness and activeRequests against advertised capacity. T0123's real heartbeat/status implementation is the producer needed to provide trusted current online/readiness snapshots; a cached directory entry alone cannot satisfy this input contract.",
+      "validation_status": "validated",
+      "evidence": [
+        "protocol/whitep/v1/messages.proto",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt",
+        "step three/T0162/execution-report.md",
+        "step three/T0162/evidence/verification.md"
+      ]
     },
     {
       "from": "T0115",
       "to": "T0124",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0124 evaluates reachability/readiness/capacity/model compatibility from peer and HostStatus inputs; it does not call the legacy TCP frame reader or ParticipationGatedNetworkListener covered by T0115. Retain blocks only as conservative sequence.",
+      "validation_status": "validated",
+      "evidence": [
+        "tests/HostLifecycle.Tests/NetworkInferenceRequestFrameAcceptanceTests.cs",
+        "src/Host.Windows/Networking/NetworkInferenceRequestFrameReader.cs",
+        "src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
+        "step three/T0115/execution-report.md"
+      ]
     },
     {
       "from": "T0124",
@@ -52127,19 +52152,35 @@
       "from": "T0174",
       "to": "T0175",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0174 produces a correlated terminal CANCELLED response for the exact (requestId, attemptId) pair. T0175's manual retry/status UI must distinguish an explicit user cancellation from a retryable FAILED result and must not mislabel or automatically retry a cancelled attempt. This is a terminal-outcome interface dependency.",
+      "validation_status": "validated",
+      "evidence": [
+        "protocol/whitep/v1/messages.proto",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/network/Libp2pInferenceRequestTransportTest.kt",
+        "step three/T0174/execution-report.md",
+        "step three/T0174/evidence/verification.md"
+      ]
     },
     {
       "from": "T0160",
       "to": "T0175",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0160 defines the canonical request_id and per-attempt attempt_id payload contract. A manual retry must remain attributable to the same logical request while receiving a fresh attempt identity, and the dispatcher/payload builder enforce that tuple before a response can be correlated or deduplicated. This is a request/attempt identity contract dependency.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/protocol/InferenceRequestPayloadBuilder.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceAttemptDispatcher.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/DistributedRequest.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/protocol/InferenceRequestPayloadBuilderTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
+        "step three/T0160/execution-report.md"
+      ]
     },
     {
       "from": "T0175",
@@ -57106,9 +57147,110 @@
         "step three/T0121/execution-report.md"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-11-01T06:12:58.992Z",
+      "edge_from": "T0122",
+      "edge_to": "T0123",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "reason": "T0123 must obtain a real heartbeat/status only for currently valid peer announcements. T0122 supplies the filtered, non-expired candidate set based on the announcement ExpiresAtUtc contract; using stale/expired directory entries would waste probes and could leave stale candidates in the online-state pipeline. This is an input/data-contract dependency, not inferred from type=blocks.",
+      "evidence": [
+        "src/Rendezvous.Service/PeerAnnouncementDirectory.cs",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/RendezvousPeerDirectoryClient.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/network/RendezvousPeerDirectoryClientTest.kt",
+        "src/Host.Windows/Networking/PeerAnnouncementLeasePublisher.cs",
+        "protocol/whitep/v1/messages.proto",
+        "step three/T0121/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-11-01T06:12:58.992Z",
+      "edge_from": "T0115",
+      "edge_to": "T0123",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "reason": "T0115 tests the legacy TCP inference-frame listener's disconnect, malformed-frame, sequential-client and shutdown behavior. The heartbeat/status contract uses peer announcements and HostStatusRequest/HostStatus over the authenticated peer path and consumes none of T0115's frame-reader/listener APIs or test output. Keep the existing blocks edge as conservative order only.",
+      "evidence": [
+        "tests/HostLifecycle.Tests/NetworkInferenceRequestFrameAcceptanceTests.cs",
+        "src/Host.Windows/Networking/NetworkInferenceRequestFrameReader.cs",
+        "src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs",
+        "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs",
+        "step three/T0115/evidence/verification.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-11-01T06:12:58.992Z",
+      "edge_from": "T0123",
+      "edge_to": "T0124",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "reason": "T0124's HostCandidate selection consumes HostStatus snapshots and uses state == READY, observedAtUnixMs freshness and activeRequests against advertised capacity. T0123's real heartbeat/status implementation is the producer needed to provide trusted current online/readiness snapshots; a cached directory entry alone cannot satisfy this input contract.",
+      "evidence": [
+        "protocol/whitep/v1/messages.proto",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt",
+        "step three/T0162/execution-report.md",
+        "step three/T0162/evidence/verification.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-11-01T06:12:58.992Z",
+      "edge_from": "T0115",
+      "edge_to": "T0124",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "reason": "T0124 evaluates reachability/readiness/capacity/model compatibility from peer and HostStatus inputs; it does not call the legacy TCP frame reader or ParticipationGatedNetworkListener covered by T0115. Retain blocks only as conservative sequence.",
+      "evidence": [
+        "tests/HostLifecycle.Tests/NetworkInferenceRequestFrameAcceptanceTests.cs",
+        "src/Host.Windows/Networking/NetworkInferenceRequestFrameReader.cs",
+        "src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
+        "step three/T0115/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-11-01T06:12:58.992Z",
+      "edge_from": "T0174",
+      "edge_to": "T0175",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "reason": "T0174 produces a correlated terminal CANCELLED response for the exact (requestId, attemptId) pair. T0175's manual retry/status UI must distinguish an explicit user cancellation from a retryable FAILED result and must not mislabel or automatically retry a cancelled attempt. This is a terminal-outcome interface dependency.",
+      "evidence": [
+        "protocol/whitep/v1/messages.proto",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/network/Libp2pInferenceRequestTransportTest.kt",
+        "step three/T0174/execution-report.md",
+        "step three/T0174/evidence/verification.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-11-01T06:12:58.992Z",
+      "edge_from": "T0160",
+      "edge_to": "T0175",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "reason": "T0160 defines the canonical request_id and per-attempt attempt_id payload contract. A manual retry must remain attributable to the same logical request while receiving a fresh attempt identity, and the dispatcher/payload builder enforce that tuple before a response can be correlated or deduplicated. This is a request/attempt identity contract dependency.",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/protocol/InferenceRequestPayloadBuilder.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceAttemptDispatcher.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/DistributedRequest.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/protocol/InferenceRequestPayloadBuilderTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
+        "step three/T0160/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-11-01T05:10:20Z",
+  "updated_at": "2026-11-01T06:12:58.992Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",
