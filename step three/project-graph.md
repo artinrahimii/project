@@ -27412,7 +27412,13 @@
         "src/Client.Android/app/src/main/java/com/whitep/client/requests/AuthenticatedHostDiscovery.kt",
         "src/Client.Android/app/src/test/java/com/whitep/client/requests/AuthenticatedHostDiscoveryTest.kt",
         "src/Client.Android/app/src/main/java/com/whitep/client/requests/RequestExecutionGateway.kt",
-        ".github/workflows/product-build.yml"
+        ".github/workflows/product-build.yml",
+        "README.md",
+        "docs/decisions/ADR-0001-platform-build-baselines.md",
+        "tests/test_product_build_contract.py",
+        "tests/test_reproducible_build_contract.py",
+        "tests/test_readme_build_commands.py",
+        "src/Client.Android/app/build.gradle.kts"
       ],
       "expected_output_paths": [
         "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostSelectionFeedback.kt",
@@ -27446,13 +27452,19 @@
         "src/Client.Android/app/src/main/java/com/whitep/client/requests/RequestExecutionGateway.kt",
         "step three/T0126/execution-report.md",
         "step three/project-graph.md",
-        ".github/workflows/product-build.yml"
+        ".github/workflows/product-build.yml",
+        "README.md",
+        "docs/decisions/ADR-0001-platform-build-baselines.md",
+        "tests/test_product_build_contract.py",
+        "tests/test_reproducible_build_contract.py",
+        "tests/test_readme_build_commands.py",
+        "src/Client.Android/app/build.gradle.kts"
       ],
-      "notes": "The expected Shared.Networking/Windows path is not the actual consumer in this repository: candidate selection and dispatch live in the Android app, and the user-facing request state/Compose screen lives under com.whitep.client.ui.request. Implement at those real boundaries. Policy: one or two validated hosts remain usable with an exact shortage warning; zero hosts is a no-send NO_SELECTED_HOSTS outcome. The MainActivity request screen is still a prepare-only preview and has no production caller for the new runtime feedback method; therefore keep this task in_progress until live discovery/dispatch feeds the UI. Do not claim a working end-to-end user notification yet.\n\nT0126-A001 (2026-11-01): Exact V 3.0.767 CI was inspected. Android KtLint and assembleDebug passed; JVM test compilation failed because RequestViewModelTest.kt omitted the HostSelectionFeedback import, so T0126 unit assertions and generated Protobuf verification did not run. Step Three's 312 Python tests and syntax check passed, but graph_guard failed because completed T0125 evidence lacked a tests/ source path. Windows WPF, HostLifecycle and Rendezvous container smoke passed. A002 adds the missing import and records test-source evidence for T0125. T0126 remains in_progress until repaired exact-head tests pass and a real request UI caller feeds live selection feedback.\n\nT0126-A002 exact V 3.0.768 CI result (2026-11-01): Android main/test KtLint, assembleDebug, compileDebugUnitTestKotlin, testDebugUnitTest and generated Protobuf Java/Kotlin verification passed; Windows WPF build/startup/security/DPAPI and policy/capability checks passed; HostLifecycle tests passed; the Step Three quality gate passed (312 Python tests, compileall and graph/evidence guard); Rendezvous container build/HTTP smoke passed. The missing import and T0125 evidence repairs are therefore verified on exact main V 3.0.768. T0126 remains in_progress: MainActivity.requestScreen is still prepare-only, Connections still says peer discovery is unavailable, and no production caller passes complete HostAnnouncement snapshots to selection/dispatch and then records the feedback. No live underfilled-host notification is claimed.\n\nT0126-A003 (2026-11-01T13:21:18.320Z): Exact V 3.0.769 source audit confirmed the remaining production integration blocker. MainActivity.requestScreen only invokes prepareRequest; no production caller invokes selectReachableHostsWithFeedback or recordHostSelectionFeedback. RendezvousPeerDirectoryClient returns metadata-only peerId/address/expiry; PeerAnnouncementHostLifecycle publishes only inference.v1. MainWindow.GetPeerRuntimeStatusAsync sets HostStatus state and activeRequests but omits models. HostCandidateSelector requires full HostAnnouncement capabilities and a fresh HostStatus with the matching model. No fabricated snapshot was introduced; task is blocked pending a real discovery/capability producer and request-screen integration.\n\nT0126-A004 (2026-11-01): Added a live model-capability source on the Windows host. LlamaCppServerBackend verifies the configured model from /v1/models and reads its actual n_ctx from GET /props; HostInferenceSession returns that snapshot only after a fresh Ready/readiness check; MainWindow reports protocol_version and includes the model only when verified. Added HostLifecycle tests. T0126 remains blocked: Android discovery and request-screen selection/dispatch integration are still missing.\nT0126-A005 (2026-11-01): Added RendezvousPeerDirectoryClient.discoverAll() to enumerate every unexpired metadata endpoint with a direct TCP route in stable PeerId order. It shares the existing bounded 16 KiB parser/cache and fail-closed refresh; resolve() now uses the same cache-refresh helper. Added a Robolectric/JVM regression proving stable discovery order, omission of a QUIC-only endpoint for this TCP client, and reuse of one directory fetch across discoverAll() and resolve(). This is a real directory API output but not yet a typed HostAnnouncement/capability source or a production request-screen caller. Exact-head Android KtLint/APK/JVM/Protobuf and product CI are pending. T0126 remains blocked.\nT0126-A005 exact V 3.0.779 CI reconciliation (2026-11-01): Android KtLint, assembleDebug, testDebugUnitTest (including discoversFreshPeersInStableIdentityOrderAndExcludesPeersWithoutTcpRoute), generated Protobuf Java/Kotlin, Windows WPF build/startup/security/DPAPI, HostLifecycle unit/integration, Step Three quality gate and Rendezvous container build/smoke all passed on exact main commit ee9692a3d34543dd159f48ca4ef72e29f5981db8. Android APK artifact 13087940513 uploaded. This validates the metadata directory API and test only; T0126 remains blocked until typed host capability/status, production request UI discovery/selection/dispatch and shortage feedback are integrated.\nT0126-A006: added the real authenticated discovery-to-candidate API and six focused JVM tests. Exact-head CI is pending; the task remains blocked because the Compose request UI still has no production discovery/dispatch/feedback caller.\nT0126-A007: corrected the two KtLint chain-method line breaks identified by the exact V 3.0.781 Android workflow. The full request UI/dispatch path remains absent; T0126 stays blocked.\nThe V 3.0.782 graph guard identified a counter/history mismatch: A006 is partial (one sub-check failed), not a fully failed attempt. failed_attempt_count was reconciled to the one historical result=failed.\nT0126-A008: replaced chained Protobuf Java builders in the new JVM test helpers with the repository's existing generated Protobuf Kotlin DSL style, addressing the four test-source KtLint findings. The behavioral assertions are unchanged.\nT0126-A009: removed the single unused ModelCapability import identified by exact V 3.0.784 test-source KtLint; no test logic or production code changed.\n\nT0126-A009 exact V 3.0.785 CI reconciliation: Android production/test KtLint, assembleDebug, testDebugUnitTest, generated Protobuf Java/Kotlin, Windows WPF build/startup/security/DPAPI, HostLifecycle, Step Three quality gate and Rendezvous container smoke all passed on 82bcc0d3ea50dc8bdaa64552273c45ffb979c562. This verifies the test-import repair only; A009 remained partial because the request-screen integration was still missing.\n\nT0126-A010 (2026-11-01T15:23:27.495Z): Implemented the missing Compose-to-runtime request path using an explicit HTTPS directory URL, metadata-only peer listing, user-confirmed trust/revoke, payload validation, fresh authenticated status-based selection, no-send when no candidate is selected, bounded dispatch and correlated response collection. Added injected-gateway ViewModel tests. A010 remains partial pending exact-head CI; tests have not yet run on this revision.\n\nExact V 3.0.787 A010 CI findings: Android KtLint parser failed at RequestViewModel.kt:201:90 due to a trailing comma after the final expression in an else block; Android APK/JVM/Protobuf checks were not reached. Step Three quality gate ran 317 Python tests and seven stale source-contract assertions failed because they expected the old prepare-only preview. Graph/syntax/evidence steps were skipped. Windows WPF, HostLifecycle and Rendezvous workflows passed. Corrected Kotlin syntax and replaced the seven obsolete preview assertions with checks for explicit trust, configured direct-peer requests, no-send on zero candidates, per-attempt response handling and the continuing privacy boundary. V 3.0.788 rerun pending.\n\nExact V 3.0.788 CI: 317 Python tests, Python syntax, graph structure and output/evidence validation all passed. Android main-source KtLint passed; test-source KtLint found 14 formatting diagnostics in RequestViewModelTest.kt (import order, chain-call line wrapping and one extra blank line). APK/JVM/Protobuf checks were not reached. Windows .NET interop fixture, WPF build/startup/security/DPAPI, HostLifecycle and Rendezvous passed. The fake-gateway tests were reformatted; V 3.0.789 rerun pending.\n\nExact V 3.0.789 CI: all 317 Python tests, syntax, graph and evidence passed. Android KtLint failed import order in five production Kotlin files and chain wrapping in RequestViewModel.kt:500; Android APK/JVM/Protobuf were not reached. Windows WPF build/startup/security/DPAPI, HostLifecycle and Rendezvous passed. Imports now follow case-sensitive lexicographic order with the java/javax/kotlin group last, chain expressions wrapped, source-contract import assertion fixed, and legacy expected ViewModel status aligned with current state. V 3.0.790 rerun pending.\n\nT0126-A013 (2026-11-01T18:48:25.015Z): Exact V 3.0.795 KtLint and Android assembleDebug passed, but testDebugUnitTest failed at Robolectric class initialization: Android SDK 36 requires Java 21 while the workflow configured Java 17. The uploaded Gradle report identifies this as a JDK/SDK mismatch, not a request-flow assertion failure. Generated Android Protobuf verification was skipped. Windows WPF/security/DPAPI, HostLifecycle, Step Three quality and Rendezvous checks passed. Updated product-build.yml Android setup-java to Temurin 21; exact-head full rerun is required. T0126 remains in_progress.",
+      "notes": "The expected Shared.Networking/Windows path is not the actual consumer in this repository: candidate selection and dispatch live in the Android app, and the user-facing request state/Compose screen lives under com.whitep.client.ui.request. Implement at those real boundaries. Policy: one or two validated hosts remain usable with an exact shortage warning; zero hosts is a no-send NO_SELECTED_HOSTS outcome. The MainActivity request screen is still a prepare-only preview and has no production caller for the new runtime feedback method; therefore keep this task in_progress until live discovery/dispatch feeds the UI. Do not claim a working end-to-end user notification yet.\n\nT0126-A001 (2026-11-01): Exact V 3.0.767 CI was inspected. Android KtLint and assembleDebug passed; JVM test compilation failed because RequestViewModelTest.kt omitted the HostSelectionFeedback import, so T0126 unit assertions and generated Protobuf verification did not run. Step Three's 312 Python tests and syntax check passed, but graph_guard failed because completed T0125 evidence lacked a tests/ source path. Windows WPF, HostLifecycle and Rendezvous container smoke passed. A002 adds the missing import and records test-source evidence for T0125. T0126 remains in_progress until repaired exact-head tests pass and a real request UI caller feeds live selection feedback.\n\nT0126-A002 exact V 3.0.768 CI result (2026-11-01): Android main/test KtLint, assembleDebug, compileDebugUnitTestKotlin, testDebugUnitTest and generated Protobuf Java/Kotlin verification passed; Windows WPF build/startup/security/DPAPI and policy/capability checks passed; HostLifecycle tests passed; the Step Three quality gate passed (312 Python tests, compileall and graph/evidence guard); Rendezvous container build/HTTP smoke passed. The missing import and T0125 evidence repairs are therefore verified on exact main V 3.0.768. T0126 remains in_progress: MainActivity.requestScreen is still prepare-only, Connections still says peer discovery is unavailable, and no production caller passes complete HostAnnouncement snapshots to selection/dispatch and then records the feedback. No live underfilled-host notification is claimed.\n\nT0126-A003 (2026-11-01T13:21:18.320Z): Exact V 3.0.769 source audit confirmed the remaining production integration blocker. MainActivity.requestScreen only invokes prepareRequest; no production caller invokes selectReachableHostsWithFeedback or recordHostSelectionFeedback. RendezvousPeerDirectoryClient returns metadata-only peerId/address/expiry; PeerAnnouncementHostLifecycle publishes only inference.v1. MainWindow.GetPeerRuntimeStatusAsync sets HostStatus state and activeRequests but omits models. HostCandidateSelector requires full HostAnnouncement capabilities and a fresh HostStatus with the matching model. No fabricated snapshot was introduced; task is blocked pending a real discovery/capability producer and request-screen integration.\n\nT0126-A004 (2026-11-01): Added a live model-capability source on the Windows host. LlamaCppServerBackend verifies the configured model from /v1/models and reads its actual n_ctx from GET /props; HostInferenceSession returns that snapshot only after a fresh Ready/readiness check; MainWindow reports protocol_version and includes the model only when verified. Added HostLifecycle tests. T0126 remains blocked: Android discovery and request-screen selection/dispatch integration are still missing.\nT0126-A005 (2026-11-01): Added RendezvousPeerDirectoryClient.discoverAll() to enumerate every unexpired metadata endpoint with a direct TCP route in stable PeerId order. It shares the existing bounded 16 KiB parser/cache and fail-closed refresh; resolve() now uses the same cache-refresh helper. Added a Robolectric/JVM regression proving stable discovery order, omission of a QUIC-only endpoint for this TCP client, and reuse of one directory fetch across discoverAll() and resolve(). This is a real directory API output but not yet a typed HostAnnouncement/capability source or a production request-screen caller. Exact-head Android KtLint/APK/JVM/Protobuf and product CI are pending. T0126 remains blocked.\nT0126-A005 exact V 3.0.779 CI reconciliation (2026-11-01): Android KtLint, assembleDebug, testDebugUnitTest (including discoversFreshPeersInStableIdentityOrderAndExcludesPeersWithoutTcpRoute), generated Protobuf Java/Kotlin, Windows WPF build/startup/security/DPAPI, HostLifecycle unit/integration, Step Three quality gate and Rendezvous container build/smoke all passed on exact main commit ee9692a3d34543dd159f48ca4ef72e29f5981db8. Android APK artifact 13087940513 uploaded. This validates the metadata directory API and test only; T0126 remains blocked until typed host capability/status, production request UI discovery/selection/dispatch and shortage feedback are integrated.\nT0126-A006: added the real authenticated discovery-to-candidate API and six focused JVM tests. Exact-head CI is pending; the task remains blocked because the Compose request UI still has no production discovery/dispatch/feedback caller.\nT0126-A007: corrected the two KtLint chain-method line breaks identified by the exact V 3.0.781 Android workflow. The full request UI/dispatch path remains absent; T0126 stays blocked.\nThe V 3.0.782 graph guard identified a counter/history mismatch: A006 is partial (one sub-check failed), not a fully failed attempt. failed_attempt_count was reconciled to the one historical result=failed.\nT0126-A008: replaced chained Protobuf Java builders in the new JVM test helpers with the repository's existing generated Protobuf Kotlin DSL style, addressing the four test-source KtLint findings. The behavioral assertions are unchanged.\nT0126-A009: removed the single unused ModelCapability import identified by exact V 3.0.784 test-source KtLint; no test logic or production code changed.\n\nT0126-A009 exact V 3.0.785 CI reconciliation: Android production/test KtLint, assembleDebug, testDebugUnitTest, generated Protobuf Java/Kotlin, Windows WPF build/startup/security/DPAPI, HostLifecycle, Step Three quality gate and Rendezvous container smoke all passed on 82bcc0d3ea50dc8bdaa64552273c45ffb979c562. This verifies the test-import repair only; A009 remained partial because the request-screen integration was still missing.\n\nT0126-A010 (2026-11-01T15:23:27.495Z): Implemented the missing Compose-to-runtime request path using an explicit HTTPS directory URL, metadata-only peer listing, user-confirmed trust/revoke, payload validation, fresh authenticated status-based selection, no-send when no candidate is selected, bounded dispatch and correlated response collection. Added injected-gateway ViewModel tests. A010 remains partial pending exact-head CI; tests have not yet run on this revision.\n\nExact V 3.0.787 A010 CI findings: Android KtLint parser failed at RequestViewModel.kt:201:90 due to a trailing comma after the final expression in an else block; Android APK/JVM/Protobuf checks were not reached. Step Three quality gate ran 317 Python tests and seven stale source-contract assertions failed because they expected the old prepare-only preview. Graph/syntax/evidence steps were skipped. Windows WPF, HostLifecycle and Rendezvous workflows passed. Corrected Kotlin syntax and replaced the seven obsolete preview assertions with checks for explicit trust, configured direct-peer requests, no-send on zero candidates, per-attempt response handling and the continuing privacy boundary. V 3.0.788 rerun pending.\n\nExact V 3.0.788 CI: 317 Python tests, Python syntax, graph structure and output/evidence validation all passed. Android main-source KtLint passed; test-source KtLint found 14 formatting diagnostics in RequestViewModelTest.kt (import order, chain-call line wrapping and one extra blank line). APK/JVM/Protobuf checks were not reached. Windows .NET interop fixture, WPF build/startup/security/DPAPI, HostLifecycle and Rendezvous passed. The fake-gateway tests were reformatted; V 3.0.789 rerun pending.\n\nExact V 3.0.789 CI: all 317 Python tests, syntax, graph and evidence passed. Android KtLint failed import order in five production Kotlin files and chain wrapping in RequestViewModel.kt:500; Android APK/JVM/Protobuf were not reached. Windows WPF build/startup/security/DPAPI, HostLifecycle and Rendezvous passed. Imports now follow case-sensitive lexicographic order with the java/javax/kotlin group last, chain expressions wrapped, source-contract import assertion fixed, and legacy expected ViewModel status aligned with current state. V 3.0.790 rerun pending.\n\nT0126-A013 (2026-11-01T18:48:25.015Z): Exact V 3.0.795 KtLint and Android assembleDebug passed, but testDebugUnitTest failed at Robolectric class initialization: Android SDK 36 requires Java 21 while the workflow configured Java 17. The uploaded Gradle report identifies this as a JDK/SDK mismatch, not a request-flow assertion failure. Generated Android Protobuf verification was skipped. Windows WPF/security/DPAPI, HostLifecycle, Step Three quality and Rendezvous checks passed. Updated product-build.yml Android setup-java to Temurin 21; exact-head full rerun is required. T0126 remains in_progress.\n\nT0126-A014 (2026-11-01T18:58:39.377Z): On exact V 3.0.796, Step Three quality ran 317 Python tests; two stale static assertions still required Java 17 after CI moved to JDK 21. Updated README/ADR and static assertions, retaining Java/Kotlin bytecode target 17. Other checks: Android lint/APK, Windows WPF, HostLifecycle and Rendezvous passed; Android JVM had a separate Robolectric module-access failure recorded in A015.\n\nT0126-A015 (2026-11-01T18:58:39.377Z): Exact V 3.0.796 Android JVM ran 180 tests; 11 RequestViewModelTest cases failed through a common Robolectric FileDescriptor interceptor IllegalAccessException because java.base did not export jdk.internal.access.SharedSecrets. Added nine Java module opens recommended for Robolectric Java 17+ to the forked Android test JVM. No app source or wire contract changes; exact-head retest pending. T0126 stays in_progress.",
       "execution_summary": {
-        "attempt_count": 13,
+        "attempt_count": 15,
         "failed_attempt_count": 1,
-        "last_attempt_id": "T0126-A013-ci-java21-robolectric",
+        "last_attempt_id": "T0126-A015-robolectric-jvm-opens",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/network/RendezvousPeerDirectoryClient.kt",
@@ -27474,7 +27486,13 @@
           "tests/test_central_inference_boundary.py",
           "tests/test_claims_audit.py",
           "tests/test_decision_traceability.py",
-          ".github/workflows/product-build.yml"
+          ".github/workflows/product-build.yml",
+          "README.md",
+          "docs/decisions/ADR-0001-platform-build-baselines.md",
+          "tests/test_product_build_contract.py",
+          "tests/test_reproducible_build_contract.py",
+          "tests/test_readme_build_commands.py",
+          "src/Client.Android/app/build.gradle.kts"
         ],
         "related_commits": [
           "431d25136b0031523e4190cf3a5cb6660080112c",
@@ -27492,7 +27510,8 @@
           "30065ac8b367d2639cb5faea2363ba852e34f05a",
           "073fed66bd7c1e0e0361ab4f2fa6e074d5de402d",
           "d63bf1ba2b01a0ba29aa51cc06db6a549146ad88",
-          "1bce3002194fddc58c5c43d901ca16f3b4df232e"
+          "1bce3002194fddc58c5c43d901ca16f3b4df232e",
+          "b91a16ca0098aa3a2c94a2070667cf44d54cea37"
         ],
         "tests_passed": [
           "Exact V 3.0.768 Android main/test KtLint — PASS — https://github.com/artinrahimii/project/actions/runs/41309472601/job/124856640138",
@@ -27576,7 +27595,12 @@
           "Exact V 3.0.795 Windows WPF Release build/startup/security/DPAPI/artifact upload — PASS — https://github.com/artinrahimii/project/actions/runs/41337879854/jobs/124941456124",
           "Exact V 3.0.795 HostLifecycle unit/integration — PASS — https://github.com/artinrahimii/project/actions/runs/41337879854/jobs/124941456124",
           "Exact V 3.0.795 Step Three quality gate — PASS — https://github.com/artinrahimii/project/actions/runs/41337880021",
-          "Exact V 3.0.795 Rendezvous production container/HTTP smoke — PASS — https://github.com/artinrahimii/project/actions/runs/41337879911"
+          "Exact V 3.0.795 Rendezvous production container/HTTP smoke — PASS — https://github.com/artinrahimii/project/actions/runs/41337879911",
+          "Exact V 3.0.796 Android main/test KtLint — PASS — https://github.com/artinrahimii/project/actions/runs/41338513498/jobs/124943343889",
+          "Exact V 3.0.796 Android assembleDebug — PASS — https://github.com/artinrahimii/project/actions/runs/41338513498/jobs/124943343889",
+          "Exact V 3.0.796 Windows WPF build/startup/security/DPAPI — PASS — https://github.com/artinrahimii/project/actions/runs/41338513498/jobs/124943343904",
+          "Exact V 3.0.796 HostLifecycle — PASS — https://github.com/artinrahimii/project/actions/runs/41338513498/jobs/124943343786",
+          "Exact V 3.0.796 Rendezvous container/HTTP smoke — PASS — https://github.com/artinrahimii/project/actions/runs/41338513465"
         ],
         "tests_failed": [
           "Exact V 3.0.767 Android JVM unit-test compilation failed at RequestViewModelTest.kt:47,58,69 because HostSelectionFeedback import was missing; tests and generated Protobuf verification did not run.",
@@ -27594,7 +27618,9 @@
           "Exact V 3.0.792 Android main-source KtLint — FAIL: three multiline expressions in RequestViewModel.kt required continuation-body indentation, and the revoke-trust discoveredPeers map remained inline; assembleDebug, JVM unit tests and generated Protobuf checks were skipped — https://github.com/artinrahimii/project/actions/runs/41336799515",
           "Exact V 3.0.793 Android debug APK compile — FAIL at :app:compileDebugKotlin: MainActivity.kt:357-358 calls the @Composable appPage from connectionsScreen, which lacks the @Composable annotation. Android JVM tests and generated Protobuf Java/Kotlin checks were skipped — https://github.com/artinrahimii/project/actions/runs/41337094356",
           "Exact V 3.0.794 Android JVM test compilation — FAIL: RequestViewModelTest.kt:239:56 passes a type argument to non-generic RuntimeEnvironment.getApplication(); compileDebugUnitTestKotlin stopped before JVM tests and generated Protobuf Java/Kotlin verification was skipped — https://github.com/artinrahimii/project/actions/runs/41337446670",
-          "Exact V 3.0.795 Android testDebugUnitTest — FAIL: 170 tests reported, one class-level RequestViewModelTest initialization failure because Robolectric SDK 36 requires Java 21 but product-build.yml selected Java 17; generated Android Protobuf Java/Kotlin verification was skipped — https://github.com/artinrahimii/project/actions/runs/41337879854/jobs/124941456124"
+          "Exact V 3.0.795 Android testDebugUnitTest — FAIL: 170 tests reported, one class-level RequestViewModelTest initialization failure because Robolectric SDK 36 requires Java 21 but product-build.yml selected Java 17; generated Android Protobuf Java/Kotlin verification was skipped — https://github.com/artinrahimii/project/actions/runs/41337879854/jobs/124941456124",
+          "Exact V 3.0.796 Android testDebugUnitTest — FAIL: 180 tests executed, 11 RequestViewModelTest cases failed through Robolectric FileDescriptorInterceptor IllegalAccessException because java.base does not export jdk.internal.access.SharedSecrets — https://github.com/artinrahimii/project/actions/runs/41338513498/jobs/124943343889",
+          "Exact V 3.0.796 Step Three quality — FAIL: 317 Python tests; two stale static JDK17 assertions failed and 315 passed — https://github.com/artinrahimii/project/actions/runs/41338513476"
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -27605,9 +27631,11 @@
             "T0115 legacy framed-listener lifecycle acceptance and sequencing constraint"
           ],
           "affected_by_contract_changes": [
-            "T0126-A010 connects the production Compose request screen to configured HTTPS peer discovery, explicit trust/revocation, authenticated status-based candidate selection, bounded dispatch, no-send for zero candidates, shortage feedback and correlated responses.",
-            "T0126-A013 changes only the Android CI JDK so Robolectric for Android SDK 36 can run; it does not change application, wire or persistence contracts.",
-            "External independent-network/two-device acceptance remains separately assigned to deferred T0128 after T0230."
+            "T0126-A010 connects the production Android Compose request screen to configured HTTPS peer discovery, explicit trust/revocation, authenticated HostStatus-based candidate selection, bounded dispatch, no-send for zero candidates, shortage feedback and correlated responses.",
+            "T0126-A013 updates the Android CI runtime JDK to 21 for Robolectric with SDK36; Java/Kotlin bytecode targets stay at17.",
+            "T0126-A014 synchronizes README, ADR-0001 and static configuration tests with JDK21 while retaining bytecode target17.",
+            "T0126-A015 adds documented Robolectric JVM module opens for the forked test process only; application source and wire contracts are unchanged.",
+            "Independent-network/two-device acceptance remains separately assigned to deferred T0128 after T0230."
           ],
           "review_evidence": [
             "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
@@ -27616,7 +27644,13 @@
             "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
             "src/Client.Android/app/src/main/java/com/whitep/client/requests/RequestExecutionGateway.kt",
             "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
-            ".github/workflows/product-build.yml"
+            ".github/workflows/product-build.yml",
+            "src/Client.Android/app/build.gradle.kts",
+            "README.md",
+            "docs/decisions/ADR-0001-platform-build-baselines.md",
+            "tests/test_product_build_contract.py",
+            "tests/test_reproducible_build_contract.py",
+            "tests/test_readme_build_commands.py"
           ]
         },
         "follow_up": "Run exact V 3.0.795 Android test-source KtLint, compileDebugUnitTestKotlin/testDebugUnitTest and generated Protobuf checks; verify the new zero-host and one-host UI feedback assertions. Then reconcile all exact-head CI and keep T0126 open until all acceptance checks pass.",
@@ -28668,16 +28702,112 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Rerun the exact V 3.0.796 Android product workflow after switching setup-java to Temurin 21. Require both KtLint source sets, assembleDebug, all testDebugUnitTest cases, generated Protobuf Java/Kotlin checks, Windows WPF/HostLifecycle and Step Three quality checks to pass before marking T0126 done."
+        },
+        {
+          "attempt_id": "T0126-A014-java21-toolchain-contracts",
+          "started_at": "2026-11-01T18:58:39.377Z",
+          "ended_at": "2026-11-01T18:58:39.377Z",
+          "result": "partial",
+          "summary": "Updated CI configuration tests and toolchain documentation after Android CI moved to JDK21. V3.0.796 quality gate exposed two stale Java17 assertions; 315/317 tests passed. Application bytecode remains Java/Kotlin17.",
+          "changed_files": [
+            "README.md",
+            "docs/decisions/ADR-0001-platform-build-baselines.md",
+            "tests/test_product_build_contract.py",
+            "tests/test_reproducible_build_contract.py",
+            "tests/test_readme_build_commands.py"
+          ],
+          "related_commits": [
+            "b91a16ca0098aa3a2c94a2070667cf44d54cea37"
+          ],
+          "tests": [
+            {
+              "command": "V3.0.796 Step Three Python tests",
+              "result": "failed",
+              "summary": "317 tests ran; two static assertions still pinned JDK17 in product-build and reproducible-build contract tests; 315 others passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41338513476"
+            },
+            {
+              "command": "V3.0.796 Android KtLint/APK",
+              "result": "passed",
+              "summary": "Both Android source sets and assembleDebug passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41338513498/jobs/124943343889"
+            },
+            {
+              "command": "V3.0.796 Windows WPF/HostLifecycle",
+              "result": "passed",
+              "summary": "Windows product and lifecycle jobs passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41338513498"
+            },
+            {
+              "command": "V3.0.796 Rendezvous",
+              "result": "passed",
+              "summary": "Production container and HTTP smoke passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41338513465"
+            }
+          ],
+          "failure_details": "Two static configuration tests expected JDK17 after CI changed to21; 315/317 passed.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Synchronize tests and docs; rerun exact-head quality."
+        },
+        {
+          "attempt_id": "T0126-A015-robolectric-jvm-opens",
+          "started_at": "2026-11-01T18:58:39.377Z",
+          "ended_at": "2026-11-01T18:58:39.377Z",
+          "result": "partial",
+          "summary": "Robolectric on Java21/Android36 executed 180 tests; 11 RequestViewModelTest methods hit a shared FileDescriptorInterceptor IllegalAccessException because java.base did not open jdk.internal.access. Added documented Java17+ --add-opens flags to unit-test JVM; exact rerun pending.",
+          "changed_files": [
+            "src/Client.Android/app/build.gradle.kts",
+            "tests/test_product_build_contract.py",
+            "step three/T0126/execution-report.md",
+            "step three/T0126/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "related_commits": [
+            "b91a16ca0098aa3a2c94a2070667cf44d54cea37"
+          ],
+          "tests": [
+            {
+              "command": "V3.0.796 Android KtLint",
+              "result": "passed",
+              "summary": "Production and test source sets passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41338513498/jobs/124943343889"
+            },
+            {
+              "command": "V3.0.796 Android assembleDebug",
+              "result": "passed",
+              "summary": "Debug APK built.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41338513498/jobs/124943343889"
+            },
+            {
+              "command": "V3.0.796 Android JVM tests",
+              "result": "failed",
+              "summary": "180 tests executed; 11 failed through common Robolectric FileDescriptor interceptor IllegalAccessException; java.base did not export jdk.internal.access.SharedSecrets.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41338513498/jobs/124943343889"
+            },
+            {
+              "command": "V3.0.796 generated Protobuf Java/Kotlin",
+              "result": "not_run",
+              "summary": "Skipped because JVM tests failed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41338513498/jobs/124943343889"
+            }
+          ],
+          "failure_details": "Robolectric 4.17 module access configuration was incomplete. Official setup documents --add-opens flags for Java17+.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Run exact V3.0.797 Android KtLint, APK, JVM and generated Protobuf checks."
         }
       ],
       "blocked_reason": null,
       "updated_at": "2026-11-01T15:23:27.495Z",
       "tests_pending": [
-        "Exact-head Android testDebugUnitTest under Java 21, including the zero-host no-send, one/two-host shortage, explicit-trust and correlated-response ViewModel tests.",
-        "Generated Android Protobuf Java/Kotlin source verification, which is ordered after and was skipped by the failing Java 17 Robolectric step on V 3.0.795.",
-        "Final exact-head end-to-end product and quality workflow reconciliation; independent public-network/two-device acceptance remains T0128."
+        "Exact-head JDK21 Android KtLint, assembleDebug, full testDebugUnitTest after Robolectric module opens, and generated Protobuf Java/Kotlin checks.",
+        "Exact-head Step Three Python suite, syntax, graph structure and recorded output/evidence checks after JDK21 assertion updates.",
+        "Final exact-head WPF/HostLifecycle/Rendezvous gates; independent-network and two-device Android-to-Windows acceptance remains deferred T0128."
       ],
-      "follow_up": "Verify exact V 3.0.796 CI after the Java 21 correction. Do not mark T0126 done until Android JVM tests and generated Protobuf checks pass. Keep independent-network/two-device acceptance in deferred T0128."
+      "follow_up": "Verify exact V3.0.797 quality and product workflows. Require Android JVM tests and generated Protobuf Java/Kotlin verification to pass after JDK21 module opens, plus full Python/graph/evidence checks. Keep T0126 in_progress until then."
     },
     {
       "id": "T0127",
@@ -60496,7 +60626,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-11-01T18:48:25.015Z",
+  "updated_at": "2026-11-01T18:58:39.377Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

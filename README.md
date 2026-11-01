@@ -43,7 +43,7 @@ White-P با هدف ساخت دو برنامه طراحی می‌شود: یک م
 ## تصمیم‌های نسخه و ابزار ساخت
 
 - مبنای میزبان ویندوز: .NET SDK نسخهٔ `10.0.100` با `global.json` و هدف `net10.0-windows` همراه WPF.
-- مبنای Android: JDK 17، Gradle 8.13 در CI، `compileSdk/targetSdk = 36` و `minSdk = 26`.
+- مبنای Android: JDK 21 برای اجرای Gradle و Robolectric روی Android SDK 36؛ Gradle 8.13 در CI، `compileSdk/targetSdk = 36` و `minSdk = 26`. هدف bytecode جاوا و Kotlin همچنان 17 است.
 - دلیل و محدودیت این انتخاب‌ها در [ADR-0001 — Platform build baselines](docs/decisions/ADR-0001-platform-build-baselines.md) ثبت شده است.
 - فهرست تصمیم‌های فناوری و پیوند هر تصمیم به کد/آزمون متناظر در [دفتر تصمیم‌ها](docs/decisions/README.md) قرار دارد.
 - تصمیم انتخاب backend استنتاج محلی و اتصال آن به رابط میزبان در [ADR-0003 — Local inference backend](docs/decisions/ADR-0003-local-inference-backend.md) ثبت شده است.
@@ -66,7 +66,7 @@ White-P با هدف ساخت دو برنامه طراحی می‌شود: یک م
 ### پیش‌نیازهای ابزار
 
 - **Windows host:** Windows، .NET SDK نسخهٔ پایهٔ `10.0.100` با سیاست `latestFeature` در `global.json`. پروژهٔ میزبان WPF روی `.NET 10` ساخته می‌شود.
-- **Android client:** JDK 17، Gradle 8.13، Android SDK platform 36، build-tools 36.0.0 و platform-tools؛ متغیرهای `ANDROID_HOME` و `ANDROID_SDK_ROOT` باید به مسیر SDK اشاره کنند.
+- **Android client:** JDK 21 برای اجرای build و آزمون‌ها، Gradle 8.13، Android SDK platform 36، build-tools 36.0.0 و platform-tools؛ متغیرهای `ANDROID_HOME` و `ANDROID_SDK_ROOT` باید به مسیر SDK اشاره کنند. این تغییر JDK به معنی تغییر هدف bytecode نیست؛ Java `sourceCompatibility/targetCompatibility` و Kotlin `jvmTarget` همچنان 17 هستند.
 - **Repository checks:** Python 3.13 برای تطبیق با workflow کنترل کیفیت.
 - این مخزن در حال حاضر Gradle Wrapper (`gradlew`) ندارد؛ Gradle 8.13 باید جداگانه نصب یا از محیطی مشابه workflow CI فراهم شود.
 

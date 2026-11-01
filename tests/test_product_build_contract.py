@@ -40,7 +40,24 @@ class ProductBuildContractTests(unittest.TestCase):
         self.assertIn('id("org.jetbrains.kotlin.plugin.compose") version "2.2.20" apply false', root_build)
         self.assertIn('id("com.google.protobuf") version "0.10.0" apply false', root_build)
         self.assertIn("gradle-version: '8.13'", workflow)
-        self.assertIn("java-version: '17'", workflow)
+        self.assertIn("java-version: '21'", workflow)
+        android_app = (ROOT / "src/Client.Android/app/build.gradle.kts").read_text(encoding="utf-8")
+        self.assertIn("JavaVersion.VERSION_17", android_app)
+        self.assertIn('jvmTarget = "17"', android_app)
+        required_robolectric_jvm_opens = (
+            "--add-opens=java.base/java.lang=ALL-UNNAMED",
+            "--add-opens=java.base/java.util=ALL-UNNAMED",
+            "--add-opens=java.base/java.io=ALL-UNNAMED",
+            "--add-opens=java.base/java.net=ALL-UNNAMED",
+            "--add-opens=java.base/java.security=ALL-UNNAMED",
+            "--add-opens=java.base/java.text=ALL-UNNAMED",
+            "--add-opens=java.base/jdk.internal.access=ALL-UNNAMED",
+            "--add-opens=java.desktop/java.awt.font=ALL-UNNAMED",
+            "--add-opens=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED",
+        )
+        for argument in required_robolectric_jvm_opens:
+            with self.subTest(argument=argument):
+                self.assertIn(argument, android_app)
         self.assertEqual(json.loads((ROOT / "global.json").read_text(encoding="utf-8"))["sdk"]["version"], "10.0.100")
     def test_csharp_and_kotlin_formatters_are_wired_into_product_ci(self):
         editorconfig = (ROOT / ".editorconfig").read_text(encoding="utf-8")

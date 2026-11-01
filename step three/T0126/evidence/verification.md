@@ -246,3 +246,18 @@ The live acceptance gap remains: `MainActivity.requestScreen` is prepare-only, a
 - Windows WPF, HostLifecycle, Step Three quality gate and Rendezvous container/HTTP smoke — PASS.
 - Exact evidence: product run 41337879854, Android job 124941456124, test-report artifact 13095829017.
 - Corrective CI change: use Temurin Java 21 for the Android job in `.github/workflows/product-build.yml`. Exact-head rerun remains required; T0126 is still `in_progress`.
+
+
+## Exact V 3.0.796 / T0126-A014 — Java 21 baseline consistency
+
+- Step Three quality run 41338513476: 317 Python tests; two failed because static contract assertions still required Java 17 in `test_product_build_contract.py` and `test_reproducible_build_contract.py`. The other 315 tests passed.
+- Product run 41338513498: Android KtLint and debug APK passed; Windows WPF and HostLifecycle passed. Rendezvous run 41338513465 passed.
+- Updated README and ADR-0001 to use JDK 21 for Gradle/Robolectric under Android SDK 36; Java/Kotlin application bytecode stays at 17. Updated corresponding static configuration tests.
+
+## Exact V 3.0.796 / T0126-A015 — Robolectric module access
+
+- Android KtLint — PASS. Android debug APK — PASS.
+- Android JVM: 180 tests completed, 11 failed with a common Robolectric FileDescriptor interceptor exception. The decisive cause is `IllegalAccessException`: `java.base` does not export `jdk.internal.access` to Robolectric's unnamed module, preventing access to `jdk.internal.access.SharedSecrets`.
+- JDK was Temurin 21.0.13; Android platform SDK 36; Robolectric 4.17. Test-report artifact [13096810722](https://github.com/artinrahimii/project/actions/runs/41338513498/artifacts/13096810722), failing job [124943343889](https://github.com/artinrahimii/project/actions/runs/41338513498/jobs/124943343889).
+- Generated Protobuf Java/Kotlin checks were skipped after the failing JVM task. Windows WPF, HostLifecycle and Rendezvous passed.
+- Added nine Robolectric-documented `--add-opens` flags to the forked Android unit-test JVM. This is test-runtime configuration only; it does not alter application APIs or bytecode targets. Exact-head rerun pending.

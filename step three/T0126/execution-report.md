@@ -296,3 +296,20 @@ The exact V 3.0.768 Android/Windows/HostLifecycle/Step Three/Rendezvous workflow
 - **Correction:** `.github/workflows/product-build.yml` configured Temurin Java 17 for the Android job while installing Android platform 36. Updated that job to Temurin Java 21, which meets Robolectric's explicit SDK 36 runtime requirement. No production application code or protocol contract was changed by this correction.
 - **Evidence:** product workflow [run 41337879854](https://github.com/artinrahimii/project/actions/runs/41337879854); Android job [124941456124](https://github.com/artinrahimii/project/actions/runs/41337879854/jobs/124941456124); uploaded test report [artifact 13095829017](https://github.com/artinrahimii/project/actions/runs/41337879854/artifacts/13095829017); quality [run 41337880021](https://github.com/artinrahimii/project/actions/runs/41337880021); Rendezvous [run 41337879911](https://github.com/artinrahimii/project/actions/runs/41337879911).
 - **Result:** partial. T0126 remains `in_progress`; rerun the exact-head Android KtLint, APK, complete JVM suite and generated Protobuf Java/Kotlin checks on the corrected Java 21 workflow before considering acceptance.
+
+
+## T0126-A014 — synchronize the Java 21 CI toolchain contracts
+
+- Exact tested commit: `b91a16ca0098aa3a2c94a2070667cf44d54cea37` (`V 3.0.796`).
+- Step Three quality run 41338513476 executed 317 Python tests and failed two stale Java 17 assertions in `tests/test_product_build_contract.py` and `tests/test_reproducible_build_contract.py`; the other 315 tests passed. Product CI passed Android KtLint, Android `assembleDebug`, Windows WPF build/startup/security/DPAPI, HostLifecycle and Rendezvous smoke.
+- Updated README prerequisites, ADR-0001, two CI toolchain assertions and the README build-contract test to specify JDK 21 for Gradle/Robolectric with Android SDK 36. Java source/target compatibility and Kotlin `jvmTarget` remain 17. This changes the build/test runtime, not the application bytecode baseline.
+- Result: partial; exact-head Step Three rerun required.
+
+## T0126-A015 — configure Robolectric Java module access for Android SDK 36
+
+- Exact tested commit: `b91a16ca0098aa3a2c94a2070667cf44d54cea37` (`V 3.0.796`), product run 41338513498, Android job 124943343889.
+- Android main/test KtLint — PASS; debug APK `assembleDebug` — PASS. Under Temurin Java 21 the JVM task executed 180 tests, with 11 failures in `RequestViewModelTest`; the report shows a shared Robolectric FileDescriptor interceptor failure because `java.base` does not export `jdk.internal.access.SharedSecrets` to the test JVM. This is a Java module-access setup failure; the request-flow assertions were not established as failing on their merits.
+- Generated Protobuf Java/Kotlin verification was skipped because the JVM task failed. Windows WPF build/startup/security/DPAPI, HostLifecycle and Rendezvous smoke passed. The Step Three run had the two stale JDK17 assertions recorded under A014.
+- Added Robolectric's documented Java 17+ `--add-opens` JVM arguments to Android `unitTests.all`, including `java.base/jdk.internal.access`, while keeping JDK 21 and Java/Kotlin target 17. Static tests check all nine module opens.
+- Result: partial. T0126 remains `in_progress`; the complete JVM suite and generated Protobuf Java/Kotlin checks must pass on the next exact-head commit.
+- Reference: [Robolectric Java 17+ setup](https://robolectric.org/getting-started/).

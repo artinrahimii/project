@@ -30,7 +30,8 @@ class ReproducibleBuildContractTests(unittest.TestCase):
         command = "gradle --no-daemon assembleDebug"
         self.assertIn(command, README)
         self.assertIn(command, PRODUCT)
-        self.assertIn("java-version: '17'", PRODUCT)
+        self.assertIn("java-version: '21'", PRODUCT)
+        self.assertIn("JDK 21", README)
         self.assertIn("gradle-version: '8.13'", PRODUCT)
         self.assertIn('"platforms;android-36"', PRODUCT)
         self.assertIn('"build-tools;36.0.0"', PRODUCT)

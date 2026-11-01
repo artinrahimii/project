@@ -43,7 +43,7 @@ class ReadmeBuildCommandTests(unittest.TestCase):
         android = (ROOT / "src/Client.Android/app/build.gradle.kts").read_text(encoding="utf-8")
         self.assertIn("compileSdk = 36", android)
         self.assertIn("minSdk = 26", android)
-        self.assertIn("JDK 17", README)
+        self.assertIn("JDK 21", README)
         self.assertIn("Gradle 8.13", README)
 
 

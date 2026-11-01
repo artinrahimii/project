@@ -15,7 +15,9 @@
 
 ### Android client
 
-- Use JDK 17 and Gradle 8.13 in CI.
+- Use JDK 21 (Temurin in CI) to run Gradle 8.13 and Robolectric with Android SDK 36.
+- Keep Java `sourceCompatibility`/`targetCompatibility` and Kotlin `jvmTarget` at 17, as declared in `src/Client.Android/app/build.gradle.kts`; the runtime JDK used by Gradle does not raise the application's bytecode target.
+- Configure the forked Android unit-test JVM with Robolectric's documented `--add-opens` flags for Java 17+ so Android's file-descriptor internals remain accessible under the module system.
 - Set `compileSdk = 36`, `targetSdk = 36`, and `minSdk = 26` in `src/Client.Android/app/build.gradle.kts`.
 - Install Android platform 36, build-tools 36.0.0, and platform-tools explicitly in the product-build workflow before invoking `gradle --no-daemon assembleDebug`.
 
