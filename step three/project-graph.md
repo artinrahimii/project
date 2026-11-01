@@ -27742,8 +27742,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0126 و T0115 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال انجام",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "src/Client.Android/app/src/test/java/com/whitep/client/network/RendezvousPeerDirectoryClientTest.kt",
         "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt",
@@ -27758,29 +27758,37 @@
         "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt",
         "step three/T0127/evidence/verification.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0127-A001 (2026-11-01): Added Android regression cases for duplicate directory PeerIds, cache expiry followed by a network interruption (fail closed without returning the cached route), and all authenticated peer status probes failing followed by NO_SELECTED_HOSTS/no inference send. Existing expired-announcement, duplicate selector/dispatcher and empty-host coverage remains. Both incoming edges were reviewed as sequencing_only and validated; original blocks labels and order remain. Exact-head CI pending; do not mark done before Android JVM/build and graph quality checks pass.\nT0127-A002 (2026-11-01): Exact V 3.0.773 CI Step Three quality, HostLifecycle and Rendezvous container checks passed; Android KtLint failed nine formatting findings in the new test files, so APK, JVM tests and generated Protobuf verification were skipped. The failure is preserved in execution_history. T0127-A003 applies formatting-only corrections; exact CI pending.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0127-A001 (2026-11-01): Added Android regression cases for duplicate directory PeerIds, cache expiry followed by a network interruption (fail closed without returning the cached route), and all authenticated peer status probes failing followed by NO_SELECTED_HOSTS/no inference send. Existing expired-announcement, duplicate selector/dispatcher and empty-host coverage remains. Both incoming edges were reviewed as sequencing_only and validated; original blocks labels and order remain. Exact-head CI pending; do not mark done before Android JVM/build and graph quality checks pass.\nT0127-A002 (2026-11-01): Exact V 3.0.773 CI Step Three quality, HostLifecycle and Rendezvous container checks passed; Android KtLint failed nine formatting findings in the new test files, so APK, JVM tests and generated Protobuf verification were skipped. The failure is preserved in execution_history. T0127-A003 applies formatting-only corrections; exact CI pending.\nT0127-A004 (2026-11-01): Exact V 3.0.774 CI passed Android KtLint, assembleDebug, testDebugUnitTest (171 tests; 0 failures; 0 ignored), generated Protobuf Java/Kotlin, Windows WPF, HostLifecycle, Step Three quality and Rendezvous container smoke. The JUnit HTML artifact explicitly records all three new T0127 tests as passed. T0127 is done. The V 3.0.773 lint failure remains in attempt history and failed_attempt_count=1.",
       "execution_summary": {
-        "attempt_count": 3,
+        "attempt_count": 4,
         "failed_attempt_count": 1,
-        "last_attempt_id": "T0127-A003-ktlint-correction",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "T0127-A004-exact-V3.0.774-CI-acceptance",
+        "last_attempt_result": "succeeded",
         "changed_files": [
-          "src/Client.Android/app/src/test/java/com/whitep/client/network/RendezvousPeerDirectoryClientTest.kt",
-          "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt",
           "step three/T0127/execution-report.md",
           "step three/T0127/evidence/verification.md",
           "step three/project-graph.md"
         ],
         "related_commits": [
-          "0642a754745de9082d5f6c0c24835975227a5942"
+          "0642a754745de9082d5f6c0c24835975227a5942",
+          "98560c02287a028f6e8eb867e5cf0c058b7a12c1"
         ],
         "tests_passed": [
-          "Exact V 3.0.773 HostLifecycle unit/integration — PASS (run 41313567864).",
-          "Exact V 3.0.773 Step Three quality gate — PASS (run 41313567881).",
-          "Exact V 3.0.773 Rendezvous container build and smoke — PASS (run 41313567782)."
+          "Android KtLint — PASS — https://github.com/artinrahimii/project/actions/runs/41313804544 (Exact V 3.0.774 test-source formatting and Kotlin lint passed.)",
+          "Android assembleDebug — PASS — https://github.com/artinrahimii/project/actions/runs/41313804544 (Exact V 3.0.774 debug APK build passed; artifact 13086661382 was uploaded.)",
+          "Android testDebugUnitTest — PASS — https://github.com/artinrahimii/project/actions/runs/41313804544 (JUnit report: 171 tests, 0 failures, 0 ignored, 38.113 seconds; report artifact 13086322646.)",
+          "RendezvousPeerDirectoryClientTest.rejectsDuplicatePeerIdsInOneDirectorySnapshot — PASS — https://github.com/artinrahimii/project/actions/runs/41313804544 (The duplicate PeerId directory snapshot was rejected.)",
+          "RendezvousPeerDirectoryClientTest.doesNotReturnCachedPeerWhenNetworkFailsAfterDirectoryCacheExpiry — PASS — https://github.com/artinrahimii/project/actions/runs/41313804544 (After cache TTL expired, a simulated refresh network interruption propagated and the stale route was not returned.)",
+          "InferenceAttemptDispatcherTest.sendsNothingWhenEveryDiscoveredPeerDisconnectsBeforeAuthenticatedStatusProbe — PASS — https://github.com/artinrahimii/project/actions/runs/41313804544 (All peer status probes failed, selected candidate list was empty, dispatch returned NO_SELECTED_HOSTS and the transport submitted no inference requests.)",
+          "Existing expired announcement, duplicate selector/dispatcher and empty-host no-send tests — PASS — https://github.com/artinrahimii/project/actions/runs/41313804544 (All related pre-existing regressions remained green in the same 171-test JVM suite.)",
+          "Generated Protobuf Java and Kotlin verification — PASS — https://github.com/artinrahimii/project/actions/runs/41313804544 (Generated Java/Kotlin source verification completed successfully.)",
+          "Windows WPF host build/startup/security — PASS — https://github.com/artinrahimii/project/actions/runs/41313804544 (The Windows WPF job completed successfully.)",
+          "HostLifecycle unit and integration tests — PASS — https://github.com/artinrahimii/project/actions/runs/41313804544 (The full HostLifecycle unit/integration job completed successfully.)",
+          "Step Three quality gate — PASS — https://github.com/artinrahimii/project/actions/runs/41313804501 (Graph, evidence and repository quality gate passed.)",
+          "Rendezvous container build and HTTP smoke — PASS — https://github.com/artinrahimii/project/actions/runs/41313804672 (Production container build and HTTP smoke passed.)"
         ],
         "tests_failed": [
-          "Exact V 3.0.773 Android ktlintTestSourceSetCheck — failed due to formatting; APK/JVM/Protobuf verification skipped."
+          "Exact V 3.0.773 Android ktlintTestSourceSetCheck failed nine formatting findings in the two new test files; Android APK/JVM/Protobuf steps were skipped on that attempt. Formatting was corrected in V 3.0.774, where the complete Android suite passed."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -27917,6 +27925,98 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Run exact V 3.0.774 product CI. If Android lint, APK/JVM/Protobuf and Step Three quality all pass, mark T0127 done in the next update."
+        },
+        {
+          "attempt_id": "T0127-A004-exact-V3.0.774-CI-acceptance",
+          "started_at": "2026-11-01T14:03:50.247Z",
+          "ended_at": "2026-11-01T14:03:50.247Z",
+          "result": "succeeded",
+          "summary": "Exact V 3.0.774 CI passed Kotlin formatting, Android debug APK build, all 171 Android JVM tests (0 failures, 0 ignored), generated Protobuf Java/Kotlin verification, Windows WPF build, HostLifecycle tests, Step Three quality and Rendezvous container smoke. All three T0127 regression tests are explicitly present and passing in the JUnit report. The earlier V 3.0.773 lint failure remains preserved as a failed attempt.",
+          "changed_files": [
+            "step three/T0127/execution-report.md",
+            "step three/T0127/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": "98560c02287a028f6e8eb867e5cf0c058b7a12c1",
+          "tests": [
+            {
+              "name": "Android KtLint",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41313804544",
+              "summary": "Exact V 3.0.774 test-source formatting and Kotlin lint passed."
+            },
+            {
+              "name": "Android assembleDebug",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41313804544",
+              "summary": "Exact V 3.0.774 debug APK build passed; artifact 13086661382 was uploaded."
+            },
+            {
+              "name": "Android testDebugUnitTest",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41313804544",
+              "summary": "JUnit report: 171 tests, 0 failures, 0 ignored, 38.113 seconds; report artifact 13086322646."
+            },
+            {
+              "name": "RendezvousPeerDirectoryClientTest.rejectsDuplicatePeerIdsInOneDirectorySnapshot",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41313804544",
+              "summary": "The duplicate PeerId directory snapshot was rejected."
+            },
+            {
+              "name": "RendezvousPeerDirectoryClientTest.doesNotReturnCachedPeerWhenNetworkFailsAfterDirectoryCacheExpiry",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41313804544",
+              "summary": "After cache TTL expired, a simulated refresh network interruption propagated and the stale route was not returned."
+            },
+            {
+              "name": "InferenceAttemptDispatcherTest.sendsNothingWhenEveryDiscoveredPeerDisconnectsBeforeAuthenticatedStatusProbe",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41313804544",
+              "summary": "All peer status probes failed, selected candidate list was empty, dispatch returned NO_SELECTED_HOSTS and the transport submitted no inference requests."
+            },
+            {
+              "name": "Existing expired announcement, duplicate selector/dispatcher and empty-host no-send tests",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41313804544",
+              "summary": "All related pre-existing regressions remained green in the same 171-test JVM suite."
+            },
+            {
+              "name": "Generated Protobuf Java and Kotlin verification",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41313804544",
+              "summary": "Generated Java/Kotlin source verification completed successfully."
+            },
+            {
+              "name": "Windows WPF host build/startup/security",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41313804544",
+              "summary": "The Windows WPF job completed successfully."
+            },
+            {
+              "name": "HostLifecycle unit and integration tests",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41313804544",
+              "summary": "The full HostLifecycle unit/integration job completed successfully."
+            },
+            {
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41313804501",
+              "summary": "Graph, evidence and repository quality gate passed."
+            },
+            {
+              "name": "Rendezvous container build and HTTP smoke",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41313804672",
+              "summary": "Production container build and HTTP smoke passed."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "T0127 is complete. Continue at the next graph-ordered task only after checking its prerequisites: T0175 is downstream of blocked T0174; resume the live Android discovery/request integration needed to unblock T0126 and T0174 before claiming the next UI task ready."
         }
       ]
     },
@@ -59244,7 +59344,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-11-01T13:57:14.554Z",
+  "updated_at": "2026-11-01T14:03:50.247Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

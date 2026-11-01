@@ -31,3 +31,18 @@
 
 ## Correction
 The follow-up corrects only KtLint-reported whitespace and multiline initializer/constructor layout. The three new test assertions remain unchanged. Exact V 3.0.774 CI is pending.
+
+
+## Exact V 3.0.774 acceptance evidence
+- Android product workflow: https://github.com/artinrahimii/project/actions/runs/41313804544 — PASS; all three product jobs completed successfully.
+- Step Three quality: https://github.com/artinrahimii/project/actions/runs/41313804501 — PASS.
+- Rendezvous container: https://github.com/artinrahimii/project/actions/runs/41313804672 — PASS.
+- Android JUnit artifact ID: `13086322646`; 171 tests, 0 failures, 0 ignored, 38.113 seconds.
+- Android APK artifact ID: `13086661382`.
+- Exact added tests:
+  - `rejectsDuplicatePeerIdsInOneDirectorySnapshot` — passed.
+  - `doesNotReturnCachedPeerWhenNetworkFailsAfterDirectoryCacheExpiry` — passed.
+  - `sendsNothingWhenEveryDiscoveredPeerDisconnectsBeforeAuthenticatedStatusProbe` — passed.
+- Android KtLint, debug APK, testDebugUnitTest and generated Protobuf Java/Kotlin verification all passed.
+- Windows WPF build and HostLifecycle unit/integration jobs passed.
+- T0127 state: `done`. Historical V 3.0.773 KtLint failure remains recorded as attempt A002; V 3.0.774 exact CI is attempt A004 and succeeded.

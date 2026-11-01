@@ -41,3 +41,25 @@ Inspect exact-head workflow results. If all relevant Android JVM/build and Step 
 - Rendezvous container build and HTTP smoke passed: [41313567782](https://github.com/artinrahimii/project/actions/runs/41313567782).
 - Android KtLint failed nine style findings in the two new test files: extra blank lines, multiline initializer layout and constructor parameter layout. APK, JVM tests and generated Protobuf verification were skipped; no Android test assertion is claimed as passed.
 - T0127-A003 removes only the reported whitespace/line-layout violations. Test behavior is unchanged; exact V 3.0.774 CI is pending.
+
+
+## T0127-A004 — exact V 3.0.774 acceptance and completion
+
+- **Exact tested main commit:** `98560c02287a028f6e8eb867e5cf0c058b7a12c1` (`V 3.0.774`).
+- **Android KtLint:** PASS — test-source formatting/lint succeeded.
+- **Android debug APK:** PASS — `assembleDebug` succeeded and APK artifact `13086661382` was uploaded.
+- **Android JVM acceptance:** PASS — `testDebugUnitTest` succeeded. The JUnit HTML report records **171 tests, 0 failures, 0 ignored, 38.113 seconds**; artifact `13086322646`.
+- **New test evidence:** all three added test methods are individually listed as passed in that exact JUnit artifact:
+  - `RendezvousPeerDirectoryClientTest.rejectsDuplicatePeerIdsInOneDirectorySnapshot`
+  - `RendezvousPeerDirectoryClientTest.doesNotReturnCachedPeerWhenNetworkFailsAfterDirectoryCacheExpiry`
+  - `InferenceAttemptDispatcherTest.sendsNothingWhenEveryDiscoveredPeerDisconnectsBeforeAuthenticatedStatusProbe`
+- **Existing regressions:** expired announcement, duplicate selector/dispatcher identity and empty-host no-send cases also passed within the same JVM report.
+- **Generated Protobuf Java/Kotlin verification:** PASS.
+- **Windows WPF and HostLifecycle:** both jobs passed in [product workflow 41313804544](https://github.com/artinrahimii/project/actions/runs/41313804544).
+- **Step Three quality gate:** PASS — [41313804501](https://github.com/artinrahimii/project/actions/runs/41313804501).
+- **Rendezvous container build and HTTP smoke:** PASS — [41313804672](https://github.com/artinrahimii/project/actions/runs/41313804672).
+- **Outcome:** T0127 is now `done`, supported by exact-commit source, test report and workflow evidence. The failed V 3.0.773 lint attempt remains preserved; it is counted as one failed attempt, not hidden or overwritten.
+
+## Next dependency-aware work
+
+The next task in the graph order is T0175, but it depends on T0174, which remains blocked by the missing live Android discovery/dispatch/UI integration. T0126 also remains blocked on that production flow. Resume that integration and revalidate those blockers before starting downstream UI tasks.
