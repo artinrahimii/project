@@ -18,15 +18,6 @@ import io.libp2p.etc.SimpleClientHandler
 import io.libp2p.etc.createSimpleBinding
 import io.netty.buffer.ByteBuf
 import io.netty.buffer.Unpooled
-import java.io.File
-import java.net.ServerSocket
-import java.time.Duration
-import java.time.Instant
-import java.util.Arrays
-import java.util.UUID
-import java.util.concurrent.CompletableFuture
-import java.util.concurrent.ConcurrentLinkedQueue
-import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
@@ -49,6 +40,15 @@ import org.whitep.shared.contracts.v1.hostAnnouncement
 import org.whitep.shared.contracts.v1.hostCapabilities
 import org.whitep.shared.contracts.v1.hostStatus
 import org.whitep.shared.contracts.v1.modelCapability
+import java.io.File
+import java.net.ServerSocket
+import java.time.Duration
+import java.time.Instant
+import java.util.Arrays
+import java.util.UUID
+import java.util.concurrent.CompletableFuture
+import java.util.concurrent.ConcurrentLinkedQueue
+import java.util.concurrent.TimeUnit
 
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [35])

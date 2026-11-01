@@ -65,3 +65,12 @@ The current `MainActivity.requestScreen` is a preparation-only preview and expli
 - Android APK/JVM/Protobuf validation was skipped because main-source-set KtLint failed first.
 - T0174-A007 adjusts exactly these expression layouts without changing cancellation behavior. The new exact-head Android workflow must still confirm formatting, build, JVM regressions and generated-source checks.
 - On exact V 3.0.733, Step Three quality, Windows WPF build/startup/security and HostLifecycle integration passed: [quality](https://github.com/artinrahimii/project/actions/runs/41271856045), [Windows](https://github.com/artinrahimii/project/actions/runs/41271856082/job/124746076851), [HostLifecycle](https://github.com/artinrahimii/project/actions/runs/41271856082/job/124746076793).
+
+
+## Final import-order correction (append-only)
+
+- Exact V 3.0.734 Android job: [124746942803](https://github.com/artinrahimii/project/actions/runs/41272151054/job/124746942803).
+- Production Kotlin KtLint passed. Test-source-set KtLint failed one import-order check because the `java.*` block was placed before `org.whitep.shared.contracts.v1.hostAnnouncement/hostCapabilities/hostStatus/modelCapability`.
+- T0174-A009 moves `java.*` after all `org.whitep` imports, keeps imports contiguous and leaves the cancellation generated import alphabetically placed.
+- No runtime changes were made by this formatting correction.
+- Step Three, Windows WPF, and HostLifecycle checks succeeded on exact V 3.0.734; Android APK/JVM was skipped at KtLint and remains unverified.

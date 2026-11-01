@@ -44749,9 +44749,9 @@
       ],
       "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0174-A001 (2026-11-01): Added bounded CancelRequest parsing/validation with an explicit user_cancelled reason; Android authenticated-stream cancellation for each queued attempt and per-attempt results; Windows bounded concurrent request handling so the receive loop can accept a cancellation frame and signal only the matching (requestId, attemptId) token; correlated deadline-bounded CANCELLED response; Android two-peer transport test; Windows trusted-loopback end-to-end cancellation test; protocol negative tests. The existing Android request screen remains preparation-only and has no live dispatch/discovery state, so no fake Cancel button was added. Keep in_progress pending exact-head CI and later real UI wiring.\nT0174-A002 (2026-11-01): Exact-head V 3.0.732 Step Three quality gate failed one obsolete source-contract assertion expecting the former inline _requestHandler(requestWire, cancellationToken) call. The production implementation had deliberately moved handler execution to ProcessRequestAndRespondAsync to keep the receive loop available for CancelRequest. T0174-A003 updates the Python source guard to assert concurrent handler dispatch, exact request/attempt cancellation lookup, bounded parser and allowlisted reason. Product build and real-inference workflow for V 3.0.732 were still running when this correction was recorded.",
       "execution_summary": {
-        "attempt_count": 7,
-        "failed_attempt_count": 3,
-        "last_attempt_id": "T0174-A007",
+        "attempt_count": 9,
+        "failed_attempt_count": 4,
+        "last_attempt_id": "T0174-A009",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Host.Infrastructure/ProtocolMessageParser.cs",
@@ -44769,7 +44769,8 @@
         ],
         "related_commits": [
           "657f0ef5669b63991ed708ed92e125f171616ca3",
-          "d334a5f509994f08ef54da077bce14f0a66b978c"
+          "d334a5f509994f08ef54da077bce14f0a66b978c",
+          "9ca3cafca1c3c93ae9319b70956d0cb3ee55005f"
         ],
         "tests_passed": [
           "Windows WPF Release build/startup/security checks — PASS on exact V 3.0.732: https://github.com/artinrahimii/project/actions/runs/41271523252/job/124745099788",
@@ -44777,12 +44778,16 @@
           "Real local llama.cpp/GGUF inference integration — PASS on exact V 3.0.732: https://github.com/artinrahimii/project/actions/runs/41271523283",
           "Step Three quality gate — PASS on exact V 3.0.733: https://github.com/artinrahimii/project/actions/runs/41271856045",
           "Windows WPF Release build/startup/security checks — PASS on exact V 3.0.733: https://github.com/artinrahimii/project/actions/runs/41271856082/job/124746076851",
-          "HostLifecycle unit and integration tests — PASS on exact V 3.0.733: https://github.com/artinrahimii/project/actions/runs/41271856082/job/124746076793"
+          "HostLifecycle unit and integration tests — PASS on exact V 3.0.733: https://github.com/artinrahimii/project/actions/runs/41271856082/job/124746076793",
+          "Step Three quality gate — PASS on exact V 3.0.734: https://github.com/artinrahimii/project/actions/runs/41272151139",
+          "Windows WPF build/startup/security — PASS on exact V 3.0.734: https://github.com/artinrahimii/project/actions/runs/41272151054/job/124746942751",
+          "HostLifecycle unit/integration — PASS on exact V 3.0.734: https://github.com/artinrahimii/project/actions/runs/41272151054/job/124746942556"
         ],
         "tests_failed": [
           "V 3.0.732 Step Three quality gate: one obsolete HostContentVisibilityTests assertion expected the old inline _requestHandler call; corrected in T0174-A003.",
           "V 3.0.732 Android KtLint: import ordering and two chained-call newline violations in Libp2pInferenceRequestTransportTest.kt; corrected in T0174-A005.",
-          "V 3.0.733 Android KtLint failed on five formatting findings in the newly added cancelAttempts/cancelSelectedHosts source: one chained protobuf builder continuation and multiline-expression continuation/layout in both runtime and transport. APK/JVM/Protobuf stages were skipped; corrected in T0174-A007."
+          "V 3.0.733 Android KtLint failed on five formatting findings in the newly added cancelAttempts/cancelSelectedHosts source: one chained protobuf builder continuation and multiline-expression continuation/layout in both runtime and transport. APK/JVM/Protobuf stages were skipped; corrected in T0174-A007.",
+          "V 3.0.734 Android ktlintTestSourceSetCheck rejected Java imports placed before org.whitep.shared.contracts.v1 extension imports in Libp2pInferenceRequestTransportTest.kt. The import block was moved to the end after all org.whitep imports in T0174-A009; Android build/JVM stages were skipped."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -45034,6 +45039,61 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Run exact-head V 3.0.734 CI. Fix any compile or regression-test failures; keep T0174 in_progress until actual Cancel control is integrated into a live dispatch screen."
+        },
+        {
+          "attempt_id": "T0174-A008",
+          "started_at": "2026-11-01T04:13:38Z",
+          "ended_at": "2026-11-01T04:13:40Z",
+          "result": "failed",
+          "summary": "Exact-head V 3.0.734 Android KtLint passed the main source set after production formatting fixes, then failed the test source set because java.* imports were placed before the remaining org.whitep.shared.contracts.v1 extension imports. APK/JVM/Protobuf stages were skipped.",
+          "changed_files": [],
+          "commit_sha": "9ca3cafca1c3c93ae9319b70956d0cb3ee55005f",
+          "tests": [
+            {
+              "name": "Android ktlintTestSourceSetCheck",
+              "result": "failed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41272151054",
+              "summary": "One lexicographic import-order finding at line 3 in Libp2pInferenceRequestTransportTest.kt."
+            }
+          ],
+          "failure_details": "KtLint's import rule places java/javax/kotlin imports after the other package imports. The previous correction moved java imports before remaining org.whitep.shared.contracts.v1 imports.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Move java imports after every org.whitep import, keep all imports contiguous and lexicographically ordered, then rerun the exact Android job."
+        },
+        {
+          "attempt_id": "T0174-A009",
+          "started_at": "2026-11-01T04:15:01.258Z",
+          "ended_at": "2026-11-01T04:15:01.258Z",
+          "result": "partial",
+          "summary": "Moved the complete java.* import block after all org.whitep.shared.contracts.v1 imports, keeping the list contiguous and CancelRequest lexicographically before HostRuntimeState. No runtime or test behavior changed; exact-head KtLint and Android tests pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/test/java/com/whitep/client/network/Libp2pInferenceRequestTransportTest.kt",
+            "step three/T0174/execution-report.md",
+            "step three/T0174/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Android ktlintTestSourceSetCheck",
+              "result": "pending"
+            },
+            {
+              "name": "Android assembleDebug",
+              "result": "pending"
+            },
+            {
+              "name": "Android testDebugUnitTest",
+              "result": "pending"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Run V 3.0.735 exact-head Android validation; only claim cancellation JVM acceptance after the two-peer CancelRequest test passes on that exact commit."
         }
       ]
     },
@@ -56738,7 +56798,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-11-01T04:10:34.704Z",
+  "updated_at": "2026-11-01T04:15:01.258Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

@@ -86,3 +86,13 @@ No UI placeholder, mock dispatch, or fabricated selected-host list was introduce
 - Exact V 3.0.733 HostLifecycle unit/integration: PASS — [job 124746076793](https://github.com/artinrahimii/project/actions/runs/41271856082/job/124746076793).
 - Android KtLint stopped on five formatting findings in the two new production Kotlin cancellation methods; no APK/JVM/Protobuf result was produced. The findings are recorded as T0174-A006.
 - T0174-A007 reformats the CancelRequest builder, queued-attempt filter, cancellation call and boolean expression to the exact leading-dot/multiline style. Exact-head Android validation is pending.
+
+
+## Fourth exact-head CI correction
+
+- Step Three quality gate: PASS on exact V 3.0.734 — [run 41272151139](https://github.com/artinrahimii/project/actions/runs/41272151139).
+- Windows WPF build/startup/security: PASS on exact V 3.0.734 — [job 124746942751](https://github.com/artinrahimii/project/actions/runs/41272151054/job/124746942751).
+- HostLifecycle integration: PASS on exact V 3.0.734 — [job 124746942556](https://github.com/artinrahimii/project/actions/runs/41272151054/job/124746942556).
+- Android main-source-set KtLint accepted the production files after T0174-A007. Test-source-set KtLint then found one remaining import-order issue: `java.*` imports appeared before remaining `org.whitep.shared.contracts.v1` imports.
+- T0174-A009 moves the Java import block to the end of the contiguous import list, after all `org.whitep` imports; `CancelRequest` remains alphabetically before `HostRuntimeState`.
+- APK/JVM/Protobuf Android validation was skipped by this lint failure and is still pending an exact-head pass.
