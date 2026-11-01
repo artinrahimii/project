@@ -1,5 +1,6 @@
 package com.whitep.client.ui.request
 
+import android.content.Context
 import com.whitep.client.context.ConversationContextCapsule
 import com.whitep.client.data.InMemoryClientRequestRepository
 import com.whitep.client.data.RequestDraftStatus
@@ -14,17 +15,16 @@ import com.whitep.client.requests.InferenceRoundDispatchResult
 import com.whitep.client.requests.InferenceRoundResponseCollection
 import com.whitep.client.requests.RequestExecutionGateway
 import com.whitep.client.requests.RequestExecutionGatewayFactory
-import java.time.Instant
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
-import org.junit.runner.RunWith
 import org.junit.Test
+import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
 import org.whitep.shared.contracts.v1.HostAnnouncement
@@ -32,9 +32,10 @@ import org.whitep.shared.contracts.v1.HostCapabilities
 import org.whitep.shared.contracts.v1.HostRuntimeState
 import org.whitep.shared.contracts.v1.HostStatus
 import org.whitep.shared.contracts.v1.InferenceOutcome
-import org.whitep.shared.contracts.v1.inferenceResponse
 import org.whitep.shared.contracts.v1.InferenceResponse
 import org.whitep.shared.contracts.v1.ModelCapability
+import org.whitep.shared.contracts.v1.inferenceResponse
+import java.time.Instant
 
 @RunWith(RobolectricTestRunner::class)
 class RequestViewModelTest {
@@ -181,26 +182,35 @@ class RequestViewModelTest {
             rendezvousServiceUrl = "https://directory.example.test",
         )
         assertEquals(1, activeViewModel.uiState.value.discoveredPeers.size)
-        assertFalse(activeViewModel.uiState.value.discoveredPeers.single().isTrusted)
+        val discoveredPeer =
+            activeViewModel.uiState.value.discoveredPeers
+                .single()
+        assertFalse(discoveredPeer.isTrusted)
         assertTrue(gateway.trustedPeers.isEmpty())
 
         activeViewModel.sendRequest("hello host", "local/test-model", 64)
         assertEquals(0, gateway.dispatchCount)
         assertTrue(gateway.sentHostIds.isEmpty())
-        assertTrue(
-            activeViewModel.uiState.value.networkStatusMessage.orEmpty()
-                .contains("No inference payload was sent"),
-        )
+        val statusMessage =
+            activeViewModel.uiState.value.networkStatusMessage
+                .orEmpty()
+        assertTrue(statusMessage.contains("No inference payload was sent"))
 
         activeViewModel.trustPeerAfterExplicitConfirmation(gateway.peerId)
-        assertTrue(activeViewModel.uiState.value.discoveredPeers.single().isTrusted)
+        val trustedPeer =
+            activeViewModel.uiState.value.discoveredPeers
+                .single()
+        assertTrue(trustedPeer.isTrusted)
         assertTrue(gateway.trustedPeers.contains(gateway.peerId))
 
         activeViewModel.sendRequest("hello host", "local/test-model", 64)
         assertEquals(1, gateway.dispatchCount)
         assertEquals(listOf(gateway.peerId), gateway.sentHostIds)
         assertEquals(1, activeViewModel.uiState.value.hostResponses.size)
-        assertEquals("host response", activeViewModel.uiState.value.hostResponses.single().outputText)
+        val hostResponse =
+            activeViewModel.uiState.value.hostResponses
+                .single()
+        assertEquals("host response", hostResponse.outputText)
 
         activeViewModel.clearDirectorySession()
         assertTrue(gateway.closed)
@@ -226,7 +236,8 @@ class RequestViewModelTest {
         activeViewModel.clearDirectorySession()
 
         assertTrue(gateway.closed)
-        assertTrue(activeViewModel.uiState.value.discoveredPeers.isEmpty())
+        val discoveredPeers = activeViewModel.uiState.value.discoveredPeers
+        assertTrue(discoveredPeers.isEmpty())
     }
 
     private fun response(
@@ -352,12 +363,14 @@ class RequestViewModelTest {
 
         private fun candidate(): HostCandidate {
             val model =
-                ModelCapability.newBuilder()
+                ModelCapability
+                    .newBuilder()
                     .setModelId(MODEL_ID)
                     .setMaxOutputTokens(128)
                     .build()
             val capabilities =
-                HostCapabilities.newBuilder()
+                HostCapabilities
+                    .newBuilder()
                     .setEphemeralHostId(peerId)
                     .setProtocolVersion("1.0.0")
                     .addModels(model)
@@ -366,14 +379,16 @@ class RequestViewModelTest {
                     .setMaxContextCapsuleBytes(4_096)
                     .build()
             val announcement =
-                HostAnnouncement.newBuilder()
+                HostAnnouncement
+                    .newBuilder()
                     .setEphemeralHostId(peerId)
                     .setProtocolVersion("1.0.0")
                     .setCapabilities(capabilities)
                     .setAnnouncedAtUnixMs(19_000L)
                     .build()
             val status =
-                HostStatus.newBuilder()
+                HostStatus
+                    .newBuilder()
                     .setEphemeralHostId(peerId)
                     .setState(HostRuntimeState.HOST_RUNTIME_STATE_READY)
                     .setActiveRequests(0)
@@ -388,5 +403,4 @@ class RequestViewModelTest {
             const val MODEL_ID = "local/test-model"
         }
     }
-
 }

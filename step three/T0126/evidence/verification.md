@@ -185,3 +185,12 @@ The live acceptance gap remains: `MainActivity.requestScreen` is prepare-only, a
 - The seven test cases are retained and rewritten to validate the new real request flow instead: configured HTTPS URL; explicit user trust/revoke; payload-to-selection, dispatch and correlated response calls; no dispatch when zero candidates exist; context capsule summary remains a local draft until the separate send action; per-response cards/imports; and the still-disclosed receiving-host privacy boundary.
 - Windows WPF build/startup/security/DPAPI and HostLifecycle tests passed on V 3.0.787; Rendezvous container build/HTTP smoke passed. These do not override the Android or Python failures.
 - **V 3.0.788 rerun:** pending; no corrected test is marked passed before the exact-head workflows finish.
+
+
+## T0126-A010 — exact V 3.0.788 validation and corrective Kotlin formatting
+
+- The Step Three quality workflow passed all 317 Python tests, Python syntax, graph structure and recorded-output/evidence validation on exact commit `0f97f55ff60f701debe855f13072c2f4854ce81d`: [41321728773](https://github.com/artinrahimii/project/actions/runs/41321728773).
+- Main Android source KtLint passed after the previous parser correction. Test-source KtLint stopped on 14 formatting diagnostics in `RequestViewModelTest.kt`: import order, chain-call wrapping and one extra blank line. The test file was corrected to mirror the import ordering and method-chain style already used by neighboring Android tests.
+- Android `assembleDebug`, `testDebugUnitTest` and generated Protobuf checks were not reached on V 3.0.788; no success is claimed for them.
+- Windows WPF Release build/startup/security/DPAPI, HostLifecycle tests, the .NET interoperability fixture build, and Rendezvous container/HTTP smoke passed.
+- **V 3.0.789 rerun:** pending.
