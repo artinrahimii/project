@@ -27473,7 +27473,13 @@
           "Exact V 3.0.768 Windows WPF Release build/startup/security/DPAPI and agent-tool policy/capability checks — PASS — https://github.com/artinrahimii/project/actions/runs/41309472601/job/124856640188",
           "Exact V 3.0.768 HostLifecycle unit and integration suite — PASS — https://github.com/artinrahimii/project/actions/runs/41309472601/job/124856639978",
           "Exact V 3.0.768 Step Three quality gate: 312 Python tests, Python compileall, graph and recorded-output/evidence guard — PASS — https://github.com/artinrahimii/project/actions/runs/41309472680",
-          "Exact V 3.0.768 Rendezvous container build and HTTP smoke — PASS — https://github.com/artinrahimii/project/actions/runs/41309472603"
+          "Exact V 3.0.768 Rendezvous container build and HTTP smoke — PASS — https://github.com/artinrahimii/project/actions/runs/41309472603",
+          "Exact V 3.0.771 Step Three quality gate — PASS — https://github.com/artinrahimii/project/actions/runs/41312296046",
+          "Exact V 3.0.771 Rendezvous container build and HTTP smoke — PASS — https://github.com/artinrahimii/project/actions/runs/41312296044",
+          "Exact V 3.0.771 Windows WPF host build/startup/security — PASS — https://github.com/artinrahimii/project/actions/runs/41312296076",
+          "Exact V 3.0.771 HostLifecycle unit/integration — PASS — https://github.com/artinrahimii/project/actions/runs/41312296076",
+          "Exact V 3.0.771 Android KtLint — PASS — https://github.com/artinrahimii/project/actions/runs/41312296076",
+          "Exact V 3.0.771 real local llama.cpp/GGUF inference — PASS — https://github.com/artinrahimii/project/actions/runs/41312296077"
         ],
         "tests_failed": [
           "Exact V 3.0.767 Android JVM unit-test compilation failed at RequestViewModelTest.kt:47,58,69 because HostSelectionFeedback import was missing; tests and generated Protobuf verification did not run.",
@@ -27502,7 +27508,7 @@
             "step three/T0115/execution-report.md"
           ]
         },
-        "follow_up": "Wire bounded RendezvousPeerDirectoryClient discovery into AndroidInferenceRequestRuntime; construct candidates only from unexpired routing metadata plus a fresh authenticated HostStatus with matching protocol/model limits; conservatively reject requests whose prompt/capsule/output budget exceeds the context window; then connect the request UI to discovery → selection → dispatch → response/shortage feedback and test 0/1/2/3 peers."
+        "follow_up": "Android KtLint passed, but exact V 3.0.771 assembleDebug, testDebugUnitTest, generated Protobuf Java/Kotlin verification and APK artifact upload were still in progress at reconciliation. Check the exact-head product workflow before closing A004. T0126 remains blocked until Android production discovery, authenticated status probing, candidate selection, dispatch and user-visible shortage feedback are connected."
       },
       "execution_history": [
         {
@@ -27657,7 +27663,7 @@
           "started_at": "2026-11-01T13:37:57.287Z",
           "ended_at": "2026-11-01T13:37:57.287Z",
           "result": "partial",
-          "summary": "Implemented a real Windows host capability producer. The llama.cpp backend verifies the configured model using /v1/models and reads the live context window from GET /props; HostInferenceSession returns the model snapshot only with a fresh Ready/readiness-checked status; Windows peer HostStatus now carries the exact protocol version and only verified model data. Added HostLifecycle tests. The Android discovery/request UI path remains unimplemented, so T0126 remains blocked.",
+          "summary": "Implemented a real Windows host capability producer. The llama.cpp backend verifies the configured model using /v1/models and reads the live context window from GET /props; HostInferenceSession returns the model snapshot only with a fresh Ready/readiness-checked status; Windows peer HostStatus now carries the exact protocol version and only verified model data. Added HostLifecycle tests. The Android discovery/request UI path remains unimplemented, so T0126 remains blocked. Exact V 3.0.771 CI passed the Step Three quality gate, Rendezvous container build/HTTP smoke, Windows WPF/Protobuf/startup/security/DPAPI, HostLifecycle integration (including the new capability acceptance test), Android KtLint and live local llama.cpp/GGUF inference. Android APK build/JVM/Protobuf verification remained in progress at reconciliation time. The attempt remains partial and T0126 remains blocked.",
           "changed_files": [
             "protocol/whitep/v1/messages.proto",
             "src/Host.Application/HostInferenceModelCapabilityProvider.cs",
@@ -27670,14 +27676,51 @@
             "step three/T0126/evidence/verification.md"
           ],
           "commit_sha": null,
-          "tests": [],
+          "tests": [
+            {
+              "name": "Exact V 3.0.771 Step Three quality gate",
+              "result": "passed",
+              "summary": "312 Python tests, syntax checks, graph structure and recorded-output/evidence validation passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41312296046"
+            },
+            {
+              "name": "Exact V 3.0.771 Rendezvous container build and HTTP smoke",
+              "result": "passed",
+              "summary": "Production container build and non-root HTTP contract smoke passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41312296044"
+            },
+            {
+              "name": "Exact V 3.0.771 Windows WPF host build/startup/security",
+              "result": "passed",
+              "summary": "C# formatting, WPF Release build, Protobuf verification, startup smoke, policy/capability and DPAPI checks passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41312296076"
+            },
+            {
+              "name": "Exact V 3.0.771 HostLifecycle unit/integration",
+              "result": "passed",
+              "summary": "Host lifecycle suite passed, including the new HostPeerRuntimeCapabilitiesAcceptanceTests.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41312296076"
+            },
+            {
+              "name": "Exact V 3.0.771 Android KtLint",
+              "result": "passed",
+              "summary": "Android Kotlin formatting/lint step passed; assembleDebug and Android JVM tests remained in progress at reconciliation time.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41312296076"
+            },
+            {
+              "name": "Exact V 3.0.771 real local llama.cpp/GGUF inference",
+              "result": "passed",
+              "summary": "Pinned llama.cpp CPU binary and Apache-2.0 GGUF validation followed by a real local inference response passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41312296077"
+            }
+          ],
           "failure_details": null,
           "blocked_reason": "The Windows host now exposes the current protocol version and a model capability snapshot only after a fresh READY/readiness check and live /v1/models + /props reads. Remaining blockers: Android Rendezvous discovery still returns routing metadata only and has no production discover-all caller; the Android request screen remains prepare-only and does not combine authenticated HostStatus with directory routes, select 0/1/2/3 valid peers, dispatch, or record feedback. Do not infer model compatibility from inference.v1 alone.",
           "reopened_reason": null,
           "contract_changes": [
             "HostStatus now has protocol_version at field number 6; existing fields 1-5 are unchanged."
           ],
-          "follow_up": "Wire bounded RendezvousPeerDirectoryClient discovery into AndroidInferenceRequestRuntime; construct candidates only from unexpired routing metadata plus a fresh authenticated HostStatus with matching protocol/model limits; conservatively reject requests whose prompt/capsule/output budget exceeds the context window; then connect the request UI to discovery → selection → dispatch → response/shortage feedback and test 0/1/2/3 peers."
+          "follow_up": "Android KtLint passed, but exact V 3.0.771 assembleDebug, testDebugUnitTest, generated Protobuf Java/Kotlin verification and APK artifact upload were still in progress at reconciliation. Check the exact-head product workflow before closing A004. T0126 remains blocked until Android production discovery, authenticated status probing, candidate selection, dispatch and user-visible shortage feedback are connected."
         }
       ],
       "blocked_reason": "The Windows host now exposes the current protocol version and a model capability snapshot only after a fresh READY/readiness check and live /v1/models + /props reads. Remaining blockers: Android Rendezvous discovery still returns routing metadata only and has no production discover-all caller; the Android request screen remains prepare-only and does not combine authenticated HostStatus with directory routes, select 0/1/2/3 valid peers, dispatch, or record feedback. Do not infer model compatibility from inference.v1 alone."
@@ -46918,7 +46961,7 @@
           "follow_up": "Provide a production HTTPS rendezvous endpoint and an independent peer; complete external reachability validation for T0121, then complete T0122 (expiry), T0123 (heartbeat/status), T0124 (real peer selection). Resume T0174 by wiring the UI to actual dispatch results and selected queued attempts, then verify the real Cancel click path with exact-head Android/.NET acceptance."
         }
       ],
-      "updated_at": "2026-11-01T13:37:57.287Z"
+      "updated_at": "2026-11-01T13:42:26.810Z"
     },
     {
       "id": "T0175",

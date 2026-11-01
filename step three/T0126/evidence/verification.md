@@ -78,3 +78,14 @@ The live acceptance gap remains: `MainActivity.requestScreen` is prepare-only, a
 - The Windows peer status callback publishes the Protobuf `protocol_version` and only includes `ModelCapability` after a fresh READY/readiness-checked snapshot.
 - Added `HostPeerRuntimeCapabilitiesAcceptanceTests` to the HostLifecycle test executable.
 - Exact-head build and test results are pending. This attempt does not complete the Android discovery/selection/request UI integration, so T0126 remains blocked.
+
+
+## Exact V 3.0.771 workflow reconciliation
+
+- Step Three quality — PASS: [41312296046](https://github.com/artinrahimii/project/actions/runs/41312296046).
+- Rendezvous container and HTTP smoke — PASS: [41312296044](https://github.com/artinrahimii/project/actions/runs/41312296044).
+- Windows WPF, Protobuf, startup, security/DPAPI and policy/capability checks — PASS: [41312296076](https://github.com/artinrahimii/project/actions/runs/41312296076).
+- HostLifecycle unit/integration, including the new host capability provider acceptance tests — PASS: [41312296076](https://github.com/artinrahimii/project/actions/runs/41312296076).
+- Android KtLint — PASS: [41312296076](https://github.com/artinrahimii/project/actions/runs/41312296076).
+- Live local llama.cpp/GGUF inference — PASS: [41312296077](https://github.com/artinrahimii/project/actions/runs/41312296077).
+- Android APK build, JVM unit tests and generated Protobuf verification were still pending; no pass is claimed for them here.

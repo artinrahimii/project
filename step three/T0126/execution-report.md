@@ -99,3 +99,16 @@ The exact V 3.0.768 Android/Windows/HostLifecycle/Step Three/Rendezvous workflow
 - Added HostLifecycle acceptance coverage for exact model discovery, context parsing, missing model/context fail-closed behaviour, fresh-session capability snapshots and stale capability removal after disconnect.
 - This is an upstream contract/producer repair only. The Android directory still has no production discovery caller, the Android request screen remains prepare-only, and the client still needs to combine the authenticated HostStatus with directory routing metadata, run 0/1/2/3-peer selection and wire dispatch/feedback to the UI. T0126 therefore remains `blocked`, not `done`.
 - **Tests in this attempt:** the new exact-host tests are added but have not yet been executed in this authoring environment; GitHub Actions must verify the commit before this attempt can be recorded as test-passing.
+
+
+## T0126-A004 — exact V 3.0.771 CI evidence reconciliation (partial)
+
+- **Exact tested commit:** `390ffad4739b7e045639c9e19219f3863361b22c` (`V 3.0.771`).
+- **Step Three quality gate:** PASS — 312 Python tests, syntax, graph and evidence checks — [run 41312296046](https://github.com/artinrahimii/project/actions/runs/41312296046).
+- **Rendezvous:** PASS — production container build and non-root HTTP smoke — [run 41312296044](https://github.com/artinrahimii/project/actions/runs/41312296044).
+- **Windows WPF:** PASS — C# formatting, Release build, Protobuf verification, startup smoke, security/policy/capability gates and DPAPI checks — [run 41312296076](https://github.com/artinrahimii/project/actions/runs/41312296076).
+- **HostLifecycle:** PASS — full unit/integration suite, including `HostPeerRuntimeCapabilitiesAcceptanceTests` — [run 41312296076](https://github.com/artinrahimii/project/actions/runs/41312296076).
+- **Android KtLint:** PASS — [run 41312296076](https://github.com/artinrahimii/project/actions/runs/41312296076).
+- **Real local inference:** PASS — pinned llama.cpp CPU binary, validated GGUF model and a real local inference response — [run 41312296077](https://github.com/artinrahimii/project/actions/runs/41312296077).
+- **Still pending at reconciliation:** Android `assembleDebug`, `testDebugUnitTest`, generated Protobuf Java/Kotlin verification and APK artifact upload. No result is claimed for those pending steps.
+- **Task status:** `blocked`. These CI checks do not establish Android live discovery, request-screen selection/dispatch or user-visible shortage handling.
