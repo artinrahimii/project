@@ -1,7 +1,7 @@
 # T0126 execution report — shortage when fewer than three compatible hosts exist
 
 - **Base:** exact online `main` commit `bd2a3deecfaa0798709177fa04db4606f62c4755` (`V 3.0.766`).
-- **Task state:** `in_progress`; implementation and focused acceptance tests have been added, but exact-head CI is still pending and the current Android request screen remains a prepare-only preview.
+- **Task state:** `in_progress`; implementation, focused acceptance tests and exact V 3.0.768 CI are verified, but the current Android request screen remains a prepare-only preview with no live discovery/selection/dispatch caller.
 - **T0125 prerequisite:** verified complete on the exact V 3.0.766 commit. Its live-selector test chooses three distinct PeerIds, Android main/test KtLint, debug APK, JVM tests, Protobuf verification and Step Three quality all passed. The full product/host and Rendezvous smoke jobs also passed. See `step three/T0125/execution-report.md`.
 - **T0115 prerequisite:** verified complete from `step three/T0115/execution-report.md` and `tests/HostLifecycle.Tests/NetworkInferenceRequestFrameAcceptanceTests.cs`; the report records the disconnect-recovery, invalid-frame, sequential-connection and shutdown acceptance tests passing.
 
@@ -32,12 +32,12 @@ The expected generic Shared.Networking/Windows path is not the real consumer in 
 - `src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt`
 - `src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt`
 
-## Acceptance tests added (pending exact-head execution)
+## Acceptance tests and exact-head CI result
 
 - `HostSelectionFeedbackTest`: zero, one, two and three available candidates; exact message and continue/no-continue decisions; reject counts above the requested ceiling.
 - `InferenceAttemptDispatcherTest`: one host dispatches, two hosts dispatch, zero hosts returns `NO_SELECTED_HOSTS` and performs no transport submit.
 - `RequestViewModelTest`: the two-of-three shortage message propagates into UI state without storing host identity data; one and zero host cases produce the intended policy messages.
-- Exact-head Android KtLint, APK, JVM, Protobuf and Step Three checks have not yet run. No test is marked passed.
+- Exact V 3.0.768 CI passed Android KtLint, debug APK build, JVM `testDebugUnitTest`, generated Protobuf Java/Kotlin verification and Step Three quality checks. Exact logs are recorded in A002 below. This verifies automated contracts, not the live request-screen path.
 
 ## Remaining integration boundary
 
@@ -45,7 +45,7 @@ The actual `MainActivity.requestScreen` still describes itself as a prepare-only
 
 ## Next
 
-Run exact-head Android lint/APK/JVM/Protobuf and Step Three quality CI. Fix any failures. Then revalidate the caller wiring against the actual request screen/discovery integration before setting T0126 to `done`.
+The exact V 3.0.768 Android/Windows/HostLifecycle/Step Three/Rendezvous workflows passed. Next, wire the feedback producer into a real Android request flow backed by validated discovery snapshots, then test the end-to-end user notification before setting T0126 to `done`.
 
 
 ## T0126-A001 — exact V 3.0.767 CI result
@@ -65,3 +65,15 @@ Run exact-head Android lint/APK/JVM/Protobuf and Step Three quality CI. Fix any 
 - Added `tests/test_android_host_candidate_selector_contract.py` and `tests/test_android_inference_attempt_dispatcher_contract.py` to T0125's graph evidence. These are the actual Python source-contract tests for the completed candidate selection and pre-send dispatch invariants.
 - No production runtime behaviour was changed in this correction.
 - Exact V 3.0.768 CI is pending. T0126 remains `in_progress`: the request screen still has no live production caller that obtains complete `HostAnnouncement` snapshots and invokes `selectReachableHostsWithFeedback`/dispatch. Conditional message rendering alone is not proof that a real user was notified.
+
+
+## T0126-A002 — exact V 3.0.768 CI result (2026-11-01)
+
+- **Tested commit:** `ffa77ceeb53648f9e450f87820dace9d1b48ffff` (`V 3.0.768`), exact online `main` head.
+- **Android:** main/test KtLint, `assembleDebug`, `compileDebugUnitTestKotlin`, `testDebugUnitTest` and generated Protobuf Java/Kotlin verification all passed. The test task includes the T0126 `HostSelectionFeedbackTest`, `InferenceAttemptDispatcherTest` and `RequestViewModelTest` cases.
+- **Windows WPF:** Release build, startup, security/DPAPI and agent-tool policy/capability checks passed.
+- **HostLifecycle:** unit and integration suite passed.
+- **Step Three:** 312 Python tests passed; `compileall` and graph/recorded-output/evidence guard passed (0 errors, 1 existing warning).
+- **Rendezvous:** container build and HTTP smoke passed.
+- **Workflow evidence:** [Android/Windows/HostLifecycle](https://github.com/artinrahimii/project/actions/runs/41309472601), [Step Three quality](https://github.com/artinrahimii/project/actions/runs/41309472680), [Rendezvous container](https://github.com/artinrahimii/project/actions/runs/41309472603).
+- **Outcome:** the A001 missing-import failure is repaired and exact-head tests pass. T0126 remains `in_progress`, not `done`: `MainActivity.requestScreen` is still prepare-only and no production caller obtains validated `HostAnnouncement` snapshots, invokes selection/dispatch, and records feedback. Unit-test success does not prove a user can receive this message in a live request.

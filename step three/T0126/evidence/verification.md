@@ -13,7 +13,7 @@
 - `RequestViewModel.kt` and `MainActivity.kt`: store the feedback message in transient UI state and render it when a live caller supplies it. No peer IDs are stored in the message.
 - `MainActivity.requestScreen` remains prepare-only, so the producer is not yet connected to the live screen/dispatch path. This prevents a completion claim for real user notification.
 
-## Tests added; status pending
+## Tests added and exact-head execution
 
 - `HostSelectionFeedbackTest.zeroHostsNeverAllowsDispatchAndStatesThatTheRequestWasNotSent`
 - `HostSelectionFeedbackTest.oneHostAllowsDispatchAndReportsTheExactShortfall`
@@ -26,7 +26,7 @@
 - `RequestViewModelTest.reportsOneAvailableHostAndAllowsTheRequestToContinue`
 - `RequestViewModelTest.reportsNoAvailableHostAndExplainsThatNothingWasSent`
 
-No CI/test outcome is claimed until the exact commit workflow is inspected.
+The exact V 3.0.768 outcomes are recorded below. Passing unit/build checks do not prove live request-screen integration.
 
 
 ## Exact V 3.0.767 CI outcome
@@ -44,3 +44,18 @@ No CI/test outcome is claimed until the exact commit workflow is inspected.
 - The missing `com.whitep.client.requests.HostSelectionFeedback` import is added to `RequestViewModelTest.kt`.
 - T0125 graph evidence now references both Python contract-test source files required by `graph_guard.py`.
 - Retest exact commit V 3.0.768; no test result is presumed.
+
+
+## Exact V 3.0.768 CI outcome (2026-11-01)
+
+- Android main/test KtLint — PASS.
+- Android `assembleDebug` — PASS.
+- Android `compileDebugUnitTestKotlin` and `testDebugUnitTest` — PASS; the three listed T0126 test classes were included in this test task.
+- Generated Protobuf Java/Kotlin verification — PASS.
+- Windows WPF build/startup/security/DPAPI and agent-tool policy/capability checks — PASS.
+- HostLifecycle unit/integration — PASS.
+- Step Three quality gate — PASS: 312 Python tests, syntax compilation and graph/recorded-output/evidence checks passed (0 errors, 1 existing warning).
+- Rendezvous container build/HTTP smoke — PASS.
+- Exact workflow links: [product workflow](https://github.com/artinrahimii/project/actions/runs/41309472601), [Step Three quality](https://github.com/artinrahimii/project/actions/runs/41309472680), [Rendezvous](https://github.com/artinrahimii/project/actions/runs/41309472603).
+
+The live acceptance gap remains: `MainActivity.requestScreen` is prepare-only, and there is no production caller passing complete validated `HostAnnouncement` capability snapshots into `selectReachableHostsWithFeedback` / dispatch and recording feedback in the request UI. T0126 stays `in_progress`.

@@ -27421,12 +27421,12 @@
         "step three/T0126/evidence/verification.md",
         "step three/T0125/execution-report.md"
       ],
-      "notes": "The expected Shared.Networking/Windows path is not the actual consumer in this repository: candidate selection and dispatch live in the Android app, and the user-facing request state/Compose screen lives under com.whitep.client.ui.request. Implement at those real boundaries. Policy: one or two validated hosts remain usable with an exact shortage warning; zero hosts is a no-send NO_SELECTED_HOSTS outcome. The MainActivity request screen is still a prepare-only preview and has no production caller for the new runtime feedback method; therefore keep this task in_progress until live discovery/dispatch feeds the UI. Do not claim a working end-to-end user notification yet.\n\nT0126-A001 (2026-11-01): Exact V 3.0.767 CI was inspected. Android KtLint and assembleDebug passed; JVM test compilation failed because RequestViewModelTest.kt omitted the HostSelectionFeedback import, so T0126 unit assertions and generated Protobuf verification did not run. Step Three's 312 Python tests and syntax check passed, but graph_guard failed because completed T0125 evidence lacked a tests/ source path. Windows WPF, HostLifecycle and Rendezvous container smoke passed. A002 adds the missing import and records test-source evidence for T0125. T0126 remains in_progress until repaired exact-head tests pass and a real request UI caller feeds live selection feedback.",
+      "notes": "The expected Shared.Networking/Windows path is not the actual consumer in this repository: candidate selection and dispatch live in the Android app, and the user-facing request state/Compose screen lives under com.whitep.client.ui.request. Implement at those real boundaries. Policy: one or two validated hosts remain usable with an exact shortage warning; zero hosts is a no-send NO_SELECTED_HOSTS outcome. The MainActivity request screen is still a prepare-only preview and has no production caller for the new runtime feedback method; therefore keep this task in_progress until live discovery/dispatch feeds the UI. Do not claim a working end-to-end user notification yet.\n\nT0126-A001 (2026-11-01): Exact V 3.0.767 CI was inspected. Android KtLint and assembleDebug passed; JVM test compilation failed because RequestViewModelTest.kt omitted the HostSelectionFeedback import, so T0126 unit assertions and generated Protobuf verification did not run. Step Three's 312 Python tests and syntax check passed, but graph_guard failed because completed T0125 evidence lacked a tests/ source path. Windows WPF, HostLifecycle and Rendezvous container smoke passed. A002 adds the missing import and records test-source evidence for T0125. T0126 remains in_progress until repaired exact-head tests pass and a real request UI caller feeds live selection feedback.\n\nT0126-A002 exact V 3.0.768 CI result (2026-11-01): Android main/test KtLint, assembleDebug, compileDebugUnitTestKotlin, testDebugUnitTest and generated Protobuf Java/Kotlin verification passed; Windows WPF build/startup/security/DPAPI and policy/capability checks passed; HostLifecycle tests passed; the Step Three quality gate passed (312 Python tests, compileall and graph/evidence guard); Rendezvous container build/HTTP smoke passed. The missing import and T0125 evidence repairs are therefore verified on exact main V 3.0.768. T0126 remains in_progress: MainActivity.requestScreen is still prepare-only, Connections still says peer discovery is unavailable, and no production caller passes complete HostAnnouncement snapshots to selection/dispatch and then records the feedback. No live underfilled-host notification is claimed.",
       "execution_summary": {
         "attempt_count": 2,
         "failed_attempt_count": 1,
         "last_attempt_id": "T0126-A002-fix-import-and-evidence",
-        "last_attempt_result": "in_progress",
+        "last_attempt_result": "partial",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostSelectionFeedback.kt",
           "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
@@ -27440,9 +27440,19 @@
           "step three/project-graph.md"
         ],
         "related_commits": [
-          "431d25136b0031523e4190cf3a5cb6660080112c"
+          "431d25136b0031523e4190cf3a5cb6660080112c",
+          "ffa77ceeb53648f9e450f87820dace9d1b48ffff"
         ],
-        "tests_passed": [],
+        "tests_passed": [
+          "Exact V 3.0.768 Android main/test KtLint — PASS — https://github.com/artinrahimii/project/actions/runs/41309472601/job/124856640138",
+          "Exact V 3.0.768 Android assembleDebug (debug APK) — PASS — https://github.com/artinrahimii/project/actions/runs/41309472601/job/124856640138",
+          "Exact V 3.0.768 Android JVM testDebugUnitTest, including HostSelectionFeedbackTest, InferenceAttemptDispatcherTest and RequestViewModelTest — PASS — https://github.com/artinrahimii/project/actions/runs/41309472601/job/124856640138",
+          "Exact V 3.0.768 generated Protobuf Java/Kotlin verification — PASS — https://github.com/artinrahimii/project/actions/runs/41309472601/job/124856640138",
+          "Exact V 3.0.768 Windows WPF Release build/startup/security/DPAPI and agent-tool policy/capability checks — PASS — https://github.com/artinrahimii/project/actions/runs/41309472601/job/124856640188",
+          "Exact V 3.0.768 HostLifecycle unit and integration suite — PASS — https://github.com/artinrahimii/project/actions/runs/41309472601/job/124856639978",
+          "Exact V 3.0.768 Step Three quality gate: 312 Python tests, Python compileall, graph and recorded-output/evidence guard — PASS — https://github.com/artinrahimii/project/actions/runs/41309472680",
+          "Exact V 3.0.768 Rendezvous container build and HTTP smoke — PASS — https://github.com/artinrahimii/project/actions/runs/41309472603"
+        ],
         "tests_failed": [
           "Exact V 3.0.767 Android JVM unit-test compilation failed at RequestViewModelTest.kt:47,58,69 because HostSelectionFeedback import was missing; tests and generated Protobuf verification did not run.",
           "Exact V 3.0.767 Step Three graph guard failed with DONE_WITHOUT_TEST_FILE_EVIDENCE for T0125 because its evidence omitted test source paths; the 312 Python tests and syntax checks themselves passed."
@@ -27470,7 +27480,7 @@
             "step three/T0115/execution-report.md"
           ]
         },
-        "follow_up": "Run exact-head V 3.0.768 CI after the import and T0125 evidence repairs. Then connect selectReachableHostsWithFeedback and recordHostSelectionFeedback to the real Android request caller; MainActivity.requestScreen remains prepare-only and the task must not be marked done until real user notification is wired and tested."
+        "follow_up": "Keep T0126 in_progress. Connect selectReachableHostsWithFeedback and RequestViewModel.recordHostSelectionFeedback to a real Android request caller only when production discovery supplies validated HostAnnouncement capability snapshots and the request flow performs the real selection/dispatch. Revalidate that live path; do not mark T0126 done on unit-test success alone."
       },
       "execution_history": [
         {
@@ -27543,8 +27553,8 @@
         {
           "attempt_id": "T0126-A002-fix-import-and-evidence",
           "started_at": "2026-11-01T13:03:46.783Z",
-          "ended_at": null,
-          "result": "in_progress",
+          "ended_at": "2026-11-01T13:08:56Z",
+          "result": "partial",
           "summary": "Corrected the exact Android JVM compilation issue by importing HostSelectionFeedback in RequestViewModelTest.kt. Updated T0125 evidence with its two Python test-source paths to satisfy graph_guard's DONE_WITHOUT_TEST_FILE_EVIDENCE invariant. Exact-head CI for the repair is pending. T0126 remains in_progress because the production request screen still has no caller that supplies live HostAnnouncement snapshots and invokes selectReachableHostsWithFeedback/dispatch; no end-to-end notification claim is made.",
           "changed_files": [
             "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
@@ -27552,13 +27562,54 @@
             "step three/T0126/evidence/verification.md",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
-          "tests": [],
+          "commit_sha": "ffa77ceeb53648f9e450f87820dace9d1b48ffff",
+          "tests": [
+            {
+              "name": "Exact V 3.0.768 Android main/test KtLint",
+              "result": "passed",
+              "summary": "PASS — https://github.com/artinrahimii/project/actions/runs/41309472601/job/124856640138"
+            },
+            {
+              "name": "Exact V 3.0.768 Android assembleDebug (debug APK)",
+              "result": "passed",
+              "summary": "PASS — https://github.com/artinrahimii/project/actions/runs/41309472601/job/124856640138"
+            },
+            {
+              "name": "Exact V 3.0.768 Android JVM testDebugUnitTest, including HostSelectionFeedbackTest, InferenceAttemptDispatcherTest and RequestViewModelTest",
+              "result": "passed",
+              "summary": "PASS — https://github.com/artinrahimii/project/actions/runs/41309472601/job/124856640138"
+            },
+            {
+              "name": "Exact V 3.0.768 generated Protobuf Java/Kotlin verification",
+              "result": "passed",
+              "summary": "PASS — https://github.com/artinrahimii/project/actions/runs/41309472601/job/124856640138"
+            },
+            {
+              "name": "Exact V 3.0.768 Windows WPF Release build/startup/security/DPAPI and agent-tool policy/capability checks",
+              "result": "passed",
+              "summary": "PASS — https://github.com/artinrahimii/project/actions/runs/41309472601/job/124856640188"
+            },
+            {
+              "name": "Exact V 3.0.768 HostLifecycle unit and integration suite",
+              "result": "passed",
+              "summary": "PASS — https://github.com/artinrahimii/project/actions/runs/41309472601/job/124856639978"
+            },
+            {
+              "name": "Exact V 3.0.768 Step Three quality gate: 312 Python tests, Python compileall, graph and recorded-output/evidence guard",
+              "result": "passed",
+              "summary": "PASS — https://github.com/artinrahimii/project/actions/runs/41309472680"
+            },
+            {
+              "name": "Exact V 3.0.768 Rendezvous container build and HTTP smoke",
+              "result": "passed",
+              "summary": "PASS — https://github.com/artinrahimii/project/actions/runs/41309472603"
+            }
+          ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect exact V 3.0.768 Android KtLint/APK/JVM/Protobuf and Step Three quality results. If those pass, continue wiring the feedback producer into the real discovery/request caller; the prepare-only screen is not acceptance."
+          "follow_up": "Keep T0126 in_progress. Connect selectReachableHostsWithFeedback and RequestViewModel.recordHostSelectionFeedback to a real Android request caller only when production discovery supplies validated HostAnnouncement capability snapshots and the request flow performs the real selection/dispatch. Revalidate that live path; do not mark T0126 done on unit-test success alone."
         }
       ]
     },
@@ -58854,7 +58905,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-11-01T13:03:46.783Z",
+  "updated_at": "2026-11-01T13:11:40.346Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",
