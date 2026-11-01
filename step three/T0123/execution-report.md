@@ -39,3 +39,18 @@
 - **Changed files:** `Libp2pInferenceRequestTransport.kt` and `Libp2pInferenceRequestTransportTest.kt`.
 - **Correction:** split multiline expressions after assignment, wrapped multiline boolean conditions with trailing commas, and formatted constructor/when/try expressions in repository style.
 - **Verification:** exact V 3.0.755 KtLint, Android APK/JVM, Windows and HostLifecycle CI are pending. No success is claimed for A003 yet.
+
+
+## T0123-A003 — exact V 3.0.755 CI result
+
+- **Commit:** `d5858762bb9f1e6d672c2d9f861a81a1187dcbea`.
+- **Passed:** HostLifecycle authenticated peer-status loopback and regression suite [job 124837268094](https://github.com/artinrahimii/project/actions/runs/41302871481/job/124837268094); Windows WPF build/startup/security job [124837268396](https://github.com/artinrahimii/project/actions/runs/41302871481/job/124837268396); Step Three quality gate [41302871471](https://github.com/artinrahimii/project/actions/runs/41302871471); Rendezvous container build and smoke [41302871554](https://github.com/artinrahimii/project/actions/runs/41302871554).
+- **Failed:** Android KtLint test source set rejected the indentation/chain layout in `Libp2pInferenceRequestTransportTest.kt`. The production transport source set passed KtLint. Android APK and JVM tests were skipped.
+- **Exact evidence:** [Product workflow 41302871481](https://github.com/artinrahimii/project/actions/runs/41302871481).
+- **Task state:** T0123 remains `in_progress`; A003 is recorded as failed because Android runtime validation did not run.
+
+## T0123-A004 — Android JVM test formatting correction
+
+- **Base:** exact online `main` commit `d5858762bb9f1e6d672c2d9f861a81a1187dcbea` (`V 3.0.755`).
+- **Changes:** corrected only the remaining KtLint test-file diagnostics: builder chain indentation, `when` branch indentation, and constructor argument/closing-parenthesis indentation. No test assertions, wire behavior or transport logic are changed.
+- **Validation:** pending exact-head product workflow. T0123 remains `in_progress` until Android lint, APK and JVM checks pass.
