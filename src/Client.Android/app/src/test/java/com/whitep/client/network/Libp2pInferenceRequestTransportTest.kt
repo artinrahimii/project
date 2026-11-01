@@ -34,6 +34,8 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import org.whitep.shared.contracts.v1.CancelRequest
 import org.whitep.shared.contracts.v1.HostRuntimeState
+import org.whitep.shared.contracts.v1.HostStatus
+import org.whitep.shared.contracts.v1.HostStatusRequest
 import org.whitep.shared.contracts.v1.InferenceOutcome
 import org.whitep.shared.contracts.v1.InferenceRequest
 import org.whitep.shared.contracts.v1.InferenceResponse
@@ -54,6 +56,58 @@ import java.util.concurrent.TimeUnit
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [35])
 class Libp2pInferenceRequestTransportTest {
+    @Test
+    fun probesFreshHostStatusOverTheAuthenticatedPeerStream() =
+        runBlocking<Unit> {
+            val serverIdentity = generateKeyPair(KeyType.ED25519).first
+            val expectedServerPeerId = PeerId.fromPubKey(serverIdentity.publicKey()).toBase58()
+            val observedAt = System.currentTimeMillis()
+            val status = HostStatus.newBuilder()
+                .setEphemeralHostId(expectedServerPeerId)
+                .setState(HostRuntimeState.HOST_RUNTIME_STATE_READY)
+                .setActiveRequests(0)
+                .setObservedAtUnixMs(observedAt)
+                .build()
+            val responder = LoopbackHostStatusResponder(expectedServerPeerId) { status }
+            val binding = createSimpleBinding(PROTOCOL_ID) { responder }
+            val server = createHost(serverIdentity, binding)
+            server.start().get(15, TimeUnit.SECONDS)
+
+            val listenAddress = server.listenAddresses().first { it.toString().contains("/tcp/") }.toString()
+            val suffix = "/p2p/$expectedServerPeerId"
+            val address = when {
+                listenAddress.endsWith(suffix) -> listenAddress
+                !listenAddress.contains("/p2p/") -> "$listenAddress$suffix"
+                else -> error("The server listen address contains a different PeerId.")
+            }
+            val endpoint = RendezvousPeerEndpoint(
+                peerId = expectedServerPeerId,
+                tcpMultiaddresses = listOf(address),
+                expiresAtUtc = Instant.now().plusSeconds(120),
+            )
+            val client = Libp2pInferenceRequestTransport(
+                localIdentity = generateKeyPair(KeyType.ED25519).first,
+                resolveEndpoint = { requestedPeerId ->
+                    if (requestedPeerId == expectedServerPeerId) endpoint else null
+                },
+                trustVerifier = PeerTrustVerifier { trustedPeerId -> trustedPeerId == expectedServerPeerId },
+                connectionTimeout = Duration.ofSeconds(15),
+            )
+
+            try {
+                val liveStatus = client.probeHostStatus(expectedServerPeerId)
+                assertEquals(expectedServerPeerId, liveStatus.ephemeralHostId)
+                assertEquals(HostRuntimeState.HOST_RUNTIME_STATE_READY, liveStatus.state)
+                assertEquals(0, liveStatus.activeRequests)
+                assertEquals(observedAt, liveStatus.observedAtUnixMs)
+                val request = withTimeout(5_000L) { responder.requestReceived.await() }
+                assertEquals(expectedServerPeerId, request.ephemeralHostId)
+            } finally {
+                client.close()
+                server.stop().get(10, TimeUnit.SECONDS)
+            }
+        }
+
     @Test
     fun cancelAttemptsSendsCorrelatedCancelRequestsToEverySelectedAuthenticatedHost() =
         runBlocking<Unit> {
@@ -830,6 +884,42 @@ class Libp2pInferenceRequestTransportTest {
             .setDeadlineUnixMs(System.currentTimeMillis() + 30_000L)
             .setMaxOutputTokens(8)
             .build()
+
+    private class LoopbackHostStatusResponder(
+        private val localPeerId: String,
+        private val statusProvider: () -> HostStatus,
+    ) : SimpleClientHandler() {
+        private val decoder = PeerMessageFrameDecoder()
+        val requestReceived = CompletableDeferred<HostStatusRequest>()
+
+        override fun streamActive(ctx: io.netty.channel.ChannelHandlerContext) {
+            this.ctx = ctx
+        }
+
+        override fun messageReceived(
+            ctx: io.netty.channel.ChannelHandlerContext,
+            msg: ByteBuf,
+        ) {
+            val chunk = ByteArray(msg.readableBytes())
+            msg.readBytes(chunk)
+            try {
+                decoder.feed(chunk).forEach { payload ->
+                    try {
+                        val request = HostStatusRequest.parseFrom(payload)
+                        check(request.ephemeralHostId == localPeerId)
+                        requestReceived.complete(request)
+                        val response = statusProvider()
+                        check(response.ephemeralHostId == localPeerId)
+                        writeAndFlush(Unpooled.wrappedBuffer(PeerMessageFrameCodec.encode(response.toByteArray())))
+                    } finally {
+                        Arrays.fill(payload, 0)
+                    }
+                }
+            } finally {
+                Arrays.fill(chunk, 0)
+            }
+        }
+    }
 
     private class LoopbackCancellationResponder(
         private val localPeerId: String,

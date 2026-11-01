@@ -26493,21 +26493,48 @@
         "خروجی قابل بررسی مربوط به «وضعیت آنلاین را از heartbeat واقعی تعیین کن، نه از زمان آخرین دادهٔ کش‌شده بدون اعتبارسنجی.» در مسیر src/Shared.Networking/ یا src/Host.Windows/Networking/ + tests/؛ همراه با آزمون/شاهد پذیرش متناسب."
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0122 و T0115 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
-      "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "acceptance": "میزبان ویندوز باید روی کانال libp2p احراز‌شده به HostStatusRequest پاسخ تازه بدهد؛ snapshot باید وضعیت backend را با health/readiness check همان لحظه (یا BUSY در عملیات فعال) تعیین کند و observed_at_unix_ms را سرور تولید کند. کلاینت اندروید باید probe واقعی را از peer مورداعتماد، با تطبیق PeerId، timestamp تازه و بدون cache وضعیت اجرا کند؛ پاسخ قدیمی، آینده‌نگر، نامعتبر یا متعلق به peer دیگر رد شود. آزمون loopback دوطرفه و Android JVM transport test روی commit دقیق باید موفق باشند. دسترسی عمومی HTTPS و peer شبکهٔ مستقل در T0230/T0128 باقی می‌ماند.",
+      "status": "in_progress",
+      "status_fa": "در حال انجام",
+      "actual_output_paths": [
+        "src/Host.Application/HostInferenceSession.cs",
+        "src/Shared.Contracts/ProtocolMessageValidator.cs",
+        "src/Host.Infrastructure/ProtocolMessageParser.cs",
+        "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
+        "tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs",
+        "src/Client.Android/app/src/test/java/com/whitep/client/network/Libp2pInferenceRequestTransportTest.kt",
+        "step three/T0123/execution-report.md"
+      ],
       "expected_output_paths": [
         "src/Shared.Networking/ یا src/Host.Windows/Networking/ + tests/"
       ],
-      "evidence": [],
+      "evidence": [
+        "src/Host.Application/HostInferenceSession.cs",
+        "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
+        "tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs",
+        "src/Client.Android/app/src/test/java/com/whitep/client/network/Libp2pInferenceRequestTransportTest.kt"
+      ],
       "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0123-A001-live-host-status-probe",
+        "last_attempt_result": "in_progress",
+        "changed_files": [
+          "src/Host.Application/HostInferenceSession.cs",
+          "src/Shared.Contracts/ProtocolMessageValidator.cs",
+          "src/Host.Infrastructure/ProtocolMessageParser.cs",
+          "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs",
+          "src/Host.Windows/MainWindow.xaml.cs",
+          "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
+          "tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs",
+          "src/Client.Android/app/src/test/java/com/whitep/client/network/Libp2pInferenceRequestTransportTest.kt",
+          "step three/T0123/execution-report.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
@@ -26517,10 +26544,44 @@
           "state": "not_required",
           "triggering_contracts": [],
           "affected_by_contract_changes": [],
-          "review_evidence": []
-        }
+          "review_evidence": [
+            "protocol/whitep/v1/messages.proto",
+            "src/Host.Infrastructure/ProtocolMessageParser.cs",
+            "src/Shared.Contracts/ProtocolMessageValidator.cs",
+            "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs",
+            "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt"
+          ]
+        },
+        "follow_up": "Exact-head CI must pass the HostLifecycle authenticated HostStatusRequest/HostStatus test, Android KtLint/APK/JVM status-probe test, Windows WPF build and Step Three quality gate. Only then mark T0123 done and continue to T0124. Status is never inferred from the last cached directory timestamp."
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0123-A001-live-host-status-probe",
+          "started_at": "2026-11-01T11:32:15.839Z",
+          "ended_at": null,
+          "result": "in_progress",
+          "summary": "Implemented live authenticated HostStatusRequest/HostStatus exchanges over the existing libp2p peer-message stream. Windows performs a fresh local backend/readiness check for each probe (or reports BUSY), binds the request to its authenticated expected peer identity, and stamps a server-generated observedAt timestamp. Android opens a direct authenticated stream, requires explicit peer trust and exact PeerId match, validates the status timestamp/state and does not cache HostStatus. C# loopback and Android JVM transport acceptance tests were added; exact-head CI is not yet available.",
+          "changed_files": [
+            "src/Host.Application/HostInferenceSession.cs",
+            "src/Shared.Contracts/ProtocolMessageValidator.cs",
+            "src/Host.Infrastructure/ProtocolMessageParser.cs",
+            "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs",
+            "src/Host.Windows/MainWindow.xaml.cs",
+            "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
+            "tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs",
+            "src/Client.Android/app/src/test/java/com/whitep/client/network/Libp2pInferenceRequestTransportTest.kt",
+            "step three/T0123/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Run exact-head Step Three quality, HostLifecycle, Windows WPF and Android lint/APK/JVM workflows. Fix failures; do not mark done until those exact-run results pass."
+        }
+      ]
     },
     {
       "id": "T0124",
@@ -57933,7 +57994,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-11-01T10:53:07Z",
+  "updated_at": "2026-11-01T11:32:15.839Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

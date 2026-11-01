@@ -32,6 +32,45 @@ public sealed class HostInferenceSession : IDisposable
 
     public bool IsConnected => !_disposed && _lifecycle.Status.State == HostState.Ready;
 
+    /// <summary>
+    /// Returns a freshly checked local backend/readiness state for an authenticated peer status
+    /// request. Busy or concurrently transitioning sessions are reported conservatively without
+    /// waiting behind an active inference operation.
+    /// </summary>
+    public async Task<HostStatus> GetFreshStatusAsync(CancellationToken cancellationToken = default)
+    {
+        ObjectDisposedException.ThrowIf(_disposed, this);
+
+        HostStatus current = _lifecycle.Status;
+        if (current.State == HostState.Busy)
+        {
+            return current;
+        }
+
+        if (!await _operationGate.WaitAsync(0, cancellationToken).ConfigureAwait(false))
+        {
+            current = _lifecycle.Status;
+            return current.State is HostState.Busy or HostState.Starting
+                ? current
+                : new HostStatus(HostState.Starting, "A host state transition is in progress; readiness is not yet confirmed.");
+        }
+
+        try
+        {
+            ObjectDisposedException.ThrowIf(_disposed, this);
+            if (_lifecycle.Status.State == HostState.Busy)
+            {
+                return _lifecycle.Status;
+            }
+
+            return await CheckBackendCoreAsync(cancellationToken).ConfigureAwait(false);
+        }
+        finally
+        {
+            _operationGate.Release();
+        }
+    }
+
     public async Task<HostStatus> ConnectAsync(Uri serverBaseAddress, string model, CancellationToken cancellationToken = default)
     {
         ObjectDisposedException.ThrowIf(_disposed, this);

@@ -225,7 +225,12 @@ internal static class PeerAnnouncementClientAcceptanceTests
                 return responseMessage.ToByteArray();
             },
             TimeSpan.FromSeconds(2),
-            TimeSpan.FromMilliseconds(150));
+            TimeSpan.FromMilliseconds(150),
+            statusProvider: _ => Task.FromResult(new HostStatus
+            {
+                State = (HostRuntimeState)2,
+                ActiveRequests = 0
+            }));
 
         await host.StartAsync().WaitAsync(TimeSpan.FromSeconds(10)).ConfigureAwait(false);
         Assert(host.IsActive, "The host lifecycle should become active only after listener startup and the initial rendezvous announcement succeed.");
@@ -253,6 +258,21 @@ internal static class PeerAnnouncementClientAcceptanceTests
             .WaitAsync(TimeSpan.FromSeconds(20), timeout.Token).ConfigureAwait(false);
         Assert(client.IsConnected && host.IsActive,
             "A separately instantiated trusted peer must establish an authenticated encrypted connection to the published host.");
+
+        long statusProbeStartedAt = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+        await client.SendMessageAsync(
+            new HostStatusRequest { EphemeralHostId = hostPeerId }.ToByteArray(),
+            timeout.Token).ConfigureAwait(false);
+        byte[] statusWire = await client.ReceiveMessageAsync(timeout.Token)
+            .WaitAsync(TimeSpan.FromSeconds(5), timeout.Token).ConfigureAwait(false);
+        var liveStatus = HostStatus.Parser.ParseFrom(statusWire);
+        Assert(liveStatus.EphemeralHostId == hostPeerId &&
+               liveStatus.State == (HostRuntimeState)2 &&
+               liveStatus.ActiveRequests == 0,
+            "The authenticated peer must return the current host identity, READY state and active-request count.");
+        Assert(liveStatus.ObservedAtUnixMs >= (ulong)Math.Max(1L, statusProbeStartedAt) &&
+               liveStatus.ObservedAtUnixMs <= (ulong)DateTimeOffset.UtcNow.AddSeconds(5).ToUnixTimeMilliseconds(),
+            "HostStatus must carry a fresh server-generated observation timestamp, not a cached announcement timestamp.");
 
         var requestMessage = new InferenceRequest
         {

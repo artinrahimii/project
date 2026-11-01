@@ -32,6 +32,7 @@ public sealed class PeerAnnouncementHostLifecycle : IAsyncDisposable
     private readonly IPAddress _advertisedAddress;
     private readonly int _port;
     private readonly Func<byte[], CancellationToken, Task<byte[]>> _requestHandler;
+    private readonly Func<CancellationToken, Task<WhiteP.Shared.Contracts.V1.HostStatus>>? _statusProvider;
     private readonly HttpClient _httpClient;
     private readonly PeerAnnouncementClient _announcementClient;
     private readonly TimeSpan _timeToLive;
@@ -65,7 +66,8 @@ public sealed class PeerAnnouncementHostLifecycle : IAsyncDisposable
         Func<byte[], CancellationToken, Task<byte[]>> requestHandler,
         TimeSpan? timeToLive = null,
         TimeSpan? renewalInterval = null,
-        AuthenticatedRequestReplayGuard? replayGuard = null)
+        AuthenticatedRequestReplayGuard? replayGuard = null,
+        Func<CancellationToken, Task<WhiteP.Shared.Contracts.V1.HostStatus>>? statusProvider = null)
     {
         ArgumentNullException.ThrowIfNull(trustStore);
         ArgumentNullException.ThrowIfNull(localIdentity);
@@ -104,6 +106,7 @@ public sealed class PeerAnnouncementHostLifecycle : IAsyncDisposable
         _timeToLive = timeToLive ?? PeerAnnouncementLeasePublisher.DefaultTimeToLive;
         _renewalInterval = renewalInterval ?? PeerAnnouncementLeasePublisher.DefaultRenewalInterval;
         _replayGuard = replayGuard ?? new AuthenticatedRequestReplayGuard();
+        _statusProvider = statusProvider;
         _httpClient = new HttpClient { Timeout = TimeSpan.FromSeconds(10) };
         try
         {
@@ -279,6 +282,21 @@ public sealed class PeerAnnouncementHostLifecycle : IAsyncDisposable
                 bool handedToHandler = false;
                 try
                 {
+                    var parsedStatusRequest = ProtocolMessageParser.ParseHostStatusRequest(requestWire);
+                    if (parsedStatusRequest.IsValid && parsedStatusRequest.Message is not null)
+                    {
+                        string authenticatedPeerIdentity = transport.RemotePeerIdentity
+                            ?? throw new InvalidDataException("The secure peer session has no authenticated remote identity.");
+                        if (!StringComparer.Ordinal.Equals(authenticatedPeerIdentity, _expectedPeerIdentity))
+                            throw new InvalidDataException("The secure peer session identity changed unexpectedly.");
+                        if (!StringComparer.Ordinal.Equals(parsedStatusRequest.Message.EphemeralHostId, LocalPeerIdentity))
+                            throw new InvalidDataException("HostStatusRequest targeted a different peer identity.");
+
+                        var status = await CreateHostStatusResponseAsync(cancellationToken).ConfigureAwait(false);
+                        await transport.SendMessageAsync(status.ToByteArray(), cancellationToken).ConfigureAwait(false);
+                        continue;
+                    }
+
                     var parsedRequest = ProtocolMessageParser.ParseInferenceRequest(requestWire);
                     if (!parsedRequest.IsValid || parsedRequest.Message is null)
                     {
@@ -405,6 +423,59 @@ public sealed class PeerAnnouncementHostLifecycle : IAsyncDisposable
                 catch (Exception) { /* Individual handlers record only exception types and tear down the session. */ }
             }
         }
+    }
+
+    private async Task<WhiteP.Shared.Contracts.V1.HostStatus> CreateHostStatusResponseAsync(
+        CancellationToken cancellationToken)
+    {
+        var status = new WhiteP.Shared.Contracts.V1.HostStatus
+        {
+            State = (WhiteP.Shared.Contracts.V1.HostRuntimeState)5
+        };
+
+        if (_statusProvider is not null)
+        {
+            try
+            {
+                status = await _statusProvider(cancellationToken).ConfigureAwait(false)
+                    ?? new WhiteP.Shared.Contracts.V1.HostStatus
+                    {
+                        State = (WhiteP.Shared.Contracts.V1.HostRuntimeState)5
+                    };
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                throw;
+            }
+            catch (Exception)
+            {
+                // A status failure is reported as unavailable; it must not tear down an
+                // otherwise authenticated peer channel or silently reuse an earlier snapshot.
+                status = new WhiteP.Shared.Contracts.V1.HostStatus
+                {
+                    State = (WhiteP.Shared.Contracts.V1.HostRuntimeState)5
+                };
+            }
+        }
+
+        int stateValue = (int)status.State;
+        if (stateValue is < 1 or > 5)
+        {
+            status.State = (WhiteP.Shared.Contracts.V1.HostRuntimeState)5;
+            status.ActiveRequests = 0;
+            status.Models.Clear();
+        }
+
+        if (status.ActiveRequests > MaximumConcurrentRequestHandlers || status.Models.Count > 32)
+        {
+            status.State = (WhiteP.Shared.Contracts.V1.HostRuntimeState)5;
+            status.ActiveRequests = 0;
+            status.Models.Clear();
+        }
+
+        status.EphemeralHostId = LocalPeerIdentity;
+        status.ObservedAtUnixMs = (ulong)Math.Max(1L, DateTimeOffset.UtcNow.ToUnixTimeMilliseconds());
+        return status;
     }
 
     private async Task ProcessRequestAndRespondAsync(

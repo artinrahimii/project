@@ -38,7 +38,7 @@ public partial class MainWindow : Window
     private string? _requestedMinimumFreeDiskRequirementText;
     private CancellationTokenSource? _operationCancellation;
     private CancellationTokenSource? _modelUpdateCancellation;
-    private bool _capacityReady;
+    private volatile bool _capacityReady;
     private bool _clearSessionRequested;
     private bool _suppressParticipationToggleChanged;
     private bool _windowCloseCleanupStarted;
@@ -859,7 +859,8 @@ public partial class MainWindow : Window
                 peerPort,
                 advertisedAddressVerified: true,
                 HandlePeerInferenceMessageAsync,
-                replayGuard: _peerRequestReplayGuard);
+                replayGuard: _peerRequestReplayGuard,
+                statusProvider: GetPeerRuntimeStatusAsync);
             _peerParticipationService = service;
             await service.StartAsync();
 
@@ -893,6 +894,25 @@ public partial class MainWindow : Window
             if (!_windowClosing)
                 NetworkParticipationToggle.IsEnabled = true;
         }
+    }
+
+    private async Task<WhiteP.Shared.Contracts.V1.HostStatus> GetPeerRuntimeStatusAsync(
+        CancellationToken cancellationToken)
+    {
+        HostStatus current = await _session.GetFreshStatusAsync(cancellationToken).ConfigureAwait(false);
+        var state = current.State switch
+        {
+            HostState.Starting => (WhiteP.Shared.Contracts.V1.HostRuntimeState)1,
+            HostState.Ready when _capacityReady => (WhiteP.Shared.Contracts.V1.HostRuntimeState)2,
+            HostState.Busy => (WhiteP.Shared.Contracts.V1.HostRuntimeState)3,
+            _ => (WhiteP.Shared.Contracts.V1.HostRuntimeState)5
+        };
+
+        return new WhiteP.Shared.Contracts.V1.HostStatus
+        {
+            State = state,
+            ActiveRequests = current.State == HostState.Busy ? 1U : 0U
+        };
     }
 
     private async Task<byte[]> HandlePeerInferenceMessageAsync(byte[] wireBytes, CancellationToken cancellationToken)

@@ -144,6 +144,24 @@ public static class ProtocolMessageValidator
         return Valid();
     }
 
+    public static ProtocolMessageValidationResult ValidateHostStatusRequest(string? ephemeralHostId)
+    {
+        if (string.IsNullOrWhiteSpace(ephemeralHostId) || ephemeralHostId.Length is < 20 or > 128)
+        {
+            return InvalidMessage("HostStatusRequest must contain a normalized peer identity.");
+        }
+
+        foreach (char character in ephemeralHostId)
+        {
+            if (!IsAsciiAlphaNumeric(character))
+            {
+                return InvalidMessage("HostStatusRequest peer identity contains an invalid character.");
+            }
+        }
+
+        return Valid();
+    }
+
     public static ProtocolMessageValidationResult ValidateHostAnnouncement(
         string? ephemeralHostId,
         string? protocolVersion,
