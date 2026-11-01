@@ -32,8 +32,8 @@ class AndroidHostResponseCardsContractTests(unittest.TestCase):
         self.assertIn("hostResponseCards(responses = requestState.hostResponses)", activity)
         self.assertIn("import com.whitep.client.ui.request.hostResponseCards", activity)
         self.assertLess(
-            activity.index("import com.whitep.client.ui.request.hostResponseCards"),
             activity.index("import com.whitep.client.ui.request.RequestViewModel"),
+            activity.index("import com.whitep.client.ui.request.hostResponseCards"),
         )
 
     def test_jvm_tests_cover_distinct_hosts_duplicate_attempts_and_rejection(self):

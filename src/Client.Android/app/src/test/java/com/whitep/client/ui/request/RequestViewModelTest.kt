@@ -60,7 +60,7 @@ class RequestViewModelTest {
         viewModel.prepareRequest()
         assertEquals(RequestDraftStatus.TRANSPORT_UNAVAILABLE, viewModel.uiState.value.status)
         assertEquals(
-            "Request not sent: no host transport yet; Android-to-host transport is not implemented.",
+            "Request is not sent. Configure the HTTPS Rendezvous directory and explicitly trust a host.",
             viewModel.uiState.value.statusMessage,
         )
     }

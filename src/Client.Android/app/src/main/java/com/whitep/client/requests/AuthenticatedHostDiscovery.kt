@@ -3,13 +3,13 @@ package com.whitep.client.requests
 import com.whitep.client.context.ConversationContextCapsule
 import com.whitep.client.network.RendezvousPeerEndpoint
 import com.whitep.client.protocol.InferenceRequestPayloadBuilder
-import java.time.Clock
 import kotlinx.coroutines.CancellationException
 import org.whitep.shared.contracts.v1.HostAnnouncement
 import org.whitep.shared.contracts.v1.HostCapabilities
 import org.whitep.shared.contracts.v1.HostRuntimeState
 import org.whitep.shared.contracts.v1.HostStatus
 import org.whitep.shared.contracts.v1.InferenceRequest
+import java.time.Clock
 
 /**
  * Joins metadata-only Rendezvous routes with fresh, authenticated HostStatus responses.

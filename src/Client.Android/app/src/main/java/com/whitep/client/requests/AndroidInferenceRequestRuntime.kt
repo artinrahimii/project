@@ -9,11 +9,6 @@ import com.whitep.client.network.PeerTrustVerifier
 import com.whitep.client.network.RendezvousPeerDirectoryClient
 import com.whitep.client.network.RendezvousPeerEndpoint
 import io.libp2p.core.crypto.PrivKey
-import java.net.URI
-import java.time.Clock
-import java.time.Duration
-import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.TimeoutException
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -21,6 +16,11 @@ import kotlinx.coroutines.withTimeoutOrNull
 import org.whitep.shared.contracts.v1.HostAnnouncement
 import org.whitep.shared.contracts.v1.InferenceRequest
 import org.whitep.shared.contracts.v1.InferenceResponse
+import java.net.URI
+import java.time.Clock
+import java.time.Duration
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.TimeoutException
 
 /**
  * Application composition root for authenticated Android inference dispatch.

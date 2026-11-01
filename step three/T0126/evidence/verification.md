@@ -194,3 +194,12 @@ The live acceptance gap remains: `MainActivity.requestScreen` is prepare-only, a
 - Android `assembleDebug`, `testDebugUnitTest` and generated Protobuf checks were not reached on V 3.0.788; no success is claimed for them.
 - Windows WPF Release build/startup/security/DPAPI, HostLifecycle tests, the .NET interoperability fixture build, and Rendezvous container/HTTP smoke passed.
 - **V 3.0.789 rerun:** pending.
+
+
+## T0126-A010 — exact V 3.0.789 CI findings and corrections
+
+- Step Three quality gate passed all 317 Python tests, Python syntax, graph structure and evidence validation: [41322274185](https://github.com/artinrahimii/project/actions/runs/41322274185).
+- Android KtLint failed on five production Kotlin import blocks because they were sorted case-insensitively and placed `java/javax/kotlin` imports before other groups; KtLint requires lexicographic ordering and that final group. It also reported two chain-wrapping issues in `RequestViewModel.kt:500`. Android APK/JVM/Protobuf tasks were not reached.
+- Windows WPF build/startup/security/DPAPI and HostLifecycle passed; Rendezvous container and HTTP smoke passed.
+- The five production Kotlin files were re-sorted case-sensitively with `java/javax/kotlin` at the end, and the two ViewModel chains were wrapped. The response-card Python source contract was corrected to reflect that case-sensitive import order. The legacy ViewModel unit-test expected status was updated to the current explicit HTTPS directory/trust guidance.
+- **V 3.0.790 checks:** pending. No Kotlin build or JVM test pass is claimed until the exact commit completes CI.

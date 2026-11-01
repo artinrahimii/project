@@ -3,9 +3,9 @@ package com.whitep.client.requests
 import android.content.Context
 import com.whitep.client.context.ConversationContextCapsule
 import com.whitep.client.network.RendezvousPeerEndpoint
+import org.whitep.shared.contracts.v1.InferenceRequest
 import java.io.Closeable
 import java.net.URI
-import org.whitep.shared.contracts.v1.InferenceRequest
 
 /** Application boundary used by the request UI to discover, trust and contact real peers. */
 interface RequestExecutionGateway : Closeable {

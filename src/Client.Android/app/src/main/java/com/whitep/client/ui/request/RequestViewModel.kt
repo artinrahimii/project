@@ -7,8 +7,8 @@ import com.whitep.client.context.ConversationContextCapsule
 import com.whitep.client.data.ClientRequestRepository
 import com.whitep.client.data.InMemoryClientRequestRepository
 import com.whitep.client.data.RequestDraftStatus
-import com.whitep.client.protocol.InferenceRequestPayloadBuilder
 import com.whitep.client.protocol.InferenceRequestPayloadBuildResult
+import com.whitep.client.protocol.InferenceRequestPayloadBuilder
 import com.whitep.client.requests.AndroidRequestExecutionGatewayFactory
 import com.whitep.client.requests.DistributedRequest
 import com.whitep.client.requests.FirstReleaseInferenceLimits
@@ -18,19 +18,19 @@ import com.whitep.client.requests.InferenceRoundResponseFailure
 import com.whitep.client.requests.InferenceRoundResponseFailureReason
 import com.whitep.client.requests.RequestExecutionGateway
 import com.whitep.client.requests.RequestExecutionGatewayFactory
-import java.net.URI
-import java.util.UUID
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import org.whitep.shared.contracts.v1.InferenceOutcome
 import org.whitep.shared.contracts.v1.InferenceResponse
+import java.net.URI
+import java.util.UUID
 
 enum class HostResponseOutcome {
     SUCCEEDED,
@@ -497,12 +497,19 @@ class RequestViewModel(
                 modelId = "",
                 outcome = outcome,
                 outputText = "",
-                errorMessage = failure.reason.name.lowercase().replace('_', ' '),
+                errorMessage =
+                    failure.reason.name
+                        .lowercase()
+                        .replace('_', ' '),
                 completedAtUnixMs = clockMillis(),
                 receivedAtUnixMs = clockMillis(),
             )
         synchronized(responseLock) {
-            if (mutableHostResponses.value.none { it.requestId == requestId && it.attemptId == failure.attemptId }) {
+            val attemptAlreadyRecorded =
+                mutableHostResponses.value.any { recorded ->
+                    recorded.requestId == requestId && recorded.attemptId == failure.attemptId
+                }
+            if (!attemptAlreadyRecorded) {
                 mutableHostResponses.value = mutableHostResponses.value + card
             }
         }
