@@ -24977,29 +24977,13 @@
       ],
       "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0121-A005 verification update (2026-10-27): all exact-commit GitHub Actions workflows for V 3.0.368 passed, including the HostLifecycle acceptance suite. This validates the correction to the tests, but does not complete runtime lifecycle integration: the publisher is not yet wired to the WPF participation toggle and safe reachable rendezvous/advertised-address configuration remains unavailable. Task status remains in_progress.\n\nT0121-A006 (2026-10-27): status changed from in_progress to blocked after source- and graph-backed review. The lease publisher/loopback tests exist, but the real WPF host listener remains loopback-only and explicitly closes inbound requests until protocol handling is implemented; no verified advertised address, rendezvous HTTPS setting or wired stable host identity exists. T0130 identity work sits downstream of T0128, which itself depends on T0121/T0122; do not add a new identity edge without resolving this potential cycle. Unblock only after authenticated peer-reachable host request handling, verified identity/address/HTTPS settings and WPF lifecycle integration pass exact-host tests. T0122 remains not_started.\n\nT0130 ordering update: identity-store work is scheduled before the blocked announcement chain after validating T0128 → T0130 as sequencing_only. This resolves the ordering-cycle concern only; it does not unblock T0121 because production identity wiring, authenticated reachable inbound handling, HTTPS rendezvous and a verified advertised address remain missing.\n\nT0121-A007 (2026-10-28): Added PeerAnnouncementHostLifecycle and connected it to WPF participation: fixed-address libp2p listening for an explicitly trusted peer, HTTPS rendezvous lease publishing/renewal, Protobuf request parsing, coordinator/readiness admission, real-session inference response, and stop-on-disconnect. Added a loopback service integration test for authenticated message exchange and expiry. The UI requires an explicit user attestation that the advertised address was tested from the remote peer; the app itself does not probe public reachability. Exact-head CI pending, so status stays blocked.\n\n\nT0121-A008/A009 (2026-10-28): The first host integration candidate was corrected to wait for an authenticated libp2p session before reading peer messages, obsolete loopback-only WPF assertions were replaced with peer-host configuration guards, and WPF type/protobuf references were fixed. Exact candidate c06d0ff passed all Step Three, HostLifecycle/peer-host, Windows WPF/DPAPI, Android and live-inference workflows. T0121 remains blocked only on independently evidenced deployment reachability/HTTPS rendezvous; no public-reachability or AC-P2P-01 success is claimed.\n\n\nT0121-A010 (2026-10-28): Re-read V 3.0.447 at online main head d1056208073960132aaa04cdb1568cfb29b13284. The full graph Blob SHA-1 matched the exact tree object; 229 tasks and 424 edges parsed. Current-head quality, HostLifecycle, Windows WPF, Android APK and local-inference CI statuses were all completed/successful. No production HTTPS rendezvous endpoint or second peer on an independent network was available, so deployment reachability remains NOT RUN; the local shallow clone also failed at DNS resolution, and no local test run is claimed. No edges or implementation files changed. T0121 remains blocked; T0122 remains not_started; AC-P2P-01 remains NOT RUN.\n\nT0121-A011 (2026-10-28): Re-read exact online main head e1ebd0895083da5558963911b04fbc9231b266cd (V 3.0.448). Exact-head Step Three quality, HostLifecycle integration, Windows WPF build, and Android APK all completed successfully. The graph was re-read from Blob 3533bf1eeaf654469f93f1edaf6c6863b9bd9af0; full UTF-8 content and JSON integrity were checked in this run. No deployed HTTPS rendezvous endpoint or independent-network peer was available, so reachability acceptance remains NOT RUN. No implementation or graph edge changed; this is an evidence synchronization attempt only. T0121 remains blocked, T0122 remains not_started, and AC-P2P-01 remains NOT RUN.\n\n\nT0121-A012 (2026-10-28): Revalidated exact online main head ff6dc21837e52c9e3e8123d409b3b41aa265c4a5 (V 3.0.449). Git Trees API identified the graph Blob 506e379f69c53aabdb2f5884cb40f6926886ae35; Git Blob API returned the complete content, recomputed Git Blob SHA-1 matched, and fenced JSON parsed as 229 tasks / 424 edges. Exact-head Step Three quality gate, HostLifecycle integration, Windows WPF build and Android APK CI all report completed/success. No deployed HTTPS rendezvous endpoint or second peer on an independent network was available, so independent reachability remains NOT RUN. No code or edge changed; this is evidence synchronization, not software progress. T0121 remains blocked; T0122 remains not_started; AC-P2P-01 remains NOT RUN.\n\nT0121-A013 (2026-10-28): Revalidated exact online main head d5f7c1d5416fef22cffa21608b173ed7839a6c38 (V 3.0.450). Git Blob API contents for graph, execution report and verification evidence matched their exact Git Blob SHA-1 IDs; the complete graph parses as 229 tasks / 424 edges. Exact-head Step Three quality gate, Android APK build, and HostLifecycle tests completed successfully. Windows WPF job remains in_progress at Set up job; no success/failure conclusion is claimed. No deployed production HTTPS rendezvous endpoint or second peer on an independent network was available, so reachability acceptance remains NOT RUN. No source code or dependency edge changed; this is fresh CI evidence recording, not software implementation progress. T0121 remains blocked, T0122 remains not_started, and AC-P2P-01 remains NOT RUN.\n\nT0121-A014 (2026-10-28): Revalidated exact online main head 20f3389614e2f6584e1d9af6d6b80af7cadea55f (V 3.0.451). Exact-head Step Three quality gate, HostLifecycle integration tests, Windows WPF Release build and Android APK build all completed successfully (https://github.com/artinrahimii/project/actions/runs/40707006692; https://github.com/artinrahimii/project/actions/runs/40707006686/job/122881723665; https://github.com/artinrahimii/project/actions/runs/40707006686/job/122881724223; https://github.com/artinrahimii/project/actions/runs/40707006686/job/122881724071). The graph was recovered via the Git Blob API from its exact tree entry; complete UTF-8 bytes matched the recorded Blob SHA-1 and JSON parsed as 229 tasks / 424 edges. No production HTTPS rendezvous endpoint or second peer on an independent network was available, so independent reachability remains NOT RUN. No product source or dependency edge changed. T0121 remains blocked; T0122 remains not_started; AC-P2P-01 remains NOT RUN.\n\nT0121-A015 (2026-10-28): Revalidated exact online main head 07b430e8f8bb6753e20d8421324fdfc652bfaed4 (V 3.0.452). The graph was retrieved via the Blob SHA recorded in that commit's tree; recomputed Git Blob SHA-1 matched and the complete JSON parsed as 229 tasks / 424 edges. Exact-head Step Three quality gate and HostLifecycle integration passed. Android APK and Windows WPF jobs remain in_progress, with no final conclusion available at this inspection. No production HTTPS rendezvous endpoint or independent-network peer was available, so external reachability remains NOT RUN. No implementation or dependency edge changed; this update records current CI evidence and is not software implementation progress. T0121 remains blocked, T0122 remains not_started, and AC-P2P-01 remains NOT RUN.\n\nT0121-A016 (2026-10-28): Final result correction for exact V 3.0.452 (https://github.com/artinrahimii/project/actions/runs/40708989069; HostLifecycle https://github.com/artinrahimii/project/actions/runs/40708988954/job/122888764070; Windows WPF https://github.com/artinrahimii/project/actions/runs/40708988954/job/122888764130; Android APK https://github.com/artinrahimii/project/actions/runs/40708988954/job/122888763816). All four exact-head CI workflows/jobs completed successfully; this supersedes the A015 observations that Windows and Android were still in progress at that earlier inspection. No production HTTPS rendezvous endpoint or independent-network peer was available, so public reachability remains NOT RUN. No implementation or edge changed; T0121 remains blocked, T0122 remains not_started, and AC-P2P-01 remains NOT RUN.\n\nT0121-A017 (2026-10-28): Revalidated exact online main head 1572ba5150e4bcd09f1264bb9162c54e081aff2d (V 3.0.454). The full graph was fetched by its exact tree Blob, complete UTF-8 bytes matched the recomputed Git Blob SHA-1, and the fenced JSON parsed as 229 tasks / 424 edges. Exact-head Step Three quality checks passed (40709904930); HostLifecycle integration, Windows WPF Release/startup/security checks, and Android APK/lint/Protobuf checks all passed (40709904932). Independent-network TCP/UDP reachability and a deployed production HTTPS rendezvous endpoint remain NOT RUN because no endpoint or independent peer was available. No product source or dependency edge changed. T0121 remains blocked; T0122 remains not_started; AC-P2P-01 remains NOT RUN. This is CI evidence synchronization, not implementation progress.\n\nT0121-A018 (2026-10-28): Re-read exact online main head 8c770adbf0cb51153e301fdbec1ad8ddc242da0a (V 3.0.455). The graph was fetched from its exact-tree Blob after normal file retrieval returned empty; full UTF-8 bytes matched the recomputed Git Blob SHA-1, and the complete JSON parsed as 229 tasks / 424 edges. Exact-head Step Three quality, HostLifecycle, Windows WPF and Android APK workflows all completed successfully (runs 40711411110 and 40711410986). No independent-network peer or production HTTPS rendezvous endpoint was available, so external advertised TCP/UDP reachability remains NOT RUN. No product source or dependency edge changed. T0121 stays blocked; T0122 not_started; AC-P2P-01 NOT RUN. This is evidence synchronization, not implementation progress.",
       "execution_summary": {
-        "attempt_count": 21,
+        "attempt_count": 22,
         "failed_attempt_count": 3,
-        "last_attempt_id": "T0121-A021-current-main-ci-final",
+        "last_attempt_id": "T0121-A022-exact-V-3.0.743-ci",
         "last_attempt_result": "blocked",
         "changed_files": [
-          "src/Host.Windows/Networking/PeerAnnouncementLeasePublisher.cs",
-          "tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs",
-          "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
           "step three/T0121/execution-report.md",
-          "step three/T0121/evidence/verification.md",
-          "step three/project-graph.md",
-          "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs",
-          "src/Host.Windows/MainWindow.xaml.cs",
-          "src/Host.Windows/MainWindow.xaml",
-          "tests/test_decision_traceability.py",
-          "tests/test_network_listener_exposure.py",
-          "docs/decisions/ADR-0006-peer-announcement-leases.md",
-          "docs/decisions/README.md",
-          "step three/T0121/evidence/v3.0.451-current-head.md",
-          "step three/T0121/evidence/v3.0.452-ci-final.md",
-          "step three/T0121/evidence/v3.0.454-ci-current-head.md",
-          "step three/T0121/evidence/v3.0.455-ci-final.md",
-          "step three/T0121/evidence/v3.0.607-current-head.md"
+          "step three/project-graph.md"
         ],
         "related_commits": [
           "969ad720db1a84c1f633031300ba26e00d48d5fa",
@@ -25012,90 +24996,10 @@
           "c06d0ff57e18c2e0ea8f685692553ab8ba089fe6"
         ],
         "tests_passed": [
-          "HostLifecycle unit/integration suite PASS on exact 969ad720db1a84c1f633031300ba26e00d48d5fa; log confirms periodic TTL renewal and natural expiry acceptance: https://github.com/artinrahimii/project/actions/runs/40455186298/job/122026746502",
-          "Step Three quality gate PASS on exact 969ad720db1a84c1f633031300ba26e00d48d5fa (Python tests, compileall, graph structure and repo output/evidence guard): https://github.com/artinrahimii/project/actions/runs/40455186284",
-          "Windows WPF Release build, C# whitespace formatting, generated Protobuf validation, startup smoke and host policy/capability checks PASS: https://github.com/artinrahimii/project/actions/runs/40455186298/job/122026746273",
-          "Android Kotlin lint, debug APK build, Protobuf round-trip and generated-source checks PASS: https://github.com/artinrahimii/project/actions/runs/40455186298/job/122026746493",
-          "Real local llama.cpp process and GGUF response/cancellation integration PASS: https://github.com/artinrahimii/project/actions/runs/40455186251",
-          "Step Three quality gate on exact commit 8a49b48259f693dc2ddc04e846a78fe15bff8227 — PASS: Run 40456065310, job 122029549896: automated tests, Python syntax, graph structure, and repository-backed output/evidence checks all completed successfully. https://github.com/artinrahimii/project/actions/runs/40456065310",
-          "Host lifecycle unit and integration tests on exact commit 8a49b48259f693dc2ddc04e846a78fe15bff8227 — PASS: Run 40456065291, job 122029550003: the HostLifecycle unit/integration test step completed successfully, including the corrected T0121 acceptance test suite. https://github.com/artinrahimii/project/actions/runs/40456065291/job/122029550003",
-          "Windows WPF host Release build and startup smoke on exact commit 8a49b48259f693dc2ddc04e846a78fe15bff8227 — PASS: Run 40456065291, job 122029549657: C# formatting, Release build, generated Protobuf validation, startup smoke, and Windows policy checks passed. https://github.com/artinrahimii/project/actions/runs/40456065291/job/122029549657",
-          "Android APK build, lint and Protobuf checks on exact commit 8a49b48259f693dc2ddc04e846a78fe15bff8227 — PASS: Run 40456065291, job 122029549997: Kotlin formatting/lint, debug APK build, Protobuf round-trip, generated-source validation, and artifact upload passed. https://github.com/artinrahimii/project/actions/runs/40456065291/job/122029549997",
-          "Real local llama.cpp/GGUF inference integration on exact commit 8a49b48259f693dc2ddc04e846a78fe15bff8227 — PASS: Run 40456065350, job 122029550007: pinned llama.cpp and GGUF validation plus live local-model inference acceptance completed successfully. https://github.com/artinrahimii/project/actions/runs/40456065350",
-          "Exact c06d0ff57e18c2e0ea8f685692553ab8ba089fe6: Step Three quality gate PASS, 191 Python tests; graph 229 nodes / 424 edges, zero errors and one preserved T0001 warning. https://github.com/artinrahimii/project/actions/runs/40661258738",
-          "Exact c06d0ff57e18c2e0ea8f685692553ab8ba089fe6: HostLifecycle integration PASS, including PeerAnnouncementHostLifecycle loopback authenticated-peer request/response and lease expiry. https://github.com/artinrahimii/project/actions/runs/40661258731/job/122724562643",
-          "Exact c06d0ff57e18c2e0ea8f685692553ab8ba089fe6: Windows WPF build/startup/DPAPI and Android APK/lint/Protobuf product jobs PASS. https://github.com/artinrahimii/project/actions/runs/40661258731",
-          "Exact c06d0ff57e18c2e0ea8f685692553ab8ba089fe6: pinned llama.cpp/GGUF live local inference workflow PASS. https://github.com/artinrahimii/project/actions/runs/40661258746",
-          "Exact online main head d1056208073960132aaa04cdb1568cfb29b13284: Step Three quality gate PASS — https://github.com/artinrahimii/project/actions/runs/40662651891/job/122729230638 (status inspected, not rerun in this audit).",
-          "Exact online main head d1056208073960132aaa04cdb1568cfb29b13284: HostLifecycle integration tests PASS — https://github.com/artinrahimii/project/actions/runs/40662651874/job/122729230947 (status inspected, not rerun in this audit).",
-          "Exact online main head d1056208073960132aaa04cdb1568cfb29b13284: Windows WPF Release build PASS — https://github.com/artinrahimii/project/actions/runs/40662651874/job/122729231366.",
-          "Exact online main head d1056208073960132aaa04cdb1568cfb29b13284: Android client APK/lint/Protobuf PASS — https://github.com/artinrahimii/project/actions/runs/40662651874/job/122729231269.",
-          "Exact online main head d1056208073960132aaa04cdb1568cfb29b13284: live local llama.cpp/GGUF workflow PASS — https://github.com/artinrahimii/project/actions/runs/40662652089/job/122729231944.",
-          "Step Three quality gate — exact V 3.0.448: PASS — https://github.com/artinrahimii/project/actions/runs/40704091906/job/122871401609. GitHub Actions reported completed/success. Inspected run output only; not rerun during this verification.",
-          "Host lifecycle unit and integration — exact V 3.0.448: PASS — https://github.com/artinrahimii/project/actions/runs/40704092070/job/122871402110. GitHub Actions reported completed/success for the exact commit.",
-          "Windows WPF host build — exact V 3.0.448: PASS — https://github.com/artinrahimii/project/actions/runs/40704092070/job/122871401355. GitHub Actions reported completed/success for the exact commit.",
-          "Android client APK — exact V 3.0.448: PASS — https://github.com/artinrahimii/project/actions/runs/40704092070/job/122871401840. GitHub Actions reported completed/success for the exact commit.",
-          {
-            "name": "Step Three quality gate — exact V 3.0.449",
-            "result": "passed",
-            "url": "https://github.com/artinrahimii/project/actions/runs/40705066591/job/122874848819",
-            "summary": "GitHub Actions reports completed/success for exact main commit ff6dc21837e52c9e3e8123d409b3b41aa265c4a5. Inspected the completed job; no new run was launched during this audit."
-          },
-          {
-            "name": "Host lifecycle unit/integration — exact V 3.0.449",
-            "result": "passed",
-            "url": "https://github.com/artinrahimii/project/actions/runs/40705066594/job/122874849027",
-            "summary": "GitHub Actions reports completed/success for exact main commit ff6dc21837e52c9e3e8123d409b3b41aa265c4a5."
-          },
-          {
-            "name": "Windows WPF host build — exact V 3.0.449",
-            "result": "passed",
-            "url": "https://github.com/artinrahimii/project/actions/runs/40705066594/job/122874848582",
-            "summary": "GitHub Actions reports completed/success for exact main commit ff6dc21837e52c9e3e8123d409b3b41aa265c4a5."
-          },
-          {
-            "name": "Android APK build — exact V 3.0.449",
-            "result": "passed",
-            "url": "https://github.com/artinrahimii/project/actions/runs/40705066594/job/122874848980",
-            "summary": "GitHub Actions reports completed/success for exact main commit ff6dc21837e52c9e3e8123d409b3b41aa265c4a5."
-          },
-          {
-            "name": "Independent-network reachability and deployed HTTPS rendezvous",
-            "result": "not_run",
-            "summary": "No production HTTPS rendezvous endpoint or peer on an independent network was available in this execution; loopback tests do not establish external reachability."
-          },
-          "Step Three quality gate — exact V 3.0.450: PASS — https://github.com/artinrahimii/project/actions/runs/40706062117. GitHub Actions reports completed/success on exact main commit d5f7c1d5416fef22cffa21608b173ed7839a6c38.",
-          "Android APK build and lint — exact V 3.0.450: PASS — https://github.com/artinrahimii/project/actions/runs/40706063503/job/122878385398. The exact-head Android build job completed successfully, including Kotlin formatting/lint, debug APK, Protobuf round-trip and generated-source checks.",
-          "HostLifecycle unit/integration tests — exact V 3.0.450: PASS — https://github.com/artinrahimii/project/actions/runs/40706063503/job/122878385751. The exact-head HostLifecycle test job completed successfully, including lifecycle integration tests.",
-          "Completed successfully: https://github.com/artinrahimii/project/actions/runs/40707006692",
-          "Completed successfully: https://github.com/artinrahimii/project/actions/runs/40707006686/job/122881723665",
-          "Completed successfully: https://github.com/artinrahimii/project/actions/runs/40707006686/job/122881724223",
-          "Completed successfully: https://github.com/artinrahimii/project/actions/runs/40707006686/job/122881724071",
-          "Step Three quality gate — exact V 3.0.452: PASS — https://github.com/artinrahimii/project/actions/runs/40708989069.",
-          "HostLifecycle unit/integration — exact V 3.0.452: PASS — https://github.com/artinrahimii/project/actions/runs/40708988954/job/122888764070.",
-          "Step Three quality gate — exact V 3.0.452: PASS — https://github.com/artinrahimii/project/actions/runs/40708989069",
-          "HostLifecycle unit and integration — exact V 3.0.452: PASS — https://github.com/artinrahimii/project/actions/runs/40708988954/job/122888764070",
-          "Windows WPF host Release build — exact V 3.0.452: PASS — https://github.com/artinrahimii/project/actions/runs/40708988954/job/122888764130",
-          "Android APK build, lint and Protobuf checks — exact V 3.0.452: PASS — https://github.com/artinrahimii/project/actions/runs/40708988954/job/122888763816",
-          "Exact V 3.0.454 Step Three quality gate PASS: https://github.com/artinrahimii/project/actions/runs/40709904930",
-          "Exact V 3.0.454 HostLifecycle integration PASS: https://github.com/artinrahimii/project/actions/runs/40709904932/job/122892022010",
-          "Exact V 3.0.454 Windows WPF build/startup/security PASS: https://github.com/artinrahimii/project/actions/runs/40709904932/job/122892022375",
-          "Exact V 3.0.454 Android APK/lint/Protobuf PASS: https://github.com/artinrahimii/project/actions/runs/40709904932/job/122892022486",
-          "Exact V 3.0.455 Step Three quality gate PASS: https://github.com/artinrahimii/project/actions/runs/40711411110",
-          "Exact V 3.0.455 HostLifecycle integration PASS: https://github.com/artinrahimii/project/actions/runs/40711410986/job/122897386880",
-          "Exact V 3.0.455 Windows WPF Release/startup/security PASS: https://github.com/artinrahimii/project/actions/runs/40711410986/job/122897387158",
-          "Exact V 3.0.455 Android APK/lint/Protobuf PASS: https://github.com/artinrahimii/project/actions/runs/40711410986/job/122897386482",
-          "Step Three quality gate — exact V 3.0.607: PASS — https://github.com/artinrahimii/project/actions/runs/41021718017",
-          "HostLifecycle unit/integration — exact V 3.0.607: PASS — https://github.com/artinrahimii/project/actions/runs/41021717940",
-          "Windows WPF build/startup/security — exact V 3.0.607: PASS — https://github.com/artinrahimii/project/actions/runs/41021717940",
-          "Android APK/lint/unit tests — exact V 3.0.607: PASS — https://github.com/artinrahimii/project/actions/runs/41021717940",
-          "Step Three quality gate — exact V 3.0.741: PASS — https://github.com/artinrahimii/project/actions/runs/41279967441",
-          "Windows WPF build/startup/security — exact V 3.0.741: PASS — https://github.com/artinrahimii/project/actions/runs/41279967432/job/124768193055",
-          "HostLifecycle unit/integration — exact V 3.0.741: PASS — https://github.com/artinrahimii/project/actions/runs/41279967432/job/124768192954",
-          "Exact V 3.0.742 Step Three quality gate PASS: https://github.com/artinrahimii/project/actions/runs/41280266301",
-          "Exact V 3.0.742 HostLifecycle unit/integration PASS: https://github.com/artinrahimii/project/actions/runs/41280266207",
-          "Exact V 3.0.742 Windows WPF Release build/startup/security PASS: https://github.com/artinrahimii/project/actions/runs/41280266207",
-          "Exact V 3.0.742 Android lint/APK/JVM/generated Protobuf PASS: https://github.com/artinrahimii/project/actions/runs/41280266207"
+          "Step Three quality gate — exact V 3.0.743 — PASS — https://github.com/artinrahimii/project/actions/runs/41280778924",
+          "HostLifecycle unit and integration — exact V 3.0.743 — PASS — https://github.com/artinrahimii/project/actions/runs/41280778977/job/124772090697",
+          "Windows WPF Release build/startup/security — exact V 3.0.743 — PASS — https://github.com/artinrahimii/project/actions/runs/41280778977/job/124772090858",
+          "Android lint, debug APK, JVM tests and generated Protobuf — exact V 3.0.743 — PASS — https://github.com/artinrahimii/project/actions/runs/41280778977/job/124772090831"
         ],
         "tests_failed": [
           "V 3.0.367 CI: Host lifecycle tests failed to compile because the new test passed HttpClient where PeerAnnouncementClient is required (CS1503).",
@@ -25114,7 +25018,10 @@
             "src/Rendezvous.Service/PeerAnnouncementDirectory.cs"
           ]
         },
-        "follow_up": "Provide/deploy the production HTTPS rendezvous endpoint and run the advertised TCP/UDP reachability test from a separately networked peer; only then re-evaluate T0121 and start T0122."
+        "follow_up": "Provide/deploy the production HTTPS rendezvous endpoint and run the advertised TCP/UDP reachability test from a separately networked peer; only then re-evaluate T0121 and start T0122.",
+        "tests_pending": [
+          "Independent-network advertised TCP/UDP reachability and production HTTPS rendezvous acceptance — NOT RUN"
+        ]
       },
       "execution_history": [
         {
@@ -26036,6 +25943,54 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Provide/deploy the production HTTPS rendezvous endpoint and run the advertised TCP/UDP reachability test from a separately networked peer; only then re-evaluate T0121 and start T0122."
+        },
+        {
+          "attempt_id": "T0121-A022-exact-V-3.0.743-ci",
+          "started_at": "2026-11-01T06:30:00.034Z",
+          "ended_at": "2026-11-01T06:30:00.034Z",
+          "result": "blocked",
+          "summary": "Revalidated T0121 against the exact online main head V 3.0.743. The exact-head Step Three quality gate, HostLifecycle unit/integration, Windows WPF Release/startup/security, and Android lint/APK/JVM/generated-Protobuf workflows all completed successfully. The production HTTPS rendezvous endpoint and independent-network advertised TCP/UDP reachability acceptance remain NOT RUN because no endpoint or separately networked peer was available. No product source or test code changed; T0121 remains blocked and T0122 remains not_started.",
+          "changed_files": [
+            "step three/T0121/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Step Three quality gate — exact V 3.0.743",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41280778924",
+              "summary": "Exact-head graph, evidence, Python tests and structural quality checks completed successfully."
+            },
+            {
+              "name": "HostLifecycle unit and integration — exact V 3.0.743",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41280778977/job/124772090697",
+              "summary": "All HostLifecycle unit and integration tests completed successfully."
+            },
+            {
+              "name": "Windows WPF Release build/startup/security — exact V 3.0.743",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41280778977/job/124772090858",
+              "summary": "Windows WPF build, startup smoke, security and policy checks completed successfully."
+            },
+            {
+              "name": "Android lint, debug APK, JVM tests and generated Protobuf — exact V 3.0.743",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41280778977/job/124772090831",
+              "summary": "All Android lint, APK, JVM unit test, Protobuf verification and artifact upload steps completed successfully."
+            },
+            {
+              "name": "Independent-network advertised TCP/UDP reachability and production HTTPS rendezvous acceptance",
+              "result": "not_run",
+              "summary": "No production HTTPS rendezvous endpoint or separately networked peer was supplied/available for this run. CI and loopback acceptance do not prove public advertised-address reachability."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": "External advertised TCP/UDP reachability acceptance remains NOT RUN: no production HTTPS rendezvous endpoint or second peer on an independent network is available.",
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Provide/deploy the production HTTPS rendezvous endpoint and run advertised TCP/UDP reachability acceptance from a peer on a separate network; only then re-evaluate T0121 and start T0122."
         }
       ]
     },
@@ -57349,7 +57304,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-11-01T06:25:12.486Z",
+  "updated_at": "2026-11-01T06:30:00.034Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",
