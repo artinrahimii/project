@@ -165,8 +165,12 @@ class RequestViewModel(
                     )
                 return
             }
-        if (!uri.isAbsolute || uri.scheme?.lowercase() != "https" ||
-            uri.host.isNullOrBlank() || uri.userInfo != null || uri.query != null || uri.fragment != null
+        if (!uri.isAbsolute
+            || uri.scheme?.lowercase() != "https"
+            || uri.host.isNullOrBlank()
+            || uri.userInfo != null
+            || uri.query != null
+            || uri.fragment != null
         ) {
             mutableNetworkState.value =
                 mutableNetworkState.value.copy(
@@ -485,9 +489,11 @@ class RequestViewModel(
                 InferenceRoundResponseFailureReason.SUBMISSION_REJECTED -> HostResponseOutcome.REJECTED
                 InferenceRoundResponseFailureReason.SUBMISSION_TIMED_OUT,
                 InferenceRoundResponseFailureReason.ROUND_WINDOW_UNAVAILABLE,
-                InferenceRoundResponseFailureReason.RESPONSE_TIMED_OUT -> HostResponseOutcome.TIMED_OUT
+                InferenceRoundResponseFailureReason.RESPONSE_TIMED_OUT,
+                -> HostResponseOutcome.TIMED_OUT
                 InferenceRoundResponseFailureReason.SUBMISSION_FAILED,
-                InferenceRoundResponseFailureReason.RESPONSE_FAILED -> HostResponseOutcome.FAILED
+                InferenceRoundResponseFailureReason.RESPONSE_FAILED,
+                -> HostResponseOutcome.FAILED
             }
         val card =
             HostResponseCardState(

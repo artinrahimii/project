@@ -203,3 +203,11 @@ The live acceptance gap remains: `MainActivity.requestScreen` is prepare-only, a
 - Windows WPF build/startup/security/DPAPI and HostLifecycle passed; Rendezvous container and HTTP smoke passed.
 - The five production Kotlin files were re-sorted case-sensitively with `java/javax/kotlin` at the end, and the two ViewModel chains were wrapped. The response-card Python source contract was corrected to reflect that case-sensitive import order. The legacy ViewModel unit-test expected status was updated to the current explicit HTTPS directory/trust guidance.
 - **V 3.0.790 checks:** pending. No Kotlin build or JVM test pass is claimed until the exact commit completes CI.
+
+## Exact V 3.0.790 / A011 follow-up
+
+- Exact V 3.0.790 Step Three quality gate — PASS: 317 Python tests, Python syntax, graph structure and recorded-output/evidence validation — [run 41323436364](https://github.com/artinrahimii/project/actions/runs/41323436364).
+- Exact V 3.0.790 Windows WPF build/startup/security/DPAPI and HostLifecycle unit/integration — PASS — [product run 41323436382](https://github.com/artinrahimii/project/actions/runs/41323436382).
+- Exact V 3.0.790 Rendezvous production container and HTTP smoke — PASS — [run 41323436381](https://github.com/artinrahimii/project/actions/runs/41323436381).
+- Exact V 3.0.790 Android KtLint — FAIL: six formatting diagnostics in `RequestViewModel.kt`; APK build, JVM tests and generated Protobuf checks were skipped — [product run 41323436382](https://github.com/artinrahimii/project/actions/runs/41323436382).
+- V 3.0.791 corrects only the reported formatting and adds ViewModel assertions proving zero-host no-send feedback and one-host shortage feedback after explicit trust. Exact-head Android and quality validation are pending; no success is presumed.

@@ -195,6 +195,10 @@ class RequestViewModelTest {
             activeViewModel.uiState.value.networkStatusMessage
                 .orEmpty()
         assertTrue(statusMessage.contains("No inference payload was sent"))
+        assertEquals(
+            "No compatible, reachable hosts are currently available. The request was not sent.",
+            activeViewModel.uiState.value.hostAvailabilityMessage,
+        )
 
         activeViewModel.trustPeerAfterExplicitConfirmation(gateway.peerId)
         val trustedPeer =
@@ -206,6 +210,10 @@ class RequestViewModelTest {
         activeViewModel.sendRequest("hello host", "local/test-model", 64)
         assertEquals(1, gateway.dispatchCount)
         assertEquals(listOf(gateway.peerId), gateway.sentHostIds)
+        assertEquals(
+            "Only 1 of 3 compatible, reachable hosts are currently available. Continuing with 1 host.",
+            activeViewModel.uiState.value.hostAvailabilityMessage,
+        )
         assertEquals(1, activeViewModel.uiState.value.hostResponses.size)
         val hostResponse =
             activeViewModel.uiState.value.hostResponses
