@@ -32,3 +32,12 @@ Existing relevant cases retained:
 ## Next
 
 Inspect exact-head workflow results. If all relevant Android JVM/build and Step Three checks pass, append exact CI evidence and mark T0127 `done` in a follow-up version commit. If any check fails, preserve this attempt as partial/failed, correct the test code, and rerun.
+
+
+## T0127-A002 — exact V 3.0.773 CI failure and correction
+
+- The Step Three quality gate passed: [41313567881](https://github.com/artinrahimii/project/actions/runs/41313567881).
+- HostLifecycle unit/integration passed: [product workflow 41313567864](https://github.com/artinrahimii/project/actions/runs/41313567864).
+- Rendezvous container build and HTTP smoke passed: [41313567782](https://github.com/artinrahimii/project/actions/runs/41313567782).
+- Android KtLint failed nine style findings in the two new test files: extra blank lines, multiline initializer layout and constructor parameter layout. APK, JVM tests and generated Protobuf verification were skipped; no Android test assertion is claimed as passed.
+- T0127-A003 removes only the reported whitespace/line-layout violations. Test behavior is unchanged; exact V 3.0.774 CI is pending.

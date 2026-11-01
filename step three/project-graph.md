@@ -27758,11 +27758,11 @@
         "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt",
         "step three/T0127/evidence/verification.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0127-A001 (2026-11-01): Added Android regression cases for duplicate directory PeerIds, cache expiry followed by a network interruption (fail closed without returning the cached route), and all authenticated peer status probes failing followed by NO_SELECTED_HOSTS/no inference send. Existing expired-announcement, duplicate selector/dispatcher and empty-host coverage remains. Both incoming edges were reviewed as sequencing_only and validated; original blocks labels and order remain. Exact-head CI pending; do not mark done before Android JVM/build and graph quality checks pass.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0127-A001 (2026-11-01): Added Android regression cases for duplicate directory PeerIds, cache expiry followed by a network interruption (fail closed without returning the cached route), and all authenticated peer status probes failing followed by NO_SELECTED_HOSTS/no inference send. Existing expired-announcement, duplicate selector/dispatcher and empty-host coverage remains. Both incoming edges were reviewed as sequencing_only and validated; original blocks labels and order remain. Exact-head CI pending; do not mark done before Android JVM/build and graph quality checks pass.\nT0127-A002 (2026-11-01): Exact V 3.0.773 CI Step Three quality, HostLifecycle and Rendezvous container checks passed; Android KtLint failed nine formatting findings in the new test files, so APK, JVM tests and generated Protobuf verification were skipped. The failure is preserved in execution_history. T0127-A003 applies formatting-only corrections; exact CI pending.",
       "execution_summary": {
-        "attempt_count": 1,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "T0127-A001-network-expiry-duplicate-and-no-host-regressions",
+        "attempt_count": 3,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "T0127-A003-ktlint-correction",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Client.Android/app/src/test/java/com/whitep/client/network/RendezvousPeerDirectoryClientTest.kt",
@@ -27771,9 +27771,17 @@
           "step three/T0127/evidence/verification.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
-        "tests_failed": [],
+        "related_commits": [
+          "0642a754745de9082d5f6c0c24835975227a5942"
+        ],
+        "tests_passed": [
+          "Exact V 3.0.773 HostLifecycle unit/integration — PASS (run 41313567864).",
+          "Exact V 3.0.773 Step Three quality gate — PASS (run 41313567881).",
+          "Exact V 3.0.773 Rendezvous container build and smoke — PASS (run 41313567782)."
+        ],
+        "tests_failed": [
+          "Exact V 3.0.773 Android ktlintTestSourceSetCheck — failed due to formatting; APK/JVM/Protobuf verification skipped."
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -27825,6 +27833,90 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Run exact V 3.0.773 Android KtLint, assembleDebug, testDebugUnitTest, generated Protobuf checks and Step Three quality gate. Only then record T0127 as done."
+        },
+        {
+          "attempt_id": "T0127-A002-exact-V3.0.773-ktlint-failure",
+          "started_at": "2026-11-01T13:55:10Z",
+          "ended_at": "2026-11-01T13:56:15Z",
+          "result": "failed",
+          "summary": "Exact V 3.0.773 product workflow ran Kotlin formatting/lint and found nine formatting violations in the two changed Android test files. assembleDebug, Android JVM tests and generated Protobuf verification were skipped by the workflow after the lint gate failed. HostLifecycle, Step Three quality and Rendezvous container checks passed.",
+          "changed_files": [
+            "src/Client.Android/app/src/test/java/com/whitep/client/network/RendezvousPeerDirectoryClientTest.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt",
+            "step three/T0127/execution-report.md",
+            "step three/T0127/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": "0642a754745de9082d5f6c0c24835975227a5942",
+          "tests": [
+            {
+              "name": "Android ktlintTestSourceSetCheck",
+              "result": "failed",
+              "summary": "Nine style findings: extra blank lines, multiline initializer layout and constructor parameter layout; see workflow 41313567864."
+            },
+            {
+              "name": "Android assembleDebug",
+              "result": "pending",
+              "summary": "Skipped because Kotlin lint failed."
+            },
+            {
+              "name": "Android testDebugUnitTest",
+              "result": "pending",
+              "summary": "Skipped because Kotlin lint failed."
+            },
+            {
+              "name": "HostLifecycle unit/integration",
+              "result": "passed",
+              "summary": "Full HostLifecycle suite passed on exact V 3.0.773 workflow 41313567864."
+            },
+            {
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "summary": "Graph/Python quality gate passed on exact V 3.0.773 workflow 41313567881."
+            },
+            {
+              "name": "Rendezvous container build and smoke",
+              "result": "passed",
+              "summary": "Container build and HTTP smoke passed on exact V 3.0.773 workflow 41313567782."
+            }
+          ],
+          "failure_details": "KtLint findings: RendezvousPeerDirectoryClientTest.kt lines 144, 162, 167, 266, 267, 282; InferenceAttemptDispatcherTest.kt line 159. No Android JVM assertions ran.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Correct the reported Kotlin formatting only, then rerun exact-head Android KtLint, APK build and JVM unit tests."
+        },
+        {
+          "attempt_id": "T0127-A003-ktlint-correction",
+          "started_at": "2026-11-01T13:57:14.554Z",
+          "ended_at": "2026-11-01T13:57:14.554Z",
+          "result": "partial",
+          "summary": "Corrected the exact KtLint layout findings in the two Android test files without changing test logic. Exact-head CI is pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/test/java/com/whitep/client/network/RendezvousPeerDirectoryClientTest.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt",
+            "step three/T0127/execution-report.md",
+            "step three/T0127/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Android ktlintTestSourceSetCheck",
+              "result": "pending",
+              "summary": "Must pass on exact V 3.0.774."
+            },
+            {
+              "name": "Android assembleDebug and testDebugUnitTest",
+              "result": "pending",
+              "summary": "Must execute after lint passes."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Run exact V 3.0.774 product CI. If Android lint, APK/JVM/Protobuf and Step Three quality all pass, mark T0127 done in the next update."
         }
       ]
     },
@@ -59152,7 +59244,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-11-01T13:54:25.218Z",
+  "updated_at": "2026-11-01T13:57:14.554Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

@@ -156,7 +156,6 @@ class InferenceAttemptDispatcherTest {
             assertTrue(transport.requests.isEmpty())
         }
 
-
     @Test
     fun sendsNothingWhenEveryDiscoveredPeerDisconnectsBeforeAuthenticatedStatusProbe() =
         runBlocking {

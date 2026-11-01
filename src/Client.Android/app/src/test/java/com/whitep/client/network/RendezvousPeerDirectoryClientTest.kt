@@ -141,7 +141,6 @@ class RendezvousPeerDirectoryClientTest {
         }
     }
 
-
     @Test
     fun rejectsDuplicatePeerIdsInOneDirectorySnapshot() {
         val address = "/ip4/127.0.0.1/tcp/41000/p2p/" + peerId
@@ -159,23 +158,25 @@ class RendezvousPeerDirectoryClientTest {
     fun doesNotReturnCachedPeerWhenNetworkFailsAfterDirectoryCacheExpiry() {
         val mutableClock = MutableClock(now)
         val calls = AtomicInteger()
-        val body = directoryJson(
-            peerId = peerId,
-            addresses = listOf("/ip4/127.0.0.1/tcp/41000/p2p/" + peerId),
-            expiresAt = now.plusSeconds(300),
-        )
-        val client = RendezvousPeerDirectoryClient(
-            serviceBaseUri = URI("https://rendezvous.example/prefix"),
-            connectionFactory = { url ->
-                if (calls.incrementAndGet() == 1) {
-                    StubConnection(url, HttpURLConnection.HTTP_OK, body)
-                } else {
-                    throw IOException("Simulated directory network interruption.")
-                }
-            },
-            clock = mutableClock,
-            cacheDuration = Duration.ofSeconds(1),
-        )
+        val body =
+            directoryJson(
+                peerId = peerId,
+                addresses = listOf("/ip4/127.0.0.1/tcp/41000/p2p/" + peerId),
+                expiresAt = now.plusSeconds(300),
+            )
+        val client =
+            RendezvousPeerDirectoryClient(
+                serviceBaseUri = URI("https://rendezvous.example/prefix"),
+                connectionFactory = { url ->
+                    if (calls.incrementAndGet() == 1) {
+                        StubConnection(url, HttpURLConnection.HTTP_OK, body)
+                    } else {
+                        throw IOException("Simulated directory network interruption.")
+                    }
+                },
+                clock = mutableClock,
+                cacheDuration = Duration.ofSeconds(1),
+            )
 
         assertNotNull(runBlockingResolve(client, peerId))
         mutableClock.advance(Duration.ofSeconds(2))
@@ -263,8 +264,9 @@ class RendezvousPeerDirectoryClientTest {
         return result
     }
 
-
-    private class MutableClock(initialInstant: Instant) : Clock() {
+    private class MutableClock(
+        initialInstant: Instant,
+    ) : Clock() {
         @Volatile
         private var currentInstant: Instant = initialInstant
 
@@ -278,7 +280,6 @@ class RendezvousPeerDirectoryClientTest {
             currentInstant = currentInstant.plus(duration)
         }
     }
-
 
     private class StubConnection(
         url: URL,
