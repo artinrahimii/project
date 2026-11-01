@@ -1,6 +1,7 @@
 package com.whitep.client.requests
 
 import com.whitep.client.protocol.InferenceRequestPayloadBuilder
+import kotlinx.coroutines.CancellationException
 import org.whitep.shared.contracts.v1.HostAnnouncement
 import org.whitep.shared.contracts.v1.HostRuntimeState
 import org.whitep.shared.contracts.v1.HostStatus
@@ -54,6 +55,63 @@ object HostCandidateSelector {
             .sortedBy { candidate -> candidate.announcement.ephemeralHostId }
             .take(maxHosts)
             .toList()
+    }
+
+    /**
+     * Selects peers only after each eligible announcement has passed an authenticated live status
+     * probe. Production callers bind [statusProbe] to Libp2pInferenceRequestTransport.probeHostStatus;
+     * a cached rendezvous announcement or caller-supplied status is not proof of reachability.
+     *
+     * Candidates are probed in stable PeerId order. Unreachable, untrusted, stale, non-ready,
+     * capacity-exhausted and model-incompatible peers are skipped. Cancellation is never swallowed.
+     */
+    suspend fun selectReachable(
+        request: InferenceRequest,
+        announcements: Collection<HostAnnouncement>,
+        statusProbe: suspend (String) -> HostStatus,
+        excludedEphemeralHostIds: Set<String> = emptySet(),
+        maxHosts: Int = MAX_HOSTS_PER_ROUND,
+    ): List<HostCandidate> {
+        if (!isLocallyValidRequest(request) || maxHosts !in 1..MAX_HOSTS_PER_ROUND) {
+            return emptyList()
+        }
+
+        // An ambiguous identity is never probed or selected, even if one duplicate looks valid.
+        val uniqueAnnouncements =
+            announcements
+                .groupBy { announcement -> announcement.ephemeralHostId }
+                .values
+                .filter { sameIdentityAnnouncements -> sameIdentityAnnouncements.size == 1 }
+                .map { sameIdentityAnnouncements -> sameIdentityAnnouncements.single() }
+                .sortedBy { announcement -> announcement.ephemeralHostId }
+
+        val selected = ArrayList<HostCandidate>(maxHosts)
+        for (announcement in uniqueAnnouncements) {
+            val hostId = announcement.ephemeralHostId
+            if (hostId in excludedEphemeralHostIds || !isAnnouncementCompatible(request, announcement)) {
+                continue
+            }
+
+            val status =
+                try {
+                    statusProbe(hostId)
+                } catch (cancellation: CancellationException) {
+                    throw cancellation
+                } catch (_: Exception) {
+                    // A failed or untrusted live probe is a non-selectable peer, not a reason to
+                    // fall back to its cached directory/status snapshot.
+                    continue
+                }
+
+            val candidate = HostCandidate(announcement, status)
+            if (isCompatibleAndReady(request, candidate)) {
+                selected.add(candidate)
+                if (selected.size == maxHosts) {
+                    break
+                }
+            }
+        }
+        return selected
     }
 
     /** Selects the first batch under the request-scoped first-release host ceiling. */
@@ -168,49 +226,30 @@ object HostCandidateSelector {
             serializedRequestBytes <= InferenceRequestPayloadBuilder.MAX_SERIALIZED_REQUEST_BYTES
     }
 
-    private fun isCompatibleAndReady(
+    private fun isAnnouncementCompatible(
         request: InferenceRequest,
-        candidate: HostCandidate,
+        announcement: HostAnnouncement,
     ): Boolean {
-        val announcement = candidate.announcement
         val capabilities = announcement.capabilities
-        val status = candidate.status
         val hostId = announcement.ephemeralHostId
 
-        if (hostId.isBlank() ||
-            capabilities.ephemeralHostId != hostId ||
-            status.ephemeralHostId != hostId
-        ) {
+        if (hostId.isBlank() || capabilities.ephemeralHostId != hostId) {
             return false
         }
 
         if (announcement.protocolVersion != request.protocolVersion ||
-            capabilities.protocolVersion != request.protocolVersion
+            capabilities.protocolVersion != request.protocolVersion ||
+            announcement.announcedAtUnixMs <= 0L
         ) {
             return false
         }
 
-        if (announcement.announcedAtUnixMs <= 0L ||
-            status.observedAtUnixMs <= 0L ||
-            status.state != HostRuntimeState.HOST_RUNTIME_STATE_READY
-        ) {
+        if (capabilities.maxConcurrentRequests <= 0) {
             return false
         }
 
-        if (capabilities.maxConcurrentRequests <= 0 ||
-            status.activeRequests < 0 ||
-            status.activeRequests >= capabilities.maxConcurrentRequests
-        ) {
-            return false
-        }
-
-        val prompt = request.prompt
-        val promptBytesArray = prompt.toByteArray(Charsets.UTF_8)
-        val promptByteCount = promptBytesArray.size
-        val promptBytes = promptByteCount.toLong()
-        val contextCapsule = request.contextCapsule
-        val capsuleByteCount = contextCapsule.size()
-        val capsuleBytes = capsuleByteCount.toLong()
+        val promptBytes = request.prompt.toByteArray(Charsets.UTF_8).size.toLong()
+        val capsuleBytes = request.contextCapsule.size().toLong()
         if (capabilities.maxPromptBytes <= 0L ||
             promptBytes > capabilities.maxPromptBytes ||
             capabilities.maxContextCapsuleBytes <= 0L ||
@@ -219,8 +258,30 @@ object HostCandidateSelector {
             return false
         }
 
-        return supportsModel(capabilities.modelsList, request) &&
-            supportsModel(status.modelsList, request)
+        return supportsModel(capabilities.modelsList, request)
+    }
+
+    private fun isCompatibleAndReady(
+        request: InferenceRequest,
+        candidate: HostCandidate,
+    ): Boolean {
+        val status = candidate.status
+        val hostId = candidate.announcement.ephemeralHostId
+        val maximumConcurrentRequests = candidate.announcement.capabilities.maxConcurrentRequests
+
+        if (!isAnnouncementCompatible(request, candidate.announcement) ||
+            status.ephemeralHostId != hostId ||
+            status.observedAtUnixMs <= 0L ||
+            status.state != HostRuntimeState.HOST_RUNTIME_STATE_READY
+        ) {
+            return false
+        }
+
+        if (status.activeRequests < 0 || status.activeRequests >= maximumConcurrentRequests) {
+            return false
+        }
+
+        return supportsModel(status.modelsList, request)
     }
 
     private fun supportsModel(

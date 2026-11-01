@@ -13,6 +13,8 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withTimeoutOrNull
+import org.whitep.shared.contracts.v1.HostAnnouncement
+import org.whitep.shared.contracts.v1.InferenceRequest
 import org.whitep.shared.contracts.v1.InferenceResponse
 import java.io.Closeable
 import java.net.URI
@@ -116,6 +118,27 @@ class AndroidInferenceRequestRuntime private constructor(
     }
 
     fun isPeerTrusted(peerId: String): Boolean = requirePeerTrustStore().isTrusted(peerId)
+
+    /**
+     * Selects hosts from announcements by performing a fresh authenticated HostStatus probe for
+     * each statically compatible candidate. The transport enforces explicit peer trust, matching
+     * PeerId, a live rendezvous lease and a bounded status timestamp before a candidate is returned.
+     * Only the current READY status, available concurrency and model support can be selected;
+     * cached status is never used as reachability evidence.
+     */
+    suspend fun selectReachableHosts(
+        request: InferenceRequest,
+        announcements: Collection<HostAnnouncement>,
+        excludedEphemeralHostIds: Set<String> = emptySet(),
+        maxHosts: Int = HostCandidateSelector.MAX_HOSTS_PER_ROUND,
+    ): List<HostCandidate> =
+        HostCandidateSelector.selectReachable(
+            request = request,
+            announcements = announcements,
+            statusProbe = { peerId -> transport.probeHostStatus(peerId) },
+            excludedEphemeralHostIds = excludedEphemeralHostIds,
+            maxHosts = maxHosts,
+        )
 
     fun trustPeerAfterExplicitConfirmation(
         peerId: String,

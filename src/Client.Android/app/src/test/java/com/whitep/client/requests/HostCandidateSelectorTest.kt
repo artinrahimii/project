@@ -2,6 +2,8 @@ package com.whitep.client.requests
 
 import com.google.protobuf.ByteString
 import com.whitep.client.protocol.InferenceRequestPayloadBuilder
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -13,6 +15,7 @@ import org.whitep.shared.contracts.v1.hostStatus
 import org.whitep.shared.contracts.v1.inferenceRequest
 import org.whitep.shared.contracts.v1.inferenceResponse
 import org.whitep.shared.contracts.v1.modelCapability
+import java.io.IOException
 
 class HostCandidateSelectorTest {
     @Test
@@ -461,6 +464,83 @@ class HostCandidateSelectorTest {
 
         assertTrue(selected.isEmpty())
     }
+
+    @Test
+    fun selectReachableProbesOnlyCompatiblePeersAndSkipsUnreachableBusyFullAndUnsupportedHosts() =
+        runBlocking {
+            val probes = mutableListOf<String>()
+            val announcements =
+                listOf(
+                    candidate("host-f").announcement,
+                    candidate("host-e").announcement,
+                    candidate("host-d").announcement,
+                    candidate("unsupported", announcementModelId = "another-model").announcement,
+                    candidate("host-c").announcement,
+                    candidate("host-b").announcement,
+                    candidate("host-a").announcement,
+                )
+
+            val selected =
+                HostCandidateSelector.selectReachable(
+                    request = validRequest(),
+                    announcements = announcements,
+                    statusProbe = { hostId ->
+                        probes.add(hostId)
+                        when (hostId) {
+                            "host-a" -> throw IOException("Peer is not reachable.")
+                            "host-b" -> candidate("host-b", state = HostRuntimeState.HOST_RUNTIME_STATE_BUSY).status
+                            "host-c" -> candidate("host-c", activeRequests = 2, maxConcurrentRequests = 2).status
+                            "host-d" -> candidate("host-d", statusModelId = "another-model").status
+                            else -> candidate(hostId).status
+                        }
+                    },
+                    maxHosts = 2,
+                )
+
+            assertEquals(listOf("host-a", "host-b", "host-c", "host-d", "host-e", "host-f"), probes)
+            assertEquals(listOf("host-e", "host-f"), selected.map { it.announcement.ephemeralHostId })
+        }
+
+    @Test
+    fun selectReachableRejectsDuplicatePeerIdsBeforeProbingAndHonorsExclusions() =
+        runBlocking {
+            val probes = mutableListOf<String>()
+            val selected =
+                HostCandidateSelector.selectReachable(
+                    request = validRequest(),
+                    announcements =
+                        listOf(
+                            candidate("duplicate").announcement,
+                            candidate("excluded").announcement,
+                            candidate("reachable").announcement,
+                            candidate("duplicate").announcement,
+                        ),
+                    statusProbe = { hostId ->
+                        probes.add(hostId)
+                        candidate(hostId).status
+                    },
+                    excludedEphemeralHostIds = setOf("excluded"),
+                )
+
+            assertEquals(listOf("reachable"), probes)
+            assertEquals(listOf("reachable"), selected.map { it.announcement.ephemeralHostId })
+        }
+
+    @Test
+    fun selectReachablePropagatesCoroutineCancellation() =
+        runBlocking {
+            var cancellationPropagated = false
+            try {
+                HostCandidateSelector.selectReachable(
+                    request = validRequest(),
+                    announcements = listOf(candidate("host-a").announcement),
+                    statusProbe = { throw CancellationException("Selection cancelled.") },
+                )
+            } catch (_: CancellationException) {
+                cancellationPropagated = true
+            }
+            assertTrue(cancellationPropagated)
+        }
 
     private fun distributedRequest(
         requestId: String = "request-001",

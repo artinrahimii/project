@@ -27016,33 +27016,79 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0123 و T0115 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt"
+      ],
       "expected_output_paths": [
         "src/Shared.Networking/ یا src/Host.Windows/Networking/ + tests/"
       ],
       "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود. T0162 already provides deterministic selection over caller-supplied snapshots. T0124 extends that existing Android selection path with live authenticated reachability probing; it does not duplicate T0162 or change its scope.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0124-A001-live-status-selection",
+        "last_attempt_result": "in_progress",
+        "changed_files": [
+          "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
+          "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
+          "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt",
+          "step three/T0124/execution-report.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
-          "affected_by_contract_changes": [],
-          "review_evidence": []
-        }
+          "state": "passed",
+          "triggering_contracts": [
+            "HostStatusRequest/HostStatus live peer-status exchange",
+            "HostCandidate announcement and live-status selection contract"
+          ],
+          "affected_by_contract_changes": [
+            "T0123"
+          ],
+          "review_evidence": [
+            "protocol/whitep/v1/messages.proto",
+            "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt",
+            "step three/T0123/execution-report.md",
+            "step three/T0115/execution-report.md",
+            "step three/T0162/execution-report.md"
+          ]
+        },
+        "follow_up": "Run exact-head Android main/test KtLint, debug APK, JVM selector tests and existing live HostStatus transport tests, generated Protobuf verification, HostLifecycle/WPF, Step Three quality and Rendezvous smoke. Do not mark T0124 done until all relevant gates pass."
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0124-A001-live-status-selection",
+          "started_at": "2026-11-01T12:08:00Z",
+          "ended_at": null,
+          "result": "in_progress",
+          "summary": "Extended the existing Android HostCandidateSelector with a live reachability stage. Each statically compatible, non-duplicate, non-excluded announcement is probed sequentially through AndroidInferenceRequestRuntime and the production Libp2pInferenceRequestTransport.probeHostStatus. Untrusted, unreachable, stale, non-ready, capacity-exhausted or runtime-model-incompatible peers are skipped; coroutine cancellation propagates. Added JVM cases for reachability failure, READY state, active capacity, runtime model mismatch, deterministic ordering, duplicate identities, exclusions and cancellation. Exact-head CI is pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt",
+            "step three/T0124/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Run exact-head Android main/test KtLint, debug APK, JVM selector tests and existing live HostStatus transport tests, generated Protobuf verification, HostLifecycle/WPF, Step Three quality and Rendezvous smoke. Do not mark T0124 done until all relevant gates pass."
+        }
+      ]
     },
     {
       "id": "T0125",
@@ -58410,7 +58456,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-11-01T12:05:30Z",
+  "updated_at": "2026-11-01T12:08:00Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",
