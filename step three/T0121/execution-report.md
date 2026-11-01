@@ -292,3 +292,14 @@ Revalidated T0121 against the exact online main head V 3.0.607. The full graph B
 - **Regression coverage:** the existing container smoke test already asserts that expired announcements and addresses without a matching peer ID both return HTTP 400. Exact-commit container build/smoke is pending; no pass is claimed until it completes.
 - **External acceptance:** production HTTPS deployment and advertised TCP/UDP/QUIC reachability from an independent peer remain **NOT RUN**.
 - **Outcome:** T0121 remains `blocked`; T0122 remains `not_started`. The runtime API error is corrected in source, but external reachability is still a release blocker.
+
+
+## T0121-A027 — exact V 3.0.749 container regression workflow passed (2026-11-01)
+
+- **Workflow:** [Rendezvous container build and smoke test — PASS]( https://github.com/artinrahimii/project/actions/runs/41293430532 ).
+- **Image build:** the multi-stage .NET 10 Docker build and `dotnet publish` succeeded for both Rendezvous.Service and Shared.Contracts.
+- **Runtime:** the container ran as non-root; `GET /healthz` returned HTTP 200.
+- **HTTP contract:** valid announcement returned 204; capability discovery returned 200 with the announced metadata; invalid capability, expired announcement and address missing the matching `/p2p/{peerId}` suffix each returned HTTP 400.
+- **Fix verification:** A027's in-handler JSON deserialization corrected the A026 HTTP 500 error for expired announcements. The same smoke test now passes on exact commit `afbb6490e9a098946e861faab3f79475835c7eda`.
+- **Quality-gate metadata correction:** the V 3.0.749 graph check found `FAILED_ATTEMPT_COUNT_MISMATCH` because the summary counter had been incremented although A026 was recorded as `partial`, not `failed`. The graph counter is reconciled to the three actual `failed` history records; A026's HTTP failure remains preserved in its own test/failure details. The exact-head Python suite reported 310 tests passed and compileall passed before the graph guard stopped on this metadata mismatch.
+- **External acceptance:** public HTTPS deployment and independent-network advertised TCP/UDP/QUIC remain **NOT RUN**. T0121 remains blocked; T0122 remains not_started.
