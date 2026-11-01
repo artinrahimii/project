@@ -84,3 +84,19 @@
 - **Base:** exact online `main` commit `9b6b1e9e87bb7e1c0ff6c321dbd81d65565961b9` (`V 3.0.757`).
 - **Change:** changed the exception path to call `onClosed(peerId, this)`, satisfying the existing two-parameter callback contract and retaining the controller identity needed for stream cleanup.
 - **Validation:** pending exact-head Android APK and JVM CI. T0123 remains `in_progress`.
+
+
+## T0123-A006 — exact V 3.0.758 CI result
+
+- **Commit:** `ee88a6d6d433b1eb5b2916c7b6a3fd4dae29706e`.
+- **Passed:** Android KtLint (main/test), .NET peer-interoperability fixture, debug APK build, Android JVM unit tests, generated Protobuf Java/Kotlin verification and APK artifact upload. The Android JVM run included the authenticated live HostStatus request/response round-trip.
+- **Passed:** HostLifecycle unit/integration; Windows WPF build, startup, security and DPAPI checks; Step Three quality gate; Rendezvous container build and smoke.
+- **Exact evidence:** [Product workflow 41303786641](https://github.com/artinrahimii/project/actions/runs/41303786641), [Step Three quality gate 41303786616](https://github.com/artinrahimii/project/actions/runs/41303786616), [Rendezvous smoke 41303786689](https://github.com/artinrahimii/project/actions/runs/41303786689).
+- **Task state:** A006 succeeded. Review of the Protobuf contract then identified that `active_requests` is `uint32`; generated Kotlin exposes it as a signed `Int`, so wire values above `Int.MAX_VALUE` may appear negative. A007 adds a lower bound and an authenticated loopback regression test; T0123 remains `in_progress` pending that exact-head run.
+
+## T0123-A007 — reject signed representation of out-of-range uint32
+
+- **Base:** exact online `main` commit `ee88a6d6d433b1eb5b2916c7b6a3fd4dae29706e` (`V 3.0.758`).
+- **Change:** the accepted active-request range is now `0..MAXIMUM_HOST_STATUS_ACTIVE_REQUESTS`, rejecting negative Kotlin representations of invalid unsigned wire values.
+- **Regression test:** added an authenticated libp2p loopback test that sends `active_requests = -1` through the Protobuf wire representation and asserts that the Android probe rejects it.
+- **Validation:** pending exact-head Android lint, APK and JVM checks plus product/quality regressions.

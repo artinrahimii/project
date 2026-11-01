@@ -57,6 +57,67 @@ import java.util.concurrent.TimeUnit
 @Config(sdk = [35])
 class Libp2pInferenceRequestTransportTest {
     @Test
+    fun rejectsNegativeUnsignedActiveRequestCountOverAuthenticatedPeerStream() =
+        runBlocking<Unit> {
+            val serverIdentity = generateKeyPair(KeyType.ED25519).first
+            val expectedServerPeerId = PeerId.fromPubKey(serverIdentity.publicKey()).toBase58()
+            val status =
+                HostStatus
+                    .newBuilder()
+                    .setEphemeralHostId(expectedServerPeerId)
+                    .setState(HostRuntimeState.HOST_RUNTIME_STATE_READY)
+                    .setActiveRequests(-1)
+                    .setObservedAtUnixMs(System.currentTimeMillis())
+                    .build()
+            val responder = LoopbackHostStatusResponder(expectedServerPeerId) { status }
+            val binding = createSimpleBinding(PROTOCOL_ID) { responder }
+            val server = createHost(serverIdentity, binding)
+            server.start().get(15, TimeUnit.SECONDS)
+
+            val listenAddress = server.listenAddresses().first { it.toString().contains("/tcp/") }.toString()
+            val suffix = "/p2p/$expectedServerPeerId"
+            val address =
+                when {
+                    listenAddress.endsWith(suffix) -> listenAddress
+                    !listenAddress.contains("/p2p/") -> "$listenAddress$suffix"
+                    else -> error("The server listen address contains a different PeerId.")
+                }
+            val endpoint =
+                RendezvousPeerEndpoint(
+                    peerId = expectedServerPeerId,
+                    tcpMultiaddresses = listOf(address),
+                    expiresAtUtc = Instant.now().plusSeconds(120),
+                )
+            val client =
+                Libp2pInferenceRequestTransport(
+                    localIdentity = generateKeyPair(KeyType.ED25519).first,
+                    resolveEndpoint = { requestedPeerId ->
+                        if (requestedPeerId == expectedServerPeerId) endpoint else null
+                    },
+                    trustVerifier = PeerTrustVerifier { trustedPeerId -> trustedPeerId == expectedServerPeerId },
+                    connectionTimeout = Duration.ofSeconds(15),
+                )
+
+            try {
+                var rejected = false
+                try {
+                    client.probeHostStatus(expectedServerPeerId)
+                } catch (_: java.io.IOException) {
+                    rejected = true
+                }
+                assertTrue(
+                    "A uint32 active-request count represented as a negative Kotlin Int must be rejected.",
+                    rejected,
+                )
+                val request = withTimeout(5_000L) { responder.requestReceived.await() }
+                assertEquals(expectedServerPeerId, request.ephemeralHostId)
+            } finally {
+                client.close()
+                server.stop().get(10, TimeUnit.SECONDS)
+            }
+        }
+
+    @Test
     fun probesFreshHostStatusOverTheAuthenticatedPeerStream() =
         runBlocking<Unit> {
             val serverIdentity = generateKeyPair(KeyType.ED25519).first

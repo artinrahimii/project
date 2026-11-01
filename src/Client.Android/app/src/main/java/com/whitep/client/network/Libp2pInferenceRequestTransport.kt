@@ -366,7 +366,7 @@ class Libp2pInferenceRequestTransport(
             if (
                 status.state.number !in 1..5 ||
                 status.observedAtUnixMs <= 0L ||
-                status.activeRequests > MAXIMUM_HOST_STATUS_ACTIVE_REQUESTS
+                status.activeRequests !in 0..MAXIMUM_HOST_STATUS_ACTIVE_REQUESTS
             ) {
                 throw IOException("The peer returned an invalid HostStatus snapshot.")
             }
