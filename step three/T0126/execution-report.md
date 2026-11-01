@@ -136,3 +136,16 @@ The exact V 3.0.768 Android/Windows/HostLifecycle/Step Three/Rendezvous workflow
 - **Step Three quality gate:** PASS — [workflow 41316384981](https://github.com/artinrahimii/project/actions/runs/41316384981).
 - **Rendezvous:** PASS — [container/smoke workflow 41316385018](https://github.com/artinrahimii/project/actions/runs/41316385018).
 - **Outcome:** A005's bounded metadata directory API and its JVM regression are verified on exact V 3.0.779. T0126 remains `blocked`, not `done`: no typed model/capacity HostAnnouncement contract or production Android request UI flow (authenticated status → selection → dispatch → feedback) exists yet.
+
+
+## T0126-A006 — authenticated discovery and candidate construction (partial)
+
+- **Base:** exact online `main` commit `baf446c5e3b1e0ee70a62096341257655210d9a5` (`V 3.0.780`).
+- Added `AuthenticatedHostDiscovery` in the Android request layer. It enumerates the existing bounded `RendezvousPeerDirectoryClient.discoverAll()` snapshot, orders peers deterministically, and obtains a fresh authenticated `HostStatus` using the existing libp2p transport for each explicitly trusted peer.
+- A candidate is built only when the authenticated status PeerId equals the directory PeerId, the route lease remains current, the status is READY and fresh, and the status includes the active model/protocol details. Public `inference.v1` metadata is not treated as model capability.
+- Capability limits are sourced from existing contracts: one concurrent inference because `HostInferenceSession` serializes operations; 8,192 UTF-8 prompt bytes and 4,096 context-capsule bytes from the shared protocol constants. Model IDs and token ceilings come only from the fresh host status produced from its active backend.
+- The production `AndroidInferenceRequestRuntime` now exposes `discoverAndSelectReachableHosts()`, using the same directory and authenticated transport instances as normal request delivery. Untrusted/unreachable/non-ready/stale/incompatible hosts are excluded; coroutine cancellation is propagated.
+- Added six JVM tests for stable three-host selection, exact 0/1/2/3 post-probe counts, expired/untrusted/busy/stale/model-incompatible peers, duplicate directory identities, cancellation propagation, and authenticated identity mismatch.
+- **Current boundary:** this adds and tests the real discovery-to-candidate API, but the Compose request screen still has no user-configured Rendezvous URL, explicit peer-trust interaction, or production caller that dispatches and records feedback. T0126 therefore remains blocked/partial; no inference request or prompt is sent by this new API. T0174 remains blocked on the complete request UI flow.
+- **Tests:** pending exact-head GitHub Actions verification for this commit. No test pass is claimed before the workflow result is inspected.
+- **Next:** connect configured service URL and explicit trust confirmation to the request UI, construct the payload from the user's actual request, call authenticated discovery/selection, dispatch only when one or more candidates exist, display the feedback, and collect correlated responses. Verify this full path before marking T0126 done.

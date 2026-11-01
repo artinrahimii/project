@@ -108,3 +108,12 @@ The live acceptance gap remains: `MainActivity.requestScreen` is prepare-only, a
 - Step Three quality gate and Rendezvous container build/HTTP smoke passed.
 - Workflow references: [product](https://github.com/artinrahimii/project/actions/runs/41316384983), [quality](https://github.com/artinrahimii/project/actions/runs/41316384981), [Rendezvous](https://github.com/artinrahimii/project/actions/runs/41316385018).
 - These results validate discoverAll and its metadata-only contract, not production Android inference request UI integration. T0126 remains blocked.
+
+
+## T0126-A006 — authenticated discovery verification
+
+- Added `src/Client.Android/app/src/main/java/com/whitep/client/requests/AuthenticatedHostDiscovery.kt`.
+- The implementation consumes metadata-only `RendezvousPeerEndpoint` values only as routes; it calls the existing `probeHostStatus` function, whose transport checks explicit trust, canonical PeerId, authenticated remote PeerId, returned HostStatus PeerId, timestamp freshness and directory lease expiry.
+- It converts the returned HostStatus model list into the local HostCapabilities candidate required by the existing selector. Fixed request limits are tied to `InferenceRequestPayloadBuilder.MAX_PROMPT_BYTES` (8,192) and `ConversationContextCapsule.MAX_SERIALIZED_BYTES` (4,096); concurrency is one, matching the Windows `HostInferenceSession` single-operation gate and MainWindow active-request status.
+- Added `src/Client.Android/app/src/test/java/com/whitep/client/requests/AuthenticatedHostDiscoveryTest.kt`. Six tests exercise deterministic three-host selection, 0/1/2/3 feedback counts, expired/untrusted/busy/stale/incompatible peers, duplicate identities, cancellation, and status identity mismatch.
+- Exact-head build, lint and JVM test results remain pending until GitHub Actions runs against the resulting commit. The task is not complete until the request UI calls this API and dispatch/feedback are verified end-to-end.

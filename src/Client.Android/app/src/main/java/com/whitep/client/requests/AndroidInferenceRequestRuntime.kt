@@ -44,6 +44,7 @@ class AndroidInferenceRequestRuntime private constructor(
     private val transport: Libp2pInferenceRequestTransport,
     private val peerTrustStore: AndroidPeerTrustStore?,
     private val roundTimer: InferenceRoundTimer,
+    private val authenticatedHostDiscovery: AuthenticatedHostDiscovery?,
 ) : Closeable {
     private data class AttemptKey(
         val requestId: String,
@@ -83,6 +84,7 @@ class AndroidInferenceRequestRuntime private constructor(
         ),
         null,
         InferenceRoundTimer(clock, roundTimeout),
+        null,
     )
 
     /**
@@ -113,7 +115,18 @@ class AndroidInferenceRequestRuntime private constructor(
                     clock = clock,
                     connectionTimeout = connectionTimeout,
                 )
-            return AndroidInferenceRequestRuntime(transport, trustStore, InferenceRoundTimer(clock, roundTimeout))
+            val authenticatedHostDiscovery =
+                AuthenticatedHostDiscovery(
+                    discoverEndpoints = directory::discoverAll,
+                    probeHostStatus = transport::probeHostStatus,
+                    clock = clock,
+                )
+            return AndroidInferenceRequestRuntime(
+                transport,
+                trustStore,
+                InferenceRoundTimer(clock, roundTimeout),
+                authenticatedHostDiscovery,
+            )
         }
     }
 
@@ -160,6 +173,23 @@ class AndroidInferenceRequestRuntime private constructor(
             candidates = candidates,
             feedback = HostSelectionFeedback(availableHostCount = candidates.size),
         )
+    }
+
+    /**
+     * Discovers current metadata routes, authenticates explicitly trusted peers, and selects only
+     * candidates backed by fresh HostStatus model/readiness data.
+     */
+    suspend fun discoverAndSelectReachableHosts(
+        request: InferenceRequest,
+        excludedEphemeralHostIds: Set<String> = emptySet(),
+        maxHosts: Int = HostCandidateSelector.MAX_HOSTS_PER_ROUND,
+    ): HostSelectionResult {
+        val discovery =
+            authenticatedHostDiscovery
+                ?: throw IllegalStateException(
+                    "Authenticated discovery requires the application-scoped Android runtime.",
+                )
+        return discovery.selectReachableHosts(request, excludedEphemeralHostIds, maxHosts)
     }
 
     fun trustPeerAfterExplicitConfirmation(
