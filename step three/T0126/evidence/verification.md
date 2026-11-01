@@ -136,3 +136,12 @@ The live acceptance gap remains: `MainActivity.requestScreen` is prepare-only, a
 - Set `failed_attempt_count=1` to match the one `execution_history` entry whose overall result is `failed`. The T0001 unmapped-dependency notice remains a non-fatal warning.
 - A007 code commit: `c618b7778f0ccdcb5152ce346141228c5519c6f1`. Graph correction commit is the next version and will be verified on `main`.
 
+
+
+## T0126-A007 exact Android lint result and A008 correction
+
+- On V 3.0.782, KtLint passed the main production source set, including `AuthenticatedHostDiscovery.kt`.
+- KtLint then failed the test source set on four chained Java Protobuf builders in `AuthenticatedHostDiscoveryTest.kt`; no Android APK, JVM unit test or generated Android Protobuf verification ran.
+- A008 replaces those nested builder chains with the generated Kotlin DSL already used in `HostCandidateSelectorTest.kt`. Test cases and their behavioral assertions are unchanged.
+- Re-run all Android checks on the new commit before recording any pass.
+

@@ -170,3 +170,12 @@ The exact V 3.0.768 Android/Windows/HostLifecycle/Step Three/Rendezvous workflow
 - The unrelated `UNMAPPED_DEPENDENCY` warning for T0001 is a pre-existing metadata warning; it is not a blocking structural error.
 - This graph correction is being recorded in `V 3.0.783`. The Android product workflow for V 3.0.782 has not yet been reconciled and remains pending.
 
+
+
+## T0126-A008 — Android test-source lint correction
+
+- Exact V 3.0.782 CI confirmed the production Kotlin source-set KtLint check passed after A007.
+- The test source-set then found four style violations in `AuthenticatedHostDiscoveryTest.kt` at lines 177, 184, 192 and 195. The test task stopped before `assembleDebug`, `testDebugUnitTest` and generated Android Protobuf verification.
+- Replaced the nested Protobuf Java builder chains in the new fixture helpers with the repository's already-used generated Protobuf Kotlin DSL (`hostStatus { }`, `modelCapability { }`, `inferenceRequest { }`). This is a formatting/API-style correction only; assertions and behavior were not changed.
+- A008 remains partial pending exact-head lint/build/JVM/Protobuf and graph-gate reruns. T0126 remains blocked because the Compose request screen still does not invoke discovery, explicit trust, dispatch and response collection.
+

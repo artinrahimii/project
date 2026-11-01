@@ -27442,11 +27442,11 @@
         "src/Client.Android/app/src/main/java/com/whitep/client/requests/AuthenticatedHostDiscovery.kt",
         "src/Client.Android/app/src/test/java/com/whitep/client/requests/AuthenticatedHostDiscoveryTest.kt"
       ],
-      "notes": "The expected Shared.Networking/Windows path is not the actual consumer in this repository: candidate selection and dispatch live in the Android app, and the user-facing request state/Compose screen lives under com.whitep.client.ui.request. Implement at those real boundaries. Policy: one or two validated hosts remain usable with an exact shortage warning; zero hosts is a no-send NO_SELECTED_HOSTS outcome. The MainActivity request screen is still a prepare-only preview and has no production caller for the new runtime feedback method; therefore keep this task in_progress until live discovery/dispatch feeds the UI. Do not claim a working end-to-end user notification yet.\n\nT0126-A001 (2026-11-01): Exact V 3.0.767 CI was inspected. Android KtLint and assembleDebug passed; JVM test compilation failed because RequestViewModelTest.kt omitted the HostSelectionFeedback import, so T0126 unit assertions and generated Protobuf verification did not run. Step Three's 312 Python tests and syntax check passed, but graph_guard failed because completed T0125 evidence lacked a tests/ source path. Windows WPF, HostLifecycle and Rendezvous container smoke passed. A002 adds the missing import and records test-source evidence for T0125. T0126 remains in_progress until repaired exact-head tests pass and a real request UI caller feeds live selection feedback.\n\nT0126-A002 exact V 3.0.768 CI result (2026-11-01): Android main/test KtLint, assembleDebug, compileDebugUnitTestKotlin, testDebugUnitTest and generated Protobuf Java/Kotlin verification passed; Windows WPF build/startup/security/DPAPI and policy/capability checks passed; HostLifecycle tests passed; the Step Three quality gate passed (312 Python tests, compileall and graph/evidence guard); Rendezvous container build/HTTP smoke passed. The missing import and T0125 evidence repairs are therefore verified on exact main V 3.0.768. T0126 remains in_progress: MainActivity.requestScreen is still prepare-only, Connections still says peer discovery is unavailable, and no production caller passes complete HostAnnouncement snapshots to selection/dispatch and then records the feedback. No live underfilled-host notification is claimed.\n\nT0126-A003 (2026-11-01T13:21:18.320Z): Exact V 3.0.769 source audit confirmed the remaining production integration blocker. MainActivity.requestScreen only invokes prepareRequest; no production caller invokes selectReachableHostsWithFeedback or recordHostSelectionFeedback. RendezvousPeerDirectoryClient returns metadata-only peerId/address/expiry; PeerAnnouncementHostLifecycle publishes only inference.v1. MainWindow.GetPeerRuntimeStatusAsync sets HostStatus state and activeRequests but omits models. HostCandidateSelector requires full HostAnnouncement capabilities and a fresh HostStatus with the matching model. No fabricated snapshot was introduced; task is blocked pending a real discovery/capability producer and request-screen integration.\n\nT0126-A004 (2026-11-01): Added a live model-capability source on the Windows host. LlamaCppServerBackend verifies the configured model from /v1/models and reads its actual n_ctx from GET /props; HostInferenceSession returns that snapshot only after a fresh Ready/readiness check; MainWindow reports protocol_version and includes the model only when verified. Added HostLifecycle tests. T0126 remains blocked: Android discovery and request-screen selection/dispatch integration are still missing.\nT0126-A005 (2026-11-01): Added RendezvousPeerDirectoryClient.discoverAll() to enumerate every unexpired metadata endpoint with a direct TCP route in stable PeerId order. It shares the existing bounded 16 KiB parser/cache and fail-closed refresh; resolve() now uses the same cache-refresh helper. Added a Robolectric/JVM regression proving stable discovery order, omission of a QUIC-only endpoint for this TCP client, and reuse of one directory fetch across discoverAll() and resolve(). This is a real directory API output but not yet a typed HostAnnouncement/capability source or a production request-screen caller. Exact-head Android KtLint/APK/JVM/Protobuf and product CI are pending. T0126 remains blocked.\nT0126-A005 exact V 3.0.779 CI reconciliation (2026-11-01): Android KtLint, assembleDebug, testDebugUnitTest (including discoversFreshPeersInStableIdentityOrderAndExcludesPeersWithoutTcpRoute), generated Protobuf Java/Kotlin, Windows WPF build/startup/security/DPAPI, HostLifecycle unit/integration, Step Three quality gate and Rendezvous container build/smoke all passed on exact main commit ee9692a3d34543dd159f48ca4ef72e29f5981db8. Android APK artifact 13087940513 uploaded. This validates the metadata directory API and test only; T0126 remains blocked until typed host capability/status, production request UI discovery/selection/dispatch and shortage feedback are integrated.\nT0126-A006: added the real authenticated discovery-to-candidate API and six focused JVM tests. Exact-head CI is pending; the task remains blocked because the Compose request UI still has no production discovery/dispatch/feedback caller.\nT0126-A007: corrected the two KtLint chain-method line breaks identified by the exact V 3.0.781 Android workflow. The full request UI/dispatch path remains absent; T0126 stays blocked.\nThe V 3.0.782 graph guard identified a counter/history mismatch: A006 is partial (one sub-check failed), not a fully failed attempt. failed_attempt_count was reconciled to the one historical result=failed.",
+      "notes": "The expected Shared.Networking/Windows path is not the actual consumer in this repository: candidate selection and dispatch live in the Android app, and the user-facing request state/Compose screen lives under com.whitep.client.ui.request. Implement at those real boundaries. Policy: one or two validated hosts remain usable with an exact shortage warning; zero hosts is a no-send NO_SELECTED_HOSTS outcome. The MainActivity request screen is still a prepare-only preview and has no production caller for the new runtime feedback method; therefore keep this task in_progress until live discovery/dispatch feeds the UI. Do not claim a working end-to-end user notification yet.\n\nT0126-A001 (2026-11-01): Exact V 3.0.767 CI was inspected. Android KtLint and assembleDebug passed; JVM test compilation failed because RequestViewModelTest.kt omitted the HostSelectionFeedback import, so T0126 unit assertions and generated Protobuf verification did not run. Step Three's 312 Python tests and syntax check passed, but graph_guard failed because completed T0125 evidence lacked a tests/ source path. Windows WPF, HostLifecycle and Rendezvous container smoke passed. A002 adds the missing import and records test-source evidence for T0125. T0126 remains in_progress until repaired exact-head tests pass and a real request UI caller feeds live selection feedback.\n\nT0126-A002 exact V 3.0.768 CI result (2026-11-01): Android main/test KtLint, assembleDebug, compileDebugUnitTestKotlin, testDebugUnitTest and generated Protobuf Java/Kotlin verification passed; Windows WPF build/startup/security/DPAPI and policy/capability checks passed; HostLifecycle tests passed; the Step Three quality gate passed (312 Python tests, compileall and graph/evidence guard); Rendezvous container build/HTTP smoke passed. The missing import and T0125 evidence repairs are therefore verified on exact main V 3.0.768. T0126 remains in_progress: MainActivity.requestScreen is still prepare-only, Connections still says peer discovery is unavailable, and no production caller passes complete HostAnnouncement snapshots to selection/dispatch and then records the feedback. No live underfilled-host notification is claimed.\n\nT0126-A003 (2026-11-01T13:21:18.320Z): Exact V 3.0.769 source audit confirmed the remaining production integration blocker. MainActivity.requestScreen only invokes prepareRequest; no production caller invokes selectReachableHostsWithFeedback or recordHostSelectionFeedback. RendezvousPeerDirectoryClient returns metadata-only peerId/address/expiry; PeerAnnouncementHostLifecycle publishes only inference.v1. MainWindow.GetPeerRuntimeStatusAsync sets HostStatus state and activeRequests but omits models. HostCandidateSelector requires full HostAnnouncement capabilities and a fresh HostStatus with the matching model. No fabricated snapshot was introduced; task is blocked pending a real discovery/capability producer and request-screen integration.\n\nT0126-A004 (2026-11-01): Added a live model-capability source on the Windows host. LlamaCppServerBackend verifies the configured model from /v1/models and reads its actual n_ctx from GET /props; HostInferenceSession returns that snapshot only after a fresh Ready/readiness check; MainWindow reports protocol_version and includes the model only when verified. Added HostLifecycle tests. T0126 remains blocked: Android discovery and request-screen selection/dispatch integration are still missing.\nT0126-A005 (2026-11-01): Added RendezvousPeerDirectoryClient.discoverAll() to enumerate every unexpired metadata endpoint with a direct TCP route in stable PeerId order. It shares the existing bounded 16 KiB parser/cache and fail-closed refresh; resolve() now uses the same cache-refresh helper. Added a Robolectric/JVM regression proving stable discovery order, omission of a QUIC-only endpoint for this TCP client, and reuse of one directory fetch across discoverAll() and resolve(). This is a real directory API output but not yet a typed HostAnnouncement/capability source or a production request-screen caller. Exact-head Android KtLint/APK/JVM/Protobuf and product CI are pending. T0126 remains blocked.\nT0126-A005 exact V 3.0.779 CI reconciliation (2026-11-01): Android KtLint, assembleDebug, testDebugUnitTest (including discoversFreshPeersInStableIdentityOrderAndExcludesPeersWithoutTcpRoute), generated Protobuf Java/Kotlin, Windows WPF build/startup/security/DPAPI, HostLifecycle unit/integration, Step Three quality gate and Rendezvous container build/smoke all passed on exact main commit ee9692a3d34543dd159f48ca4ef72e29f5981db8. Android APK artifact 13087940513 uploaded. This validates the metadata directory API and test only; T0126 remains blocked until typed host capability/status, production request UI discovery/selection/dispatch and shortage feedback are integrated.\nT0126-A006: added the real authenticated discovery-to-candidate API and six focused JVM tests. Exact-head CI is pending; the task remains blocked because the Compose request UI still has no production discovery/dispatch/feedback caller.\nT0126-A007: corrected the two KtLint chain-method line breaks identified by the exact V 3.0.781 Android workflow. The full request UI/dispatch path remains absent; T0126 stays blocked.\nThe V 3.0.782 graph guard identified a counter/history mismatch: A006 is partial (one sub-check failed), not a fully failed attempt. failed_attempt_count was reconciled to the one historical result=failed.\nT0126-A008: replaced chained Protobuf Java builders in the new JVM test helpers with the repository's existing generated Protobuf Kotlin DSL style, addressing the four test-source KtLint findings. The behavioral assertions are unchanged.",
       "execution_summary": {
-        "attempt_count": 7,
+        "attempt_count": 8,
         "failed_attempt_count": 1,
-        "last_attempt_id": "T0126-A007-ktlint-format-repair",
+        "last_attempt_id": "T0126-A008-test-ktlint-repair",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/network/RendezvousPeerDirectoryClient.kt",
@@ -27493,13 +27493,15 @@
           "Exact V 3.0.781 Windows WPF Release build/startup/security/DPAPI — PASS — https://github.com/artinrahimii/project/actions/runs/41318161673",
           "Exact V 3.0.781 HostLifecycle unit/integration — PASS — https://github.com/artinrahimii/project/actions/runs/41318161673",
           "Exact V 3.0.781 Step Three quality gate — PASS — https://github.com/artinrahimii/project/actions/runs/41318161646",
-          "Exact V 3.0.781 Rendezvous container build and HTTP smoke — PASS — https://github.com/artinrahimii/project/actions/runs/41318161644"
+          "Exact V 3.0.781 Rendezvous container build and HTTP smoke — PASS — https://github.com/artinrahimii/project/actions/runs/41318161644",
+          "Exact V 3.0.782 Android main-source KtLint — PASS — https://github.com/artinrahimii/project/actions/runs/41318563487 (AuthenticatedHostDiscovery.kt production source passed.)"
         ],
         "tests_failed": [
           "Exact V 3.0.767 Android JVM unit-test compilation failed at RequestViewModelTest.kt:47,58,69 because HostSelectionFeedback import was missing; tests and generated Protobuf verification did not run.",
           "Exact V 3.0.767 Step Three graph guard failed with DONE_WITHOUT_TEST_FILE_EVIDENCE for T0125 because its evidence omitted test source paths; the 312 Python tests and syntax checks themselves passed.",
           "Exact V 3.0.781 Android ktlintCheck — FAIL — KtLint required a newline before the chained newBuilder() calls at AuthenticatedHostDiscovery.kt:109 and :118. Android assembleDebug, testDebugUnitTest and generated Protobuf verification were not reached.",
-          "Exact V 3.0.782 Step Three graph guard — FAIL — FAILED_ATTEMPT_COUNT_MISMATCH: T0126 summary=2, history=1. Corrected by retaining failed_attempt_count=1 because A006 is partial, not failed."
+          "Exact V 3.0.782 Step Three graph guard — FAIL — FAILED_ATTEMPT_COUNT_MISMATCH: T0126 summary=2, history=1. Corrected by retaining failed_attempt_count=1 because A006 is partial, not failed.",
+          "Exact V 3.0.782 Android test-source KtLint — FAIL — four chaining style violations in AuthenticatedHostDiscoveryTest.kt at lines 177, 184, 192 and 195; APK build, JVM tests and generated Android Protobuf verification were not reached."
         ],
         "blocked_reason": "Authenticated directory-to-HostStatus candidate discovery is now implemented behind AndroidInferenceRequestRuntime, but the Compose request UI still has no configured Rendezvous origin, explicit peer-trust interaction, payload-building/dispatch caller or live feedback/response collection. Keep T0126 blocked until the full user-facing request path and 0/1/2/3-host end-to-end tests pass.",
         "reopened_reason": null,
@@ -27897,23 +27899,23 @@
           "tests": [
             {
               "command": "Android ktlintCheck",
-              "result": "pending",
-              "summary": "Rerun on the corrected exact commit."
+              "result": "partial",
+              "summary": "The main Kotlin source-set lint passed after the code-file formatting fix. The test source-set lint then failed on four chained Protobuf Java builder expressions in AuthenticatedHostDiscoveryTest.kt (lines 177, 184, 192, 195)."
             },
             {
               "command": "Android assembleDebug",
-              "result": "pending",
-              "summary": "Rerun on the corrected exact commit."
+              "result": "not_run",
+              "summary": "Not reached because the test source-set KtLint step failed."
             },
             {
               "command": "Android testDebugUnitTest",
-              "result": "pending",
-              "summary": "Includes AuthenticatedHostDiscoveryTest; rerun on the corrected exact commit."
+              "result": "not_run",
+              "summary": "Not reached because the test source-set KtLint step failed."
             },
             {
               "command": "Generated Android Protobuf Java/Kotlin verification",
-              "result": "pending",
-              "summary": "Rerun on the corrected exact commit."
+              "result": "not_run",
+              "summary": "Not reached because the test source-set KtLint step failed."
             },
             {
               "command": "Step Three quality gate",
@@ -27925,6 +27927,18 @@
               "result": "failed",
               "summary": "Graph validation found FAILED_ATTEMPT_COUNT_MISMATCH: T0126 summary=2, history=1. A006 is a partial attempt with a failed lint check, not a fully failed attempt; the summary counter has been reconciled to the single failed historical attempt. The existing unmapped-dependency warning for T0001 is pre-existing and non-fatal.",
               "url": "https://github.com/artinrahimii/project/actions/runs/41318563537"
+            },
+            {
+              "command": "Exact V 3.0.782 Android main-source KtLint",
+              "result": "passed",
+              "summary": "The production source-set lint, including AuthenticatedHostDiscovery.kt, passed on V 3.0.782.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41318563487"
+            },
+            {
+              "command": "Exact V 3.0.782 Android test-source KtLint",
+              "result": "failed",
+              "summary": "Four builder-chain style violations remained in AuthenticatedHostDiscoveryTest.kt. The helpers are being rewritten using the generated Protobuf Kotlin DSL; Android build and unit tests were not reached.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41318563487"
             }
           ],
           "failure_details": null,
@@ -27932,10 +27946,56 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Wire the configured Rendezvous service and explicit peer-trust interaction into the Compose request UI, build the real request payload, call authenticated discovery/selection and dispatch only for nonempty results, then display feedback and correlated responses. Add end-to-end tests before unblocking T0126 and resuming T0174."
+        },
+        {
+          "attempt_id": "T0126-A008-test-ktlint-repair",
+          "started_at": "2026-11-01T15:00:10.237Z",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Rewrote the new Android JVM test fixtures to use the repository's generated Protobuf Kotlin DSL instead of Java builder chains. This addresses four test-source KtLint findings. The discovery implementation and test intent are unchanged; lint/build/JVM/Protobuf verification must run again on the new commit. T0126 remains blocked pending UI-level invocation and actual dispatch/feedback.",
+          "changed_files": [
+            "src/Client.Android/app/src/test/java/com/whitep/client/requests/AuthenticatedHostDiscoveryTest.kt",
+            "step three/T0126/execution-report.md",
+            "step three/T0126/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "command": "Android ktlintCheck",
+              "result": "pending",
+              "summary": "Rerun main and test source sets after the DSL rewrite."
+            },
+            {
+              "command": "Android assembleDebug",
+              "result": "pending",
+              "summary": "Rerun after lint passes."
+            },
+            {
+              "command": "Android testDebugUnitTest",
+              "result": "pending",
+              "summary": "Includes the six AuthenticatedHostDiscoveryTest cases."
+            },
+            {
+              "command": "Generated Android Protobuf Java/Kotlin verification",
+              "result": "pending",
+              "summary": "Rerun against the corrected Android test source."
+            },
+            {
+              "command": "Step Three quality gate",
+              "result": "pending",
+              "summary": "Revalidate graph structure and evidence paths."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": "Authenticated directory-to-HostStatus candidate discovery is now implemented behind AndroidInferenceRequestRuntime, but the Compose request UI still has no configured Rendezvous origin, explicit peer-trust interaction, payload-building/dispatch caller or live feedback/response collection. Keep T0126 blocked until the full user-facing request path and 0/1/2/3-host end-to-end tests pass.",
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Verify Android main/test KtLint, assembleDebug, testDebugUnitTest, generated Protobuf sources and graph quality on this exact commit. Then wire this runtime API into the Compose request screen with explicit trust and real dispatch/response collection. Keep T0126 blocked until end-to-end acceptance passes."
         }
       ],
       "blocked_reason": "Authenticated directory-to-HostStatus candidate discovery is now implemented behind AndroidInferenceRequestRuntime, but the Compose request UI still has no configured Rendezvous origin, explicit peer-trust interaction, payload-building/dispatch caller or live feedback/response collection. Keep T0126 blocked until the full user-facing request path and 0/1/2/3-host end-to-end tests pass.",
-      "updated_at": "2026-11-01T14:57:17.213Z"
+      "updated_at": "2026-11-01T15:00:10.237Z"
     },
     {
       "id": "T0127",
@@ -59754,7 +59814,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-11-01T14:57:17.213Z",
+  "updated_at": "2026-11-01T15:00:10.237Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

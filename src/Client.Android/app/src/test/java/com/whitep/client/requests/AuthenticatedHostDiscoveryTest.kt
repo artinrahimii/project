@@ -11,6 +11,9 @@ import org.whitep.shared.contracts.v1.HostRuntimeState
 import org.whitep.shared.contracts.v1.HostStatus
 import org.whitep.shared.contracts.v1.InferenceRequest
 import org.whitep.shared.contracts.v1.ModelCapability
+import org.whitep.shared.contracts.v1.hostStatus
+import org.whitep.shared.contracts.v1.inferenceRequest
+import org.whitep.shared.contracts.v1.modelCapability
 import java.time.Clock
 import java.time.Instant
 import java.time.ZoneOffset
@@ -173,33 +176,34 @@ class AuthenticatedHostDiscoveryTest {
         state: HostRuntimeState = HostRuntimeState.HOST_RUNTIME_STATE_READY,
         observedAt: Instant = now,
         modelId: String = "model-a",
-    ): HostStatus =
-        HostStatus.newBuilder()
-            .setEphemeralHostId(peerId)
-            .setState(state)
-            .setActiveRequests(0)
-            .setObservedAtUnixMs(observedAt.toEpochMilli())
-            .setProtocolVersion("1.0.0")
-            .addModels(
-                ModelCapability.newBuilder()
-                    .setModelId(modelId)
-                    .setDisplayName("Test model")
-                    .setMaxContextTokens(8_192L)
-                    .setMaxOutputTokens(512L)
-                    .setSupportsStreaming(true)
-                    .build(),
-            )
-            .build()
+    ): HostStatus {
+        val runtimeModel =
+            modelCapability {
+                this.modelId = modelId
+                displayName = "Test model"
+                maxContextTokens = 8_192L
+                maxOutputTokens = 512L
+                supportsStreaming = true
+            }
+        return hostStatus {
+            ephemeralHostId = peerId
+            this.state = state
+            activeRequests = 0
+            observedAtUnixMs = observedAt.toEpochMilli()
+            protocolVersion = "1.0.0"
+            models += runtimeModel
+        }
+    }
 
     private fun validRequest(): InferenceRequest =
-        InferenceRequest.newBuilder()
-            .setRequestId("request-1")
-            .setAttemptId("attempt-1")
-            .setRoundId("round-1")
-            .setModelId("model-a")
-            .setPrompt("hello")
-            .setDeadlineUnixMs(now.plusSeconds(60).toEpochMilli())
-            .setMaxOutputTokens(128)
-            .setProtocolVersion("1.0.0")
-            .build()
+        inferenceRequest {
+            requestId = "request-1"
+            attemptId = "attempt-1"
+            roundId = "round-1"
+            modelId = "model-a"
+            prompt = "hello"
+            deadlineUnixMs = now.plusSeconds(60).toEpochMilli()
+            maxOutputTokens = 128
+            protocolVersion = "1.0.0"
+        }
 }
