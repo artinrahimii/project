@@ -160,3 +160,13 @@ The exact V 3.0.768 Android/Windows/HostLifecycle/Step Three/Rendezvous workflow
 - **T0126-A007** applies only the two KtLint-required chain-call line breaks in `AuthenticatedHostDiscovery.kt`. The discovery behavior and acceptance scope are unchanged. Android lint/build/JVM/Protobuf checks are pending rerun on the corrected commit.
 - T0126 remains blocked: the Compose request screen still does not connect user-configured Rendezvous, explicit peer trust, payload construction, dispatch, shortage feedback and correlated response collection.
 
+
+
+## T0126-A007 graph-ledger correction after V 3.0.782 quality run
+
+- The Android formatting correction is committed as `c618b7778f0ccdcb5152ce346141228c5519c6f1` (`V 3.0.782`).
+- The V 3.0.782 graph validator reported `FAILED_ATTEMPT_COUNT_MISMATCH: T0126: summary=2, history=1`. This came from counting A006's failed lint sub-check as a fully failed task attempt even though A006's overall result is correctly `partial`.
+- Reconciled `execution_summary.failed_attempt_count` to `1`, which matches the single historical attempt whose overall `result` is `failed`. The A006 lint failure remains preserved in `tests_failed` and its own test record; it was not erased or relabeled as a pass.
+- The unrelated `UNMAPPED_DEPENDENCY` warning for T0001 is a pre-existing metadata warning; it is not a blocking structural error.
+- This graph correction is being recorded in `V 3.0.783`. The Android product workflow for V 3.0.782 has not yet been reconciled and remains pending.
+

@@ -127,3 +127,12 @@ The live acceptance gap remains: `MainActivity.requestScreen` is prepare-only, a
 - Windows WPF formatting/build/startup/security/DPAPI checks passed; HostLifecycle tests passed; Step Three graph/Python quality gate passed; Rendezvous container build and HTTP smoke passed.
 - A007 changes only those two Kotlin line breaks. The Android checks must be rerun on A007's commit before they can be recorded as passing.
 
+
+
+## T0126-A007 graph-ledger correction
+
+- Exact V 3.0.782 graph guard error: `FAILED_ATTEMPT_COUNT_MISMATCH: T0126: summary=2, history=1`.
+- The attempt A006 overall result is `partial`, although its KtLint sub-check failed. The separate test failure is retained, but it does not increase the count of fully failed attempts.
+- Set `failed_attempt_count=1` to match the one `execution_history` entry whose overall result is `failed`. The T0001 unmapped-dependency notice remains a non-fatal warning.
+- A007 code commit: `c618b7778f0ccdcb5152ce346141228c5519c6f1`. Graph correction commit is the next version and will be verified on `main`.
+
