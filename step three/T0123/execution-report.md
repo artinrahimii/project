@@ -54,3 +54,18 @@
 - **Base:** exact online `main` commit `d5858762bb9f1e6d672c2d9f861a81a1187dcbea` (`V 3.0.755`).
 - **Changes:** corrected only the remaining KtLint test-file diagnostics: builder chain indentation, `when` branch indentation, and constructor argument/closing-parenthesis indentation. No test assertions, wire behavior or transport logic are changed.
 - **Validation:** pending exact-head product workflow. T0123 remains `in_progress` until Android lint, APK and JVM checks pass.
+
+
+## T0123-A004 — exact V 3.0.756 CI result
+
+- **Commit:** `fdf51f72fa9d389aeed11709db8a870c036fac2f`.
+- **Passed:** HostLifecycle regression [job 124838033151](https://github.com/artinrahimii/project/actions/runs/41303131592/job/124838033151); Step Three quality gate [41303131602](https://github.com/artinrahimii/project/actions/runs/41303131602); Rendezvous container build and smoke [41303131595](https://github.com/artinrahimii/project/actions/runs/41303131595). The Windows WPF job passed its build and startup/security checks.
+- **Failed:** Android KtLint in the production source set reported indentation and chain-layout errors in `Libp2pInferenceRequestTransport.kt` within the status-probe implementation. The Android JVM test source set passed KtLint. Android APK/JVM steps were skipped.
+- **Exact evidence:** [Product workflow 41303131592](https://github.com/artinrahimii/project/actions/runs/41303131592).
+- **Task state:** T0123 remains `in_progress`; A004 is recorded as failed because the production Android source gate prevented APK and JVM execution.
+
+## T0123-A005 — Android production transport formatting correction
+
+- **Base:** exact online `main` commit `fdf51f72fa9d389aeed11709db8a870c036fac2f` (`V 3.0.756`).
+- **Changes:** corrected only Kotlin continuation indentation and member-chain layout in `probeHostStatus` and the HostStatus receive branch. No runtime or protocol behavior is intentionally changed. The JVM test formatting from A004 is retained.
+- **Validation:** pending exact-head product workflow. T0123 remains `in_progress` until Kotlin lint, debug APK build and Android JVM transport acceptance pass together with HostLifecycle and WPF checks.

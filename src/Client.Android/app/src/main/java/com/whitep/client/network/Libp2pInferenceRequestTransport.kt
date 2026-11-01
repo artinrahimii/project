@@ -300,24 +300,24 @@ class Libp2pInferenceRequestTransport(
         }
         val remotePeerId =
             try {
-            PeerId.fromBase58(endpoint.peerId)
-        } catch (exception: IllegalArgumentException) {
-            throw SecurityException("The rendezvous PeerId is not canonical.", exception)
-        }
+                PeerId.fromBase58(endpoint.peerId)
+            } catch (exception: IllegalArgumentException) {
+                throw SecurityException("The rendezvous PeerId is not canonical.", exception)
+            }
         if (remotePeerId.toBase58() != endpoint.peerId) {
             throw SecurityException("The rendezvous PeerId is not canonical.")
         }
 
         val addresses =
             endpoint.tcpMultiaddresses.map { address ->
-            require(address.endsWith("/p2p/${endpoint.peerId}")) {
-                "The direct multiaddress must end with the announced PeerId."
+                require(address.endsWith("/p2p/${endpoint.peerId}")) {
+                    "The direct multiaddress must end with the announced PeerId."
+                }
+                require(address.contains("/tcp/") && !address.contains("/p2p-circuit")) {
+                    "Only direct TCP multiaddresses are supported by this Android status probe."
+                }
+                Multiaddr.fromString(address)
             }
-            require(address.contains("/tcp/") && !address.contains("/p2p-circuit")) {
-                "Only direct TCP multiaddresses are supported by this Android status probe."
-            }
-            Multiaddr.fromString(address)
-        }
         if (addresses.isEmpty()) throw IOException("The rendezvous entry has no direct TCP route.")
 
         val pending = PendingHostStatusRequest(endpoint.peerId)
@@ -325,27 +325,29 @@ class Libp2pInferenceRequestTransport(
             throw IllegalStateException("A status probe is already pending for this peer.")
         }
         val requestWire =
-            HostStatusRequest.newBuilder()
-            .setEphemeralHostId(ephemeralHostId)
-            .build()
-            .toByteArray()
+            HostStatusRequest
+                .newBuilder()
+                .setEphemeralHostId(ephemeralHostId)
+                .build()
+                .toByteArray()
         try {
             ensureHostStarted()
             val promise =
-                libp2pHost.newStream<InferencePeerMessageController>(
-                listOf(PROTOCOL_ID),
-                remotePeerId,
-                *addresses.toTypedArray(),
-            )
+                libp2pHost
+                    .newStream<InferencePeerMessageController>(
+                        listOf(PROTOCOL_ID),
+                        remotePeerId,
+                        *addresses.toTypedArray(),
+                    )
             val timeoutSeconds = connectionTimeout.toSeconds().coerceAtLeast(1L)
             val stream =
                 withContext(Dispatchers.IO) {
-                promise.stream.get(timeoutSeconds, TimeUnit.SECONDS)
-            }
+                    promise.stream.get(timeoutSeconds, TimeUnit.SECONDS)
+                }
             val controller =
                 withContext(Dispatchers.IO) {
-                promise.controller.get(timeoutSeconds, TimeUnit.SECONDS)
-            }
+                    promise.controller.get(timeoutSeconds, TimeUnit.SECONDS)
+                }
             pending.controller = controller
             if (stream.remotePeerId().toBase58() != endpoint.peerId) {
                 throw SecurityException("The authenticated peer did not match the trusted directory identity.")
@@ -355,16 +357,16 @@ class Libp2pInferenceRequestTransport(
             }
             val status =
                 withTimeout(timeout.toMillis().coerceAtLeast(1L)) {
-                pending.response.await()
-            }
+                    pending.response.await()
+                }
 
             if (status.ephemeralHostId != ephemeralHostId) {
                 throw SecurityException("The HostStatus identity did not match the authenticated peer.")
             }
             if (
                 status.state.number !in 1..5 ||
-                    status.observedAtUnixMs <= 0L ||
-                    status.activeRequests > MAXIMUM_HOST_STATUS_ACTIVE_REQUESTS
+                status.observedAtUnixMs <= 0L ||
+                status.activeRequests > MAXIMUM_HOST_STATUS_ACTIVE_REQUESTS
             ) {
                 throw IOException("The peer returned an invalid HostStatus snapshot.")
             }
@@ -503,13 +505,13 @@ class Libp2pInferenceRequestTransport(
         if (pendingStatus?.controller === controller) {
             val status =
                 try {
-                HostStatus.parseFrom(payload)
-            } catch (exception: Exception) {
-                pendingStatus.response.completeExceptionally(
-                    IOException("The authenticated peer returned a malformed HostStatus message.", exception),
-                )
-                return
-            }
+                    HostStatus.parseFrom(payload)
+                } catch (exception: Exception) {
+                    pendingStatus.response.completeExceptionally(
+                        IOException("The authenticated peer returned a malformed HostStatus message.", exception),
+                    )
+                    return
+                }
             if (status.ephemeralHostId != pendingStatus.peerId) {
                 pendingStatus.response.completeExceptionally(
                     SecurityException("The HostStatus identity did not match the authenticated peer."),
