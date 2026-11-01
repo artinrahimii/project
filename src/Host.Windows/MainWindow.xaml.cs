@@ -899,20 +899,38 @@ public partial class MainWindow : Window
     private async Task<WhiteP.Shared.Contracts.V1.HostStatus> GetPeerRuntimeStatusAsync(
         CancellationToken cancellationToken)
     {
-        HostStatus current = await _session.GetFreshStatusAsync(cancellationToken).ConfigureAwait(false);
+        var snapshot = await _session.GetFreshPeerRuntimeSnapshotAsync(cancellationToken).ConfigureAwait(false);
+        HostStatus current = snapshot.Status;
         var state = current.State switch
         {
             HostState.Starting => (WhiteP.Shared.Contracts.V1.HostRuntimeState)1,
-            HostState.Ready when _capacityReady => (WhiteP.Shared.Contracts.V1.HostRuntimeState)2,
+            HostState.Ready when _capacityReady && snapshot.ModelCapability is not null =>
+                (WhiteP.Shared.Contracts.V1.HostRuntimeState)2,
             HostState.Busy => (WhiteP.Shared.Contracts.V1.HostRuntimeState)3,
             _ => (WhiteP.Shared.Contracts.V1.HostRuntimeState)5
         };
 
-        return new WhiteP.Shared.Contracts.V1.HostStatus
+        var peerStatus = new WhiteP.Shared.Contracts.V1.HostStatus
         {
             State = state,
-            ActiveRequests = current.State == HostState.Busy ? 1U : 0U
+            ActiveRequests = current.State == HostState.Busy ? 1U : 0U,
+            ProtocolVersion = ProtocolVersionPolicy.CurrentVersion
         };
+
+        if (state == (WhiteP.Shared.Contracts.V1.HostRuntimeState)2 &&
+            snapshot.ModelCapability is { } capability)
+        {
+            peerStatus.Models.Add(new ModelCapability
+            {
+                ModelId = capability.ModelId,
+                DisplayName = capability.DisplayName,
+                MaxContextTokens = capability.MaxContextTokens,
+                MaxOutputTokens = capability.MaxOutputTokens,
+                SupportsStreaming = capability.SupportsStreaming
+            });
+        }
+
+        return peerStatus;
     }
 
     private async Task<byte[]> HandlePeerInferenceMessageAsync(byte[] wireBytes, CancellationToken cancellationToken)

@@ -69,3 +69,12 @@ The live acceptance gap remains: `MainActivity.requestScreen` is prepare-only, a
 - The Windows `GetPeerRuntimeStatusAsync` provider currently returns state and active request count without `HostStatus.models`. This cannot satisfy the selector's live matching-model requirement.
 - No live acceptance test was possible because the production flow does not exist. No fake candidate data was introduced. T0126 is recorded as `blocked` pending the real capability/discovery and request-screen integration described in the execution report.
 - Incoming dependency classifications remain unchanged. No outgoing `unreviewed` edge was reclassified or removed.
+
+
+## T0126-A004 — capability-source implementation (pending exact-head CI)
+
+- Added `IInferenceModelCapabilityProvider` and `HostPeerRuntimeSnapshot` in the application layer.
+- `LlamaCppServerBackend.GetModelCapabilityAsync` verifies the configured model is present in `/v1/models` and reads `n_ctx` from `GET /props`; malformed, missing, zero or unavailable values return no capability.
+- The Windows peer status callback publishes the Protobuf `protocol_version` and only includes `ModelCapability` after a fresh READY/readiness-checked snapshot.
+- Added `HostPeerRuntimeCapabilitiesAcceptanceTests` to the HostLifecycle test executable.
+- Exact-head build and test results are pending. This attempt does not complete the Android discovery/selection/request UI integration, so T0126 remains blocked.

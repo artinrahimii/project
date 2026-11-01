@@ -71,6 +71,77 @@ public sealed class HostInferenceSession : IDisposable
         }
     }
 
+    /// <summary>
+    /// Returns a fresh readiness check together with model limits read from the active backend.
+    /// Missing capability data is represented as null; callers must not construct a selectable
+    /// host from a READY state alone.
+    /// </summary>
+    public async Task<HostPeerRuntimeSnapshot> GetFreshPeerRuntimeSnapshotAsync(
+        CancellationToken cancellationToken = default)
+    {
+        ObjectDisposedException.ThrowIf(_disposed, this);
+
+        HostStatus current = _lifecycle.Status;
+        if (current.State == HostState.Busy)
+        {
+            return new HostPeerRuntimeSnapshot(current, null);
+        }
+
+        if (!await _operationGate.WaitAsync(0, cancellationToken).ConfigureAwait(false))
+        {
+            current = _lifecycle.Status;
+            var transitional = current.State is HostState.Busy or HostState.Starting
+                ? current
+                : new HostStatus(HostState.Starting, "A host state transition is in progress; readiness is not yet confirmed.");
+            return new HostPeerRuntimeSnapshot(transitional, null);
+        }
+
+        try
+        {
+            ObjectDisposedException.ThrowIf(_disposed, this);
+            if (_lifecycle.Status.State == HostState.Busy)
+            {
+                return new HostPeerRuntimeSnapshot(_lifecycle.Status, null);
+            }
+
+            HostStatus status = await CheckBackendCoreAsync(cancellationToken).ConfigureAwait(false);
+            if (status.State != HostState.Ready || _backend is not IInferenceModelCapabilityProvider provider)
+            {
+                return new HostPeerRuntimeSnapshot(status, null);
+            }
+
+            try
+            {
+                InferenceModelCapabilitySnapshot? capability =
+                    await provider.GetModelCapabilityAsync(cancellationToken).ConfigureAwait(false);
+                if (capability is null ||
+                    string.IsNullOrWhiteSpace(capability.ModelId) ||
+                    capability.MaxContextTokens == 0 ||
+                    capability.MaxOutputTokens == 0 ||
+                    capability.MaxOutputTokens > capability.MaxContextTokens ||
+                    capability.MaxOutputTokens > ProtocolMessageLimits.MaximumOutputTokens)
+                {
+                    return new HostPeerRuntimeSnapshot(status, null);
+                }
+
+                return new HostPeerRuntimeSnapshot(status, capability);
+            }
+            catch (OperationCanceledException)
+            {
+                throw;
+            }
+            catch (Exception)
+            {
+                // A backend that cannot prove its active model limits is not selectable.
+                return new HostPeerRuntimeSnapshot(status, null);
+            }
+        }
+        finally
+        {
+            _operationGate.Release();
+        }
+    }
+
     public async Task<HostStatus> ConnectAsync(Uri serverBaseAddress, string model, CancellationToken cancellationToken = default)
     {
         ObjectDisposedException.ThrowIf(_disposed, this);

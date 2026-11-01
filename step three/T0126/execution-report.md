@@ -88,3 +88,14 @@ The exact V 3.0.768 Android/Windows/HostLifecycle/Step Three/Rendezvous workflow
 - **Decision:** T0126 is now `blocked`, not `done` or failed. The existing A001/A002 history and V 3.0.768 unit/CI passes are preserved; they prove the count/dispatch/feedback components in isolation, not a live UI flow. No fabricated HostAnnouncement/status snapshots were added and no production source was changed during this audit.
 - **Required next work:** implement a validated capability publication/discovery contract from actual Windows model/readiness configuration, populate model capability data in fresh HostStatus, add bounded Android directory discovery returning typed HostAnnouncement values, and wire the real request UI to discover → live-probe → select → dispatch → display feedback. Then test the real user path for 0/1/2/3 valid peers before resuming T0126 or proceeding to T0127.
 - **Tests in A003:** none run; this was a source/call-graph audit. Existing V 3.0.768 focused tests and CI remain recorded above.
+
+
+## T0126-A004 — fresh host model-capability source (partial; live Android wiring remains blocked)
+
+- **Base:** exact online `main` commit `566da8bd34e92e86935e41b01a034b7098e5d837` (`V 3.0.770`).
+- Added a backend capability-provider contract and a fresh peer-runtime snapshot API. A snapshot is only returned with model data when the local session has just passed backend health and host-readiness checks; a busy, transitioning, disconnected or unverifiable backend returns no selectable model.
+- The Windows llama.cpp backend now checks the configured model against `GET /v1/models` and reads the live context window from read-only `GET /props` (`default_generation_settings.n_ctx`). It does not use catalog claims or a guessed model-family limit. The reported output ceiling is capped by both the live context window and the shared protocol maximum.
+- Windows `GetPeerRuntimeStatusAsync` now returns the exact current protocol version and adds the model capability only when the fresh runtime snapshot proves it. If the model snapshot is unavailable, the peer status is UNAVAILABLE rather than READY-with-guessed-capabilities.
+- Added HostLifecycle acceptance coverage for exact model discovery, context parsing, missing model/context fail-closed behaviour, fresh-session capability snapshots and stale capability removal after disconnect.
+- This is an upstream contract/producer repair only. The Android directory still has no production discovery caller, the Android request screen remains prepare-only, and the client still needs to combine the authenticated HostStatus with directory routing metadata, run 0/1/2/3-peer selection and wire dispatch/feedback to the UI. T0126 therefore remains `blocked`, not `done`.
+- **Tests in this attempt:** the new exact-host tests are added but have not yet been executed in this authoring environment; GitHub Actions must verify the commit before this attempt can be recorded as test-passing.

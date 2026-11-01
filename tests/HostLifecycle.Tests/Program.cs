@@ -120,6 +120,7 @@ LocalHostSettingsPersistenceTests.Run();
 await HostRequestCoordinatorTests.RunAsync();
 await HostRequestResponseDeliveryTests.RunAsync();
 await LlamaCppInferenceEngineCancellationTests.RunAsync();
+await HostPeerRuntimeCapabilitiesAcceptanceTests.RunAsync();
 await HostRequestCoordinatorBusyTests.RunAsync();
 await HostRequestCoordinatorConcurrencyTests.RunAsync();
 await HostRequestCoordinatorFailureAcceptanceTests.RunAsync();

@@ -12,7 +12,7 @@ namespace WhiteP.Host.Infrastructure;
 
 /// <summary>A real HTTP client for a llama.cpp server running on the same host.</summary>
 /// <remarks>The server/model must be installed and started separately. This class never logs prompt or response content.</remarks>
-public sealed class LlamaCppServerBackend : IInferenceBackend, IAgentToolCapabilityProvider, IDisposable
+public sealed class LlamaCppServerBackend : IInferenceBackend, IAgentToolCapabilityProvider, IInferenceModelCapabilityProvider, IDisposable
 {
     private readonly HttpClient _http;
     private readonly bool _ownsClient;
@@ -34,6 +34,97 @@ public sealed class LlamaCppServerBackend : IInferenceBackend, IAgentToolCapabil
         _ownsClient = httpClient is null;
         _http.BaseAddress = EnsureTrailingSlash(serverBaseAddress);
         _http.Timeout = Timeout.InfiniteTimeSpan;
+    }
+
+    /// <summary>
+    /// Reads the active model ID from /v1/models and its actual context window from GET /props.
+    /// This is a read-only metadata check; it never sends a prompt or changes server properties.
+    /// </summary>
+    public async Task<InferenceModelCapabilitySnapshot?> GetModelCapabilityAsync(
+        CancellationToken cancellationToken = default)
+    {
+        using var timeout = CreateTimeout(cancellationToken);
+        try
+        {
+            using var modelsResponse = await _http.GetAsync(
+                "v1/models",
+                HttpCompletionOption.ResponseHeadersRead,
+                timeout.Token).ConfigureAwait(false);
+            if (!modelsResponse.IsSuccessStatusCode)
+            {
+                return null;
+            }
+
+            byte[] modelsBytes = await ReadLimitedBodyAsync(
+                modelsResponse.Content,
+                ProtocolMessageLimits.MaximumLocalResponseBodyBytes,
+                timeout.Token).ConfigureAwait(false);
+            using var modelsDocument = JsonDocument.Parse(modelsBytes);
+            if (!modelsDocument.RootElement.TryGetProperty("data", out var models) ||
+                models.ValueKind != JsonValueKind.Array)
+            {
+                return null;
+            }
+
+            bool configuredModelIsActive = models.EnumerateArray().Any(model =>
+                model.ValueKind == JsonValueKind.Object &&
+                model.TryGetProperty("id", out var id) &&
+                id.ValueKind == JsonValueKind.String &&
+                string.Equals(id.GetString(), _model, StringComparison.Ordinal));
+            if (!configuredModelIsActive)
+            {
+                return null;
+            }
+
+            // GET /props is read-only by default. Its n_ctx value is the active server context
+            // window; do not substitute catalog declarations or guessed model-family defaults.
+            using var propertiesResponse = await _http.GetAsync(
+                "props",
+                HttpCompletionOption.ResponseHeadersRead,
+                timeout.Token).ConfigureAwait(false);
+            if (!propertiesResponse.IsSuccessStatusCode)
+            {
+                return null;
+            }
+
+            byte[] propertiesBytes = await ReadLimitedBodyAsync(
+                propertiesResponse.Content,
+                ProtocolMessageLimits.MaximumLocalResponseBodyBytes,
+                timeout.Token).ConfigureAwait(false);
+            using var propertiesDocument = JsonDocument.Parse(propertiesBytes);
+            if (!propertiesDocument.RootElement.TryGetProperty("default_generation_settings", out var defaults) ||
+                defaults.ValueKind != JsonValueKind.Object ||
+                !defaults.TryGetProperty("n_ctx", out var contextElement) ||
+                !contextElement.TryGetUInt64(out ulong contextTokens) ||
+                contextTokens == 0)
+            {
+                return null;
+            }
+
+            ulong maxOutputTokens = Math.Min(
+                contextTokens,
+                (ulong)ProtocolMessageLimits.MaximumOutputTokens);
+            if (maxOutputTokens == 0)
+            {
+                return null;
+            }
+
+            return new InferenceModelCapabilitySnapshot(
+                ModelId: _model,
+                DisplayName: _model,
+                MaxContextTokens: contextTokens,
+                MaxOutputTokens: maxOutputTokens,
+                SupportsStreaming: false);
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            throw;
+        }
+        catch (Exception exception) when (
+            exception is OperationCanceledException or HttpRequestException or IOException or JsonException or InvalidOperationException)
+        {
+            return null;
+        }
     }
 
     public bool IsAvailable { get; private set; }

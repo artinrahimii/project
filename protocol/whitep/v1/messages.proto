@@ -121,6 +121,8 @@ message HostStatus {
   uint32 active_requests = 3;
   uint64 observed_at_unix_ms = 4;
   repeated ModelCapability models = 5;
+  // The host reports the exact wire version used for its live capability snapshot.
+  string protocol_version = 6;
 }
 
 message ProtocolError {

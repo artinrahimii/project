@@ -27399,7 +27399,14 @@
         "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt",
         "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
         "step three/T0126/execution-report.md",
-        "step three/T0126/evidence/verification.md"
+        "step three/T0126/evidence/verification.md",
+        "protocol/whitep/v1/messages.proto",
+        "src/Host.Application/HostInferenceModelCapabilityProvider.cs",
+        "src/Host.Application/HostInferenceSession.cs",
+        "src/Host.Infrastructure/LlamaCppServerBackend.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "tests/HostLifecycle.Tests/HostPeerRuntimeCapabilitiesAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/Program.cs"
       ],
       "expected_output_paths": [
         "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostSelectionFeedback.kt",
@@ -27419,14 +27426,20 @@
         "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt",
         "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
         "step three/T0126/evidence/verification.md",
-        "step three/T0125/execution-report.md"
+        "step three/T0125/execution-report.md",
+        "src/Host.Application/HostInferenceModelCapabilityProvider.cs",
+        "src/Host.Application/HostInferenceSession.cs",
+        "src/Host.Infrastructure/LlamaCppServerBackend.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "tests/HostLifecycle.Tests/HostPeerRuntimeCapabilitiesAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/Program.cs"
       ],
-      "notes": "The expected Shared.Networking/Windows path is not the actual consumer in this repository: candidate selection and dispatch live in the Android app, and the user-facing request state/Compose screen lives under com.whitep.client.ui.request. Implement at those real boundaries. Policy: one or two validated hosts remain usable with an exact shortage warning; zero hosts is a no-send NO_SELECTED_HOSTS outcome. The MainActivity request screen is still a prepare-only preview and has no production caller for the new runtime feedback method; therefore keep this task in_progress until live discovery/dispatch feeds the UI. Do not claim a working end-to-end user notification yet.\n\nT0126-A001 (2026-11-01): Exact V 3.0.767 CI was inspected. Android KtLint and assembleDebug passed; JVM test compilation failed because RequestViewModelTest.kt omitted the HostSelectionFeedback import, so T0126 unit assertions and generated Protobuf verification did not run. Step Three's 312 Python tests and syntax check passed, but graph_guard failed because completed T0125 evidence lacked a tests/ source path. Windows WPF, HostLifecycle and Rendezvous container smoke passed. A002 adds the missing import and records test-source evidence for T0125. T0126 remains in_progress until repaired exact-head tests pass and a real request UI caller feeds live selection feedback.\n\nT0126-A002 exact V 3.0.768 CI result (2026-11-01): Android main/test KtLint, assembleDebug, compileDebugUnitTestKotlin, testDebugUnitTest and generated Protobuf Java/Kotlin verification passed; Windows WPF build/startup/security/DPAPI and policy/capability checks passed; HostLifecycle tests passed; the Step Three quality gate passed (312 Python tests, compileall and graph/evidence guard); Rendezvous container build/HTTP smoke passed. The missing import and T0125 evidence repairs are therefore verified on exact main V 3.0.768. T0126 remains in_progress: MainActivity.requestScreen is still prepare-only, Connections still says peer discovery is unavailable, and no production caller passes complete HostAnnouncement snapshots to selection/dispatch and then records the feedback. No live underfilled-host notification is claimed.\n\nT0126-A003 (2026-11-01T13:21:18.320Z): Exact V 3.0.769 source audit confirmed the remaining production integration blocker. MainActivity.requestScreen only invokes prepareRequest; no production caller invokes selectReachableHostsWithFeedback or recordHostSelectionFeedback. RendezvousPeerDirectoryClient returns metadata-only peerId/address/expiry; PeerAnnouncementHostLifecycle publishes only inference.v1. MainWindow.GetPeerRuntimeStatusAsync sets HostStatus state and activeRequests but omits models. HostCandidateSelector requires full HostAnnouncement capabilities and a fresh HostStatus with the matching model. No fabricated snapshot was introduced; task is blocked pending a real discovery/capability producer and request-screen integration.",
+      "notes": "The expected Shared.Networking/Windows path is not the actual consumer in this repository: candidate selection and dispatch live in the Android app, and the user-facing request state/Compose screen lives under com.whitep.client.ui.request. Implement at those real boundaries. Policy: one or two validated hosts remain usable with an exact shortage warning; zero hosts is a no-send NO_SELECTED_HOSTS outcome. The MainActivity request screen is still a prepare-only preview and has no production caller for the new runtime feedback method; therefore keep this task in_progress until live discovery/dispatch feeds the UI. Do not claim a working end-to-end user notification yet.\n\nT0126-A001 (2026-11-01): Exact V 3.0.767 CI was inspected. Android KtLint and assembleDebug passed; JVM test compilation failed because RequestViewModelTest.kt omitted the HostSelectionFeedback import, so T0126 unit assertions and generated Protobuf verification did not run. Step Three's 312 Python tests and syntax check passed, but graph_guard failed because completed T0125 evidence lacked a tests/ source path. Windows WPF, HostLifecycle and Rendezvous container smoke passed. A002 adds the missing import and records test-source evidence for T0125. T0126 remains in_progress until repaired exact-head tests pass and a real request UI caller feeds live selection feedback.\n\nT0126-A002 exact V 3.0.768 CI result (2026-11-01): Android main/test KtLint, assembleDebug, compileDebugUnitTestKotlin, testDebugUnitTest and generated Protobuf Java/Kotlin verification passed; Windows WPF build/startup/security/DPAPI and policy/capability checks passed; HostLifecycle tests passed; the Step Three quality gate passed (312 Python tests, compileall and graph/evidence guard); Rendezvous container build/HTTP smoke passed. The missing import and T0125 evidence repairs are therefore verified on exact main V 3.0.768. T0126 remains in_progress: MainActivity.requestScreen is still prepare-only, Connections still says peer discovery is unavailable, and no production caller passes complete HostAnnouncement snapshots to selection/dispatch and then records the feedback. No live underfilled-host notification is claimed.\n\nT0126-A003 (2026-11-01T13:21:18.320Z): Exact V 3.0.769 source audit confirmed the remaining production integration blocker. MainActivity.requestScreen only invokes prepareRequest; no production caller invokes selectReachableHostsWithFeedback or recordHostSelectionFeedback. RendezvousPeerDirectoryClient returns metadata-only peerId/address/expiry; PeerAnnouncementHostLifecycle publishes only inference.v1. MainWindow.GetPeerRuntimeStatusAsync sets HostStatus state and activeRequests but omits models. HostCandidateSelector requires full HostAnnouncement capabilities and a fresh HostStatus with the matching model. No fabricated snapshot was introduced; task is blocked pending a real discovery/capability producer and request-screen integration.\n\nT0126-A004 (2026-11-01): Added a live model-capability source on the Windows host. LlamaCppServerBackend verifies the configured model from /v1/models and reads its actual n_ctx from GET /props; HostInferenceSession returns that snapshot only after a fresh Ready/readiness check; MainWindow reports protocol_version and includes the model only when verified. Added HostLifecycle tests. T0126 remains blocked: Android discovery and request-screen selection/dispatch integration are still missing.",
       "execution_summary": {
-        "attempt_count": 3,
+        "attempt_count": 4,
         "failed_attempt_count": 1,
-        "last_attempt_id": "T0126-A003-live-discovery-capability-audit",
-        "last_attempt_result": "blocked",
+        "last_attempt_id": "T0126-A004-host-model-capability-snapshot",
+        "last_attempt_result": "partial",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostSelectionFeedback.kt",
           "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
@@ -27437,12 +27450,20 @@
           "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
           "step three/T0126/execution-report.md",
           "step three/T0126/evidence/verification.md",
-          "step three/project-graph.md"
+          "step three/project-graph.md",
+          "protocol/whitep/v1/messages.proto",
+          "src/Host.Application/HostInferenceModelCapabilityProvider.cs",
+          "src/Host.Application/HostInferenceSession.cs",
+          "src/Host.Infrastructure/LlamaCppServerBackend.cs",
+          "src/Host.Windows/MainWindow.xaml.cs",
+          "tests/HostLifecycle.Tests/HostPeerRuntimeCapabilitiesAcceptanceTests.cs",
+          "tests/HostLifecycle.Tests/Program.cs"
         ],
         "related_commits": [
           "431d25136b0031523e4190cf3a5cb6660080112c",
           "ffa77ceeb53648f9e450f87820dace9d1b48ffff",
-          "c2db7d9e848567f21206bbcd55408b36ae1c7c8b"
+          "c2db7d9e848567f21206bbcd55408b36ae1c7c8b",
+          "566da8bd34e92e86935e41b01a034b7098e5d837"
         ],
         "tests_passed": [
           "Exact V 3.0.768 Android main/test KtLint — PASS — https://github.com/artinrahimii/project/actions/runs/41309472601/job/124856640138",
@@ -27458,7 +27479,7 @@
           "Exact V 3.0.767 Android JVM unit-test compilation failed at RequestViewModelTest.kt:47,58,69 because HostSelectionFeedback import was missing; tests and generated Protobuf verification did not run.",
           "Exact V 3.0.767 Step Three graph guard failed with DONE_WITHOUT_TEST_FILE_EVIDENCE for T0125 because its evidence omitted test source paths; the 312 Python tests and syntax checks themselves passed."
         ],
-        "blocked_reason": "The live Android request screen still calls only RequestViewModel.prepareRequest and has no production caller for AndroidInferenceRequestRuntime.selectReachableHostsWithFeedback/dispatch or RequestViewModel.recordHostSelectionFeedback. The production Rendezvous client exposes metadata-only peerId, direct TCP addresses and expiresAtUtc; it does not produce typed HostAnnouncement/HostCapabilities with model, concurrency, prompt-byte and capsule-byte limits. On Windows, MainWindow.GetPeerRuntimeStatusAsync currently returns runtime state and activeRequests but does not populate HostStatus.models. HostCandidateSelector requires complete compatible announcement capabilities and a fresh authenticated HostStatus containing the matching model. Therefore no real production candidate list can currently be constructed. Do not synthesize capabilities or infer reachability/readiness from the inference.v1 metadata tag.",
+        "blocked_reason": "The Windows host now exposes the current protocol version and a model capability snapshot only after a fresh READY/readiness check and live /v1/models + /props reads. Remaining blockers: Android Rendezvous discovery still returns routing metadata only and has no production discover-all caller; the Android request screen remains prepare-only and does not combine authenticated HostStatus with directory routes, select 0/1/2/3 valid peers, dispatch, or record feedback. Do not infer model compatibility from inference.v1 alone.",
         "reopened_reason": null,
         "contract_revalidation": {
           "state": "passed",
@@ -27481,7 +27502,7 @@
             "step three/T0115/execution-report.md"
           ]
         },
-        "follow_up": "Implement and verify the missing production discovery/capability contract first: expose validated model and payload/concurrency capabilities from actual Windows model/readiness configuration through the renewable peer announcement; populate fresh HostStatus.models from the active model; add bounded Android directory discovery returning typed HostAnnouncement data; then wire the application-scoped runtime into the real request ViewModel/screen and test 0/1/2/3 reachable peers, including no-send on zero. Revalidate dependency edges before changing scope or status. Only then resume T0126 and consider T0127."
+        "follow_up": "Wire bounded RendezvousPeerDirectoryClient discovery into AndroidInferenceRequestRuntime; construct candidates only from unexpired routing metadata plus a fresh authenticated HostStatus with matching protocol/model limits; conservatively reject requests whose prompt/capsule/output budget exceeds the context window; then connect the request UI to discovery → selection → dispatch → response/shortage feedback and test 0/1/2/3 peers."
       },
       "execution_history": [
         {
@@ -27630,9 +27651,36 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Implement and verify the missing production discovery/capability contract first: expose validated model and payload/concurrency capabilities from actual Windows model/readiness configuration through the renewable peer announcement; populate fresh HostStatus.models from the active model; add bounded Android directory discovery returning typed HostAnnouncement data; then wire the application-scoped runtime into the real request ViewModel/screen and test 0/1/2/3 reachable peers, including no-send on zero. Revalidate dependency edges before changing scope or status. Only then resume T0126 and consider T0127."
+        },
+        {
+          "attempt_id": "T0126-A004-host-model-capability-snapshot",
+          "started_at": "2026-11-01T13:37:57.287Z",
+          "ended_at": "2026-11-01T13:37:57.287Z",
+          "result": "partial",
+          "summary": "Implemented a real Windows host capability producer. The llama.cpp backend verifies the configured model using /v1/models and reads the live context window from GET /props; HostInferenceSession returns the model snapshot only with a fresh Ready/readiness-checked status; Windows peer HostStatus now carries the exact protocol version and only verified model data. Added HostLifecycle tests. The Android discovery/request UI path remains unimplemented, so T0126 remains blocked.",
+          "changed_files": [
+            "protocol/whitep/v1/messages.proto",
+            "src/Host.Application/HostInferenceModelCapabilityProvider.cs",
+            "src/Host.Application/HostInferenceSession.cs",
+            "src/Host.Infrastructure/LlamaCppServerBackend.cs",
+            "src/Host.Windows/MainWindow.xaml.cs",
+            "tests/HostLifecycle.Tests/HostPeerRuntimeCapabilitiesAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "step three/T0126/execution-report.md",
+            "step three/T0126/evidence/verification.md"
+          ],
+          "commit_sha": null,
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": "The Windows host now exposes the current protocol version and a model capability snapshot only after a fresh READY/readiness check and live /v1/models + /props reads. Remaining blockers: Android Rendezvous discovery still returns routing metadata only and has no production discover-all caller; the Android request screen remains prepare-only and does not combine authenticated HostStatus with directory routes, select 0/1/2/3 valid peers, dispatch, or record feedback. Do not infer model compatibility from inference.v1 alone.",
+          "reopened_reason": null,
+          "contract_changes": [
+            "HostStatus now has protocol_version at field number 6; existing fields 1-5 are unchanged."
+          ],
+          "follow_up": "Wire bounded RendezvousPeerDirectoryClient discovery into AndroidInferenceRequestRuntime; construct candidates only from unexpired routing metadata plus a fresh authenticated HostStatus with matching protocol/model limits; conservatively reject requests whose prompt/capsule/output budget exceeds the context window; then connect the request UI to discovery → selection → dispatch → response/shortage feedback and test 0/1/2/3 peers."
         }
       ],
-      "blocked_reason": "The live Android request screen still calls only RequestViewModel.prepareRequest and has no production caller for AndroidInferenceRequestRuntime.selectReachableHostsWithFeedback/dispatch or RequestViewModel.recordHostSelectionFeedback. The production Rendezvous client exposes metadata-only peerId, direct TCP addresses and expiresAtUtc; it does not produce typed HostAnnouncement/HostCapabilities with model, concurrency, prompt-byte and capsule-byte limits. On Windows, MainWindow.GetPeerRuntimeStatusAsync currently returns runtime state and activeRequests but does not populate HostStatus.models. HostCandidateSelector requires complete compatible announcement capabilities and a fresh authenticated HostStatus containing the matching model. Therefore no real production candidate list can currently be constructed. Do not synthesize capabilities or infer reachability/readiness from the inference.v1 metadata tag."
+      "blocked_reason": "The Windows host now exposes the current protocol version and a model capability snapshot only after a fresh READY/readiness check and live /v1/models + /props reads. Remaining blockers: Android Rendezvous discovery still returns routing metadata only and has no production discover-all caller; the Android request screen remains prepare-only and does not combine authenticated HostStatus with directory routes, select 0/1/2/3 valid peers, dispatch, or record feedback. Do not infer model compatibility from inference.v1 alone."
     },
     {
       "id": "T0127",
@@ -46870,7 +46918,7 @@
           "follow_up": "Provide a production HTTPS rendezvous endpoint and an independent peer; complete external reachability validation for T0121, then complete T0122 (expiry), T0123 (heartbeat/status), T0124 (real peer selection). Resume T0174 by wiring the UI to actual dispatch results and selected queued attempts, then verify the real Cancel click path with exact-head Android/.NET acceptance."
         }
       ],
-      "updated_at": "2026-11-01T09:30:00+03:30"
+      "updated_at": "2026-11-01T13:37:57.287Z"
     },
     {
       "id": "T0175",
