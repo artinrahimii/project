@@ -114,3 +114,19 @@ The current `MainActivity.requestScreen` is a preparation-only preview and expli
 ## Outstanding production UI integration
 
 The existing Android request screen is a prepare-only preview. It creates neither a live dispatch nor a retained list of selected `InferenceHostAttempt` values. No production call site invokes `cancelSelectedHosts`. A real Cancel button is therefore not yet implemented. T0174 remains `in_progress` despite the passing backend/JVM/Windows acceptance tests.
+
+
+## V 3.0.737 — exact-head result
+
+- Quality gate: PASS — [run 41275179422](https://github.com/artinrahimii/project/actions/runs/41275179422).
+- Windows WPF build/startup/security: PASS — [job 124755825167](https://github.com/artinrahimii/project/actions/runs/41275179435/job/124755825167).
+- HostLifecycle integration: PASS — [job 124755825154](https://github.com/artinrahimii/project/actions/runs/41275179435/job/124755825154).
+- Real local inference integration: PASS — [run 41275179495](https://github.com/artinrahimii/project/actions/runs/41275179495).
+- Android KtLint failed one import-order check at `Libp2pInferenceRequestTransportTest.kt:3:1`. The new `kotlinx.coroutines.delay` import was placed before `Dispatchers`; the sorted order is `CompletableDeferred`, `Dispatchers`, `delay`, `runBlocking`, etc.
+- Android APK, JVM and Protobuf steps were skipped, so the A013 Android-to-.NET cancellation test did not execute.
+
+## A015 source correction
+
+- Moved `import kotlinx.coroutines.delay` after `import kotlinx.coroutines.Dispatchers`.
+- Only the test-source import order changed. Production code, C# fixture and protocol behavior are unchanged.
+- Exact-head CI for A015 remains pending. T0174 stays `in_progress`.

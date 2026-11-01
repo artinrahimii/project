@@ -137,3 +137,20 @@ The production Android application still has no live request dispatch call site.
 - Backend contract, Android runtime transport cancellation and Windows host cancellation behavior: verified by exact V 3.0.736 CI.
 - Android-to-.NET three-host cancellation interop test: added in A013; exact-head CI pending.
 - Real Android UI Cancel action and dispatch lifecycle: outstanding.
+
+
+## V 3.0.737 exact-head result — T0174-A014/A015
+
+- Exact commit: `cd1b1b67cd6ce1a500da0c120c52dc321de36ac4` (`V 3.0.737`).
+- Step Three quality gate: PASS — [run 41275179422](https://github.com/artinrahimii/project/actions/runs/41275179422).
+- Windows WPF build/startup/security: PASS — [job 124755825167](https://github.com/artinrahimii/project/actions/runs/41275179435/job/124755825167).
+- HostLifecycle tests: PASS — [job 124755825154](https://github.com/artinrahimii/project/actions/runs/41275179435/job/124755825154).
+- Real local inference integration: PASS — [run 41275179495](https://github.com/artinrahimii/project/actions/runs/41275179495).
+- Android KtLint failed in `ktlintTestSourceSetCheck` at `Libp2pInferenceRequestTransportTest.kt:3:1`: import statements were not in lexicographic order. The new `kotlinx.coroutines.delay` import was placed before `Dispatchers`; KtLint requires `Dispatchers` before `delay`.
+- Android APK build, JVM tests and generated Protobuf checks were skipped after lint failed. The new native Android-to-.NET cancellation test was therefore not executed on V 3.0.737. No Android or cross-runtime test pass is claimed for this version.
+- T0174-A014 records the failed lint attempt. T0174-A015 moves only the `delay` import after `Dispatchers` in the contiguous lexicographic import block. No runtime or test behavior changes.
+- Next exact-head run must execute Android lint, APK build, JVM tests (including the new three-native-.NET-peer cancellation test), generated Protobuf verification, Windows WPF, HostLifecycle and graph quality.
+
+## Acceptance boundary unchanged
+
+The production Android UI still exposes no live dispatch or selected-attempt lifecycle, and no production call site invokes `cancelSelectedHosts`. Therefore T0174 remains `in_progress` even if the new cross-runtime test passes; the user-facing Cancel button must still be connected to a real in-flight request.
