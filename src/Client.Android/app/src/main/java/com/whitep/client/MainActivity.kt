@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
@@ -20,27 +21,32 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavType
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import com.whitep.client.ui.conversations.conversationDetailScreen
 import com.whitep.client.ui.conversations.conversationListScreen
 import com.whitep.client.ui.navigation.ClientDestination
 import com.whitep.client.ui.navigation.ClientNavigation
-import com.whitep.client.ui.request.RequestViewModel
 import com.whitep.client.ui.request.hostResponseCards
+import com.whitep.client.ui.request.RequestViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -149,11 +155,11 @@ private fun homeScreen(
         subtitle = "A focused workspace for preparing local AI requests.",
     ) {
         Text(
-            "P2P client preview (transport not implemented)",
+            "Direct peer requests",
             style = MaterialTheme.typography.bodyMedium,
         )
         Text(
-            "Requests are not sent yet; transport is not implemented.",
+            "Configure an HTTPS peer directory and explicitly trust each processing host before sending.",
             style = MaterialTheme.typography.bodySmall,
         )
         Card(modifier = Modifier.fillMaxWidth()) {
@@ -174,7 +180,7 @@ private fun homeScreen(
                     onClick = onOpenRequest,
                     modifier = Modifier.fillMaxWidth(),
                 ) {
-                    Text("Prepare request")
+                    Text("New request")
                 }
             }
         }
@@ -185,7 +191,7 @@ private fun homeScreen(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 Text("Connection status", style = MaterialTheme.typography.titleMedium)
-                Text("Not connected. Android-to-host transport is not available yet.")
+                Text("No peer has been selected for a request yet.")
                 OutlinedButton(
                     onClick = onOpenConnections,
                     modifier = Modifier.fillMaxWidth(),
@@ -210,27 +216,105 @@ private fun requestScreen(
     requestViewModel: RequestViewModel = viewModel(),
 ) {
     val requestState by requestViewModel.uiState.collectAsState()
+    val context = LocalContext.current
+    var rendezvousUrl by rememberSaveable { mutableStateOf("") }
+    var modelId by rememberSaveable { mutableStateOf("") }
+    var maxOutputTokens by rememberSaveable { mutableStateOf("256") }
+    var pendingTrustPeerId by rememberSaveable { mutableStateOf<String?>(null) }
 
     appPage(
         title = "New request",
-        subtitle = "Prepare text only. This preview does not send it to a host.",
+        subtitle = "Configure your HTTPS peer directory, explicitly trust a host, and send an inference request.",
     ) {
+        OutlinedTextField(
+            value = rendezvousUrl,
+            onValueChange = {
+                rendezvousUrl = it
+                requestViewModel.clearDirectorySession()
+            },
+            modifier = Modifier.fillMaxWidth(),
+            label = { Text("HTTPS Rendezvous URL") },
+            supportingText = {
+                Text("Use the HTTPS address configured by the service operator. No server address is prefilled.")
+            },
+            singleLine = true,
+        )
+        Button(
+            onClick = { requestViewModel.discoverPeers(context.applicationContext, rendezvousUrl) },
+            enabled = !requestState.isDiscoveringPeers && rendezvousUrl.isNotBlank(),
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            Text(if (requestState.isDiscoveringPeers) "Discovering peers…" else "Discover peers")
+        }
+        requestState.discoveredPeers.forEach { peer ->
+            Card(modifier = Modifier.fillMaxWidth()) {
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    Text("Peer ID", style = MaterialTheme.typography.labelLarge)
+                    Text(peer.peerId, style = MaterialTheme.typography.bodySmall)
+                    Text("Lease expires: ${peer.expiresAtUtc}", style = MaterialTheme.typography.bodySmall)
+                    Text(if (peer.isTrusted) "Explicitly trusted" else "Not trusted")
+                    if (peer.isTrusted) {
+                        OutlinedButton(
+                            onClick = { requestViewModel.revokePeerTrust(peer.peerId) },
+                            modifier = Modifier.fillMaxWidth(),
+                        ) {
+                            Text("Revoke trust")
+                        }
+                    } else {
+                        Button(
+                            onClick = { pendingTrustPeerId = peer.peerId },
+                            modifier = Modifier.fillMaxWidth(),
+                        ) {
+                            Text("Review and trust this host")
+                        }
+                    }
+                }
+            }
+        }
+
         OutlinedTextField(
             value = requestState.prompt,
             onValueChange = requestViewModel::updatePrompt,
             modifier = Modifier.fillMaxWidth(),
             label = { Text("Prompt") },
-            supportingText = { Text("Text remains in this screen's in-memory state.") },
+            supportingText = { Text("The selected processing host can read this prompt after transport decryption.") },
             minLines = 4,
             maxLines = 8,
         )
+        OutlinedTextField(
+            value = modelId,
+            onValueChange = { modelId = it },
+            modifier = Modifier.fillMaxWidth(),
+            label = { Text("Exact model ID") },
+            supportingText = { Text("Enter a model ID advertised by the host; model names are not guessed.") },
+            singleLine = true,
+        )
+        OutlinedTextField(
+            value = maxOutputTokens,
+            onValueChange = { maxOutputTokens = it.filter(Char::isDigit).take(6) },
+            modifier = Modifier.fillMaxWidth(),
+            label = { Text("Maximum output tokens") },
+            singleLine = true,
+        )
         Button(
-            onClick = requestViewModel::prepareRequest,
+            onClick = {
+                requestViewModel.sendRequest(
+                    prompt = requestState.prompt,
+                    modelId = modelId,
+                    maxOutputTokens = maxOutputTokens.toIntOrNull() ?: 0,
+                )
+            },
+            enabled = !requestState.isSendingRequest,
             modifier = Modifier.fillMaxWidth(),
         ) {
-            Text("Prepare request")
+            Text(if (requestState.isSendingRequest) "Sending and waiting for hosts…" else "Send to trusted hosts")
         }
-        Text("Status: ${requestState.statusMessage}", style = MaterialTheme.typography.bodyMedium)
+        requestState.networkStatusMessage?.let { message ->
+            Text(message, style = MaterialTheme.typography.bodyMedium)
+        }
         requestState.hostAvailabilityMessage?.let { message ->
             Text(message, style = MaterialTheme.typography.bodyMedium)
         }
@@ -239,9 +323,37 @@ private fun requestScreen(
             Text("Back")
         }
     }
+
+    pendingTrustPeerId?.let { peerId ->
+        AlertDialog(
+            onDismissRequest = { pendingTrustPeerId = null },
+            title = { Text("Trust this processing host?") },
+            text = {
+                Text(
+                    "After approval, this host may receive and read the prompts and context " +
+                        "you choose to send to it. Trust is stored locally and can be revoked. " +
+                        "The peer directory itself does not receive your inference prompt.",
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        requestViewModel.trustPeerAfterExplicitConfirmation(peerId)
+                        pendingTrustPeerId = null
+                    },
+                ) {
+                    Text("Trust peer")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { pendingTrustPeerId = null }) {
+                    Text("Cancel")
+                }
+            },
+        )
+    }
 }
 
-@Composable
 private fun connectionsScreen() {
     appPage(
         title = "Connections",
@@ -252,8 +364,8 @@ private fun connectionsScreen() {
                 modifier = Modifier.padding(20.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                Text("Peer discovery is not available in this client preview.")
-                Text("No connection attempt or network request is made from this screen.")
+                Text("Peer discovery is configured from the New request screen.")
+                Text("Only the configured directory is queried; peer trust requires an explicit confirmation.")
             }
         }
     }
@@ -280,8 +392,8 @@ private fun privacyScreen() {
                 )
                 Text(
                     text =
-                        "This preview does not send requests yet. " +
-                            "Android-to-Windows delivery and no-storage behavior have not been verified.",
+                        "Only explicitly trusted peers are eligible for inference. " +
+                            "The receiving host can read the prompt and context after transport decryption.",
                     style = MaterialTheme.typography.bodyMedium,
                 )
             }

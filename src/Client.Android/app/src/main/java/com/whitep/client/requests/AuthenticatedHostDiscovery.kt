@@ -3,13 +3,13 @@ package com.whitep.client.requests
 import com.whitep.client.context.ConversationContextCapsule
 import com.whitep.client.network.RendezvousPeerEndpoint
 import com.whitep.client.protocol.InferenceRequestPayloadBuilder
+import java.time.Clock
 import kotlinx.coroutines.CancellationException
 import org.whitep.shared.contracts.v1.HostAnnouncement
 import org.whitep.shared.contracts.v1.HostCapabilities
 import org.whitep.shared.contracts.v1.HostRuntimeState
 import org.whitep.shared.contracts.v1.HostStatus
 import org.whitep.shared.contracts.v1.InferenceRequest
-import java.time.Clock
 
 /**
  * Joins metadata-only Rendezvous routes with fresh, authenticated HostStatus responses.
@@ -23,6 +23,23 @@ internal class AuthenticatedHostDiscovery(
     private val probeHostStatus: suspend (String) -> HostStatus,
     private val clock: Clock = Clock.systemUTC(),
 ) {
+    /**
+     * Returns metadata identities for a user-mediated trust decision only.
+     * This does not probe, trust, or select a peer for inference.
+     */
+    suspend fun discoverPeersForTrust(): List<RendezvousPeerEndpoint> {
+        val endpoints = discoverEndpoints()
+        val peerIds = endpoints.map { endpoint -> endpoint.peerId }
+        require(peerIds.none(String::isBlank) && peerIds.distinct().size == peerIds.size) {
+            "The Rendezvous directory returned an empty or duplicate peer identity."
+        }
+        val now = clock.instant()
+        return endpoints
+            .filter { endpoint ->
+                endpoint.tcpMultiaddresses.isNotEmpty() && endpoint.expiresAtUtc.isAfter(now)
+            }.sortedBy { endpoint -> endpoint.peerId }
+    }
+
     suspend fun selectReachableHosts(
         request: InferenceRequest,
         excludedEphemeralHostIds: Set<String> = emptySet(),

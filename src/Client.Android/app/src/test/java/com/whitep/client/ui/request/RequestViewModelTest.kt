@@ -1,21 +1,42 @@
 package com.whitep.client.ui.request
 
+import com.whitep.client.context.ConversationContextCapsule
 import com.whitep.client.data.InMemoryClientRequestRepository
 import com.whitep.client.data.RequestDraftStatus
+import com.whitep.client.network.RendezvousPeerEndpoint
+import com.whitep.client.requests.DistributedRequest
+import com.whitep.client.requests.HostCandidate
 import com.whitep.client.requests.HostSelectionFeedback
+import com.whitep.client.requests.HostSelectionResult
+import com.whitep.client.requests.InferenceAttemptSubmissionStatus
+import com.whitep.client.requests.InferenceHostAttempt
+import com.whitep.client.requests.InferenceRoundDispatchResult
+import com.whitep.client.requests.InferenceRoundResponseCollection
+import com.whitep.client.requests.RequestExecutionGateway
+import com.whitep.client.requests.RequestExecutionGatewayFactory
+import java.time.Instant
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
+import org.junit.runner.RunWith
 import org.junit.Test
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.RuntimeEnvironment
+import org.whitep.shared.contracts.v1.HostAnnouncement
+import org.whitep.shared.contracts.v1.HostCapabilities
+import org.whitep.shared.contracts.v1.HostRuntimeState
+import org.whitep.shared.contracts.v1.HostStatus
 import org.whitep.shared.contracts.v1.InferenceOutcome
-import org.whitep.shared.contracts.v1.InferenceResponse
 import org.whitep.shared.contracts.v1.inferenceResponse
+import org.whitep.shared.contracts.v1.InferenceResponse
+import org.whitep.shared.contracts.v1.ModelCapability
 
+@RunWith(RobolectricTestRunner::class)
 class RequestViewModelTest {
     private val commandScope = CoroutineScope(SupervisorJob() + Dispatchers.Unconfined)
     private val viewModel =
@@ -143,6 +164,71 @@ class RequestViewModelTest {
         assertEquals("", viewModel.uiState.value.prompt)
     }
 
+    @Test
+    fun discoveryDoesNotTrustPeersAndOnlyExplicitlyApprovedPeersReceiveRequests() {
+        val gateway = FakeRequestExecutionGateway()
+        val factory = RequestExecutionGatewayFactory { _, _ -> gateway }
+        val activeViewModel =
+            RequestViewModel(
+                repository = InMemoryClientRequestRepository(),
+                operationScope = commandScope,
+                clockMillis = { 20_000L },
+                runtimeFactory = factory,
+            )
+
+        activeViewModel.discoverPeers(
+            context = RuntimeEnvironment.getApplication(),
+            rendezvousServiceUrl = "https://directory.example.test",
+        )
+        assertEquals(1, activeViewModel.uiState.value.discoveredPeers.size)
+        assertFalse(activeViewModel.uiState.value.discoveredPeers.single().isTrusted)
+        assertTrue(gateway.trustedPeers.isEmpty())
+
+        activeViewModel.sendRequest("hello host", "local/test-model", 64)
+        assertEquals(0, gateway.dispatchCount)
+        assertTrue(gateway.sentHostIds.isEmpty())
+        assertTrue(
+            activeViewModel.uiState.value.networkStatusMessage.orEmpty()
+                .contains("No inference payload was sent"),
+        )
+
+        activeViewModel.trustPeerAfterExplicitConfirmation(gateway.peerId)
+        assertTrue(activeViewModel.uiState.value.discoveredPeers.single().isTrusted)
+        assertTrue(gateway.trustedPeers.contains(gateway.peerId))
+
+        activeViewModel.sendRequest("hello host", "local/test-model", 64)
+        assertEquals(1, gateway.dispatchCount)
+        assertEquals(listOf(gateway.peerId), gateway.sentHostIds)
+        assertEquals(1, activeViewModel.uiState.value.hostResponses.size)
+        assertEquals("host response", activeViewModel.uiState.value.hostResponses.single().outputText)
+
+        activeViewModel.clearDirectorySession()
+        assertTrue(gateway.closed)
+    }
+
+    @Test
+    fun clearingDirectorySessionRemovesItsPeerListAndClosesTheGateway() {
+        val gateway = FakeRequestExecutionGateway()
+        val activeViewModel =
+            RequestViewModel(
+                repository = InMemoryClientRequestRepository(),
+                operationScope = commandScope,
+                clockMillis = { 20_000L },
+                runtimeFactory = RequestExecutionGatewayFactory { _, _ -> gateway },
+            )
+
+        activeViewModel.discoverPeers(
+            context = RuntimeEnvironment.getApplication<Context>(),
+            rendezvousServiceUrl = "https://directory.example.test",
+        )
+        assertEquals(1, activeViewModel.uiState.value.discoveredPeers.size)
+
+        activeViewModel.clearDirectorySession()
+
+        assertTrue(gateway.closed)
+        assertTrue(activeViewModel.uiState.value.discoveredPeers.isEmpty())
+    }
+
     private fun response(
         attemptId: String,
         hostId: String,
@@ -168,4 +254,139 @@ class RequestViewModelTest {
         const val HOST_B = "host-b"
         const val MODEL_ID = "local/model-1"
     }
+
+    private class FakeRequestExecutionGateway : RequestExecutionGateway {
+        val peerId = "peer-test-01"
+        val trustedPeers = mutableSetOf<String>()
+        var dispatchCount = 0
+        var closed = false
+        var sentHostIds: List<String> = emptyList()
+
+        private val endpoint =
+            RendezvousPeerEndpoint(
+                peerId = peerId,
+                tcpMultiaddresses = listOf("/ip4/127.0.0.1/tcp/4001/p2p/$peerId"),
+                expiresAtUtc = Instant.parse("2099-01-01T00:00:00Z"),
+            )
+
+        override fun isPeerTrusted(peerId: String): Boolean = peerId in trustedPeers
+
+        override fun trustPeerAfterExplicitConfirmation(
+            peerId: String,
+            explicitlyConfirmed: Boolean,
+        ) {
+            check(explicitlyConfirmed)
+            trustedPeers.add(peerId)
+        }
+
+        override fun revokePeerTrust(peerId: String) {
+            trustedPeers.remove(peerId)
+        }
+
+        override suspend fun discoverPeersForTrust(): List<RendezvousPeerEndpoint> = listOf(endpoint)
+
+        override suspend fun discoverAndSelectReachableHosts(
+            request: org.whitep.shared.contracts.v1.InferenceRequest,
+            excludedEphemeralHostIds: Set<String>,
+            maxHosts: Int,
+        ): HostSelectionResult {
+            val candidates =
+                if (peerId in trustedPeers && peerId !in excludedEphemeralHostIds && maxHosts > 0) {
+                    listOf(candidate())
+                } else {
+                    emptyList()
+                }
+            return HostSelectionResult(
+                candidates = candidates,
+                feedback = HostSelectionFeedback(availableHostCount = candidates.size),
+            )
+        }
+
+        override suspend fun dispatchRound(
+            distributedRequest: DistributedRequest,
+            selectedHosts: List<HostCandidate>,
+            modelId: String,
+            currentMessage: String,
+            capsule: ConversationContextCapsule,
+            maxOutputTokens: Int,
+            protocolVersion: String,
+        ): InferenceRoundDispatchResult {
+            check(selectedHosts.all { it.announcement.ephemeralHostId in trustedPeers })
+            dispatchCount++
+            sentHostIds = selectedHosts.map { it.announcement.ephemeralHostId }
+            return InferenceRoundDispatchResult.Dispatched(
+                selectedHosts.mapIndexed { index, host ->
+                    InferenceHostAttempt(
+                        ephemeralHostId = host.announcement.ephemeralHostId,
+                        attemptId = "attempt-${index + 1}",
+                        submissionStatus = InferenceAttemptSubmissionStatus.QUEUED,
+                    )
+                },
+            )
+        }
+
+        override suspend fun awaitRoundResponses(
+            requestId: String,
+            attempts: List<InferenceHostAttempt>,
+        ): InferenceRoundResponseCollection =
+            InferenceRoundResponseCollection(
+                responses =
+                    attempts.map { attempt ->
+                        inferenceResponse {
+                            this.requestId = requestId
+                            attemptId = attempt.attemptId
+                            ephemeralHostId = attempt.ephemeralHostId
+                            outcome = InferenceOutcome.INFERENCE_OUTCOME_SUCCEEDED
+                            outputText = "host response"
+                            completedAtUnixMs = 19_999L
+                            modelId = MODEL_ID
+                            roundId = "round-001"
+                        }
+                    },
+                failures = emptyList(),
+            )
+
+        override fun close() {
+            closed = true
+        }
+
+        private fun candidate(): HostCandidate {
+            val model =
+                ModelCapability.newBuilder()
+                    .setModelId(MODEL_ID)
+                    .setMaxOutputTokens(128)
+                    .build()
+            val capabilities =
+                HostCapabilities.newBuilder()
+                    .setEphemeralHostId(peerId)
+                    .setProtocolVersion("1.0.0")
+                    .addModels(model)
+                    .setMaxConcurrentRequests(1)
+                    .setMaxPromptBytes(8_192)
+                    .setMaxContextCapsuleBytes(4_096)
+                    .build()
+            val announcement =
+                HostAnnouncement.newBuilder()
+                    .setEphemeralHostId(peerId)
+                    .setProtocolVersion("1.0.0")
+                    .setCapabilities(capabilities)
+                    .setAnnouncedAtUnixMs(19_000L)
+                    .build()
+            val status =
+                HostStatus.newBuilder()
+                    .setEphemeralHostId(peerId)
+                    .setState(HostRuntimeState.HOST_RUNTIME_STATE_READY)
+                    .setActiveRequests(0)
+                    .setObservedAtUnixMs(19_000L)
+                    .setProtocolVersion("1.0.0")
+                    .addModels(model)
+                    .build()
+            return HostCandidate(announcement, status)
+        }
+
+        private companion object {
+            const val MODEL_ID = "local/test-model"
+        }
+    }
+
 }

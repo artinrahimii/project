@@ -9,6 +9,11 @@ import com.whitep.client.network.PeerTrustVerifier
 import com.whitep.client.network.RendezvousPeerDirectoryClient
 import com.whitep.client.network.RendezvousPeerEndpoint
 import io.libp2p.core.crypto.PrivKey
+import java.net.URI
+import java.time.Clock
+import java.time.Duration
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.TimeoutException
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -16,12 +21,6 @@ import kotlinx.coroutines.withTimeoutOrNull
 import org.whitep.shared.contracts.v1.HostAnnouncement
 import org.whitep.shared.contracts.v1.InferenceRequest
 import org.whitep.shared.contracts.v1.InferenceResponse
-import java.io.Closeable
-import java.net.URI
-import java.time.Clock
-import java.time.Duration
-import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.TimeoutException
 
 /**
  * Application composition root for authenticated Android inference dispatch.
@@ -45,7 +44,7 @@ class AndroidInferenceRequestRuntime private constructor(
     private val peerTrustStore: AndroidPeerTrustStore?,
     private val roundTimer: InferenceRoundTimer,
     private val authenticatedHostDiscovery: AuthenticatedHostDiscovery?,
-) : Closeable {
+) : RequestExecutionGateway {
     private data class AttemptKey(
         val requestId: String,
         val attemptId: String,
@@ -130,7 +129,16 @@ class AndroidInferenceRequestRuntime private constructor(
         }
     }
 
-    fun isPeerTrusted(peerId: String): Boolean = requirePeerTrustStore().isTrusted(peerId)
+    override fun isPeerTrusted(peerId: String): Boolean = requirePeerTrustStore().isTrusted(peerId)
+
+    override suspend fun discoverPeersForTrust(): List<RendezvousPeerEndpoint> {
+        val discovery =
+            authenticatedHostDiscovery
+                ?: throw IllegalStateException(
+                    "Peer discovery requires the application-scoped Android runtime.",
+                )
+        return discovery.discoverPeersForTrust()
+    }
 
     /**
      * Selects hosts from announcements by performing a fresh authenticated HostStatus probe for
@@ -179,10 +187,10 @@ class AndroidInferenceRequestRuntime private constructor(
      * Discovers current metadata routes, authenticates explicitly trusted peers, and selects only
      * candidates backed by fresh HostStatus model/readiness data.
      */
-    suspend fun discoverAndSelectReachableHosts(
+    override suspend fun discoverAndSelectReachableHosts(
         request: InferenceRequest,
-        excludedEphemeralHostIds: Set<String> = emptySet(),
-        maxHosts: Int = HostCandidateSelector.MAX_HOSTS_PER_ROUND,
+        excludedEphemeralHostIds: Set<String>,
+        maxHosts: Int,
     ): HostSelectionResult {
         val discovery =
             authenticatedHostDiscovery
@@ -192,14 +200,14 @@ class AndroidInferenceRequestRuntime private constructor(
         return discovery.selectReachableHosts(request, excludedEphemeralHostIds, maxHosts)
     }
 
-    fun trustPeerAfterExplicitConfirmation(
+    override fun trustPeerAfterExplicitConfirmation(
         peerId: String,
         explicitlyConfirmed: Boolean,
     ) {
         requirePeerTrustStore().trustPeerAfterExplicitConfirmation(peerId, explicitlyConfirmed)
     }
 
-    fun revokePeerTrust(peerId: String) {
+    override fun revokePeerTrust(peerId: String) {
         requirePeerTrustStore().revokeTrust(peerId)
     }
 
@@ -209,7 +217,7 @@ class AndroidInferenceRequestRuntime private constructor(
         return requestBudgetStates[requestId]?.progress ?: DistributedRequestProgress()
     }
 
-    suspend fun dispatchRound(
+    override suspend fun dispatchRound(
         distributedRequest: DistributedRequest,
         selectedHosts: List<HostCandidate>,
         modelId: String,
@@ -372,7 +380,7 @@ class AndroidInferenceRequestRuntime private constructor(
      * host does not end collection for the remaining hosts; each is awaited concurrently until
      * it responds or the common round deadline expires.
      */
-    suspend fun awaitRoundResponses(
+    override suspend fun awaitRoundResponses(
         requestId: String,
         attempts: List<InferenceHostAttempt>,
     ): InferenceRoundResponseCollection {

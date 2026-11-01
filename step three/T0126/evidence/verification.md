@@ -165,3 +165,14 @@ The live acceptance gap remains: `MainActivity.requestScreen` is prepare-only, a
 - Windows WPF, HostLifecycle, Step Three graph quality and Rendezvous smoke all passed.
 - Automated checks for this attempt are complete. Production Compose request flow and end-to-end dispatch/feedback/response remain outstanding; T0126 is not marked done.
 
+
+
+## T0126-A010 — request UI orchestration and trust boundary
+
+- Added `RequestExecutionGateway` as the UI-facing application port and implemented it with the production Android runtime. The production factory uses the configured HTTPS URL, Android local identity, the explicit trust store, the bounded directory client and authenticated libp2p transport.
+- Peer listing is metadata-only. The user must explicitly confirm trust for each peer, and can revoke it. No peer is automatically trusted.
+- The ViewModel builds a validated Protobuf request, calls the runtime's live authenticated candidate selection, and bases availability feedback on the final compatible candidate list. It returns before dispatch when no candidate is available.
+- Nonempty selections use the existing bounded dispatcher. The response collector awaits queued attempts, and the UI keeps correlated host/attempt responses as separate cards.
+- Two new ViewModel tests cover no automatic trust, no dispatch before approval, dispatch after approval, response-card rendering and gateway disposal when the directory URL changes.
+- These tests use a fake gateway and prove only ViewModel orchestration. Real public-network reachability, multi-host execution and physical-device acceptance are not claimed; T0128 remains deferred for that final stage.
+- **A010 exact-head CI:** pending; no test pass is claimed for the new sources before the V 3.0.787 workflows finish.
