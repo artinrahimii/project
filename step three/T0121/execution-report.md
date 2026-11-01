@@ -226,3 +226,14 @@ Revalidated T0121 against the exact online main head V 3.0.607. The full graph B
 - **Dependency review:** `T0120 → T0121` remains validated as `contract_or_interface_dependency`; `T0115 → T0121` remains validated as `sequencing_only`; `T0121 → T0122` remains validated as `contract_or_interface_dependency`. No edge was changed. `T0122` remains `not_started` until T0121's external lease/reachability acceptance is completed.
 - **Outcome:** T0121 remains `blocked`; attempt count is now 22. No product source or test code changed, and no implementation-progress credit is added. This attempt records exact-head CI evidence only.
 - **Next:** provide/deploy the production HTTPS rendezvous endpoint and run advertised TCP/UDP reachability acceptance from a peer on an independent network before re-evaluating T0121.
+
+
+## T0121-A023 — exact V 3.0.744 CI passed; independent-network acceptance remains blocked
+
+- **Exact online baseline:** `main` at [`6783231ca0eaebfb2ae4680abea836d6ca157020`](https://github.com/artinrahimii/project/commit/6783231ca0eaebfb2ae4680abea836d6ca157020), message `V 3.0.744`.
+- **Graph integrity before update:** Blob `aeca86edfb7607de97dbc1c785fb78ba65ef01e9` from the exact V 3.0.744 tree was fetched in full and its complete JSON parsed as 229 nodes / 418 edges / 22 sections. The file contains 3,560,003 UTF-8 bytes and 3,436,348 text characters; recomputed Git Blob SHA-1 matched the tree entry.
+- **Exact-head CI evidence:** [Step Three quality gate — PASS](https://github.com/artinrahimii/project/actions/runs/41281088547); [HostLifecycle unit/integration — PASS](https://github.com/artinrahimii/project/actions/runs/41281088539/job/124772993825); [Windows WPF Release/startup/security — PASS](https://github.com/artinrahimii/project/actions/runs/41281088539/job/124772993636); [Android lint/APK/JVM/generated Protobuf — PASS](https://github.com/artinrahimii/project/actions/runs/41281088539/job/124772993886). All four jobs completed successfully on the exact V 3.0.744 head.
+- **Independent-network acceptance:** **NOT RUN**. No production HTTPS rendezvous endpoint or peer on an independent network was available. CI and loopback tests do not establish public advertised TCP/UDP reachability.
+- **Dependency review:** existing validated edges `T0120 → T0121`, `T0115 → T0121`, and `T0121 → T0122` were preserved. No edge was changed. T0122 remains `not_started` until T0121's external lease/reachability acceptance is completed.
+- **Outcome:** T0121 remains `blocked`; attempt count is now 23. No product source or test code changed; no implementation-progress credit is added. This attempt records exact-head CI evidence only.
+- **Next:** provide/deploy the production HTTPS rendezvous endpoint and run advertised TCP/UDP reachability acceptance from a peer on an independent network before re-evaluating T0121.
