@@ -26495,7 +26495,7 @@
       "start_condition": "همهٔ پیش‌نیازهای T0122 و T0115 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "میزبان ویندوز باید روی کانال libp2p احراز‌شده به HostStatusRequest پاسخ تازه بدهد؛ snapshot باید وضعیت backend را با health/readiness check همان لحظه (یا BUSY در عملیات فعال) تعیین کند و observed_at_unix_ms را سرور تولید کند. کلاینت اندروید باید probe واقعی را از peer مورداعتماد، با تطبیق PeerId، timestamp تازه و بدون cache وضعیت اجرا کند؛ پاسخ قدیمی، آینده‌نگر، نامعتبر یا متعلق به peer دیگر رد شود. آزمون loopback دوطرفه و Android JVM transport test روی commit دقیق باید موفق باشند. دسترسی عمومی HTTPS و peer شبکهٔ مستقل در T0230/T0128 باقی می‌ماند.",
       "status": "done",
-      "status_fa": "در حال انجام",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "src/Host.Application/HostInferenceSession.cs",
         "src/Shared.Contracts/ProtocolMessageValidator.cs",
@@ -58410,7 +58410,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-11-01T12:03:01Z",
+  "updated_at": "2026-11-01T12:05:30Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",
