@@ -276,3 +276,19 @@ Revalidated T0121 against the exact online main head V 3.0.607. The full graph B
 - **External acceptance:** public HTTPS deployment and advertised TCP/UDP/QUIC reachability from an independent peer remain **NOT RUN**. The smoke script uses synthetic metadata only and is not a reachability test.
 - **Outcome:** T0121 remains `blocked`; T0122 remains `not_started`. This attempt advances deployment readiness but does not complete the external acceptance criterion.
 - **Next:** verify the exact-commit container workflow, deploy a single replica behind a real HTTPS endpoint, configure both clients, and test authenticated reachability from a separate network.
+
+
+## T0121-A026 — exact V 3.0.748 container smoke result correction (2026-11-01)
+
+- **Workflow:** [Rendezvous container build and smoke test — run 41293258833](https://github.com/artinrahimii/project/actions/runs/41293258833).
+- **Passed:** Docker image built successfully; container ran as a non-root UID; `GET /healthz` returned 200; a valid announcement returned 204; capability discovery returned 200; invalid capability returned 400.
+- **Failed:** expired announcement returned HTTP 500 instead of 400. Kestrel showed `ArgumentOutOfRangeException` from the `PeerAnnouncement` constructor during automatic minimal-API JSON parameter binding, before the handler's exception handling. Invalid-address assertion was not reached.
+- **Correction:** see T0121-A027; JSON deserialization is moved inside `HandleAnnouncement` so invalid metadata is translated to a safe 400 response. This is a real API defect discovered by the new smoke test; the A026 failure is retained.
+
+## T0121-A027 — fix invalid announcement HTTP status handling (2026-11-01)
+
+- **Baseline:** exact `V 3.0.748` commit `d88163b11db85787244957d2837fa2b53cf5e9d8`.
+- **Changed source:** `src/Rendezvous.Service/PeerAnnouncementServiceHost.cs` now reads the JSON body inside `HandleAnnouncement` and catches constructor argument failures, malformed JSON and `BadHttpRequestException`, returning the corresponding safe client-error status. Directory-capacity failures remain HTTP 503.
+- **Regression coverage:** the existing container smoke test already asserts that expired announcements and addresses without a matching peer ID both return HTTP 400. Exact-commit container build/smoke is pending; no pass is claimed until it completes.
+- **External acceptance:** production HTTPS deployment and advertised TCP/UDP/QUIC reachability from an independent peer remain **NOT RUN**.
+- **Outcome:** T0121 remains `blocked`; T0122 remains `not_started`. The runtime API error is corrected in source, but external reachability is still a release blocker.

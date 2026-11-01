@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -33,11 +34,32 @@ public static class PeerAnnouncementServiceHost
         return app;
     }
 
-    private static IResult HandleAnnouncement(PeerAnnouncement announcement, PeerAnnouncementDirectory directory)
+    private static async Task<IResult> HandleAnnouncement(HttpRequest request, PeerAnnouncementDirectory directory)
     {
-        try { directory.Announce(announcement); return Results.NoContent(); }
-        catch (ArgumentException) { return Results.BadRequest(new { error = "invalid_announcement" }); }
-        catch (InvalidOperationException) { return Results.StatusCode(StatusCodes.Status503ServiceUnavailable); }
+        try
+        {
+            PeerAnnouncement? announcement = await request.ReadFromJsonAsync<PeerAnnouncement>(
+                cancellationToken: request.HttpContext.RequestAborted).ConfigureAwait(false);
+            if (announcement is null) return Results.BadRequest(new { error = "invalid_announcement" });
+            directory.Announce(announcement);
+            return Results.NoContent();
+        }
+        catch (ArgumentException)
+        {
+            return Results.BadRequest(new { error = "invalid_announcement" });
+        }
+        catch (JsonException)
+        {
+            return Results.BadRequest(new { error = "invalid_announcement" });
+        }
+        catch (BadHttpRequestException exception)
+        {
+            return Results.StatusCode(exception.StatusCode);
+        }
+        catch (InvalidOperationException)
+        {
+            return Results.StatusCode(StatusCodes.Status503ServiceUnavailable);
+        }
     }
 
     private static IResult HandleCapabilityDiscovery(string? capability, PeerAnnouncementDirectory directory)
