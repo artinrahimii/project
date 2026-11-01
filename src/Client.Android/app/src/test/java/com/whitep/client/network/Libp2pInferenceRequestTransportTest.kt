@@ -32,6 +32,7 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import org.whitep.shared.contracts.v1.HostRuntimeState
+import org.whitep.shared.contracts.v1.CancelRequest
 import org.whitep.shared.contracts.v1.InferenceOutcome
 import org.whitep.shared.contracts.v1.InferenceRequest
 import org.whitep.shared.contracts.v1.InferenceResponse
@@ -52,6 +53,107 @@ import java.util.concurrent.TimeUnit
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [35])
 class Libp2pInferenceRequestTransportTest {
+    @Test
+    fun cancelAttemptsSendsCorrelatedCancelRequestsToEverySelectedAuthenticatedHost() =
+        runBlocking<Unit> {
+            val servers = mutableListOf<Host>()
+            val responders = mutableListOf<LoopbackCancellationResponder>()
+            val endpoints = linkedMapOf<String, RendezvousPeerEndpoint>()
+            val clientsByHost = linkedMapOf<String, String>()
+            try {
+                repeat(2) { index ->
+                    val serverIdentity = generateKeyPair(KeyType.ED25519).first
+                    val expectedServerPeerId = PeerId.fromPubKey(serverIdentity.publicKey()).toBase58()
+                    val responder = LoopbackCancellationResponder(expectedServerPeerId)
+                    val binding =
+                        createSimpleBinding(PROTOCOL_ID) {
+                            responder
+                        }
+                    val server = createHost(serverIdentity, binding)
+                    servers += server
+                    responders += responder
+                    server.start().get(15, TimeUnit.SECONDS)
+
+                    val serverPeerId = server.peerId.toBase58()
+                    assertEquals(expectedServerPeerId, serverPeerId)
+                    val listenAddress = server.listenAddresses().first { it.toString().contains("/tcp/") }.toString()
+                    val suffix = "/p2p/$serverPeerId"
+                    val address =
+                        when {
+                            listenAddress.endsWith(suffix) -> listenAddress
+                            !listenAddress.contains("/p2p/") -> "$listenAddress$suffix"
+                            else -> error("The server listen address contains a different PeerId.")
+                        }
+                    endpoints[serverPeerId] =
+                        RendezvousPeerEndpoint(
+                            peerId = serverPeerId,
+                            tcpMultiaddresses = listOf(address),
+                            expiresAtUtc = Instant.now().plusSeconds(120),
+                        )
+                    clientsByHost[serverPeerId] = "attempt-cancel-$index"
+                }
+
+                val client =
+                    Libp2pInferenceRequestTransport(
+                        localIdentity = generateKeyPair(KeyType.ED25519).first,
+                        resolveEndpoint = { requestedPeerId -> endpoints[requestedPeerId] },
+                        trustVerifier = PeerTrustVerifier { trustedPeerId -> trustedPeerId in endpoints },
+                        connectionTimeout = Duration.ofSeconds(15),
+                    )
+                try {
+                    val baseRequest = createRequest()
+                    val selectedHostIds = endpoints.keys.toList()
+                    val attemptIds = clientsByHost.values.toList()
+                    selectedHostIds.forEachIndexed { index, hostId ->
+                        val request =
+                            baseRequest.toBuilder()
+                                .setAttemptId(attemptIds[index])
+                                .build()
+                        assertEquals(
+                            com.whitep.client.requests.InferenceTransportSubmission.QUEUED,
+                            client.submit(hostId, request),
+                        )
+                    }
+
+                    responders.forEachIndexed { index, responder ->
+                        val received = withTimeout(5_000L) { responder.requestReceived.await() }
+                        assertEquals(baseRequest.requestId, received.requestId)
+                        assertEquals(attemptIds[index], received.attemptId)
+                    }
+
+                    val cancellationResults = client.cancelAttempts(baseRequest.requestId, attemptIds)
+                    assertEquals(attemptIds.associateWith { true }, cancellationResults)
+
+                    responders.forEachIndexed { index, responder ->
+                        val cancel = withTimeout(5_000L) { responder.cancelReceived.await() }
+                        assertEquals(baseRequest.requestId, cancel.requestId)
+                        assertEquals(attemptIds[index], cancel.attemptId)
+                        assertEquals("user_cancelled", cancel.reason)
+                    }
+
+                    selectedHostIds.forEachIndexed { index, hostId ->
+                        val response =
+                            client.awaitResponse(
+                                requestId = baseRequest.requestId,
+                                attemptId = attemptIds[index],
+                                timeout = Duration.ofSeconds(10),
+                            )
+                        assertEquals(baseRequest.requestId, response.requestId)
+                        assertEquals(attemptIds[index], response.attemptId)
+                        assertEquals(hostId, response.ephemeralHostId)
+                        assertEquals(InferenceOutcome.INFERENCE_OUTCOME_CANCELLED, response.outcome)
+                        assertEquals("", response.outputText)
+                    }
+                } finally {
+                    client.close()
+                }
+            } finally {
+                servers.asReversed().forEach { server ->
+                    server.stop().get(10, TimeUnit.SECONDS)
+                }
+            }
+        }
+
     @Test
     fun sendsAndReceivesCorrelatedResponseOverAuthenticatedNoiseTcpStream() =
         runBlocking {
@@ -543,6 +645,62 @@ class Libp2pInferenceRequestTransportTest {
             .setDeadlineUnixMs(System.currentTimeMillis() + 30_000L)
             .setMaxOutputTokens(8)
             .build()
+
+    private class LoopbackCancellationResponder(
+        private val localPeerId: String,
+    ) : SimpleClientHandler() {
+        private val decoder = PeerMessageFrameDecoder()
+        private var activeRequest: InferenceRequest? = null
+        val requestReceived = CompletableDeferred<InferenceRequest>()
+        val cancelReceived = CompletableDeferred<CancelRequest>()
+
+        override fun streamActive(ctx: io.netty.channel.ChannelHandlerContext) {
+            this.ctx = ctx
+        }
+
+        override fun messageReceived(
+            ctx: io.netty.channel.ChannelHandlerContext,
+            msg: ByteBuf,
+        ) {
+            val chunk = ByteArray(msg.readableBytes())
+            msg.readBytes(chunk)
+            try {
+                decoder.feed(chunk).forEach { payload ->
+                    try {
+                        val parsedRequest = InferenceRequest.parseFrom(payload)
+                        if (parsedRequest.deadlineUnixMs > 0L && parsedRequest.prompt.isNotBlank()) {
+                            activeRequest = parsedRequest
+                            requestReceived.complete(parsedRequest)
+                        } else {
+                            val cancel = CancelRequest.parseFrom(payload)
+                            val request = activeRequest ?: error("CancelRequest arrived before an active request.")
+                            check(cancel.requestId == request.requestId && cancel.attemptId == request.attemptId)
+                            check(cancel.reason == "user_cancelled")
+                            cancelReceived.complete(cancel)
+
+                            val response =
+                                InferenceResponse.newBuilder()
+                                    .setRequestId(request.requestId)
+                                    .setAttemptId(request.attemptId)
+                                    .setRoundId(request.roundId)
+                                    .setEphemeralHostId(localPeerId)
+                                    .setOutcome(InferenceOutcome.INFERENCE_OUTCOME_CANCELLED)
+                                    .setOutputText("")
+                                    .setCompletedAtUnixMs(System.currentTimeMillis())
+                                    .setModelId(request.modelId)
+                                    .setErrorMessage("The request was cancelled by the remote client.")
+                                    .build()
+                            writeAndFlush(Unpooled.wrappedBuffer(PeerMessageFrameCodec.encode(response.toByteArray())))
+                        }
+                    } finally {
+                        Arrays.fill(payload, 0)
+                    }
+                }
+            } finally {
+                Arrays.fill(chunk, 0)
+            }
+        }
+    }
 
     private class LoopbackInferenceResponder(
         private val localPeerId: String,

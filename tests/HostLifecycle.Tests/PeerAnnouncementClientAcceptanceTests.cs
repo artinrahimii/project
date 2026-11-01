@@ -186,6 +186,7 @@ internal static class PeerAnnouncementClientAcceptanceTests
             "The host must refuse to publish an advertised address unless its reachability has been independently confirmed.");
 
         var requestHandlerCalls = 0;
+        var cancellationRequestStarted = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
         await using var host = new PeerAnnouncementHostLifecycle(
             hostTrust.Store,
             hostIdentity,
@@ -195,7 +196,7 @@ internal static class PeerAnnouncementClientAcceptanceTests
             IPAddress.Loopback,
             ReservePort(),
             advertisedAddressVerified: true,
-            (bytes, _) =>
+            async (bytes, cancellationToken) =>
             {
                 var parsed = ProtocolMessageParser.ParseInferenceRequest(bytes);
                 if (!parsed.IsValid || parsed.Message is null)
@@ -203,6 +204,12 @@ internal static class PeerAnnouncementClientAcceptanceTests
 
                 Interlocked.Increment(ref requestHandlerCalls);
                 var requestMessage = parsed.Message;
+                if (requestMessage.Prompt == "wait-for-cancel")
+                {
+                    cancellationRequestStarted.TrySetResult(true);
+                    await Task.Delay(Timeout.InfiniteTimeSpan, cancellationToken).ConfigureAwait(false);
+                }
+
                 var responseMessage = new InferenceResponse
                 {
                     RequestId = requestMessage.RequestId,
@@ -215,7 +222,7 @@ internal static class PeerAnnouncementClientAcceptanceTests
                     ModelId = requestMessage.ModelId,
                     ErrorMessage = string.Empty
                 };
-                return Task.FromResult(responseMessage.ToByteArray());
+                return responseMessage.ToByteArray();
             },
             TimeSpan.FromSeconds(2),
             TimeSpan.FromMilliseconds(150));
@@ -282,6 +289,35 @@ internal static class PeerAnnouncementClientAcceptanceTests
             "Replaying the same authenticated request/attempt tuple must be rejected without a second handler invocation.");
         Assert(Volatile.Read(ref requestHandlerCalls) == 1,
             "An exact replay must not reach the inference handler twice.");
+
+        var cancellableRequest = requestMessage.Clone();
+        cancellableRequest.AttemptId = "attempt-cancel-loopback-001";
+        cancellableRequest.Prompt = "wait-for-cancel";
+        await client.SendMessageAsync(cancellableRequest.ToByteArray(), timeout.Token).ConfigureAwait(false);
+        await cancellationRequestStarted.Task.WaitAsync(TimeSpan.FromSeconds(5), timeout.Token).ConfigureAwait(false);
+
+        var cancelRequest = new CancelRequest
+        {
+            RequestId = cancellableRequest.RequestId,
+            AttemptId = cancellableRequest.AttemptId,
+            Reason = ProtocolMessageValidator.UserCancellationReason
+        };
+        Assert(ProtocolMessageParser.ParseCancelRequest(cancelRequest.ToByteArray()).IsValid,
+            "A bounded cancellation request with the exact active request/attempt identity must pass protocol validation.");
+        await client.SendMessageAsync(cancelRequest.ToByteArray(), timeout.Token).ConfigureAwait(false);
+
+        byte[] cancelledWire = await client.ReceiveMessageAsync(timeout.Token)
+            .WaitAsync(TimeSpan.FromSeconds(10), timeout.Token).ConfigureAwait(false);
+        var cancelledResponse = InferenceResponse.Parser.ParseFrom(cancelledWire);
+        Assert(cancelledResponse.RequestId == cancellableRequest.RequestId &&
+               cancelledResponse.AttemptId == cancellableRequest.AttemptId &&
+               cancelledResponse.RoundId == cancellableRequest.RoundId &&
+               cancelledResponse.EphemeralHostId == hostPeerId &&
+               cancelledResponse.Outcome == InferenceOutcome.Cancelled &&
+               cancelledResponse.ErrorMessage == "The request was cancelled by the remote client.",
+            "A correlated CancelRequest must cancel the active host operation and return a CANCELLED response.");
+        Assert(Volatile.Read(ref requestHandlerCalls) == 2,
+            "The cancellation path must process the second request exactly once.");
 
         await client.DisconnectAsync(timeout.Token).ConfigureAwait(false);
         DateTimeOffset stoppedDeadline = DateTimeOffset.UtcNow.AddSeconds(5);

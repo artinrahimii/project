@@ -12,6 +12,7 @@ internal static class PeerMessageSecurityAcceptanceTests
     public static void Run()
     {
         TamperedRequestFieldsAreRejectedBeforeDispatch();
+        CancelRequestRequiresAValidRequestAttemptAndReason();
         ReplayGuardRejectsRepeatedAuthenticatedRequestAttempts();
         ForgedOrMisroutedResponsesAreRejected();
         Console.WriteLine("PASS: tampered request rejection, bounded request replay fencing, forged response correlation rejection, and authenticated-peer transport checks.");
@@ -32,6 +33,34 @@ internal static class PeerMessageSecurityAcceptanceTests
         var malformed = ProtocolMessageParser.ParseInferenceRequest(new byte[] { 0x0A, 0xFF, 0xFF });
         Assert(!malformed.IsValid && malformed.Message is null,
             "Malformed/tampered Protobuf wire data must not produce an accepted inference request.");
+    }
+
+    private static void CancelRequestRequiresAValidRequestAttemptAndReason()
+    {
+        var valid = new CancelRequest
+        {
+            RequestId = "req_00112233445566778899aabbccddeeff",
+            AttemptId = "attempt-001",
+            Reason = ProtocolMessageValidator.UserCancellationReason
+        };
+        var validResult = ProtocolMessageParser.ParseCancelRequest(valid.ToByteArray());
+        Assert(validResult.IsValid, "A valid bounded CancelRequest must pass the shared protocol parser.");
+
+        var wrongReason = valid.Clone();
+        wrongReason.Reason = "cancel_everything";
+        var wrongReasonResult = ProtocolMessageParser.ParseCancelRequest(wrongReason.ToByteArray());
+        Assert(!wrongReasonResult.IsValid && wrongReasonResult.Message is null,
+            "An unrecognized cancellation reason must be rejected before it can signal an active operation.");
+
+        var missingAttempt = valid.Clone();
+        missingAttempt.AttemptId = string.Empty;
+        var missingAttemptResult = ProtocolMessageParser.ParseCancelRequest(missingAttempt.ToByteArray());
+        Assert(!missingAttemptResult.IsValid && missingAttemptResult.Message is null,
+            "A cancellation without an exact attempt identifier must be rejected.");
+
+        var malformed = ProtocolMessageParser.ParseCancelRequest(new byte[] { 0x0A, 0xFF, 0xFF });
+        Assert(!malformed.IsValid && malformed.Message is null,
+            "Malformed cancellation Protobuf must be rejected before application dispatch.");
     }
 
     private static void ReplayGuardRejectsRepeatedAuthenticatedRequestAttempts()

@@ -127,6 +127,23 @@ public static class ProtocolMessageValidator
         (value >= 'A' && value <= 'Z') ||
         (value >= '0' && value <= '9');
 
+    public const string UserCancellationReason = "user_cancelled";
+
+    public static ProtocolMessageValidationResult ValidateCancelRequest(
+        string? requestId,
+        string? attemptId,
+        string? reason)
+    {
+        if (!IsValidRequestIdentifier(requestId) ||
+            !IsValidRequestIdentifier(attemptId) ||
+            !string.Equals(reason, UserCancellationReason, StringComparison.Ordinal))
+        {
+            return InvalidMessage("CancelRequest must contain valid request/attempt identifiers and a supported reason.");
+        }
+
+        return Valid();
+    }
+
     public static ProtocolMessageValidationResult ValidateHostAnnouncement(
         string? ephemeralHostId,
         string? protocolVersion,

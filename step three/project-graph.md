@@ -44703,33 +44703,152 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0173 و T0160 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال انجام",
+      "actual_output_paths": [
+        "src/Host.Infrastructure/ProtocolMessageParser.cs",
+        "src/Shared.Contracts/ProtocolMessageValidator.cs",
+        "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
+        "tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/PeerMessageSecurityAcceptanceTests.cs",
+        "src/Client.Android/app/src/test/java/com/whitep/client/network/Libp2pInferenceRequestTransportTest.kt",
+        "step three/T0174/execution-report.md",
+        "step three/T0174/evidence/verification.md",
+        "step three/project-graph.md"
+      ],
       "expected_output_paths": [
         "src/Client.Android/Requests/ + tests/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "src/Host.Infrastructure/ProtocolMessageParser.cs",
+        "src/Shared.Contracts/ProtocolMessageValidator.cs",
+        "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
+        "tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/PeerMessageSecurityAcceptanceTests.cs",
+        "src/Client.Android/app/src/test/java/com/whitep/client/network/Libp2pInferenceRequestTransportTest.kt",
+        "protocol/whitep/v1/messages.proto",
+        "src/Host.Windows/Networking/PeerResponseCorrelationValidator.cs",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/InferenceResponseCorrelationValidator.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceAttemptDispatcher.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/protocol/InferenceRequestPayloadBuilder.kt",
+        "step three/T0160/execution-report.md",
+        "step three/T0172/execution-report.md",
+        "step three/T0173/execution-report.md",
+        "step three/T0173/evidence/verification.md",
+        "step three/T0174/execution-report.md",
+        "step three/T0174/evidence/verification.md"
+      ],
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0174-A001 (2026-11-01): Added bounded CancelRequest parsing/validation with an explicit user_cancelled reason; Android authenticated-stream cancellation for each queued attempt and per-attempt results; Windows bounded concurrent request handling so the receive loop can accept a cancellation frame and signal only the matching (requestId, attemptId) token; correlated deadline-bounded CANCELLED response; Android two-peer transport test; Windows trusted-loopback end-to-end cancellation test; protocol negative tests. The existing Android request screen remains preparation-only and has no live dispatch/discovery state, so no fake Cancel button was added. Keep in_progress pending exact-head CI and later real UI wiring.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0174-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Host.Infrastructure/ProtocolMessageParser.cs",
+          "src/Shared.Contracts/ProtocolMessageValidator.cs",
+          "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs",
+          "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
+          "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
+          "tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs",
+          "tests/HostLifecycle.Tests/PeerMessageSecurityAcceptanceTests.cs",
+          "src/Client.Android/app/src/test/java/com/whitep/client/network/Libp2pInferenceRequestTransportTest.kt",
+          "step three/T0174/execution-report.md",
+          "step three/T0174/evidence/verification.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
-          "affected_by_contract_changes": [],
-          "review_evidence": []
+          "state": "in_review",
+          "triggering_contracts": [
+            "CancelRequest parsing and validation: bounded control frame, exact request/attempt identifiers, allowlisted user_cancelled reason.",
+            "Android cancellation dispatch reuses the authenticated per-attempt peer stream and waits for a correlated CANCELLED or race-winning terminal response.",
+            "Windows host cancellation maps request_id/attempt_id to one active linked cancellation token and emits a response bounded by the original deadline."
+          ],
+          "affected_by_contract_changes": [
+            "T0175",
+            "T0176"
+          ],
+          "review_evidence": [
+            "src/Host.Infrastructure/ProtocolMessageParser.cs",
+            "src/Shared.Contracts/ProtocolMessageValidator.cs",
+            "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs",
+            "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
+            "tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/PeerMessageSecurityAcceptanceTests.cs",
+            "src/Client.Android/app/src/test/java/com/whitep/client/network/Libp2pInferenceRequestTransportTest.kt",
+            "protocol/whitep/v1/messages.proto",
+            "src/Host.Windows/Networking/PeerResponseCorrelationValidator.cs",
+            "src/Client.Android/app/src/main/java/com/whitep/client/network/InferenceResponseCorrelationValidator.kt"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0174-A001",
+          "started_at": "2026-11-01T04:01:43.250Z",
+          "ended_at": "2026-11-01T04:01:43.250Z",
+          "result": "partial",
+          "summary": "Implemented bounded CancelRequest parsing/validation, Android per-selected-attempt cancellation over authenticated streams, Windows concurrent receive plus exact request/attempt cancellation-token dispatch and correlated CANCELLED response. Added Android two-peer libp2p cancellation test, Windows trusted loopback cancellation integration test, and malformed/untrusted cancellation parser tests. Exact-head CI pending; real Cancel button cannot be wired because the current Android request screen is preview-only and has no dispatch/discovery lifecycle.",
+          "changed_files": [
+            "src/Host.Infrastructure/ProtocolMessageParser.cs",
+            "src/Shared.Contracts/ProtocolMessageValidator.cs",
+            "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs",
+            "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
+            "tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/PeerMessageSecurityAcceptanceTests.cs",
+            "src/Client.Android/app/src/test/java/com/whitep/client/network/Libp2pInferenceRequestTransportTest.kt",
+            "step three/T0174/execution-report.md",
+            "step three/T0174/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Android Libp2pInferenceRequestTransportTest.cancelAttemptsSendsCorrelatedCancelRequestsToEverySelectedAuthenticatedHost",
+              "result": "pending"
+            },
+            {
+              "name": "HostLifecycle trusted loopback CancelRequest → CANCELLED response acceptance",
+              "result": "pending"
+            },
+            {
+              "name": "PeerMessageSecurityAcceptanceTests.CancelRequestRequiresAValidRequestAttemptAndReason",
+              "result": "pending"
+            },
+            {
+              "name": "Android KtLint, APK, JVM and Protobuf product checks",
+              "result": "pending"
+            },
+            {
+              "name": "Windows WPF build and HostLifecycle integration",
+              "result": "pending"
+            },
+            {
+              "name": "Step Three Python/graph quality gate",
+              "result": "pending"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Run exact-head CI, repair all concrete failures, then wire the Cancel control only after the Android screen has real host discovery and dispatch state. Keep T0174 in_progress until both backend acceptance and real user-facing cancellation are verified."
+        }
+      ]
     },
     {
       "id": "T0175",
@@ -51460,19 +51579,31 @@
       "from": "T0173",
       "to": "T0174",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0173 uses the exact (requestId, attemptId) pair to identify and de-duplicate a response card. T0174 sends and receives cancellation for this same attempt identity and must not alter another attempt's terminal response.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/InferenceResponseCorrelationValidator.kt",
+        "protocol/whitep/v1/messages.proto",
+        "step three/T0173/execution-report.md"
+      ]
     },
     {
       "from": "T0160",
       "to": "T0174",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0160 produces the canonical request ID and per-host attempt IDs used by InferenceRequest and InferenceHostAttempt. CancelRequest targets the same exact request/attempt identity pair, so this is a direct protocol-interface dependency.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/protocol/InferenceRequestPayloadBuilder.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceAttemptDispatcher.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
+        "protocol/whitep/v1/messages.proto",
+        "step three/T0160/execution-report.md"
+      ]
     },
     {
       "from": "T0174",
@@ -56386,9 +56517,41 @@
         "step three/T0160/execution-report.md"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-11-01T04:01:43.250Z",
+      "edge_from": "T0173",
+      "edge_to": "T0174",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "reason": "T0173 uses the exact (requestId, attemptId) pair to identify and de-duplicate a response card. T0174 sends and receives cancellation for this same attempt identity and must not alter another attempt's terminal response.",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/InferenceResponseCorrelationValidator.kt",
+        "protocol/whitep/v1/messages.proto",
+        "step three/T0173/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-11-01T04:01:43.250Z",
+      "edge_from": "T0160",
+      "edge_to": "T0174",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "reason": "T0160 produces the canonical request ID and per-host attempt IDs used by InferenceRequest and InferenceHostAttempt. CancelRequest targets the same exact request/attempt identity pair, so this is a direct protocol-interface dependency.",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/protocol/InferenceRequestPayloadBuilder.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceAttemptDispatcher.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
+        "protocol/whitep/v1/messages.proto",
+        "step three/T0160/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-11-01T07:16:53+03:30",
+  "updated_at": "2026-11-01T04:01:43.250Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

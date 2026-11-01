@@ -61,6 +61,40 @@ public static class ProtocolMessageParser
         }
     }
 
+    public static ProtocolMessageParseResult<CancelRequest> ParseCancelRequest(byte[]? wireBytes)
+    {
+        if (wireBytes is null)
+        {
+            return Invalid<CancelRequest>(ProtocolMessageValidator.InvalidMessage(
+                "CancelRequest wire bytes are missing."));
+        }
+
+        var sizeResult = ProtocolMessageValidator.FromLimitResult(
+            ProtocolMessageLimits.ValidateControlMessageBytes(wireBytes.LongLength));
+        if (!sizeResult.IsValid)
+        {
+            return Invalid<CancelRequest>(sizeResult);
+        }
+
+        try
+        {
+            var request = CancelRequest.Parser.ParseFrom(wireBytes);
+            var validation = ProtocolMessageValidator.ValidateCancelRequest(
+                request.RequestId,
+                request.AttemptId,
+                request.Reason);
+
+            return validation.IsValid
+                ? new ProtocolMessageParseResult<CancelRequest>(request, validation)
+                : Invalid<CancelRequest>(validation);
+        }
+        catch (InvalidProtocolBufferException)
+        {
+            return Invalid<CancelRequest>(ProtocolMessageValidator.InvalidMessage(
+                "CancelRequest contains malformed Protobuf wire data."));
+        }
+    }
+
     public static ProtocolMessageParseResult<HostAnnouncement> ParseHostAnnouncement(byte[]? wireBytes)
     {
         if (wireBytes is null)

@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Concurrent;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Sockets;
@@ -35,6 +37,12 @@ public sealed class PeerAnnouncementHostLifecycle : IAsyncDisposable
     private readonly TimeSpan _timeToLive;
     private readonly TimeSpan _renewalInterval;
     private readonly AuthenticatedRequestReplayGuard _replayGuard;
+    private const int MaximumConcurrentRequestHandlers = 8;
+    private readonly SemaphoreSlim _requestHandlerSlots = new(MaximumConcurrentRequestHandlers, MaximumConcurrentRequestHandlers);
+    private readonly ConcurrentDictionary<RequestAttemptKey, CancellationTokenSource> _activeRequestCancellations = new();
+    private readonly ConcurrentDictionary<RequestAttemptKey, Task> _requestHandlerTasks = new();
+
+    private readonly record struct RequestAttemptKey(string RequestId, string AttemptId);
 
     private Libp2pPeerTransport? _transport;
     private PeerAnnouncementLeasePublisher? _publisher;
@@ -261,54 +269,112 @@ public sealed class PeerAnnouncementHostLifecycle : IAsyncDisposable
         try
         {
             // StartListenAsync opens the listener before any remote session exists. Wait for the
-            // explicit peer-identity gate and negotiated secure protocol to become connected
-            // before calling ReceiveMessageAsync, which intentionally fails closed otherwise.
+            // explicit peer-identity gate and negotiated secure protocol before reading frames.
             while (!cancellationToken.IsCancellationRequested && !transport.IsConnected)
                 await Task.Delay(TimeSpan.FromMilliseconds(50), cancellationToken).ConfigureAwait(false);
 
             while (!cancellationToken.IsCancellationRequested)
             {
                 byte[] requestWire = await transport.ReceiveMessageAsync(cancellationToken).ConfigureAwait(false);
-                var parsedRequest = ProtocolMessageParser.ParseInferenceRequest(requestWire);
-                if (!parsedRequest.IsValid || parsedRequest.Message is null)
-                    throw new InvalidDataException("The peer sent a malformed or invalid inference request.");
-
-                InferenceRequest request = parsedRequest.Message;
-                string authenticatedPeerIdentity = transport.RemotePeerIdentity
-                    ?? throw new InvalidDataException("The secure peer session has no authenticated remote identity.");
-                if (!StringComparer.Ordinal.Equals(authenticatedPeerIdentity, _expectedPeerIdentity))
-                    throw new InvalidDataException("The secure peer session identity changed unexpectedly.");
-
-                DateTimeOffset requestExpiry = DateTimeOffset.FromUnixTimeMilliseconds(checked((long)request.DeadlineUnixMs));
-                var replayDecision = _replayGuard.TryRegister(
-                    authenticatedPeerIdentity, request.RequestId, request.AttemptId, requestExpiry, DateTimeOffset.UtcNow);
-
-                if (replayDecision != AuthenticatedRequestReplayDecision.Accepted)
-                {
-                    InferenceResponse rejected = CreateReplayRejection(request);
-                    PeerResponseCorrelationValidator.Validate(request, rejected, LocalPeerIdentity);
-                    await transport.SendMessageAsync(rejected.ToByteArray(), cancellationToken).ConfigureAwait(false);
-                    continue;
-                }
-
-                byte[] responseWire = await _requestHandler(requestWire, cancellationToken).ConfigureAwait(false);
-                if (responseWire is null || responseWire.Length == 0)
-                    throw new InvalidDataException("The peer request handler returned no response.");
-                if (responseWire.Length > ProtocolMessageLimits.MaximumResponseMessageBytes)
-                    throw new InvalidDataException("The peer response exceeds the protocol message limit.");
-
-                InferenceResponse parsedResponse;
+                bool handedToHandler = false;
                 try
                 {
-                    parsedResponse = InferenceResponse.Parser.ParseFrom(responseWire);
-                }
-                catch (InvalidProtocolBufferException exception)
-                {
-                    throw new InvalidDataException("The peer request handler produced malformed response data.", exception);
-                }
+                    var parsedRequest = ProtocolMessageParser.ParseInferenceRequest(requestWire);
+                    if (!parsedRequest.IsValid || parsedRequest.Message is null)
+                    {
+                        // The authenticated peer protocol is a stream of bounded Protobuf frames.
+                        // Try the separate CancelRequest contract only after a frame fails request
+                        // validation, so a valid InferenceRequest always retains precedence.
+                        var parsedCancel = ProtocolMessageParser.ParseCancelRequest(requestWire);
+                        if (!parsedCancel.IsValid || parsedCancel.Message is null)
+                            throw new InvalidDataException("The peer sent a malformed request or cancellation message.");
 
-                PeerResponseCorrelationValidator.Validate(request, parsedResponse, LocalPeerIdentity);
-                await transport.SendMessageAsync(responseWire, cancellationToken).ConfigureAwait(false);
+                        var cancel = parsedCancel.Message;
+                        var cancelKey = new RequestAttemptKey(cancel.RequestId, cancel.AttemptId);
+                        if (_activeRequestCancellations.TryGetValue(cancelKey, out var activeCancellation))
+                        {
+                            try
+                            {
+                                activeCancellation.Cancel();
+                            }
+                            catch (ObjectDisposedException)
+                            {
+                                // The matching operation completed at the same time as cancellation.
+                            }
+                        }
+
+                        // Unknown, completed and repeated cancellation messages are idempotent no-ops.
+                        continue;
+                    }
+
+                    InferenceRequest request = parsedRequest.Message;
+                    string authenticatedPeerIdentity = transport.RemotePeerIdentity
+                        ?? throw new InvalidDataException("The secure peer session has no authenticated remote identity.");
+                    if (!StringComparer.Ordinal.Equals(authenticatedPeerIdentity, _expectedPeerIdentity))
+                        throw new InvalidDataException("The secure peer session identity changed unexpectedly.");
+
+                    DateTimeOffset requestExpiry = DateTimeOffset.FromUnixTimeMilliseconds(checked((long)request.DeadlineUnixMs));
+                    var replayDecision = _replayGuard.TryRegister(
+                        authenticatedPeerIdentity, request.RequestId, request.AttemptId, requestExpiry, DateTimeOffset.UtcNow);
+
+                    if (replayDecision != AuthenticatedRequestReplayDecision.Accepted)
+                    {
+                        InferenceResponse rejected = CreateReplayRejection(request);
+                        PeerResponseCorrelationValidator.Validate(request, rejected, LocalPeerIdentity);
+                        await transport.SendMessageAsync(rejected.ToByteArray(), cancellationToken).ConfigureAwait(false);
+                        continue;
+                    }
+
+                    if (!_requestHandlerSlots.Wait(0))
+                    {
+                        InferenceResponse? busy = CreateBusyResponse(request);
+                        if (busy is not null)
+                        {
+                            PeerResponseCorrelationValidator.Validate(request, busy, LocalPeerIdentity);
+                            await transport.SendMessageAsync(busy.ToByteArray(), cancellationToken).ConfigureAwait(false);
+                        }
+                        continue;
+                    }
+
+                    var key = new RequestAttemptKey(request.RequestId, request.AttemptId);
+                    var requestCancellation = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+                    if (!_activeRequestCancellations.TryAdd(key, requestCancellation))
+                    {
+                        requestCancellation.Dispose();
+                        _requestHandlerSlots.Release();
+                        InferenceResponse rejected = CreateReplayRejection(request);
+                        PeerResponseCorrelationValidator.Validate(request, rejected, LocalPeerIdentity);
+                        await transport.SendMessageAsync(rejected.ToByteArray(), cancellationToken).ConfigureAwait(false);
+                        continue;
+                    }
+
+                    var startSignal = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+                    Task responseTask = ProcessRequestAndRespondAsync(
+                        transport,
+                        publisher,
+                        request,
+                        requestWire,
+                        key,
+                        requestCancellation,
+                        cancellationToken,
+                        startSignal.Task);
+                    if (!_requestHandlerTasks.TryAdd(key, responseTask))
+                    {
+                        requestCancellation.Cancel();
+                        _activeRequestCancellations.TryRemove(key, out _);
+                        requestCancellation.Dispose();
+                        _requestHandlerSlots.Release();
+                        throw new InvalidOperationException("A peer request handler already exists for the same request/attempt pair.");
+                    }
+
+                    handedToHandler = true;
+                    startSignal.TrySetResult(true);
+                }
+                finally
+                {
+                    if (!handedToHandler)
+                        Array.Clear(requestWire, 0, requestWire.Length);
+                }
             }
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
@@ -324,6 +390,151 @@ public sealed class PeerAnnouncementHostLifecycle : IAsyncDisposable
             try { await transport.DisconnectAsync().ConfigureAwait(false); }
             catch (Exception disconnectException) { Volatile.Write(ref _lastFailureType, disconnectException.GetType().Name); }
         }
+        finally
+        {
+            foreach (var activeCancellation in _activeRequestCancellations.Values)
+            {
+                try { activeCancellation.Cancel(); }
+                catch (ObjectDisposedException) { }
+            }
+
+            Task[] remainingHandlers = _requestHandlerTasks.Values.ToArray();
+            if (remainingHandlers.Length > 0)
+            {
+                try { await Task.WhenAll(remainingHandlers).ConfigureAwait(false); }
+                catch (Exception) { /* Individual handlers record only exception types and tear down the session. */ }
+            }
+        }
+    }
+
+    private async Task ProcessRequestAndRespondAsync(
+        Libp2pPeerTransport transport,
+        PeerAnnouncementLeasePublisher publisher,
+        InferenceRequest request,
+        byte[] requestWire,
+        RequestAttemptKey key,
+        CancellationTokenSource requestCancellation,
+        CancellationToken lifetimeToken,
+        Task startSignal)
+    {
+        byte[]? responseWire = null;
+        try
+        {
+            await startSignal.ConfigureAwait(false);
+
+            try
+            {
+                responseWire = await _requestHandler(requestWire, requestCancellation.Token).ConfigureAwait(false);
+            }
+            catch (OperationCanceledException) when (requestCancellation.IsCancellationRequested && !lifetimeToken.IsCancellationRequested)
+            {
+                // The cancellation response is created once below after the request token is checked.
+            }
+
+            if (lifetimeToken.IsCancellationRequested)
+                return;
+
+            // A cooperative handler may return after cancellation rather than throw. Never
+            // deliver a success result once the matching request/attempt token was signalled.
+            if (requestCancellation.IsCancellationRequested)
+            {
+                if (responseWire is not null)
+                    Array.Clear(responseWire, 0, responseWire.Length);
+                InferenceResponse? cancelled = CreateCancelledResponse(request);
+                responseWire = cancelled?.ToByteArray();
+            }
+
+            if (responseWire is null)
+            {
+                if (requestCancellation.IsCancellationRequested)
+                    return; // The original absolute deadline elapsed before a cancellation response could be sent.
+                throw new InvalidDataException("The peer request handler returned no response.");
+            }
+            if (responseWire.Length == 0)
+                throw new InvalidDataException("The peer request handler returned no response.");
+            if (responseWire.Length > ProtocolMessageLimits.MaximumResponseMessageBytes)
+                throw new InvalidDataException("The peer response exceeds the protocol message limit.");
+
+            InferenceResponse parsedResponse;
+            try
+            {
+                parsedResponse = InferenceResponse.Parser.ParseFrom(responseWire);
+            }
+            catch (InvalidProtocolBufferException exception)
+            {
+                throw new InvalidDataException("The peer request handler produced malformed response data.", exception);
+            }
+
+            PeerResponseCorrelationValidator.Validate(request, parsedResponse, LocalPeerIdentity);
+            await transport.SendMessageAsync(responseWire, lifetimeToken).ConfigureAwait(false);
+        }
+        catch (OperationCanceledException) when (lifetimeToken.IsCancellationRequested)
+        {
+            // The peer session or participation lifecycle ended; no response can be delivered.
+        }
+        catch (Exception exception)
+        {
+            Volatile.Write(ref _lastFailureType, exception.GetType().Name);
+            Volatile.Write(ref _active, 0);
+            try { await publisher.StopAsync().ConfigureAwait(false); }
+            catch (Exception stopException) { Volatile.Write(ref _lastFailureType, stopException.GetType().Name); }
+            try { await transport.DisconnectAsync().ConfigureAwait(false); }
+            catch (Exception disconnectException) { Volatile.Write(ref _lastFailureType, disconnectException.GetType().Name); }
+        }
+        finally
+        {
+            if (responseWire is not null)
+                Array.Clear(responseWire, 0, responseWire.Length);
+            Array.Clear(requestWire, 0, requestWire.Length);
+            if (_activeRequestCancellations.TryRemove(key, out var completedCancellation))
+                completedCancellation.Dispose();
+            _requestHandlerSlots.Release();
+            _requestHandlerTasks.TryRemove(key, out _);
+        }
+    }
+
+    private InferenceResponse? CreateCancelledResponse(InferenceRequest request)
+    {
+        long completedAt = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+        if (completedAt <= 0 || (ulong)completedAt > request.DeadlineUnixMs)
+            return null;
+
+        var response = new InferenceResponse
+        {
+            RequestId = request.RequestId,
+            AttemptId = request.AttemptId,
+            RoundId = request.RoundId,
+            EphemeralHostId = LocalPeerIdentity,
+            Outcome = InferenceOutcome.Cancelled,
+            OutputText = string.Empty,
+            CompletedAtUnixMs = (ulong)completedAt,
+            ModelId = request.ModelId,
+            ErrorMessage = "The request was cancelled by the remote client."
+        };
+        PeerResponseCorrelationValidator.Validate(request, response, LocalPeerIdentity);
+        return response;
+    }
+
+    private InferenceResponse? CreateBusyResponse(InferenceRequest request)
+    {
+        long completedAt = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+        if (completedAt <= 0 || (ulong)completedAt > request.DeadlineUnixMs)
+            return null;
+
+        var response = new InferenceResponse
+        {
+            RequestId = request.RequestId,
+            AttemptId = request.AttemptId,
+            RoundId = request.RoundId,
+            EphemeralHostId = LocalPeerIdentity,
+            Outcome = InferenceOutcome.Failed,
+            OutputText = string.Empty,
+            CompletedAtUnixMs = (ulong)completedAt,
+            ModelId = request.ModelId,
+            ErrorMessage = "The host is busy and cannot accept another active inference request."
+        };
+        PeerResponseCorrelationValidator.Validate(request, response, LocalPeerIdentity);
+        return response;
     }
 
     private InferenceResponse CreateReplayRejection(InferenceRequest request) =>
@@ -350,6 +561,7 @@ public sealed class PeerAnnouncementHostLifecycle : IAsyncDisposable
                 return;
             _disposed = true;
             _httpClient.Dispose();
+            _requestHandlerSlots.Dispose();
         }
         finally
         {

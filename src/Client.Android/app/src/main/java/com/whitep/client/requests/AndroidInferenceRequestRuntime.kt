@@ -31,6 +31,13 @@ import java.util.concurrent.TimeoutException
  * Callers must supply HostCandidate values obtained from a separately validated discovery/status
  * source. A directory entry alone contains routing metadata, not proof of model readiness.
  */
+data class InferenceAttemptCancellationResult(
+    val requestId: String,
+    val attemptId: String,
+    val ephemeralHostId: String,
+    val cancellationSent: Boolean,
+)
+
 class AndroidInferenceRequestRuntime private constructor(
     private val transport: Libp2pInferenceRequestTransport,
     private val peerTrustStore: AndroidPeerTrustStore?,
@@ -237,6 +244,46 @@ class AndroidInferenceRequestRuntime private constructor(
             response ?: throw TimeoutException("The inference round expired before this host returned a response.")
         } finally {
             attemptRoundWindows.remove(key, roundWindow)
+        }
+    }
+
+    /**
+     * Requests cancellation for the exact attempts returned by one selected dispatch round.
+     * Failed or rejected submissions are reported as not sent because no authenticated
+     * peer stream exists for them. The caller must use the same request ID and attempt list
+     * returned by dispatchRound; this method does not rediscover or guess hosts.
+     */
+    suspend fun cancelSelectedHosts(
+        requestId: String,
+        selectedAttempts: List<InferenceHostAttempt>,
+    ): List<InferenceAttemptCancellationResult> {
+        require(requestId.isNotBlank()) { "requestId must not be blank." }
+        require(selectedAttempts.map { it.attemptId }.all(String::isNotBlank)) {
+            "Every selected host attempt must have a non-blank attempt ID."
+        }
+        require(selectedAttempts.map { it.attemptId }.distinct().size == selectedAttempts.size) {
+            "Selected host attempt IDs must be unique."
+        }
+        require(selectedAttempts.map { it.ephemeralHostId }.all(String::isNotBlank)) {
+            "Every selected host must have a non-blank peer identity."
+        }
+
+        val queuedAttempts = selectedAttempts.filter {
+            it.submissionStatus == InferenceAttemptSubmissionStatus.QUEUED
+        }
+        val sentByAttempt = transport.cancelAttempts(
+            requestId = requestId,
+            attemptIds = queuedAttempts.map { it.attemptId },
+        )
+
+        return selectedAttempts.map { attempt ->
+            InferenceAttemptCancellationResult(
+                requestId = requestId,
+                attemptId = attempt.attemptId,
+                ephemeralHostId = attempt.ephemeralHostId,
+                cancellationSent = attempt.submissionStatus == InferenceAttemptSubmissionStatus.QUEUED &&
+                    sentByAttempt[attempt.attemptId] == true,
+            )
         }
     }
 

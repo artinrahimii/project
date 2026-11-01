@@ -22,6 +22,7 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
+import org.whitep.shared.contracts.v1.CancelRequest
 import org.whitep.shared.contracts.v1.InferenceRequest
 import org.whitep.shared.contracts.v1.InferenceResponse
 import java.io.Closeable
@@ -286,6 +287,63 @@ class Libp2pInferenceRequestTransport(
         }
     }
 
+    /**
+     * Sends a correlated CancelRequest over the already authenticated stream for each
+     * still-pending selected attempt. A false result means the attempt was not pending,
+     * its response had already arrived, or the cancellation frame could not be written.
+     * The pending response is deliberately retained so the host's CANCELLED response
+     * (or a race-winning completed response) remains authoritative.
+     */
+    suspend fun cancelAttempts(
+        requestId: String,
+        attemptIds: Collection<String>,
+    ): Map<String, Boolean> {
+        require(requestId.isNotBlank()) { "requestId must not be blank." }
+        val ids = attemptIds.toList()
+        require(ids.all(String::isNotBlank) && ids.size == ids.toSet().size) {
+            "Cancellation attempt IDs must be non-blank and unique."
+        }
+
+        val results = linkedMapOf<String, Boolean>()
+        for (attemptId in ids) {
+            val key = AttemptKey(requestId, attemptId)
+            val pending = pendingAttempts[key]
+            val controller = pending?.controller
+            if (pending == null || controller == null || pending.response.isCompleted) {
+                results[attemptId] = false
+                continue
+            }
+
+            val cancelWire = CancelRequest.newBuilder()
+                .setRequestId(requestId)
+                .setAttemptId(attemptId)
+                .setReason(USER_CANCELLATION_REASON)
+                .build()
+                .toByteArray()
+            results[attemptId] =
+                try {
+                    if (cancelWire.size > PeerMessageFrameCodec.DEFAULT_MAXIMUM_MESSAGE_BYTES) {
+                        false
+                    } else {
+                        withContext(Dispatchers.IO) {
+                            controller.sendRequest(cancelWire).get(
+                                connectionTimeout.toSeconds().coerceAtLeast(1L),
+                                TimeUnit.SECONDS,
+                            )
+                        }
+                        true
+                    }
+                } catch (cancellation: CancellationException) {
+                    throw cancellation
+                } catch (_: Exception) {
+                    false
+                } finally {
+                    Arrays.fill(cancelWire, 0)
+                }
+        }
+        return results
+    }
+
     private suspend fun ensureHostStarted() {
         startMutex.withLock {
             if (closed.get()) {
@@ -371,6 +429,7 @@ class Libp2pInferenceRequestTransport(
 
     private companion object {
         const val PROTOCOL_ID = "/white-p/peer-message/1.0.0"
+        const val USER_CANCELLATION_REASON = "user_cancelled"
         const val SHUTDOWN_TIMEOUT_SECONDS = 5L
         val DEFAULT_CONNECTION_TIMEOUT: Duration = Duration.ofSeconds(15)
         val DEFAULT_RESPONSE_TIMEOUT: Duration = Duration.ofSeconds(60)
