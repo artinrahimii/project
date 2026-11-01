@@ -2,7 +2,7 @@
 
 ## Status
 
-`in_progress` (partial implementation; exact-head CI pending; Android request-screen integration not yet possible).
+`blocked` (cancellation runtime/backend is implemented and passed prior exact-head CI; production Android UI integration is blocked by the missing validated discovery/status prerequisite T0124).
 
 This attempt adds the real cancellation protocol path on Android and Windows and acceptance tests. It does **not** claim the user-facing Cancel button is connected: the current Android request screen is explicitly a preparation-only preview and has no live dispatch/discovery or active-request state. The graph task therefore remains open.
 
@@ -177,3 +177,15 @@ No inert Cancel button or invented HostStatus values were added. The backend, An
 - Attempt ID: `T0174-A016-v3.0.738-exact-head-ci`
 - Result: `partial` (all implemented backend/cross-runtime checks passed; production UI integration remains outstanding).
 - Follow-up: implement or complete a real Android discovery/status and dispatch UI path before connecting a Cancel button. Do not close T0174 until the button cancels every selected queued host attempt from an actual live request.
+
+
+## T0174-A017 — discovery/status prerequisite review (2026-11-01)
+
+- Exact base: `main` at `211eae4cc7f33ae956e3d505ad2b5ba58104e9bf` (`V 3.0.739`). The graph was read from the exact tree Blob and its full Git Blob SHA-1 was verified before parsing.
+- `T0173` and `T0160` remain completed prerequisites. Their incoming edges to `T0174` remain unchanged and validated.
+- Source review confirms `MainActivity.requestScreen` only prepares text and makes no network request; `connectionsScreen` reports discovery unavailable. `AndroidInferenceRequestRuntime` deliberately requires validated `HostCandidate` snapshots; `HostCandidateSelector` evaluates candidates but does not discover peers or perform network I/O. `RendezvousPeerDirectoryClient` only resolves expiring announcement metadata and addresses; the rendezvous directory is metadata-only. `HostStatus` exists in the protocol schema, but this review did not find a production Android status-discovery call site.
+- Added `T0124 → T0174` as `contract_or_interface_dependency`, retaining `type: blocks`. Evidence is recorded on the edge and in `edge_change_log`. `T0124` selects candidates by reachability, readiness, capacity and model compatibility, so the request UI cannot dispatch to genuine selected attempts until this contract is delivered.
+- The upstream chain is still unavailable: `T0124` depends on `T0123`; `T0123` depends on `T0122`; `T0122` depends on blocked `T0121`. `T0121` remains blocked pending a production HTTPS rendezvous endpoint and verification from a second peer on an independent network.
+- Result: `T0174` is now `blocked`, not `done`. The previous Android cancellation API and Android↔native-.NET interoperability evidence from A016 remain intact; the visible user-facing Cancel click path is still unimplemented.
+- No product source code changed in A017. No new tests were executed in this graph-review attempt. The existing exact-base V 3.0.739 [product workflow](https://github.com/artinrahimii/project/actions/runs/41278700922) and [Step Three quality workflow](https://github.com/artinrahimii/project/actions/runs/41278700976) were inspected and had completed successfully; those baseline checks do not constitute a test of the missing UI click path.
+- Follow-up: unblock and complete `T0121 → T0122 → T0123 → T0124`, then resume T0174 with actual selected queued attempts and add UI-level cancellation acceptance. Do not add an inert Cancel button or fabricate HostStatus snapshots.

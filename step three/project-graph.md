@@ -44692,7 +44692,8 @@
       "section": "16. انتخاب سه میزبان، چندپاسخی و تلاش مجدد",
       "depends_on": [
         "T0173",
-        "T0160"
+        "T0160",
+        "T0124"
       ],
       "inputs": [
         "خروجی تأییدشدهٔ پیش‌نیازها",
@@ -44701,10 +44702,10 @@
       "outputs": [
         "خروجی قابل بررسی مربوط به «دکمهٔ لغو را به پیام CancelRequest برای تمام میزبان‌های انتخاب‌شده وصل کن.» در مسیر src/Client.Android/Requests/ + tests/؛ همراه با آزمون/شاهد پذیرش متناسب."
       ],
-      "start_condition": "همهٔ پیش‌نیازهای T0173 و T0160 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
+      "start_condition": "T0173، T0160 و T0124 تکمیل شده و معیارهای پذیرش آن‌ها پاس شده باشند؛ UI باید درخواست dispatch واقعی و فهرست attemptهای انتخاب‌شده را از منبع معتبر دریافت کند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال انجام",
+      "status": "blocked",
+      "status_fa": "مسدود",
       "actual_output_paths": [
         "src/Host.Infrastructure/ProtocolMessageParser.cs",
         "src/Shared.Contracts/ProtocolMessageValidator.cs",
@@ -44751,27 +44752,16 @@
         "tests/HostLifecycle.Tests/Program.cs",
         "tests/HostLifecycle.Tests/AndroidInteropPeerServer.cs"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0174-A001 (2026-11-01): Added bounded CancelRequest parsing/validation with an explicit user_cancelled reason; Android authenticated-stream cancellation for each queued attempt and per-attempt results; Windows bounded concurrent request handling so the receive loop can accept a cancellation frame and signal only the matching (requestId, attemptId) token; correlated deadline-bounded CANCELLED response; Android two-peer transport test; Windows trusted-loopback end-to-end cancellation test; protocol negative tests. The existing Android request screen remains preparation-only and has no live dispatch/discovery state, so no fake Cancel button was added. Keep in_progress pending exact-head CI and later real UI wiring.\nT0174-A002 (2026-11-01): Exact-head V 3.0.732 Step Three quality gate failed one obsolete source-contract assertion expecting the former inline _requestHandler(requestWire, cancellationToken) call. The production implementation had deliberately moved handler execution to ProcessRequestAndRespondAsync to keep the receive loop available for CancelRequest. T0174-A003 updates the Python source guard to assert concurrent handler dispatch, exact request/attempt cancellation lookup, bounded parser and allowlisted reason. Product build and real-inference workflow for V 3.0.732 were still running when this correction was recorded.\nT0174-A010 (2026-11-01): Exact V 3.0.735 product CI passed Android lint and APK build, but compileDebugUnitTestKotlin failed at test helper type mismatch: createHost required ProtocolBinding<LoopbackInferenceResponder> and received ProtocolBinding<LoopbackCancellationResponder>. Android JVM tests did not execute. Exact V 3.0.735 Step Three quality, Windows WPF, and HostLifecycle tests passed. T0174-A011 fixes createHost to accept ProtocolBinding<T> for T : SimpleClientHandler; task stays in_progress pending a new exact-head Android JVM pass and real UI cancellation integration.\nT0174-A012 (2026-11-01): Exact V 3.0.736 product and Step Three workflows passed. Android KtLint, debug APK, all 150 JVM tests (0 failures/0 ignored), generated Protobuf Java/Kotlin, Windows WPF and HostLifecycle passed. The four Libp2pInferenceRequestTransportTest cases passed; the two-host cancellation test completed in 6.055 seconds. The Windows HostLifecycle loopback CancelRequest→CANCELLED integration test passed. This verifies runtime/transport and host cancellation, not cross-runtime Android→.NET cancellation nor a production UI click path.\nT0174-A013 (2026-11-01): Added native Android-to-.NET three-host cancellation interop acceptance: .NET peer fixture optional cancel mode receives and validates CancelRequest then returns correlated CANCELLED; Android JVM test dispatches to three independent .NET processes, waits for all to receive requests, cancels all selected attempts and checks all three responses. Exact-head CI is pending. No production UI call site currently invokes cancelSelectedHosts; task remains in_progress.\nT0174-A014 (2026-11-01): Exact V 3.0.737 Step Three quality, Windows WPF build/startup/security, HostLifecycle and real local inference all passed. Android KtLint failed one test-source import-order rule at Libp2pInferenceRequestTransportTest.kt:3:1 because the newly added kotlinx.coroutines.delay import was placed before Dispatchers. Android APK/JVM/Protobuf stages were skipped; the new three-native-.NET cancellation test did not execute. T0174-A015 moves delay after Dispatchers; exact-head CI pending.\nT0174-A016 (2026-11-01): Exact V 3.0.738 CI passed. Android KtLint/APK/JVM/Protobuf, 151 JVM tests (0 failures/0 ignored), including sendsCancellationToThreeNativeDotNetLibp2pHostsAndReceivesCancelledResponses (3 native .NET peers, 3.808s) and the two-peer cancellation API test (6.053s), Windows WPF, HostLifecycle, and Step Three quality all passed. No production Cancel button was added: MainActivity remains a prepare-only preview, Connections has no discovery, and AndroidInferenceRequestRuntime deliberately requires independently validated HostCandidate status snapshots. T0174 remains in_progress pending real discovery/dispatch UI and click-path acceptance.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0174-A001 (2026-11-01): Added bounded CancelRequest parsing/validation with an explicit user_cancelled reason; Android authenticated-stream cancellation for each queued attempt and per-attempt results; Windows bounded concurrent request handling so the receive loop can accept a cancellation frame and signal only the matching (requestId, attemptId) token; correlated deadline-bounded CANCELLED response; Android two-peer transport test; Windows trusted-loopback end-to-end cancellation test; protocol negative tests. The existing Android request screen remains preparation-only and has no live dispatch/discovery state, so no fake Cancel button was added. Keep in_progress pending exact-head CI and later real UI wiring.\nT0174-A002 (2026-11-01): Exact-head V 3.0.732 Step Three quality gate failed one obsolete source-contract assertion expecting the former inline _requestHandler(requestWire, cancellationToken) call. The production implementation had deliberately moved handler execution to ProcessRequestAndRespondAsync to keep the receive loop available for CancelRequest. T0174-A003 updates the Python source guard to assert concurrent handler dispatch, exact request/attempt cancellation lookup, bounded parser and allowlisted reason. Product build and real-inference workflow for V 3.0.732 were still running when this correction was recorded.\nT0174-A010 (2026-11-01): Exact V 3.0.735 product CI passed Android lint and APK build, but compileDebugUnitTestKotlin failed at test helper type mismatch: createHost required ProtocolBinding<LoopbackInferenceResponder> and received ProtocolBinding<LoopbackCancellationResponder>. Android JVM tests did not execute. Exact V 3.0.735 Step Three quality, Windows WPF, and HostLifecycle tests passed. T0174-A011 fixes createHost to accept ProtocolBinding<T> for T : SimpleClientHandler; task stays in_progress pending a new exact-head Android JVM pass and real UI cancellation integration.\nT0174-A012 (2026-11-01): Exact V 3.0.736 product and Step Three workflows passed. Android KtLint, debug APK, all 150 JVM tests (0 failures/0 ignored), generated Protobuf Java/Kotlin, Windows WPF and HostLifecycle passed. The four Libp2pInferenceRequestTransportTest cases passed; the two-host cancellation test completed in 6.055 seconds. The Windows HostLifecycle loopback CancelRequest→CANCELLED integration test passed. This verifies runtime/transport and host cancellation, not cross-runtime Android→.NET cancellation nor a production UI click path.\nT0174-A013 (2026-11-01): Added native Android-to-.NET three-host cancellation interop acceptance: .NET peer fixture optional cancel mode receives and validates CancelRequest then returns correlated CANCELLED; Android JVM test dispatches to three independent .NET processes, waits for all to receive requests, cancels all selected attempts and checks all three responses. Exact-head CI is pending. No production UI call site currently invokes cancelSelectedHosts; task remains in_progress.\nT0174-A014 (2026-11-01): Exact V 3.0.737 Step Three quality, Windows WPF build/startup/security, HostLifecycle and real local inference all passed. Android KtLint failed one test-source import-order rule at Libp2pInferenceRequestTransportTest.kt:3:1 because the newly added kotlinx.coroutines.delay import was placed before Dispatchers. Android APK/JVM/Protobuf stages were skipped; the new three-native-.NET cancellation test did not execute. T0174-A015 moves delay after Dispatchers; exact-head CI pending.\nT0174-A016 (2026-11-01): Exact V 3.0.738 CI passed. Android KtLint/APK/JVM/Protobuf, 151 JVM tests (0 failures/0 ignored), including sendsCancellationToThreeNativeDotNetLibp2pHostsAndReceivesCancelledResponses (3 native .NET peers, 3.808s) and the two-peer cancellation API test (6.053s), Windows WPF, HostLifecycle, and Step Three quality all passed. No production Cancel button was added: MainActivity remains a prepare-only preview, Connections has no discovery, and AndroidInferenceRequestRuntime deliberately requires independently validated HostCandidate status snapshots. T0174 remains in_progress pending real discovery/dispatch UI and click-path acceptance.\n\nT0174-A017 (2026-11-01): Re-read exact online main head 211eae4cc7f33ae956e3d505ad2b5ba58104e9bf (V 3.0.739), revalidated T0173 and T0160 inputs and inspected MainActivity, AndroidInferenceRequestRuntime, HostCandidateSelector, RendezvousPeerDirectoryClient and the metadata-only rendezvous service. The production request screen has no live dispatch or discovery call site; AndroidInferenceRequestRuntime requires externally validated HostCandidate snapshots, while HostCandidateSelector does not perform discovery. T0124 is therefore a missing contract/interface prerequisite for a real Cancel click path. Added and validated T0124 -> T0174 without removing or weakening any existing edge. T0124 remains not_started behind T0123/T0115; T0123 remains behind T0122/T0115; T0122 is held by blocked T0121 because independent-network reachability and deployed HTTPS rendezvous are not verified. T0174 status changed to blocked; cancellation runtime/backend remains evidenced by prior A016 CI, but UI acceptance is not met. No product source code was changed and no tests were run in this graph-review attempt; exact V 3.0.739 baseline product and graph workflows were inspected and passed. Follow up by supplying a real HTTPS rendezvous and an independent peer for T0121, then execute T0122-T0124 and return to the Android live request/cancel UI.",
       "execution_summary": {
-        "attempt_count": 16,
+        "attempt_count": 17,
         "failed_attempt_count": 6,
-        "last_attempt_id": "T0174-A016-v3.0.738-exact-head-ci",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "T0174-A017-discovery-prerequisite-review",
+        "last_attempt_result": "blocked",
         "changed_files": [
-          "src/Host.Infrastructure/ProtocolMessageParser.cs",
-          "src/Shared.Contracts/ProtocolMessageValidator.cs",
-          "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs",
-          "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
-          "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
-          "tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs",
-          "tests/HostLifecycle.Tests/PeerMessageSecurityAcceptanceTests.cs",
-          "src/Client.Android/app/src/test/java/com/whitep/client/network/Libp2pInferenceRequestTransportTest.kt",
-          "step three/T0174/execution-report.md",
-          "step three/T0174/evidence/verification.md",
           "step three/project-graph.md",
-          "tests/test_host_content_visibility.py",
-          "tests/HostLifecycle.Tests/Program.cs",
-          "tests/HostLifecycle.Tests/AndroidInteropPeerServer.cs"
+          "step three/T0174/execution-report.md",
+          "step three/T0174/evidence/verification.md"
         ],
         "related_commits": [
           "657f0ef5669b63991ed708ed92e125f171616ca3",
@@ -44817,36 +44807,31 @@
           "Android JVM test compilation failed on exact V 3.0.735 at Libp2pInferenceRequestTest.kt:72:61: createHost expected ProtocolBinding<LoopbackInferenceResponder> but received ProtocolBinding<LoopbackCancellationResponder>. The JVM tests did not execute; correction T0174-A011 makes the test helper generic.",
           "V 3.0.737 Android ktlintTestSourceSetCheck failed one import-order finding at Libp2pInferenceRequestTransportTest.kt:3:1: kotlinx.coroutines.delay was before Dispatchers. Android APK/JVM/Protobuf and the newly added cross-runtime cancellation test did not run on that commit."
         ],
-        "blocked_reason": null,
+        "blocked_reason": "The production Android request screen has no live dispatch/discovery path. AndroidInferenceRequestRuntime requires HostCandidate snapshots from a separately validated discovery/status source; T0124 is the missing selection contract and remains not_started behind T0123/T0122. T0122 is itself blocked by T0121 pending production HTTPS rendezvous and independent-network reachability evidence.",
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "in_review",
+          "state": "passed",
           "triggering_contracts": [
-            "CancelRequest parsing and validation: bounded control frame, exact request/attempt identifiers, allowlisted user_cancelled reason.",
-            "Android cancellation dispatch reuses the authenticated per-attempt peer stream and waits for a correlated CANCELLED or race-winning terminal response.",
-            "Windows host cancellation maps request_id/attempt_id to one active linked cancellation token and emits a response bounded by the original deadline."
+            "T0174 cancellation API requires the exact selected queued InferenceHostAttempt list returned by a live dispatch round",
+            "T0124 selection must produce candidates using validated reachability, READY status, capacity and model compatibility"
           ],
-          "affected_by_contract_changes": [
-            "T0175",
-            "T0176"
-          ],
+          "affected_by_contract_changes": [],
           "review_evidence": [
-            "src/Host.Infrastructure/ProtocolMessageParser.cs",
-            "src/Shared.Contracts/ProtocolMessageValidator.cs",
-            "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs",
-            "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
             "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
-            "tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs",
-            "tests/HostLifecycle.Tests/PeerMessageSecurityAcceptanceTests.cs",
-            "src/Client.Android/app/src/test/java/com/whitep/client/network/Libp2pInferenceRequestTransportTest.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/network/RendezvousPeerDirectoryClient.kt",
+            "src/Rendezvous.Service/PeerAnnouncementDirectory.cs",
             "protocol/whitep/v1/messages.proto",
-            "src/Host.Windows/Networking/PeerResponseCorrelationValidator.cs",
-            "src/Client.Android/app/src/main/java/com/whitep/client/network/InferenceResponseCorrelationValidator.kt"
+            "src/Client.Android/app/src/test/java/com/whitep/client/network/RendezvousPeerDirectoryClientTest.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt",
+            "step three/T0121/execution-report.md"
           ]
         },
         "tests_pending": [
           "Production Android request UI must gain a real discovery/status source and a live dispatch lifecycle, then expose a visible Cancel action that calls cancelSelectedHosts with the actual selected queued attempts and displays per-attempt cancellation outcomes."
-        ]
+        ],
+        "follow_up": "Provide a production HTTPS rendezvous endpoint and an independent peer; complete external reachability validation for T0121, then complete T0122 (expiry), T0123 (heartbeat/status), T0124 (real peer selection). Resume T0174 by wiring the UI to actual dispatch results and selected queued attempts, then verify the real Cancel click path with exact-head Android/.NET acceptance."
       },
       "execution_history": [
         {
@@ -45360,9 +45345,28 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Implement validated discovery/status and live Android request dispatch UI, then connect a real Cancel button to cancelSelectedHosts using the actual selected queued host attempts. Do not mark T0174 done before UI acceptance."
+        },
+        {
+          "attempt_id": "T0174-A017-discovery-prerequisite-review",
+          "started_at": "2026-11-01T09:30:00+03:30",
+          "ended_at": "2026-11-01T09:30:00+03:30",
+          "result": "blocked",
+          "summary": "Revalidated exact main V 3.0.739 production sources. Confirmed the current Android screen is preparation-only, the runtime requires independently validated HostCandidate snapshots, and the selector does not perform discovery. Added the missing T0124 -> T0174 contract/interface dependency and blocked the UI acceptance task until the upstream discovery/readiness chain is real.",
+          "changed_files": [
+            "step three/project-graph.md",
+            "step three/T0174/execution-report.md",
+            "step three/T0174/evidence/verification.md"
+          ],
+          "commit_sha": null,
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": "The production Android request screen has no live dispatch/discovery path. AndroidInferenceRequestRuntime requires HostCandidate snapshots from a separately validated discovery/status source; T0124 is the missing selection contract and remains not_started behind T0123/T0122. T0122 is itself blocked by T0121 pending production HTTPS rendezvous and independent-network reachability evidence.",
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Provide a production HTTPS rendezvous endpoint and an independent peer; complete external reachability validation for T0121, then complete T0122 (expiry), T0123 (heartbeat/status), T0124 (real peer selection). Resume T0174 by wiring the UI to actual dispatch results and selected queued attempts, then verify the real Cancel click path with exact-head Android/.NET acceptance."
         }
       ],
-      "updated_at": "2026-11-01T05:04:11.199Z"
+      "updated_at": "2026-11-01T09:30:00+03:30"
     },
     {
       "id": "T0175",
@@ -53077,6 +53081,25 @@
         "tests/HostLifecycle.Tests/PeerTrustStoreAcceptanceTests.cs",
         "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs"
       ]
+    },
+    {
+      "from": "T0124",
+      "to": "T0174",
+      "type": "blocks",
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "A live Cancel control cannot choose peers by announcement metadata alone. MainActivity currently exposes only a preparation preview and explicitly states that no network request is made. AndroidInferenceRequestRuntime requires caller-supplied HostCandidate snapshots from a separately validated discovery/status source; HostCandidateSelector only evaluates those snapshots and performs no discovery or network I/O; RendezvousPeerDirectoryClient resolves metadata-only announcements and addresses; the rendezvous service stores announcement metadata with expiry. T0124 supplies the missing selection contract based on reachability, READY status, capacity and model compatibility, which is required before the UI can dispatch to real selected attempts and call cancelSelectedHosts. The original edge label blocks is retained as the graph's ordering relation; the technical reason is recorded as a contract/interface dependency.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/RendezvousPeerDirectoryClient.kt",
+        "src/Rendezvous.Service/PeerAnnouncementDirectory.cs",
+        "protocol/whitep/v1/messages.proto",
+        "src/Client.Android/app/src/test/java/com/whitep/client/network/RendezvousPeerDirectoryClientTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt",
+        "step three/T0121/execution-report.md"
+      ]
     }
   ],
   "execution_order": [
@@ -57061,6 +57084,26 @@
         "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
         "protocol/whitep/v1/messages.proto",
         "step three/T0160/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-11-01T09:30:00+03:30",
+      "edge_from": "T0124",
+      "edge_to": "T0174",
+      "old_classification": "not_present",
+      "new_classification": "contract_or_interface_dependency",
+      "reason": "A live Cancel control cannot choose peers by announcement metadata alone. MainActivity currently exposes only a preparation preview and explicitly states that no network request is made. AndroidInferenceRequestRuntime requires caller-supplied HostCandidate snapshots from a separately validated discovery/status source; HostCandidateSelector only evaluates those snapshots and performs no discovery or network I/O; RendezvousPeerDirectoryClient resolves metadata-only announcements and addresses; the rendezvous service stores announcement metadata with expiry. T0124 supplies the missing selection contract based on reachability, READY status, capacity and model compatibility, which is required before the UI can dispatch to real selected attempts and call cancelSelectedHosts. The original edge label blocks is retained as the graph's ordering relation; the technical reason is recorded as a contract/interface dependency.",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/RendezvousPeerDirectoryClient.kt",
+        "src/Rendezvous.Service/PeerAnnouncementDirectory.cs",
+        "protocol/whitep/v1/messages.proto",
+        "src/Client.Android/app/src/test/java/com/whitep/client/network/RendezvousPeerDirectoryClientTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt",
+        "step three/T0121/execution-report.md"
       ],
       "reviewed_by": "Step Three execution review"
     }

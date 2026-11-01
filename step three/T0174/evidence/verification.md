@@ -154,3 +154,20 @@ The existing Android request screen is a prepare-only preview. It creates neithe
 - `AndroidInferenceRequestRuntime` requires caller-provided `HostCandidate` snapshots from a separately validated discovery/status source; it deliberately does not invent readiness from metadata-only rendezvous announcements.
 - No production Android call site invokes `dispatchRound` or `cancelSelectedHosts`.
 - Therefore the visible Cancel button acceptance criterion is still unmet; T0174 remains `in_progress`, despite passing Android↔native-.NET cancellation interoperability.
+
+
+## T0174-A017 — missing live discovery/readiness prerequisite
+
+Exact base inspected: `main` commit `211eae4cc7f33ae956e3d505ad2b5ba58104e9bf` (`V 3.0.739`).
+
+Source-backed findings:
+- `MainActivity.requestScreen` only invokes `prepareRequest`; its own copy says no request is sent. The Connections screen states peer discovery is unavailable.
+- `AndroidInferenceRequestRuntime` has real `dispatchRound` and `cancelSelectedHosts` APIs, but callers must supply `HostCandidate` values from a separately validated discovery/status source.
+- `HostCandidateSelector` validates supplied announcement/status snapshots, including READY state, freshness, capacity and model support; it expressly does not implement discovery or network I/O.
+- `RendezvousPeerDirectoryClient` fetches expiring announcement metadata and peer addresses only. The current rendezvous directory stores metadata; it does not provide a live HostStatus/heartbeat stream to the Android UI. `HostStatusRequest`/`HostStatus` being present in `messages.proto` and wire fixtures is not evidence of a production status-discovery call site.
+
+Dependency decision: added validated `T0124 → T0174` (`type: blocks`, classification `contract_or_interface_dependency`). The edge records that the live Cancel control consumes actual queued attempts from a real dispatch, and that dispatch requires candidates selected from independently validated reachability/readiness/capacity/model data. No existing edge was removed or reclassified. T0174 now has T0124 in `depends_on` and is `blocked` until this input contract exists.
+
+Upstream blocker: T0124 is not_started behind T0123 and T0115; T0123 is not_started behind T0122; T0122 is not_started behind T0121; T0121 is blocked because there is no deployed production HTTPS rendezvous endpoint and no independent-network peer to validate advertised reachability. These facts prevent safely presenting a live Cancel action tied to real selected attempts.
+
+Validation scope: this attempt was a source/graph audit only. No product implementation changed and no new test command was run. The existing V 3.0.739 product build and Step Three quality gate completed successfully on the exact base commit: [product](https://github.com/artinrahimii/project/actions/runs/41278700922), [quality](https://github.com/artinrahimii/project/actions/runs/41278700976). Those runs validate the base source/build and graph guard, not an Android UI cancellation click path.
