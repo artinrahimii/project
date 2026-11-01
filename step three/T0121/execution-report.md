@@ -263,3 +263,16 @@ Revalidated T0121 against the exact online main head V 3.0.607. The full graph B
 - **External acceptance — NOT RUN:** the repository tree contains no deployment descriptor or deployment workflow for a production Rendezvous endpoint, and no independently networked peer/production HTTPS endpoint was available in this execution. CI and loopback tests do not prove advertised public TCP/UDP reachability.
 - **Dependency outcome:** T0121 remains `blocked`; T0122 remains `not_started`. No product source or test code changed. This is exact-head CI evidence synchronization, not implementation progress.
 - **Next:** provision/deploy a production HTTPS Rendezvous endpoint and test the advertised host address from an independent network before re-evaluating T0121.
+
+
+## T0121-A026 — add deployable container and production smoke coverage (2026-11-01)
+
+- **Exact online baseline:** [`V 3.0.747`](https://github.com/artinrahimii/project/commit/3016440610e56682cc08a8800b9979bff019c136) (`3016440610e56682cc08a8800b9979bff019c136`).
+- **Implementation:** added `src/Rendezvous.Service/Dockerfile` (multi-stage .NET 10 publish, non-root UID/GID 10001, HTTP container port 8080), Dockerfile-specific build-context exclusions, and `docs/deployment/rendezvous-service.md`.
+- **Service change:** added `GET /healthz` returning a minimal `{ status: "ok" }` health response.
+- **Automated smoke coverage:** added `tests/rendezvous_container_smoke.py` and `.github/workflows/rendezvous-container.yml`. The workflow builds and starts the image, verifies its process is non-root, checks health, publishes a valid metadata announcement, discovers it by capability, and verifies expired/invalid metadata rejection.
+- **Operational constraint:** `PeerAnnouncementDirectory` is in-memory and singleton-scoped. Production must run one replica behind HTTPS termination. Multi-replica deployment is unsafe until a shared expiry-aware directory store is implemented. The container itself serves private HTTP; this commit does not create a public HTTPS endpoint.
+- **Validation at commit creation:** the container workflow is newly added and has not run on this commit yet. No test/build pass is claimed in advance.
+- **External acceptance:** public HTTPS deployment and advertised TCP/UDP/QUIC reachability from an independent peer remain **NOT RUN**. The smoke script uses synthetic metadata only and is not a reachability test.
+- **Outcome:** T0121 remains `blocked`; T0122 remains `not_started`. This attempt advances deployment readiness but does not complete the external acceptance criterion.
+- **Next:** verify the exact-commit container workflow, deploy a single replica behind a real HTTPS endpoint, configure both clients, and test authenticated reachability from a separate network.

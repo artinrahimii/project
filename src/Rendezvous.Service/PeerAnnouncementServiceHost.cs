@@ -27,6 +27,7 @@ public static class PeerAnnouncementServiceHost
         });
         builder.Services.AddSingleton<PeerAnnouncementDirectory>();
         var app = builder.Build();
+        app.MapGet("/healthz", static () => Results.Ok(new { status = "ok" }));
         app.MapPost("/v1/peers/announcements", HandleAnnouncement);
         app.MapGet("/v1/peers", HandleCapabilityDiscovery);
         return app;
