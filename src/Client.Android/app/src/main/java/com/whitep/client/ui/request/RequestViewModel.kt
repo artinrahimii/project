@@ -165,12 +165,12 @@ class RequestViewModel(
                     )
                 return
             }
-        if (!uri.isAbsolute
-            || uri.scheme?.lowercase() != "https"
-            || uri.host.isNullOrBlank()
-            || uri.userInfo != null
-            || uri.query != null
-            || uri.fragment != null
+        if (!uri.isAbsolute ||
+            uri.scheme?.lowercase() != "https" ||
+            uri.host.isNullOrBlank() ||
+            uri.userInfo != null ||
+            uri.query != null ||
+            uri.fragment != null
         ) {
             mutableNetworkState.value =
                 mutableNetworkState.value.copy(
@@ -199,7 +199,8 @@ class RequestViewModel(
                 mutableNetworkState.value =
                     mutableNetworkState.value.copy(
                         discoveredPeers = peers,
-                        message = if (peers.isEmpty()) {
+                        message =
+                            if (peers.isEmpty()) {
                             "The directory returned no unexpired direct TCP peers."
                         } else {
                             "Found ${peers.size} peer(s). None is trusted automatically."
@@ -236,7 +237,8 @@ class RequestViewModel(
                 gateway.trustPeerAfterExplicitConfirmation(peerId, explicitlyConfirmed = true)
                 mutableNetworkState.value =
                     mutableNetworkState.value.copy(
-                        discoveredPeers = mutableNetworkState.value.discoveredPeers.map { peer ->
+                        discoveredPeers =
+                            mutableNetworkState.value.discoveredPeers.map { peer ->
                             if (peer.peerId == peerId) peer.copy(isTrusted = true) else peer
                         },
                         message = "Peer trust saved. This host may receive prompts and context you send to it.",

@@ -256,3 +256,11 @@ The exact V 3.0.768 Android/Windows/HostLifecycle/Step Three/Rendezvous workflow
 - **Regression strengthening:** the existing injected-gateway ViewModel test now asserts the exact user-visible zero-host message and no-send outcome before trust, then asserts the exact one-of-three shortage message after explicit trust and dispatch. Existing dedicated feedback/dispatcher/discovery tests retain zero/one/two/three-host coverage.
 - **Task status:** `in_progress`. T0126 remains incomplete pending exact V 3.0.791 Android lint/build/JVM/Protobuf and quality-gate results. Public independent-network/two-device acceptance is the separate deferred T0128 and is not claimed here.
 - **Next:** inspect the exact V 3.0.791 workflow; record only checks that actually pass and fix any remaining failure.
+## T0126-A011 — exact V 3.0.791 formatting findings and V 3.0.792 correction
+
+- Exact tested commit: `05354729bf2a36aa3c45ed26ff0329fcd3fd3db7` (`V 3.0.791`).
+- Step Three graph/Python/syntax/evidence quality — PASS — [run 41336524524](https://github.com/artinrahimii/project/actions/runs/41336524524). HostLifecycle unit/integration — PASS — product [run 41336524479](https://github.com/artinrahimii/project/actions/runs/41336524479). Rendezvous production container/HTTP smoke — PASS — [run 41336524490](https://github.com/artinrahimii/project/actions/runs/41336524490).
+- Android test-source KtLint completed successfully, but main-source KtLint failed. The multiline HTTPS condition had operators at the start of following lines, contrary to this repository's rule requiring each `||` at the end of the previous line. Three `message`/`discoveredPeers` assignment right-hand expressions also needed to begin on a new line.
+- Android APK, JVM tests and generated Protobuf Java/Kotlin checks were skipped after main-source KtLint failed. No Android build or JVM test pass is claimed for V 3.0.791.
+- V 3.0.792 changes only those source-formatting layouts. The previously added zero-host no-send and one-host shortage ViewModel assertions remain unchanged.
+- T0126 remains `in_progress`; exact V 3.0.792 Android and full quality/product workflow results are pending.

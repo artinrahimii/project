@@ -211,3 +211,10 @@ The live acceptance gap remains: `MainActivity.requestScreen` is prepare-only, a
 - Exact V 3.0.790 Rendezvous production container and HTTP smoke — PASS — [run 41323436381](https://github.com/artinrahimii/project/actions/runs/41323436381).
 - Exact V 3.0.790 Android KtLint — FAIL: six formatting diagnostics in `RequestViewModel.kt`; APK build, JVM tests and generated Protobuf checks were skipped — [product run 41323436382](https://github.com/artinrahimii/project/actions/runs/41323436382).
 - V 3.0.791 corrects only the reported formatting and adds ViewModel assertions proving zero-host no-send feedback and one-host shortage feedback after explicit trust. Exact-head Android and quality validation are pending; no success is presumed.
+## Exact V 3.0.791 / A011 follow-up
+
+- Step Three quality gate — PASS — 41336524524.
+- HostLifecycle unit/integration — PASS — product run 41336524479.
+- Rendezvous production container build/HTTP smoke — PASS — 41336524490.
+- Android test-source KtLint completed, but main-source KtLint failed due to trailing-operator placement and three multiline assignment layout findings in `RequestViewModel.kt`. Android APK, JVM and generated Protobuf checks did not run.
+- V 3.0.792 corrects only these formatting findings; the exact-head Android checks remain pending.
