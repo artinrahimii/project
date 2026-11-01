@@ -46,3 +46,22 @@ The actual `MainActivity.requestScreen` still describes itself as a prepare-only
 ## Next
 
 Run exact-head Android lint/APK/JVM/Protobuf and Step Three quality CI. Fix any failures. Then revalidate the caller wiring against the actual request screen/discovery integration before setting T0126 to `done`.
+
+
+## T0126-A001 — exact V 3.0.767 CI result
+
+- **Commit:** `431d25136b0031523e4190cf3a5cb6660080112c` (`V 3.0.767`).
+- **Android KtLint:** passed.
+- **Android Debug APK:** `assembleDebug` passed.
+- **Android JVM:** failed at test-source compilation. `RequestViewModelTest.kt` referenced `HostSelectionFeedback` at lines 47, 58 and 69 without importing `com.whitep.client.requests.HostSelectionFeedback`. The JVM assertions did not execute; generated Protobuf Java/Kotlin verification was skipped.
+- **Step Three:** all 312 Python tests passed and Python syntax validation passed. The graph guard failed with `DONE_WITHOUT_TEST_FILE_EVIDENCE: T0125`, because the T0125 `evidence` list did not include a source path under `tests/` or `test/`. The existing T0001 unmapped-dependency metadata warning was preserved.
+- **Windows/HostLifecycle:** WPF build/startup/security/DPAPI checks and HostLifecycle unit/integration passed.
+- **Rendezvous:** container build and HTTP smoke passed.
+- **Outcome:** A001 is recorded as failed verification. No Android test assertion for T0126 is claimed as passed.
+
+## T0126-A002 — import and evidence repair
+
+- Added the missing `HostSelectionFeedback` import to `RequestViewModelTest.kt`.
+- Added `tests/test_android_host_candidate_selector_contract.py` and `tests/test_android_inference_attempt_dispatcher_contract.py` to T0125's graph evidence. These are the actual Python source-contract tests for the completed candidate selection and pre-send dispatch invariants.
+- No production runtime behaviour was changed in this correction.
+- Exact V 3.0.768 CI is pending. T0126 remains `in_progress`: the request screen still has no live production caller that obtains complete `HostAnnouncement` snapshots and invokes `selectReachableHostsWithFeedback`/dispatch. Conditional message rendering alone is not proof that a real user was notified.

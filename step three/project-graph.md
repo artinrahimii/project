@@ -27244,7 +27244,7 @@
         }
       ]
     },
-        {
+    {
       "id": "T0125",
       "title": "انتخاب سه میزبان را با سه هویت گرهٔ متمایز تضمین کن.",
       "section": "12. معماری P2P و کشف میزبان",
@@ -27281,7 +27281,9 @@
         "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceAttemptDispatcher.kt",
         "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt",
         "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt",
-        "step three/T0125/execution-report.md"
+        "step three/T0125/execution-report.md",
+        "tests/test_android_host_candidate_selector_contract.py",
+        "tests/test_android_inference_attempt_dispatcher_contract.py"
       ],
       "notes": "T0162 already supplied uniqueness for caller-provided candidates; T0124 now supplies the live reachability/readiness candidate list. Existing dispatch code independently rejects duplicate PeerIds and more than three hosts before any send. T0125 adds an explicit regression for exactly three distinct hosts through the live selector path and revalidates the dispatch boundary. This API remains fed by caller-supplied HostAnnouncement snapshots; it does not claim the Rendezvous HTTP directory or request UI is already wired to provide those snapshots.",
       "execution_summary": {
@@ -27369,7 +27371,7 @@
         }
       ]
     },
-        {
+    {
       "id": "T0126",
       "title": "وقتی کمتر از سه میزبان معتبر وجود دارد، رفتار تعریف‌شده را اجرا و کمبود را به کاربر اعلام کن.",
       "section": "12. معماری P2P و کشف میزبان",
@@ -27416,14 +27418,15 @@
         "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostSelectionFeedbackTest.kt",
         "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt",
         "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
-        "step three/T0126/evidence/verification.md"
+        "step three/T0126/evidence/verification.md",
+        "step three/T0125/execution-report.md"
       ],
-      "notes": "The expected Shared.Networking/Windows path is not the actual consumer in this repository: candidate selection and dispatch live in the Android app, and the user-facing request state/Compose screen lives under com.whitep.client.ui.request. Implement at those real boundaries. Policy: one or two validated hosts remain usable with an exact shortage warning; zero hosts is a no-send NO_SELECTED_HOSTS outcome. The MainActivity request screen is still a prepare-only preview and has no production caller for the new runtime feedback method; therefore keep this task in_progress until live discovery/dispatch feeds the UI. Do not claim a working end-to-end user notification yet.",
+      "notes": "The expected Shared.Networking/Windows path is not the actual consumer in this repository: candidate selection and dispatch live in the Android app, and the user-facing request state/Compose screen lives under com.whitep.client.ui.request. Implement at those real boundaries. Policy: one or two validated hosts remain usable with an exact shortage warning; zero hosts is a no-send NO_SELECTED_HOSTS outcome. The MainActivity request screen is still a prepare-only preview and has no production caller for the new runtime feedback method; therefore keep this task in_progress until live discovery/dispatch feeds the UI. Do not claim a working end-to-end user notification yet.\n\nT0126-A001 (2026-11-01): Exact V 3.0.767 CI was inspected. Android KtLint and assembleDebug passed; JVM test compilation failed because RequestViewModelTest.kt omitted the HostSelectionFeedback import, so T0126 unit assertions and generated Protobuf verification did not run. Step Three's 312 Python tests and syntax check passed, but graph_guard failed because completed T0125 evidence lacked a tests/ source path. Windows WPF, HostLifecycle and Rendezvous container smoke passed. A002 adds the missing import and records test-source evidence for T0125. T0126 remains in_progress until repaired exact-head tests pass and a real request UI caller feeds live selection feedback.",
       "execution_summary": {
-        "attempt_count": 1,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "T0126-A001-underfilled-host-selection-feedback",
-        "last_attempt_result": "partial",
+        "attempt_count": 2,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "T0126-A002-fix-import-and-evidence",
+        "last_attempt_result": "in_progress",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostSelectionFeedback.kt",
           "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
@@ -27433,11 +27436,17 @@
           "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt",
           "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
           "step three/T0126/execution-report.md",
-          "step three/T0126/evidence/verification.md"
+          "step three/T0126/evidence/verification.md",
+          "step three/project-graph.md"
         ],
-        "related_commits": [],
+        "related_commits": [
+          "431d25136b0031523e4190cf3a5cb6660080112c"
+        ],
         "tests_passed": [],
-        "tests_failed": [],
+        "tests_failed": [
+          "Exact V 3.0.767 Android JVM unit-test compilation failed at RequestViewModelTest.kt:47,58,69 because HostSelectionFeedback import was missing; tests and generated Protobuf verification did not run.",
+          "Exact V 3.0.767 Step Three graph guard failed with DONE_WITHOUT_TEST_FILE_EVIDENCE for T0125 because its evidence omitted test source paths; the 312 Python tests and syntax checks themselves passed."
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -27461,15 +27470,15 @@
             "step three/T0115/execution-report.md"
           ]
         },
-        "follow_up": "Inspect exact-head Android KtLint, APK, JVM, generated Protobuf and Step Three quality results. Fix any failures. Then connect selectReachableHostsWithFeedback and RequestViewModel.recordHostSelectionFeedback to a real request caller when the blocked T0174 request UI/discovery integration becomes executable. Do not mark T0126 done or claim live notification until that caller path is implemented and verified."
+        "follow_up": "Run exact-head V 3.0.768 CI after the import and T0125 evidence repairs. Then connect selectReachableHostsWithFeedback and recordHostSelectionFeedback to the real Android request caller; MainActivity.requestScreen remains prepare-only and the task must not be marked done until real user notification is wired and tested."
       },
       "execution_history": [
         {
           "attempt_id": "T0126-A001-underfilled-host-selection-feedback",
           "started_at": "2026-11-01T12:49:51.204Z",
-          "ended_at": null,
-          "result": "partial",
-          "summary": "Reviewed both incoming edges, preserved their blocks labels and validated T0125 as a contract/interface dependency and T0115 as sequencing-only. Added a typed post-probe host-count feedback result, a runtime wrapper, transient RequestViewModel feedback state, conditional Compose rendering, and tests for 0/1/2/3 hosts and partial/zero dispatch behaviour. Exact-head CI is pending. The request screen remains prepare-only and has no production caller for live host selection, so the task remains in_progress.",
+          "ended_at": "2026-11-01T12:55:53Z",
+          "result": "failed",
+          "summary": "Exact V 3.0.767 CI ran. Android KtLint and debug APK build passed, but JVM test compilation failed before running unit tests because RequestViewModelTest.kt referenced HostSelectionFeedback without importing com.whitep.client.requests.HostSelectionFeedback. Step Three's 312 Python tests and syntax check passed, but graph_guard failed because T0125 was marked done without any tests/ or test/ source path in its evidence. Windows WPF, HostLifecycle and Rendezvous container smoke passed. No T0126 unit-test assertion is claimed as run or passed.",
           "changed_files": [
             "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostSelectionFeedback.kt",
             "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
@@ -27481,46 +27490,75 @@
             "step three/T0126/execution-report.md",
             "step three/T0126/evidence/verification.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "431d25136b0031523e4190cf3a5cb6660080112c",
           "tests": [
             {
-              "name": "HostSelectionFeedbackTest — zero, one, two, three candidates and invalid count",
-              "result": "pending",
-              "summary": "Checks exact shortage messages and the zero-host no-dispatch decision."
+              "name": "Android main/test KtLint",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41308558286/job/124853943405"
             },
             {
-              "name": "InferenceAttemptDispatcherTest.continuesWithTwoAvailableDistinctHostsAndSubmitsBoth",
-              "result": "pending",
-              "summary": "Checks a two-host underfilled round still submits both valid hosts."
+              "name": "Android assembleDebug",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41308558286/job/124853943405"
             },
             {
-              "name": "InferenceAttemptDispatcherTest.continuesWithOneAvailableHostAndSubmitsIt",
-              "result": "pending",
-              "summary": "Checks a one-host underfilled round still submits that valid host."
+              "name": "Android JVM unit-test compilation",
+              "result": "failed",
+              "summary": "compileDebugUnitTestKotlin could not resolve HostSelectionFeedback in RequestViewModelTest.kt; test assertions and Protobuf verification were not run.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41308558286/job/124853943405"
             },
             {
-              "name": "InferenceAttemptDispatcherTest.rejectsZeroAvailableHostsWithoutSubmittingAnyRequest",
-              "result": "pending",
-              "summary": "Checks empty selection returns NO_SELECTED_HOSTS and does not call transport."
+              "name": "Step Three Python tests and syntax",
+              "result": "passed",
+              "summary": "312 Python tests passed and syntax check passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41308558249/job/124853943020"
             },
             {
-              "name": "RequestViewModelTest host shortage feedback tests",
-              "result": "pending",
-              "summary": "Checks the message reaches transient UI state without recording PeerIds."
+              "name": "Step Three graph guard",
+              "result": "failed",
+              "summary": "T0125 DONE_WITHOUT_TEST_FILE_EVIDENCE because its evidence array omitted tests/ test-source paths.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41308558249/job/124853943020"
             },
             {
-              "name": "Exact-head Android KtLint/APK/JVM/Protobuf and Step Three quality",
-              "result": "pending",
-              "summary": "Run on the versioned main commit after push."
+              "name": "Windows WPF and HostLifecycle",
+              "result": "passed",
+              "summary": "Windows build/startup/security/DPAPI and HostLifecycle passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41308558286"
+            },
+            {
+              "name": "Rendezvous container build/smoke",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41308558375"
             }
           ],
-          "failure_details": null,
+          "failure_details": "Android job 124853943405: compileDebugUnitTestKotlin failed at RequestViewModelTest.kt:47:47, :58:24 and :69:24 with unresolved reference HostSelectionFeedback. Step Three job 124853943020: graph guard reported DONE_WITHOUT_TEST_FILE_EVIDENCE for T0125. All 312 Python tests passed; graph structure guard returned 1 error and 1 pre-existing T0001 metadata warning.",
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [
             "Added HostSelectionFeedback and HostSelectionResult; exposed selectReachableHostsWithFeedback; added transient UI feedback state and conditional Compose text."
           ],
           "follow_up": "Inspect exact-head CI and then wire the feedback producer into the real request flow when production discovery/request UI integration is available."
+        },
+        {
+          "attempt_id": "T0126-A002-fix-import-and-evidence",
+          "started_at": "2026-11-01T13:03:46.783Z",
+          "ended_at": null,
+          "result": "in_progress",
+          "summary": "Corrected the exact Android JVM compilation issue by importing HostSelectionFeedback in RequestViewModelTest.kt. Updated T0125 evidence with its two Python test-source paths to satisfy graph_guard's DONE_WITHOUT_TEST_FILE_EVIDENCE invariant. Exact-head CI for the repair is pending. T0126 remains in_progress because the production request screen still has no caller that supplies live HostAnnouncement snapshots and invokes selectReachableHostsWithFeedback/dispatch; no end-to-end notification claim is made.",
+          "changed_files": [
+            "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
+            "step three/T0126/execution-report.md",
+            "step three/T0126/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect exact V 3.0.768 Android KtLint/APK/JVM/Protobuf and Step Three quality results. If those pass, continue wiring the feedback producer into the real discovery/request caller; the prepare-only screen is not acceptance."
         }
       ]
     },
@@ -52383,7 +52421,7 @@
         "step three/T0115/execution-report.md"
       ]
     },
-        {
+    {
       "from": "T0125",
       "to": "T0126",
       "type": "blocks",
@@ -52397,7 +52435,7 @@
         "step three/T0125/execution-report.md"
       ]
     },
-        {
+    {
       "from": "T0115",
       "to": "T0126",
       "type": "blocks",
@@ -58816,7 +58854,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-11-01T12:26:00Z",
+  "updated_at": "2026-11-01T13:03:46.783Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",
