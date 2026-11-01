@@ -27016,23 +27016,33 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0123 و T0115 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
         "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
-        "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt"
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt",
+        "step three/T0124/execution-report.md"
       ],
       "expected_output_paths": [
         "src/Shared.Networking/ یا src/Host.Windows/Networking/ + tests/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود. T0162 already provides deterministic selection over caller-supplied snapshots. T0124 extends that existing Android selection path with live authenticated reachability probing; it does not duplicate T0162 or change its scope.",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt",
+        "tests/test_android_host_candidate_selector_contract.py",
+        "step three/T0124/execution-report.md",
+        "https://github.com/artinrahimii/project/actions/runs/41305839553",
+        "https://github.com/artinrahimii/project/actions/runs/41305839501",
+        "https://github.com/artinrahimii/project/actions/runs/41305839606"
+      ],
+      "notes": "T0162 already supplies deterministic selection over caller-provided HostAnnouncement/HostStatus snapshots. T0124 completes the missing online reachability stage in the Android request runtime: it filters static announcement compatibility before probing, obtains fresh authenticated HostStatus through T0123, and selects only READY peers with remaining advertised concurrency and matching model/output capability. The implementation is located in the Android app because that is the existing consumer of the libp2p transport. Scope boundary: the caller must supply validated HostAnnouncement capability snapshots; the current Rendezvous HTTP directory still publishes routing metadata rather than the full model/capacity snapshot, the request UI is not yet wired to this method (tracked separately), and no independent public-Internet reachability is claimed.",
       "execution_summary": {
         "attempt_count": 3,
         "failed_attempt_count": 2,
         "last_attempt_id": "T0124-A003-ktlint-size-chain-format",
-        "last_attempt_result": "in_progress",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
           "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
@@ -27042,13 +27052,22 @@
         ],
         "related_commits": [
           "910ef405225cede0292303d369a02dfd776023cc",
-          "2ad34f147a0517736f62893a52b0083f45ebb469"
+          "2ad34f147a0517736f62893a52b0083f45ebb469",
+          "8e949a2733731af0d96035e8cecda7f21536fb2f"
         ],
         "tests_passed": [
           "Exact V 3.0.763 Step Three quality gate — PASS — https://github.com/artinrahimii/project/actions/runs/41305547585",
           "Exact V 3.0.763 Rendezvous container build/smoke — PASS — https://github.com/artinrahimii/project/actions/runs/41305547544",
           "Exact V 3.0.763 HostLifecycle suite — PASS — https://github.com/artinrahimii/project/actions/runs/41305547591",
-          "Exact V 3.0.763 Android .NET peer interop fixture — PASS — https://github.com/artinrahimii/project/actions/runs/41305547591"
+          "Exact V 3.0.763 Android .NET peer interop fixture — PASS — https://github.com/artinrahimii/project/actions/runs/41305547591",
+          "Exact V 3.0.764 Step Three quality gate — PASS — https://github.com/artinrahimii/project/actions/runs/41305839501",
+          "Exact V 3.0.764 Android main/test KtLint — PASS — https://github.com/artinrahimii/project/actions/runs/41305839553",
+          "Exact V 3.0.764 Android debug APK and artifact upload — PASS — https://github.com/artinrahimii/project/actions/runs/41305839553",
+          "Exact V 3.0.764 Android JVM testDebugUnitTest, including selectReachable tests — PASS — https://github.com/artinrahimii/project/actions/runs/41305839553",
+          "Exact V 3.0.764 generated Protobuf Java/Kotlin verification — PASS — https://github.com/artinrahimii/project/actions/runs/41305839553",
+          "Exact V 3.0.764 HostLifecycle unit/integration — PASS — https://github.com/artinrahimii/project/actions/runs/41305839553",
+          "Exact V 3.0.764 Windows WPF build/startup/security/DPAPI — PASS — https://github.com/artinrahimii/project/actions/runs/41305839553",
+          "Exact V 3.0.764 Rendezvous container build/HTTP smoke — PASS — https://github.com/artinrahimii/project/actions/runs/41305839606"
         ],
         "tests_failed": [
           "Exact V 3.0.762 Step Three quality gate — FAILED one source-contract test because refactored source no longer contained status.activeRequests >= capabilities.maxConcurrentRequests — https://github.com/artinrahimii/project/actions/runs/41305388502",
@@ -27075,7 +27094,7 @@
             "step three/T0162/execution-report.md"
           ]
         },
-        "follow_up": "Run exact-head Step Three gate, Android main/test KtLint, debug APK and JVM selector/live-status tests, generated Protobuf check, HostLifecycle, Windows WPF and Rendezvous smoke."
+        "follow_up": "T0124 is complete for the Android selection contract: callers provide validated HostAnnouncement capability snapshots, and the runtime obtains fresh authenticated HostStatus from the peer transport before selecting. The Rendezvous directory still publishes route metadata rather than complete HostAnnouncement/model-capability snapshots, and the request UI is not yet wired to this API; retain those as separate discovery/UI integration work and do not claim public reachability beyond the authenticated direct probe."
       },
       "execution_history": [
         {
@@ -27159,21 +27178,70 @@
         {
           "attempt_id": "T0124-A003-ktlint-size-chain-format",
           "started_at": "2026-11-01T12:16:10Z",
-          "ended_at": null,
-          "result": "in_progress",
-          "summary": "Reformatted prompt/capsule byte-size calculations using intermediate byte-array and ByteString size variables, matching the established KtLint-compatible style already used in HostCandidateSelector. No selection semantics changed. Exact-head CI is pending.",
+          "ended_at": "2026-11-01T12:22:11Z",
+          "result": "succeeded",
+          "summary": "The exact V 3.0.764 CI passed all required checks: Step Three graph/source-contract quality, Android main/test KtLint, Android debug APK compilation, Android JVM unit tests (including all three new selectReachable selector tests), generated Protobuf Java/Kotlin verification and APK artifact upload; HostLifecycle unit/integration, Windows WPF build/startup/security/DPAPI and Rendezvous container build/smoke also passed. The prompt/capsule size calculation formatting correction did not change behavior.",
           "changed_files": [
             "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
             "step three/T0124/execution-report.md",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
-          "tests": [],
+          "commit_sha": "8e949a2733731af0d96035e8cecda7f21536fb2f",
+          "tests": [
+            {
+              "name": "Step Three quality gate — exact V 3.0.764",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41305839501",
+              "summary": "The full Step Three graph/Python source-contract quality workflow completed successfully."
+            },
+            {
+              "name": "Android production and test KtLint — exact V 3.0.764",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41305839553",
+              "summary": "Both main and test Kotlin source-set lint checks passed."
+            },
+            {
+              "name": "Android debug APK — exact V 3.0.764",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41305839553",
+              "summary": "The debug APK assembled successfully and the APK artifact was uploaded."
+            },
+            {
+              "name": "Android JVM unit tests — exact V 3.0.764",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41305839553",
+              "summary": "The testDebugUnitTest Gradle task completed successfully, including the three new selectReachable tests for failed/unreachable or unready/full/incompatible peers, duplicate IDs/exclusions and cancellation propagation."
+            },
+            {
+              "name": "Generated Protobuf Java/Kotlin verification — exact V 3.0.764",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41305839553",
+              "summary": "Generated Java and Kotlin protobuf sources were verified against the canonical schema."
+            },
+            {
+              "name": "HostLifecycle unit/integration — exact V 3.0.764",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41305839553",
+              "summary": "The complete HostLifecycle test job passed."
+            },
+            {
+              "name": "Windows WPF build/startup/security/DPAPI — exact V 3.0.764",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41305839553",
+              "summary": "The WPF build, generated Protobuf checks, startup, process/policy/capability gates, DPAPI identity/trust checks and artifact upload passed."
+            },
+            {
+              "name": "Rendezvous container build/smoke — exact V 3.0.764",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41305839606",
+              "summary": "Production container build and HTTP smoke completed successfully."
+            }
+          ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Run exact-head Step Three gate, Android main/test KtLint, debug APK and JVM selector/live-status tests, generated Protobuf check, HostLifecycle, Windows WPF and Rendezvous smoke."
+          "follow_up": "T0124 is complete for the Android selection contract: callers provide validated HostAnnouncement capability snapshots, and the runtime obtains fresh authenticated HostStatus from the peer transport before selecting. The Rendezvous directory still publishes route metadata rather than complete HostAnnouncement/model-capability snapshots, and the request UI is not yet wired to this API; retain those as separate discovery/UI integration work and do not claim public reachability beyond the authenticated direct probe."
         }
       ]
     },
@@ -58543,7 +58611,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-11-01T12:16:10Z",
+  "updated_at": "2026-11-01T12:22:11Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

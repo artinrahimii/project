@@ -51,3 +51,17 @@
 - **Base:** exact online `main` commit `2ad34f147a0517736f62893a52b0083f45ebb469` (`V 3.0.763`).
 - **Change:** replaced the two KtLint-rejected chained size conversions with explicit prompt byte-array and capsule size intermediates. The comparisons and accepted byte limits remain unchanged.
 - **Validation:** exact-head CI is pending; no APK/JVM pass is claimed for A003 yet.
+
+
+## T0124-A003 — exact V 3.0.764 acceptance result
+
+- **Commit:** `8e949a2733731af0d96035e8cecda7f21536fb2f`.
+- **Passed:** [Step Three quality gate 41305839501](https://github.com/artinrahimii/project/actions/runs/41305839501); [Rendezvous container build/smoke 41305839606](https://github.com/artinrahimii/project/actions/runs/41305839606); the complete [White-P product build 41305839553](https://github.com/artinrahimii/project/actions/runs/41305839553).
+- **Android:** production/test KtLint passed; debug APK assembled; `testDebugUnitTest` passed, including:
+  - `selectReachableProbesOnlyCompatiblePeersAndSkipsUnreachableBusyFullAndUnsupportedHosts`;
+  - `selectReachableRejectsDuplicatePeerIdsBeforeProbingAndHonorsExclusions`;
+  - `selectReachablePropagatesCoroutineCancellation`.
+  Generated Protobuf Java/Kotlin source verification and APK artifact upload also passed.
+- **Windows/.NET:** HostLifecycle integration tests, WPF build, generated Protobuf C# verification, startup, process/policy/capability restrictions, DPAPI identity/trust checks and artifact upload passed.
+- **Final result:** T0124 is `done`. The two earlier failures remain preserved in A001/A002 history; A003 succeeded and did not change selection semantics.
+- **Scope boundary:** the API accepts validated `HostAnnouncement` capability snapshots and obtains live authenticated `HostStatus` through T0123 before selecting. The current Rendezvous HTTP directory still exposes routing metadata, not the complete model/capacity snapshot, and the request UI is not yet wired to this method. This result does not claim independent public-Internet reachability or a user-visible end-to-end dispatch path.
