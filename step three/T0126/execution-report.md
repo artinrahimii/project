@@ -286,3 +286,13 @@ The exact V 3.0.768 Android/Windows/HostLifecycle/Step Three/Rendezvous workflow
 - Source review found `android.content.Context` was referenced only by the obsolete type argument; the import is removed and the call is changed to `RuntimeEnvironment.getApplication()`.
 - V 3.0.795 contains this one-line test fix plus import cleanup; no production/runtime behavior changes.
 - T0126 remains `in_progress` pending exact-head Android JVM/Protobuf and complete quality/product verification.
+
+## T0126-A013 — Robolectric SDK 36 CI runtime correction
+
+- **Exact tested commit:** `1bce3002194fddc58c5c43d901ca16f3b4df232e` (`V 3.0.795`).
+- **Android production/test KtLint — PASS.** **Android debug APK (`assembleDebug`) — PASS.** The Android JVM task started and compiled the test sources.
+- **Android JVM tests — FAIL:** Gradle reported 170 tests completed and one class-level failure, `RequestViewModelTest > classMethod`. The uploaded report (artifact `13095829017`) identifies the cause as `Android SDK 36 requires Java 21 (have Java 17)` while Robolectric creates its sandbox. This is an execution-environment mismatch; the suite is not recorded as passing. The generated Protobuf Java/Kotlin verification step was skipped after the failing JVM step.
+- **Other exact-head checks — PASS:** Windows WPF Release build/startup/security/DPAPI and artifact upload; HostLifecycle unit/integration; Step Three quality gate; Rendezvous production container build and HTTP smoke.
+- **Correction:** `.github/workflows/product-build.yml` configured Temurin Java 17 for the Android job while installing Android platform 36. Updated that job to Temurin Java 21, which meets Robolectric's explicit SDK 36 runtime requirement. No production application code or protocol contract was changed by this correction.
+- **Evidence:** product workflow [run 41337879854](https://github.com/artinrahimii/project/actions/runs/41337879854); Android job [124941456124](https://github.com/artinrahimii/project/actions/runs/41337879854/jobs/124941456124); uploaded test report [artifact 13095829017](https://github.com/artinrahimii/project/actions/runs/41337879854/artifacts/13095829017); quality [run 41337880021](https://github.com/artinrahimii/project/actions/runs/41337880021); Rendezvous [run 41337879911](https://github.com/artinrahimii/project/actions/runs/41337879911).
+- **Result:** partial. T0126 remains `in_progress`; rerun the exact-head Android KtLint, APK, complete JVM suite and generated Protobuf Java/Kotlin checks on the corrected Java 21 workflow before considering acceptance.

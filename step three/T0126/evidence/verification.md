@@ -237,3 +237,12 @@ The live acceptance gap remains: `MainActivity.requestScreen` is prepare-only, a
 - Android JVM test compilation — FAIL at RequestViewModelTest.kt:239:56 because the type argument is invalid for the non-generic Robolectric `RuntimeEnvironment.getApplication()` method; the tests and generated Protobuf Java/Kotlin verification did not run.
 - Windows WPF build/security/DPAPI/artifact upload, HostLifecycle, Rendezvous container/HTTP smoke and Step Three quality — PASS.
 - V 3.0.795 removes the obsolete Context type argument and its now-unused import. Exact-head verification is pending.
+
+## Exact V 3.0.795 / T0126-A013 CI environment finding
+
+- Android production/test KtLint — PASS; Android debug APK — PASS.
+- Android JVM task — FAIL: 170 tests completed, one class-level `RequestViewModelTest > classMethod` failure. Robolectric reports: `Android SDK 36 requires Java 21 (have Java 17)`. This occurs before the test class is initialized, so it does not establish a failing request-flow assertion. The full JVM suite is not accepted as passing.
+- Generated Android Protobuf Java/Kotlin verification — skipped after the JVM step failed.
+- Windows WPF, HostLifecycle, Step Three quality gate and Rendezvous container/HTTP smoke — PASS.
+- Exact evidence: product run 41337879854, Android job 124941456124, test-report artifact 13095829017.
+- Corrective CI change: use Temurin Java 21 for the Android job in `.github/workflows/product-build.yml`. Exact-head rerun remains required; T0126 is still `in_progress`.
