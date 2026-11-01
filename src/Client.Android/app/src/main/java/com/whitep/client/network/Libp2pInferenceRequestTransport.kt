@@ -314,12 +314,14 @@ class Libp2pInferenceRequestTransport(
                 continue
             }
 
-            val cancelWire = CancelRequest.newBuilder()
-                .setRequestId(requestId)
-                .setAttemptId(attemptId)
-                .setReason(USER_CANCELLATION_REASON)
-                .build()
-                .toByteArray()
+            val cancelWire =
+                CancelRequest
+                    .newBuilder()
+                    .setRequestId(requestId)
+                    .setAttemptId(attemptId)
+                    .setReason(USER_CANCELLATION_REASON)
+                    .build()
+                    .toByteArray()
             results[attemptId] =
                 try {
                     if (cancelWire.size > PeerMessageFrameCodec.DEFAULT_MAXIMUM_MESSAGE_BYTES) {

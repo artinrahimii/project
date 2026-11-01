@@ -44749,9 +44749,9 @@
       ],
       "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0174-A001 (2026-11-01): Added bounded CancelRequest parsing/validation with an explicit user_cancelled reason; Android authenticated-stream cancellation for each queued attempt and per-attempt results; Windows bounded concurrent request handling so the receive loop can accept a cancellation frame and signal only the matching (requestId, attemptId) token; correlated deadline-bounded CANCELLED response; Android two-peer transport test; Windows trusted-loopback end-to-end cancellation test; protocol negative tests. The existing Android request screen remains preparation-only and has no live dispatch/discovery state, so no fake Cancel button was added. Keep in_progress pending exact-head CI and later real UI wiring.\nT0174-A002 (2026-11-01): Exact-head V 3.0.732 Step Three quality gate failed one obsolete source-contract assertion expecting the former inline _requestHandler(requestWire, cancellationToken) call. The production implementation had deliberately moved handler execution to ProcessRequestAndRespondAsync to keep the receive loop available for CancelRequest. T0174-A003 updates the Python source guard to assert concurrent handler dispatch, exact request/attempt cancellation lookup, bounded parser and allowlisted reason. Product build and real-inference workflow for V 3.0.732 were still running when this correction was recorded.",
       "execution_summary": {
-        "attempt_count": 5,
-        "failed_attempt_count": 2,
-        "last_attempt_id": "T0174-A005",
+        "attempt_count": 7,
+        "failed_attempt_count": 3,
+        "last_attempt_id": "T0174-A007",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Host.Infrastructure/ProtocolMessageParser.cs",
@@ -44768,16 +44768,21 @@
           "tests/test_host_content_visibility.py"
         ],
         "related_commits": [
-          "657f0ef5669b63991ed708ed92e125f171616ca3"
+          "657f0ef5669b63991ed708ed92e125f171616ca3",
+          "d334a5f509994f08ef54da077bce14f0a66b978c"
         ],
         "tests_passed": [
           "Windows WPF Release build/startup/security checks — PASS on exact V 3.0.732: https://github.com/artinrahimii/project/actions/runs/41271523252/job/124745099788",
           "HostLifecycle unit and integration tests, including the trusted loopback peer test — PASS on exact V 3.0.732: https://github.com/artinrahimii/project/actions/runs/41271523252/job/124745100081",
-          "Real local llama.cpp/GGUF inference integration — PASS on exact V 3.0.732: https://github.com/artinrahimii/project/actions/runs/41271523283"
+          "Real local llama.cpp/GGUF inference integration — PASS on exact V 3.0.732: https://github.com/artinrahimii/project/actions/runs/41271523283",
+          "Step Three quality gate — PASS on exact V 3.0.733: https://github.com/artinrahimii/project/actions/runs/41271856045",
+          "Windows WPF Release build/startup/security checks — PASS on exact V 3.0.733: https://github.com/artinrahimii/project/actions/runs/41271856082/job/124746076851",
+          "HostLifecycle unit and integration tests — PASS on exact V 3.0.733: https://github.com/artinrahimii/project/actions/runs/41271856082/job/124746076793"
         ],
         "tests_failed": [
           "V 3.0.732 Step Three quality gate: one obsolete HostContentVisibilityTests assertion expected the old inline _requestHandler call; corrected in T0174-A003.",
-          "V 3.0.732 Android KtLint: import ordering and two chained-call newline violations in Libp2pInferenceRequestTransportTest.kt; corrected in T0174-A005."
+          "V 3.0.732 Android KtLint: import ordering and two chained-call newline violations in Libp2pInferenceRequestTransportTest.kt; corrected in T0174-A005.",
+          "V 3.0.733 Android KtLint failed on five formatting findings in the newly added cancelAttempts/cancelSelectedHosts source: one chained protobuf builder continuation and multiline-expression continuation/layout in both runtime and transport. APK/JVM/Protobuf stages were skipped; corrected in T0174-A007."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -44969,6 +44974,66 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Run V 3.0.733 exact-head quality/product workflows and resolve any remaining compile or acceptance failures. T0174 remains in_progress until real Cancel control integration exists."
+        },
+        {
+          "attempt_id": "T0174-A006",
+          "started_at": "2026-11-01T04:08:53Z",
+          "ended_at": "2026-11-01T04:09:05Z",
+          "result": "failed",
+          "summary": "Exact-head V 3.0.733 Android KtLint failed main source-set formatting in Libp2pInferenceRequestTransport.kt and AndroidInferenceRequestRuntime.kt. The lint stage stopped before APK, JVM unit tests and generated Protobuf validation.",
+          "changed_files": [],
+          "commit_sha": "d334a5f509994f08ef54da077bce14f0a66b978c",
+          "tests": [
+            {
+              "name": "Android ktlintMainSourceSetCheck",
+              "result": "failed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41271856082",
+              "summary": "One leading-dot/multiline builder finding in cancelAttempts and multiline expression formatting in cancelSelectedHosts."
+            }
+          ],
+          "failure_details": "KtLint reported 5 style findings at Libp2pInferenceRequestTransport.kt:317 and AndroidInferenceRequestRuntime.kt:271, 274 and 284; no Android test result was produced.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Reformat the CancelRequest builder, queued-attempt filter, cancelAttempts invocation and per-attempt boolean expression, then rerun exact Android checks."
+        },
+        {
+          "attempt_id": "T0174-A007",
+          "started_at": "2026-11-01T04:10:34.704Z",
+          "ended_at": "2026-11-01T04:10:34.704Z",
+          "result": "partial",
+          "summary": "Reformatted the CancelRequest builder chain and all multiline expressions in AndroidInferenceRequestRuntime.cancelSelectedHosts to KtLint's required leading-dot and continuation style. No behavioral change. Exact-head KtLint, APK, JVM and Protobuf checks remain pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
+            "step three/T0174/execution-report.md",
+            "step three/T0174/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Android ktlintMainSourceSetCheck",
+              "result": "pending"
+            },
+            {
+              "name": "Android assembleDebug",
+              "result": "pending"
+            },
+            {
+              "name": "Android testDebugUnitTest",
+              "result": "pending"
+            },
+            {
+              "name": "Generated Protobuf Java/Kotlin",
+              "result": "pending"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Run exact-head V 3.0.734 CI. Fix any compile or regression-test failures; keep T0174 in_progress until actual Cancel control is integrated into a live dispatch screen."
         }
       ]
     },
@@ -56673,7 +56738,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-11-01T04:06:15.624Z",
+  "updated_at": "2026-11-01T04:10:34.704Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

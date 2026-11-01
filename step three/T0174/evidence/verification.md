@@ -56,3 +56,12 @@ The current `MainActivity.requestScreen` is a preparation-only preview and expli
 - The APK build, JVM tests and generated Protobuf validation were skipped because lint failed first.
 - T0174-A005 reorders the full import list and adjusts both call-chain continuation layouts. No runtime behavior changed. The exact V 3.0.733 Android workflow will verify the correction.
 - Independent checks on V 3.0.732 succeeded: Windows WPF [job 124745099788](https://github.com/artinrahimii/project/actions/runs/41271523252/job/124745099788), HostLifecycle [job 124745100081](https://github.com/artinrahimii/project/actions/runs/41271523252/job/124745100081), real local inference [run 41271523283](https://github.com/artinrahimii/project/actions/runs/41271523283).
+
+
+## Android production-source KtLint correction (append-only)
+
+- Exact V 3.0.733 Android product job: [124746076534](https://github.com/artinrahimii/project/actions/runs/41271856082/job/124746076534).
+- Findings: `Libp2pInferenceRequestTransport.kt:317` required the CancelRequest builder expression and leading-dot chain on continuation lines. `AndroidInferenceRequestRuntime.kt:271, 274, 284` required multiline expression formatting for the queued-attempt filter, transport cancellation invocation and per-attempt boolean.
+- Android APK/JVM/Protobuf validation was skipped because main-source-set KtLint failed first.
+- T0174-A007 adjusts exactly these expression layouts without changing cancellation behavior. The new exact-head Android workflow must still confirm formatting, build, JVM regressions and generated-source checks.
+- On exact V 3.0.733, Step Three quality, Windows WPF build/startup/security and HostLifecycle integration passed: [quality](https://github.com/artinrahimii/project/actions/runs/41271856045), [Windows](https://github.com/artinrahimii/project/actions/runs/41271856082/job/124746076851), [HostLifecycle](https://github.com/artinrahimii/project/actions/runs/41271856082/job/124746076793).

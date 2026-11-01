@@ -77,3 +77,12 @@ No UI placeholder, mock dispatch, or fabricated selected-host list was introduce
 - Android KtLint failed before APK/JVM/Protobuf stages on three style findings in `Libp2pInferenceRequestTransportTest.kt`: import ordering and two chained-call continuation lines. No Android test result is claimed for this attempt.
 - T0174-A005 sorts the imports and adjusts both method-chain layouts; exact-head Android CI is pending.
 - T0174 remains open because the Android request screen still has no live dispatch/discovery state and no real user-facing Cancel button.
+
+
+## Third exact-head CI correction
+
+- Exact V 3.0.733 Step Three quality gate: PASS — [run 41271856045](https://github.com/artinrahimii/project/actions/runs/41271856045).
+- Exact V 3.0.733 Windows WPF build/startup/security: PASS — [job 124746076851](https://github.com/artinrahimii/project/actions/runs/41271856082/job/124746076851).
+- Exact V 3.0.733 HostLifecycle unit/integration: PASS — [job 124746076793](https://github.com/artinrahimii/project/actions/runs/41271856082/job/124746076793).
+- Android KtLint stopped on five formatting findings in the two new production Kotlin cancellation methods; no APK/JVM/Protobuf result was produced. The findings are recorded as T0174-A006.
+- T0174-A007 reformats the CancelRequest builder, queued-attempt filter, cancellation call and boolean expression to the exact leading-dot/multiline style. Exact-head Android validation is pending.

@@ -268,21 +268,24 @@ class AndroidInferenceRequestRuntime private constructor(
             "Every selected host must have a non-blank peer identity."
         }
 
-        val queuedAttempts = selectedAttempts.filter {
-            it.submissionStatus == InferenceAttemptSubmissionStatus.QUEUED
-        }
-        val sentByAttempt = transport.cancelAttempts(
-            requestId = requestId,
-            attemptIds = queuedAttempts.map { it.attemptId },
-        )
+        val queuedAttempts =
+            selectedAttempts.filter {
+                it.submissionStatus == InferenceAttemptSubmissionStatus.QUEUED
+            }
+        val sentByAttempt =
+            transport.cancelAttempts(
+                requestId = requestId,
+                attemptIds = queuedAttempts.map { it.attemptId },
+            )
 
         return selectedAttempts.map { attempt ->
             InferenceAttemptCancellationResult(
                 requestId = requestId,
                 attemptId = attempt.attemptId,
                 ephemeralHostId = attempt.ephemeralHostId,
-                cancellationSent = attempt.submissionStatus == InferenceAttemptSubmissionStatus.QUEUED &&
-                    sentByAttempt[attempt.attemptId] == true,
+                cancellationSent =
+                    attempt.submissionStatus == InferenceAttemptSubmissionStatus.QUEUED &&
+                        sentByAttempt[attempt.attemptId] == true,
             )
         }
     }
