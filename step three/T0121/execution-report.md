@@ -237,3 +237,17 @@ Revalidated T0121 against the exact online main head V 3.0.607. The full graph B
 - **Dependency review:** existing validated edges `T0120 → T0121`, `T0115 → T0121`, and `T0121 → T0122` were preserved. No edge was changed. T0122 remains `not_started` until T0121's external lease/reachability acceptance is completed.
 - **Outcome:** T0121 remains `blocked`; attempt count is now 23. No product source or test code changed; no implementation-progress credit is added. This attempt records exact-head CI evidence only.
 - **Next:** provide/deploy the production HTTPS rendezvous endpoint and run advertised TCP/UDP reachability acceptance from a peer on an independent network before re-evaluating T0121.
+
+
+## T0121-A024 — exact V 3.0.745 CI passed; independent-network acceptance remains blocked (2026-11-01)
+
+- **Exact online baseline:** [`V 3.0.745`](https://github.com/artinrahimii/project/commit/279795f1d1bcb2cd6fbeff0181ab1e1c2104ddd4) (`279795f1d1bcb2cd6fbeff0181ab1e1c2104ddd4`).
+- **Graph integrity:** exact commit tree `aa702e7b3a5c584cbb222df368e188d6d7706ac6` identifies `step three/project-graph.md` as Blob `1ac2bdcc62693eff794a68e57dbb1985c353100b`; the complete Blob was recovered after the ordinary file fetch returned empty. The original content is 3,564,656 UTF-8 bytes (3,440,993 text characters), its recomputed Git Blob SHA-1 matches, and the complete fenced JSON parses as 229 nodes / 418 edges with no duplicate task IDs or unresolved edge references.
+- **Exact-head Step Three quality gate — PASS:** [run 41284224821](https://github.com/artinrahimii/project/actions/runs/41284224821); automated tests, Python syntax, graph structure, and recorded evidence/output validation all succeeded.
+- **Exact-head HostLifecycle unit/integration — PASS:** [job 124782140148](https://github.com/artinrahimii/project/actions/runs/41284224801/job/124782140148); lifecycle test steps completed successfully.
+- **Exact-head Windows WPF — PASS:** [job 124782140161](https://github.com/artinrahimii/project/actions/runs/41284224801/job/124782140161); formatting, host build, Protobuf, WPF startup smoke, agent-tool policy/process/capability checks, DPAPI identity/trust storage, and artifact upload all succeeded.
+- **Exact-head Android — PASS:** [job 124782140230](https://github.com/artinrahimii/project/actions/runs/41284224801/job/124782140230); Kotlin lint, APK build, JVM tests, peer interoperability fixture, Protobuf verification, and artifact upload all succeeded.
+- **Independent-network acceptance — NOT RUN:** no deployed production HTTPS rendezvous endpoint or peer on an independent network was available. CI and loopback integration do not establish advertised public TCP/UDP reachability.
+- **Dependency review:** the validated edges `T0120 → T0121`, `T0115 → T0121`, and `T0121 → T0122` remain unchanged. The first and third are contract/interface dependencies; the second is sequencing-only.
+- **Outcome:** `T0121` remains `blocked`; `T0122` remains `not_started`. No product source, tests, or dependency edges changed. This is exact-head CI evidence synchronization, not implementation progress.
+- **Next:** deploy/configure a production HTTPS rendezvous endpoint and run advertised TCP/UDP reachability acceptance from a peer on a separate network before re-evaluating `T0121`.
