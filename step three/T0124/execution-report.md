@@ -21,3 +21,18 @@
 - Source-level diff review completed against the exact V 3.0.761 tree; changes are restricted to the selector, Android runtime composition root, selector JVM tests, this report and the graph.
 - Exact-head KtLint, APK build, JVM tests and product regression workflows are pending. No acceptance test is yet claimed as passed for A001.
 - **Task state:** `in_progress` until those exact-head workflows pass.
+
+
+## T0124-A001 — exact V 3.0.762 quality-gate result
+
+- **Commit:** `910ef405225cede0292303d369a02dfd776023cc`.
+- **Failed gate:** [Step Three quality gate 41305388502](https://github.com/artinrahimii/project/actions/runs/41305388502) ran 312 Python tests. One existing source-contract assertion failed in `tests/test_android_host_candidate_selector_contract.py:33` because the refactor renamed the local `capabilities` reference to `maximumConcurrentRequests`, so the exact expected source expression `status.activeRequests >= capabilities.maxConcurrentRequests` was not present. The capacity decision remained semantically equivalent; this is a source-contract compatibility failure, not evidence of a runtime capacity defect.
+- **Product workflow at follow-up time:** Android KtLint and HostLifecycle/Windows jobs were still running; no outcome is inferred for those unfinished jobs here.
+- **Correction in A002:** restore the established `capabilities` local and exact expression without changing the condition's meaning.
+- **Task state:** T0124 remains `in_progress`; A001 is retained as failed.
+
+## T0124-A002 — preserve the established source contract
+
+- **Base:** exact online `main` commit `910ef405225cede0292303d369a02dfd776023cc` (`V 3.0.762`).
+- **Change:** use `candidate.announcement.capabilities` as the local `capabilities` and preserve `status.activeRequests >= capabilities.maxConcurrentRequests`. The lower-bound check for negative active counts and all live-probe logic remain unchanged.
+- **Validation:** pending exact-head Step Three and product workflows.

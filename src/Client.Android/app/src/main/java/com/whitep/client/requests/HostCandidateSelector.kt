@@ -266,8 +266,8 @@ object HostCandidateSelector {
         candidate: HostCandidate,
     ): Boolean {
         val status = candidate.status
+        val capabilities = candidate.announcement.capabilities
         val hostId = candidate.announcement.ephemeralHostId
-        val maximumConcurrentRequests = candidate.announcement.capabilities.maxConcurrentRequests
 
         if (!isAnnouncementCompatible(request, candidate.announcement) ||
             status.ephemeralHostId != hostId ||
@@ -277,7 +277,7 @@ object HostCandidateSelector {
             return false
         }
 
-        if (status.activeRequests < 0 || status.activeRequests >= maximumConcurrentRequests) {
+        if (status.activeRequests < 0 || status.activeRequests >= capabilities.maxConcurrentRequests) {
             return false
         }
 

@@ -27029,9 +27029,9 @@
       "evidence": [],
       "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود. T0162 already provides deterministic selection over caller-supplied snapshots. T0124 extends that existing Android selection path with live authenticated reachability probing; it does not duplicate T0162 or change its scope.",
       "execution_summary": {
-        "attempt_count": 1,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "T0124-A001-live-status-selection",
+        "attempt_count": 2,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "T0124-A002-preserve-capacity-source-contract",
         "last_attempt_result": "in_progress",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
@@ -27040,9 +27040,13 @@
           "step three/T0124/execution-report.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
+        "related_commits": [
+          "910ef405225cede0292303d369a02dfd776023cc"
+        ],
         "tests_passed": [],
-        "tests_failed": [],
+        "tests_failed": [
+          "Exact V 3.0.762 Step Three quality gate — FAILED one source-contract test because refactored source no longer contained status.activeRequests >= capabilities.maxConcurrentRequests — https://github.com/artinrahimii/project/actions/runs/41305388502"
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -27064,19 +27068,45 @@
             "step three/T0162/execution-report.md"
           ]
         },
-        "follow_up": "Run exact-head Android main/test KtLint, debug APK, JVM selector tests and existing live HostStatus transport tests, generated Protobuf verification, HostLifecycle/WPF, Step Three quality and Rendezvous smoke. Do not mark T0124 done until all relevant gates pass."
+        "follow_up": "Re-run exact-head workflows. Do not mark T0124 done until all selector JVM and product acceptance checks pass."
       },
       "execution_history": [
         {
           "attempt_id": "T0124-A001-live-status-selection",
           "started_at": "2026-11-01T12:08:00Z",
-          "ended_at": null,
-          "result": "in_progress",
-          "summary": "Extended the existing Android HostCandidateSelector with a live reachability stage. Each statically compatible, non-duplicate, non-excluded announcement is probed sequentially through AndroidInferenceRequestRuntime and the production Libp2pInferenceRequestTransport.probeHostStatus. Untrusted, unreachable, stale, non-ready, capacity-exhausted or runtime-model-incompatible peers are skipped; coroutine cancellation propagates. Added JVM cases for reachability failure, READY state, active capacity, runtime model mismatch, deterministic ordering, duplicate identities, exclusions and cancellation. Exact-head CI is pending.",
+          "ended_at": "2026-11-01T12:12:51Z",
+          "result": "failed",
+          "summary": "Added the authenticated live reachability selection stage, runtime binding and three JVM tests. The Step Three quality workflow then failed one existing Python source-contract assertion that expected the exact `status.activeRequests >= capabilities.maxConcurrentRequests` expression. The new predicate was behaviorally equivalent but used a renamed local maximumConcurrentRequests; A002 restores the established expression without changing the capacity decision.",
           "changed_files": [
             "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
             "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
             "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt",
+            "step three/T0124/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": "910ef405225cede0292303d369a02dfd776023cc",
+          "tests": [
+            {
+              "name": "Step Three Python source-contract/graph quality gate — exact V 3.0.762",
+              "result": "failed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41305388502",
+              "summary": "311-test quality suite had one failure: tests/test_android_host_candidate_selector_contract.py expected the exact source expression `status.activeRequests >= capabilities.maxConcurrentRequests`; the refactor changed the local variable name. All other 311 Python checks passed; no selector acceptance completion is claimed."
+            }
+          ],
+          "failure_details": "Step Three quality gate run 41305388502 ran 312 Python tests and failed one existing source-contract assertion in test_android_host_candidate_selector_contract.py:33 because the source no longer contained `status.activeRequests >= capabilities.maxConcurrentRequests`. This was a contract-test compatibility failure caused by refactoring the local variable name; it did not show a runtime capacity logic error. Android/Windows/HostLifecycle jobs were still running when the follow-up was prepared.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "A002 restores the original capabilities variable and exact capacity expression expected by the existing source-contract guard, then reruns the full exact-head workflow."
+        },
+        {
+          "attempt_id": "T0124-A002-preserve-capacity-source-contract",
+          "started_at": "2026-11-01T12:13:10Z",
+          "ended_at": null,
+          "result": "in_progress",
+          "summary": "Restored the existing `capabilities` local and exact `status.activeRequests >= capabilities.maxConcurrentRequests` source expression so the repository's source-contract test remains compatible. The condition is semantically unchanged. Re-run exact-head Step Three quality, Android KtLint/APK/JVM, HostLifecycle/WPF and Rendezvous workflows.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
             "step three/T0124/execution-report.md",
             "step three/project-graph.md"
           ],
@@ -27086,7 +27116,7 @@
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Run exact-head Android main/test KtLint, debug APK, JVM selector tests and existing live HostStatus transport tests, generated Protobuf verification, HostLifecycle/WPF, Step Three quality and Rendezvous smoke. Do not mark T0124 done until all relevant gates pass."
+          "follow_up": "Re-run exact-head workflows. Do not mark T0124 done until all selector JVM and product acceptance checks pass."
         }
       ]
     },
@@ -58456,7 +58486,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-11-01T12:08:00Z",
+  "updated_at": "2026-11-01T12:13:10Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",
