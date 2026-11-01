@@ -617,9 +617,9 @@ class Libp2pInferenceRequestTransportTest {
         )
     }
 
-    private fun createHost(
+    private fun <T : SimpleClientHandler> createHost(
         identity: PrivKey,
-        binding: ProtocolBinding<LoopbackInferenceResponder>,
+        binding: ProtocolBinding<T>,
     ): Host =
         host {
             identity {

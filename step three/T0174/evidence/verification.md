@@ -74,3 +74,21 @@ The current `MainActivity.requestScreen` is a preparation-only preview and expli
 - T0174-A009 moves `java.*` after all `org.whitep` imports, keeps imports contiguous and leaves the cancellation generated import alphabetically placed.
 - No runtime changes were made by this formatting correction.
 - Step Three, Windows WPF, and HostLifecycle checks succeeded on exact V 3.0.734; Android APK/JVM was skipped at KtLint and remains unverified.
+
+
+## Exact V 3.0.735 CI and A010 failure
+
+- Step Three quality gate passed on exact head `0391c10da301d876b549d6d23eb753e0b00c5dc4`: [run 41272466910](https://github.com/artinrahimii/project/actions/runs/41272466910).
+- Windows WPF build/startup/security passed: [job 124747874779](https://github.com/artinrahimii/project/actions/runs/41272466918/job/124747874779).
+- HostLifecycle unit/integration passed, including the trusted loopback CancelRequest-to-CANCELLED response case: [job 124747874652](https://github.com/artinrahimii/project/actions/runs/41272466918/job/124747874652).
+- Android KtLint passed and `assembleDebug` passed. The JVM test source did not compile:
+  `Libp2pInferenceRequestTransportTest.kt:72:61`: `ProtocolBinding<LoopbackCancellationResponder>` was not assignable to the test helper's `ProtocolBinding<LoopbackInferenceResponder>`.
+- Therefore the Android JVM test method was not executed, and no Android cancellation-test pass is claimed for V 3.0.735.
+
+## A011 source correction
+
+- Changed test helper `createHost` to accept `ProtocolBinding<T>` for `T : SimpleClientHandler`.
+- This removes the responder-type mismatch while preserving the common test-host builder and protocol binding cast.
+- No production code or protocol behavior changed.
+- Exact-head Android test-source compilation, the cancellation JVM regression and generated Protobuf validation remain pending.
+- T0174 remains `in_progress`: the Android request UI is still a prepare-only preview without real dispatch/selected-attempt state, so there is no genuine click path to attach a Cancel button to.

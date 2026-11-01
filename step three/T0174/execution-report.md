@@ -96,3 +96,14 @@ No UI placeholder, mock dispatch, or fabricated selected-host list was introduce
 - Android main-source-set KtLint accepted the production files after T0174-A007. Test-source-set KtLint then found one remaining import-order issue: `java.*` imports appeared before remaining `org.whitep.shared.contracts.v1` imports.
 - T0174-A009 moves the Java import block to the end of the contiguous import list, after all `org.whitep` imports; `CancelRequest` remains alphabetically before `HostRuntimeState`.
 - APK/JVM/Protobuf Android validation was skipped by this lint failure and is still pending an exact-head pass.
+
+
+## Fifth exact-head CI result and test-fixture correction (append-only)
+
+- Exact V 3.0.735 Step Three quality gate: PASS — [run 41272466910](https://github.com/artinrahimii/project/actions/runs/41272466910).
+- Exact V 3.0.735 Windows WPF Release/build/startup/security: PASS — [job 124747874779](https://github.com/artinrahimii/project/actions/runs/41272466918/job/124747874779).
+- Exact V 3.0.735 HostLifecycle unit/integration, including the Windows cancellation acceptance test: PASS — [job 124747874652](https://github.com/artinrahimii/project/actions/runs/41272466918/job/124747874652).
+- Android KtLint and debug APK build passed on V 3.0.735. Android JVM compilation then failed before the JVM test suite could execute: `Libp2pInferenceRequestTransportTest.kt:72:61` passed `ProtocolBinding<LoopbackCancellationResponder>` to a helper that was hard-coded to `ProtocolBinding<LoopbackInferenceResponder>`. No Android JVM test pass is claimed.
+- T0174-A010 is recorded as a failed test-compilation attempt on exact commit `0391c10da301d876b549d6d23eb753e0b00c5dc4`.
+- T0174-A011 changes only the test fixture helper to a generic `<T : SimpleClientHandler>` binding. It permits both responder implementations while keeping the existing libp2p test-host setup unchanged. Runtime behavior is unchanged.
+- The next exact-head workflow must verify Android JVM compilation and then execute the two-host cancellation test; T0174 remains `in_progress` and the user-facing Cancel action is still not wired to a live request screen.
