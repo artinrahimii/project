@@ -26494,7 +26494,7 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0122 و T0115 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "میزبان ویندوز باید روی کانال libp2p احراز‌شده به HostStatusRequest پاسخ تازه بدهد؛ snapshot باید وضعیت backend را با health/readiness check همان لحظه (یا BUSY در عملیات فعال) تعیین کند و observed_at_unix_ms را سرور تولید کند. کلاینت اندروید باید probe واقعی را از peer مورداعتماد، با تطبیق PeerId، timestamp تازه و بدون cache وضعیت اجرا کند؛ پاسخ قدیمی، آینده‌نگر، نامعتبر یا متعلق به peer دیگر رد شود. آزمون loopback دوطرفه و Android JVM transport test روی commit دقیق باید موفق باشند. دسترسی عمومی HTTPS و peer شبکهٔ مستقل در T0230/T0128 باقی می‌ماند.",
-      "status": "in_progress",
+      "status": "done",
       "status_fa": "در حال انجام",
       "actual_output_paths": [
         "src/Host.Application/HostInferenceSession.cs",
@@ -26515,14 +26515,15 @@
         "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs",
         "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
         "tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs",
-        "src/Client.Android/app/src/test/java/com/whitep/client/network/Libp2pInferenceRequestTransportTest.kt"
+        "src/Client.Android/app/src/test/java/com/whitep/client/network/Libp2pInferenceRequestTransportTest.kt",
+        "step three/T0123/execution-report.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0123-A007 passed exact V 3.0.759 acceptance on 2026-11-01. Fresh authenticated HostStatus loopback, Android negative uint32 active_requests rejection, Android JVM suite, APK build, generated Protobuf verification, HostLifecycle, Windows WPF/security/DPAPI, Step Three quality gate and Rendezvous container smoke all passed. Public HTTPS and independent-network acceptance remain reserved for T0230/T0128.",
       "execution_summary": {
         "attempt_count": 7,
         "failed_attempt_count": 5,
         "last_attempt_id": "T0123-A007-reject-negative-uint32-active-count",
-        "last_attempt_result": "in_progress",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
           "src/Client.Android/app/src/test/java/com/whitep/client/network/Libp2pInferenceRequestTransportTest.kt",
@@ -26561,7 +26562,15 @@
           "Exact V 3.0.758 HostLifecycle suite — PASS — https://github.com/artinrahimii/project/actions/runs/41303786641",
           "Exact V 3.0.758 Windows WPF build/startup/security/DPAPI — PASS — https://github.com/artinrahimii/project/actions/runs/41303786641",
           "Exact V 3.0.758 Step Three quality gate — PASS — https://github.com/artinrahimii/project/actions/runs/41303786616",
-          "Exact V 3.0.758 Rendezvous container build/smoke — PASS — https://github.com/artinrahimii/project/actions/runs/41303786689"
+          "Exact V 3.0.758 Rendezvous container build/smoke — PASS — https://github.com/artinrahimii/project/actions/runs/41303786689",
+          "Exact V 3.0.759 Android production/test KtLint — PASS — https://github.com/artinrahimii/project/actions/runs/41304338914",
+          "Exact V 3.0.759 Android debug APK — PASS — https://github.com/artinrahimii/project/actions/runs/41304338914",
+          "Exact V 3.0.759 Android JVM testDebugUnitTest (fresh authenticated HostStatus and negative uint32 active_requests tests) — PASS — https://github.com/artinrahimii/project/actions/runs/41304338914",
+          "Exact V 3.0.759 Protobuf Java/Kotlin verification and APK artifact upload — PASS — https://github.com/artinrahimii/project/actions/runs/41304338914",
+          "Exact V 3.0.759 HostLifecycle — PASS — https://github.com/artinrahimii/project/actions/runs/41304338914",
+          "Exact V 3.0.759 Windows WPF/security/DPAPI — PASS — https://github.com/artinrahimii/project/actions/runs/41304338914",
+          "Exact V 3.0.759 Step Three quality gate — PASS — https://github.com/artinrahimii/project/actions/runs/41304338796",
+          "Exact V 3.0.759 Rendezvous container smoke — PASS — https://github.com/artinrahimii/project/actions/runs/41304338927"
         ],
         "tests_failed": [
           "Exact V 3.0.753 HostLifecycle compile — FAILED CS0136 — https://github.com/artinrahimii/project/actions/runs/41302359549/job/124835779036",
@@ -26584,7 +26593,7 @@
             "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt"
           ]
         },
-        "follow_up": "Run exact-head Android main/test KtLint, assembleDebug, testDebugUnitTest (including the negative uint32 regression), Protobuf verification, HostLifecycle/WPF and Step Three/Rendezvous workflows. Mark T0123 done only after all required checks pass."
+        "follow_up": "T0124 is next. Its incoming T0123 -> T0124 contract/interface dependency and T0115 -> T0124 sequencing-only edge must remain in force; revalidate T0124 inputs against the now-passing HostStatus contract before implementation. Do not conflate this with final-only public deployment/network acceptance T0230/T0128."
       },
       "execution_history": [
         {
@@ -26916,22 +26925,77 @@
         {
           "attempt_id": "T0123-A007-reject-negative-uint32-active-count",
           "started_at": "2026-11-01T11:57:00Z",
-          "ended_at": null,
-          "result": "in_progress",
-          "summary": "Protobuf defines active_requests as uint32, while the generated Android API exposes it as a signed Kotlin Int. Added a lower-bound check so the accepted range is 0..MAXIMUM_HOST_STATUS_ACTIVE_REQUESTS, and added an authenticated loopback JVM regression test that serializes active_requests=-1 (an unsigned value above Int.MAX_VALUE) and expects rejection. Exact-head CI is pending.",
+          "ended_at": "2026-11-01T12:03:01Z",
+          "result": "succeeded",
+          "summary": "Exact V 3.0.759 CI passed all T0123 acceptance paths. Android production/test KtLint passed, the .NET peer interoperability fixture compiled, the debug APK built and was uploaded, and testDebugUnitTest passed including the fresh authenticated HostStatus round-trip and negative uint32 active_requests regression. Generated Protobuf Java/Kotlin verification passed. HostLifecycle and Windows WPF build/startup/security/DPAPI checks passed, as did the Step Three quality gate and Rendezvous container build/smoke. The Android client rejects negative signed representations of an out-of-range uint32 active-request count. T0123 acceptance is now satisfied; public HTTPS/independent-network testing remains in T0230/T0128.",
           "changed_files": [
             "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
             "src/Client.Android/app/src/test/java/com/whitep/client/network/Libp2pInferenceRequestTransportTest.kt",
             "step three/T0123/execution-report.md",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
-          "tests": [],
+          "commit_sha": "450b0bd8ab937e6a9b8b0605521efa1bdde3dca7",
+          "tests": [
+            {
+              "name": "Android production and test KtLint — exact V 3.0.759",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41304338914",
+              "summary": "Both Kotlin main and test source sets passed lint."
+            },
+            {
+              "name": "Android debug APK build — exact V 3.0.759",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41304338914",
+              "summary": "assembleDebug completed successfully."
+            },
+            {
+              "name": "Android JVM unit tests — exact V 3.0.759",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41304338914",
+              "summary": "testDebugUnitTest completed successfully. The test source includes probesFreshHostStatusOverTheAuthenticatedPeerStream and rejectsNegativeUnsignedActiveRequestCountOverAuthenticatedPeerStream."
+            },
+            {
+              "name": "Generated Protobuf Java/Kotlin verification — exact V 3.0.759",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41304338914",
+              "summary": "Generated Java/Kotlin Protobuf sources matched the checked-in protocol contract."
+            },
+            {
+              "name": "Android debug APK artifact upload — exact V 3.0.759",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41304338914",
+              "summary": "whitep-android-debug-apk artifact uploaded successfully."
+            },
+            {
+              "name": "HostLifecycle unit/integration — exact V 3.0.759",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41304338914",
+              "summary": "The complete host lifecycle test job passed."
+            },
+            {
+              "name": "Windows WPF Release build/startup/security/DPAPI — exact V 3.0.759",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41304338914",
+              "summary": "WPF build succeeded with zero warnings and zero errors; startup, process/policy/capability and user-scoped DPAPI checks passed."
+            },
+            {
+              "name": "Step Three quality gate — exact V 3.0.759",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41304338796",
+              "summary": "Graph and project quality gate succeeded."
+            },
+            {
+              "name": "Rendezvous container build and smoke — exact V 3.0.759",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41304338927",
+              "summary": "Production container build and smoke test succeeded."
+            }
+          ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Run exact-head Android main/test KtLint, assembleDebug, testDebugUnitTest (including the negative uint32 regression), Protobuf verification, HostLifecycle/WPF and Step Three/Rendezvous workflows. Mark T0123 done only after all required checks pass."
+          "follow_up": "T0124 is next. Its incoming T0123 -> T0124 contract/interface dependency and T0115 -> T0124 sequencing-only edge must remain in force; revalidate T0124 inputs against the now-passing HostStatus contract before implementation. Do not conflate this with final-only public deployment/network acceptance T0230/T0128."
         }
       ]
     },
@@ -58346,7 +58410,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-11-01T11:57:00Z",
+  "updated_at": "2026-11-01T12:03:01Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

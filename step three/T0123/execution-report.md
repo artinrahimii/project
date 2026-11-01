@@ -100,3 +100,16 @@
 - **Change:** the accepted active-request range is now `0..MAXIMUM_HOST_STATUS_ACTIVE_REQUESTS`, rejecting negative Kotlin representations of invalid unsigned wire values.
 - **Regression test:** added an authenticated libp2p loopback test that sends `active_requests = -1` through the Protobuf wire representation and asserts that the Android probe rejects it.
 - **Validation:** pending exact-head Android lint, APK and JVM checks plus product/quality regressions.
+
+
+## T0123-A007 — exact V 3.0.759 verification completed
+
+- **Verified commit:** `450b0bd8ab937e6a9b8b0605521efa1bdde3dca7` (`V 3.0.759`).
+- **Android Kotlin:** production and test KtLint passed.
+- **Android APK:** `assembleDebug` passed and the `whitep-android-debug-apk` artifact uploaded.
+- **Android JVM:** `testDebugUnitTest` passed. The checked-in suite includes `probesFreshHostStatusOverTheAuthenticatedPeerStream` and `rejectsNegativeUnsignedActiveRequestCountOverAuthenticatedPeerStream`; the latter sends the negative Kotlin `Int` representation of an out-of-range Protobuf `uint32` over the authenticated peer stream and verifies rejection.
+- **Protobuf:** generated Java/Kotlin source verification passed.
+- **Windows/Host:** HostLifecycle unit/integration passed; Windows WPF Release build passed with zero warnings and zero errors, along with startup, agent-tool process/policy/capability and current-user DPAPI identity/trust checks.
+- **Other regression gates:** [Step Three quality gate 41304338796](https://github.com/artinrahimii/project/actions/runs/41304338796) and [Rendezvous container build/smoke 41304338927](https://github.com/artinrahimii/project/actions/runs/41304338927) passed. The full [White-P product build 41304338914](https://github.com/artinrahimii/project/actions/runs/41304338914) completed successfully.
+- **Acceptance boundary:** this closes the live authenticated heartbeat/readiness and Android fresh-status probe scope. It does not claim public HTTPS or independent-network operation; those remain final-only T0230/T0128.
+- **Task state:** T0123 is now `done`; A007 is recorded as succeeded. Next task is T0124, subject to its validated incoming dependency edges.
