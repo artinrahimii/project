@@ -285,9 +285,9 @@ public sealed class PeerAnnouncementHostLifecycle : IAsyncDisposable
                     var parsedStatusRequest = ProtocolMessageParser.ParseHostStatusRequest(requestWire);
                     if (parsedStatusRequest.IsValid && parsedStatusRequest.Message is not null)
                     {
-                        string authenticatedPeerIdentity = transport.RemotePeerIdentity
+                        string statusAuthenticatedPeerIdentity = transport.RemotePeerIdentity
                             ?? throw new InvalidDataException("The secure peer session has no authenticated remote identity.");
-                        if (!StringComparer.Ordinal.Equals(authenticatedPeerIdentity, _expectedPeerIdentity))
+                        if (!StringComparer.Ordinal.Equals(statusAuthenticatedPeerIdentity, _expectedPeerIdentity))
                             throw new InvalidDataException("The secure peer session identity changed unexpectedly.");
                         if (!StringComparer.Ordinal.Equals(parsedStatusRequest.Message.EphemeralHostId, LocalPeerIdentity))
                             throw new InvalidDataException("HostStatusRequest targeted a different peer identity.");

@@ -26519,25 +26519,23 @@
       ],
       "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
       "execution_summary": {
-        "attempt_count": 1,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "T0123-A001-live-host-status-probe",
+        "attempt_count": 2,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "T0123-A002-fix-status-handler-local-name",
         "last_attempt_result": "in_progress",
         "changed_files": [
-          "src/Host.Application/HostInferenceSession.cs",
-          "src/Shared.Contracts/ProtocolMessageValidator.cs",
-          "src/Host.Infrastructure/ProtocolMessageParser.cs",
           "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs",
-          "src/Host.Windows/MainWindow.xaml.cs",
-          "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
-          "tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs",
-          "src/Client.Android/app/src/test/java/com/whitep/client/network/Libp2pInferenceRequestTransportTest.kt",
           "step three/T0123/execution-report.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
+        "related_commits": [
+          "03792d1a958cb1edf552092f0d7d371d8b8e5b47"
+        ],
         "tests_passed": [],
-        "tests_failed": [],
+        "tests_failed": [
+          "Exact V 3.0.753 HostLifecycle compile — FAILED CS0136 — https://github.com/artinrahimii/project/actions/runs/41302359549/job/124835779036",
+          "Exact V 3.0.753 Android .NET peer interoperability fixture — FAILED on shared CS0136 compile error; Android lint/JVM not reached — https://github.com/artinrahimii/project/actions/runs/41302359549/job/124835779273"
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -26552,14 +26550,14 @@
             "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt"
           ]
         },
-        "follow_up": "Exact-head CI must pass the HostLifecycle authenticated HostStatusRequest/HostStatus test, Android KtLint/APK/JVM status-probe test, Windows WPF build and Step Three quality gate. Only then mark T0123 done and continue to T0124. Status is never inferred from the last cached directory timestamp."
+        "follow_up": "A002 renames the status handler local to statusAuthenticatedPeerIdentity to remove CS0136. Run exact-head product workflow (HostLifecycle, WPF, Android lint/APK/JVM), Step Three quality and container smoke. Do not mark T0123 done until all relevant jobs pass."
       },
       "execution_history": [
         {
           "attempt_id": "T0123-A001-live-host-status-probe",
           "started_at": "2026-11-01T11:32:15.839Z",
-          "ended_at": null,
-          "result": "in_progress",
+          "ended_at": "2026-11-01T11:33:26Z",
+          "result": "failed",
           "summary": "Implemented live authenticated HostStatusRequest/HostStatus exchanges over the existing libp2p peer-message stream. Windows performs a fresh local backend/readiness check for each probe (or reports BUSY), binds the request to its authenticated expected peer identity, and stamps a server-generated observedAt timestamp. Android opens a direct authenticated stream, requires explicit peer trust and exact PeerId match, validates the status timestamp/state and does not cache HostStatus. C# loopback and Android JVM transport acceptance tests were added; exact-head CI is not yet available.",
           "changed_files": [
             "src/Host.Application/HostInferenceSession.cs",
@@ -26574,12 +26572,44 @@
             "step three/project-graph.md"
           ],
           "commit_sha": null,
+          "tests": [
+            {
+              "name": "HostLifecycle unit/integration compile",
+              "result": "failed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41302359549/job/124835779036",
+              "summary": "CS0136 duplicate local variable authenticatedPeerIdentity in PeerAnnouncementHostLifecycle.cs:288:32."
+            },
+            {
+              "name": "Android .NET peer interoperability fixture build",
+              "result": "failed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41302359549/job/124835779273",
+              "summary": "Fixture build failed on the same shared HostLifecycle source compile error; Kotlin lint, APK build and Android JVM tests were skipped."
+            }
+          ],
+          "failure_details": "Exact V 3.0.753 HostLifecycle build failed with CS0136 at PeerAnnouncementHostLifecycle.cs:288:32 because the new status handler declared authenticatedPeerIdentity in a scope where the inference branch already uses the same name. The Android .NET peer-interoperability fixture build also failed before Kotlin lint/APK/JVM tests because it compiles the same HostLifecycle test sources. No runtime heartbeat assertion was executed.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "A002 renames the status request branch variable to statusAuthenticatedPeerIdentity; rerun all exact-head workflows."
+        },
+        {
+          "attempt_id": "T0123-A002-fix-status-handler-local-name",
+          "started_at": "2026-11-01T11:34:57.300Z",
+          "ended_at": null,
+          "result": "in_progress",
+          "summary": "Corrected the compiler error from A001 by renaming the HostStatusRequest branch local to statusAuthenticatedPeerIdentity, avoiding collision with the inference-request local in the enclosing receive-loop scope. Exact-head CI has not yet run for this correction.",
+          "changed_files": [
+            "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs",
+            "step three/T0123/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
           "tests": [],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Run exact-head Step Three quality, HostLifecycle, Windows WPF and Android lint/APK/JVM workflows. Fix failures; do not mark done until those exact-run results pass."
+          "follow_up": "Wait for exact V 3.0.754 CI and fix any subsequent failures. Keep T0123 in_progress until all acceptance jobs pass."
         }
       ]
     },
@@ -57994,7 +58024,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-11-01T11:32:15.839Z",
+  "updated_at": "2026-11-01T11:34:57.300Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

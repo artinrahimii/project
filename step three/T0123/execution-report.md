@@ -13,3 +13,12 @@
 - **Current state:** implementation and regression tests are authored. Exact-head GitHub Actions have not yet run; no test pass is claimed in this attempt. T0123 remains `in_progress`.
 - **Next:** inspect exact-commit Step Three quality, HostLifecycle, Windows WPF and Android KtLint/APK/JVM results. Correct any failures, then record the exact successful evidence before changing T0123 to `done`. T0124 is next; public HTTPS and independent-network acceptance remain final-only T0230/T0128.
 
+
+
+## T0123-A001 — first compile failure
+
+- **Exact run:** V 3.0.753, product workflow [41302359549](https://github.com/artinrahimii/project/actions/runs/41302359549).
+- **HostLifecycle result:** failed to compile with `CS0136` at `PeerAnnouncementHostLifecycle.cs:288:32`: the status branch redeclared `authenticatedPeerIdentity`, already used by the inference branch in the same receive-loop scope.
+- **Android result:** the .NET peer-interoperability fixture build also stopped on the same shared compile error. Kotlin lint, APK compilation and Android JVM tests were skipped; no Android runtime pass is claimed.
+- **Correction in A002:** renamed the new status-branch local to `statusAuthenticatedPeerIdentity`. No protocol or security behavior was changed.
+- **Task state:** T0123 remains `in_progress`; A001 is recorded as failed, A002 is in progress. No acceptance criterion is yet marked complete.
