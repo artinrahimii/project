@@ -77,3 +77,14 @@ The exact V 3.0.768 Android/Windows/HostLifecycle/Step Three/Rendezvous workflow
 - **Rendezvous:** container build and HTTP smoke passed.
 - **Workflow evidence:** [Android/Windows/HostLifecycle](https://github.com/artinrahimii/project/actions/runs/41309472601), [Step Three quality](https://github.com/artinrahimii/project/actions/runs/41309472680), [Rendezvous container](https://github.com/artinrahimii/project/actions/runs/41309472603).
 - **Outcome:** the A001 missing-import failure is repaired and exact-head tests pass. T0126 remains `in_progress`, not `done`: `MainActivity.requestScreen` is still prepare-only and no production caller obtains validated `HostAnnouncement` snapshots, invokes selection/dispatch, and records feedback. Unit-test success does not prove a user can receive this message in a live request.
+
+
+## T0126-A003 — exact V 3.0.769 discovery/capability boundary audit (blocked)
+
+- **Base:** exact online `main` commit `c2db7d9e848567f21206bbcd55408b36ae1c7c8b` (`V 3.0.769`).
+- **Live UI review:** `MainActivity.requestScreen` still invokes only `RequestViewModel.prepareRequest`; the Connections preview explicitly says peer discovery is unavailable. No production caller was found for `AndroidInferenceRequestRuntime.selectReachableHostsWithFeedback` or `RequestViewModel.recordHostSelectionFeedback`.
+- **Discovery contract review:** `RendezvousPeerDirectoryClient` exposes only peer ID, direct TCP addresses and lease expiry. The metadata service advertises `inference.v1`, not model-level capability. `PeerAnnouncementHostLifecycle` publishes only this metadata tag.
+- **Readiness contract review:** `MainWindow.GetPeerRuntimeStatusAsync` currently sets runtime state and active request count but does not populate `HostStatus.models`. The Android selector requires a matching current model in the announcement and fresh status, along with valid concurrency and prompt/capsule limits.
+- **Decision:** T0126 is now `blocked`, not `done` or failed. The existing A001/A002 history and V 3.0.768 unit/CI passes are preserved; they prove the count/dispatch/feedback components in isolation, not a live UI flow. No fabricated HostAnnouncement/status snapshots were added and no production source was changed during this audit.
+- **Required next work:** implement a validated capability publication/discovery contract from actual Windows model/readiness configuration, populate model capability data in fresh HostStatus, add bounded Android directory discovery returning typed HostAnnouncement values, and wire the real request UI to discover → live-probe → select → dispatch → display feedback. Then test the real user path for 0/1/2/3 valid peers before resuming T0126 or proceeding to T0127.
+- **Tests in A003:** none run; this was a source/call-graph audit. Existing V 3.0.768 focused tests and CI remain recorded above.

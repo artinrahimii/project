@@ -59,3 +59,13 @@ The exact V 3.0.768 outcomes are recorded below. Passing unit/build checks do no
 - Exact workflow links: [product workflow](https://github.com/artinrahimii/project/actions/runs/41309472601), [Step Three quality](https://github.com/artinrahimii/project/actions/runs/41309472680), [Rendezvous](https://github.com/artinrahimii/project/actions/runs/41309472603).
 
 The live acceptance gap remains: `MainActivity.requestScreen` is prepare-only, and there is no production caller passing complete validated `HostAnnouncement` capability snapshots into `selectReachableHostsWithFeedback` / dispatch and recording feedback in the request UI. T0126 stays `in_progress`.
+
+
+## T0126-A003 — exact V 3.0.769 live discovery/feedback audit (blocked)
+
+- **Base code:** `c2db7d9e848567f21206bbcd55408b36ae1c7c8b` (`V 3.0.769`).
+- `MainActivity.requestScreen` calls only `prepareRequest`; no production call site invokes `selectReachableHostsWithFeedback` or `recordHostSelectionFeedback`.
+- The Android Rendezvous directory result is metadata-only (peer ID, TCP route, expiry). The Windows peer announcement publishes only `inference.v1`; it carries no model/concurrency/payload capability snapshot.
+- The Windows `GetPeerRuntimeStatusAsync` provider currently returns state and active request count without `HostStatus.models`. This cannot satisfy the selector's live matching-model requirement.
+- No live acceptance test was possible because the production flow does not exist. No fake candidate data was introduced. T0126 is recorded as `blocked` pending the real capability/discovery and request-screen integration described in the execution report.
+- Incoming dependency classifications remain unchanged. No outgoing `unreviewed` edge was reclassified or removed.

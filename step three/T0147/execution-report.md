@@ -38,3 +38,12 @@
 ## Acceptance boundary
 
 The UI shows request states actually stored locally. It does **not** synthesize lifecycle transitions, create fake requests, implement Android-to-Windows transport or claim live P2P reachability.
+
+
+## T0147-A005 — current-main graph closeout reconciliation
+
+- **Exact current main:** `c2db7d9e848567f21206bbcd55408b36ae1c7c8b` (`V 3.0.769`).
+- The corrected `tests/test_android_request_status_contract.py` path is present in `T0147.evidence`, and the referenced test/code files exist in the exact main tree.
+- Exact-head Step Three graph/evidence gate passed: [run 41310105654](https://github.com/artinrahimii/project/actions/runs/41310105654).
+- This resolves the stale A004 “pending” graph-closeout summary. It does not replace or overstate code-level acceptance: the actual Android/Windows/HostLifecycle product and quality acceptance remains the recorded V 3.0.534 result above. No production code changed in A005.
+- T0147 remains `done`; the A001–A004 history and recorded failures are preserved.

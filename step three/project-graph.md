@@ -27388,8 +27388,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0125 و T0115 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "blocked",
+      "status_fa": "مسدود",
       "actual_output_paths": [
         "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostSelectionFeedback.kt",
         "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
@@ -27421,12 +27421,12 @@
         "step three/T0126/evidence/verification.md",
         "step three/T0125/execution-report.md"
       ],
-      "notes": "The expected Shared.Networking/Windows path is not the actual consumer in this repository: candidate selection and dispatch live in the Android app, and the user-facing request state/Compose screen lives under com.whitep.client.ui.request. Implement at those real boundaries. Policy: one or two validated hosts remain usable with an exact shortage warning; zero hosts is a no-send NO_SELECTED_HOSTS outcome. The MainActivity request screen is still a prepare-only preview and has no production caller for the new runtime feedback method; therefore keep this task in_progress until live discovery/dispatch feeds the UI. Do not claim a working end-to-end user notification yet.\n\nT0126-A001 (2026-11-01): Exact V 3.0.767 CI was inspected. Android KtLint and assembleDebug passed; JVM test compilation failed because RequestViewModelTest.kt omitted the HostSelectionFeedback import, so T0126 unit assertions and generated Protobuf verification did not run. Step Three's 312 Python tests and syntax check passed, but graph_guard failed because completed T0125 evidence lacked a tests/ source path. Windows WPF, HostLifecycle and Rendezvous container smoke passed. A002 adds the missing import and records test-source evidence for T0125. T0126 remains in_progress until repaired exact-head tests pass and a real request UI caller feeds live selection feedback.\n\nT0126-A002 exact V 3.0.768 CI result (2026-11-01): Android main/test KtLint, assembleDebug, compileDebugUnitTestKotlin, testDebugUnitTest and generated Protobuf Java/Kotlin verification passed; Windows WPF build/startup/security/DPAPI and policy/capability checks passed; HostLifecycle tests passed; the Step Three quality gate passed (312 Python tests, compileall and graph/evidence guard); Rendezvous container build/HTTP smoke passed. The missing import and T0125 evidence repairs are therefore verified on exact main V 3.0.768. T0126 remains in_progress: MainActivity.requestScreen is still prepare-only, Connections still says peer discovery is unavailable, and no production caller passes complete HostAnnouncement snapshots to selection/dispatch and then records the feedback. No live underfilled-host notification is claimed.",
+      "notes": "The expected Shared.Networking/Windows path is not the actual consumer in this repository: candidate selection and dispatch live in the Android app, and the user-facing request state/Compose screen lives under com.whitep.client.ui.request. Implement at those real boundaries. Policy: one or two validated hosts remain usable with an exact shortage warning; zero hosts is a no-send NO_SELECTED_HOSTS outcome. The MainActivity request screen is still a prepare-only preview and has no production caller for the new runtime feedback method; therefore keep this task in_progress until live discovery/dispatch feeds the UI. Do not claim a working end-to-end user notification yet.\n\nT0126-A001 (2026-11-01): Exact V 3.0.767 CI was inspected. Android KtLint and assembleDebug passed; JVM test compilation failed because RequestViewModelTest.kt omitted the HostSelectionFeedback import, so T0126 unit assertions and generated Protobuf verification did not run. Step Three's 312 Python tests and syntax check passed, but graph_guard failed because completed T0125 evidence lacked a tests/ source path. Windows WPF, HostLifecycle and Rendezvous container smoke passed. A002 adds the missing import and records test-source evidence for T0125. T0126 remains in_progress until repaired exact-head tests pass and a real request UI caller feeds live selection feedback.\n\nT0126-A002 exact V 3.0.768 CI result (2026-11-01): Android main/test KtLint, assembleDebug, compileDebugUnitTestKotlin, testDebugUnitTest and generated Protobuf Java/Kotlin verification passed; Windows WPF build/startup/security/DPAPI and policy/capability checks passed; HostLifecycle tests passed; the Step Three quality gate passed (312 Python tests, compileall and graph/evidence guard); Rendezvous container build/HTTP smoke passed. The missing import and T0125 evidence repairs are therefore verified on exact main V 3.0.768. T0126 remains in_progress: MainActivity.requestScreen is still prepare-only, Connections still says peer discovery is unavailable, and no production caller passes complete HostAnnouncement snapshots to selection/dispatch and then records the feedback. No live underfilled-host notification is claimed.\n\nT0126-A003 (2026-11-01T13:21:18.320Z): Exact V 3.0.769 source audit confirmed the remaining production integration blocker. MainActivity.requestScreen only invokes prepareRequest; no production caller invokes selectReachableHostsWithFeedback or recordHostSelectionFeedback. RendezvousPeerDirectoryClient returns metadata-only peerId/address/expiry; PeerAnnouncementHostLifecycle publishes only inference.v1. MainWindow.GetPeerRuntimeStatusAsync sets HostStatus state and activeRequests but omits models. HostCandidateSelector requires full HostAnnouncement capabilities and a fresh HostStatus with the matching model. No fabricated snapshot was introduced; task is blocked pending a real discovery/capability producer and request-screen integration.",
       "execution_summary": {
-        "attempt_count": 2,
+        "attempt_count": 3,
         "failed_attempt_count": 1,
-        "last_attempt_id": "T0126-A002-fix-import-and-evidence",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "T0126-A003-live-discovery-capability-audit",
+        "last_attempt_result": "blocked",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostSelectionFeedback.kt",
           "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
@@ -27441,7 +27441,8 @@
         ],
         "related_commits": [
           "431d25136b0031523e4190cf3a5cb6660080112c",
-          "ffa77ceeb53648f9e450f87820dace9d1b48ffff"
+          "ffa77ceeb53648f9e450f87820dace9d1b48ffff",
+          "c2db7d9e848567f21206bbcd55408b36ae1c7c8b"
         ],
         "tests_passed": [
           "Exact V 3.0.768 Android main/test KtLint — PASS — https://github.com/artinrahimii/project/actions/runs/41309472601/job/124856640138",
@@ -27457,7 +27458,7 @@
           "Exact V 3.0.767 Android JVM unit-test compilation failed at RequestViewModelTest.kt:47,58,69 because HostSelectionFeedback import was missing; tests and generated Protobuf verification did not run.",
           "Exact V 3.0.767 Step Three graph guard failed with DONE_WITHOUT_TEST_FILE_EVIDENCE for T0125 because its evidence omitted test source paths; the 312 Python tests and syntax checks themselves passed."
         ],
-        "blocked_reason": null,
+        "blocked_reason": "The live Android request screen still calls only RequestViewModel.prepareRequest and has no production caller for AndroidInferenceRequestRuntime.selectReachableHostsWithFeedback/dispatch or RequestViewModel.recordHostSelectionFeedback. The production Rendezvous client exposes metadata-only peerId, direct TCP addresses and expiresAtUtc; it does not produce typed HostAnnouncement/HostCapabilities with model, concurrency, prompt-byte and capsule-byte limits. On Windows, MainWindow.GetPeerRuntimeStatusAsync currently returns runtime state and activeRequests but does not populate HostStatus.models. HostCandidateSelector requires complete compatible announcement capabilities and a fresh authenticated HostStatus containing the matching model. Therefore no real production candidate list can currently be constructed. Do not synthesize capabilities or infer reachability/readiness from the inference.v1 metadata tag.",
         "reopened_reason": null,
         "contract_revalidation": {
           "state": "passed",
@@ -27480,7 +27481,7 @@
             "step three/T0115/execution-report.md"
           ]
         },
-        "follow_up": "Keep T0126 in_progress. Connect selectReachableHostsWithFeedback and RequestViewModel.recordHostSelectionFeedback to a real Android request caller only when production discovery supplies validated HostAnnouncement capability snapshots and the request flow performs the real selection/dispatch. Revalidate that live path; do not mark T0126 done on unit-test success alone."
+        "follow_up": "Implement and verify the missing production discovery/capability contract first: expose validated model and payload/concurrency capabilities from actual Windows model/readiness configuration through the renewable peer announcement; populate fresh HostStatus.models from the active model; add bounded Android directory discovery returning typed HostAnnouncement data; then wire the application-scoped runtime into the real request ViewModel/screen and test 0/1/2/3 reachable peers, including no-send on zero. Revalidate dependency edges before changing scope or status. Only then resume T0126 and consider T0127."
       },
       "execution_history": [
         {
@@ -27610,8 +27611,28 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Keep T0126 in_progress. Connect selectReachableHostsWithFeedback and RequestViewModel.recordHostSelectionFeedback to a real Android request caller only when production discovery supplies validated HostAnnouncement capability snapshots and the request flow performs the real selection/dispatch. Revalidate that live path; do not mark T0126 done on unit-test success alone."
+        },
+        {
+          "attempt_id": "T0126-A003-live-discovery-capability-audit",
+          "started_at": "2026-11-01T13:21:18.320Z",
+          "ended_at": "2026-11-01T13:21:18.320Z",
+          "result": "blocked",
+          "summary": "Reviewed exact V 3.0.769 production UI, Rendezvous, host-announcement and live status paths. The request screen only prepares a draft; no production caller supplies HostAnnouncement snapshots or invokes selection/feedback. Rendezvous publishes route metadata only and Windows HostStatus omits models, while the selector requires model and payload/capacity capabilities. Cannot complete the live user path without a real upstream discovery/capability contract. No mock data or runtime implementation was introduced.",
+          "changed_files": [
+            "step three/T0126/execution-report.md",
+            "step three/T0126/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": "The live Android request screen still calls only RequestViewModel.prepareRequest and has no production caller for AndroidInferenceRequestRuntime.selectReachableHostsWithFeedback/dispatch or RequestViewModel.recordHostSelectionFeedback. The production Rendezvous client exposes metadata-only peerId, direct TCP addresses and expiresAtUtc; it does not produce typed HostAnnouncement/HostCapabilities with model, concurrency, prompt-byte and capsule-byte limits. On Windows, MainWindow.GetPeerRuntimeStatusAsync currently returns runtime state and activeRequests but does not populate HostStatus.models. HostCandidateSelector requires complete compatible announcement capabilities and a fresh authenticated HostStatus containing the matching model. Therefore no real production candidate list can currently be constructed. Do not synthesize capabilities or infer reachability/readiness from the inference.v1 metadata tag.",
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Implement and verify the missing production discovery/capability contract first: expose validated model and payload/concurrency capabilities from actual Windows model/readiness configuration through the renewable peer announcement; populate fresh HostStatus.models from the active model; add bounded Android directory discovery returning typed HostAnnouncement data; then wire the application-scoped runtime into the real request ViewModel/screen and test 0/1/2/3 reachable peers, including no-send on zero. Revalidate dependency edges before changing scope or status. Only then resume T0126 and consider T0127."
         }
-      ]
+      ],
+      "blocked_reason": "The live Android request screen still calls only RequestViewModel.prepareRequest and has no production caller for AndroidInferenceRequestRuntime.selectReachableHostsWithFeedback/dispatch or RequestViewModel.recordHostSelectionFeedback. The production Rendezvous client exposes metadata-only peerId, direct TCP addresses and expiresAtUtc; it does not produce typed HostAnnouncement/HostCapabilities with model, concurrency, prompt-byte and capsule-byte limits. On Windows, MainWindow.GetPeerRuntimeStatusAsync currently returns runtime state and activeRequests but does not populate HostStatus.models. HostCandidateSelector requires complete compatible announcement capabilities and a fresh authenticated HostStatus containing the matching model. Therefore no real production candidate list can currently be constructed. Do not synthesize capabilities or infer reachability/readiness from the inference.v1 metadata tag."
     },
     {
       "id": "T0127",
@@ -32805,12 +32826,12 @@
         "tests/test_android_request_status_contract.py",
         "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestStatusPresentationTest.kt"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0147-A001 (2026-10-29T11:42:00Z): Reviewed T0146 → T0147 and T0138 → T0147 against the current Room/status model and request UI. Neither predecessor's implementation/API is directly consumed; both edges are validated as sequencing_only and kept as blocks edges. Added an exhaustive presentation mapper for all seven PersistedRequestStatus values and rendered only actual Room-backed request-state rows in conversation detail; the empty state says no request state exists and transport remains unavailable. Added JVM, Room and Python contract tests. Exact-head CI pending; remain in_progress until product and quality gates pass.\n\nT0147-A001 exact-head CI result (V 3.0.532): Step Three quality run 40868131396 ran 228 tests; seven subtests in the new contract guard failed because Kotlin enum members in RequestStateEntity.kt are declared as bare names, not `PersistedRequestStatus.NAME`. Android product job 123427984091 failed ktlint at ClientDatabaseTest.kt:125:25 with `Expected newline before .`; APK/unit tests were skipped. HostLifecycle job 123427984365 passed. These are test/style issues, not acceptance; A002 corrects them.\n\nT0147-A002 exact-head CI result (V 3.0.533): Step Three quality gate 40868507192 passed all 228 tests and both graph guards (0 errors; one preserved T0001 metadata warning). Android product job 123429253448 failed ktlint with four `Expected newline before .` violations at ClientDatabaseTest.kt:124 because the chained Flow expression was on one line. APK/JVM tests were skipped; HostLifecycle passed. T0147-A003 moves each call in the Room flow chain to an individual line; V 3.0.534 CI is pending.\n\nT0147-A003 acceptance closeout (2026-10-29): exact revision V 3.0.534 (a10aebc13e8a5caf7ce27552fd3c970f49c6c820) passed both GitHub Actions workflows. Quality run 40868883509 passed 228 Python tests, syntax, and graph/evidence guards (229 tasks, 417 edges, zero errors; existing T0001 free-text metadata warning preserved). Product run 40868883480 passed Android ktlint, assembleDebug, testDebugUnitTest (including the new seven-status mapping and Room persistence checks), generated Protobuf verification and APK upload; Windows WPF formatting/build/Protobuf/startup/security checks and artifact upload; and HostLifecycle unit/integration tests. Artifacts uploaded: whitep-android-debug-apk 11,874,698 bytes; whitep-windows-host 14,254,957 bytes. T0147 is closed for displaying actual locally persisted status rows; no status-transition engine or host transport is claimed.\n\nT0147-A004 (2026-10-29T11:59:00Z): V 3.0.535 implementation product CI passed, but the graph closeout quality job found DONE_WITHOUT_TEST_FILE_EVIDENCE. The test file was real and listed in actual_output_paths but absent from evidence. Added that source path to T0147.evidence; exact-head graph check for V 3.0.536 is pending.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\n\nT0147-A001 (2026-10-29T11:42:00Z): Reviewed T0146 → T0147 and T0138 → T0147 against the current Room/status model and request UI. Neither predecessor's implementation/API is directly consumed; both edges are validated as sequencing_only and kept as blocks edges. Added an exhaustive presentation mapper for all seven PersistedRequestStatus values and rendered only actual Room-backed request-state rows in conversation detail; the empty state says no request state exists and transport remains unavailable. Added JVM, Room and Python contract tests. Exact-head CI pending; remain in_progress until product and quality gates pass.\n\nT0147-A001 exact-head CI result (V 3.0.532): Step Three quality run 40868131396 ran 228 tests; seven subtests in the new contract guard failed because Kotlin enum members in RequestStateEntity.kt are declared as bare names, not `PersistedRequestStatus.NAME`. Android product job 123427984091 failed ktlint at ClientDatabaseTest.kt:125:25 with `Expected newline before .`; APK/unit tests were skipped. HostLifecycle job 123427984365 passed. These are test/style issues, not acceptance; A002 corrects them.\n\nT0147-A002 exact-head CI result (V 3.0.533): Step Three quality gate 40868507192 passed all 228 tests and both graph guards (0 errors; one preserved T0001 metadata warning). Android product job 123429253448 failed ktlint with four `Expected newline before .` violations at ClientDatabaseTest.kt:124 because the chained Flow expression was on one line. APK/JVM tests were skipped; HostLifecycle passed. T0147-A003 moves each call in the Room flow chain to an individual line; V 3.0.534 CI is pending.\n\nT0147-A003 acceptance closeout (2026-10-29): exact revision V 3.0.534 (a10aebc13e8a5caf7ce27552fd3c970f49c6c820) passed both GitHub Actions workflows. Quality run 40868883509 passed 228 Python tests, syntax, and graph/evidence guards (229 tasks, 417 edges, zero errors; existing T0001 free-text metadata warning preserved). Product run 40868883480 passed Android ktlint, assembleDebug, testDebugUnitTest (including the new seven-status mapping and Room persistence checks), generated Protobuf verification and APK upload; Windows WPF formatting/build/Protobuf/startup/security checks and artifact upload; and HostLifecycle unit/integration tests. Artifacts uploaded: whitep-android-debug-apk 11,874,698 bytes; whitep-windows-host 14,254,957 bytes. T0147 is closed for displaying actual locally persisted status rows; no status-transition engine or host transport is claimed.\n\nT0147-A004 (2026-10-29T11:59:00Z): V 3.0.535 implementation product CI passed, but the graph closeout quality job found DONE_WITHOUT_TEST_FILE_EVIDENCE. The test file was real and listed in actual_output_paths but absent from evidence. Added that source path to T0147.evidence; exact-head graph check for V 3.0.536 is pending.\n\nT0147-A005 (2026-11-01T13:21:18.320Z): Reconciled the stale A004 summary. Exact V 3.0.769 Step Three gate passed; current graph.evidence contains tests/test_android_request_status_contract.py and the Kotlin status test, and referenced evidence files exist. A003's V 3.0.534 product/quality acceptance remains the code-level completion evidence. A005 validates graph closeout only; T0147 remains done.",
       "execution_summary": {
-        "attempt_count": 4,
+        "attempt_count": 5,
         "failed_attempt_count": 2,
-        "last_attempt_id": "T0147-A004",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "T0147-A005-current-main-evidence-reconciliation",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestStatusPresentation.kt",
           "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
@@ -32819,19 +32840,20 @@
           "tests/test_android_request_status_contract.py",
           "step three/T0147/execution-report.md",
           "step three/T0147/evidence/verification.md",
-          "step three/project-graph.md",
-          "tests/test_android_request_status_contract.py"
+          "step three/project-graph.md"
         ],
         "related_commits": [
           "90f542e2500e1af5a99d8f0f11336d3a29f05a1a",
           "95e1af212d790aba0e9f920b30090b53d402323f",
-          "a10aebc13e8a5caf7ce27552fd3c970f49c6c820"
+          "a10aebc13e8a5caf7ce27552fd3c970f49c6c820",
+          "c2db7d9e848567f21206bbcd55408b36ae1c7c8b"
         ],
         "tests_passed": [
           "V 3.0.534 Step Three quality run 40868883509 passed all 228 Python tests, syntax and graph/evidence guards (229 tasks / 417 edges, 0 errors, 1 preserved metadata warning).",
           "V 3.0.534 product run 40868883480 passed Android ktlintCheck, assembleDebug, testDebugUnitTest, Protobuf verification and APK upload.",
           "V 3.0.534 product run 40868883480 passed Windows WPF formatting/build/Protobuf/startup/security and artifact upload.",
-          "V 3.0.534 product run 40868883480 passed HostLifecycle unit/integration tests."
+          "V 3.0.534 product run 40868883480 passed HostLifecycle unit/integration tests.",
+          "Exact online main V 3.0.769 Step Three graph/evidence guard — PASS — https://github.com/artinrahimii/project/actions/runs/41310105654. Confirms the corrected T0147 evidence-path mapping and current graph structure; this is not a rerun of T0147 Android product acceptance, which remains evidenced by its exact V 3.0.534 product CI."
         ],
         "tests_failed": [
           "V 3.0.532 quality run 40868131396: seven enum-source subtests failed because assertions expected enum type prefixes.",
@@ -33024,6 +33046,32 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Include tests/test_android_request_status_contract.py in the evidence list and rerun the Step Three quality gate on V 3.0.536."
+        },
+        {
+          "attempt_id": "T0147-A005-current-main-evidence-reconciliation",
+          "started_at": "2026-11-01T13:21:18.320Z",
+          "ended_at": "2026-11-01T13:21:18.320Z",
+          "result": "succeeded",
+          "summary": "Reconciled the stale A004 graph-closeout summary. The exact V 3.0.769 graph includes the corrected test source path in T0147.evidence, referenced files exist, and the exact-head Step Three graph/evidence gate passed. Earlier V 3.0.534 product/quality CI remains the code-level acceptance evidence; A005 does not claim new product code or tests.",
+          "changed_files": [
+            "step three/T0147/execution-report.md",
+            "step three/T0147/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "V 3.0.769 Step Three graph/evidence gate",
+              "result": "passed",
+              "summary": "Exact online main head graph and recorded-output/evidence validation succeeded.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41310105654"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "T0147 remains done based on exact V 3.0.534 Android/Windows/HostLifecycle acceptance and current-main graph closeout; revalidate only if implementation changes."
         }
       ]
     },
@@ -58905,7 +58953,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-11-01T13:11:40.346Z",
+  "updated_at": "2026-11-01T13:21:18.320Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",
