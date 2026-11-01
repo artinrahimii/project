@@ -60,13 +60,20 @@ class CentralInferenceBoundaryTests(unittest.TestCase):
             "declaration found outside the local Windows host: " + ", ".join(violations),
         )
 
-    def test_current_android_client_does_not_claim_prompt_delivery(self):
+    def test_android_request_uses_authenticated_peer_gateway_without_central_prompt_api(self):
         client = (SRC / "Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt").read_text(encoding="utf-8")
-        self.assertIn("Requests are not sent yet; transport is not implemented.", client)
         view_model = ANDROID_REQUEST_VIEW_MODEL.read_text(encoding="utf-8")
-        self.assertIn("Request not sent: no host transport yet", view_model)
-        self.assertIn("Android-to-host transport is not implemented.", view_model)
-
+        gateway = (SRC / "Client.Android/app/src/main/java/com/whitep/client/requests/RequestExecutionGateway.kt").read_text(encoding="utf-8")
+        runtime = (SRC / "Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt").read_text(encoding="utf-8")
+        self.assertIn("requestViewModel.sendRequest(", client)
+        self.assertIn("gateway.discoverAndSelectReachableHosts(", view_model)
+        self.assertIn("gateway.dispatchRound(", view_model)
+        self.assertIn("gateway.awaitRoundResponses(", view_model)
+        self.assertIn("Libp2pInferenceRequestTransport", runtime)
+        self.assertIn("trustPeerAfterExplicitConfirmation", gateway)
+        self.assertNotIn("HttpClient", view_model)
+        self.assertNotIn("Socket(", view_model)
+        self.assertNotIn("MapPost(", view_model)
     def test_requirement_requires_network_evidence_beyond_source_search(self):
         requirements = (ROOT / "docs/requirements.md").read_text(encoding="utf-8")
         self.assertIn("No central inference API or conversation history", requirements)

@@ -19,7 +19,7 @@ class AndroidContextCapsuleHistoryUpdateContractTests(unittest.TestCase):
         self.assertIn("maxSerializedBytes = current.maxSerializedBytes", source)
         self.assertIn("Review and save to persist.", source)
 
-    def test_suggestion_is_a_draft_and_does_not_send_network_requests(self):
+    def test_suggestion_remains_a_local_draft_until_the_separate_request_action(self):
         source = VIEW_MODEL.read_text(encoding="utf-8")
         screen = SCREEN.read_text(encoding="utf-8")
         main = MAIN_ACTIVITY.read_text(encoding="utf-8")
@@ -29,8 +29,8 @@ class AndroidContextCapsuleHistoryUpdateContractTests(unittest.TestCase):
         self.assertIn("Uses only this conversation’s local messages.", screen)
         self.assertNotIn("HttpClient", source)
         self.assertNotIn("Socket(", source)
-        self.assertIn("Requests are not sent yet; transport is not implemented.", main)
-
+        self.assertNotIn("sendRequest(", source + screen)
+        self.assertIn("requestViewModel.sendRequest(", main)
     def test_robolectric_test_covers_conversation_scope_and_manual_save(self):
         source = KOTLIN_TEST.read_text(encoding="utf-8")
         self.assertIn("suggestsCapsuleFromOnlyThisConversationsLocalHistoryAndRequiresSave", source)

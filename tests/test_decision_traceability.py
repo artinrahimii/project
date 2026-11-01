@@ -80,14 +80,20 @@ class DecisionTraceabilityTests(unittest.TestCase):
         self.assertIn("<UseWPF>true</UseWPF>", (ROOT / "src/Host.Windows/WhiteP.Host.Windows.csproj").read_text(encoding="utf-8"))
         self.assertIn("compileSdk = 36", (ROOT / "src/Client.Android/app/build.gradle.kts").read_text(encoding="utf-8"))
 
-    def test_p2p_decision_is_traceable_without_claiming_transport_is_delivered(self):
+    def test_p2p_decision_maps_to_the_configured_authenticated_peer_request_path(self):
         for phrase in ("REQ-010", "REQ-011", "AC-P2P-01", "tests/test_p2p_data_path_decision.py"):
             self.assertIn(phrase, ADR2 + REGISTER)
         self.assertIn("Direct peer-to-peer transfer is the default data path.", REQUIREMENTS)
-        self.assertIn("transport not implemented", (ROOT / "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt").read_text(encoding="utf-8"))
+        client = (ROOT / "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt").read_text(encoding="utf-8")
+        view_model = (ROOT / "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt").read_text(encoding="utf-8")
+        runtime = (ROOT / "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt").read_text(encoding="utf-8")
+        self.assertIn("requestViewModel.sendRequest(", client)
+        self.assertIn("gateway.dispatchRound(", view_model)
+        self.assertIn("gateway.awaitRoundResponses(", view_model)
+        self.assertIn("Libp2pInferenceRequestTransport", runtime)
+        self.assertNotIn("transport not implemented", client.lower())
         self.assertIn("AC-P2P-01", ACCEPTANCE)
         self.assertIn("NOT RUN", ACCEPTANCE)
-
     def test_local_backend_decision_maps_to_real_adapter_ui_and_controlled_tests(self):
         backend = (ROOT / "src/Host.Infrastructure/LlamaCppServerBackend.cs").read_text(encoding="utf-8")
         lifecycle = (ROOT / "src/Host.Application/HostInferenceSession.cs").read_text(encoding="utf-8")

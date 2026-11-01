@@ -35,18 +35,22 @@ class AndroidRequestArchitectureTests(unittest.TestCase):
         self.assertIn("fun prepareRequest()", VIEW_MODEL)
         self.assertIn("fun clearDraft()", VIEW_MODEL)
 
-    def test_compose_screen_uses_viewmodel_and_keeps_transport_boundary_truthful(self):
+    def test_compose_screen_uses_viewmodel_and_production_peer_gateway(self):
         self.assertIn('implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.9.3")', ANDROID_BUILD)
         self.assertIn("RequestViewModel", ACTIVITY)
         self.assertIn("viewModel()", ACTIVITY)
         self.assertIn("collectAsState()", ACTIVITY)
         self.assertIn("requestViewModel::updatePrompt", ACTIVITY)
-        self.assertIn("requestViewModel::prepareRequest", ACTIVITY)
-        self.assertIn("Android-to-host transport is not implemented.", VIEW_MODEL)
+        self.assertIn("requestViewModel.sendRequest(", ACTIVITY)
+        self.assertIn("requestViewModel.discoverPeers(", ACTIVITY)
+        self.assertIn("import com.whitep.client.requests.RequestExecutionGateway", VIEW_MODEL)
+        self.assertIn("AndroidRequestExecutionGatewayFactory", VIEW_MODEL)
+        self.assertIn("gateway.discoverAndSelectReachableHosts(", VIEW_MODEL)
+        self.assertIn("gateway.dispatchRound(", VIEW_MODEL)
+        self.assertIn("gateway.awaitRoundResponses(", VIEW_MODEL)
         self.assertIn("The processing host can read your prompt and context capsule", ACTIVITY)
         self.assertNotIn("OkHttpClient(", REPOSITORY + VIEW_MODEL)
         self.assertNotIn("Socket(", REPOSITORY + VIEW_MODEL)
-
 
 if __name__ == "__main__":
     unittest.main()

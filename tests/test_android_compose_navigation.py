@@ -61,14 +61,20 @@ class AndroidComposeNavigationTests(unittest.TestCase):
         self.assertIn("launchSingleTop = true", ACTIVITY)
         self.assertIn("restoreState = true", ACTIVITY)
 
-    def test_request_screen_does_not_claim_to_send_and_privacy_screen_discloses_host_visibility(self):
-        self.assertIn("Android-to-host transport is not implemented.", REQUEST_VIEW_MODEL)
-        self.assertIn("Request not sent: no host transport yet", REQUEST_VIEW_MODEL)
+    def test_request_screen_configures_directory_and_uses_explicit_peer_trust(self):
+        self.assertIn('label = { Text("HTTPS Rendezvous URL") }', ACTIVITY)
+        self.assertIn("No server address is prefilled.", ACTIVITY)
+        self.assertIn("requestViewModel.discoverPeers(", ACTIVITY)
+        self.assertIn("Review and trust this host", ACTIVITY)
+        self.assertIn("requestViewModel.trustPeerAfterExplicitConfirmation(peerId)", ACTIVITY)
+        self.assertIn("requestViewModel.sendRequest(", ACTIVITY)
         self.assertIn("The processing host can read your prompt and context capsule", ACTIVITY)
         self.assertIn("Transport encryption protects data in transit, not from the receiving host.", ACTIVITY)
-        self.assertIn("Android-to-Windows delivery", ACTIVITY)
-        self.assertIn("no-storage behavior have not been verified.", ACTIVITY)
-
+        self.assertIn("selection.candidates.isEmpty()", REQUEST_VIEW_MODEL)
+        self.assertLess(
+            REQUEST_VIEW_MODEL.index("if (selection.candidates.isEmpty())"),
+            REQUEST_VIEW_MODEL.index("gateway.dispatchRound("),
+        )
 
 if __name__ == "__main__":
     unittest.main()

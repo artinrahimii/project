@@ -198,7 +198,7 @@ class RequestViewModel(
                         message = if (peers.isEmpty()) {
                             "The directory returned no unexpired direct TCP peers."
                         } else {
-                            "Found ${peers.size} peer(s). None is trusted automatically.",
+                            "Found ${peers.size} peer(s). None is trusted automatically."
                         },
                     )
             } catch (cancellation: CancellationException) {

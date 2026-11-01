@@ -176,3 +176,12 @@ The live acceptance gap remains: `MainActivity.requestScreen` is prepare-only, a
 - Two new ViewModel tests cover no automatic trust, no dispatch before approval, dispatch after approval, response-card rendering and gateway disposal when the directory URL changes.
 - These tests use a fake gateway and prove only ViewModel orchestration. Real public-network reachability, multi-host execution and physical-device acceptance are not claimed; T0128 remains deferred for that final stage.
 - **A010 exact-head CI:** pending; no test pass is claimed for the new sources before the V 3.0.787 workflows finish.
+
+
+## T0126-A010 — exact V 3.0.787 test failures and corrective changes
+
+- Android KtLint failed to parse `RequestViewModel.kt` at line 201, column 90 due to a trailing comma after the final expression in an `else` block. The comma is removed in the corrective source blob. APK build, JVM tests and Android Protobuf verification were not reached.
+- The Step Three quality gate ran 317 Python tests and found seven stale assertions requiring the removed preview/no-delivery strings. The failures were limited to the seven Android request/decision source-contract test files listed in the execution report; graph and evidence validators were skipped after the Python test command failed.
+- The seven test cases are retained and rewritten to validate the new real request flow instead: configured HTTPS URL; explicit user trust/revoke; payload-to-selection, dispatch and correlated response calls; no dispatch when zero candidates exist; context capsule summary remains a local draft until the separate send action; per-response cards/imports; and the still-disclosed receiving-host privacy boundary.
+- Windows WPF build/startup/security/DPAPI and HostLifecycle tests passed on V 3.0.787; Rendezvous container build/HTTP smoke passed. These do not override the Android or Python failures.
+- **V 3.0.788 rerun:** pending; no corrected test is marked passed before the exact-head workflows finish.
