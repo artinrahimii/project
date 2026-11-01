@@ -155,3 +155,13 @@ The live acceptance gap remains: `MainActivity.requestScreen` is prepare-only, a
 - Windows WPF build/startup/security/DPAPI, HostLifecycle tests, Step Three quality gate, and Rendezvous container smoke all passed on the exact V 3.0.784 commit.
 - A009 removes that unused import only; its resulting commit must still pass a new exact-head CI run before Android verification can be marked successful.
 
+
+
+## T0126-A009 final verification summary
+
+- Exact V 3.0.785: Android KtLint PASS, `assembleDebug` PASS, `testDebugUnitTest` PASS (178 tests / 0 failures / 0 ignored), generated Protobuf Java/Kotlin PASS.
+- The six tests in `AuthenticatedHostDiscoveryTest` are present in the downloaded Gradle HTML report and all six passed.
+- Android debug APK artifact ID `13088671959`, 19,484,737 bytes, SHA-256 `dfd55299a6662d0a7aa18a9b38b586b8b134195df51461322326302b5e34ec13`.
+- Windows WPF, HostLifecycle, Step Three graph quality and Rendezvous smoke all passed.
+- Automated checks for this attempt are complete. Production Compose request flow and end-to-end dispatch/feedback/response remain outstanding; T0126 is not marked done.
+

@@ -27532,10 +27532,11 @@
             "step three/T0115/execution-report.md"
           ]
         },
-        "follow_up": "Implement the missing typed capability/status-to-candidate path using real Windows model/readiness/capacity information; wire Android identity and explicit peer trust, authenticated HostStatus probes, selection and dispatch into the real request screen; expose shortage feedback; test 0/1/2/3 peers including no-send on zero. Only then unblock T0126 and resume T0174.",
+        "follow_up": "Connect the configured Rendezvous origin and explicit peer-trust flow to the Compose request screen; construct the user's real typed request; invoke authenticated discovery and HostCandidate selection; dispatch only when one or more valid hosts exist; render 0/1/2/3-host feedback; collect and correlate actual responses; add UI/ViewModel and end-to-end tests including no-send on zero hosts. Keep T0126 blocked until this complete user-facing path passes.",
         "contract_changes": [
           "Added RendezvousPeerDirectoryClient.discoverAll(): bounded enumeration of unexpired metadata-only direct-TCP peer endpoints in stable PeerId order, sharing the existing strict cache refresh; no HostAnnouncement model/capability contract or production UI wiring is claimed."
-        ]
+        ],
+        "tests_pending": []
       },
       "execution_history": [
         {
@@ -28068,11 +28069,11 @@
           "blocked_reason": "Authenticated directory-to-HostStatus candidate discovery is now implemented behind AndroidInferenceRequestRuntime, but the Compose request UI still has no configured Rendezvous origin, explicit peer-trust interaction, payload-building/dispatch caller or live feedback/response collection. Keep T0126 blocked until the full user-facing request path and 0/1/2/3-host end-to-end tests pass.",
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Verify KtLint on production and test source sets, then run assembleDebug, testDebugUnitTest and generated Protobuf verification on this exact commit. Once those pass, integrate configured Rendezvous and explicit peer trust into the Compose request UI, construct the actual request payload, dispatch only nonempty selections, render shortage feedback and collect correlated responses. Keep T0126 blocked until end-to-end acceptance passes."
+          "follow_up": "Connect the configured Rendezvous origin and explicit peer-trust flow to the Compose request screen; construct the user's real typed request; invoke authenticated discovery and HostCandidate selection; dispatch only when one or more valid hosts exist; render 0/1/2/3-host feedback; collect and correlate actual responses; add UI/ViewModel and end-to-end tests including no-send on zero hosts. Keep T0126 blocked until this complete user-facing path passes."
         }
       ],
       "blocked_reason": "Authenticated directory-to-HostStatus candidate discovery is now implemented behind AndroidInferenceRequestRuntime, but the Compose request UI still has no configured Rendezvous origin, explicit peer-trust interaction, payload-building/dispatch caller or live feedback/response collection. Keep T0126 blocked until the full user-facing request path and 0/1/2/3-host end-to-end tests pass.",
-      "updated_at": "2026-11-01T15:05:24.454Z"
+      "updated_at": "2026-11-01T15:18:01.500Z"
     },
     {
       "id": "T0127",
@@ -59891,7 +59892,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-11-01T15:05:24.454Z",
+  "updated_at": "2026-11-01T15:18:01.500Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

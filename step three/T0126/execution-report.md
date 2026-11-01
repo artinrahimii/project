@@ -189,3 +189,13 @@ The exact V 3.0.768 Android/Windows/HostLifecycle/Step Three/Rendezvous workflow
 - A009 removes only that unused import. The test logic, fixtures and production code are unchanged. All Android verification is pending on the next exact-head commit.
 - T0126 remains blocked because the Compose request screen still does not connect configured Rendezvous, explicit peer trust, actual request construction, dispatch, shortage feedback and correlated response collection.
 
+
+
+## T0126-A009 final status reconciliation
+
+- The exact V 3.0.785 Android test report is inspected: 178 total JVM tests, zero failures and zero ignored; `AuthenticatedHostDiscoveryTest` has six passed tests.
+- The debug APK artifact SHA-256 from GitHub Actions is `dfd55299a6662d0a7aa18a9b38b586b8b134195df51461322326302b5e34ec13` (artifact ID `13088671959`, 19,484,737 bytes).
+- All Android KtLint/build/JVM/Protobuf, Windows WPF/startup/security/DPAPI, HostLifecycle, Step Three quality and Rendezvous smoke checks on V 3.0.785 passed.
+- No automated test in A009 is pending now. The remaining blocker is implementation scope, not CI: the request Compose UI does not yet invoke the authenticated discovery and dispatch path or present live feedback/collected responses.
+- Next work is the production UI-to-host flow described in the graph's T0126 follow-up. T0126 remains blocked until that end-to-end path passes.
+
