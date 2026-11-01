@@ -171,3 +171,14 @@ Dependency decision: added validated `T0124 → T0174` (`type: blocks`, classifi
 Upstream blocker: T0124 is not_started behind T0123 and T0115; T0123 is not_started behind T0122; T0122 is not_started behind T0121; T0121 is blocked because there is no deployed production HTTPS rendezvous endpoint and no independent-network peer to validate advertised reachability. These facts prevent safely presenting a live Cancel action tied to real selected attempts.
 
 Validation scope: this attempt was a source/graph audit only. No product implementation changed and no new test command was run. The existing V 3.0.739 product build and Step Three quality gate completed successfully on the exact base commit: [product](https://github.com/artinrahimii/project/actions/runs/41278700922), [quality](https://github.com/artinrahimii/project/actions/runs/41278700976). Those runs validate the base source/build and graph guard, not an Android UI cancellation click path.
+
+
+## T0174-A018 — current-main dependency verification (V 3.0.777)
+
+- Base: `6aa52c73e59b8508be75c6c454bc16c28ae16ca1`; graph Blob: `867eb8c83df840ee25ae660caece2b9841d90a69` (full file retrieved and SHA-1 verified against the base commit tree).
+- Confirmed T0121-T0125, including T0124, are now done. The previous A017 upstream blocker is stale.
+- Current Android request screen is still prepare-only; the Connections screen performs no discovery or network request.
+- Rendezvous exposes metadata-only endpoint resolution; `inference.v1` is not a model-capability snapshot. HostCandidateSelector requires typed HostAnnouncement capability data and fresh authenticated HostStatus. AndroidInferenceRequestRuntime has the real dispatch/cancel APIs, but the production screen does not call them or retain dispatch attempts.
+- Existing Android identity and trust stores were verified in source, but are not wired to the request UI flow.
+- Added a validated `T0126 → T0174` contract/interface dependency. T0126 must provide the real discovery/status/selection/dispatch path before T0174 can cancel actual queued attempts.
+- No product source change and no test execution in A018. T0174 remains blocked; no task was marked complete.
