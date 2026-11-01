@@ -63,3 +63,12 @@ Inspect exact-head workflow results. If all relevant Android JVM/build and Step 
 ## Next dependency-aware work
 
 The next task in the graph order is T0175, but it depends on T0174, which remains blocked by the missing live Android discovery/dispatch/UI integration. T0126 also remains blocked on that production flow. Resume that integration and revalidate those blockers before starting downstream UI tasks.
+
+
+## T0127-A005 — graph-guard evidence-path correction
+
+- Exact V 3.0.775 Step Three quality gate ran 312 Python tests successfully, but `tools/graph_guard.py` rejected the completed T0127 record with `DONE_WITHOUT_TEST_FILE_EVIDENCE`: the existing JUnit source files live under `src/.../src/test/`, while the guard's documented rule accepts test evidence paths beginning `tests/` or `test/`.
+- The Android tests themselves are not in question: exact V 3.0.774 JUnit contains all three new cases and passed 171/171 tests; Android KtLint, APK build and generated Protobuf checks also passed.
+- Added `tests/test_android_network_failure_acceptance.py`, a top-level repository quality test that verifies the exact JUnit regression methods and the production parser/cache/selector/dispatcher fail-closed contracts. This gives the graph guard a top-level test source path and also prevents accidental deletion of the tested regression coverage.
+- Added that test file to T0127 `actual_output_paths` and `evidence`. The task remains `done` because its Android runtime acceptance is already evidenced by exact V 3.0.774 CI; this attempt repairs the repository-level evidence guard.
+- Exact V 3.0.776 Step Three quality and product CI are pending. Do not claim the new Python evidence test passed until the exact-head workflow finishes.

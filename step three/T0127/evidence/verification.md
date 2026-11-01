@@ -46,3 +46,11 @@ The follow-up corrects only KtLint-reported whitespace and multiline initializer
 - Android KtLint, debug APK, testDebugUnitTest and generated Protobuf Java/Kotlin verification all passed.
 - Windows WPF build and HostLifecycle unit/integration jobs passed.
 - T0127 state: `done`. Historical V 3.0.773 KtLint failure remains recorded as attempt A002; V 3.0.774 exact CI is attempt A004 and succeeded.
+
+
+## T0127-A005 — graph evidence guard correction
+- V 3.0.775 Step Three quality run: https://github.com/artinrahimii/project/actions/runs/41314358746
+- Python unit tests passed (312); graph_guard then failed because T0127 evidence did not include a top-level `tests/` source path. Existing Android JVM test sources are under `src/.../src/test/`, which the current guard does not recognize as an evidence path.
+- Added `tests/test_android_network_failure_acceptance.py` to directly verify the named Android JVM regression cases and related production fail-closed parser/cache/selection/dispatch contracts.
+- This new source is intended as supplementary repository evidence/guard, not a replacement for the already-passing Android JUnit acceptance tests.
+- Exact V 3.0.776 CI is pending.
