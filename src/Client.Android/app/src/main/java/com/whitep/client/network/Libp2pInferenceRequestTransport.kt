@@ -70,7 +70,9 @@ class Libp2pInferenceRequestTransport(
         var controller: InferencePeerMessageController? = null
     }
 
-    private class PendingHostStatusRequest(val peerId: String) {
+    private class PendingHostStatusRequest(
+        val peerId: String,
+    ) {
         val response = CompletableDeferred<HostStatus>()
 
         @Volatile
@@ -278,8 +280,10 @@ class Libp2pInferenceRequestTransport(
         require(!timeout.isNegative && !timeout.isZero && timeout <= MAXIMUM_STATUS_TIMEOUT) {
             "The status-probe timeout must be positive and no longer than one minute."
         }
-        require(!maximumStatusAge.isNegative && !maximumStatusAge.isZero &&
-            maximumStatusAge <= MAXIMUM_STATUS_AGE_LIMIT
+        require(
+            !maximumStatusAge.isNegative &&
+                !maximumStatusAge.isZero &&
+                maximumStatusAge <= MAXIMUM_STATUS_AGE_LIMIT,
         ) {
             "The maximum status age must be positive and no longer than one minute."
         }
@@ -288,12 +292,14 @@ class Libp2pInferenceRequestTransport(
             throw SecurityException("The peer must be explicitly trusted before status probing.")
         }
 
-        val endpoint = resolveEndpoint(ephemeralHostId)
-            ?: throw IOException("The rendezvous directory did not return this peer.")
+        val endpoint =
+            resolveEndpoint(ephemeralHostId)
+                ?: throw IOException("The rendezvous directory did not return this peer.")
         if (endpoint.peerId != ephemeralHostId || !endpoint.expiresAtUtc.isAfter(clock.instant())) {
             throw SecurityException("The rendezvous peer identity or lease expiry did not match the requested peer.")
         }
-        val remotePeerId = try {
+        val remotePeerId =
+            try {
             PeerId.fromBase58(endpoint.peerId)
         } catch (exception: IllegalArgumentException) {
             throw SecurityException("The rendezvous PeerId is not canonical.", exception)
@@ -302,7 +308,8 @@ class Libp2pInferenceRequestTransport(
             throw SecurityException("The rendezvous PeerId is not canonical.")
         }
 
-        val addresses = endpoint.tcpMultiaddresses.map { address ->
+        val addresses =
+            endpoint.tcpMultiaddresses.map { address ->
             require(address.endsWith("/p2p/${endpoint.peerId}")) {
                 "The direct multiaddress must end with the announced PeerId."
             }
@@ -317,22 +324,26 @@ class Libp2pInferenceRequestTransport(
         if (pendingHostStatusRequests.putIfAbsent(endpoint.peerId, pending) != null) {
             throw IllegalStateException("A status probe is already pending for this peer.")
         }
-        val requestWire = HostStatusRequest.newBuilder()
+        val requestWire =
+            HostStatusRequest.newBuilder()
             .setEphemeralHostId(ephemeralHostId)
             .build()
             .toByteArray()
         try {
             ensureHostStarted()
-            val promise = libp2pHost.newStream<InferencePeerMessageController>(
+            val promise =
+                libp2pHost.newStream<InferencePeerMessageController>(
                 listOf(PROTOCOL_ID),
                 remotePeerId,
                 *addresses.toTypedArray(),
             )
             val timeoutSeconds = connectionTimeout.toSeconds().coerceAtLeast(1L)
-            val stream = withContext(Dispatchers.IO) {
+            val stream =
+                withContext(Dispatchers.IO) {
                 promise.stream.get(timeoutSeconds, TimeUnit.SECONDS)
             }
-            val controller = withContext(Dispatchers.IO) {
+            val controller =
+                withContext(Dispatchers.IO) {
                 promise.controller.get(timeoutSeconds, TimeUnit.SECONDS)
             }
             pending.controller = controller
@@ -342,15 +353,18 @@ class Libp2pInferenceRequestTransport(
             withContext(Dispatchers.IO) {
                 controller.sendRequest(requestWire).get(timeoutSeconds, TimeUnit.SECONDS)
             }
-            val status = withTimeout(timeout.toMillis().coerceAtLeast(1L)) {
+            val status =
+                withTimeout(timeout.toMillis().coerceAtLeast(1L)) {
                 pending.response.await()
             }
 
             if (status.ephemeralHostId != ephemeralHostId) {
                 throw SecurityException("The HostStatus identity did not match the authenticated peer.")
             }
-            if (status.state.number !in 1..5 || status.observedAtUnixMs <= 0L ||
-                status.activeRequests > MAXIMUM_HOST_STATUS_ACTIVE_REQUESTS
+            if (
+                status.state.number !in 1..5 ||
+                    status.observedAtUnixMs <= 0L ||
+                    status.activeRequests > MAXIMUM_HOST_STATUS_ACTIVE_REQUESTS
             ) {
                 throw IOException("The peer returned an invalid HostStatus snapshot.")
             }
@@ -487,7 +501,8 @@ class Libp2pInferenceRequestTransport(
     ) {
         val pendingStatus = pendingHostStatusRequests[authenticatedPeerId]
         if (pendingStatus?.controller === controller) {
-            val status = try {
+            val status =
+                try {
                 HostStatus.parseFrom(payload)
             } catch (exception: Exception) {
                 pendingStatus.response.completeExceptionally(

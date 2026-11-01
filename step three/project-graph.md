@@ -26519,22 +26519,29 @@
       ],
       "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
       "execution_summary": {
-        "attempt_count": 2,
-        "failed_attempt_count": 1,
-        "last_attempt_id": "T0123-A002-fix-status-handler-local-name",
+        "attempt_count": 3,
+        "failed_attempt_count": 2,
+        "last_attempt_id": "T0123-A003-android-kotlin-formatting",
         "last_attempt_result": "in_progress",
         "changed_files": [
-          "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs",
+          "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
+          "src/Client.Android/app/src/test/java/com/whitep/client/network/Libp2pInferenceRequestTransportTest.kt",
           "step three/T0123/execution-report.md",
           "step three/project-graph.md"
         ],
         "related_commits": [
-          "03792d1a958cb1edf552092f0d7d371d8b8e5b47"
+          "03792d1a958cb1edf552092f0d7d371d8b8e5b47",
+          "d38558244b9bcff6b2a1c42c1421d086872d3f27"
         ],
-        "tests_passed": [],
+        "tests_passed": [
+          "Exact V 3.0.754 HostLifecycle authenticated HostStatusRequest/HostStatus loopback acceptance — PASS — https://github.com/artinrahimii/project/actions/runs/41302568558/job/124836380905",
+          "Exact V 3.0.754 Windows WPF build/startup/security checks — PASS — https://github.com/artinrahimii/project/actions/runs/41302568558/job/124836380718",
+          "Exact V 3.0.754 Step Three quality gate — PASS — https://github.com/artinrahimii/project/actions/runs/41302568562",
+          "Exact V 3.0.754 Rendezvous container build and HTTP smoke — PASS — https://github.com/artinrahimii/project/actions/runs/41302568585"
+        ],
         "tests_failed": [
           "Exact V 3.0.753 HostLifecycle compile — FAILED CS0136 — https://github.com/artinrahimii/project/actions/runs/41302359549/job/124835779036",
-          "Exact V 3.0.753 Android .NET peer interoperability fixture — FAILED on shared CS0136 compile error; Android lint/JVM not reached — https://github.com/artinrahimii/project/actions/runs/41302359549/job/124835779273"
+          "Exact V 3.0.754 Android KtLint — FAILED formatting in main and test source sets; APK/JVM skipped — https://github.com/artinrahimii/project/actions/runs/41302568558/job/124836380819"
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -26550,7 +26557,7 @@
             "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt"
           ]
         },
-        "follow_up": "A002 renames the status handler local to statusAuthenticatedPeerIdentity to remove CS0136. Run exact-head product workflow (HostLifecycle, WPF, Android lint/APK/JVM), Step Three quality and container smoke. Do not mark T0123 done until all relevant jobs pass."
+        "follow_up": "A003 contains formatting-only corrections for Android main and test Kotlin files. Exact-head Android KtLint, APK and JVM tests must pass, together with a final passing product build and Step Three quality gate, before T0123 can be marked done."
       },
       "execution_history": [
         {
@@ -26595,11 +26602,68 @@
         {
           "attempt_id": "T0123-A002-fix-status-handler-local-name",
           "started_at": "2026-11-01T11:34:57.300Z",
-          "ended_at": null,
-          "result": "in_progress",
+          "ended_at": "2026-11-01T11:37:38Z",
+          "result": "failed",
           "summary": "Corrected the compiler error from A001 by renaming the HostStatusRequest branch local to statusAuthenticatedPeerIdentity, avoiding collision with the inference-request local in the enclosing receive-loop scope. Exact-head CI has not yet run for this correction.",
           "changed_files": [
             "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs",
+            "step three/T0123/execution-report.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "HostLifecycle authenticated HostStatusRequest/HostStatus loopback test and full suite",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41302568558/job/124836380905",
+              "summary": "The live status request returned the exact host identity, READY state, active request count and fresh server-generated timestamp."
+            },
+            {
+              "name": "Windows WPF release build/startup/security checks",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41302568558/job/124836380718",
+              "summary": "WPF host build, Protobuf source verification, startup, process restrictions, policy gate, capability gate and DPAPI identity/trust checks passed."
+            },
+            {
+              "name": "Android .NET peer interoperability fixture build",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41302568558/job/124836380819",
+              "summary": "The shared Windows/.NET test fixture compiled successfully."
+            },
+            {
+              "name": "Android KtLint main and test source sets",
+              "result": "failed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41302568558/job/124836380819",
+              "summary": "Formatting violations in Libp2pInferenceRequestTransport.kt and Libp2pInferenceRequestTransportTest.kt; APK and JVM test stages were skipped."
+            },
+            {
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41302568562",
+              "summary": "Graph and Python quality checks passed."
+            },
+            {
+              "name": "Rendezvous container build and HTTP smoke",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41302568585",
+              "summary": "Production container build and HTTP smoke passed."
+            }
+          ],
+          "failure_details": "HostStatusRequest C# handler and all HostLifecycle integration tests passed on exact V 3.0.754, but Android KtLint rejected formatting in Libp2pInferenceRequestTransport.kt and Libp2pInferenceRequestTransportTest.kt. Errors included multiline assignment/constructor layout, condition continuation, newline placement and trailing-comma rules. Android APK build and JVM tests were skipped. Windows WPF build, Step Three quality gate and Rendezvous container smoke passed.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "A003 formats the two Kotlin files per repository KtLint rules; rerun Android lint, APK and JVM tests plus exact-head regression."
+        },
+        {
+          "attempt_id": "T0123-A003-android-kotlin-formatting",
+          "started_at": "2026-11-01T11:38:35.734Z",
+          "ended_at": null,
+          "result": "in_progress",
+          "summary": "Applied repository KtLint layout rules to the new Android HostStatus probe and transport test: multiline expression breaks, condition wrapping, constructor formatting and trailing commas. No protocol or runtime behavior was changed by this formatting-only correction. Exact V 3.0.755 CI is pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/network/Libp2pInferenceRequestTransportTest.kt",
             "step three/T0123/execution-report.md",
             "step three/project-graph.md"
           ],
@@ -26609,7 +26673,7 @@
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Wait for exact V 3.0.754 CI and fix any subsequent failures. Keep T0123 in_progress until all acceptance jobs pass."
+          "follow_up": "Run exact-head Android KtLint, APK, Android JVM transport test, Windows WPF and HostLifecycle regression. Resolve any further compile/test failures before marking T0123 done."
         }
       ]
     },
@@ -58024,7 +58088,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-11-01T11:34:57.300Z",
+  "updated_at": "2026-11-01T11:38:35.734Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

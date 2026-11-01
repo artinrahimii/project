@@ -62,7 +62,8 @@ class Libp2pInferenceRequestTransportTest {
             val serverIdentity = generateKeyPair(KeyType.ED25519).first
             val expectedServerPeerId = PeerId.fromPubKey(serverIdentity.publicKey()).toBase58()
             val observedAt = System.currentTimeMillis()
-            val status = HostStatus.newBuilder()
+            val status =
+                HostStatus.newBuilder()
                 .setEphemeralHostId(expectedServerPeerId)
                 .setState(HostRuntimeState.HOST_RUNTIME_STATE_READY)
                 .setActiveRequests(0)
@@ -75,17 +76,20 @@ class Libp2pInferenceRequestTransportTest {
 
             val listenAddress = server.listenAddresses().first { it.toString().contains("/tcp/") }.toString()
             val suffix = "/p2p/$expectedServerPeerId"
-            val address = when {
+            val address =
+                when {
                 listenAddress.endsWith(suffix) -> listenAddress
                 !listenAddress.contains("/p2p/") -> "$listenAddress$suffix"
                 else -> error("The server listen address contains a different PeerId.")
             }
-            val endpoint = RendezvousPeerEndpoint(
+            val endpoint =
+                RendezvousPeerEndpoint(
                 peerId = expectedServerPeerId,
                 tcpMultiaddresses = listOf(address),
                 expiresAtUtc = Instant.now().plusSeconds(120),
             )
-            val client = Libp2pInferenceRequestTransport(
+            val client =
+                Libp2pInferenceRequestTransport(
                 localIdentity = generateKeyPair(KeyType.ED25519).first,
                 resolveEndpoint = { requestedPeerId ->
                     if (requestedPeerId == expectedServerPeerId) endpoint else null

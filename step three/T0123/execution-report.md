@@ -22,3 +22,20 @@
 - **Android result:** the .NET peer-interoperability fixture build also stopped on the same shared compile error. Kotlin lint, APK compilation and Android JVM tests were skipped; no Android runtime pass is claimed.
 - **Correction in A002:** renamed the new status-branch local to `statusAuthenticatedPeerIdentity`. No protocol or security behavior was changed.
 - **Task state:** T0123 remains `in_progress`; A001 is recorded as failed, A002 is in progress. No acceptance criterion is yet marked complete.
+
+## T0123-A002 — HostStatus path compiled; Kotlin style gate failed
+
+- **Exact verification commit:** `V 3.0.754` — `d38558244b9bcff6b2a1c42c1421d086872d3f27`.
+- **HostLifecycle:** PASS — the authenticated loopback HostStatusRequest/HostStatus exchange passed within [job 124836380905](https://github.com/artinrahimii/project/actions/runs/41302568558/job/124836380905). The test verified the matching host PeerId, READY status, active request count and server-generated fresh timestamp.
+- **Windows WPF:** PASS — build, Protobuf, startup, security and DPAPI checks passed in [job 124836380718](https://github.com/artinrahimii/project/actions/runs/41302568558/job/124836380718).
+- **Android .NET fixture:** PASS — shared C# peer fixture compiled in [job 124836380819](https://github.com/artinrahimii/project/actions/runs/41302568558/job/124836380819).
+- **Android KtLint:** FAILED — formatting in the new Android transport and test files violated multiline-expression, newline and trailing-comma rules. The APK and Android JVM test stages were skipped; no Android probe test pass is claimed.
+- **Other checks:** [Step Three quality gate](https://github.com/artinrahimii/project/actions/runs/41302568562) and [Rendezvous container smoke](https://github.com/artinrahimii/project/actions/runs/41302568585) passed.
+- **Correction in A003:** reflowed the affected Kotlin expressions, conditions and constructors to match existing KtLint style. This change is formatting-only; it does not alter the HostStatus wire format or runtime semantics.
+- **Task state:** T0123 remains `in_progress`. A002 is preserved as failed because Android's style gate blocked compilation and runtime testing.
+
+## T0123-A003 — Android Kotlin formatting correction
+
+- **Changed files:** `Libp2pInferenceRequestTransport.kt` and `Libp2pInferenceRequestTransportTest.kt`.
+- **Correction:** split multiline expressions after assignment, wrapped multiline boolean conditions with trailing commas, and formatted constructor/when/try expressions in repository style.
+- **Verification:** exact V 3.0.755 KtLint, Android APK/JVM, Windows and HostLifecycle CI are pending. No success is claimed for A003 yet.
