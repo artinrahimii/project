@@ -275,7 +275,8 @@ internal static class PeerAnnouncementClientAcceptanceTests
                 "Authenticated HostStatus round-trip failed. " +
                 $"hostActive={host.IsActive}; " +
                 $"hostFailureType={host.LastFailureType ?? "none"}; " +
-                $"clientConnected={client.IsConnected}; " +
+                $"hostFailureStage={host.LastFailureStage ?? "none"}; " +
+                $"clientConnected={client.IsConnected}; 
                 $"failureType={exception.GetType().Name}.",
                 exception);
         }

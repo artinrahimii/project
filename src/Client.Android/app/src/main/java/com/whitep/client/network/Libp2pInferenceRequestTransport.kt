@@ -36,6 +36,7 @@ import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicLong
 
 /**
  * Android outbound libp2p adapter for the Windows /white-p/peer-message/1.0.0 protocol.
@@ -83,11 +84,34 @@ class Libp2pInferenceRequestTransport(
     private val startMutex = Mutex()
     private val pendingAttempts = ConcurrentHashMap<AttemptKey, PendingAttempt>()
     private val pendingHostStatusRequests = ConcurrentHashMap<String, PendingHostStatusRequest>()
+    private val inboundChunks = AtomicLong()
+    private val decodedFrames = AtomicLong()
+    private val hostStatusFrames = AtomicLong()
+    private val responseFrames = AtomicLong()
+    private val malformedResponseFrames = AtomicLong()
+    private val unmatchedResponseFrames = AtomicLong()
+    private val correlationRejectedFrames = AtomicLong()
+    private val acceptedResponseFrames = AtomicLong()
+    private val peerClosedCallbacks = AtomicLong()
+    private val callbackFailures = AtomicLong()
     private var hostStarted = false
 
     @Volatile
     internal var lastSubmissionFailure: String? = null
         private set
+
+    /** Payload-free counters for diagnosing cross-runtime response delivery. */
+    internal fun diagnosticSnapshot(): String =
+        "inboundChunks=${inboundChunks.get()};" +
+            "decodedFrames=${decodedFrames.get()};" +
+            "hostStatusFrames=${hostStatusFrames.get()};" +
+            "responseFrames=${responseFrames.get()};" +
+            "malformedResponseFrames=${malformedResponseFrames.get()};" +
+            "unmatchedResponseFrames=${unmatchedResponseFrames.get()};" +
+            "correlationRejectedFrames=${correlationRejectedFrames.get()};" +
+            "acceptedResponseFrames=${acceptedResponseFrames.get()};" +
+            "peerClosedCallbacks=${peerClosedCallbacks.get()};" +
+            "callbackFailures=${callbackFailures.get()}"
     private val protocolBinding =
         createSimpleBinding(PROTOCOL_ID) {
             InferencePeerMessageController(::onIncomingFrame, ::onPeerClosed)
@@ -540,6 +564,7 @@ class Libp2pInferenceRequestTransport(
     ) {
         val pendingStatus = pendingHostStatusRequests[authenticatedPeerId]
         if (pendingStatus?.controller === controller) {
+            hostStatusFrames.incrementAndGet()
             val status =
                 try {
                     HostStatus.parseFrom(payload)
@@ -563,12 +588,18 @@ class Libp2pInferenceRequestTransport(
             try {
                 InferenceResponse.parseFrom(payload)
             } catch (_: Exception) {
+                malformedResponseFrames.incrementAndGet()
                 failPendingAttemptsForPeer(authenticatedPeerId, controller)
                 return
             }
 
+        responseFrames.incrementAndGet()
         val key = AttemptKey(response.requestId, response.attemptId)
-        val pending = pendingAttempts[key] ?: return
+        val pending = pendingAttempts[key]
+        if (pending == null) {
+            unmatchedResponseFrames.incrementAndGet()
+            return
+        }
         if (authenticatedPeerId != pending.peerId ||
             !InferenceResponseCorrelationValidator.matches(
                 response = response,
@@ -581,11 +612,13 @@ class Libp2pInferenceRequestTransport(
                 receivedAtUnixMs = clock.millis(),
             )
         ) {
+            correlationRejectedFrames.incrementAndGet()
             pending.response.completeExceptionally(
                 SecurityException("The response did not match its authenticated peer or request correlation."),
             )
             return
         }
+        acceptedResponseFrames.incrementAndGet()
         pending.response.complete(response)
     }
 
@@ -593,6 +626,7 @@ class Libp2pInferenceRequestTransport(
         authenticatedPeerId: String,
         controller: InferencePeerMessageController,
     ) {
+        peerClosedCallbacks.incrementAndGet()
         pendingHostStatusRequests[authenticatedPeerId]
             ?.takeIf { pending -> pending.controller === controller }
             ?.response
@@ -675,14 +709,17 @@ internal class InferencePeerMessageController(
         val peerId = authenticatedPeerId ?: return
         val bytes = ByteArray(msg.readableBytes())
         msg.readBytes(bytes)
+        inboundChunks.incrementAndGet()
         try {
             val frames = decoder.feed(bytes)
+            decodedFrames.addAndGet(frames.size.toLong())
             try {
                 frames.forEach { frame -> onFrame(peerId, frame, this) }
             } finally {
                 frames.forEach { frame -> Arrays.fill(frame, 0) }
             }
         } catch (_: Exception) {
+            callbackFailures.incrementAndGet()
             decoder.clear()
             onClosed(peerId, this)
             stream.reset()

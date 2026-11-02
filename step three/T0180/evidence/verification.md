@@ -78,3 +78,13 @@ Changed code implements zeroization for Windows frames/queue/lifecycle buffers a
 - Added a safe, type-only diagnostic wrapper around the HostStatus receive in PeerAnnouncementClientAcceptanceTests. It surfaces host.IsActive, host.LastFailureType, client.IsConnected and the received exception type only.
 - No secrets, identifiers, prompts, responses or exception messages are emitted by the added diagnostic.
 - This commit has not yet been validated by exact-head CI; no task completion is claimed.
+
+
+## T0180-A010 — type/stage-only and counter diagnostics
+
+- Exact base: `V 3.0.828`, commit `0608663fa99031d43c637158f3c9976f257bd9c6`, branch `main`.
+- The exact-base graph Blob was obtained from Git Blobs API and matched the Git Trees entry by SHA-1. Seven modified-file inputs were fetched as Base64 and each recomputed Git Blob SHA-1 matched both the contents response and the same commit's tree entry.
+- Windows host diagnostics now expose a fixed receive-loop stage separately from exception type. The acceptance failure message includes only these values.
+- Android transport maintains numeric counts for inbound chunks, decoded frames, HostStatus frames, InferenceResponse frames, malformed response frames, unmatched response frames, correlation rejections, accepted responses, peer-closed callbacks and callback failures. No application payload, peer ID, prompt, response text, exception message or key material is recorded.
+- CI failures observed on V 3.0.828 remain: HostLifecycle reported InvalidDataException and Android JVM reported 1 failure among 196 tests in the three-peer cancellation round-trip. The new diagnostic counters/stage have not yet been exercised by exact-head CI.
+- No task completion is claimed; T0180 remains in_progress pending root-cause correction and full exact-head acceptance.

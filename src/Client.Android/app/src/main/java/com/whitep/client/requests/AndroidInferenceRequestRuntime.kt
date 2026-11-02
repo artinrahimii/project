@@ -66,6 +66,9 @@ class AndroidInferenceRequestRuntime private constructor(
     internal val lastSubmissionFailure: String?
         get() = transport.lastSubmissionFailure
 
+    /** Payload-free receive counters from the Android peer transport. */
+    internal fun transportDiagnosticSnapshot(): String = transport.diagnosticSnapshot()
+
     internal constructor(
         localIdentity: PrivKey,
         resolveEndpoint: suspend (String) -> RendezvousPeerEndpoint?,

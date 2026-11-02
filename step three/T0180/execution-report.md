@@ -146,3 +146,12 @@
 - آزمون loopback اکنون در شکست دریافت HostStatus، مقادیر غیرحساس hostActive، hostFailureType، clientConnected و failureType را گزارش می‌کند.
 - این تغییر صرفاً ابزار تشخیص در آزمون است؛ هیچ رفتار production تغییر نکرده و علت ریشه‌ای بسته‌شدن اتصال هنوز اثبات نشده است.
 - آزمون‌های محلی این تلاش اجرا نشدند؛ پذیرش دقیق commit جدید باید از طریق CI بررسی شود. T0180 همچنان in_progress است.
+
+
+## تلاش T0180-A010 — تشخیص مرحله‌ای Windows و دریافت پاسخ Android
+
+- گزارش CI مربوط به V 3.0.828 نشان داد HostLifecycle با `hostActive=False` و `hostFailureType=InvalidDataException` متوقف شده است. چون این نوع استثنا می‌تواند از چند کنترل متفاوت در ReceiveLoopAsync ایجاد شود، یک LastFailureStage با مقادیر ثابت و غیرحساس اضافه شد؛ مراحل شامل parse پیام، احراز هویت peer، تطبیق شناسهٔ مقصد، ساخت و ارسال HostStatus و رد پیام نامعتبر هستند.
+- گزارش JUnit همان commit نشان داد آزمون Android از ۱۹۶ آزمون، ۱۹۵ موفق و یک ناموفق داشته است. هر سه fixture ویندوزی CANCEL_RECEIVED، VALIDATED و SENT را ثبت کرده‌اند، اما کلاینت در awaitResponse به timeout رسیده و diagnostics سمت کلاینت پیش‌تر در دسترس نبوده است.
+- شمارنده‌های عددی Android اکنون تعداد chunkها و frameهای ورودی، frameهای HostStatus و InferenceResponse، parse ناموفق، پاسخ بدون pending، رد تطبیق، پاسخ پذیرفته‌شده، بسته‌شدن peer و خطای callback را بدون ثبت payload یا شناسه نگه می‌دارند.
+- دو آزمون پذیرش در صورت شکست، فقط کد مرحله/شمارنده‌های allowlist‌شده را چاپ می‌کنند. هیچ تغییر در قالب پیام Protobuf، framing یا قواعد اعتماد peer اعمال نشده است.
+- این تغییر تشخیصی است و هنوز علت ریشه‌ای دو شکست را برطرف نکرده است. آزمون‌های محلی این نشست اجرا نشده‌اند؛ CI دقیق commit بعدی برای تعیین علت لازم است. T0180 همچنان in_progress است.

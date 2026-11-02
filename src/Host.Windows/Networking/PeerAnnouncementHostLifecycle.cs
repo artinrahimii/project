@@ -54,6 +54,7 @@ public sealed class PeerAnnouncementHostLifecycle : IAsyncDisposable
     private bool _disposed;
     private int _active;
     private string? _lastFailureType;
+    private string? _lastFailureStage;
 
     public PeerAnnouncementHostLifecycle(
         PeerTrustStore trustStore,
@@ -140,6 +141,9 @@ public sealed class PeerAnnouncementHostLifecycle : IAsyncDisposable
     /// <summary>Type-only diagnostics; never retains request, response, or exception message content.</summary>
     public string? LastFailureType => Volatile.Read(ref _lastFailureType);
 
+    /// <summary>Fixed allowlisted receive-loop stage; never includes peer or message content.</summary>
+    public string? LastFailureStage => Volatile.Read(ref _lastFailureStage);
+
     /// <summary>Starts the authenticated listener before publishing a renewable metadata lease.</summary>
     public async Task StartAsync(CancellationToken cancellationToken = default)
     {
@@ -186,6 +190,7 @@ public sealed class PeerAnnouncementHostLifecycle : IAsyncDisposable
                 _publisher = publisher;
                 _lifetime = new CancellationTokenSource();
                 Volatile.Write(ref _lastFailureType, null);
+                Volatile.Write(ref _lastFailureStage, null);
                 Volatile.Write(ref _active, 1);
                 _receiveLoop = ReceiveLoopAsync(transport, publisher, _lifetime.Token);
             }
@@ -270,6 +275,7 @@ public sealed class PeerAnnouncementHostLifecycle : IAsyncDisposable
         PeerAnnouncementLeasePublisher publisher,
         CancellationToken cancellationToken)
     {
+        string failureStage = "await_authenticated_peer";
         try
         {
             // StartListenAsync opens the listener before any remote session exists. Wait for the
@@ -279,34 +285,46 @@ public sealed class PeerAnnouncementHostLifecycle : IAsyncDisposable
 
             while (!cancellationToken.IsCancellationRequested)
             {
+                failureStage = "receive_application_message";
                 byte[] requestWire = await transport.ReceiveMessageAsync(cancellationToken).ConfigureAwait(false);
                 bool handedToHandler = false;
                 try
                 {
+                    failureStage = "parse_host_status_request";
                     var parsedStatusRequest = ProtocolMessageParser.ParseHostStatusRequest(requestWire);
                     if (parsedStatusRequest.IsValid && parsedStatusRequest.Message is not null)
                     {
+                        failureStage = "host_status_remote_identity_missing";
                         string statusAuthenticatedPeerIdentity = transport.RemotePeerIdentity
                             ?? throw new InvalidDataException("The secure peer session has no authenticated remote identity.");
+                        failureStage = "host_status_remote_identity_mismatch";
                         if (!StringComparer.Ordinal.Equals(statusAuthenticatedPeerIdentity, _expectedPeerIdentity))
                             throw new InvalidDataException("The secure peer session identity changed unexpectedly.");
+                        failureStage = "host_status_target_identity_mismatch";
                         if (!StringComparer.Ordinal.Equals(parsedStatusRequest.Message.EphemeralHostId, LocalPeerIdentity))
                             throw new InvalidDataException("HostStatusRequest targeted a different peer identity.");
 
+                        failureStage = "create_host_status_response";
                         var status = await CreateHostStatusResponseAsync(cancellationToken).ConfigureAwait(false);
+                        failureStage = "send_host_status_response";
                         await SendAndClearMessageAsync(transport, status, cancellationToken).ConfigureAwait(false);
                         continue;
                     }
 
+                    failureStage = "parse_inference_request";
                     var parsedRequest = ProtocolMessageParser.ParseInferenceRequest(requestWire);
                     if (!parsedRequest.IsValid || parsedRequest.Message is null)
                     {
                         // The authenticated peer protocol is a stream of bounded Protobuf frames.
                         // Try the separate CancelRequest contract only after a frame fails request
                         // validation, so a valid InferenceRequest always retains precedence.
+                        failureStage = "parse_cancel_request";
                         var parsedCancel = ProtocolMessageParser.ParseCancelRequest(requestWire);
                         if (!parsedCancel.IsValid || parsedCancel.Message is null)
+                        {
+                            failureStage = "reject_malformed_application_message";
                             throw new InvalidDataException("The peer sent a malformed request or cancellation message.");
+                        }
 
                         var cancel = parsedCancel.Message;
                         var cancelKey = new RequestAttemptKey(cancel.RequestId, cancel.AttemptId);
@@ -402,6 +420,7 @@ public sealed class PeerAnnouncementHostLifecycle : IAsyncDisposable
         }
         catch (Exception exception)
         {
+            Volatile.Write(ref _lastFailureStage, failureStage);
             Volatile.Write(ref _lastFailureType, exception.GetType().Name);
             Volatile.Write(ref _active, 0);
             try { await publisher.StopAsync().ConfigureAwait(false); }

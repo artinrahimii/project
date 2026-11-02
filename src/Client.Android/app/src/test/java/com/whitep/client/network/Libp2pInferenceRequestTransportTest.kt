@@ -635,7 +635,8 @@ class Libp2pInferenceRequestTransportTest {
                                     .joinToString(separator = " | ")
                             throw AssertionError(
                                 "The Windows host did not return its correlated CANCELLED response; " +
-                                    "phases=$phases; diagnostics=$diagnostics",
+                                    "phases=$phases; diagnostics=$diagnostics; " +
+                                    "androidTransport=${runtimeClient.transportDiagnosticSnapshot()}",
                                 exception,
                             )
                         }
