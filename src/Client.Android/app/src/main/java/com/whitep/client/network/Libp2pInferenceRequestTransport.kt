@@ -442,8 +442,10 @@ class Libp2pInferenceRequestTransport(
      * Sends a correlated CancelRequest over the already authenticated stream for each
      * still-pending selected attempt. A false result means the attempt was not pending,
      * its response had already arrived, or the cancellation frame could not be written.
-     * The pending response is deliberately retained so the host's CANCELLED response
-     * (or a race-winning completed response) remains authoritative.
+     * After a successful write, the host's CANCELLED response (or a race-winning completed
+     * response) remains authoritative. If the write wait is cancelled, interrupted or times
+     * out before its Netty promise completes, the stream is closed to finish the pending write
+     * and trigger the frame-zeroization callback.
      */
     suspend fun cancelAttempts(
         requestId: String,
@@ -487,7 +489,15 @@ class Libp2pInferenceRequestTransport(
                         true
                     }
                 } catch (cancellation: CancellationException) {
+                    closeStreamAfterPendingWriteFailure(controller)
                     throw cancellation
+                } catch (_: java.util.concurrent.TimeoutException) {
+                    closeStreamAfterPendingWriteFailure(controller)
+                    false
+                } catch (_: InterruptedException) {
+                    closeStreamAfterPendingWriteFailure(controller)
+                    Thread.currentThread().interrupt()
+                    false
                 } catch (_: Exception) {
                     false
                 } finally {
@@ -497,6 +507,17 @@ class Libp2pInferenceRequestTransport(
         return results
     }
 
+    /**
+     * Future.get(timeout) does not cancel the underlying Netty write. Closing this stream
+     * makes an unfinished write fail, which runs sendRequest's whenComplete zeroization.
+     */
+    private fun closeStreamAfterPendingWriteFailure(controller: InferencePeerMessageController) {
+        try {
+            controller.closeStream()
+        } catch (_: Exception) {
+            // Preserve the caller's cancellation/timeout result if teardown also fails.
+        }
+    }
     private suspend fun ensureHostStarted() {
         startMutex.withLock {
             if (closed.get()) {

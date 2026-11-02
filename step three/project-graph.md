@@ -49922,9 +49922,8 @@
         "tests/test_sensitive_buffer_cleanup.py",
         "step three/T0180/execution-report.md",
         "step three/T0180/evidence/verification.md",
-        "step three/T0180/execution-report.md",
-        "step three/T0180/evidence/verification.md",
-        "step three/project-graph.md"
+        "step three/project-graph.md",
+        "tests/test_android_libp2p_transport_contract.py"
       ],
       "expected_output_paths": [
         "src/Shared.Security/ + src/Host.Windows/ + src/Client.Android/ + docs/security.md"
@@ -49935,22 +49934,28 @@
         "tests/test_sensitive_buffer_cleanup.py",
         "src/Client.Android/app/src/test/java/com/whitep/client/network/PeerMessageFrameCodecTest.kt",
         "src/Host.Windows/Networking/Libp2pPeerMessageProtocol.cs",
-        "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs"
+        "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs",
+        "tests/test_android_libp2p_transport_contract.py",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0180-A001 (2026-11-02T17:03:47+03:30): implemented explicit cleanup for Windows outbound frames, failed queue handoff, queued messages at disposal, host request/response wire arrays and short-lived serialized status/rejection messages; Android decoder pending/temporary buffers and decoded frames are zeroed on replacement, malformed frame, callback failure and stream closure. T0177→T0180 and T0179→T0180 reviewed as sequencing_only while retaining type=blocks and the original execution order. Added Android JVM backing-array tests, Python source regressions and documented limits. Exact-head CI pending; task remains in_progress.\nT0180-A002 (2026-11-02T17:23:00+03:30–2026-11-02T17:29:27+03:30): removed a redundant consecutive blank line before the new Android JVM test. Exact-base graph Blob SHA-1 and JSON structure were validated. No automated tests or exact-head CI ran because the clone failed DNS resolution and local .NET/Gradle/Android toolchains are unavailable; the current commit has no returned status checks. Task remains in_progress.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0180-A001 (2026-11-02T17:03:47+03:30): implemented explicit cleanup for Windows outbound frames, failed queue handoff, queued messages at disposal, host request/response wire arrays and short-lived serialized status/rejection messages; Android decoder pending/temporary buffers and decoded frames are zeroed on replacement, malformed frame, callback failure and stream closure. T0177→T0180 and T0179→T0180 reviewed as sequencing_only while retaining type=blocks and the original execution order. Added Android JVM backing-array tests, Python source regressions and documented limits. Exact-head CI pending; task remains in_progress.\nT0180-A002 (2026-11-02T17:23:00+03:30–2026-11-02T17:29:27+03:30): removed a redundant consecutive blank line before the new Android JVM test. Exact-base graph Blob SHA-1 and JSON structure were validated. No automated tests or exact-head CI ran because the clone failed DNS resolution and local .NET/Gradle/Android toolchains are unavailable; the current commit has no returned status checks. Task remains in_progress.\nT0180-A003 (2026-11-02T18:14:10+03:30): identified that CompletableFuture.get(timeout) in cancelAttempts does not cancel the Netty write promise; added stream closure on cancellation/timeout/interruption so pending writes terminate and the sendRequest whenComplete callback clears its frame. Added a Python source-contract regression. Independently compiled the fetched PeerMessageFrameCodec production source with Kotlin 1.9.0/JDK21 and ran 8/8 decoder scenarios. Full Android/Windows/CI acceptance remains pending; task stays in_progress.",
       "execution_summary": {
-        "attempt_count": 2,
+        "attempt_count": 3,
         "failed_attempt_count": 0,
-        "last_attempt_id": "T0180-A002",
+        "last_attempt_id": "T0180-A003",
         "last_attempt_result": "partial",
         "changed_files": [
-          "src/Client.Android/app/src/test/java/com/whitep/client/network/PeerMessageFrameCodecTest.kt",
+          "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
+          "tests/test_android_libp2p_transport_contract.py",
           "step three/T0180/execution-report.md",
           "step three/T0180/evidence/verification.md",
           "step three/project-graph.md"
         ],
         "related_commits": [],
-        "tests_passed": [],
+        "tests_passed": [
+          "Standalone Kotlin/JVM codec harness — 8/8 scenarios passed with Kotlin 1.9.0 / JDK 21; production source Blob f39a0695e6ce2b927b255e0f188dd1ed4b778098.",
+          "Exact-source static cleanup predicate audit — 11/11 checks true (tool-side verification; not the Python unittest suite)."
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -50009,6 +50014,38 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Run Step Three quality gate, Android KtLint/compile/APK/JVM tests, Windows WPF/HostLifecycle tests and container checks on the new exact main commit; mark done only if all acceptance evidence passes."
+        },
+        {
+          "attempt_id": "T0180-A003",
+          "started_at": "2026-11-02T18:14:10+03:30",
+          "ended_at": "2026-11-02T18:14:10+03:30",
+          "result": "partial",
+          "summary": "Fixed Android cancel-write timeout/cancellation/interruption cleanup by closing the affected stream, added a source-contract regression, and independently compiled/exercised the production codec with an 8/8 standalone Kotlin harness.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
+            "tests/test_android_libp2p_transport_contract.py",
+            "step three/T0180/execution-report.md",
+            "step three/T0180/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Standalone Kotlin/JVM codec acceptance harness",
+              "result": "passed",
+              "summary": "Production PeerMessageFrameCodec source compiled with Kotlin 1.9.0 on JDK 21; 8/8 framing and zeroization scenarios passed."
+            },
+            {
+              "name": "Exact-source cleanup predicate audit",
+              "result": "passed",
+              "summary": "11/11 source predicates for Windows, Android decoder/controller and committed regression coverage were present."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": "Full Android Gradle/JUnit and Netty integration, Windows/.NET build, Python unittest suite and exact-head GitHub Actions checks are unavailable from this runtime; clone attempt failed because github.com DNS resolution failed.",
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Run Python quality workflow, Android KtLint/compile/APK/JVM+Netty integration, Windows WPF/HostLifecycle and Rendezvous container workflows on the exact new main commit. Confirm that a timed-out/cancelled Netty write completes exceptionally after stream close and that its frame array is zeroed; only then mark T0180 done."
         }
       ]
     },
@@ -62184,7 +62221,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-11-02T17:29:27+03:30",
+  "updated_at": "2026-11-02T18:14:10+03:30",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

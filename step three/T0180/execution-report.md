@@ -51,3 +51,26 @@
 - GitHub برای SHA مبنا status check برنگرداند؛ ابزار موجود برای فهرست workflow runها فقط اجراهای PR را برمی‌گرداند و نتیجه‌ای نشان نداد. بنابراین هیچ آزمونی موفق یا ناموفق اعلام نمی‌شود.
 
 **اقدام بعدی:** اجرای quality gate و workflowهای واقعی Windows/Android/HostLifecycle روی commit جدید؛ تنها پس از موفقیت شواهد، وضعیت به `done` تغییر کند.
+
+## تلاش T0180-A003 — بستن stream در timeout/cancellation نوشتن Android
+
+**زمان ثبت:** 2026-11-02T18:14:10+03:30  
+**وضعیت:** partial؛ وظیفه همچنان in_progress است.
+
+### یافته و اصلاح واقعی
+
+- بازبینی دقیق نشان داد CompletableFuture.get(timeout) در cancelAttempts صرفاً انتظار فراخوان را timeout می‌کند و لزوماً Promise نوشتن Netty را لغو نمی‌کند. مسیر قبلی در TimeoutException یا interruption فقط false برمی‌گرداند؛ در نتیجه callback پاک‌سازی frame ممکن بود تا پایان نامعلوم Promise اجرا نشود.
+- مسیر Android اکنون در CancellationException، TimeoutException و InterruptedException، stream مربوط را می‌بندد تا نوشتن معلق شکست بخورد و callback موجود sendRequest(...).whenComplete پاک‌سازی frame را اجرا کند. در interruption، وضعیت interrupt thread نیز برگردانده می‌شود.
+- مستند تابع به‌روزرسانی شد: پاسخ CANCELLED/پاسخ مسابقه‌ای فقط بعد از write موفق مرجع می‌ماند؛ اگر خود write پیش از تکمیل لغو یا timeout شود، بسته‌شدن stream مسیر شکست را قطعی می‌کند.
+- آزمون قراردادی Python برای حفاظت از سه شاخهٔ timeout/cancel/interruption و ارتباط آن‌ها با closeStream و whenComplete اضافه شد.
+
+### آزمون‌های اجراشده
+
+- کامپایل مستقل فایل تولیدی PeerMessageFrameCodec.kt با Kotlin/JVM 1.9.0 و JDK 21: موفق.
+- harness اجرایی decoder: ۸ از ۸ سناریو موفق؛ شامل مرز طول‌های varint، frame تکه‌تکه، چند frame، پیام خالی، طول بیش‌ازحد، prefix غیر canonical/بیش‌ازحد بلند، EOF ناقص و صفرشدن بافر قبلی/ناقص.
+- ممیزی predicateهای منبع روی فایل‌های دقیق commit مبنا: ۱۱ از ۱۱ شرط موجود.
+- آزمون Gradle/JUnit برنامهٔ Android، کل Python unittest suite، build ویندوز و CI دقیق این commit در این محیط اجرا نشده‌اند. نتیجهٔ harness مستقل، جایگزین آن‌ها نیست.
+
+### محدودیت باقی‌مانده
+
+تأیید end-to-end بسته‌شدن stream و تکمیل Promise واقعی Netty در timeout هنوز به آزمون Android integration/CI نیاز دارد. آزمون‌های Windows، کل برنامه و workflowهای CI نیز هنوز لازم‌اند؛ بنابراین T0180 تکمیل‌شده اعلام نمی‌شود.

@@ -22,3 +22,14 @@ Changed code implements zeroization for Windows frames/queue/lifecycle buffers a
 - Source review confirmed the redundant blank line in the Android JVM test; it was removed. No automated test was executed in this environment. The local clone attempt failed because DNS could not resolve `github.com`; .NET SDK, Gradle and Android SDK are unavailable.
 - The combined commit status for the base SHA returned no status checks. No PR-triggered workflow run was returned. This is not treated as a test pass or failure.
 - T0180 remains `in_progress`; both validated incoming edges remain `sequencing_only`, with original `type=blocks` and order preserved. The outgoing edge to T0181 remains `unreviewed`.
+
+## T0180-A003 — مستقل‌سازی و اجرای آزمون decoder
+
+- Base revision: b9092888dab7b52a7bbbc22056d8a6f8b4bec57c (V 3.0.823).
+- Production source: src/Client.Android/app/src/main/java/com/whitep/client/network/PeerMessageFrameCodec.kt; fetched Blob SHA: f39a0695e6ce2b927b255e0f188dd1ed4b778098.
+- Runtime: Kotlin/JVM compiler 1.9.0, JDK 21.0.12.1.
+- Command: kotlinc PeerMessageFrameCodec.kt CodecAcceptanceHarness.kt -include-runtime -d codec-acceptance.jar && java -jar codec-acceptance.jar
+- Observed output: PASS: 8/8 codec acceptance scenarios.
+- The harness exercised the production decoder/codec source in isolation. It does not compile the Android app or prove Netty integration, Android SDK compatibility, or Windows behavior.
+- Additional exact-source audit: 11/11 predicates for Windows frame/request/response cleanup, Android pending/temp/frame cleanup, and presence of the committed Python/JVM regressions were true.
+- T0180-A003 closes the Android peer stream when cancellation, interruption or timeout leaves a Netty write promise pending; the existing completion callback then zeros the encoded frame. Exact-head Android integration/CI remains pending.

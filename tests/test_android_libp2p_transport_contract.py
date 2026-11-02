@@ -193,5 +193,20 @@ class AndroidLibp2pTransportContractTests(unittest.TestCase):
             protocol_block.index("add(protocolBindingForHost())"),
         )
 
+    def test_cancel_write_timeout_and_cancellation_close_stream_to_release_frame(self):
+        source = TRANSPORT.read_text(encoding="utf-8")
+        cancel_body = source.split("suspend fun cancelAttempts(", 1)[1].split(
+            "private fun closeStreamAfterPendingWriteFailure", 1
+        )[0]
+        self.assertIn("catch (cancellation: CancellationException)", cancel_body)
+        self.assertIn("catch (_: java.util.concurrent.TimeoutException)", cancel_body)
+        self.assertIn("catch (_: InterruptedException)", cancel_body)
+        self.assertEqual(3, cancel_body.count("closeStreamAfterPendingWriteFailure(controller)"))
+        cleanup = source.split("private fun closeStreamAfterPendingWriteFailure", 1)[1].split(
+            "private suspend fun ensureHostStarted", 1
+        )[0]
+        self.assertIn("controller.closeStream()", cleanup)
+        self.assertIn("whenComplete", source)
+        self.assertIn("Arrays.fill(frame, 0)", source)
 if __name__ == "__main__":
     unittest.main()
