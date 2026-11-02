@@ -121,7 +121,7 @@ class WpfEntryPointTests(unittest.TestCase):
     def test_chat_messages_are_backed_by_an_ordered_in_memory_conversation(self):
         conversation = (ROOT / "src/Host.Application/Chat/ChatConversation.cs").read_text(encoding="utf-8")
         lifecycle_tests = (ROOT / "tests/HostLifecycle.Tests/ChatConversationAcceptanceTests.cs").read_text(encoding="utf-8")
-        self.assertIn("private readonly ChatConversation _conversation = new();", WINDOW_CODE)
+        self.assertIn("private readonly ChatConversation _conversation = new(HostConversationRetentionPolicy.Default);", WINDOW_CODE)
         self.assertIn("AppendConversationMessage(ConversationMessageRole.User, prompt);", WINDOW_CODE)
         self.assertIn("AppendConversationMessage(ConversationMessageRole.Assistant, response);", WINDOW_CODE)
         self.assertIn("_conversation.Add(role, content)", WINDOW_CODE)

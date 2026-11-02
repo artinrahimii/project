@@ -49510,6 +49510,7 @@
         "src/Host.Windows/MainWindow.xaml.cs",
         "tests/HostLifecycle.Tests/ChatConversationAcceptanceTests.cs",
         "tests/test_host_conversation_retention_policy.py",
+        "tests/test_wpf_entrypoint.py",
         "docs/security.md",
         "step three/T0178/execution-report.md",
         "step three/T0178/evidence/verification.md",
@@ -49524,14 +49525,15 @@
         "src/Host.Windows/MainWindow.xaml.cs",
         "tests/HostLifecycle.Tests/ChatConversationAcceptanceTests.cs",
         "tests/test_host_conversation_retention_policy.py",
+        "tests/test_wpf_entrypoint.py",
         "docs/security.md",
         "step three/T0178/evidence/verification.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0178-A001 (2026-11-02T11:47:11.868Z): implemented explicit process-session-only host policy and runtime/source regression checks. Exact-head CI pending; status remains in_progress until those runs are inspected.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0178-A001 (2026-11-02T11:47:11.868Z): implemented explicit process-session-only host policy and runtime/source regression checks. Exact-head CI pending; status remains in_progress until those runs are inspected.\nT0178-A001 validation failed in quality run 41439579310 because tests/test_wpf_entrypoint.py asserted the obsolete parameterless initializer; this historical failure is retained. T0178-A002 updates that assertion for explicit policy injection; exact-head CI pending.",
       "execution_summary": {
-        "attempt_count": 1,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "T0178-A001",
+        "attempt_count": 2,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "T0178-A002",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Host.Application/Chat/HostConversationRetentionPolicy.cs",
@@ -49539,14 +49541,19 @@
           "src/Host.Windows/MainWindow.xaml.cs",
           "tests/HostLifecycle.Tests/ChatConversationAcceptanceTests.cs",
           "tests/test_host_conversation_retention_policy.py",
+          "tests/test_wpf_entrypoint.py",
           "docs/security.md",
           "step three/T0178/execution-report.md",
           "step three/T0178/evidence/verification.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
+        "related_commits": [
+          "1bd292f8daddc2466177aa48844b84c7a8603db3"
+        ],
         "tests_passed": [],
-        "tests_failed": [],
+        "tests_failed": [
+          "Step Three quality gate run 41439579310: one stale WPF initializer assertion in tests/test_wpf_entrypoint.py; 332 tests ran."
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -49560,9 +49567,9 @@
         {
           "attempt_id": "T0178-A001",
           "started_at": "2026-11-02T11:47:11.868Z",
-          "ended_at": null,
-          "result": "partial",
-          "summary": "Implemented an immutable process-session-only host retention policy, connected it to WPF ChatConversation, added HostLifecycle and Python regression checks, and documented the bounded claim. Exact-head CI has not yet run.",
+          "ended_at": "2026-11-02T11:49:03.912Z",
+          "result": "failed",
+          "summary": "The initial exact-head Step Three quality gate failed because an existing WPF source-contract test still expected the old parameterless ChatConversation initializer. The implementation injects HostConversationRetentionPolicy.Default. Other workflows were still pending at inspection.",
           "changed_files": [
             "src/Host.Application/Chat/HostConversationRetentionPolicy.cs",
             "src/Host.Application/Chat/ChatConversation.cs",
@@ -49574,13 +49581,40 @@
             "step three/T0178/evidence/verification.md",
             "step three/project-graph.md"
           ],
+          "commit_sha": "1bd292f8daddc2466177aa48844b84c7a8603db3",
+          "tests": [
+            {
+              "name": "Step Three quality gate — run 41439579310",
+              "result": "failed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41439579310",
+              "summary": "The Python suite ran 332 tests and reported one failure: tests/test_wpf_entrypoint.py expected `private readonly ChatConversation _conversation = new();` rather than the new explicit default-policy initializer. The failure is a stale test expectation, not a C# compile result."
+            }
+          ],
+          "failure_details": "tests/test_wpf_entrypoint.py:124 — AssertionError: the legacy initializer string was not found in MainWindow.xaml.cs after explicit HostConversationRetentionPolicy.Default injection.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "A002 updates the WPF source-contract assertion to the explicit policy injection. Rerun exact-head quality and all product workflows before completion."
+        },
+        {
+          "attempt_id": "T0178-A002",
+          "started_at": "2026-11-02T11:49:03.912Z",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Updated the pre-existing WPF source-contract test to expect the explicit default retention policy injected by MainWindow. Exact-head CI is pending.",
+          "changed_files": [
+            "tests/test_wpf_entrypoint.py",
+            "step three/T0178/execution-report.md",
+            "step three/T0178/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
           "commit_sha": null,
           "tests": [],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "After pushing, inspect exact-head Windows/Android product build, Step Three quality gate and Rendezvous container checks. On passing results, finalize T0178 and fill the commit/test evidence."
+          "follow_up": "Inspect Step Three quality, Windows/Android product build, HostLifecycle, Rendezvous container, and real-inference workflows for this exact commit. Only mark done after relevant checks pass."
         }
       ]
     },
@@ -61758,7 +61792,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-11-02T11:47:11.868Z",
+  "updated_at": "2026-11-02T11:49:03.912Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

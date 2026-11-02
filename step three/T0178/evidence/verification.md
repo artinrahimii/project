@@ -1,25 +1,30 @@
 # T0178 verification evidence
 
-## Base revision inspected
-- Branch: `main`
-- Base commit: `08431f8eabb2a6010be6cd3f8cd149ec8928acbe` (`V 3.0.812`)
-- `ChatConversation` stores messages in an in-memory `List<ConversationMessage>`; the WPF window clears it when the user clears the session.
-- `LocalHostSettingsStore` persists configuration fields (local endpoint, model ID, timeout and local paths), not request/response content.
-- Host-side peer identity and trust stores persist cryptographic identity/trust material, not prompt/response text.
-- Android Room message persistence is a distinct client-side behavior documented in ADR-0020.
-- Search of the inspected host runtime files found no file-writing, append-log, or serialization-to-disk API in `ChatConversation`, `MainWindow`, `HostInferenceSession`, host network listener, or the local inference adapter's request path. The local backend serializes request bytes in memory for the configured localhost HTTP engine.
+## Base source review
+- Branch: `main`; base `08431f8eabb2a6010be6cd3f8cd149ec8928acbe`.
+- Host conversation messages are held by the in-memory `List<ConversationMessage>`.
+- `MainWindow` clears the in-memory conversation when the user clears the session.
+- `LocalHostSettingsStore` persists model/backend configuration only; it has no prompt, response, or capsule fields.
+- Host peer identity/trust persistence is separate cryptographic metadata.
+- Android Room message persistence is a distinct client-side behavior recorded in ADR-0020.
+- Inspected host runtime sources showed no durable file/log/JSON serialization path for the conversation; local inference request serialization occurs in memory for the local engine request.
 
-## Dependency review
-- `T0177 → T0178`: validated as `sequencing_only`; no artifact/contract from the prior Android attempt-budget tests is consumed by host conversation retention. The edge's `type=blocks` and execution order remain unchanged.
-- Evidence: `step three/T0177/execution-report.md`, `src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt`, `tests/test_android_inference_attempt_budget_acceptance.py`, `src/Host.Application/Chat/ChatConversation.cs`, `src/Host.Windows/MainWindow.xaml.cs`.
+## Dependency validation
+- `T0177 → T0178` is validated as `sequencing_only`; the existing `blocks` relation and order are preserved.
+- Evidence: T0177 report, host candidate/attempt-dispatch tests, existing `ChatConversation` and `MainWindow` source.
 
-## New evidence created
-- Immutable default policy: `src/Host.Application/Chat/HostConversationRetentionPolicy.cs`.
-- Runtime test: `tests/HostLifecycle.Tests/ChatConversationAcceptanceTests.cs`.
-- Source regression test: `tests/test_host_conversation_retention_policy.py`.
-- Scoped privacy/security explanation: `docs/security.md`.
+## Implemented output
+- `HostConversationRetentionPolicy.Default`: process-session-only scope and no persistent prompt/response storage.
+- `ChatConversation`: accepts and exposes the policy.
+- `MainWindow`: explicitly wires the default policy.
+- HostLifecycle and Python tests cover policy use and guard against reintroducing persistence APIs/settings content.
+- `docs/security.md` scopes the claim and lists independent limitations.
 
-## Execution boundary
-- Status while awaiting exact-head CI: `partial`.
-- HostLifecycle, Android, Python quality, graph/evidence and container checks have **not** yet been run against this new commit. This evidence file does not claim they passed.
-- This task does not prove operating-system memory zeroization, paging/crash-dump behavior, external diagnostic handling, complete log redaction (T0179), temporary-buffer cleanup (T0180), or end-to-end operational privacy acceptance (`AC-PRIV-01`).
+## Attempts and test evidence
+- A001 commit `1bd292f8daddc2466177aa48844b84c7a8603db3`: Step Three quality gate run [41439579310](https://github.com/artinrahimii/project/actions/runs/41439579310) failed one existing WPF source assertion that expected the old parameterless initializer. The other 331 Python tests did not report failure; this does not replace Windows/Android build evidence.
+- A002 updates `tests/test_wpf_entrypoint.py` to the explicit default-policy initializer. Exact-head CI is pending; no pass is claimed yet.
+
+## Explicit non-claims
+- No proof of OS pagefile/swap, crash-dump or memory-zeroization behavior.
+- No full log-redaction proof (T0179), temporary-buffer cleanup proof (T0180), or independent network/storage trace for `AC-PRIV-01`.
+- Android Room persistence remains local client storage and is not disabled by this host-side task.
