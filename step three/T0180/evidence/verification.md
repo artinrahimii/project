@@ -33,3 +33,13 @@ Changed code implements zeroization for Windows frames/queue/lifecycle buffers a
 - The harness exercised the production decoder/codec source in isolation. It does not compile the Android app or prove Netty integration, Android SDK compatibility, or Windows behavior.
 - Additional exact-source audit: 11/11 predicates for Windows frame/request/response cleanup, Android pending/temp/frame cleanup, and presence of the committed Python/JVM regressions were true.
 - T0180-A003 closes the Android peer stream when cancellation, interruption or timeout leaves a Netty write promise pending; the existing completion callback then zeros the encoded frame. Exact-head Android integration/CI remains pending.
+
+## T0180-A004 — CI evidence and corrections
+
+- Base commit: fef1135d983ed2f62619fe8e1224301adb887615 (`V 3.0.824`).
+- Step Three quality gate: run 41465625302 — success; 338 Python tests passed; compileall passed; graph guard 230 tasks / 422 edges / zero errors / one pre-existing T0001 unmapped-dependency metadata warning.
+- Rendezvous container: run 41465625258 — production image build and non-root HTTP contract smoke passed.
+- Product build: run 41465625430 — Windows WPF job passed, Windows HostLifecycle job passed, Android job failed at KtLint before APK/JVM/Protobuf steps.
+- Failing job: 125345607621. KtLint exact diagnostic: `src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt:521:5 Expected a blank line for this declaration`.
+- Windows build warning: `Libp2pPeerMessageProtocol.cs(197,44): CS8600` from the nullable contract of ChannelReader.TryRead. The loop now declares `byte[]?` and applies a non-null/length pattern before zeroization.
+- A004 corrects both findings and tightens the source regression. It does not mark task done; exact-head CI remains pending.

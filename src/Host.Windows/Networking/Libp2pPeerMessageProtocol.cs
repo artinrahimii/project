@@ -194,9 +194,9 @@ internal sealed class Libp2pPeerMessageProtocol : SymmetricSessionProtocol, ISes
     public void Dispose()
     {
         _inbound.Writer.TryComplete();
-        while (_inbound.Reader.TryRead(out byte[] pendingMessage))
+        while (_inbound.Reader.TryRead(out byte[]? pendingMessage))
         {
-            if (pendingMessage.Length > 0)
+            if (pendingMessage is { Length: > 0 })
             {
                 CryptographicOperations.ZeroMemory(pendingMessage);
             }

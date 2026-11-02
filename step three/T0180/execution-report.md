@@ -74,3 +74,28 @@
 ### محدودیت باقی‌مانده
 
 تأیید end-to-end بسته‌شدن stream و تکمیل Promise واقعی Netty در timeout هنوز به آزمون Android integration/CI نیاز دارد. آزمون‌های Windows، کل برنامه و workflowهای CI نیز هنوز لازم‌اند؛ بنابراین T0180 تکمیل‌شده اعلام نمی‌شود.
+
+## تلاش T0180-A004 — رفع شکست واقعی CI و هشدار nullable در صف Windows
+
+**زمان ثبت:** 2026-11-02T18:27:13+03:30  
+**وضعیت:** partial؛ T0180 همچنان in_progress است.
+
+### یافته‌های CI روی V 3.0.824
+
+- Step Three quality gate، اجرا 41465625302: موفق؛ 338 آزمون Python، compileall و graph_guard با 230 وظیفه/422 یال، صفر خطا و یک هشدار metadata قدیمی T0001.
+- Rendezvous container، اجرا 41465625258: build و smoke test موفق.
+- White-P product build، اجرا 41465625430: شکست فقط در گام KtLint Android؛ Windows WPF build و smoke، fixture بین‌عملیاتی .NET و HostLifecycle tests موفق بودند. Android APK، JVM unit tests و generated Protobuf verification به‌دلیل توقف KtLint اجرا نشدند.
+- خطای دقیق KtLint: Libp2pInferenceRequestTransport.kt:521:5 — Expected a blank line for this declaration. log کامل job 125345607621 این محل را مشخص کرد.
+- build ویندوز یک هشدار CS8600 در حلقهٔ Dispose فایل Libp2pPeerMessageProtocol.cs، خط 197 گزارش کرد؛ build شکست نخورده بود.
+
+### اصلاحات واقعی این تلاش
+
+- خط خالی موردنیاز KtLint پیش از ensureHostStarted اضافه شد.
+- فاصلهٔ خالی استاندارد پیش از guard اصلی فایل تست Python افزوده شد.
+- حلقهٔ تخلیهٔ صف Windows اکنون nullable بودن خروجی TryRead را صریح اعلام می‌کند و فقط وقتی pendingMessage دارای Length مثبت است ZeroMemory را اجرا می‌کند؛ این اصلاح هشدار CS8600 را هدف می‌گیرد.
+- آزمون قراردادی Python برای قرارداد nullable و guard صف به‌روز شد.
+
+### اعتبارسنجی
+
+- نتایج CI بالا روی commit مبنای V 3.0.824 هستند، نه روی اصلاحات A004. هیچ نتیجهٔ KtLint یا build برای این اصلاحات هنوز ادعا نمی‌شود.
+- اجرای بعدی CI باید KtLint، Android assembleDebug، testDebugUnitTest، Protobuf verification، Windows build بدون هشدار nullable و HostLifecycle را روی SHA دقیق جدید تأیید کند.

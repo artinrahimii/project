@@ -16,7 +16,8 @@ class SensitiveBufferCleanupTests(unittest.TestCase):
         self.assertIn("CryptographicOperations.ZeroMemory(frame)", source)
         self.assertIn("CryptographicOperations.ZeroMemory(message)", source)
         self.assertIn("_inbound.Writer.TryComplete()", source)
-        self.assertIn("_inbound.Reader.TryRead(out byte[] pendingMessage)", source)
+        self.assertIn("_inbound.Reader.TryRead(out byte[]? pendingMessage)", source)
+        self.assertIn("pendingMessage is { Length: > 0 }", source)
         self.assertIn("CryptographicOperations.ZeroMemory(pendingMessage)", source)
 
     def test_windows_request_lifecycle_zeroes_serialized_and_handed_off_messages(self):

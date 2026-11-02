@@ -49938,25 +49938,34 @@
         "tests/test_android_libp2p_transport_contract.py",
         "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0180-A001 (2026-11-02T17:03:47+03:30): implemented explicit cleanup for Windows outbound frames, failed queue handoff, queued messages at disposal, host request/response wire arrays and short-lived serialized status/rejection messages; Android decoder pending/temporary buffers and decoded frames are zeroed on replacement, malformed frame, callback failure and stream closure. T0177→T0180 and T0179→T0180 reviewed as sequencing_only while retaining type=blocks and the original execution order. Added Android JVM backing-array tests, Python source regressions and documented limits. Exact-head CI pending; task remains in_progress.\nT0180-A002 (2026-11-02T17:23:00+03:30–2026-11-02T17:29:27+03:30): removed a redundant consecutive blank line before the new Android JVM test. Exact-base graph Blob SHA-1 and JSON structure were validated. No automated tests or exact-head CI ran because the clone failed DNS resolution and local .NET/Gradle/Android toolchains are unavailable; the current commit has no returned status checks. Task remains in_progress.\nT0180-A003 (2026-11-02T18:14:10+03:30): identified that CompletableFuture.get(timeout) in cancelAttempts does not cancel the Netty write promise; added stream closure on cancellation/timeout/interruption so pending writes terminate and the sendRequest whenComplete callback clears its frame. Added a Python source-contract regression. Independently compiled the fetched PeerMessageFrameCodec production source with Kotlin 1.9.0/JDK21 and ran 8/8 decoder scenarios. Full Android/Windows/CI acceptance remains pending; task stays in_progress.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0180-A001 (2026-11-02T17:03:47+03:30): implemented explicit cleanup for Windows outbound frames, failed queue handoff, queued messages at disposal, host request/response wire arrays and short-lived serialized status/rejection messages; Android decoder pending/temporary buffers and decoded frames are zeroed on replacement, malformed frame, callback failure and stream closure. T0177→T0180 and T0179→T0180 reviewed as sequencing_only while retaining type=blocks and the original execution order. Added Android JVM backing-array tests, Python source regressions and documented limits. Exact-head CI pending; task remains in_progress.\nT0180-A002 (2026-11-02T17:23:00+03:30–2026-11-02T17:29:27+03:30): removed a redundant consecutive blank line before the new Android JVM test. Exact-base graph Blob SHA-1 and JSON structure were validated. No automated tests or exact-head CI ran because the clone failed DNS resolution and local .NET/Gradle/Android toolchains are unavailable; the current commit has no returned status checks. Task remains in_progress.\nT0180-A003 (2026-11-02T18:14:10+03:30): identified that CompletableFuture.get(timeout) in cancelAttempts does not cancel the Netty write promise; added stream closure on cancellation/timeout/interruption so pending writes terminate and the sendRequest whenComplete callback clears its frame. Added a Python source-contract regression. Independently compiled the fetched PeerMessageFrameCodec production source with Kotlin 1.9.0/JDK21 and ran 8/8 decoder scenarios. Full Android/Windows/CI acceptance remains pending; task stays in_progress.\nT0180-A004 (2026-11-02T18:27:13+03:30): inspected exact GitHub Actions logs for V 3.0.824. The 338-test Step Three quality gate and Rendezvous container build/smoke passed; Windows WPF and HostLifecycle passed. Android product job failed at KtLint line 521:5 due to one missing blank line; Android APK/JVM/Protobuf steps were skipped. Windows compile reported CS8600 in the queue-drain TryRead loop. Added the KtLint separator, made TryRead result nullable-aware with a guarded length pattern, and updated regression assertions. Exact-head verification pending; T0180 remains in_progress.",
       "execution_summary": {
-        "attempt_count": 3,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "T0180-A003",
+        "attempt_count": 4,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "T0180-A004",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
+          "src/Host.Windows/Networking/Libp2pPeerMessageProtocol.cs",
           "tests/test_android_libp2p_transport_contract.py",
+          "tests/test_sensitive_buffer_cleanup.py",
           "step three/T0180/execution-report.md",
           "step three/T0180/evidence/verification.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
+        "related_commits": [
+          "fef1135d983ed2f62619fe8e1224301adb887615"
+        ],
         "tests_passed": [
           "Standalone Kotlin/JVM codec harness — 8/8 scenarios passed with Kotlin 1.9.0 / JDK 21; production source Blob f39a0695e6ce2b927b255e0f188dd1ed4b778098.",
-          "Exact-source static cleanup predicate audit — 11/11 checks true (tool-side verification; not the Python unittest suite)."
+          "Exact-source static cleanup predicate audit — 11/11 checks true (tool-side verification; not the Python unittest suite).",
+          "Step Three quality gate run 41465625302 on V 3.0.824 — 338 Python tests passed, compileall passed; graph guard 230 tasks/422 edges, 0 errors and 1 existing T0001 metadata warning.",
+          "Rendezvous container run 41465625258 on V 3.0.824 — production image build and non-root HTTP contract smoke passed.",
+          "Windows WPF and HostLifecycle jobs in product run 41465625430 on V 3.0.824 passed."
         ],
-        "tests_failed": [],
+        "tests_failed": [
+          "White-P product build run 41465625430 on V 3.0.824 — Android KtLint failed at Libp2pInferenceRequestTransport.kt:521:5 (Expected a blank line for this declaration); assembleDebug, testDebugUnitTest and generated Protobuf checks were skipped."
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -50046,6 +50055,50 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Run Python quality workflow, Android KtLint/compile/APK/JVM+Netty integration, Windows WPF/HostLifecycle and Rendezvous container workflows on the exact new main commit. Confirm that a timed-out/cancelled Netty write completes exceptionally after stream close and that its frame array is zeroed; only then mark T0180 done."
+        },
+        {
+          "attempt_id": "T0180-A004",
+          "started_at": "2026-11-02T18:27:13+03:30",
+          "ended_at": "2026-11-02T18:27:13+03:30",
+          "result": "partial",
+          "summary": "Inspected full CI logs for V 3.0.824, corrected the exact Android KtLint spacing error, fixed a nullable queue-drain warning in Windows, and updated source-contract assertions. Waiting for exact-head workflow validation.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
+            "src/Host.Windows/Networking/Libp2pPeerMessageProtocol.cs",
+            "tests/test_android_libp2p_transport_contract.py",
+            "tests/test_sensitive_buffer_cleanup.py",
+            "step three/T0180/execution-report.md",
+            "step three/T0180/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Step Three quality gate — run 41465625302",
+              "result": "passed",
+              "summary": "338 Python tests; compileall passed; graph guard 230 tasks / 422 edges / 0 errors / 1 existing T0001 metadata warning."
+            },
+            {
+              "name": "Rendezvous container — run 41465625258",
+              "result": "passed",
+              "summary": "Production image build and non-root HTTP contract smoke passed."
+            },
+            {
+              "name": "Windows WPF and HostLifecycle — run 41465625430",
+              "result": "passed",
+              "summary": "Windows WPF build/smoke and HostLifecycle tests passed; Windows build emitted a CS8600 warning subsequently corrected in A004."
+            },
+            {
+              "name": "Android KtLint — run 41465625430",
+              "result": "failed",
+              "summary": "Expected a blank line for this declaration at Libp2pInferenceRequestTransport.kt:521:5. Android APK, JVM unit tests and generated Protobuf checks were skipped."
+            }
+          ],
+          "failure_details": "Exact CI failure and build warning are preserved above. A004 applies targeted source fixes; no exact-head success is claimed until the next push workflow completes.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect Step Three quality gate, Android KtLint/compile/APK/JVM/Protobuf, Windows WPF/HostLifecycle and container workflows triggered by the A004 commit. Verify the KtLint fix and that the nullable queue-drain no longer emits CS8600 before completing T0180."
         }
       ]
     },
@@ -62221,7 +62274,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-11-02T18:14:10+03:30",
+  "updated_at": "2026-11-02T18:27:13+03:30",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

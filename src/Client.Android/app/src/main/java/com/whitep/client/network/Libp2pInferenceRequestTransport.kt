@@ -518,6 +518,7 @@ class Libp2pInferenceRequestTransport(
             // Preserve the caller's cancellation/timeout result if teardown also fails.
         }
     }
+
     private suspend fun ensureHostStarted() {
         startMutex.withLock {
             if (closed.get()) {
