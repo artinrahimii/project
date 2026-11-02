@@ -129,6 +129,7 @@ class Libp2pInferenceRequestTransport(
             SafeDiagnosticEventCode.InferenceSubmission,
             SafeDiagnosticOutcomeCode.Started,
         )
+
         fun reject(reason: String): InferenceTransportSubmission {
             lastSubmissionFailure = reason
             SafeDiagnosticLog.write(
