@@ -95,7 +95,6 @@ class PeerMessageFrameCodecTest {
         }
     }
 
-
     @Test
     fun zeroesThePreviousPendingBufferWhenAFrameCompletes() {
         val message = ByteArray(128) { index -> (index + 1).toByte() }
