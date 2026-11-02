@@ -49057,37 +49057,37 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0175 و T0160 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "تکمیل‌شده",
       "actual_output_paths": [
-        "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceRoundResponseCollectorTest.kt",
         "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
-        "tests/test_android_inference_round_response_collector_contract.py",
-        "tests/test_android_inference_response_correlation_contract.py",
-        "step three/T0176/execution-report.md",
-        "step three/T0176/evidence/verification.md",
-        "step three/project-graph.md"
-      ],
-      "expected_output_paths": [
-        "src/Client.Android/Requests/ + tests/"
-      ],
-      "evidence": [
         "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceRoundResponseCollectorTest.kt",
-        "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
         "tests/test_android_inference_round_response_collector_contract.py",
         "tests/test_android_inference_response_correlation_contract.py",
         "step three/T0176/execution-report.md",
         "step three/T0176/evidence/verification.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0176-A001: validated T0175 -> T0176 and T0160 -> T0176 as contract_or_interface_dependency using exact-base production source, protocol, and test evidence. Both edges remain type=blocks. Added response-cardinality and duplicate-response Android JVM regressions plus deterministic collector timeouts and late-response contract checks. Exact-head CI pending; no completion claim.\nT0176-A001 / V 3.0.807: 324 Python tests, compileall and graph structural validation passed; repo-backed evidence validation failed on six pre-existing T0175 Actions URLs recorded in the file-path-only evidence array. Android KtLint rejected the newly added Kotlin list/assert formatting; APK/JVM tests were skipped. Windows WPF and HostLifecycle passed. Failures are preserved in execution_history.\nT0176-A002 / V 3.0.808: corrected the above formatting and path metadata; exact-head CI pending.",
+      "expected_output_paths": [
+        "src/Client.Android/Requests/ + tests/"
+      ],
+      "evidence": [
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceRoundResponseCollectorTest.kt",
+        "tests/test_android_inference_round_response_collector_contract.py",
+        "tests/test_android_inference_response_correlation_contract.py",
+        "step three/T0176/execution-report.md",
+        "step three/T0176/evidence/verification.md",
+        "src/Client.Android/app/src/test/java/com/whitep/client/network/InferenceResponseCorrelationValidatorTest.kt"
+      ],
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0176-A001: validated T0175 -> T0176 and T0160 -> T0176 as contract_or_interface_dependency using exact-base production source, protocol, and test evidence. Both edges remain type=blocks. Added response-cardinality and duplicate-response Android JVM regressions plus deterministic collector timeouts and late-response contract checks. Exact-head CI pending; no completion claim.\nT0176-A001 / V 3.0.807: 324 Python tests, compileall and graph structural validation passed; repo-backed evidence validation failed on six pre-existing T0175 Actions URLs recorded in the file-path-only evidence array. Android KtLint rejected the newly added Kotlin list/assert formatting; APK/JVM tests were skipped. Windows WPF and HostLifecycle passed. Failures are preserved in execution_history.\nT0176-A002 / V 3.0.808: corrected the above formatting and path metadata; exact-head CI pending.\nT0176 completed by A002 after exact-head V 3.0.808 CI passed. Zero/one/two/three response card counts, duplicate response rejection, late completion/arrival, deterministic timeout and the existing cancellation regression are covered by Android JVM and Step Three contract tests. A001's KtLint/graph-evidence failures are retained in execution_history; A002 contains the fixes and passed CI.",
       "execution_summary": {
         "attempt_count": 2,
         "failed_attempt_count": 1,
         "last_attempt_id": "T0176-A002-v3.0.808-exact-head-ci-pending",
-        "last_attempt_result": "partial",
+        "last_attempt_result": "succeeded",
         "changed_files": [
-          "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceRoundResponseCollectorTest.kt",
           "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
+          "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceRoundResponseCollectorTest.kt",
           "tests/test_android_inference_round_response_collector_contract.py",
           "tests/test_android_inference_response_correlation_contract.py",
           "step three/T0176/execution-report.md",
@@ -49095,34 +49095,45 @@
           "step three/project-graph.md"
         ],
         "related_commits": [
-          "201cf977f09c6c0f01ec0ea284eed3d25b92ab39"
+          "062794153557c686538150b2f4af0abfccba9778"
         ],
-        "tests_passed": [],
+        "tests_passed": [
+          "V 3.0.808 Android KtLint passed.",
+          "V 3.0.808 Android assembleDebug passed; whitep-android-debug-apk artifact 13134591087 uploaded (19,524,950 bytes).",
+          "V 3.0.808 Android testDebugUnitTest passed; JUnit report artifact 13133179900 uploaded (49,921 bytes).",
+          "V 3.0.808 generated Android Protobuf Java/Kotlin verification passed.",
+          "V 3.0.808 Windows WPF release build, startup, security/policy/capability and DPAPI checks passed; artifact 13133473445 uploaded.",
+          "V 3.0.808 HostLifecycle unit/integration job passed.",
+          "V 3.0.808 Step Three quality gate passed: 324 Python tests, compileall, graph structure and repository-backed evidence validation.",
+          "V 3.0.808 graph guard validated 230 tasks and 422 edges with zero errors; one existing T0001 metadata warning was preserved.",
+          "V 3.0.808 Rendezvous production container build and non-root HTTP contract smoke passed.",
+          "T0176 zero/one/two/three response, duplicate, late response, deterministic timeout and cancellation acceptance checks passed within the Android JVM and Python contract suites."
+        ],
         "tests_failed": [
-          "V 3.0.807 Android KtLint",
-          "V 3.0.807 repository-backed evidence validation"
+          "V 3.0.807: Android KtLint failed on formatting in newly added tests; corrected in V 3.0.808.",
+          "V 3.0.807: repository-backed graph evidence guard failed on six pre-existing T0175 Actions URLs stored in its file-path-only evidence field; corrected in V 3.0.808 while retaining URL history."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
           "state": "passed",
           "triggering_contracts": [
-            "T0175 RequestViewModel aggregate status, retry and terminal cancellation contract",
-            "T0160 requestId/attemptId payload and response-correlation identity contract"
+            "T0175 RequestViewModel aggregate response/status/retry/cancellation contract",
+            "T0160 requestId/attemptId request payload and response-correlation identity contract"
           ],
           "affected_by_contract_changes": [],
           "review_evidence": [
             "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt",
             "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
             "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceRoundResponseCollector.kt",
-            "step three/T0175/execution-report.md",
-            "step three/T0175/evidence/verification.md",
             "src/Client.Android/app/src/main/java/com/whitep/client/protocol/InferenceRequestPayloadBuilder.kt",
             "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceAttemptDispatcher.kt",
             "protocol/whitep/v1/messages.proto",
             "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
             "src/Client.Android/app/src/main/java/com/whitep/client/network/InferenceResponseCorrelationValidator.kt",
             "src/Client.Android/app/src/test/java/com/whitep/client/network/InferenceResponseCorrelationValidatorTest.kt",
+            "step three/T0175/execution-report.md",
+            "step three/T0175/evidence/verification.md",
             "step three/T0160/execution-report.md",
             "step three/T0160/evidence/verification.md"
           ]
@@ -49198,36 +49209,84 @@
         {
           "attempt_id": "T0176-A002-v3.0.808-exact-head-ci-pending",
           "started_at": "2026-11-02T10:42:34.552Z",
-          "ended_at": "2026-11-02T10:42:34.552Z",
-          "result": "partial",
-          "summary": "Corrected all observed V 3.0.807 KtLint findings, changed the ViewModel assertions to count success and failure cards exactly, and corrected the pre-existing T0175 graph evidence-path metadata while retaining every Actions URL in execution history. Exact-head V 3.0.808 CI is pending.",
+          "ended_at": "2026-11-02T10:49:18.919Z",
+          "result": "succeeded",
+          "summary": "Exact-head V 3.0.808 passed all required quality and product CI. Android KtLint, debug APK build, the complete Android JVM testDebugUnitTest suite, generated Protobuf verification, Windows WPF build/startup/security, HostLifecycle integration, all 324 Step Three Python tests, compileall, graph structure and repository evidence validation, and the Rendezvous container build/non-root HTTP smoke all succeeded. The task-specific zero/one/two/three response, duplicate, late-response, timeout and cancellation JVM/source-contract checks were part of those passing suites.",
           "changed_files": [
-            "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceRoundResponseCollectorTest.kt",
             "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
-            "tests/test_android_inference_round_response_collector_contract.py",
-            "tests/test_android_inference_response_correlation_contract.py",
+            "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceRoundResponseCollectorTest.kt",
             "step three/T0176/execution-report.md",
             "step three/T0176/evidence/verification.md",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "062794153557c686538150b2f4af0abfccba9778",
           "tests": [
             {
-              "name": "Android KtLint/JVM tests",
-              "result": "not_run",
-              "summary": "Corrections are committed in V 3.0.808; wait for exact-head Android workflow."
+              "name": "Android KtLint — V 3.0.808",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41431021173/job/125229320065",
+              "summary": "ktlintCheck completed successfully, including test-source formatting."
             },
             {
-              "name": "Step Three quality/evidence validation",
-              "result": "not_run",
-              "summary": "T0175 evidence path metadata corrected; wait for exact-head quality run."
+              "name": "Android debug APK — V 3.0.808",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41431021173/job/125229320065",
+              "summary": "assembleDebug completed successfully; whitep-android-debug-apk artifact 13134591087 uploaded (19,524,950 bytes)."
+            },
+            {
+              "name": "Android JVM unit suite — V 3.0.808",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41431021173/job/125229320065",
+              "summary": "testDebugUnitTest completed successfully; JUnit report artifact 13133179900 uploaded (49,921 bytes)."
+            },
+            {
+              "name": "Generated Android Protobuf Java/Kotlin verification — V 3.0.808",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41431021173/job/125229320065",
+              "summary": "Generated source verification step passed."
+            },
+            {
+              "name": "Windows WPF release build/startup/security/DPAPI checks — V 3.0.808",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41431021173/job/125229319922",
+              "summary": "All build, startup, process restriction, policy, capability and user-scoped DPAPI checks passed; artifact 13133473445 uploaded."
+            },
+            {
+              "name": "HostLifecycle unit/integration — V 3.0.808",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41431021173/job/125229319659",
+              "summary": "Host lifecycle test job passed."
+            },
+            {
+              "name": "Step Three Python suite — V 3.0.808",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41431021155",
+              "summary": "324 tests ran and passed."
+            },
+            {
+              "name": "Python compileall — V 3.0.808",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41431021155",
+              "summary": "python -m compileall -q tools tests passed."
+            },
+            {
+              "name": "Graph structure and repository-backed evidence — V 3.0.808",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41431021155",
+              "summary": "230 tasks, 422 edges, zero errors; the pre-existing T0001 unmapped-dependency metadata warning remains."
+            },
+            {
+              "name": "Rendezvous production container build and non-root HTTP smoke — V 3.0.808",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41431021244",
+              "summary": "Production container build and HTTP smoke passed."
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect exact-head V 3.0.808 Android KtLint/JVM and Step Three quality/evidence results. Do not mark T0176 done until both pass."
+          "follow_up": "Proceed to T0177 in execution order. Before starting it, inspect and validate its incoming T0176 and T0160 dependency edges against the exact main source and test evidence."
         }
       ]
     },
@@ -61428,7 +61487,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-11-02T10:37:53.686Z",
+  "updated_at": "2026-11-02T10:49:18.919Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",
