@@ -329,7 +329,10 @@ private fun requestScreen(
             }
         }
         Text(
-            "Request status: " + requestState.runStatus.name.lowercase().replace('_', ' '),
+            "Request status: " +
+                requestState.runStatus.name
+                    .lowercase()
+                    .replace('_', ' '),
             color =
                 if (requestState.runStatus == RequestRunStatus.FAILED) {
                     MaterialTheme.colorScheme.error

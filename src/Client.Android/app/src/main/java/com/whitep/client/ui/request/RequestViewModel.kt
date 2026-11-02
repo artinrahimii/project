@@ -490,7 +490,8 @@ class RequestViewModel(
                                 runStatus = RequestRunStatus.IDLE,
                                 canRetryRequest = false,
                                 message =
-                                    "No inference payload was sent. No compatible, reachable hosts are currently available.",
+                                    "No inference payload was sent. " +
+                                        "No compatible, reachable hosts are currently available.",
                             )
                     } else {
                         updateAggregatedRequestStatus(
@@ -609,9 +610,7 @@ class RequestViewModel(
         }
     }
 
-    private fun latestOutcomeByHost(
-        context: RetryableRequestContext,
-    ): Map<String, HostResponseOutcome?> {
+    private fun latestOutcomeByHost(context: RetryableRequestContext): Map<String, HostResponseOutcome?> {
         val responsesByAttempt =
             mutableHostResponses.value
                 .filter { response -> response.requestId == context.request.requestId }
