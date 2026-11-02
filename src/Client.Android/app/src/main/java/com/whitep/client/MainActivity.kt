@@ -45,6 +45,7 @@ import com.whitep.client.ui.conversations.conversationDetailScreen
 import com.whitep.client.ui.conversations.conversationListScreen
 import com.whitep.client.ui.navigation.ClientDestination
 import com.whitep.client.ui.navigation.ClientNavigation
+import com.whitep.client.ui.request.RequestRunStatus
 import com.whitep.client.ui.request.RequestViewModel
 import com.whitep.client.ui.request.hostResponseCards
 
@@ -323,6 +324,34 @@ private fun requestScreen(
                         "Sending cancellation…"
                     } else {
                         "Cancel request on selected hosts"
+                    },
+                )
+            }
+        }
+        Text(
+            "Request status: " + requestState.runStatus.name.lowercase().replace('_', ' '),
+            color =
+                if (requestState.runStatus == RequestRunStatus.FAILED) {
+                    MaterialTheme.colorScheme.error
+                } else {
+                    MaterialTheme.colorScheme.onSurface
+                },
+            style = MaterialTheme.typography.titleMedium,
+        )
+        if (requestState.canRetryRequest || requestState.isRetryingRequest) {
+            OutlinedButton(
+                onClick = requestViewModel::retryFailedAttempts,
+                enabled =
+                    requestState.canRetryRequest &&
+                        !requestState.isSendingRequest &&
+                        !requestState.isCancellingRequest,
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Text(
+                    if (requestState.isRetryingRequest) {
+                        "Retrying failed attempts…"
+                    } else {
+                        "Retry failed attempts manually"
                     },
                 )
             }

@@ -11,6 +11,7 @@ import com.whitep.client.protocol.InferenceRequestPayloadBuildResult
 import com.whitep.client.protocol.InferenceRequestPayloadBuilder
 import com.whitep.client.requests.AndroidRequestExecutionGatewayFactory
 import com.whitep.client.requests.DistributedRequest
+import com.whitep.client.requests.DistributedRequestProgress
 import com.whitep.client.requests.FirstReleaseInferenceLimits
 import com.whitep.client.requests.HostSelectionFeedback
 import com.whitep.client.requests.InferenceAttemptCancellationResult
@@ -44,6 +45,15 @@ enum class HostResponseOutcome {
     UNKNOWN,
 }
 
+enum class RequestRunStatus {
+    IDLE,
+    RUNNING,
+    SUCCEEDED,
+    PARTIAL,
+    FAILED,
+    CANCELLED,
+}
+
 /** One independently renderable, in-memory result for a single host attempt. */
 data class HostResponseCardState(
     val requestId: String,
@@ -73,6 +83,9 @@ data class RequestUiState(
     val isSendingRequest: Boolean = false,
     val canCancelRequest: Boolean = false,
     val isCancellingRequest: Boolean = false,
+    val runStatus: RequestRunStatus = RequestRunStatus.IDLE,
+    val canRetryRequest: Boolean = false,
+    val isRetryingRequest: Boolean = false,
     val networkStatusMessage: String? = null,
 ) {
     val statusMessage: String
@@ -91,12 +104,25 @@ private data class RequestNetworkState(
     val isSendingRequest: Boolean = false,
     val canCancelRequest: Boolean = false,
     val isCancellingRequest: Boolean = false,
+    val runStatus: RequestRunStatus = RequestRunStatus.IDLE,
+    val canRetryRequest: Boolean = false,
+    val isRetryingRequest: Boolean = false,
     val message: String? = null,
 )
 
 private data class ActiveRequestCancellation(
     val requestId: String,
     val attempts: List<InferenceHostAttempt>,
+)
+
+private data class RetryableRequestContext(
+    val request: DistributedRequest,
+    val prompt: String,
+    val modelId: String,
+    val maxOutputTokens: Int,
+    val capsule: ConversationContextCapsule,
+    val progress: DistributedRequestProgress = DistributedRequestProgress(),
+    val attempts: List<InferenceHostAttempt> = emptyList(),
 )
 
 /**
@@ -121,6 +147,7 @@ class RequestViewModel(
     private var requestRuntime: RequestExecutionGateway? = null
     private var requestRuntimeUri: URI? = null
     private var activeRequestCancellation: ActiveRequestCancellation? = null
+    private var retryableRequest: RetryableRequestContext? = null
 
     val uiState: StateFlow<RequestUiState> =
         combine(
@@ -139,6 +166,9 @@ class RequestViewModel(
                 isSendingRequest = network.isSendingRequest,
                 canCancelRequest = network.canCancelRequest,
                 isCancellingRequest = network.isCancellingRequest,
+                runStatus = network.runStatus,
+                canRetryRequest = network.canRetryRequest,
+                isRetryingRequest = network.isRetryingRequest,
                 networkStatusMessage = network.message,
             )
         }.stateIn(
@@ -149,6 +179,14 @@ class RequestViewModel(
 
     fun updatePrompt(prompt: String) {
         mutableHostAvailabilityMessage.value = null
+        if (retryableRequest != null && retryableRequest?.prompt != prompt.trim()) {
+            retryableRequest = null
+            mutableNetworkState.value =
+                mutableNetworkState.value.copy(
+                    canRetryRequest = false,
+                    message = "The draft changed. Send a new request to use the edited prompt.",
+                )
+        }
         commandsScope.launch { repository.updatePrompt(prompt) }
     }
 
@@ -159,6 +197,12 @@ class RequestViewModel(
 
     fun clearDraft() {
         mutableHostAvailabilityMessage.value = null
+        retryableRequest = null
+        mutableNetworkState.value =
+            mutableNetworkState.value.copy(
+                canRetryRequest = false,
+                message = "The draft was cleared. Send a new request to start another execution.",
+            )
         commandsScope.launch { repository.clearDraft() }
     }
 
@@ -238,6 +282,7 @@ class RequestViewModel(
     /** Drops a configured directory session when its URL is edited. */
     fun clearDirectorySession() {
         activeRequestCancellation = null
+        retryableRequest = null
         requestRuntime?.close()
         requestRuntime = null
         requestRuntimeUri = null
@@ -287,8 +332,8 @@ class RequestViewModel(
     }
 
     /**
-     * Builds, selects and dispatches one real inference round. The directory receives only control
-     * metadata; selected peers are authenticated and must have been explicitly trusted beforehand.
+     * Starts one logical inference request. Manual retries keep the same request ID and bounded budget.
+     * No retry is dispatched automatically.
      */
     fun sendRequest(
         prompt: String,
@@ -306,53 +351,127 @@ class RequestViewModel(
         }
         if (mutableNetworkState.value.isSendingRequest) return
 
-        commandsScope.launch {
-            mutableHostResponses.value = emptyList()
-            mutableHostAvailabilityMessage.value = null
-            mutableNetworkState.value =
-                mutableNetworkState.value.copy(
-                    isSendingRequest = true,
-                    canCancelRequest = false,
-                    isCancellingRequest = false,
-                    message = "Preparing a request for explicitly trusted, compatible peers…",
-                )
-            try {
-                val gateway = requireRuntime()
-                val distributedRequest =
+        val context =
+            RetryableRequestContext(
+                request =
                     DistributedRequest.create(
                         deadlineUnixMs = Math.addExact(clockMillis(), REQUEST_DEADLINE_MILLIS),
-                        maxRounds = 1,
-                        maxTotalHosts = FirstReleaseInferenceLimits.MAX_HOSTS_PER_ROUND,
-                    )
-                val capsule =
+                        maxRounds = FirstReleaseInferenceLimits.MAX_ROUNDS,
+                        maxTotalHosts = FirstReleaseInferenceLimits.MAX_TOTAL_HOSTS,
+                    ),
+                prompt = cleanPrompt,
+                modelId = cleanModelId,
+                maxOutputTokens = maxOutputTokens,
+                capsule =
                     ConversationContextCapsule(
                         goal = "Single-turn request without additional conversation context.",
+                    ),
+            )
+        retryableRequest = context
+        mutableHostResponses.value = emptyList()
+        mutableHostAvailabilityMessage.value = null
+        activeRequestCancellation = null
+        executeRequestRound(context, manualRetry = false)
+    }
+
+    /** Dispatches another bounded round only after the user explicitly presses Retry. */
+    fun retryFailedAttempts() {
+        val context = retryableRequest ?: return
+        val network = mutableNetworkState.value
+        if (!network.canRetryRequest || network.isSendingRequest || network.isCancellingRequest) return
+        executeRequestRound(context, manualRetry = true)
+    }
+
+    private fun executeRequestRound(
+        requestedContext: RetryableRequestContext,
+        manualRetry: Boolean,
+    ) {
+        if (mutableNetworkState.value.isSendingRequest) return
+        val currentContext =
+            retryableRequest?.takeIf { current ->
+                current.request.requestId == requestedContext.request.requestId
+            } ?: return
+        if (manualRetry && failedPeerIdsForRetry(currentContext).isEmpty()) return
+
+        mutableNetworkState.value =
+            mutableNetworkState.value.copy(
+                isSendingRequest = true,
+                canCancelRequest = false,
+                isCancellingRequest = false,
+                runStatus = RequestRunStatus.RUNNING,
+                canRetryRequest = false,
+                isRetryingRequest = manualRetry,
+                message =
+                    if (manualRetry) {
+                        "Preparing a manual retry for failed host attempts…"
+                    } else {
+                        "Preparing a request for explicitly trusted, compatible peers…"
+                    },
+            )
+
+        commandsScope.launch {
+            var context = currentContext
+            try {
+                val gateway = requireRuntime()
+                if (manualRetry) {
+                    context =
+                        context.copy(
+                            request =
+                                context.request.copy(
+                                    deadlineUnixMs = Math.addExact(clockMillis(), REQUEST_DEADLINE_MILLIS),
+                                ),
+                        )
+                    retryableRequest = context
+                }
+
+                val remainingHosts = context.request.maxTotalHosts - context.progress.hostsAttempted
+                val failedPeerCount = failedPeerIdsForRetry(context).size
+                val requestedHosts =
+                    if (manualRetry) failedPeerCount else FirstReleaseInferenceLimits.MAX_HOSTS_PER_ROUND
+                val maxHosts =
+                    minOf(
+                        FirstReleaseInferenceLimits.MAX_HOSTS_PER_ROUND,
+                        remainingHosts,
+                        requestedHosts,
                     )
-                val selectionAttemptId = UUID.randomUUID().toString()
-                val selectionRoundId = UUID.randomUUID().toString()
+                if (context.progress.roundsDispatched >= context.request.maxRounds || maxHosts <= 0) {
+                    updateAggregatedRequestStatus(
+                        context,
+                        "The manual retry budget for this request has been exhausted.",
+                    )
+                    return@launch
+                }
+
                 val selectionRequest =
                     when (
                         val built =
                             InferenceRequestPayloadBuilder.build(
-                                requestId = distributedRequest.requestId,
-                                attemptId = selectionAttemptId,
-                                roundId = selectionRoundId,
-                                modelId = cleanModelId,
-                                currentMessage = cleanPrompt,
-                                capsule = capsule,
-                                deadlineUnixMs = distributedRequest.deadlineUnixMs,
-                                maxOutputTokens = maxOutputTokens,
+                                requestId = context.request.requestId,
+                                attemptId = UUID.randomUUID().toString(),
+                                roundId = UUID.randomUUID().toString(),
+                                modelId = context.modelId,
+                                currentMessage = context.prompt,
+                                capsule = context.capsule,
+                                deadlineUnixMs = context.request.deadlineUnixMs,
+                                maxOutputTokens = context.maxOutputTokens,
                                 protocolVersion = CURRENT_PROTOCOL_VERSION,
                             )
                     ) {
                         is InferenceRequestPayloadBuildResult.Built -> built.request
                         is InferenceRequestPayloadBuildResult.Rejected -> {
-                            mutableNetworkState.value =
-                                mutableNetworkState.value.copy(
-                                    message =
-                                        "Request validation failed: " +
-                                            "${built.reason.name.lowercase().replace('_', ' ')}.",
-                                )
+                            val message =
+                                "Request validation failed: " +
+                                    "${built.reason.name.lowercase().replace('_', ' ')}."
+                            if (context.attempts.isEmpty()) {
+                                mutableNetworkState.value =
+                                    mutableNetworkState.value.copy(
+                                        runStatus = RequestRunStatus.FAILED,
+                                        canRetryRequest = false,
+                                        message = message,
+                                    )
+                            } else {
+                                updateAggregatedRequestStatus(context, message)
+                            }
                             return@launch
                         }
                     }
@@ -360,45 +479,75 @@ class RequestViewModel(
                 val selection =
                     gateway.discoverAndSelectReachableHosts(
                         request = selectionRequest,
-                        maxHosts = FirstReleaseInferenceLimits.MAX_HOSTS_PER_ROUND,
+                        excludedEphemeralHostIds = successfulPeerIds(context),
+                        maxHosts = maxHosts,
                     )
                 mutableHostAvailabilityMessage.value = selection.feedback.message
                 if (selection.candidates.isEmpty()) {
-                    mutableNetworkState.value =
-                        mutableNetworkState.value.copy(
-                            message = "No inference payload was sent. Trust a compatible host and retry discovery.",
+                    if (context.attempts.isEmpty()) {
+                        mutableNetworkState.value =
+                            mutableNetworkState.value.copy(
+                                runStatus = RequestRunStatus.IDLE,
+                                canRetryRequest = false,
+                                message =
+                                    "No compatible, reachable hosts are currently available. " +
+                                        "The request was not sent.",
+                            )
+                    } else {
+                        updateAggregatedRequestStatus(
+                            context,
+                            "No eligible failed or untried host is currently reachable. Retry remains manual.",
                         )
+                    }
                     return@launch
                 }
 
                 val dispatch =
                     gateway.dispatchRound(
-                        distributedRequest = distributedRequest,
+                        distributedRequest = context.request,
                         selectedHosts = selection.candidates,
-                        modelId = cleanModelId,
-                        currentMessage = cleanPrompt,
-                        capsule = capsule,
-                        maxOutputTokens = maxOutputTokens,
+                        modelId = context.modelId,
+                        currentMessage = context.prompt,
+                        capsule = context.capsule,
+                        maxOutputTokens = context.maxOutputTokens,
                         protocolVersion = CURRENT_PROTOCOL_VERSION,
                     )
                 when (dispatch) {
                     is InferenceRoundDispatchResult.Rejected -> {
-                        mutableNetworkState.value =
-                            mutableNetworkState.value.copy(
-                                message =
-                                    "The round was not dispatched: " +
-                                        "${dispatch.reason.name.lowercase().replace('_', ' ')}.",
-                            )
+                        val message =
+                            "The round was not dispatched: " +
+                                "${dispatch.reason.name.lowercase().replace('_', ' ')}."
+                        if (context.attempts.isEmpty()) {
+                            mutableNetworkState.value =
+                                mutableNetworkState.value.copy(
+                                    runStatus = RequestRunStatus.FAILED,
+                                    canRetryRequest = false,
+                                    message = message,
+                                )
+                        } else {
+                            updateAggregatedRequestStatus(context, message)
+                        }
                         return@launch
                     }
                     is InferenceRoundDispatchResult.Dispatched -> {
+                        val nextContext =
+                            context.copy(
+                                progress =
+                                    context.progress.afterDispatch(
+                                        dispatch.attempts.map { attempt -> attempt.ephemeralHostId },
+                                    ),
+                                attempts = context.attempts + dispatch.attempts,
+                            )
+                        if (retryableRequest?.request?.requestId == context.request.requestId) {
+                            retryableRequest = nextContext
+                        }
                         val hasQueuedAttempts =
                             dispatch.attempts.any { attempt ->
                                 attempt.submissionStatus == InferenceAttemptSubmissionStatus.QUEUED
                             }
                         activeRequestCancellation =
                             if (hasQueuedAttempts) {
-                                ActiveRequestCancellation(distributedRequest.requestId, dispatch.attempts.toList())
+                                ActiveRequestCancellation(context.request.requestId, dispatch.attempts.toList())
                             } else {
                                 null
                             }
@@ -406,38 +555,48 @@ class RequestViewModel(
                             mutableNetworkState.value.copy(canCancelRequest = hasQueuedAttempts)
                         val collection =
                             gateway.awaitRoundResponses(
-                                requestId = distributedRequest.requestId,
+                                requestId = context.request.requestId,
                                 attempts = dispatch.attempts,
                             )
                         val attemptsById = dispatch.attempts.associateBy { attempt -> attempt.attemptId }
                         collection.responses.forEach { response ->
                             val attempt = attemptsById[response.attemptId] ?: return@forEach
                             recordValidatedResponse(
-                                expectedRequestId = distributedRequest.requestId,
+                                expectedRequestId = context.request.requestId,
                                 expectedAttemptId = attempt.attemptId,
                                 expectedHostId = attempt.ephemeralHostId,
-                                expectedModelId = cleanModelId,
+                                expectedModelId = context.modelId,
                                 response = response,
                             )
                         }
                         collection.failures.forEach { failure ->
-                            recordFailedAttempt(distributedRequest.requestId, failure)
+                            recordFailedAttempt(context.request.requestId, failure)
                         }
-                        mutableNetworkState.value =
-                            mutableNetworkState.value.copy(
-                                message =
-                                    "Round finished: ${collection.responses.size} response(s), " +
-                                        "${collection.failures.size} failed or unanswered attempt(s).",
-                            )
+                        updateAggregatedRequestStatus(
+                            nextContext,
+                            "Round finished: ${collection.responses.size} response(s), " +
+                                "${collection.failures.size} failed or unanswered attempt(s).",
+                        )
                     }
                 }
             } catch (cancellation: CancellationException) {
                 throw cancellation
             } catch (exception: Exception) {
-                mutableNetworkState.value =
-                    mutableNetworkState.value.copy(
-                        message = "Request execution failed: ${safeMessage(exception)}",
-                    )
+                val message = "Request execution failed: ${safeMessage(exception)}"
+                val latestContext =
+                    retryableRequest?.takeIf { current ->
+                        current.request.requestId == context.request.requestId
+                    }
+                if (latestContext != null && latestContext.attempts.isNotEmpty()) {
+                    updateAggregatedRequestStatus(latestContext, message)
+                } else {
+                    mutableNetworkState.value =
+                        mutableNetworkState.value.copy(
+                            runStatus = RequestRunStatus.FAILED,
+                            canRetryRequest = false,
+                            message = message,
+                        )
+                }
             } finally {
                 activeRequestCancellation = null
                 mutableNetworkState.value =
@@ -445,9 +604,95 @@ class RequestViewModel(
                         isSendingRequest = false,
                         canCancelRequest = false,
                         isCancellingRequest = false,
+                        isRetryingRequest = false,
                     )
             }
         }
+    }
+
+    private fun latestOutcomeByHost(
+        context: RetryableRequestContext,
+    ): Map<String, HostResponseOutcome?> {
+        val responsesByAttempt =
+            mutableHostResponses.value
+                .filter { response -> response.requestId == context.request.requestId }
+                .associateBy { response -> response.attemptId }
+        return context.attempts
+            .groupBy { attempt -> attempt.ephemeralHostId }
+            .mapValues { (_, attempts) ->
+                responsesByAttempt[attempts.last().attemptId]?.outcome
+            }
+    }
+
+    private fun failedPeerIdsForRetry(context: RetryableRequestContext): Set<String> =
+        latestOutcomeByHost(context)
+            .filterValues { outcome ->
+                outcome != HostResponseOutcome.SUCCEEDED && outcome != HostResponseOutcome.CANCELLED
+            }.keys
+
+    private fun successfulPeerIds(context: RetryableRequestContext): Set<String> =
+        latestOutcomeByHost(context)
+            .filterValues { outcome ->
+                outcome == HostResponseOutcome.SUCCEEDED ||
+                    outcome == HostResponseOutcome.CANCELLED
+            }.keys
+
+    private fun updateAggregatedRequestStatus(
+        context: RetryableRequestContext,
+        message: String? = null,
+    ) {
+        val latestOutcomes = latestOutcomeByHost(context).values
+        val successCount = latestOutcomes.count { outcome -> outcome == HostResponseOutcome.SUCCEEDED }
+        val failedCount =
+            latestOutcomes.count { outcome ->
+                outcome != HostResponseOutcome.SUCCEEDED && outcome != HostResponseOutcome.CANCELLED
+            }
+        val hasCancellation = latestOutcomes.any { outcome -> outcome == HostResponseOutcome.CANCELLED }
+        val status =
+            when {
+                latestOutcomes.isEmpty() -> RequestRunStatus.IDLE
+                hasCancellation -> RequestRunStatus.CANCELLED
+                failedCount == 0 -> RequestRunStatus.SUCCEEDED
+                successCount > 0 -> RequestRunStatus.PARTIAL
+                else -> RequestRunStatus.FAILED
+            }
+        val budgetRemaining =
+            context.progress.roundsDispatched < context.request.maxRounds &&
+                context.progress.hostsAttempted < context.request.maxTotalHosts
+        val isCurrentRetryContext =
+            retryableRequest?.request?.requestId == context.request.requestId
+        val canRetry =
+            isCurrentRetryContext &&
+                failedCount > 0 &&
+                !hasCancellation &&
+                budgetRemaining
+        val statusMessage =
+            when (status) {
+                RequestRunStatus.IDLE -> "No request has been sent."
+                RequestRunStatus.RUNNING -> "The request is still running."
+                RequestRunStatus.SUCCEEDED -> "All latest host attempts completed successfully."
+                RequestRunStatus.PARTIAL ->
+                    if (canRetry) {
+                        "The request has partial results. Failed host attempts can be retried manually."
+                    } else {
+                        "The request has partial results; no further retry budget is available."
+                    }
+                RequestRunStatus.FAILED ->
+                    if (canRetry) {
+                        "All latest host attempts failed or timed out. A manual retry is available."
+                    } else {
+                        "All latest host attempts failed or timed out. The manual retry budget is exhausted."
+                    }
+                RequestRunStatus.CANCELLED ->
+                    "The request was cancelled. Cancelled attempts cannot be retried."
+            }
+        mutableNetworkState.value =
+            mutableNetworkState.value.copy(
+                runStatus = status,
+                canRetryRequest = canRetry,
+                isRetryingRequest = false,
+                message = message?.let { "$it $statusMessage" } ?: statusMessage,
+            )
     }
 
     /** Sends cancellation to every queued attempt from the exact active dispatch result. */
@@ -631,6 +876,7 @@ class RequestViewModel(
             ?: exception.javaClass.simpleName
 
     override fun onCleared() {
+        retryableRequest = null
         requestRuntime?.close()
         requestRuntime = null
         requestRuntimeUri = null
