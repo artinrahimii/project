@@ -129,3 +129,20 @@
 - fixture سه‌میزبانهٔ .NET پس از ارسال پاسخ دیگر بلافاصله خارج نمی‌شود؛ تا بسته‌شدن stream از سوی Android منتظر می‌ماند. Android در `awaitResponse` پس از دریافت/پردازش پاسخ stream را می‌بندد؛ این handshake تست از race میان ارسال پاسخ و disposal میزبان جلوگیری می‌کند.
 - assertion تست Windows HostLifecycle اکنون فقط booleanهای تطبیق request/attempt/round/peer/model/output و وضعیت outcome/deadline را گزارش می‌کند؛ شناسه‌ها یا متن واقعی prompt ثبت نمی‌شوند.
 - این تغییرات فقط test fixture و diagnostics را اصلاح می‌کنند؛ هنوز هیچ موفقیت CI برای commit جدید ادعا نمی‌شود.
+
+
+## تلاش T0180-A008 — نتیجهٔ CI دقیق V 3.0.827
+
+- آزمون Android شامل KtLint، ساخت APK، JVM unit tests و بررسی Protobuf با موفقیت گذشت.
+- ساخت Windows WPF و آزمون‌های startup/security/DPAPI موفق شدند.
+- Quality Gate مرحلهٔ سوم: ۳۳۸ آزمون Python، compileall و graph guard موفق؛ ۲۳۰ وظیفه و ۴۲۲ یال، صفر خطا و یک هشدار metadata قدیمی T0001.
+- ساخت و smoke test سرویس Rendezvous موفق بود.
+- آزمون HostLifecycle شکست خورد؛ خطا اکنون در دریافت پاسخ HostStatus و خط ۲۶۶ آزمون loopback رخ می‌دهد: IOException با inner ChannelClosedException. پیش از ارسال InferenceRequest اتصال بسته می‌شود.
+- workflow اجرای مدل محلی نیز به‌دلیل شکست همین مجموعهٔ مشترک HostLifecycle متوقف شد؛ بخش اجرای llama.cpp و GGUF فراخوانی نشد و نتیجهٔ آزمون inference واقعی هنوز نامشخص است.
+- اصلاح A008 مشکل قبلی Android cancellation را رفع کرده، اما T0180 همچنان in_progress است.
+
+## تلاش T0180-A009 — تشخیص ایمن شکست HostStatus
+
+- آزمون loopback اکنون در شکست دریافت HostStatus، مقادیر غیرحساس hostActive، hostFailureType، clientConnected و failureType را گزارش می‌کند.
+- این تغییر صرفاً ابزار تشخیص در آزمون است؛ هیچ رفتار production تغییر نکرده و علت ریشه‌ای بسته‌شدن اتصال هنوز اثبات نشده است.
+- آزمون‌های محلی این تلاش اجرا نشدند؛ پذیرش دقیق commit جدید باید از طریق CI بررسی شود. T0180 همچنان in_progress است.

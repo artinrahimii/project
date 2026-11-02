@@ -263,8 +263,22 @@ internal static class PeerAnnouncementClientAcceptanceTests
         await client.SendMessageAsync(
             new HostStatusRequest { EphemeralHostId = hostPeerId }.ToByteArray(),
             timeout.Token).ConfigureAwait(false);
-        byte[] statusWire = await client.ReceiveMessageAsync(timeout.Token)
-            .WaitAsync(TimeSpan.FromSeconds(5), timeout.Token).ConfigureAwait(false);
+        byte[] statusWire;
+        try
+        {
+            statusWire = await client.ReceiveMessageAsync(timeout.Token)
+                .WaitAsync(TimeSpan.FromSeconds(5), timeout.Token).ConfigureAwait(false);
+        }
+        catch (Exception exception)
+        {
+            throw new InvalidOperationException(
+                "Authenticated HostStatus round-trip failed. " +
+                $"hostActive={host.IsActive}; " +
+                $"hostFailureType={host.LastFailureType ?? "none"}; " +
+                $"clientConnected={client.IsConnected}; " +
+                $"failureType={exception.GetType().Name}.",
+                exception);
+        }
         var liveStatus = HostStatus.Parser.ParseFrom(statusWire);
         Assert(liveStatus.EphemeralHostId == hostPeerId &&
                liveStatus.State == (HostRuntimeState)2 &&

@@ -49938,17 +49938,23 @@
         "tests/test_android_libp2p_transport_contract.py",
         "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0180-A001 (2026-11-02T17:03:47+03:30): implemented explicit cleanup for Windows outbound frames, failed queue handoff, queued messages at disposal, host request/response wire arrays and short-lived serialized status/rejection messages; Android decoder pending/temporary buffers and decoded frames are zeroed on replacement, malformed frame, callback failure and stream closure. T0177→T0180 and T0179→T0180 reviewed as sequencing_only while retaining type=blocks and the original execution order. Added Android JVM backing-array tests, Python source regressions and documented limits. Exact-head CI pending; task remains in_progress.\nT0180-A002 (2026-11-02T17:23:00+03:30–2026-11-02T17:29:27+03:30): removed a redundant consecutive blank line before the new Android JVM test. Exact-base graph Blob SHA-1 and JSON structure were validated. No automated tests or exact-head CI ran because the clone failed DNS resolution and local .NET/Gradle/Android toolchains are unavailable; the current commit has no returned status checks. Task remains in_progress.\nT0180-A003 (2026-11-02T18:14:10+03:30): identified that CompletableFuture.get(timeout) in cancelAttempts does not cancel the Netty write promise; added stream closure on cancellation/timeout/interruption so pending writes terminate and the sendRequest whenComplete callback clears its frame. Added a Python source-contract regression. Independently compiled the fetched PeerMessageFrameCodec production source with Kotlin 1.9.0/JDK21 and ran 8/8 decoder scenarios. Full Android/Windows/CI acceptance remains pending; task stays in_progress.\nT0180-A004 (2026-11-02T18:27:13+03:30): inspected exact GitHub Actions logs for V 3.0.824. The 338-test Step Three quality gate and Rendezvous container build/smoke passed; Windows WPF and HostLifecycle passed. Android product job failed at KtLint line 521:5 due to one missing blank line; Android APK/JVM/Protobuf steps were skipped. Windows compile reported CS8600 in the queue-drain TryRead loop. Added the KtLint separator, made TryRead result nullable-aware with a guarded length pattern, and updated regression assertions. Exact-head verification pending; T0180 remains in_progress.\nT0180-A005 (2026-11-02T18:31:21+03:30): exact-head V 3.0.825 validation ran 338 Python tests and compileall successfully but graph_guard failed because summary.failed_attempt_count=1 had no failed history row. Product build and container ultimately passed: Android KtLint/APK/JVM/Protobuf and Windows WPF checks passed; HostLifecycle failed twice on peer closure and passed on third retry; Rendezvous container passed. A006 records the graph correction without changing T0180 to done.\nT0180-A006 (2026-11-02T18:37:57+03:30): appended the missing failed validation attempt and corrective graph-metadata attempt; attempt_count=6 and failed_attempt_count=1 now match execution_history (one result=failed). All earlier history is retained; T0180 remains in_progress.\nT0180-A007 (2026-11-02T18:40–18:42+03:30): exact-head V 3.0.826 validation passed Step Three quality (338 tests, graph guard 0 errors) and Rendezvous container; Windows WPF and Android lint/APK passed. Android JVM had 1 failure out of 196 in the 3-host cancellation interop test: server processes logged SENT/PASS then closed before client received a correlated response. HostLifecycle failed the response-correlation assertion at PeerAnnouncementClientAcceptanceTests.cs:293, but the current generic message did not expose which field differed. T0180 remains in_progress.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0180-A001 (2026-11-02T17:03:47+03:30): implemented explicit cleanup for Windows outbound frames, failed queue handoff, queued messages at disposal, host request/response wire arrays and short-lived serialized status/rejection messages; Android decoder pending/temporary buffers and decoded frames are zeroed on replacement, malformed frame, callback failure and stream closure. T0177→T0180 and T0179→T0180 reviewed as sequencing_only while retaining type=blocks and the original execution order. Added Android JVM backing-array tests, Python source regressions and documented limits. Exact-head CI pending; task remains in_progress.\nT0180-A002 (2026-11-02T17:23:00+03:30–2026-11-02T17:29:27+03:30): removed a redundant consecutive blank line before the new Android JVM test. Exact-base graph Blob SHA-1 and JSON structure were validated. No automated tests or exact-head CI ran because the clone failed DNS resolution and local .NET/Gradle/Android toolchains are unavailable; the current commit has no returned status checks. Task remains in_progress.\nT0180-A003 (2026-11-02T18:14:10+03:30): identified that CompletableFuture.get(timeout) in cancelAttempts does not cancel the Netty write promise; added stream closure on cancellation/timeout/interruption so pending writes terminate and the sendRequest whenComplete callback clears its frame. Added a Python source-contract regression. Independently compiled the fetched PeerMessageFrameCodec production source with Kotlin 1.9.0/JDK21 and ran 8/8 decoder scenarios. Full Android/Windows/CI acceptance remains pending; task stays in_progress.\nT0180-A004 (2026-11-02T18:27:13+03:30): inspected exact GitHub Actions logs for V 3.0.824. The 338-test Step Three quality gate and Rendezvous container build/smoke passed; Windows WPF and HostLifecycle passed. Android product job failed at KtLint line 521:5 due to one missing blank line; Android APK/JVM/Protobuf steps were skipped. Windows compile reported CS8600 in the queue-drain TryRead loop. Added the KtLint separator, made TryRead result nullable-aware with a guarded length pattern, and updated regression assertions. Exact-head verification pending; T0180 remains in_progress.\nT0180-A005 (2026-11-02T18:31:21+03:30): exact-head V 3.0.825 validation ran 338 Python tests and compileall successfully but graph_guard failed because summary.failed_attempt_count=1 had no failed history row. Product build and container ultimately passed: Android KtLint/APK/JVM/Protobuf and Windows WPF checks passed; HostLifecycle failed twice on peer closure and passed on third retry; Rendezvous container passed. A006 records the graph correction without changing T0180 to done.\nT0180-A006 (2026-11-02T18:37:57+03:30): appended the missing failed validation attempt and corrective graph-metadata attempt; attempt_count=6 and failed_attempt_count=1 now match execution_history (one result=failed). All earlier history is retained; T0180 remains in_progress.\nT0180-A007 (2026-11-02T18:40–18:42+03:30): exact-head V 3.0.826 validation passed Step Three quality (338 tests, graph guard 0 errors) and Rendezvous container; Windows WPF and Android lint/APK passed. Android JVM had 1 failure out of 196 in the 3-host cancellation interop test: server processes logged SENT/PASS then closed before client received a correlated response. HostLifecycle failed the response-correlation assertion at PeerAnnouncementClientAcceptanceTests.cs:293, but the current generic message did not expose which field differed. T0180 remains in_progress.\nT0180-A008 (2026-11-02T15:24:57Z–15:26:55Z): exact-head CI on V 3.0.827 confirmed Android KtLint, debug APK, JVM unit tests and generated Protobuf checks passed; Windows WPF passed; Step Three quality gate passed 338 Python tests, compileall and graph guard (230 tasks / 422 edges / 0 errors / 1 preserved T0001 metadata warning); Rendezvous production container build and non-root HTTP smoke passed. HostLifecycle failed earlier than the prior response-correlation assertion: the authenticated client sent HostStatusRequest, then ReceiveMessageAsync failed at PeerAnnouncementClientAcceptanceTests.cs:266 with IOException wrapping ChannelClosedException before HostStatus arrived. The real-inference workflow also stopped in this shared HostLifecycle suite before reaching the opt-in llama.cpp/GGUF inference block; live model inference was not run. A008 fixture/diagnostic changes fixed the previous Android cancellation failure, but T0180 remains in_progress.\nT0180-A009 (2026-11-02T15:43:16.924Z): added type-only HostStatus round-trip failure diagnostics to the loopback acceptance test. On receive failure, the test reports host active state, the host lifecycle's existing LastFailureType, client connected state and exception type; it does not include peer IDs, prompt/response content, exception messages, credentials or key material. This is a test-diagnostic change only, not a production transport fix. No local .NET/Android/Python suite was run in this tool session; exact-head CI is pending. T0180 remains in_progress.",
       "execution_summary": {
-        "attempt_count": 7,
+        "attempt_count": 9,
         "failed_attempt_count": 2,
-        "last_attempt_id": "T0180-A007",
-        "last_attempt_result": "failed",
-        "changed_files": [],
+        "last_attempt_id": "T0180-A009",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs",
+          "step three/T0180/execution-report.md",
+          "step three/T0180/evidence/verification.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [
           "fef1135d983ed2f62619fe8e1224301adb887615",
           "d85b2a362cd6e95db38f4b6ed5b7a4d2321377ac",
-          "d49eea16e539755f5ad79b4c920829328fe40616"
+          "d49eea16e539755f5ad79b4c920829328fe40616",
+          "e84d73f68c22b87e699ac482c1706f8a410dba20"
         ],
         "tests_passed": [
           "Standalone Kotlin/JVM codec harness — 8/8 scenarios passed with Kotlin 1.9.0 / JDK 21; production source Blob f39a0695e6ce2b927b255e0f188dd1ed4b778098.",
@@ -49961,14 +49967,19 @@
           "V 3.0.826 Step Three quality gate run 41469076873 — 338 Python tests, compileall and graph_guard all passed (230 tasks / 422 edges / 0 errors / 1 preserved T0001 metadata warning).",
           "V 3.0.826 Rendezvous container run 41469076680 — production build and non-root HTTP smoke passed.",
           "V 3.0.826 Windows WPF job 125357569545 — formatting, build, generated Protobuf, startup/security/DPAPI checks passed.",
-          "V 3.0.826 Android KtLint and assembleDebug in job 125357569592 passed."
+          "V 3.0.826 Android KtLint and assembleDebug in job 125357569592 passed.",
+          "V 3.0.827 Android product job 125365442148 — KtLint, debug APK, JVM unit tests and generated Protobuf verification passed.",
+          "V 3.0.827 Windows WPF job 125365442688 — formatting, Release build, startup/security and DPAPI checks passed.",
+          "V 3.0.827 Step Three quality gate 41471350827 — 338 Python tests, compileall and graph guard passed (230 tasks / 422 edges / 0 errors / 1 preserved T0001 metadata warning).",
+          "V 3.0.827 Rendezvous container run 41471350787 — production build and non-root HTTP contract smoke passed."
         ],
         "tests_failed": [
           "White-P product build run 41465625430 on V 3.0.824 — Android KtLint failed at Libp2pInferenceRequestTransport.kt:521:5 (Expected a blank line for this declaration); assembleDebug, testDebugUnitTest and generated Protobuf checks were skipped.",
           "V 3.0.825 Step Three quality gate run 41467491212 — 338 Python tests and compileall passed, but graph_guard failed with FAILED_ATTEMPT_COUNT_MISMATCH: T0180: summary=1, history=0. Corrective append-only history record A005 and metadata reconciliation A006 are included in this commit.",
           "V 3.0.825 HostLifecycle product run 41467491153 attempt 1 and attempt 2 — loopback peer stream closed while awaiting HostStatus/inference response; attempt 3 subsequently passed.",
           "V 3.0.826 Android JVM — 1 of 196 tests failed: sendsCancellationToThreeNativeDotNetLibp2pHostsAndReceivesCancelledResponses. The Windows fixture logged CANCEL_RECEIVED / VALIDATED / SENT / PASS but client saw the peer stream close before receiving its correlated CANCELLED response.",
-          "V 3.0.826 HostLifecycle job 125357569172 — PeerHostLifecyclePublishesAndServesTrustedPeerAsync failed response correlation/output assertion at line 293; the generic assertion did not disclose which field differed."
+          "V 3.0.826 HostLifecycle job 125357569172 — PeerHostLifecyclePublishesAndServesTrustedPeerAsync failed response correlation/output assertion at line 293; the generic assertion did not disclose which field differed.",
+          "V 3.0.827 HostLifecycle job 125365442905 — PeerHostLifecyclePublishesAndServesTrustedPeerAsync failed while awaiting HostStatus at line 266 after HostStatusRequest; ReceiveMessageAsync threw IOException wrapping ChannelClosedException before the inference request exchange."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -50219,6 +50230,73 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Keep the .NET interop fixture alive until the Android peer closes its stream after awaitResponse, and add safe field-match diagnostics to the Windows HostLifecycle integration assertion. Run exact-head Step Three, Android JVM, Windows HostLifecycle, WPF and container workflows again; investigate any remaining production defect instead of marking T0180 done."
+        },
+        {
+          "attempt_id": "T0180-A008",
+          "started_at": "2026-11-02T15:24:57Z",
+          "ended_at": "2026-11-02T15:26:55Z",
+          "result": "partial",
+          "summary": "Exact-head V 3.0.827 CI passed Android lint/APK/JVM/Protobuf, Windows WPF, Step Three quality gate (338 Python tests, compileall, graph guard 230 tasks/422 edges/0 errors/1 preserved metadata warning) and Rendezvous container. HostLifecycle then failed before inference while awaiting HostStatus at PeerAnnouncementClientAcceptanceTests.cs:266: IOException wrapping ChannelClosedException. Real llama.cpp/GGUF inference was not reached. A008 fixes the earlier Android cancellation test but does not complete T0180.",
+          "changed_files": [
+            "tests/HostLifecycle.Tests/AndroidInteropPeerServer.cs",
+            "tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs",
+            "step three/T0180/execution-report.md",
+            "step three/T0180/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": "e84d73f68c22b87e699ac482c1706f8a410dba20",
+          "tests": [
+            {
+              "name": "Android product job 125365442148 — KtLint/APK/JVM/Protobuf",
+              "result": "passed",
+              "summary": "The complete Android job passed, including JVM unit tests and generated Protobuf verification."
+            },
+            {
+              "name": "Windows WPF job 125365442688",
+              "result": "passed",
+              "summary": "Formatting, Release build, Protobuf, startup/security and DPAPI checks passed."
+            },
+            {
+              "name": "Step Three quality gate 41471350827",
+              "result": "passed",
+              "summary": "338 Python tests and compileall passed; graph guard validated 230 tasks / 422 edges with zero errors and one preserved T0001 metadata warning."
+            },
+            {
+              "name": "Rendezvous container run 41471350787",
+              "result": "passed",
+              "summary": "Production container build and non-root HTTP contract smoke passed."
+            },
+            {
+              "name": "HostLifecycle job 125365442905",
+              "result": "failed",
+              "summary": "The authenticated HostStatus round-trip failed before inference: ReceiveMessageAsync at PeerAnnouncementClientAcceptanceTests.cs:266 threw IOException wrapping ChannelClosedException."
+            }
+          ],
+          "failure_details": "The loopback HostLifecycle test loses the authenticated application stream after HostStatusRequest and before HostStatus is received. Exact root cause is not identified by current logs. The separate real-inference workflow exits in this shared acceptance suite before its optional live-model test; no real-model inference result exists.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Run the exact-head HostLifecycle and full product workflows after adding safe host LastFailureType diagnostics; identify and fix the underlying session/receive-loop failure. Confirm the real llama.cpp/GGUF acceptance is actually reached. Mark T0180 done only after required Windows and Android/transport acceptance passes."
+        },
+        {
+          "attempt_id": "T0180-A009",
+          "started_at": "2026-11-02T15:43:16.924Z",
+          "ended_at": "2026-11-02T15:43:16.924Z",
+          "result": "partial",
+          "summary": "Added type-only failure diagnostics around the HostStatus loopback receive so the next exact-head CI run reports host active state, host LastFailureType, client connected state and exception type without logging sensitive message content. This is diagnostic instrumentation, not a production fix.",
+          "changed_files": [
+            "tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs",
+            "step three/T0180/execution-report.md",
+            "step three/T0180/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": "No local .NET, Android Gradle or Python test command was executed in this tool session. Exact-head GitHub Actions validation is pending.",
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect the HostLifecycle job's hostFailureType diagnostic on the exact new main commit, correct the underlying transport/session bug, then rerun the complete product workflows. Do not complete T0180 until HostLifecycle, Android transport and required CI acceptance pass."
         }
       ]
     },
@@ -62394,7 +62472,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-11-02T18:37:57+03:30",
+  "updated_at": "2026-11-02T15:43:16.924Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

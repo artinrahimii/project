@@ -61,3 +61,20 @@ Changed code implements zeroization for Windows frames/queue/lifecycle buffers a
 - Android job `125357569592`: KtLint and APK build passed; 196 JVM tests completed, 1 failure. JUnit artifact `13153164724` shows `sendsCancellationToThreeNativeDotNetLibp2pHostsAndReceivesCancelledResponses` failed because the client observed stream closure before a correlated CANCELLED response. All three .NET fixture peers logged `CANCEL_RECEIVED`, `VALIDATED`, `SENT`, `PASS`; the fixture process then returned and disposed its transport immediately after send.
 - Windows HostLifecycle job `125357569172`: `PeerHostLifecyclePublishesAndServesTrustedPeerAsync` failed its first-response correlation assertion at line 293. Assertion previously did not identify mismatched fields.
 - A008 changes the one-shot .NET fixture to remain alive until the Android client closes the stream after handling the response, and adds non-sensitive boolean diagnostics to the Windows assertion. No production behavior is changed in A008; exact-head CI remains mandatory.
+
+
+## T0180-A008 — V 3.0.827 exact-head CI evidence
+
+- Step Three quality gate run 41471350827 / job 125365446419: passed; 338 Python tests, compileall, graph guard for 230 tasks / 422 edges, zero errors and one preserved T0001 metadata warning.
+- Rendezvous container run 41471350787 / job 125365442833: passed; production image build and non-root HTTP contract smoke passed.
+- Android product job 125365442148: passed; KtLint, debug APK, JVM unit tests, generated Protobuf verification and APK upload succeeded.
+- Windows WPF job 125365442688: passed; formatting, Release build, generated Protobuf, startup/security and DPAPI checks succeeded.
+- HostLifecycle job 125365442905: failed at PeerHostLifecyclePublishesAndServesTrustedPeerAsync while waiting for HostStatus at line 266 after HostStatusRequest. ReceiveMessageAsync threw IOException with inner ChannelClosedException (libp2p channel aborted); the test did not reach the InferenceRequest exchange.
+- Real local inference run 41471350738 / job 125365443683: the shared HostLifecycle acceptance suite failed at the same HostStatus receive before the optional real-model block. The llama.cpp/GGUF inference acceptance was not reached and is not classified as a model-test failure.
+- The A008 Android fixture handshake correction is supported by the Android JVM pass on this exact head; Windows HostLifecycle acceptance remains failing.
+
+## T0180-A009 — diagnostic change
+
+- Added a safe, type-only diagnostic wrapper around the HostStatus receive in PeerAnnouncementClientAcceptanceTests. It surfaces host.IsActive, host.LastFailureType, client.IsConnected and the received exception type only.
+- No secrets, identifiers, prompts, responses or exception messages are emitted by the added diagnostic.
+- This commit has not yet been validated by exact-head CI; no task completion is claimed.
