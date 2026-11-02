@@ -4,12 +4,16 @@ import android.util.Log
 import java.util.concurrent.atomic.AtomicInteger
 
 /** Fixed numeric diagnostic categories shared with the Windows host schema. */
-internal enum class SafeDiagnosticEventCode(val code: Int) {
+internal enum class SafeDiagnosticEventCode(
+    val code: Int,
+) {
     PEER_TRANSPORT_CONNECTION(1),
     INFERENCE_SUBMISSION(2),
 }
 
-internal enum class SafeDiagnosticOutcomeCode(val code: Int) {
+internal enum class SafeDiagnosticOutcomeCode(
+    val code: Int,
+) {
     STARTED(1),
     SUCCEEDED(2),
     REJECTED(3),

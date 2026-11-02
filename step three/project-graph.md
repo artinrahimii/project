@@ -49688,11 +49688,11 @@
         "tests/HostLifecycle.Tests/SafeDiagnosticLogAcceptanceTests.cs",
         "src/Client.Android/app/src/test/java/com/whitep/client/network/SafeDiagnosticLogTest.kt"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0179-A001 (2026-11-02T12:37:09.268Z): implemented allowlist-only numeric diagnostic logging in Shared.Security and Android, wired it into Windows peer transport and Android inference submission, removed template/category/exception details from the interop test logger, and added regression/acceptance coverage. Incoming T0177/T0178 edges were validated as sequencing_only; original blocks types and execution order retained. Exact-head CI pending; task remains in_progress.\nT0179-A001 CI completion (2026-11-02T12:39:49Z): 333 Python tests, graph guard, HostLifecycle/EventSource, Windows WPF, Rendezvous container and real local inference passed. Android ktlintCheck failed on two formatting violations in SafeDiagnosticLog.kt; Android APK build and JVM tests were skipped. T0179-A002 fixes those formatting issues; exact-head validation is pending.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0179-A001 (2026-11-02T12:37:09.268Z): implemented allowlist-only numeric diagnostic logging in Shared.Security and Android, wired it into Windows peer transport and Android inference submission, removed template/category/exception details from the interop test logger, and added regression/acceptance coverage. Incoming T0177/T0178 edges were validated as sequencing_only; original blocks types and execution order retained. Exact-head CI pending; task remains in_progress.\nT0179-A001 CI completion (2026-11-02T12:39:49Z): 333 Python tests, graph guard, HostLifecycle/EventSource, Windows WPF, Rendezvous container and real local inference passed. Android ktlintCheck failed on two formatting violations in SafeDiagnosticLog.kt; Android APK build and JVM tests were skipped. T0179-A002 fixes those formatting issues; exact-head validation is pending.\nT0179-A002 CI completion (2026-11-02T12:45:54Z): Step Three quality gate (333 Python tests, graph guard), HostLifecycle and Rendezvous container passed. Android ktlintCheck still failed, now only on enum constructor parameter lists at lines 7 and 12; previous A001 JSON-length/multiline-expression errors no longer appear. APK/JVM tests skipped. A003 reformats both enum constructors; exact-head CI pending.",
       "execution_summary": {
-        "attempt_count": 2,
-        "failed_attempt_count": 1,
-        "last_attempt_id": "T0179-A002",
+        "attempt_count": 3,
+        "failed_attempt_count": 2,
+        "last_attempt_id": "T0179-A003",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Shared.Security/SafeDiagnosticLog.cs",
@@ -49711,17 +49711,19 @@
           "step three/project-graph.md"
         ],
         "related_commits": [
-          "583dccc5decebccb78d6599c082e12e516bb80c9"
+          "583dccc5decebccb78d6599c082e12e516bb80c9",
+          "4bfb38ab6238b3c4b8168352715704241c739b82"
         ],
         "tests_passed": [
-          "Step Three quality gate: 333 Python tests, Python compileall, graph_guard with 0 errors (one existing T0001 metadata warning).",
-          "HostLifecycle tests passed; SafeDiagnosticLog EventSource test verified only the three numeric values.",
-          "Windows WPF formatting/build/Protobuf/startup smoke and Windows policy/identity checks passed.",
-          "Rendezvous container build and smoke test passed.",
-          "Real local inference integration passed."
+          "Step Three quality gate A001 and A002: 333 Python tests and compileall passed; graph_guard validated 230 tasks and 422 edges with zero errors and one existing T0001 metadata warning.",
+          "HostLifecycle/EventSource acceptance passed in A001 and HostLifecycle passed again in A002.",
+          "Windows WPF formatting/build/Protobuf/smoke and policy checks passed in A001.",
+          "Rendezvous container build/smoke passed in A001 and A002.",
+          "Real local inference integration passed in A001."
         ],
         "tests_failed": [
-          "Android ktlintCheck failed on SafeDiagnosticLog.kt lines 35 and 43; assembleDebug and testDebugUnitTest were skipped."
+          "A001 Android ktlintCheck: line 35 exceeded 120 characters; line 43 multiline expression formatting. Android APK and JVM tests skipped.",
+          "A002 Android ktlintCheck: both enum constructor parameter lists were required to use multiline formatting. Android APK and JVM tests skipped."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -49757,26 +49759,53 @@
           ],
           "commit_sha": "583dccc5decebccb78d6599c082e12e516bb80c9",
           "tests": [
-            "PASS — Step Three quality gate run 41446302498: 333 Python tests passed; compileall passed; graph_guard validated 230 tasks / 422 edges with zero errors and one existing T0001 metadata warning.",
-            "PASS — HostLifecycle job 125280122897: SafeDiagnosticLog EventSource acceptance emitted PASS for the three allowlisted numeric fields.",
-            "PASS — Windows WPF job 125280122628: formatting, build, generated Protobuf, startup smoke, and Windows policy/identity steps succeeded.",
+            "PASS — Step Three quality gate run 41446302498: 333 Python tests, compileall and graph_guard (230 tasks, 422 edges, 0 errors and one existing T0001 metadata warning).",
+            "PASS — HostLifecycle job 125280122897; SafeDiagnosticLog EventSource acceptance emitted PASS for the three allowlisted numeric fields.",
+            "PASS — Windows WPF job 125280122628: formatting, build, Protobuf, startup smoke and Windows policy/identity steps passed.",
             "PASS — Rendezvous container build/smoke run 41446302729.",
             "PASS — Real local inference integration run 41446302931.",
-            "FAIL — Android ktlintCheck in job 125280123096: SafeDiagnosticLog.kt line 35 column 121 exceeded the 120-character limit; line 43 column 24 required a multiline expression to start on a new line.",
-            "SKIPPED — Android assembleDebug and testDebugUnitTest were skipped after the ktlint failure."
+            "FAIL — Android ktlintCheck: SafeDiagnosticLog.kt line 35 column 121 exceeded 120 characters; line 43 column 24 required a multiline expression to start on a new line.",
+            "SKIPPED — Android assembleDebug and testDebugUnitTest after the lint failure."
           ],
-          "failure_details": "Android ktlintCheck failed for SafeDiagnosticLog.kt: line 35 column 121 exceeded max line length (120); line 43 column 24 required a multiline expression to start on a new line. As a consequence, assembleDebug and testDebugUnitTest were skipped.",
+          "failure_details": "Android ktlintCheck reported SafeDiagnosticLog.kt line 35 column 121 above the 120-character limit and line 43 column 24 requiring the multiline expression to begin on a new line.",
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "A002 reformats JSON construction using buildString and wraps AtomicInteger.getAndUpdate on the next line. Rerun ktlintCheck, assembleDebug, Android JVM unit tests and full product CI."
+          "follow_up": "A002 changed JSON formatting to buildString and moved the multiline atomic update expression to a new line; rerun Android CI."
         },
         {
           "attempt_id": "T0179-A002",
           "started_at": "2026-11-02T12:43:55.531Z",
-          "ended_at": "2026-11-02T12:43:55.531Z",
-          "result": "partial",
+          "ended_at": "2026-11-02T12:45:54Z",
+          "result": "failed",
           "summary": "Corrected both Android ktlint violations in SafeDiagnosticLog.kt without changing the allowlist record schema. Exact-head lint/build/unit tests for this correction are pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/network/SafeDiagnosticLog.kt",
+            "step three/T0179/execution-report.md",
+            "step three/T0179/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": "4bfb38ab6238b3c4b8168352715704241c739b82",
+          "tests": [
+            "PASS — Step Three quality gate run 41447155706: 333 Python tests, compileall and graph guard (230 tasks / 422 edges; 0 errors and one existing T0001 metadata warning).",
+            "PASS — HostLifecycle unit/integration job 125283016047.",
+            "PASS — Rendezvous container build/smoke run 41447155821.",
+            "FAIL — Android ktlintCheck job 125283015847: SafeDiagnosticLog.kt line 7 columns 45 and 58 required newlines after opening/before closing constructor parentheses; line 12 columns 47 and 60 reported the same rule for the outcome enum.",
+            "SKIPPED — Android assembleDebug, testDebugUnitTest and generated Protobuf source checks after ktlint failure.",
+            "IN PROGRESS at the time of ledger update — Windows WPF job 125283016169; build, formatting, generated Protobuf, startup smoke, process restriction and policy rejection steps passed; capability/DPAPI identity checks had not yet both completed."
+          ],
+          "failure_details": "Android ktlintCheck still failed after the A002 correction. The previous JSON line-length and multiline-expression violations were no longer reported; instead ktlint required the constructor parameter lists of both enums to be multiline. Android APK build and JVM unit tests remained skipped.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "A003 formats both enum constructor parameter lists over multiple lines and reruns product CI."
+        },
+        {
+          "attempt_id": "T0179-A003",
+          "started_at": "2026-11-02T12:47:11.823Z",
+          "ended_at": "2026-11-02T12:47:11.823Z",
+          "result": "partial",
+          "summary": "Reformatted both enum constructor parameter lists in SafeDiagnosticLog.kt onto separate lines to satisfy the exact ktlint rule reported by A002. Android lint, APK build and JVM tests for A003 are pending.",
           "changed_files": [
             "src/Client.Android/app/src/main/java/com/whitep/client/network/SafeDiagnosticLog.kt",
             "step three/T0179/execution-report.md",
@@ -49789,7 +49818,7 @@
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect V 3.0.817 CI. Require Android ktlintCheck, assembleDebug, testDebugUnitTest, and successful White-P product build before marking T0179 done."
+          "follow_up": "Inspect the V3.0.818 product-build CI. Require ktlintCheck, assembleDebug and testDebugUnitTest to pass before marking T0179 done."
         }
       ]
     },
@@ -61964,7 +61993,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-11-02T12:43:55.531Z",
+  "updated_at": "2026-11-02T12:47:11.823Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",
