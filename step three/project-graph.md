@@ -49688,11 +49688,11 @@
         "tests/HostLifecycle.Tests/SafeDiagnosticLogAcceptanceTests.cs",
         "src/Client.Android/app/src/test/java/com/whitep/client/network/SafeDiagnosticLogTest.kt"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0179-A001 (2026-11-02T12:37:09.268Z): implemented allowlist-only numeric diagnostic logging in Shared.Security and Android, wired it into Windows peer transport and Android inference submission, removed template/category/exception details from the interop test logger, and added regression/acceptance coverage. Incoming T0177/T0178 edges were validated as sequencing_only; original blocks types and execution order retained. Exact-head CI pending; task remains in_progress.\nT0179-A001 CI completion (2026-11-02T12:39:49Z): 333 Python tests, graph guard, HostLifecycle/EventSource, Windows WPF, Rendezvous container and real local inference passed. Android ktlintCheck failed on two formatting violations in SafeDiagnosticLog.kt; Android APK build and JVM tests were skipped. T0179-A002 fixes those formatting issues; exact-head validation is pending.\nT0179-A002 CI completion (2026-11-02T12:45:54Z): Step Three quality gate (333 Python tests, graph guard), HostLifecycle and Rendezvous container passed. Android ktlintCheck still failed, now only on enum constructor parameter lists at lines 7 and 12; previous A001 JSON-length/multiline-expression errors no longer appear. APK/JVM tests skipped. A003 reformats both enum constructors; exact-head CI pending.\nT0179-A003 CI completion (2026-11-02T12:49:31Z): Step Three quality gate passed (333 Python tests, graph guard); HostLifecycle, Windows WPF and Rendezvous container jobs passed. Android ktlintCheck passed the earlier SafeDiagnosticLog.kt rules but found one missing blank line before local reject declaration in Libp2pInferenceRequestTransport.kt line 132; APK/JVM tests skipped. A004 inserts the blank line; exact-head CI pending.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0179-A001 (2026-11-02T12:37:09.268Z): implemented allowlist-only numeric diagnostic logging in Shared.Security and Android, wired it into Windows peer transport and Android inference submission, removed template/category/exception details from the interop test logger, and added regression/acceptance coverage. Incoming T0177/T0178 edges were validated as sequencing_only; original blocks types and execution order retained. Exact-head CI pending; task remains in_progress.\nT0179-A001 CI completion (2026-11-02T12:39:49Z): 333 Python tests, graph guard, HostLifecycle/EventSource, Windows WPF, Rendezvous container and real local inference passed. Android ktlintCheck failed on two formatting violations in SafeDiagnosticLog.kt; Android APK build and JVM tests were skipped. T0179-A002 fixes those formatting issues; exact-head validation is pending.\nT0179-A002 CI completion (2026-11-02T12:45:54Z): Step Three quality gate (333 Python tests, graph guard), HostLifecycle and Rendezvous container passed. Android ktlintCheck still failed, now only on enum constructor parameter lists at lines 7 and 12; previous A001 JSON-length/multiline-expression errors no longer appear. APK/JVM tests skipped. A003 reformats both enum constructors; exact-head CI pending.\nT0179-A003 CI completion (2026-11-02T12:49:31Z): Step Three quality gate passed (333 Python tests, graph guard); HostLifecycle, Windows WPF and Rendezvous container jobs passed. Android ktlintCheck passed the earlier SafeDiagnosticLog.kt rules but found one missing blank line before local reject declaration in Libp2pInferenceRequestTransport.kt line 132; APK/JVM tests skipped. A004 inserts the blank line; exact-head CI pending.\nT0179-A004 CI completion (2026-11-02T12:54:50Z): Step Three gate (333 Python tests/graph guard), Android ktlint, Windows WPF (including DPAPI identity/trust), HostLifecycle and Rendezvous passed. Android compileDebugKotlin failed because the transport used PascalCase enum constants not declared by Kotlin's uppercase enums; APK and JVM tests skipped. A005 aligns transport calls and Python assertions to uppercase Kotlin enum entries; exact-head CI pending.",
       "execution_summary": {
-        "attempt_count": 4,
-        "failed_attempt_count": 3,
-        "last_attempt_id": "T0179-A004",
+        "attempt_count": 5,
+        "failed_attempt_count": 4,
+        "last_attempt_id": "T0179-A005",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Shared.Security/SafeDiagnosticLog.cs",
@@ -49713,19 +49713,22 @@
         "related_commits": [
           "583dccc5decebccb78d6599c082e12e516bb80c9",
           "4bfb38ab6238b3c4b8168352715704241c739b82",
-          "4b686da26a6d61e73adc8daa13d1d0ac742f9e11"
+          "4b686da26a6d61e73adc8daa13d1d0ac742f9e11",
+          "998c84ec83e3b8706b20e664f7d8570e6cac14b5"
         ],
         "tests_passed": [
-          "Step Three quality gate passed on A001, A002 and A003: 333 Python tests and compileall; graph_guard found 230 tasks/422 edges with zero errors and one existing T0001 metadata warning.",
-          "HostLifecycle/EventSource acceptance passed in A001; HostLifecycle job passed again in A002 and A003.",
-          "Windows WPF build/format/Protobuf/smoke and policy/identity checks passed in A001 and A003.",
-          "Rendezvous container build/smoke passed in A001, A002 and A003.",
+          "Step Three quality gate passed on A001–A004: 333 Python tests and compileall; graph_guard reported 230 tasks/422 edges, zero errors and one existing T0001 metadata warning.",
+          "HostLifecycle/EventSource passed in A001; HostLifecycle job passed in A002, A003 and A004.",
+          "Windows WPF build/format/Protobuf/smoke and policy/identity checks passed in A001, A003 and A004.",
+          "Android ktlintCheck passed in A004 after the formatting corrections.",
+          "Rendezvous container build/smoke passed in A001, A002, A003 and A004.",
           "Real local inference integration passed in A001."
         ],
         "tests_failed": [
           "A001 Android ktlintCheck: SafeDiagnosticLog.kt line 35 exceeded 120 characters; line 43 multiline expression formatting. APK and JVM tests skipped.",
           "A002 Android ktlintCheck: SafeDiagnosticLog.kt enum constructor parameter lists required multiline formatting. APK and JVM tests skipped.",
-          "A003 Android ktlintCheck: Libp2pInferenceRequestTransport.kt line 132 required a blank line before the local function declaration. APK and JVM tests skipped."
+          "A003 Android ktlintCheck: Libp2pInferenceRequestTransport.kt line 132 required a blank line before the local function declaration. APK and JVM tests skipped.",
+          "A004 Android compileDebugKotlin: unresolved references due PascalCase enum usage in Kotlin; APK and JVM tests skipped."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -49832,11 +49835,40 @@
         {
           "attempt_id": "T0179-A004",
           "started_at": "2026-11-02T12:51:22.291Z",
-          "ended_at": "2026-11-02T12:51:22.291Z",
-          "result": "partial",
+          "ended_at": "2026-11-02T12:54:50Z",
+          "result": "failed",
           "summary": "Added the blank line required by ktlint before the local reject function declaration in Libp2pInferenceRequestTransport.kt. The code behavior and diagnostic data schema are unchanged; exact-head Android lint/build/unit tests are pending.",
           "changed_files": [
             "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
+            "step three/T0179/execution-report.md",
+            "step three/T0179/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": "998c84ec83e3b8706b20e664f7d8570e6cac14b5",
+          "tests": [
+            "PASS — Step Three quality gate run 41448213572: 333 Python tests, compileall and graph guard (230 tasks / 422 edges, zero errors and one existing T0001 metadata warning).",
+            "PASS — ktlintCheck passed in Android job 125286553700.",
+            "PASS — Windows WPF job 125286554509: C# formatting, build, generated Protobuf, WPF smoke, process restrictions, policy rejection, model capability gate and DPAPI identity/trust passed.",
+            "PASS — HostLifecycle job 125286554615.",
+            "PASS — Rendezvous container build/smoke run 41448213662.",
+            "FAIL — Android compileDebugKotlin: Libp2pInferenceRequestTransport.kt referenced enum entries with PascalCase names that do not exist in the Kotlin enums: InferenceSubmission, Started, Rejected, Succeeded and Cancelled.",
+            "SKIPPED — Android JVM tests and APK upload after Kotlin compilation failed."
+          ],
+          "failure_details": "Android lint passed, but compileDebugKotlin failed with unresolved enum references. SafeDiagnosticEventCode.InferenceSubmission and SafeDiagnosticOutcomeCode.Started/Rejected/Succeeded/Cancelled were referenced using PascalCase; the Kotlin enum declarations expose INFERENCE_SUBMISSION and uppercase outcome entries. APK was not produced and JVM tests were skipped.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "A005 changes Android transport enum references to the declared uppercase constants and updates Python source-contract assertions accordingly; rerun Android lint, compile, APK and JVM tests."
+        },
+        {
+          "attempt_id": "T0179-A005",
+          "started_at": "2026-11-02T12:56:51.944Z",
+          "ended_at": "2026-11-02T12:56:51.944Z",
+          "result": "partial",
+          "summary": "Aligned Android transport enum references with the actual Kotlin enum entry identifiers (uppercase) and updated the Python source-contract test. No logging schema or behavior change; exact-head CI pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
+            "tests/test_network_payload_logging.py",
             "step three/T0179/execution-report.md",
             "step three/T0179/evidence/verification.md",
             "step three/project-graph.md"
@@ -49847,7 +49879,7 @@
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect V3.0.819 CI. Require Android ktlintCheck, assembleDebug and testDebugUnitTest to succeed before marking T0179 done."
+          "follow_up": "Inspect V3.0.820 CI and require ktlintCheck, compileDebugKotlin, assembleDebug, testDebugUnitTest, and full product build success before marking T0179 done."
         }
       ]
     },
@@ -62022,7 +62054,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-11-02T12:51:22.291Z",
+  "updated_at": "2026-11-02T12:56:51.944Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

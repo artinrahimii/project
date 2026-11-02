@@ -126,15 +126,15 @@ class Libp2pInferenceRequestTransport(
     ): InferenceTransportSubmission {
         val diagnosticStartedAtMs = clock.millis()
         SafeDiagnosticLog.write(
-            SafeDiagnosticEventCode.InferenceSubmission,
-            SafeDiagnosticOutcomeCode.Started,
+            SafeDiagnosticEventCode.INFERENCE_SUBMISSION,
+            SafeDiagnosticOutcomeCode.STARTED,
         )
 
         fun reject(reason: String): InferenceTransportSubmission {
             lastSubmissionFailure = reason
             SafeDiagnosticLog.write(
-                SafeDiagnosticEventCode.InferenceSubmission,
-                SafeDiagnosticOutcomeCode.Rejected,
+                SafeDiagnosticEventCode.INFERENCE_SUBMISSION,
+                SafeDiagnosticOutcomeCode.REJECTED,
                 (clock.millis() - diagnosticStartedAtMs).coerceAtLeast(0L),
             )
             return InferenceTransportSubmission.REJECTED
@@ -253,15 +253,15 @@ class Libp2pInferenceRequestTransport(
                     controller.sendRequest(requestWire).get(timeoutSeconds, TimeUnit.SECONDS)
                 }
                 SafeDiagnosticLog.write(
-                    SafeDiagnosticEventCode.InferenceSubmission,
-                    SafeDiagnosticOutcomeCode.Succeeded,
+                    SafeDiagnosticEventCode.INFERENCE_SUBMISSION,
+                    SafeDiagnosticOutcomeCode.SUCCEEDED,
                     (clock.millis() - diagnosticStartedAtMs).coerceAtLeast(0L),
                 )
                 return InferenceTransportSubmission.QUEUED
             } catch (cancellation: CancellationException) {
                 SafeDiagnosticLog.write(
-                    SafeDiagnosticEventCode.InferenceSubmission,
-                    SafeDiagnosticOutcomeCode.Cancelled,
+                    SafeDiagnosticEventCode.INFERENCE_SUBMISSION,
+                    SafeDiagnosticOutcomeCode.CANCELLED,
                     (clock.millis() - diagnosticStartedAtMs).coerceAtLeast(0L),
                 )
                 pending.response.cancel(cancellation)

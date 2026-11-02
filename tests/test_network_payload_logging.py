@@ -78,10 +78,11 @@ class NetworkPayloadLoggingTests(unittest.TestCase):
         self.assertIn("SafeDiagnosticOutcomeCode.Succeeded", windows)
         self.assertIn("SafeDiagnosticOutcomeCode.Failed", windows)
         self.assertIn("SafeDiagnosticEventCode.PeerTransportConnection", windows)
-        self.assertIn("SafeDiagnosticOutcomeCode.Started", android)
-        self.assertIn("SafeDiagnosticOutcomeCode.Succeeded", android)
-        self.assertIn("SafeDiagnosticOutcomeCode.Rejected", android)
-        self.assertIn("SafeDiagnosticOutcomeCode.Cancelled", android)
+        self.assertIn("SafeDiagnosticEventCode.INFERENCE_SUBMISSION", android)
+        self.assertIn("SafeDiagnosticOutcomeCode.STARTED", android)
+        self.assertIn("SafeDiagnosticOutcomeCode.SUCCEEDED", android)
+        self.assertIn("SafeDiagnosticOutcomeCode.REJECTED", android)
+        self.assertIn("SafeDiagnosticOutcomeCode.CANCELLED", android)
         for call in re.findall(r"SafeDiagnosticLog\.write\((.*?)\)", android, re.DOTALL):
             self.assertNotRegex(call, r"\b(request|response|peer|model|exception|payload)\b")
 
