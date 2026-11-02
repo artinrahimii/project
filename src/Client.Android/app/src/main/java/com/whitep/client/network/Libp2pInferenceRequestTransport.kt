@@ -112,6 +112,7 @@ class Libp2pInferenceRequestTransport(
             "acceptedResponseFrames=${acceptedResponseFrames.get()};" +
             "peerClosedCallbacks=${peerClosedCallbacks.get()};" +
             "callbackFailures=${callbackFailures.get()}"
+
     private val protocolBinding =
         createSimpleBinding(PROTOCOL_ID) {
             InferencePeerMessageController(::onIncomingFrame, ::onPeerClosed)

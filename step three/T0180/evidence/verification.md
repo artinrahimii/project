@@ -97,3 +97,21 @@ Changed code implements zeroization for Windows frames/queue/lifecycle buffers a
 - Android product job 125390035607: failed while building the Windows .NET interop fixture because of the same C# test-source syntax error; Android lint/JVM acceptance did not run.
 - Rendezvous container run 41478431814: passed production image build and non-root HTTP smoke.
 - No inference-model success is inferred from an in-progress workflow; the next exact-head CI must verify all required jobs.
+
+
+## T0180-A013 — V 3.0.830 exact-head evidence
+
+- Step Three quality gate run 41479259509: passed, including Python tests and graph validation for 230 tasks / 422 edges.
+- Rendezvous container run 41479259270 / job 125392908935: passed production build and non-root HTTP smoke.
+- Windows WPF job 125392910104: passed.
+- HostLifecycle job 125392910293: failed after successful compilation. Diagnostic: `hostActive=False`, `hostFailureType=InvalidDataException`, `hostFailureStage=reject_malformed_application_message`; the listener rejected the received application frame as neither HostStatusRequest, InferenceRequest nor CancelRequest. Parser validation categories, frame size and first tag were not yet exposed.
+- Android job 125392910595: failed KtLint at `Libp2pInferenceRequestTransport.kt:115:5`; Android APK/JVM/Protobuf tests were not reached.
+- Real local inference run 41479259306 / job 125392908304: timed out at `PeerAnnouncementClientAcceptanceTests.cs:340` in the shared HostLifecycle loopback suite, before live model generation was confirmed. Downloading and validating the pinned model/runtime is not proof of inference success.
+- A014 adds payload-free parser categories, frame length and first tag, plus the KtLint blank line. No exact-head validation result for those changes exists yet.
+
+## T0180-A014 — diagnostic source changes (CI pending)
+
+- Windows `PeerAnnouncementHostLifecycle` records only parser validation enum/error-code names, received application-frame byte length and first Protobuf tag byte when the receive loop terminates on a malformed message.
+- Windows HostLifecycle failure output includes those fields alongside active/failure stage/type and client connectivity. No Protobuf payload, peer identity or prompt/response content is logged.
+- Android transport’s counter snapshot was retained; the missing blank line required by KtLint at line 115 was added before the protocol binding declaration.
+- No local tests were executed. Exact-head Python quality, C# compilation/HostLifecycle, Android KtLint/APK/JVM/Protobuf, Windows WPF, Rendezvous and real local inference remain required. T0180 stays in_progress.

@@ -55,6 +55,9 @@ public sealed class PeerAnnouncementHostLifecycle : IAsyncDisposable
     private int _active;
     private string? _lastFailureType;
     private string? _lastFailureStage;
+    private string? _lastFailureParseSummary;
+    private int _lastFailureMessageBytes = -1;
+    private int _lastFailureFirstTag = -1;
 
     public PeerAnnouncementHostLifecycle(
         PeerTrustStore trustStore,
@@ -144,6 +147,13 @@ public sealed class PeerAnnouncementHostLifecycle : IAsyncDisposable
     /// <summary>Fixed allowlisted receive-loop stage; never includes peer or message content.</summary>
     public string? LastFailureStage => Volatile.Read(ref _lastFailureStage);
 
+    /// <summary>Parser categories and fixed validation codes only; contains no parsed message content.</summary>
+    public string? LastFailureParseSummary => Volatile.Read(ref _lastFailureParseSummary);
+
+    public int LastFailureMessageBytes => Volatile.Read(ref _lastFailureMessageBytes);
+
+    public int LastFailureFirstTag => Volatile.Read(ref _lastFailureFirstTag);
+
     /// <summary>Starts the authenticated listener before publishing a renewable metadata lease.</summary>
     public async Task StartAsync(CancellationToken cancellationToken = default)
     {
@@ -191,6 +201,9 @@ public sealed class PeerAnnouncementHostLifecycle : IAsyncDisposable
                 _lifetime = new CancellationTokenSource();
                 Volatile.Write(ref _lastFailureType, null);
                 Volatile.Write(ref _lastFailureStage, null);
+                Volatile.Write(ref _lastFailureParseSummary, null);
+                Volatile.Write(ref _lastFailureMessageBytes, -1);
+                Volatile.Write(ref _lastFailureFirstTag, -1);
                 Volatile.Write(ref _active, 1);
                 _receiveLoop = ReceiveLoopAsync(transport, publisher, _lifetime.Token);
             }
@@ -276,6 +289,9 @@ public sealed class PeerAnnouncementHostLifecycle : IAsyncDisposable
         CancellationToken cancellationToken)
     {
         string failureStage = "await_authenticated_peer";
+        string? failureParseSummary = null;
+        int failureMessageBytes = -1;
+        int failureFirstTag = -1;
         try
         {
             // StartListenAsync opens the listener before any remote session exists. Wait for the
@@ -287,11 +303,14 @@ public sealed class PeerAnnouncementHostLifecycle : IAsyncDisposable
             {
                 failureStage = "receive_application_message";
                 byte[] requestWire = await transport.ReceiveMessageAsync(cancellationToken).ConfigureAwait(false);
+                failureMessageBytes = requestWire.Length;
+                failureFirstTag = requestWire.Length > 0 ? requestWire[0] : -1;
                 bool handedToHandler = false;
                 try
                 {
                     failureStage = "parse_host_status_request";
                     var parsedStatusRequest = ProtocolMessageParser.ParseHostStatusRequest(requestWire);
+                    failureParseSummary = $"status={parsedStatusRequest.Validation.Kind}:{parsedStatusRequest.Validation.ErrorCodeName ?? "none"}";
                     if (parsedStatusRequest.IsValid && parsedStatusRequest.Message is not null)
                     {
                         failureStage = "host_status_remote_identity_missing";
@@ -313,6 +332,7 @@ public sealed class PeerAnnouncementHostLifecycle : IAsyncDisposable
 
                     failureStage = "parse_inference_request";
                     var parsedRequest = ProtocolMessageParser.ParseInferenceRequest(requestWire);
+                    failureParseSummary += $";inference={parsedRequest.Validation.Kind}:{parsedRequest.Validation.ErrorCodeName ?? "none"}";
                     if (!parsedRequest.IsValid || parsedRequest.Message is null)
                     {
                         // The authenticated peer protocol is a stream of bounded Protobuf frames.
@@ -320,6 +340,7 @@ public sealed class PeerAnnouncementHostLifecycle : IAsyncDisposable
                         // validation, so a valid InferenceRequest always retains precedence.
                         failureStage = "parse_cancel_request";
                         var parsedCancel = ProtocolMessageParser.ParseCancelRequest(requestWire);
+                        failureParseSummary += $";cancel={parsedCancel.Validation.Kind}:{parsedCancel.Validation.ErrorCodeName ?? "none"}";
                         if (!parsedCancel.IsValid || parsedCancel.Message is null)
                         {
                             failureStage = "reject_malformed_application_message";
@@ -421,6 +442,9 @@ public sealed class PeerAnnouncementHostLifecycle : IAsyncDisposable
         catch (Exception exception)
         {
             Volatile.Write(ref _lastFailureStage, failureStage);
+            Volatile.Write(ref _lastFailureParseSummary, failureParseSummary);
+            Volatile.Write(ref _lastFailureMessageBytes, failureMessageBytes);
+            Volatile.Write(ref _lastFailureFirstTag, failureFirstTag);
             Volatile.Write(ref _lastFailureType, exception.GetType().Name);
             Volatile.Write(ref _active, 0);
             try { await publisher.StopAsync().ConfigureAwait(false); }

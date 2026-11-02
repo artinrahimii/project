@@ -163,3 +163,14 @@
 - آزمون HostLifecycle به علت خطای نحوی در رشتهٔ تشخیصی C# کامپایل نشد: CS1039 و CS1003 در خط ۲۷۹. بنابراین LastFailureStage در این اجرا هنوز آزمایش نشد.
 - job اندروید نیز هنگام ساخت fixture بین‌اجرایی .NET به همان خطای C# برخورد کرد و به KtLint/JVM acceptance نرسید.
 - خطاهای بالا مربوط به ابزار تشخیص و guard خودکار هستند، نه اثبات عیب تازه در framing یا منطق پاسخ. هر دو اصلاح در A012 اعمال شده‌اند؛ CI دقیق بعدی هنوز لازم است.
+
+
+## تلاش T0180-A013 — نتایج CI دقیق V 3.0.830
+
+- Step Three quality gate run 41479259509 با موفقیت گذشت و graph guard ساختار ۲۳۰ وظیفه و ۴۲۲ یال را تأیید کرد.
+- Rendezvous container run 41479259270 با موفقیت build و non-root HTTP smoke را اجرا کرد.
+- Windows WPF job 125392910104 موفق شد.
+- HostLifecycle job 125392910293 پس از کامپایل موفق، در رفت‌وبرگشت HostStatus شکست خورد. تشخیص نشان داد `hostFailureStage=reject_malformed_application_message`؛ یعنی parserهای HostStatusRequest، InferenceRequest و CancelRequest هیچ‌کدام پیام ورودی را نپذیرفتند. در این commit طول frame و دسته‌بندی parserها هنوز چاپ نمی‌شد.
+- Android job 125392910595 پیش از ساخت APK و اجرای JVM tests در KtLint متوقف شد: `Libp2pInferenceRequestTransport.kt:115:5 Expected a blank line for this declaration`.
+- Real local inference workflow run 41479259306 در همان مجموعهٔ مشترک HostLifecycle، در خط ۳۴۰ آزمون loopback با TimeoutException شکست خورد؛ اجرای واقعی generation از llama.cpp/GGUF تأیید نشد.
+- A014 فاصلهٔ خالی KtLint را اصلاح کرد و تشخیص میزبان را با طول بایت، اولین tag و دسته‌بندی ثابت سه parser گسترش داد. نتیجهٔ CI دقیق A014 هنوز وجود ندارد.

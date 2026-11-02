@@ -276,6 +276,9 @@ internal static class PeerAnnouncementClientAcceptanceTests
                 $"hostActive={host.IsActive}; " +
                 $"hostFailureType={host.LastFailureType ?? "none"}; " +
                 $"hostFailureStage={host.LastFailureStage ?? "none"}; " +
+                $"hostFailureParseSummary={host.LastFailureParseSummary ?? "none"}; " +
+                $"hostFailureMessageBytes={host.LastFailureMessageBytes}; " +
+                $"hostFailureFirstTag={host.LastFailureFirstTag}; " +
                 $"clientConnected={client.IsConnected}; " +
                 $"failureType={exception.GetType().Name}.",
                 exception);
