@@ -49502,8 +49502,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0177 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال انجام",
+      "status": "done",
+      "status_fa": "تکمیل‌شده",
       "actual_output_paths": [
         "src/Host.Application/Chat/HostConversationRetentionPolicy.cs",
         "src/Host.Application/Chat/ChatConversation.cs",
@@ -49529,12 +49529,12 @@
         "docs/security.md",
         "step three/T0178/evidence/verification.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0178-A001 (2026-11-02T11:47:11.868Z): implemented explicit process-session-only host policy and runtime/source regression checks. Exact-head CI pending; status remains in_progress until those runs are inspected.\nT0178-A001 validation failed in quality run 41439579310 because tests/test_wpf_entrypoint.py asserted the obsolete parameterless initializer; this historical failure is retained. T0178-A002 updates that assertion for explicit policy injection; exact-head CI pending.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0178-A001 (2026-11-02T11:47:11.868Z): implemented explicit process-session-only host policy and runtime/source regression checks. Exact-head CI pending; status remains in_progress until those runs are inspected.\nT0178-A001 validation failed in quality run 41439579310 because tests/test_wpf_entrypoint.py asserted the obsolete parameterless initializer; this historical failure is retained. T0178-A002 updates that assertion for explicit policy injection; exact-head CI pending.\nT0178-A002 completed at 2026-11-02T11:55:46.212Z: Step Three quality gate (41439813467), Windows/Android product build with HostLifecycle (41439813544), and Rendezvous container smoke test (41439813434) all passed on e2ee8f70ac70b0680cc9be03e7e219747980a9fe. A001's stale-test failure remains in attempt history; A002 corrected it and succeeded.",
       "execution_summary": {
         "attempt_count": 2,
         "failed_attempt_count": 1,
         "last_attempt_id": "T0178-A002",
-        "last_attempt_result": "partial",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Host.Application/Chat/HostConversationRetentionPolicy.cs",
           "src/Host.Application/Chat/ChatConversation.cs",
@@ -49548,12 +49548,15 @@
           "step three/project-graph.md"
         ],
         "related_commits": [
-          "1bd292f8daddc2466177aa48844b84c7a8603db3"
+          "1bd292f8daddc2466177aa48844b84c7a8603db3",
+          "e2ee8f70ac70b0680cc9be03e7e219747980a9fe"
         ],
-        "tests_passed": [],
-        "tests_failed": [
-          "Step Three quality gate run 41439579310: one stale WPF initializer assertion in tests/test_wpf_entrypoint.py; 332 tests ran."
+        "tests_passed": [
+          "Step Three quality gate run 41439813467: 332 Python tests passed; graph guard 230 tasks/422 edges, 0 errors.",
+          "White-P product build run 41439813544: Windows, Android and HostLifecycle jobs passed.",
+          "Rendezvous container build and smoke test run 41439813434 passed."
         ],
+        "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -49599,22 +49602,44 @@
         {
           "attempt_id": "T0178-A002",
           "started_at": "2026-11-02T11:49:03.912Z",
-          "ended_at": null,
-          "result": "partial",
-          "summary": "Updated the pre-existing WPF source-contract test to expect the explicit default retention policy injected by MainWindow. Exact-head CI is pending.",
+          "ended_at": "2026-11-02T11:55:46.212Z",
+          "result": "succeeded",
+          "summary": "Updated the stale WPF source-contract assertion and verified the exact main commit. Step Three quality gate, full Windows/Android product build, HostLifecycle tests and Rendezvous container checks all passed.",
           "changed_files": [
             "tests/test_wpf_entrypoint.py",
             "step three/T0178/execution-report.md",
             "step three/T0178/evidence/verification.md",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
-          "tests": [],
+          "commit_sha": "e2ee8f70ac70b0680cc9be03e7e219747980a9fe",
+          "tests": [
+            {
+              "name": "Step Three quality gate",
+              "result": "passed",
+              "run_id": 41439813467,
+              "url": "https://github.com/artinrahimii/project/actions/runs/41439813467",
+              "summary": "332 Python tests passed; Python compile check passed; graph guard validated 230 tasks and 422 edges with 0 errors and 1 pre-existing T0001 metadata warning."
+            },
+            {
+              "name": "White-P product build",
+              "result": "passed",
+              "run_id": 41439813544,
+              "url": "https://github.com/artinrahimii/project/actions/runs/41439813544",
+              "summary": "Windows WPF formatting/build/Protobuf/startup/security checks passed; Android lint, debug APK, JVM tests and generated Protobuf checks passed; HostLifecycle unit/integration job passed."
+            },
+            {
+              "name": "Rendezvous container build and smoke test",
+              "result": "passed",
+              "run_id": 41439813434,
+              "url": "https://github.com/artinrahimii/project/actions/runs/41439813434",
+              "summary": "Container build and smoke-test job passed."
+            }
+          ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect Step Three quality, Windows/Android product build, HostLifecycle, Rendezvous container, and real-inference workflows for this exact commit. Only mark done after relevant checks pass."
+          "follow_up": "T0178 is complete for the documented host-application retention scope. Continue with T0179 in graph order; AC-PRIV-01 and OS-level storage controls remain separate."
         }
       ]
     },
@@ -61792,7 +61817,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-11-02T11:49:03.912Z",
+  "updated_at": "2026-11-02T11:55:46.212Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",
