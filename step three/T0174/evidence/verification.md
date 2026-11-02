@@ -201,3 +201,19 @@ Validation scope: this attempt was a source/graph audit only. No product impleme
 - Step Three Python suite: 317/317 passed; compileall passed; graph syntax validation passed.
 - Repository-wide graph guard found one missing current T0126 output/evidence path. The path was removed from current T0126 arrays after full-tree inspection; see T0126-A017.
 - Fixes: put each Kotlin chained member on a new line and make the Compose conditional button text a multiline expression. Exact-head rerun is required.
+
+## T0174-A021 — exact V 3.0.799 cancellation acceptance evidence
+
+- Exact `main` head tested: `be653d0f29f3eb5c991ccb94ab1069cfdf16609e` (`V 3.0.799`); tree: `80ada1c0b2475432529c0aa6508feb17ab67934b`.
+- Exact graph source at that base: `step three/project-graph.md`, Blob `aa2e2644062ae3ee91410546413b37ffe951f9d5`; complete original UTF-8 content was 3,840,120 bytes / 3,713,584 Unicode characters. The calculated Git Blob SHA-1 matched the tree Blob before parsing; the fenced JSON parsed as 230 nodes and 422 edges.
+- Production click path inspected in the exact tree: `MainActivity.requestScreen` → `RequestViewModel.cancelCurrentRequest` → `RequestExecutionGateway.cancelSelectedHosts` → `AndroidInferenceRequestRuntime.cancelSelectedHosts` → authenticated `Libp2pInferenceRequestTransport.cancelAttempts`. The selected request ID and attempt list are copied from the real dispatch result; the operation does not rediscover or substitute peers. Only queued submissions receive cancellation frames; correlated host responses remain the authoritative terminal result.
+- **UI/ViewModel test — PASS:** `RequestViewModelTest.cancelActionSendsCorrelatedCancellationForEveryQueuedAttemptFromTheLiveDispatch`. It verifies all three queued attempts and their peer IDs are passed with the original request ID and that three CANCELLED cards arrive after the response window is released.
+- **Android/.NET transport test — PASS:** `sendsCancellationToThreeNativeDotNetLibp2pHostsAndReceivesCancelledResponses` (4.162 seconds). Three separate native .NET peer processes return a matching correlated CANCELLED response for each selected attempt.
+- **Authenticated peer transport test — PASS:** `cancelAttemptsSendsCorrelatedCancelRequestsToEverySelectedAuthenticatedHost` (6.068 seconds).
+- **Android product job — PASS:** [job 125166827040](https://github.com/artinrahimii/project/actions/runs/41411972355/job/125166827040): KtLint, `assembleDebug`, `testDebugUnitTest`, generated Protobuf Java/Kotlin checks and artifact uploads. Gradle report artifact [13126540335](https://github.com/artinrahimii/project/actions/runs/41411972355/artifacts/13126540335) shows 181 tests, 0 failures, 0 ignored.
+- **Windows WPF — PASS:** [job 125166827068](https://github.com/artinrahimii/project/actions/runs/41411972355/job/125166827068), including Release build, startup and security/DPAPI checks.
+- **Windows HostLifecycle — PASS:** [job 125166826748](https://github.com/artinrahimii/project/actions/runs/41411972355/job/125166826748).
+- **Step Three quality gate — PASS:** [run 41411972354](https://github.com/artinrahimii/project/actions/runs/41411972354), including automated tests, syntax, graph structure, and recorded output/evidence validation.
+- **Rendezvous container — PASS:** [run 41411972411](https://github.com/artinrahimii/project/actions/runs/41411972411), limited to image build and non-root HTTP contract smoke.
+- **Historical failure retained:** V 3.0.798 Android KtLint and Step Three stale-path validation failures are recorded as T0174-A020; neither has been removed. The corrected exact-head V 3.0.799 verification passed.
+- **Scope:** T0174 is accepted and marked `done`. Physical two-device/independent-public-network acceptance is not claimed; T0128 and T0230 remain deferred_final.
