@@ -1,37 +1,40 @@
 # T0179 verification evidence
 
-## Graph and dependency integrity
+## Exact graph snapshot and output verification
 
-- Initial graph Blob at V3.0.815: `8a230baabd5cad87156b0bd94e4118f28eb2eb7d`; 3,920,856 UTF-8 bytes and 3,794,175 characters; Git Blob SHA-1 was independently recomputed and matched.
-- Graph contains 230 unique tasks and 422 edges.
-- `T0177 → T0179` and `T0178 → T0179` retain `blocks`, validated as `sequencing_only`; no edge removed and original ordering preserved.
+- Repository: `artinrahimii/project`, branch `main`.
+- Implementation commit: `0b023a4201b28feb9748c17ec4698bb5528b7d52` (`V 3.0.820`).
+- Graph path at the implementation commit: `step three/project-graph.md`.
+- Graph Blob: `4b15f304bebac4c6b52012483e45b359f6b30830`.
+- Original graph bytes: 3940829 UTF-8 bytes; text length: 3814095 Unicode characters.
+- Recomputed Git Blob SHA-1 using the original full bytes matched the tree Blob.
+- Full JSON parsed; 230 unique task nodes and 422 edges.
+- All expected T0179 source, test, security-document and evidence paths were present in the exact V 3.0.820 tree.
 
-## A001 — V 3.0.816
-- Commit `583dccc5decebccb78d6599c082e12e516bb80c9`.
-- [Step Three quality gate](https://github.com/artinrahimii/project/actions/runs/41446302498): success; 333 Python tests, compileall, graph guard (0 errors, one existing T0001 warning).
-- [White-P product build](https://github.com/artinrahimii/project/actions/runs/41446302777): Windows and HostLifecycle passed; Android ktlint failed at SafeDiagnosticLog.kt lines 35 and 43; APK/JVM skipped.
-- HostLifecycle log confirmed the EventSource emitted only the three allowlisted numeric values.
-- [Rendezvous](https://github.com/artinrahimii/project/actions/runs/41446302729) and [Real local inference](https://github.com/artinrahimii/project/actions/runs/41446302931) passed.
+## Dependency review retained
 
-## A002 — V 3.0.817
-- Commit `4bfb38ab6238b3c4b8168352715704241c739b82`.
-- [Step Three quality gate](https://github.com/artinrahimii/project/actions/runs/41447155706): 333 Python tests and graph guard passed.
-- [White-P product build](https://github.com/artinrahimii/project/actions/runs/41447156073): HostLifecycle passed; Android ktlint failed at enum constructor formatting in SafeDiagnosticLog.kt lines 7 and 12; APK/JVM skipped.
-- [Rendezvous](https://github.com/artinrahimii/project/actions/runs/41447155821): passed.
+- `T0177 → T0179` and `T0178 → T0179`: edge type `blocks` retained, classification validated as `sequencing_only`, original execution order retained.
+- `T0179 → T0180` and `T0177 → T0180`: remain `unreviewed`; no dependent work started.
 
-## A003 — V 3.0.818
-- Commit `4b686da26a6d61e73adc8daa13d1d0ac742f9e11`.
-- [Step Three quality gate](https://github.com/artinrahimii/project/actions/runs/41447625728): 333 Python tests and graph guard passed.
-- [White-P product build](https://github.com/artinrahimii/project/actions/runs/41447625945): Windows WPF and HostLifecycle passed; Android ktlint then failed at Libp2pInferenceRequestTransport.kt:132:9 (blank line before local declaration). APK/JVM skipped.
-- [Rendezvous](https://github.com/artinrahimii/project/actions/runs/41447625716): passed.
+## Exact-head CI — A005 / V 3.0.820
 
-## A004 — V 3.0.819
-- Commit `998c84ec83e3b8706b20e664f7d8570e6cac14b5`.
-- [Step Three quality gate](https://github.com/artinrahimii/project/actions/runs/41448213572): 333 Python tests, compileall and graph guard passed (230 tasks/422 edges, zero errors, one existing T0001 warning).
-- [White-P product build](https://github.com/artinrahimii/project/actions/runs/41448213571): Windows WPF and HostLifecycle passed; Android ktlint passed but compileDebugKotlin failed with unresolved PascalCase enum names in Libp2pInferenceRequestTransport.kt:129, 130, 136, 137, 256, 257, 263 and 264. APK/JVM skipped.
-- [Rendezvous](https://github.com/artinrahimii/project/actions/runs/41448213662): passed.
+- [Step Three quality gate](https://github.com/artinrahimii/project/actions/runs/41448964242): success. Python tests, compileall and graph guard passed; graph guard reported 230 tasks, 422 edges, zero graph errors and one existing T0001 metadata warning.
+- [White-P product build](https://github.com/artinrahimii/project/actions/runs/41448964240): success; all jobs completed successfully.
+  - Android job `125289084756`: success.
+    - Kotlin formatting/lint: success.
+    - Kotlin compilation and debug APK build: success.
+    - JVM unit tests via `testDebugUnitTest`: success.
+    - Generated Protobuf Java/Kotlin source verification: success.
+    - Android debug APK upload: success.
+    - JVM unit-test reports upload: success.
+  - Windows WPF job `125289083955`: success; C# formatting, build, generated Protobuf, WPF startup smoke, process restrictions, policy rejection, capability gate and DPAPI identity/trust checks passed.
+  - HostLifecycle job `125289084220`: success. Its log explicitly states: `PASS: safe diagnostic EventSource emitted only the three allowlisted numeric fields.`
+- [Rendezvous container build and smoke test](https://github.com/artinrahimii/project/actions/runs/41448964125): success.
+- Uploaded artifacts:
+  - `whitep-android-debug-apk`: ID `13144066959`, 19,529,756 bytes.
+  - `whitep-android-unit-test-reports`: ID `13143233051`, 51,034 bytes.
+  - `whitep-windows-host`: ID `13143761971`, 14,267,967 bytes.
 
-## A005 correction
-- Android transport now uses the declared Kotlin enum entries `INFERENCE_SUBMISSION`, `STARTED`, `REJECTED`, `SUCCEEDED` and `CANCELLED`.
-- The Python source-contract regression test now expects those actual enum identifiers.
-- The record schema and runtime behavior are unchanged. Exact-head A005 CI has not run yet.
+## Acceptance
+
+T0179's implementation outputs exist in the exact main tree, all relevant exact-head automated checks succeeded, Android APK and test-report artifacts were uploaded, and HostLifecycle exercised the allowlist EventSource. T0179 is therefore marked `done` on V 3.0.820. Four earlier failed attempts remain in the execution history; A005 is the successful fifth attempt.
