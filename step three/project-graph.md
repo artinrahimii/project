@@ -49938,20 +49938,17 @@
         "tests/test_android_libp2p_transport_contract.py",
         "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0180-A001 (2026-11-02T17:03:47+03:30): implemented explicit cleanup for Windows outbound frames, failed queue handoff, queued messages at disposal, host request/response wire arrays and short-lived serialized status/rejection messages; Android decoder pending/temporary buffers and decoded frames are zeroed on replacement, malformed frame, callback failure and stream closure. T0177→T0180 and T0179→T0180 reviewed as sequencing_only while retaining type=blocks and the original execution order. Added Android JVM backing-array tests, Python source regressions and documented limits. Exact-head CI pending; task remains in_progress.\nT0180-A002 (2026-11-02T17:23:00+03:30–2026-11-02T17:29:27+03:30): removed a redundant consecutive blank line before the new Android JVM test. Exact-base graph Blob SHA-1 and JSON structure were validated. No automated tests or exact-head CI ran because the clone failed DNS resolution and local .NET/Gradle/Android toolchains are unavailable; the current commit has no returned status checks. Task remains in_progress.\nT0180-A003 (2026-11-02T18:14:10+03:30): identified that CompletableFuture.get(timeout) in cancelAttempts does not cancel the Netty write promise; added stream closure on cancellation/timeout/interruption so pending writes terminate and the sendRequest whenComplete callback clears its frame. Added a Python source-contract regression. Independently compiled the fetched PeerMessageFrameCodec production source with Kotlin 1.9.0/JDK21 and ran 8/8 decoder scenarios. Full Android/Windows/CI acceptance remains pending; task stays in_progress.\nT0180-A004 (2026-11-02T18:27:13+03:30): inspected exact GitHub Actions logs for V 3.0.824. The 338-test Step Three quality gate and Rendezvous container build/smoke passed; Windows WPF and HostLifecycle passed. Android product job failed at KtLint line 521:5 due to one missing blank line; Android APK/JVM/Protobuf steps were skipped. Windows compile reported CS8600 in the queue-drain TryRead loop. Added the KtLint separator, made TryRead result nullable-aware with a guarded length pattern, and updated regression assertions. Exact-head verification pending; T0180 remains in_progress.\nT0180-A005 (2026-11-02T18:31:21+03:30): exact-head V 3.0.825 validation ran 338 Python tests and compileall successfully but graph_guard failed because summary.failed_attempt_count=1 had no failed history row. Product build and container ultimately passed: Android KtLint/APK/JVM/Protobuf and Windows WPF checks passed; HostLifecycle failed twice on peer closure and passed on third retry; Rendezvous container passed. A006 records the graph correction without changing T0180 to done.\nT0180-A006 (2026-11-02T18:37:57+03:30): appended the missing failed validation attempt and corrective graph-metadata attempt; attempt_count=6 and failed_attempt_count=1 now match execution_history (one result=failed). All earlier history is retained; T0180 remains in_progress.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0180-A001 (2026-11-02T17:03:47+03:30): implemented explicit cleanup for Windows outbound frames, failed queue handoff, queued messages at disposal, host request/response wire arrays and short-lived serialized status/rejection messages; Android decoder pending/temporary buffers and decoded frames are zeroed on replacement, malformed frame, callback failure and stream closure. T0177→T0180 and T0179→T0180 reviewed as sequencing_only while retaining type=blocks and the original execution order. Added Android JVM backing-array tests, Python source regressions and documented limits. Exact-head CI pending; task remains in_progress.\nT0180-A002 (2026-11-02T17:23:00+03:30–2026-11-02T17:29:27+03:30): removed a redundant consecutive blank line before the new Android JVM test. Exact-base graph Blob SHA-1 and JSON structure were validated. No automated tests or exact-head CI ran because the clone failed DNS resolution and local .NET/Gradle/Android toolchains are unavailable; the current commit has no returned status checks. Task remains in_progress.\nT0180-A003 (2026-11-02T18:14:10+03:30): identified that CompletableFuture.get(timeout) in cancelAttempts does not cancel the Netty write promise; added stream closure on cancellation/timeout/interruption so pending writes terminate and the sendRequest whenComplete callback clears its frame. Added a Python source-contract regression. Independently compiled the fetched PeerMessageFrameCodec production source with Kotlin 1.9.0/JDK21 and ran 8/8 decoder scenarios. Full Android/Windows/CI acceptance remains pending; task stays in_progress.\nT0180-A004 (2026-11-02T18:27:13+03:30): inspected exact GitHub Actions logs for V 3.0.824. The 338-test Step Three quality gate and Rendezvous container build/smoke passed; Windows WPF and HostLifecycle passed. Android product job failed at KtLint line 521:5 due to one missing blank line; Android APK/JVM/Protobuf steps were skipped. Windows compile reported CS8600 in the queue-drain TryRead loop. Added the KtLint separator, made TryRead result nullable-aware with a guarded length pattern, and updated regression assertions. Exact-head verification pending; T0180 remains in_progress.\nT0180-A005 (2026-11-02T18:31:21+03:30): exact-head V 3.0.825 validation ran 338 Python tests and compileall successfully but graph_guard failed because summary.failed_attempt_count=1 had no failed history row. Product build and container ultimately passed: Android KtLint/APK/JVM/Protobuf and Windows WPF checks passed; HostLifecycle failed twice on peer closure and passed on third retry; Rendezvous container passed. A006 records the graph correction without changing T0180 to done.\nT0180-A006 (2026-11-02T18:37:57+03:30): appended the missing failed validation attempt and corrective graph-metadata attempt; attempt_count=6 and failed_attempt_count=1 now match execution_history (one result=failed). All earlier history is retained; T0180 remains in_progress.\nT0180-A007 (2026-11-02T18:40–18:42+03:30): exact-head V 3.0.826 validation passed Step Three quality (338 tests, graph guard 0 errors) and Rendezvous container; Windows WPF and Android lint/APK passed. Android JVM had 1 failure out of 196 in the 3-host cancellation interop test: server processes logged SENT/PASS then closed before client received a correlated response. HostLifecycle failed the response-correlation assertion at PeerAnnouncementClientAcceptanceTests.cs:293, but the current generic message did not expose which field differed. T0180 remains in_progress.",
       "execution_summary": {
-        "attempt_count": 6,
-        "failed_attempt_count": 1,
-        "last_attempt_id": "T0180-A006",
-        "last_attempt_result": "partial",
-        "changed_files": [
-          "step three/T0180/execution-report.md",
-          "step three/T0180/evidence/verification.md",
-          "step three/project-graph.md"
-        ],
+        "attempt_count": 7,
+        "failed_attempt_count": 2,
+        "last_attempt_id": "T0180-A007",
+        "last_attempt_result": "failed",
+        "changed_files": [],
         "related_commits": [
           "fef1135d983ed2f62619fe8e1224301adb887615",
-          "d85b2a362cd6e95db38f4b6ed5b7a4d2321377ac"
+          "d85b2a362cd6e95db38f4b6ed5b7a4d2321377ac",
+          "d49eea16e539755f5ad79b4c920829328fe40616"
         ],
         "tests_passed": [
           "Standalone Kotlin/JVM codec harness — 8/8 scenarios passed with Kotlin 1.9.0 / JDK 21; production source Blob f39a0695e6ce2b927b255e0f188dd1ed4b778098.",
@@ -49960,12 +49957,18 @@
           "Rendezvous container run 41465625258 on V 3.0.824 — production image build and non-root HTTP contract smoke passed.",
           "Windows WPF and HostLifecycle jobs in product run 41465625430 on V 3.0.824 passed.",
           "V 3.0.825 product workflow run 41467491153 — final attempt 3 completed successfully. Android KtLint, debug APK build, Android JVM tests, generated Protobuf checks and artifacts passed on attempt 2; Windows WPF/DPAPI build and smoke checks passed on attempt 2; HostLifecycle passed on attempt 3 after two failed retries.",
-          "Rendezvous container run 41467491150 — production image build and non-root HTTP contract smoke passed."
+          "Rendezvous container run 41467491150 — production image build and non-root HTTP contract smoke passed.",
+          "V 3.0.826 Step Three quality gate run 41469076873 — 338 Python tests, compileall and graph_guard all passed (230 tasks / 422 edges / 0 errors / 1 preserved T0001 metadata warning).",
+          "V 3.0.826 Rendezvous container run 41469076680 — production build and non-root HTTP smoke passed.",
+          "V 3.0.826 Windows WPF job 125357569545 — formatting, build, generated Protobuf, startup/security/DPAPI checks passed.",
+          "V 3.0.826 Android KtLint and assembleDebug in job 125357569592 passed."
         ],
         "tests_failed": [
           "White-P product build run 41465625430 on V 3.0.824 — Android KtLint failed at Libp2pInferenceRequestTransport.kt:521:5 (Expected a blank line for this declaration); assembleDebug, testDebugUnitTest and generated Protobuf checks were skipped.",
           "V 3.0.825 Step Three quality gate run 41467491212 — 338 Python tests and compileall passed, but graph_guard failed with FAILED_ATTEMPT_COUNT_MISMATCH: T0180: summary=1, history=0. Corrective append-only history record A005 and metadata reconciliation A006 are included in this commit.",
-          "V 3.0.825 HostLifecycle product run 41467491153 attempt 1 and attempt 2 — loopback peer stream closed while awaiting HostStatus/inference response; attempt 3 subsequently passed."
+          "V 3.0.825 HostLifecycle product run 41467491153 attempt 1 and attempt 2 — loopback peer stream closed while awaiting HostStatus/inference response; attempt 3 subsequently passed.",
+          "V 3.0.826 Android JVM — 1 of 196 tests failed: sendsCancellationToThreeNativeDotNetLibp2pHostsAndReceivesCancelledResponses. The Windows fixture logged CANCEL_RECEIVED / VALIDATED / SENT / PASS but client saw the peer stream close before receiving its correlated CANCELLED response.",
+          "V 3.0.826 HostLifecycle job 125357569172 — PeerHostLifecyclePublishesAndServesTrustedPeerAsync failed response correlation/output assertion at line 293; the generic assertion did not disclose which field differed."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -50170,6 +50173,52 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Run the exact-head Step Three quality gate on the next main commit and confirm the graph guard accepts 6 attempts / 1 failed attempt. Inspect the newly triggered product and container workflows; only mark T0180 done if all required exact-head workflows pass."
+        },
+        {
+          "attempt_id": "T0180-A007",
+          "started_at": "2026-11-02T18:40:00+03:30",
+          "ended_at": "2026-11-02T18:42:00+03:30",
+          "result": "failed",
+          "summary": "Exact-head V 3.0.826 CI: Step Three quality gate (338 Python tests, compileall, graph_guard) and Rendezvous container passed; Windows WPF passed; Android KtLint and debug APK build passed but 1 of 196 Android JVM tests failed in the three-native-.NET-host cancellation interop path; HostLifecycle integration failed the response-correlation assertion in the loopback peer acceptance test.",
+          "changed_files": [],
+          "commit_sha": "d49eea16e539755f5ad79b4c920829328fe40616",
+          "tests": [
+            {
+              "name": "Step Three quality gate — run 41469076873",
+              "result": "passed",
+              "summary": "338 Python tests passed; compileall passed; graph guard validated 230 tasks / 422 edges with zero errors and one preserved T0001 metadata warning."
+            },
+            {
+              "name": "Rendezvous container — run 41469076680",
+              "result": "passed",
+              "summary": "Production image build and non-root HTTP contract smoke passed."
+            },
+            {
+              "name": "Windows WPF — product run 41469076909, job 125357569545",
+              "result": "passed",
+              "summary": "The Windows WPF build, formatting, generated Protobuf, startup smoke and security/DPAPI checks passed."
+            },
+            {
+              "name": "Android KtLint and debug APK — product run 41469076909, job 125357569592",
+              "result": "passed",
+              "summary": "Kotlin lint and assembleDebug passed; JVM tests then ran."
+            },
+            {
+              "name": "Android JVM tests — product run 41469076909, job 125357569592",
+              "result": "failed",
+              "summary": "196 tests completed, 1 failed. sendsCancellationToThreeNativeDotNetLibp2pHostsAndReceivesCancelledResponses failed with IOException: the authenticated peer stream closed before a correlated response arrived. All three native .NET fixture processes logged CANCEL_RECEIVED, VALIDATED, SENT and PASS, then exited immediately after send; the downloaded JUnit artifact 13153164724 contains the full report."
+            },
+            {
+              "name": "Windows HostLifecycle — product run 41469076909, job 125357569172",
+              "result": "failed",
+              "summary": "PeerHostLifecyclePublishesAndServesTrustedPeerAsync received an InferenceResponse but its assertion at line 293 found at least one request/attempt/round/host/outcome/output field did not match the expected correlated response; the existing generic assertion message did not identify which field."
+            }
+          ],
+          "failure_details": "The product workflow was not green on V 3.0.826. The Android cancellation interop fixture returned immediately after logging SENT/PASS and disposed the host before the client had a deterministic response-consumption handshake. The Windows HostLifecycle assertion also needs field-level diagnostics to distinguish correlation, outcome and output mismatches. No production code is changed on this attempt.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Keep the .NET interop fixture alive until the Android peer closes its stream after awaitResponse, and add safe field-match diagnostics to the Windows HostLifecycle integration assertion. Run exact-head Step Three, Android JVM, Windows HostLifecycle, WPF and container workflows again; investigate any remaining production defect instead of marking T0180 done."
         }
       ]
     },

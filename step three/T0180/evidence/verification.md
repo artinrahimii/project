@@ -52,3 +52,12 @@ Changed code implements zeroization for Windows frames/queue/lifecycle buffers a
 - Rendezvous container run `41467491150` passed production build and non-root HTTP contract smoke.
 - A005 adds the missing `result=failed` row for the failed graph-validation attempt; A006 is the metadata reconciliation attempt. The failed prior HostLifecycle retries remain explicitly preserved, along with the successful retry.
 - New graph counters: 6 total attempts / 1 failed. T0180 remains in_progress until the corrected graph passes its own exact-head quality gate and the required product workflows pass.
+
+## T0180-A007/A008 — V 3.0.826 product failure and fixture correction
+
+- Step Three quality gate `41469076873`: success; 338 Python tests; compileall; graph guard 230 tasks/422 edges, zero errors and one T0001 metadata warning.
+- Rendezvous container `41469076680`: success.
+- Windows WPF job `125357569545`: success.
+- Android job `125357569592`: KtLint and APK build passed; 196 JVM tests completed, 1 failure. JUnit artifact `13153164724` shows `sendsCancellationToThreeNativeDotNetLibp2pHostsAndReceivesCancelledResponses` failed because the client observed stream closure before a correlated CANCELLED response. All three .NET fixture peers logged `CANCEL_RECEIVED`, `VALIDATED`, `SENT`, `PASS`; the fixture process then returned and disposed its transport immediately after send.
+- Windows HostLifecycle job `125357569172`: `PeerHostLifecyclePublishesAndServesTrustedPeerAsync` failed its first-response correlation assertion at line 293. Assertion previously did not identify mismatched fields.
+- A008 changes the one-shot .NET fixture to remain alive until the Android client closes the stream after handling the response, and adds non-sensitive boolean diagnostics to the Windows assertion. No production behavior is changed in A008; exact-head CI remains mandatory.

@@ -296,7 +296,15 @@ internal static class PeerAnnouncementClientAcceptanceTests
                response.EphemeralHostId == hostPeerId &&
                response.Outcome == InferenceOutcome.Succeeded &&
                response.OutputText == "loopback-inference-result",
-            "The host must return a protocol-valid response correlated to the authenticated request.");
+            "The host must return a protocol-valid response correlated to the authenticated request. " +
+            $"requestMatch={response.RequestId == requestMessage.RequestId}; " +
+            $"attemptMatch={response.AttemptId == requestMessage.AttemptId}; " +
+            $"roundMatch={response.RoundId == requestMessage.RoundId}; " +
+            $"peerMatch={response.EphemeralHostId == hostPeerId}; " +
+            $"outcome={response.Outcome}; " +
+            $"outputMatch={response.OutputText == "loopback-inference-result"}; " +
+            $"modelMatch={response.ModelId == requestMessage.ModelId}; " +
+            $"completedAtWithinDeadline={response.CompletedAtUnixMs <= requestMessage.DeadlineUnixMs}.");
 
         await client.SendMessageAsync(request, timeout.Token).ConfigureAwait(false);
         byte[] replayWire = await client.ReceiveMessageAsync(timeout.Token)

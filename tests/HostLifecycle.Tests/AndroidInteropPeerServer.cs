@@ -126,6 +126,18 @@ internal static class AndroidInteropPeerServer
         Console.WriteLine("SENT");
         Console.WriteLine("PASS");
         Console.Out.Flush();
+
+        // Keep the one-shot fixture alive until the Android client has consumed the
+        // response and closes its stream from awaitResponse's finally block.
+        try
+        {
+            _ = await server.ReceiveMessageAsync(timeout.Token).ConfigureAwait(false);
+            throw new InvalidDataException("The Android client sent an unexpected application message after the response.");
+        }
+        catch (IOException) when (!timeout.IsCancellationRequested)
+        {
+            // Expected acknowledgement-by-close after the client has completed response handling.
+        }
     }
     private sealed class InteropDiagnosticLoggerProvider : ILoggerProvider
     {

@@ -114,3 +114,18 @@
 - رکورد A005 نتیجهٔ واقعی validation شکست‌خوردهٔ V 3.0.825 را ثبت می‌کند؛ A006 این مغایرت metadata را با حفظ سوابق قبلی اصلاح می‌کند.
 - تعداد تلاش‌ها اکنون ۶ و تعداد تلاش‌های ناموفق ۱ است؛ فقط A005 نتیجهٔ failed دارد. وضعیت T0180 همچنان in_progress است.
 - commit بعدی باید quality gate را روی SHA دقیق اجرا کند؛ این اصلاح به‌تنهایی اثبات قبولی graph_guard نیست.
+
+## تلاش T0180-A007 — شکست‌های دقیق CI در V 3.0.826
+
+- Step Three quality gate run 41469076873 موفق: 338 آزمون Python، compileall و graph_guard؛ 230 وظیفه/422 یال، صفر خطا و یک هشدار metadata قدیمی T0001.
+- Rendezvous container run 41469076680 موفق.
+- Windows WPF job 125357569545 موفق.
+- Android KtLint و assembleDebug موفق؛ در `testDebugUnitTest` تعداد 196 آزمون اجرا شد و فقط یک آزمون شکست خورد: `sendsCancellationToThreeNativeDotNetLibp2pHostsAndReceivesCancelledResponses`. گزارش JUnit artifact 13153164724 نشان می‌دهد هر سه fixture میزبان مراحل CANCEL_RECEIVED، VALIDATED، SENT و PASS را ثبت کردند، ولی Android قبل از دریافت پاسخ با بسته‌شدن stream مواجه شد. fixture .NET بلافاصله پس از ارسال پاسخ خارج می‌شد.
+- HostLifecycle job 125357569172 شکست خورد؛ پاسخ دریافت‌شده در assertion خط 293 با قرارداد request/attempt/round/peer/outcome/output تطبیق نداشت. پیام قبلی فیلد ناسازگار را مشخص نمی‌کرد.
+- این تلاش به‌عنوان failed در تاریخچه افزوده شده؛ T0180 تکمیل‌شده نیست.
+
+## تلاش T0180-A008 — اصلاح چرخهٔ عمر fixture و تشخیص فیلد پاسخ
+
+- fixture سه‌میزبانهٔ .NET پس از ارسال پاسخ دیگر بلافاصله خارج نمی‌شود؛ تا بسته‌شدن stream از سوی Android منتظر می‌ماند. Android در `awaitResponse` پس از دریافت/پردازش پاسخ stream را می‌بندد؛ این handshake تست از race میان ارسال پاسخ و disposal میزبان جلوگیری می‌کند.
+- assertion تست Windows HostLifecycle اکنون فقط booleanهای تطبیق request/attempt/round/peer/model/output و وضعیت outcome/deadline را گزارش می‌کند؛ شناسه‌ها یا متن واقعی prompt ثبت نمی‌شوند.
+- این تغییرات فقط test fixture و diagnostics را اصلاح می‌کنند؛ هنوز هیچ موفقیت CI برای commit جدید ادعا نمی‌شود.
