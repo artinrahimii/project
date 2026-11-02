@@ -43,3 +43,12 @@ Changed code implements zeroization for Windows frames/queue/lifecycle buffers a
 - Failing job: 125345607621. KtLint exact diagnostic: `src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt:521:5 Expected a blank line for this declaration`.
 - Windows build warning: `Libp2pPeerMessageProtocol.cs(197,44): CS8600` from the nullable contract of ChannelReader.TryRead. The loop now declares `byte[]?` and applies a non-null/length pattern before zeroization.
 - A004 corrects both findings and tightens the source regression. It does not mark task done; exact-head CI remains pending.
+
+## T0180-A005/A006 — CI attempt accounting reconciliation
+
+- Tested commit: `d85b2a362cd6e95db38f4b6ed5b7a4d2321377ac` (`V 3.0.825`).
+- Step Three quality gate run `41467491212`: 338 Python tests passed and compileall passed; graph_guard failed on `FAILED_ATTEMPT_COUNT_MISMATCH: T0180: summary=1, history=0`.
+- Product workflow run `41467491153`: final run attempt 3 concluded success. Android job `125354254445` passed KtLint, APK build, JVM tests, generated Protobuf verification and artifact uploads. Windows job `125354160493` passed formatting/build/smoke/security checks with no nullable warning. HostLifecycle job `125355346288` passed on attempt 3 after attempts 1 and 2 failed on early peer-stream closure.
+- Rendezvous container run `41467491150` passed production build and non-root HTTP contract smoke.
+- A005 adds the missing `result=failed` row for the failed graph-validation attempt; A006 is the metadata reconciliation attempt. The failed prior HostLifecycle retries remain explicitly preserved, along with the successful retry.
+- New graph counters: 6 total attempts / 1 failed. T0180 remains in_progress until the corrected graph passes its own exact-head quality gate and the required product workflows pass.

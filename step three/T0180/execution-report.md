@@ -99,3 +99,18 @@
 
 - نتایج CI بالا روی commit مبنای V 3.0.824 هستند، نه روی اصلاحات A004. هیچ نتیجهٔ KtLint یا build برای این اصلاحات هنوز ادعا نمی‌شود.
 - اجرای بعدی CI باید KtLint، Android assembleDebug، testDebugUnitTest، Protobuf verification، Windows build بدون هشدار nullable و HostLifecycle را روی SHA دقیق جدید تأیید کند.
+
+## تلاش T0180-A005 — اعتبارسنجی دقیق V 3.0.825
+
+- Step Three quality gate run 41467491212: 338 آزمون Python و compileall موفق؛ graph_guard ناموفق با `FAILED_ATTEMPT_COUNT_MISMATCH: T0180: summary=1, history=0`.
+- Product workflow run 41467491153 در تلاش نهایی سوم موفق شد. Android KtLint، ساخت APK، JVM unit tests، بررسی generated Protobuf و upload artefactها در تلاش دوم موفق شدند. Windows WPF build، startup smoke، DPAPI/trust و upload artefactها نیز موفق شدند.
+- HostLifecycle در تلاش اول و دوم با بسته‌شدن peer stream هنگام انتظار برای HostStatus/InferenceResponse شکست خورد؛ تلاش سوم همان job موفق شد و نتیجهٔ نهایی product workflow success بود.
+- Rendezvous container run 41467491150: build و non-root HTTP smoke موفق.
+- هیچ‌یک از این نتایج، شکست graph_guard را برطرف نمی‌کرد؛ A005 آن را در تاریخچهٔ افزایشی به‌عنوان یک تلاش ناموفق ثبت می‌کند.
+
+## تلاش T0180-A006 — اصلاح سازگاری شمارنده و تاریخچه
+
+- علت دقیق guard failure: execution_summary.failed_attempt_count برابر ۱ بود، در حالی که هیچ رکورد execution_history با result=failed وجود نداشت.
+- رکورد A005 نتیجهٔ واقعی validation شکست‌خوردهٔ V 3.0.825 را ثبت می‌کند؛ A006 این مغایرت metadata را با حفظ سوابق قبلی اصلاح می‌کند.
+- تعداد تلاش‌ها اکنون ۶ و تعداد تلاش‌های ناموفق ۱ است؛ فقط A005 نتیجهٔ failed دارد. وضعیت T0180 همچنان in_progress است.
+- commit بعدی باید quality gate را روی SHA دقیق اجرا کند؛ این اصلاح به‌تنهایی اثبات قبولی graph_guard نیست.
