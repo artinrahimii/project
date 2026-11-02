@@ -49307,8 +49307,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0176 و T0160 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال انجام",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt",
         "tests/test_android_inference_attempt_budget_acceptance.py",
@@ -49326,30 +49326,38 @@
         "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt",
         "tests/test_android_inference_attempt_budget_acceptance.py",
         "step three/T0160/execution-report.md",
+        "step three/T0160/evidence/verification.md",
         "step three/T0176/execution-report.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0177-A001 exact-head V 3.0.810 failed Android KtLint only because of a redundant blank line at InferenceAttemptDispatcherTest.kt:510; the failure, skipped Android build/tests, and successful separate quality/container/HostLifecycle checks are retained in execution_history. A002 removes the blank line; task remains incomplete pending exact-head CI.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0177-A001 exact-head V 3.0.810 failed Android KtLint only because of a redundant blank line at InferenceAttemptDispatcherTest.kt:510; the failure, skipped Android build/tests, and successful separate quality/container/HostLifecycle checks are retained in execution_history. A002 removes the blank line; task remains incomplete pending exact-head CI.\nT0177 acceptance is confirmed by exact-head V 3.0.811 commit 8345a037602b9cdf6f562f98cde18f6be8954da6. The Android JVM tests now cover the normal three-round/nine-attempt path and a smaller custom budget consumed by a permitted retry. A001 KtLint failure remains in append-only history; A002 and all required CI checks passed.",
       "execution_summary": {
         "attempt_count": 2,
         "failed_attempt_count": 1,
         "last_attempt_id": "T0177-A002",
-        "last_attempt_result": "partial",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt",
+          "tests/test_android_inference_attempt_budget_acceptance.py",
           "step three/T0177/execution-report.md",
           "step three/T0177/evidence/verification.md",
           "step three/project-graph.md"
         ],
         "related_commits": [
-          "fd7fabcab361c6b8736c869b3b6d97aaa6d7d6b6"
+          "fd7fabcab361c6b8736c869b3b6d97aaa6d7d6b6",
+          "8345a037602b9cdf6f562f98cde18f6be8954da6"
         ],
         "tests_passed": [
-          "V 3.0.810 Step Three quality gate: 328 Python tests passed; compileall and graph/evidence validation passed (230 tasks, 422 edges, zero errors, one preserved T0001 warning).",
-          "V 3.0.810 HostLifecycle unit/integration job passed.",
-          "V 3.0.810 Rendezvous production container build and non-root HTTP smoke passed."
+          "Android KtLint — V 3.0.811: gradle --no-daemon ktlintCheck completed successfully.",
+          "Android debug APK — V 3.0.811: gradle --no-daemon assembleDebug passed; APK artifact 13137520910 uploaded (19,524,952 bytes).",
+          "Android JVM unit tests — V 3.0.811: gradle --no-daemon testDebugUnitTest completed successfully; JUnit report artifact 13137490934 uploaded (49,961 bytes).",
+          "Generated Android Protobuf Java/Kotlin verification — V 3.0.811: Both generated source verification steps passed after Android JVM tests.",
+          "Windows WPF host — V 3.0.811: C# formatting, Release build, generated Protobuf, WPF startup smoke, agent-tool process restrictions, policy rejections, capability gate, user-scoped DPAPI identity/trust checks and artifact upload all passed.",
+          "HostLifecycle unit/integration — V 3.0.811: Host lifecycle unit and integration tests passed.",
+          "Step Three Python quality gate — V 3.0.811: 328 Python tests passed; compileall passed; graph/evidence validation passed with 230 tasks, 422 edges, zero errors and one pre-existing T0001 metadata warning.",
+          "Rendezvous container build/smoke — V 3.0.811: Production container build and non-root HTTP contract smoke passed."
         ],
         "tests_failed": [
-          "V 3.0.810 Android KtLint failed: needless blank line at InferenceAttemptDispatcherTest.kt:510; APK build and Android JVM suite skipped."
+          "V 3.0.810 Android KtLint failed once because of one needless blank line at InferenceAttemptDispatcherTest.kt:510; Android APK build and JVM tests were skipped for that failed attempt. The correction was validated by all passing V 3.0.811 checks."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -49409,23 +49417,72 @@
         },
         {
           "attempt_id": "T0177-A002",
-          "started_at": "2026-11-02T11:27:59.640Z",
-          "ended_at": "2026-11-02T11:27:59.640Z",
-          "result": "partial",
-          "summary": "Removed the redundant blank line reported by V 3.0.810 KtLint. The existing attempt failure remains in append-only history; exact-head V 3.0.811 CI is pending.",
+          "started_at": "2026-11-02T11:28:35Z",
+          "ended_at": "2026-11-02T11:32:05Z",
+          "result": "succeeded",
+          "summary": "Exact-head V 3.0.811 CI passed all required quality and product checks. Android KtLint, debug APK build, the full Android JVM unit suite and generated Protobuf verification passed; Windows WPF build/startup/security/DPAPI checks, HostLifecycle, 328 Python tests, compileall, graph/evidence validation and the Rendezvous container build/smoke all passed.",
           "changed_files": [
             "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt",
             "step three/T0177/execution-report.md",
             "step three/T0177/evidence/verification.md",
             "step three/project-graph.md"
           ],
-          "commit_sha": null,
-          "tests": [],
+          "commit_sha": "8345a037602b9cdf6f562f98cde18f6be8954da6",
+          "tests": [
+            {
+              "name": "Android KtLint — V 3.0.811",
+              "result": "passed",
+              "summary": "gradle --no-daemon ktlintCheck completed successfully.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41437131408"
+            },
+            {
+              "name": "Android debug APK — V 3.0.811",
+              "result": "passed",
+              "summary": "gradle --no-daemon assembleDebug passed; APK artifact 13137520910 uploaded (19,524,952 bytes).",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41437131408"
+            },
+            {
+              "name": "Android JVM unit tests — V 3.0.811",
+              "result": "passed",
+              "summary": "gradle --no-daemon testDebugUnitTest completed successfully; JUnit report artifact 13137490934 uploaded (49,961 bytes).",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41437131408"
+            },
+            {
+              "name": "Generated Android Protobuf Java/Kotlin verification — V 3.0.811",
+              "result": "passed",
+              "summary": "Both generated source verification steps passed after Android JVM tests.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41437131408"
+            },
+            {
+              "name": "Windows WPF host — V 3.0.811",
+              "result": "passed",
+              "summary": "C# formatting, Release build, generated Protobuf, WPF startup smoke, agent-tool process restrictions, policy rejections, capability gate, user-scoped DPAPI identity/trust checks and artifact upload all passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41437131408"
+            },
+            {
+              "name": "HostLifecycle unit/integration — V 3.0.811",
+              "result": "passed",
+              "summary": "Host lifecycle unit and integration tests passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41437131408"
+            },
+            {
+              "name": "Step Three Python quality gate — V 3.0.811",
+              "result": "passed",
+              "summary": "328 Python tests passed; compileall passed; graph/evidence validation passed with 230 tasks, 422 edges, zero errors and one pre-existing T0001 metadata warning.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41437132158"
+            },
+            {
+              "name": "Rendezvous container build/smoke — V 3.0.811",
+              "result": "passed",
+              "summary": "Production container build and non-root HTTP contract smoke passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41437131542"
+            }
+          ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Run exact-head V 3.0.811 KtLint, assembleDebug, testDebugUnitTest and the Step Three Python/graph/evidence quality gate. Keep T0177 in progress unless all required checks pass."
+          "follow_up": "T0177 is complete. Next execution-order task is T0178; review its incoming edges before implementation and preserve unreviewed edges."
         }
       ]
     },
@@ -61625,7 +61682,7 @@
       "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-11-02T11:27:59.640Z",
+  "updated_at": "2026-11-02T11:33:08.372Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",
