@@ -46,7 +46,9 @@ class InferenceResponseRoundCorrelationContractTests(unittest.TestCase):
         self.assertIn("response.requestId == expectedRequestId", VALIDATOR)
         self.assertIn("response.attemptId == expectedAttemptId", VALIDATOR)
         self.assertIn("val key = AttemptKey(response.requestId, response.attemptId)", TRANSPORT)
-        self.assertIn("val pending = pendingAttempts[key] ?: return", TRANSPORT)
+        self.assertIn("val pending = pendingAttempts[key]", TRANSPORT)
+        self.assertIn("if (pending == null)", TRANSPORT)
+        self.assertIn("unmatchedResponseFrames.incrementAndGet()", TRANSPORT)
         self.assertIn("pendingAttempts.remove(key, pending)", TRANSPORT)
         self.assertIn("receivedAtUnixMs = clock.millis()", TRANSPORT)
         self.assertIn(

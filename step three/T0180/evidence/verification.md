@@ -88,3 +88,12 @@ Changed code implements zeroization for Windows frames/queue/lifecycle buffers a
 - Android transport maintains numeric counts for inbound chunks, decoded frames, HostStatus frames, InferenceResponse frames, malformed response frames, unmatched response frames, correlation rejections, accepted responses, peer-closed callbacks and callback failures. No application payload, peer ID, prompt, response text, exception message or key material is recorded.
 - CI failures observed on V 3.0.828 remain: HostLifecycle reported InvalidDataException and Android JVM reported 1 failure among 196 tests in the three-peer cancellation round-trip. The new diagnostic counters/stage have not yet been exercised by exact-head CI.
 - No task completion is claimed; T0180 remains in_progress pending root-cause correction and full exact-head acceptance.
+
+
+## T0180-A011 — V 3.0.829 CI failure evidence
+
+- Step Three quality gate run 41478433797 / job 125390039305: 338 Python tests ran; 1 failed. `test_android_does_not_correlate_a_previous_request_response_to_a_new_request` in `tests/test_android_inference_response_correlation_contract.py:49` asserted the previous source spelling and failed after the null-pending path was expanded to increment a diagnostic counter. The Python suite stopped before compileall and graph_guard.
+- Windows HostLifecycle job 125390036031: test project compilation failed at `PeerAnnouncementClientAcceptanceTests.cs:279` with CS1039 (unterminated string literal) and CS1003. The new `LastFailureStage` was not exercised.
+- Android product job 125390035607: failed while building the Windows .NET interop fixture because of the same C# test-source syntax error; Android lint/JVM acceptance did not run.
+- Rendezvous container run 41478431814: passed production image build and non-root HTTP smoke.
+- No inference-model success is inferred from an in-progress workflow; the next exact-head CI must verify all required jobs.
