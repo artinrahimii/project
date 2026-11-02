@@ -213,3 +213,14 @@ No inert Cancel button or invented HostStatus values were added. The backend, An
 - **Regression added:** `RequestViewModelTest.cancelActionSendsCorrelatedCancellationForEveryQueuedAttemptFromTheLiveDispatch` constructs three explicitly trusted test peers, holds response collection open, verifies that the ViewModel passes all three exact dispatch attempts and the same request ID to the gateway, and then verifies the three correlated CANCELLED response cards.
 - **Prior transport evidence:** the existing Android↔native-.NET three-peer cancellation interoperability test in `Libp2pInferenceRequestTransportTest` previously passed on V 3.0.738. This A019 change wires the UI/ViewModel layer to that existing runtime path; the new A019 ViewModel test has not yet run on CI.
 - **Result:** partial / `in_progress` pending exact-head Android KtLint, APK build, JVM suite, generated Protobuf verification and Step Three quality gate.
+
+
+## T0174-A020 — fix exact V 3.0.798 KtLint failures (2026-11-02)
+
+- Exact commit checked: `229df0126ec34e422c13339f7bddf690c48ab964`.
+- Android KtLint job `125165414642` failed before APK/JVM/Protobuf stages:
+  - `RequestViewModelTest.kt:266:63`: expected a newline before the chained `.contains`; the receiver and each chained method are now split onto separate lines.
+  - `MainActivity.kt:322:121`: the Cancel button's conditional label exceeded 120 columns; the conditional is now a multiline expression.
+- The Step Three quality workflow `41411517988` ran all 317 Python tests successfully and compileall passed, but repository-wide graph evidence validation found the stale T0126 path described in T0126-A017.
+- The exact V 3.0.798 cancellation ViewModel test did not run because KtLint stopped the Android job. No Android build/test success is claimed for A019 yet.
+- Result: partial; both formatting corrections and T0126 evidence reconciliation are included in the next exact-head commit. Re-run Android KtLint, APK, complete JVM suite, Protobuf Java/Kotlin verification, and Step Three quality before accepting T0174.

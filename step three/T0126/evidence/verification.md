@@ -272,3 +272,10 @@ The live acceptance gap remains: `MainActivity.requestScreen` is prepare-only, a
 - `HostSelectionFeedbackTest`: zero/one/two/three count behavior passed. `InferenceAttemptDispatcherTest`: zero-host rejection and 1/2/3-host dispatch bounds passed.
 - Step Three quality run 41339423909 passed 317 Python tests and graph/evidence validation. Windows WPF/HostLifecycle and Rendezvous container/HTTP-smoke jobs also passed.
 - External two-node / independent-network acceptance remains T0128 and is not included in this completion claim.
+
+
+## V 3.0.798 graph-guard reconciliation
+
+- Repository-wide graph guard failure: stale path `src/Host.Application/HostInferenceModelCapabilityProvider.cs` was listed under T0126 actual outputs and evidence, but was absent from the exact main tree.
+- Inspected the complete tree; related current code includes `HostPeerRuntimeCapabilities.cs` and `HostInferenceSession.cs`. No substitute path was invented.
+- Removed the absent path from current T0126 actual/evidence arrays only. Preserved execution-history records and all other paths. No placeholder was added.

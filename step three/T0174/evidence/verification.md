@@ -193,3 +193,11 @@ Validation scope: this attempt was a source/graph audit only. No product impleme
 - Added a three-peer ViewModel regression that asserts all exact queued attempts are sent to the gateway and that later correlated CANCELLED responses populate the UI response cards.
 - Existing V 3.0.738 native .NET three-peer transport interoperability evidence remains applicable to the unchanged underlying transport; the new production UI/ViewModel layer still requires exact-head CI execution.
 - **No test result is claimed for A019 yet.** The task remains `in_progress` until the next exact-head CI results are reconciled.
+
+
+## V 3.0.798 exact CI failure
+
+- Android KtLint failed at `RequestViewModelTest.kt:266:63` (chain continuation) and `MainActivity.kt:322:121` (120-character line limit). APK/JVM/Protobuf tasks did not run.
+- Step Three Python suite: 317/317 passed; compileall passed; graph syntax validation passed.
+- Repository-wide graph guard found one missing current T0126 output/evidence path. The path was removed from current T0126 arrays after full-tree inspection; see T0126-A017.
+- Fixes: put each Kotlin chained member on a new line and make the Compose conditional button text a multiline expression. Exact-head rerun is required.

@@ -324,3 +324,13 @@ The exact V 3.0.768 Android/Windows/HostLifecycle/Step Three/Rendezvous workflow
 - **Other exact-head checks:** [Step Three quality run 41339423909](https://github.com/artinrahimii/project/actions/runs/41339423909) passed 317 Python tests and the graph/evidence quality job; [Windows product jobs](https://github.com/artinrahimii/project/actions/runs/41339423721) passed WPF Release/startup/security/DPAPI and HostLifecycle unit/integration; [Rendezvous run 41339423726](https://github.com/artinrahimii/project/actions/runs/41339423726) passed container build and HTTP smoke.
 - **Scope boundary:** this closes the application-level request discovery/selection/dispatch/shortage-feedback task. It does not claim two physical computers or independent public networks were tested; that remains the separately deferred T0128 acceptance after T0230.
 - **Result:** `T0126 = done`. The earlier prepare-only note is historical and is superseded by the current Compose/ViewModel wiring above.
+
+
+## T0126-A017 — reconcile stale output evidence after V 3.0.798 graph guard (2026-11-02)
+
+- Exact commit checked: `229df0126ec34e422c13339f7bddf690c48ab964` (`V 3.0.798`).
+- The Step Three unit suite passed all 317 tests and graph syntax validation passed. The repository-wide graph guard found one historical path recorded as both actual output and evidence that does not exist in the current exact main tree: `src/Host.Application/HostInferenceModelCapabilityProvider.cs`.
+- Inspected the entire untruncated Git tree and the current `src/Host.Application` directory. The named file is absent; current related source files include `HostPeerRuntimeCapabilities.cs`, `HostInferenceSession.cs` and backend implementation files. No assumption was made that a different file is identical to the missing one.
+- Removed only the nonexistent path from T0126's current `actual_output_paths` and `evidence`. All prior execution history and other paths were preserved. No placeholder/stub file was created.
+- The same V 3.0.798 quality workflow independently caught two KtLint formatting issues in the new T0174 UI/test patch; see T0174-A020.
+- T0126 remains `done` on the strength of its prior exact V 3.0.797 application/JVM/CI acceptance. This change reconciles the current repository evidence list, not the original acceptance claim.

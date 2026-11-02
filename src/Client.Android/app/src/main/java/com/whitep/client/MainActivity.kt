@@ -319,7 +319,11 @@ private fun requestScreen(
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 Text(
-                    if (requestState.isCancellingRequest) "Sending cancellation…" else "Cancel request on selected hosts",
+                    if (requestState.isCancellingRequest) {
+                        "Sending cancellation…"
+                    } else {
+                        "Cancel request on selected hosts"
+                    },
                 )
             }
         }

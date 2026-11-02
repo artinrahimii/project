@@ -263,7 +263,8 @@ class RequestViewModelTest {
         assertTrue(gateway.lastCancellationResults.all { result -> result.cancellationSent })
         assertFalse(activeViewModel.uiState.value.canCancelRequest)
         assertTrue(
-            activeViewModel.uiState.value.networkStatusMessage.orEmpty()
+            activeViewModel.uiState.value.networkStatusMessage
+                .orEmpty()
                 .contains("Cancellation requests sent to all 3 queued host attempts."),
         )
 
