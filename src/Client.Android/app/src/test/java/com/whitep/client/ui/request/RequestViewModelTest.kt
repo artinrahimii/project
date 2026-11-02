@@ -13,6 +13,8 @@ import com.whitep.client.requests.InferenceAttemptSubmissionStatus
 import com.whitep.client.requests.InferenceHostAttempt
 import com.whitep.client.requests.InferenceRoundDispatchResult
 import com.whitep.client.requests.InferenceRoundResponseCollection
+import com.whitep.client.requests.InferenceRoundResponseFailure
+import com.whitep.client.requests.InferenceRoundResponseFailureReason
 import com.whitep.client.requests.RequestExecutionGateway
 import com.whitep.client.requests.RequestExecutionGatewayFactory
 import kotlinx.coroutines.CompletableDeferred
@@ -124,6 +126,19 @@ class RequestViewModelTest {
 
         assertFalse(viewModel.recordValidatedResponse(REQUEST_ID, ATTEMPT_A, HOST_A, MODEL_ID, first))
         assertEquals(2, viewModel.hostResponses.value.size)
+    }
+
+    @Test
+    fun rejectsDuplicateResponseForTheSameRequestAndAttemptWithoutReplacingTheFirstCard() {
+        val first = response(ATTEMPT_A, HOST_A, "first response")
+        val duplicate = first.toBuilder().setOutputText("duplicate response").build()
+
+        assertTrue(viewModel.recordValidatedResponse(REQUEST_ID, ATTEMPT_A, HOST_A, MODEL_ID, first))
+        assertFalse(viewModel.recordValidatedResponse(REQUEST_ID, ATTEMPT_A, HOST_A, MODEL_ID, duplicate))
+
+        val cards = viewModel.uiState.value.hostResponses
+        assertEquals(1, cards.size)
+        assertEquals("first response", cards.single().outputText)
     }
 
     @Test
@@ -278,6 +293,43 @@ class RequestViewModelTest {
         )
         assertEquals(RequestRunStatus.CANCELLED, activeViewModel.uiState.value.runStatus)
         assertFalse(activeViewModel.uiState.value.canRetryRequest)
+    }
+
+    @Test
+    fun aggregatesZeroOneTwoAndThreeResponsesWithoutInventingMissingResults() {
+        val cases =
+            listOf(
+                Triple(0, RequestRunStatus.FAILED, true),
+                Triple(1, RequestRunStatus.PARTIAL, true),
+                Triple(2, RequestRunStatus.PARTIAL, true),
+                Triple(3, RequestRunStatus.SUCCEEDED, false),
+            )
+
+        cases.forEach { (responseCount, expectedStatus, expectedCanRetry) ->
+            val gateway =
+                FakeRequestExecutionGateway(peerIds = listOf("peer-a", "peer-b", "peer-c"))
+            gateway.responseCountsByRound = listOf(responseCount)
+            val activeViewModel =
+                RequestViewModel(
+                    repository = InMemoryClientRequestRepository(),
+                    operationScope = commandScope,
+                    clockMillis = { 20_000L },
+                    runtimeFactory = RequestExecutionGatewayFactory { _, _ -> gateway },
+                )
+
+            activeViewModel.discoverPeers(
+                context = RuntimeEnvironment.getApplication(),
+                rendezvousServiceUrl = "https://directory.example.test",
+            )
+            gateway.peerIds.forEach(activeViewModel::trustPeerAfterExplicitConfirmation)
+            activeViewModel.sendRequest("response cardinality $responseCount", "local/test-model", 64)
+
+            assertEquals(responseCount, activeViewModel.uiState.value.hostResponses.size)
+            assertEquals(expectedStatus, activeViewModel.uiState.value.runStatus)
+            assertEquals(expectedCanRetry, activeViewModel.uiState.value.canRetryRequest)
+            assertEquals(3, activeViewModel.uiState.value.hostResponses.size +
+                (3 - activeViewModel.uiState.value.hostResponses.size))
+        }
     }
 
     @Test
@@ -436,6 +488,7 @@ class RequestViewModelTest {
         val dispatchedAttemptIdsByRound = mutableListOf<List<String>>()
         var lastExcludedHostIds: Set<String> = emptySet()
         var responseOutcomesByRound: List<List<InferenceOutcome>> = emptyList()
+        var responseCountsByRound: List<Int> = emptyList()
         private var attemptSequence = 0
         private var responseRoundIndex = 0
         var lastCancellationRequestId = ""
@@ -545,11 +598,13 @@ class RequestViewModelTest {
             attempts: List<InferenceHostAttempt>,
         ): InferenceRoundResponseCollection {
             if (holdRoundResponses) releaseRoundResponses.await()
-            val roundOutcomes = responseOutcomesByRound.getOrNull(responseRoundIndex)
+            val roundIndex = responseRoundIndex
             responseRoundIndex++
+            val roundOutcomes = responseOutcomesByRound.getOrNull(roundIndex)
+            val responseCount = responseCountsByRound.getOrNull(roundIndex) ?: attempts.size
             return InferenceRoundResponseCollection(
                 responses =
-                    attempts.mapIndexed { index, attempt ->
+                    attempts.take(responseCount).mapIndexed { index, attempt ->
                         val outcome =
                             if (attempt.attemptId in cancelledAttemptIds) {
                                 InferenceOutcome.INFERENCE_OUTCOME_CANCELLED
@@ -578,7 +633,14 @@ class RequestViewModelTest {
                             roundId = "round-001"
                         }
                     },
-                failures = emptyList(),
+                failures =
+                    attempts.drop(responseCount).map { attempt ->
+                        InferenceRoundResponseFailure(
+                            ephemeralHostId = attempt.ephemeralHostId,
+                            attemptId = attempt.attemptId,
+                            reason = InferenceRoundResponseFailureReason.RESPONSE_TIMED_OUT,
+                        )
+                    },
             )
         }
 

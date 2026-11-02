@@ -1,0 +1,11 @@
+# T0176 — deterministic multi-response acceptance tests
+
+- **Base revision:** `6cab4939766b88d42ddce10e05091c8e8c4d66dd` on `main` (`V 3.0.806`).
+- **Attempt:** `T0176-A001-v3.0.807-exact-head-ci-pending`.
+- **Status:** in progress; exact-head CI is pending.
+- **Dependency review:** both incoming `blocks` edges were inspected against production source and tests. `T0175 → T0176` is validated as `contract_or_interface_dependency` for the ViewModel aggregate status, response-card, retry and cancellation contract. `T0160 → T0176` is validated as `contract_or_interface_dependency` for the request/attempt ID payload and response-correlation contract. The original edge type `blocks` was retained; the graph change log records each review.
+- **Real test changes:** expanded the Android JVM tests for zero, one, two and three response outcomes; added a named duplicate-response rejection regression; made the collector timeout case deterministic rather than relying on a 20 ms wall-clock race; explicitly asserted late completion/late arrival validator tests in the Python source-contract suite.
+- **Scope:** tests and evidence only. No production transport or host behavior was replaced with a mock as acceptance evidence; the ViewModel fake gateway is used only for deterministic aggregate-state unit testing, while existing authenticated transport integration tests remain unchanged.
+- **Files changed:** `src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt`, `src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceRoundResponseCollectorTest.kt`, `tests/test_android_inference_round_response_collector_contract.py`, `tests/test_android_inference_response_correlation_contract.py`, and the graph/evidence files listed above.
+- **Verification:** graph base-blob SHA-1 had already matched the exact base tree. The new tests have not yet been executed by CI at this report revision. No passing test result is claimed until the exact `V 3.0.807` Actions runs are read.
+- **Next action:** inspect Android KtLint/JVM and Step Three quality runs for `V 3.0.807`; fix observed failures, preserve each attempt, and only then transition this node to `done`.

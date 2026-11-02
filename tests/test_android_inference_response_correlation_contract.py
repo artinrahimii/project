@@ -36,6 +36,11 @@ class InferenceResponseRoundCorrelationContractTests(unittest.TestCase):
         self.assertIn("response.roundId == expectedRoundId", VALIDATOR)
         self.assertIn("response.completedAtUnixMs <= requestDeadlineUnixMs", VALIDATOR)
         self.assertIn("receivedAtUnixMs <= requestDeadlineUnixMs", VALIDATOR)
+        self.assertIn("fun rejectsCompletionAfterRequestDeadline()", VALIDATOR_TEST)
+        self.assertIn(
+            "fun rejectsResponseReceivedAfterRequestDeadlineEvenWhenCompletionTimestampIsEarlier()",
+            VALIDATOR_TEST,
+        )
 
     def test_android_does_not_correlate_a_previous_request_response_to_a_new_request(self):
         self.assertIn("response.requestId == expectedRequestId", VALIDATOR)

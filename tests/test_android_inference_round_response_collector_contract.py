@@ -36,6 +36,22 @@ class AndroidInferenceRoundResponseCollectorContractTests(unittest.TestCase):
         self.assertIn("doesNotStartAnAttemptWhenItsSharedRoundWindowHasExpired", source)
         self.assertIn("callerCancellationIsNotMisreportedAsAnAttemptTimeout", source)
 
+    def test_jvm_tests_cover_zero_one_two_and_three_response_cardinalities(self):
+        collector = JVM_TEST.read_text(encoding="utf-8")
+        self.assertIn("collectsNoResponsesAsOneTimeoutPerQueuedAttempt", collector)
+        self.assertIn("collectsOneOfThreeResponsesAndRetainsTheOtherAttemptTimeouts", collector)
+        self.assertIn("keepsWaitingForOtherHostsAfterTheFirstValidResponseArrives", collector)
+        self.assertIn("collectsThreeResponsesInDispatchOrder", collector)
+        self.assertIn('throw TimeoutException("deterministic response deadline")', collector)
+        self.assertNotIn("withTimeout(20L)", collector)
+
+    def test_view_model_covers_aggregate_cardinality_duplicates_and_cancellation(self):
+        view_model = ROOT / "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt"
+        source = view_model.read_text(encoding="utf-8")
+        self.assertIn("aggregatesZeroOneTwoAndThreeResponsesWithoutInventingMissingResults", source)
+        self.assertIn("rejectsDuplicateResponseForTheSameRequestAndAttemptWithoutReplacingTheFirstCard", source)
+        self.assertIn("cancelActionSendsCorrelatedCancellationForEveryQueuedAttemptFromTheLiveDispatch", source)
+
 
 if __name__ == "__main__":
     unittest.main()

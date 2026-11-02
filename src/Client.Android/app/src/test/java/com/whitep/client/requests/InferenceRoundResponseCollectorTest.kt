@@ -20,6 +20,7 @@ import java.time.Duration
 import java.time.Instant
 import java.time.ZoneId
 import java.time.ZoneOffset
+import java.util.concurrent.TimeoutException
 
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [35])
@@ -78,7 +79,6 @@ class InferenceRoundResponseCollectorTest {
     fun oneHostTimeoutDoesNotCancelASecondHostsValidResponse() =
         runBlocking {
             val roundWindow = newRoundWindow()
-            val neverResponds = CompletableDeferred<InferenceResponse>()
             val secondResponse = CompletableDeferred<InferenceResponse>()
             val secondWaiterStarted = CompletableDeferred<Unit>()
 
@@ -89,7 +89,7 @@ class InferenceRoundResponseCollectorTest {
                         roundWindowFor = { roundWindow },
                         awaitResponse = { hostAttempt, timeout ->
                             when (hostAttempt.attemptId) {
-                                "attempt-a" -> withTimeout(20L) { neverResponds.await() }
+                                "attempt-a" -> throw TimeoutException("deterministic response deadline")
                                 else -> {
                                     assertTrue(timeout > Duration.ZERO)
                                     secondWaiterStarted.complete(Unit)
@@ -210,6 +210,69 @@ class InferenceRoundResponseCollectorTest {
                 callerCancelled = true
             }
             assertTrue(callerCancelled)
+        }
+
+    @Test
+    fun collectsNoResponsesAsOneTimeoutPerQueuedAttempt() =
+        runBlocking {
+            val attempts = listOf(attempt("attempt-a", "host-a"), attempt("attempt-b", "host-b"), attempt("attempt-c", "host-c"))
+            val result =
+                collector.collect(
+                    attempts = attempts,
+                    roundWindowFor = { newRoundWindow() },
+                    awaitResponse = { _, _ -> throw TimeoutException("deterministic response deadline") },
+                )
+
+            assertTrue(result.responses.isEmpty())
+            assertEquals(3, result.failures.size)
+            assertTrue(
+                result.failures.all { failure ->
+                    failure.reason == InferenceRoundResponseFailureReason.RESPONSE_TIMED_OUT
+                },
+            )
+            assertEquals(attempts.map { it.attemptId }, result.failures.map { it.attemptId })
+        }
+
+    @Test
+    fun collectsOneOfThreeResponsesAndRetainsTheOtherAttemptTimeouts() =
+        runBlocking {
+            val attempts = listOf(attempt("attempt-a", "host-a"), attempt("attempt-b", "host-b"), attempt("attempt-c", "host-c"))
+            val result =
+                collector.collect(
+                    attempts = attempts,
+                    roundWindowFor = { newRoundWindow() },
+                    awaitResponse = { hostAttempt, _ ->
+                        if (hostAttempt.attemptId == "attempt-b") {
+                            throw TimeoutException("deterministic response deadline")
+                        }
+                        response(hostAttempt.attemptId, hostAttempt.ephemeralHostId, "answer")
+                    },
+                )
+
+            assertEquals(listOf("attempt-a", "attempt-c"), result.responses.map { it.attemptId })
+            assertEquals(listOf("attempt-b"), result.failures.map { it.attemptId })
+            assertEquals(
+                InferenceRoundResponseFailureReason.RESPONSE_TIMED_OUT,
+                result.failures.single().reason,
+            )
+        }
+
+    @Test
+    fun collectsThreeResponsesInDispatchOrder() =
+        runBlocking {
+            val attempts = listOf(attempt("attempt-a", "host-a"), attempt("attempt-b", "host-b"), attempt("attempt-c", "host-c"))
+            val result =
+                collector.collect(
+                    attempts = attempts,
+                    roundWindowFor = { newRoundWindow() },
+                    awaitResponse = { hostAttempt, _ ->
+                        response(hostAttempt.attemptId, hostAttempt.ephemeralHostId, "answer-${hostAttempt.attemptId}")
+                    },
+                )
+
+            assertEquals(listOf("attempt-a", "attempt-b", "attempt-c"), result.responses.map { it.attemptId })
+            assertEquals(3, result.responses.size)
+            assertTrue(result.failures.isEmpty())
         }
 
     private fun newRoundWindow(): InferenceRoundTimer.Window {

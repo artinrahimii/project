@@ -49063,33 +49063,113 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0175 و T0160 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
+      "actual_output_paths": [
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceRoundResponseCollectorTest.kt",
+        "tests/test_android_inference_round_response_collector_contract.py",
+        "tests/test_android_inference_response_correlation_contract.py",
+        "step three/T0176/execution-report.md",
+        "step three/T0176/evidence/verification.md",
+        "step three/project-graph.md"
+      ],
       "expected_output_paths": [
         "src/Client.Android/Requests/ + tests/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceRoundResponseCollectorTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
+        "tests/test_android_inference_round_response_collector_contract.py",
+        "tests/test_android_inference_response_correlation_contract.py",
+        "step three/T0176/execution-report.md",
+        "step three/T0176/evidence/verification.md"
+      ],
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0176-A001: validated T0175 -> T0176 and T0160 -> T0176 as contract_or_interface_dependency using exact-base production source, protocol, and test evidence. Both edges remain type=blocks. Added response-cardinality and duplicate-response Android JVM regressions plus deterministic collector timeouts and late-response contract checks. Exact-head CI pending; no completion claim.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0176-A001-v3.0.807-exact-head-ci-pending",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
+          "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceRoundResponseCollectorTest.kt",
+          "tests/test_android_inference_round_response_collector_contract.py",
+          "tests/test_android_inference_response_correlation_contract.py",
+          "step three/T0176/execution-report.md",
+          "step three/T0176/evidence/verification.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
+          "state": "passed",
+          "triggering_contracts": [
+            "T0175 RequestViewModel aggregate status, retry and terminal cancellation contract",
+            "T0160 requestId/attemptId payload and response-correlation identity contract"
+          ],
           "affected_by_contract_changes": [],
-          "review_evidence": []
+          "review_evidence": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceRoundResponseCollector.kt",
+            "step three/T0175/execution-report.md",
+            "step three/T0175/evidence/verification.md",
+            "src/Client.Android/app/src/main/java/com/whitep/client/protocol/InferenceRequestPayloadBuilder.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceAttemptDispatcher.kt",
+            "protocol/whitep/v1/messages.proto",
+            "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/network/InferenceResponseCorrelationValidator.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/network/InferenceResponseCorrelationValidatorTest.kt",
+            "step three/T0160/execution-report.md",
+            "step three/T0160/evidence/verification.md"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0176-A001-v3.0.807-exact-head-ci-pending",
+          "started_at": "2026-11-02T10:37:53.686Z",
+          "ended_at": "2026-11-02T10:37:53.686Z",
+          "result": "partial",
+          "summary": "Reviewed both incoming dependency edges against the exact main source tree and preserved their blocks type while validating them as contract/interface dependencies. Added deterministic Android JVM regressions for zero/one/two/three responses, duplicate response suppression, timeout, late completion/arrival, and cancellation. Exact-head CI has not yet completed; the task remains in progress.",
+          "changed_files": [
+            "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceRoundResponseCollectorTest.kt",
+            "tests/test_android_inference_round_response_collector_contract.py",
+            "tests/test_android_inference_response_correlation_contract.py",
+            "step three/T0176/execution-report.md",
+            "step three/T0176/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Android InferenceRoundResponseCollectorTest",
+              "result": "not_run",
+              "summary": "Added zero/one/three cardinality cases and replaced a 20 ms wall-clock timeout with deterministic TimeoutException; exact-head Gradle execution is pending."
+            },
+            {
+              "name": "Android RequestViewModelTest",
+              "result": "not_run",
+              "summary": "Added zero/one/two/three response aggregation, explicit duplicate response rejection; existing cancellation regression is retained."
+            },
+            {
+              "name": "Python source-contract tests",
+              "result": "not_run",
+              "summary": "Extended checks for Android JVM response cardinality, duplicate/cancellation and late-response test evidence; exact-head quality CI is pending."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect the exact V 3.0.807 GitHub Actions runs. Fix any actual failing gate and retain failed attempts. Mark T0176 done only after the Android JVM and Step Three quality gates pass."
+        }
+      ]
     },
     {
       "id": "T0177",
@@ -55915,19 +55995,34 @@
       "from": "T0175",
       "to": "T0176",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0176 exercises the aggregate request-result/card/retry/cancellation contract in RequestViewModel. The production flow consumes RequestExecutionGateway.awaitRoundResponses results keyed by exact requestId/attemptId, aggregates per-host success/failure/cancellation and enables retry only for the current request's eligible failed attempts. T0175 establishes that production status/retry/cancel behavior and its ViewModel regression contract; T0176 extends and validates the same consumer-facing contract. The existing blocks edge type is not itself proof of dependency.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceRoundResponseCollector.kt",
+        "step three/T0175/execution-report.md",
+        "step three/T0175/evidence/verification.md"
+      ]
     },
     {
       "from": "T0160",
       "to": "T0176",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0176 verifies multiple responses, late/duplicate correlation and per-attempt outcomes. The Android payload builder established by T0160 serializes requestId and attemptId into the generated InferenceRequest; the dispatcher and libp2p transport use those identifiers as the per-attempt key, and the response correlation validator requires the echoed identifiers. This is a concrete wire-contract dependency, not an inference from the blocks label.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/protocol/InferenceRequestPayloadBuilder.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceAttemptDispatcher.kt",
+        "protocol/whitep/v1/messages.proto",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/InferenceResponseCorrelationValidator.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/network/InferenceResponseCorrelationValidatorTest.kt",
+        "step three/T0160/execution-report.md",
+        "step three/T0160/evidence/verification.md"
+      ]
     },
     {
       "from": "T0176",
@@ -61236,9 +61331,44 @@
         "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-11-02T10:37:53.684Z",
+      "edge_from": "T0175",
+      "edge_to": "T0176",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "reason": "T0176 exercises the aggregate request-result/card/retry/cancellation contract in RequestViewModel. The production flow consumes RequestExecutionGateway.awaitRoundResponses results keyed by exact requestId/attemptId, aggregates per-host success/failure/cancellation and enables retry only for the current request's eligible failed attempts. T0175 establishes that production status/retry/cancel behavior and its ViewModel regression contract; T0176 extends and validates the same consumer-facing contract. The existing blocks edge type is not itself proof of dependency.",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceRoundResponseCollector.kt",
+        "step three/T0175/execution-report.md",
+        "step three/T0175/evidence/verification.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-11-02T10:37:53.686Z",
+      "edge_from": "T0160",
+      "edge_to": "T0176",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "reason": "T0176 verifies multiple responses, late/duplicate correlation and per-attempt outcomes. The Android payload builder established by T0160 serializes requestId and attemptId into the generated InferenceRequest; the dispatcher and libp2p transport use those identifiers as the per-attempt key, and the response correlation validator requires the echoed identifiers. This is a concrete wire-contract dependency, not an inference from the blocks label.",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/protocol/InferenceRequestPayloadBuilder.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceAttemptDispatcher.kt",
+        "protocol/whitep/v1/messages.proto",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/InferenceResponseCorrelationValidator.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/network/InferenceResponseCorrelationValidatorTest.kt",
+        "step three/T0160/execution-report.md",
+        "step three/T0160/evidence/verification.md"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-11-02T08:35:00Z",
+  "updated_at": "2026-11-02T10:37:53.686Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",
