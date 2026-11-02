@@ -48677,33 +48677,250 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0174 و T0160 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "done",
+      "status_fa": "تکمیل‌شده",
+      "actual_output_paths": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
+        "step three/T0175/execution-report.md",
+        "step three/T0175/evidence/verification.md"
+      ],
       "expected_output_paths": [
         "src/Client.Android/Requests/ + tests/"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
+        "step three/T0174/execution-report.md",
+        "step three/T0174/evidence/verification.md",
+        "step three/T0160/execution-report.md",
+        "https://github.com/artinrahimii/project/actions/runs/41417197342",
+        "https://github.com/artinrahimii/project/actions/runs/41417197306",
+        "https://github.com/artinrahimii/project/actions/runs/41417197168",
+        "https://github.com/artinrahimii/project/actions/runs/41417197342/artifacts/13127773181",
+        "https://github.com/artinrahimii/project/actions/runs/41417197342/artifacts/13128670755",
+        "https://github.com/artinrahimii/project/actions/runs/41417197342/artifacts/13128885203"
+      ],
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0175-A001 (2026-11-02): V 3.0.801 exact-head quality failed one of 317 Python tests because the no-host message lost the required 'No inference payload was sent' disclosure phrase; Android KtLint also found the MainActivity status-chain and ViewModel signature formatting issues. Windows WPF/HostLifecycle and the container smoke passed. These failures are retained in execution_history.\nT0175-A002 (2026-11-02): V 3.0.802 restored the required disclosure and passed all 317 Python/graph/evidence checks, Windows WPF/HostLifecycle and container smoke; Android KtLint still failed the two formatting patterns. These failures are retained in execution_history.\nT0175-A003 (2026-11-02): V 3.0.803 passed all T0175 acceptance gates: KtLint, APK, 183 JVM tests (0 failed/0 ignored), both manual-retry regressions, Protobuf Java/Kotlin, Windows WPF/startup/security/DPAPI, HostLifecycle, 317-test Step Three quality/evidence gate, and Rendezvous container HTTP smoke. Retry preserves requestId, uses fresh attemptIds, excludes hosts whose latest attempt succeeded/cancelled, remains manually initiated and capped at three rounds/nine total attempts. Cancellation is terminal/non-retryable. T0175 is done. T0175 -> T0176 remains unreviewed.",
       "execution_summary": {
-        "attempt_count": 0,
-        "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
-        "related_commits": [],
-        "tests_passed": [],
-        "tests_failed": [],
+        "attempt_count": 3,
+        "failed_attempt_count": 2,
+        "last_attempt_id": "T0175-A003-v3.0.803-exact-head-acceptance",
+        "last_attempt_result": "succeeded",
+        "changed_files": [
+          "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt",
+          "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
+          "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
+          "step three/T0175/execution-report.md",
+          "step three/T0175/evidence/verification.md"
+        ],
+        "related_commits": [
+          "5eef2ac3841cc3e40f83965cc1233bfb95a30245",
+          "7f8c4f11e4dc55892061f26872ab437f9002104f",
+          "aed7d2c3c49e04b596c457e5f38f680d88027b04"
+        ],
+        "tests_passed": [
+          "V 3.0.803 exact-head Android KtLint passed.",
+          "V 3.0.803 assembleDebug passed and Android debug APK artifact was uploaded.",
+          "V 3.0.803 Android testDebugUnitTest passed: 183 tests, 0 failures, 0 ignored; Gradle report duration 38.912s.",
+          "V 3.0.803 RequestViewModelTest: 14 tests, 0 failures, 0 ignored; both new manual-retry regressions passed.",
+          "V 3.0.803 existing correlated Android Cancel regression passed; cancelled request remains non-retryable.",
+          "V 3.0.803 generated Android Protobuf Java and Kotlin verification passed.",
+          "V 3.0.803 Windows WPF Release build, startup smoke, security/policy/capability and DPAPI peer-trust checks passed.",
+          "V 3.0.803 HostLifecycle unit/integration job passed.",
+          "V 3.0.803 Step Three quality gate passed: 317 Python tests, compileall, graph and recorded-output/evidence validation.",
+          "V 3.0.803 Rendezvous production container build and non-root HTTP contract smoke passed."
+        ],
+        "tests_failed": [
+          "V 3.0.801: Step Three Python quality had 1 failure out of 317 because tests/test_claims_audit.py required the exact 'No inference payload was sent' disclosure phrase; restored in V 3.0.802.",
+          "V 3.0.801: Android KtLint found status-chain and single-parameter function formatting violations; corrected in V 3.0.803.",
+          "V 3.0.802: Android KtLint still found the two formatting patterns; corrected in V 3.0.803."
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
+          "state": "passed",
+          "triggering_contracts": [
+            "protocol/whitep/v1/messages.proto request_id, attempt_id and terminal CANCELLED outcome",
+            "T0160 canonical request/attempt identity and payload-builder contract",
+            "T0174 correlated cancellation contract for the exact (requestId, attemptId) pair",
+            "DistributedRequestProgress and FirstReleaseInferenceLimits three-round/nine-attempt budget",
+            "Android RequestExecutionGateway dispatch and response-correlation contract"
+          ],
           "affected_by_contract_changes": [],
-          "review_evidence": []
+          "review_evidence": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/requests/DistributedRequest.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceAttemptDispatcher.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/requests/RequestExecutionGateway.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
+            "step three/T0174/execution-report.md",
+            "step three/T0174/evidence/verification.md",
+            "step three/T0160/execution-report.md",
+            "https://github.com/artinrahimii/project/actions/runs/41417197342"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0175-A001-v3.0.801-exact-head",
+          "started_at": "2026-11-02T08:57:39Z",
+          "ended_at": "2026-11-02T08:59:39Z",
+          "result": "failed",
+          "summary": "The first exact-head run exposed two independent quality issues. The 317-test Python suite had one failure: test_android_ui_discloses_explicit_trust_and_receiving_host_visibility expected the compatibility phrase 'No inference payload was sent' in the no-host message. Android KtLint also rejected the new MainActivity status-chain wrapping and the latestOutcomeByHost parameter formatting. The Android APK/JVM/Protobuf steps were not reached. Windows WPF/HostLifecycle and the Rendezvous container smoke passed.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt"
+          ],
+          "commit_sha": "5eef2ac3841cc3e40f83965cc1233bfb95a30245",
+          "tests": [
+            {
+              "name": "Step Three Python quality — V 3.0.801",
+              "result": "failed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41416855247",
+              "summary": "317 tests ran; 316 passed and one failed at tests/test_claims_audit.py:32 because the exact disclosure phrase 'No inference payload was sent' was absent. Compile, graph and evidence steps were skipped after unittest failure."
+            },
+            {
+              "name": "Android KtLint — V 3.0.801",
+              "result": "failed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41416855141",
+              "summary": "MainActivity.kt:332 had two expected-newline-before-dot violations; RequestViewModel.kt:614 had two parameter-parenthesis whitespace violations. APK/JVM/Protobuf were skipped."
+            },
+            {
+              "name": "Windows WPF / HostLifecycle — V 3.0.801",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41416855141",
+              "summary": "Windows WPF and HostLifecycle jobs completed successfully."
+            },
+            {
+              "name": "Rendezvous container smoke — V 3.0.801",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41416855145",
+              "summary": "Production image build and non-root HTTP contract smoke completed successfully."
+            }
+          ],
+          "failure_details": "The user-facing no-host wording had lost a phrase required by the repository's claims-audit source contract, and two Kotlin formatting patterns violated KtLint. Both were retained as historical failures and corrected in subsequent exact-head commits.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Restore the exact no-payload disclosure phrase and rerun quality; fix both KtLint formatting findings and rerun the full Android product job."
+        },
+        {
+          "attempt_id": "T0175-A002-v3.0.802-exact-head",
+          "started_at": "2026-11-02T08:59:03Z",
+          "ended_at": "2026-11-02T09:00:42Z",
+          "result": "failed",
+          "summary": "The exact V 3.0.802 Step Three quality gate passed all 317 Python tests, syntax checks, graph structure and recorded-output/evidence validation after restoring the required no-payload phrase. The Android product job still failed KtLint on the two formatting patterns discovered in A001; APK/JVM/Protobuf were skipped. Windows WPF and HostLifecycle passed, and Rendezvous container build/smoke passed.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt"
+          ],
+          "commit_sha": "7f8c4f11e4dc55892061f26872ab437f9002104f",
+          "tests": [
+            {
+              "name": "Step Three Python quality — V 3.0.802",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41417019043",
+              "summary": "All 317 Python tests, Python syntax compilation, graph structure validation and recorded-output/evidence validation passed."
+            },
+            {
+              "name": "Android KtLint — V 3.0.802",
+              "result": "failed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41417019147",
+              "summary": "The two formatting issues from A001 remained in MainActivity.kt and RequestViewModel.kt. APK/JVM/Protobuf were skipped."
+            },
+            {
+              "name": "Windows WPF / HostLifecycle — V 3.0.802",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41417019147",
+              "summary": "Windows WPF and HostLifecycle product jobs passed."
+            },
+            {
+              "name": "Rendezvous container smoke — V 3.0.802",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41417018962",
+              "summary": "Production image build and non-root HTTP contract smoke passed."
+            }
+          ],
+          "failure_details": "The Python contract regression was corrected; only the Android Kotlin formatting findings remained. No Android JVM success was claimed for this attempt.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Format the MainActivity status chain and latestOutcomeByHost signature, then rerun exact-head Android lint, APK, JVM and Protobuf checks."
+        },
+        {
+          "attempt_id": "T0175-A003-v3.0.803-exact-head-acceptance",
+          "started_at": "2026-11-02T09:00:28Z",
+          "ended_at": "2026-11-02T09:03:39Z",
+          "result": "succeeded",
+          "summary": "Exact V 3.0.803 CI passed all T0175 acceptance gates. The production Android request UI displays aggregate IDLE/RUNNING/SUCCEEDED/PARTIAL/FAILED/CANCELLED state and exposes an explicit manual Retry action only when the latest attempt outcomes contain retryable failures and the request budget remains. Retry preserves the logical request ID and progress, creates fresh attempt IDs, retries only after the user action, excludes hosts whose latest attempt succeeded or was cancelled, and remains bounded by the existing three-round/nine-attempt budget. Cancellation is terminal and is not retryable. Both new request-level retry regressions passed.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt"
+          ],
+          "commit_sha": "aed7d2c3c49e04b596c457e5f38f680d88027b04",
+          "tests": [
+            {
+              "name": "Android Kotlin formatting and lint — V 3.0.803",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41417197342/job/125183843391",
+              "summary": "KtLint passed after the exact formatting corrections."
+            },
+            {
+              "name": "Android debug APK — V 3.0.803",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41417197342/job/125183843391",
+              "summary": "assembleDebug completed successfully; the debug APK artifact was uploaded."
+            },
+            {
+              "name": "Android JVM unit suite — V 3.0.803",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41417197342/artifacts/13127773181",
+              "summary": "Gradle report records 183 tests, 0 failures, 0 ignored, 100% success, 38.912 seconds. RequestViewModelTest contains 14 tests, 0 failures and 0 ignored; both showsFailedAndRetriesOnlyAfterTheUserRequestsItWithSameRequestAndFreshAttemptIds and manualRetryExcludesHostsWhoseLatestAttemptAlreadySucceeded passed. The existing correlated Cancel regression also passed."
+            },
+            {
+              "name": "Generated Android Protobuf Java and Kotlin — V 3.0.803",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41417197342/job/125183843391",
+              "summary": "Both generated Protobuf source sets were found and verified after JVM tests."
+            },
+            {
+              "name": "Windows WPF build/startup/security/DPAPI — V 3.0.803",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41417197342/job/125183844243",
+              "summary": "C# formatting, Release build, generated Protobuf C#, WPF startup smoke, agent-tool restrictions/policy/capability, current-user DPAPI identity/trust storage and Windows artifact upload passed."
+            },
+            {
+              "name": "HostLifecycle unit/integration — V 3.0.803",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41417197342/job/125183843834",
+              "summary": "Host lifecycle unit and integration job passed."
+            },
+            {
+              "name": "Step Three quality gate — V 3.0.803",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41417197306",
+              "summary": "All 317 Python tests, compileall, graph structure and recorded-output/evidence validation passed."
+            },
+            {
+              "name": "Rendezvous production container build/HTTP smoke — V 3.0.803",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41417197168",
+              "summary": "Production container build and non-root HTTP contract smoke passed."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Proceed to T0176 only after reviewing its incoming edge(s); T0175 -> T0176 remains unreviewed and must not be reclassified or removed without evidence."
+        }
+      ]
     },
     {
       "id": "T0176",
