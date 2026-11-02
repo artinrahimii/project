@@ -131,14 +131,14 @@ internal static class AndroidInteropPeerServer
     {
         private int _written;
 
-        public ILogger CreateLogger(string categoryName) =>
-            new InteropDiagnosticLogger(categoryName, () => Interlocked.Increment(ref _written) <= 80);
+        public ILogger CreateLogger(string _) =>
+            new InteropDiagnosticLogger(() => Interlocked.Increment(ref _written) <= 80);
 
         public void Dispose()
         {
         }
 
-        private sealed class InteropDiagnosticLogger(string categoryName, Func<bool> allowWrite) : ILogger
+        private sealed class InteropDiagnosticLogger(Func<bool> allowWrite) : ILogger
         {
             public IDisposable? BeginScope<TState>(TState state)
                 where TState : notnull => null;
@@ -155,17 +155,7 @@ internal static class AndroidInteropPeerServer
                 if (!IsEnabled(logLevel) || !allowWrite())
                     return;
 
-                string template =
-                    state is IEnumerable<KeyValuePair<string, object?>> values
-                        ? values.FirstOrDefault(static item => item.Key == "{OriginalFormat}").Value?.ToString()
-                            ?? eventId.Name
-                            ?? "<no-template>"
-                        : eventId.Name ?? "<no-template>";
-                string safeCategory = categoryName.Replace('\t', ' ').Replace('\r', ' ').Replace('\n', ' ');
-                string safeTemplate = template.Replace('\t', ' ').Replace('\r', ' ').Replace('\n', ' ');
-
-                Console.WriteLine(
-                    $"P2P_DIAG\t{safeCategory}\t{logLevel}\t{eventId.Id}\t{safeTemplate}\t{exception?.GetType().Name ?? "none"}");
+                Console.WriteLine($"P2P_DIAG\t{(int)logLevel}\t{eventId.Id}");
                 Console.Out.Flush();
             }
         }

@@ -49660,20 +49660,56 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0178 و T0177 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال انجام",
+      "actual_output_paths": [
+        "src/Shared.Security/SafeDiagnosticLog.cs",
+        "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/SafeDiagnosticLog.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/network/SafeDiagnosticLogTest.kt",
+        "tests/HostLifecycle.Tests/SafeDiagnosticLogAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "tests/HostLifecycle.Tests/AndroidInteropPeerServer.cs",
+        "tests/test_network_payload_logging.py",
+        "tests/test_android_libp2p_transport_contract.py",
+        "docs/security.md",
+        "step three/T0179/execution-report.md",
+        "step three/T0179/evidence/verification.md"
+      ],
       "expected_output_paths": [
         "src/Shared.Security/ + src/Host.Windows/ + src/Client.Android/ + docs/security.md"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "step three/T0179/execution-report.md",
+        "step three/T0179/evidence/verification.md",
+        "tests/test_network_payload_logging.py",
+        "tests/test_android_libp2p_transport_contract.py",
+        "tests/HostLifecycle.Tests/SafeDiagnosticLogAcceptanceTests.cs",
+        "src/Client.Android/app/src/test/java/com/whitep/client/network/SafeDiagnosticLogTest.kt"
+      ],
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0179-A001 (2026-11-02T12:37:09.268Z): implemented allowlist-only numeric diagnostic logging in Shared.Security and Android, wired it into Windows peer transport and Android inference submission, removed template/category/exception details from the interop test logger, and added regression/acceptance coverage. Incoming T0177/T0178 edges were validated as sequencing_only; original blocks types and execution order retained. Exact-head CI pending; task remains in_progress.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0179-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Shared.Security/SafeDiagnosticLog.cs",
+          "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+          "src/Client.Android/app/src/main/java/com/whitep/client/network/SafeDiagnosticLog.kt",
+          "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
+          "src/Client.Android/app/src/test/java/com/whitep/client/network/SafeDiagnosticLogTest.kt",
+          "tests/HostLifecycle.Tests/SafeDiagnosticLogAcceptanceTests.cs",
+          "tests/HostLifecycle.Tests/Program.cs",
+          "tests/HostLifecycle.Tests/AndroidInteropPeerServer.cs",
+          "tests/test_network_payload_logging.py",
+          "tests/test_android_libp2p_transport_contract.py",
+          "docs/security.md",
+          "step three/T0179/execution-report.md",
+          "step three/T0179/evidence/verification.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
@@ -49686,7 +49722,38 @@
           "review_evidence": []
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0179-A001",
+          "started_at": "2026-11-02T12:37:09.268Z",
+          "ended_at": "2026-11-02T12:37:09.268Z",
+          "result": "partial",
+          "summary": "Implemented allowlist-only numeric diagnostic records across .NET and Android product transports and added source/runtime regression tests. Validated both incoming edges as sequencing_only while retaining blocks type and original order. Exact-head CI pending.",
+          "changed_files": [
+            "src/Shared.Security/SafeDiagnosticLog.cs",
+            "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+            "src/Client.Android/app/src/main/java/com/whitep/client/network/SafeDiagnosticLog.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/network/SafeDiagnosticLogTest.kt",
+            "tests/HostLifecycle.Tests/SafeDiagnosticLogAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "tests/HostLifecycle.Tests/AndroidInteropPeerServer.cs",
+            "tests/test_network_payload_logging.py",
+            "tests/test_android_libp2p_transport_contract.py",
+            "docs/security.md",
+            "step three/T0179/execution-report.md",
+            "step three/T0179/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect Step Three quality gate, Windows/Android product build and HostLifecycle on the exact main commit. Mark done only after relevant CI checks pass; otherwise append a corrective attempt."
+        }
+      ]
     },
     {
       "id": "T0180",
@@ -56456,19 +56523,30 @@
       "from": "T0178",
       "to": "T0179",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0178 implements an in-memory host UI conversation-retention policy. T0179's diagnostic event schema and transport logging consume no ChatConversation or retention-policy interface; preserve the original order as a conservative sequencing constraint rather than treating the blocks label as proof of a technical dependency.",
+      "validation_status": "validated",
+      "evidence": [
+        "step three/T0178/execution-report.md",
+        "src/Host.Application/Chat/ChatConversation.cs",
+        "src/Host.Application/Chat/HostConversationRetentionPolicy.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "docs/security.md"
+      ]
     },
     {
       "from": "T0177",
       "to": "T0179",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0177 verifies Android host selection and per-request dispatch budgets. T0179's logging API does not consume selector, dispatcher, response-card or attempt-budget outputs; preserve the original order as a conservative sequencing constraint rather than treating the blocks label as proof of a technical dependency.",
+      "validation_status": "validated",
+      "evidence": [
+        "step three/T0177/execution-report.md",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceAttemptDispatcher.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt"
+      ]
     },
     {
       "from": "T0179",
@@ -61815,9 +61893,40 @@
         "src/Host.Windows/MainWindow.xaml.cs"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-11-02T12:37:09.268Z",
+      "edge_from": "T0177",
+      "edge_to": "T0179",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "reason": "T0177 verifies Android host selection and per-request dispatch budgets. T0179's logging API does not consume selector, dispatcher, response-card or attempt-budget outputs; preserve the original order as a conservative sequencing constraint rather than treating the blocks label as proof of a technical dependency.",
+      "evidence": [
+        "step three/T0177/execution-report.md",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceAttemptDispatcher.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-11-02T12:37:09.268Z",
+      "edge_from": "T0178",
+      "edge_to": "T0179",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "reason": "T0178 implements an in-memory host UI conversation-retention policy. T0179's diagnostic event schema and transport logging consume no ChatConversation or retention-policy interface; preserve the original order as a conservative sequencing constraint rather than treating the blocks label as proof of a technical dependency.",
+      "evidence": [
+        "step three/T0178/execution-report.md",
+        "src/Host.Application/Chat/ChatConversation.cs",
+        "src/Host.Application/Chat/HostConversationRetentionPolicy.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "docs/security.md"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-11-02T11:55:46.212Z",
+  "updated_at": "2026-11-02T12:37:09.268Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

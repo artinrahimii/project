@@ -124,6 +124,21 @@ class Libp2pInferenceRequestTransport(
         ephemeralHostId: String,
         request: InferenceRequest,
     ): InferenceTransportSubmission {
+        val diagnosticStartedAtMs = clock.millis()
+        SafeDiagnosticLog.write(
+            SafeDiagnosticEventCode.InferenceSubmission,
+            SafeDiagnosticOutcomeCode.Started,
+        )
+        fun reject(reason: String): InferenceTransportSubmission {
+            lastSubmissionFailure = reason
+            SafeDiagnosticLog.write(
+                SafeDiagnosticEventCode.InferenceSubmission,
+                SafeDiagnosticOutcomeCode.Rejected,
+                (clock.millis() - diagnosticStartedAtMs).coerceAtLeast(0L),
+            )
+            return InferenceTransportSubmission.REJECTED
+        }
+
         lastSubmissionFailure = null
         if (closed.get() ||
             ephemeralHostId.isBlank() ||
@@ -133,8 +148,7 @@ class Libp2pInferenceRequestTransport(
             request.modelId.isBlank() ||
             request.deadlineUnixMs <= clock.millis()
         ) {
-            lastSubmissionFailure = "invalid_request_or_closed_transport"
-            return InferenceTransportSubmission.REJECTED
+            return reject("invalid_request_or_closed_transport")
         }
 
         val explicitlyTrusted =
@@ -145,31 +159,25 @@ class Libp2pInferenceRequestTransport(
                 false
             }
         if (!explicitlyTrusted) {
-            if (lastSubmissionFailure == null) {
-                lastSubmissionFailure = "peer_not_explicitly_trusted"
-            }
-            return InferenceTransportSubmission.REJECTED
+            return reject(lastSubmissionFailure ?: "peer_not_explicitly_trusted")
         }
 
         val endpoint = resolveEndpoint(ephemeralHostId)
         if (endpoint == null) {
-            lastSubmissionFailure = "directory_peer_not_found"
-            return InferenceTransportSubmission.REJECTED
+            return reject("directory_peer_not_found")
         }
         if (endpoint.peerId != ephemeralHostId || !endpoint.expiresAtUtc.isAfter(clock.instant())) {
-            lastSubmissionFailure = "directory_peer_identity_or_expiry_mismatch"
-            return InferenceTransportSubmission.REJECTED
+            return reject("directory_peer_identity_or_expiry_mismatch")
         }
 
         val remotePeerId =
             try {
                 PeerId.fromBase58(endpoint.peerId)
             } catch (_: IllegalArgumentException) {
-                lastSubmissionFailure = "directory_peer_id_is_not_canonical"
-                return InferenceTransportSubmission.REJECTED
+                return reject("directory_peer_id_is_not_canonical")
             }
         if (remotePeerId.toBase58() != endpoint.peerId) {
-            return InferenceTransportSubmission.REJECTED
+            return reject("directory_peer_id_is_not_canonical")
         }
 
         val addresses =
@@ -184,19 +192,16 @@ class Libp2pInferenceRequestTransport(
                     Multiaddr.fromString(address)
                 }
             } catch (exception: Exception) {
-                lastSubmissionFailure = "directory_address_rejected:${exception.javaClass.simpleName}"
-                return InferenceTransportSubmission.REJECTED
+                return reject("directory_address_rejected:${exception.javaClass.simpleName}")
             }
         if (addresses.isEmpty()) {
-            lastSubmissionFailure = "directory_has_no_direct_tcp_address"
-            return InferenceTransportSubmission.REJECTED
+            return reject("directory_has_no_direct_tcp_address")
         }
 
         val requestWire = request.toByteArray()
         try {
             if (requestWire.size > PeerMessageFrameCodec.DEFAULT_MAXIMUM_MESSAGE_BYTES) {
-                lastSubmissionFailure = "request_frame_exceeds_transport_limit"
-                return InferenceTransportSubmission.REJECTED
+                return reject("request_frame_exceeds_transport_limit")
             }
 
             val key = AttemptKey(request.requestId, request.attemptId)
@@ -208,8 +213,7 @@ class Libp2pInferenceRequestTransport(
                     request.deadlineUnixMs,
                 )
             if (pendingAttempts.putIfAbsent(key, pending) != null) {
-                lastSubmissionFailure = "duplicate_pending_request_and_attempt_id"
-                return InferenceTransportSubmission.REJECTED
+                return reject("duplicate_pending_request_and_attempt_id")
             }
 
             var failureStage = "start_local_libp2p_host"
@@ -247,20 +251,30 @@ class Libp2pInferenceRequestTransport(
                 withContext(Dispatchers.IO) {
                     controller.sendRequest(requestWire).get(timeoutSeconds, TimeUnit.SECONDS)
                 }
+                SafeDiagnosticLog.write(
+                    SafeDiagnosticEventCode.InferenceSubmission,
+                    SafeDiagnosticOutcomeCode.Succeeded,
+                    (clock.millis() - diagnosticStartedAtMs).coerceAtLeast(0L),
+                )
                 return InferenceTransportSubmission.QUEUED
             } catch (cancellation: CancellationException) {
+                SafeDiagnosticLog.write(
+                    SafeDiagnosticEventCode.InferenceSubmission,
+                    SafeDiagnosticOutcomeCode.Cancelled,
+                    (clock.millis() - diagnosticStartedAtMs).coerceAtLeast(0L),
+                )
                 pending.response.cancel(cancellation)
                 pendingAttempts.remove(key, pending)
                 pending.controller?.closeStream()
                 throw cancellation
             } catch (exception: Exception) {
-                lastSubmissionFailure = "$failureStage:${exception.javaClass.simpleName}"
+                val failureReason = "$failureStage:${exception.javaClass.simpleName}"
                 pending.response.completeExceptionally(
                     IOException("The authenticated peer request could not be submitted."),
                 )
                 pendingAttempts.remove(key, pending)
                 pending.controller?.closeStream()
-                return InferenceTransportSubmission.REJECTED
+                return reject(failureReason)
             }
         } finally {
             Arrays.fill(requestWire, 0)

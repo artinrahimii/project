@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
@@ -182,6 +183,8 @@ public sealed class Libp2pPeerTransport : IPeerTransport
             throw new AuthenticationException("The peer identity in the multiaddress does not match the expected peer identity.");
         }
         _peerTrustStore.EnsureTrusted(endpoint.ExpectedPeerIdentity);
+        var diagnosticTimer = Stopwatch.StartNew();
+        SafeDiagnosticLog.Write(SafeDiagnosticEventCode.PeerTransportConnection, SafeDiagnosticOutcomeCode.Started);
 
         if (Interlocked.CompareExchange(ref _connectStarted, 1, 0) != 0)
         {
@@ -232,9 +235,19 @@ public sealed class Libp2pPeerTransport : IPeerTransport
             {
                 throw new IOException("The libp2p secure channel did not reach the connected state.");
             }
+            SafeDiagnosticLog.Write(
+                SafeDiagnosticEventCode.PeerTransportConnection,
+                SafeDiagnosticOutcomeCode.Succeeded,
+                diagnosticTimer.ElapsedMilliseconds);
         }
         catch
         {
+            SafeDiagnosticLog.Write(
+                SafeDiagnosticEventCode.PeerTransportConnection,
+                cancellationToken.IsCancellationRequested
+                    ? SafeDiagnosticOutcomeCode.Cancelled
+                    : SafeDiagnosticOutcomeCode.Failed,
+                diagnosticTimer.ElapsedMilliseconds);
             if (session is not null)
             {
                 await DisconnectQuietlyAsync(session).ConfigureAwait(false);

@@ -132,6 +132,7 @@ await NetworkInferenceRequestResponseMapperAcceptanceTests.RunAsync();
 await PeerTransportContractAcceptanceTests.RunAsync().ConfigureAwait(false);
 PeerMessageSecurityAcceptanceTests.Run();
 PeerSecurityPolicyAcceptanceTests.Run();
+SafeDiagnosticLogAcceptanceTests.Run();
 PeerTrustStoreAcceptanceTests.Run();
 HostIdentityStoreAcceptanceTests.Run();
 await PeerAnnouncementClientAcceptanceTests.RunAsync().ConfigureAwait(false);
