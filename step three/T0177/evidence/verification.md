@@ -1,30 +1,27 @@
 # T0177 verification evidence
 
-## Source revision
+## Graph and source validation
 
-- Repository: `artinrahimii/project`
-- Branch: `main`
-- Base commit: `75651286a49d7dfbb598e749c7f5f9967ed4d0b8` (`V 3.0.809`)
-- Graph source: `step three/project-graph.md`, Blob `1a41d47d2944ddc2aba3cee70ae80f6733ff327f`
-- Graph retrieval: Git Trees API -> Blob SHA from the exact base commit -> Git Blob API.
-- Original UTF-8 size: 3,897,496 bytes; text length: 3,770,857 characters.
-- Git blob SHA-1 recomputed over `blob 3897496\0` plus the original UTF-8 bytes: matched `1a41d47d2944ddc2aba3cee70ae80f6733ff327f`.
-- Full fenced JSON parsed successfully: 230 nodes and 422 edges.
+- Repository/branch: `artinrahimii/project`, `main`.
+- Base implementation commit: `fd7fabcab361c6b8736c869b3b6d97aaa6d7d6b6` (`V 3.0.810`).
+- Graph at the base commit was fetched by its tree-derived Blob SHA and SHA-1 validated against the original 3,897,496 UTF-8 bytes; full fenced JSON parsed as 230 nodes and 422 edges.
+- Incoming edges were reviewed and recorded: `T0176 → T0177` = `sequencing_only`; `T0160 → T0177` = `contract_or_interface_dependency`. Both remain `blocks` edges and remain in the conservative order.
 
-## Incoming dependency review
+## Acceptance implementation
 
-- `T0176 → T0177`: validated as `sequencing_only`; the dependency remains in the graph and retains `type: blocks`. T0177 uses the response collection type as an input but does not consume T0176's response-card, timeout aggregation or cancellation test output.
-- `T0160 → T0177`: validated as `contract_or_interface_dependency`; the dispatcher under test calls the real payload builder established by T0160 and uses its canonical request/attempt payload fields.
-- Both changes are recorded in `edge_change_log`; execution order was not changed.
+- Android JVM tests cover three rounds, a maximum of three distinct peers per round, nine total attempts, no ordinary peer reuse across rounds, and a previously used peer retry consuming the last slot in a smaller request budget.
+- Python source-contract tests cover centralized policy limits and the selector/dispatcher guard paths.
+- Production source is unchanged.
 
-## Test implementation
+## Exact-head V 3.0.810 results
 
-- Android JVM: added `enforcesThreeDistinctHostsPerRoundAndNineAttemptsAcrossTheRequest`.
-- Android JVM: added `honorsTheRemainingAttemptBudgetWhenAPreviouslyUsedHostIsRetried`.
-- Python: added `tests/test_android_inference_attempt_budget_acceptance.py` to check production guards and required JVM acceptance cases.
-- Production source was not changed.
+- [Step Three quality gate](https://github.com/artinrahimii/project/actions/runs/41436616226): passed 328 Python tests, compileall, 230 nodes / 422 edges, zero graph/evidence errors and one preserved metadata warning.
+- [HostLifecycle tests](https://github.com/artinrahimii/project/actions/runs/41436616179): passed.
+- [Rendezvous container build/smoke](https://github.com/artinrahimii/project/actions/runs/41436616214): passed.
+- [Android product build](https://github.com/artinrahimii/project/actions/runs/41436616179): failed at `ktlintTestSourceSetCheck` because of one needless blank line at test source line 510. APK build and JVM tests were skipped.
 
-## Test result
+## Correction and current state
 
-- Exact-head CI: pending at the time this evidence file was created.
-- This task is intentionally `in_progress`, not `done`, until the exact commit passes KtLint, Android APK build, Android JVM tests, Python tests, compileall, graph structure and repository evidence validation.
+- A002 removed the extra blank line between the previous test and the first new acceptance test.
+- Exact-head CI for `V 3.0.811` is pending.
+- T0177 remains `in_progress`; the Android tests are not considered accepted until the corrected commit passes KtLint, APK build and `testDebugUnitTest`.

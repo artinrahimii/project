@@ -507,7 +507,6 @@ class InferenceAttemptDispatcherTest {
             assertTrue(transport.requests.isEmpty())
         }
 
-
     @Test
     fun enforcesThreeDistinctHostsPerRoundAndNineAttemptsAcrossTheRequest() =
         runBlocking {
