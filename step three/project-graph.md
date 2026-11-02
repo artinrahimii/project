@@ -48677,8 +48677,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0174 و T0160 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "تکمیل‌شده",
       "actual_output_paths": [
         "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt",
         "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
@@ -48705,12 +48705,12 @@
         "https://github.com/artinrahimii/project/actions/runs/41417197342/artifacts/13128885203",
         "tests/test_android_manual_retry_contract.py"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0175-A001 (2026-11-02): V 3.0.801 exact-head quality failed one of 317 Python tests because the no-host message lost the required 'No inference payload was sent' disclosure phrase; Android KtLint also found the MainActivity status-chain and ViewModel signature formatting issues. Windows WPF/HostLifecycle and the container smoke passed. These failures are retained in execution_history.\nT0175-A002 (2026-11-02): V 3.0.802 restored the required disclosure and passed all 317 Python/graph/evidence checks, Windows WPF/HostLifecycle and container smoke; Android KtLint still failed the two formatting patterns. These failures are retained in execution_history.\nT0175-A003 (2026-11-02): V 3.0.803 passed all T0175 acceptance gates: KtLint, APK, 183 JVM tests (0 failed/0 ignored), both manual-retry regressions, Protobuf Java/Kotlin, Windows WPF/startup/security/DPAPI, HostLifecycle, 317-test Step Three quality/evidence gate, and Rendezvous container HTTP smoke. Retry preserves requestId, uses fresh attemptIds, excludes hosts whose latest attempt succeeded/cancelled, remains manually initiated and capped at three rounds/nine total attempts. Cancellation is terminal/non-retryable. T0175 is done. T0175 -> T0176 remains unreviewed.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0175-A001 (2026-11-02): V 3.0.801 exact-head quality failed one of 317 Python tests because the no-host message lost the required 'No inference payload was sent' disclosure phrase; Android KtLint also found the MainActivity status-chain and ViewModel signature formatting issues. Windows WPF/HostLifecycle and the container smoke passed. These failures are retained in execution_history.\nT0175-A002 (2026-11-02): V 3.0.802 restored the required disclosure and passed all 317 Python/graph/evidence checks, Windows WPF/HostLifecycle and container smoke; Android KtLint still failed the two formatting patterns. These failures are retained in execution_history.\nT0175-A003 (2026-11-02): V 3.0.803 passed all T0175 acceptance gates: KtLint, APK, 183 JVM tests (0 failed/0 ignored), both manual-retry regressions, Protobuf Java/Kotlin, Windows WPF/startup/security/DPAPI, HostLifecycle, 317-test Step Three quality/evidence gate, and Rendezvous container HTTP smoke. Retry preserves requestId, uses fresh attemptIds, excludes hosts whose latest attempt succeeded/cancelled, remains manually initiated and capped at three rounds/nine total attempts. Cancellation is terminal/non-retryable. T0175 is done. T0175 -> T0176 remains unreviewed.\nT0175-A006 (2026-11-02): V 3.0.805 Step Three quality passed all 322 Python tests, compileall and graph guard (230 tasks / 422 edges, zero errors, one pre-existing T0001 UNMAPPED_DEPENDENCY warning). The supplemental tests/test_android_manual_retry_contract.py passed all five tests and satisfies the validator's required tests/ evidence prefix. Full product CI V 3.0.804 also passed on unchanged Android/Windows production source blobs, including Android KtLint/APK/183 JVM tests/Protobuf, Windows WPF/startup/security/DPAPI and HostLifecycle. V 3.0.805 container smoke passed. T0175 is done. T0175 -> T0176 remains unreviewed.",
       "execution_summary": {
-        "attempt_count": 5,
+        "attempt_count": 6,
         "failed_attempt_count": 3,
-        "last_attempt_id": "T0175-A005-v3.0.805-test-evidence-repair",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "T0175-A006-v3.0.805-exact-head-evidence-acceptance",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt",
           "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
@@ -48723,7 +48723,8 @@
           "5eef2ac3841cc3e40f83965cc1233bfb95a30245",
           "7f8c4f11e4dc55892061f26872ab437f9002104f",
           "aed7d2c3c49e04b596c457e5f38f680d88027b04",
-          "1010fe74f1a3722026148c1a291bca7dd414e1a3"
+          "1010fe74f1a3722026148c1a291bca7dd414e1a3",
+          "6ad288699d1889003849d6fef4da5dab48f1fab1"
         ],
         "tests_passed": [
           "V 3.0.803 exact-head Android KtLint passed.",
@@ -48735,7 +48736,11 @@
           "V 3.0.803 Windows WPF Release build, startup smoke, security/policy/capability and DPAPI peer-trust checks passed.",
           "V 3.0.803 HostLifecycle unit/integration job passed.",
           "V 3.0.803 Step Three quality gate passed: 317 Python tests, compileall, graph and recorded-output/evidence validation.",
-          "V 3.0.803 Rendezvous production container build and non-root HTTP contract smoke passed."
+          "V 3.0.803 Rendezvous production container build and non-root HTTP contract smoke passed.",
+          "V 3.0.805 supplemental tests/test_android_manual_retry_contract.py: 5 source-contract tests passed.",
+          "V 3.0.805 Step Three quality gate: 322 Python tests passed, compileall passed, graph guard 230 tasks / 422 edges / 0 errors (one existing T0001 metadata warning).",
+          "V 3.0.804 full product workflow passed on the unchanged Android/Windows production source blobs carried into V 3.0.805: Android KtLint, APK, 183 JVM tests, Protobuf Java/Kotlin, Windows WPF/startup/security/DPAPI and HostLifecycle.",
+          "V 3.0.805 Rendezvous production container build and non-root HTTP smoke passed."
         ],
         "tests_failed": [
           "V 3.0.801: Step Three Python quality had 1 failure out of 317 because tests/test_claims_audit.py required the exact 'No inference payload was sent' disclosure phrase; restored in V 3.0.802.",
@@ -48744,7 +48749,7 @@
           "V 3.0.804 graph guard failed DONE_WITHOUT_TEST_FILE_EVIDENCE because the accepted evidence convention requires a top-level tests/ or test/ path; the real Android JVM source under src/.../src/test/ did not satisfy the guard."
         ],
         "blocked_reason": null,
-        "reopened_reason": "V 3.0.804 graph guard rejected the test evidence path convention; adding a top-level tests/ source-contract test and rerunning the guard.",
+        "reopened_reason": null,
         "contract_revalidation": {
           "state": "passed",
           "triggering_contracts": [
@@ -48993,6 +48998,51 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Inspect the exact V 3.0.805 Step Three quality job. Only after the new tests and graph guard pass should T0175 be marked done again."
+        },
+        {
+          "attempt_id": "T0175-A006-v3.0.805-exact-head-evidence-acceptance",
+          "started_at": "2026-11-02T09:12:33Z",
+          "ended_at": "2026-11-02T09:12:46Z",
+          "result": "succeeded",
+          "summary": "The V 3.0.805 repository quality gate completed successfully after adding the validator-compatible tests/ evidence path. All 322 Python tests passed, Python compileall passed, and graph_guard validated 230 tasks / 422 edges with 0 errors (one pre-existing UNMAPPED_DEPENDENCY metadata warning on T0001). The five supplemental Android manual-retry source-contract tests passed. The full V 3.0.804 product workflow also completed successfully on the unchanged Android/Windows production source blobs: Android KtLint/APK/JVM/Protobuf, Windows WPF build/startup/security/DPAPI, and HostLifecycle all passed. The V 3.0.805 Rendezvous container build and HTTP smoke passed. V 3.0.805 only added a Python contract test and evidence/ledger entries; Kotlin production sources are unchanged from the fully tested V 3.0.804 product revision. T0175 is now closed as done.",
+          "changed_files": [
+            "tests/test_android_manual_retry_contract.py",
+            "step three/project-graph.md",
+            "step three/T0175/execution-report.md",
+            "step three/T0175/evidence/verification.md"
+          ],
+          "commit_sha": "6ad288699d1889003849d6fef4da5dab48f1fab1",
+          "tests": [
+            {
+              "name": "Supplemental Android manual-retry source contract — V 3.0.805",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41418767399",
+              "summary": "Five new Python tests passed as part of the 322-test suite; they verify aggregate request states, same logical request ID/fresh attempt IDs and budget caps, latest-outcome filtering and cancellation terminal behavior, explicit Compose Retry wiring, and the real JVM regression test references."
+            },
+            {
+              "name": "Step Three quality gate — V 3.0.805",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41418767399",
+              "summary": "322 Python tests passed; compileall passed; graph guard validated 230 tasks / 422 edges with zero errors and one existing T0001 unmapped-metadata warning."
+            },
+            {
+              "name": "Android product build — V 3.0.804 production sources unchanged in V 3.0.805",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41418163737",
+              "summary": "Exact product workflow completed successfully: Android KtLint, debug APK, 183 JVM tests and generated Protobuf Java/Kotlin; Windows WPF/startup/security/DPAPI; HostLifecycle. The three Android production/test blobs are unchanged between V 3.0.804 and V 3.0.805."
+            },
+            {
+              "name": "Rendezvous container build and HTTP smoke — V 3.0.805",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41418767397",
+              "summary": "Production image build and non-root HTTP contract smoke passed."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "T0175 is complete. Before starting T0176, review its incoming edges and evidence; preserve T0175 -> T0176 as unreviewed until the actual downstream contract is inspected."
         }
       ]
     },

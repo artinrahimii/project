@@ -69,3 +69,14 @@ T0175 is accepted for the real Android UI/ViewModel failure-status and explicit 
 - Added the path to T0175 `actual_output_paths` and `evidence`.
 - The new source test verifies aggregate status exposure, same-requestId/fresh-attemptId bounded manual retry, latest-outcome filtering, cancellation terminal behavior, explicit Compose Retry callback and the exact passing Android JVM regression names.
 - The exact V 3.0.805 Python/graph quality run is pending. T0175 is intentionally retained as `in_progress` until the new tests and graph guard pass.
+
+
+## A006 — final evidence gate on V 3.0.805
+
+- Added `tests/test_android_manual_retry_contract.py` and verified it exists in the V 3.0.805 tree. Its five tests passed in the exact V 3.0.805 quality workflow.
+- [Step Three quality gate](https://github.com/artinrahimii/project/actions/runs/41418767399): **322 tests, zero failures**, Python compileall passed, Graph guard: 230 tasks / 422 edges, **0 errors**, one existing T0001 `UNMAPPED_DEPENDENCY` warning.
+- [Product workflow V 3.0.804](https://github.com/artinrahimii/project/actions/runs/41418163737) completed successfully while carrying the exact same Android production/ViewModel/Compose/JVM source blobs as V 3.0.805. Android lint/APK/183 JVM tests/Protobuf, Windows WPF build/startup/security/DPAPI and HostLifecycle passed.
+- [Rendezvous container V 3.0.805](https://github.com/artinrahimii/project/actions/runs/41418767397): production container and non-root HTTP smoke passed.
+- A004's `DONE_WITHOUT_TEST_FILE_EVIDENCE` was caused by the validator's explicit `tests/` or `test/` evidence prefix. A005 added a matching real test source; A006 confirms the exact-head gate passed.
+- The T0174 and T0160 incoming edges remain unchanged and validated. The outgoing T0175 -> T0176 edge remains unchanged and unreviewed.
+- Final task state: `T0175 = done`.

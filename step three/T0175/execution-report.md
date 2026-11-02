@@ -59,3 +59,13 @@ The product-level acceptance from V 3.0.803 remains valid. On V 3.0.804, the Ste
 ## A005 — V 3.0.805 supplemental evidence repair (pending exact-head CI)
 
 Added `tests/test_android_manual_retry_contract.py`, a real Python source-contract test that reads the production Android ViewModel, Compose screen and Android JVM test source. It checks the aggregate status states, same-request/fresh-attempt bounded retry wiring, latest-outcome/success/cancellation handling, explicit manual UI callback, and the existing passing JVM retry/cancellation regression names. The file is included in both `actual_output_paths` and `evidence` to satisfy the graph guard's explicit tests/ convention. This supplemental source-contract suite is not a replacement for the 183 real Android JVM tests. The exact V 3.0.805 Python/graph CI result is pending; T0175 remains `in_progress` until that gate passes.
+
+
+## A006 — V 3.0.805 final evidence acceptance
+
+- Added and executed the supplemental top-level source-contract test `tests/test_android_manual_retry_contract.py` (5 tests); this is additional repository-level evidence and does not replace the real Android JVM acceptance.
+- [Step Three quality gate V 3.0.805](https://github.com/artinrahimii/project/actions/runs/41418767399) passed all **322 Python tests**, `compileall`, and graph validation: 230 tasks / 422 edges, zero errors and one pre-existing T0001 metadata warning.
+- [Full product workflow V 3.0.804](https://github.com/artinrahimii/project/actions/runs/41418163737) completed successfully on the unchanged production Kotlin blobs carried into V 3.0.805: Android KtLint, APK, 183 JVM tests, Protobuf Java/Kotlin, Windows WPF/startup/security/DPAPI, and HostLifecycle all passed.
+- [Rendezvous container V 3.0.805](https://github.com/artinrahimii/project/actions/runs/41418767397) passed production image build and non-root HTTP smoke.
+- A004's graph-evidence convention failure remains preserved; A005 records the supplemental evidence repair. No dependency edge was changed.
+- **Final result: T0175 = done.** The outgoing `T0175 -> T0176` edge is still `unreviewed` and must be reviewed before starting the downstream task.
