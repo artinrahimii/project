@@ -30,7 +30,7 @@ public partial class MainWindow : Window
     private readonly LocalInferenceProcessLauncher _localInferenceProcessLauncher = new();
     private LocalHostSettings _settings = LocalHostSettings.Defaults;
     private readonly HostInferenceSession _session;
-    private readonly ChatConversation _conversation = new();
+    private readonly ChatConversation _conversation = new(HostConversationRetentionPolicy.Default);
     private readonly HostRequestCoordinator _peerRequestCoordinator = new();
     private readonly AuthenticatedRequestReplayGuard _peerRequestReplayGuard = new();
     private PeerAnnouncementHostLifecycle? _peerParticipationService;

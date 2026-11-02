@@ -15,6 +15,13 @@ public sealed class ChatConversation
     private readonly List<ConversationMessage> _messages = [];
     private long _nextSequence = 1;
 
+    public ChatConversation(HostConversationRetentionPolicy? retentionPolicy = null)
+    {
+        RetentionPolicy = retentionPolicy ?? HostConversationRetentionPolicy.Default;
+    }
+
+    public HostConversationRetentionPolicy RetentionPolicy { get; }
+
     public IReadOnlyList<ConversationMessage> Messages => _messages.AsReadOnly();
 
     public void Clear()

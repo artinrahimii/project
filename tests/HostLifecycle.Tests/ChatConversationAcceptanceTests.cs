@@ -4,7 +4,14 @@ public static class ChatConversationAcceptanceTests
 {
     public static void Run()
     {
-        var conversation = new ChatConversation();
+        var retentionPolicy = HostConversationRetentionPolicy.Default;
+        if (retentionPolicy.Scope != HostConversationRetentionScope.ProcessSessionOnly ||
+            retentionPolicy.PersistsPromptAndResponse)
+            throw new Exception("The default host must not persist prompt or response content.");
+
+        var conversation = new ChatConversation(retentionPolicy);
+        if (!ReferenceEquals(conversation.RetentionPolicy, retentionPolicy))
+            throw new Exception("ChatConversation must use the supplied host retention policy.");
         var user = conversation.Add(ConversationMessageRole.User, "Hello");
         var assistant = conversation.Add(ConversationMessageRole.Assistant, "Hello from the local model");
         var system = conversation.Add(ConversationMessageRole.System, "Inference cancelled");
@@ -33,6 +40,12 @@ public static class ChatConversationAcceptanceTests
         var afterClear = conversation.Add(ConversationMessageRole.User, "New session");
         if (afterClear.Sequence != 1 || conversation.Messages.Count != 1)
             throw new Exception("A cleared session must restart its sequence at one.");
+
+        var separateSession = new ChatConversation();
+        if (separateSession.Messages.Count != 0)
+            throw new Exception("A new host session must not restore a previous session's prompt or response content.");
+        if (separateSession.RetentionPolicy.PersistsPromptAndResponse)
+            throw new Exception("The default host retention policy must remain session-only.");
         Console.WriteLine("PASS: in-memory conversation preserves deterministic order, roles, and content.");
     }
 }

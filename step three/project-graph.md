@@ -49502,20 +49502,48 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0177 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال انجام",
+      "actual_output_paths": [
+        "src/Host.Application/Chat/HostConversationRetentionPolicy.cs",
+        "src/Host.Application/Chat/ChatConversation.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "tests/HostLifecycle.Tests/ChatConversationAcceptanceTests.cs",
+        "tests/test_host_conversation_retention_policy.py",
+        "docs/security.md",
+        "step three/T0178/execution-report.md",
+        "step three/T0178/evidence/verification.md",
+        "step three/project-graph.md"
+      ],
       "expected_output_paths": [
         "src/Shared.Security/ + src/Host.Windows/ + src/Client.Android/ + docs/security.md"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "src/Host.Application/Chat/HostConversationRetentionPolicy.cs",
+        "src/Host.Application/Chat/ChatConversation.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "tests/HostLifecycle.Tests/ChatConversationAcceptanceTests.cs",
+        "tests/test_host_conversation_retention_policy.py",
+        "docs/security.md",
+        "step three/T0178/evidence/verification.md"
+      ],
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0178-A001 (2026-11-02T11:47:11.868Z): implemented explicit process-session-only host policy and runtime/source regression checks. Exact-head CI pending; status remains in_progress until those runs are inspected.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0178-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Host.Application/Chat/HostConversationRetentionPolicy.cs",
+          "src/Host.Application/Chat/ChatConversation.cs",
+          "src/Host.Windows/MainWindow.xaml.cs",
+          "tests/HostLifecycle.Tests/ChatConversationAcceptanceTests.cs",
+          "tests/test_host_conversation_retention_policy.py",
+          "docs/security.md",
+          "step three/T0178/execution-report.md",
+          "step three/T0178/evidence/verification.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
@@ -49528,7 +49556,33 @@
           "review_evidence": []
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0178-A001",
+          "started_at": "2026-11-02T11:47:11.868Z",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Implemented an immutable process-session-only host retention policy, connected it to WPF ChatConversation, added HostLifecycle and Python regression checks, and documented the bounded claim. Exact-head CI has not yet run.",
+          "changed_files": [
+            "src/Host.Application/Chat/HostConversationRetentionPolicy.cs",
+            "src/Host.Application/Chat/ChatConversation.cs",
+            "src/Host.Windows/MainWindow.xaml.cs",
+            "tests/HostLifecycle.Tests/ChatConversationAcceptanceTests.cs",
+            "tests/test_host_conversation_retention_policy.py",
+            "docs/security.md",
+            "step three/T0178/execution-report.md",
+            "step three/T0178/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "After pushing, inspect exact-head Windows/Android product build, Step Three quality gate and Rendezvous container checks. On passing results, finalize T0178 and fill the commit/test evidence."
+        }
+      ]
     },
     {
       "id": "T0179",
@@ -56328,10 +56382,16 @@
       "from": "T0177",
       "to": "T0178",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0177 verifies Android host selection and per-request attempt budgets. The host-side ChatConversation retention policy does not consume T0177's test output or contract. The existing order is retained as a conservative sequencing constraint; this is not a technical dependency inferred from type=blocks.",
+      "validation_status": "validated",
+      "evidence": [
+        "step three/T0177/execution-report.md",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt",
+        "tests/test_android_inference_attempt_budget_acceptance.py",
+        "src/Host.Application/Chat/ChatConversation.cs",
+        "src/Host.Windows/MainWindow.xaml.cs"
+      ]
     },
     {
       "from": "T0178",
@@ -61680,9 +61740,25 @@
         "step three/T0160/evidence/verification.md"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-11-02T11:47:11.868Z",
+      "edge_from": "T0177",
+      "edge_to": "T0178",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "reason": "T0177 verifies Android host selection and per-request attempt budgets. The host-side ChatConversation retention policy does not consume T0177's test output or contract. The existing order is retained as a conservative sequencing constraint; this is not a technical dependency inferred from type=blocks.",
+      "evidence": [
+        "step three/T0177/execution-report.md",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt",
+        "tests/test_android_inference_attempt_budget_acceptance.py",
+        "src/Host.Application/Chat/ChatConversation.cs",
+        "src/Host.Windows/MainWindow.xaml.cs"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-11-02T11:33:08.372Z",
+  "updated_at": "2026-11-02T11:47:11.868Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",
