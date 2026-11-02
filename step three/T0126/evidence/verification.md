@@ -261,3 +261,14 @@ The live acceptance gap remains: `MainActivity.requestScreen` is prepare-only, a
 - JDK was Temurin 21.0.13; Android platform SDK 36; Robolectric 4.17. Test-report artifact [13096810722](https://github.com/artinrahimii/project/actions/runs/41338513498/artifacts/13096810722), failing job [124943343889](https://github.com/artinrahimii/project/actions/runs/41338513498/jobs/124943343889).
 - Generated Protobuf Java/Kotlin checks were skipped after the failing JVM task. Windows WPF, HostLifecycle and Rendezvous passed.
 - Added nine Robolectric-documented `--add-opens` flags to the forked Android unit-test JVM. This is test-runtime configuration only; it does not alter application APIs or bytecode targets. Exact-head rerun pending.
+
+## Exact V 3.0.797 / T0126-A016 — live request/feedback acceptance
+
+- Base commit: `45e9c2941393e0e86e116c214335956289921c12`.
+- `MainActivity.kt`: production Compose request screen calls `discoverPeers` and `sendRequest`, and renders the availability/network messages plus correlated host response cards.
+- `RequestViewModel.kt`: fresh authenticated selection result is used for the actual dispatch; an empty candidate list returns without sending any inference payload.
+- Android product job 124946081786 passed KtLint, `assembleDebug`, `testDebugUnitTest` and generated Protobuf Java/Kotlin verification.
+- `RequestViewModelTest.discoveryDoesNotTrustPeersAndOnlyExplicitlyApprovedPeersReceiveRequests`: zero-host no-send and one-host explicitly trusted continuation passed.
+- `HostSelectionFeedbackTest`: zero/one/two/three count behavior passed. `InferenceAttemptDispatcherTest`: zero-host rejection and 1/2/3-host dispatch bounds passed.
+- Step Three quality run 41339423909 passed 317 Python tests and graph/evidence validation. Windows WPF/HostLifecycle and Rendezvous container/HTTP-smoke jobs also passed.
+- External two-node / independent-network acceptance remains T0128 and is not included in this completion claim.

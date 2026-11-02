@@ -336,7 +336,7 @@ class AndroidInferenceRequestRuntime private constructor(
      * peer stream exists for them. The caller must use the same request ID and attempt list
      * returned by dispatchRound; this method does not rediscover or guess hosts.
      */
-    suspend fun cancelSelectedHosts(
+    override suspend fun cancelSelectedHosts(
         requestId: String,
         selectedAttempts: List<InferenceHostAttempt>,
     ): List<InferenceAttemptCancellationResult> {

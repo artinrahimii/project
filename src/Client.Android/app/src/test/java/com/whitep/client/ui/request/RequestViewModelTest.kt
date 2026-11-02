@@ -8,12 +8,14 @@ import com.whitep.client.requests.DistributedRequest
 import com.whitep.client.requests.HostCandidate
 import com.whitep.client.requests.HostSelectionFeedback
 import com.whitep.client.requests.HostSelectionResult
+import com.whitep.client.requests.InferenceAttemptCancellationResult
 import com.whitep.client.requests.InferenceAttemptSubmissionStatus
 import com.whitep.client.requests.InferenceHostAttempt
 import com.whitep.client.requests.InferenceRoundDispatchResult
 import com.whitep.client.requests.InferenceRoundResponseCollection
 import com.whitep.client.requests.RequestExecutionGateway
 import com.whitep.client.requests.RequestExecutionGatewayFactory
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -224,6 +226,58 @@ class RequestViewModelTest {
     }
 
     @Test
+    fun cancelActionSendsCorrelatedCancellationForEveryQueuedAttemptFromTheLiveDispatch() {
+        val gateway =
+            FakeRequestExecutionGateway(
+                peerIds = listOf("peer-a", "peer-b", "peer-c"),
+            )
+        gateway.holdRoundResponses = true
+        val activeViewModel =
+            RequestViewModel(
+                repository = InMemoryClientRequestRepository(),
+                operationScope = commandScope,
+                clockMillis = { 20_000L },
+                runtimeFactory = RequestExecutionGatewayFactory { _, _ -> gateway },
+            )
+
+        activeViewModel.discoverPeers(
+            context = RuntimeEnvironment.getApplication(),
+            rendezvousServiceUrl = "https://directory.example.test",
+        )
+        gateway.peerIds.forEach(activeViewModel::trustPeerAfterExplicitConfirmation)
+        activeViewModel.sendRequest("cancel this request", "local/test-model", 64)
+
+        assertTrue(activeViewModel.uiState.value.isSendingRequest)
+        assertTrue(activeViewModel.uiState.value.canCancelRequest)
+        assertEquals(gateway.peerIds, gateway.sentHostIds)
+
+        activeViewModel.cancelCurrentRequest()
+
+        assertEquals(1, gateway.cancellationCallCount)
+        assertTrue(gateway.lastCancellationRequestId.isNotBlank())
+        assertEquals(
+            listOf("attempt-1", "attempt-2", "attempt-3"),
+            gateway.lastCancelledAttempts.map { attempt -> attempt.attemptId },
+        )
+        assertEquals(gateway.peerIds, gateway.lastCancelledAttempts.map { attempt -> attempt.ephemeralHostId })
+        assertTrue(gateway.lastCancellationResults.all { result -> result.cancellationSent })
+        assertFalse(activeViewModel.uiState.value.canCancelRequest)
+        assertTrue(
+            activeViewModel.uiState.value.networkStatusMessage.orEmpty()
+                .contains("Cancellation requests sent to all 3 queued host attempts."),
+        )
+
+        gateway.releaseRoundResponses.complete(Unit)
+        assertFalse(activeViewModel.uiState.value.isSendingRequest)
+        assertEquals(3, activeViewModel.uiState.value.hostResponses.size)
+        assertTrue(
+            activeViewModel.uiState.value.hostResponses.all { response ->
+                response.outcome == HostResponseOutcome.CANCELLED
+            },
+        )
+    }
+
+    @Test
     fun clearingDirectorySessionRemovesItsPeerListAndClosesTheGateway() {
         val gateway = FakeRequestExecutionGateway()
         val activeViewModel =
@@ -273,19 +327,34 @@ class RequestViewModelTest {
         const val MODEL_ID = "local/model-1"
     }
 
-    private class FakeRequestExecutionGateway : RequestExecutionGateway {
-        val peerId = "peer-test-01"
+    private class FakeRequestExecutionGateway(
+        val peerIds: List<String> = listOf("peer-test-01"),
+    ) : RequestExecutionGateway {
+        init {
+            require(peerIds.isNotEmpty() && peerIds.distinct().size == peerIds.size)
+        }
+
+        val peerId = peerIds.first()
         val trustedPeers = mutableSetOf<String>()
         var dispatchCount = 0
+        var cancellationCallCount = 0
+        var lastCancellationRequestId = ""
+        var lastCancelledAttempts: List<InferenceHostAttempt> = emptyList()
+        var lastCancellationResults: List<InferenceAttemptCancellationResult> = emptyList()
+        val cancelledAttemptIds = mutableSetOf<String>()
+        var holdRoundResponses = false
+        val releaseRoundResponses = CompletableDeferred<Unit>()
         var closed = false
         var sentHostIds: List<String> = emptyList()
 
-        private val endpoint =
-            RendezvousPeerEndpoint(
-                peerId = peerId,
-                tcpMultiaddresses = listOf("/ip4/127.0.0.1/tcp/4001/p2p/$peerId"),
-                expiresAtUtc = Instant.parse("2099-01-01T00:00:00Z"),
-            )
+        private val endpoints =
+            peerIds.map { id ->
+                RendezvousPeerEndpoint(
+                    peerId = id,
+                    tcpMultiaddresses = listOf("/ip4/127.0.0.1/tcp/4001/p2p/$id"),
+                    expiresAtUtc = Instant.parse("2099-01-01T00:00:00Z"),
+                )
+            }
 
         override fun isPeerTrusted(peerId: String): Boolean = peerId in trustedPeers
 
@@ -301,7 +370,7 @@ class RequestViewModelTest {
             trustedPeers.remove(peerId)
         }
 
-        override suspend fun discoverPeersForTrust(): List<RendezvousPeerEndpoint> = listOf(endpoint)
+        override suspend fun discoverPeersForTrust(): List<RendezvousPeerEndpoint> = endpoints
 
         override suspend fun discoverAndSelectReachableHosts(
             request: org.whitep.shared.contracts.v1.InferenceRequest,
@@ -309,11 +378,10 @@ class RequestViewModelTest {
             maxHosts: Int,
         ): HostSelectionResult {
             val candidates =
-                if (peerId in trustedPeers && peerId !in excludedEphemeralHostIds && maxHosts > 0) {
-                    listOf(candidate())
-                } else {
-                    emptyList()
-                }
+                peerIds
+                    .filter { id -> id in trustedPeers && id !in excludedEphemeralHostIds }
+                    .take(maxHosts)
+                    .map(::candidate)
             return HostSelectionResult(
                 candidates = candidates,
                 feedback = HostSelectionFeedback(availableHostCount = candidates.size),
@@ -343,19 +411,49 @@ class RequestViewModelTest {
             )
         }
 
+        override suspend fun cancelSelectedHosts(
+            requestId: String,
+            selectedAttempts: List<InferenceHostAttempt>,
+        ): List<InferenceAttemptCancellationResult> {
+            cancellationCallCount++
+            lastCancellationRequestId = requestId
+            lastCancelledAttempts = selectedAttempts.toList()
+            cancelledAttemptIds.addAll(
+                selectedAttempts
+                    .filter { attempt -> attempt.submissionStatus == InferenceAttemptSubmissionStatus.QUEUED }
+                    .map { attempt -> attempt.attemptId },
+            )
+            lastCancellationResults =
+                selectedAttempts.map { attempt ->
+                    InferenceAttemptCancellationResult(
+                        requestId = requestId,
+                        attemptId = attempt.attemptId,
+                        ephemeralHostId = attempt.ephemeralHostId,
+                        cancellationSent = attempt.attemptId in cancelledAttemptIds,
+                    )
+                }
+            return lastCancellationResults
+        }
+
         override suspend fun awaitRoundResponses(
             requestId: String,
             attempts: List<InferenceHostAttempt>,
-        ): InferenceRoundResponseCollection =
-            InferenceRoundResponseCollection(
+        ): InferenceRoundResponseCollection {
+            if (holdRoundResponses) releaseRoundResponses.await()
+            return InferenceRoundResponseCollection(
                 responses =
                     attempts.map { attempt ->
                         inferenceResponse {
                             this.requestId = requestId
                             attemptId = attempt.attemptId
                             ephemeralHostId = attempt.ephemeralHostId
-                            outcome = InferenceOutcome.INFERENCE_OUTCOME_SUCCEEDED
-                            outputText = "host response"
+                            outcome =
+                                if (attempt.attemptId in cancelledAttemptIds) {
+                                    InferenceOutcome.INFERENCE_OUTCOME_CANCELLED
+                                } else {
+                                    InferenceOutcome.INFERENCE_OUTCOME_SUCCEEDED
+                                }
+                            outputText = if (attempt.attemptId in cancelledAttemptIds) "" else "host response"
                             completedAtUnixMs = 19_999L
                             modelId = MODEL_ID
                             roundId = "round-001"
@@ -363,12 +461,13 @@ class RequestViewModelTest {
                     },
                 failures = emptyList(),
             )
+        }
 
         override fun close() {
             closed = true
         }
 
-        private fun candidate(): HostCandidate {
+        private fun candidate(peerId: String): HostCandidate {
             val model =
                 ModelCapability
                     .newBuilder()

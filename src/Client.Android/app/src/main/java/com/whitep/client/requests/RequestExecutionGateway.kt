@@ -36,6 +36,11 @@ interface RequestExecutionGateway : Closeable {
         protocolVersion: String,
     ): InferenceRoundDispatchResult
 
+    suspend fun cancelSelectedHosts(
+        requestId: String,
+        selectedAttempts: List<InferenceHostAttempt>,
+    ): List<InferenceAttemptCancellationResult>
+
     suspend fun awaitRoundResponses(
         requestId: String,
         attempts: List<InferenceHostAttempt>,

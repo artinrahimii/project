@@ -13,6 +13,9 @@ import com.whitep.client.requests.AndroidRequestExecutionGatewayFactory
 import com.whitep.client.requests.DistributedRequest
 import com.whitep.client.requests.FirstReleaseInferenceLimits
 import com.whitep.client.requests.HostSelectionFeedback
+import com.whitep.client.requests.InferenceAttemptCancellationResult
+import com.whitep.client.requests.InferenceAttemptSubmissionStatus
+import com.whitep.client.requests.InferenceHostAttempt
 import com.whitep.client.requests.InferenceRoundDispatchResult
 import com.whitep.client.requests.InferenceRoundResponseFailure
 import com.whitep.client.requests.InferenceRoundResponseFailureReason
@@ -68,6 +71,8 @@ data class RequestUiState(
     val discoveredPeers: List<RequestPeerUiState> = emptyList(),
     val isDiscoveringPeers: Boolean = false,
     val isSendingRequest: Boolean = false,
+    val canCancelRequest: Boolean = false,
+    val isCancellingRequest: Boolean = false,
     val networkStatusMessage: String? = null,
 ) {
     val statusMessage: String
@@ -84,7 +89,14 @@ private data class RequestNetworkState(
     val discoveredPeers: List<RequestPeerUiState> = emptyList(),
     val isDiscoveringPeers: Boolean = false,
     val isSendingRequest: Boolean = false,
+    val canCancelRequest: Boolean = false,
+    val isCancellingRequest: Boolean = false,
     val message: String? = null,
+)
+
+private data class ActiveRequestCancellation(
+    val requestId: String,
+    val attempts: List<InferenceHostAttempt>,
 )
 
 /**
@@ -108,6 +120,7 @@ class RequestViewModel(
     private val responseLock = Any()
     private var requestRuntime: RequestExecutionGateway? = null
     private var requestRuntimeUri: URI? = null
+    private var activeRequestCancellation: ActiveRequestCancellation? = null
 
     val uiState: StateFlow<RequestUiState> =
         combine(
@@ -124,6 +137,8 @@ class RequestViewModel(
                 discoveredPeers = network.discoveredPeers,
                 isDiscoveringPeers = network.isDiscoveringPeers,
                 isSendingRequest = network.isSendingRequest,
+                canCancelRequest = network.canCancelRequest,
+                isCancellingRequest = network.isCancellingRequest,
                 networkStatusMessage = network.message,
             )
         }.stateIn(
@@ -222,6 +237,7 @@ class RequestViewModel(
 
     /** Drops a configured directory session when its URL is edited. */
     fun clearDirectorySession() {
+        activeRequestCancellation = null
         requestRuntime?.close()
         requestRuntime = null
         requestRuntimeUri = null
@@ -296,6 +312,8 @@ class RequestViewModel(
             mutableNetworkState.value =
                 mutableNetworkState.value.copy(
                     isSendingRequest = true,
+                    canCancelRequest = false,
+                    isCancellingRequest = false,
                     message = "Preparing a request for explicitly trusted, compatible peers…",
                 )
             try {
@@ -374,6 +392,18 @@ class RequestViewModel(
                         return@launch
                     }
                     is InferenceRoundDispatchResult.Dispatched -> {
+                        val hasQueuedAttempts =
+                            dispatch.attempts.any { attempt ->
+                                attempt.submissionStatus == InferenceAttemptSubmissionStatus.QUEUED
+                            }
+                        activeRequestCancellation =
+                            if (hasQueuedAttempts) {
+                                ActiveRequestCancellation(distributedRequest.requestId, dispatch.attempts.toList())
+                            } else {
+                                null
+                            }
+                        mutableNetworkState.value =
+                            mutableNetworkState.value.copy(canCancelRequest = hasQueuedAttempts)
                         val collection =
                             gateway.awaitRoundResponses(
                                 requestId = distributedRequest.requestId,
@@ -409,8 +439,55 @@ class RequestViewModel(
                         message = "Request execution failed: ${safeMessage(exception)}",
                     )
             } finally {
+                activeRequestCancellation = null
                 mutableNetworkState.value =
-                    mutableNetworkState.value.copy(isSendingRequest = false)
+                    mutableNetworkState.value.copy(
+                        isSendingRequest = false,
+                        canCancelRequest = false,
+                        isCancellingRequest = false,
+                    )
+            }
+        }
+    }
+
+    /** Sends cancellation to every queued attempt from the exact active dispatch result. */
+    fun cancelCurrentRequest() {
+        val active = activeRequestCancellation ?: return
+        if (!mutableNetworkState.value.canCancelRequest || mutableNetworkState.value.isCancellingRequest) return
+
+        commandsScope.launch {
+            if (activeRequestCancellation != active || mutableNetworkState.value.isCancellingRequest) return@launch
+            mutableNetworkState.value =
+                mutableNetworkState.value.copy(
+                    canCancelRequest = false,
+                    isCancellingRequest = true,
+                    message = "Sending cancellation requests to the selected hosts…",
+                )
+            try {
+                val results = requireRuntime().cancelSelectedHosts(active.requestId, active.attempts)
+                val queuedCount =
+                    active.attempts.count { attempt ->
+                        attempt.submissionStatus == InferenceAttemptSubmissionStatus.QUEUED
+                    }
+                val sentCount = results.count(InferenceAttemptCancellationResult::cancellationSent)
+                val message =
+                    if (sentCount == queuedCount) {
+                        "Cancellation requests sent to all $queuedCount queued host attempts. " +
+                            "Waiting for host responses."
+                    } else {
+                        "Cancellation requests sent to $sentCount of $queuedCount queued host attempts; " +
+                            "the remaining attempts may have completed or could not accept cancellation."
+                    }
+                mutableNetworkState.value = mutableNetworkState.value.copy(message = message)
+            } catch (cancellation: CancellationException) {
+                throw cancellation
+            } catch (exception: Exception) {
+                mutableNetworkState.value =
+                    mutableNetworkState.value.copy(
+                        message = "Cancellation request failed: ${safeMessage(exception)}",
+                    )
+            } finally {
+                mutableNetworkState.value = mutableNetworkState.value.copy(isCancellingRequest = false)
             }
         }
     }

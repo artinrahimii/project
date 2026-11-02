@@ -27388,8 +27388,8 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0125 و T0115 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "in_progress",
-      "status_fa": "در حال انجام",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "actual_output_paths": [
         "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostSelectionFeedback.kt",
         "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
@@ -27460,12 +27460,12 @@
         "tests/test_readme_build_commands.py",
         "src/Client.Android/app/build.gradle.kts"
       ],
-      "notes": "The expected Shared.Networking/Windows path is not the actual consumer in this repository: candidate selection and dispatch live in the Android app, and the user-facing request state/Compose screen lives under com.whitep.client.ui.request. Implement at those real boundaries. Policy: one or two validated hosts remain usable with an exact shortage warning; zero hosts is a no-send NO_SELECTED_HOSTS outcome. The MainActivity request screen is still a prepare-only preview and has no production caller for the new runtime feedback method; therefore keep this task in_progress until live discovery/dispatch feeds the UI. Do not claim a working end-to-end user notification yet.\n\nT0126-A001 (2026-11-01): Exact V 3.0.767 CI was inspected. Android KtLint and assembleDebug passed; JVM test compilation failed because RequestViewModelTest.kt omitted the HostSelectionFeedback import, so T0126 unit assertions and generated Protobuf verification did not run. Step Three's 312 Python tests and syntax check passed, but graph_guard failed because completed T0125 evidence lacked a tests/ source path. Windows WPF, HostLifecycle and Rendezvous container smoke passed. A002 adds the missing import and records test-source evidence for T0125. T0126 remains in_progress until repaired exact-head tests pass and a real request UI caller feeds live selection feedback.\n\nT0126-A002 exact V 3.0.768 CI result (2026-11-01): Android main/test KtLint, assembleDebug, compileDebugUnitTestKotlin, testDebugUnitTest and generated Protobuf Java/Kotlin verification passed; Windows WPF build/startup/security/DPAPI and policy/capability checks passed; HostLifecycle tests passed; the Step Three quality gate passed (312 Python tests, compileall and graph/evidence guard); Rendezvous container build/HTTP smoke passed. The missing import and T0125 evidence repairs are therefore verified on exact main V 3.0.768. T0126 remains in_progress: MainActivity.requestScreen is still prepare-only, Connections still says peer discovery is unavailable, and no production caller passes complete HostAnnouncement snapshots to selection/dispatch and then records the feedback. No live underfilled-host notification is claimed.\n\nT0126-A003 (2026-11-01T13:21:18.320Z): Exact V 3.0.769 source audit confirmed the remaining production integration blocker. MainActivity.requestScreen only invokes prepareRequest; no production caller invokes selectReachableHostsWithFeedback or recordHostSelectionFeedback. RendezvousPeerDirectoryClient returns metadata-only peerId/address/expiry; PeerAnnouncementHostLifecycle publishes only inference.v1. MainWindow.GetPeerRuntimeStatusAsync sets HostStatus state and activeRequests but omits models. HostCandidateSelector requires full HostAnnouncement capabilities and a fresh HostStatus with the matching model. No fabricated snapshot was introduced; task is blocked pending a real discovery/capability producer and request-screen integration.\n\nT0126-A004 (2026-11-01): Added a live model-capability source on the Windows host. LlamaCppServerBackend verifies the configured model from /v1/models and reads its actual n_ctx from GET /props; HostInferenceSession returns that snapshot only after a fresh Ready/readiness check; MainWindow reports protocol_version and includes the model only when verified. Added HostLifecycle tests. T0126 remains blocked: Android discovery and request-screen selection/dispatch integration are still missing.\nT0126-A005 (2026-11-01): Added RendezvousPeerDirectoryClient.discoverAll() to enumerate every unexpired metadata endpoint with a direct TCP route in stable PeerId order. It shares the existing bounded 16 KiB parser/cache and fail-closed refresh; resolve() now uses the same cache-refresh helper. Added a Robolectric/JVM regression proving stable discovery order, omission of a QUIC-only endpoint for this TCP client, and reuse of one directory fetch across discoverAll() and resolve(). This is a real directory API output but not yet a typed HostAnnouncement/capability source or a production request-screen caller. Exact-head Android KtLint/APK/JVM/Protobuf and product CI are pending. T0126 remains blocked.\nT0126-A005 exact V 3.0.779 CI reconciliation (2026-11-01): Android KtLint, assembleDebug, testDebugUnitTest (including discoversFreshPeersInStableIdentityOrderAndExcludesPeersWithoutTcpRoute), generated Protobuf Java/Kotlin, Windows WPF build/startup/security/DPAPI, HostLifecycle unit/integration, Step Three quality gate and Rendezvous container build/smoke all passed on exact main commit ee9692a3d34543dd159f48ca4ef72e29f5981db8. Android APK artifact 13087940513 uploaded. This validates the metadata directory API and test only; T0126 remains blocked until typed host capability/status, production request UI discovery/selection/dispatch and shortage feedback are integrated.\nT0126-A006: added the real authenticated discovery-to-candidate API and six focused JVM tests. Exact-head CI is pending; the task remains blocked because the Compose request UI still has no production discovery/dispatch/feedback caller.\nT0126-A007: corrected the two KtLint chain-method line breaks identified by the exact V 3.0.781 Android workflow. The full request UI/dispatch path remains absent; T0126 stays blocked.\nThe V 3.0.782 graph guard identified a counter/history mismatch: A006 is partial (one sub-check failed), not a fully failed attempt. failed_attempt_count was reconciled to the one historical result=failed.\nT0126-A008: replaced chained Protobuf Java builders in the new JVM test helpers with the repository's existing generated Protobuf Kotlin DSL style, addressing the four test-source KtLint findings. The behavioral assertions are unchanged.\nT0126-A009: removed the single unused ModelCapability import identified by exact V 3.0.784 test-source KtLint; no test logic or production code changed.\n\nT0126-A009 exact V 3.0.785 CI reconciliation: Android production/test KtLint, assembleDebug, testDebugUnitTest, generated Protobuf Java/Kotlin, Windows WPF build/startup/security/DPAPI, HostLifecycle, Step Three quality gate and Rendezvous container smoke all passed on 82bcc0d3ea50dc8bdaa64552273c45ffb979c562. This verifies the test-import repair only; A009 remained partial because the request-screen integration was still missing.\n\nT0126-A010 (2026-11-01T15:23:27.495Z): Implemented the missing Compose-to-runtime request path using an explicit HTTPS directory URL, metadata-only peer listing, user-confirmed trust/revoke, payload validation, fresh authenticated status-based selection, no-send when no candidate is selected, bounded dispatch and correlated response collection. Added injected-gateway ViewModel tests. A010 remains partial pending exact-head CI; tests have not yet run on this revision.\n\nExact V 3.0.787 A010 CI findings: Android KtLint parser failed at RequestViewModel.kt:201:90 due to a trailing comma after the final expression in an else block; Android APK/JVM/Protobuf checks were not reached. Step Three quality gate ran 317 Python tests and seven stale source-contract assertions failed because they expected the old prepare-only preview. Graph/syntax/evidence steps were skipped. Windows WPF, HostLifecycle and Rendezvous workflows passed. Corrected Kotlin syntax and replaced the seven obsolete preview assertions with checks for explicit trust, configured direct-peer requests, no-send on zero candidates, per-attempt response handling and the continuing privacy boundary. V 3.0.788 rerun pending.\n\nExact V 3.0.788 CI: 317 Python tests, Python syntax, graph structure and output/evidence validation all passed. Android main-source KtLint passed; test-source KtLint found 14 formatting diagnostics in RequestViewModelTest.kt (import order, chain-call line wrapping and one extra blank line). APK/JVM/Protobuf checks were not reached. Windows .NET interop fixture, WPF build/startup/security/DPAPI, HostLifecycle and Rendezvous passed. The fake-gateway tests were reformatted; V 3.0.789 rerun pending.\n\nExact V 3.0.789 CI: all 317 Python tests, syntax, graph and evidence passed. Android KtLint failed import order in five production Kotlin files and chain wrapping in RequestViewModel.kt:500; Android APK/JVM/Protobuf were not reached. Windows WPF build/startup/security/DPAPI, HostLifecycle and Rendezvous passed. Imports now follow case-sensitive lexicographic order with the java/javax/kotlin group last, chain expressions wrapped, source-contract import assertion fixed, and legacy expected ViewModel status aligned with current state. V 3.0.790 rerun pending.\n\nT0126-A013 (2026-11-01T18:48:25.015Z): Exact V 3.0.795 KtLint and Android assembleDebug passed, but testDebugUnitTest failed at Robolectric class initialization: Android SDK 36 requires Java 21 while the workflow configured Java 17. The uploaded Gradle report identifies this as a JDK/SDK mismatch, not a request-flow assertion failure. Generated Android Protobuf verification was skipped. Windows WPF/security/DPAPI, HostLifecycle, Step Three quality and Rendezvous checks passed. Updated product-build.yml Android setup-java to Temurin 21; exact-head full rerun is required. T0126 remains in_progress.\n\nT0126-A014 (2026-11-01T18:58:39.377Z): On exact V 3.0.796, Step Three quality ran 317 Python tests; two stale static assertions still required Java 17 after CI moved to JDK 21. Updated README/ADR and static assertions, retaining Java/Kotlin bytecode target 17. Other checks: Android lint/APK, Windows WPF, HostLifecycle and Rendezvous passed; Android JVM had a separate Robolectric module-access failure recorded in A015.\n\nT0126-A015 (2026-11-01T18:58:39.377Z): Exact V 3.0.796 Android JVM ran 180 tests; 11 RequestViewModelTest cases failed through a common Robolectric FileDescriptor interceptor IllegalAccessException because java.base did not export jdk.internal.access.SharedSecrets. Added nine Java module opens recommended for Robolectric Java 17+ to the forked Android test JVM. No app source or wire contract changes; exact-head retest pending. T0126 stays in_progress.",
+      "notes": "The expected Shared.Networking/Windows path is not the actual consumer in this repository: candidate selection and dispatch live in the Android app, and the user-facing request state/Compose screen lives under com.whitep.client.ui.request. Implement at those real boundaries. Policy: one or two validated hosts remain usable with an exact shortage warning; zero hosts is a no-send NO_SELECTED_HOSTS outcome. Superseded by T0126-A016 and exact V 3.0.797 verification: MainActivity.requestScreen invokes RequestViewModel.discoverPeers/sendRequest, renders hostAvailabilityMessage and correlated response cards, and the ViewModel passes fresh authenticated HostSelectionResult feedback into UI state. Zero candidates return before dispatch; one or two validated candidates remain dispatchable with an exact shortage message. Independent physical-node/network acceptance remains deferred to T0128.\n\nT0126-A001 (2026-11-01): Exact V 3.0.767 CI was inspected. Android KtLint and assembleDebug passed; JVM test compilation failed because RequestViewModelTest.kt omitted the HostSelectionFeedback import, so T0126 unit assertions and generated Protobuf verification did not run. Step Three's 312 Python tests and syntax check passed, but graph_guard failed because completed T0125 evidence lacked a tests/ source path. Windows WPF, HostLifecycle and Rendezvous container smoke passed. A002 adds the missing import and records test-source evidence for T0125. T0126 remains in_progress until repaired exact-head tests pass and a real request UI caller feeds live selection feedback.\n\nT0126-A002 exact V 3.0.768 CI result (2026-11-01): Android main/test KtLint, assembleDebug, compileDebugUnitTestKotlin, testDebugUnitTest and generated Protobuf Java/Kotlin verification passed; Windows WPF build/startup/security/DPAPI and policy/capability checks passed; HostLifecycle tests passed; the Step Three quality gate passed (312 Python tests, compileall and graph/evidence guard); Rendezvous container build/HTTP smoke passed. The missing import and T0125 evidence repairs are therefore verified on exact main V 3.0.768. T0126 remains in_progress: MainActivity.requestScreen is still prepare-only, Connections still says peer discovery is unavailable, and no production caller passes complete HostAnnouncement snapshots to selection/dispatch and then records the feedback. No live underfilled-host notification is claimed.\n\nT0126-A003 (2026-11-01T13:21:18.320Z): Exact V 3.0.769 source audit confirmed the remaining production integration blocker. MainActivity.requestScreen only invokes prepareRequest; no production caller invokes selectReachableHostsWithFeedback or recordHostSelectionFeedback. RendezvousPeerDirectoryClient returns metadata-only peerId/address/expiry; PeerAnnouncementHostLifecycle publishes only inference.v1. MainWindow.GetPeerRuntimeStatusAsync sets HostStatus state and activeRequests but omits models. HostCandidateSelector requires full HostAnnouncement capabilities and a fresh HostStatus with the matching model. No fabricated snapshot was introduced; task is blocked pending a real discovery/capability producer and request-screen integration.\n\nT0126-A004 (2026-11-01): Added a live model-capability source on the Windows host. LlamaCppServerBackend verifies the configured model from /v1/models and reads its actual n_ctx from GET /props; HostInferenceSession returns that snapshot only after a fresh Ready/readiness check; MainWindow reports protocol_version and includes the model only when verified. Added HostLifecycle tests. T0126 remains blocked: Android discovery and request-screen selection/dispatch integration are still missing.\nT0126-A005 (2026-11-01): Added RendezvousPeerDirectoryClient.discoverAll() to enumerate every unexpired metadata endpoint with a direct TCP route in stable PeerId order. It shares the existing bounded 16 KiB parser/cache and fail-closed refresh; resolve() now uses the same cache-refresh helper. Added a Robolectric/JVM regression proving stable discovery order, omission of a QUIC-only endpoint for this TCP client, and reuse of one directory fetch across discoverAll() and resolve(). This is a real directory API output but not yet a typed HostAnnouncement/capability source or a production request-screen caller. Exact-head Android KtLint/APK/JVM/Protobuf and product CI are pending. T0126 remains blocked.\nT0126-A005 exact V 3.0.779 CI reconciliation (2026-11-01): Android KtLint, assembleDebug, testDebugUnitTest (including discoversFreshPeersInStableIdentityOrderAndExcludesPeersWithoutTcpRoute), generated Protobuf Java/Kotlin, Windows WPF build/startup/security/DPAPI, HostLifecycle unit/integration, Step Three quality gate and Rendezvous container build/smoke all passed on exact main commit ee9692a3d34543dd159f48ca4ef72e29f5981db8. Android APK artifact 13087940513 uploaded. This validates the metadata directory API and test only; T0126 remains blocked until typed host capability/status, production request UI discovery/selection/dispatch and shortage feedback are integrated.\nT0126-A006: added the real authenticated discovery-to-candidate API and six focused JVM tests. Exact-head CI is pending; the task remains blocked because the Compose request UI still has no production discovery/dispatch/feedback caller.\nT0126-A007: corrected the two KtLint chain-method line breaks identified by the exact V 3.0.781 Android workflow. The full request UI/dispatch path remains absent; T0126 stays blocked.\nThe V 3.0.782 graph guard identified a counter/history mismatch: A006 is partial (one sub-check failed), not a fully failed attempt. failed_attempt_count was reconciled to the one historical result=failed.\nT0126-A008: replaced chained Protobuf Java builders in the new JVM test helpers with the repository's existing generated Protobuf Kotlin DSL style, addressing the four test-source KtLint findings. The behavioral assertions are unchanged.\nT0126-A009: removed the single unused ModelCapability import identified by exact V 3.0.784 test-source KtLint; no test logic or production code changed.\n\nT0126-A009 exact V 3.0.785 CI reconciliation: Android production/test KtLint, assembleDebug, testDebugUnitTest, generated Protobuf Java/Kotlin, Windows WPF build/startup/security/DPAPI, HostLifecycle, Step Three quality gate and Rendezvous container smoke all passed on 82bcc0d3ea50dc8bdaa64552273c45ffb979c562. This verifies the test-import repair only; A009 remained partial because the request-screen integration was still missing.\n\nT0126-A010 (2026-11-01T15:23:27.495Z): Implemented the missing Compose-to-runtime request path using an explicit HTTPS directory URL, metadata-only peer listing, user-confirmed trust/revoke, payload validation, fresh authenticated status-based selection, no-send when no candidate is selected, bounded dispatch and correlated response collection. Added injected-gateway ViewModel tests. A010 remains partial pending exact-head CI; tests have not yet run on this revision.\n\nExact V 3.0.787 A010 CI findings: Android KtLint parser failed at RequestViewModel.kt:201:90 due to a trailing comma after the final expression in an else block; Android APK/JVM/Protobuf checks were not reached. Step Three quality gate ran 317 Python tests and seven stale source-contract assertions failed because they expected the old prepare-only preview. Graph/syntax/evidence steps were skipped. Windows WPF, HostLifecycle and Rendezvous workflows passed. Corrected Kotlin syntax and replaced the seven obsolete preview assertions with checks for explicit trust, configured direct-peer requests, no-send on zero candidates, per-attempt response handling and the continuing privacy boundary. V 3.0.788 rerun pending.\n\nExact V 3.0.788 CI: 317 Python tests, Python syntax, graph structure and output/evidence validation all passed. Android main-source KtLint passed; test-source KtLint found 14 formatting diagnostics in RequestViewModelTest.kt (import order, chain-call line wrapping and one extra blank line). APK/JVM/Protobuf checks were not reached. Windows .NET interop fixture, WPF build/startup/security/DPAPI, HostLifecycle and Rendezvous passed. The fake-gateway tests were reformatted; V 3.0.789 rerun pending.\n\nExact V 3.0.789 CI: all 317 Python tests, syntax, graph and evidence passed. Android KtLint failed import order in five production Kotlin files and chain wrapping in RequestViewModel.kt:500; Android APK/JVM/Protobuf were not reached. Windows WPF build/startup/security/DPAPI, HostLifecycle and Rendezvous passed. Imports now follow case-sensitive lexicographic order with the java/javax/kotlin group last, chain expressions wrapped, source-contract import assertion fixed, and legacy expected ViewModel status aligned with current state. V 3.0.790 rerun pending.\n\nT0126-A013 (2026-11-01T18:48:25.015Z): Exact V 3.0.795 KtLint and Android assembleDebug passed, but testDebugUnitTest failed at Robolectric class initialization: Android SDK 36 requires Java 21 while the workflow configured Java 17. The uploaded Gradle report identifies this as a JDK/SDK mismatch, not a request-flow assertion failure. Generated Android Protobuf verification was skipped. Windows WPF/security/DPAPI, HostLifecycle, Step Three quality and Rendezvous checks passed. Updated product-build.yml Android setup-java to Temurin 21; exact-head full rerun is required. T0126 remains in_progress.\n\nT0126-A014 (2026-11-01T18:58:39.377Z): On exact V 3.0.796, Step Three quality ran 317 Python tests; two stale static assertions still required Java 17 after CI moved to JDK 21. Updated README/ADR and static assertions, retaining Java/Kotlin bytecode target 17. Other checks: Android lint/APK, Windows WPF, HostLifecycle and Rendezvous passed; Android JVM had a separate Robolectric module-access failure recorded in A015.\n\nT0126-A015 (2026-11-01T18:58:39.377Z): Exact V 3.0.796 Android JVM ran 180 tests; 11 RequestViewModelTest cases failed through a common Robolectric FileDescriptor interceptor IllegalAccessException because java.base did not export jdk.internal.access.SharedSecrets. Added nine Java module opens recommended for Robolectric Java 17+ to the forked Android test JVM. No app source or wire contract changes; exact-head retest pending. T0126 stays in_progress.",
       "execution_summary": {
-        "attempt_count": 15,
+        "attempt_count": 16,
         "failed_attempt_count": 1,
-        "last_attempt_id": "T0126-A015-robolectric-jvm-opens",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "T0126-A016-v3.0.797-exact-head-validation",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/network/RendezvousPeerDirectoryClient.kt",
           "src/Client.Android/app/src/test/java/com/whitep/client/network/RendezvousPeerDirectoryClientTest.kt",
@@ -27511,7 +27511,8 @@
           "073fed66bd7c1e0e0361ab4f2fa6e074d5de402d",
           "d63bf1ba2b01a0ba29aa51cc06db6a549146ad88",
           "1bce3002194fddc58c5c43d901ca16f3b4df232e",
-          "b91a16ca0098aa3a2c94a2070667cf44d54cea37"
+          "b91a16ca0098aa3a2c94a2070667cf44d54cea37",
+          "45e9c2941393e0e86e116c214335956289921c12"
         ],
         "tests_passed": [
           "Exact V 3.0.768 Android main/test KtLint — PASS — https://github.com/artinrahimii/project/actions/runs/41309472601/job/124856640138",
@@ -27600,7 +27601,13 @@
           "Exact V 3.0.796 Android assembleDebug — PASS — https://github.com/artinrahimii/project/actions/runs/41338513498/jobs/124943343889",
           "Exact V 3.0.796 Windows WPF build/startup/security/DPAPI — PASS — https://github.com/artinrahimii/project/actions/runs/41338513498/jobs/124943343904",
           "Exact V 3.0.796 HostLifecycle — PASS — https://github.com/artinrahimii/project/actions/runs/41338513498/jobs/124943343786",
-          "Exact V 3.0.796 Rendezvous container/HTTP smoke — PASS — https://github.com/artinrahimii/project/actions/runs/41338513465"
+          "Exact V 3.0.796 Rendezvous container/HTTP smoke — PASS — https://github.com/artinrahimii/project/actions/runs/41338513465",
+          "Exact main V 3.0.797 Android KtLint, assembleDebug, testDebugUnitTest and generated Protobuf Java/Kotlin verification passed (product run 41339423721, Android job 124946081786).",
+          "Exact main V 3.0.797 Step Three quality gate passed 317 Python tests and graph/evidence checks (run 41339423909).",
+          "Exact main V 3.0.797 Windows WPF Release/startup/security/DPAPI and HostLifecycle unit/integration jobs passed (product run 41339423721; jobs 124946082093 and 124946082043).",
+          "Exact main V 3.0.797 Rendezvous container build/HTTP smoke passed (run 41339423726).",
+          "RequestViewModelTest.discoveryDoesNotTrustPeersAndOnlyExplicitlyApprovedPeersReceiveRequests passed: zero candidates caused no dispatch; one explicitly trusted candidate dispatched with exact shortage feedback.",
+          "HostSelectionFeedback zero/one/two/three-host tests and InferenceAttemptDispatcher zero/one/two/three-host bounds passed in exact-head Android JVM tests."
         ],
         "tests_failed": [
           "Exact V 3.0.767 Android JVM unit-test compilation failed at RequestViewModelTest.kt:47,58,69 because HostSelectionFeedback import was missing; tests and generated Protobuf verification did not run.",
@@ -27657,10 +27664,7 @@
         "contract_changes": [
           "Added RendezvousPeerDirectoryClient.discoverAll(): bounded enumeration of unexpired metadata-only direct-TCP peer endpoints in stable PeerId order, sharing the existing strict cache refresh; no HostAnnouncement model/capability contract or production UI wiring is claimed."
         ],
-        "tests_pending": [
-          "Exact V 3.0.795 Android test-source KtLint, compileDebugUnitTestKotlin/testDebugUnitTest including the zero/one-host feedback assertions, generated Protobuf Java/Kotlin checks and APK upload.",
-          "Exact V 3.0.795 Step Three graph/Python/syntax/evidence, Windows WPF/HostLifecycle and Rendezvous container smoke."
-        ],
+        "tests_pending": [],
         "failure_details": "Exact V 3.0.794: Android main/test KtLint and debug APK build passed. JVM test compilation failed at RequestViewModelTest.kt:239:56 because Robolectric RuntimeEnvironment.getApplication() is not generic in the selected version. Android JVM test execution and generated Protobuf Java/Kotlin verification were skipped. Windows WPF build/security/DPAPI/artifact upload, HostLifecycle, Rendezvous smoke and Step Three quality passed. V 3.0.795 removes only the obsolete type argument and now-unused Context import."
       },
       "execution_history": [
@@ -28798,16 +28802,59 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Run exact V3.0.797 Android KtLint, APK, JVM and generated Protobuf checks."
+        },
+        {
+          "attempt_id": "T0126-A016-v3.0.797-exact-head-validation",
+          "started_at": "2026-11-02T07:59:00Z",
+          "ended_at": "2026-11-02T07:59:00Z",
+          "result": "succeeded",
+          "summary": "Reconciled the stale prepare-only UI note against the actual Compose request screen, ViewModel and authenticated runtime. Exact V 3.0.797 main CI passed Android KtLint, debug APK, Android JVM tests, generated Protobuf Java/Kotlin, Windows WPF/security/DPAPI, HostLifecycle, Step Three quality (317 Python tests) and Rendezvous smoke. The Android ViewModel regression verifies zero-host no-send and one explicitly trusted host continues with exact shortage feedback. T0126 is done for application-level request discovery/selection/dispatch/shortage feedback; physical independent-network acceptance remains deferred to T0128.",
+          "changed_files": [
+            "step three/T0126/execution-report.md",
+            "step three/T0126/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "related_commits": [
+            "45e9c2941393e0e86e116c214335956289921c12"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Android KtLint / assembleDebug / testDebugUnitTest / generated Protobuf Java+Kotlin — V 3.0.797",
+              "result": "passed",
+              "summary": "All Android tasks completed successfully on exact main; includes RequestViewModel and host-shortage tests.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41339423721/jobs/124946081786"
+            },
+            {
+              "name": "Step Three quality gate — V 3.0.797",
+              "result": "passed",
+              "summary": "317 Python tests and graph/evidence quality gate passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41339423909"
+            },
+            {
+              "name": "Windows WPF and HostLifecycle — V 3.0.797",
+              "result": "passed",
+              "summary": "Windows WPF Release/startup/security/DPAPI and HostLifecycle unit/integration jobs passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41339423721"
+            },
+            {
+              "name": "Rendezvous container build/HTTP smoke — V 3.0.797",
+              "result": "passed",
+              "summary": "Container build and HTTP smoke passed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41339423726"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "The containing V 3.0.798 commit records this closure; resolve its SHA from online main history. T0128 remains final deferred acceptance after T0230."
         }
       ],
       "blocked_reason": null,
-      "updated_at": "2026-11-01T15:23:27.495Z",
-      "tests_pending": [
-        "Exact-head JDK21 Android KtLint, assembleDebug, full testDebugUnitTest after Robolectric module opens, and generated Protobuf Java/Kotlin checks.",
-        "Exact-head Step Three Python suite, syntax, graph structure and recorded output/evidence checks after JDK21 assertion updates.",
-        "Final exact-head WPF/HostLifecycle/Rendezvous gates; independent-network and two-device Android-to-Windows acceptance remains deferred T0128."
-      ],
-      "follow_up": "Verify exact V3.0.797 quality and product workflows. Require Android JVM tests and generated Protobuf Java/Kotlin verification to pass after JDK21 module opens, plus full Python/graph/evidence checks. Keep T0126 in_progress until then."
+      "updated_at": "2026-11-02T07:59:00Z",
+      "tests_pending": [],
+      "follow_up": "Continue with the next non-deferred task in execution order. T0128 remains deferred until T0230 is deployed and two independent real peers are available."
     },
     {
       "id": "T0127",
@@ -47750,8 +47797,8 @@
       ],
       "start_condition": "T0173، T0160، T0124 و T0126 تکمیل شده و معیارهای پذیرش آن‌ها پاس شده باشند؛ UI باید درخواست dispatch واقعی، وضعیت آن و فهرست دقیق attemptهای انتخاب‌شده را از مسیر تولیدی و منبع معتبر دریافت کند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "blocked",
-      "status_fa": "مسدود",
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
       "actual_output_paths": [
         "src/Host.Infrastructure/ProtocolMessageParser.cs",
         "src/Shared.Contracts/ProtocolMessageValidator.cs",
@@ -47766,7 +47813,11 @@
         "step three/project-graph.md",
         "tests/test_host_content_visibility.py",
         "tests/HostLifecycle.Tests/Program.cs",
-        "tests/HostLifecycle.Tests/AndroidInteropPeerServer.cs"
+        "tests/HostLifecycle.Tests/AndroidInteropPeerServer.cs",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/RequestExecutionGateway.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt"
       ],
       "expected_output_paths": [
         "src/Client.Android/Requests/ + tests/"
@@ -47796,18 +47847,24 @@
         "step three/T0174/evidence/verification.md",
         "tests/test_host_content_visibility.py",
         "tests/HostLifecycle.Tests/Program.cs",
-        "tests/HostLifecycle.Tests/AndroidInteropPeerServer.cs"
+        "tests/HostLifecycle.Tests/AndroidInteropPeerServer.cs",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/RequestExecutionGateway.kt"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0174-A001 (2026-11-01): Added bounded CancelRequest parsing/validation with an explicit user_cancelled reason; Android authenticated-stream cancellation for each queued attempt and per-attempt results; Windows bounded concurrent request handling so the receive loop can accept a cancellation frame and signal only the matching (requestId, attemptId) token; correlated deadline-bounded CANCELLED response; Android two-peer transport test; Windows trusted-loopback end-to-end cancellation test; protocol negative tests. The existing Android request screen remains preparation-only and has no live dispatch/discovery state, so no fake Cancel button was added. Keep in_progress pending exact-head CI and later real UI wiring.\nT0174-A002 (2026-11-01): Exact-head V 3.0.732 Step Three quality gate failed one obsolete source-contract assertion expecting the former inline _requestHandler(requestWire, cancellationToken) call. The production implementation had deliberately moved handler execution to ProcessRequestAndRespondAsync to keep the receive loop available for CancelRequest. T0174-A003 updates the Python source guard to assert concurrent handler dispatch, exact request/attempt cancellation lookup, bounded parser and allowlisted reason. Product build and real-inference workflow for V 3.0.732 were still running when this correction was recorded.\nT0174-A010 (2026-11-01): Exact V 3.0.735 product CI passed Android lint and APK build, but compileDebugUnitTestKotlin failed at test helper type mismatch: createHost required ProtocolBinding<LoopbackInferenceResponder> and received ProtocolBinding<LoopbackCancellationResponder>. Android JVM tests did not execute. Exact V 3.0.735 Step Three quality, Windows WPF, and HostLifecycle tests passed. T0174-A011 fixes createHost to accept ProtocolBinding<T> for T : SimpleClientHandler; task stays in_progress pending a new exact-head Android JVM pass and real UI cancellation integration.\nT0174-A012 (2026-11-01): Exact V 3.0.736 product and Step Three workflows passed. Android KtLint, debug APK, all 150 JVM tests (0 failures/0 ignored), generated Protobuf Java/Kotlin, Windows WPF and HostLifecycle passed. The four Libp2pInferenceRequestTransportTest cases passed; the two-host cancellation test completed in 6.055 seconds. The Windows HostLifecycle loopback CancelRequest→CANCELLED integration test passed. This verifies runtime/transport and host cancellation, not cross-runtime Android→.NET cancellation nor a production UI click path.\nT0174-A013 (2026-11-01): Added native Android-to-.NET three-host cancellation interop acceptance: .NET peer fixture optional cancel mode receives and validates CancelRequest then returns correlated CANCELLED; Android JVM test dispatches to three independent .NET processes, waits for all to receive requests, cancels all selected attempts and checks all three responses. Exact-head CI is pending. No production UI call site currently invokes cancelSelectedHosts; task remains in_progress.\nT0174-A014 (2026-11-01): Exact V 3.0.737 Step Three quality, Windows WPF build/startup/security, HostLifecycle and real local inference all passed. Android KtLint failed one test-source import-order rule at Libp2pInferenceRequestTransportTest.kt:3:1 because the newly added kotlinx.coroutines.delay import was placed before Dispatchers. Android APK/JVM/Protobuf stages were skipped; the new three-native-.NET cancellation test did not execute. T0174-A015 moves delay after Dispatchers; exact-head CI pending.\nT0174-A016 (2026-11-01): Exact V 3.0.738 CI passed. Android KtLint/APK/JVM/Protobuf, 151 JVM tests (0 failures/0 ignored), including sendsCancellationToThreeNativeDotNetLibp2pHostsAndReceivesCancelledResponses (3 native .NET peers, 3.808s) and the two-peer cancellation API test (6.053s), Windows WPF, HostLifecycle, and Step Three quality all passed. No production Cancel button was added: MainActivity remains a prepare-only preview, Connections has no discovery, and AndroidInferenceRequestRuntime deliberately requires independently validated HostCandidate status snapshots. T0174 remains in_progress pending real discovery/dispatch UI and click-path acceptance.\n\nT0174-A017 (2026-11-01): Re-read exact online main head 211eae4cc7f33ae956e3d505ad2b5ba58104e9bf (V 3.0.739), revalidated T0173 and T0160 inputs and inspected MainActivity, AndroidInferenceRequestRuntime, HostCandidateSelector, RendezvousPeerDirectoryClient and the metadata-only rendezvous service. The production request screen has no live dispatch or discovery call site; AndroidInferenceRequestRuntime requires externally validated HostCandidate snapshots, while HostCandidateSelector does not perform discovery. T0124 is therefore a missing contract/interface prerequisite for a real Cancel click path. Added and validated T0124 -> T0174 without removing or weakening any existing edge. T0124 remains not_started behind T0123/T0115; T0123 remains behind T0122/T0115; T0122 is held by blocked T0121 because independent-network reachability and deployed HTTPS rendezvous are not verified. T0174 status changed to blocked; cancellation runtime/backend remains evidenced by prior A016 CI, but UI acceptance is not met. No product source code was changed and no tests were run in this graph-review attempt; exact V 3.0.739 baseline product and graph workflows were inspected and passed. Follow up by supplying a real HTTPS rendezvous and an independent peer for T0121, then execute T0122-T0124 and return to the Android live request/cancel UI.\nT0174-A018 (2026-11-01): Revalidated exact online main V 3.0.777. T0124 and T0121-T0125 are now done; the old A017 blocker describing T0124/T0121 as incomplete is stale. Inspected the current Android request and Connections screens, metadata-only PeerAnnouncement/Rendezvous contract, Android directory resolver, candidate selector, runtime, identity/trust stores, Windows HostStatus producer and protocol. The app still has no production discover-all → authenticated status → candidate selection → dispatch flow. Added the validated T0126 → T0174 contract/interface edge: T0174 needs the exact queued attempts returned by a real T0126 dispatch. T0174 stays blocked; no code or tests were changed/run in this review.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0174-A001 (2026-11-01): Added bounded CancelRequest parsing/validation with an explicit user_cancelled reason; Android authenticated-stream cancellation for each queued attempt and per-attempt results; Windows bounded concurrent request handling so the receive loop can accept a cancellation frame and signal only the matching (requestId, attemptId) token; correlated deadline-bounded CANCELLED response; Android two-peer transport test; Windows trusted-loopback end-to-end cancellation test; protocol negative tests. The existing Android request screen remains preparation-only and has no live dispatch/discovery state, so no fake Cancel button was added. Keep in_progress pending exact-head CI and later real UI wiring.\nT0174-A002 (2026-11-01): Exact-head V 3.0.732 Step Three quality gate failed one obsolete source-contract assertion expecting the former inline _requestHandler(requestWire, cancellationToken) call. The production implementation had deliberately moved handler execution to ProcessRequestAndRespondAsync to keep the receive loop available for CancelRequest. T0174-A003 updates the Python source guard to assert concurrent handler dispatch, exact request/attempt cancellation lookup, bounded parser and allowlisted reason. Product build and real-inference workflow for V 3.0.732 were still running when this correction was recorded.\nT0174-A010 (2026-11-01): Exact V 3.0.735 product CI passed Android lint and APK build, but compileDebugUnitTestKotlin failed at test helper type mismatch: createHost required ProtocolBinding<LoopbackInferenceResponder> and received ProtocolBinding<LoopbackCancellationResponder>. Android JVM tests did not execute. Exact V 3.0.735 Step Three quality, Windows WPF, and HostLifecycle tests passed. T0174-A011 fixes createHost to accept ProtocolBinding<T> for T : SimpleClientHandler; task stays in_progress pending a new exact-head Android JVM pass and real UI cancellation integration.\nT0174-A012 (2026-11-01): Exact V 3.0.736 product and Step Three workflows passed. Android KtLint, debug APK, all 150 JVM tests (0 failures/0 ignored), generated Protobuf Java/Kotlin, Windows WPF and HostLifecycle passed. The four Libp2pInferenceRequestTransportTest cases passed; the two-host cancellation test completed in 6.055 seconds. The Windows HostLifecycle loopback CancelRequest→CANCELLED integration test passed. This verifies runtime/transport and host cancellation, not cross-runtime Android→.NET cancellation nor a production UI click path.\nT0174-A013 (2026-11-01): Added native Android-to-.NET three-host cancellation interop acceptance: .NET peer fixture optional cancel mode receives and validates CancelRequest then returns correlated CANCELLED; Android JVM test dispatches to three independent .NET processes, waits for all to receive requests, cancels all selected attempts and checks all three responses. Exact-head CI is pending. No production UI call site currently invokes cancelSelectedHosts; task remains in_progress.\nT0174-A014 (2026-11-01): Exact V 3.0.737 Step Three quality, Windows WPF build/startup/security, HostLifecycle and real local inference all passed. Android KtLint failed one test-source import-order rule at Libp2pInferenceRequestTransportTest.kt:3:1 because the newly added kotlinx.coroutines.delay import was placed before Dispatchers. Android APK/JVM/Protobuf stages were skipped; the new three-native-.NET cancellation test did not execute. T0174-A015 moves delay after Dispatchers; exact-head CI pending.\nT0174-A016 (2026-11-01): Exact V 3.0.738 CI passed. Android KtLint/APK/JVM/Protobuf, 151 JVM tests (0 failures/0 ignored), including sendsCancellationToThreeNativeDotNetLibp2pHostsAndReceivesCancelledResponses (3 native .NET peers, 3.808s) and the two-peer cancellation API test (6.053s), Windows WPF, HostLifecycle, and Step Three quality all passed. No production Cancel button was added: MainActivity remains a prepare-only preview, Connections has no discovery, and AndroidInferenceRequestRuntime deliberately requires independently validated HostCandidate status snapshots. T0174 remains in_progress pending real discovery/dispatch UI and click-path acceptance.\n\nT0174-A017 (2026-11-01): Re-read exact online main head 211eae4cc7f33ae956e3d505ad2b5ba58104e9bf (V 3.0.739), revalidated T0173 and T0160 inputs and inspected MainActivity, AndroidInferenceRequestRuntime, HostCandidateSelector, RendezvousPeerDirectoryClient and the metadata-only rendezvous service. The production request screen has no live dispatch or discovery call site; AndroidInferenceRequestRuntime requires externally validated HostCandidate snapshots, while HostCandidateSelector does not perform discovery. T0124 is therefore a missing contract/interface prerequisite for a real Cancel click path. Added and validated T0124 -> T0174 without removing or weakening any existing edge. T0124 remains not_started behind T0123/T0115; T0123 remains behind T0122/T0115; T0122 is held by blocked T0121 because independent-network reachability and deployed HTTPS rendezvous are not verified. T0174 status changed to blocked; cancellation runtime/backend remains evidenced by prior A016 CI, but UI acceptance is not met. No product source code was changed and no tests were run in this graph-review attempt; exact V 3.0.739 baseline product and graph workflows were inspected and passed. Follow up by supplying a real HTTPS rendezvous and an independent peer for T0121, then execute T0122-T0124 and return to the Android live request/cancel UI.\nT0174-A018 (2026-11-01): Revalidated exact online main V 3.0.777. T0124 and T0121-T0125 are now done; the old A017 blocker describing T0124/T0121 as incomplete is stale. Inspected the current Android request and Connections screens, metadata-only PeerAnnouncement/Rendezvous contract, Android directory resolver, candidate selector, runtime, identity/trust stores, Windows HostStatus producer and protocol. The app still has no production discover-all → authenticated status → candidate selection → dispatch flow. Added the validated T0126 → T0174 contract/interface edge: T0174 needs the exact queued attempts returned by a real T0126 dispatch. T0174 stays blocked; no code or tests were changed/run in this review.\nT0174-A019 (2026-11-02): T0126 is now done with exact V 3.0.797 application-flow evidence; T0173, T0160 and T0124 are also done. Revalidated the live request screen and existing transport cancellation API. Added the cancellation method to RequestExecutionGateway, retained the exact request ID and full InferenceHostAttempt list from successful dispatch while responses are pending, and added a Compose Cancel button that calls the ViewModel action only while queued attempts exist. The action passes the original request/attempt tuple to cancelSelectedHosts and reports cancellation-frame count without claiming host-side completion. Added a three-host ViewModel regression with a held response window, exact attempt/peer assertions and correlated CANCELLED response cards. Exact-head CI is pending; task remains in_progress.",
       "execution_summary": {
-        "attempt_count": 18,
+        "attempt_count": 19,
         "failed_attempt_count": 6,
-        "last_attempt_id": "T0174-A018-current-main-dependency-revalidation",
-        "last_attempt_result": "blocked",
+        "last_attempt_id": "T0174-A019-live-request-cancel-ui",
+        "last_attempt_result": "partial",
         "changed_files": [
           "step three/project-graph.md",
           "step three/T0174/execution-report.md",
-          "step three/T0174/evidence/verification.md"
+          "step three/T0174/evidence/verification.md",
+          "src/Client.Android/app/src/main/java/com/whitep/client/requests/RequestExecutionGateway.kt",
+          "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
+          "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt",
+          "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
+          "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt"
         ],
         "related_commits": [
           "657f0ef5669b63991ed708ed92e125f171616ca3",
@@ -47817,7 +47874,8 @@
           "339b1efb54449fe0a3d5d4dad3d26c096ad3d36d",
           "cd1b1b67cd6ce1a500da0c120c52dc321de36ac4",
           "34db50f1e11de7ee034fb1082b7f901ffc1134d9",
-          "6aa52c73e59b8508be75c6c454bc16c28ae16ca1"
+          "6aa52c73e59b8508be75c6c454bc16c28ae16ca1",
+          "45e9c2941393e0e86e116c214335956289921c12"
         ],
         "tests_passed": [
           "Windows WPF Release build/startup/security checks — PASS on exact V 3.0.732: https://github.com/artinrahimii/project/actions/runs/41271523252/job/124745099788",
@@ -47854,39 +47912,34 @@
           "Android JVM test compilation failed on exact V 3.0.735 at Libp2pInferenceRequestTest.kt:72:61: createHost expected ProtocolBinding<LoopbackInferenceResponder> but received ProtocolBinding<LoopbackCancellationResponder>. The JVM tests did not execute; correction T0174-A011 makes the test helper generic.",
           "V 3.0.737 Android ktlintTestSourceSetCheck failed one import-order finding at Libp2pInferenceRequestTransportTest.kt:3:1: kotlinx.coroutines.delay was before Dispatchers. Android APK/JVM/Protobuf and the newly added cross-runtime cancellation test did not run on that commit."
         ],
-        "blocked_reason": "T0124 and the upstream T0121-T0125 tasks are now done; the A017 blocker that described T0124 as not_started is obsolete. The remaining application-level prerequisite is T0126: the production Android request screen is still a preparation-only preview, and the Connections screen explicitly makes no discovery or network request. RendezvousPeerDirectoryClient exposes resolve(ephemeralHostId) and returns only peer ID, direct TCP addresses and lease expiry; PeerAnnouncement currently carries only coarse string capability tags such as inference.v1, not the typed model/concurrency/prompt/capsule HostCapabilities required by HostCandidateSelector. HostCandidateSelector only evaluates supplied HostAnnouncement/HostStatus snapshots and does not discover peers. AndroidInferenceRequestRuntime has real selection, dispatch and cancellation APIs, but the current production screen does not construct or invoke the runtime, obtain a live discovery snapshot, dispatch a request or retain its exact InferenceHostAttempt list. Android identity and trust stores exist but are not wired into this request flow. Therefore T0174 cannot yet connect a visible Cancel action to real queued attempts. T0121-T0125 are not blockers; public deployment and independent-network reachability remain separately deferred to T0230/T0128.",
+        "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "passed",
+          "state": "in_review",
           "triggering_contracts": [
-            "T0174.cancelSelectedHosts accepts only the exact requestId and InferenceHostAttempt list produced by a real dispatch round; it sends CancelRequest only for queued submissions.",
-            "T0126 is the graph task responsible for connecting directory discovery, authenticated HostStatus probing, HostCandidate selection, real dispatch and user-visible shortage feedback.",
-            "The current Android UI must retain the exact selected attempts from that live dispatch before T0174 can expose a genuine Cancel action."
+            "CancelRequest carries the exact request_id, attempt_id and allowlisted user_cancelled reason.",
+            "cancelSelectedHosts accepts the exact request ID and dispatch attempt list and sends only to attempts whose submission status is QUEUED.",
+            "T0126's live request flow now retains the exact dispatched InferenceHostAttempt list while awaiting correlated responses."
           ],
           "affected_by_contract_changes": [
-            "T0124 and T0121-T0125 are now done; A017's statement that T0124 was not_started and T0121 was blocked is no longer current.",
-            "T0126 remains blocked because the production Android app does not connect metadata discovery, typed model capabilities, authenticated status, selection, dispatch and feedback.",
-            "T0174 remains blocked until the T0126 request flow provides a real active request and its exact queued-attempt list."
+            "RequestExecutionGateway now exposes cancelSelectedHosts, implemented by AndroidInferenceRequestRuntime.",
+            "RequestViewModel captures the dispatch result's request ID and exact attempts; the Compose request screen exposes the action only while queued attempts are active."
           ],
           "review_evidence": [
-            "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
-            "src/Client.Android/app/src/main/java/com/whitep/client/network/RendezvousPeerDirectoryClient.kt",
-            "src/Client.Android/app/src/main/java/com/whitep/client/network/AndroidPeerIdentityStore.kt",
-            "src/Client.Android/app/src/main/java/com/whitep/client/network/AndroidPeerTrustStore.kt",
-            "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/requests/RequestExecutionGateway.kt",
             "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
             "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt",
-            "src/Shared.Contracts/Networking/PeerAnnouncement.cs",
-            "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs",
-            "src/Host.Application/HostInferenceSession.cs",
+            "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/network/Libp2pInferenceRequestTransportTest.kt",
             "protocol/whitep/v1/messages.proto",
-            "step three/T0124/execution-report.md",
-            "step three/T0126/execution-report.md",
             "step three/T0174/execution-report.md"
           ]
         },
         "tests_pending": [
-          "Production Android request UI must gain a real discovery/status source and a live dispatch lifecycle, then expose a visible Cancel action that calls cancelSelectedHosts with the actual selected queued attempts and displays per-attempt cancellation outcomes."
+          "Exact-head Android KtLint, assembleDebug, testDebugUnitTest and generated Protobuf Java/Kotlin verification for the new gateway/ViewModel/Compose cancellation click path.",
+          "Exact-head Step Three quality and graph/evidence guard."
         ],
         "follow_up": "Complete T0126 as a real Android application flow: add bounded discover-all peer enumeration; carry or construct typed, validated HostAnnouncement capabilities from actual host model/readiness/capacity data; use the existing Android identity and explicit trust stores; probe authenticated HostStatus; select 0/1/2/3 valid peers; dispatch only the actual selected candidates; and display the resulting shortage feedback. Add exact-head tests for the live flow and no-send-on-zero. Only after T0126 passes should T0174 wire a visible Cancel action to the exact queued attempts from that dispatch result, display per-attempt cancellation outcomes, and pass Android-to-.NET UI-level cancellation acceptance."
       },
@@ -48442,9 +48495,57 @@
             "Added the validated T0126 -> T0174 contract_or_interface_dependency edge and included T0126 in T0174.depends_on/start_condition."
           ],
           "follow_up": "Complete T0126 as a real Android application flow: add bounded discover-all peer enumeration; carry or construct typed, validated HostAnnouncement capabilities from actual host model/readiness/capacity data; use the existing Android identity and explicit trust stores; probe authenticated HostStatus; select 0/1/2/3 valid peers; dispatch only the actual selected candidates; and display the resulting shortage feedback. Add exact-head tests for the live flow and no-send-on-zero. Only after T0126 passes should T0174 wire a visible Cancel action to the exact queued attempts from that dispatch result, display per-attempt cancellation outcomes, and pass Android-to-.NET UI-level cancellation acceptance."
+        },
+        {
+          "attempt_id": "T0174-A019-live-request-cancel-ui",
+          "started_at": "2026-11-02T07:59:00Z",
+          "ended_at": "2026-11-02T07:59:00Z",
+          "result": "partial",
+          "summary": "T0126 now supplies the production live request/dispatch flow. Added cancelSelectedHosts to the gateway interface, implemented the concrete runtime override, retained the exact dispatched request/attempt list in RequestViewModel, added a visible Compose Cancel action, and added a three-host ViewModel regression. Exact-head Android and Step Three CI have not run yet, so T0174 remains in_progress.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/requests/RequestExecutionGateway.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
+            "step three/T0174/execution-report.md",
+            "step three/T0174/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "related_commits": [
+            "45e9c2941393e0e86e116c214335956289921c12"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "RequestViewModelTest.cancelActionSendsCorrelatedCancellationForEveryQueuedAttemptFromTheLiveDispatch",
+              "result": "not_run",
+              "summary": "Added test source; awaiting exact-head Android testDebugUnitTest.",
+              "url": null
+            },
+            {
+              "name": "Android KtLint / assembleDebug / testDebugUnitTest / generated Protobuf",
+              "result": "not_run",
+              "summary": "Must run on the exact implementation commit.",
+              "url": null
+            },
+            {
+              "name": "Step Three quality gate",
+              "result": "not_run",
+              "summary": "Must run on the exact implementation commit.",
+              "url": null
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "RequestExecutionGateway gained cancelSelectedHosts(requestId, selectedAttempts); AndroidInferenceRequestRuntime implements the interface method."
+          ],
+          "follow_up": "Inspect exact-head Android KtLint, APK, JVM and generated Protobuf results plus Step Three quality. Fix any failures before marking T0174 done."
         }
       ],
-      "updated_at": "2026-11-01T14:24:22.154Z"
+      "updated_at": "2026-11-02T07:59:00Z"
     },
     {
       "id": "T0175",
@@ -56302,7 +56403,7 @@
       "to": "T0174",
       "type": "blocks",
       "dependency_classification": "contract_or_interface_dependency",
-      "rationale": "A live Cancel control cannot choose peers by announcement metadata alone. MainActivity currently exposes only a preparation preview and explicitly states that no network request is made. AndroidInferenceRequestRuntime requires caller-supplied HostCandidate snapshots from a separately validated discovery/status source; HostCandidateSelector only evaluates those snapshots and performs no discovery or network I/O; RendezvousPeerDirectoryClient resolves metadata-only announcements and addresses; the rendezvous service stores announcement metadata with expiry. T0124 supplies the missing selection contract based on reachability, READY status, capacity and model compatibility, which is required before the UI can dispatch to real selected attempts and call cancelSelectedHosts. The original edge label blocks is retained as the graph's ordering relation; the technical reason is recorded as a contract/interface dependency.",
+      "rationale": "T0124 defines the typed HostCandidate selection contract (fresh authenticated HostStatus, READY state, capacity and model compatibility) consumed by T0126's production request flow. T0174 does not call the selector directly: its immediate attempt-list source is T0126's completed dispatch. This edge records the upstream contract necessary for T0126 to produce genuine selected attempts; the direct cancellation-state interface is separately captured by T0126 -> T0174. Retain the original blocks ordering label and classify the upstream data contract explicitly.",
       "validation_status": "validated",
       "evidence": [
         "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
@@ -56313,7 +56414,11 @@
         "protocol/whitep/v1/messages.proto",
         "src/Client.Android/app/src/test/java/com/whitep/client/network/RendezvousPeerDirectoryClientTest.kt",
         "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt",
-        "step three/T0121/execution-report.md"
+        "step three/T0121/execution-report.md",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt",
+        "step three/T0124/execution-report.md",
+        "step three/T0126/execution-report.md",
+        "step three/T0174/execution-report.md"
       ]
     },
     {
@@ -56368,7 +56473,7 @@
       "to": "T0174",
       "type": "blocks",
       "dependency_classification": "contract_or_interface_dependency",
-      "rationale": "T0126 is the Android application integration flow that must enumerate real rendezvous peers, obtain validated HostAnnouncement capability data, probe authenticated HostStatus, select HostCandidate values and dispatch a real request. T0174's Cancel action consumes the exact InferenceHostAttempt list produced by that dispatch and can send CancelRequest only to its queued attempts. The current request screen has no production caller for the selection/dispatch/cancellation APIs, and the current directory returns metadata-only endpoints rather than typed HostAnnouncement snapshots. This is a concrete request-state/interface dependency; it is not inferred from the blocks label.",
+      "rationale": "T0126's production Compose screen now calls RequestViewModel.discoverPeers/sendRequest. The ViewModel performs authenticated discovery/selection, dispatches selected HostCandidate values, then retains the exact requestId and InferenceHostAttempt list while waiting for correlated responses. T0174 consumes that exact attempt list through RequestExecutionGateway.cancelSelectedHosts and must not rediscover or substitute hosts. This is a direct request/attempt interface dependency validated against the current production wiring and its ViewModel regression.",
       "validation_status": "validated",
       "evidence": [
         "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
@@ -56384,7 +56489,9 @@
         "protocol/whitep/v1/messages.proto",
         "step three/T0124/execution-report.md",
         "step three/T0126/execution-report.md",
-        "step three/T0174/execution-report.md"
+        "step three/T0174/execution-report.md",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/RequestExecutionGateway.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt"
       ]
     }
   ],
@@ -60624,9 +60731,60 @@
         "step three/T0174/execution-report.md"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-11-02T07:59:00Z",
+      "edge_from": "T0124",
+      "edge_to": "T0174",
+      "old_classification": "contract_or_interface_dependency",
+      "new_classification": "contract_or_interface_dependency",
+      "reason": "Revalidated after T0126 became done. T0124 remains the upstream HostCandidate contract consumed through T0126; the edge no longer relies on the stale claim that MainActivity is prepare-only. T0126 -> T0174 is the direct attempt-list interface.",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/RendezvousPeerDirectoryClient.kt",
+        "src/Rendezvous.Service/PeerAnnouncementDirectory.cs",
+        "protocol/whitep/v1/messages.proto",
+        "src/Client.Android/app/src/test/java/com/whitep/client/network/RendezvousPeerDirectoryClientTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt",
+        "step three/T0121/execution-report.md",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt",
+        "step three/T0124/execution-report.md",
+        "step three/T0126/execution-report.md",
+        "step three/T0174/execution-report.md"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-11-02T07:59:00Z",
+      "edge_from": "T0126",
+      "edge_to": "T0174",
+      "old_classification": "contract_or_interface_dependency",
+      "new_classification": "contract_or_interface_dependency",
+      "reason": "Revalidated against the completed production request flow. T0126 now produces and retains the exact dispatched request/attempt tuple consumed by T0174 cancellation.",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/RendezvousPeerDirectoryClient.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/AndroidPeerIdentityStore.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/AndroidPeerTrustStore.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt",
+        "src/Shared.Contracts/Networking/PeerAnnouncement.cs",
+        "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs",
+        "src/Host.Application/HostInferenceSession.cs",
+        "protocol/whitep/v1/messages.proto",
+        "step three/T0124/execution-report.md",
+        "step three/T0126/execution-report.md",
+        "step three/T0174/execution-report.md",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/RequestExecutionGateway.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-11-01T18:58:39.377Z",
+  "updated_at": "2026-11-02T07:59:00Z",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

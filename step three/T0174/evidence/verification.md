@@ -182,3 +182,14 @@ Validation scope: this attempt was a source/graph audit only. No product impleme
 - Existing Android identity and trust stores were verified in source, but are not wired to the request UI flow.
 - Added a validated `T0126 → T0174` contract/interface dependency. T0126 must provide the real discovery/status/selection/dispatch path before T0174 can cancel actual queued attempts.
 - No product source change and no test execution in A018. T0174 remains blocked; no task was marked complete.
+
+## T0174-A019 — production Cancel action (exact-head CI pending)
+
+- Base: `45e9c2941393e0e86e116c214335956289921c12` (`V 3.0.797`).
+- The previous blocker is cleared by T0126's live Compose request/dispatch flow.
+- New gateway contract: `RequestExecutionGateway.cancelSelectedHosts`; concrete runtime delegates to its existing authenticated transport cancellation routine.
+- `RequestViewModel` keeps the original request ID and attempt list returned by dispatch, offers cancellation only while at least one selected attempt is queued, then reports sent-frame count.
+- Compose `MainActivity.requestScreen` now renders and wires `Cancel request on selected hosts`.
+- Added a three-peer ViewModel regression that asserts all exact queued attempts are sent to the gateway and that later correlated CANCELLED responses populate the UI response cards.
+- Existing V 3.0.738 native .NET three-peer transport interoperability evidence remains applicable to the unchanged underlying transport; the new production UI/ViewModel layer still requires exact-head CI execution.
+- **No test result is claimed for A019 yet.** The task remains `in_progress` until the next exact-head CI results are reconciled.

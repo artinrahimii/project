@@ -312,6 +312,17 @@ private fun requestScreen(
         ) {
             Text(if (requestState.isSendingRequest) "Sending and waiting for hosts…" else "Send to trusted hosts")
         }
+        if (requestState.canCancelRequest || requestState.isCancellingRequest) {
+            OutlinedButton(
+                onClick = requestViewModel::cancelCurrentRequest,
+                enabled = requestState.canCancelRequest && !requestState.isCancellingRequest,
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Text(
+                    if (requestState.isCancellingRequest) "Sending cancellation…" else "Cancel request on selected hosts",
+                )
+            }
+        }
         requestState.networkStatusMessage?.let { message ->
             Text(message, style = MaterialTheme.typography.bodyMedium)
         }
