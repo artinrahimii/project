@@ -490,8 +490,7 @@ class RequestViewModel(
                                 runStatus = RequestRunStatus.IDLE,
                                 canRetryRequest = false,
                                 message =
-                                    "No compatible, reachable hosts are currently available. " +
-                                        "The request was not sent.",
+                                    "No inference payload was sent. No compatible, reachable hosts are currently available.",
                             )
                     } else {
                         updateAggregatedRequestStatus(
