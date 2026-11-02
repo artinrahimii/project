@@ -654,14 +654,14 @@ internal class InferencePeerMessageController(
         val bytes = ByteArray(msg.readableBytes())
         msg.readBytes(bytes)
         try {
-            decoder.feed(bytes).forEach { frame ->
-                try {
-                    onFrame(peerId, frame, this)
-                } finally {
-                    Arrays.fill(frame, 0)
-                }
+            val frames = decoder.feed(bytes)
+            try {
+                frames.forEach { frame -> onFrame(peerId, frame, this) }
+            } finally {
+                frames.forEach { frame -> Arrays.fill(frame, 0) }
             }
         } catch (_: Exception) {
+            decoder.clear()
             onClosed(peerId, this)
             stream.reset()
         } finally {
@@ -670,6 +670,7 @@ internal class InferencePeerMessageController(
     }
 
     override fun streamClosed(ctx: ChannelHandlerContext) {
+        decoder.clear()
         authenticatedPeerId?.let { peerId -> onClosed(peerId, this) }
     }
 

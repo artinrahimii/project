@@ -1,6 +1,7 @@
 package com.whitep.client.network
 
 import java.io.EOFException
+import java.util.Arrays
 
 /**
  * Encodes and decodes the message framing used by the Windows libp2p peer protocol.
@@ -68,47 +69,71 @@ internal class PeerMessageFrameDecoder(
         }
         require(pending.size <= Int.MAX_VALUE - chunk.size) { "Input chunk is too large." }
 
-        val input = ByteArray(pending.size + chunk.size)
-        pending.copyInto(input)
-        chunk.copyInto(input, pending.size)
+        val previousPending = pending
+        val input = ByteArray(previousPending.size + chunk.size)
+        previousPending.copyInto(input)
+        chunk.copyInto(input, previousPending.size)
 
         val messages = ArrayList<ByteArray>()
-        var offset = 0
-        while (offset < input.size) {
-            val frameStart = offset
-            val decodedLength = decodeLength(input, offset)
-            if (decodedLength == null) {
-                pending = input.copyOfRange(frameStart, input.size)
-                return messages
+        try {
+            var offset = 0
+            while (offset < input.size) {
+                val frameStart = offset
+                val decodedLength = decodeLength(input, offset)
+                if (decodedLength == null) {
+                    replacePending(input.copyOfRange(frameStart, input.size))
+                    return messages
+                }
+
+                if (decodedLength.value > maximumMessageBytes) {
+                    reject("The peer message exceeds the configured size limit.")
+                }
+                offset += decodedLength.byteCount
+
+                val remainingPayloadBytes = input.size - offset
+                if (remainingPayloadBytes < decodedLength.value) {
+                    replacePending(input.copyOfRange(frameStart, input.size))
+                    return messages
+                }
+
+                messages.add(input.copyOfRange(offset, offset + decodedLength.value))
+                offset += decodedLength.value
             }
 
-            if (decodedLength.value > maximumMessageBytes) {
-                reject("The peer message exceeds the configured size limit.")
-            }
-            offset += decodedLength.byteCount
-
-            val remainingPayloadBytes = input.size - offset
-            if (remainingPayloadBytes < decodedLength.value) {
-                pending = input.copyOfRange(frameStart, input.size)
-                return messages
-            }
-
-            messages.add(input.copyOfRange(offset, offset + decodedLength.value))
-            offset += decodedLength.value
+            clear()
+            return messages
+        } catch (failure: Throwable) {
+            messages.forEach { message -> Arrays.fill(message, 0) }
+            clear()
+            throw failure
+        } finally {
+            Arrays.fill(previousPending, 0)
+            Arrays.fill(input, 0)
         }
-
-        pending = ByteArray(0)
-        return messages
     }
 
     /**
      * Call when the underlying stream closes. A non-empty pending buffer means the
-     * stream ended in the middle of a length prefix or payload.
+     * stream ended in the middle of a length prefix or payload. Retained bytes are
+     * cleared whether the stream ended cleanly or part-way through a frame.
      */
     fun finish() {
-        if (pending.isNotEmpty()) {
+        val truncated = pending.isNotEmpty()
+        clear()
+        if (truncated) {
             throw EOFException("The peer stream ended before a complete message frame arrived.")
         }
+    }
+
+    fun clear() {
+        val previous = pending
+        pending = ByteArray(0)
+        Arrays.fill(previous, 0)
+    }
+
+    private fun replacePending(next: ByteArray) {
+        clear()
+        pending = next
     }
 
     private fun decodeLength(
@@ -143,7 +168,7 @@ internal class PeerMessageFrameDecoder(
     }
 
     private fun reject(message: String): Nothing {
-        pending = ByteArray(0)
+        clear()
         throw IllegalArgumentException(message)
     }
 }

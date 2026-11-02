@@ -1,5 +1,6 @@
 using System.Buffers;
 using System.IO;
+using System.Security.Cryptography;
 using System.Threading.Channels;
 using Nethermind.Libp2p.Core;
 
@@ -68,27 +69,35 @@ internal sealed class Libp2pPeerMessageProtocol : SymmetricSessionProtocol, ISes
                     throw new InvalidDataException("The peer message length is outside the configured limit.");
                 }
 
-                byte[] message;
-                if (messageLength == 0)
+                byte[] message = Array.Empty<byte>();
+                bool queued = false;
+                try
                 {
-                    message = Array.Empty<byte>();
-                }
-                else
-                {
-                    var read = await channel.ReadAsync(messageLength, token: channelToken).ConfigureAwait(false);
-                    if (read.Result != IOResult.Ok)
+                    if (messageLength > 0)
                     {
-                        throw new IOException("The peer message frame ended before the complete payload was received.");
+                        var read = await channel.ReadAsync(messageLength, token: channelToken).ConfigureAwait(false);
+                        if (read.Result != IOResult.Ok)
+                        {
+                            throw new IOException("The peer message frame ended before the complete payload was received.");
+                        }
+
+                        message = read.Data.ToArray();
+                        if (message.Length != messageLength)
+                        {
+                            throw new IOException("The peer message frame payload length did not match its prefix.");
+                        }
                     }
 
-                    message = read.Data.ToArray();
-                    if (message.Length != messageLength)
+                    await _inbound.Writer.WriteAsync(message, channelToken).ConfigureAwait(false);
+                    queued = true;
+                }
+                finally
+                {
+                    if (!queued && message.Length > 0)
                     {
-                        throw new IOException("The peer message frame payload length did not match its prefix.");
+                        CryptographicOperations.ZeroMemory(message);
                     }
                 }
-
-                await _inbound.Writer.WriteAsync(message, channelToken).ConfigureAwait(false);
             }
         }
         catch (OperationCanceledException) when (channelToken.IsCancellationRequested)
@@ -135,15 +144,22 @@ internal sealed class Libp2pPeerMessageProtocol : SymmetricSessionProtocol, ISes
 
             int prefixLength = VarInt.GetSizeInBytes(message.Length);
             byte[] frame = new byte[checked(prefixLength + message.Length)];
-            int offset = 0;
-            VarInt.Encode(message.Length, frame, ref offset);
-            message.Span.CopyTo(frame.AsSpan(offset));
-
-            IOResult result = await channel.WriteAsync(new ReadOnlySequence<byte>(frame), cancellationToken)
-                .ConfigureAwait(false);
-            if (result != IOResult.Ok)
+            try
             {
-                throw new IOException("The peer transport did not accept the complete message frame.");
+                int offset = 0;
+                VarInt.Encode(message.Length, frame, ref offset);
+                message.Span.CopyTo(frame.AsSpan(offset));
+
+                IOResult result = await channel.WriteAsync(new ReadOnlySequence<byte>(frame), cancellationToken)
+                    .ConfigureAwait(false);
+                if (result != IOResult.Ok)
+                {
+                    throw new IOException("The peer transport did not accept the complete message frame.");
+                }
+            }
+            finally
+            {
+                CryptographicOperations.ZeroMemory(frame);
             }
         }
         finally
@@ -178,6 +194,14 @@ internal sealed class Libp2pPeerMessageProtocol : SymmetricSessionProtocol, ISes
     public void Dispose()
     {
         _inbound.Writer.TryComplete();
+        while (_inbound.Reader.TryRead(out byte[] pendingMessage))
+        {
+            if (pendingMessage.Length > 0)
+            {
+                CryptographicOperations.ZeroMemory(pendingMessage);
+            }
+        }
+
         _sendLock.Dispose();
     }
 }

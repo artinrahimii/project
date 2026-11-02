@@ -49910,20 +49910,53 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0179 و T0177 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال انجام",
+      "actual_output_paths": [
+        "src/Host.Windows/Networking/Libp2pPeerMessageProtocol.cs",
+        "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/PeerMessageFrameCodec.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/network/PeerMessageFrameCodecTest.kt",
+        "docs/security.md",
+        "tests/test_sensitive_buffer_cleanup.py",
+        "step three/T0180/execution-report.md",
+        "step three/T0180/evidence/verification.md",
+        "step three/T0180/execution-report.md",
+        "step three/T0180/evidence/verification.md",
+        "step three/project-graph.md"
+      ],
       "expected_output_paths": [
         "src/Shared.Security/ + src/Host.Windows/ + src/Client.Android/ + docs/security.md"
       ],
-      "evidence": [],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
+      "evidence": [
+        "step three/T0180/execution-report.md",
+        "step three/T0180/evidence/verification.md",
+        "tests/test_sensitive_buffer_cleanup.py",
+        "src/Client.Android/app/src/test/java/com/whitep/client/network/PeerMessageFrameCodecTest.kt",
+        "src/Host.Windows/Networking/Libp2pPeerMessageProtocol.cs",
+        "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs"
+      ],
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0180-A001 (2026-11-02T17:03:47+03:30): implemented explicit cleanup for Windows outbound frames, failed queue handoff, queued messages at disposal, host request/response wire arrays and short-lived serialized status/rejection messages; Android decoder pending/temporary buffers and decoded frames are zeroed on replacement, malformed frame, callback failure and stream closure. T0177→T0180 and T0179→T0180 reviewed as sequencing_only while retaining type=blocks and the original execution order. Added Android JVM backing-array tests, Python source regressions and documented limits. Exact-head CI pending; task remains in_progress.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0180-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Host.Windows/Networking/Libp2pPeerMessageProtocol.cs",
+          "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs",
+          "src/Client.Android/app/src/main/java/com/whitep/client/network/PeerMessageFrameCodec.kt",
+          "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
+          "src/Client.Android/app/src/test/java/com/whitep/client/network/PeerMessageFrameCodecTest.kt",
+          "docs/security.md",
+          "tests/test_sensitive_buffer_cleanup.py",
+          "step three/T0180/execution-report.md",
+          "step three/T0180/evidence/verification.md",
+          "step three/T0180/execution-report.md",
+          "step three/T0180/evidence/verification.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
@@ -49936,7 +49969,36 @@
           "review_evidence": []
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0180-A001",
+          "started_at": "2026-11-02T17:03:47+03:30",
+          "ended_at": "2026-11-02T17:03:47+03:30",
+          "result": "partial",
+          "summary": "Implemented app-owned transient-buffer cleanup in Windows and Android transport paths, added decoder zeroization JVM tests and Python source-contract guards, documented limits, and reviewed both incoming dependency edges as sequencing_only. Exact-head CI pending.",
+          "changed_files": [
+            "src/Host.Windows/Networking/Libp2pPeerMessageProtocol.cs",
+            "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs",
+            "src/Client.Android/app/src/main/java/com/whitep/client/network/PeerMessageFrameCodec.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/network/PeerMessageFrameCodecTest.kt",
+            "docs/security.md",
+            "tests/test_sensitive_buffer_cleanup.py",
+            "step three/T0180/execution-report.md",
+            "step three/T0180/evidence/verification.md",
+            "step three/T0180/execution-report.md",
+            "step three/T0180/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Run exact-head Step Three quality and full product workflows; mark done only after Windows, Android and host acceptance checks pass."
+        }
+      ]
     },
     {
       "id": "T0181",
@@ -56690,19 +56752,32 @@
       "from": "T0179",
       "to": "T0180",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0179's allowlist-only diagnostic schema is present in the same Android and Windows transports, but T0180 does not consume its event codes, results or logging API. Buffer ownership and cleanup are independently determined by frame serialization, decoder state, inbound queue ownership and request-lifecycle finally blocks. Retain the existing order as sequencing only; preserve the blocks field.",
+      "validation_status": "validated",
+      "evidence": [
+        "step three/T0179/execution-report.md",
+        "src/Shared.Security/SafeDiagnosticLog.cs",
+        "src/Host.Windows/Networking/Libp2pPeerMessageProtocol.cs",
+        "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/PeerMessageFrameCodec.kt"
+      ]
     },
     {
       "from": "T0177",
       "to": "T0180",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0177's verified host-selection and per-request attempt-budget outputs are not consumed by T0180's buffer-ownership/cleanup implementation. The dispatcher passes a canonical InferenceRequest to the injected transport, but cleanup is implemented at serialization, framing, queue and stream-buffer ownership boundaries. Keep the original order as a conservative sequencing constraint; the blocks label alone is not evidence of a technical dependency.",
+      "validation_status": "validated",
+      "evidence": [
+        "step three/T0177/execution-report.md",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceAttemptDispatcher.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/PeerMessageFrameCodec.kt",
+        "src/Host.Windows/Networking/Libp2pPeerMessageProtocol.cs"
+      ]
     },
     {
       "from": "T0180",
@@ -62062,9 +62137,42 @@
         "docs/security.md"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-11-02T17:03:47+03:30",
+      "edge_from": "T0177",
+      "edge_to": "T0180",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "reason": "T0177's verified host-selection and per-request attempt-budget outputs are not consumed by T0180's buffer-ownership/cleanup implementation. The dispatcher passes a canonical InferenceRequest to the injected transport, but cleanup is implemented at serialization, framing, queue and stream-buffer ownership boundaries. Keep the original order as a conservative sequencing constraint; the blocks label alone is not evidence of a technical dependency.",
+      "evidence": [
+        "step three/T0177/execution-report.md",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceAttemptDispatcher.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/PeerMessageFrameCodec.kt",
+        "src/Host.Windows/Networking/Libp2pPeerMessageProtocol.cs"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-11-02T17:03:47+03:30",
+      "edge_from": "T0179",
+      "edge_to": "T0180",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "reason": "T0179's allowlist-only diagnostic schema is present in the same Android and Windows transports, but T0180 does not consume its event codes, results or logging API. Buffer ownership and cleanup are independently determined by frame serialization, decoder state, inbound queue ownership and request-lifecycle finally blocks. Retain the existing order as sequencing only; preserve the blocks field.",
+      "evidence": [
+        "step three/T0179/execution-report.md",
+        "src/Shared.Security/SafeDiagnosticLog.cs",
+        "src/Host.Windows/Networking/Libp2pPeerMessageProtocol.cs",
+        "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/PeerMessageFrameCodec.kt"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-11-02T13:01:27Z",
+  "updated_at": "2026-11-02T17:03:47+03:30",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",

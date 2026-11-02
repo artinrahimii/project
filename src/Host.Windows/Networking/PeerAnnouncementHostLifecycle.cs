@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Sockets;
+using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 using Google.Protobuf;
@@ -293,7 +294,7 @@ public sealed class PeerAnnouncementHostLifecycle : IAsyncDisposable
                             throw new InvalidDataException("HostStatusRequest targeted a different peer identity.");
 
                         var status = await CreateHostStatusResponseAsync(cancellationToken).ConfigureAwait(false);
-                        await transport.SendMessageAsync(status.ToByteArray(), cancellationToken).ConfigureAwait(false);
+                        await SendAndClearMessageAsync(transport, status, cancellationToken).ConfigureAwait(false);
                         continue;
                     }
 
@@ -339,7 +340,7 @@ public sealed class PeerAnnouncementHostLifecycle : IAsyncDisposable
                     {
                         InferenceResponse rejected = CreateReplayRejection(request);
                         PeerResponseCorrelationValidator.Validate(request, rejected, LocalPeerIdentity);
-                        await transport.SendMessageAsync(rejected.ToByteArray(), cancellationToken).ConfigureAwait(false);
+                        await SendAndClearMessageAsync(transport, rejected, cancellationToken).ConfigureAwait(false);
                         continue;
                     }
 
@@ -349,7 +350,7 @@ public sealed class PeerAnnouncementHostLifecycle : IAsyncDisposable
                         if (busy is not null)
                         {
                             PeerResponseCorrelationValidator.Validate(request, busy, LocalPeerIdentity);
-                            await transport.SendMessageAsync(busy.ToByteArray(), cancellationToken).ConfigureAwait(false);
+                            await SendAndClearMessageAsync(transport, busy, cancellationToken).ConfigureAwait(false);
                         }
                         continue;
                     }
@@ -362,7 +363,7 @@ public sealed class PeerAnnouncementHostLifecycle : IAsyncDisposable
                         _requestHandlerSlots.Release();
                         InferenceResponse rejected = CreateReplayRejection(request);
                         PeerResponseCorrelationValidator.Validate(request, rejected, LocalPeerIdentity);
-                        await transport.SendMessageAsync(rejected.ToByteArray(), cancellationToken).ConfigureAwait(false);
+                        await SendAndClearMessageAsync(transport, rejected, cancellationToken).ConfigureAwait(false);
                         continue;
                     }
 
@@ -391,7 +392,7 @@ public sealed class PeerAnnouncementHostLifecycle : IAsyncDisposable
                 finally
                 {
                     if (!handedToHandler)
-                        Array.Clear(requestWire, 0, requestWire.Length);
+                        CryptographicOperations.ZeroMemory(requestWire);
                 }
             }
         }
@@ -422,6 +423,22 @@ public sealed class PeerAnnouncementHostLifecycle : IAsyncDisposable
                 try { await Task.WhenAll(remainingHandlers).ConfigureAwait(false); }
                 catch (Exception) { /* Individual handlers record only exception types and tear down the session. */ }
             }
+        }
+    }
+
+    private static async Task SendAndClearMessageAsync(
+        Libp2pPeerTransport transport,
+        IMessage message,
+        CancellationToken cancellationToken)
+    {
+        byte[] wire = message.ToByteArray();
+        try
+        {
+            await transport.SendMessageAsync(wire, cancellationToken).ConfigureAwait(false);
+        }
+        finally
+        {
+            CryptographicOperations.ZeroMemory(wire);
         }
     }
 
@@ -510,7 +527,7 @@ public sealed class PeerAnnouncementHostLifecycle : IAsyncDisposable
             if (requestCancellation.IsCancellationRequested)
             {
                 if (responseWire is not null)
-                    Array.Clear(responseWire, 0, responseWire.Length);
+                    CryptographicOperations.ZeroMemory(responseWire);
                 InferenceResponse? cancelled = CreateCancelledResponse(request);
                 responseWire = cancelled?.ToByteArray();
             }
@@ -555,8 +572,8 @@ public sealed class PeerAnnouncementHostLifecycle : IAsyncDisposable
         finally
         {
             if (responseWire is not null)
-                Array.Clear(responseWire, 0, responseWire.Length);
-            Array.Clear(requestWire, 0, requestWire.Length);
+                CryptographicOperations.ZeroMemory(responseWire);
+            CryptographicOperations.ZeroMemory(requestWire);
             if (_activeRequestCancellations.TryRemove(key, out var completedCancellation))
                 completedCancellation.Dispose();
             _requestHandlerSlots.Release();

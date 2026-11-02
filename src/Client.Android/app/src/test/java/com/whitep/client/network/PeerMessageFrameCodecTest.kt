@@ -95,6 +95,56 @@ class PeerMessageFrameCodecTest {
         }
     }
 
+
+    @Test
+    fun zeroesThePreviousPendingBufferWhenAFrameCompletes() {
+        val message = ByteArray(128) { index -> (index + 1).toByte() }
+        val frame = PeerMessageFrameCodec.encode(message)
+        val decoder = PeerMessageFrameDecoder()
+
+        decoder.feed(frame.copyOfRange(0, 1))
+        val retained = pendingBuffer(decoder)
+        val decoded = decoder.feed(frame.copyOfRange(1, frame.size))
+
+        assertArrayEquals(message, decoded.single())
+        assertArrayEquals(ByteArray(retained.size), retained)
+    }
+
+    @Test
+    fun zeroesPartialFrameWhenStreamFinishesAsTruncatedAndAllowsReuse() {
+        val decoder = PeerMessageFrameDecoder()
+        val partial = PeerMessageFrameCodec.encode(byteArrayOf(4, 5, 6))
+        decoder.feed(partial.copyOfRange(0, partial.size - 1))
+        val retained = pendingBuffer(decoder)
+
+        assertThrows(EOFException::class.java) { decoder.finish() }
+        assertArrayEquals(ByteArray(retained.size), retained)
+
+        val nextMessage = byteArrayOf(9, 8, 7)
+        val decoded = decoder.feed(PeerMessageFrameCodec.encode(nextMessage))
+        assertArrayEquals(nextMessage, decoded.single())
+        decoder.finish()
+    }
+
+    @Test
+    fun explicitClearZeroesAndDiscardsPartialFrame() {
+        val decoder = PeerMessageFrameDecoder()
+        decoder.feed(byteArrayOf(0x80.toByte()))
+        val retained = pendingBuffer(decoder)
+
+        decoder.clear()
+
+        assertArrayEquals(ByteArray(retained.size), retained)
+        assertTrue(pendingBuffer(decoder).isEmpty())
+        decoder.finish()
+    }
+
+    private fun pendingBuffer(decoder: PeerMessageFrameDecoder): ByteArray {
+        val field = PeerMessageFrameDecoder::class.java.getDeclaredField("pending")
+        field.isAccessible = true
+        return field.get(decoder) as ByteArray
+    }
+
     @Test
     fun rejectsInvalidLimitsAndEncoderOversize() {
         assertThrows(IllegalArgumentException::class.java) {
