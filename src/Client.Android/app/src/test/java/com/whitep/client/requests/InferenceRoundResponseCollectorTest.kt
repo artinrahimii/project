@@ -215,7 +215,12 @@ class InferenceRoundResponseCollectorTest {
     @Test
     fun collectsNoResponsesAsOneTimeoutPerQueuedAttempt() =
         runBlocking {
-            val attempts = listOf(attempt("attempt-a", "host-a"), attempt("attempt-b", "host-b"), attempt("attempt-c", "host-c"))
+            val attempts =
+                listOf(
+                    attempt("attempt-a", "host-a"),
+                    attempt("attempt-b", "host-b"),
+                    attempt("attempt-c", "host-c"),
+                )
             val result =
                 collector.collect(
                     attempts = attempts,
@@ -236,7 +241,12 @@ class InferenceRoundResponseCollectorTest {
     @Test
     fun collectsOneOfThreeResponsesAndRetainsTheOtherAttemptTimeouts() =
         runBlocking {
-            val attempts = listOf(attempt("attempt-a", "host-a"), attempt("attempt-b", "host-b"), attempt("attempt-c", "host-c"))
+            val attempts =
+                listOf(
+                    attempt("attempt-a", "host-a"),
+                    attempt("attempt-b", "host-b"),
+                    attempt("attempt-c", "host-c"),
+                )
             val result =
                 collector.collect(
                     attempts = attempts,
@@ -260,7 +270,12 @@ class InferenceRoundResponseCollectorTest {
     @Test
     fun collectsThreeResponsesInDispatchOrder() =
         runBlocking {
-            val attempts = listOf(attempt("attempt-a", "host-a"), attempt("attempt-b", "host-b"), attempt("attempt-c", "host-c"))
+            val attempts =
+                listOf(
+                    attempt("attempt-a", "host-a"),
+                    attempt("attempt-b", "host-b"),
+                    attempt("attempt-c", "host-c"),
+                )
             val result =
                 collector.collect(
                     attempts = attempts,

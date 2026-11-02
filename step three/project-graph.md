@@ -48697,15 +48697,9 @@
         "step three/T0174/execution-report.md",
         "step three/T0174/evidence/verification.md",
         "step three/T0160/execution-report.md",
-        "https://github.com/artinrahimii/project/actions/runs/41417197342",
-        "https://github.com/artinrahimii/project/actions/runs/41417197306",
-        "https://github.com/artinrahimii/project/actions/runs/41417197168",
-        "https://github.com/artinrahimii/project/actions/runs/41417197342/artifacts/13127773181",
-        "https://github.com/artinrahimii/project/actions/runs/41417197342/artifacts/13128670755",
-        "https://github.com/artinrahimii/project/actions/runs/41417197342/artifacts/13128885203",
         "tests/test_android_manual_retry_contract.py"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0175-A001 (2026-11-02): V 3.0.801 exact-head quality failed one of 317 Python tests because the no-host message lost the required 'No inference payload was sent' disclosure phrase; Android KtLint also found the MainActivity status-chain and ViewModel signature formatting issues. Windows WPF/HostLifecycle and the container smoke passed. These failures are retained in execution_history.\nT0175-A002 (2026-11-02): V 3.0.802 restored the required disclosure and passed all 317 Python/graph/evidence checks, Windows WPF/HostLifecycle and container smoke; Android KtLint still failed the two formatting patterns. These failures are retained in execution_history.\nT0175-A003 (2026-11-02): V 3.0.803 passed all T0175 acceptance gates: KtLint, APK, 183 JVM tests (0 failed/0 ignored), both manual-retry regressions, Protobuf Java/Kotlin, Windows WPF/startup/security/DPAPI, HostLifecycle, 317-test Step Three quality/evidence gate, and Rendezvous container HTTP smoke. Retry preserves requestId, uses fresh attemptIds, excludes hosts whose latest attempt succeeded/cancelled, remains manually initiated and capped at three rounds/nine total attempts. Cancellation is terminal/non-retryable. T0175 is done. T0175 -> T0176 remains unreviewed.\nT0175-A006 (2026-11-02): V 3.0.805 Step Three quality passed all 322 Python tests, compileall and graph guard (230 tasks / 422 edges, zero errors, one pre-existing T0001 UNMAPPED_DEPENDENCY warning). The supplemental tests/test_android_manual_retry_contract.py passed all five tests and satisfies the validator's required tests/ evidence prefix. Full product CI V 3.0.804 also passed on unchanged Android/Windows production source blobs, including Android KtLint/APK/183 JVM tests/Protobuf, Windows WPF/startup/security/DPAPI and HostLifecycle. V 3.0.805 container smoke passed. T0175 is done. T0175 -> T0176 remains unreviewed.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0175-A001 (2026-11-02): V 3.0.801 exact-head quality failed one of 317 Python tests because the no-host message lost the required 'No inference payload was sent' disclosure phrase; Android KtLint also found the MainActivity status-chain and ViewModel signature formatting issues. Windows WPF/HostLifecycle and the container smoke passed. These failures are retained in execution_history.\nT0175-A002 (2026-11-02): V 3.0.802 restored the required disclosure and passed all 317 Python/graph/evidence checks, Windows WPF/HostLifecycle and container smoke; Android KtLint still failed the two formatting patterns. These failures are retained in execution_history.\nT0175-A003 (2026-11-02): V 3.0.803 passed all T0175 acceptance gates: KtLint, APK, 183 JVM tests (0 failed/0 ignored), both manual-retry regressions, Protobuf Java/Kotlin, Windows WPF/startup/security/DPAPI, HostLifecycle, 317-test Step Three quality/evidence gate, and Rendezvous container HTTP smoke. Retry preserves requestId, uses fresh attemptIds, excludes hosts whose latest attempt succeeded/cancelled, remains manually initiated and capped at three rounds/nine total attempts. Cancellation is terminal/non-retryable. T0175 is done. T0175 -> T0176 remains unreviewed.\nT0175-A006 (2026-11-02): V 3.0.805 Step Three quality passed all 322 Python tests, compileall and graph guard (230 tasks / 422 edges, zero errors, one pre-existing T0001 UNMAPPED_DEPENDENCY warning). The supplemental tests/test_android_manual_retry_contract.py passed all five tests and satisfies the validator's required tests/ evidence prefix. Full product CI V 3.0.804 also passed on unchanged Android/Windows production source blobs, including Android KtLint/APK/183 JVM tests/Protobuf, Windows WPF/startup/security/DPAPI and HostLifecycle. V 3.0.805 container smoke passed. T0175 is done. T0175 -> T0176 remains unreviewed.\nGraph evidence metadata correction in V 3.0.808: removed GitHub Actions run/artifact URLs from the file-path-only evidence array because graph_guard requires repository paths there. All original Actions/artifact URLs remain preserved in execution_summary.tests[].url, execution_history[].tests[].url and the task report; no test history or status was removed.",
       "execution_summary": {
         "attempt_count": 6,
         "failed_attempt_count": 3,
@@ -49066,8 +49060,8 @@
       "status": "in_progress",
       "status_fa": "در حال اجرا",
       "actual_output_paths": [
-        "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
         "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceRoundResponseCollectorTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
         "tests/test_android_inference_round_response_collector_contract.py",
         "tests/test_android_inference_response_correlation_contract.py",
         "step three/T0176/execution-report.md",
@@ -49085,24 +49079,29 @@
         "step three/T0176/execution-report.md",
         "step three/T0176/evidence/verification.md"
       ],
-      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0176-A001: validated T0175 -> T0176 and T0160 -> T0176 as contract_or_interface_dependency using exact-base production source, protocol, and test evidence. Both edges remain type=blocks. Added response-cardinality and duplicate-response Android JVM regressions plus deterministic collector timeouts and late-response contract checks. Exact-head CI pending; no completion claim.",
+      "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0176-A001: validated T0175 -> T0176 and T0160 -> T0176 as contract_or_interface_dependency using exact-base production source, protocol, and test evidence. Both edges remain type=blocks. Added response-cardinality and duplicate-response Android JVM regressions plus deterministic collector timeouts and late-response contract checks. Exact-head CI pending; no completion claim.\nT0176-A001 / V 3.0.807: 324 Python tests, compileall and graph structural validation passed; repo-backed evidence validation failed on six pre-existing T0175 Actions URLs recorded in the file-path-only evidence array. Android KtLint rejected the newly added Kotlin list/assert formatting; APK/JVM tests were skipped. Windows WPF and HostLifecycle passed. Failures are preserved in execution_history.\nT0176-A002 / V 3.0.808: corrected the above formatting and path metadata; exact-head CI pending.",
       "execution_summary": {
-        "attempt_count": 1,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "T0176-A001-v3.0.807-exact-head-ci-pending",
+        "attempt_count": 2,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "T0176-A002-v3.0.808-exact-head-ci-pending",
         "last_attempt_result": "partial",
         "changed_files": [
-          "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
           "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceRoundResponseCollectorTest.kt",
+          "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
           "tests/test_android_inference_round_response_collector_contract.py",
           "tests/test_android_inference_response_correlation_contract.py",
           "step three/T0176/execution-report.md",
           "step three/T0176/evidence/verification.md",
           "step three/project-graph.md"
         ],
-        "related_commits": [],
+        "related_commits": [
+          "201cf977f09c6c0f01ec0ea284eed3d25b92ab39"
+        ],
         "tests_passed": [],
-        "tests_failed": [],
+        "tests_failed": [
+          "V 3.0.807 Android KtLint",
+          "V 3.0.807 repository-backed evidence validation"
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -49133,9 +49132,9 @@
         {
           "attempt_id": "T0176-A001-v3.0.807-exact-head-ci-pending",
           "started_at": "2026-11-02T10:37:53.686Z",
-          "ended_at": "2026-11-02T10:37:53.686Z",
-          "result": "partial",
-          "summary": "Reviewed both incoming dependency edges against the exact main source tree and preserved their blocks type while validating them as contract/interface dependencies. Added deterministic Android JVM regressions for zero/one/two/three responses, duplicate response suppression, timeout, late completion/arrival, and cancellation. Exact-head CI has not yet completed; the task remains in progress.",
+          "ended_at": "2026-11-02T10:42:34.552Z",
+          "result": "failed",
+          "summary": "Exact-head V 3.0.807 exposed two independent CI failures. Step Three ran all 324 Python tests and compileall successfully and passed graph structure validation, but the repo-backed evidence check rejected six GitHub Actions URLs stored as file paths in the pre-existing T0175 evidence array. Android product build stopped at KtLint because three new three-host list literals and one new cardinality assertion violated formatting. Windows WPF and HostLifecycle passed; Android JVM execution was skipped after lint failure.",
           "changed_files": [
             "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
             "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceRoundResponseCollectorTest.kt",
@@ -49145,29 +49144,90 @@
             "step three/T0176/evidence/verification.md",
             "step three/project-graph.md"
           ],
+          "commit_sha": "201cf977f09c6c0f01ec0ea284eed3d25b92ab39",
+          "tests": [
+            {
+              "name": "Step Three automated Python suite — run 41430423260",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41430423260",
+              "summary": "324 tests ran and passed."
+            },
+            {
+              "name": "Python compileall — run 41430423260",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41430423260",
+              "summary": "python -m compileall -q tools tests passed."
+            },
+            {
+              "name": "Graph structure validation — run 41430423260",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41430423260",
+              "summary": "230 tasks, 422 edges, zero errors and one pre-existing T0001 unmapped-dependency warning."
+            },
+            {
+              "name": "Repository-backed evidence validation — run 41430423260",
+              "result": "failed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41430423260",
+              "summary": "Failed with six MISSING_EVIDENCE_FILE errors because T0175.evidence contained Action URLs rather than repository-relative paths. Those URLs are retained in execution test-history URL fields; V 3.0.808 corrects only the file-path array."
+            },
+            {
+              "name": "Android KtLint — run 41430423224",
+              "result": "failed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41430423224/job/125227306266",
+              "summary": "Three inline listOf(attempt(...)) expressions in InferenceRoundResponseCollectorTest.kt and one multiline assertion in RequestViewModelTest.kt violated KtLint. APK/JVM/Protobuf steps were skipped."
+            },
+            {
+              "name": "Windows WPF build/startup/security — run 41430423224",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41430423224/job/125227305983",
+              "summary": "Release build, startup and security checks passed."
+            },
+            {
+              "name": "HostLifecycle unit/integration — run 41430423224",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41430423224/job/125227306211",
+              "summary": "Host lifecycle unit/integration job passed."
+            }
+          ],
+          "failure_details": "Step Three repository evidence validation rejected six pre-existing T0175 evidence strings beginning with https:// because the graph guard expects local repository paths. Android KtLint rejected three long one-line three-host attempt lists and the added assertion wrapping in the new Kotlin tests. The Android APK/JVM steps did not run.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "V 3.0.808 corrects the T0175 path-only evidence array without deleting Actions URLs from historical records; formats Kotlin lists and replaces the tautological VM assertion with exact success/failure card counts. Inspect new exact-head CI before completion."
+        },
+        {
+          "attempt_id": "T0176-A002-v3.0.808-exact-head-ci-pending",
+          "started_at": "2026-11-02T10:42:34.552Z",
+          "ended_at": "2026-11-02T10:42:34.552Z",
+          "result": "partial",
+          "summary": "Corrected all observed V 3.0.807 KtLint findings, changed the ViewModel assertions to count success and failure cards exactly, and corrected the pre-existing T0175 graph evidence-path metadata while retaining every Actions URL in execution history. Exact-head V 3.0.808 CI is pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceRoundResponseCollectorTest.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
+            "tests/test_android_inference_round_response_collector_contract.py",
+            "tests/test_android_inference_response_correlation_contract.py",
+            "step three/T0176/execution-report.md",
+            "step three/T0176/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
           "commit_sha": null,
           "tests": [
             {
-              "name": "Android InferenceRoundResponseCollectorTest",
+              "name": "Android KtLint/JVM tests",
               "result": "not_run",
-              "summary": "Added zero/one/three cardinality cases and replaced a 20 ms wall-clock timeout with deterministic TimeoutException; exact-head Gradle execution is pending."
+              "summary": "Corrections are committed in V 3.0.808; wait for exact-head Android workflow."
             },
             {
-              "name": "Android RequestViewModelTest",
+              "name": "Step Three quality/evidence validation",
               "result": "not_run",
-              "summary": "Added zero/one/two/three response aggregation, explicit duplicate response rejection; existing cancellation regression is retained."
-            },
-            {
-              "name": "Python source-contract tests",
-              "result": "not_run",
-              "summary": "Extended checks for Android JVM response cardinality, duplicate/cancellation and late-response test evidence; exact-head quality CI is pending."
+              "summary": "T0175 evidence path metadata corrected; wait for exact-head quality run."
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Inspect the exact V 3.0.807 GitHub Actions runs. Fix any actual failing gate and retain failed attempts. Mark T0176 done only after the Android JVM and Step Three quality gates pass."
+          "follow_up": "Inspect exact-head V 3.0.808 Android KtLint/JVM and Step Three quality/evidence results. Do not mark T0176 done until both pass."
         }
       ]
     },

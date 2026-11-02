@@ -324,11 +324,18 @@ class RequestViewModelTest {
             gateway.peerIds.forEach(activeViewModel::trustPeerAfterExplicitConfirmation)
             activeViewModel.sendRequest("response cardinality $responseCount", "local/test-model", 64)
 
-            assertEquals(responseCount, activeViewModel.uiState.value.hostResponses.size)
+            val cards = activeViewModel.uiState.value.hostResponses
+            assertEquals(3, cards.size)
+            assertEquals(
+                responseCount,
+                cards.count { card -> card.outcome == HostResponseOutcome.SUCCEEDED },
+            )
+            assertEquals(
+                3 - responseCount,
+                cards.count { card -> card.outcome != HostResponseOutcome.SUCCEEDED },
+            )
             assertEquals(expectedStatus, activeViewModel.uiState.value.runStatus)
             assertEquals(expectedCanRetry, activeViewModel.uiState.value.canRetryRequest)
-            assertEquals(3, activeViewModel.uiState.value.hostResponses.size +
-                (3 - activeViewModel.uiState.value.hostResponses.size))
         }
     }
 
