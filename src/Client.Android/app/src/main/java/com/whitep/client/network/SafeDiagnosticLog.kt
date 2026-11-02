@@ -32,7 +32,15 @@ internal object SafeDiagnosticLog {
         durationMilliseconds: Long = 0L,
     ): String {
         require(durationMilliseconds >= 0L) { "Diagnostic duration cannot be negative." }
-        return """{"schema":1,"event_code":${eventCode.code},"outcome_code":${outcomeCode.code},"duration_ms":${durationMilliseconds}}"""
+        return buildString {
+            append("""{"schema":1,"event_code":""")
+            append(eventCode.code)
+            append(""","outcome_code":""")
+            append(outcomeCode.code)
+            append(""","duration_ms":""")
+            append(durationMilliseconds)
+            append('}')
+        }
     }
 
     internal fun write(
@@ -40,9 +48,10 @@ internal object SafeDiagnosticLog {
         outcomeCode: SafeDiagnosticOutcomeCode,
         durationMilliseconds: Long = 0L,
     ) {
-        val previous = written.getAndUpdate { count ->
-            if (count < MAXIMUM_RECORDS_PER_PROCESS) count + 1 else count
-        }
+        val previous =
+            written.getAndUpdate { count ->
+                if (count < MAXIMUM_RECORDS_PER_PROCESS) count + 1 else count
+            }
         if (previous >= MAXIMUM_RECORDS_PER_PROCESS) return
         Log.i(TAG, formatRecord(eventCode, outcomeCode, durationMilliseconds))
     }
