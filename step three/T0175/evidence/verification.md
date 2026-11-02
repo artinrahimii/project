@@ -53,3 +53,19 @@
 ## Acceptance boundary
 
 T0175 is accepted for the real Android UI/ViewModel failure-status and explicit manual-retry path. The implementation retains the same request ID, fresh attempt IDs, per-host latest outcomes, successful-host exclusion and bounded retry budget. Cancellation is terminal and is not retryable. No claim is made that physical two-device or independent-public-network final acceptance has passed.
+
+
+## A004 — graph guard result on V 3.0.804
+
+- Exact graph commit tested: `1010fe74f1a3722026148c1a291bca7dd414e1a3`.
+- All 317 Python tests passed and `python -m compileall -q tools tests` passed.
+- `tools/graph_guard.py` found 230 tasks / 422 edges but rejected T0175 with `DONE_WITHOUT_TEST_FILE_EVIDENCE`.
+- Inspection of `tools/graph_guard.py` confirms that evidence qualification requires a source-path string starting exactly with `tests/` or `test/`. The Android JVM test file exists under `src/Client.Android/.../src/test/`, but that path is outside the validator's accepted evidence prefixes.
+- The existing `UNMAPPED_DEPENDENCY` warning for T0001 is metadata preserved by the guard; it is not the new error.
+
+## A005 — supplemental test-source evidence repair
+
+- Added `tests/test_android_manual_retry_contract.py` as a top-level test source. It reads the actual production Kotlin files and Android JVM test source; it does not replace or simulate the real Gradle/JVM acceptance.
+- Added the path to T0175 `actual_output_paths` and `evidence`.
+- The new source test verifies aggregate status exposure, same-requestId/fresh-attemptId bounded manual retry, latest-outcome filtering, cancellation terminal behavior, explicit Compose Retry callback and the exact passing Android JVM regression names.
+- The exact V 3.0.805 Python/graph quality run is pending. T0175 is intentionally retained as `in_progress` until the new tests and graph guard pass.

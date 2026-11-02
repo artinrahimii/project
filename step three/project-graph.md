@@ -48677,14 +48677,15 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0174 و T0160 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "done",
-      "status_fa": "تکمیل‌شده",
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
       "actual_output_paths": [
         "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt",
         "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
         "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
         "step three/T0175/execution-report.md",
-        "step three/T0175/evidence/verification.md"
+        "step three/T0175/evidence/verification.md",
+        "tests/test_android_manual_retry_contract.py"
       ],
       "expected_output_paths": [
         "src/Client.Android/Requests/ + tests/"
@@ -48701,25 +48702,28 @@
         "https://github.com/artinrahimii/project/actions/runs/41417197168",
         "https://github.com/artinrahimii/project/actions/runs/41417197342/artifacts/13127773181",
         "https://github.com/artinrahimii/project/actions/runs/41417197342/artifacts/13128670755",
-        "https://github.com/artinrahimii/project/actions/runs/41417197342/artifacts/13128885203"
+        "https://github.com/artinrahimii/project/actions/runs/41417197342/artifacts/13128885203",
+        "tests/test_android_manual_retry_contract.py"
       ],
       "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.\nT0175-A001 (2026-11-02): V 3.0.801 exact-head quality failed one of 317 Python tests because the no-host message lost the required 'No inference payload was sent' disclosure phrase; Android KtLint also found the MainActivity status-chain and ViewModel signature formatting issues. Windows WPF/HostLifecycle and the container smoke passed. These failures are retained in execution_history.\nT0175-A002 (2026-11-02): V 3.0.802 restored the required disclosure and passed all 317 Python/graph/evidence checks, Windows WPF/HostLifecycle and container smoke; Android KtLint still failed the two formatting patterns. These failures are retained in execution_history.\nT0175-A003 (2026-11-02): V 3.0.803 passed all T0175 acceptance gates: KtLint, APK, 183 JVM tests (0 failed/0 ignored), both manual-retry regressions, Protobuf Java/Kotlin, Windows WPF/startup/security/DPAPI, HostLifecycle, 317-test Step Three quality/evidence gate, and Rendezvous container HTTP smoke. Retry preserves requestId, uses fresh attemptIds, excludes hosts whose latest attempt succeeded/cancelled, remains manually initiated and capped at three rounds/nine total attempts. Cancellation is terminal/non-retryable. T0175 is done. T0175 -> T0176 remains unreviewed.",
       "execution_summary": {
-        "attempt_count": 3,
-        "failed_attempt_count": 2,
-        "last_attempt_id": "T0175-A003-v3.0.803-exact-head-acceptance",
-        "last_attempt_result": "succeeded",
+        "attempt_count": 5,
+        "failed_attempt_count": 3,
+        "last_attempt_id": "T0175-A005-v3.0.805-test-evidence-repair",
+        "last_attempt_result": "partial",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt",
           "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
           "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
           "step three/T0175/execution-report.md",
-          "step three/T0175/evidence/verification.md"
+          "step three/T0175/evidence/verification.md",
+          "tests/test_android_manual_retry_contract.py"
         ],
         "related_commits": [
           "5eef2ac3841cc3e40f83965cc1233bfb95a30245",
           "7f8c4f11e4dc55892061f26872ab437f9002104f",
-          "aed7d2c3c49e04b596c457e5f38f680d88027b04"
+          "aed7d2c3c49e04b596c457e5f38f680d88027b04",
+          "1010fe74f1a3722026148c1a291bca7dd414e1a3"
         ],
         "tests_passed": [
           "V 3.0.803 exact-head Android KtLint passed.",
@@ -48736,10 +48740,11 @@
         "tests_failed": [
           "V 3.0.801: Step Three Python quality had 1 failure out of 317 because tests/test_claims_audit.py required the exact 'No inference payload was sent' disclosure phrase; restored in V 3.0.802.",
           "V 3.0.801: Android KtLint found status-chain and single-parameter function formatting violations; corrected in V 3.0.803.",
-          "V 3.0.802: Android KtLint still found the two formatting patterns; corrected in V 3.0.803."
+          "V 3.0.802: Android KtLint still found the two formatting patterns; corrected in V 3.0.803.",
+          "V 3.0.804 graph guard failed DONE_WITHOUT_TEST_FILE_EVIDENCE because the accepted evidence convention requires a top-level tests/ or test/ path; the real Android JVM source under src/.../src/test/ did not satisfy the guard."
         ],
         "blocked_reason": null,
-        "reopened_reason": null,
+        "reopened_reason": "V 3.0.804 graph guard rejected the test evidence path convention; adding a top-level tests/ source-contract test and rerunning the guard.",
         "contract_revalidation": {
           "state": "passed",
           "triggering_contracts": [
@@ -48919,6 +48924,75 @@
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Proceed to T0176 only after reviewing its incoming edge(s); T0175 -> T0176 remains unreviewed and must not be reclassified or removed without evidence."
+        },
+        {
+          "attempt_id": "T0175-A004-v3.0.804-graph-guard-reopen",
+          "started_at": "2026-11-02T09:07:56Z",
+          "ended_at": "2026-11-02T09:08:17Z",
+          "result": "failed",
+          "summary": "The .804 quality workflow ran all 317 Python tests and compileall successfully, but graph_guard.py rejected T0175 with DONE_WITHOUT_TEST_FILE_EVIDENCE. Its explicit rule accepts test-source paths only when evidence items start with tests/ or test/; the real Android JVM source path starts src/Client.Android/.../src/test/ and therefore does not satisfy this repository-level evidence convention. This is a graph evidence-contract failure, not an Android/JVM product-test failure. T0175 was reopened pending a matching top-level tests/ source-evidence file and a rerun of the quality gate.",
+          "changed_files": [
+            "step three/project-graph.md",
+            "step three/T0175/execution-report.md",
+            "step three/T0175/evidence/verification.md"
+          ],
+          "commit_sha": "1010fe74f1a3722026148c1a291bca7dd414e1a3",
+          "tests": [
+            {
+              "name": "Step Three Python suite — V 3.0.804",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41418163707",
+              "summary": "All 317 Python tests passed; compileall passed."
+            },
+            {
+              "name": "Graph guard — V 3.0.804",
+              "result": "failed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41418163707",
+              "summary": "Graph guard reported 230 tasks and 422 edges, one pre-existing UNMAPPED_DEPENDENCY warning for T0001, and one error: DONE_WITHOUT_TEST_FILE_EVIDENCE for T0175. The error is caused by the validator's tests/ or test/ prefix convention."
+            },
+            {
+              "name": "Rendezvous container smoke — V 3.0.804",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/41418163813",
+              "summary": "Production container build and non-root HTTP contract smoke passed."
+            }
+          ],
+          "failure_details": "The task evidence list referenced the real Android JVM source under src/Client.Android/.../src/test/... but graph_guard.py line 89 accepts only evidence strings beginning tests/ or test/. The guard therefore did not recognize this test source, even though the Android JVM report contained 183 passing tests. No dependency edge was changed.",
+          "blocked_reason": null,
+          "reopened_reason": "The .804 graph-quality gate rejected the test evidence path convention. The earlier V 3.0.803 product/JVM acceptance remains in history; T0175 is reopened until a matching tests/ source evidence and an exact-head quality rerun pass.",
+          "contract_changes": [],
+          "follow_up": "Add a real supplemental tests/ source-contract test tied to the Android ViewModel/Compose and the passing JVM regression names; include it in actual_output_paths and evidence; rerun the exact-head Step Three quality gate before marking T0175 done."
+        },
+        {
+          "attempt_id": "T0175-A005-v3.0.805-test-evidence-repair",
+          "started_at": "2026-11-02T09:11:44.498Z",
+          "ended_at": "2026-11-02T09:11:44.498Z",
+          "result": "partial",
+          "summary": "Added tests/test_android_manual_retry_contract.py. It checks the live ViewModel aggregate statuses, requestId/attempt budget preservation, latest-attempt success/cancellation filtering, explicit Compose Retry callback and the exact Android JVM retry/cancellation regression names. The path is included as a real test source in T0175 actual_output_paths and evidence so graph_guard.py's required tests/ prefix convention can recognize it. The exact-head .805 Python suite and graph guard have not run yet.",
+          "changed_files": [
+            "tests/test_android_manual_retry_contract.py",
+            "step three/project-graph.md",
+            "step three/T0175/execution-report.md",
+            "step three/T0175/evidence/verification.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Supplemental Android manual-retry source contract — V 3.0.805",
+              "result": "not_run",
+              "summary": "Source and assertions are prepared; exact-head quality CI must execute this file."
+            },
+            {
+              "name": "Step Three graph guard — V 3.0.805",
+              "result": "not_run",
+              "summary": "Pending the commit-triggered quality workflow."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect the exact V 3.0.805 Step Three quality job. Only after the new tests and graph guard pass should T0175 be marked done again."
         }
       ]
     },

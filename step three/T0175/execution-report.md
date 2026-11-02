@@ -50,3 +50,12 @@ This acceptance proves the Android request UI/ViewModel flow and its bounded ret
 ## Next action
 
 Review all incoming edges and evidence for T0176 before starting it. Keep unreviewed edges unchanged until the affected contracts are actually inspected.
+
+
+## A004 — V 3.0.804 graph-guard evidence revalidation
+
+The product-level acceptance from V 3.0.803 remains valid. On V 3.0.804, the Step Three Python suite (317 tests) and compileall passed, but `tools/graph_guard.py` reported `DONE_WITHOUT_TEST_FILE_EVIDENCE` for T0175. The validator's exact convention (source line 89) recognizes a task test source only when an evidence item begins with `tests/` or `test/`; the Android Gradle test source under `src/Client.Android/.../src/test/` is real, but does not match that repository-level convention. T0175 was reopened while preserving the prior successful Android acceptance and both earlier failed attempts.
+
+## A005 — V 3.0.805 supplemental evidence repair (pending exact-head CI)
+
+Added `tests/test_android_manual_retry_contract.py`, a real Python source-contract test that reads the production Android ViewModel, Compose screen and Android JVM test source. It checks the aggregate status states, same-request/fresh-attempt bounded retry wiring, latest-outcome/success/cancellation handling, explicit manual UI callback, and the existing passing JVM retry/cancellation regression names. The file is included in both `actual_output_paths` and `evidence` to satisfy the graph guard's explicit tests/ convention. This supplemental source-contract suite is not a replacement for the 183 real Android JVM tests. The exact V 3.0.805 Python/graph CI result is pending; T0175 remains `in_progress` until that gate passes.
