@@ -507,6 +507,204 @@ class InferenceAttemptDispatcherTest {
             assertTrue(transport.requests.isEmpty())
         }
 
+
+    @Test
+    fun enforcesThreeDistinctHostsPerRoundAndNineAttemptsAcrossTheRequest() =
+        runBlocking {
+            val request = distributedRequest()
+            val protocolRequest = validRequest(requestId = request.requestId)
+            val candidates =
+                (1..12).map { index ->
+                    candidate("host-${index.toString().padStart(2, '0')}")
+                }
+            val transport = RecordingTransport()
+            val requestDispatcher = dispatcher(transport)
+            var progress = DistributedRequestProgress()
+            var previousRoundAttempts = emptyList<InferenceHostAttempt>()
+            val allAttemptedHosts = mutableListOf<String>()
+            val roundHostIds = mutableListOf<List<String>>()
+
+            repeat(request.maxRounds) { roundIndex ->
+                val selected =
+                    if (roundIndex == 0) {
+                        HostCandidateSelector.selectFirstRound(
+                            distributedRequest = request,
+                            request = protocolRequest,
+                            candidates = candidates,
+                        )
+                    } else {
+                        HostCandidateSelector.selectNextRound(
+                            distributedRequest = request,
+                            request = protocolRequest,
+                            candidates = candidates,
+                            previousRoundAttempts = previousRoundAttempts,
+                            previousRoundResponses =
+                                InferenceRoundResponseCollection(emptyList(), emptyList()),
+                            progress = progress,
+                        )
+                    }
+                val selectedIds = selected.map { it.announcement.ephemeralHostId }
+
+                assertTrue(selectedIds.size in 1..HostCandidateSelector.MAX_HOSTS_PER_ROUND)
+                assertEquals(selectedIds.size, selectedIds.toSet().size)
+                assertTrue(selectedIds.none { hostId -> hostId in allAttemptedHosts })
+
+                val result =
+                    requestDispatcher.dispatchRound(
+                        distributedRequest = request,
+                        selectedHosts = selected,
+                        modelId = MODEL_ID,
+                        currentMessage = "message",
+                        capsule = capsule(),
+                        maxOutputTokens = 64,
+                        protocolVersion = PROTOCOL_VERSION,
+                        progress = progress,
+                    )
+                assertTrue(result is InferenceRoundDispatchResult.Dispatched)
+
+                val attempts = (result as InferenceRoundDispatchResult.Dispatched).attempts
+                assertEquals(selectedIds, attempts.map { it.ephemeralHostId })
+                assertTrue(attempts.size <= FirstReleaseInferenceLimits.MAX_HOSTS_PER_ROUND)
+
+                roundHostIds += selectedIds
+                allAttemptedHosts += selectedIds
+                progress = progress.afterDispatch(attempts.map { it.ephemeralHostId })
+                previousRoundAttempts = attempts
+            }
+
+            assertEquals(FirstReleaseInferenceLimits.MAX_ROUNDS, progress.roundsDispatched)
+            assertEquals(FirstReleaseInferenceLimits.MAX_TOTAL_HOSTS, progress.hostsAttempted)
+            assertEquals(9, transport.requests.size)
+            assertEquals(9, allAttemptedHosts.size)
+            assertEquals(9, allAttemptedHosts.toSet().size)
+            assertTrue(roundHostIds.all { ids -> ids.size == ids.toSet().size })
+
+            val fourthRound =
+                HostCandidateSelector.selectNextRound(
+                    distributedRequest = request,
+                    request = protocolRequest,
+                    candidates = candidates,
+                    previousRoundAttempts = previousRoundAttempts,
+                    previousRoundResponses = InferenceRoundResponseCollection(emptyList(), emptyList()),
+                    progress = progress,
+                )
+            assertTrue(fourthRound.isEmpty())
+
+            val rejected =
+                requestDispatcher.dispatchRound(
+                    distributedRequest = request,
+                    selectedHosts = listOf(candidate("host-13")),
+                    modelId = MODEL_ID,
+                    currentMessage = "message",
+                    capsule = capsule(),
+                    maxOutputTokens = 64,
+                    protocolVersion = PROTOCOL_VERSION,
+                    progress = progress,
+                )
+            assertEquals(
+                InferenceRoundDispatchResult.Rejected(InferenceRoundDispatchRejection.ROUND_LIMIT_REACHED),
+                rejected,
+            )
+            assertEquals(9, transport.requests.size)
+        }
+
+    @Test
+    fun honorsTheRemainingAttemptBudgetWhenAPreviouslyUsedHostIsRetried() =
+        runBlocking {
+            val request = distributedRequest(maxRounds = 3, maxTotalHosts = 4)
+            val protocolRequest = validRequest(requestId = request.requestId)
+            val transport = RecordingTransport()
+            val requestDispatcher = dispatcher(transport)
+            val firstRoundCandidates = listOf(candidate("host-01"), candidate("host-02"), candidate("host-03"))
+            val firstRound =
+                HostCandidateSelector.selectFirstRound(
+                    distributedRequest = request,
+                    request = protocolRequest,
+                    candidates = firstRoundCandidates,
+                )
+            assertEquals(3, firstRound.size)
+
+            val firstResult =
+                requestDispatcher.dispatchRound(
+                    distributedRequest = request,
+                    selectedHosts = firstRound,
+                    modelId = MODEL_ID,
+                    currentMessage = "message",
+                    capsule = capsule(),
+                    maxOutputTokens = 64,
+                    protocolVersion = PROTOCOL_VERSION,
+                    progress = DistributedRequestProgress(),
+                )
+            assertTrue(firstResult is InferenceRoundDispatchResult.Dispatched)
+            val firstAttempts = (firstResult as InferenceRoundDispatchResult.Dispatched).attempts
+            var progress = DistributedRequestProgress().afterDispatch(firstAttempts.map { it.ephemeralHostId })
+
+            val retryBatch =
+                HostCandidateSelector.selectNextRound(
+                    distributedRequest = request,
+                    request = protocolRequest,
+                    candidates =
+                        listOf(
+                            candidate("host-01"),
+                            candidate("host-04"),
+                            candidate("host-05"),
+                        ),
+                    previousRoundAttempts = firstAttempts,
+                    previousRoundResponses = InferenceRoundResponseCollection(emptyList(), emptyList()),
+                    progress = progress,
+                    retryableEphemeralHostIds = setOf("host-01"),
+                )
+            assertEquals(listOf("host-01"), retryBatch.map { it.announcement.ephemeralHostId })
+
+            val retryResult =
+                requestDispatcher.dispatchRound(
+                    distributedRequest = request,
+                    selectedHosts = retryBatch,
+                    modelId = MODEL_ID,
+                    currentMessage = "message",
+                    capsule = capsule(),
+                    maxOutputTokens = 64,
+                    protocolVersion = PROTOCOL_VERSION,
+                    progress = progress,
+                )
+            assertTrue(retryResult is InferenceRoundDispatchResult.Dispatched)
+            val retryAttempts = (retryResult as InferenceRoundDispatchResult.Dispatched).attempts
+            progress = progress.afterDispatch(retryAttempts.map { it.ephemeralHostId })
+
+            assertEquals(2, progress.roundsDispatched)
+            assertEquals(4, progress.hostsAttempted)
+            assertEquals(listOf("host-01", "host-02", "host-03", "host-01"), progress.attemptedEphemeralHostIds)
+            assertEquals(4, transport.requests.size)
+
+            val exhaustedSelection =
+                HostCandidateSelector.selectNextRound(
+                    distributedRequest = request,
+                    request = protocolRequest,
+                    candidates = listOf(candidate("host-04"), candidate("host-05")),
+                    previousRoundAttempts = retryAttempts,
+                    previousRoundResponses = InferenceRoundResponseCollection(emptyList(), emptyList()),
+                    progress = progress,
+                )
+            assertTrue(exhaustedSelection.isEmpty())
+
+            val rejected =
+                requestDispatcher.dispatchRound(
+                    distributedRequest = request,
+                    selectedHosts = listOf(candidate("host-04")),
+                    modelId = MODEL_ID,
+                    currentMessage = "message",
+                    capsule = capsule(),
+                    maxOutputTokens = 64,
+                    protocolVersion = PROTOCOL_VERSION,
+                    progress = progress,
+                )
+            assertEquals(
+                InferenceRoundDispatchResult.Rejected(InferenceRoundDispatchRejection.TOTAL_HOST_LIMIT_REACHED),
+                rejected,
+            )
+            assertEquals(4, transport.requests.size)
+        }
+
     private suspend fun dispatchBlankPrompt(transport: RecordingTransport): InferenceRoundDispatchResult =
         dispatcher(transport).dispatchRound(
             distributedRequest(),
@@ -538,9 +736,9 @@ class InferenceAttemptDispatcherTest {
 
     private fun capsule() = ConversationContextCapsule(goal = "Run one local inference request")
 
-    private fun validRequest() =
+    private fun validRequest(requestId: String = "selector-request") =
         inferenceRequest {
-            requestId = "selector-request"
+            this.requestId = requestId
             attemptId = "selector-attempt"
             modelId = MODEL_ID
             prompt = "select compatible hosts"

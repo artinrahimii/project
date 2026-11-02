@@ -49307,20 +49307,40 @@
       ],
       "start_condition": "همهٔ پیش‌نیازهای T0176 و T0160 تکمیل و معیارهای پذیرش آن‌ها پاس شده باشند.",
       "acceptance": "خروجی واقعی در مسیر مورد انتظار وجود داشته باشد؛ آزمون مربوطه اجرا و موفق شود؛ نتیجه در CI یا گزارش آزمون قابل بررسی باشد.",
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
-      "actual_output_paths": [],
+      "status": "in_progress",
+      "status_fa": "در حال انجام",
+      "actual_output_paths": [
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt",
+        "tests/test_android_inference_attempt_budget_acceptance.py",
+        "step three/T0177/execution-report.md",
+        "step three/T0177/evidence/verification.md",
+        "step three/project-graph.md"
+      ],
       "expected_output_paths": [
         "src/Client.Android/Requests/ + tests/"
       ],
-      "evidence": [],
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/DistributedRequest.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceAttemptDispatcher.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt",
+        "tests/test_android_inference_attempt_budget_acceptance.py",
+        "step three/T0160/execution-report.md",
+        "step three/T0176/execution-report.md"
+      ],
       "notes": "مسیر مورد انتظار، مسیر طراحی‌شده است؛ تا زمان تولید و تأیید واقعی خروجی، به‌عنوان مسیر فایل موجود تلقی نشود.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "T0177-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt",
+          "tests/test_android_inference_attempt_budget_acceptance.py",
+          "step three/T0177/execution-report.md",
+          "step three/T0177/evidence/verification.md",
+          "step three/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
@@ -49333,7 +49353,29 @@
           "review_evidence": []
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "T0177-A001",
+          "started_at": "2026-11-02T14:24:00+03:30",
+          "ended_at": "2026-11-02T14:27:00+03:30",
+          "result": "partial",
+          "summary": "Added integrated Android JVM acceptance tests for three distinct hosts per round, the three-round/nine-attempt first-release ceiling, and an explicitly allowed retry consuming a smaller request budget. Added a Python source-contract guard. Exact-head CI has not yet run; the task remains in progress until Android and Python quality jobs pass.",
+          "changed_files": [
+            "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt",
+            "tests/test_android_inference_attempt_budget_acceptance.py",
+            "step three/T0177/execution-report.md",
+            "step three/T0177/evidence/verification.md",
+            "step three/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Run exact-head V 3.0.810 CI. Promote T0177 to done only if ktlintCheck, assembleDebug, testDebugUnitTest and the Step Three Python/graph/evidence quality gate all pass."
+        }
+      ]
     },
     {
       "id": "T0178",
@@ -56147,19 +56189,31 @@
       "from": "T0176",
       "to": "T0177",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "sequencing_only",
+      "rationale": "T0176 adds deterministic response aggregation and ViewModel/card/retry/cancellation acceptance. T0177 exercises host selection and dispatch-budget enforcement using an empty completed-response collection to continue the next-round algorithm; it does not consume T0176's test outputs or response-card behavior. Keep the original order as a conservative sequencing constraint, not a technical prerequisite.",
+      "validation_status": "validated",
+      "evidence": [
+        "step three/T0176/execution-report.md",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceAttemptDispatcher.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt"
+      ]
     },
     {
       "from": "T0160",
       "to": "T0177",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "rationale": "",
-      "validation_status": "unreviewed",
-      "evidence": []
+      "dependency_classification": "contract_or_interface_dependency",
+      "rationale": "T0177 validates the production InferenceAttemptDispatcher by submitting selected hosts through its real InferenceRequestPayloadBuilder path. That builder serializes the request/attempt/round identifiers and canonical InferenceRequest protocol fields established by T0160; the dispatcher contract and tests directly consume that interface. This is a payload/interface dependency, not an inference from type=blocks.",
+      "validation_status": "validated",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/protocol/InferenceRequestPayloadBuilder.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceAttemptDispatcher.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt",
+        "protocol/whitep/v1/messages.proto",
+        "step three/T0160/execution-report.md",
+        "step three/T0160/evidence/verification.md"
+      ]
     },
     {
       "from": "T0177",
@@ -61485,9 +61539,41 @@
         "step three/T0160/evidence/verification.md"
       ],
       "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-11-02T14:27:00+03:30",
+      "edge_from": "T0176",
+      "edge_to": "T0177",
+      "old_classification": "unreviewed",
+      "new_classification": "sequencing_only",
+      "reason": "T0176 adds deterministic response aggregation and ViewModel/card/retry/cancellation acceptance. T0177 exercises host selection and dispatch-budget enforcement using an empty completed-response collection to continue the next-round algorithm; it does not consume T0176's test outputs or response-card behavior. Keep the original order as a conservative sequencing constraint, not a technical prerequisite.",
+      "evidence": [
+        "step three/T0176/execution-report.md",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceAttemptDispatcher.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt"
+      ],
+      "reviewed_by": "Step Three execution review"
+    },
+    {
+      "changed_at": "2026-11-02T14:27:00+03:30",
+      "edge_from": "T0160",
+      "edge_to": "T0177",
+      "old_classification": "unreviewed",
+      "new_classification": "contract_or_interface_dependency",
+      "reason": "T0177 validates the production InferenceAttemptDispatcher by submitting selected hosts through its real InferenceRequestPayloadBuilder path. That builder serializes the request/attempt/round identifiers and canonical InferenceRequest protocol fields established by T0160; the dispatcher contract and tests directly consume that interface. This is a payload/interface dependency, not an inference from type=blocks.",
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/protocol/InferenceRequestPayloadBuilder.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceAttemptDispatcher.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt",
+        "protocol/whitep/v1/messages.proto",
+        "step three/T0160/execution-report.md",
+        "step three/T0160/evidence/verification.md"
+      ],
+      "reviewed_by": "Step Three execution review"
     }
   ],
-  "updated_at": "2026-11-02T10:49:18.919Z",
+  "updated_at": "2026-11-02T14:27:00+03:30",
   "execution_order_change_log": [
     {
       "changed_at": "2026-10-27T20:22:14.101Z",
