@@ -1,9 +1,9 @@
 # T0184 — رمزگذاری ذخیره‌سازی حساس Android بدون کلید تعبیه‌شده در کد
 
-- **وضعیت:** `in_progress`؛ SQLCipher و ادغام Room پیاده‌سازی شده‌اند، اما پذیرش runtime اختصاصی T0184 هنوز انجام نشده است.
+- **وضعیت:** `done`؛ پیاده‌سازی SQLCipher/Room و چهار سناریوی اختصاصی runtime در CI دقیق `V 3.0.866` با موفقیت پذیرفته شده‌اند.
 - **پیاده‌سازی اولیه:** `11eddfda0cc7f25a7c2ba9177d279960ce1a432c` — `V 3.0.854`.
-- **آخرین CI بررسی‌شده:** `d740c10032d488c6d698aa4d43e78f6e1458d8b2` — `V 3.0.862`.
-- **تلاش‌ها:** A001 تا A013؛ پنج تلاش ناموفق فنی قبلی ثبت شده‌اند. A012 خطای overload کامپایل را اصلاح کرد و build/JVM را در V 3.0.862 پاس کرد؛ A013 تنظیم runner شبیه‌ساز را برای رفع کمبود فضای پارتیشن اصلاح می‌کند.
+- **آخرین CI بررسی‌شده:** `0cb7b121ba7d375f5779f0b0b1869b59f9890bfb` — `V 3.0.866`؛ محصول run `41703869530` و Android job `126153927134`.
+- **تلاش‌ها:** A001 تا A017؛ شش تلاش ناموفق تاریخی حفظ شده‌اند. A017 پذیرش runtime را بر پایهٔ گزارش دقیق CI و artifact آزمون ثبت می‌کند.
 
 ## وابستگی‌ها
 
@@ -40,7 +40,7 @@
 
 ## مرز پذیرش و محدودیت‌ها
 
-چهار آزمون instrumentation مخصوص T0184 تا این لحظه هیچ اجرای موفقی ندارند. تا اجرای موفق exact-head، رمزگذاری runtime فایل Room، مهاجرت دادهٔ plaintext و رفتار fail-closed تأییدشده محسوب نمی‌شوند. موفقیت آزمون‌های Keystore در T0183 جایگزین این چهار آزمون نیست.
+چهار آزمون instrumentation مخصوص T0184 در اجرای exact-head `V 3.0.866` همگی موفق شده‌اند. این نتیجه شامل رمزگذاری پایگاه تازه، ماندگاری داده پس از بازگشایی، مهاجرت پایگاه plaintext و رفتار fail-closed هنگام فقدان کلید است. آزمون‌های T0183 نیز جداگانه در همان artifact موفق‌اند؛ شواهد هر دو مجموعه از هم تفکیک شده‌اند.
 
 emulator، TEE/StrongBox دستگاه فیزیکی را اثبات نمی‌کند. ادعا فقط رمزگذاری فایل پایگاه در حالت سکون است؛ plaintext در حافظهٔ فرایند، pagefile/swap، crash dump، پاک‌سازی فورنزیک بلوک‌های فلش و دستگاه روت‌شده خارج از دامنه‌اند.
 
@@ -100,3 +100,23 @@ emulator، TEE/StrongBox دستگاه فیزیکی را اثبات نمی‌کن
 - نتیجهٔ runtime اصلاح A016 هنوز pending است. `T0184` در `in_progress` باقی می‌ماند؛ هیچ‌کدام از معیارهای مهاجرت دادهٔ قدیمی را تا اجرای exact-head جدید pass نمی‌دانیم.
 
 **گام بعدی:** اجرای exact-head `V 3.0.866`؛ بررسی موفقیت مهاجرت plaintext و حفظ conversation/message/draft، header رمز‌شده، بازیابی کلید Keystore و fail-closed در برابر فقدان کلید.
+
+
+## A017 — پذیرش runtime روی V 3.0.866
+
+- commit دقیق آزموده‌شده: `0cb7b121ba7d375f5779f0b0b1869b59f9890bfb`؛ پیام `V 3.0.866`؛ شاخهٔ `main`.
+- محصول workflow: [run 41703869530](https://github.com/artinrahimii/project/actions/runs/41703869530)؛ Android job `126153927134`.
+- Android KtLint، `assembleDebug`، `testDebugUnitTest` و مرحلهٔ `connectedDebugAndroidTest` همگی موفق شدند. اجرای job گزارش instrumentation را تولید و upload کرد.
+- artifact گزارش instrumentation: `whitep-android-keystore-instrumentation-reports`، شناسهٔ `13265621398`، اندازهٔ ZIP برابر `7,390` بایت. گزارش HTML کامل: **۹ تست، صفر شکست، صفر skipped**.
+- چهار آزمون مختص T0184 در گزارش HTML:
+  - `databaseKeyIsStoredOnlyAsKeystoreProtectedEnvelope` — passed.
+  - `freshDatabaseIsEncryptedAndConversationDataSurvivesReopen` — passed.
+  - `legacyPlaintextRoomDatabaseIsExportedAndExistingRowsArePreserved` — passed.
+  - `missingProtectedKeyFailsClosedAndLeavesEncryptedDatabaseUnchanged` — passed.
+- پنج آزمون `AndroidKeyStorePersistenceTest` مربوط به T0183 نیز در همان اجرا موفق شدند؛ آن‌ها به‌عنوان چهار آزمون T0184 شمرده نشده‌اند.
+- Windows WPF job `126153926732` و HostLifecycle job `126153927096` موفق شدند. Step Three quality gate run `41703869372` و Rendezvous container run `41703869443` نیز موفق شدند.
+- نتیجهٔ شکست قبلی A016 در تاریخچه باقی می‌ماند؛ اصلاح `OPEN_READWRITE or CREATE_IF_NECESSARY` در فایل factory در commit آزموده‌شده وجود دارد و آزمون مهاجرت همان commit را پاس کرده است.
+- **نتیجه:** معیارهای runtime این وظیفه با شواهد دقیق CI احراز شدند؛ وضعیت T0184 از `in_progress` به `done` تغییر می‌کند.
+- **محدودیت:** آزمون روی Android emulator انجام شده است؛ TEE/StrongBox سخت‌افزار فیزیکی، دستگاه روت‌شده و پاک‌سازی فورنزیک حافظهٔ فلش را اثبات نمی‌کند. محدودیت‌های قبلی امنیتی بدون تغییر باقی می‌مانند.
+- **نوبت ثبت شواهد:** `2026-11-04T01:48:38+03:30`.
+

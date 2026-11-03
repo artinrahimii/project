@@ -113,3 +113,23 @@ A011 فقط همین چهار خط را در lambda خروجی SQLCipher چها�
 - در `EncryptedClientDatabaseFactory.kt`، بازکردن منبع plaintext از `OPEN_READWRITE` به ترکیب `OPEN_READWRITE or CREATE_IF_NECESSARY` تغییر یافت تا SQLCipher اجازهٔ ایجاد فایل مقصد ATTACH را داشته باشد.
 - این اصلاح بر پایهٔ شکست واقعی exact-head V 3.0.865 است؛ هنوز runtime CI روی commit اصلاح‌شده اجرا نشده است.
 - **مرز ادعا:** T0184 همچنان `in_progress` است. هیچ‌کدام از چهار معیار instrumentation اختصاصی T0184 به‌عنوان گروه کامل پذیرفته نشده‌اند تا exact-head بعدی همه را سبز کند.
+
+
+## A017 — exact-head V 3.0.866 instrumentation acceptance
+
+- Repository/branch: `artinrahimii/project` / `main`.
+- Tested commit: `0cb7b121ba7d375f5779f0b0b1869b59f9890bfb`; message: `V 3.0.866`.
+- Product workflow: [run 41703869530](https://github.com/artinrahimii/project/actions/runs/41703869530); Android job: `126153927134`.
+- Android lint, debug APK assembly, JVM unit tests, and connected instrumentation all completed successfully.
+- Instrumentation artifact: `whitep-android-keystore-instrumentation-reports`, artifact ID `13265621398`, ZIP size `7,390` bytes. The downloaded HTML report was inspected locally; its summary is **9 tests, 0 failures, 0 skipped**.
+- T0184-specific runtime cases:
+  1. `databaseKeyIsStoredOnlyAsKeystoreProtectedEnvelope` — passed.
+  2. `freshDatabaseIsEncryptedAndConversationDataSurvivesReopen` — passed.
+  3. `legacyPlaintextRoomDatabaseIsExportedAndExistingRowsArePreserved` — passed.
+  4. `missingProtectedKeyFailsClosedAndLeavesEncryptedDatabaseUnchanged` — passed.
+- The remaining five tests belong to `AndroidKeyStorePersistenceTest` for T0183 and also passed; they are not counted as T0184 cases.
+- Windows WPF job `126153926732`, HostLifecycle job `126153927096`, Step Three quality run `41703869372`, and Rendezvous container run `41703869443` all succeeded.
+- The previous A016 migration failure remains in the historical record. The corrected source open flags `OPEN_READWRITE or CREATE_IF_NECESSARY` were present on the tested commit, and the legacy migration case passed on that exact commit.
+- Acceptance result: T0184 runtime acceptance **passed**. This report does not assert physical TEE/StrongBox assurance or secure erasure of flash storage.
+- Evidence checked at `2026-11-04T01:48:38+03:30`.
+

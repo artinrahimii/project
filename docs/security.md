@@ -75,16 +75,16 @@ DPAPI از داده در برابر خواندن مستقیم فایل توسط 
 
 آزمون runtime، فایل یتیم قدیمی، فایل تازه، فایل قفل‌شده، نام GUID نامعتبر و نام متعلق به ذخیره‌ساز دیگر را پوشش می‌دهد. این سازوکار فقط temporary fileهای همین ذخیره‌ساز میزبان را هدف می‌گیرد؛ پاک‌سازی pagefile، crash dump، نسخهٔ پشتیبان سیستم‌عامل یا فایل‌های سایر اجزا را ادعا نمی‌کند.
 
-## رمزگذاری پایگاه محلی Android با SQLCipher (T0184 — CI در انتظار)
+## رمزگذاری پایگاه محلی Android با SQLCipher (T0184 — پذیرش runtime موفق در V 3.0.866)
 
-Room اکنون از `EncryptedClientDatabaseFactory` و SQLCipher Community Edition استفاده می‌کند. کد در main افزوده شده، اما تا اجرای موفق آزمون‌های exact-head این سند آن را قابلیت پذیرفته‌شدهٔ محصول اعلام نمی‌کند.
+Room اکنون از `EncryptedClientDatabaseFactory` و SQLCipher Community Edition استفاده می‌کند. پیاده‌سازی در commit `0cb7b121ba7d375f5779f0b0b1869b59f9890bfb` (`V 3.0.866`) با KtLint، ساخت APK، آزمون‌های JVM و آزمون‌های instrumentation متصل‌شده به emulator با موفقیت اعتبارسنجی شده است؛ گزارش کامل در [GitHub Actions run 41703869530](https://github.com/artinrahimii/project/actions/runs/41703869530) و artifact `13265621398` ثبت شده است.
 
 - وابستگی‌ها SQLCipher نسخهٔ `4.20.0` و `androidx.sqlite:sqlite:2.7.0` هستند و Room 2 از `SupportOpenHelperFactory` استفاده می‌کند.
 - برای هر فایل پایگاه، passphrase تصادفی ۲۵۶ بیتی تولید می‌شود. نسخهٔ خام آن در source، تنظیمات، گزارش یا SharedPreferences نوشته نمی‌شود؛ فقط envelope نسخه‌دار و احرازاصالت‌شدهٔ Android Keystore در preferences خصوصی اپ نگهداری می‌شود.
 - alias کلید پایگاه `com.whitep.client.database_key.v1` از aliasهای identity و trust همتا جدا است. اگر فایل رمز‌شده وجود داشته باشد ولی کلید یا envelope بازیابی نشود، factory fail-closed می‌شود و فایل را با کلید تازه جایگزین نمی‌کند.
 - مهاجرت فایل SQLite قدیمی با WAL checkpoint، export به فایل موقت رمز‌شده از طریق `sqlcipher_export()`، حفظ `user_version` و `application_id`، integrity check و سپس rename اتمی انجام می‌شود. فایل قدیمی تا پیش از موفقیت export و اعتبارسنجی مقصد جایگزین نمی‌شود.
 - `allowBackup=false` در AndroidManifest حفظ شده است. این مسیر رمزگذاری فایل پایگاه در حالت سکون را هدف می‌گیرد؛ صفرسازی plaintext در حافظه، حذف فورنزیک بلوک‌های قدیمی فلش، تضمین TEE/StrongBox روی همهٔ دستگاه‌ها یا حفاظت در برابر دستگاه روت‌شده و فرایند مخرب هم‌حساب را ادعا نمی‌کند.
-- چهار آزمون instrumentation برای پایگاه تازه، مهاجرت plaintext، envelope کلید و فقدان کلید افزوده شده‌اند؛ نتیجهٔ آن‌ها تا تکمیل CI این commit **اجرا‌نشده** است.
+- چهار آزمون instrumentation اختصاصی T0184 در همان commit موفق شدند: `databaseKeyIsStoredOnlyAsKeystoreProtectedEnvelope`، `freshDatabaseIsEncryptedAndConversationDataSurvivesReopen`، `legacyPlaintextRoomDatabaseIsExportedAndExistingRowsArePreserved` و `missingProtectedKeyFailsClosedAndLeavesEncryptedDatabaseUnchanged`. artifact HTML مجموعاً ۹ تست، صفر شکست و صفر skipped نشان می‌دهد؛ پنج تست دیگر متعلق به T0183 هستند.
 
 ## کارهای خارج از دامنهٔ این سیاست
 - پذیرش انتها‌به‌انتها و بازرسی مستقل شبکه/ذخیره‌سازی در `AC-PRIV-01` همچنان جداگانه لازم است؛ این وظیفه به‌تنهایی آن معیار عملیاتی نهایی را تأیید نمی‌کند.
