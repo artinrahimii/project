@@ -1,3 +1,4 @@
+using System.Security.Cryptography;
 using System.IO;
 using System.Globalization;
 using System.Net;
@@ -30,7 +31,10 @@ public partial class MainWindow : Window
     private readonly LocalInferenceProcessLauncher _localInferenceProcessLauncher = new();
     private LocalHostSettings _settings = LocalHostSettings.Defaults;
     private readonly HostInferenceSession _session;
-    private readonly ChatConversation _conversation = new(HostConversationRetentionPolicy.Default);
+    private ChatConversation _conversation = new(HostConversationRetentionPolicy.Default);
+    private readonly WindowsHostConversationStore _conversationStore = new();
+    private bool _conversationPersistenceAvailable = true;
+    private bool _suppressConversationRetentionToggle;
     private readonly HostRequestCoordinator _peerRequestCoordinator = new();
     private readonly AuthenticatedRequestReplayGuard _peerRequestReplayGuard = new();
     private PeerAnnouncementHostLifecycle? _peerParticipationService;
@@ -68,6 +72,27 @@ public partial class MainWindow : Window
         ModelId.Text = _settings.ModelId;
         EngineExecutablePath.Text = _settings.EngineExecutablePath ?? string.Empty;
         ModelFilePath.Text = _settings.ModelFilePath ?? string.Empty;
+        _conversation.UpdateRetentionPolicy(
+            HostConversationRetentionPolicy.FromOwnerConsent(_settings.PersistHostConversation));
+        _suppressConversationRetentionToggle = true;
+        HostConversationRetentionToggle.IsChecked = _settings.PersistHostConversation;
+        _suppressConversationRetentionToggle = false;
+        if (_settings.PersistHostConversation)
+        {
+            try
+            {
+                foreach (var savedMessage in _conversationStore.Load())
+                {
+                    var restoredMessage = _conversation.Add(savedMessage.Role, savedMessage.Content);
+                    RenderConversationMessage(restoredMessage);
+                }
+            }
+            catch (Exception exception) when (
+                exception is IOException or UnauthorizedAccessException or CryptographicException or InvalidDataException)
+            {
+                _conversationPersistenceAvailable = false;
+            }
+        }
         RenderStatus(_session.Status);
         RenderHostHardwareSummary();
         RenderDisplayAdapters();
@@ -77,6 +102,10 @@ public partial class MainWindow : Window
         if (settingsLoadFailed)
         {
             LifecycleState.Text = "Error — local settings could not be loaded or validated; check the settings file and permissions before reconnecting.";
+        }
+        else if (_settings.PersistHostConversation && !_conversationPersistenceAvailable)
+        {
+            LifecycleState.Text = "Optional local conversation history could not be opened. It was not overwritten; turn the setting off to stop restoring it.";
         }
     }
 
@@ -397,7 +426,8 @@ public partial class MainWindow : Window
                     _settings.RequestTimeoutSeconds,
                     EngineExecutablePath.Text,
                     ModelFilePath.Text,
-                    _settings.ActiveCatalogModelId));
+                    _settings.ActiveCatalogModelId,
+                    _settings.PersistHostConversation));
             }
             catch (ArgumentException exception)
             {
@@ -535,13 +565,117 @@ public partial class MainWindow : Window
     private void AppendConversationMessage(ConversationMessageRole role, string content)
     {
         var message = _conversation.Add(role, content);
-        var label = role switch
+        RenderConversationMessage(message);
+        if (_settings.PersistHostConversation && _conversationPersistenceAvailable)
+        {
+            try
+            {
+                _conversationStore.Save(_conversation.Messages);
+            }
+            catch (Exception exception) when (
+                exception is IOException or UnauthorizedAccessException or CryptographicException or InvalidDataException or ArgumentException)
+            {
+                _conversationPersistenceAvailable = false;
+                LifecycleState.Text = "Local conversation history could not be updated. Further saves are paused for this session; the last successfully saved copy may remain encrypted on this device.";
+            }
+        }
+    }
+
+    private void RenderConversationMessage(ConversationMessage message)
+    {
+        var label = message.Role switch
         {
             ConversationMessageRole.User => "You",
             ConversationMessageRole.Assistant => "Local AI",
             _ => "System"
         };
         ChatMessages.Items.Add($"{label}: {message.Content}");
+    }
+
+    private void HostConversationRetentionToggle_Changed(object sender, RoutedEventArgs e)
+    {
+        if (_suppressConversationRetentionToggle)
+            return;
+        if (HostConversationRetentionToggle.IsChecked == true)
+            EnableHostConversationRetention();
+        else
+            DisableHostConversationRetention();
+    }
+
+    private void EnableHostConversationRetention()
+    {
+        if (_settings.PersistHostConversation)
+            return;
+        var choice = MessageBox.Show(
+            "Enable optional local host conversation history?\n\nIf you continue, the prompts, responses and system messages already shown in this session, plus future messages, will be saved on this Windows device. The file is encrypted with Windows DPAPI for your current Windows account. This does not protect it from malicious code running as your account, Windows backups, paging files or screenshots. You can turn off this setting or clear the session at any time.\n\nDo you consent to this local storage?",
+            "Confirm optional local conversation history",
+            MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No);
+        if (choice != MessageBoxResult.Yes)
+        {
+            SetConversationRetentionToggle(false);
+            return;
+        }
+
+        try
+        {
+            _conversationStore.Delete();
+            _settings = _settingsStore.Save(_settings with { PersistHostConversation = true });
+            _conversation.UpdateRetentionPolicy(HostConversationRetentionPolicy.FromOwnerConsent(ownerConsent: true));
+            _conversationPersistenceAvailable = true;
+            _conversationStore.Save(_conversation.Messages);
+            LifecycleState.Text = "Optional local conversation history is enabled and protected for this Windows account.";
+        }
+        catch (Exception exception) when (
+            exception is IOException or UnauthorizedAccessException or CryptographicException or InvalidDataException or ArgumentException)
+        {
+            _conversationPersistenceAvailable = false;
+            _conversation.UpdateRetentionPolicy(HostConversationRetentionPolicy.Default);
+            try
+            {
+                _settings = _settingsStore.Save(_settings with { PersistHostConversation = false });
+                SetConversationRetentionToggle(false);
+            }
+            catch (Exception rollbackException) when (
+                rollbackException is IOException or UnauthorizedAccessException or ArgumentException or InvalidDataException)
+            {
+                HostConversationRetentionToggle.IsEnabled = false;
+            }
+            LifecycleState.Text = "Optional local conversation history could not be enabled. The non-persistent in-memory mode remains active.";
+        }
+    }
+
+    private void DisableHostConversationRetention()
+    {
+        try
+        {
+            _settings = _settingsStore.Save(_settings with { PersistHostConversation = false });
+            _conversation.UpdateRetentionPolicy(HostConversationRetentionPolicy.Default);
+            _conversationPersistenceAvailable = false;
+        }
+        catch (Exception exception) when (
+            exception is IOException or UnauthorizedAccessException or ArgumentException or InvalidDataException)
+        {
+            SetConversationRetentionToggle(true);
+            LifecycleState.Text = "The retention preference could not be saved. The previous setting remains active.";
+            return;
+        }
+
+        try
+        {
+            _conversationStore.Delete();
+            LifecycleState.Text = "Optional local conversation history is off; the protected local history file was deleted.";
+        }
+        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
+        {
+            LifecycleState.Text = "Optional local conversation history is off, but the previous encrypted file could not be deleted. It will not be restored while this setting remains off.";
+        }
+    }
+
+    private void SetConversationRetentionToggle(bool enabled)
+    {
+        _suppressConversationRetentionToggle = true;
+        HostConversationRetentionToggle.IsChecked = enabled;
+        _suppressConversationRetentionToggle = false;
     }
 
     private void ClearSessionButton_Click(object sender, RoutedEventArgs e)
@@ -562,9 +696,25 @@ public partial class MainWindow : Window
         ChatMessages.Items.Clear();
         PromptInput.Clear();
         CancelGenerationButton.IsEnabled = false;
-        LifecycleState.Text = generationWasRunning
-            ? "Session cleared; active inference cancellation requested. Reconnect before generating again."
-            : "Session cleared.";
+        var historyDeleted = true;
+        try
+        {
+            _conversationStore.Delete();
+        }
+        catch (IOException)
+        {
+            historyDeleted = false;
+        }
+        catch (UnauthorizedAccessException)
+        {
+            historyDeleted = false;
+        }
+
+        LifecycleState.Text = !historyDeleted
+            ? "The in-memory session was cleared, but the previous encrypted local history file could not be deleted."
+            : generationWasRunning
+                ? "Session cleared; active inference cancellation requested. Reconnect before generating again."
+                : "Session cleared.";
     }
 
     private void CancelGenerationButton_Click(object sender, RoutedEventArgs e)

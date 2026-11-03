@@ -20,9 +20,15 @@ public sealed class ChatConversation
         RetentionPolicy = retentionPolicy ?? HostConversationRetentionPolicy.Default;
     }
 
-    public HostConversationRetentionPolicy RetentionPolicy { get; }
+    public HostConversationRetentionPolicy RetentionPolicy { get; private set; }
 
     public IReadOnlyList<ConversationMessage> Messages => _messages.AsReadOnly();
+
+    public void UpdateRetentionPolicy(HostConversationRetentionPolicy retentionPolicy)
+    {
+        ArgumentNullException.ThrowIfNull(retentionPolicy);
+        RetentionPolicy = retentionPolicy;
+    }
 
     public void Clear()
     {

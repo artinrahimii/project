@@ -7,7 +7,7 @@ namespace WhiteP.Host.Infrastructure;
 /// Validated settings for the local llama.cpp-compatible inference endpoint.
 /// The persisted document is explicitly schema-versioned so future changes fail closed.
 /// </summary>
-public sealed record LocalHostSettings(string ServerUrl, string ModelId, int RequestTimeoutSeconds, string? EngineExecutablePath = null, string? ModelFilePath = null, string? ActiveCatalogModelId = null)
+public sealed record LocalHostSettings(string ServerUrl, string ModelId, int RequestTimeoutSeconds, string? EngineExecutablePath = null, string? ModelFilePath = null, string? ActiveCatalogModelId = null, bool PersistHostConversation = false)
 {
     public const int CurrentSchemaVersion = 1;
     public static LocalHostSettings Defaults { get; } =
@@ -39,7 +39,7 @@ public sealed record LocalHostSettings(string ServerUrl, string ModelId, int Req
         var activeCatalogModelId = NormalizeOptionalModelId(settings.ActiveCatalogModelId);
         return new LocalHostSettings(endpoint.ToString(), model, settings.RequestTimeoutSeconds,
             NormalizeOptionalPath(settings.EngineExecutablePath, nameof(settings.EngineExecutablePath)),
-            NormalizeOptionalPath(settings.ModelFilePath, nameof(settings.ModelFilePath)), activeCatalogModelId);
+            NormalizeOptionalPath(settings.ModelFilePath, nameof(settings.ModelFilePath)), activeCatalogModelId, settings.PersistHostConversation);
     }
 
     private static string? NormalizeOptionalModelId(string? modelId)
@@ -109,7 +109,8 @@ public sealed class LocalHostSettingsStore
                 document.RequestTimeoutSeconds,
                 document.EngineExecutablePath,
                 document.ModelFilePath,
-                document.ActiveCatalogModelId));
+                document.ActiveCatalogModelId,
+                document.PersistHostConversation));
         }
         catch (JsonException exception)
         {
@@ -132,7 +133,8 @@ public sealed class LocalHostSettingsStore
             RequestTimeoutSeconds = validated.RequestTimeoutSeconds,
             EngineExecutablePath = validated.EngineExecutablePath,
             ModelFilePath = validated.ModelFilePath,
-            ActiveCatalogModelId = validated.ActiveCatalogModelId
+            ActiveCatalogModelId = validated.ActiveCatalogModelId,
+            PersistHostConversation = validated.PersistHostConversation
         };
         var temporaryPath = _filePath + "." + Guid.NewGuid().ToString("N") + ".tmp";
         try
@@ -177,5 +179,8 @@ public sealed class LocalHostSettingsStore
 
         [JsonPropertyName("activeCatalogModelId")]
         public string? ActiveCatalogModelId { get; init; }
+
+        [JsonPropertyName("persistHostConversation")]
+        public bool PersistHostConversation { get; init; }
     }
 }

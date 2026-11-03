@@ -20,7 +20,7 @@ class WpfEntryPointTests(unittest.TestCase):
         self.assertIn("<UseWPF>true</UseWPF>", PROJECT)
 
     def test_main_window_has_required_operational_controls_and_cleanup(self):
-        for name in ("ServerUrl", "ModelId", "ConnectButton", "LifecycleState", "CpuStatus", "MemoryStatus", "CapacityStatus", "PromptInput", "OutputText", "GenerateButton", "ChatMessages"):
+        for name in ("ServerUrl", "ModelId", "ConnectButton", "LifecycleState", "CpuStatus", "MemoryStatus", "CapacityStatus", "PromptInput", "OutputText", "GenerateButton", "ChatMessages", "HostConversationRetentionToggle"):
             with self.subTest(control=name):
                 self.assertIn(f'x:Name="{name}"', WINDOW_XAML)
                 self.assertIn(f'window.FindName("{name}")', APP_CODE)
@@ -34,6 +34,10 @@ class WpfEntryPointTests(unittest.TestCase):
         self.assertIn('KeyDown="PromptInput_KeyDown"', WINDOW_XAML)
         self.assertIn("ModifierKeys.Shift", WINDOW_CODE)
         self.assertIn("GenerateButton_Click(sender, new RoutedEventArgs());", WINDOW_CODE)
+        self.assertIn('Checked="HostConversationRetentionToggle_Changed"', WINDOW_XAML)
+        self.assertIn('Unchecked="HostConversationRetentionToggle_Changed"', WINDOW_XAML)
+        self.assertIn("EnableHostConversationRetention()", WINDOW_CODE)
+        self.assertIn("DisableHostConversationRetention()", WINDOW_CODE)
 
     def test_smoke_mode_waits_for_loaded_visible_main_window_then_exits(self):
         for marker in (
@@ -121,7 +125,7 @@ class WpfEntryPointTests(unittest.TestCase):
     def test_chat_messages_are_backed_by_an_ordered_in_memory_conversation(self):
         conversation = (ROOT / "src/Host.Application/Chat/ChatConversation.cs").read_text(encoding="utf-8")
         lifecycle_tests = (ROOT / "tests/HostLifecycle.Tests/ChatConversationAcceptanceTests.cs").read_text(encoding="utf-8")
-        self.assertIn("private readonly ChatConversation _conversation = new(HostConversationRetentionPolicy.Default);", WINDOW_CODE)
+        self.assertIn("private ChatConversation _conversation = new(HostConversationRetentionPolicy.Default);", WINDOW_CODE)
         self.assertIn("AppendConversationMessage(ConversationMessageRole.User, prompt);", WINDOW_CODE)
         self.assertIn("AppendConversationMessage(ConversationMessageRole.Assistant, response);", WINDOW_CODE)
         self.assertIn("_conversation.Add(role, content)", WINDOW_CODE)
