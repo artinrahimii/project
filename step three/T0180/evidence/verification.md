@@ -189,3 +189,16 @@ Changed code implements zeroization for Windows frames/queue/lifecycle buffers a
 - Successful Windows outbound frames are now retained in a bounded per-stream collection until the next ordered peer message or stream teardown/disposal. Failed writes are removed and zeroized immediately. Retained frames are zeroized on acknowledgement or closure.
 - Retention is bounded by configured inbound queue capacity and an aggregate budget of two maximum-sized frames.
 - Added a Python source-contract regression. No A017 build/test result is claimed pending exact-head CI.
+
+
+## T0180-A018 — exact-head V 3.0.836 completion evidence
+
+- Exact head: `main`, commit `be44ff01649a6e36f631e8a286f1bfc9b4fb8820` (`V 3.0.836`).
+- Step Three quality run `41612366597`: 341 Python tests passed; syntax and output/evidence checks passed; graph guard reported 230 tasks / 422 edges / 0 errors / 1 existing metadata warning.
+- Relevant Python regressions passed: `test_successful_sends_retain_bounded_frame_buffers`, `test_response_and_stream_teardown_release_retained_frames`, and all four `SensitiveBufferCleanupTests`.
+- Android JUnit artifact `13219812228`: 196 tests, 0 failures. `PeerMessageFrameCodecTest`: 10 tests / 0 failures, including `zeroesThePreviousPendingBufferWhenAFrameCompletes`, `zeroesPartialFrameWhenStreamFinishesAsTruncatedAndAllowsReuse`, and `explicitClearZeroesAndDiscardsPartialFrame`. `Libp2pInferenceRequestTransportTest`: 7 tests / 0 failures, including three-native-.NET-host cancellation.
+- Product run `41612366697`: Windows WPF job `125837178133`, Android job `125837178286`, and HostLifecycle job `125837178370` all passed. The HostLifecycle suite includes authenticated HostStatus, request/replay/cancellation, TCP and QUIC transport checks.
+- Rendezvous run `41612366582`: production container build and non-root HTTP contract smoke passed.
+- Windows successful outbound frames remain only in a bounded per-stream buffer until an ordered peer message acknowledges consumption or stream teardown/disposal; unsuccessful sends remove and zero the frame immediately. Android temporary/pending/decoded/request buffers are zeroized in their success/error/cancellation/stream-close paths.
+- No Protobuf schema or peer-trust contract changed. No local SDK test run was performed in this session; the exact-head CI and JUnit artifact are the execution evidence.
+- T0180 status is now `done`; this does not imply completion of the overall project.

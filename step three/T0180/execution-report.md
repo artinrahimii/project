@@ -252,3 +252,17 @@
 - Retention is bounded by the configured inbound queue capacity and an aggregate byte budget of two maximum-sized frames. Failed writes remove and zero their frame immediately; acknowledged/closed frames are zeroized.
 - Added `tests/test_libp2p_peer_message_buffer_lifetime.py` to guard bounded retention, immediate failure cleanup and acknowledgement/teardown cleanup.
 - No local .NET/Python toolchain ran. Exact-head CI must verify HostLifecycle and QUIC binary response before the task can be marked complete.
+
+
+
+## تلاش T0180-A018 — تأیید نهایی و تکمیل وظیفه در V 3.0.836
+
+- شاخهٔ `main` روی commit `be44ff01649a6e36f631e8a286f1bfc9b4fb8820` با پیام `V 3.0.836` بررسی شد.
+- گیت کیفیت مرحلهٔ سوم، run `41612366597`، با موفقیت تمام شد: ۳۴۱ آزمون Python، صفر شکست؛ بررسی syntax و شواهد موفق؛ graph guard برای ۲۳۰ وظیفه و ۴۲۲ یال، صفر خطا و یک هشدار metadata موجود.
+- دو آزمون جدید چرخهٔ عمر frame خروجی Windows در `tests/test_libp2p_peer_message_buffer_lifetime.py` و هر چهار آزمون `tests/test_sensitive_buffer_cleanup.py` موفق شدند.
+- محصول Windows: job `125837178133`، قالب‌بندی C#، build برنامهٔ WPF، Protobuf، smoke شروع برنامه و کنترل‌های process/policy/DPAPI موفق شدند. آزمون‌های HostLifecycle در job `125837178370` موفق شدند؛ suite اجرایی شامل HostStatus، inference، replay rejection، cancellation و قرارداد TCP/QUIC است.
+- محصول Android: job `125837178286`، KtLint، Kotlin compile، ساخت APK، تولید Protobuf و تمام JVM tests موفق شدند. JUnit artifact `13219812228` را نیز بازبینی کردم: ۱۹۶ آزمون، صفر شکست. `PeerMessageFrameCodecTest` برابر ۱۰/۱۰ و `Libp2pInferenceRequestTransportTest` برابر ۷/۷ موفق بودند؛ آزمون پاک‌سازی pending/partial frame و cancellation با سه peer بومی .NET نیز موفق بود.
+- Rendezvous run `41612366582`، ساخت image تولیدی و smoke آزمون HTTP با کاربر غیرریشه‌ای را با موفقیت گذراند.
+- اصلاح A017 از نظر عمر buffer با CI تأیید شد: frame خروجی موفق Windows به‌علت رفتار غیرهم‌زمان multiplexer، داخل بودجهٔ محدود per-stream نگه داشته می‌شود تا پیام مرتب بعدی مصرف آن را تأیید کند یا stream بسته/dispose شود؛ سپس zeroize می‌شود. ارسال ناموفق فوراً frame را آزاد و zeroize می‌کند. بافرهای decoder/temporary/decoded و request در Android هم در مسیرهای تکمیل، خطا، قطع ناقص، clear صریح، لغو و بستن stream پاک‌سازی می‌شوند.
+- قرارداد Protobuf یا اعتماد peer تغییر نکرد. آزمون local جداگانه‌ای در محیط این نشست اجرا نشد؛ نتیجهٔ پذیرش بر اساس CI دقیق همان commit و JUnit artifact ثبت شده است.
+- با احراز معیار پذیرش و موفقیت آزمون‌های مرتبط، وضعیت `T0180` از `in_progress` به `done` تغییر کرد. این تأیید به معنای تکمیل وظایف دیگر یا کل محصول نیست.
