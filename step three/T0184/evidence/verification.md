@@ -1,39 +1,38 @@
-# T0184-A001 تا A009 — شواهد پیاده‌سازی و CI
+# T0184-A001 تا A010 — شواهد پیاده‌سازی و CI
 
-## snapshot
+## snapshot دقیق V3.0.859
 - مخزن/شاخه: `artinrahimii/project` / `main`.
-- commit بررسی‌شده: `e7affffd1c05736338c2caf0f1149baaec38b207` — `V 3.0.858`.
-- گراف: Blob `2cbe8897a7f991ebe24e4ecd5e8825fb55e0caa5`، 3372375 بایت UTF-8؛ اندازهٔ اعلام‌شدهٔ GitHub 3372375 بایت؛ Git SHA-1 قالب blob تطبیق یافت و JSON کامل parse و round-trip شد.
+- commit: `1e14ea896eaff3d8c24399156b8c79c7ba53308a`; پیام `V 3.0.859`; tree `da09f6f408009631257bea09e4bb8ecdedddaf36`.
+- گراف: Blob `17e2f250d883769fb03450ac84d40712d960f88d`؛ اندازهٔ GitHub و UTF-8 برابر `3375671` بایت؛ Git SHA-1 قالب blob تطبیق یافت؛ JSON کامل parse و round-trip شد.
+- factory: Blob `df158ad4ac2fbf5ae96ba57592d4b9c1f1886892`؛ اندازهٔ GitHub و UTF-8 برابر `12429` بایت؛ Git SHA-1 قالب blob تطبیق یافت.
 
-## فایل‌های کد و آزمون
+## کد واقعی و آزمون‌ها
 - `src/Client.Android/app/src/main/java/com/whitep/client/data/EncryptedClientDatabaseFactory.kt`
 - `src/Client.Android/app/src/main/java/com/whitep/client/data/ClientDatabase.kt`
 - `src/Client.Android/app/build.gradle.kts`
 - `src/Client.Android/app/src/androidTest/java/com/whitep/client/data/EncryptedClientDatabaseAcceptanceTest.kt`
-- regression tests برای migration، encrypted storage، capsule persistence و local storage boundary
-- `docs/security.md` و ADR-0020
+- regression tests مربوط به Room migration، encrypted storage و local storage boundary
+- `docs/security.md` و ADR-0020.
 
-## شواهد CI
-- V3.0.854 quality `41686907108`: ۳۵۰/۳۵۳؛ سه شکست در assertionهای قدیمی.
-- V3.0.855 quality `41687478161`: ۳۵۳ آزمون موفق؛ container `41687478388` موفق؛ Android product در lint متوقف شد.
-- V3.0.856 quality `41688070305`: ۳۵۳ آزمون موفق؛ container `41688070068` موفق؛ test-source lint با خطای import/chain.
-- V3.0.857 quality `41688934109`: ۳۵۳ آزمون موفق؛ container `41688934150` موفق؛ Windows و HostLifecycle موفق؛ Android lint با یک خطای import.
-- V3.0.858 quality `41689552284`: ۳۵۳ آزمون موفق؛ graph guard ۲۳۰ task/۴۲۲ edge، صفر خطا و یک هشدار metadata قدیمی T0001.
+## CI exact-head
+- V3.0.858 quality `41689552284`: ۳۵۳ آزمون موفق؛ graph guard ۲۳۰ task و ۴۲۲ edge، صفر خطا و یک هشدار metadata قدیمی T0001.
 - V3.0.858 container `41689552377`: build و non-root HTTP smoke موفق.
-- V3.0.858 product `41689552411`: Windows WPF و HostLifecycle موفق؛ فایل test source از KtLint عبور کرد؛ main source lint روی factory با سه خطا شکست خورد.
+- V3.0.858 product `41689552411`: Windows WPF و HostLifecycle موفق؛ test-source lint موفق؛ main-source KtLint در factory سه ایراد گزارش کرد.
+- V3.0.859 quality `41691220553`: ۳۵۳ آزمون Python موفق؛ compileall و graph/evidence validation موفق.
+- V3.0.859 container `41691220755`: build و non-root HTTP smoke موفق.
+- V3.0.859 product `41691220625`: Windows WPF و HostLifecycle موفق؛ Android test-source lint موفق؛ main-source KtLint یک خطا در line 70 factory گزارش کرد.
 
-## A009 — اصلاح factory
-1. import دارای alias به انتهای فهرست importها منتقل شد.
-2. `Room.databaseBuilder` به خط continuation منتقل و زنجیرهٔ Room به فراخوانی‌های یک‌خطی/چندخطی استاندارد تفکیک شد.
-3. `source.rawQuery` به خط continuation منتقل شد.
+## خطای دقیق V3.0.859
+`EncryptedClientDatabaseFactory.kt:70:21 Unexpected newline before '.'` در `.openHelperFactory(openHelperFactory)`. پس از شکست lint، `assembleDebug`، `testDebugUnitTest` و `connectedDebugAndroidTest` اجرا نشدند.
 
-هیچ تغییر runtime در الگوریتم encryption/export/key handling در این patch وجود ندارد؛ این اصلاح برای عبور formatter است. نتیجهٔ CI A009 در زمان ثبت این گزارش هنوز موجود نیست.
+## A010
+فقط `)` و `.openHelperFactory(openHelperFactory)` در یک خط قرار گرفتند؛ منطق رمزنگاری، ساخت کلید، ذخیرهٔ envelope، SQLCipher export، integrity check و rename تغییر نکردند. اجرای CI A010 هنوز موجود نیست.
 
-## چهار آزمون اختصاصی SQLCipher — هنوز بدون نتیجهٔ pass
-1. ایجاد پایگاه تازهٔ رمز‌شده و بازیابی مکالمه/پیام پس از reopen.
+## چهار آزمون اختصاصی T0184 — بدون نتیجهٔ pass
+1. ایجاد پایگاه تازهٔ رمز‌شده و بازیابی conversation/message پس از reopen.
 2. مهاجرت پایگاه plaintext و حفظ conversation/message/draft.
-3. ذخیرهٔ کلید پایگاه فقط به‌صورت envelope محافظت‌شده با Keystore.
-4. fail-closed با کلید مفقود و عدم تغییر hash فایل پایگاه.
+3. نگهداری کلید database فقط به‌شکل envelope محافظت‌شده با Keystore.
+4. fail-closed هنگام فقدان کلید و عدم تغییر hash فایل پایگاه.
 
 ## مرز ادعا
-تا اجرای موفق چهار سناریو روی exact commit، هیچ پذیرش runtime مربوط به SQLCipher ثبت نمی‌شود. آزمون Keystore در T0183 نیز سخت‌افزار TEE/StrongBox گوشی فیزیکی را اثبات نمی‌کند.
+تا اجرای موفق چهار scenario روی exact commit، هیچ runtime acceptance مربوط به SQLCipher ثبت نمی‌شود. آزمون T0183 نیز TEE/StrongBox دستگاه فیزیکی را اثبات نمی‌کند.

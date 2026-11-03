@@ -66,8 +66,7 @@ internal object EncryptedClientDatabaseFactory {
                         appContext,
                         ClientDatabase::class.java,
                         databaseName,
-                    )
-                    .openHelperFactory(openHelperFactory)
+                    ).openHelperFactory(openHelperFactory)
                     .addMigrations(
                         ClientDatabase.MIGRATION_1_2,
                         ClientDatabase.MIGRATION_2_3,
