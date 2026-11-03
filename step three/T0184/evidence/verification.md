@@ -46,3 +46,18 @@ A011 فقط همین چهار خط را در lambda خروجی SQLCipher چها�
 
 ## مرز ادعا
 تا اجرای موفق چهار scenario روی exact commit، هیچ runtime acceptance مربوط به SQLCipher ثبت نمی‌شود. آزمون T0183 نیز TEE/StrongBox دستگاه فیزیکی را اثبات نمی‌کند.
+
+## V 3.0.861 — exact-head failure و اصلاح A012
+
+- commit: `6325ae0097bf262c02aa298a389481dc12db1625`.
+- Product run: `41695659213`; Android job: `126125365784`.
+- KtLint: passed.
+- `assembleDebug`: failed at Kotlin compilation in `EncryptedClientDatabaseFactory.kt:248-250`.
+  - The four-argument call was resolved against a non-password overload; `ByteArray` was seen where `CursorFactory` was expected, followed by mismatched `Int` and `DatabaseErrorHandler` parameters.
+  - Exact-head logs show no APK, JVM unit-test, or connected instrumentation execution after compilation failed.
+- Windows WPF and HostLifecycle: passed.
+- Step Three quality run `41695659074`: passed.
+- Rendezvous container run `41695659104`: passed.
+- API reference: SQLCipher Android tag `v4.20.0`, `SQLiteDatabase.openDatabase(String, byte[], CursorFactory, int, SQLiteDatabaseHook)`.
+- A012 adds the explicit fifth argument `null` for `SQLiteDatabaseHook` to select that overload.
+- A012 verification is **pending**; no SQLCipher runtime acceptance is claimed.

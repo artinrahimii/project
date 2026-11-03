@@ -248,6 +248,7 @@ internal object EncryptedClientDatabaseFactory {
                 databaseKey,
                 null,
                 CipherSQLiteDatabase.OPEN_READONLY,
+                null,
             )
         try {
             requireIntegrity(encryptedDatabase, "PRAGMA integrity_check", "encrypted database")

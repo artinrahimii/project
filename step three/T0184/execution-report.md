@@ -2,7 +2,7 @@
 
 - **وضعیت:** `in_progress`؛ SQLCipher و ادغام Room پیاده‌سازی شده‌اند، اما پذیرش runtime اختصاصی T0184 هنوز انجام نشده است.
 - **پیاده‌سازی اولیه:** `11eddfda0cc7f25a7c2ba9177d279960ce1a432c` — `V 3.0.854`.
-- **آخرین CI بررسی‌شده:** `7d34810154bf3637e3eeccb51de2df51e4e4b947` — `V 3.0.860`.
+- **آخرین CI بررسی‌شده:** `6325ae0097bf262c02aa298a389481dc12db1625` — `V 3.0.861`.
 - **تلاش‌ها:** A001 تا A011؛ پنج تلاش CI ناموفق ثبت شده‌اند. A010 شکست KtLint در factory داشت؛ A011 فقط اصلاح تورفتگی است و هنوز CI نشده است.
 
 ## وابستگی‌ها
@@ -45,3 +45,15 @@
 emulator، TEE/StrongBox دستگاه فیزیکی را اثبات نمی‌کند. ادعا فقط رمزگذاری فایل پایگاه در حالت سکون است؛ plaintext در حافظهٔ فرایند، pagefile/swap، crash dump، پاک‌سازی فورنزیک بلوک‌های فلش و دستگاه روت‌شده خارج از دامنه‌اند.
 
 **اقدام بعدی:** CI دقیق V3.0.861 باید KtLint کامل، ساخت APK، JVM tests و چهار سناریوی `connectedDebugAndroidTest` را اجرا کند. فقط پس از موفقیت معیارهای واقعی، T0184 به `done` تغییر می‌کند.
+
+## A012 — اصلاح امضای SQLCipher و نتیجهٔ CI دقیق V 3.0.861
+
+- commit بررسی‌شده: `6325ae0097bf262c02aa298a389481dc12db1625` (`V 3.0.861`).
+- workflow محصول: run `41695659213`؛ job اندروید `126125365784`.
+- KtLint کامل موفق شد. کامپایل Kotlin در `EncryptedClientDatabaseFactory.kt:248-250` شکست خورد: overload چهارتایی انتخاب‌شده، آرگومان `ByteArray` را به‌عنوان `CursorFactory` و آرگومان‌های بعدی را با انواع نامتناسب تفسیر می‌کرد. در نتیجه APK، JVM unit tests و چهار instrumentation test اجرا نشدند.
+- Windows WPF و HostLifecycle موفق شدند؛ Step Three quality run `41695659074` و Rendezvous container run `41695659104` نیز موفق شدند. این نتایج جایگزین آزمون‌های اندروید نیستند.
+- بازبینی منبع رسمی SQLCipher Android در tag `v4.20.0`، overload پنج‌آرگومانی را تأیید کرد: `openDatabase(String, byte[], CursorFactory, int, SQLiteDatabaseHook)`. منبع: `sqlcipher/src/main/java/net/zetetic/database/sqlcipher/SQLiteDatabase.java` در tag `v4.20.0`.
+- **اصلاح A012:** آرگومان پنجم `null` به فراخوانی اضافه شد تا overload دارای `byte[] password` و `SQLiteDatabaseHook` صریحاً انتخاب شود. تغییر فقط در امضای فراخوانی بازکردن پایگاه مهاجرت‌شده است؛ الگوریتم رمزگذاری، ساخت passphrase، export، integrity check، Room migration و ذخیرهٔ Keystore تغییر نکردند.
+- نتیجهٔ آزمون A012 هنوز pending است؛ تا CI دقیق commit بعدی، T0184 همچنان `in_progress` می‌ماند و هیچ‌یک از چهار سناریوی runtime به‌عنوان موفق ثبت نمی‌شوند.
+
+**گام بعدی:** اجرای KtLint، `assembleDebug`، `testDebugUnitTest` و چهار سناریوی `connectedDebugAndroidTest` روی commit دقیق A012؛ سپس اصلاح خطاهای واقعی بعدی، در صورت وجود.
