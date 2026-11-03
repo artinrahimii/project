@@ -193,3 +193,22 @@
 - آزمون Windows پیش از ارسال HostStatusRequest طول بایت پیام سریال‌شده و اولین tag پروتوباف را ثبت می‌کند؛ هیچ payload، شناسهٔ peer یا کلید ثبت نمی‌شود. بافر موقت پس از پایان ارسال پاک می‌شود.
 - علت اصلی دریافت frame خالی در Windows هنوز قطعی نیست. تا وقتی اندازهٔ پیام خروجی با اندازهٔ دریافتی مقایسه نشود، کد production framing تغییر نمی‌کند.
 - در این نوبت ابزار محلی .NET، Gradle/Android و Python اجرا نشد؛ پذیرش دقیق commit جدید به CI وابسته است. T0180 همچنان `in_progress` است.
+
+
+## T0180-A015 — exact-head CI on V 3.0.832
+
+- Android KtLint/formatting, Kotlin compilation and debug APK build passed (job 125817204860).
+- Android JVM suite: 196 tests completed, 1 failed. The cross-runtime three-peer cancellation test timed out. Full JUnit report: artifact 13216862899 (workflow run 41606404519).
+- The JUnit failure details showed all three .NET peers reached `CANCEL_RECEIVED`, `VALIDATED` and `SENT`. Android transport diagnostics reported 3 inbound chunks, 261 decoded/parsed response frames, 259 unmatched responses, 2 accepted responses, 1 peer-close callback and zero callback failures.
+- Windows WPF build/startup and process/security checks passed (job 125817205085).
+- Windows HostLifecycle still failed (job 125817205025): the sender recorded a 54-byte HostStatusRequest with first Protobuf tag 10, but the listener reported a zero-byte message and no first tag.
+- The real local inference workflow failed at the shared HostStatus loopback before model generation (job 125817205365). No real model generation success is claimed.
+- Step Three quality gate run 41606404540 and Rendezvous container run 41606404559 passed.
+- T0180 remains `in_progress`; the transport framing/root cause is not yet established.
+
+## T0180-A016 — payload-free cross-runtime frame metadata
+
+- Android transport diagnostic snapshots now capture the byte length and first Protobuf tag of the latest inbound frame and latest unmatched response, plus a count of empty inbound frames.
+- The .NET cancellation interop fixture emits only response byte length and first Protobuf tag before sending, then clears the temporary response buffer. It does not emit message contents, request identifiers, peer identifiers or credentials.
+- The Android test captures the metadata line and appends it to the existing payload-free diagnostic summary if the three-peer correlation test fails.
+- This is a diagnostic implementation, not a transport fix. No post-change build/test result is claimed; exact-head CI must validate the changes and provide the next framing evidence.

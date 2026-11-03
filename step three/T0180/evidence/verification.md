@@ -133,3 +133,21 @@ Changed code implements zeroization for Windows frames/queue/lifecycle buffers a
 - A Python source-contract regression verifies the constructor and binding ownership contract.
 - The Windows HostStatus loopback test records only `statusRequestBytes` and `statusRequestFirstTag`, allowing them to be compared against the receiver's existing zero-byte/first-tag diagnostics. The serialized request array is zeroed in a finally block after the send completes.
 - No local .NET, Android Gradle or Python tests ran in this session. Exact-head CI is required; T0180 remains incomplete.
+
+
+## T0180-A015 — verified V 3.0.832 CI
+
+- Android format/lint, Kotlin compile and debug APK build passed; the Android JVM suite finished 196 tests with one cross-runtime cancellation failure (job 125817204860).
+- JUnit artifact 13216862899 showed all three .NET fixtures received, validated and sent their cancellation responses. Android saw 3 inbound chunks and 261 decoded response frames, of which 259 were unmatched and 2 accepted.
+- Windows WPF checks passed (job 125817205085).
+- Windows HostLifecycle failed: serialized sender request was 54 bytes with first tag 10; listener reported an empty frame (0 bytes, first tag -1) (job 125817205025).
+- The real local inference workflow failed before model generation because the same HostStatus loopback did not pass (job 125817205365).
+- The Step Three quality gate (run 41606404540) and Rendezvous container smoke (run 41606404559) passed.
+- No claim of successful live inference or complete T0180 acceptance.
+
+## T0180-A016 — additional metadata for the next diagnostic run
+
+- New Android counters expose only frame byte lengths, numeric first Protobuf tags and empty-frame count.
+- The Windows .NET fixture emits a payload-free response length/tag marker and clears temporary serialized response bytes after send.
+- The Android test retains this marker in the failure diagnostics.
+- The purpose is to determine whether frame expansion/alignment occurs before, during or after the Windows application protocol writer. The root cause remains unknown pending exact-head CI.

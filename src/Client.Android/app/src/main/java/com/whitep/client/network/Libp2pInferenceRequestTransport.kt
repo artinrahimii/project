@@ -94,6 +94,11 @@ class Libp2pInferenceRequestTransport(
     private val acceptedResponseFrames = AtomicLong()
     private val peerClosedCallbacks = AtomicLong()
     private val callbackFailures = AtomicLong()
+    private val emptyInboundFrames = AtomicLong()
+    private val lastInboundPayloadBytes = AtomicLong(-1)
+    private val lastInboundFirstTag = AtomicLong(-1)
+    private val lastUnmatchedPayloadBytes = AtomicLong(-1)
+    private val lastUnmatchedFirstTag = AtomicLong(-1)
     private var hostStarted = false
 
     @Volatile
@@ -111,7 +116,12 @@ class Libp2pInferenceRequestTransport(
             "correlationRejectedFrames=${correlationRejectedFrames.get()};" +
             "acceptedResponseFrames=${acceptedResponseFrames.get()};" +
             "peerClosedCallbacks=${peerClosedCallbacks.get()};" +
-            "callbackFailures=${callbackFailures.get()}"
+            "callbackFailures=${callbackFailures.get()};" +
+            "emptyInboundFrames=${emptyInboundFrames.get()};" +
+            "lastInboundPayloadBytes=${lastInboundPayloadBytes.get()};" +
+            "lastInboundFirstTag=${lastInboundFirstTag.get()};" +
+            "lastUnmatchedPayloadBytes=${lastUnmatchedPayloadBytes.get()};" +
+            "lastUnmatchedFirstTag=${lastUnmatchedFirstTag.get()}"
 
     private val protocolBinding =
         createSimpleBinding(PROTOCOL_ID) {
@@ -569,6 +579,11 @@ class Libp2pInferenceRequestTransport(
         payload: ByteArray,
         controller: InferencePeerMessageController,
     ) {
+        lastInboundPayloadBytes.set(payload.size.toLong())
+        lastInboundFirstTag.set(payload.firstOrNull()?.toUByte()?.toLong() ?: -1L)
+        if (payload.isEmpty()) {
+            emptyInboundFrames.incrementAndGet()
+        }
         val pendingStatus = pendingHostStatusRequests[authenticatedPeerId]
         if (pendingStatus?.controller === controller) {
             hostStatusFrames.incrementAndGet()
@@ -605,6 +620,8 @@ class Libp2pInferenceRequestTransport(
         val pending = pendingAttempts[key]
         if (pending == null) {
             unmatchedResponseFrames.incrementAndGet()
+            lastUnmatchedPayloadBytes.set(payload.size.toLong())
+            lastUnmatchedFirstTag.set(payload.firstOrNull()?.toUByte()?.toLong() ?: -1L)
             return
         }
         if (authenticatedPeerId != pending.peerId ||

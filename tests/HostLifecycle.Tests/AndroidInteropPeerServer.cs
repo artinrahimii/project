@@ -122,7 +122,18 @@ internal static class AndroidInteropPeerServer
         Console.WriteLine("VALIDATED");
         Console.Out.Flush();
 
-        await server.SendMessageAsync(response.ToByteArray(), timeout.Token).ConfigureAwait(false);
+        byte[] responseWire = response.ToByteArray();
+        int responseFirstTag = responseWire.Length > 0 ? responseWire[0] : -1;
+        Console.WriteLine($"SENT_META\t{responseWire.Length}\t{responseFirstTag}");
+        Console.Out.Flush();
+        try
+        {
+            await server.SendMessageAsync(responseWire, timeout.Token).ConfigureAwait(false);
+        }
+        finally
+        {
+            Array.Clear(responseWire, 0, responseWire.Length);
+        }
         Console.WriteLine("SENT");
         Console.WriteLine("PASS");
         Console.Out.Flush();

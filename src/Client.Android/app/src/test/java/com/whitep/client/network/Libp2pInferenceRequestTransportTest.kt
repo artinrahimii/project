@@ -544,6 +544,19 @@ class Libp2pInferenceRequestTransportTest {
                                     when {
                                         line.startsWith("READY\t") -> readyLineFuture.complete(line)
                                         line in allowedMarkers -> phaseOutput.add("peer-" + serverNumber + ":" + line)
+                                        line.startsWith("SENT_META\t") -> {
+                                            val fields = line.split('\t')
+                                            if (fields.size == 3 &&
+                                                fields[1].toIntOrNull() != null &&
+                                                fields[2].toIntOrNull() != null &&
+                                                diagnosticOutput.size < 240
+                                            ) {
+                                                diagnosticOutput.add(
+                                                    "peer-" + serverNumber + ":sent-meta:bytes=" +
+                                                        fields[1] + ":firstTag=" + fields[2],
+                                                )
+                                            }
+                                        }
                                         line.startsWith("P2P_DIAG\t") -> {
                                             val fields = line.split('\t', limit = 6)
                                             if (fields.size == 6 && diagnosticOutput.size < 240) {
