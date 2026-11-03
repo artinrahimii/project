@@ -151,3 +151,14 @@ Changed code implements zeroization for Windows frames/queue/lifecycle buffers a
 - The Windows .NET fixture emits a payload-free response length/tag marker and clears temporary serialized response bytes after send.
 - The Android test retains this marker in the failure diagnostics.
 - The purpose is to determine whether frame expansion/alignment occurs before, during or after the Windows application protocol writer. The root cause remains unknown pending exact-head CI.
+
+
+## T0180-A016 — V 3.0.833 exact-head CI
+
+- Step Three quality gate run 41610464154: passed.
+- Rendezvous container build/smoke run 41610464102: passed.
+- Windows WPF build/startup and process/policy/DPAPI checks job 125830768358: passed.
+- HostLifecycle job 125830768736: failed with sender HostStatusRequest length 54 / first tag 10 and receiver frame length 0 / first tag -1.
+- Real local inference job 125830768050: pinned llama.cpp b11443 and GGUF validated; runtime status check passed; QUIC fallback binary-response assertion failed at PeerTransportContractAcceptanceTests.cs:372. No real generation success.
+- Android formatting/lint and debug APK build passed; Android JVM test suite was still in progress at the time of this evidence update.
+- The task remains in_progress. No acceptance criterion is declared complete from these failures.

@@ -212,3 +212,14 @@
 - The .NET cancellation interop fixture emits only response byte length and first Protobuf tag before sending, then clears the temporary response buffer. It does not emit message contents, request identifiers, peer identifiers or credentials.
 - The Android test captures the metadata line and appends it to the existing payload-free diagnostic summary if the three-peer correlation test fails.
 - This is a diagnostic implementation, not a transport fix. No post-change build/test result is claimed; exact-head CI must validate the changes and provide the next framing evidence.
+
+
+## T0180-A016 — exact-head CI on V 3.0.833
+
+- Step Three quality gate run 41610464154 passed.
+- Rendezvous container build/smoke run 41610464102 passed.
+- Windows WPF job 125830768358 passed: C# formatting, host build, WPF startup and process/policy/DPAPI trust-store checks succeeded.
+- Windows HostLifecycle job 125830768736 failed with the same mismatch: sender serialized a 54-byte HostStatusRequest with first Protobuf tag 10, but the listener received an empty frame (0 bytes, first tag -1).
+- Real local inference job 125830768050 verified the pinned llama.cpp b11443 executable and GGUF model and observed the active model runtime status, but failed at QUIC fallback binary-response delivery in `PeerTransportContractAcceptanceTests.VerifyQuicFallbackAfterUnreachableTcpAddressAsync` (line 372). The assertion was: `Binary response bytes must return directly over the selected peer connection.` No successful model generation result was established.
+- Android KtLint/formatting and debug APK build passed (job 125830768838). Its JVM suite was still running when this update was written, so no JVM result is recorded yet.
+- T0180 remains `in_progress`.
