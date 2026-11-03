@@ -76,7 +76,7 @@ class AndroidKeystoreLocalSecretsTests(unittest.TestCase):
                 self.assertIn(dependency, gradle)
         workflow = WORKFLOW.read_text(encoding="utf-8")
         self.assertIn("reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d", workflow)
-        self.assertIn("gradle --no-daemon connectedDebugAndroidTest", workflow)
+        self.assertIn("gradle --no-daemon --project-dir src/Client.Android connectedDebugAndroidTest", workflow)
         self.assertIn("whitep-android-keystore-instrumentation-reports", workflow)
 
     def test_security_docs_do_not_claim_room_database_is_encrypted_by_this_task(self):
