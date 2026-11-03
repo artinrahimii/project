@@ -153,7 +153,13 @@ class AndroidKeyStorePersistenceTest {
             AndroidPeerIdentityStore.IDENTITY_PREFERENCES,
             AndroidPeerTrustStore.TRUST_PREFERENCES,
         ).forEach { name ->
-            assertTrue(context.getSharedPreferences(name, Context.MODE_PRIVATE).edit().clear().commit())
+            assertTrue(
+                context
+                    .getSharedPreferences(name, Context.MODE_PRIVATE)
+                    .edit()
+                    .clear()
+                    .commit(),
+            )
         }
     }
 
