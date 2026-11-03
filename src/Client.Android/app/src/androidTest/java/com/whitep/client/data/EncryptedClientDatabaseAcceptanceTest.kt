@@ -6,12 +6,6 @@ import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.whitep.client.security.AndroidKeyStoreProtectedBlobProtector
-import java.io.File
-import java.io.FileInputStream
-import java.security.GeneralSecurityException
-import java.security.MessageDigest
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
@@ -19,6 +13,12 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertThrows
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.io.File
+import java.io.FileInputStream
+import java.security.GeneralSecurityException
+import java.security.MessageDigest
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 import net.zetetic.database.sqlcipher.SQLiteDatabase as CipherSQLiteDatabase
 
 @RunWith(AndroidJUnit4::class)
@@ -36,11 +36,11 @@ class EncryptedClientDatabaseAcceptanceTest {
     fun cleanUp() {
         databaseNames.forEach { name ->
             context.deleteDatabase(name)
-            context.getSharedPreferences(
-                EncryptedClientDatabaseFactory.KEY_PREFERENCES_NAME,
-                Context.MODE_PRIVATE,
-            )
-                .edit()
+            context
+                .getSharedPreferences(
+                    EncryptedClientDatabaseFactory.KEY_PREFERENCES_NAME,
+                    Context.MODE_PRIVATE,
+                ).edit()
                 .remove(EncryptedClientDatabaseFactory.wrappedKeyPreference(name))
                 .commit()
         }
@@ -85,7 +85,8 @@ class EncryptedClientDatabaseAcceptanceTest {
                 )
                 assertEquals(
                     listOf("local message"),
-                    reopened.messageDao()
+                    reopened
+                        .messageDao()
                         .observeForConversation("encrypted-conversation")
                         .first()
                         .map { it.content },
@@ -100,7 +101,8 @@ class EncryptedClientDatabaseAcceptanceTest {
         runBlocking {
             val databaseName = databaseNames[1]
             val legacy =
-                Room.databaseBuilder(context, ClientDatabase::class.java, databaseName)
+                Room
+                    .databaseBuilder(context, ClientDatabase::class.java, databaseName)
                     .addMigrations(
                         ClientDatabase.MIGRATION_1_2,
                         ClientDatabase.MIGRATION_2_3,
@@ -147,7 +149,8 @@ class EncryptedClientDatabaseAcceptanceTest {
                 )
                 assertEquals(
                     "legacy plaintext data",
-                    encrypted.messageDao()
+                    encrypted
+                        .messageDao()
                         .observeForConversation("legacy-conversation")
                         .first()
                         .single()
@@ -200,10 +203,13 @@ class EncryptedClientDatabaseAcceptanceTest {
         val databaseFile = context.getDatabasePath(databaseName)
         val originalHash = sha256(databaseFile)
 
-        context.getSharedPreferences(
-            EncryptedClientDatabaseFactory.KEY_PREFERENCES_NAME,
-            Context.MODE_PRIVATE,
-        ).edit().remove(EncryptedClientDatabaseFactory.wrappedKeyPreference(databaseName)).commit()
+        context
+            .getSharedPreferences(
+                EncryptedClientDatabaseFactory.KEY_PREFERENCES_NAME,
+                Context.MODE_PRIVATE,
+            ).edit()
+            .remove(EncryptedClientDatabaseFactory.wrappedKeyPreference(databaseName))
+            .commit()
 
         assertThrows(GeneralSecurityException::class.java) {
             EncryptedClientDatabaseFactory.open(context, databaseName)
