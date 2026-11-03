@@ -115,6 +115,15 @@ jobs:
       - name: Build debug APK
         working-directory: src/Client.Android
         run: gradle --no-daemon assembleDebug
+      - name: Verify minimum permissions in merged Android APK
+        shell: bash
+        run: |
+          set -euo pipefail
+          aapt2="$ANDROID_HOME/build-tools/36.0.0/aapt2"
+          test -x "$aapt2"
+          python tools/verify_android_permissions.py \
+            --apk src/Client.Android/app/build/outputs/apk/debug/app-debug.apk \
+            --aapt2 "$aapt2"
       - name: Run Android JVM unit tests
         working-directory: src/Client.Android
         env:

@@ -101,3 +101,18 @@ Room اکنون از `EncryptedClientDatabaseFactory` و SQLCipher Community Edi
 - کنترل منبع و مستندات: `tests/test_host_conversation_retention_policy.py` و `tests/test_wpf_entrypoint.py`
 
 این شواهد، سیاست ذخیره‌سازی تحت کنترل برنامه را توصیف می‌کنند؛ به‌تنهایی آزمون مستقل ترافیک شبکه، فایل‌های موقت، logها یا رفتار سیستم‌عامل نیستند.
+
+
+## حداقل مجوزهای کلاینت Android (T0185 — کنترل CI در انتظار)
+
+کلاینت Android فقط `android.permission.INTERNET` را درخواست می‌کند. این مجوز برای بازکردن سوکت‌های شبکه در کشف HTTPS سرویس rendezvous و ارتباط مستقیم TCP/libp2p لازم است. سطح حفاظت آن در Android برابر `normal` است و در گروه مجوزهای زمان نصب قرار می‌گیرد؛ بنابراین پنجرهٔ درخواست مجوز runtime ندارد.
+
+مجوز `ACCESS_NETWORK_STATE` اضافه نشده است: کد فعلی وضعیت اتصال یا شبکه‌های فعال را از سیستم‌عامل استعلام نمی‌کند. پایگاه Room نیز در فضای خصوصی برنامه و با SQLCipher نگهداری می‌شود؛ دسترسی به فایل‌های مشترک، رسانه، مکان، دوربین، میکروفون یا بلوتوث در قابلیت‌های فعلی استفاده نمی‌شود.
+
+کنترل منبع XML به‌تنهایی برای کشف مجوزهای افزوده‌شده از طریق Manifestهای وابستگی‌ها کافی نیست. به همین دلیل workflow ساخت محصول پس از تولید APK، خروجی `aapt2 dump permissions` را بررسی می‌کند و اگر مجوزی غیر از `INTERNET` در manifest ادغام‌شده وجود داشته باشد یا `INTERNET` حذف شده باشد، job را ناموفق می‌کند. آزمون‌های Python نیز parser، allowlist و رد مجوزهای اضافی/مفقود را پوشش می‌دهند.
+
+این allowlist باید هنگام افزودن قابلیت جدیدی که واقعاً به دسترسی سیستم‌عامل نیاز دارد، دوباره بر اساس API استفاده‌شده و manifest نهایی ارزیابی شود؛ افزودن مجوز صرفاً برای رفع خطای ساخت یا از روی حدس مجاز نیست.
+
+- Android permission model: https://developer.android.com/guide/topics/permissions/overview
+- Android INTERNET permission API: https://developer.android.com/reference/android/Manifest.permission#INTERNET
+- APK manifest inspection with AAPT2: https://developer.android.com/tools/aapt2
