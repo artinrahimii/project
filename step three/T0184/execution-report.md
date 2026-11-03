@@ -2,8 +2,8 @@
 
 - **وضعیت:** `in_progress`؛ SQLCipher و ادغام Room پیاده‌سازی شده‌اند، اما پذیرش runtime اختصاصی T0184 هنوز انجام نشده است.
 - **پیاده‌سازی اولیه:** `11eddfda0cc7f25a7c2ba9177d279960ce1a432c` — `V 3.0.854`.
-- **آخرین CI بررسی‌شده:** `1e14ea896eaff3d8c24399156b8c79c7ba53308a` — `V 3.0.859`.
-- **تلاش‌ها:** A001 تا A010؛ چهار تلاش CI ناموفق ثبت‌شده‌اند. A010 تنها یک اصلاح formatter است و هنوز CI نشده است.
+- **آخرین CI بررسی‌شده:** `7d34810154bf3637e3eeccb51de2df51e4e4b947` — `V 3.0.860`.
+- **تلاش‌ها:** A001 تا A011؛ پنج تلاش CI ناموفق ثبت شده‌اند. A010 شکست KtLint در factory داشت؛ A011 فقط اصلاح تورفتگی است و هنوز CI نشده است.
 
 ## وابستگی‌ها
 
@@ -28,11 +28,12 @@
 - **V3.0.857 / A007:** quality `41688934109` موفق با ۳۵۳ آزمون؛ container `41688934150` موفق؛ Android KtLint یک خطای import در test source داشت.
 - **V3.0.858 / A008:** quality `41689552284` و container `41689552377` موفق؛ Windows WPF و HostLifecycle موفق. test-source lint موفق شد، اما main-source KtLint سه ایراد در factory را گزارش کرد؛ APK/JVM/instrumentation اجرا نشدند.
 - **V3.0.859 / A009:** quality `41691220553` با ۳۵۳ آزمون موفق؛ container `41691220755` موفق؛ Windows WPF و HostLifecycle موفق. test-source و بیشتر main-source lint موفق شدند؛ تنها خطای باقی‌مانده `EncryptedClientDatabaseFactory.kt:70:21 Unexpected newline before '.'` در زنجیرهٔ Room بود. بنابراین ساخت APK، JVM tests و چهار instrumentation test اجرا نشدند.
-- **A010 — اصلاح فعلی:** `.openHelperFactory(openHelperFactory)` به خط بسته‌شدن `Room.databaseBuilder(...)` منتقل شد. این تغییر فقط formatting است و هیچ منطق runtime را تغییر نمی‌دهد. CI دقیق هنوز اجرا نشده است.
+- **V3.0.860 / A010:** quality run `41693397321` با ۳۵۳ آزمون Python موفق؛ graph guard با ۲۳۰ وظیفه و ۴۲۲ یال، صفر خطا و یک هشدار قدیمی T0001؛ container run `41693397637` موفق. در product run `41693397531`، Windows WPF و HostLifecycle موفق و test-source KtLint نیز موفق بود؛ اما main-source KtLint چهار خطای تورفتگی در `EncryptedClientDatabaseFactory.kt:194-197` گزارش کرد. پس از آن APK، JVM unit tests و چهار connected instrumentation tests اجرا نشدند.
+- **A011 — اصلاح فعلی:** بدنهٔ lambda مربوط به `source.rawQuery(...).use` و آکولاد بسته‌شدن آن چهار فاصله به داخل منتقل شدند تا با مقادیر دقیق مورد انتظار KtLint (به‌ترتیب ۲۴، ۲۸، ۲۴ و ۲۰ فاصله) مطابقت داشته باشند. منطق SQLCipher، export، integrity، key handling و Room تغییر نکرده است. CI دقیق هنوز اجرا نشده است.
 
 ## فایل‌های تغییر این نوبت
 
-- `src/Client.Android/app/src/main/java/com/whitep/client/data/EncryptedClientDatabaseFactory.kt`: اصلاح newline در زنجیرهٔ Room.
+- `src/Client.Android/app/src/main/java/com/whitep/client/data/EncryptedClientDatabaseFactory.kt`: اصلاح تورفتگی چهار خط در cursor lambda پس از شکست واقعی KtLint در V3.0.860.
 - `step three/T0184/execution-report.md`
 - `step three/T0184/evidence/verification.md`
 - `step three/project-graph.md`
@@ -43,4 +44,4 @@
 
 emulator، TEE/StrongBox دستگاه فیزیکی را اثبات نمی‌کند. ادعا فقط رمزگذاری فایل پایگاه در حالت سکون است؛ plaintext در حافظهٔ فرایند، pagefile/swap، crash dump، پاک‌سازی فورنزیک بلوک‌های فلش و دستگاه روت‌شده خارج از دامنه‌اند.
 
-**اقدام بعدی:** CI دقیق V3.0.860 باید KtLint کامل، ساخت APK، JVM tests و چهار سناریوی `connectedDebugAndroidTest` را اجرا کند. فقط پس از موفقیت معیارهای واقعی، T0184 به `done` تغییر می‌کند.
+**اقدام بعدی:** CI دقیق V3.0.861 باید KtLint کامل، ساخت APK، JVM tests و چهار سناریوی `connectedDebugAndroidTest` را اجرا کند. فقط پس از موفقیت معیارهای واقعی، T0184 به `done` تغییر می‌کند.

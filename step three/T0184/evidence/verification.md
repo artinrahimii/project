@@ -1,10 +1,10 @@
-# T0184-A001 تا A010 — شواهد پیاده‌سازی و CI
+# T0184-A001 تا A011 — شواهد پیاده‌سازی و CI
 
-## snapshot دقیق V3.0.859
+## snapshot دقیق V3.0.860
 - مخزن/شاخه: `artinrahimii/project` / `main`.
-- commit: `1e14ea896eaff3d8c24399156b8c79c7ba53308a`; پیام `V 3.0.859`; tree `da09f6f408009631257bea09e4bb8ecdedddaf36`.
-- گراف: Blob `17e2f250d883769fb03450ac84d40712d960f88d`؛ اندازهٔ GitHub و UTF-8 برابر `3375671` بایت؛ Git SHA-1 قالب blob تطبیق یافت؛ JSON کامل parse و round-trip شد.
-- factory: Blob `df158ad4ac2fbf5ae96ba57592d4b9c1f1886892`؛ اندازهٔ GitHub و UTF-8 برابر `12429` بایت؛ Git SHA-1 قالب blob تطبیق یافت.
+- commit: `7d34810154bf3637e3eeccb51de2df51e4e4b947`; پیام `V 3.0.860`; tree `15104846e2993e1342745d6c0b65c5552a4a71cd`.
+- گراف: Blob `ecfebd4adf633274b8979ebadc3de8aefa5b9c04`؛ اندازهٔ GitHub و UTF-8 برابر `3378931` بایت؛ Git SHA-1 قالب blob تطبیق یافت؛ JSON کامل parse و round-trip شد.
+- factory: Blob `3d33cfdeba365d64d72305490a9e43eb1aace559`؛ اندازهٔ GitHub و UTF-8 برابر `12408` بایت؛ Git SHA-1 قالب blob تطبیق یافت.
 
 ## کد واقعی و آزمون‌ها
 - `src/Client.Android/app/src/main/java/com/whitep/client/data/EncryptedClientDatabaseFactory.kt`
@@ -21,12 +21,22 @@
 - V3.0.859 quality `41691220553`: ۳۵۳ آزمون Python موفق؛ compileall و graph/evidence validation موفق.
 - V3.0.859 container `41691220755`: build و non-root HTTP smoke موفق.
 - V3.0.859 product `41691220625`: Windows WPF و HostLifecycle موفق؛ Android test-source lint موفق؛ main-source KtLint یک خطا در line 70 factory گزارش کرد.
+- V3.0.860 quality `41693397321`: ۳۵۳ آزمون Python موفق؛ graph guard با ۲۳۰ task/۴۲۲ edge، صفر خطا و یک هشدار قدیمی T0001؛ container `41693397637` موفق.
+- V3.0.860 product `41693397531`: Windows WPF و HostLifecycle موفق؛ test-source lint موفق؛ main-source lint چهار خطای indentation در factory داشت و build/JVM/instrumentation اجرا نشدند.
 
 ## خطای دقیق V3.0.859
 `EncryptedClientDatabaseFactory.kt:70:21 Unexpected newline before '.'` در `.openHelperFactory(openHelperFactory)`. پس از شکست lint، `assembleDebug`، `testDebugUnitTest` و `connectedDebugAndroidTest` اجرا نشدند.
 
 ## A010
 فقط `)` و `.openHelperFactory(openHelperFactory)` در یک خط قرار گرفتند؛ منطق رمزنگاری، ساخت کلید، ذخیرهٔ envelope، SQLCipher export، integrity check و rename تغییر نکردند. اجرای CI A010 هنوز موجود نیست.
+
+## V3.0.860 lint failure و A011
+در job Android `126117502709`، KtLint چهار مورد را مشخص کرد:
+- خط 194: تورفتگی ۲۰ به‌جای ۲۴ فاصله.
+- خط 195: تورفتگی ۲۴ به‌جای ۲۸ فاصله.
+- خط 196: تورفتگی ۲۰ به‌جای ۲۴ فاصله.
+- خط 197: تورفتگی ۱۶ به‌جای ۲۰ فاصله.
+A011 فقط همین چهار خط را در lambda خروجی SQLCipher چهار فاصله به داخل منتقل می‌کند. این اصلاح هنوز CI نشده است.
 
 ## چهار آزمون اختصاصی T0184 — بدون نتیجهٔ pass
 1. ایجاد پایگاه تازهٔ رمز‌شده و بازیابی conversation/message پس از reopen.

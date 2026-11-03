@@ -191,10 +191,10 @@ internal object EncryptedClientDatabaseFactory {
                         "SELECT sqlcipher_export('$ENCRYPTED_DATABASE_ALIAS')",
                         emptyArray<String>(),
                     ).use { cursor ->
-                    if (!cursor.moveToFirst()) {
-                        throw GeneralSecurityException("SQLCipher returned no result for the database export.")
+                        if (!cursor.moveToFirst()) {
+                            throw GeneralSecurityException("SQLCipher returned no result for the database export.")
+                        }
                     }
-                }
                 source.execSQL("PRAGMA $ENCRYPTED_DATABASE_ALIAS.user_version = $sourceVersion")
                 source.execSQL("PRAGMA $ENCRYPTED_DATABASE_ALIAS.application_id = $applicationId")
                 requireIntegrity(
