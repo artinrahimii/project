@@ -15,7 +15,7 @@ The Android client needs durable, device-local conversation, message, draft, and
 2. Conversation messages and the current draft are intentional local persistence. This initial schema does not synchronize these rows to a central service or rendezvous server.
 3. Request-state rows contain request identifiers, conversation relationship, lifecycle status, timestamps, attempt number, and an optional typed error code. They do not contain prompt text, context-capsule bytes, or response bodies.
 4. Deleting a conversation cascades to its message and request-state rows. Clearing the current draft deletes its Room row.
-5. T0184 integrates SQLCipher Community Edition 4.20.0 with Room 2. A random 256-bit database passphrase is wrapped by the purpose-separated Android Keystore protector; only its authenticated envelope is stored in app-private preferences. A legacy plaintext SQLite file is exported into a separate encrypted file, integrity-checked, and atomically replaced only after success. Missing key material for an already encrypted database must fail closed rather than creating a replacement key. Exact-commit runtime acceptance is tracked in `step three/T0184/` and is not claimed until its instrumentation tests pass.
+5. The original Room-only storage baseline was not encrypted at rest. T0184 integrates SQLCipher Community Edition 4.20.0 with Room 2. A random 256-bit database passphrase is wrapped by the purpose-separated Android Keystore protector; only its authenticated envelope is stored in app-private preferences. A legacy plaintext SQLite file is exported into a separate encrypted file, integrity-checked, and atomically replaced only after success. Missing key material for an already encrypted database must fail closed rather than creating a replacement key. Exact-commit runtime acceptance is tracked in `step three/T0184/` and is not claimed until its instrumentation tests pass.
 6. Schema version 1 is the initial database contract. T0142 must add checked-in schema/migration verification and upgrade tests; this task does not claim that migration behavior is implemented.
 7. ADR-0019 remains in force: a processing host can read the prompt and context capsule it receives after transport decryption. This local-storage choice neither changes that endpoint trust boundary nor proves Android-to-Windows P2P delivery.
 
@@ -28,7 +28,7 @@ The Android client needs durable, device-local conversation, message, draft, and
 - Repository/privacy boundary regression: `tests/test_android_local_storage_boundary.py`.
 - Clean-build/test workflow: `.github/workflows/product-build.yml`.
 
-The database acceptance tests are scoped to local persistence, deterministic message ordering, deletion cascades, and request-state restoration. They do not prove cross-device delivery, encryption at rest, or deployment-level privacy.
+The original Room acceptance tests are scoped to local persistence, deterministic message ordering, deletion cascades, and request-state restoration. They do not prove cross-device delivery or deployment-level privacy. SQLCipher at-rest encryption is covered separately by the T0184 instrumentation tests, whose exact-commit result is pending.
 
 
 ## T0184 — SQLCipher-backed Room storage

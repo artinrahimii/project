@@ -1,21 +1,21 @@
-# T0184-A001 — شواهد پیاده‌سازی و وضعیت اعتبارسنجی
+# T0184-A001 تا A003 — شواهد پیاده‌سازی و کنترل کیفیت
 
-## snapshot گراف
+## snapshot و منبع
 
 - مخزن/شاخه: `artinrahimii/project` / `main`
-- commit پایه: `9cf5e9b858f975b605c952ead3c4010fa78a9d11`
-- tree پایه: `3518804be7a98ddac216830980e181ab9512945c`
-- Blob گراف: `b69a152faf7e1676a998cfd11a776997ef3b7c45`؛ ۳٬۳۵۱٬۱۵۹ بایت UTF-8؛ تطبیق SHA-1 قالب Git blob موفق و JSON کامل parse شد.
+- commit پیاده‌سازی: `11eddfda0cc7f25a7c2ba9177d279960ce1a432c` — `V 3.0.854`.
+- commit پایهٔ گراف: `9cf5e9b858f975b605c952ead3c4010fa78a9d11`.
+- گراف پایه از Git Blob API دریافت شد؛ ۳٬۳۵۱٬۱۵۹ بایت UTF-8؛ SHA-1 قالب Git blob تطبیق داشت و JSON کامل parse شد.
 
-## شواهد معماری و کد
+## تصمیم و شواهد پیاده‌سازی
 
-- Room پیش از این از open-helper استاندارد SQLite استفاده می‌کرد و ADR-0020 رمزگذاری at-rest را انجام‌نشده می‌دانست.
-- T0183 در `src/Client.Android/app/src/main/java/com/whitep/client/security/AndroidKeyStoreProtectedBlobProtector.kt` پیاده‌سازی Keystore را ایجاد کرده است؛ پنج آزمون instrumentation آن روی emulator API 36 در product run `41678108221` موفق شدند.
-- T0184 از SQLCipher `4.20.0` و `SupportOpenHelperFactory` استفاده می‌کند و Room از مسیر factory جدید باز می‌شود.
-- کلید تصادفی پایگاه فقط به‌صورت envelope Keystore-protected نگهداری می‌شود؛ هیچ passphrase خامی به source یا preferences نوشته نمی‌شود.
-- مهاجرت plaintext با checkpoint و export فایل جداگانه انجام می‌شود و قبل از rename اتمی، integrity مقصد بررسی می‌شود.
+- Room قبلاً از open-helper استاندارد SQLite استفاده می‌کرد و رمزگذاری at-rest نداشت.
+- T0183 رابط Keystore را فراهم می‌کند؛ پنج آزمون provider آن روی API 36 emulator در product run `41678108221` موفق شدند.
+- T0184 از SQLCipher `4.20.0` و `SupportOpenHelperFactory` استفاده می‌کند.
+- کلید تصادفی پایگاه فقط به‌صورت envelope محافظت‌شده توسط Android Keystore ذخیره می‌شود.
+- مهاجرت plaintext با checkpoint و export به فایل جداگانه انجام می‌شود؛ integrity پیش از rename اتمی بررسی می‌شود.
 
-## فایل‌های خروجی T0184
+## فایل‌های خروجی
 
 - `src/Client.Android/app/src/main/java/com/whitep/client/data/EncryptedClientDatabaseFactory.kt`
 - `src/Client.Android/app/src/main/java/com/whitep/client/data/ClientDatabase.kt`
@@ -23,18 +23,23 @@
 - `src/Client.Android/app/src/androidTest/java/com/whitep/client/data/EncryptedClientDatabaseAcceptanceTest.kt`
 - `tests/test_android_database_migration_contract.py`
 - `tests/test_android_encrypted_storage_contract.py`
+- `tests/test_android_context_capsule_persistence_contract.py`
+- `tests/test_android_local_storage_boundary.py`
 - `docs/security.md`
 - `docs/decisions/ADR-0020-android-client-local-conversation-storage.md`
 - `step three/T0184/execution-report.md`
-- `step three/T0184/evidence/verification.md`
 
-## نتایج آزمون
+## شکست CI و اصلاح
 
-کدهای T0184 در محیط محلی Gradle اجرا نشده‌اند. چهار instrumentation test و دو Python contract test به مخزن اضافه می‌شوند؛ اجرای آن‌ها روی commit نهایی هنوز **انجام‌نشده** است. بنابراین `tests_passed` در گراف T0184 خالی می‌ماند و وضعیت `in_progress` است.
+Quality run `41686907108`، روی commit `11eddfda0cc7f25a7c2ba9177d279960ce1a432c`، ۳۵۳ آزمون را اجرا کرد: ۳۵۰ موفق و سه شکست:
+1. `test_android_context_capsule_persistence_contract.py` هنوز محل قدیمی `addMigrations` را در ClientDatabase.kt می‌خواست.
+2. `test_android_local_storage_boundary.py` نیز همان فرض محل قدیمی را داشت.
+3. تست ADR عبارت `not encrypted at rest` را به‌عنوان افشای محدودیت baseline جست‌وجو می‌کرد.
 
-## موارد ریسک برای CI
+A003 دو assertion را به factory جدید منتقل کرد و ADR را با حفظ عبارت تاریخی، بدون ادعای پذیرش نهایی SQLCipher، اصلاح کرد. نتیجهٔ این اصلاح هنوز در CI تأیید نشده است.
 
-- سازگاری نسخهٔ SQLCipher با API مربوط به Room و emulator.
-- اجرای واقعی ATTACH/export/checkpoint روی فایل SQLite.
-- اثبات حفظ schema/data در مهاجرت و fail-closed بودن کلید مفقود.
-- اجرای KtLint و بررسی اینکه workflow instrumentation این چهار سناریو را همراه سایر تست‌ها اجرا کند.
+## آزمون‌های T0184
+
+چهار instrumentation test جدید هنوز در CI اجرا/تأیید نشده‌اند. هیچ نتیجه‌ای برای آن‌ها در `tests_passed` ثبت نشده است. Container run `41686907102` موفق شد؛ Product run `41686906946` در زمان ثبت این گزارش در حال اجرا بود.
+
+**وضعیت:** `in_progress`؛ شکست‌های regression test مشخص و اصلاح شده‌اند، ولی اجرای مجدد و پذیرش runtime باقی مانده است.

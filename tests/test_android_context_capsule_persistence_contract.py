@@ -23,7 +23,11 @@ class AndroidContextCapsulePersistenceContractTests(unittest.TestCase):
         self.assertIn("object : Migration(1, 2)", source)
         self.assertIn("object : Migration(2, 3)", source)
         self.assertIn("object : Migration(3, 4)", source)
-        self.assertIn("addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)", source)
+        factory = (ROOT / "src/Client.Android/app/src/main/java/com/whitep/client/data/EncryptedClientDatabaseFactory.kt").read_text(encoding="utf-8")
+        self.assertIn("addMigrations(", factory)
+        self.assertIn("ClientDatabase.MIGRATION_1_2", factory)
+        self.assertIn("ClientDatabase.MIGRATION_2_3", factory)
+        self.assertIn("ClientDatabase.MIGRATION_3_4", factory)
         self.assertIn("conversationContextCapsuleDao", source)
 
     def test_repository_uses_capsule_codec_and_rejects_invalid_payloads(self):
