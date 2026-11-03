@@ -98,3 +98,18 @@ A011 فقط همین چهار خط را در lambda خروجی SQLCipher چها�
 - Replaced the ineffective emulator CLI `-partition-size 4096` option with `disk-size: 4096M` under the action's `with` block.
 - Preserved safe cleanup of the already-consumed `tests/HostLifecycle.Tests/bin` and `obj` outputs before AVD creation and a `df -h "$HOME"` diagnostic.
 - Static source contract review: passed. Exact-head GitHub Actions, AVD boot and SQLCipher instrumentation tests: pending. No runtime acceptance is claimed.
+
+
+## V 3.0.865 — اجرای واقعی instrumentation و شکست مهاجرت plaintext
+
+- Commit: `e2e13532785b7f02ada7864e0eed9cb84dfee97e` (`V 3.0.865`); product run `41701047926`; Android job `126144093268`.
+- Emulator با تنظیم `disk-size: 4096M` boot شد؛ `sys.boot_completed=1`. بنابراین مانع ساخت userdata قبلی برطرف شده است.
+- Android KtLint: passed. `assembleDebug`: passed. `testDebugUnitTest`: passed. Windows WPF و HostLifecycle: passed. Step Three quality gate run `41701047886` و Rendezvous container run `41701048006`: passed.
+- `connectedDebugAndroidTest` نه تست را شروع کرد. آزمون `legacyPlaintextRoomDatabaseIsExportedAndExistingRowsArePreserved` شکست خورد: `SQLiteCantOpenDatabaseException` هنگام `ATTACH DATABASE` برای `t0184-legacy-plaintext.db.sqlcipher-migrating`، کد ۱۴. سایر سناریوها را بدون گزارش جزئی جداگانه، pass مستقل اعلام نمی‌کنیم.
+- بررسی سورس SQLCipher Android `v4.20.0` وجود `CREATE_IF_NECESSARY` را تأیید می‌کند. upstream issue #259 هم کاربرد این flag برای ساخت فایل مقصد ATTACH را توصیف می‌کند.
+
+## A016 — اصلاح flag ایجاد فایل مقصد
+
+- در `EncryptedClientDatabaseFactory.kt`، بازکردن منبع plaintext از `OPEN_READWRITE` به ترکیب `OPEN_READWRITE or CREATE_IF_NECESSARY` تغییر یافت تا SQLCipher اجازهٔ ایجاد فایل مقصد ATTACH را داشته باشد.
+- این اصلاح بر پایهٔ شکست واقعی exact-head V 3.0.865 است؛ هنوز runtime CI روی commit اصلاح‌شده اجرا نشده است.
+- **مرز ادعا:** T0184 همچنان `in_progress` است. هیچ‌کدام از چهار معیار instrumentation اختصاصی T0184 به‌عنوان گروه کامل پذیرفته نشده‌اند تا exact-head بعدی همه را سبز کند.

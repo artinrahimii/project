@@ -168,7 +168,7 @@ internal object EncryptedClientDatabaseFactory {
                     CipherSQLiteDatabase.openDatabase(
                         databaseFile.absolutePath,
                         null,
-                        CipherSQLiteDatabase.OPEN_READWRITE,
+                        CipherSQLiteDatabase.OPEN_READWRITE or CipherSQLiteDatabase.CREATE_IF_NECESSARY,
                     )
                 sourceDatabase = source
                 requireIntegrity(source, "PRAGMA quick_check", "legacy database")

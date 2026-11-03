@@ -89,3 +89,14 @@ emulator، TEE/StrongBox دستگاه فیزیکی را اثبات نمی‌کن
 - این تغییر هنوز CI نشده است. T0184 همچنان `in_progress` است و هیچ‌یک از چهار سناریوی SQLCipher instrumentation به‌عنوان موفق ثبت نشده‌اند.
 
 **گام بعدی:** exact-head V 3.0.865 باید workflow و build را پاس کند، AVD با userdata چهار گیگابایتی boot شود و چهار سناریوی `connectedDebugAndroidTest` واقعاً اجرا شوند.
+
+## A016 — ایجاد صحیح فایل مقصد هنگام ATTACH در مهاجرت SQLCipher
+
+- commit مبنا: `e2e13532785b7f02ada7864e0eed9cb84dfee97e` (`V 3.0.865`).
+- Product workflow دقیق: run `41701047926`؛ Android job `126144093268`. اجرای emulator موفق شد و `sys.boot_completed=1` شد. KtLint، `assembleDebug` و `testDebugUnitTest` موفق شدند؛ Windows WPF، HostLifecycle، Step Three quality gate و Rendezvous container نیز موفق بودند.
+- `connectedDebugAndroidTest` واقعاً شروع شد و ۹ اجرای instrumentation را گزارش کرد. یک مورد مشخص شکست خورد: `EncryptedClientDatabaseAcceptanceTest.legacyPlaintextRoomDatabaseIsExportedAndExistingRowsArePreserved`. خطا هنگام بازکردن فایل مقصد `t0184-legacy-plaintext.db.sqlcipher-migrating` در `ATTACH DATABASE` بود: `SQLiteCantOpenDatabaseException` / کد ۱۴ (`SQLITE_CANTOPEN`). این شکست runtime واقعی است؛ مهاجرت plaintext هنوز پذیرفته‌شده نیست.
+- بررسی سورس دقیق SQLCipher Android tag `v4.20.0` نشان می‌دهد `CREATE_IF_NECESSARY` یک open flag پشتیبانی‌شده است. سابقهٔ upstream در issue #259 نیز توضیح می‌دهد که برای ایجاد فایل مقصدِ ATTACH باید این flag به‌جای `OPEN_READWRITE` صرف استفاده شود: https://github.com/sqlcipher/android-database-sqlcipher/issues/259 .
+- **اصلاح A016:** فراخوانی بازکردن پایگاه plaintext اکنون `OPEN_READWRITE or CREATE_IF_NECESSARY` را درخواست می‌کند. این تغییر به همان نقطهٔ بازکردن منبع محدود است؛ رمزگذاری کلید، envelope، Room migrations، الگوریتم export، integrity check و جایگزینی اتمی تغییر نکرده‌اند.
+- نتیجهٔ runtime اصلاح A016 هنوز pending است. `T0184` در `in_progress` باقی می‌ماند؛ هیچ‌کدام از معیارهای مهاجرت دادهٔ قدیمی را تا اجرای exact-head جدید pass نمی‌دانیم.
+
+**گام بعدی:** اجرای exact-head `V 3.0.866`؛ بررسی موفقیت مهاجرت plaintext و حفظ conversation/message/draft، header رمز‌شده، بازیابی کلید Keystore و fail-closed در برابر فقدان کلید.
