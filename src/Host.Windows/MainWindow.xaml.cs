@@ -22,6 +22,7 @@ using Google.Protobuf;
 using HostCapabilities = WhiteP.Host.Domain.HostCapabilities;
 using HostStatus = WhiteP.Host.Domain.HostStatus;
 using WhiteP.Shared.Security;
+using WhiteP.Host.Windows.Chat;
 
 namespace WhiteP.Host.Windows;
 
