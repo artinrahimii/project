@@ -2,8 +2,8 @@
 
 - **وضعیت:** `in_progress`؛ SQLCipher و ادغام Room پیاده‌سازی شده‌اند، اما پذیرش runtime اختصاصی T0184 هنوز انجام نشده است.
 - **پیاده‌سازی اولیه:** `11eddfda0cc7f25a7c2ba9177d279960ce1a432c` — `V 3.0.854`.
-- **آخرین CI بررسی‌شده:** `6325ae0097bf262c02aa298a389481dc12db1625` — `V 3.0.861`.
-- **تلاش‌ها:** A001 تا A011؛ پنج تلاش CI ناموفق ثبت شده‌اند. A010 شکست KtLint در factory داشت؛ A011 فقط اصلاح تورفتگی است و هنوز CI نشده است.
+- **آخرین CI بررسی‌شده:** `d740c10032d488c6d698aa4d43e78f6e1458d8b2` — `V 3.0.862`.
+- **تلاش‌ها:** A001 تا A013؛ پنج تلاش ناموفق فنی قبلی ثبت شده‌اند. A012 خطای overload کامپایل را اصلاح کرد و build/JVM را در V 3.0.862 پاس کرد؛ A013 تنظیم runner شبیه‌ساز را برای رفع کمبود فضای پارتیشن اصلاح می‌کند.
 
 ## وابستگی‌ها
 
@@ -57,3 +57,15 @@ emulator، TEE/StrongBox دستگاه فیزیکی را اثبات نمی‌کن
 - نتیجهٔ آزمون A012 هنوز pending است؛ تا CI دقیق commit بعدی، T0184 همچنان `in_progress` می‌ماند و هیچ‌یک از چهار سناریوی runtime به‌عنوان موفق ثبت نمی‌شوند.
 
 **گام بعدی:** اجرای KtLint، `assembleDebug`، `testDebugUnitTest` و چهار سناریوی `connectedDebugAndroidTest` روی commit دقیق A012؛ سپس اصلاح خطاهای واقعی بعدی، در صورت وجود.
+
+## A013 — رفع کمبود فضای دیسک Android Emulator
+
+- commit مبنا: `d740c10032d488c6d698aa4d43e78f6e1458d8b2` (`V 3.0.862`).
+- Product workflow: run `41697319573`؛ Android job `126131159871`.
+- KtLint، `assembleDebug` و `testDebugUnitTest` موفق شدند. گزارش Gradle بارگذاری‌شده (`whitep-android-unit-test-reports`, artifact `13263131610`, اندازه `51,122` بایت) تعداد **۱۹۶ تست، صفر شکست و صفر ignored** را نشان می‌دهد.
+- Windows WPF، HostLifecycle، Step Three quality gate (۳۵۳ تست Python و graph guard با ۲۳۰ task/۴۲۲ edge، صفر خطا و یک هشدار metadata قدیمی T0001) و Rendezvous container build/smoke موفق شدند.
+- اجرای `reactivecircus/android-emulator-runner` پیش از اجرای `connectedDebugAndroidTest` شکست خورد: emulator خطای `Not enough space to create userdata partition. Available: 5861.69 MB, need 7372.80 MB` داد؛ دستگاه `emulator-5554` در ADB ظاهر نشد و runner با `Timeout waiting for emulator to boot` متوقف شد. بنابراین **هیچ‌یک از چهار تست instrumentation مربوط به T0184 اجرا نشدند** و پوشهٔ گزارش connected نیز ساخته نشد؛ عدم وجود artifact گزارش به معنی pass نیست.
+- **اصلاح A013 در workflow:** گزینهٔ رسمی `-partition-size 4096` به emulator اضافه شد تا پارتیشن داده در اندازهٔ مناسب برای runner ایجاد شود. خروجی‌های موقت `tests/HostLifecycle.Tests/bin` و `obj` نیز پس از پایان JVM tests حذف می‌شوند، چون fixture .NET در همان job دیگر مصرفی ندارد؛ فضای آزاد با `df -h` ثبت خواهد شد.
+- این اصلاح هنوز در commit جدید CI نشده است. T0184 همچنان `in_progress` می‌ماند و پذیرش runtime SQLCipher هنوز اثبات نشده است.
+
+**گام بعدی:** اجرای exact-head V 3.0.863؛ باید emulator boot شود و چهار تست `connectedDebugAndroidTest` واقعاً اجرا و نتیجهٔ report/runner بررسی شود.

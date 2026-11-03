@@ -61,3 +61,19 @@ A011 فقط همین چهار خط را در lambda خروجی SQLCipher چها�
 - API reference: SQLCipher Android tag `v4.20.0`, `SQLiteDatabase.openDatabase(String, byte[], CursorFactory, int, SQLiteDatabaseHook)`.
 - A012 adds the explicit fifth argument `null` for `SQLiteDatabaseHook` to select that overload.
 - A012 verification is **pending**; no SQLCipher runtime acceptance is claimed.
+
+## V 3.0.862 — exact-head build and emulator bootstrap failure
+
+- Commit: `d740c10032d488c6d698aa4d43e78f6e1458d8b2` (`V 3.0.862`).
+- Product run: `41697319573`; Android job: `126131159871`.
+- Android KtLint: passed.
+- Android `assembleDebug`: passed.
+- Android `testDebugUnitTest`: passed. Downloaded artifact `13263131610` (51,122 bytes) reports 196 tests, 0 failures, 0 ignored.
+- KVM udev setup: passed.
+- Instrumentation step: failed before Gradle `connectedDebugAndroidTest` started. Emulator log: `Not enough space to create userdata partition. Available: 5861.69 MB, need 7372.80 MB`; `emulator-5554` did not appear in ADB; final error `Timeout waiting for emulator to boot`.
+- Instrumentation report directory was not created; the configured upload step found no files. No T0184 instrumentation test result is claimed.
+- Windows WPF and HostLifecycle jobs: passed.
+- Step Three quality run `41697319725`: passed; 353 Python tests, compileall, graph guard 230 tasks/422 edges, 0 errors, 1 existing T0001 metadata warning.
+- Rendezvous container run `41697319454`: passed.
+- A013 changes the emulator options to include `-partition-size 4096` and removes the already-used one-time .NET `bin`/`obj` fixture outputs before emulator startup, then records available disk with `df -h`.
+- The workflow adjustment is pending exact-head CI. No SQLCipher instrumentation acceptance is claimed.

@@ -125,14 +125,20 @@ jobs:
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
-      - name: Run Android Keystore instrumentation tests
+      - name: Remove temporary .NET fixture outputs before Android emulator
+  shell: bash
+  run: |
+    set -euo pipefail
+    rm -rf tests/HostLifecycle.Tests/bin tests/HostLifecycle.Tests/obj
+    df -h "$HOME"
+  - name: Run Android Keystore instrumentation tests
         uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d
         with:
           api-level: 36
           target: google_apis
           arch: x86_64
           profile: pixel_6
-          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -partition-size 4096
           disable-animations: true
           script: gradle --no-daemon --project-dir src/Client.Android connectedDebugAndroidTest
       - name: Upload Android Keystore instrumentation reports
