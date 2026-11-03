@@ -85,3 +85,16 @@ A011 فقط همین چهار خط را در lambda خروجی SQLCipher چها�
 - Commit diff shows the new cleanup step was not indented as a child of the Android `steps` list (`shell` and `run` were at root indentation).
 - A014 fixes YAML indentation for the cleanup step and restores the emulator-runner step as a sibling. The `-partition-size 4096` setting remains.
 - Exact-head validation is pending; no app/test pass is claimed from V 3.0.863.
+
+## V 3.0.864 — workflow dispatch after indentation correction
+
+- Commit: `3f41808e3995110b746f8c538e1bc5fc585f195f` (`V 3.0.864`).
+- Product run `41700515325` created Android, Windows WPF, and HostLifecycle jobs; the YAML/workflow dispatch failure from V 3.0.863 no longer occurred.
+- HostLifecycle completed successfully. Android KtLint passed; Android `assembleDebug` was still running at the verification checkpoint. The four instrumentation tests had not started.
+
+## A015 — correct Android userdata disk sizing
+
+- The exact pinned `reactivecircus/android-emulator-runner` action commit `a421e43855164a8197daf9d8d40fe71c6996bb0d` declares a `disk-size` input. Its `src/emulator-manager.ts` maps that input to `disk.dataPartition.size=<value>`.
+- Replaced the ineffective emulator CLI `-partition-size 4096` option with `disk-size: 4096M` under the action's `with` block.
+- Preserved safe cleanup of the already-consumed `tests/HostLifecycle.Tests/bin` and `obj` outputs before AVD creation and a `df -h "$HOME"` diagnostic.
+- Static source contract review: passed. Exact-head GitHub Actions, AVD boot and SQLCipher instrumentation tests: pending. No runtime acceptance is claimed.

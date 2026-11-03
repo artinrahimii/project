@@ -78,3 +78,14 @@ emulator، TEE/StrongBox دستگاه فیزیکی را اثبات نمی‌کن
 - این اصلاح هنوز روی commit جدید CI نشده است. T0184 همچنان `in_progress` است و نتیجهٔ جدیدی برای instrumentation ثبت نمی‌شود.
 
 **گام بعدی:** exact-head V 3.0.864 باید workflow را parse کند و build، JVM و emulator/instrumentation را اجرا کند. پذیرش runtime فقط پس از موفقیت چهار تست واقعی ثبت می‌شود.
+
+## A015 — تنظیم صحیح ظرفیت userdata در Android Emulator
+
+- commit مبنا: `3f41808e3995110b746f8c538e1bc5fc585f195f` (`V 3.0.864`).
+- اجرای workflow در نسخهٔ 864 این بار jobهای Android، Windows و HostLifecycle را ایجاد کرده است؛ پس خطای YAML نسخهٔ 863 برطرف شده است. در checkpoint بررسی، KtLint اندروید موفق، `assembleDebug` در حال اجرا، HostLifecycle موفق، و instrumentation هنوز شروع نشده بود. اجرای exact-head هنوز نهایی نشده است.
+- بررسی سورس دقیق action استفاده‌شده در workflow (`reactivecircus/android-emulator-runner` commit `a421e43855164a8197daf9d8d40fe71c6996bb0d`) نشان می‌دهد ورودی `disk-size` پیکربندی `disk.dataPartition.size` را تنظیم می‌کند. این ورودی همان ظرفیت userdata مورد نیاز برای ساخت AVD است.
+- `-partition-size` صرفاً پارتیشن سیستم emulator را تغییر می‌دهد و علت خطای userdata را برطرف نمی‌کند؛ از workflow حذف شد.
+- **اصلاح A015:** ورودی `disk-size: 4096M` به action اضافه و گزینهٔ نامرتبط `-partition-size 4096` حذف شد. پاک‌سازی bin/obj تولیدشدهٔ fixture .NET بعد از JVM tests و ثبت `df -h "$HOME"` حفظ شد.
+- این تغییر هنوز CI نشده است. T0184 همچنان `in_progress` است و هیچ‌یک از چهار سناریوی SQLCipher instrumentation به‌عنوان موفق ثبت نشده‌اند.
+
+**گام بعدی:** exact-head V 3.0.865 باید workflow و build را پاس کند، AVD با userdata چهار گیگابایتی boot شود و چهار سناریوی `connectedDebugAndroidTest` واقعاً اجرا شوند.
