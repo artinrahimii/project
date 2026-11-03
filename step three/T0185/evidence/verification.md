@@ -67,3 +67,15 @@
 - A local parser fixture matching AOSP's AAPT2 xmltree attribute format passed. This is a parser fixture only, not a claim that the actual APK has passed the revised verifier.
 - Exact-head V 3.0.869 product and quality workflows are pending. Keep T0185 in_progress until both confirm the output.
 
+
+
+## A003 — نتیجهٔ دقیق CI کیفیت V 3.0.869
+
+- Product workflow: 41734543287؛ در زمان ثبت این گزارش هنوز in_progress بود و Android job در assembleDebug قرار داشت. مرحلهٔ AAPT2 ممیزی permission هنوز اجرا نشده بود.
+- Step Three quality gate: 41734543291 — success.
+- کل آزمون‌های Python: 366 passed.
+- هر 13 آزمون اختصاصی T0185 در همین اجرا passed شدند، شامل پذیرش دقیق AndroidX signature permission و رد مجوزهای دیگر/ضعیف‌تر.
+- Python compileall موفق شد.
+- Graph guard: 230 tasks / 422 edges، صفر خطا و یک هشدار قدیمی T0001.
+- نتیجه: آزمون‌های کد verifier و graph-quality پذیرفته شده‌اند؛ این نتیجه جایگزین بررسی Manifest باینری APK نیست. T0185 همچنان in_progress باقی می‌ماند.
+
