@@ -6,6 +6,8 @@ import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.whitep.client.security.AndroidKeyStoreProtectedBlobProtector
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
@@ -17,8 +19,6 @@ import java.io.File
 import java.io.FileInputStream
 import java.security.GeneralSecurityException
 import java.security.MessageDigest
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
 import net.zetetic.database.sqlcipher.SQLiteDatabase as CipherSQLiteDatabase
 
 @RunWith(AndroidJUnit4::class)
