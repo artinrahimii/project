@@ -45,7 +45,7 @@ class ReproducibleBuildContractTests(unittest.TestCase):
         self.assertIn("path: src/Host.Windows/bin/Release/net10.0-windows/", PRODUCT)
         self.assertIn("path: src/Client.Android/app/build/outputs/apk/debug/app-debug.apk", PRODUCT)
         self.assertEqual(PRODUCT.count("if-no-files-found: error"), 2)
-        self.assertEqual(PRODUCT.count("retention-days: 7"), 3)
+        self.assertEqual(PRODUCT.count("retention-days: 7"), 4)
         self.assertIn("name: whitep-android-unit-test-reports", PRODUCT)
         self.assertIn("if: always()", PRODUCT)
         self.assertIn("path: src/Client.Android/app/build/reports/tests/testDebugUnitTest/", PRODUCT)
