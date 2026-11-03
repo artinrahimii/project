@@ -115,7 +115,13 @@ class Libp2pInferenceRequestTransport(
 
     private val protocolBinding =
         createSimpleBinding(PROTOCOL_ID) {
-            InferencePeerMessageController(::onIncomingFrame, ::onPeerClosed)
+            InferencePeerMessageController(
+                ::onIncomingFrame,
+                ::onPeerClosed,
+                inboundChunks,
+                decodedFrames,
+                callbackFailures,
+            )
         }
 
     private val libp2pHost: Host =
@@ -691,6 +697,9 @@ class Libp2pInferenceRequestTransport(
 internal class InferencePeerMessageController(
     private val onFrame: (String, ByteArray, InferencePeerMessageController) -> Unit,
     private val onClosed: (String, InferencePeerMessageController) -> Unit,
+    private val inboundChunks: AtomicLong,
+    private val decodedFrames: AtomicLong,
+    private val callbackFailures: AtomicLong,
 ) : SimpleClientHandler() {
     private val decoder = PeerMessageFrameDecoder()
     private var authenticatedPeerId: String? = null

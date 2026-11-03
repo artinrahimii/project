@@ -210,5 +210,17 @@ class AndroidLibp2pTransportContractTests(unittest.TestCase):
         self.assertIn("Arrays.fill(frame, 0)", source)
 
 
+    def test_inbound_controller_receives_transport_owned_diagnostic_counters(self):
+        source = TRANSPORT.read_text(encoding="utf-8")
+        binding = source.split("private val protocolBinding", 1)[1].split(
+            "private val libp2pHost", 1
+        )[0]
+        controller = source.split("internal class InferencePeerMessageController(", 1)[1]
+        for counter in ("inboundChunks", "decodedFrames", "callbackFailures"):
+            with self.subTest(counter=counter):
+                self.assertIn(counter, binding)
+                self.assertIn(f"private val {counter}: AtomicLong", controller)
+
+
 if __name__ == "__main__":
     unittest.main()

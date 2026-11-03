@@ -174,3 +174,22 @@
 - Android job 125392910595 پیش از ساخت APK و اجرای JVM tests در KtLint متوقف شد: `Libp2pInferenceRequestTransport.kt:115:5 Expected a blank line for this declaration`.
 - Real local inference workflow run 41479259306 در همان مجموعهٔ مشترک HostLifecycle، در خط ۳۴۰ آزمون loopback با TimeoutException شکست خورد؛ اجرای واقعی generation از llama.cpp/GGUF تأیید نشد.
 - A014 فاصلهٔ خالی KtLint را اصلاح کرد و تشخیص میزبان را با طول بایت، اولین tag و دسته‌بندی ثابت سه parser گسترش داد. نتیجهٔ CI دقیق A014 هنوز وجود ندارد.
+
+
+## تلاش T0180-A014 — نتایج CI دقیق V 3.0.831
+
+- Step Three quality gate run 41481768427 موفق بود.
+- Rendezvous container build/smoke run 41481768488 موفق بود.
+- Windows WPF job 125401644497 موفق بود.
+- HostLifecycle job 125401643696 شکست خورد. تشخیص دقیق: `hostFailureType=InvalidDataException`، مرحلهٔ `reject_malformed_application_message`، طول پیام دریافتی صفر بایت و اولین tag برابر `-1`. هر سه parser مربوط به HostStatusRequest، InferenceRequest و CancelRequest پیام را رد کردند.
+- Android job 125401644795 در کامپایل Kotlin شکست خورد؛ ارجاع‌های `inboundChunks`، `decodedFrames` و `callbackFailures` در کلاس مستقل `InferencePeerMessageController` unresolved بودند.
+- Real local inference job 125401638934 در loopback مشترک HostLifecycle با قطع peer stream شکست خورد؛ بخش اجرای مدل واقعی llama.cpp/GGUF به مرحلهٔ generation نرسید.
+- این نتایج در تاریخچهٔ افزایشی گراف به‌عنوان A014 ثبت شدند؛ وضعیت T0180 همچنان `in_progress` است.
+
+## تلاش T0180-A015 — اصلاح مالکیت شمارنده‌های Android و تشخیص خروجی Windows
+
+- سه شمارندهٔ `AtomicLong` که در transport بیرونی تعریف شده‌اند، اکنون صریحاً به constructor کلاس مستقل `InferencePeerMessageController` تزریق می‌شوند. این اصلاح خطای unresolved reference در کامپایل V 3.0.831 را هدف می‌گیرد.
+- یک آزمون قرارداد Python برای اتصال شمارنده‌های transport به controller اضافه شد.
+- آزمون Windows پیش از ارسال HostStatusRequest طول بایت پیام سریال‌شده و اولین tag پروتوباف را ثبت می‌کند؛ هیچ payload، شناسهٔ peer یا کلید ثبت نمی‌شود. بافر موقت پس از پایان ارسال پاک می‌شود.
+- علت اصلی دریافت frame خالی در Windows هنوز قطعی نیست. تا وقتی اندازهٔ پیام خروجی با اندازهٔ دریافتی مقایسه نشود، کد production framing تغییر نمی‌کند.
+- در این نوبت ابزار محلی .NET، Gradle/Android و Python اجرا نشد؛ پذیرش دقیق commit جدید به CI وابسته است. T0180 همچنان `in_progress` است.

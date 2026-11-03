@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Reflection;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using Google.Protobuf;
@@ -260,9 +261,18 @@ internal static class PeerAnnouncementClientAcceptanceTests
             "A separately instantiated trusted peer must establish an authenticated encrypted connection to the published host.");
 
         long statusProbeStartedAt = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-        await client.SendMessageAsync(
-            new HostStatusRequest { EphemeralHostId = hostPeerId }.ToByteArray(),
-            timeout.Token).ConfigureAwait(false);
+        byte[] statusRequestWire = new HostStatusRequest { EphemeralHostId = hostPeerId }.ToByteArray();
+        int statusRequestBytes = statusRequestWire.Length;
+        int statusRequestFirstTag = statusRequestWire.Length > 0 ? statusRequestWire[0] : -1;
+        try
+        {
+            await client.SendMessageAsync(statusRequestWire, timeout.Token).ConfigureAwait(false);
+        }
+        finally
+        {
+            CryptographicOperations.ZeroMemory(statusRequestWire);
+        }
+
         byte[] statusWire;
         try
         {
@@ -279,6 +289,8 @@ internal static class PeerAnnouncementClientAcceptanceTests
                 $"hostFailureParseSummary={host.LastFailureParseSummary ?? "none"}; " +
                 $"hostFailureMessageBytes={host.LastFailureMessageBytes}; " +
                 $"hostFailureFirstTag={host.LastFailureFirstTag}; " +
+                $"statusRequestBytes={statusRequestBytes}; " +
+                $"statusRequestFirstTag={statusRequestFirstTag}; " +
                 $"clientConnected={client.IsConnected}; " +
                 $"failureType={exception.GetType().Name}.",
                 exception);

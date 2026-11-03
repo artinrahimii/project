@@ -115,3 +115,21 @@ Changed code implements zeroization for Windows frames/queue/lifecycle buffers a
 - Windows HostLifecycle failure output includes those fields alongside active/failure stage/type and client connectivity. No Protobuf payload, peer identity or prompt/response content is logged.
 - Android transport’s counter snapshot was retained; the missing blank line required by KtLint at line 115 was added before the protocol binding declaration.
 - No local tests were executed. Exact-head Python quality, C# compilation/HostLifecycle, Android KtLint/APK/JVM/Protobuf, Windows WPF, Rendezvous and real local inference remain required. T0180 stays in_progress.
+
+
+## T0180-A014 — V 3.0.831 exact-head results
+
+- Step Three quality gate run 41481768427: passed.
+- Rendezvous container build and non-root smoke run 41481768488: passed.
+- Windows WPF job 125401644497: passed.
+- HostLifecycle job 125401643696: failed. The listener rejected an empty application frame; diagnostics reported `hostFailureMessageBytes=0`, `hostFailureFirstTag=-1`, and `reject_malformed_application_message`.
+- Android job 125401644795: failed Kotlin compilation with unresolved references to `inboundChunks`, `decodedFrames` and `callbackFailures` inside the top-level controller class.
+- Real local inference job 125401638934: peer stream closed in the shared HostLifecycle loopback before the live model generation check. No actual model-generation success is claimed.
+- These failures are recorded in the graph execution history as A014; T0180 remains in_progress.
+
+## T0180-A015 — changes prepared for exact-head validation
+
+- The three diagnostic AtomicLong values are passed explicitly from the owning Android transport to the top-level `InferencePeerMessageController`.
+- A Python source-contract regression verifies the constructor and binding ownership contract.
+- The Windows HostStatus loopback test records only `statusRequestBytes` and `statusRequestFirstTag`, allowing them to be compared against the receiver's existing zero-byte/first-tag diagnostics. The serialized request array is zeroed in a finally block after the send completes.
+- No local .NET, Android Gradle or Python tests ran in this session. Exact-head CI is required; T0180 remains incomplete.
