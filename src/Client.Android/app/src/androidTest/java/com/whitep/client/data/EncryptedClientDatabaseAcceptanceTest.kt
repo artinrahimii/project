@@ -12,7 +12,6 @@ import java.security.GeneralSecurityException
 import java.security.MessageDigest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
-import net.zetetic.database.sqlcipher.SQLiteDatabase as CipherSQLiteDatabase
 import org.junit.After
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
@@ -20,6 +19,7 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertThrows
 import org.junit.Test
 import org.junit.runner.RunWith
+import net.zetetic.database.sqlcipher.SQLiteDatabase as CipherSQLiteDatabase
 
 @RunWith(AndroidJUnit4::class)
 class EncryptedClientDatabaseAcceptanceTest {
@@ -39,7 +39,10 @@ class EncryptedClientDatabaseAcceptanceTest {
             context.getSharedPreferences(
                 EncryptedClientDatabaseFactory.KEY_PREFERENCES_NAME,
                 Context.MODE_PRIVATE,
-            ).edit().remove(EncryptedClientDatabaseFactory.wrappedKeyPreference(name)).commit()
+            )
+                .edit()
+                .remove(EncryptedClientDatabaseFactory.wrappedKeyPreference(name))
+                .commit()
         }
     }
 
@@ -252,6 +255,5 @@ class EncryptedClientDatabaseAcceptanceTest {
         }
     }
 
-    private fun sha256(file: File): ByteArray =
-        MessageDigest.getInstance("SHA-256").digest(file.readBytes())
+    private fun sha256(file: File): ByteArray = MessageDigest.getInstance("SHA-256").digest(file.readBytes())
 }
