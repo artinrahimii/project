@@ -172,3 +172,20 @@ Changed code implements zeroization for Windows frames/queue/lifecycle buffers a
 - JUnit artifact: 13218328799.
 - This is an exact-run success and does not establish that the earlier timeout's underlying cause is permanently resolved.
 - Windows HostLifecycle empty-frame failure and real-inference QUIC fallback failure remain open; no successful live model generation is claimed.
+
+
+## T0180-A016 — V 3.0.833 exact-head CI
+
+- Step Three quality gate run 41610464154 passed.
+- Rendezvous container build/smoke run 41610464102 passed.
+- Windows WPF job 125830768358 passed.
+- Android job 125830768838 passed: 7/7 transport JVM tests, formatting/lint, Kotlin compile, debug APK and Protobuf passed.
+- HostLifecycle job 125830768736 failed: 54-byte sender HostStatusRequest (tag 10) was received as a zero-byte application message (tag -1); VarInt.Decode then reported an aborted channel.
+- Real local inference job 125830768050 verified llama.cpp b11443/GGUF and runtime status, but failed QUIC fallback binary response delivery at PeerTransportContractAcceptanceTests.cs:372; no model response generation is evidenced.
+
+## T0180-A017 — bounded outbound frame retention
+
+- Source evidence: `IWriter.WriteAsync` acknowledges when the immediate channel reader consumes a chunk. Yamux forwards the returned `ReadOnlySequence` asynchronously to the application stream. The previous send implementation zeroized its backing frame immediately after the lower-level acknowledgement, before remote application consumption was assured.
+- Successful Windows outbound frames are now retained in a bounded per-stream collection until the next ordered peer message or stream teardown/disposal. Failed writes are removed and zeroized immediately. Retained frames are zeroized on acknowledgement or closure.
+- Retention is bounded by configured inbound queue capacity and an aggregate budget of two maximum-sized frames.
+- Added a Python source-contract regression. No A017 build/test result is claimed pending exact-head CI.

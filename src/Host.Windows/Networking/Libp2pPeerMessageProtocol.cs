@@ -1,4 +1,5 @@
 using System.Buffers;
+using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
 using System.Threading.Channels;
@@ -16,6 +17,11 @@ internal sealed class Libp2pPeerMessageProtocol : SymmetricSessionProtocol, ISes
     private readonly int _maximumMessageBytes;
     private readonly Channel<byte[]> _inbound;
     private readonly SemaphoreSlim _sendLock = new(1, 1);
+    private readonly object _outboundFrameGate = new();
+    private readonly List<byte[]> _pendingOutboundFrames = new();
+    private readonly int _maximumPendingOutboundFrames;
+    private readonly long _maximumPendingOutboundBytes;
+    private long _pendingOutboundBytes;
     private readonly TaskCompletionSource _ready = new(TaskCreationOptions.RunContinuationsAsynchronously);
     private IChannel? _channel;
     private Func<Task>? _disconnectCurrentSession;
@@ -28,6 +34,8 @@ internal sealed class Libp2pPeerMessageProtocol : SymmetricSessionProtocol, ISes
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(maximumMessageBytes);
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(inboundQueueCapacity);
         _maximumMessageBytes = maximumMessageBytes;
+        _maximumPendingOutboundFrames = inboundQueueCapacity;
+        _maximumPendingOutboundBytes = checked(2L * (maximumMessageBytes + VarInt.GetSizeInBytes(maximumMessageBytes)));
         _inbound = System.Threading.Channels.Channel.CreateBounded<byte[]>(new BoundedChannelOptions(inboundQueueCapacity)
         {
             FullMode = BoundedChannelFullMode.Wait,
@@ -120,6 +128,9 @@ internal sealed class Libp2pPeerMessageProtocol : SymmetricSessionProtocol, ISes
         }
         finally
         {
+            // The application stream is closed or aborted, so none of its retained outbound
+            // buffers can still be consumed downstream.
+            ClearPendingOutboundFrames();
             Volatile.Write(ref _connected, 0);
             _inbound.Writer.TryComplete(_terminalError);
         }
@@ -144,11 +155,19 @@ internal sealed class Libp2pPeerMessageProtocol : SymmetricSessionProtocol, ISes
 
             int prefixLength = VarInt.GetSizeInBytes(message.Length);
             byte[] frame = new byte[checked(prefixLength + message.Length)];
+            bool retained = false;
             try
             {
                 int offset = 0;
                 VarInt.Encode(message.Length, frame, ref offset);
                 message.Span.CopyTo(frame.AsSpan(offset));
+
+                // A successful lower-channel write means the multiplexer read this chunk.
+                // Yamux can still forward the same ReadOnlySequence asynchronously to the
+                // remote application stream, so keep the backing array alive until its
+                // ordered response or stream teardown.
+                RetainOutboundFrame(frame);
+                retained = true;
 
                 IOResult result = await channel.WriteAsync(new ReadOnlySequence<byte>(frame), cancellationToken)
                     .ConfigureAwait(false);
@@ -157,9 +176,17 @@ internal sealed class Libp2pPeerMessageProtocol : SymmetricSessionProtocol, ISes
                     throw new IOException("The peer transport did not accept the complete message frame.");
                 }
             }
-            finally
+            catch
             {
-                CryptographicOperations.ZeroMemory(frame);
+                if (retained)
+                {
+                    ReleaseOutboundFrame(frame);
+                }
+                else
+                {
+                    CryptographicOperations.ZeroMemory(frame);
+                }
+                throw;
             }
         }
         finally
@@ -172,7 +199,10 @@ internal sealed class Libp2pPeerMessageProtocol : SymmetricSessionProtocol, ISes
     {
         try
         {
-            return await _inbound.Reader.ReadAsync(cancellationToken).ConfigureAwait(false);
+            byte[] message = await _inbound.Reader.ReadAsync(cancellationToken).ConfigureAwait(false);
+            // The next ordered peer message acknowledges consumption of preceding outbound frames.
+            ClearPendingOutboundFrames();
+            return message;
         }
         catch (ChannelClosedException exception)
         {
@@ -202,6 +232,56 @@ internal sealed class Libp2pPeerMessageProtocol : SymmetricSessionProtocol, ISes
             }
         }
 
+        ClearPendingOutboundFrames();
         _sendLock.Dispose();
+    }
+
+    private void RetainOutboundFrame(byte[] frame)
+    {
+        lock (_outboundFrameGate)
+        {
+            if (_pendingOutboundFrames.Count >= _maximumPendingOutboundFrames ||
+                _pendingOutboundBytes > _maximumPendingOutboundBytes - frame.Length)
+            {
+                throw new IOException("The peer stream exceeded its bounded unacknowledged outbound-frame budget.");
+            }
+
+            _pendingOutboundFrames.Add(frame);
+            _pendingOutboundBytes += frame.Length;
+        }
+    }
+
+    private void ReleaseOutboundFrame(byte[] frame)
+    {
+        bool removed;
+        lock (_outboundFrameGate)
+        {
+            removed = _pendingOutboundFrames.Remove(frame);
+            if (removed)
+            {
+                _pendingOutboundBytes -= frame.Length;
+            }
+        }
+
+        if (removed)
+        {
+            CryptographicOperations.ZeroMemory(frame);
+        }
+    }
+
+    private void ClearPendingOutboundFrames()
+    {
+        byte[][] pending;
+        lock (_outboundFrameGate)
+        {
+            pending = _pendingOutboundFrames.ToArray();
+            _pendingOutboundFrames.Clear();
+            _pendingOutboundBytes = 0;
+        }
+
+        foreach (byte[] frame in pending)
+        {
+            CryptographicOperations.ZeroMemory(frame);
+        }
     }
 }

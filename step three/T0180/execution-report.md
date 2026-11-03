@@ -233,3 +233,22 @@
 - JUnit report artifact: 13218328799.
 - This demonstrates successful Android cross-runtime cancellation in this exact CI run. It does not prove the previous timeout's root cause has been permanently eliminated.
 - Windows HostLifecycle still receives an empty application frame after the sender serializes a 54-byte HostStatusRequest. Real local inference integration still fails the QUIC fallback binary-response acceptance before a successful model-generation result. T0180 remains `in_progress`.
+
+
+## T0180-A016 — V 3.0.833 exact-head CI
+
+- Step Three quality gate run 41610464154 passed.
+- Rendezvous container build/smoke run 41610464102 passed.
+- Windows WPF job 125830768358 passed: build/startup, process restrictions, policy and DPAPI trust checks succeeded.
+- Android job 125830768838 passed: format/lint, Kotlin compile, debug APK, Protobuf and JVM tests all passed. `Libp2pInferenceRequestTransportTest` completed 7 tests with 0 failures, including the three-.NET-host cancellation exchange.
+- HostLifecycle job 125830768736 failed: sender serialized a 54-byte HostStatusRequest with first tag 10; the listener observed a zero-byte frame (first tag -1), and VarInt.Decode then saw an aborted channel.
+- Real local inference job 125830768050 verified pinned llama.cpp b11443 and the GGUF model and passed runtime status, but failed the QUIC fallback binary-response assertion at `PeerTransportContractAcceptanceTests.cs:372`. No live generation success is claimed.
+- T0180 remains `in_progress`.
+
+## T0180-A017 — Windows .NET outbound frame-lifetime fix
+
+- The lower libp2p channel write can complete when the multiplexer consumes the chunk, before Yamux has finished asynchronously forwarding the same memory to the remote application stream.
+- The Windows peer-message protocol now retains each successful outbound frame until the next ordered peer message acknowledges consumption or the stream is closed/disposed.
+- Retention is bounded by the configured inbound queue capacity and an aggregate byte budget of two maximum-sized frames. Failed writes remove and zero their frame immediately; acknowledged/closed frames are zeroized.
+- Added `tests/test_libp2p_peer_message_buffer_lifetime.py` to guard bounded retention, immediate failure cleanup and acknowledgement/teardown cleanup.
+- No local .NET/Python toolchain ran. Exact-head CI must verify HostLifecycle and QUIC binary response before the task can be marked complete.
