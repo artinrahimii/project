@@ -113,9 +113,9 @@ Room اکنون از `EncryptedClientDatabaseFactory` و SQLCipher Community Edi
 
 کنترل CI دو سطح را بررسی می‌کند:
 - Manifest منبع باید فقط INTERNET را درخواست کند.
-- AAPT2 روی APK نهایی باید دقیقاً INTERNET و مجوز app-scoped بالا را گزارش کند؛ سپس خروجی xmltree باید تعریف همان مجوز را دقیقاً یک بار با protectionLevel عددی 0x2 (signature) نشان دهد. هر مجوز اضافی، مجوز سفارشی دیگر، declaration مفقود/تکراری یا سطح حفاظتی متفاوت باعث شکست می‌شود.
+- AAPT2 روی APK نهایی باید دقیقاً INTERNET و مجوز app-scoped بالا را گزارش کند؛ سپس خروجی xmltree باید تعریف همان مجوز را دقیقاً یک بار با protectionLevel عددی 0x2 (signature) نشان دهد. parser هر دو قالب prefix کوتاه android: و URI کامل فضای نام Android را می‌خواند. هر مجوز اضافی، مجوز سفارشی دیگر، declaration مفقود/تکراری یا سطح حفاظتی متفاوت باعث شکست می‌شود.
 
-در V 3.0.868 ساخت APK و KtLint موفق بودند، اما verifier اولیه مجوز AndroidX را نشناخت و به همین علت ممیزی شکست خورد؛ آزمون‌های Android که بعد از آن قرار داشتند اجرا نشدند. اصلاح A003 این استثنای باریک را اضافه کرده و exact-head CI مجدد هنوز pending است. تا تأیید آن، T0185 تکمیل‌شده نیست.
+در V 3.0.868 verifier اولیه مجوز AndroidX را نشناخت؛ V 3.0.869 آن مجوز را در فهرست درخواست‌ها پذیرفت اما parser تعریف آن را از xmltree استخراج نکرد. این دو شکست در execution history ثبت شده‌اند. اصلاح A005 هر دو قالب namespace را می‌پذیرد و شواهد CI بعدی برای APK واقعی هنوز pending است. تا تأیید آن، T0185 تکمیل‌شده نیست.
 
 منابع:
 - AndroidX Core merged manifest: https://android.googlesource.com/platform/prebuilts/sdk/+/dbc89592d1bcb88ed9718f2b8d4f117ebb74547f/current/androidx/manifests/androidx.core_core/AndroidManifest.xml

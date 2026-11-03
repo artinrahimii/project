@@ -18,9 +18,12 @@ AAPT_PERMISSION_LINE = re.compile(
     re.MULTILINE,
 )
 XMLTREE_ELEMENT = re.compile(r"^(\s*)E:\s+permission(?:\s|\(|$)")
-XMLTREE_NAME = re.compile(r'A:\s+android:name\([^)]+\)="([^"]+)"')
+XMLTREE_ANDROID_ATTRIBUTE_PREFIX = r"(?:android:|http://schemas\.android\.com/apk/res/android:)"
+XMLTREE_NAME = re.compile(
+    rf'A:\s+{XMLTREE_ANDROID_ATTRIBUTE_PREFIX}name\([^)]+\)="([^"]+)"'
+)
 XMLTREE_PROTECTION_LEVEL = re.compile(
-    r"A:\s+android:protectionLevel\([^)]+\)="
+    rf"A:\s+{XMLTREE_ANDROID_ATTRIBUTE_PREFIX}protectionLevel\([^)]+\)="
     r"(?:\(type\s+[^)]+\))?(0x[0-9a-fA-F]+)"
 )
 
@@ -121,9 +124,14 @@ def validate_permission_policy(
         if item.get("name") == private_receiver_permission
     ]
     if len(declarations) != 1:
+        parsed = [
+            (item.get("name"), item.get("protection_level"))
+            for item in declared_permissions
+        ]
         raise PermissionPolicyError(
             "The exact AndroidX dynamic-receiver permission must be declared exactly once "
-            "in the packaged manifest."
+            "in the packaged manifest; AAPT2 parsed declarations: "
+            f"{parsed!r}."
         )
     level = declarations[0].get("protection_level")
     if level != 0x2:

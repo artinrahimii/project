@@ -79,3 +79,21 @@
 - Graph guard: 230 tasks / 422 edges، صفر خطا و یک هشدار قدیمی T0001.
 - نتیجه: آزمون‌های کد verifier و graph-quality پذیرفته شده‌اند؛ این نتیجه جایگزین بررسی Manifest باینری APK نیست. T0185 همچنان in_progress باقی می‌ماند.
 
+
+
+## A004 — exact-head AAPT2 declaration parser failure (V 3.0.869)
+
+- Product run 41734543287 completed failure.
+- KtLint and APK assembly passed.
+- AAPT2 permission audit found the app-scoped permission request, but the parser reported that the matching permission declaration was not found.
+- Android JVM and connected instrumentation were skipped after the failed audit.
+- The Step Three quality gate 41734543291 passed 366 Python tests, including all 13 prior T0185 policy tests; compileall passed; graph guard showed 230 tasks / 422 edges, zero errors and one pre-existing T0001 warning.
+- Diagnosis: the AAPT2 XML-tree parser matched only the short android: attribute prefix. AAPT2 can render Android attributes using the full namespace URI.
+
+## A005 — both AAPT2 namespace representations
+
+- Parser now supports the short android: prefix and full http://schemas.android.com/apk/res/android: prefix for both android:name and android:protectionLevel.
+- The focused suite now contains 14 tests, with a distinct full-URI AAPT2 XML-tree fixture.
+- Local fixture validation passed for both namespace forms, extracting the app-scoped permission name and signature protection level 0x2.
+- The actual APK audit on V 3.0.871 has not run yet. Product run 41735036654 for V 3.0.870 was still active before this correction and is not counted as success.
+

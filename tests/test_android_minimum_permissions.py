@@ -31,6 +31,14 @@ XMLTREE_SIGNATURE_PERMISSION = f'''N: android=http://schemas.android.com/apk/res
     E: uses-permission (line=9)
       A: android:name(0x01010003)="android.permission.INTERNET" (Raw: "android.permission.INTERNET")
 '''
+XMLTREE_SIGNATURE_PERMISSION_FULL_URI = (
+    XMLTREE_SIGNATURE_PERMISSION
+    .replace("android:name(", "http://schemas.android.com/apk/res/android:name(")
+    .replace(
+        "android:protectionLevel(",
+        "http://schemas.android.com/apk/res/android:protectionLevel(",
+    )
+)
 
 
 class AndroidMinimumPermissionTests(unittest.TestCase):
@@ -55,6 +63,12 @@ class AndroidMinimumPermissionTests(unittest.TestCase):
         self.assertEqual(
             [{"name": DYNAMIC_PERMISSION, "protection_level": 0x2}],
             parse_declared_permissions(XMLTREE_SIGNATURE_PERMISSION),
+        )
+
+    def test_aapt2_full_namespace_attributes_are_parsed(self):
+        self.assertEqual(
+            [{"name": DYNAMIC_PERMISSION, "protection_level": 0x2}],
+            parse_declared_permissions(XMLTREE_SIGNATURE_PERMISSION_FULL_URI),
         )
 
     def test_exact_minimum_permission_set_with_androidx_signature_permission_passes(self):

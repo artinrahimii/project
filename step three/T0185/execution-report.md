@@ -35,3 +35,23 @@
 - fixture محلی قالب AAPT2 xmltree مستندشده در ابزار AOSP parsed شد و مقدار signature برابر 0x2 تأیید شد. این fixture جایگزین اجرای واقعی verifier روی APK نیست.
 - **نتیجه:** پیاده‌سازی اصلاح شد؛ نتیجهٔ exact-head CI هنوز pending است و T0185 done نیست.
 
+
+
+## A004 — شکست واقعی parser در V 3.0.869
+
+- commit آزموده‌شده: 43311fb5593ac6a9e10f553506458366135d9314؛ product run 41734543287.
+- Android KtLint و assembleDebug موفق شدند؛ AAPT2 ممیزی مجوز شکست خورد.
+- پیام خطا: The exact AndroidX dynamic-receiver permission must be declared exactly once in the packaged manifest.
+- مجوز app-scoped در فهرست permissionهای APK وجود داشت، اما parser تعریف آن را از xmltree استخراج نکرد. Android JVM و instrumentation بعد از شکست skipped شدند.
+- کیفیت run 41734543291 موفق شد: 366 آزمون Python، شامل 13 آزمون T0185؛ compileall موفق؛ graph guard صفر خطا و یک هشدار قدیمی T0001. Windows WPF، HostLifecycle و Rendezvous container نیز موفق بودند.
+- تشخیص: parser فقط پیشوند کوتاه android: را می‌پذیرفت؛ قالب AAPT2 می‌تواند attribute را با URI کامل فضای نام Android چاپ کند. این ناسازگاری parser بود، نه مدرکی از مجوز اضافی جدید.
+
+## A005 — پشتیبانی از هر دو قالب attribute در AAPT2
+
+- XMLTREE_NAME و XMLTREE_PROTECTION_LEVEL اکنون هم پیشوند کوتاه android: و هم پیشوند کامل http://schemas.android.com/apk/res/android: را می‌پذیرند.
+- پیام خطای عدم شناسایی declaration، فهرست declarationهای parse‌شده و سطح حفاظتی را نیز گزارش می‌کند تا شکست بعدی قابل‌تشخیص باشد.
+- آزمون متمرکز جدید، قالب URI کامل را جدا از قالب کوتاه بررسی می‌کند؛ اکنون 14 آزمون اختصاصی وجود دارد.
+- دو fixture محلی برای هر دو قالب موفق شدند؛ این نتیجه هنوز اجرای verifier روی APK واقعی نیست.
+- product run قبلی V 3.0.870 در زمان ثبت A005 هنوز در مرحله‌های مقدماتی بود؛ نتیجهٔ آن در این گزارش موفق یا ناموفق فرض نشده است.
+- **نتیجه:** parser اصلاح شده، T0185 همچنان in_progress است تا ممیزی APK واقعی و آزمون‌های Android در exact-head CI موفق شوند.
+
