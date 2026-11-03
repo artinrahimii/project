@@ -60,7 +60,59 @@ public static class ChatConversationAcceptanceTests
         if (separateSession.RetentionPolicy.PersistsPromptAndResponse)
             throw new Exception("The default host retention policy must remain session-only.");
         VerifyDpapiProtectedConversationStore();
-        Console.WriteLine("PASS: in-memory conversation, explicit retention consent and Windows DPAPI local-history storage.");
+        VerifyOrphanedTemporaryFileCleanup();
+        Console.WriteLine("PASS: in-memory conversation, explicit retention consent, Windows DPAPI history and orphaned temporary-file cleanup.");
+    }
+
+    private static void VerifyOrphanedTemporaryFileCleanup()
+    {
+        var directory = Path.Combine(Path.GetTempPath(), "whitep-orphaned-conversation-tests-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(directory);
+        var historyPath = Path.Combine(directory, "history.dpapi");
+        var prefix = "." + Path.GetFileName(historyPath) + ".";
+        var stalePath = Path.Combine(directory, prefix + Guid.NewGuid().ToString("N") + ".tmp");
+        var recentPath = Path.Combine(directory, prefix + Guid.NewGuid().ToString("N") + ".tmp");
+        var activePath = Path.Combine(directory, prefix + Guid.NewGuid().ToString("N") + ".tmp");
+        var malformedPath = Path.Combine(directory, prefix + "not-a-guid.tmp");
+        var unrelatedPath = Path.Combine(directory, ".another-store." + Guid.NewGuid().ToString("N") + ".tmp");
+
+        try
+        {
+            foreach (var path in new[] { stalePath, recentPath, activePath, malformedPath, unrelatedPath })
+                File.WriteAllText(path, "non-sensitive temporary test payload");
+
+            var oldTimestamp = DateTime.UtcNow.AddMinutes(-2);
+            File.SetLastWriteTimeUtc(stalePath, oldTimestamp);
+            File.SetLastWriteTimeUtc(activePath, oldTimestamp);
+
+            using (var activeWriter = new FileStream(activePath, FileMode.Open, FileAccess.ReadWrite, FileShare.None))
+            {
+                _ = new WindowsHostConversationStore(historyPath);
+                if (File.Exists(stalePath))
+                    throw new Exception("A stale, correctly named orphan temporary file was not removed at store startup.");
+                if (!File.Exists(activePath))
+                    throw new Exception("Startup cleanup removed a temporary file still held by an active writer.");
+            }
+
+            if (!File.Exists(recentPath) || !File.Exists(malformedPath) || !File.Exists(unrelatedPath))
+                throw new Exception("Cleanup removed a recent, malformed-name or unrelated temporary file.");
+
+            _ = new WindowsHostConversationStore(historyPath);
+            if (File.Exists(activePath))
+                throw new Exception("A formerly active temporary file was not removed after its writer released the handle.");
+
+            File.SetLastWriteTimeUtc(recentPath, oldTimestamp);
+            _ = new WindowsHostConversationStore(historyPath);
+            if (File.Exists(recentPath))
+                throw new Exception("A now-stale temporary file was not removed on a subsequent startup scan.");
+            if (!File.Exists(malformedPath) || !File.Exists(unrelatedPath))
+                throw new Exception("Cleanup must preserve files outside the exact store-owned GUID pattern.");
+        }
+        finally
+        {
+            if (Directory.Exists(directory))
+                Directory.Delete(directory, recursive: true);
+        }
     }
 
     private static void VerifyDpapiProtectedConversationStore()

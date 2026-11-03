@@ -19,6 +19,7 @@ public sealed class WindowsHostConversationStore
     private const int MaximumProtectedBytes = MaximumPlaintextBytes + (128 * 1024);
     private const int MaximumMessages = 2_000;
     private const int MaximumMessageCharacters = 256 * 1024;
+    private static readonly TimeSpan OrphanedTemporaryFileMinimumAge = TimeSpan.FromSeconds(30);
 
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
@@ -37,6 +38,77 @@ public sealed class WindowsHostConversationStore
             "WhiteP",
             "host-conversation.dpapi"));
         _protector = protector ?? new WindowsDpapiSecretProtector();
+        _ = CleanupOrphanedTemporaryFiles();
+    }
+
+    /// <summary>
+    /// Removes only stale temporary files created by this store. Recent files are
+    /// left alone to avoid racing the short close-to-rename interval in Save; an
+    /// exclusive open skips files that are still actively being written.
+    /// </summary>
+    public int CleanupOrphanedTemporaryFiles()
+    {
+        var directory = Path.GetDirectoryName(_filePath);
+        if (string.IsNullOrWhiteSpace(directory) || !Directory.Exists(directory))
+            return 0;
+
+        var filePrefix = $".{Path.GetFileName(_filePath)}.";
+        var staleBeforeUtc = DateTime.UtcNow - OrphanedTemporaryFileMinimumAge;
+        var removedCount = 0;
+        try
+        {
+            foreach (var candidatePath in Directory.EnumerateFiles(directory, "*", SearchOption.TopDirectoryOnly))
+            {
+                var candidateName = Path.GetFileName(candidatePath);
+                if (!candidateName.StartsWith(filePrefix, StringComparison.Ordinal) ||
+                    !candidateName.EndsWith(".tmp", StringComparison.Ordinal))
+                    continue;
+
+                var identifierLength = candidateName.Length - filePrefix.Length - ".tmp".Length;
+                if (identifierLength != 32)
+                    continue;
+
+                var identifier = candidateName.Substring(filePrefix.Length, identifierLength);
+                if (!Guid.TryParseExact(identifier, "N", out _))
+                    continue;
+
+                try
+                {
+                    var attributes = File.GetAttributes(candidatePath);
+                    if ((attributes & (FileAttributes.Directory | FileAttributes.ReparsePoint)) != 0)
+                        continue;
+                    if (File.GetLastWriteTimeUtc(candidatePath) > staleBeforeUtc)
+                        continue;
+
+                    // Save holds an exclusive file handle while writing. If another
+                    // host instance owns this temporary file, the open fails.
+                    using (var lease = new FileStream(candidatePath, FileMode.Open, FileAccess.Read, FileShare.None))
+                    {
+                    }
+
+                    File.Delete(candidatePath);
+                    removedCount++;
+                }
+                catch (IOException)
+                {
+                    // A missing, locked or otherwise unavailable candidate is not safe to remove.
+                }
+                catch (UnauthorizedAccessException)
+                {
+                    // Cleanup must never prevent the host from starting.
+                }
+            }
+        }
+        catch (IOException)
+        {
+            // Directory enumeration failure is non-fatal; remaining files are retried next startup.
+        }
+        catch (UnauthorizedAccessException)
+        {
+            // Do not expose local paths or block startup when the directory is inaccessible.
+        }
+
+        return removedCount;
     }
 
     public IReadOnlyList<ConversationMessage> Load()

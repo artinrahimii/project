@@ -56,10 +56,19 @@ class HostConversationRetentionPolicyTests(unittest.TestCase):
         self.assertIn("_conversationStore.Delete()", WINDOW)
         self.assertIn("HostConversationRetentionToggle", WINDOW)
 
+    def test_store_startup_cleans_only_stale_owned_temp_files_and_skips_locked_files(self):
+        self.assertIn("_ = CleanupOrphanedTemporaryFiles();", STORE)
+        self.assertIn("OrphanedTemporaryFileMinimumAge", STORE)
+        self.assertIn('Guid.TryParseExact(identifier, "N", out _)', STORE)
+        self.assertIn("FileShare.None", STORE)
+        self.assertIn("FileAttributes.ReparsePoint", STORE)
+        self.assertIn("VerifyOrphanedTemporaryFileCleanup();", (ROOT / "tests/HostLifecycle.Tests/ChatConversationAcceptanceTests.cs").read_text(encoding="utf-8"))
+
     def test_security_document_scopes_the_guarantee_and_keeps_android_storage_separate(self):
         self.assertIn("T0179", SECURITY_DOC)
         self.assertIn("T0180", SECURITY_DOC)
         self.assertIn("T0181", SECURITY_DOC)
+        self.assertIn("T0182", SECURITY_DOC)
         self.assertIn("ADR-0020", SECURITY_DOC)
         self.assertIn("AC-PRIV-01", SECURITY_DOC)
         self.assertIn("فرایند جاری", SECURITY_DOC)
