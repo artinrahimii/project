@@ -2,7 +2,6 @@ package com.whitep.client.data
 
 import android.content.Context
 import androidx.room.Database
-import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverter
 import androidx.room.TypeConverters
@@ -105,13 +104,8 @@ abstract class ClientDatabase : RoomDatabase() {
 
         fun getInstance(context: Context): ClientDatabase =
             instance ?: synchronized(this) {
-                instance ?: Room
-                    .databaseBuilder(
-                        context.applicationContext,
-                        ClientDatabase::class.java,
-                        DATABASE_NAME,
-                    ).addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
-                    .build()
+                instance ?: EncryptedClientDatabaseFactory
+                    .open(context.applicationContext, DATABASE_NAME)
                     .also { database -> instance = database }
             }
     }

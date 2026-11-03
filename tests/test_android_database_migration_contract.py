@@ -5,6 +5,7 @@ import unittest
 ROOT = Path(__file__).resolve().parents[1]
 ANDROID_APP = ROOT / "src" / "Client.Android" / "app"
 DATABASE_SOURCE = ANDROID_APP / "src" / "main" / "java" / "com" / "whitep" / "client" / "data" / "ClientDatabase.kt"
+ENCRYPTED_FACTORY_SOURCE = ANDROID_APP / "src" / "main" / "java" / "com" / "whitep" / "client" / "data" / "EncryptedClientDatabaseFactory.kt"
 REQUEST_STATE_SOURCE = ANDROID_APP / "src" / "main" / "java" / "com" / "whitep" / "client" / "data" / "RequestStateEntity.kt"
 MIGRATION_TEST = ANDROID_APP / "src" / "test" / "java" / "com" / "whitep" / "client" / "data" / "ClientDatabaseMigrationTest.kt"
 LEGACY_SCHEMA = ANDROID_APP / "src" / "test" / "resources" / "db" / "v1-schema.sql"
@@ -18,7 +19,13 @@ class AndroidDatabaseMigrationContractTests(unittest.TestCase):
         self.assertIn("Migration(1, 2)", database)
         self.assertIn("Migration(2, 3)", database)
         self.assertIn("Migration(3, 4)", database)
-        self.assertIn("addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)", database)
+        factory = ENCRYPTED_FACTORY_SOURCE.read_text(encoding="utf-8")
+        self.assertIn("EncryptedClientDatabaseFactory", database)
+        self.assertIn("addMigrations(", factory)
+        self.assertIn("ClientDatabase.MIGRATION_1_2", factory)
+        self.assertIn("ClientDatabase.MIGRATION_2_3", factory)
+        self.assertIn("ClientDatabase.MIGRATION_3_4", factory)
+        self.assertIn("SupportOpenHelperFactory", factory)
         self.assertIn(INDEX_NAME, database)
         self.assertIn("conversation_context_capsule_changes", database)
 

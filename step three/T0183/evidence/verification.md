@@ -1,17 +1,31 @@
-# T0183-A002 تا A007 — شواهد و اعتبارسنجی
+# T0183-A002 — شواهد پذیرش exact-head
 
-## snapshot
+## snapshot و اعتبار فایل گراف
+
 - مخزن/شاخه: `artinrahimii/project` / `main`
-- مبنا: `88639fc553295c9b8a10b71b5eade12e1143ded8` (`V 3.0.852`)
-- workflow instrumentation اکنون از فرمان `gradle --no-daemon --project-dir src/Client.Android connectedDebugAndroidTest` استفاده می‌کند. این اصلاح A006 مانع اجرای Gradle از ریشهٔ مخزن می‌شود.
+- commit آزموده‌شده: `9cf5e9b858f975b605c952ead3c4010fa78a9d11` — `V 3.0.853`
+- tree منبع: `3518804be7a98ddac216830980e181ab9512945c`
+- Blob گراف: `b69a152faf7e1676a998cfd11a776997ef3b7c45`
+- گراف از Git Blob API دریافت شد؛ اندازه ۳٬۳۵۱٬۱۵۹ بایت UTF-8، طول متن ۳٬۲۲۴٬۱۸۶ نویسه. SHA-1 با قالب Git `blob <length>\0<content>` دقیقاً با Blob در tree برابر شد و JSON کامل parse شد: ۲۳۰ node و ۴۲۲ edge.
 
-## تاریخچهٔ شکست و اصلاح
-- V848 run `41673696991`: ۸ تخلف KtLint در main source.
-- V849 run `41675040018`: ۲ تخلف import در test source.
-- V850 run `41675745738`: ۲ تخلف KtLint در Builder chain.
-- V851 run `41676304428`: KtLint، assembleDebug و JVM tests موفق؛ emulator boot شد ولی test step به‌علت اجرای `cd` در shell مستقل Gradle را از root اجرا کرد. پیام واقعی: `Directory '/home/runner/work/project/project' does not contain a Gradle build.` این instrumentation tests را اجرا نکرد؛ شکست test assertion نبود.
-- V852 quality run `41677809950`: 350 آزمون؛ 349 success و یک failure در `tests/test_android_keystore_local_secrets.py:79`. علت، assertion قدیمی بود که به فرمان قبلی workflow وابسته مانده بود. A007 انتظار را به فرمان دارای `--project-dir src/Client.Android` به‌روزرسانی می‌کند.
-- V852 container run `41677809985`: success. Product run `41677809961` هنگام ثبت این شاهد هنوز در حال اجرا بود.
+## CI و آزمون
+
+- Product run: https://github.com/artinrahimii/project/actions/runs/41678108221 — موفق؛ Windows WPF، Android و HostLifecycle همگی موفق.
+- Android job `126064102869`: KtLint، `assembleDebug`، `testDebugUnitTest`، Protobuf Java/Kotlin و `connectedDebugAndroidTest` موفق.
+- log instrumentation صریحاً `Starting 5 tests` و `Finished 5 tests` روی emulator API 36 را ثبت کرد.
+- Instrumentation artifact `13252670975`؛ JVM report `13252631231`؛ APK `13252915718`.
+- Step Three quality run: https://github.com/artinrahimii/project/actions/runs/41678108248 — موفق.
+- Rendezvous container run: https://github.com/artinrahimii/project/actions/runs/41678108226 — موفق.
+
+## خطاها و اصلاحات حفظ‌شده
+
+- V848: هشت تخلف KtLint در main source.
+- V849: دو خطای import در test source.
+- V850: دو خطای قالب‌بندی Builder.
+- V851: instrumentation به علت cwd اشتباه به Gradle نرسید؛ خطای مسیر build بود، نه شکست assert.
+- V852: guard کیفیت هنوز فرمان قدیمی workflow را انتظار داشت؛ assertion با مسیر جدید همگام شد.
+- V853: پنج سناریوی instrumentation واقعاً اجرا شدند؛ quality، product و container نیز موفق شدند.
 
 ## مرز ادعا
-تا اجرای واقعی connectedDebugAndroidTest با پنج سناریو و مشاهدهٔ report، هیچ instrumentation test به‌عنوان موفق ثبت نمی‌شود. emulator hardware-backed TEE/StrongBox دستگاه فیزیکی را اثبات نمی‌کند.
+
+emulator صحت provider را در همان محیط تأیید می‌کند؛ TEE/StrongBox دستگاه فیزیکی را ثابت نمی‌کند. رمزگذاری پایگاه Room در T0184 مستقل است.

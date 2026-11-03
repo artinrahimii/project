@@ -1,23 +1,39 @@
 # T0183 — استفاده از Android Keystore برای اسرار و کلیدهای محلی
 
-- **وضعیت:** `in_progress`؛ مسیر instrumentation اصلاح شده، اما یک guard آزمون قراردادی قدیمی مانع سبزشدن quality gate شده است.
-- **commit مبنا:** `88639fc553295c9b8a10b71b5eade12e1143ded8` — `V 3.0.852`
-- **تلاش‌ها:** A001 پیاده‌سازی، A002 lint main source، A003 lint test source، A004 اصلاح importها، A005 اصلاح Builder chain، A006 اصلاح مسیر instrumentation، A007 اصلاح قرارداد آزمون workflow (CI در انتظار)
+<badge>Completed</badge>
 
-## پیش‌نیازها و قرارداد
-T0182 و T0177 در گراف `done` و یال‌های ورودی T0183 از قبل `sequencing_only` / `validated` هستند؛ نوع `blocks` و ترتیب حفظ شده است. یال خروجی T0183→T0184 از نوع `blocks` و طبقه‌بندی `contract_or_interface_dependency` با وضعیت `validated` باقی می‌ماند؛ T0184 باید `ProtectedBlobProtector` را برای wrap کلید دیتابیس Room مصرف کند.
+- **وضعیت نهایی:** `done`؛ معیارهای T0183 با آزمون provider واقعی روی Android API 36 emulator و CI دقیق احراز شدند.
+- **پیاده‌سازی:** `cf383f4e94cd41f6e63fa78dbbabfe2e4d0afdd8` — `V 3.0.844`.
+- **CI تأییدکننده:** `9cf5e9b858f975b605c952ead3c4010fa78a9d11` — `V 3.0.853`.
+- **تلاش‌ها:** A001 پیاده‌سازی و اصلاحات آغازین؛ A002 بررسی نهایی exact-head پس از رفع خطاهای KtLint، فرمان instrumentation و guard قراردادی.
+
+## وابستگی‌ها و قرارداد
+
+- `T0182 → T0183`: `sequencing_only` / `validated`.
+- `T0177 → T0183`: `sequencing_only` / `validated`.
+- یال‌های اصلی `blocks` و ترتیب محافظه‌کارانه حفظ شدند.
+- قرارداد `ProtectedBlobProtector` اکنون برای wrap کلید پایگاه Room در T0184 مصرف می‌شود. رمزگذاری خود پایگاه در دامنهٔ T0183 نبود.
 
 ## پیاده‌سازی واقعی
-helper مشترک AES-256-GCM در Android Keystore، کلیدهای non-exportable و aliasهای مستقل برای peer identity و trust، envelope نسخه‌بندی‌شده با nonce ۹۶ بیتی و tag ۱۲۸ بیتی، alias-bound AAD، محدودیت اندازه و fail-closed ایجاد شده‌اند. پنج سناریوی instrumentation برای provider واقعی AndroidKeyStore روی emulator API 36 در workflow تعریف شده‌اند.
 
-## نتایج CI و اصلاح‌ها
-- V848 / run `41673696991`: هشت خطای KtLint در فایل main helper.
-- V849 / run `41675040018`: دو خطای import در test source.
-- V850 / run `41675745738`: دو خطای قالب‌بندی در زنجیرهٔ Builder.
-- V851 / run `41676304428`: KtLint، APK و JVM tests موفق؛ instrumentation به Gradle task نرسید، زیرا android-emulator-runner هر خط script را در shell جدا اجرا می‌کند و `cd` بین خطوط حفظ نشد. خطای واقعی Gradle این بود: `Directory '/home/runner/work/project/project' does not contain a Gradle build.`
-- A006 / V852: فرمان instrumentation به یک خط با `--project-dir src/Client.Android` تغییر کرد تا به cwd shell متکی نباشد.
-- Step Three quality gate run `41677809950` پس از A006، 350 آزمون را اجرا کرد: 349 موفق، 1 شکست. شکست در `tests/test_android_keystore_local_secrets.py:79` بود؛ test contract هنوز رشتهٔ قدیمی `gradle --no-daemon connectedDebugAndroidTest` را انتظار داشت. A007 assertion را به فرمان جدید `gradle --no-daemon --project-dir src/Client.Android connectedDebugAndroidTest` تغییر می‌دهد.
-- Container run `41677809985` موفق شد. در زمان ثبت این گزارش، product run `41677809961` هنوز در حال اجرا بود و نتیجهٔ نهایی Android/WPF/HostLifecycle تثبیت نشده بود.
+- helper مشترک AES-256-GCM با کلید non-exportable در Android Keystore.
+- envelope نسخه‌دار با nonce تصادفی ۹۶ بیتی، ciphertext، tag احرازاصالت ۱۲۸ بیتی و AAD مقید به alias.
+- alias مستقل برای peer identity و peer trust؛ SharedPreferences فقط envelope رمز‌شده را نگه می‌دارد.
+- خواندن envelope خراب یا کلید مفقود fail-closed است؛ identity بی‌صدا rotate نمی‌شود و trust خودکار ساخته نمی‌شود.
+- پنج سناریوی instrumentation برای provider واقعی Android Keystore روی emulator API 36 در workflow محصول اجرا می‌شوند.
 
-## وضعیت پذیرش
-A006 هنوز در CI محصول به‌صورت قطعی تأیید نشده است و A007 guard مرتبط را با workflow همگام می‌کند. تا سبزشدن quality gate و اجرای موفق پنج instrumentation scenario، task `in_progress` باقی می‌ماند. Room encryption در T0184 است؛ emulator نیز TEE/StrongBox واقعی دستگاه را اثبات نمی‌کند.
+## شواهد CI دقیق
+
+- Product run **41678108221** روی commit دقیق `9cf5e9b858f975b605c952ead3c4010fa78a9d11`: موفق؛ jobهای Windows WPF، Android و HostLifecycle همگی موفق.
+- Android job **126064102869**: KtLint، ساخت APK، آزمون JVM، بررسی Protobuf و `connectedDebugAndroidTest` موفق.
+- log instrumentation: **۵ آزمون** روی `emulator-5554 - API 36` شروع و تمام شدند؛ Gradle با `BUILD SUCCESSFUL` خاتمه یافت.
+- Instrumentation artifact **13252670975** (۵٬۳۵۳ بایت)، JVM report **13252631231** (۵۱٬۲۱۸ بایت)، APK artifact **13252915718** (۱۹٬۵۳۲٬۹۲۱ بایت).
+- Windows host artifact **13250877673** (۱۴٬۲۷۵٬۵۱۴ بایت).
+- Step Three quality run **41678108248**: موفق.
+- Rendezvous container run **41678108226**: موفق.
+
+## محدودیت
+
+این آزمون‌ها provider را در Android API 36 emulator تأیید می‌کنند؛ سخت‌افزاری بودن کلید با TEE/StrongBox روی دستگاه فیزیکی را اثبات نمی‌کنند. رمزگذاری Room، حفاظت plaintext در حافظه و پذیرش نهایی P2P جزو T0183 نیستند.
+
+**نتیجه:** T0183 از `in_progress` به `done` تغییر کرد.
