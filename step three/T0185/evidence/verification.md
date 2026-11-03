@@ -11,7 +11,7 @@
   - `src/Client.Android/app/src/main/java/com/whitep/client/data/EncryptedClientDatabaseFactory.kt`: `376edde0a9f0cc00fc797a9961fc6e2d1f369677`.
   - `src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt`: `e32db4d192879f3d77cd46603d3c60ceb1b5c2db`.
   - `src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceAttemptDispatcher.kt`: `99f69fbadc0270aec5ed6464c3f4cbb383d2417f`.
-  - `src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt`: `86c2c211fd73b64ac973ca9567b5bfc5fd0735fc`.
+  - `src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt`: `86c2c211fd73b64ac973ca9566d269c5fd0735fc`.
   - `.github/workflows/product-build.yml`: `f90aff07a86103da147b4e58159094b80f46e0af`.
   - `docs/security.md`: `86df99eac2fbe9c638ba81e91ed3136b578f26e9`.
 
@@ -43,3 +43,27 @@
 - Permission protection levels and install-time/runtime behavior: https://developer.android.com/guide/topics/permissions/overview
 - `INTERNET` permission is normal and allows opening network sockets: https://developer.android.com/reference/android/Manifest.permission#INTERNET
 - AAPT2 `dump permissions` inspects permissions extracted from the APK manifest: https://developer.android.com/tools/aapt2
+
+
+## A002 — exact-head AAPT2 result
+
+- Exact commit: f2883e4f07459e1dcb03d2c71971685ee28b7048; V 3.0.868; product workflow 41731636396.
+- KtLint and assembleDebug passed.
+- AAPT2 permission audit failed with the only unexpected entry: com.whitep.client.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION.
+- Android JVM and connected instrumentation steps were skipped as downstream steps; do not count them as successes.
+- Windows WPF, HostLifecycle, quality gate and container workflows passed. Quality run 41731636477 completed 361 Python tests, compileall and graph/output validation; 230 nodes, 422 edges, zero errors, one pre-existing T0001 warning.
+- Root cause checked against the AndroidX Core manifest maintained in the Android Open Source Project mirror: it declares com.whitep.client.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION with protectionLevel=signature and a matching uses-permission. This mechanism protects dynamic receivers on older Android versions.
+- Previous evidence correction: the source blob for InferenceAttemptDispatcherTest.kt is 86c2c211fd73b64ac973ca9566d269c5fd0735fc; an earlier evidence line contained a transcription typo.
+
+## A003 — exact validation rules now implemented
+
+- Source manifest request allowlist: INTERNET only.
+- Packaged APK request allowlist: INTERNET plus exactly com.whitep.client.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION.
+- The verifier invokes aapt2 dump permissions and aapt2 dump xmltree --file AndroidManifest.xml.
+- The binary manifest must declare that exact application-scoped permission exactly once with numeric protection level 0x2 (signature).
+- Any other packaged permission, any other custom permission declaration, a missing/duplicate declaration or protection level other than signature is rejected.
+- applicationId is fixed to com.whitep.client and tested against app/build.gradle.kts.
+- Added 13 focused tests, including expected AndroidX signature permission acceptance and rejection of ACCESS_NETWORK_STATE, arbitrary app-scoped permission, missing declaration and weak protection.
+- A local parser fixture matching AOSP's AAPT2 xmltree attribute format passed. This is a parser fixture only, not a claim that the actual APK has passed the revised verifier.
+- Exact-head V 3.0.869 product and quality workflows are pending. Keep T0185 in_progress until both confirm the output.
+

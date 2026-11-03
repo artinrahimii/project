@@ -103,16 +103,23 @@ Room اکنون از `EncryptedClientDatabaseFactory` و SQLCipher Community Edi
 این شواهد، سیاست ذخیره‌سازی تحت کنترل برنامه را توصیف می‌کنند؛ به‌تنهایی آزمون مستقل ترافیک شبکه، فایل‌های موقت، logها یا رفتار سیستم‌عامل نیستند.
 
 
-## حداقل مجوزهای کلاینت Android (T0185 — کنترل CI در انتظار)
+## حداقل مجوزهای کلاینت Android (T0185 — پذیرش CI در انتظار)
 
-کلاینت Android فقط `android.permission.INTERNET` را درخواست می‌کند. این مجوز برای بازکردن سوکت‌های شبکه در کشف HTTPS سرویس rendezvous و ارتباط مستقیم TCP/libp2p لازم است. سطح حفاظت آن در Android برابر `normal` است و در گروه مجوزهای زمان نصب قرار می‌گیرد؛ بنابراین پنجرهٔ درخواست مجوز runtime ندارد.
+در Manifest منبع برنامه فقط android.permission.INTERNET درخواست می‌شود. این مجوز برای بازکردن سوکت‌های شبکه در کشف HTTPS سرویس rendezvous و ارتباط مستقیم TCP/libp2p لازم است. سطح حفاظت آن normal و از نوع install-time است؛ پنجرهٔ درخواست runtime ندارد.
 
-مجوز `ACCESS_NETWORK_STATE` اضافه نشده است: کد فعلی وضعیت اتصال یا شبکه‌های فعال را از سیستم‌عامل استعلام نمی‌کند. پایگاه Room نیز در فضای خصوصی برنامه و با SQLCipher نگهداری می‌شود؛ دسترسی به فایل‌های مشترک، رسانه، مکان، دوربین، میکروفون یا بلوتوث در قابلیت‌های فعلی استفاده نمی‌شود.
+در APK ادغام‌شده، AndroidX Core یک مورد خاص دیگر نیز قرار می‌دهد: com.whitep.client.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION. این مجوز app-scoped با protectionLevel برابر signature تعریف می‌شود تا در نسخه‌های قدیمی‌تر Android، رفتار non-exported برای dynamic receiverها حفظ شود. فقط برنامه‌هایی که با گواهی یکسان امضا شده‌اند می‌توانند آن را دریافت کنند. این مورد را فقط به‌صورت دقیق و محدود می‌پذیریم؛ مجوز سفارشی دیگر یا سطح حفاظتی متفاوت مجاز نیست.
 
-کنترل منبع XML به‌تنهایی برای کشف مجوزهای افزوده‌شده از طریق Manifestهای وابستگی‌ها کافی نیست. به همین دلیل workflow ساخت محصول پس از تولید APK، خروجی `aapt2 dump permissions` را بررسی می‌کند و اگر مجوزی غیر از `INTERNET` در manifest ادغام‌شده وجود داشته باشد یا `INTERNET` حذف شده باشد، job را ناموفق می‌کند. آزمون‌های Python نیز parser، allowlist و رد مجوزهای اضافی/مفقود را پوشش می‌دهند.
+مجوز ACCESS_NETWORK_STATE اضافه نشده است: کد فعلی وضعیت اتصال یا شبکه‌های فعال را از سیستم‌عامل استعلام نمی‌کند. پایگاه Room در فضای خصوصی برنامه و با SQLCipher نگهداری می‌شود؛ دسترسی به فایل‌های مشترک، رسانه، مکان، دوربین، میکروفون یا بلوتوث در قابلیت‌های فعلی استفاده نمی‌شود. کد کلاینت نیز API درخواست مجوز runtime ندارد.
 
-این allowlist باید هنگام افزودن قابلیت جدیدی که واقعاً به دسترسی سیستم‌عامل نیاز دارد، دوباره بر اساس API استفاده‌شده و manifest نهایی ارزیابی شود؛ افزودن مجوز صرفاً برای رفع خطای ساخت یا از روی حدس مجاز نیست.
+کنترل CI دو سطح را بررسی می‌کند:
+- Manifest منبع باید فقط INTERNET را درخواست کند.
+- AAPT2 روی APK نهایی باید دقیقاً INTERNET و مجوز app-scoped بالا را گزارش کند؛ سپس خروجی xmltree باید تعریف همان مجوز را دقیقاً یک بار با protectionLevel عددی 0x2 (signature) نشان دهد. هر مجوز اضافی، مجوز سفارشی دیگر، declaration مفقود/تکراری یا سطح حفاظتی متفاوت باعث شکست می‌شود.
 
-- Android permission model: https://developer.android.com/guide/topics/permissions/overview
-- Android INTERNET permission API: https://developer.android.com/reference/android/Manifest.permission#INTERNET
-- APK manifest inspection with AAPT2: https://developer.android.com/tools/aapt2
+در V 3.0.868 ساخت APK و KtLint موفق بودند، اما verifier اولیه مجوز AndroidX را نشناخت و به همین علت ممیزی شکست خورد؛ آزمون‌های Android که بعد از آن قرار داشتند اجرا نشدند. اصلاح A003 این استثنای باریک را اضافه کرده و exact-head CI مجدد هنوز pending است. تا تأیید آن، T0185 تکمیل‌شده نیست.
+
+منابع:
+- AndroidX Core merged manifest: https://android.googlesource.com/platform/prebuilts/sdk/+/dbc89592d1bcb88ed9718f2b8d4f117ebb74547f/current/androidx/manifests/androidx.core_core/AndroidManifest.xml
+- Android security guidance for dynamic receivers and signature protection: https://developer.android.com/agents/security/android-intent-security/skill
+- Android custom permission protection levels: https://developer.android.com/guide/topics/manifest/permission-element
+- Android INTERNET permission: https://developer.android.com/reference/android/Manifest.permission#INTERNET
+- AAPT2 command documentation: https://developer.android.com/tools/aapt2
