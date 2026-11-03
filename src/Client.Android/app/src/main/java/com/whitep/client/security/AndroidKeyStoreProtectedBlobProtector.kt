@@ -13,6 +13,7 @@ import javax.crypto.spec.GCMParameterSpec
 /** Purpose-separated boundary for small app-private records protected by Android Keystore. */
 internal interface ProtectedBlobProtector {
     fun protect(cleartext: ByteArray): ByteArray
+
     fun unprotect(envelope: ByteArray): ByteArray
 }
 
@@ -20,7 +21,9 @@ internal interface ProtectedBlobProtector {
  * Versioned AES-256-GCM envelope backed by a non-exportable Android Keystore AES key.
  * Envelope: version byte || 96-bit random nonce || ciphertext || 128-bit authentication tag.
  */
-internal class AndroidKeyStoreProtectedBlobProtector(private val keyAlias: String) : ProtectedBlobProtector {
+internal class AndroidKeyStoreProtectedBlobProtector(
+    private val keyAlias: String,
+) : ProtectedBlobProtector {
     init {
         require(KEY_ALIAS_PATTERN.matches(keyAlias)) { "A bounded Android Keystore alias is required." }
     }
@@ -81,26 +84,28 @@ internal class AndroidKeyStoreProtectedBlobProtector(private val keyAlias: Strin
         }
     }
 
-    private fun additionalData(): ByteArray =
-        byteArrayOf(ENVELOPE_VERSION) + keyAlias.toByteArray(Charsets.UTF_8)
+    private fun additionalData(): ByteArray = byteArrayOf(ENVELOPE_VERSION) + keyAlias.toByteArray(Charsets.UTF_8)
 
     private fun getOrCreateKey(): SecretKey =
         synchronized(KEYSTORE_LOCK) {
             val store = loadKeyStore()
             if (store.containsAlias(keyAlias)) {
-                val entry = store.getEntry(keyAlias, null) as? KeyStore.SecretKeyEntry
-                    ?: throw GeneralSecurityException("The Android Keystore alias has an unexpected entry type.")
+                val entry =
+                    store.getEntry(keyAlias, null) as? KeyStore.SecretKeyEntry
+                        ?: throw GeneralSecurityException("The Android Keystore alias has an unexpected entry type.")
                 return@synchronized validateKey(entry.secretKey)
             }
             val generator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, ANDROID_KEY_STORE)
-            val spec = KeyGenParameterSpec.Builder(
-                keyAlias,
-                KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT,
-            ).setBlockModes(KeyProperties.BLOCK_MODE_GCM)
-                .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
-                .setRandomizedEncryptionRequired(true)
-                .setKeySize(AES_KEY_SIZE_BITS)
-                .build()
+            val spec =
+                KeyGenParameterSpec.Builder(
+                    keyAlias,
+                    KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT,
+                )
+                    .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
+                    .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
+                    .setRandomizedEncryptionRequired(true)
+                    .setKeySize(AES_KEY_SIZE_BITS)
+                    .build()
             generator.init(spec)
             validateKey(generator.generateKey())
         }
@@ -110,8 +115,9 @@ internal class AndroidKeyStoreProtectedBlobProtector(private val keyAlias: Strin
         if (!store.containsAlias(keyAlias)) {
             throw GeneralSecurityException("The Android Keystore key for an existing protected record is missing.")
         }
-        val entry = store.getEntry(keyAlias, null) as? KeyStore.SecretKeyEntry
-            ?: throw GeneralSecurityException("The Android Keystore key for an existing record is invalid.")
+        val entry =
+            store.getEntry(keyAlias, null) as? KeyStore.SecretKeyEntry
+                ?: throw GeneralSecurityException("The Android Keystore key for an existing record is invalid.")
         return validateKey(entry.secretKey)
     }
 
