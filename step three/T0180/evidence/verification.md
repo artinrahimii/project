@@ -162,3 +162,13 @@ Changed code implements zeroization for Windows frames/queue/lifecycle buffers a
 - Real local inference job 125830768050: pinned llama.cpp b11443 and GGUF validated; runtime status check passed; QUIC fallback binary-response assertion failed at PeerTransportContractAcceptanceTests.cs:372. No real generation success.
 - Android formatting/lint and debug APK build passed; Android JVM test suite was still in progress at the time of this evidence update.
 - The task remains in_progress. No acceptance criterion is declared complete from these failures.
+
+
+## T0180-A016 — Android CI completion on V 3.0.833
+
+- Android job 125830768838 passed: formatting/lint, Kotlin compile, debug APK and Protobuf generation.
+- Android JVM class `Libp2pInferenceRequestTransportTest`: 7 tests, 0 failures (100%).
+- The three-native-.NET-host cancellation round-trip test passed.
+- JUnit artifact: 13218328799.
+- This is an exact-run success and does not establish that the earlier timeout's underlying cause is permanently resolved.
+- Windows HostLifecycle empty-frame failure and real-inference QUIC fallback failure remain open; no successful live model generation is claimed.

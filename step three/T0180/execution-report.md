@@ -223,3 +223,13 @@
 - Real local inference job 125830768050 verified the pinned llama.cpp b11443 executable and GGUF model and observed the active model runtime status, but failed at QUIC fallback binary-response delivery in `PeerTransportContractAcceptanceTests.VerifyQuicFallbackAfterUnreachableTcpAddressAsync` (line 372). The assertion was: `Binary response bytes must return directly over the selected peer connection.` No successful model generation result was established.
 - Android KtLint/formatting and debug APK build passed (job 125830768838). Its JVM suite was still running when this update was written, so no JVM result is recorded yet.
 - T0180 remains `in_progress`.
+
+
+## T0180-A016 — completed Android CI result (V 3.0.833)
+
+- Android job 125830768838 completed successfully.
+- KtLint/formatting, Kotlin compilation, debug APK build and generated Protobuf checks passed.
+- The Android JVM suite passed. The `Libp2pInferenceRequestTransportTest` class completed 7 tests with 0 failures (100%); in particular, `sendsCancellationToThreeNativeDotNetLibp2pHostsAndReceivesCancelledResponses` passed against three native .NET peer fixtures.
+- JUnit report artifact: 13218328799.
+- This demonstrates successful Android cross-runtime cancellation in this exact CI run. It does not prove the previous timeout's root cause has been permanently eliminated.
+- Windows HostLifecycle still receives an empty application frame after the sender serializes a 54-byte HostStatusRequest. Real local inference integration still fails the QUIC fallback binary-response acceptance before a successful model-generation result. T0180 remains `in_progress`.
