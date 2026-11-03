@@ -18,7 +18,7 @@ class HostConversationRetentionPolicyTests(unittest.TestCase):
         self.assertIn("LocalDeviceWithOwnerConsent", POLICY)
         self.assertIn("PersistsPromptAndResponse", POLICY)
         self.assertIn("FromOwnerConsent(bool ownerConsent)", POLICY)
-        self.assertIn("HostConversationRetentionPolicy.Default", POLICY)
+        self.assertIn("public static HostConversationRetentionPolicy Default", POLICY)
         self.assertIn("HostConversationRetentionPolicy.FromOwnerConsent(_settings.PersistHostConversation)", WINDOW)
         self.assertIn("ownerConsent: true", WINDOW)
 
