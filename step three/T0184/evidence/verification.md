@@ -77,3 +77,11 @@ A011 فقط همین چهار خط را در lambda خروجی SQLCipher چها�
 - Rendezvous container run `41697319454`: passed.
 - A013 changes the emulator options to include `-partition-size 4096` and removes the already-used one-time .NET `bin`/`obj` fixture outputs before emulator startup, then records available disk with `df -h`.
 - The workflow adjustment is pending exact-head CI. No SQLCipher instrumentation acceptance is claimed.
+
+## V 3.0.863 — workflow rejected before jobs
+
+- Commit: `d9a2889743f26571fa80fea9b0d4d7be54519575` (`V 3.0.863`).
+- GitHub Actions check for `.github/workflows/product-build.yml`: failed; no workflow jobs were created.
+- Commit diff shows the new cleanup step was not indented as a child of the Android `steps` list (`shell` and `run` were at root indentation).
+- A014 fixes YAML indentation for the cleanup step and restores the emulator-runner step as a sibling. The `-partition-size 4096` setting remains.
+- Exact-head validation is pending; no app/test pass is claimed from V 3.0.863.

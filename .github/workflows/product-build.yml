@@ -126,12 +126,12 @@ jobs:
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
       - name: Remove temporary .NET fixture outputs before Android emulator
-  shell: bash
-  run: |
-    set -euo pipefail
-    rm -rf tests/HostLifecycle.Tests/bin tests/HostLifecycle.Tests/obj
-    df -h "$HOME"
-  - name: Run Android Keystore instrumentation tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf tests/HostLifecycle.Tests/bin tests/HostLifecycle.Tests/obj
+          df -h "$HOME"
+      - name: Run Android Keystore instrumentation tests
         uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d
         with:
           api-level: 36

@@ -69,3 +69,12 @@ emulator، TEE/StrongBox دستگاه فیزیکی را اثبات نمی‌کن
 - این اصلاح هنوز در commit جدید CI نشده است. T0184 همچنان `in_progress` می‌ماند و پذیرش runtime SQLCipher هنوز اثبات نشده است.
 
 **گام بعدی:** اجرای exact-head V 3.0.863؛ باید emulator boot شود و چهار تست `connectedDebugAndroidTest` واقعاً اجرا و نتیجهٔ report/runner بررسی شود.
+
+## A014 — اصلاح تورفتگی YAML در workflow
+
+- commit A013: `d9a2889743f26571fa80fea9b0d4d7be54519575` (`V 3.0.863`).
+- workflow run `41700157377` برای `.github/workflows/product-build.yml` پیش از ایجاد jobها ناموفق شد. diff همان commit نشان می‌دهد بلوک cleanup جدید با تورفتگی سطح ریشه وارد `jobs.android.steps` شده بود؛ `shell` و `run` در سطح نادرست قرار گرفتند.
+- **اصلاح A014:** تورفتگی cleanup و step بعدی با ساختار sibling در `steps` هماهنگ شد؛ دستورهای cleanup و گزینهٔ `-partition-size 4096` تغییر منطقی نکردند.
+- این اصلاح هنوز روی commit جدید CI نشده است. T0184 همچنان `in_progress` است و نتیجهٔ جدیدی برای instrumentation ثبت نمی‌شود.
+
+**گام بعدی:** exact-head V 3.0.864 باید workflow را parse کند و build، JVM و emulator/instrumentation را اجرا کند. پذیرش runtime فقط پس از موفقیت چهار تست واقعی ثبت می‌شود.
