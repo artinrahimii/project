@@ -65,7 +65,7 @@ jobs:
   android-client:
     name: Build Android client APK
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-dotnet@v4
@@ -120,6 +120,31 @@ jobs:
         env:
           WHITEP_INTEROP_SERVER_DLL: ${{ github.workspace }}/tests/HostLifecycle.Tests/bin/Release/net10.0/HostLifecycle.Tests.dll
         run: gradle --no-daemon testDebugUnitTest
+      - name: Configure KVM access for Android Keystore instrumentation
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - name: Run Android Keystore instrumentation tests
+        uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d
+        with:
+          api-level: 36
+          target: google_apis
+          arch: x86_64
+          profile: pixel_6
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
+          script: |
+            cd src/Client.Android
+            gradle --no-daemon connectedDebugAndroidTest
+      - name: Upload Android Keystore instrumentation reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: whitep-android-keystore-instrumentation-reports
+          path: src/Client.Android/app/build/reports/androidTests/connected/
+          if-no-files-found: ignore
+          retention-days: 7
       - name: Upload Android unit-test reports
         if: always()
         uses: actions/upload-artifact@v4

@@ -3,6 +3,8 @@ package com.whitep.client.network
 import android.content.Context
 import android.content.SharedPreferences
 import android.util.Base64
+import com.whitep.client.security.AndroidKeyStoreProtectedBlobProtector
+import com.whitep.client.security.ProtectedBlobProtector
 import io.libp2p.core.PeerId
 import java.nio.charset.StandardCharsets
 import java.util.Arrays

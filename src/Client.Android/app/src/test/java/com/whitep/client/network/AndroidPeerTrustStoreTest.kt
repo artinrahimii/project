@@ -1,5 +1,7 @@
 package com.whitep.client.network
 
+import com.whitep.client.security.ProtectedBlobProtector
+
 import android.content.Context
 import io.libp2p.core.PeerId
 import io.libp2p.core.crypto.KeyType

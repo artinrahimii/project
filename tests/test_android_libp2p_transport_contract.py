@@ -5,6 +5,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SETTINGS = ROOT / "src/Client.Android/settings.gradle.kts"
 APP_BUILD = ROOT / "src/Client.Android/app/build.gradle.kts"
 IDENTITY = ROOT / "src/Client.Android/app/src/main/java/com/whitep/client/network/AndroidPeerIdentityStore.kt"
+PROTECTOR = ROOT / "src/Client.Android/app/src/main/java/com/whitep/client/security/AndroidKeyStoreProtectedBlobProtector.kt"
 TRUST = ROOT / "src/Client.Android/app/src/main/java/com/whitep/client/network/AndroidPeerTrustStore.kt"
 TRANSPORT = ROOT / "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt"
 TRANSPORT_TEST = ROOT / "src/Client.Android/app/src/test/java/com/whitep/client/network/Libp2pInferenceRequestTransportTest.kt"
@@ -28,8 +29,10 @@ class AndroidLibp2pTransportContractTests(unittest.TestCase):
 
     def test_android_identity_is_persistent_and_keystore_protected(self):
         source = IDENTITY.read_text(encoding="utf-8")
-        self.assertIn('"AndroidKeyStore"', source)
-        self.assertIn('"AES/GCM/NoPadding"', source)
+        protector = PROTECTOR.read_text(encoding="utf-8")
+        self.assertIn("AndroidKeyStoreProtectedBlobProtector(IDENTITY_KEY_ALIAS)", source)
+        self.assertIn('"AndroidKeyStore"', protector)
+        self.assertIn('"AES/GCM/NoPadding"', protector)
         self.assertIn("generateKeyPair(KeyType.ED25519)", source)
         self.assertIn("unmarshalPrivateKey(cleartext)", source)
         self.assertIn("fails closed", source)

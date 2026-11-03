@@ -109,6 +109,9 @@ dependencies {
     implementation("androidx.room:room-runtime:2.8.5")
     kapt("androidx.room:room-compiler:2.8.5")
     testImplementation("junit:junit:4.13.2")
+    androidTestImplementation("androidx.test:core:1.7.0")
+    androidTestImplementation("androidx.test:runner:1.7.0")
+    androidTestImplementation("androidx.test.ext:junit:1.3.0")
     testImplementation("org.robolectric:robolectric:4.17")
     debugImplementation("androidx.compose.ui:ui-tooling:1.9.2")
 }

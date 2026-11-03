@@ -879,6 +879,8 @@ class DecisionTraceabilityTests(unittest.TestCase):
     def test_android_libp2p_transport_decision_maps_to_peer_identity_trust_and_wire_acceptance(self):
         paths = (
             "docs/decisions/ADR-0021-android-libp2p-peer-transport.md",
+            "src/Client.Android/app/src/main/java/com/whitep/client/security/AndroidKeyStoreProtectedBlobProtector.kt",
+            "src/Client.Android/app/src/androidTest/java/com/whitep/client/network/AndroidKeyStorePersistenceTest.kt",
             "src/Client.Android/app/src/main/java/com/whitep/client/network/AndroidPeerIdentityStore.kt",
             "src/Client.Android/app/src/main/java/com/whitep/client/network/AndroidPeerTrustStore.kt",
             "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
@@ -901,8 +903,9 @@ class DecisionTraceabilityTests(unittest.TestCase):
         self.assertIn("protobuf-java:4.36.2", android_build)
         self.assertNotIn("protobuf-javalite", android_build)
         self.assertIn("AndroidKeyStore", (ROOT / paths[1]).read_text(encoding="utf-8"))
-        self.assertIn("trustPeerAfterExplicitConfirmation", (ROOT / paths[2]).read_text(encoding="utf-8"))
-        self.assertIn("/white-p/peer-message/1.0.0", (ROOT / paths[3]).read_text(encoding="utf-8"))
+        self.assertIn("assertNonExportableAesKey", (ROOT / paths[2]).read_text(encoding="utf-8"))
+        self.assertIn("trustPeerAfterExplicitConfirmation", (ROOT / paths[4]).read_text(encoding="utf-8"))
+        self.assertIn("/white-p/peer-message/1.0.0", (ROOT / paths[5]).read_text(encoding="utf-8"))
 
     def test_explicit_peer_trust_decision_maps_to_persistent_store_transport_gate_and_acceptance(self):
         paths = (
