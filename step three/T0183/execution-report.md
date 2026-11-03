@@ -1,40 +1,29 @@
 # T0183 — استفاده از Android Keystore برای اسرار و کلیدهای محلی
 
-- **وضعیت:** `in_progress`؛ اصلاح KtLint ثبت می‌شود و تأیید نهایی به CI دقیق نسخهٔ اصلاحی وابسته است.
-- **شاخه:** `main`
-- **آخرین snapshot بررسی‌شده:** `0be00fb2f36f1a69fff8af31acc4339a76c7eb8e` — `V 3.0.848`
-- **تلاش‌ها:** `T0183-A001` (پیاده‌سازی اولیه)، `T0183-A002` (شکست KtLint)، `T0183-A003` (اصلاح قالب‌بندی؛ CI در انتظار)
+- **وضعیت:** `in_progress`؛ اصلاحات KtLint مرحله‌ای ثبت شده‌اند و پذیرش نهایی هنوز به CI کامل Android وابسته است.
+- **آخرین commit بررسی‌شده:** `6af58b498c536db0ae6788099e44195ff1ce7809` — `V 3.0.849`
+- **تلاش‌ها:** A001 پیاده‌سازی، A002 شکست lint در main source، A003 شکست lint در test source، A004 اصلاح importهای آزمون (CI در انتظار)
 
-## پیش‌نیازها و قراردادها
+## پیش‌نیازها و قرارداد
 
-- `T0182` و `T0177` در گراف `done` هستند. خروجی‌های واقعی آن‌ها بررسی شدند؛ پاک‌سازی فایل‌های موقت میزبان Windows و منطق انتخاب میزبان/بودجهٔ تلاش Android توسط Android Keystore key wrapping مصرف نمی‌شوند. دو یال ورودی از قبل `sequencing_only` و `validated` هستند؛ نوع اصلی `blocks` و ترتیب محافظه‌کارانه حفظ شده است.
-- یال خروجی `T0183 → T0184` از نوع `blocks` و طبقه‌بندی `contract_or_interface_dependency` با وضعیت `validated` است. T0184 باید از رابط `ProtectedBlobProtector` برای حفاظت کلید پایگاه Room استفاده کند؛ کد دیتابیس رمز‌شده در خود T0183 ادعا نمی‌شود.
+- T0182 و T0177 در گراف `done` هستند؛ دو یال ورودی T0183 از قبل `sequencing_only` / `validated` هستند و نوع `blocks` و ترتیب اجرایی حفظ شده است.
+- یال `T0183 → T0184` از نوع `blocks` و کلاس `contract_or_interface_dependency` با وضعیت `validated` است. T0184 باید از `ProtectedBlobProtector` برای wrap کلید رمزگذاری دیتابیس Room استفاده کند. رمزگذاری خود Room در T0183 انجام نشده است.
 
 ## پیاده‌سازی موجود
 
-- پیاده‌سازی مشترک AES-256-GCM در `src/Client.Android/app/src/main/java/com/whitep/client/security/AndroidKeyStoreProtectedBlobProtector.kt` قرار گرفته است.
-- هویت Peer و trust از دو alias مستقل و non-exportable در Android Keystore استفاده می‌کنند.
-- envelope نسخه‌بندی‌شده، nonce تصادفی ۹۶ بیتی، tag احراز اصالت ۱۲۸ بیتی و AAD وابسته به alias دارد.
-- اعتبارسنجی اندازهٔ payload، نوع کلید و exportability وجود دارد؛ envelope خراب یا کلید مفقود fail-closed است.
-- آزمون‌های provider واقعی Android در instrumentation test اضافه شده‌اند و workflow محصول آن‌ها را روی emulator API 36 اجرا می‌کند.
-- هیچ تغییر رفتاری یا معماری در این اصلاح قالب‌بندی اعمال نشده است.
+- helper مشترک `ProtectedBlobProtector` و `AndroidKeyStoreProtectedBlobProtector` با AES-256-GCM، کلید non-exportable، nonce تصادفی ۹۶ بیتی، tag ۱۲۸ بیتی، AAD وابسته به alias و محدودیت اندازه ایجاد شده‌اند.
+- ذخیره‌ساز هویت و trust از دو alias جدا استفاده می‌کنند و در خطای کلید/رکورد به‌صورت fail-closed رفتار می‌کنند.
+- پنج instrumentation سناریو برای provider واقعی AndroidKeyStore روی emulator API 36 اضافه شده‌اند.
+- آزمون‌های JVM و قراردادهای CI حفظ شده‌اند.
 
-## نتایج CI در snapshot فعلی
+## CI و شکست‌های ثبت‌شده
 
-برای commit `0be00fb2f36f1a69fff8af31acc4339a76c7eb8e`:
+- Snapshot `V 3.0.848`، run `41673696991`: product build شکست خورد. KtLint در فایل اصلی Keystore هشت مورد گزارش کرد؛ APK و instrumentation این revision اجرا نشدند.
+- اصلاح main source در `V 3.0.849` ثبت شد. run `41675040018` از `ktlintMainSourceSetCheck` عبور کرد، اما `ktlintTestSourceSetCheck` در دو فایل آزمون JVM متوقف شد: import گروه `com` قبل از `android` بود و میان importها خط خالی وجود داشت.
+- فایل‌های `AndroidPeerIdentityStoreTest.kt` و `AndroidPeerTrustStoreTest.kt` اکنون در تلاش A004 با ترتیب گروه‌های import اصلاح می‌شوند. هیچ منطق آزمون یا رفتار رمزنگاری تغییر نمی‌کند.
+- run `41675040020`، Step Three quality gate، موفق است. HostLifecycle job `126053271139` نیز موفق شده است. Windows WPF و container باید از نتیجهٔ کامل همین run تأیید شوند.
+- تا زمان اجرای مجدد KtLint test source، ساخت APK، JVM unit tests، connected instrumentation، Protobuf checks و artifact upload، وضعیت T0183 `in_progress` است.
 
-- Step Three quality gate — run `41673697033`: موفق.
-- Rendezvous container build and smoke — run `41673696995`: موفق.
-- White-P product build — run `41673696991`: ناموفق.
-- Windows WPF و HostLifecycle در product run موفق بودند.
-- job ساخت Android، `126048506024`، در `ktlintMainSourceSetCheck` متوقف شد؛ هشت مورد KtLint در فایل پیاده‌سازی Keystore گزارش شد. به‌دلیل توقف در lint، آزمون JVM، ساخت APK و instrumentation این revision را موفق ثبت نمی‌کنیم.
+## محدودیت
 
-## اصلاح T0183-A003
-
-فقط فایل `AndroidKeyStoreProtectedBlobProtector.kt` از نظر قالب Kotlin اصلاح شد: فاصلهٔ بین اعلان‌ها، سازندهٔ چندخطی، chain سازندهٔ KeyGenParameterSpec، عبارت‌های چندخطی و expression body تابع `additionalData`. پس از ثبت، workflow کامل محصول باید دوباره اجرا شود.
-
-## محدودیت امنیتی و پذیرش
-
-- emulator API 36 می‌تواند provider integration و non-exportability قابل مشاهده از API را آزمایش کند؛ TEE/StrongBox واقعی دستگاه فیزیکی را اثبات نمی‌کند.
-- رمزگذاری پایگاه Room و migration کلید آن در T0184 باقی می‌ماند.
-- تا موفقیت KtLint، ساخت APK، JVM unit tests، connected instrumentation، Protobuf checks و سایر jobهای product build روی commit اصلاحی، وضعیت T0183 `in_progress` باقی می‌ماند.
+emulator API 36، provider integration و عدم export کلید از API را آزمایش می‌کند، اما TEE/StrongBox دستگاه فیزیکی را اثبات نمی‌کند. حفاظت کلید Room و رمزگذاری پایگاه داده همچنان متعلق به T0184 است.

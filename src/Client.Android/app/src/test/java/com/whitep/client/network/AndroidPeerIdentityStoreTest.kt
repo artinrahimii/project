@@ -1,9 +1,8 @@
 package com.whitep.client.network
 
-import com.whitep.client.security.ProtectedBlobProtector
-
 import android.content.Context
 import android.util.Base64
+import com.whitep.client.security.ProtectedBlobProtector
 import io.libp2p.core.PeerId
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertThrows
