@@ -5,7 +5,6 @@ import android.system.Os
 import android.util.Base64
 import androidx.room.Room
 import com.whitep.client.security.AndroidKeyStoreProtectedBlobProtector
-import net.zetetic.database.sqlcipher.SQLiteDatabase as CipherSQLiteDatabase
 import net.zetetic.database.sqlcipher.SupportOpenHelperFactory
 import java.io.File
 import java.io.FileInputStream
@@ -13,6 +12,7 @@ import java.io.IOException
 import java.security.GeneralSecurityException
 import java.security.SecureRandom
 import java.util.Arrays
+import net.zetetic.database.sqlcipher.SQLiteDatabase as CipherSQLiteDatabase
 
 /**
  * Opens the Room database through SQLCipher and stores its random passphrase only as
@@ -61,11 +61,13 @@ internal object EncryptedClientDatabaseFactory {
         return try {
             val openHelperFactory = SupportOpenHelperFactory(databaseKey.copyOf())
             val database =
-                Room.databaseBuilder(
-                    appContext,
-                    ClientDatabase::class.java,
-                    databaseName,
-                ).openHelperFactory(openHelperFactory)
+                Room
+                    .databaseBuilder(
+                        appContext,
+                        ClientDatabase::class.java,
+                        databaseName,
+                    )
+                    .openHelperFactory(openHelperFactory)
                     .addMigrations(
                         ClientDatabase.MIGRATION_1_2,
                         ClientDatabase.MIGRATION_2_3,
@@ -185,10 +187,11 @@ internal object EncryptedClientDatabaseFactory {
                     arrayOf<Any>(temporaryFile.absolutePath, databaseKey),
                 )
                 attached = true
-                source.rawQuery(
-                    "SELECT sqlcipher_export('$ENCRYPTED_DATABASE_ALIAS')",
-                    emptyArray<String>(),
-                ).use { cursor ->
+                source
+                    .rawQuery(
+                        "SELECT sqlcipher_export('$ENCRYPTED_DATABASE_ALIAS')",
+                        emptyArray<String>(),
+                    ).use { cursor ->
                     if (!cursor.moveToFirst()) {
                         throw GeneralSecurityException("SQLCipher returned no result for the database export.")
                     }
