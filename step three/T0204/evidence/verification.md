@@ -20,3 +20,7 @@ The original `blocks` edge values and the conservative execution order remain un
 ## Execution state
 
 The test code and fixture mode have been added. Exact-head CI has not yet executed, so this file intentionally contains no passing test claim. T0204 is `in_progress`, not `done`.
+
+## First CI feedback and correction
+
+Quality Gate run `41910395010`, job `126856098151`: 407 Python source-contract tests ran; 406 passed and `test_dotnet_ready_record_uses_matching_tab_delimiters` failed because the new Kotlin peer-process reader had double-escaped tab literals. They are corrected in attempt `T0204-A002`. The correction still requires CI verification; no pass is claimed.

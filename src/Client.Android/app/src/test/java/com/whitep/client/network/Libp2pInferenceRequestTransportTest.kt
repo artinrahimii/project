@@ -956,10 +956,10 @@ class Libp2pInferenceRequestTransportTest {
                                 while (true) {
                                     val line = runCatching { reader.readLine() }.getOrNull() ?: break
                                     when {
-                                        line.startsWith("READY\\t") -> readyLineFuture.complete(line)
+                                        line.startsWith("READY\t") -> readyLineFuture.complete(line)
                                         line in allowedMarkers -> phaseOutput.add("peer-" + serverNumber + ":" + line)
-                                        line.startsWith("P2P_DIAG\\t") -> {
-                                            val fields = line.split('\\t', limit = 6)
+                                        line.startsWith("P2P_DIAG\t") -> {
+                                            val fields = line.split('\t', limit = 6)
                                             if (fields.size == 6 && diagnosticOutput.size < 240) {
                                                 diagnosticOutput.add(
                                                     "peer-" + serverNumber + ":libp2p:" +
@@ -981,7 +981,7 @@ class Libp2pInferenceRequestTransportTest {
                                 readyLineFuture.get(30, TimeUnit.SECONDS)
                             }
                         }
-                    val readyFields = readyLine.split('\\t')
+                    val readyFields = readyLine.split('\t')
                     assertEquals("READY", readyFields.firstOrNull())
                     assertEquals(3, readyFields.size)
                     val peerId = readyFields[1]

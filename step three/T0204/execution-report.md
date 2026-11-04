@@ -21,3 +21,10 @@
 - Static source-edit checks: all expected insertion anchors matched; task-specific test and silent mode are present.
 - Runtime build/test: **not yet run**. The Product Build workflow runs on pushes to `main`; exact-head results must be checked before marking this task done.
 - T0204 remains incomplete until the new Android JVM interop test and relevant Windows HostLifecycle build/test jobs pass on the committed head.
+
+## CI correction record
+
+- Exact-head Quality Gate run `41910395010`, job `126856098151`, executed 407 Python source-contract tests: 406 passed and one failed, `test_dotnet_ready_record_uses_matching_tab_delimiters`.
+- Root cause: the new Kotlin peer-process reader used double-escaped tab literals, violating the existing source contract. This is recorded as failed attempt `T0204-A001`.
+- Attempt `T0204-A002` corrects the READY marker, diagnostic marker and tab splitting to the single Kotlin tab escape.
+- The corrected source has not yet been built or run. T0204 remains **in_progress** until exact-head CI passes.
