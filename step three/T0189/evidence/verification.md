@@ -90,3 +90,17 @@
 - Placed RequestViewModel.safeMessage's short expression on the signature line.
 - No business logic, protocol contract, error classification, redaction rule or test assertion was weakened.
 - Exact-head lint/build/JVM/instrumentation results for A004 are pending; T0189 remains in_progress.
+
+
+## Exact-head CI reconciliation for V 3.0.888
+- Commit: `f7d01de9bc9a628f9b0cde50ba9060354ac5908c`.
+- Step Three quality gate run `41832537397`: passed.
+- Rendezvous container run `41832537373`: passed.
+- Product build run `41832537324`: HostLifecycle job `126583060656` passed; Windows WPF job `126583060973` passed; Android job `126583060958` failed at `ktlintMainSourceSetCheck`.
+- KtLint reported unexpected indentation in `Libp2pInferenceRequestTransport.kt` lines 614–621 (expected indentation columns 20/24/16 as appropriate). APK, merged manifest permission verification, JVM tests and Android Keystore instrumentation were skipped.
+
+## A005 correction snapshot
+- Adjusted only indentation of the body and closing brace in the `pendingAttempts.entries.filter` lambda in `Libp2pInferenceRequestTransport.kt`.
+- Request ID, authenticated peer, controller identity, ephemeral host ID and model ID predicates are unchanged.
+- No protocol schema, error mapping, redaction rule or test assertion changed.
+- Exact-head KtLint/build/JVM/instrumentation results are pending; T0189 remains `in_progress`.

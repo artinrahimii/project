@@ -1,6 +1,6 @@
 # T0189 — کد خطای پایدار و قابل‌نمایش
 
-- **وضعیت:** در حال اجرا؛ نگاشت خطا در Windows و Android، parse پیام‌های خطای پروتکل، نمایش امن در UI و آزمون‌های رگرسیون اضافه شده‌اند؛ CI دقیق این تغییرات هنوز اجرا نشده است.
+- **وضعیت:** در حال اجرا؛ پیاده‌سازی Windows و Android و آزمون‌های مرتبط اضافه شده‌اند. اصلاح تورفتگی KtLint در A005 انجام شده و CI دقیق آن هنوز در انتظار اجراست.
 - **مبنای بررسی:** `artinrahimii/project`، شاخهٔ `main`، commit `42c872b6620abcd81a553213fa957f6846c4fbdd`، نسخهٔ `V 3.0.884`.
 - **پیش‌نیاز:** T0188 در گراف همین commit `done` است و معیارهای مستندات/آزمون منبعی‌اش در CI دقیق نسخهٔ پیاده‌سازی تأیید شده‌اند.
 - **بازبینی یال `T0188 → T0189`:** نوع اصلی `blocks` حفظ شد؛ طبقه‌بندی به `sequencing_only` با وضعیت `validated` تغییر می‌کند. T0188 مدل تهدید و محدودیت‌های محرمانگی را مستند می‌کند، اما T0189 هیچ رابط اجرایی از آن مصرف نمی‌کند. دلیل و شواهد در `edge_change_log` ثبت شده‌اند و ترتیب محافظه‌کارانهٔ گراف عوض نشده است.
@@ -41,3 +41,15 @@
 - **شکست Android:** job `126580651061` تنها در `ktlintMainSourceSetCheck` شکست خورد. سه مورد دقیق: `RequestErrorCode.kt:61` ویرگول پایانی پیش از `;`، `Libp2pInferenceRequestTransport.kt:612` شروع expression چندخطی روی خط بعد، و `RequestViewModel.kt:880` قراردادن expression کوتاه در همان خط signature. APK، JVM tests و instrumentation به‌علت این gate اجرا نشدند.
 - **T0189-A004:** همین سه مورد قالب‌بندی اصلاح شدند؛ هیچ منطق خطا، قرارداد یا assertion تغییر نکرد.
 - **وضعیت:** `in_progress` تا اجرای lint و تمام مراحل build/test اندروید روی commit بعدی.
+
+
+## بررسی CI دقیق V 3.0.888 و اصلاح A005
+
+- commit دقیق: `f7d01de9bc9a628f9b0cde50ba9060354ac5908c` (`V 3.0.888`).
+- Step Three quality gate run `41832537397`: موفق.
+- Rendezvous container run `41832537373`: موفق.
+- Product build run `41832537324`: Windows HostLifecycle job `126583060656` و Windows WPF job `126583060973` موفق؛ Android job `126583060958` در `ktlintMainSourceSetCheck` شکست خورد.
+- log دقیق KtLint در `Libp2pInferenceRequestTransport.kt` خطوط 614 تا 621 را به‌علت تورفتگی نامعتبر گزارش کرد؛ مقدارهای مورد انتظار به‌ترتیب 20، 20، 20، 24، 24، 24، 24 و 16 فاصله بودند. APK، بررسی مجوزهای APK، JVM tests و Keystore instrumentation به‌علت شکست lint اجرا نشدند.
+- A005 فقط تورفتگی بدنهٔ lambda در `pendingAttempts.entries.filter` را اصلاح می‌کند؛ منطق correlation، peer authentication، model matching، پروتکل و آزمون‌ها تغییر نمی‌کنند.
+- workflow اختصاصی inference واقعی روی commit `V 3.0.888` در فهرست اجراهای main مشاهده نشد؛ شاهد موفق inference واقعی قبلی مربوط به commit `V 3.0.887` است و به‌عنوان اجرای دقیق 888 ادعا نمی‌شود.
+- نتیجهٔ KtLint، APK، permission verification، Android JVM و instrumentation برای A005 تا اجرای CI commit بعدی pending است؛ T0189 همچنان `in_progress` می‌ماند.

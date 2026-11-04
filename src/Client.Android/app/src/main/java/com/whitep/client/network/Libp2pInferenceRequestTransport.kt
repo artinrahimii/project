@@ -611,14 +611,14 @@ class Libp2pInferenceRequestTransport(
         if (remoteError != null) {
             val matchingAttempts =
                 pendingAttempts.entries.filter { entry ->
-                val key = entry.key
-                val pending = entry.value
-                key.requestId == remoteError.requestId &&
-                    pending.peerId == authenticatedPeerId &&
-                    pending.controller === controller &&
-                    (remoteError.ephemeralHostId == null || remoteError.ephemeralHostId == authenticatedPeerId) &&
-                    (remoteError.modelId == null || remoteError.modelId == pending.modelId)
-            }
+                    val key = entry.key
+                    val pending = entry.value
+                    key.requestId == remoteError.requestId &&
+                        pending.peerId == authenticatedPeerId &&
+                        pending.controller === controller &&
+                        (remoteError.ephemeralHostId == null || remoteError.ephemeralHostId == authenticatedPeerId) &&
+                        (remoteError.modelId == null || remoteError.modelId == pending.modelId)
+                }
             if (matchingAttempts.isEmpty()) {
                 unmatchedResponseFrames.incrementAndGet()
                 lastUnmatchedPayloadBytes.set(payload.size.toLong())
