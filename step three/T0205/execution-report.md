@@ -1,35 +1,30 @@
 # T0205 execution report
 
-- Status: **in_progress**
-- Attempt: `T0205-A001`
-- Base commit: `a099bf871de6d2035950f304d48c3406f55e0311`
-- CI verification: pending
+- Status: **done**
+- Attempts: 2 total; 1 failed compile attempt, 1 successful exact-head runtime attempt
+- Final implementation commit: `a3e50e03f105e54ad01a0d97d04b9436ebcb6dbd` (`V 3.0.940`)
 
 ## Incoming edge review
 
-- `T0204 → T0205`: **validated / sequencing_only**. T0204 is the Android client-side second-round failover test; T0205 is the Windows host-side incoming cancellation path. T0205 consumes no T0204-specific API/output. The graph's conservative order and original `blocks` edge are retained.
-- `T0195 → T0205`: **validated / contract_or_interface_dependency**. T0195 verified the HostRequestCoordinator cancellation/failure behavior and admission-gate release. T0205 uses that same coordinator contract to propagate remote cancellation through the real host pipeline. The original `blocks` edge is retained.
+- `T0204 → T0205`: **validated / sequencing_only**. T0204 validates Android-side second-round failover; T0205 validates the separate Windows host-side authenticated cancellation path. No T0204-specific API or output is consumed.
+- `T0195 → T0205`: **validated / contract_or_interface_dependency**. T0195 verifies HostRequestCoordinator cancellation/failure and request-gate contracts used by the remote cancellation path here. Original `blocks` edge values and conservative order were preserved.
 
-## Implemented test change
+## Implemented test
 
-Extended `tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs`. The existing authenticated libp2p host lifecycle acceptance scenario now composes:
-1. the production `LlamaCppServerBackend` using an injected HTTP client;
-2. `HostInferenceSession` with a live health probe and explicit readiness result;
-3. the production `HostRequestCoordinator`;
-4. the production `PeerAnnouncementHostLifecycle` incoming `CancelRequest` parser and active request cancellation map.
+Extended `tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs` so the authenticated peer-host integration scenario composes the production `PeerAnnouncementHostLifecycle`, `HostRequestCoordinator`, `HostInferenceSession` and `LlamaCppServerBackend`. A test HTTP handler responds to the backend health probe and holds the active `POST /v1/chat/completions` operation until its cancellation token is signalled.
 
-The scenario sends an authenticated inference request that enters the fake HTTP handler's active `POST /v1/chat/completions`, sends a matching `CancelRequest` on the same authenticated peer stream, and waits until the HTTP handler observes and exits on cancellation. It then verifies a correlated `CANCELLED` response with empty output and that the coordinator releases its single-request gate.
+The test sends an authenticated request, waits until the HTTP generation operation is active, sends a matching `CancelRequest` on the same authenticated peer connection, then waits for the HTTP handler to observe cancellation and exit. It asserts a correlated `CANCELLED` response with empty output and that the HostRequestCoordinator releases its single-request gate.
+
+## CI evidence
+
+- Product Build run `41915992536`, Host Lifecycle job `126875674392`: **passed**. The complete `dotnet run --project tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj --configuration Release` suite completed successfully. It ran `PeerAnnouncementClientAcceptanceTests.RunAsync`, including `PeerHostLifecyclePublishesAndServesTrustedPeerAsync` with the updated cancellation scenario. The suite emitted its metadata-only peer-discovery PASS line and completed without an assertion or unhandled exception.
+- Step Three Quality Gate run `41915992559`, job `126875673317`: **passed**, including Python tests, syntax, graph and evidence validation.
+
+## Failed attempt and correction
+
+- `T0205-A001`: compile failed with CS0104 because importing the entire `WhiteP.Host.Domain` namespace made the domain `HostStatus` ambiguous with the existing Protobuf `HostStatus`.
+- `T0205-A002`: replaced the broad namespace import with explicit `HostState` and `HostCapacityState` aliases; exact-head HostLifecycle CI then passed.
 
 ## Backend limitation
 
-This proves the host-side HTTP request operation is cancelled and the host suppresses a late success response. The configured llama.cpp server is a separate process; aborting its HTTP request does **not** prove the server has stopped its internal CPU/GPU inference computation. No remote compute-cancellation API is present in this backend contract, so no such guarantee is claimed.
-
-## Verification
-
-Source changes and edge classifications are prepared. The HostLifecycle runtime suite, Product Build, and Step Three Quality Gate have not yet run on this revision. T0205 remains `in_progress` until the actual acceptance test passes in CI.
-
-## CI feedback and correction
-
-Attempt `T0205-A001` did not reach runtime tests. The exact-head HostLifecycle job `126874055063` failed compilation with CS0104 at source lines 256 and 324 because adding `using WhiteP.Host.Domain;` made the domain `HostStatus` ambiguous with the existing Protobuf `WhiteP.Shared.Contracts.V1.HostStatus`.
-
-Attempt `T0205-A002` removes the broad domain import and instead aliases only `HostState` and `HostCapacityState`. The updated source awaits another exact-head build and HostLifecycle run. T0205 remains **in_progress**.
+The test proves that the host's active HTTP generation request receives cancellation and that the host does not return a late success response. The llama.cpp server is a separate process; cancelling the client's HTTP operation does **not** prove that the server has stopped its internal CPU/GPU inference work. The backend currently has no remote compute-cancellation contract, so that stronger guarantee is not claimed.

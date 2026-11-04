@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -33,7 +34,7 @@ internal static class PeerAnnouncementClientAcceptanceTests
         await RealAnnouncementAndCapabilityDiscoveryWorkOverLoopbackAsync().ConfigureAwait(false);
         await PeriodicLeaseRenewalRefreshesTtlAndStopsAsync().ConfigureAwait(false);
         await PeerHostLifecyclePublishesAndServesTrustedPeerAsync().ConfigureAwait(false);
-        await UnknownPromptFieldIsRejectedByTheControlPlaneAsync().ConfigureAwait(false);
+        await SensitiveInferencePayloadFieldsAreRejectedByTheControlPlaneAsync().ConfigureAwait(false);
         await OversizedControlMessagesAreRejectedAsync().ConfigureAwait(false);
         Console.WriteLine("PASS: metadata-only discovery, lease configuration validation, periodic TTL renewal/expiry, unknown-field rejection and control-message bounds.");
     }
@@ -82,6 +83,22 @@ internal static class PeerAnnouncementClientAcceptanceTests
                 found[0].Addresses.Any(a => a.Contains("/quic-v1", StringComparison.Ordinal)),
                 "Discovery did not preserve the announced direct TCP and QUIC addresses.");
             Assert(found[0].SupportsCapability("backend.local"), "Declared capability metadata was not preserved.");
+            using var rawDiscoveryResponse = await httpClient.GetAsync(
+                new Uri(serviceUri, "v1/peers?capability=inference.v1")).ConfigureAwait(false);
+            Assert(rawDiscoveryResponse.StatusCode == HttpStatusCode.OK,
+                "The metadata-only discovery endpoint must return the announced peer.");
+            string rawDiscoveryJson = await rawDiscoveryResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
+            using var discoveryDocument = JsonDocument.Parse(rawDiscoveryJson);
+            string[] discoveredFields = discoveryDocument.RootElement[0]
+                .EnumerateObject()
+                .Select(property => property.Name)
+                .OrderBy(name => name, StringComparer.Ordinal)
+                .ToArray();
+            Assert(discoveredFields.SequenceEqual(["addresses", "capabilities", "expiresAtUtc", "peerId"]),
+                "The introducer response must expose only peer ID, direct addresses, capabilities and expiry.");
+            Assert(!rawDiscoveryJson.Contains("prompt", StringComparison.OrdinalIgnoreCase) &&
+                   !rawDiscoveryJson.Contains("capsule", StringComparison.OrdinalIgnoreCase),
+                "The introducer response must not contain inference prompt or context-capsule fields.");
             Assert((await client.DiscoverByCapabilityAsync("embeddings.v1").ConfigureAwait(false)).Count == 0,
                 "Discovery returned a peer that did not announce the requested capability.");
 
@@ -429,7 +446,7 @@ internal static class PeerAnnouncementClientAcceptanceTests
         return ((IPEndPoint)listener.LocalEndpoint).Port;
     }
 
-    private static async Task UnknownPromptFieldIsRejectedByTheControlPlaneAsync()
+    private static async Task SensitiveInferencePayloadFieldsAreRejectedByTheControlPlaneAsync()
     {
         await using var app = PeerAnnouncementServiceHost.Create(Array.Empty<string>(), "http://127.0.0.1:0");
         await app.StartAsync().ConfigureAwait(false);
@@ -439,23 +456,47 @@ internal static class PeerAnnouncementClientAcceptanceTests
             var serviceUri = new Uri(server.Features.Get<IServerAddressesFeature>()!.Addresses.Single(), UriKind.Absolute);
             using var httpClient = new HttpClient();
             string peerId = CreatePeerId();
-            string json = JsonSerializer.Serialize(new
+            var metadata = new Dictionary<string, object>(StringComparer.Ordinal)
             {
-                peerId,
-                addresses = new[] { $"/ip4/127.0.0.1/tcp/43003/p2p/{peerId}" },
-                capabilities = new[] { "inference.v1" },
-                expiresAtUtc = DateTimeOffset.UtcNow.AddMinutes(5),
-                prompt = "DO_NOT_STORE_OR_FORWARD"
-            });
-            using var request = new HttpRequestMessage(HttpMethod.Post, new Uri(serviceUri, "v1/peers/announcements"))
-            {
-                Content = new StringContent(json, Encoding.UTF8, "application/json")
+                ["peerId"] = peerId,
+                ["addresses"] = new[] { $"/ip4/127.0.0.1/tcp/43003/p2p/{peerId}" },
+                ["capabilities"] = new[] { "inference.v1" },
+                ["expiresAtUtc"] = DateTimeOffset.UtcNow.AddMinutes(5)
             };
-            using HttpResponseMessage response = await httpClient.SendAsync(request).ConfigureAwait(false);
-            Assert(response.StatusCode == HttpStatusCode.BadRequest,
-                "An announcement with an unrecognized prompt field must be rejected before directory storage.");
+
+            foreach (string forbiddenField in new[] { "prompt", "contextCapsule", "capsule" })
+            {
+                var attemptedAnnouncement = new Dictionary<string, object>(metadata, StringComparer.Ordinal)
+                {
+                    [forbiddenField] = forbiddenField == "contextCapsule"
+                        ? new { goal = "DO_NOT_STORE_OR_FORWARD" }
+                        : "DO_NOT_STORE_OR_FORWARD"
+                };
+                string json = JsonSerializer.Serialize(attemptedAnnouncement);
+                using var request = new HttpRequestMessage(
+                    HttpMethod.Post,
+                    new Uri(serviceUri, "v1/peers/announcements"))
+                {
+                    Content = new StringContent(json, Encoding.UTF8, "application/json")
+                };
+                using HttpResponseMessage response = await httpClient.SendAsync(request).ConfigureAwait(false);
+                Assert(response.StatusCode == HttpStatusCode.BadRequest,
+                    $"Rendezvous must reject an announcement containing the unrecognized inference field '{forbiddenField}'.");
+            }
+
+            using var discoveryResponse = await httpClient.GetAsync(
+                new Uri(serviceUri, "v1/peers?capability=inference.v1")).ConfigureAwait(false);
+            Assert(discoveryResponse.StatusCode == HttpStatusCode.OK,
+                "Metadata discovery must remain available after rejected sensitive-field announcements.");
+            string discoveryJson = await discoveryResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
+            using var discoveryDocument = JsonDocument.Parse(discoveryJson);
+            Assert(discoveryDocument.RootElement.GetArrayLength() == 0,
+                "Rejected prompt/capsule announcements must never enter the introducer's peer directory.");
         }
-        finally { await app.StopAsync().ConfigureAwait(false); }
+        finally
+        {
+            await app.StopAsync().ConfigureAwait(false);
+        }
     }
 
     private static async Task OversizedControlMessagesAreRejectedAsync()

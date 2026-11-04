@@ -3,6 +3,7 @@ package com.whitep.client.network
 import org.json.JSONArray
 import org.json.JSONObject
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertThrows
@@ -42,10 +43,13 @@ class RendezvousPeerDirectoryClientTest {
                 expiresAt = now.plusSeconds(300),
             )
         var requestedUrl: URL? = null
+        var requestedConnection: StubConnection? = null
         val client =
             client { url ->
                 requestedUrl = url
-                StubConnection(url, HttpURLConnection.HTTP_OK, body)
+                StubConnection(url, HttpURLConnection.HTTP_OK, body).also { connection ->
+                    requestedConnection = connection
+                }
             }
 
         val endpoint = runBlockingResolve(client, peerId)
@@ -58,6 +62,10 @@ class RendezvousPeerDirectoryClientTest {
             requestedUrl!!.path,
         )
         assertEquals("capability=inference.v1", requestedUrl!!.query)
+        assertEquals("GET", requestedConnection!!.requestMethod)
+        assertFalse("Directory discovery must not upload an HTTP request body.", requestedConnection!!.doOutput)
+        assertFalse(requestedUrl!!.toExternalForm().contains("prompt", ignoreCase = true))
+        assertFalse(requestedUrl!!.toExternalForm().contains("capsule", ignoreCase = true))
     }
 
     @Test

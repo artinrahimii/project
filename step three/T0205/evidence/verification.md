@@ -2,31 +2,32 @@
 
 ## Incoming edge validation
 
-1. `T0204 → T0205` — `sequencing_only`, validated. T0204 tests Android-side second-round failover; T0205 tests Windows host-side cancellation. No T0204-specific artifact/API is consumed. Evidence: T0204 report/evidence and the separate `PeerAnnouncementHostLifecycle.cs` server path.
-2. `T0195 → T0205` — `contract_or_interface_dependency`, validated. T0195 verifies `HostRequestCoordinator` cancellation and gate-release contracts that this end-to-end cancellation flow reuses. Evidence: T0195 report/evidence, `HostRequestCoordinatorFailureAcceptanceTests.cs`, `HostRequestCoordinatorTests.cs`, and `HostRequestCoordinator.cs`.
+1. `T0204 → T0205` — `sequencing_only`, validated. Android-side round-two failover and Windows-side incoming cancellation are separate acceptance paths; T0205 consumes no T0204-specific output/API.
+2. `T0195 → T0205` — `contract_or_interface_dependency`, validated. T0195 verifies the request coordinator's cancellation and operation-gate behavior used by this test.
+The original edge `type: blocks` values and conservative execution order are unchanged.
 
-Original edge `type: blocks` values and conservative order are unchanged.
+## Acceptance coverage
 
-## Runtime contract under test
+The updated authenticated loopback scenario composes the production peer lifecycle, host request coordinator, host inference session and llama.cpp server backend adapter. Its test-only HTTP handler:
+- returns a successful `/health` response;
+- captures the active `POST /v1/chat/completions` operation;
+- signals when the supplied cancellation token is cancelled;
+- signals when the generation operation exits due to cancellation.
 
-The test composes production components: authenticated `PeerAnnouncementHostLifecycle`, `HostRequestCoordinator`, `HostInferenceSession`, and `LlamaCppServerBackend`. A test-only `HttpMessageHandler` supplies the local backend's health response and blocks the active generation HTTP request until its cancellation token is signalled.
+The acceptance test sends a matching remote `CancelRequest` and asserts:
+- the HTTP generation operation observed cancellation and stopped at the handler boundary;
+- the response is correlated to request ID, attempt ID, round ID and authenticated host identity;
+- response outcome is `CANCELLED`, output text is empty and no late successful output is delivered;
+- the coordinator's single-request gate is released.
 
-Acceptance assertions:
-- the authenticated host receives the inference request and forwards it through coordinator/session/backend;
-- the fake HTTP backend confirms that `POST /v1/chat/completions` is active;
-- a matching authenticated `CancelRequest` (same request ID and attempt ID) is accepted;
-- cancellation reaches the HTTP handler and that generation operation exits due to its cancellation token;
-- the peer receives a correctly correlated `CANCELLED` response with empty output, not a late success;
-- the HostRequestCoordinator releases its single-request gate.
+## Exact-head evidence
 
-## Backend limitation
+Commit `a3e50e03f105e54ad01a0d97d04b9436ebcb6dbd` (`V 3.0.940`):
+- Product Build run `41915992536`, Host Lifecycle job `126875674392`: succeeded. `PeerAnnouncementClientAcceptanceTests.RunAsync` completed, so the updated authenticated host lifecycle/cancellation assertions ran without failure.
+- Step Three Quality Gate run `41915992559`, job `126875673317`: succeeded.
 
-The test proves cancellation of the host's HTTP request operation. It does not prove the separate llama.cpp server process stops internal CPU/GPU work after the client request is aborted; this backend exposes no remote compute-cancellation contract.
+Attempt A001 is retained as a compile failure (CS0104 ambiguous `HostStatus`); A002 uses explicit domain type aliases and passed CI.
 
-## Execution state
+## Limitation
 
-Code and evidence are prepared in attempt `T0205-A001`. Runtime verification is pending. T0205 remains `in_progress`.
-
-## First CI compile result
-
-Product Build run `41915532966`, Host Lifecycle job `126874055063` failed before runtime execution with CS0104: `HostStatus` was ambiguous between the domain model and the Protobuf contract after a broad domain namespace import. The attempt is recorded as failed; no cancellation behavior pass is claimed. Attempt `T0205-A002` uses explicit type aliases for the two needed domain types.
+This test confirms cancellation of the host-side HTTP request and suppression of late response delivery. It does not establish that a separate remote llama.cpp server process stops its internal CPU/GPU computation after the HTTP client aborts.
