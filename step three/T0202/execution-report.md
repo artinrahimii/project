@@ -112,3 +112,14 @@ This is a source-integrity correction only. It does not change the LAN test resu
 - First attempt of the Android job had 17 Robolectric class setup I/O failures at `MavenArtifactFetcher.java:130`; the retried Android JVM test step passed. This is recorded as a recovered CI attempt, not an application assertion regression.
 
 **Acceptance boundary:** T0202 remains blocked. The manual physical-device Android-to-Windows LAN workflow was not run; no Windows self-hosted `whitep-lan` runner plus separate Android device was available. No authenticated LAN request/response artifact exists.
+
+## Final-stage scheduling decision — 2026-11-04T20:41:56.515Z
+
+**Current status: deferred_final (not done).** At the user's direction, the physical Android-to-Windows non-loopback LAN acceptance is removed from ordinary execution and moved to the final external-acceptance queue. This is a scheduling decision only; no new LAN test was run and no acceptance pass is claimed.
+
+- Final queue order: T0202 (physical Android-to-Windows LAN), T0230 (public HTTPS Rendezvous deployment), then T0128 (independent-node end-to-end acceptance).
+- The required Windows self-hosted runner labelled `whitep-lan` and a physical Android handset on the same RFC1918 LAN are still required. At final stage, run `.github/workflows/android-windows-lan-acceptance.yml` and inspect the redacted authenticated request/response evidence, including disconnect behavior.
+- The incoming edges from T0201 and T0195 and the outgoing edge to T0203 remain intact; all three were verified as `sequencing_only` with `validation_status: validated`. No hard dependency or contract/interface dependency is being bypassed.
+- T0202 remains incomplete and excluded from the completed-task count until the real LAN acceptance passes.
+
+The graph records the deferral reason, start condition, final-stage placement, and execution-order change. Historical attempts and their original results are preserved.
