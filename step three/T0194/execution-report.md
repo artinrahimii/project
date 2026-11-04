@@ -49,3 +49,12 @@
 - The preceding A003 commit [f1a43e416b85b5994eec14184ec7f55bfc935746](https://github.com/artinrahimii/project/commit/f1a43e416b85b5994eec14184ec7f55bfc935746) had already wrapped the Room migration invocation and two long ViewModel expressions. Its exact-head workflows are queued as of this report update.
 - A004 is a formatting-only correction; it does not change the lifecycle state model, Room schema, encryption boundary, network behavior or dependency edges.
 - **Verification state:** no KtLint, APK, Android JVM or instrumentation pass is claimed for A004. Exact-head workflows are required before T0194 can move to `done`.
+
+## T0194-A004 commit identification and A005 import-order correction
+
+- The A004 formatting changes were committed in [`V 3.0.913`](https://github.com/artinrahimii/project/commit/698308ad00a5d2f3768f09c9a1fb67653ae1dc64); the graph attempt entry is reconciled to this commit SHA.
+- An independent review against the repository's `.editorconfig` setting `ktlint_code_style=ktlint_official` found that A004's import sorter was case-insensitive. The official KtLint ordering is lexicographic within each import group, with capital letters before lower-case letters; therefore some same-package imports still had the wrong order.
+- A005 reorders imports in `MainActivity.kt` and `RequestViewModel.kt` using a case-sensitive lexicographic comparison, with the configured `java.`, `javax.`, and `kotlin.` groups at the end and aliases last. Source-level order checks and the 120-character limit check passed in the preparation script; this is not a substitute for KtLint itself.
+- A005 changes imports only. It does not change runtime statements, request lifecycle behavior, database schema, protocols, or privacy boundaries.
+- GitHub Actions for A004 commit `698308ad00a5d2f3768f09c9a1fb67653ae1dc64` (Quality `41877738825`, Product `41877739005`, Rendezvous `41877738930`) remained `queued` on inspection; no test pass is inferred.
+- **Verification state:** A005 remains partial until exact-head Quality, Android KtLint, APK build, JVM and SQLCipher/Room instrumentation results are available.

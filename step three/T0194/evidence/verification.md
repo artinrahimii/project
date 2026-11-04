@@ -68,3 +68,10 @@ The exact-head KtLint log for run 41876620048 identified remaining main-source i
 
 A004 is formatting-only. CI has not yet verified these changes; APK/JVM/instrumentation acceptance remains pending.
 
+## A005 — case-sensitive KtLint import-order correction
+
+- Re-read `.editorconfig` from the A004 base: `ktlint_code_style=ktlint_official`, Kotlin `max_line_length=120`.
+- The official KtLint reference says imports in a group are sorted alphabetically with capital letters before lower-case letters, and the configured official layout places `java.`, `javax.`, and `kotlin.` imports at the end. The previous case-insensitive sort did not satisfy that rule for names sharing the same package prefix.
+- A005 re-sorts the full import blocks in `MainActivity.kt` and `RequestViewModel.kt` with case-sensitive lexical order and configured trailing groups.
+- Local source check: both import lists equal the comparator's expected order; neither file contains a line longer than 120 characters. No KtLint execution is claimed.
+- A004's CI runs on `698308ad00a5d2f3768f09c9a1fb67653ae1dc64` were queued when checked; A005 must be validated on its exact new commit.
