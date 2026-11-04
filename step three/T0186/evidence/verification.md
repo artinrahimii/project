@@ -1,21 +1,24 @@
-# T0186 — شواهد اجرا، شکست CI و اصلاح دفتر گراف
+# T0186 — شواهد نهایی پذیرش
 
-## Snapshot معتبر
-- Commit: `ea0edc3db0addf1f46c38663119b5ab33d8c3fe5`، شاخه main، پیام V 3.0.874.
-- Git tree: `910a6c42f7edfed88a231dde7bd6676df3333de6`.
-- Graph blob از tree همان commit استخراج و کامل دریافت شد؛ JSON معتبر با ۲۳۰ task و ۴۲۲ edge.
-- وضعیت snapshot: ۱۸۴ done، ۲ deferred_final، ۱ in_progress، ۴۳ not_started.
+## نسخه و منبع
+- مخزن: artinrahimii/project، شاخه main.
+- نسخهٔ آزمون‌شده: `V 3.0.875`، commit `14d232be48af41a71dee4acf4bebc47467280895`.
+- مسیر گراف: `step three/project-graph.md`; tree دقیق commit بررسی شد.
+- گراف: ۲۳۰ task با شناسه‌های T0001 تا T0230 و ۴۲۲ edge؛ JSON کامل parse شد.
+- وضعیت‌های پیش از تکمیل T0186: ۱۸۴ done، ۲ deferred_final، ۱ in_progress، ۴۳ not_started.
 
-## CI V 3.0.874
-- Workflow quality run `41816319735`, job `126527849431`.
-- ۳۷۱ آزمون Python: موفق.
-- `python -m compileall -q tools tests`: موفق.
-- `python tools/graph_guard.py "step three/project-graph.md"`: ناموفق با `FAILED_ATTEMPT_COUNT_MISMATCH: T0186: summary=1, history=0`.
-- علت: guard تعداد attemptهایی را می‌شمارد که `result == failed`؛ دو تلاش ثبت‌شدهٔ T0186 هر دو `partial` هستند. بنابراین مقدار صحیح `failed_attempt_count` صفر است.
-- Container run `41816319760`: موفق.
-- Android job `126527849590`، Windows job `126527967724` و HostLifecycle job `126527852877` هنگام ثبت این مدخل هنوز در حال اجرا بودند.
+## پذیرش مستقیم T0186
+- Quality workflow `41816590858`, job `126528767522`: موفق؛ ۳۷۱ آزمون Python، compileall و graph_guard (۰ خطا، ۱ هشدار metadata مربوط به T0001).
+- Product workflow `41816590890`:
+  - Windows job `126528767063`: موفق؛ C# formatting، WPF build، Protobuf generation و startup smoke test.
+  - HostLifecycle job `126528767381`: موفق؛ آزمون‌های unit/integration از جمله assertionهای متن disclosure.
+  - Android job `126528768198`: KtLint، assembleDebug، merged APK permission verification و Android JVM unit tests همگی موفق شدند.
+- Container workflow `41816590836`: موفق.
 
-## اصلاح A003
-- `execution_summary.failed_attempt_count` به صفر تغییر کرد تا با تعداد history entryهای دارای `result=failed` منطبق باشد.
-- شکست graph guard و اقدام اصلاحی در history ثبت شد؛ status وظیفه همچنان in_progress است.
-- بررسی مجدد validator باید روی commit بعدی main انجام شود.
+## خروجی اجرایی
+- Android trust dialog قبل از ذخیرهٔ اعتماد، PeerId و مشاهده‌پذیری prompt/capsule در میزبان را افشا می‌کند؛ trust به‌تنهایی درخواست را ارسال نمی‌کند.
+- Windows قبل از ساخت/شروع سرویس peer host رضایت مستقل با default No می‌گیرد؛ رد consent سرویس را start نمی‌کند.
+- کلاس متن مشترک Windows، تست‌های source-contract و HostLifecycle، مستندات امنیت و پوشهٔ شواهد وجود دارند.
+
+## محدودیت خارج از معیار T0186
+در زمان ثبت مدخل، product workflow هنوز Android Keystore instrumentation را اجرا می‌کرد؛ این گیت به T0183/T0184 مربوط است. بنابراین T0186 تکمیل شده، اما کل workflow محصول یا کل پروژه تکمیل‌شده اعلام نمی‌شود.

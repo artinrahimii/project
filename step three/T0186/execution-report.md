@@ -1,14 +1,20 @@
 # T0186 — رضایت آگاهانه و هشدار حریم خصوصی پیش از اعتماد به همتا
 
-- **وضعیت:** در حال اجرا؛ کد رابط و متن رضایت پیاده‌سازی شده، اما پذیرش نهایی CI هنوز کامل نیست.
-- **نسخهٔ مبنا:** main در `V 3.0.874`، commit `ea0edc3db0addf1f46c38663119b5ab33d8c3fe5`.
-- **پیش‌نیازها:** T0185 و T0177 تکمیل‌شده و بررسی شده‌اند.
-- **یال‌ها:** دو یال ورودی به `sequencing_only` / `validated` طبقه‌بندی شدند؛ `blocks` و ترتیب اصلی حفظ شد.
-- **خروجی Android:** هشدار peer-specific قبل از ثبت اعتماد، مشاهده‌پذیری prompt و context capsule پس از رمزگشایی انتقال و عدم ارسال خودکار هنگام ذخیرهٔ trust را توضیح می‌دهد.
-- **خروجی Windows:** پیش از ساخت/شروع listener میزبان همتا، صاحب دستگاه باید هشدار با پیش‌فرض No را بپذیرد؛ رد آن toggle را خاموش نگه می‌دارد و سرویس را ایجاد نمی‌کند.
-- **CI نسخهٔ V 3.0.873:** Windows WPF build و HostLifecycle tests موفق؛ container و real local llama.cpp integration موفق؛ Android KtLint و quality tests شکست داشتند.
-- **CI نسخهٔ V 3.0.874:** Python test suite با ۳۷۱ آزمون موفق شد؛ compileall موفق شد؛ container build/smoke موفق شد. graph guard به‌علت اختلاف `failed_attempt_count` با تعداد attemptهایی که `result=failed` دارند شکست خورد. هر دو تلاش T0186 با `result=partial` ثبت شده‌اند، پس شمار درست failed_attempt_count صفر است.
-- **اصلاح گراف A003:** failed_attempt_count به صفر اصلاح شد و خطای validator با شواهد ثبت شد. آزمون graph guard روی commit بعدی باید آن را تأیید کند.
-- **در انتظار:** Android product build، WPF و HostLifecycle jobهای V 3.0.874 هنگام ثبت این گزارش هنوز در حال اجرا بودند.
-- **محدودیت:** متن رضایت، تضمین رفتار میزبان/کلاینت مقابل یا حذف log و payload از کنترل سیستم‌عامل و نرم‌افزار ثالث نیست.
-- **ادامه:** ابتدا exact-head graph guard و jobهای باقی‌ماندهٔ محصول را تأیید کن؛ فقط پس از موفقیت همهٔ معیارهای مرتبط، T0186 را done کن.
+<badge>تکمیل‌شده</badge>
+
+- **وضعیت:** تکمیل‌شده بر اساس معیارهای مستقیم پذیرش و شواهد CI روی `V 3.0.875`، commit `14d232be48af41a71dee4acf4bebc47467280895`.
+- **پیش‌نیازها:** T0185 و T0177 تکمیل‌شده و بررسی شدند.
+- **بازبینی یال‌ها:** T0185 → T0186 و T0177 → T0186 به `sequencing_only` / `validated` تغییر طبقه‌بندی یافتند؛ نوع `blocks` و ترتیب اصلی حفظ شد.
+- **Android:** هشدار پیش از ذخیرهٔ اعتماد، PeerId دقیق را نشان می‌دهد؛ صریحاً افشا می‌کند که میزبان پس از رمزگشایی انتقال prompt و context capsule را می‌خواند؛ ذخیرهٔ trust به‌خودی‌خود payload ارسال نمی‌کند و ارسال فقط با اقدام جداگانهٔ کاربر است.
+- **Windows:** پیش از ساخت یا شروع `PeerAnnouncementHostLifecycle`، رضایت صاحب دستگاه با پیش‌فرض No اخذ می‌شود. رد هشدار toggle را خاموش نگه می‌دارد و listener/lease شروع نمی‌شود؛ تأیید PeerId همچنان مستقل است.
+- **CI موفق:**
+  - Python quality suite: ۳۷۱ آزمون موفق، شامل تست‌های source-contract رضایت.
+  - Python compileall: موفق.
+  - Graph guard: ۲۳۰ وظیفه، ۴۲۲ یال، صفر خطا؛ یک هشدار قدیمی T0001 به‌عنوان metadata حفظ شد.
+  - Windows: C# formatting، WPF build، generated Protobuf validation و startup smoke موفق.
+  - HostLifecycle unit/integration tests: موفق.
+  - Android: KtLint، ساخت debug APK، verifier مجوزهای APK ادغام‌شده و Android JVM unit tests موفق.
+  - Rendezvous container build/smoke: موفق.
+- **محدودیت مهم:** در زمان ثبت این وضعیت، کل product workflow هنوز یک Android Keystore instrumentation job جداگانه را اجرا می‌کرد؛ آن آزمون مربوط به کنترل‌های T0183/T0184 است، نه رضایت T0186. این گزارش به‌معنای تکمیل کل workflow یا کل محصول نیست.
+- **فایل‌ها:** کد disclosure در Shared.Security، جریان Windows و Android، آزمون‌های Python و HostLifecycle، docs/security.md و شواهد این پوشه.
+- **وظیفهٔ منطقی بعدی:** T0187 — آزمون جست‌وجوی log و فایل‌های موقت برای نبود prompt، capsule و اسرار. یال خروجی T0186 → T0187 هنوز `unreviewed` است و پیش از اجرای T0187 باید با شواهد بررسی شود.
