@@ -6,6 +6,7 @@ ROOT = Path(__file__).resolve().parents[1]
 ANDROID = ROOT / "src/Client.Android/app/src/main/java/com/whitep/client"
 ANDROID_TESTS = ROOT / "src/Client.Android/app/src/test/java/com/whitep/client"
 SCREEN = (ANDROID / "ui/conversations/ConversationDetailScreen.kt").read_text(encoding="utf-8")
+REQUEST_SCREEN = (ANDROID / "MainActivity.kt").read_text(encoding="utf-8")
 PRESENTATION = (ANDROID / "ui/request/RequestStatusPresentation.kt").read_text(encoding="utf-8")
 PRESENTATION_TEST = (
     ANDROID_TESTS / "ui/request/RequestStatusPresentationTest.kt"
@@ -42,6 +43,15 @@ class AndroidRequestStatusContractTests(unittest.TestCase):
         self.assertIn("fun observeForConversation(conversationId: String): Flow<List<RequestStateEntity>>", ENTITY)
         self.assertIn("allPersistedRequestStatusesCanBeReadFromRoomInCreationOrder", DATABASE_TEST)
         self.assertNotIn("PersistedRequestStatus.values()", SCREEN)
+
+    def test_live_network_and_inference_status_displays_structured_state_not_free_form_messages(self):
+        self.assertIn("toNetworkInferenceStatusPresentation()", REQUEST_SCREEN)
+        self.assertIn("statusPresentation.networkStatus", REQUEST_SCREEN)
+        self.assertIn("statusPresentation.inferenceStatus", REQUEST_SCREEN)
+        self.assertNotIn("requestState.networkStatusMessage", REQUEST_SCREEN)
+        self.assertNotIn("requestState.hostAvailabilityMessage", REQUEST_SCREEN)
+        self.assertNotIn("networkStatusMessage", PRESENTATION)
+        self.assertNotIn("hostAvailabilityMessage", PRESENTATION)
 
 
 if __name__ == "__main__":

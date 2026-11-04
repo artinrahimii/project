@@ -741,7 +741,7 @@ public partial class MainWindow : Window
         BackendCapabilityStatus.Text = status.State switch
         {
             HostState.Ready => "Backend: available — the configured local llama.cpp endpoint passed its health check.",
-            HostState.Error => "Backend: unavailable or not ready — " + status.Message,
+            HostState.Error => "Backend: unavailable or not ready — details are hidden.",
             HostState.Starting => "Backend: checking the configured local endpoint…",
             HostState.Busy => "Backend: available — one local inference request is running.",
             _ => "Backend: not checked or disconnected."

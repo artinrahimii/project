@@ -1063,11 +1063,12 @@ Console.WriteLine("PASS: protocol request, capsule, prompt, response, HTTP-body 
 
 
  // T0046: status presentation must derive from the observed host/backend state.
-var presentedStopped = new WhiteP.Host.Domain.HostStatus(HostState.Stopped, "Host stopped.");
-var presentedStarting = new WhiteP.Host.Domain.HostStatus(HostState.Starting, "Checking local inference backend.");
-var presentedReady = new WhiteP.Host.Domain.HostStatus(HostState.Ready, "Local inference backend is ready.");
-var presentedBusy = new WhiteP.Host.Domain.HostStatus(HostState.Busy, "Generating locally; one request at a time.");
-var presentedError = new WhiteP.Host.Domain.HostStatus(HostState.Error, "Local inference connection failed.");
+var statusMessageContent = "PRIVATE_PROMPT_AND_INFERENCE_RESPONSE";
+var presentedStopped = new WhiteP.Host.Domain.HostStatus(HostState.Stopped, statusMessageContent);
+var presentedStarting = new WhiteP.Host.Domain.HostStatus(HostState.Starting, statusMessageContent);
+var presentedReady = new WhiteP.Host.Domain.HostStatus(HostState.Ready, statusMessageContent);
+var presentedBusy = new WhiteP.Host.Domain.HostStatus(HostState.Busy, statusMessageContent);
+var presentedError = new WhiteP.Host.Domain.HostStatus(HostState.Error, statusMessageContent);
 Assert(HostStatusPresentation.FormatBackendStatus(presentedReady).Contains("Ready", StringComparison.Ordinal), "Backend status presentation must use the actual Ready state.");
 Assert(HostStatusPresentation.FormatNetworkStatus(presentedStopped).Contains("not checked", StringComparison.Ordinal), "Stopped state must not claim an endpoint is connected.");
 Assert(HostStatusPresentation.FormatNetworkStatus(presentedStarting).Contains("checking backend health", StringComparison.Ordinal), "Starting state must report a live health check.");
@@ -1075,7 +1076,14 @@ Assert(HostStatusPresentation.FormatNetworkStatus(presentedReady).Contains("heal
 Assert(HostStatusPresentation.FormatNetworkStatus(presentedBusy).Contains("inference is in progress", StringComparison.Ordinal), "Busy state must be visible while an inference request is running.");
 Assert(HostStatusPresentation.FormatNetworkStatus(presentedError).Contains("status: error", StringComparison.Ordinal), "Error state must not be presented as a healthy endpoint.");
 Assert(HostStatusPresentation.FormatNetworkStatus(presentedReady).Contains("Direct peer-to-peer transport: not implemented", StringComparison.Ordinal), "The UI must not imply the unimplemented P2P transport is available.");
-Console.WriteLine("PASS: backend and local-endpoint status presentation reflects all HostState values and discloses unavailable P2P transport.");
+foreach (var presentedStatus in new[] { presentedStopped, presentedStarting, presentedReady, presentedBusy, presentedError })
+{
+    var backendStatusText = HostStatusPresentation.FormatBackendStatus(presentedStatus);
+    var networkStatusText = HostStatusPresentation.FormatNetworkStatus(presentedStatus);
+    Assert(!backendStatusText.Contains(statusMessageContent, StringComparison.Ordinal), "Backend status must not expose the HostStatus message content.");
+    Assert(!networkStatusText.Contains(statusMessageContent, StringComparison.Ordinal), "Network status must not expose the HostStatus message content.");
+}
+Console.WriteLine("PASS: backend and local-endpoint status uses structured state only, excludes HostStatus message content, and discloses unavailable P2P transport.");
 
  HostErrorPresentationAcceptanceTests.Run();
 

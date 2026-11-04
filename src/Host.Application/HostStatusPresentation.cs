@@ -11,7 +11,15 @@ public static class HostStatusPresentation
     public static string FormatBackendStatus(HostStatus status)
     {
         ArgumentNullException.ThrowIfNull(status);
-        return $"Backend — {status.State}: {status.Message}";
+        return status.State switch
+        {
+            HostState.Stopped => "Backend — stopped.",
+            HostState.Starting => "Backend — checking the local endpoint.",
+            HostState.Ready => "Backend — ready.",
+            HostState.Busy => "Backend — inference in progress.",
+            HostState.Error => "Backend — unavailable; details are hidden.",
+            _ => "Backend — status unknown."
+        };
     }
 
     public static string FormatNetworkStatus(HostStatus status)

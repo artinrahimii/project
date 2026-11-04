@@ -48,6 +48,7 @@ import com.whitep.client.ui.navigation.ClientNavigation
 import com.whitep.client.ui.request.RequestRunStatus
 import com.whitep.client.ui.request.RequestViewModel
 import com.whitep.client.ui.request.hostResponseCards
+import com.whitep.client.ui.request.toNetworkInferenceStatusPresentation
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -217,6 +218,7 @@ private fun requestScreen(
     requestViewModel: RequestViewModel = viewModel(),
 ) {
     val requestState by requestViewModel.uiState.collectAsState()
+    val statusPresentation = requestState.toNetworkInferenceStatusPresentation()
     val context = LocalContext.current
     var rendezvousUrl by rememberSaveable { mutableStateOf("") }
     var modelId by rememberSaveable { mutableStateOf("") }
@@ -334,10 +336,11 @@ private fun requestScreen(
             }
         }
         Text(
-            "Request status: " +
-                requestState.runStatus.name
-                    .lowercase()
-                    .replace('_', ' '),
+            "Network status: ${statusPresentation.networkStatus}",
+            style = MaterialTheme.typography.titleMedium,
+        )
+        Text(
+            "Inference status: ${statusPresentation.inferenceStatus}",
             color =
                 if (requestState.runStatus == RequestRunStatus.FAILED) {
                     MaterialTheme.colorScheme.error
@@ -363,12 +366,6 @@ private fun requestScreen(
                     },
                 )
             }
-        }
-        requestState.networkStatusMessage?.let { message ->
-            Text(message, style = MaterialTheme.typography.bodyMedium)
-        }
-        requestState.hostAvailabilityMessage?.let { message ->
-            Text(message, style = MaterialTheme.typography.bodyMedium)
         }
         hostResponseCards(responses = requestState.hostResponses)
         OutlinedButton(onClick = onBack, modifier = Modifier.fillMaxWidth()) {

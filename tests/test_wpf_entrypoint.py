@@ -82,6 +82,9 @@ class WpfEntryPointTests(unittest.TestCase):
         self.assertIn("var generationTask = _session.GenerateAsync", WINDOW_CODE)
         presenter = (ROOT / "src/Host.Application/HostStatusPresentation.cs").read_text(encoding="utf-8")
         self.assertIn("Direct peer-to-peer transport: not implemented in this build.", presenter)
+        self.assertNotIn("status.Message", presenter)
+        self.assertNotIn("status.Message", WINDOW_CODE)
+        self.assertIn("details are hidden", presenter)
 
     def test_user_visible_errors_use_safe_mapping_not_exception_details(self):
         self.assertIn("HostErrorPresentation.ToUserMessage(exception)", WINDOW_CODE)
