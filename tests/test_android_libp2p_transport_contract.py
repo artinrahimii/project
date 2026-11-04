@@ -29,9 +29,9 @@ class AndroidLibp2pTransportContractTests(unittest.TestCase):
 
     def test_robolectric_runtime_sdk_jars_use_configurable_maven_central_mirror(self):
         build = APP_BUILD.read_text(encoding="utf-8")
-        self.assertIn(
-            'providers.gradleProperty("robolectricDependencyRepoUrl")',
+        self.assertRegex(
             build,
+            r'providers\s*\.gradleProperty\("robolectricDependencyRepoUrl"\)',
         )
         self.assertIn(
             'providers.environmentVariable("ROBOLECTRIC_DEPENDENCY_REPO_URL")',

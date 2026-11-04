@@ -1,34 +1,35 @@
 # T0207 — شواهد راستی‌آزمایی
 
-## نسخهٔ منبع و یکپارچگی گراف پایه
+## نسخهٔ منبع و صحت گراف پایه
 
 - مخزن/شاخه: `artinrahimii/project` / `main`
-- commit پایهٔ این به‌روزرسانی: `37ed932657824ecb2eac6e532f5f8a5bb766d764` (`V 3.0.945`)
-- tree همان commit: `9058689ce8ab083aebe2fc90c91f53a957f5e036`
+- commit پایه: `5f45fc2a72b9ad382d5823c0568686aeb07ef3c6` (`V 3.0.946`)
+- tree پایه: `b03afff4f4d7e19b069c3e099dd3596e16274d0a`
 - مسیر گراف: `step three/project-graph.md`
-- Blob گراف پایه: `a0d7e556f2f48b8165028074fff97b93570765d7`
-- اندازهٔ محتوای اصلی UTF-8: 3,697,173 بایت؛ طول متن decode‌شده: 3,568,728 نویسه.
-- SHA-1 شیء Git با سربرگ `blob 3697173\0` و تمام بایت‌های اصلی محاسبه شد و با Blob فوق مطابقت داشت.
-- JSON کامل parse شد: ۲۳۰ task node، ۴۲۲ edge، بدون شناسهٔ تکراری و بدون endpoint معلق.
+- Blob گراف پایه: `9224da6fec457ca0a53e2d04a8c3cc8808de5f19`
+- اندازهٔ UTF-8 محتوای اصلی: 3,700,412 بایت؛ طول متن decode‌شده: 3,571,953 نویسه.
+- SHA-1 شیء Git با سربرگ `blob 3700412\0` و کل بایت‌های اصلی محاسبه شد؛ با Blob درخت همان commit مطابق بود.
+- JSON کامل parse شد: ۲۳۰ وظیفه، ۴۲۲ یال، صفر شناسهٔ تکراری و صفر endpoint حل‌نشده.
 
-## نتایج مرتبط
+## CI دقیق
 
-- [Product Build 41921424399، commit 943](https://github.com/artinrahimii/project/actions/runs/41921424399): هر سه job موفق؛ ویندوز ۱۶/۱۶، HostLifecycle ۹/۹، اندروید ۲۸/۲۸.
-- [Quality Gate 41921424419](https://github.com/artinrahimii/project/actions/runs/41921424419): موفق.
-- [Rendezvous 41921424425](https://github.com/artinrahimii/project/actions/runs/41921424425): موفق.
-- Product Build روی commit 944 (`41922371821`): ویندوز و HostLifecycle موفق؛ Android JVM پنج خطای Robolectric setup به‌دلیل HTTP 429 و ۱۸۶ تست موفق.
-- Product Build روی commit 945 (`41924457380`):
-  - Windows job `126905065862`: موفق، ۱۶/۱۶.
-  - HostLifecycle job `126905065861`: موفق، ۹/۹.
-  - Android job `126905065423`: ناموفق در KtLint: `src/Client.Android/app/build.gradle.kts:13:14 Expected newline before '.'`; مراحل بعدی Android اجرا نشدند.
-- [Quality Gate 41924457621](https://github.com/artinrahimii/project/actions/runs/41924457621): شکست در graph guard با `FAILED_ATTEMPT_COUNT_MISMATCH`. validator به‌طور مشخص تعداد رکوردهای تاریخچه با `result == "failed"` را با summary مقایسه می‌کند؛ رکورد A002 اکنون مطابق نتیجهٔ CI `failed` است.
+- Product Build run `41921424399` روی commit 943: هر سه job موفق؛ Android ۲۸/۲۸، Windows ۱۶/۱۶، HostLifecycle ۹/۹.
+- Quality Gate `41921424419` و Rendezvous `41921424425`: موفق.
+- Product Build روی commit 944، run `41922371821`: پنج خطای Robolectric setup ناشی از HTTP 429؛ ۱۸۶ تست از ۱۹۱ موفق.
+- Product Build روی commit 945، run `41924457380`: ویندوز ۱۶/۱۶ و HostLifecycle ۹/۹ موفق؛ Android در KtLint با `Expected newline before '.'` شکست.
+- Quality Gate روی commit 945، run `41924457621`: خطای شمارندهٔ تلاش ناموفق در graph guard.
+- Quality Gate روی commit 946، run `41925547826`: ۴۰۷ از ۴۰۸ تست Python موفق؛ assertion تست mirror به‌علت تفاوت شکل تک‌خطی/چندخطی شکست.
+- Product Build روی commit 946، run `41925547942`: Windows و HostLifecycle موفق؛ در آخرین بررسی Android از KtLint عبور کرده و APK assembly در جریان بود.
+- Rendezvous روی commit 946، run `41925547878`: موفق.
 
-## اصلاح حاضر
+## فایل‌های اصلاح‌شده
 
-- فایل اصلاح‌شده: `src/Client.Android/app/build.gradle.kts`.
-- زنجیرهٔ providers اکنون با خط ادامهٔ جداگانه آغاز می‌شود تا قاعدهٔ KtLint برای newline پیش از نقطه رعایت شود.
-- Blob جدید فایل Kotlin DSL: `7b8324063e7244da8ca79d148bdd2641c9520209`.
-- تلاش A002 به‌عنوان شکست واقعی ثبت شده و A003 برای اصلاح/بازآزمایی فعال است.
-- Blob جدید گراف در همین commit اعمال خواهد شد؛ وضعیت task همچنان `in_progress` باقی می‌ماند.
+- `src/Client.Android/app/build.gradle.kts`: mirror runtime Robolectric قابل تنظیم؛ زنجیرهٔ providers مطابق KtLint.
+- `tests/test_android_libp2p_transport_contract.py`: بررسی regex برای اجازهٔ whitespace در زنجیرهٔ چندخطی providers.
+- `step three/T0207/execution-report.md`
+- `step three/T0207/evidence/verification.md`
+- `step three/project-graph.md`: تاریخچهٔ تلاش‌های A001 تا A004؛ A002 با `result=failed` و failed_attempt_count=1 ثبت شده است. T0207 هنوز `in_progress`.
 
-**عدم ادعای موفقیت:** اصلاح mirror و تغییر قالب‌بندی هنوز روی runner اجرا نشده‌اند. پذیرش نهایی T0207 منوط به سبزشدن Quality Gate و هر سه job Product Build روی commit جدید است.
+## عدم ادعای تکمیل
+
+تغییر تست در commit جاری هنوز CI نشده است. برای تکمیل، Quality Gate باید همهٔ تست‌های Python و هر دو graph guard را پاس کند؛ Product Build نیز باید clean build، lint، APK، JVM tests، Android Keystore instrumentation، generated Protobuf و artifact uploads را روی همان commit به پایان موفق برساند.
