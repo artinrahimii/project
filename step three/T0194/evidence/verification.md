@@ -108,3 +108,11 @@ A004 is formatting-only. CI has not yet verified these changes; APK/JVM/instrume
 - A007 aligns both test builders to the existing production chain layout. The change is formatting-only; no schema or behavior change is intended.
 - Exact-head KtLint and all Android build/test steps remain pending.
 
+## A007 commit SHA and exact-head verification state
+
+- A007 is committed at `52b6ea75889914cdf4f17782baade2a9804948d9` (`V 3.0.917`). The previously empty graph `commit_sha` is reconciled.
+- The prior .916 Android KtLint log specified 28-space argument continuation and 24-space method-chain continuation/close columns. The two builder calls in .917 have been inspected and match those columns.
+- GitHub Actions returned no workflow run/check suite for exact SHA `52b6ea75889914cdf4f17782baade2a9804948d9` when queried. No KtLint, APK, JVM or instrumentation success is asserted for .917.
+- Windows WPF and Host Lifecycle jobs from .916 passed; Android job failed KtLint. This does not establish Android acceptance.
+- T0194 remains in_progress, and T0195 remains not_started.
+

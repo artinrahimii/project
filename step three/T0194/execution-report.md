@@ -96,3 +96,12 @@
 - A007 aligns both builder argument lists and the closing `addMigrations` calls with the existing production pattern. This changes formatting only.
 - No KtLint result for A006/A007 is claimed here. The new exact-head Product Build must confirm the formatting and then continue through APK, JVM and Keystore instrumentation before T0194 can be accepted.
 
+## T0194-A007 commit reconciliation and CI availability
+
+- A007 source formatting and its report/evidence/graph changes are committed on `main` in [`V 3.0.917`](https://github.com/artinrahimii/project/commit/52b6ea75889914cdf4f17782baade2a9804948d9); the A007 graph `commit_sha` now records this exact SHA.
+- The previous Android KtLint log for Product run [41881677064](https://github.com/artinrahimii/project/actions/runs/41881677064), job `126755446818`, reported the continuation columns required in `ClientDatabaseTest.kt`: 28 spaces for arguments and 24 spaces for method-chain closing/continuation lines.
+- Direct source inspection at V 3.0.917 confirms both Room builder blocks now use these exact indentation columns. This is not a KtLint execution result.
+- GitHub Actions queries for exact commit `52b6ea75889914cdf4f17782baade2a9804948d9` returned no workflow runs and no check runs. Therefore no exact-head KtLint, APK, JVM or instrumentation result can be claimed for V 3.0.917.
+- The previous V 3.0.916 Android Product job failed at KtLint on indentation; Windows WPF and Host Lifecycle jobs for that commit passed. A007 is retained as `partial`, not marked `done`.
+- **Next gate:** obtain a real exact-head Android product workflow and validate KtLint, APK, merged permissions, JVM tests and SQLCipher/Keystore instrumentation. T0194 stays `in_progress`.
+
