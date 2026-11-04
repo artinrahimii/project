@@ -27,3 +27,9 @@ This proves the host-side HTTP request operation is cancelled and the host suppr
 ## Verification
 
 Source changes and edge classifications are prepared. The HostLifecycle runtime suite, Product Build, and Step Three Quality Gate have not yet run on this revision. T0205 remains `in_progress` until the actual acceptance test passes in CI.
+
+## CI feedback and correction
+
+Attempt `T0205-A001` did not reach runtime tests. The exact-head HostLifecycle job `126874055063` failed compilation with CS0104 at source lines 256 and 324 because adding `using WhiteP.Host.Domain;` made the domain `HostStatus` ambiguous with the existing Protobuf `WhiteP.Shared.Contracts.V1.HostStatus`.
+
+Attempt `T0205-A002` removes the broad domain import and instead aliases only `HostState` and `HostCapacityState`. The updated source awaits another exact-head build and HostLifecycle run. T0205 remains **in_progress**.

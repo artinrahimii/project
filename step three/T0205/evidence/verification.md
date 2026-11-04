@@ -26,3 +26,7 @@ The test proves cancellation of the host's HTTP request operation. It does not p
 ## Execution state
 
 Code and evidence are prepared in attempt `T0205-A001`. Runtime verification is pending. T0205 remains `in_progress`.
+
+## First CI compile result
+
+Product Build run `41915532966`, Host Lifecycle job `126874055063` failed before runtime execution with CS0104: `HostStatus` was ambiguous between the domain model and the Protobuf contract after a broad domain namespace import. The attempt is recorded as failed; no cancellation behavior pass is claimed. Attempt `T0205-A002` uses explicit type aliases for the two needed domain types.
