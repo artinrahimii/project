@@ -20,3 +20,14 @@
 - Android Gradle Plugin code coverage: https://developer.android.com/studio/test/coverage-report
 - Microsoft dotnet-coverage: https://learn.microsoft.com/dotnet/core/additional-tools/dotnet-coverage
 - dotnet-coverage 18.12.0: https://www.nuget.org/packages/dotnet-coverage/18.12.0
+
+## A001 — نتیجهٔ نخستین CI روی V 3.0.949
+
+- Quality Gate run 41928891108 اجرا شد: ۴۱۴ آزمون Python؛ ۴۱۳ موفق و یک شکست.
+- شکست در آزمون موجود test_product_builds_publish_real_artifacts_and_fail_if_missing بود. این آزمون هنوز تعداد upload-artifactها را ۴ فرض می‌کرد، درحالی‌که دو artifact جدید پوشش Android و HostLifecycle تعداد را به ۶ افزایش داده‌اند.
+- هر شش آزمون جدید tests/test_validate_coverage_artifacts.py موفق شدند.
+- Product Build run 41928891017 در زمان checkpoint هنوز در حال اجرا بود؛ jobهای Windows، Android و HostLifecycle در جریان بودند.
+
+## A002 — اصلاح قرارداد CI
+
+آزمون test_reproducible_build_contract.py به‌روزرسانی شد تا شش artifact upload، چهار مسیر fail-if-missing، شش retention declaration، دو task پوشش Android و collector پوشش HostLifecycle را بررسی کند. اجرای این اصلاح در CI commit بعدی هنوز تأیید نشده است؛ بنابراین T0208 همچنان in_progress می‌ماند.

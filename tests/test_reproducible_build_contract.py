@@ -40,16 +40,21 @@ class ReproducibleBuildContractTests(unittest.TestCase):
         self.assertIn("minSdk = 26", gradle)
 
     def test_product_builds_publish_real_artifacts_and_fail_if_missing(self):
-        self.assertEqual(PRODUCT.count("uses: actions/upload-artifact@v4"), 4)
+        self.assertEqual(PRODUCT.count("uses: actions/upload-artifact@v4"), 6)
         self.assertIn("whitep-android-keystore-instrumentation-reports", PRODUCT)
         self.assertIn("path: src/Host.Windows/bin/Release/net10.0-windows/", PRODUCT)
         self.assertIn("path: src/Client.Android/app/build/outputs/apk/debug/app-debug.apk", PRODUCT)
-        self.assertEqual(PRODUCT.count("if-no-files-found: error"), 2)
-        self.assertEqual(PRODUCT.count("retention-days: 7"), 4)
+        self.assertEqual(PRODUCT.count("if-no-files-found: error"), 4)
+        self.assertEqual(PRODUCT.count("retention-days: 7"), 6)
         self.assertIn("name: whitep-android-unit-test-reports", PRODUCT)
         self.assertIn("if: always()", PRODUCT)
-        self.assertIn("path: src/Client.Android/app/build/reports/tests/testDebugUnitTest/", PRODUCT)
+        self.assertIn("src/Client.Android/app/build/reports/tests/testDebugUnitTest/", PRODUCT)
         self.assertIn("if-no-files-found: ignore", PRODUCT)
+        self.assertIn("whitep-android-coverage-and-critical-results", PRODUCT)
+        self.assertIn("whitep-host-lifecycle-coverage-and-critical-results", PRODUCT)
+        self.assertIn("createDebugUnitTestCoverageReport", PRODUCT)
+        self.assertIn("createDebugAndroidTestCoverageReport", PRODUCT)
+        self.assertIn("dotnet-coverage collect", PRODUCT)
 
     def test_python_quality_commands_are_documented_and_executed_in_ci(self):
         for command in (
