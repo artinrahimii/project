@@ -31,3 +31,15 @@
 ## Acceptance decision
 - Task state remains `in_progress` until exact-head CI verifies the source and tests.
 - This change addresses the confirmed host inference deadline-cancellation gap; it does not claim that all product workflows or independent-network acceptance are complete.
+
+
+## T0191-A002 — exact-head CI evidence
+
+- Tested implementation commit: `d6b91bdbaef56806447505be7a66e12765677e1f` (`V 3.0.895`) on `main`.
+- Step Three quality gate run `41854307129`, job `126658638110`: **success**.
+- HostLifecycle product job `126658642450`: **success**; log includes the deadline-cancellation acceptance summary.
+- Windows WPF product job `126658642602`: **success**.
+- Android product job `126658642541`: **success**, including Keystore instrumentation and generated Protobuf Java/Kotlin verification.
+- Real inference run `41854307881`, job `126658641762`: **success**, including actual local llama.cpp generation and active generation cancellation.
+- Rendezvous run `41854307047`, job `126658635302`: **success**.
+- Acceptance decision: **T0191 = done**. The source/test commit is exact-head verified; no local .NET execution is claimed.
