@@ -35,6 +35,7 @@ import com.whitep.client.data.MessageEntity
 import com.whitep.client.data.RequestStateEntity
 import com.whitep.client.data.RoomConversationContextCapsuleRepository
 import com.whitep.client.data.SharedPreferencesConversationContextCapsuleSizeLimitStore
+import com.whitep.client.errors.RequestErrorCode
 import com.whitep.client.domain.ConversationMessageValidationError
 import com.whitep.client.domain.ConversationMessageValidator
 import com.whitep.client.ui.request.toPresentation
@@ -508,8 +509,13 @@ private fun requestStatusCard(requestState: RequestStateEntity) {
             if (requestState.attemptNumber > 0) {
                 Text("Attempt ${requestState.attemptNumber}", style = MaterialTheme.typography.bodySmall)
             }
-            requestState.errorCode?.let { code ->
-                Text("Error code: $code", style = MaterialTheme.typography.bodySmall)
+            requestState.errorCode?.let { storedCode ->
+                val errorCode = RequestErrorCode.fromWireCode(storedCode)
+                Text(
+                    "Error code: ${errorCode.wireCode}",
+                    style = MaterialTheme.typography.labelMedium,
+                )
+                Text(errorCode.userMessage, style = MaterialTheme.typography.bodySmall)
             }
             Text(
                 "Updated ${formatConversationTimestamp(requestState.updatedAtEpochMillis)}",

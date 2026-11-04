@@ -1077,6 +1077,8 @@ Assert(HostStatusPresentation.FormatNetworkStatus(presentedError).Contains("stat
 Assert(HostStatusPresentation.FormatNetworkStatus(presentedReady).Contains("Direct peer-to-peer transport: not implemented", StringComparison.Ordinal), "The UI must not imply the unimplemented P2P transport is available.");
 Console.WriteLine("PASS: backend and local-endpoint status presentation reflects all HostState values and discloses unavailable P2P transport.");
 
+ HostErrorPresentationAcceptanceTests.Run();
+
  // T0047: safe user-facing error mapping must never expose exception details.
 Assert(HostErrorPresentation.ToUserMessage(new OperationCanceledException()).Contains("cancelled or timed out", StringComparison.Ordinal), "Cancellation must map to user-friendly guidance.");
 Assert(HostErrorPresentation.ToUserMessage(new HttpRequestException("secret URL token")).Contains("Could not reach the local inference server", StringComparison.Ordinal), "Network errors must map to actionable guidance.");

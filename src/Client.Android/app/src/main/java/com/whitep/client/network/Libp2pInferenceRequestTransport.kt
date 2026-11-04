@@ -1,5 +1,6 @@
 package com.whitep.client.network
 
+import com.whitep.client.errors.RequestExecutionException
 import com.whitep.client.requests.InferenceRequestTransport
 import com.whitep.client.requests.InferenceTransportSubmission
 import io.libp2p.core.Host
@@ -602,6 +603,31 @@ class Libp2pInferenceRequestTransport(
                 )
             } else {
                 pendingStatus.response.complete(status)
+            }
+            return
+        }
+
+        val remoteError = RemoteRequestErrorParser.parse(payload)
+        if (remoteError != null) {
+            val matchingAttempts = pendingAttempts.entries.filter { entry ->
+                val key = entry.key
+                val pending = entry.value
+                key.requestId == remoteError.requestId &&
+                    pending.peerId == authenticatedPeerId &&
+                    pending.controller === controller &&
+                    (remoteError.ephemeralHostId == null || remoteError.ephemeralHostId == authenticatedPeerId) &&
+                    (remoteError.modelId == null || remoteError.modelId == pending.modelId)
+            }
+            if (matchingAttempts.isEmpty()) {
+                unmatchedResponseFrames.incrementAndGet()
+                lastUnmatchedPayloadBytes.set(payload.size.toLong())
+                lastUnmatchedFirstTag.set(payload.firstOrNull()?.toUByte()?.toLong() ?: -1L)
+            } else {
+                matchingAttempts.forEach { entry ->
+                    entry.value.response.completeExceptionally(
+                        RequestExecutionException(remoteError.errorCode),
+                    )
+                }
             }
             return
         }

@@ -1,5 +1,7 @@
 package com.whitep.client.requests
 
+import com.whitep.client.errors.RequestErrorCode
+import com.whitep.client.errors.RequestExecutionException
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
@@ -288,6 +290,25 @@ class InferenceRoundResponseCollectorTest {
             assertEquals(listOf("attempt-a", "attempt-b", "attempt-c"), result.responses.map { it.attemptId })
             assertEquals(3, result.responses.size)
             assertTrue(result.failures.isEmpty())
+        }
+
+    @Test
+    fun preservesTypedRemoteErrorCategoryForTheFailedAttempt() =
+        runBlocking {
+            val currentAttempt = attempt("attempt-model", "peer-model")
+            val result =
+                collector.collect(
+                    attempts = listOf(currentAttempt),
+                    roundWindowFor = { newRoundWindow() },
+                    awaitResponse = { _, _ ->
+                        throw RequestExecutionException(RequestErrorCode.MODEL_UNAVAILABLE)
+                    },
+                )
+
+            assertTrue(result.responses.isEmpty())
+            assertEquals(1, result.failures.size)
+            assertEquals(RequestErrorCode.MODEL_UNAVAILABLE, result.failures.single().errorCode)
+            assertEquals(InferenceRoundResponseFailureReason.RESPONSE_FAILED, result.failures.single().reason)
         }
 
     private fun newRoundWindow(): InferenceRoundTimer.Window {

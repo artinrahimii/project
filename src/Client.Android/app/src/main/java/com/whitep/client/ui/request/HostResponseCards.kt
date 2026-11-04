@@ -46,9 +46,14 @@ internal fun hostResponseCards(responses: List<HostResponseCardState>) {
                                 response.outputText.ifBlank { "This host returned no response text." },
                                 style = MaterialTheme.typography.bodyLarge,
                             )
-                            if (response.errorMessage.isNotBlank()) {
+                            response.errorCode?.let { errorCode ->
                                 Text(
-                                    response.errorMessage,
+                                    "Error code: ${errorCode.wireCode}",
+                                    color = MaterialTheme.colorScheme.error,
+                                    style = MaterialTheme.typography.labelMedium,
+                                )
+                                Text(
+                                    errorCode.userMessage,
                                     color = MaterialTheme.colorScheme.error,
                                     style = MaterialTheme.typography.bodySmall,
                                 )

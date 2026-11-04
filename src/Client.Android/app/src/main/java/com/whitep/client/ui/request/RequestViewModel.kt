@@ -7,6 +7,8 @@ import com.whitep.client.context.ConversationContextCapsule
 import com.whitep.client.data.ClientRequestRepository
 import com.whitep.client.data.InMemoryClientRequestRepository
 import com.whitep.client.data.RequestDraftStatus
+import com.whitep.client.errors.RequestErrorCode
+import com.whitep.client.errors.toRequestErrorCode
 import com.whitep.client.protocol.InferenceRequestPayloadBuildResult
 import com.whitep.client.protocol.InferenceRequestPayloadBuilder
 import com.whitep.client.requests.AndroidRequestExecutionGatewayFactory
@@ -30,11 +32,11 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import java.net.URI
+import java.util.UUID
 import kotlinx.coroutines.launch
 import org.whitep.shared.contracts.v1.InferenceOutcome
 import org.whitep.shared.contracts.v1.InferenceResponse
-import java.net.URI
-import java.util.UUID
 
 enum class HostResponseOutcome {
     SUCCEEDED,
@@ -65,6 +67,7 @@ data class HostResponseCardState(
     val errorMessage: String,
     val completedAtUnixMs: Long,
     val receivedAtUnixMs: Long,
+    val errorCode: RequestErrorCode? = null,
 )
 
 data class RequestPeerUiState(
@@ -772,6 +775,15 @@ class RequestViewModel(
             return false
         }
 
+        val errorCode =
+            when (response.outcome) {
+                InferenceOutcome.INFERENCE_OUTCOME_SUCCEEDED -> null
+                InferenceOutcome.INFERENCE_OUTCOME_FAILED -> RequestErrorCode.INTERNAL
+                InferenceOutcome.INFERENCE_OUTCOME_CANCELLED -> RequestErrorCode.CANCELLED
+                InferenceOutcome.INFERENCE_OUTCOME_TIMED_OUT -> RequestErrorCode.REQUEST_EXPIRED
+                InferenceOutcome.INFERENCE_OUTCOME_REJECTED -> RequestErrorCode.VALIDATION_FAILED
+                else -> RequestErrorCode.UNKNOWN
+            }
         val card =
             HostResponseCardState(
                 requestId = response.requestId,
@@ -788,9 +800,10 @@ class RequestViewModel(
                         else -> HostResponseOutcome.UNKNOWN
                     },
                 outputText = response.outputText,
-                errorMessage = response.errorMessage,
+                errorMessage = errorCode?.userMessage.orEmpty(),
                 completedAtUnixMs = response.completedAtUnixMs,
                 receivedAtUnixMs = clockMillis(),
+                errorCode = errorCode,
             )
 
         synchronized(responseLock) {
@@ -826,12 +839,10 @@ class RequestViewModel(
                 modelId = "",
                 outcome = outcome,
                 outputText = "",
-                errorMessage =
-                    failure.reason.name
-                        .lowercase()
-                        .replace('_', ' '),
+                errorMessage = failure.errorCode.userMessage,
                 completedAtUnixMs = clockMillis(),
                 receivedAtUnixMs = clockMillis(),
+                errorCode = failure.errorCode,
             )
         synchronized(responseLock) {
             val attemptAlreadyRecorded =
@@ -867,11 +878,7 @@ class RequestViewModel(
             ?: throw IllegalStateException("Discover peers using the configured HTTPS Rendezvous URL first.")
 
     private fun safeMessage(exception: Exception): String =
-        exception.message
-            ?.replace(Regex("[\\r\\n\\t]+"), " ")
-            ?.take(180)
-            ?.ifBlank { exception.javaClass.simpleName }
-            ?: exception.javaClass.simpleName
+        exception.toRequestErrorCode().userMessage
 
     override fun onCleared() {
         retryableRequest = null

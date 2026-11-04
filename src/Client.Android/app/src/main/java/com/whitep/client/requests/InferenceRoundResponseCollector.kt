@@ -1,5 +1,9 @@
 package com.whitep.client.requests
 
+import com.whitep.client.errors.RequestErrorCode
+import com.whitep.client.errors.toRequestErrorCode
+import java.time.Duration
+import java.util.concurrent.TimeoutException
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.async
@@ -8,8 +12,6 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 import org.whitep.shared.contracts.v1.InferenceResponse
-import java.time.Duration
-import java.util.concurrent.TimeoutException
 
 /** Describes why a queued or submitted host attempt did not yield a valid response. */
 enum class InferenceRoundResponseFailureReason {
@@ -26,6 +28,7 @@ data class InferenceRoundResponseFailure(
     val ephemeralHostId: String,
     val attemptId: String,
     val reason: InferenceRoundResponseFailureReason,
+    val errorCode: RequestErrorCode = RequestErrorCode.NETWORK_UNAVAILABLE,
 )
 
 /** Responses and failures are returned separately in the original dispatch-attempt order. */
@@ -116,20 +119,23 @@ internal class InferenceRoundResponseCollector {
                                                 AttemptOutcome.Failed(
                                                     attempt.failure(
                                                         InferenceRoundResponseFailureReason.RESPONSE_TIMED_OUT,
+                                                        RequestErrorCode.REQUEST_EXPIRED,
                                                     ),
                                                 )
                                             } catch (_: TimeoutException) {
                                                 AttemptOutcome.Failed(
                                                     attempt.failure(
                                                         InferenceRoundResponseFailureReason.RESPONSE_TIMED_OUT,
+                                                        RequestErrorCode.REQUEST_EXPIRED,
                                                     ),
                                                 )
                                             } catch (cancellation: CancellationException) {
                                                 throw cancellation
-                                            } catch (_: Exception) {
+                                            } catch (exception: Exception) {
                                                 AttemptOutcome.Failed(
                                                     attempt.failure(
                                                         InferenceRoundResponseFailureReason.RESPONSE_FAILED,
+                                                        exception.toRequestErrorCode(),
                                                     ),
                                                 )
                                             }
@@ -148,10 +154,23 @@ internal class InferenceRoundResponseCollector {
 
     private fun InferenceHostAttempt.failure(
         reason: InferenceRoundResponseFailureReason,
+        errorCode: RequestErrorCode = reason.toRequestErrorCode(),
     ): InferenceRoundResponseFailure =
         InferenceRoundResponseFailure(
             ephemeralHostId = ephemeralHostId,
             attemptId = attemptId,
             reason = reason,
+            errorCode = errorCode,
         )
+
+    private fun InferenceRoundResponseFailureReason.toRequestErrorCode(): RequestErrorCode =
+        when (this) {
+            InferenceRoundResponseFailureReason.SUBMISSION_REJECTED -> RequestErrorCode.VALIDATION_FAILED
+            InferenceRoundResponseFailureReason.SUBMISSION_FAILED -> RequestErrorCode.NETWORK_UNAVAILABLE
+            InferenceRoundResponseFailureReason.SUBMISSION_TIMED_OUT,
+            InferenceRoundResponseFailureReason.ROUND_WINDOW_UNAVAILABLE,
+            InferenceRoundResponseFailureReason.RESPONSE_TIMED_OUT,
+            -> RequestErrorCode.REQUEST_EXPIRED
+            InferenceRoundResponseFailureReason.RESPONSE_FAILED -> RequestErrorCode.NETWORK_UNAVAILABLE
+        }
 }
