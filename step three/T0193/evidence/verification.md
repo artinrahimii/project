@@ -45,3 +45,10 @@ Exact-head GitHub Actions has not yet run for the T0193 implementation commit. N
 - Graph snapshot used for this review: `main` commit `dfc6ed433dc35bf57b088ed2b571f273e4f4eb0a`, path `step three/project-graph.md`, Blob `3cba90b5dac0d6d61d55ca555c379258a13f36fc`, GitHub size `3526074` bytes. The recomputed Git Blob SHA-1 matched; full JSON parsed as 230 tasks and 422 edges.
 - The new A003 source guard now expects `service.StartAsync(cancellationToken)` and verifies the single-transition check. This is a correction made before running CI, not a recorded failed test.
 - Exact-head jobs for V 3.0.900 were queued; no automated results are claimed. T0193 remains `in_progress`.
+
+
+## T0193-A004 — source guard review
+
+- Baseline: `main` `717caa832d9b16073f045eb27957b94ad3ae62ff` (`V 3.0.901`).
+- The new WPF single-flight transition guard is written in C# as `if (_suppressParticipationToggleChanged || _windowClosing || _peerParticipationTask is not null)`. The Python test now checks that exact source text.
+- This was a static source/test consistency correction before CI execution. The test was not run locally; no pass/fail result is claimed.

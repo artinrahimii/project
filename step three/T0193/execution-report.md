@@ -40,3 +40,12 @@
 - **Prior attempt commits:** A001 `0ba42632794058dd478b96427f08857e1b75479b` (`V 3.0.899`); A002 `dfc6ed433dc35bf57b088ed2b571f273e4f4eb0a` (`V 3.0.900`).
 - **Exact-head CI for V 3.0.900:** quality run `41864411115`, product run `41864410577`, and Rendezvous run `41864410847` were queued at the latest check. The new V 3.0.901 commit must pass its own exact-head quality and product jobs before T0193 can be completed.
 - **Environment limit:** no local .NET SDK/WPF runtime is available; no local .NET tests were run.
+
+
+## T0193-A004 — source guard token correction
+
+- **Finding:** the A003 assertion searched C# source for Python tokens (`or` and `None`) instead of the actual C# condition (`||` and `null`). That assertion would fail when executed.
+- **Correction:** changed the source-contract expectation to the exact C# expression. No production source changed in A004.
+- **Execution status:** found by direct source/test comparison before CI started; no executed test failure or pass is claimed.
+- **Baseline:** `main` `717caa832d9b16073f045eb27957b94ad3ae62ff` (`V 3.0.901`). Exact-head CI for V 3.0.901 was queued at inspection; A004 awaits its own exact-head CI.
+- **Task state:** `in_progress`; no acceptance claim is made.

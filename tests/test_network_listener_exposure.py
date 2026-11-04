@@ -115,7 +115,7 @@ class NetworkListenerExposureTests(unittest.TestCase):
     def test_window_closing_cancels_and_drains_peer_participation_transition(self):
         self.assertIn("_peerParticipationTask", WINDOW)
         self.assertIn("_peerParticipationCancellation?.Cancel();", WINDOW)
-        self.assertIn("if (_suppressParticipationToggleChanged or _windowClosing or _peerParticipationTask is not None)", WINDOW)
+        self.assertIn("if (_suppressParticipationToggleChanged || _windowClosing || _peerParticipationTask is not null)", WINDOW)
         closing = WINDOW.split("private async void MainWindow_Closing", 1)[1].split(
             "private void MainWindow_Closed", 1
         )[0]
