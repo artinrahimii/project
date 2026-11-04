@@ -10,7 +10,8 @@ plugins {
 }
 
 val robolectricDependencyRepoUrl =
-    providers.gradleProperty("robolectricDependencyRepoUrl")
+    providers
+        .gradleProperty("robolectricDependencyRepoUrl")
         .orElse(providers.environmentVariable("ROBOLECTRIC_DEPENDENCY_REPO_URL"))
         .orElse("https://maven-central.storage-download.googleapis.com/maven2/")
 

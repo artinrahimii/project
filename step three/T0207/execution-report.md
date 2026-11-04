@@ -1,46 +1,53 @@
-# T0207 execution report
+# T0207 — گزارش اجرای واقعی
 
-- Status: **in_progress**
-- Attempts: 2 (one clean-build implementation attempt; one rate-limit resilience correction)
-- Implementation baseline: `ccaddf87dac832c838c9c270d20fc16e6ccf9e28` (`V 3.0.943`)
-- Current tracking revision: `56c307679e79b72177eb48666b9f59ce0d541e47` (`V 3.0.944`)
-- Current correction: `T0207-A002`, CI pending
+## وضعیت فعلی
 
-## Incoming edge review
+**در حال انجام؛ هنوز تکمیل نشده است.** پیاده‌سازی build پاک در `V 3.0.943` روی runnerهای تازه در Product Build کامل موفق شد. اما بازآزمایی‌های بعدی دو مشکل مستقل نشان دادند؛ اصلاح آینهٔ Maven در commit `V 3.0.945` هنوز با CI سبز تأیید نشده است.
 
-- `T0206 → T0207`: **validated / sequencing_only**. T0207 rebuilds from a fresh checkout and consumes no T0206-specific API, schema, fixture, or generated output. Original `blocks` edge and order retained.
-- `T0195 → T0207`: **validated / sequencing_only**. T0207 consumes no task-specific output from T0195. Original `blocks` edge and order retained.
+## وابستگی‌های ورودی
 
-## Clean-build workflow implementation
+- `T0206 → T0207`: اعتبارسنجی‌شده با طبقه‌بندی `sequencing_only`. ساخت پاک از checkout تازه انجام می‌شود و API، schema، fixture یا artifact اختصاصی T0206 را مصرف نمی‌کند. نوع اصلی یال `blocks` و ترتیب محافظه‌کارانه حفظ شده است.
+- `T0195 → T0207`: اعتبارسنجی‌شده با طبقه‌بندی `sequencing_only`. build پاک، خروجی اختصاصی T0195 را مصرف نمی‌کند. نوع اصلی یال `blocks` و ترتیب حفظ شده است.
 
-The online workflow `.github/workflows/product-build.yml` now explicitly cleans outputs before compiling on fresh GitHub-hosted runners:
+## پیاده‌سازی واقعی
 
-- Windows: `dotnet clean WhiteP.sln`, then a non-incremental Release build; WPF startup and Windows acceptance checks follow.
-- Android: clean the .NET interop fixture and rebuild it non-incrementally, run Gradle `clean`, lint and build the debug APK with build cache disabled; execute JVM and emulator tests and verify generated sources.
-- HostLifecycle: `dotnet clean` followed by the full lifecycle suite.
+فایل `.github/workflows/product-build.yml` در commit `ccaddf87dac832c838c9c270d20fc16e6ccf9e28` اصلاح شد:
+- ویندوز: clean صریح solution و build غیر incremental در Release.
+- اندروید: clean و build مجدد fixture دات‌نت، Gradle clean، lint و build APK از خروجی پاک.
+- HostLifecycle: clean پروژهٔ آزمون پیش از اجرای suite کامل.
 
-## Verified CI results
+در ادامهٔ بازآزمایی، CI در تاریخچهٔ Robolectric به دلیل HTTP 429 از `repo1.maven.org` هنگام دریافت `android-all-instrumented` شکست موقت داشت (۵ شکست class setup از ۱۹۱ تست؛ ۱۸۶ تست دیگر موفق). برای مقاوم‌سازی این وضعیت، commit `37ed932657824ecb2eac6e532f5f8a5bb766d764` ویژگی‌های runtime مستند Robolectric را برای آینهٔ Google Maven Central، با امکان override از طریق Gradle property یا environment variable، اضافه کرد.
 
-**Implementation commit V 3.0.943 — full success**
+بازآزمایی همان commit خطای قالب‌بندی Kotlin DSL را آشکار کرد: `app/build.gradle.kts:13:14 Expected newline before '.'`. در commit حاضر، زنجیرهٔ providers به قالبی تبدیل شد که فراخوانی `gradleProperty` را در خط ادامهٔ جداگانه قرار می‌دهد. این اصلاح هنوز در CI اجرا نشده است.
 
-Product Build run `41921424399` completed successfully:
-- Android job `126894611985`: **28/28 steps passed**, including clean fixture build, Gradle clean, APK build/permission checks, all JVM tests, Android Keystore instrumentation, generated Protobuf source checks and APK artifact upload.
-- Windows WPF job `126894612727`: **16/16 passed**.
-- HostLifecycle job `126894612520`: **9/9 passed**.
-- Step Three Quality Gate `41921424419`: passed.
-- Rendezvous container run `41921424425`: passed.
+## نتایج CI و شواهد
 
-**Follow-up exact-head verification V 3.0.944 — one external dependency failure**
+### پیاده‌سازی build پاک — commit `V 3.0.943`
 
-Product Build run `41922371821`:
-- Windows WPF: **16/16 passed**.
-- HostLifecycle: **9/9 passed**.
-- Android: clean .NET fixture build, Gradle clean, KtLint, clean APK assembly and permission validation passed; `testDebugUnitTest` then ran **191 tests, 5 failed**.
-- JUnit report artifact `13368600158` identifies the same cause for all five failures: Robolectric `MavenArtifactFetcher` received HTTP **429 Too Many Requests** from `https://repo1.maven.org/maven2` while fetching `org.robolectric:android-all-instrumented:15-robolectric-13954326-i7`. The failures occurred during Robolectric sandbox setup before the five affected test bodies; **186 other tests passed**.
-- Affected class setup reports: `ConversationContextCapsuleSummarizerTest`, `ConversationContextCapsuleTest`, `ClientDatabaseMigrationTest`, `ClientDatabaseTest`, and `ConversationContextCapsulePersistenceTest`.
+Product Build run [41921424399](https://github.com/artinrahimii/project/actions/runs/41921424399) با موفقیت کامل شد:
+- Windows job `126894612727`: ۱۶ از ۱۶ مرحله موفق؛ clean و Release build، Protobuf، WPF smoke، کنترل‌های agent tool و DPAPI.
+- HostLifecycle job `126894612520`: ۹ از ۹ مرحله موفق؛ clean و اجرای کامل آزمون‌ها.
+- Android job `126894611985`: ۲۸ از ۲۸ مرحله موفق؛ Gradle clean، lint، APK، JVM tests، Keystore instrumentation، بررسی Protobuf و بارگذاری artifactها.
+- گزارش instrumentation: [artifact 13367776949](https://github.com/artinrahimii/project/actions/runs/41921424399/artifacts/13367776949).
+- گزارش آزمون JVM: [artifact 13366814095](https://github.com/artinrahimii/project/actions/runs/41921424399/artifacts/13366814095).
+- APK دیباگ: [artifact 13367262823](https://github.com/artinrahimii/project/actions/runs/41921424399/artifacts/13367262823).
+- [Quality Gate 41921424419](https://github.com/artinrahimii/project/actions/runs/41921424419) و [Rendezvous 41921424425](https://github.com/artinrahimii/project/actions/runs/41921424425): موفق.
 
-## Resilience correction T0207-A002
+### بازآزمایی روی commit `V 3.0.944`
 
-Robolectric's documented runtime properties allow an independent Maven repository URL and ID. The Android test configuration now uses a Google-hosted Maven Central mirror by default and allows override through `-ProbolectricDependencyRepoUrl` or `ROBOLECTRIC_DEPENDENCY_REPO_URL`. A Python quality-gate contract test guards this configuration.
+Product Build run `41922371821`: ویندوز و HostLifecycle موفق؛ Android JVM شامل ۱۹۱ تست بود که ۵ مورد در bootstrap مربوط به Robolectric و به علت HTTP 429 شکست خوردند؛ ۱۸۶ تست موفق بودند. این خطاها پیش از اجرای بدنهٔ پنج test class رخ دادند.
 
-This correction has not yet run on CI. **T0207 remains in_progress** until the next exact-head Quality Gate and full Product Build pass.
+### بازآزمایی روی commit `V 3.0.945`
+
+- Windows job `126905065862`: موفق، ۱۶ از ۱۶.
+- HostLifecycle job `126905065861`: موفق، ۹ از ۹.
+- Android job `126905065423`: ناموفق در `ktlintKotlinScriptCheck`؛ مرحلهٔ lint خطای `Expected newline before '.'` را در خط ۱۳ گزارش کرد. build APK، JVM tests و instrumentation اجرا نشدند.
+- Quality Gate run [41924457621](https://github.com/artinrahimii/project/actions/runs/41924457621): به دلیل ناسازگاری مقدار `failed_attempt_count` با تعداد تاریخچهٔ تلاش‌های دارای `result=failed` شکست خورد. معنای validator بررسی شد و سابقهٔ تلاش A002 در گراف با نتیجهٔ واقعی `failed` ثبت گردید.
+
+## تلاش‌ها و اقدام بعدی
+
+- `T0207-A001`: پیاده‌سازی clean build؛ CI دقیقاً روی commit پیاده‌سازی موفق شد، اما بازآزمایی بعدی روی 944 خطای خارجی HTTP 429 را آشکار کرد.
+- `T0207-A002`: افزودن mirror قابل تنظیم برای Robolectric؛ روی 945 در lint شکست خورد و در validator نیز ناسازگاری سابقهٔ اجرا آشکار شد.
+- `T0207-A003`: اصلاح قالب‌بندی Kotlin DSL و ثبت سازگار تلاش ناموفق A002 در تاریخچه؛ **CI هنوز در انتظار اجرا است**.
+
+تا زمانی که Quality Gate و Product Build روی commit حاضر موفق نشوند، وضعیت T0207 به `done` تغییر نمی‌کند.
