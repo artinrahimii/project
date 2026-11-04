@@ -609,7 +609,8 @@ class Libp2pInferenceRequestTransport(
 
         val remoteError = RemoteRequestErrorParser.parse(payload)
         if (remoteError != null) {
-            val matchingAttempts = pendingAttempts.entries.filter { entry ->
+            val matchingAttempts =
+                pendingAttempts.entries.filter { entry ->
                 val key = entry.key
                 val pending = entry.value
                 key.requestId == remoteError.requestId &&

@@ -32,3 +32,12 @@
 - **Real local inference integration:** run `41831155932` باینری pin‌شدهٔ llama.cpp و فایل GGUF را دریافت و اعتبارسنجی کرد، اما پیش از اجرای acceptance واقعی مدل، در همان آزمون T0047 متوقف شد. بنابراین موفقیت یا شکست inference واقعی هنوز اثبات نشده است.
 - **T0189-A003:** پیام امن اختصاصی `ArgumentException` بازگردانده شد، در حالی‌که کد پایدار `VALIDATION_FAILED` حفظ می‌شود؛ آزمون پذیرش برای راهنمای تنظیمات و redaction افزوده شد و importهای `ConversationDetailScreen.kt` مرتب شدند.
 - **وضعیت:** `in_progress` تا اجرای کامل CI دقیق این اصلاحات.
+
+
+## بازبینی CI دقیق commit و تلاش قالب‌بندی A004
+
+- **CI دقیق `V 3.0.887` / commit `9460217afc6bac4b0c0b253ef3947f85e0451c3b`:** Step Three quality gate run `41831823959` موفق؛ Rendezvous container run `41831823935` موفق؛ Windows WPF job `126580651445` موفق؛ HostLifecycle job `126580651477` موفق؛ Real local inference job `126580651317` موفق.
+- **شاهد inference واقعی:** log job `126580651317` صریحاً `real local llama.cpp inference succeeded` را ثبت کرد؛ پاسخ واقعی دریافت شد، cancellation حین generation مشاهده شد و process تحت مالکیت برنامه تمیز متوقف شد.
+- **شکست Android:** job `126580651061` تنها در `ktlintMainSourceSetCheck` شکست خورد. سه مورد دقیق: `RequestErrorCode.kt:61` ویرگول پایانی پیش از `;`، `Libp2pInferenceRequestTransport.kt:612` شروع expression چندخطی روی خط بعد، و `RequestViewModel.kt:880` قراردادن expression کوتاه در همان خط signature. APK، JVM tests و instrumentation به‌علت این gate اجرا نشدند.
+- **T0189-A004:** همین سه مورد قالب‌بندی اصلاح شدند؛ هیچ منطق خطا، قرارداد یا assertion تغییر نکرد.
+- **وضعیت:** `in_progress` تا اجرای lint و تمام مراحل build/test اندروید روی commit بعدی.

@@ -877,8 +877,7 @@ class RequestViewModel(
         requestRuntime
             ?: throw IllegalStateException("Discover peers using the configured HTTPS Rendezvous URL first.")
 
-    private fun safeMessage(exception: Exception): String =
-        exception.toRequestErrorCode().userMessage
+    private fun safeMessage(exception: Exception): String = exception.toRequestErrorCode().userMessage
 
     override fun onCleared() {
         retryableRequest = null

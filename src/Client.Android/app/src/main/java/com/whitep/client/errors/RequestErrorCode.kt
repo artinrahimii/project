@@ -58,7 +58,8 @@ enum class RequestErrorCode(
     UNKNOWN(
         "UNKNOWN",
         "The request failed for an unknown reason. Internal details are hidden.",
-    );
+    ),
+    ;
 
     companion object {
         fun fromWireCode(value: String?): RequestErrorCode =

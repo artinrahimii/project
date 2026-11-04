@@ -74,3 +74,19 @@
 - HostErrorPresentationAcceptanceTests explicitly checks the actionable safe guidance and redaction.
 - ConversationDetailScreen imports are sorted according to KtLint's reported ordering.
 - A003 has not yet run on an exact head; T0189 remains in_progress.
+
+
+## Exact-head CI reconciliation for V 3.0.887
+- Step Three quality gate run 41831823959: passed.
+- Rendezvous container run 41831823935: passed.
+- Windows WPF job 126580651445: passed.
+- HostLifecycle job 126580651477: passed, including the previously failing participation-recovery and safe-error-mapping assertions.
+- Real local inference job 126580651317: passed. The log states: "real local llama.cpp inference succeeded; active generation cancellation was observed and the owned process stopped cleanly."
+- Android job 126580651061: failed only in ktlintMainSourceSetCheck, with three reported formatting violations in RequestErrorCode.kt:61, Libp2pInferenceRequestTransport.kt:612, and RequestViewModel.kt:880. Android APK, JVM tests and instrumentation were not run.
+
+## A004 correction snapshot
+- Added the trailing comma before the enum-entry semicolon in RequestErrorCode.kt.
+- Moved the multi-line filter expression in Libp2pInferenceRequestTransport.kt to the next line after the assignment.
+- Placed RequestViewModel.safeMessage's short expression on the signature line.
+- No business logic, protocol contract, error classification, redaction rule or test assertion was weakened.
+- Exact-head lint/build/JVM/instrumentation results for A004 are pending; T0189 remains in_progress.
