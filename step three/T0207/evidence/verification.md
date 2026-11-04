@@ -42,3 +42,13 @@
 - Product Build run `41926077657`: Windows job `126910709342` موفق؛ HostLifecycle job `126910709152` موفق.
 - Android job `126910709306`: clean fixture build، Gradle clean، KtLint، APK build، permission policy و JVM tests همگی موفق؛ Keystore instrumentation در زمان ثبت checkpoint در حال اجرا بود و generated Protobuf check و artifact uploads هنوز انجام نشده بودند.
 - گراف پس از ثبت این checkpoint همچنان T0207 را `in_progress` نگه می‌دارد؛ هیچ ادعای تکمیل زودهنگام ثبت نشده است.
+
+## شواهد نهایی پذیرش T0207
+
+- Product Build: https://github.com/artinrahimii/project/actions/runs/41925547942 — success.
+- Windows WPF: 126908875632، ۱۶/۱۶؛ Android: 126908875955، ۲۸/۲۸؛ HostLifecycle: 126908875958، ۹/۹.
+- artifactها: JVM report 13370600082، APK 13370500424، Keystore instrumentation report 13370420629، Windows host 13368862206.
+- Quality Gate: https://github.com/artinrahimii/project/actions/runs/41926077752 — success پس از اصلاح assertion چندخطی آزمون منبع.
+- فایل workflow و Gradle محصول بین snapshot موفق 946 و commit 948 تغییر نکردند؛ تغییرات بین آن‌ها به گزارش‌ها، گراف و آزمون Python محدود بود.
+
+**پذیرش:** ساخت پاک میزبان/کلاینت، آزمون‌های JVM و instrumentation، بررسی Protobuf و بارگذاری artifactها موفق‌اند؛ T0207 اکنون done است.

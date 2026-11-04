@@ -131,11 +131,11 @@ jobs:
           python tools/verify_android_permissions.py \
             --apk src/Client.Android/app/build/outputs/apk/debug/app-debug.apk \
             --aapt2 "$aapt2"
-      - name: Run Android JVM unit tests
+      - name: Run Android JVM unit tests and generate coverage report
         working-directory: src/Client.Android
         env:
           WHITEP_INTEROP_SERVER_DLL: ${{ github.workspace }}/tests/HostLifecycle.Tests/bin/Release/net10.0/HostLifecycle.Tests.dll
-        run: gradle --no-daemon testDebugUnitTest
+        run: gradle --no-daemon testDebugUnitTest createDebugUnitTestCoverageReport
       - name: Configure KVM access for Android Keystore instrumentation
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
@@ -157,13 +157,15 @@ jobs:
           disk-size: 4096M
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
-          script: gradle --no-daemon --project-dir src/Client.Android connectedDebugAndroidTest
+          script: gradle --no-daemon --project-dir src/Client.Android connectedDebugAndroidTest createDebugAndroidTestCoverageReport
       - name: Upload Android Keystore instrumentation reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: whitep-android-keystore-instrumentation-reports
-          path: src/Client.Android/app/build/reports/androidTests/connected/
+          path: |
+            src/Client.Android/app/build/reports/androidTests/connected/
+            src/Client.Android/app/build/outputs/androidTest-results/connected/
           if-no-files-found: ignore
           retention-days: 7
       - name: Upload Android unit-test reports
@@ -171,7 +173,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: whitep-android-unit-test-reports
-          path: src/Client.Android/app/build/reports/tests/testDebugUnitTest/
+          path: |
+            src/Client.Android/app/build/reports/tests/testDebugUnitTest/
+            src/Client.Android/app/build/test-results/testDebugUnitTest/
           if-no-files-found: ignore
           retention-days: 7
       - name: Verify generated Protobuf Java and Kotlin sources
@@ -194,6 +198,26 @@ jobs:
           path: src/Client.Android/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 7
+      - name: Validate Android coverage and critical test results
+        shell: bash
+        run: |
+          set -euo pipefail
+          python tests/validate_coverage_artifacts.py \
+            --html-report src/Client.Android/app/build/reports/coverage/test/debug/index.html \
+            --html-report src/Client.Android/app/build/reports/coverage/androidTest/debug/connected/index.html \
+            --junit-dir src/Client.Android/app/build/test-results/testDebugUnitTest \
+            --junit-dir src/Client.Android/app/build/outputs/androidTest-results/connected \
+            --output artifacts/coverage/android-summary.json
+      - name: Upload Android coverage reports and critical test summary
+        uses: actions/upload-artifact@v4
+        with:
+          name: whitep-android-coverage-and-critical-results
+          path: |
+            src/Client.Android/app/build/reports/coverage/test/debug/index.html
+            src/Client.Android/app/build/reports/coverage/androidTest/debug/connected/index.html
+            artifacts/coverage/android-summary.json
+          if-no-files-found: error
+          retention-days: 7
 
   host-lifecycle-tests:
     name: Host lifecycle unit and integration tests
@@ -204,6 +228,10 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 10.0.x
+      - name: Install pinned .NET code coverage collector
+        run: |
+          dotnet tool install --global dotnet-coverage --version 18.12.0
+          echo "$HOME/.dotnet/tools" >> "$GITHUB_PATH"
       - name: Install MsQuic runtime for QUIC fallback integration
         shell: bash
         run: |
@@ -216,5 +244,32 @@ jobs:
           sudo apt-get install --yes libmsquic
       - name: Clean HostLifecycle test outputs
         run: dotnet clean tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj --configuration Release
-      - name: Run lifecycle tests from clean outputs
-        run: dotnet run --project tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj --configuration Release --no-launch-profile
+      - name: Build HostLifecycle harness from clean outputs
+        run: dotnet build tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj --configuration Release --no-incremental
+      - name: Run HostLifecycle acceptance suite with code coverage
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/coverage artifacts/critical-test-results
+          dotnet-coverage collect \
+            --include-files "tests/HostLifecycle.Tests/bin/Release/net10.0/*.dll" \
+            --output artifacts/coverage/host-lifecycle.cobertura.xml \
+            --output-format cobertura \
+            dotnet tests/HostLifecycle.Tests/bin/Release/net10.0/HostLifecycle.Tests.dll \
+            2>&1 | tee artifacts/critical-test-results/host-lifecycle.log
+      - name: Validate HostLifecycle coverage and critical results
+        run: |
+          python tests/validate_coverage_artifacts.py \
+            --cobertura artifacts/coverage/host-lifecycle.cobertura.xml \
+            --critical-log artifacts/critical-test-results/host-lifecycle.log \
+            --output artifacts/coverage/host-lifecycle-summary.json
+      - name: Upload HostLifecycle coverage and critical results
+        uses: actions/upload-artifact@v4
+        with:
+          name: whitep-host-lifecycle-coverage-and-critical-results
+          path: |
+            artifacts/coverage/host-lifecycle.cobertura.xml
+            artifacts/coverage/host-lifecycle-summary.json
+            artifacts/critical-test-results/host-lifecycle.log
+          if-no-files-found: error
+          retention-days: 7

@@ -63,3 +63,15 @@ Product Build run `41922371821`: ویندوز و HostLifecycle موفق؛ Androi
 - Android job `126910709306`: ساخت fixture، Gradle clean، KtLint، ساخت APK پاک، کنترل حداقل مجوزها و آزمون‌های JVM موفق شدند. در زمان checkpoint، Android Keystore instrumentation هنوز در حال اجرا بود و بررسی نهایی Protobuf و بارگذاری گزارش‌ها/APK در انتظار بودند.
 
 **وضعیت پذیرش:** این checkpoint، موفقیت کامل T0207 را ثابت نمی‌کند. وظیفه تا پایان موفق Android instrumentation و همهٔ artifactها در وضعیت `in_progress` باقی می‌ماند.
+
+## پذیرش نهایی T0207 — 2026-11-05
+
+- Product Build run 41925547942 روی commit 5f45fc2a72b9ad382d5823c0568686aeb07ef3c6 کامل و موفق شد.
+- Windows job 126908875632: ۱۶/۱۶ گام موفق.
+- Android job 126908875955: ۲۸/۲۸ گام موفق؛ clean build، KtLint، APK، آزمون‌های JVM، Keystore instrumentation، بررسی Protobuf Java/Kotlin و بارگذاری APK و گزارش‌ها همگی موفق.
+- HostLifecycle job 126908875958: ۹/۹ گام موفق.
+- artifactها: Windows host 13368862206، Android unit reports 13370600082، debug APK 13370500424، Keystore instrumentation reports 13370420629.
+- Quality Gate run 41926077752 روی commit 3930ed7017ded5dea7786655590648920cb4ce1f پس از اصلاح regex آزمون منبع موفق شد.
+- بررسی compare بین commitهای 946 و 948 نشان داد فایل build workflow و Gradle محصول بعد از build موفق 946 تغییر نکرده‌اند؛ تغییرات بعدی به گراف/گزارش و آزمون منبع محدود بوده‌اند.
+
+**نتیجه:** معیار پذیرش T0207 با شواهد CI و artifact واقعی احراز شد و وضعیت آن به done تغییر یافت.
