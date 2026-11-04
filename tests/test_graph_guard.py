@@ -159,4 +159,45 @@ class ValidateTests(unittest.TestCase):
                      "execution_summary":{"attempt_count":1,"failed_attempt_count":0,"tests_passed":["unit tests passed"]}})
         self.assertIn("DONE_WITHOUT_TEST_FILE_EVIDENCE", {x.code for x in validate_graph(g)})
 
+
+    def test_done_accepts_android_unit_test_source_evidence(self):
+        g = graph_fixture()
+        node = g["nodes"][0]
+        node.update({
+            "status": "done",
+            "actual_output_paths": ["output.txt"],
+            "acceptance": "Output and evidence are present.",
+            "evidence": ["report.md", "src/Client.Android/app/src/test/java/sample/ExampleTest.kt"],
+            "execution_history": [{"result": "succeeded", "tests": ["Android JVM test passed"]}],
+            "execution_summary": {"attempt_count": 1, "failed_attempt_count": 0, "tests_passed": ["Android JVM test passed"]},
+        })
+        self.assertEqual(validate_graph(g), [])
+
+    def test_done_accepts_android_instrumentation_test_source_evidence(self):
+        g = graph_fixture()
+        node = g["nodes"][0]
+        node.update({
+            "status": "done",
+            "actual_output_paths": ["output.txt"],
+            "acceptance": "Output and evidence are present.",
+            "evidence": ["report.md", "src/Client.Android/app/src/androidTest/java/sample/ExampleAcceptanceTest.kt"],
+            "execution_history": [{"result": "succeeded", "tests": ["Android instrumentation test passed"]}],
+            "execution_summary": {"attempt_count": 1, "failed_attempt_count": 0, "tests_passed": ["Android instrumentation test passed"]},
+        })
+        self.assertEqual(validate_graph(g), [])
+
+    def test_done_does_not_accept_android_production_source_as_test_evidence(self):
+        g = graph_fixture()
+        node = g["nodes"][0]
+        node.update({
+            "status": "done",
+            "actual_output_paths": ["output.txt"],
+            "acceptance": "Output and evidence are present.",
+            "evidence": ["report.md", "src/Client.Android/app/src/main/java/sample/ProductionCode.kt"],
+            "execution_history": [{"result": "succeeded", "tests": ["A test passed"]}],
+            "execution_summary": {"attempt_count": 1, "failed_attempt_count": 0, "tests_passed": ["A test passed"]},
+        })
+        self.assertIn("DONE_WITHOUT_TEST_FILE_EVIDENCE", {x.code for x in validate_graph(g)})
+
+
 if __name__ == "__main__": unittest.main()

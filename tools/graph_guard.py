@@ -28,6 +28,21 @@ def extract_graph(markdown: str) -> dict:
             return graph
     raise ValueError("No fenced JSON graph with both 'nodes' and 'edges' was found.")
 
+def _is_test_source_evidence(value) -> bool:
+    """Recognize repository test roots, including Android's standard source sets."""
+    if not isinstance(value, str) or not value.strip():
+        return False
+    normalized = value.replace("\\", "/")
+    if normalized.startswith(("tests/", "test/")):
+        return True
+    parts = [part for part in normalized.split("/") if part and part != "."]
+    android_test_root = any(
+        parts[index] == "src" and parts[index + 1] in {"test", "androidTest"}
+        for index in range(len(parts) - 1)
+    )
+    return android_test_root and Path(normalized).suffix.lower() in {".kt", ".kts", ".java"}
+
+
 def _list(value):
     return value if isinstance(value, list) else []
 
@@ -86,7 +101,7 @@ def validate_graph(graph: dict, repo_root: Path | None = None) -> list[Finding]:
             if not evidence: out.append(Finding("ERROR", "DONE_WITHOUT_EVIDENCE", f"{tid} is done but has no evidence."))
             if not tests: out.append(Finding("ERROR", "DONE_WITHOUT_PASSED_TESTS", f"{tid} has no recorded passing tests."))
             if not successful_attempts: out.append(Finding("ERROR", "DONE_WITHOUT_SUCCESSFUL_ATTEMPT", f"{tid} has no successful execution-history entry."))
-            test_evidence = [item for item in evidence if isinstance(item, str) and (item.startswith("tests/") or item.startswith("test/"))]
+            test_evidence = [item for item in evidence if _is_test_source_evidence(item)]
             if not test_evidence:
                 out.append(Finding("ERROR", "DONE_WITHOUT_TEST_FILE_EVIDENCE", f"{tid} is done but evidence does not reference a test source file."))
             if repo_root is not None:
