@@ -19,9 +19,10 @@ if (args.Length > 0 && args[0] == "--interop-peer-server")
     if (!int.TryParse(args[2], System.Globalization.NumberStyles.None, System.Globalization.CultureInfo.InvariantCulture, out var interopPort))
         throw new ArgumentException("The interop server TCP port is invalid.");
     bool waitForCancellation = args.Length == 4 && args[3] == "cancel";
-    if (args.Length == 4 && !waitForCancellation)
-        throw new ArgumentException("The optional interop server mode must be 'cancel'.");
-    await AndroidInteropPeerServer.RunAsync(args[1], interopPort, waitForCancellation);
+    bool silentResponse = args.Length == 4 && args[3] == "silent";
+    if (args.Length == 4 && !waitForCancellation && !silentResponse)
+        throw new ArgumentException("The optional interop server mode must be 'cancel' or 'silent'.");
+    await AndroidInteropPeerServer.RunAsync(args[1], interopPort, waitForCancellation, silentResponse: silentResponse);
     return;
 }
 

@@ -7,6 +7,8 @@ import com.whitep.client.requests.DistributedRequestProgress
 import com.whitep.client.requests.HostCandidate
 import com.whitep.client.requests.InferenceAttemptSubmissionStatus
 import com.whitep.client.requests.InferenceRoundDispatchResult
+import com.whitep.client.requests.HostCandidateSelector
+import com.whitep.client.requests.InferenceRoundResponseFailureReason
 import io.libp2p.core.Host
 import io.libp2p.core.PeerId
 import io.libp2p.core.crypto.KeyType
@@ -895,6 +897,268 @@ class Libp2pInferenceRequestTransportTest {
                     }
                     process.inputStream.close()
                 }
+            }
+        }
+
+
+    @Test
+    fun dispatchesSecondRoundToThreeNewPeersAfterFirstThreeRemainSilent() =
+        runBlocking<Unit> {
+            val serverDll = System.getenv("WHITEP_INTEROP_SERVER_DLL")
+            assumeTrue(
+                "The cross-runtime .NET peer fixture is enabled only by the CI interop job.",
+                !serverDll.isNullOrBlank() && File(serverDll).isFile,
+            )
+
+            val clientIdentity = generateKeyPair(KeyType.ED25519).first
+            val clientPeerId = PeerId.fromPubKey(clientIdentity.publicKey()).toBase58()
+            val processes = mutableListOf<Process>()
+            val outputReaders = mutableListOf<Thread>()
+            val phaseOutput = ConcurrentLinkedQueue<String>()
+            val diagnosticOutput = ConcurrentLinkedQueue<String>()
+            val activeEndpoints = linkedMapOf<String, RendezvousPeerEndpoint>()
+            var runtime: AndroidInferenceRequestRuntime? = null
+
+            suspend fun startPeers(silentResponse: Boolean): LinkedHashMap<String, RendezvousPeerEndpoint> {
+                val endpoints = linkedMapOf<String, RendezvousPeerEndpoint>()
+                repeat(3) {
+                    val serverNumber = processes.size + 1
+                    val port = ServerSocket(0).use { socket -> socket.localPort }
+                    val command =
+                        mutableListOf(
+                            "dotnet",
+                            serverDll!!,
+                            "--interop-peer-server",
+                            clientPeerId,
+                            port.toString(),
+                        )
+                    if (silentResponse) command += "silent"
+                    val process =
+                        ProcessBuilder(command).redirectErrorStream(true).start()
+                    processes += process
+
+                    val readyLineFuture = CompletableFuture<String>()
+                    val outputReader =
+                        Thread(
+                            {
+                                val reader = process.inputStream.bufferedReader()
+                                val allowedMarkers =
+                                    setOf(
+                                        "WAITING_FOR_REMOTE_SESSION",
+                                        "SESSION_AUTHENTICATED",
+                                        "APPLICATION_PROTOCOL_READY",
+                                        "RECEIVED",
+                                        "RECEIVED_WITHOUT_RESPONSE",
+                                        "VALIDATED",
+                                        "SENT",
+                                        "PASS",
+                                    )
+                                while (true) {
+                                    val line = runCatching { reader.readLine() }.getOrNull() ?: break
+                                    when {
+                                        line.startsWith("READY\\t") -> readyLineFuture.complete(line)
+                                        line in allowedMarkers -> phaseOutput.add("peer-" + serverNumber + ":" + line)
+                                        line.startsWith("P2P_DIAG\\t") -> {
+                                            val fields = line.split('\\t', limit = 6)
+                                            if (fields.size == 6 && diagnosticOutput.size < 240) {
+                                                diagnosticOutput.add(
+                                                    "peer-" + serverNumber + ":libp2p:" +
+                                                        fields.drop(1).joinToString(separator = ":"),
+                                                )
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "whitep-dotnet-peer-" + serverNumber + "-output",
+                        ).apply { isDaemon = true }
+                    outputReaders += outputReader
+                    outputReader.start()
+
+                    val readyLine =
+                        withContext(Dispatchers.IO) {
+                            withTimeout(30_000L) {
+                                readyLineFuture.get(30, TimeUnit.SECONDS)
+                            }
+                        }
+                    val readyFields = readyLine.split('\\t')
+                    assertEquals("READY", readyFields.firstOrNull())
+                    assertEquals(3, readyFields.size)
+                    val peerId = readyFields[1]
+                    endpoints[peerId] =
+                        RendezvousPeerEndpoint(
+                            peerId = peerId,
+                            tcpMultiaddresses = listOf(readyFields[2]),
+                            expiresAtUtc = Instant.now().plusSeconds(180),
+                        )
+                }
+                return endpoints
+            }
+
+            try {
+                val firstProcessStart = processes.size
+                val firstEndpoints = startPeers(silentResponse = true)
+                val firstProcesses = processes.drop(firstProcessStart).toList()
+                activeEndpoints.putAll(firstEndpoints)
+
+                val clientRuntime =
+                    AndroidInferenceRequestRuntime(
+                        localIdentity = clientIdentity,
+                        resolveEndpoint = { requestedPeerId -> activeEndpoints[requestedPeerId] },
+                        trustVerifier = PeerTrustVerifier { trustedPeerId -> trustedPeerId in activeEndpoints },
+                        connectionTimeout = Duration.ofSeconds(20),
+                        roundTimeout = Duration.ofSeconds(15),
+                    )
+                runtime = clientRuntime
+
+                val requestId = "interop-round-two-${UUID.randomUUID()}"
+                val deadline = System.currentTimeMillis() + 180_000L
+                val distributedRequest =
+                    DistributedRequest(
+                        requestId = requestId,
+                        deadlineUnixMs = deadline,
+                        maxRounds = 2,
+                        maxTotalHosts = 6,
+                    )
+                val selectorRequest =
+                    createRequest().toBuilder()
+                        .setRequestId(requestId)
+                        .setAttemptId("round-two-selector-attempt")
+                        .setRoundId("round-two-selector-round")
+                        .setModelId(MODEL_ID)
+                        .setProtocolVersion(PROTOCOL_VERSION)
+                        .setDeadlineUnixMs(deadline)
+                        .build()
+
+                val firstSelection =
+                    HostCandidateSelector.selectFirstRound(
+                        distributedRequest = distributedRequest,
+                        request = selectorRequest,
+                        candidates = firstEndpoints.keys.map(::candidate),
+                    )
+                assertEquals(3, firstSelection.size)
+
+                val firstDispatch =
+                    clientRuntime.dispatchRound(
+                        distributedRequest = distributedRequest,
+                        selectedHosts = firstSelection,
+                        modelId = MODEL_ID,
+                        currentMessage = "First three peers deliberately withhold responses",
+                        capsule =
+                            ConversationContextCapsule(
+                                goal = "Verify that a timed-out first round advances to three new peers",
+                            ),
+                        maxOutputTokens = 8,
+                        protocolVersion = PROTOCOL_VERSION,
+                    )
+                assertTrue("The first round must dispatch: $firstDispatch", firstDispatch is InferenceRoundDispatchResult.Dispatched)
+                val firstAttempts = (firstDispatch as InferenceRoundDispatchResult.Dispatched).attempts
+                assertEquals(3, firstAttempts.size)
+                assertTrue(firstAttempts.all { it.submissionStatus == InferenceAttemptSubmissionStatus.QUEUED })
+                val firstHostIds = firstAttempts.map { it.ephemeralHostId }.toSet()
+                assertEquals(3, firstHostIds.size)
+
+                withTimeout(15_000L) {
+                    while (phaseOutput.count { it.endsWith(":RECEIVED_WITHOUT_RESPONSE") } < 3) {
+                        delay(25L)
+                    }
+                }
+                assertTrue("The first three silent peer processes must still be running.", firstProcesses.all { it.isAlive })
+
+                val firstCollection = clientRuntime.awaitRoundResponses(requestId, firstAttempts)
+                assertTrue("No first-round peer may return a response.", firstCollection.responses.isEmpty())
+                assertEquals(3, firstCollection.failures.size)
+                assertTrue(
+                    firstCollection.failures.all { failure ->
+                        failure.reason == InferenceRoundResponseFailureReason.RESPONSE_TIMED_OUT &&
+                            failure.ephemeralHostId in firstHostIds
+                    },
+                )
+
+                firstProcesses.forEach { process ->
+                    if (process.isAlive) {
+                        process.destroyForcibly()
+                        process.waitFor(5, TimeUnit.SECONDS)
+                    }
+                }
+                activeEndpoints.clear()
+                val secondProcessStart = processes.size
+                val secondEndpoints = startPeers(silentResponse = false)
+                val secondProcesses = processes.drop(secondProcessStart).toList()
+                activeEndpoints.putAll(secondEndpoints)
+
+                val secondHostIds = secondEndpoints.keys
+                assertEquals(3, secondHostIds.size)
+                assertTrue(firstHostIds.intersect(secondHostIds).isEmpty())
+
+                val secondSelection =
+                    HostCandidateSelector.selectNextRound(
+                        distributedRequest = distributedRequest,
+                        request = selectorRequest,
+                        candidates = secondHostIds.map(::candidate),
+                        previousRoundAttempts = firstAttempts,
+                        previousRoundResponses = firstCollection,
+                        progress = clientRuntime.dispatchProgress(requestId),
+                    )
+                assertEquals(3, secondSelection.size)
+                assertEquals(secondHostIds, secondSelection.map { it.announcement.ephemeralHostId }.toSet())
+                assertTrue(secondSelection.none { it.announcement.ephemeralHostId in firstHostIds })
+
+                val secondDispatch =
+                    clientRuntime.dispatchRound(
+                        distributedRequest = distributedRequest,
+                        selectedHosts = secondSelection,
+                        modelId = MODEL_ID,
+                        currentMessage = "Second round dispatched to three fresh .NET peers",
+                        capsule =
+                            ConversationContextCapsule(
+                                goal = "Verify independent response correlation after first-round timeouts",
+                            ),
+                        maxOutputTokens = 8,
+                        protocolVersion = PROTOCOL_VERSION,
+                    )
+                assertTrue("The second round must dispatch: $secondDispatch", secondDispatch is InferenceRoundDispatchResult.Dispatched)
+                val secondAttempts = (secondDispatch as InferenceRoundDispatchResult.Dispatched).attempts
+                assertEquals(3, secondAttempts.size)
+                assertTrue(secondAttempts.all { it.submissionStatus == InferenceAttemptSubmissionStatus.QUEUED })
+
+                val secondCollection = clientRuntime.awaitRoundResponses(requestId, secondAttempts)
+                assertEquals(3, secondCollection.responses.size)
+                assertTrue(secondCollection.failures.isEmpty())
+                assertEquals(secondHostIds, secondCollection.responses.map { it.ephemeralHostId }.toSet())
+                assertEquals(secondAttempts.map { it.attemptId }.toSet(), secondCollection.responses.map { it.attemptId }.toSet())
+                assertTrue(
+                    secondCollection.responses.all { response ->
+                        response.requestId == requestId &&
+                            response.modelId == MODEL_ID &&
+                            response.outputText == "dotnet-host-response" &&
+                            response.outcome == InferenceOutcome.INFERENCE_OUTCOME_SUCCEEDED
+                    },
+                )
+
+                val progress = clientRuntime.dispatchProgress(requestId)
+                assertEquals(2, progress.roundsDispatched)
+                assertEquals(6, progress.hostsAttempted)
+                assertEquals(
+                    firstAttempts.map { it.ephemeralHostId } + secondAttempts.map { it.ephemeralHostId },
+                    progress.attemptedEphemeralHostIds,
+                )
+
+                secondProcesses.forEach { process ->
+                    val processExited = process.waitFor(15, TimeUnit.SECONDS)
+                    assertTrue("A responding .NET peer fixture must exit after its response is consumed.", processExited)
+                    assertEquals(0, process.exitValue())
+                }
+            } finally {
+                runtime?.close()
+                processes.forEach { process ->
+                    if (process.isAlive) {
+                        process.destroyForcibly()
+                        process.waitFor(5, TimeUnit.SECONDS)
+                    }
+                    runCatching { process.inputStream.close() }
+                }
+                outputReaders.forEach { reader -> runCatching { reader.join(1_000L) } }
             }
         }
 

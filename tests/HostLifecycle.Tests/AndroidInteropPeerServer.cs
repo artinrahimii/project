@@ -15,7 +15,7 @@ using WhiteP.Shared.Contracts.V1;
 
 internal static class AndroidInteropPeerServer
 {
-    public static async Task RunAsync(string expectedAndroidPeerId, int port, bool waitForCancellation = false, IPAddress? bindAddress = null)
+    public static async Task RunAsync(string expectedAndroidPeerId, int port, bool waitForCancellation = false, IPAddress? bindAddress = null, bool silentResponse = false)
     {
         if (string.IsNullOrWhiteSpace(expectedAndroidPeerId))
             throw new ArgumentException("The Android PeerId is required.", nameof(expectedAndroidPeerId));
@@ -117,6 +117,15 @@ internal static class AndroidInteropPeerServer
             {
                 Array.Clear(cancelWire, 0, cancelWire.Length);
             }
+        }
+        else if (silentResponse)
+        {
+            // Keep the authenticated peer connected but deliberately withhold its inference response.
+            // The cross-runtime retry test stops these peers after the shared Android round window expires.
+            Console.WriteLine("RECEIVED_WITHOUT_RESPONSE");
+            Console.Out.Flush();
+            await Task.Delay(Timeout.Infinite, timeout.Token).ConfigureAwait(false);
+            return;
         }
         else
         {
