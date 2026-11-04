@@ -86,3 +86,18 @@ This is a source-integrity correction only. It does not change the LAN test resu
 - The manual workflow `.github/workflows/android-windows-lan-acceptance.yml` was not run because no Windows runner labelled `whitep-lan` with a separate physical Android device on the same RFC1918 LAN was available.
 - No authenticated Android-to-Windows LAN request/response evidence or `lan-acceptance.md` artifact is claimed.
 - The successful CI results verify that the test harness source compiles and the product CI pipelines pass on V3.0.929; they do not complete the T0202 acceptance criterion.
+
+## T0202-A005 — latest Android CI retry (partial; LAN still blocked)
+
+- Source revision: fff8b813cc90bd853b83b01b87a42fc57e58657c (`V 3.0.930`) on `main`.
+- Product Build run: [41902912019](https://github.com/artinrahimii/project/actions/runs/41902912019). The Windows WPF job and HostLifecycle job completed successfully.
+- Android job first attempt: the .NET peer fixture build, KtLint, debug APK build and merged APK permission check passed. `testDebugUnitTest` then reported 17 failed Robolectric class setups out of 131 tests, each rooted at `MavenArtifactFetcher.java:130` with `IOException` from `HttpURLConnection`. The test log did not establish an application assertion regression.
+- The failed Android job was retried alone (job 126832565983, run attempt 2). At this report snapshot it had passed the .NET fixture build, Kotlin lint, debug APK build, merged permission policy, Android JVM unit tests, KVM setup and temporary fixture cleanup. The Android Keystore emulator instrumentation step was still `in_progress`; Protobuf verification and artifact upload had not yet completed.
+- This retry behavior is consistent with a transient Maven artifact fetch failure, but no network-level root cause has been proven. The successful JVM retry is recorded separately from the initial failing attempt.
+
+### Acceptance boundary
+
+- **T0202 remains blocked.** The standard emulator/Keystore instrumentation is not the requested Android physical-device-to-Windows-host LAN path.
+- The manual workflow `.github/workflows/android-windows-lan-acceptance.yml` still requires a Windows self-hosted runner labelled `whitep-lan` and a separate physical Android device connected to the same RFC1918 LAN. No such runner/device was available to this execution, and the manual workflow was not run.
+- No real authenticated Android-to-Windows LAN request/response evidence or `lan-acceptance.md` artifact is claimed.
+- Snapshot limitation: the Android Keystore instrumentation result and remaining Protobuf/artifact steps were still in progress at the time this report was written.
