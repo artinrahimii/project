@@ -38,3 +38,14 @@
   - HostLifecycle job `126736316108` — **passed**.
 - KtLint's configured `max_line_length=120`. Source inspection found a 146-character `.addMigrations(...)` call in `ConversationContextCapsulePersistenceTest.kt`, plus two RequestViewModel lines at 121/122 characters. All three were reformatted in attempt `T0194-A003`. No behavioral change was intended.
 - A002 is recorded as failed because its exact-head Android gate did not complete; A003 is partial pending the next exact-head test run.
+
+## T0194-A004 Android KtLint follow-up
+
+- Based on the exact-head log for product run [41876620048](https://github.com/artinrahimii/project/actions/runs/41876620048), applied the remaining reported main-source formatting corrections:
+  - sorted imports in `MainActivity.kt` and `RequestViewModel.kt`;
+  - put the `requestScreen` parameter on the function declaration line;
+  - added the required trailing comma/newline in the multi-label `when` branch;
+  - removed the extra blank line before `RequestViewModelFactory`.
+- The preceding A003 commit [f1a43e416b85b5994eec14184ec7f55bfc935746](https://github.com/artinrahimii/project/commit/f1a43e416b85b5994eec14184ec7f55bfc935746) had already wrapped the Room migration invocation and two long ViewModel expressions. Its exact-head workflows are queued as of this report update.
+- A004 is a formatting-only correction; it does not change the lifecycle state model, Room schema, encryption boundary, network behavior or dependency edges.
+- **Verification state:** no KtLint, APK, Android JVM or instrumentation pass is claimed for A004. Exact-head workflows are required before T0194 can move to `done`.

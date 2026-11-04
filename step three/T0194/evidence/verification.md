@@ -57,3 +57,14 @@
 - Repo `.editorconfig` sets Kotlin `max_line_length=120`.
 - Local source inspection found a 146-character Room `.addMigrations(...)` invocation and two `RequestViewModel` lines at 121/122 characters. These were wrapped in A003. Exact-head KtLint rerun remains pending.
 - Same product run Windows WPF job `126736316030` and HostLifecycle job `126736316108` passed.
+
+## T0194-A004 source formatting correction
+
+The exact-head KtLint log for run 41876620048 identified remaining main-source issues in `MainActivity.kt` and `RequestViewModel.kt`. A004:
+- sorts the imports in both source files using the configured official KtLint ordering (including JVM imports at the end);
+- normalizes the requestScreen function signature;
+- adds the trailing comma before the arrow in the multi-label when entry;
+- removes the excess blank line before the factory declaration.
+
+A004 is formatting-only. CI has not yet verified these changes; APK/JVM/instrumentation acceptance remains pending.
+

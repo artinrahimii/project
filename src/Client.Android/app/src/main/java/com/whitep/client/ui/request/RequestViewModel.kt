@@ -6,16 +6,16 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.whitep.client.context.ConversationContextCapsule
 import com.whitep.client.data.ClientRequestRepository
-import com.whitep.client.data.InMemoryClientRequestRepository
 import com.whitep.client.data.InferenceRequestLifecycleRepository
 import com.whitep.client.data.InferenceRequestLifecycleState
+import com.whitep.client.data.InMemoryClientRequestRepository
 import com.whitep.client.data.InMemoryInferenceRequestLifecycleRepository
 import com.whitep.client.data.PersistedRequestStatus
 import com.whitep.client.data.RequestDraftStatus
 import com.whitep.client.errors.RequestErrorCode
 import com.whitep.client.errors.toRequestErrorCode
-import com.whitep.client.protocol.InferenceRequestPayloadBuildResult
 import com.whitep.client.protocol.InferenceRequestPayloadBuilder
+import com.whitep.client.protocol.InferenceRequestPayloadBuildResult
 import com.whitep.client.requests.AndroidRequestExecutionGatewayFactory
 import com.whitep.client.requests.DistributedRequest
 import com.whitep.client.requests.DistributedRequestProgress
@@ -32,11 +32,11 @@ import com.whitep.client.requests.RequestExecutionGatewayFactory
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import org.whitep.shared.contracts.v1.InferenceOutcome
@@ -175,7 +175,8 @@ class RequestViewModel(
                             PersistedRequestStatus.QUEUED,
                             PersistedRequestStatus.CONTACTING,
                             PersistedRequestStatus.WAITING,
-                            PersistedRequestStatus.EXPIRED -> RequestRunStatus.EXPIRED
+                            PersistedRequestStatus.EXPIRED,
+                            -> RequestRunStatus.EXPIRED
                             PersistedRequestStatus.PARTIAL -> RequestRunStatus.PARTIAL
                             PersistedRequestStatus.COMPLETED -> RequestRunStatus.SUCCEEDED
                             PersistedRequestStatus.FAILED -> RequestRunStatus.FAILED
@@ -1034,7 +1035,6 @@ class RequestViewModel(
         const val REQUEST_DEADLINE_MILLIS = 90_000L
     }
 }
-
 
 /** Creates the production request ViewModel with the encrypted Room lifecycle store. */
 class RequestViewModelFactory(
