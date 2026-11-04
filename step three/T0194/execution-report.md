@@ -122,3 +122,19 @@ All results below are from exact commit `52b6ea75889914cdf4f17782baade2a9804948d
 - Because the Android emulator/Keystore instrumentation step has not completed, there is no instrumentation result or generated-Protobuf verification result yet. A007 remains `partial`; T0194 remains `in_progress`.
 - The workflow also uploads Android instrumentation/JVM reports and the APK after preceding steps; these post-test steps remain pending.
 
+## T0194 final acceptance — V 3.0.917
+
+- **Status: done.** Exact-head Product Build [41882320680](https://github.com/artinrahimii/project/actions/runs/41882320680) completed successfully on commit `52b6ea75889914cdf4f17782baade2a9804948d9`.
+- Android job `126757694647` passed:
+  - KtLint source checks.
+  - `assembleDebug` APK build.
+  - Merged APK minimum-permission verification (only INTERNET plus AndroidX signature-scoped receiver permission).
+  - `testDebugUnitTest` JVM unit tests.
+  - `connectedDebugAndroidTest` on emulator API 36: **9 tests, 0 skipped, 0 failed**, Gradle BUILD SUCCESSFUL.
+  - Generated Protobuf Java and Kotlin source verification.
+  - Upload of instrumentation reports, JVM test reports and debug APK.
+- Windows WPF job `126757694989` passed; Host Lifecycle job `126757695001` passed.
+- Quality Gate [41882320819](https://github.com/artinrahimii/project/actions/runs/41882320819) and Rendezvous [41882320755](https://github.com/artinrahimii/project/actions/runs/41882320755) passed.
+- The three earlier failed attempts remain in the immutable task history; the accepted implementation is recorded in A007. No failure record was removed or retroactively reclassified.
+- T0194's contract revalidation is passed. The task's app-local lifecycle table continues to store only opaque request identifiers/state/timestamps/attempt count/fixed error codes, not prompt/capsule/peer metadata/response content.
+

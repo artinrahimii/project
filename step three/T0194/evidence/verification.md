@@ -129,3 +129,24 @@ A004 is formatting-only. CI has not yet verified these changes; APK/JVM/instrume
   - Windows WPF job 126757694989 — passed.
   - Host Lifecycle job 126757695001 — passed.
 - Keystore instrumentation, generated Protobuf Java/Kotlin check and artifact upload have not completed. Do not treat Android acceptance as complete.
+
+## T0194 final acceptance evidence
+
+Exact commit: `52b6ea75889914cdf4f17782baade2a9804948d9` (V 3.0.917).
+
+- [Product Build 41882320680](https://github.com/artinrahimii/project/actions/runs/41882320680): overall success.
+- Android job 126757694647:
+  - KtLint — passed.
+  - Debug APK build — passed.
+  - Merged permission verification — passed.
+  - JVM unit tests — passed.
+  - Android Keystore/Room instrumentation on emulator API 36 — 9 tests, 0 skipped, 0 failed.
+  - Generated Protobuf Java/Kotlin sources — passed.
+  - APK, unit test and instrumentation report artifacts — uploaded successfully.
+- Windows WPF job 126757694989 — passed.
+- Host Lifecycle job 126757695001 — passed.
+- [Quality Gate 41882320819](https://github.com/artinrahimii/project/actions/runs/41882320819) — passed.
+- [Rendezvous 41882320755](https://github.com/artinrahimii/project/actions/runs/41882320755) — passed.
+
+T0194 is accepted; this does not mark downstream tasks or broader P2P/network acceptance complete.
+
