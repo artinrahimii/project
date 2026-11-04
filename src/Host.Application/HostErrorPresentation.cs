@@ -53,7 +53,16 @@ public static class HostErrorPresentation
             _ => HostErrorCode.INTERNAL
         };
 
-    public static string ToUserMessage(Exception exception) => ToUserMessage(ToErrorCode(exception));
+    public static string ToUserMessage(Exception exception)
+    {
+        ArgumentNullException.ThrowIfNull(exception);
+        if (exception is ArgumentException)
+        {
+            return "Some settings are invalid. Check the server URL and model ID.";
+        }
+
+        return ToUserMessage(ToErrorCode(exception));
+    }
 
     public static string ToUserMessage(HostErrorCode code) =>
         code switch

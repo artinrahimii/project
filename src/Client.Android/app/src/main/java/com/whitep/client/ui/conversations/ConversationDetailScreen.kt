@@ -35,9 +35,9 @@ import com.whitep.client.data.MessageEntity
 import com.whitep.client.data.RequestStateEntity
 import com.whitep.client.data.RoomConversationContextCapsuleRepository
 import com.whitep.client.data.SharedPreferencesConversationContextCapsuleSizeLimitStore
-import com.whitep.client.errors.RequestErrorCode
 import com.whitep.client.domain.ConversationMessageValidationError
 import com.whitep.client.domain.ConversationMessageValidator
+import com.whitep.client.errors.RequestErrorCode
 import com.whitep.client.ui.request.toPresentation
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt

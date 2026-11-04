@@ -21,6 +21,12 @@ internal static class HostErrorPresentationAcceptanceTests
         AssertMapping(new OperationCanceledException("private cancellation detail"), HostErrorCode.CANCELLED);
         AssertMapping(new IOException("private generic I/O detail"), HostErrorCode.INTERNAL);
         AssertMapping(new Exception("C:\\private\\token.json"), HostErrorCode.INTERNAL);
+        var settingsMessage = HostErrorPresentation.ToUserMessage(
+            new ArgumentException("C:\\private\\settings.json"));
+        Assert(settingsMessage.Contains("server URL and model ID", StringComparison.Ordinal),
+            "Invalid settings must retain the stable, actionable settings guidance.");
+        Assert(!settingsMessage.Contains("private", StringComparison.OrdinalIgnoreCase),
+            "Invalid settings guidance must not expose exception paths.");
 
         Assert(HostErrorPresentation.FromProtocolCode(ProtocolErrorCode.UnsupportedModel) == HostErrorCode.MODEL_UNAVAILABLE,
             "Unsupported-model protocol failures must use the stable model category.");

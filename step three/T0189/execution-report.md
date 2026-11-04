@@ -22,3 +22,13 @@
 - **Real local inference integration:** run `41829441646` در همان آزمون HostLifecycle متوقف شد؛ سناریوی اجرای واقعی llama.cpp به مرحلهٔ acceptance خودش نرسید و بنابراین نتیجهٔ مستقلی دربارهٔ مدل به دست نیامد.
 - **T0189-A002:** نگاشت عمومی `IOException` حذف شد تا خطای I/O ناشناخته به `INTERNAL` برگردد؛ آزمون صریح generic IOException اضافه شد. importهای Kotlin دست‌خورده مرتب شدند تا importهای `java.*` در انتهای بلوک قرار گیرند.
 - **وضعیت پس از اصلاح:** `in_progress`. آزمون‌های اصلاحی هنوز روی commit جدید اجرا نشده‌اند؛ موفقیت T0189 ادعا نمی‌شود.
+
+
+## بازبینی CI دقیق commit و تلاش اصلاحی A003
+
+- **CI دقیق `V 3.0.886` / commit `29b468456290b5cecf672df4533f445d893ae216`:** Step Three quality gate run `41831155750` موفق؛ Rendezvous container run `41831155720` موفق؛ Windows WPF job `126578385121` موفق.
+- **شکست HostLifecycle:** job `126578385038` از آزمون قدیمی T0047 با پیام `Invalid settings must map to safe guidance` شکست خورد. دسته‌بندی `ArgumentException` همچنان `VALIDATION_FAILED` می‌ماند، اما پیام کاربر باید راهنمای مشخص بررسی server URL و model ID را حفظ کند.
+- **شکست Android:** job `126578384349` در KtLint، ترتیب importهای `ConversationDetailScreen.kt` را رد کرد؛ مراحل APK، JVM و instrumentation اجرا نشدند.
+- **Real local inference integration:** run `41831155932` باینری pin‌شدهٔ llama.cpp و فایل GGUF را دریافت و اعتبارسنجی کرد، اما پیش از اجرای acceptance واقعی مدل، در همان آزمون T0047 متوقف شد. بنابراین موفقیت یا شکست inference واقعی هنوز اثبات نشده است.
+- **T0189-A003:** پیام امن اختصاصی `ArgumentException` بازگردانده شد، در حالی‌که کد پایدار `VALIDATION_FAILED` حفظ می‌شود؛ آزمون پذیرش برای راهنمای تنظیمات و redaction افزوده شد و importهای `ConversationDetailScreen.kt` مرتب شدند.
+- **وضعیت:** `in_progress` تا اجرای کامل CI دقیق این اصلاحات.

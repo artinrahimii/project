@@ -59,3 +59,18 @@
 - HostErrorPresentationAcceptanceTests explicitly verifies that generic IOException maps to INTERNAL and that supplied exception details are not exposed.
 - Kotlin imports are reordered with standard java imports after regular application/library imports.
 - The correction commit and exact-head CI results are pending; task status remains in_progress.
+
+
+## Exact-head CI reconciliation for V 3.0.886
+- Step Three quality gate run 41831155750: passed.
+- Rendezvous container run 41831155720: passed.
+- Windows WPF job 126578385121: passed.
+- HostLifecycle job 126578385038: failed the existing T0047 assertion because ArgumentException presentation must retain actionable "server URL and model ID" guidance.
+- Android job 126578384349: failed KtLint import ordering in ConversationDetailScreen.kt; APK/JVM/instrumentation did not execute.
+- Real local inference run 41831155932: pinned llama.cpp binary and GGUF download/checks completed, but the run stopped at the same T0047 HostLifecycle assertion before live inference acceptance.
+
+## A003 correction snapshot
+- ArgumentException remains VALIDATION_FAILED while using fixed safe settings guidance mentioning the server URL and model ID; supplied exception text/path is not rendered.
+- HostErrorPresentationAcceptanceTests explicitly checks the actionable safe guidance and redaction.
+- ConversationDetailScreen imports are sorted according to KtLint's reported ordering.
+- A003 has not yet run on an exact head; T0189 remains in_progress.
