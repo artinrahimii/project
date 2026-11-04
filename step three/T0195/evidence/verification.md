@@ -1,20 +1,40 @@
 # T0195 — verification evidence
 
-## New low-disk tests
+## Exact-head source
 
-- Source: `tests/HostLifecycle.Tests/VerifiedModelInstallerAcceptanceTests.cs`.
-- Tests use the existing injectable `availableFreeSpaceBytesProvider`; they do not fill the CI runner's disk or depend on machine-specific free space.
-- Initial-install case: available bytes = declared model size − 1. Expected: insufficient-space IOException, zero HTTP requests, no final model and no staging file.
-- Update case: available bytes = replacement size − 1. Expected: insufficient-space IOException, zero HTTP requests, unchanged previous-model bytes and no staging/backup file.
-- Both tests are invoked by `VerifiedModelInstallerAcceptanceTests.Run()`, already called from `tests/HostLifecycle.Tests/Program.cs`.
+- Repository: `artinrahimii/project`
+- Branch: `main`
+- Commit tested: `a074815979aff371650c5101c514989f42180968`
+- Commit message: `V 3.0.922`
 
-## Existing failure-scenario tests
+## Acceptance evidence
 
-- Internet interruption: `tests/HostLifecycle.Tests/IncompleteModelDownloadAcceptanceTests.cs`.
-- Host disconnect/no-send: `src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt`.
-- Inference-server disconnect: `tests/HostLifecycle.Tests/Program.cs` fault-injection path and `tests/HostLifecycle.Tests/HostRequestCoordinatorFailureAcceptanceTests.cs`.
-- App close/restart: T0194 ViewModel and encrypted Room/SQLCipher instrumentation tests; exact prior Product run [41882320680](https://github.com/artinrahimii/project/actions/runs/41882320680) passed the Android emulator suite (9 tests, 0 skipped, 0 failed).
+- HostLifecycle job 126773137103 passed: dotnet run --project tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj --configuration Release.
+- PASS: low-disk model install and update fail before network access.
+- PASS: interrupted model downloads remove partial staging files and never expose an incomplete final model.
+- PASS: insufficient disk space, HTTP failure, invalid checksum, and cancelled updates preserve the existing model.
+- PASS: HostRequestCoordinator cancellation/failure paths release the request gate; host lifecycle shutdown/recovery checks passed.
+- Android JVM unit-test task passed in Product Build job 126773137271.
+- Android connectedDebugAndroidTest finished nine tests; the Gradle task and Android job completed successfully.
+- Product Build run 41886746018 succeeded on the exact head; Quality Gate, Rendezvous and Real local inference workflows also succeeded.
 
-## Status
+## Source/test paths
 
-A001 adds the two low-space acceptance tests. Source inspection is not treated as a passing CI result. Exact-head Quality, HostLifecycle and Android CI must pass before T0195 can move to `done`.
+- `tests/HostLifecycle.Tests/VerifiedModelInstallerAcceptanceTests.cs`
+- `tests/HostLifecycle.Tests/IncompleteModelDownloadAcceptanceTests.cs`
+- `tests/HostLifecycle.Tests/ModelDownloadCancellationAcceptanceTests.cs`
+- `tests/HostLifecycle.Tests/HostRequestCoordinatorFailureAcceptanceTests.cs`
+- `src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt`
+- `src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt`
+- `src/Client.Android/app/src/androidTest/java/com/whitep/client/data/EncryptedClientDatabaseAcceptanceTest.kt`
+
+## CI evidence
+
+- https://github.com/artinrahimii/project/actions/runs/41886746018/job/126773137103
+- https://github.com/artinrahimii/project/actions/runs/41886746018/job/126773137271
+- https://github.com/artinrahimii/project/actions/runs/41886746018
+- https://github.com/artinrahimii/project/actions/runs/41886746371
+
+## Scope note
+
+Only the acceptance criteria supported by the listed source and successful CI runs are recorded as complete. A passing task does not imply that later network/device/release tasks have passed.

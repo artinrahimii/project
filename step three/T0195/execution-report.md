@@ -1,27 +1,41 @@
-# T0195 — Failure-path acceptance tests
+# T0195 — execution report
 
-## Scope and implementation
+## Result
 
-T0195 covers five failure classes across the existing Windows and Android implementations. Existing executable tests already cover network interruption, host disconnect, inference-server disconnect and app restart. This attempt adds the missing explicit low-disk acceptance coverage rather than duplicating existing scenarios.
+**Status: succeeded.** The task acceptance criteria were checked against existing implementation/tests and executed CI evidence on exact source commit `a074815979aff371650c5101c514989f42180968`.
 
-Updated `tests/HostLifecycle.Tests/VerifiedModelInstallerAcceptanceTests.cs` with two executable cases:
+## Work performed
 
-- `RejectsInsufficientDiskSpaceBeforeNetworkAccess`: injects an available-space provider reporting one byte less than the required model staging size; verifies rejection before contacting the HTTP source, creating a final model or leaving a staging file.
-- `PreservesExistingModelWhenReplacementSpaceIsInsufficient`: repeats the preflight for an update; verifies the previous installed model remains byte-for-byte unchanged, no HTTP request is made, and no staging/backup file remains.
+Completed the outstanding verification for all five failure classes. Exact-head CI on a074815979aff371650c5101c514989f42180968 passed: HostLifecycle tests, Windows host build, Android JVM and instrumentation tests, Quality Gate, Rendezvous and real local inference. The HostLifecycle log explicitly passed low-disk install/update, interrupted download cleanup, coordinator failure and capacity checks. The Android job completed its nine instrumentation tests and ended successfully.
 
-The production installer already performs this free-space check before download and staging; no new runtime dependency or behavior was added. The tests protect the existing failure boundary.
+No duplicate test/source implementation was added where the required executable coverage already existed. The existing production and test paths below were inspected at the recorded commit; this run adds task-specific traceability and execution evidence.
 
-## Existing scenario coverage mapped to T0195
+## Tests and verification
 
-- **Internet interruption:** `tests/HostLifecycle.Tests/IncompleteModelDownloadAcceptanceTests.cs` — `InterruptedTransferRemovesPartialStagingAndLeavesNoFinalModel`; the fixture provides partial bytes then throws IOException, verifying cleanup and no final model.
-- **Host disconnect:** `src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt` — `sendsNothingWhenEveryDiscoveredPeerDisconnectsBeforeAuthenticatedStatusProbe`; verifies no request is sent after all selected peers disconnect.
-- **Inference server/process failure:** `tests/HostLifecycle.Tests/Program.cs` injects a local inference transport failure and verifies a stable “server process stopped” message without exposing the underlying exception; `HostRequestCoordinatorFailureAcceptanceTests` verifies an inference failure releases the single-request gate.
-- **Application shutdown/restart:** delivered under T0194 through `RequestViewModelTest.processRestartExpiresPersistedInFlightRequestAndRestoresExplicitExpiredState` and encrypted Room/SQLCipher instrumentation. Exact Product run 41882320680 passed all 9 emulator instrumentation tests (0 skipped, 0 failed).
+- HostLifecycle job 126773137103 passed: dotnet run --project tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj --configuration Release.
+- PASS: low-disk model install and update fail before network access.
+- PASS: interrupted model downloads remove partial staging files and never expose an incomplete final model.
+- PASS: insufficient disk space, HTTP failure, invalid checksum, and cancelled updates preserve the existing model.
+- PASS: HostRequestCoordinator cancellation/failure paths release the request gate; host lifecycle shutdown/recovery checks passed.
+- Android JVM unit-test task passed in Product Build job 126773137271.
+- Android connectedDebugAndroidTest finished nine tests; the Gradle task and Android job completed successfully.
+- Product Build run 41886746018 succeeded on the exact head; Quality Gate, Rendezvous and Real local inference workflows also succeeded.
 
-## Dependencies and privacy
+## Verified outputs
 
-Incoming T0194 and T0188 edges are already validated in the graph. Their original `type=blocks` values and execution order are preserved. Failure tests continue to respect the fixed diagnostic allowlist and do not log prompt, response, capsule, key or peer identifiers.
+- `tests/HostLifecycle.Tests/VerifiedModelInstallerAcceptanceTests.cs`
+- `tests/HostLifecycle.Tests/IncompleteModelDownloadAcceptanceTests.cs`
+- `tests/HostLifecycle.Tests/ModelDownloadCancellationAcceptanceTests.cs`
+- `tests/HostLifecycle.Tests/HostRequestCoordinatorFailureAcceptanceTests.cs`
+- `src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt`
+- `src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt`
+- `src/Client.Android/app/src/androidTest/java/com/whitep/client/data/EncryptedClientDatabaseAcceptanceTest.kt`
+- `step three/T0195/execution-report.md`
+- `step three/T0195/evidence/verification.md`
 
-## Verification state
+## Source revision and tracking
 
-The new C# tests are registered in `VerifiedModelInstallerAcceptanceTests.Run()`, invoked by `tests/HostLifecycle.Tests/Program.cs`. Source-level inspection of the added methods passed. Exact-head Quality and Product CI are pending; T0195 remains `in_progress`.
+- Tested source commit: `a074815979aff371650c5101c514989f42180968` (`main`, `V 3.0.922`).
+- Verification timestamp: `2026-11-04T19:01:26Z`.
+- Task evidence and graph status are recorded in the same `V 3.0.923` tracking commit.
+- Follow-up: T0195 is complete. Its outgoing edges to T0196-T0201 were reviewed individually; proceed only along the validated graph.
