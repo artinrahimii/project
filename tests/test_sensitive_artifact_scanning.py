@@ -4,6 +4,10 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 HOST_STORE = (ROOT / "src/Host.Windows/Chat/WindowsHostConversationStore.cs").read_text(encoding="utf-8")
+HOST_IDENTITY = (ROOT / "src/Shared.Security/HostIdentityStore.cs").read_text(encoding="utf-8")
+PEER_TRUST = (ROOT / "src/Shared.Security/PeerTrustStore.cs").read_text(encoding="utf-8")
+HOST_SETTINGS = (ROOT / "src/Host.Infrastructure/LocalHostSettingsStore.cs").read_text(encoding="utf-8")
+MODEL_INSTALLER = (ROOT / "src/Host.Windows/Models/VerifiedModelInstaller.cs").read_text(encoding="utf-8")
 HOST_RUNTIME_TEST = (ROOT / "tests/HostLifecycle.Tests/ChatConversationAcceptanceTests.cs").read_text(encoding="utf-8")
 HOST_LOG_TEST = (ROOT / "tests/HostLifecycle.Tests/SafeDiagnosticLogAcceptanceTests.cs").read_text(encoding="utf-8")
 ANDROID_DB_FACTORY = (
@@ -83,6 +87,40 @@ class SensitiveArtifactScanningTests(unittest.TestCase):
         self.assertIn("## آزمون اسکن log و فایل‌های موقت برای prompt، capsule و اسرار (T0187)", SECURITY_DOC)
         self.assertIn("pagefile/swap", SECURITY_DOC)
         self.assertIn("crash dump", SECURITY_DOC)
+
+
+
+    def test_identity_and_peer_trust_temporary_files_write_only_protected_envelopes(self):
+        self.assertIn("_protector.Protect(serializedPrivateKey)", HOST_IDENTITY)
+        self.assertIn("envelope = BuildEnvelope(protectedPayload)", HOST_IDENTITY)
+        self.assertIn("stream.Write(envelope)", HOST_IDENTITY)
+        self.assertIn("CryptographicOperations.ZeroMemory(serializedPrivateKey)", HOST_IDENTITY)
+        self.assertIn("_protector.Protect(plaintext)", PEER_TRUST)
+        self.assertIn("protectedPayload.CopyTo(envelope, FileMagic.Length + 1)", PEER_TRUST)
+        self.assertIn("stream.Write(envelope)", PEER_TRUST)
+        self.assertIn("CryptographicOperations.ZeroMemory(plaintext)", PEER_TRUST)
+
+    def test_settings_temp_file_contains_no_request_capsule_or_secret_fields(self):
+        self.assertIn('".tmp"', HOST_SETTINGS)
+        self.assertIn("JsonSerializer.Serialize(stream, document, JsonOptions)", HOST_SETTINGS)
+        settings_document = HOST_SETTINGS.split("private sealed class SettingsDocument", 1)[1]
+        for field in ("Prompt", "ContextCapsule", "SerializedCapsule", "PrivateKey", "Secret", "AccessToken", "Password"):
+            with self.subTest(field=field):
+                self.assertNotIn(field.lower(), settings_document.lower())
+
+    def test_model_staging_temp_file_is_verified_model_content_not_request_content(self):
+        self.assertIn('.whitep-download-{Guid.NewGuid():N}.tmp', MODEL_INSTALLER)
+        self.assertIn("_downloader.DownloadAsync(model, temporaryPath", MODEL_INSTALLER)
+        self.assertIn("SHA256.HashDataAsync(input, cancellationToken)", MODEL_INSTALLER)
+        self.assertIn("ValidateModelFileFormatAsync(model.Format, temporaryPath", MODEL_INSTALLER)
+        self.assertIn("TryDelete(temporaryPath)", MODEL_INSTALLER)
+
+    def test_android_context_capsule_canary_is_stored_in_the_actual_capsule_blob(self):
+        self.assertIn("ConversationContextCapsule(", ANDROID_DB_TEST)
+        self.assertIn("ConversationContextCapsuleEntity(", ANDROID_DB_TEST)
+        self.assertIn("serializedCapsule = capsuleBytes", ANDROID_DB_TEST)
+        self.assertIn("ConversationContextCapsule.decode", ANDROID_DB_TEST)
+        self.assertIn("keyFacts = listOf(capsuleMarker)", ANDROID_DB_TEST)
 
 
 if __name__ == "__main__":

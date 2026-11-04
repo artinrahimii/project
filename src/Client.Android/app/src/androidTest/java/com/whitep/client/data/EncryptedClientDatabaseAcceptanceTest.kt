@@ -5,6 +5,7 @@ import android.util.Base64
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.whitep.client.context.ConversationContextCapsule
 import com.whitep.client.security.AndroidKeyStoreProtectedBlobProtector
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
@@ -106,6 +107,12 @@ class EncryptedClientDatabaseAcceptanceTest {
     fun legacyPlaintextRoomDatabaseIsExportedAndExistingRowsArePreserved() =
         runBlocking {
             val databaseName = databaseNames[1]
+            val capsuleMarker = sensitiveCanaryMarkers[1]
+            val capsule = ConversationContextCapsule(
+                goal = "T0187 context capsule persistence fixture",
+                keyFacts = listOf(capsuleMarker),
+            )
+            val capsuleBytes = checkNotNull(capsule.encode().bytes)
             val legacy =
                 Room
                     .databaseBuilder(context, ClientDatabase::class.java, databaseName)
@@ -118,7 +125,7 @@ class EncryptedClientDatabaseAcceptanceTest {
                 legacy.conversationDao().upsert(
                     ConversationEntity(
                         conversationId = "legacy-conversation",
-                        title = "T0187_CONTEXT_CAPSULE_CANARY_91C4",
+                        title = "Preserve this record",
                         createdAtEpochMillis = 30L,
                         updatedAtEpochMillis = 40L,
                     ),
@@ -139,6 +146,14 @@ class EncryptedClientDatabaseAcceptanceTest {
                         status = RequestDraftStatus.NOT_SENT,
                     ),
                 )
+                legacy.conversationContextCapsuleDao().upsert(
+                    ConversationContextCapsuleEntity(
+                        conversationId = "legacy-conversation",
+                        serializedCapsule = capsuleBytes,
+                        updatedAtEpochMillis = 36L,
+                    ),
+                )
+                capsuleBytes.fill(0)
                 legacy.openHelper.writableDatabase
             } finally {
                 legacy.close()
@@ -150,7 +165,7 @@ class EncryptedClientDatabaseAcceptanceTest {
             val encrypted = EncryptedClientDatabaseFactory.open(context, databaseName)
             try {
                 assertEquals(
-                    "T0187_CONTEXT_CAPSULE_CANARY_91C4",
+                    "Preserve this record",
                     encrypted.conversationDao().findById("legacy-conversation")?.title,
                 )
                 assertEquals(
@@ -166,6 +181,12 @@ class EncryptedClientDatabaseAcceptanceTest {
                     "T0187_PROMPT_CANARY_7F2A",
                     encrypted.clientRequestDraftDao().findById("current")?.prompt,
                 )
+                val migratedCapsule = checkNotNull(
+                    encrypted.conversationContextCapsuleDao().findByConversationId("legacy-conversation"),
+                )
+                val decodedCapsule = ConversationContextCapsule.decode(migratedCapsule.serializedCapsule)
+                assertEquals(null, decodedCapsule.error)
+                assertEquals(listOf(capsuleMarker), decodedCapsule.capsule?.keyFacts)
             } finally {
                 encrypted.close()
             }

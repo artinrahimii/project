@@ -40,3 +40,11 @@
 - Rendezvous container workflow `41818882949`: موفق.
 - WPF job `126536652244` و Android job `126536652473` در زمان ثبت شکست هنوز در حال اجرا بودند؛ موفقیت برای آن‌ها ادعا نشده است.
 - اصلاح A002 فقط assertion source-contract را با عبارت واقعی هم‌تراز می‌کند؛ کنترل runtime و منطق امنیتی بدون تغییر می‌ماند.
+
+ 
+## A003 — اصلاح پوشش capsule و فایل‌های موقت
+ 
+- آزمون اندروید اکنون marker را در JSON معتبر `ConversationContextCapsule` و ستون واقعی `serializedCapsule` ذخیره می‌کند و پس از مهاجرت رمز‌شده از DAO بازیابی و decode می‌کند؛ از فیلد عنوان به‌عنوان جانشین capsule استفاده نمی‌شود.
+- آزمون منبعی writerهای temporary در HostIdentityStore، PeerTrustStore، LocalHostSettingsStore و VerifiedModelInstaller را پوشش می‌دهد.
+- ممیزی log به همهٔ `src/Host.Windows` گسترش یافت و حداقل یک log sink واقعی را الزام می‌کند.
+- CI روی نسخهٔ قبل، `V 3.0.878`: quality، WPF، HostLifecycle، Android JVM/instrumentation و Rendezvous موفق بودند؛ تغییرات A003 برای پذیرش نیازمند اجرای مجدد CI هستند.

@@ -5,7 +5,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE_ROOTS = (
-    ROOT / "src/Host.Windows/Networking",
+    ROOT / "src/Host.Windows",
     ROOT / "src/Host.Infrastructure",
     ROOT / "src/Host.Application",
     ROOT / "src/Shared.Security",
@@ -25,9 +25,9 @@ LOG_SINK = re.compile(
 )
 SENSITIVE_REFERENCE = re.compile(
     r"\b(?:request|response|frame|payload|outcome|exception|ex|endpoint|identity|key)\s*\.\s*"
-    r"(?:Prompt|ContextCapsule|OutputText|ErrorMessage|Message|RequestId|AttemptId|RoundId|ModelId|"
+    r"(?:Prompt|ContextCapsule|SerializedCapsule|OutputText|ErrorMessage|Message|RequestId|AttemptId|RoundId|ModelId|"
     r"EphemeralHostId|PeerId|PrivateKey|Secret|Token|Address)\b"
-    r"|\b(?:Prompt|ContextCapsule|OutputText|ErrorMessage|PrivateKey|SecretKey|AccessToken|"
+    r"|\b(?:Prompt|ContextCapsule|SerializedCapsule|OutputText|ErrorMessage|PrivateKey|SecretKey|AccessToken|"
     r"RefreshToken|password|apiKey)\b",
     re.IGNORECASE,
 )
@@ -49,7 +49,7 @@ class NetworkPayloadLoggingTests(unittest.TestCase):
                             SENSITIVE_REFERENCE.search(context),
                             f"Possible sensitive diagnostic disclosure at {path}:{index + 1}",
                         )
-        self.assertGreaterEqual(inspected, 0)
+        self.assertGreater(inspected, 0, "The production log-sink audit did not inspect any sink.")
 
     def test_dotnet_diagnostic_api_accepts_only_numeric_allowlist_values(self):
         source = CSHARP_LOG.read_text(encoding="utf-8")

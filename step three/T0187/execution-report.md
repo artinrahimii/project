@@ -24,3 +24,13 @@
 - Rendezvous container run `41818882949` موفق شد. WPF و Android jobهای product run هنگام ثبت شکست هنوز در حال اجرا بودند؛ نتیجهٔ آن‌ها را موفق فرض نمی‌کنیم.
 - A002 فقط متن مورد انتظار source-contract را با expression دقیق C# هم‌راستا می‌کند؛ هیچ کنترل runtime یا معیار امنیتی حذف/تضعیف نمی‌شود. کیفیت exact-head نسخهٔ بعد باید دوباره پاس شود.
 - وضعیت T0187: `in_progress`؛ یک تلاش failed و یک تلاش اصلاحی partial ثبت شده است.
+
+ 
+## A003 — اصلاح capsule واقعی و گسترش ممیزی فایل موقت/log
+
+- marker مربوط به capsule به‌جای عنوان گفتگو، اکنون در `ConversationContextCapsule.keyFacts` قرار می‌گیرد؛ با `encode()` به JSON معتبر UTF-8 تبدیل و از طریق `ConversationContextCapsuleEntity.serializedCapsule` در Room ذخیره می‌شود. پس از export با SQLCipher، آزمون ردیف capsule را از DAO می‌خواند، decode می‌کند و marker را از همان فیلد تأیید می‌کند.
+- آزمون منبعی برای writerهای فایل موقت HostIdentityStore، PeerTrustStore، LocalHostSettingsStore و VerifiedModelInstaller افزوده شد. دو writer امنیتی envelope محافظت‌شده را می‌نویسند؛ تنظیمات سند غیرمکالمه‌ای است؛ فایل دانلود مدل فقط staging محتوای مدل است و hash/format-check می‌شود.
+- اسکن sinkهای log به کل `src/Host.Windows` گسترش یافت؛ آزمون اکنون وجود sink قابل‌اسکن را الزام می‌کند و `SerializedCapsule` را در فیلدهای حساس می‌شناسد.
+- نتایج exact-head نسخهٔ `V 3.0.878`: quality gate، Windows WPF، HostLifecycle، Android client (شامل JVM و Keystore instrumentation)، و Rendezvous همگی موفق شدند.
+- کدهای A003 هنوز در CI اجرا نشده‌اند؛ وضعیت وظیفه تا تأیید workflowهای exact-head بعدی `in_progress` می‌ماند.
+- زمان ثبت: 2026-11-04T11:22:07.732Z
