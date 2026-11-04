@@ -5,6 +5,7 @@ import argparse, json, re, sys
 from collections import defaultdict, deque
 from dataclasses import dataclass
 from pathlib import Path
+from urllib.parse import urlsplit
 
 NODE_STATUSES = {"not_started", "in_progress", "done", "blocked", "deferred_final"}
 SUCCESSFUL_ATTEMPT_RESULTS = {"succeeded", "passed"}
@@ -128,7 +129,11 @@ def validate_graph(graph: dict, repo_root: Path | None = None) -> list[Finding]:
                 for item in evidence:
                     if not isinstance(item, str) or not item.strip():
                         out.append(Finding("ERROR", "INVALID_EVIDENCE", f"{tid}: evidence must be non-empty text.")); continue
-                    if "/" in item or "\\" in item:
+                    if "://" in item:
+                        parsed_url = urlsplit(item)
+                        if parsed_url.scheme != "https" or not parsed_url.netloc:
+                            out.append(Finding("ERROR", "INVALID_EVIDENCE_URL", f"{tid}: external evidence URL must use HTTPS and include a host: {item!r}."))
+                    elif "/" in item or "\\" in item:
                         p = _repo_path(repo_root, item)
                         if p is None or not p.is_file(): out.append(Finding("ERROR", "MISSING_EVIDENCE_FILE", f"{tid}: evidence file not found: {item!r}."))
 

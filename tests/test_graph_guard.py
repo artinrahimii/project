@@ -65,7 +65,7 @@ class ValidateTests(unittest.TestCase):
         import tempfile
         g=graph_fixture(); node=g["nodes"][0]
         node.update({"status":"done", "actual_output_paths":["output.txt"], "acceptance":"Output and evidence are present.",
-                     "evidence":["report.md", "tests/test_graph_guard.py"],
+                     "evidence":["report.md", "tests/test_graph_guard.py", "https://github.com/owner/repo/actions/runs/42"],
                      "execution_history":[{"result":"succeeded","tests":["unit tests passed"]}],
                      "execution_summary":{"attempt_count":1,"failed_attempt_count":0,"tests_passed":["unit tests passed"]}})
         with tempfile.TemporaryDirectory() as td:
@@ -198,6 +198,28 @@ class ValidateTests(unittest.TestCase):
             "execution_summary": {"attempt_count": 1, "failed_attempt_count": 0, "tests_passed": ["A test passed"]},
         })
         self.assertIn("DONE_WITHOUT_TEST_FILE_EVIDENCE", {x.code for x in validate_graph(g)})
+
+
+
+    def test_done_rejects_non_https_external_evidence_url(self):
+        import tempfile
+        g = graph_fixture()
+        node = g["nodes"][0]
+        node.update({
+            "status": "done",
+            "actual_output_paths": ["output.txt"],
+            "acceptance": "Output and evidence are present.",
+            "evidence": ["report.md", "tests/test_graph_guard.py", "http://github.com/owner/repo/actions/runs/42"],
+            "execution_history": [{"result": "succeeded", "tests": ["unit tests passed"]}],
+            "execution_summary": {"attempt_count": 1, "failed_attempt_count": 0, "tests_passed": ["unit tests passed"]},
+        })
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            (root / "output.txt").write_text("real output")
+            (root / "report.md").write_text("evidence")
+            (root / "tests").mkdir()
+            (root / "tests" / "test_graph_guard.py").write_text("test source")
+            self.assertIn("INVALID_EVIDENCE_URL", {x.code for x in validate_graph(g, root)})
 
 
 if __name__ == "__main__": unittest.main()

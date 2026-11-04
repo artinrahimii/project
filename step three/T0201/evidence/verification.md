@@ -17,7 +17,7 @@
 
 - `.github/workflows/real-inference.yml`
 - `tests/HostLifecycle.Tests/Program.cs`
-- `src/Host.Windows/Inference/LlamaCppServerBackend.cs`
+- `src/Host.Infrastructure/LlamaCppServerBackend.cs`
 - `src/Host.Windows/Inference/LocalInferenceProcessLauncher.cs`
 
 ## CI evidence

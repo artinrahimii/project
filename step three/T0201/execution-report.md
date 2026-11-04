@@ -20,7 +20,7 @@ No duplicate test/source implementation was added where the required executable 
 
 - `.github/workflows/real-inference.yml`
 - `tests/HostLifecycle.Tests/Program.cs`
-- `src/Host.Windows/Inference/LlamaCppServerBackend.cs`
+- `src/Host.Infrastructure/LlamaCppServerBackend.cs`
 - `src/Host.Windows/Inference/LocalInferenceProcessLauncher.cs`
 - `step three/T0201/execution-report.md`
 - `step three/T0201/evidence/verification.md`
