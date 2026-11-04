@@ -13,3 +13,10 @@
 - **Tests added/updated:** Room file-reopen recovery, migration v1→v5, ViewModel startup recovery, expired-status presentation, SQLCipher restart recovery and Python source/privacy contracts. Existing capsule persistence tests were updated to register migration 4→5.
 - **Verification boundary:** source/contract structure was inspected, but no local Android SDK/build is available in this execution environment. Exact-head GitHub Actions results are pending; no test success is yet claimed for A001.
 - **Next:** inspect exact-head Step Three quality and Android lint/build/JVM/instrumentation results. Fix failures and only then accept T0194.
+
+
+## T0194-A001 CI finding and T0194-A002 correction
+
+- Exact-head Quality run [41875864372](https://github.com/artinrahimii/project/actions/runs/41875864372), job `126734953437`, ran **403 tests** and failed one source-contract test: `test_android_request_architecture.test_compose_screen_uses_viewmodel_and_production_peer_gateway` expected the old `viewModel()` no-argument syntax. The production code now correctly injects `RequestViewModelFactory` and `RoomInferenceRequestLifecycleRepository`; this test had not been updated for that intended wiring. The other 402 tests passed.
+- Corrected `tests/test_android_request_architecture.py` to assert the Compose `viewModel(` factory call, `RequestViewModelFactory`, and `RoomInferenceRequestLifecycleRepository`.
+- This correction is attempt `T0194-A002`. No Android build or runtime success is claimed yet. The product workflow was still running Windows, Android and host lifecycle jobs at inspection. Rerun exact-head CI is required.

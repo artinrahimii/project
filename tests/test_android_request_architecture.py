@@ -38,7 +38,9 @@ class AndroidRequestArchitectureTests(unittest.TestCase):
     def test_compose_screen_uses_viewmodel_and_production_peer_gateway(self):
         self.assertIn('implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.9.3")', ANDROID_BUILD)
         self.assertIn("RequestViewModel", ACTIVITY)
-        self.assertIn("viewModel()", ACTIVITY)
+        self.assertIn("viewModel(", ACTIVITY)
+        self.assertIn("RequestViewModelFactory", ACTIVITY)
+        self.assertIn("RoomInferenceRequestLifecycleRepository", ACTIVITY)
         self.assertIn("collectAsState()", ACTIVITY)
         self.assertIn("requestViewModel::updatePrompt", ACTIVITY)
         self.assertIn("requestViewModel.sendRequest(", ACTIVITY)

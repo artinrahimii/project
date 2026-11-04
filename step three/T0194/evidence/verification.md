@@ -35,3 +35,10 @@
 ## CI
 
 - Exact-head Quality and Android product-build results will be appended after the workflow finishes. A001 remains partial until the relevant CI gates pass.
+
+
+## CI feedback
+
+- Run `41875864372` / job `126734953437` — **failed**, 403 Python tests executed, 402 passed and one failed. Failure: the pre-existing `test_android_request_architecture` assertion still required `viewModel()`; it was stale after the request screen began injecting the Room repository through `RequestViewModelFactory`.
+- A002 updates that source-contract assertion to the new production factory/repository pattern. This fixes the known test mismatch; it is not itself evidence of passing CI.
+- At inspection, product jobs in run `41875864365` were still running (Windows, Android APK/interoperability and HostLifecycle); no result is claimed for them.
