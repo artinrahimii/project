@@ -363,8 +363,7 @@ class ConversationContextCapsulePersistenceTest {
                 ClientDatabase.MIGRATION_2_3,
                 ClientDatabase.MIGRATION_3_4,
                 ClientDatabase.MIGRATION_4_5,
-            )
-            .allowMainThreadQueries()
+            ).allowMainThreadQueries()
             .build()
             .also { activeDatabase = it }
 

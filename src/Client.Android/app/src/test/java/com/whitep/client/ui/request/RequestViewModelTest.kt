@@ -479,7 +479,9 @@ class RequestViewModelTest {
         assertEquals(RequestRunStatus.EXPIRED, restoredViewModel.uiState.value.runStatus)
         assertEquals(
             "Expired after the app closed before a result was saved.",
-            restoredViewModel.uiState.value.toNetworkInferenceStatusPresentation().inferenceStatus,
+            restoredViewModel.uiState.value
+                .toNetworkInferenceStatusPresentation()
+                .inferenceStatus,
         )
         val persisted =
             kotlinx.coroutines.runBlocking {

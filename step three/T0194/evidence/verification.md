@@ -87,3 +87,16 @@ A004 is formatting-only. CI has not yet verified these changes; APK/JVM/instrume
 - Code review: `ClientDatabase.getInstance` uses `EncryptedClientDatabaseFactory`; the factory opens Room with SQLCipher and registers migrations 1→2→3→4→5. The new app-level lifecycle entity contains request ID, enum status, timestamps, attempt count and fixed error code only. The Room DAO marks all prior QUEUED/CONTACTING/WAITING rows EXPIRED transactionally on recovery. The request ViewModel awaits recovery and persists QUEUED/CONTACTING before dispatch.
 - Tests present: file-backed Room reopen/recovery, migration from v1 through v5, ViewModel process-restart recovery, exhaustive EXPIRED presentation, and SQLCipher instrumentation reopen. Presence of tests is not evidence that they passed.
 - Local tests could not be run because Gradle and dotnet are unavailable in this environment and Git clone was blocked by DNS. The graph remains in_progress pending exact-head CI.
+
+## A005 exact-head CI outcome
+
+- Quality Gate run 41879924836: passed. Its log confirms 403 Python tests, syntax compilation, graph structure validation (230 tasks/422 edges), and recorded-output/evidence validation. One non-blocking unmapped dependency warning in T0001 remains preserved as metadata.
+- Rendezvous container run 41879924251: passed.
+- Product Build run 41879926235, Android job 126749441659: failed at KtLint test-source check:
+  - ClientDatabaseTest.kt — four diagnostics across two Room builder chains.
+  - ConversationContextCapsulePersistenceTest.kt — one chain-continuation diagnostic.
+  - RequestViewModelTest.kt — two chained-call continuation diagnostics.
+- APK build, permission verification, JVM tests and Keystore instrumentation were skipped.
+- A006 corrects all seven diagnostics while leaving request lifecycle behavior, database schema and security boundaries unchanged. Targeted source and 120-column checks pass; KtLint itself is not claimed as passed.
+- T0194 remains in_progress pending exact-head validation.
+

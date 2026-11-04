@@ -295,7 +295,8 @@ class ClientDatabaseTest {
             application.deleteDatabase(databaseName)
             try {
                 val firstDatabase =
-                    Room.databaseBuilder(
+                    Room
+                        .databaseBuilder(
                         application,
                         ClientDatabase::class.java,
                         databaseName,
@@ -304,7 +305,8 @@ class ClientDatabaseTest {
                         ClientDatabase.MIGRATION_2_3,
                         ClientDatabase.MIGRATION_3_4,
                         ClientDatabase.MIGRATION_4_5,
-                    ).allowMainThreadQueries().build()
+                    ).allowMainThreadQueries()
+                        .build()
                 firstDatabase.inferenceRequestStateDao().upsert(
                     InferenceRequestStateEntity(
                         requestId = "opaque-request-lifecycle",
@@ -317,7 +319,8 @@ class ClientDatabaseTest {
                 firstDatabase.close()
 
                 val reopenedDatabase =
-                    Room.databaseBuilder(
+                    Room
+                        .databaseBuilder(
                         application,
                         ClientDatabase::class.java,
                         databaseName,
@@ -326,7 +329,8 @@ class ClientDatabaseTest {
                         ClientDatabase.MIGRATION_2_3,
                         ClientDatabase.MIGRATION_3_4,
                         ClientDatabase.MIGRATION_4_5,
-                    ).allowMainThreadQueries().build()
+                    ).allowMainThreadQueries()
+                        .build()
                 try {
                     val repository =
                         RoomInferenceRequestLifecycleRepository(

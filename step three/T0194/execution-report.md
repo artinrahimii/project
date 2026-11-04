@@ -71,3 +71,16 @@
 - Relevant Room migration, ViewModel recovery, status-presentation and SQLCipher instrumentation tests exist in the repository. They have not yet been executed successfully by the new exact-head CI runs.
 - Local execution limitation: this environment has no Gradle or .NET SDK, and a shallow clone attempt could not resolve `github.com`; no local Kotlin/Android or .NET test result is claimed.
 - T0194 remains `in_progress` until exact-head KtLint, APK, JVM and SQLCipher/Room instrumentation pass.
+
+## T0194-A005 exact-head CI result
+
+- Quality Gate [41879924836](https://github.com/artinrahimii/project/actions/runs/41879924836): **passed** on `1a427e7d24070be0dedbc88f6ef190eed21870ef`. The job log confirms 403 Python tests passed, Python syntax compilation passed, graph structure guard passed (230 tasks, 422 edges; one existing non-blocking metadata warning), and recorded-output/evidence validation passed.
+- Rendezvous container [41879924251](https://github.com/artinrahimii/project/actions/runs/41879924251): **passed** on the same commit.
+- Product Build [41879926235](https://github.com/artinrahimii/project/actions/runs/41879926235): **failed**. Android job `126749441659` stopped at `ktlintTestSourceSetCheck` with seven diagnostics:
+  - `ClientDatabaseTest.kt`: lines 298:25, 307:47, 320:25, and 329:47.
+  - `ConversationContextCapsulePersistenceTest.kt`: line 367:13.
+  - `RequestViewModelTest.kt`: line 482:44 and 482:83.
+- The failure is confined to Kotlin test-source chain formatting. Android APK build, merged-manifest permission verification, JVM unit tests and Keystore instrumentation were skipped.
+- A006 corrects all seven reported locations. It does not change lifecycle behavior, Room schema, SQLCipher handling, network contracts, or user-data privacy.
+- Targeted source-level checks confirmed the changed chain patterns and no line over 120 columns. This is not a substitute for KtLint itself.
+- **Verification remains pending:** no APK/JVM/Instrumentation pass is claimed for A006.
