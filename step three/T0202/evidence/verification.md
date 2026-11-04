@@ -50,3 +50,15 @@ The evidence establishes the gap, not successful T0202 acceptance. The task rema
 - `gradle --no-daemon ktlintCheck` failed at AndroidWindowsLanIntegrationTest.kt line 118 with `Expected newline before '.'` for the InferenceRequest builder chain.
 - The builder chain is corrected by moving `.newBuilder()` to the next line. The Android APK build and instrumentation were skipped in that failed run; no Android test pass is claimed.
 - A fresh CI run is required on the correction commit. The physical Android-to-Windows LAN acceptance remains unexecuted.
+
+## T0202-A004 — successful automated CI (not LAN acceptance)
+
+- [Step Three quality gate, run 41900885151](https://github.com/artinrahimii/project/actions/runs/41900885151) — success.
+- [White-P product build, run 41900885262](https://github.com/artinrahimii/project/actions/runs/41900885262) — success.
+- [Rendezvous container, run 41900885166](https://github.com/artinrahimii/project/actions/runs/41900885166) — success.
+- Windows WPF Release build, Protobuf C# generation, startup smoke, agent-tool policy/capability/process tests, DPAPI identity/peer trust tests — passed.
+- HostLifecycle unit/integration tests — passed.
+- Android Windows .NET peer fixture build, KtLint, debug APK build, merged permissions check, JVM unit tests, Keystore emulator instrumentation, generated Java/Kotlin Protobuf check and APK upload — passed.
+- Android APK, Windows host and Android instrumentation/unit-test report artifacts were published.
+
+**Scope limitation:** The successful Android Keystore emulator instrumentation is not an Android-to-Windows LAN test. The manual workflow needs one physical Android handset and the Windows host on the same non-loopback private LAN. That workflow was not executed, so T0202 remains blocked.

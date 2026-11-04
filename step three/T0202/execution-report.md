@@ -68,3 +68,21 @@ This is a source-integrity correction only. It does not change the LAN test resu
 - KtLint failed with `AndroidWindowsLanIntegrationTest.kt:118:37 Expected newline before '.'` on the `InferenceRequest.newBuilder()` chain. The Android APK build and later Android tests were skipped after this lint failure.
 - Corrected the chain to place `.newBuilder()` on the next line, matching the repository's ktlint_official style. Maximum-line-length preflight remains satisfied.
 - Result: partial correction; the workflow on the new commit must pass before the Android build can be reported successful. T0202 remains blocked pending physical-device LAN acceptance.
+
+## T0202-A004 — automated CI follow-up (partial; LAN acceptance still blocked)
+
+- Source revision: `e19609161bafb131275c9fcf95629f3415818a9e` (`V 3.0.929`) on `main`.
+- Step Three quality gate: [run 41900885151](https://github.com/artinrahimii/project/actions/runs/41900885151) — success.
+- White-P product build: [run 41900885262](https://github.com/artinrahimii/project/actions/runs/41900885262) — success.
+- Rendezvous container build and smoke test: [run 41900885166](https://github.com/artinrahimii/project/actions/runs/41900885166) — success.
+- Windows job: C# formatting, Release build, generated Protobuf, WPF startup smoke, agent-tool process restriction/policy/capability tests, DPAPI identity and peer-trust checks — passed.
+- Host lifecycle job: `dotnet run --project tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj --configuration Release` — passed.
+- Android job: Windows .NET fixture build, `ktlintCheck`, `assembleDebug`, merged APK permission policy, `testDebugUnitTest`, Keystore emulator instrumentation, generated Protobuf Java/Kotlin verification and APK upload — passed.
+- Published artifacts include the Android debug APK, Windows host build, Android Keystore instrumentation report and Android JVM unit-test report.
+
+### Acceptance boundary
+
+- **T0202 remains blocked.** The ordinary Product Build emulator/Keystore test is not the requested Android application-to-Windows-host LAN path.
+- The manual workflow `.github/workflows/android-windows-lan-acceptance.yml` was not run because no Windows runner labelled `whitep-lan` with a separate physical Android device on the same RFC1918 LAN was available.
+- No authenticated Android-to-Windows LAN request/response evidence or `lan-acceptance.md` artifact is claimed.
+- The successful CI results verify that the test harness source compiles and the product CI pipelines pass on V3.0.929; they do not complete the T0202 acceptance criterion.
