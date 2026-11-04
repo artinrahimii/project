@@ -110,9 +110,9 @@ class EncryptedClientDatabaseAcceptanceTest {
             val capsuleMarker = sensitiveCanaryMarkers[1]
             val capsule =
                 ConversationContextCapsule(
-                goal = "T0187 context capsule persistence fixture",
-                keyFacts = listOf(capsuleMarker),
-            )
+                    goal = "T0187 context capsule persistence fixture",
+                    keyFacts = listOf(capsuleMarker),
+                )
             val capsuleBytes = checkNotNull(capsule.encode().bytes)
             val legacy =
                 Room
@@ -184,8 +184,8 @@ class EncryptedClientDatabaseAcceptanceTest {
                 )
                 val migratedCapsule =
                     checkNotNull(
-                    encrypted.conversationContextCapsuleDao().findByConversationId("legacy-conversation"),
-                )
+                        encrypted.conversationContextCapsuleDao().findByConversationId("legacy-conversation"),
+                    )
                 val decodedCapsule = ConversationContextCapsule.decode(migratedCapsule.serializedCapsule)
                 assertEquals(null, decodedCapsule.error)
                 assertEquals(listOf(capsuleMarker), decodedCapsule.capsule?.keyFacts)

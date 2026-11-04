@@ -58,3 +58,9 @@
 - Product run `41820347748`: Windows WPF job `126541644091` موفق؛ HostLifecycle job `126541644094` موفق؛ Android job `126541644002` ناموفق.
 - خروجی Android KtLint دقیقاً دو محل را نشان داد: خط 111 و 184، هر دو `A multiline expression should start on a new line`. این step پیش از build APK و JVM/instrumentation اجرا می‌شود؛ بنابراین برای V3.0.879 نتیجه‌ای دربارهٔ اجرای آن آزمون‌ها وجود ندارد.
 - A004 دو assignment را به فرم چندخطی تبدیل می‌کند و منطق آزمون capsule BLOB، SQLCipher migration و scan canary را حفظ می‌کند.
+
+
+## A005 — جزئیات KtLint
+
+- در `V 3.0.880` دو خطا از نوع `Unexpected indentation` در پارامترهای فراخوانی `ConversationContextCapsule` و `checkNotNull` مشاهده شد: expected indentation به‌ترتیب 20/16 و 24/20 ستون.
+- A005 فقط indentation پارامترها و پرانتز بسته را مطابق همین مقادیر اصلاح می‌کند. هیچ test assertion یا production behavior تغییر نکرد.
