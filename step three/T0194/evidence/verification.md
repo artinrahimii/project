@@ -75,3 +75,15 @@ A004 is formatting-only. CI has not yet verified these changes; APK/JVM/instrume
 - A005 re-sorts the full import blocks in `MainActivity.kt` and `RequestViewModel.kt` with case-sensitive lexical order and configured trailing groups.
 - Local source check: both import lists equal the comparator's expected order; neither file contains a line longer than 120 characters. No KtLint execution is claimed.
 - A004's CI runs on `698308ad00a5d2f3768f09c9a1fb67653ae1dc64` were queued when checked; A005 must be validated on its exact new commit.
+
+## A005 commit and CI state
+
+- A005 is committed in `V 3.0.914` (`c942502c6e1514767f8bc957810feb6bb32fb256`); this identifier is now stored in the graph attempt record.
+- Exact commit workflows:
+  - Quality Gate run 41879452329 — queued.
+  - Android/Windows/HostLifecycle Product Build run 41879452513 — queued.
+  - Rendezvous run 41879452384 — queued.
+- Earlier commit `698308ad00a5d2f3768f09c9a1fb67653ae1dc64` workflows also remained queued at the time of inspection.
+- Code review: `ClientDatabase.getInstance` uses `EncryptedClientDatabaseFactory`; the factory opens Room with SQLCipher and registers migrations 1→2→3→4→5. The new app-level lifecycle entity contains request ID, enum status, timestamps, attempt count and fixed error code only. The Room DAO marks all prior QUEUED/CONTACTING/WAITING rows EXPIRED transactionally on recovery. The request ViewModel awaits recovery and persists QUEUED/CONTACTING before dispatch.
+- Tests present: file-backed Room reopen/recovery, migration from v1 through v5, ViewModel process-restart recovery, exhaustive EXPIRED presentation, and SQLCipher instrumentation reopen. Presence of tests is not evidence that they passed.
+- Local tests could not be run because Gradle and dotnet are unavailable in this environment and Git clone was blocked by DNS. The graph remains in_progress pending exact-head CI.

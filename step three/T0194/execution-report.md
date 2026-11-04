@@ -58,3 +58,16 @@
 - A005 changes imports only. It does not change runtime statements, request lifecycle behavior, database schema, protocols, or privacy boundaries.
 - GitHub Actions for A004 commit `698308ad00a5d2f3768f09c9a1fb67653ae1dc64` (Quality `41877738825`, Product `41877739005`, Rendezvous `41877738930`) remained `queued` on inspection; no test pass is inferred.
 - **Verification state:** A005 remains partial until exact-head Quality, Android KtLint, APK build, JVM and SQLCipher/Room instrumentation results are available.
+
+## T0194-A005 commit and exact-head workflow state
+
+- A005's case-sensitive import correction and corresponding report/evidence/graph update are included in [`V 3.0.914`](https://github.com/artinrahimii/project/commit/c942502c6e1514767f8bc957810feb6bb32fb256); the A005 `commit_sha` is now reconciled to this commit.
+- Exact-head workflows created for `c942502c6e1514767f8bc957810feb6bb32fb256`:
+  - Quality Gate [41879452329](https://github.com/artinrahimii/project/actions/runs/41879452329) — `queued`.
+  - Product Build [41879452513](https://github.com/artinrahimii/project/actions/runs/41879452513) — `queued`.
+  - Rendezvous [41879452384](https://github.com/artinrahimii/project/actions/runs/41879452384) — `queued`.
+- The predecessor commit `698308ad00a5d2f3768f09c9a1fb67653ae1dc64` workflows `41877738825`, `41877739005`, and `41877738930` also remained queued at inspection. No test pass/fail is inferred from a queued run.
+- Source review confirms the production factory opens Room through SQLCipher and registers migration 4→5; startup recovery expires QUEUED/CONTACTING/WAITING rows; request content is not part of the lifecycle entity; and dispatch waits for successful local recovery and pre-dispatch persistence.
+- Relevant Room migration, ViewModel recovery, status-presentation and SQLCipher instrumentation tests exist in the repository. They have not yet been executed successfully by the new exact-head CI runs.
+- Local execution limitation: this environment has no Gradle or .NET SDK, and a shallow clone attempt could not resolve `github.com`; no local Kotlin/Android or .NET test result is claimed.
+- T0194 remains `in_progress` until exact-head KtLint, APK, JVM and SQLCipher/Room instrumentation pass.
