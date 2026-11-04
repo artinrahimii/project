@@ -49,3 +49,6 @@
 - **Execution status:** found by direct source/test comparison before CI started; no executed test failure or pass is claimed.
 - **Baseline:** `main` `717caa832d9b16073f045eb27957b94ad3ae62ff` (`V 3.0.901`). Exact-head CI for V 3.0.901 was queued at inspection; A004 awaits its own exact-head CI.
 - **Task state:** `in_progress`; no acceptance claim is made.
+
+
+- A004 source-guard correction commit: `bbb744beb126d4f38c50dfa00014a92992b0d119` (`V 3.0.902`), verified on `main`.

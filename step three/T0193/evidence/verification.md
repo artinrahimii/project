@@ -52,3 +52,6 @@ Exact-head GitHub Actions has not yet run for the T0193 implementation commit. N
 - Baseline: `main` `717caa832d9b16073f045eb27957b94ad3ae62ff` (`V 3.0.901`).
 - The new WPF single-flight transition guard is written in C# as `if (_suppressParticipationToggleChanged || _windowClosing || _peerParticipationTask is not null)`. The Python test now checks that exact source text.
 - This was a static source/test consistency correction before CI execution. The test was not run locally; no pass/fail result is claimed.
+
+
+- A004 commit attribution: `tests/test_network_listener_exposure.py` and the corresponding report/evidence/graph updates are committed in `bbb744beb126d4f38c50dfa00014a92992b0d119` (`V 3.0.902`).
