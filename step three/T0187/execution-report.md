@@ -34,3 +34,12 @@
 - نتایج exact-head نسخهٔ `V 3.0.878`: quality gate، Windows WPF، HostLifecycle، Android client (شامل JVM و Keystore instrumentation)، و Rendezvous همگی موفق شدند.
 - کدهای A003 هنوز در CI اجرا نشده‌اند؛ وضعیت وظیفه تا تأیید workflowهای exact-head بعدی `in_progress` می‌ماند.
 - زمان ثبت: 2026-11-04T11:22:07.732Z
+
+
+## A004 — اصلاح KtLint در تست instrumentation اندروید
+
+- CI دقیق commit `9b646018e4ec4d11b898aac5ade2c3ce9fa09af1` (`V 3.0.879`) quality gate، Rendezvous و jobهای Windows WPF و HostLifecycle را با موفقیت گذراند.
+- Android job `126541644002` در step `Verify Kotlin formatting and lint` شکست خورد. خروجی KtLint دو مورد `A multiline expression should start on a new line` را در خطوط 111 و 184 فایل `EncryptedClientDatabaseAcceptanceTest.kt` گزارش کرد. به همین دلیل build APK، JVM و instrumentation در همین run اجرا نشدند.
+- A004 فقط assignmentهای `capsule` و `migratedCapsule` را مطابق قالب چندخطی Kotlin تنظیم می‌کند؛ هیچ assertion یا شرط امنیتی حذف نشده است.
+- نتیجهٔ A004 تا CI exact-head جدید `partial` است.
+- زمان ثبت: 2026-11-04T11:26:21.387Z

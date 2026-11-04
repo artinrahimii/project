@@ -108,7 +108,8 @@ class EncryptedClientDatabaseAcceptanceTest {
         runBlocking {
             val databaseName = databaseNames[1]
             val capsuleMarker = sensitiveCanaryMarkers[1]
-            val capsule = ConversationContextCapsule(
+            val capsule =
+                ConversationContextCapsule(
                 goal = "T0187 context capsule persistence fixture",
                 keyFacts = listOf(capsuleMarker),
             )
@@ -181,7 +182,8 @@ class EncryptedClientDatabaseAcceptanceTest {
                     "T0187_PROMPT_CANARY_7F2A",
                     encrypted.clientRequestDraftDao().findById("current")?.prompt,
                 )
-                val migratedCapsule = checkNotNull(
+                val migratedCapsule =
+                    checkNotNull(
                     encrypted.conversationContextCapsuleDao().findByConversationId("legacy-conversation"),
                 )
                 val decodedCapsule = ConversationContextCapsule.decode(migratedCapsule.serializedCapsule)

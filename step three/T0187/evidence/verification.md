@@ -48,3 +48,13 @@
 - آزمون منبعی writerهای temporary در HostIdentityStore، PeerTrustStore، LocalHostSettingsStore و VerifiedModelInstaller را پوشش می‌دهد.
 - ممیزی log به همهٔ `src/Host.Windows` گسترش یافت و حداقل یک log sink واقعی را الزام می‌کند.
 - CI روی نسخهٔ قبل، `V 3.0.878`: quality، WPF، HostLifecycle، Android JVM/instrumentation و Rendezvous موفق بودند؛ تغییرات A003 برای پذیرش نیازمند اجرای مجدد CI هستند.
+
+
+## A004 — شکست style و اصلاح حداقلی
+
+- Commit `9b646018e4ec4d11b898aac5ade2c3ce9fa09af1`، `V 3.0.879`.
+- Quality workflow `41820347836`: موفق.
+- Rendezvous workflow `41820348035`: موفق.
+- Product run `41820347748`: Windows WPF job `126541644091` موفق؛ HostLifecycle job `126541644094` موفق؛ Android job `126541644002` ناموفق.
+- خروجی Android KtLint دقیقاً دو محل را نشان داد: خط 111 و 184، هر دو `A multiline expression should start on a new line`. این step پیش از build APK و JVM/instrumentation اجرا می‌شود؛ بنابراین برای V3.0.879 نتیجه‌ای دربارهٔ اجرای آن آزمون‌ها وجود ندارد.
+- A004 دو assignment را به فرم چندخطی تبدیل می‌کند و منطق آزمون capsule BLOB، SQLCipher migration و scan canary را حفظ می‌کند.
