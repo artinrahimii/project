@@ -104,3 +104,14 @@ Exact-head GitHub Actions has not yet run for the T0193 implementation commit. N
 - The receive-loop finalizer continues to cancel active request tokens and await all registered handler tasks, preserving in-flight drain semantics.
 - Added `test_peer_shutdown_closes_request_admission_before_cancelling_and_draining` to `tests/test_network_listener_exposure.py`; it asserts the ordering and synchronization contract.
 - The new changes have not yet been exercised by CI. No success is claimed for A010 until exact-head workflow results are inspected.
+
+
+## T0193-A010 — final exact-head verification (V 3.0.907)
+
+- Code commit: `66c613d4db0ed292467c549e59f88785385fc7a7`, branch `main`.
+- Quality run `41871635622`, job `126719983461`: **success**; 400 Python tests passed, graph guard 0 errors / 1 warning. The new peer request-admission shutdown source guard ran in this suite.
+- Windows product job `126719985290`: **success**; C# format, Release build, Protobuf generation check, WPF startup smoke and host identity/peer trust checks passed.
+- HostLifecycle product job `126719985223`: **success**; the log explicitly confirms async host shutdown cancellation, rejection of late results, draining before backend disposal, and closed admission.
+- Rendezvous run `41871635406`, job `126719982448`: **success**; production image and HTTP smoke test passed.
+- Android product job `126719985287`: **in progress** on the Android JVM test step at inspection. No result is inferred. No Android source changed in A010; Android app-close recovery remains T0194.
+- T0193 acceptance is met by its Windows host/session outputs and their exact-head acceptance gates. T0193 is marked `done`; T0194 remains `not_started`.

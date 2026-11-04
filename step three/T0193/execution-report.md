@@ -1,6 +1,6 @@
 # T0193 — Stop host admission and safely drain active work during shutdown
 
-- **Status:** `in_progress`; implementation commits `V 3.0.899` and `V 3.0.900` are online. A003 corrected a stale source-contract assertion; exact-head CI is still pending.
+- **Status:** `done`; host shutdown implementation and acceptance are verified on `main` `V 3.0.907` (`66c613d4db0ed292467c549e59f88785385fc7a7`). Exact-head Quality, Windows WPF, HostLifecycle and Rendezvous checks passed; see the final A010 verification section. The Android product job was still running and is not claimed as passed.
 - **Baseline:** `main`, `b1ec4cccc8d0b55782054e12737c334d62864cbc` (`V 3.0.898`); graph Blob `8ad42a93096ddc1eecaa94f12c6abdcd99472f83` (3,519,955 UTF-8 bytes; Git Blob SHA-1 independently matched).
 - **Defect:** `HostInferenceSession.Dispose()` previously disposed its backend without acquiring the semaphore used by inference. It could release a backend during active generation. WPF cancelled operation sources only from `MainWindow_Closed`, after the closing path.
 - **Session fix:** `HostInferenceSession` implements `IAsyncDisposable`; all gated operations are linked to a session shutdown token. Shutdown closes admission immediately, publishes one shared/idempotent disposal task, signals cancellation, waits for the common operation gate, transitions to `Stopped`, and only then detaches and disposes the backend. Generation checks cancellation after the backend returns so a cancellation-ignoring backend cannot publish late output. Synchronous `Dispose()` remains compatible and delegates to the async drain.
@@ -112,3 +112,15 @@
 - **Regression guard:** added a Python source-contract test asserting the lock/guard/registration order and that lifetime cancellation precedes the awaited publisher stop.
 - **Dependency review:** T0192 → T0193 and T0188 → T0193 remain `sequencing_only / validated`; original `blocks` edges and conservative execution order are unchanged. No edge was reclassified in this attempt.
 - **Verification boundary:** source changes and the guard were checked structurally before commit. No local C#/.NET runtime is available here; this new correction has not yet run in CI. T0193 remains `in_progress` pending exact-head Quality, Windows WPF, and HostLifecycle CI.
+
+
+## T0193-A010 — exact-head acceptance results (V 3.0.907)
+
+- **Tested commit:** `main` / `66c613d4db0ed292467c549e59f88785385fc7a7`.
+- **Step Three Quality:** run [41871635622](https://github.com/artinrahimii/project/actions/runs/41871635622), job `126719983461` — **passed**. All **400 Python tests** passed; graph guard reported **0 errors** and **1 preserved warning**. This includes the new `test_peer_shutdown_closes_request_admission_before_cancelling_and_draining` regression guard.
+- **Windows WPF:** product run [41871636147](https://github.com/artinrahimii/project/actions/runs/41871636147), job `126719985290` — **passed**. C# formatting, Release build, generated Protobuf verification, WPF startup smoke test, agent-tool process/policy/backend gates, DPAPI host identity and peer-trust checks all passed.
+- **Host lifecycle:** product run [41871636147](https://github.com/artinrahimii/project/actions/runs/41871636147), job `126719985223` — **passed**. Runtime log explicitly reports: `PASS: async host shutdown cancels active inference, rejects late results, drains work before backend disposal, and closes admission.`
+- **Rendezvous:** run [41871635406](https://github.com/artinrahimii/project/actions/runs/41871635406), job `126719982448` — **passed**, including production container build and HTTP contract smoke test.
+- **Android product job:** job `126719985287` was still running at inspection, on `Run Android JVM unit tests`; no Android success/failure is claimed. A010 changed no Android source. This broader product job is recorded as pending and is not used as evidence for the Windows host shutdown criterion.
+- **Acceptance decision:** production shutdown code and regression guard are present; Quality, Windows WPF and HostLifecycle exact-head checks passed. T0193 is therefore marked `done`. The separate Android client shutdown task remains T0194 and is not included in this completion.
+- **Code and fix commit:** `V 3.0.907`, `66c613d4db0ed292467c549e59f88785385fc7a7`. This report and graph status update are recorded in the following versioned commit.
