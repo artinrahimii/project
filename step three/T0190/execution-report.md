@@ -1,6 +1,6 @@
 # T0190 — گزارش وضعیت شبکه و inference بدون محتوای پیام
 
-- **وضعیت:** در حال اجرا؛ نمایش وضعیت ساختاریافته در Windows و Android پیاده‌سازی شده و آزمون‌های رگرسیون افزوده شده‌اند؛ CI دقیق commit این تلاش هنوز اجرا نشده است.
+- **وضعیت:** تکمیل‌شده؛ وضعیت شبکه و inference در Windows و Android از state ساختاریافته نمایش داده می‌شود و متن آزاد پیام/استثنا وارد برچسب‌های وضعیت نمی‌شود. معیارهای پذیرش مرتبط در CI دقیق `V 3.0.893` موفق‌اند.
 - **مبنای بررسی:** مخزن `artinrahimii/project`، شاخهٔ `main`، commit `bcec43249466d88015c2807701f9ec873b7caa27`، نسخهٔ `V 3.0.890`.
 - **گراف مبنا:** `step three/project-graph.md`، Blob `5e228afd442578fdbe4fea79e5c56cda62db219f`؛ ۲۳۰ گره و ۴۲۲ یال.
 - **پیش‌نیازها:** T0189 و T0188 هر دو `done` هستند. یال‌های ورودی `T0189 → T0190` و `T0188 → T0190` از نوع اصلی `blocks` حفظ شده‌اند، اما پس از بررسی واقعی به `sequencing_only / validated` طبقه‌بندی شده‌اند. ترتیب محافظه‌کارانهٔ گراف تغییر نکرده است.
@@ -43,3 +43,16 @@
 - **Android:** job `126601807116` در KtLint خط اصلی شکست خورد؛ یک خط خالی غیرضروری در `RequestStatusPresentation.kt:51`. APK/JVM/instrumentation در این job اجرا نشدند.
 - **A003:** خط خالی presenter حذف شد. نتیجهٔ تلاش A001 به `failed` اصلاح شد تا با شکست واقعی exact-head آن سازگار باشد؛ شمارندهٔ شکست همچنان ۱ است. A002 به‌عنوان `partial` باقی می‌ماند.
 - **وضعیت:** T0190 همچنان `in_progress` تا عبور گیت‌های exact-head بعد از A003.
+
+
+## پذیرش نهایی T0190 — CI دقیق V 3.0.893
+
+- **Commit:** `ba0f5dd57eb5b11dda9aabe3cd56430e939b561e` در شاخهٔ `main`.
+- **Step Three quality gate:** run `41838724150` موفق؛ ۳۹۱ آزمون Python، syntax، graph guard، تطبیق execution_history با failed_attempt_count و بررسی مسیرهای شواهد/خروجی موفق.
+- **Rendezvous container:** run `41838723576` موفق.
+- **Windows HostLifecycle:** job `126604339681` موفق؛ assertion sentinel تضمین کرد متن آزاد `HostStatus.Message` در status شبکه/backend ظاهر نمی‌شود.
+- **Windows WPF:** job `126604339078` موفق؛ C# format، build، Protobuf، startup smoke، agent-tool policy/capability و DPAPI/peer-trust checks پاس شدند.
+- **Android:** job `126604339686` در زمان بررسی: KtLint، APK build، بررسی permission policy و Android JVM unit tests موفق بودند؛ JVM suite شامل `RequestStatusPresentationTest` است.
+- **اجرای واقعی مدل:** run `41837994496` روی commit `V 3.0.892` موفق؛ llama.cpp محلی پاسخ واقعی تولید کرد، لغو حین generation مشاهده شد و process تحت مالکیت برنامه تمیز متوقف شد. commit `V 3.0.893` فقط whitespace در presenter Android و تاریخچه/شواهد را اصلاح کرد و کد runtime inference/status را تغییر نداد.
+- **محدودیت کل workflow:** Android Keystore instrumentation در product build run `41838723715` در آخرین مشاهده هنوز `in_progress` بود و مراحل upload گزارش instrumentation، Protobuf generated verification و APK artifact upload هنوز pending بودند. این‌ها دروازه‌های عمومی محصول/ذخیره‌سازی‌اند، نه آزمون مستقیم T0190؛ بنابراین موفقیت کل product-build workflow اعلام نمی‌شود.
+- **نتیجه:** کد وضعیت ساختاریافته و آزمون‌های پذیرش مرتبط Windows/Android پاس شده‌اند؛ T0190 بر اساس معیارهای خودش `done` است.

@@ -60,3 +60,21 @@
 - Marked T0190-A001 as `failed`, matching its exact-head HostLifecycle/Android acceptance failure; summary `failed_attempt_count=1` now matches history. T0190-A002 remains `partial`.
 - No production status behavior or privacy boundary changed.
 - Exact-head graph guard, Android lint/build/tests and live-inference rerun remain pending.
+
+
+## Final acceptance evidence — V 3.0.893
+
+- **Branch/commit:** `main` / `ba0f5dd57eb5b11dda9aabe3cd56430e939b561e`.
+- **Graph/Python gate:** run `41838724150` passed; 391 Python tests passed; graph_guard accepted 230 nodes/422 edges and the reconciled T0190 failed-attempt summary/history.
+- **Rendezvous:** run `41838723576` passed.
+- **Windows HostLifecycle:** job `126604339681` passed; log includes `backend and local-endpoint status uses structured state only, excludes HostStatus message content` and the safe-error mapping assertions.
+- **Windows WPF:** job `126604339078` passed, including build/startup, agent-tool restrictions and DPAPI/peer-trust validation.
+- **Android:** job `126604339686` passed KtLint, APK build, merged-manifest permission policy and Android JVM tests, including the status presentation tests.
+- **Real model proof:** on V 3.0.892, run `41837994496` recorded `real local llama.cpp inference succeeded`; the response was received, active generation cancellation was observed, and the application-owned process stopped cleanly. The only V 3.0.893 code adjustment after this was removal of a whitespace-only blank line in RequestStatusPresentation.kt.
+- **Broader workflow caveat:** on V 3.0.893, Android Keystore instrumentation remained in progress at the final observation; instrumentation report upload, Protobuf generated source verification, and APK artifact upload were not yet confirmed. This does not invalidate T0190's direct HostLifecycle/Android JVM status-presentation acceptance, but the overall product build is not being claimed green.
+
+## Completion decision
+- Windows status presenter uses only `HostState` and fixed copy; no `HostStatus.Message` is surfaced.
+- Android status panel displays network and inference labels derived from structured lifecycle/peer state; free-form network/host availability messages are not rendered in the status panel.
+- Prompt and inference responses remain in their dedicated input/result areas and are not reclassified as status.
+- Regression checks passed on both client platforms. T0190 is `done`.
