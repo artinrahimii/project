@@ -71,3 +71,14 @@ The evidence establishes the gap, not successful T0202 acceptance. The task rema
 - The failed Android job was retried as run attempt 2. Confirmed successful steps at snapshot: fixture build, KtLint, debug APK build, permissions policy, `testDebugUnitTest`, KVM setup and temporary fixture cleanup.
 - Android Keystore emulator instrumentation was still running at snapshot time. No result is inferred for that pending step.
 - This rerun is supporting CI evidence only. The manual physical-device Android-to-Windows LAN workflow was not executed; T0202 stays blocked.
+
+## T0202-A005 — final retry result
+
+- Product Build run [41902912019](https://github.com/artinrahimii/project/actions/runs/41902912019), run attempt 2: overall success.
+- Windows WPF and HostLifecycle jobs: success.
+- Android fixture build, Kotlin lint, APK build, merged permission policy, JVM unit tests, Keystore emulator instrumentation, Protobuf Java/Kotlin generation verification and artifact uploads: success.
+- `connectedDebugAndroidTest` finished 12 tests. `AndroidWindowsLanIntegrationTest.connectsToWindowsHostOverNonLoopbackLan` was **SKIPPED** on the ordinary emulator job because the manual LAN host arguments were absent. This is not evidence of a successful network connection.
+- Uploaded artifacts: APK ID 13358249815; JVM report ID 13359797798; Keystore instrumentation report ID 13360107291.
+- The first Android attempt's 17 Robolectric MavenArtifactFetcher I/O setup failures did not recur in the retry; `testDebugUnitTest` passed on attempt 2.
+
+**T0202 remains blocked:** `.github/workflows/android-windows-lan-acceptance.yml` has not been run against a physical Android device and an independent Windows host on the same non-loopback LAN.

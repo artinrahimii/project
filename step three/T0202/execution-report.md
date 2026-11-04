@@ -101,3 +101,14 @@ This is a source-integrity correction only. It does not change the LAN test resu
 - The manual workflow `.github/workflows/android-windows-lan-acceptance.yml` still requires a Windows self-hosted runner labelled `whitep-lan` and a separate physical Android device connected to the same RFC1918 LAN. No such runner/device was available to this execution, and the manual workflow was not run.
 - No real authenticated Android-to-Windows LAN request/response evidence or `lan-acceptance.md` artifact is claimed.
 - Snapshot limitation: the Android Keystore instrumentation result and remaining Protobuf/artifact steps were still in progress at the time this report was written.
+
+### T0202-A005 — final CI retry result
+
+- Product Build run [41902912019](https://github.com/artinrahimii/project/actions/runs/41902912019), run attempt 2 — **success** after retrying only its previously failed Android job.
+- Windows WPF build and HostLifecycle unit/integration jobs — passed.
+- Android peer fixture build, `ktlintCheck`, debug APK build, merged APK permission policy, `testDebugUnitTest`, connected Keystore instrumentation, generated Protobuf Java/Kotlin verification and artifact uploads — passed.
+- `connectedDebugAndroidTest` completed 12 tests. The LAN-specific method `AndroidWindowsLanIntegrationTest.connectsToWindowsHostOverNonLoopbackLan` was **SKIPPED**, because the regular emulator job did not supply the explicit host arguments required by the manual LAN workflow. It must not be counted as a LAN pass.
+- Android artifacts uploaded: `whitep-android-debug-apk` (ID 13358249815), `whitep-android-unit-test-reports` (ID 13359797798) and `whitep-android-keystore-instrumentation-reports` (ID 13360107291).
+- First attempt of the Android job had 17 Robolectric class setup I/O failures at `MavenArtifactFetcher.java:130`; the retried Android JVM test step passed. This is recorded as a recovered CI attempt, not an application assertion regression.
+
+**Acceptance boundary:** T0202 remains blocked. The manual physical-device Android-to-Windows LAN workflow was not run; no Windows self-hosted `whitep-lan` runner plus separate Android device was available. No authenticated LAN request/response artifact exists.
