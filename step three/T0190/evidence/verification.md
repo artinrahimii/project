@@ -44,3 +44,19 @@
 - Removed the single extra blank line at the end of `RequestStatusPresentationTest.kt` reported by KtLint.
 - No protocol, status mapping, redaction, inference, or networking logic changed.
 - Exact-head Step Three, HostLifecycle, Android lint/APK/JVM/instrumentation and real-inference results are pending.
+
+
+## Exact-head CI reconciliation for V 3.0.892
+
+- Rendezvous container run `41837994420`: passed.
+- Windows HostLifecycle job `126601806755`: passed, including T0190's structured-state/no-HostStatus.Message sentinel assertion and corrected Ready assertion.
+- Windows WPF job `126601807304`: passed, including build, startup, generated Protobuf, agent-tool and DPAPI/peer-trust checks.
+- Real inference run `41837994496` / job `126601806330`: passed. The log explicitly states live local llama.cpp inference succeeded, active generation cancellation was observed, and the owned process stopped cleanly.
+- Step Three quality gate run `41837994512`: Python test suite ran 391 tests and passed; graph guard failed only with `FAILED_ATTEMPT_COUNT_MISMATCH: T0190: summary=1, history=0` because A001 had not been classified as failed in the history.
+- Android job `126601807116`: KtLint reported one needless blank line in `RequestStatusPresentation.kt:51`; APK/JVM/instrumentation did not execute.
+
+## A003 correction snapshot
+- Removed the needless blank line in `RequestStatusPresentation.kt` reported by KtLint.
+- Marked T0190-A001 as `failed`, matching its exact-head HostLifecycle/Android acceptance failure; summary `failed_attempt_count=1` now matches history. T0190-A002 remains `partial`.
+- No production status behavior or privacy boundary changed.
+- Exact-head graph guard, Android lint/build/tests and live-inference rerun remain pending.

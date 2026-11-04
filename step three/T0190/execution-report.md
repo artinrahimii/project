@@ -30,3 +30,16 @@
 - **Real local inference:** run `41837229151` باینری pin‌شدهٔ llama.cpp و فایل GGUF را با موفقیت download/verify کرد؛ اما اجرای acceptance واقعی در همان harness آزمون HostLifecycle به assertion قدیمی بالا برخورد کرد و پیش از تولید پاسخ مدل متوقف شد. بنابراین این run نه موفقیت inference است و نه شکست موتور inference.
 - **A002:** assertion C# اکنون با `StringComparison.OrdinalIgnoreCase` عبارت `ready` را بررسی می‌کند؛ آزمون Kotlin نیز خط خالی اضافی حذف شده است. منطق وضعیت، متن ثابت، redaction، پروتکل یا کد runtime تغییر نکرده‌اند.
 - **وضعیت:** `in_progress`؛ نتایج exact-head پس از A002 هنوز pending.
+
+
+## بررسی CI دقیق V 3.0.892 و اصلاح A003
+
+- **Commit:** `032213166c6212b6e3646a81d8785e67e07b1d8c` (`V 3.0.892`).
+- **Rendezvous container:** run `41837994420` موفق.
+- **Windows HostLifecycle:** job `126601806755` موفق؛ assertionهای جدید T0190 برای عدم نمایش sentinel در status و assertion اصلاح‌شدهٔ Ready پاس شدند.
+- **Windows WPF:** job `126601807304` موفق؛ build، Protobuf، startup smoke، agent-tool policy/capability و DPAPI/peer-trust موفق.
+- **Real local inference:** run `41837994496` / job `126601806330` موفق؛ باینری pin‌شدهٔ llama.cpp و GGUF اعتبارسنجی شدند، inference واقعی پاسخ برگرداند، لغو حین generation مشاهده شد و process تحت مالکیت برنامه تمیز متوقف شد.
+- **Step Three quality gate:** run `41837994512` شکست خورد. ۳۹۱ آزمون Python و syntax check موفق بودند؛ graph guard فقط به‌دلیل اختلاف `failed_attempt_count=1` با صفر نتیجهٔ `failed` در execution_history خطا داد.
+- **Android:** job `126601807116` در KtLint خط اصلی شکست خورد؛ یک خط خالی غیرضروری در `RequestStatusPresentation.kt:51`. APK/JVM/instrumentation در این job اجرا نشدند.
+- **A003:** خط خالی presenter حذف شد. نتیجهٔ تلاش A001 به `failed` اصلاح شد تا با شکست واقعی exact-head آن سازگار باشد؛ شمارندهٔ شکست همچنان ۱ است. A002 به‌عنوان `partial` باقی می‌ماند.
+- **وضعیت:** T0190 همچنان `in_progress` تا عبور گیت‌های exact-head بعد از A003.

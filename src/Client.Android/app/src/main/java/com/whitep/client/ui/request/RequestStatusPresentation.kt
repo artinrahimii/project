@@ -48,7 +48,6 @@ fun PersistedRequestStatus.toPresentation(): RequestStatusPresentation =
             )
     }
 
-
 data class NetworkInferenceStatusPresentation(
     val networkStatus: String,
     val inferenceStatus: String,
