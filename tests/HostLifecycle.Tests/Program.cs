@@ -1069,7 +1069,7 @@ var presentedStarting = new WhiteP.Host.Domain.HostStatus(HostState.Starting, st
 var presentedReady = new WhiteP.Host.Domain.HostStatus(HostState.Ready, statusMessageContent);
 var presentedBusy = new WhiteP.Host.Domain.HostStatus(HostState.Busy, statusMessageContent);
 var presentedError = new WhiteP.Host.Domain.HostStatus(HostState.Error, statusMessageContent);
-Assert(HostStatusPresentation.FormatBackendStatus(presentedReady).Contains("Ready", StringComparison.Ordinal), "Backend status presentation must use the actual Ready state.");
+Assert(HostStatusPresentation.FormatBackendStatus(presentedReady).Contains("ready", StringComparison.OrdinalIgnoreCase), "Backend status presentation must use the actual Ready state.");
 Assert(HostStatusPresentation.FormatNetworkStatus(presentedStopped).Contains("not checked", StringComparison.Ordinal), "Stopped state must not claim an endpoint is connected.");
 Assert(HostStatusPresentation.FormatNetworkStatus(presentedStarting).Contains("checking backend health", StringComparison.Ordinal), "Starting state must report a live health check.");
 Assert(HostStatusPresentation.FormatNetworkStatus(presentedReady).Contains("healthy", StringComparison.Ordinal), "Ready state must report the health-check result.");

@@ -17,3 +17,16 @@
 - فایل‌های کد: `src/Host.Application/HostStatusPresentation.cs`، `src/Host.Windows/MainWindow.xaml.cs`، `src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt` و `src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestStatusPresentation.kt`.
 - فایل‌های آزمون: `tests/HostLifecycle.Tests/Program.cs`، `tests/test_wpf_entrypoint.py`، `tests/test_android_request_status_contract.py` و `src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestStatusPresentationTest.kt`.
 - وضعیت: `partial` تا اجرای CI دقیق همین تغییرات.
+
+
+## بازبینی CI دقیق V 3.0.891 و اصلاح A002
+
+- **Commit:** `7ec9f9009263f86c78c05e21b3ccf81569562b74`.
+- **Step Three quality gate:** run `41837229188` موفق؛ automated tests، syntax، graph structure و recorded outputs/evidence validation همگی pass.
+- **Rendezvous container:** run `41837229166` موفق؛ production image و non-root HTTP smoke test pass.
+- **Windows WPF:** job `126599163618` موفق؛ C# format، build، Protobuf، WPF startup smoke، agent-tool restrictions/policy/capability و DPAPI/peer-trust checks pass.
+- **Windows HostLifecycle:** job `126599162902` شکست خورد. assertion قدیمی `Contains("Ready", StringComparison.Ordinal)` با متن ثابت جدید `Backend — ready.` تطبیق نداشت؛ شکست در مقایسهٔ حساس به حروف بود، نه در نمایش پیام خصوصی یا نگاشت state. خط دقیق: `tests/HostLifecycle.Tests/Program.cs:1072`.
+- **Android:** job `126599163603` در `ktlintTestSourceSetCheck` شکست خورد؛ تنها یافتهٔ log: یک خط خالی اضافی پیش از `}` در `RequestStatusPresentationTest.kt:71`. APK، JVM unit tests و instrumentation به علت lint اجرا نشدند.
+- **Real local inference:** run `41837229151` باینری pin‌شدهٔ llama.cpp و فایل GGUF را با موفقیت download/verify کرد؛ اما اجرای acceptance واقعی در همان harness آزمون HostLifecycle به assertion قدیمی بالا برخورد کرد و پیش از تولید پاسخ مدل متوقف شد. بنابراین این run نه موفقیت inference است و نه شکست موتور inference.
+- **A002:** assertion C# اکنون با `StringComparison.OrdinalIgnoreCase` عبارت `ready` را بررسی می‌کند؛ آزمون Kotlin نیز خط خالی اضافی حذف شده است. منطق وضعیت، متن ثابت، redaction، پروتکل یا کد runtime تغییر نکرده‌اند.
+- **وضعیت:** `in_progress`؛ نتایج exact-head پس از A002 هنوز pending.

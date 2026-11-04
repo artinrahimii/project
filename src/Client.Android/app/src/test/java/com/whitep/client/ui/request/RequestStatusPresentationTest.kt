@@ -68,5 +68,4 @@ class RequestStatusPresentationTest {
         assertEquals("Peers discovered: 2; trusted: 1.", presentation.networkStatus)
         assertEquals("Running.", presentation.inferenceStatus)
     }
-
 }

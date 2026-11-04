@@ -27,3 +27,20 @@
 - آزمون محلی در این محیط اجرا نشده است.
 - نتیجهٔ KtLint، Android JVM، Windows HostLifecycle، WPF build و Step Three quality gate برای commit نهایی هنوز pending است.
 - تا دریافت CI exact-head، T0190 تکمیل‌شده تلقی نمی‌شود.
+
+
+## Exact-head CI reconciliation for V 3.0.891
+
+- Step Three quality gate run `41837229188`: passed.
+- Rendezvous container run `41837229166`: passed.
+- Windows WPF job `126599163618`: passed (C# format, host build, generated Protobuf, WPF startup, agent-tool checks and DPAPI/peer trust).
+- Windows HostLifecycle job `126599162902`: failed only at the prior case-sensitive assertion that expected capitalized `Ready`, while the new fixed state-only label is `ready`. The failure was at `Program.cs:1072`; newly added sentinel redaction assertions were not reached.
+- Android job `126599163603`: KtLint failed due one extra blank line before the final class brace in `RequestStatusPresentationTest.kt:71`. Android APK, JVM and Keystore instrumentation were skipped.
+- Real inference job `41837229151`: pinned llama.cpp binary and GGUF verification succeeded; the shared HostLifecycle harness failed at the same status capitalization assertion before the live model acceptance test could produce a response. No inference success/failure is claimed.
+
+## A002 correction snapshot
+
+- Updated the legacy HostStatus ready-state assertion to compare `ready` with `StringComparison.OrdinalIgnoreCase`; the production presenter remains static and never reads `HostStatus.Message`.
+- Removed the single extra blank line at the end of `RequestStatusPresentationTest.kt` reported by KtLint.
+- No protocol, status mapping, redaction, inference, or networking logic changed.
+- Exact-head Step Three, HostLifecycle, Android lint/APK/JVM/instrumentation and real-inference results are pending.
