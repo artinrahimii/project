@@ -21,7 +21,7 @@
 - Android JVM: `InferenceAttemptDispatcherTest` covers one submission when individual host submissions reject/throw, 3 rounds/9 unique hosts, round rejection, and an explicitly retried host consuming the remaining custom budget.
 - Android request ViewModel tests cover user-triggered manual retry with the same request ID and fresh attempt IDs, success exclusion, and cancellation as terminal.
 - HostLifecycle tests cover sequential and concurrent response-gate claims and prohibit retry after ambiguous response-path failure.
-- Exact-head outcomes for the new Python guard and product jobs are pending at this revision. They will be recorded only after the corresponding Actions results are inspected.
+- Exact-head acceptance on `V 3.0.897`: the five Python guard tests and full 396-test Python suite passed; HostLifecycle, Windows WPF, Android JVM/Keystore instrumentation, APK/permissions/Protobuf, and Rendezvous jobs all passed. See A003 below.
 
 ## Dependency validation
 - `T0191 → T0192`: `contract_or_interface_dependency / validated`; the absolute request deadline flows from Android payload creation to the host admission/coordinator boundary. Evidence also includes T0191's exact-head successful regression.
@@ -34,3 +34,14 @@
 - The exact-head graph guard then failed with one metadata error, `DONE_WITHOUT_TEST_FILE_EVIDENCE: T0191`, because its existing HostLifecycle acceptance source was absent from T0191's graph `evidence` array. The source path existed in `actual_output_paths`, and the test itself was green. The unrelated T0001 unmapped dependency remained a warning.
 - The Rendezvous workflow on this exact commit passed. Android and Windows product workflows were still running at the time of this inspection; they are not claimed here.
 - This is recorded as **partial**, not success or an implementation failure. The evidence list is being corrected and all exact-head jobs will be checked again.
+
+
+## T0192-A003 — exact-head CI results
+
+- Tested revision: `main` `a1026fff0b1f9088de167106611f73b4a914e374` (`V 3.0.897`).
+- Step Three quality gate: run `41858050167`, job `126671925979` — **success**; 396 Python tests, syntax and graph guard (0 errors / 1 preserved warning).
+- HostLifecycle: product run `41858050329`, job `126671926824` — **success**.
+- Windows WPF: product run `41858050329`, job `126671926849` — **success**.
+- Android: product run `41858050329`, job `126671926817` — **success**, including APK, permission checks, JVM tests, Keystore instrumentation, Protobuf Java/Kotlin verification and artifact uploads.
+- Rendezvous: run `41858050036`, job `126671924869` — **success**.
+- T0192 accepted as **done**. The underlying runtime was already bounded; the new tests guard its separation of retry scopes and prevent reintroducing hidden retries.
