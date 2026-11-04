@@ -16,3 +16,10 @@
 - **No retry-policy expansion:** no new runtime loop, extra retry count, altered wire format, or automatic retry trigger was introduced.
 - **Local test limitation:** no local project checkout is available in this execution environment. The new Python guard is pending the exact-head GitHub Actions run; no local pass is claimed.
 - **Next action:** inspect the exact-head Step Three quality gate and product jobs. Keep this node `in_progress` unless the new test and relevant Android/Windows acceptance suites pass.
+
+
+## T0192-A002 — first exact-head CI observation
+- Commit `fc53011424092440573a94886a5d404c87c7d064` (`V 3.0.896`) ran the complete Python suite: **396 passed**, including all five tests in `test_request_retry_budget_boundary.py`; `compileall` passed.
+- The exact-head graph guard then failed with one metadata error, `DONE_WITHOUT_TEST_FILE_EVIDENCE: T0191`, because its existing HostLifecycle acceptance source was absent from T0191's graph `evidence` array. The source path existed in `actual_output_paths`, and the test itself was green. The unrelated T0001 unmapped dependency remained a warning.
+- The Rendezvous workflow on this exact commit passed. Android and Windows product workflows were still running at the time of this inspection; they are not claimed here.
+- This is recorded as **partial**, not success or an implementation failure. The evidence list is being corrected and all exact-head jobs will be checked again.

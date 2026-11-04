@@ -27,3 +27,10 @@
 - `T0191 → T0192`: `contract_or_interface_dependency / validated`; the absolute request deadline flows from Android payload creation to the host admission/coordinator boundary. Evidence also includes T0191's exact-head successful regression.
 - `T0188 → T0192`: `sequencing_only / validated`; privacy constraints are respected, but no executable artifact from T0188 is consumed.
 - Original `type=blocks` values and execution order are preserved.
+
+
+## T0192-A002 — first exact-head CI observation
+- Commit `fc53011424092440573a94886a5d404c87c7d064` (`V 3.0.896`) ran the complete Python suite: **396 passed**, including all five tests in `test_request_retry_budget_boundary.py`; `compileall` passed.
+- The exact-head graph guard then failed with one metadata error, `DONE_WITHOUT_TEST_FILE_EVIDENCE: T0191`, because its existing HostLifecycle acceptance source was absent from T0191's graph `evidence` array. The source path existed in `actual_output_paths`, and the test itself was green. The unrelated T0001 unmapped dependency remained a warning.
+- The Rendezvous workflow on this exact commit passed. Android and Windows product workflows were still running at the time of this inspection; they are not claimed here.
+- This is recorded as **partial**, not success or an implementation failure. The evidence list is being corrected and all exact-head jobs will be checked again.

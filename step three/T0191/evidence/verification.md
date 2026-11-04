@@ -43,3 +43,7 @@
 - Real inference run `41854307881`, job `126658641762`: **success**, including actual local llama.cpp generation and active generation cancellation.
 - Rendezvous run `41854307047`, job `126658635302`: **success**.
 - Acceptance decision: **T0191 = done**. The source/test commit is exact-head verified; no local .NET execution is claimed.
+
+
+## Evidence path reconciliation after V 3.0.896
+- The implementation test source `tests/HostLifecycle.Tests/HostRequestCoordinatorFailureAcceptanceTests.cs` existed and ran successfully in the exact-head HostLifecycle job. The Step Three graph guard additionally requires the source path in the node's `evidence` list, not only `actual_output_paths`. The graph evidence list is corrected in the follow-up commit; no T0191 source or acceptance result is changed.
