@@ -42,3 +42,11 @@ The evidence establishes the gap, not successful T0202 acceptance. The task rema
 - Replaced it with a fresh, independently created Blob and fetched that Blob again.
 - Verified exact character-for-character round trip, 293 lines, one script entry point, one firewall-rule creation, one Windows fixture process launch and expected cleanup structure.
 - This source correction is not an end-to-end LAN test and does not change T0202's blocked status.
+
+## CI result and correction — T0202-A003
+
+- [White-P product build run 41899975472](https://github.com/artinrahimii/project/actions/runs/41899975472), Android job 126819471978.
+- The Windows .NET peer fixture build completed before Android lint.
+- `gradle --no-daemon ktlintCheck` failed at AndroidWindowsLanIntegrationTest.kt line 118 with `Expected newline before '.'` for the InferenceRequest builder chain.
+- The builder chain is corrected by moving `.newBuilder()` to the next line. The Android APK build and instrumentation were skipped in that failed run; no Android test pass is claimed.
+- A fresh CI run is required on the correction commit. The physical Android-to-Windows LAN acceptance remains unexecuted.

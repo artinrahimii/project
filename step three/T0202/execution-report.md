@@ -60,3 +60,11 @@ The T0202-A002 graph history entry is included in this commit. Its own commit SH
 A read-back review of the first PowerShell runner Blob found duplicated trailing code sections. The script was rebuilt as one 293-line file and the new Blob was fetched again; the returned content exactly matched the submitted content. Structural preflight now confirms one command entry point, one temporary firewall-rule creation, one Windows fixture launch and the expected two cleanup/finally blocks.
 
 This is a source-integrity correction only. It does not change the LAN test result: the .NET/Android builds and physical-device request/response remain unexecuted, and T0202 remains blocked.
+
+## T0202-A003 — Kotlin lint correction
+
+- CI evidence: White-P product build run 41899975472, Android job 126819471978, on the T0202 harness commit.
+- The Android job reached `gradle --no-daemon ktlintCheck` after the Windows .NET peer fixture build passed.
+- KtLint failed with `AndroidWindowsLanIntegrationTest.kt:118:37 Expected newline before '.'` on the `InferenceRequest.newBuilder()` chain. The Android APK build and later Android tests were skipped after this lint failure.
+- Corrected the chain to place `.newBuilder()` on the next line, matching the repository's ktlint_official style. Maximum-line-length preflight remains satisfied.
+- Result: partial correction; the workflow on the new commit must pass before the Android build can be reported successful. T0202 remains blocked pending physical-device LAN acceptance.

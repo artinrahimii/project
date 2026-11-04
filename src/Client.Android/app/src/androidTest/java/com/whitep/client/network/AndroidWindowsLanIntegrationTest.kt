@@ -115,7 +115,8 @@ class AndroidWindowsLanIntegrationTest {
 
                 val now = System.currentTimeMillis()
                 val request =
-                    InferenceRequest.newBuilder()
+                    InferenceRequest
+                        .newBuilder()
                         .setProtocolVersion("1.0.0")
                         .setRequestId("lan-${UUID.randomUUID()}")
                         .setAttemptId("lan-attempt-${UUID.randomUUID()}")
