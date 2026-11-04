@@ -20,3 +20,11 @@
 - Exact-head Quality run [41875864372](https://github.com/artinrahimii/project/actions/runs/41875864372), job `126734953437`, ran **403 tests** and failed one source-contract test: `test_android_request_architecture.test_compose_screen_uses_viewmodel_and_production_peer_gateway` expected the old `viewModel()` no-argument syntax. The production code now correctly injects `RequestViewModelFactory` and `RoomInferenceRequestLifecycleRepository`; this test had not been updated for that intended wiring. The other 402 tests passed.
 - Corrected `tests/test_android_request_architecture.py` to assert the Compose `viewModel(` factory call, `RequestViewModelFactory`, and `RoomInferenceRequestLifecycleRepository`.
 - This correction is attempt `T0194-A002`. No Android build or runtime success is claimed yet. The product workflow was still running Windows, Android and host lifecycle jobs at inspection. Rerun exact-head CI is required.
+
+
+## T0194-A002 graph validation correction
+
+- Exact-head Quality run [41876248248](https://github.com/artinrahimii/project/actions/runs/41876248248), job `126736315881`: **403 Python tests passed** (`OK`). The graph guard then reported one error: `FAILED_ATTEMPT_COUNT_MISMATCH: T0194: summary=1, history=0`.
+- Cause: A001's CI gate had failed the stale architecture assertion, and the summary incremented `failed_attempt_count`, but its history item still said `partial`.
+- Correction: A001 history is now marked `failed`, matching the recorded counter. A002 remains `partial`; this corrects the execution ledger and does not assert Android product acceptance.
+- A fresh Quality run is required before T0194 can proceed to acceptance. Product workflow results remain separately pending.

@@ -42,3 +42,10 @@
 - Run `41875864372` / job `126734953437` — **failed**, 403 Python tests executed, 402 passed and one failed. Failure: the pre-existing `test_android_request_architecture` assertion still required `viewModel()`; it was stale after the request screen began injecting the Room repository through `RequestViewModelFactory`.
 - A002 updates that source-contract assertion to the new production factory/repository pattern. This fixes the known test mismatch; it is not itself evidence of passing CI.
 - At inspection, product jobs in run `41875864365` were still running (Windows, Android APK/interoperability and HostLifecycle); no result is claimed for them.
+
+
+## Graph ledger validation correction
+
+- A001 Quality failure was already counted in `failed_attempt_count=1`, but the corresponding history record still used `result=partial`.
+- A002 Quality run 41876248248 had 403 Python tests pass, then graph guard failed with `FAILED_ATTEMPT_COUNT_MISMATCH` (summary=1, history=0).
+- The history now marks A001 `failed`, matching the summary. A002 remains partial; a new exact-head graph/quality run is required.
