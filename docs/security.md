@@ -158,3 +158,39 @@ Room اکنون از `EncryptedClientDatabaseFactory` و SQLCipher Community Edi
 - Android custom permission protection levels: https://developer.android.com/guide/topics/manifest/permission-element
 - Android INTERNET permission: https://developer.android.com/reference/android/Manifest.permission#INTERNET
 - AAPT2 command documentation: https://developer.android.com/tools/aapt2
+
+## مدل تهدید و محدودیت ناشناس‌بودن (T0188)
+
+### دامنه و دارایی‌های در معرض خطر
+
+این بخش، مرزهای قابل مشاهده در پیاده‌سازی فعلی مخزن را ثبت می‌کند؛ جایگزین آزمون مستقل شبکه، ممیزی زیرساخت عملیاتی یا تضمین امنیتی عمومی نیست. دارایی‌های مهم عبارت‌اند از: متن prompt و پاسخ، بایت‌های context capsule، هویت پایدار همتا (PeerId)، نشانی‌های مستقیم شبکه، قابلیت‌ها و زمان انقضای اعلان، سابقهٔ محلی Android، کلیدهای اعتماد و اطلاعات تشخیصی.
+
+### چه کسی چه چیزی را می‌تواند ببیند؟
+
+- **سرویس rendezvous و گردانندهٔ آن:** قرارداد اعلان همتا شامل PeerId، یک تا هشت نشانی مستقیم، یک تا ۳۲ capability و زمان انقضا است. نشانی مستقیم می‌تواند IP و port همتا را در multiaddress آشکار کند. سرویس این فراداده را در دایرکتوری درون‌حافظه‌ای نگه می‌دارد؛ سقف فعلی ۲٬۰۴۸ همتای فعال است و اعلان باید حداکثر تا ۲۴ ساعت منقضی شود. کلاینت‌ها به HTTPS محدود شده‌اند (جز loopback در آزمون). HTTPS مسیر انتقال را محافظت می‌کند، نه محتوای اعلان را از خود سرویس. این مخزن سیاست ثبت یا نگهداری logهای زیرساخت، reverse proxy یا ارائه‌دهندهٔ میزبانی را اثبات نمی‌کند؛ بنابراین دربارهٔ حذف یا عدم ثبت فراداده در آن لایه‌ها ادعایی وجود ندارد.
+- **ناظر مسیر شبکه:** در ارتباط مستقیم می‌تواند دو سر ارتباط، IP/portهای قابل مشاهده، زمان شروع و پایان، حجم و الگوی زمانی ترافیک را استنباط کند. کانال libp2p با Noise/TLS از محتوای پیام در مسیر محافظت می‌کند، اما padding، پوشاندن نشانی شبکه یا مخلوط‌سازی ترافیک در این پیاده‌سازی نشان داده نشده است.
+- **همتای پردازشگر و گردانندهٔ رایانهٔ میزبان:** پس از رمزگشایی کانال، فرایند میزبان می‌تواند prompt و بایت‌های capsule را بخواند. رمزگذاری انتقال، محتوا را از مقصد پنهان نمی‌کند؛ میزبان یا نرم‌افزاری که دسترسی کافی روی همان دستگاه دارد ممکن است محتوا را مشاهده یا نگهداری کند. رضایت و هشدار حریم خصوصی این مرز را اعلام می‌کنند، اما رفتار اپراتور مقصد را کنترل نمی‌کنند.
+- **دستگاه Android درخواست‌دهنده:** سابقهٔ مکالمه به‌صورت عمدی در Room محلی ذخیره می‌شود و پایگاه با SQLCipher محافظت شده؛ گذرواژهٔ پایگاه با کلید Android Keystore پوشانده می‌شود. این کنترل، رمزگذاری دادهٔ ذخیره‌شده در حالت عادی را هدف می‌گیرد؛ از داده در زمان استفاده در فرایند باز، دستگاه unlockشده یا دستگاه/سیستم‌عامل compromiseشده تضمین نمی‌دهد. وجود TEE یا StrongBox روی همهٔ دستگاه‌ها نیز اثبات نشده است.
+- **سیستم‌عامل، ابزارهای خارجی و نسخهٔ تغییریافتهٔ برنامه:** آزمون‌های T0187 فقط sinkهای log و فایل‌های موقت تحت مالکیت برنامه و artifactهای اختصاصی آزمون را پوشش می‌دهند. این آزمون‌ها پاک‌سازی pagefile/swap، crash dump، backup، screenshot، logهای سیستم‌عامل، Event Viewer خارج از EventSource برنامه یا ابزارهای ثالث را اثبات نمی‌کنند.
+- **همتای مخرب یا بدرفتار:** ذخیرهٔ اعتماد به PeerId نیازمند تأیید صریح کاربر است و اتصال باید هویت همتای مورد انتظار را احراز کند. replay guard درخواست تکراری را محدود می‌کند و handlerهای میزبان نیز سقف هم‌زمانی دارند. این کنترل‌ها رفتار صادقانهٔ همتای مورد اعتماد، محرمانه ماندن پاسخ پس از دریافت، دسترس‌پذیری همیشگی یا مقاومت کامل در برابر DoS را تضمین نمی‌کنند.
+
+### محدودیت ناشناس‌بودن و پیوندپذیری
+
+این محصول **ناشناس‌ساز شبکه نیست** و ناشناس‌بودن یا غیرقابل‌پیوندبودن ارتباط‌ها را تضمین نمی‌کند. PeerId یک شناسهٔ پایدار همتاست که در اعلان و multiaddress به کار می‌رود؛ ممکن است نام واقعی نباشد، اما برای پیوند دادن اعلان‌ها و ارتباط‌های همان همتا کافی است. سرویس rendezvous نشانی‌های مستقیم و capabilityها را دریافت می‌کند و طرف ارتباط مستقیم نیز endpoint شبکهٔ همتای مقابل را می‌بیند.
+
+مسیر دادهٔ نسخهٔ اول مستقیم TCP/QUIC است؛ نشانی‌های اعلامی circuit-relay را رد می‌کنند و مسیر میزبان نیز relay را به‌صورت خودکار فعال نمی‌کند. در صورت شکست مسیر مستقیم، اتصال باید با خطای صریح unavailable متوقف شود، نه اینکه prompt یا پاسخ بی‌صدا به سرویس واسط فرستاده شود. این مرز، سیاست و کنترل منبع فعلی است؛ به‌تنهایی اثبات packet capture مستقل یا پذیرش end-to-end همهٔ استقرارها نیست.
+
+هیچ پوشاندن IP با Tor/proxy، onion routing، traffic padding، mix network، پنهان‌سازی PeerId یا حذف همبستگی زمانی/حجمی در معیارهای فعلی پیاده‌سازی و پذیرفته نشده است. سقف انتخاب حداکثر سه میزبان در هر دور و سقف کل نه تلاش در درخواست (سه دور) کنترل منابع و retry هستند؛ این محدودیت‌ها ابزار ناشناس‌سازی یا کاهش قطعی قابلیت ردیابی نیستند.
+
+معیارهای عملیاتی `AC-P2P-01` و `AC-PRIV-01` در `docs/acceptance.md` همچنان **NOT RUN** هستند تا آزمون واقعی مستقل Android↔Windows، مسیر ترافیک و بازرسی ذخیره‌سازی/log اجرا شود. بنابراین وجود کد transport، رمزگذاری کانال، تست‌های قرارداد یا CI سبز را نباید معادل تحویل کامل P2P یا اثبات ناشناس‌بودن دانست. فقط محتوایی را به یک میزبان بفرستید که حاضر هستید همان میزبان پس از رمزگشایی ببیند.
+
+### کنترل‌های اجرایی و شواهد مرتبط
+
+**فرادادهٔ control plane و جدایی data plane:** قرارداد [اعلان PeerAnnouncement](../src/Shared.Contracts/Networking/PeerAnnouncement.cs)، [دایرکتوری درون‌حافظه‌ای rendezvous](../src/Rendezvous.Service/PeerAnnouncementDirectory.cs)، [endpointهای سرویس](../src/Rendezvous.Service/PeerAnnouncementServiceHost.cs)، [کلاینت HTTPS میزبان](../src/Host.Windows/Networking/PeerAnnouncementClient.cs) و [کلاینت دایرکتوری Android](../src/Client.Android/app/src/main/java/com/whitep/client/network/RendezvousPeerDirectoryClient.kt) را ببینید. تصمیم [ADR-0002](decisions/ADR-0002-direct-p2p-data-path.md) جدایی control plane از مسیر داده و تصمیم [ADR-0004](decisions/ADR-0004-encrypted-relay-boundary.md) ممنوعیت relay داده در نسخهٔ اول را ثبت می‌کنند.
+
+**احراز هویت و مشاهده‌پذیری endpoint:** [انتقال libp2p در Android](../src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt)، [انتقال میزبان Windows](../src/Host.Windows/Networking/Libp2pPeerTransport.cs)، [قاب‌بندی پیام میزبان](../src/Host.Windows/Networking/Libp2pPeerMessageProtocol.cs)، [سیاست اعتبارسنجی PeerId](../src/Shared.Security/PeerSecurityPolicy.cs)، [فهرست اعتماد Android](../src/Client.Android/app/src/main/java/com/whitep/client/network/AndroidPeerTrustStore.kt) و [متن رضایت حریم خصوصی](../src/Shared.Security/PeerInferencePrivacyDisclosure.cs) شواهد پیاده‌سازی این مرز هستند. [ADR-0019](decisions/ADR-0019-host-visible-inference-content.md) توضیح می‌دهد که endpoint پردازشگر محتوای رمزگشایی‌شده را می‌بیند.
+
+**کنترل درخواست، ذخیره‌سازی و log:** [انتخاب میزبان](../src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt)، [بودجهٔ dispatch](../src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceAttemptDispatcher.kt)، [replay guard](../src/Shared.Security/AuthenticatedRequestReplayGuard.cs)، [allowlist لاگ تشخیصی](../src/Shared.Security/SafeDiagnosticLog.cs)، [ذخیرهٔ اختیاری DPAPI میزبان](../src/Host.Windows/Chat/WindowsHostConversationStore.cs) و [پایگاه رمز‌شدهٔ Android](../src/Client.Android/app/src/main/java/com/whitep/client/data/EncryptedClientDatabaseFactory.kt) کنترل‌های مرتبط را نشان می‌دهند. جزئیات و حدود آزمون‌های اسکن در بخش مربوط به T0187 در همین سند آمده است؛ [ADR-0020](decisions/ADR-0020-android-client-local-conversation-storage.md) نیز نگهداری محلی Android را از ذخیره‌سازی میزبان و rendezvous جدا می‌کند.
+
+این بخش مستندسازی مدل تهدید است، نه گواهی مستقل امنیت یا ناشناس‌بودن. آزمون منبعی همراه آن فقط پیوندها و هم‌خوانی ادعاهای این سند با قراردادها و کنترل‌های مشخص مخزن را می‌سنجد.
+
