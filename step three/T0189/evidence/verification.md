@@ -42,3 +42,20 @@
 - آزمون‌های Windows و Android در source اضافه شده‌اند؛ در محیط این نوبت محلی اجرا نشده‌اند.
 - نتایج CI دقیق commit حاوی این تغییرات هنوز pending است.
 - این تغییر کدهای پایدار و نمایش امن را پوشش می‌دهد؛ سنجش دسترس‌پذیری واقعی اینترنت، صحت مدل نصب‌شده یا موفقیت inference end-to-end را جایگزین نمی‌کند.
+
+
+## Exact-head CI reconciliation for V 3.0.885
+
+- Step Three quality gate run 41829441636: passed.
+- Rendezvous container run 41829441657: passed.
+- Windows WPF job 126572504180: passed.
+- HostLifecycle job 126572504604: failed at ParticipationActivationRecoveryTests.FailedRollbackAddsSafeRecoveryGuidanceAsync; the broad IOException-to-RESOURCE_LIMIT mapping displaced the expected safe generic fallback.
+- Android job 126572504616: KtLint failed on import ordering in RequestErrorCodeTest.kt at line 3. The build and test steps behind this lint gate did not execute in this job.
+- Real local inference run 41829441646: stopped at the same HostLifecycle failure; live model acceptance was not reached, so this is not evidence of a llama.cpp runtime failure.
+
+## A002 correction snapshot
+
+- Generic IOException now maps to INTERNAL unless a more specific subtype already maps to NETWORK_UNAVAILABLE, MODEL_UNAVAILABLE or RESOURCE_LIMIT.
+- HostErrorPresentationAcceptanceTests explicitly verifies that generic IOException maps to INTERNAL and that supplied exception details are not exposed.
+- Kotlin imports are reordered with standard java imports after regular application/library imports.
+- The correction commit and exact-head CI results are pending; task status remains in_progress.

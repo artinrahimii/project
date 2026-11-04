@@ -35,7 +35,6 @@ public static class HostErrorPresentation
             FileNotFoundException or DirectoryNotFoundException => HostErrorCode.MODEL_UNAVAILABLE,
             OutOfMemoryException or UnauthorizedAccessException => HostErrorCode.RESOURCE_LIMIT,
             InvalidDataException or ArgumentException => HostErrorCode.VALIDATION_FAILED,
-            IOException => HostErrorCode.RESOURCE_LIMIT,
             InvalidOperationException => HostErrorCode.HOST_BUSY,
             _ => HostErrorCode.INTERNAL
         };

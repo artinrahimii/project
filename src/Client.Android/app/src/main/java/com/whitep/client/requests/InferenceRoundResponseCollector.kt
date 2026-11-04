@@ -2,8 +2,6 @@ package com.whitep.client.requests
 
 import com.whitep.client.errors.RequestErrorCode
 import com.whitep.client.errors.toRequestErrorCode
-import java.time.Duration
-import java.util.concurrent.TimeoutException
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.async
@@ -12,6 +10,8 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 import org.whitep.shared.contracts.v1.InferenceResponse
+import java.time.Duration
+import java.util.concurrent.TimeoutException
 
 /** Describes why a queued or submitted host attempt did not yield a valid response. */
 enum class InferenceRoundResponseFailureReason {

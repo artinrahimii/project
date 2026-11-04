@@ -19,6 +19,7 @@ internal static class HostErrorPresentationAcceptanceTests
         AssertMapping(new TimeoutException("private deadline detail"), HostErrorCode.REQUEST_EXPIRED);
         AssertMapping(new InvalidOperationException("private host state"), HostErrorCode.HOST_BUSY);
         AssertMapping(new OperationCanceledException("private cancellation detail"), HostErrorCode.CANCELLED);
+        AssertMapping(new IOException("private generic I/O detail"), HostErrorCode.INTERNAL);
         AssertMapping(new Exception("C:\\private\\token.json"), HostErrorCode.INTERNAL);
 
         Assert(HostErrorPresentation.FromProtocolCode(ProtocolErrorCode.UnsupportedModel) == HostErrorCode.MODEL_UNAVAILABLE,

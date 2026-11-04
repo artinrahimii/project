@@ -1,6 +1,8 @@
 package com.whitep.client.errors
 
 import com.google.protobuf.InvalidProtocolBufferException
+import kotlinx.coroutines.CancellationException
+import org.whitep.shared.contracts.v1.ProtocolErrorCode
 import java.io.FileNotFoundException
 import java.io.IOException
 import java.net.ConnectException
@@ -10,8 +12,6 @@ import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import java.util.Locale
 import java.util.concurrent.TimeoutException
-import kotlinx.coroutines.CancellationException
-import org.whitep.shared.contracts.v1.ProtocolErrorCode
 
 /**
  * Stable, payload-free error categories shared by request cards, persisted request state,

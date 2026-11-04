@@ -1,14 +1,14 @@
 package com.whitep.client.errors
 
-import java.io.FileNotFoundException
-import java.net.SocketException
-import java.net.UnknownHostException
-import java.util.concurrent.TimeoutException
 import kotlinx.coroutines.CancellationException
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Test
 import org.whitep.shared.contracts.v1.ProtocolErrorCode
+import java.io.FileNotFoundException
+import java.net.SocketException
+import java.net.UnknownHostException
+import java.util.concurrent.TimeoutException
 
 class RequestErrorCodeTest {
     @Test

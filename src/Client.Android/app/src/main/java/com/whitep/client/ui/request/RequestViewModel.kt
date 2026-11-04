@@ -32,11 +32,11 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
-import java.net.URI
-import java.util.UUID
 import kotlinx.coroutines.launch
 import org.whitep.shared.contracts.v1.InferenceOutcome
 import org.whitep.shared.contracts.v1.InferenceResponse
+import java.net.URI
+import java.util.UUID
 
 enum class HostResponseOutcome {
     SUCCEEDED,

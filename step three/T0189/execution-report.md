@@ -12,3 +12,13 @@
 - **آزمون‌های افزوده‌شده:** آزمون Windows برای نگاشت exception و عدم افشای جزئیات؛ آزمون Android برای همهٔ enumهای wire، دسته‌بندی exceptionها، parse سه پیام خطای واقعی، عدم اشتباه‌گرفتن InferenceResponse موفق با خطا و حفظ کد خطای typed در collector؛ آزمون منبع Python برای یکپارچگی قراردادها.
 - **نتیجهٔ آزمون:** در محیط این نوبت checkout محلی و SDK اجرایی برای اجرای تست‌ها در دسترس نیست؛ نتایج محلی ادعا نمی‌شود. workflowهای exact-head در انتظار اجرا هستند.
 - **گام بعدی:** workflowهای دقیق commit را بررسی کن؛ شکست‌های KtLint، C# build، Android compile/unit tests و graph/evidence guard را بر اساس log واقعی اصلاح کن. T0189 فقط پس از موفقیت گیت‌های مربوطه `done` می‌شود.
+
+
+## بازبینی CI دقیق commit و تلاش اصلاحی A002
+
+- **CI دقیق `V 3.0.885` / commit `2daa4f30826bdb547a5ae92d2b8957f9b212a1ef`:** Step Three quality gate run `41829441636` موفق شد؛ Rendezvous container run `41829441657` موفق شد؛ Windows WPF job `126572504180` موفق شد.
+- **شکست Windows HostLifecycle:** job `126572504604` در آزمون `ParticipationActivationRecoveryTests.FailedRollbackAddsSafeRecoveryGuidanceAsync` متوقف شد. علت واقعی: نگاشت عمومی `IOException` به `RESOURCE_LIMIT` پیام عمومی امن fallback را به پیام منابع تبدیل کرده بود.
+- **شکست Android:** job `126572504616` در KtLint، فایل `RequestErrorCodeTest.kt:3` را به‌دلیل ترتیب importها رد کرد؛ مرحله‌های APK، JVM و instrumentation در این job اجرا نشدند.
+- **Real local inference integration:** run `41829441646` در همان آزمون HostLifecycle متوقف شد؛ سناریوی اجرای واقعی llama.cpp به مرحلهٔ acceptance خودش نرسید و بنابراین نتیجهٔ مستقلی دربارهٔ مدل به دست نیامد.
+- **T0189-A002:** نگاشت عمومی `IOException` حذف شد تا خطای I/O ناشناخته به `INTERNAL` برگردد؛ آزمون صریح generic IOException اضافه شد. importهای Kotlin دست‌خورده مرتب شدند تا importهای `java.*` در انتهای بلوک قرار گیرند.
+- **وضعیت پس از اصلاح:** `in_progress`. آزمون‌های اصلاحی هنوز روی commit جدید اجرا نشده‌اند؛ موفقیت T0189 ادعا نمی‌شود.
