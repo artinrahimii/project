@@ -146,7 +146,8 @@ class RequestViewModel(
     private val operationScope: CoroutineScope? = null,
     private val clockMillis: () -> Long = System::currentTimeMillis,
     private val runtimeFactory: RequestExecutionGatewayFactory = AndroidRequestExecutionGatewayFactory,
-    private val lifecycleRepository: InferenceRequestLifecycleRepository = InMemoryInferenceRequestLifecycleRepository(),
+    private val lifecycleRepository: InferenceRequestLifecycleRepository =
+        InMemoryInferenceRequestLifecycleRepository(),
 ) : ViewModel() {
     private val commandsScope: CoroutineScope
         get() = operationScope ?: viewModelScope
@@ -830,7 +831,8 @@ class RequestViewModel(
             lifecyclePersistenceAvailable = false
             mutableNetworkState.value =
                 mutableNetworkState.value.copy(
-                    message = "The local request status could not be saved; it may not be recoverable after app closure.",
+                    message =
+                        "The local request status could not be saved; it may not be recoverable after app closure.",
                 )
             false
         }

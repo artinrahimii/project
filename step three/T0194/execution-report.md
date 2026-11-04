@@ -28,3 +28,13 @@
 - Cause: A001's CI gate had failed the stale architecture assertion, and the summary incremented `failed_attempt_count`, but its history item still said `partial`.
 - Correction: A001 history is now marked `failed`, matching the recorded counter. A002 remains `partial`; this corrects the execution ledger and does not assert Android product acceptance.
 - A fresh Quality run is required before T0194 can proceed to acceptance. Product workflow results remain separately pending.
+
+
+## T0194-A002 product gate results
+
+- Product run [41876248274](https://github.com/artinrahimii/project/actions/runs/41876248274):
+  - Android job `126736315663` — **failed** at `:app:ktlintTestSourceSetCheck`. The job stopped before APK compilation, JVM unit tests or instrumentation; none of those are claimed.
+  - Windows job `126736316030` — **passed**.
+  - HostLifecycle job `126736316108` — **passed**.
+- KtLint's configured `max_line_length=120`. Source inspection found a 146-character `.addMigrations(...)` call in `ConversationContextCapsulePersistenceTest.kt`, plus two RequestViewModel lines at 121/122 characters. All three were reformatted in attempt `T0194-A003`. No behavioral change was intended.
+- A002 is recorded as failed because its exact-head Android gate did not complete; A003 is partial pending the next exact-head test run.

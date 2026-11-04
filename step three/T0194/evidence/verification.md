@@ -49,3 +49,11 @@
 - A001 Quality failure was already counted in `failed_attempt_count=1`, but the corresponding history record still used `result=partial`.
 - A002 Quality run 41876248248 had 403 Python tests pass, then graph guard failed with `FAILED_ATTEMPT_COUNT_MISMATCH` (summary=1, history=0).
 - The history now marks A001 `failed`, matching the summary. A002 remains partial; a new exact-head graph/quality run is required.
+
+
+## Android formatting gate
+
+- Product run `41876248274`, Android job `126736315663`: failed at `:app:ktlintTestSourceSetCheck`, before APK/JVM/instrumentation.
+- Repo `.editorconfig` sets Kotlin `max_line_length=120`.
+- Local source inspection found a 146-character Room `.addMigrations(...)` invocation and two `RequestViewModel` lines at 121/122 characters. These were wrapped in A003. Exact-head KtLint rerun remains pending.
+- Same product run Windows WPF job `126736316030` and HostLifecycle job `126736316108` passed.
