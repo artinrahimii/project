@@ -29,7 +29,7 @@ class NetworkListenerExposureTests(unittest.TestCase):
                 self.assertIn(f'x:Name="{name}"', WINDOW_XAML)
 
         self.assertIn("new PeerAnnouncementHostLifecycle(", WINDOW)
-        self.assertIn("await service.StartAsync();", WINDOW)
+        self.assertIn("await service.StartAsync(cancellationToken);", WINDOW)
         self.assertIn("PeerReachabilityConfirmed.IsChecked != true", WINDOW)
         self.assertIn("TrustPeerAfterExplicitConfirmation(expectedPeerIdentity, explicitlyConfirmed: true)", WINDOW)
         self.assertIn("this app does not independently verify public internet reachability", WINDOW.lower())
@@ -115,6 +115,7 @@ class NetworkListenerExposureTests(unittest.TestCase):
     def test_window_closing_cancels_and_drains_peer_participation_transition(self):
         self.assertIn("_peerParticipationTask", WINDOW)
         self.assertIn("_peerParticipationCancellation?.Cancel();", WINDOW)
+        self.assertIn("if (_suppressParticipationToggleChanged or _windowClosing or _peerParticipationTask is not None)", WINDOW)
         closing = WINDOW.split("private async void MainWindow_Closing", 1)[1].split(
             "private void MainWindow_Closed", 1
         )[0]

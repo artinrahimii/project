@@ -37,3 +37,11 @@ Exact-head GitHub Actions has not yet run for the T0193 implementation commit. N
 - Recomputed Git SHA-1 over `blob 3524924\\0<payload>`: exact match with the tree Blob ID. Full JSON parse: 230 task nodes / 422 edges, no duplicate task IDs and no unresolved edge endpoints.
 - Re-reviewed `T0192 → T0193` and `T0188 → T0193`: both remain `sequencing_only / validated`; the original `type=blocks` edges and conservative execution order are preserved.
 - Follow-up found an untracked async network-participation transition during WPF Closing. A002 tracks, cancels and awaits that operation; the Python guard covers ordering. The runtime and exact-head build result remains pending; no pass is claimed.
+
+
+## T0193-A003 — source/test consistency and attempt trace
+- A001 implementation commit: `0ba42632794058dd478b96427f08857e1b75479b` (`V 3.0.899`).
+- A002 peer-participation lifecycle commit: `dfc6ed433dc35bf57b088ed2b571f273e4f4eb0a` (`V 3.0.900`).
+- Graph snapshot used for this review: `main` commit `dfc6ed433dc35bf57b088ed2b571f273e4f4eb0a`, path `step three/project-graph.md`, Blob `3cba90b5dac0d6d61d55ca555c379258a13f36fc`, GitHub size `3526074` bytes. The recomputed Git Blob SHA-1 matched; full JSON parsed as 230 tasks and 422 edges.
+- The new A003 source guard now expects `service.StartAsync(cancellationToken)` and verifies the single-transition check. This is a correction made before running CI, not a recorded failed test.
+- Exact-head jobs for V 3.0.900 were queued; no automated results are claimed. T0193 remains `in_progress`.
