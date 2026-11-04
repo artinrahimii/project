@@ -24,6 +24,12 @@ import net.zetetic.database.sqlcipher.SQLiteDatabase as CipherSQLiteDatabase
 @RunWith(AndroidJUnit4::class)
 class EncryptedClientDatabaseAcceptanceTest {
     private val context = ApplicationProvider.getApplicationContext<Context>()
+    private val sensitiveCanaryMarkers =
+        listOf(
+            "T0187_PROMPT_CANARY_7F2A",
+            "T0187_CONTEXT_CAPSULE_CANARY_91C4",
+            "T0187_SECRET_CANARY_3BD8",
+        )
     private val databaseNames =
         listOf(
             "t0184-fresh-encrypted.db",
@@ -112,7 +118,7 @@ class EncryptedClientDatabaseAcceptanceTest {
                 legacy.conversationDao().upsert(
                     ConversationEntity(
                         conversationId = "legacy-conversation",
-                        title = "Preserve this record",
+                        title = "T0187_CONTEXT_CAPSULE_CANARY_91C4",
                         createdAtEpochMillis = 30L,
                         updatedAtEpochMillis = 40L,
                     ),
@@ -122,14 +128,14 @@ class EncryptedClientDatabaseAcceptanceTest {
                         messageId = "legacy-message",
                         conversationId = "legacy-conversation",
                         authorRole = "assistant",
-                        content = "legacy plaintext data",
+                        content = "T0187_SECRET_CANARY_3BD8",
                         createdAtEpochMillis = 35L,
                     ),
                 )
                 legacy.clientRequestDraftDao().upsert(
                     ClientRequestDraftEntity(
                         draftId = "current",
-                        prompt = "legacy draft",
+                        prompt = "T0187_PROMPT_CANARY_7F2A",
                         status = RequestDraftStatus.NOT_SENT,
                     ),
                 )
@@ -144,11 +150,11 @@ class EncryptedClientDatabaseAcceptanceTest {
             val encrypted = EncryptedClientDatabaseFactory.open(context, databaseName)
             try {
                 assertEquals(
-                    "Preserve this record",
+                    "T0187_CONTEXT_CAPSULE_CANARY_91C4",
                     encrypted.conversationDao().findById("legacy-conversation")?.title,
                 )
                 assertEquals(
-                    "legacy plaintext data",
+                    "T0187_SECRET_CANARY_3BD8",
                     encrypted
                         .messageDao()
                         .observeForConversation("legacy-conversation")
@@ -157,7 +163,7 @@ class EncryptedClientDatabaseAcceptanceTest {
                         .content,
                 )
                 assertEquals(
-                    "legacy draft",
+                    "T0187_PROMPT_CANARY_7F2A",
                     encrypted.clientRequestDraftDao().findById("current")?.prompt,
                 )
             } finally {
@@ -166,6 +172,11 @@ class EncryptedClientDatabaseAcceptanceTest {
 
             assertEncryptedHeader(databaseFile)
             assertCannotReadWithoutKey(databaseFile)
+            assertNoSensitiveCanariesInDatabaseArtifacts(databaseFile)
+            assertFalse(
+                "A SQLCipher migration temporary file remained after the atomic rename.",
+                File(databaseFile.absolutePath + ".sqlcipher-migrating").exists(),
+            )
         }
 
     @Test
@@ -229,6 +240,32 @@ class EncryptedClientDatabaseAcceptanceTest {
             "The database still has a plaintext SQLite header.",
             readHeader(file).contentEquals("SQLite format 3\u0000".toByteArray(Charsets.US_ASCII)),
         )
+    }
+
+    private fun assertNoSensitiveCanariesInDatabaseArtifacts(databaseFile: File) {
+        val artifacts =
+            listOf(
+                databaseFile,
+                File(databaseFile.absolutePath + "-wal"),
+                File(databaseFile.absolutePath + "-shm"),
+                File(databaseFile.absolutePath + ".sqlcipher-migrating"),
+                File(databaseFile.absolutePath + ".sqlcipher-migrating-wal"),
+                File(databaseFile.absolutePath + ".sqlcipher-migrating-shm"),
+            )
+        artifacts.filter(File::exists).forEach { artifact ->
+            val contents = artifact.readBytes()
+            try {
+                val searchable = contents.toString(Charsets.ISO_8859_1)
+                sensitiveCanaryMarkers.forEach { marker ->
+                    assertFalse(
+                        "A synthetic prompt/capsule/secret canary remained in an app-owned database artifact.",
+                        searchable.contains(marker),
+                    )
+                }
+            } finally {
+                contents.fill(0)
+            }
+        }
     }
 
     private fun readHeader(file: File): ByteArray =

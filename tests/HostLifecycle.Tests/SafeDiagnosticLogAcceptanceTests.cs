@@ -38,7 +38,20 @@ internal static class SafeDiagnosticLogAcceptanceTests
             throw new InvalidOperationException("The safe diagnostic event contained unexpected or non-numeric values.");
         }
 
-        Console.WriteLine("PASS: safe diagnostic EventSource emitted only the three allowlisted numeric fields.");
+        string observedRecord = string.Join(" ", new[] { record.Message ?? string.Empty }
+            .Concat(payload.Select(value => Convert.ToString(value, System.Globalization.CultureInfo.InvariantCulture) ?? string.Empty)));
+        foreach (var marker in new[]
+        {
+            "T0187_PROMPT_CANARY_7F2A",
+            "T0187_CONTEXT_CAPSULE_CANARY_91C4",
+            "T0187_SECRET_CANARY_3BD8"
+        })
+        {
+            if (observedRecord.Contains(marker, StringComparison.Ordinal))
+                throw new InvalidOperationException("A sensitive canary appeared in the emitted safe diagnostic event.");
+        }
+
+        Console.WriteLine("PASS: safe diagnostic EventSource emitted numeric allowlist fields and no prompt/capsule/secret canaries.");
     }
 
     private sealed class SafeDiagnosticEventListener : EventListener

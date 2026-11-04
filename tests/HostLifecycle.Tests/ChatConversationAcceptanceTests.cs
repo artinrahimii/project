@@ -1,10 +1,18 @@
 using System.Security.Cryptography;
+using System.Text;
 using WhiteP.Host.Application.Chat;
 using WhiteP.Host.Windows.Chat;
 using WhiteP.Host.Windows.Security;
 
 public static class ChatConversationAcceptanceTests
 {
+    private static readonly string[] SensitiveCanaryMarkers =
+    [
+        "T0187_PROMPT_CANARY_7F2A",
+        "T0187_CONTEXT_CAPSULE_CANARY_91C4",
+        "T0187_SECRET_CANARY_3BD8",
+    ];
+
     public static void Run()
     {
         var retentionPolicy = HostConversationRetentionPolicy.Default;
@@ -61,7 +69,7 @@ public static class ChatConversationAcceptanceTests
             throw new Exception("The default host retention policy must remain session-only.");
         VerifyDpapiProtectedConversationStore();
         VerifyOrphanedTemporaryFileCleanup();
-        Console.WriteLine("PASS: in-memory conversation, explicit retention consent, Windows DPAPI history and orphaned temporary-file cleanup.");
+        Console.WriteLine("PASS: conversation retention, DPAPI history, orphaned temp cleanup, and prompt/capsule/secret canary scans.");
     }
 
     private static void VerifyOrphanedTemporaryFileCleanup()
@@ -78,8 +86,12 @@ public static class ChatConversationAcceptanceTests
 
         try
         {
-            foreach (var path in new[] { stalePath, recentPath, activePath, malformedPath, unrelatedPath })
-                File.WriteAllText(path, "non-sensitive temporary test payload");
+            File.WriteAllText(stalePath, string.Join("\n", SensitiveCanaryMarkers), Encoding.UTF8);
+            foreach (var path in new[] { recentPath, activePath, malformedPath, unrelatedPath })
+                File.WriteAllText(path, "non-sensitive temporary test payload", Encoding.UTF8);
+
+            if (!ContainsSensitiveCanariesInFiles(directory))
+                throw new Exception("The temporary-file scan fixture did not detect its synthetic prompt/capsule/secret markers.");
 
             var oldTimestamp = DateTime.UtcNow.AddMinutes(-2);
             File.SetLastWriteTimeUtc(stalePath, oldTimestamp);
@@ -93,6 +105,8 @@ public static class ChatConversationAcceptanceTests
                 if (!File.Exists(activePath))
                     throw new Exception("Startup cleanup removed a temporary file still held by an active writer.");
             }
+
+            AssertNoSensitiveCanariesInFiles(directory, "after stale temporary-file cleanup");
 
             if (!File.Exists(recentPath) || !File.Exists(malformedPath) || !File.Exists(unrelatedPath))
                 throw new Exception("Cleanup removed a recent, malformed-name or unrelated temporary file.");
@@ -115,6 +129,42 @@ public static class ChatConversationAcceptanceTests
         }
     }
 
+    private static bool ContainsSensitiveCanariesInFiles(string directory)
+    {
+        foreach (var candidate in Directory.EnumerateFiles(directory, "*", SearchOption.TopDirectoryOnly))
+        {
+            byte[] contents = File.ReadAllBytes(candidate);
+            try
+            {
+                foreach (var marker in SensitiveCanaryMarkers)
+                {
+                    byte[] markerBytes = Encoding.UTF8.GetBytes(marker);
+                    try
+                    {
+                        if (contents.AsSpan().IndexOf(markerBytes) >= 0)
+                            return true;
+                    }
+                    finally
+                    {
+                        CryptographicOperations.ZeroMemory(markerBytes);
+                    }
+                }
+            }
+            finally
+            {
+                CryptographicOperations.ZeroMemory(contents);
+            }
+        }
+
+        return false;
+    }
+
+    private static void AssertNoSensitiveCanariesInFiles(string directory, string phase)
+    {
+        if (ContainsSensitiveCanariesInFiles(directory))
+            throw new Exception("A synthetic prompt, context capsule or secret marker remained in an application-owned test file after " + phase + ".");
+    }
+
     private static void VerifyDpapiProtectedConversationStore()
     {
         if (!OperatingSystem.IsWindows())
@@ -126,24 +176,26 @@ public static class ChatConversationAcceptanceTests
         {
             var store = new WindowsHostConversationStore(path, new WindowsDpapiSecretProtector());
             var conversation = new ChatConversation(HostConversationRetentionPolicy.OwnerConsentedLocalDevice);
-            const string privateMarker = "OWNER_CONSENT_PRIVATE_CONVERSATION_MARKER_8F2C";
-            conversation.Add(ConversationMessageRole.User, privateMarker);
-            conversation.Add(ConversationMessageRole.Assistant, "A protected local response.");
+            var promptMarker = SensitiveCanaryMarkers[0];
+            var capsuleMarker = SensitiveCanaryMarkers[1];
+            var secretMarker = SensitiveCanaryMarkers[2];
+            conversation.Add(ConversationMessageRole.User, promptMarker + "\n" + capsuleMarker);
+            conversation.Add(ConversationMessageRole.Assistant, secretMarker);
 
             store.Save(conversation.Messages);
             if (!File.Exists(path))
                 throw new Exception("Owner-consented conversation history was not written.");
-            var protectedFile = File.ReadAllBytes(path);
-            var containsPlaintext = Convert.ToBase64String(protectedFile).Contains(privateMarker, StringComparison.Ordinal);
-            CryptographicOperations.ZeroMemory(protectedFile);
-            if (containsPlaintext)
-                throw new Exception("The local history file contains plaintext prompt content.");
+            AssertNoSensitiveCanariesInFiles(directory, "after DPAPI-protected conversation save");
+            if (Directory.EnumerateFiles(directory, "*.tmp", SearchOption.TopDirectoryOnly).Any())
+                throw new Exception("A conversation-store temporary file remained after the atomic DPAPI save.");
 
             var restored = store.Load();
             if (restored.Count != 2 || restored[0].Role != ConversationMessageRole.User ||
-                restored[0].Content != privateMarker || restored[1].Role != ConversationMessageRole.Assistant ||
-                restored[1].Content != "A protected local response.")
-                throw new Exception("DPAPI-protected local history did not round-trip the conversation.");
+                restored[0].Content != promptMarker + "\n" + capsuleMarker ||
+                restored[1].Role != ConversationMessageRole.Assistant ||
+                restored[1].Content != secretMarker)
+                throw new Exception("DPAPI-protected local history did not round-trip the synthetic canary fixture.");
+            AssertNoSensitiveCanariesInFiles(directory, "after DPAPI-protected conversation reload");
 
             var corruptBytes = new byte[] { 0x01, 0x02, 0x03, 0x04 };
             File.WriteAllBytes(path, corruptBytes);

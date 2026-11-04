@@ -117,6 +117,26 @@ Room اکنون از `EncryptedClientDatabaseFactory` و SQLCipher Community Edi
 
 دو شکست واقعی نسخه‌های V 3.0.868 و V 3.0.869 در execution history حفظ شده‌اند. اصلاح A005 هر دو قالب namespace را می‌پذیرد. در product run دقیق V 3.0.871، ممیزی AAPT2 روی APK واقعی، آزمون‌های Android JVM و instrumentation موفق شدند؛ artifact 13279121914 شامل ۹ آزمون، صفر شکست و صفر skipped است. product build، quality gate و آزمون container نسخهٔ V 3.0.872 نیز روی commit 6b507bba948743fe7da5cf3d4d4f9925601f24a7 موفق شدند. وضعیت T0185 در گراف done است.
 
+## آزمون اسکن log و فایل‌های موقت برای prompt، capsule و اسرار (T0187)
+
+برای جلوگیری از ثبت ناخواستهٔ محتوای حساس، آزمون‌های source-contract و runtime مستقل وجود دارند:
+
+- آزمون‌های source-contract در `tests/test_network_payload_logging.py` تمام log sinkهای شناخته‌شدهٔ Windows و Android را بررسی می‌کنند و ارجاع مستقیم به prompt، context capsule، شناسهٔ درخواست/PeerId، کلید و token را در پیرامون فراخوانی log رد می‌کنند. API تشخیصی هر دو سمت فقط کدهای عددی allowlist و مدت زمان را می‌پذیرد.
+- آزمون runtime در `SafeDiagnosticLogAcceptanceTests.cs` و `SafeDiagnosticLogTest.kt` خروجی واقعی EventSource و formatter اندروید را بررسی می‌کند؛ schema پذیرفته‌شده فقط event code، outcome code و duration است و marker آزمایشی prompt/capsule/secret نباید در خروجی ظاهر شود.
+
+در Windows، آزمون `ChatConversationAcceptanceTests` سه marker ساختگی را در یک فایل موقت متعلق به پوشهٔ تست قرار می‌دهد و تأیید می‌کند scanner آن‌ها را پیش از cleanup پیدا می‌کند. پس از پاک‌سازی فایل یتیم و نیز پس از ذخیره/بازیابی تاریخچهٔ دارای رضایت با DPAPI، فایل‌های همان پوشهٔ آزمایشی اسکن می‌شوند و هیچ marker روشن نباید باقی مانده باشد. آزمون همچنین نبود فایل `*.tmp` پس از rename اتمی موفق را کنترل می‌کند. کد store، plaintext را پیش از ایجاد فایل موقت با protector رمز می‌کند و فقط `protectedPayload` را در فایل موقت می‌نویسد؛ bufferهای تحت مالکیت store در پایان صفر می‌شوند.
+
+در Android، آزمون instrumentation مهاجرت Room/SQLCipher، markerهای ساختگی prompt/capsule/secret را در دادهٔ legacy قرار می‌دهد. پس از مهاجرت، فایل پایگاه و sidecarهای WAL/SHM و artifact موقت `.sqlcipher-migrating` در صورت وجود اسکن می‌شوند؛ متن marker نباید در هیچ artifact متعلق به همان پایگاه پیدا شود و فایل موقت مهاجرت باید پس از rename حذف شده باشد. آزمون JVM نیز خروجی formatter تشخیصی را برای همین markerها بررسی می‌کند.
+
+این کنترل‌ها فقط sinkهای log و فایل‌های متعلق به مسیرهای برنامه/پوشه‌های آزمون مشخص‌شده را می‌سنجند. آن‌ها اثبات نمی‌کنند که سیستم‌عامل، Event Viewer خارج از EventSource برنامه، pagefile/swap، crash dump، backup، screenshot، ابزارهای امنیتی ثالث یا فرایند مخرب هم‌حساب هیچ نسخه‌ای ندارند. همچنین وجود canary در تست، جایگزین ممیزی فورنزیک کل دستگاه نیست.
+
+شواهد:
+- Windows temporary-file and DPAPI history canary scan: `tests/HostLifecycle.Tests/ChatConversationAcceptanceTests.cs`.
+- Windows EventSource allowlist: `tests/HostLifecycle.Tests/SafeDiagnosticLogAcceptanceTests.cs`.
+- Android SQLCipher migration artifact scan: `src/Client.Android/app/src/androidTest/java/com/whitep/client/data/EncryptedClientDatabaseAcceptanceTest.kt`.
+- Android diagnostic formatter: `src/Client.Android/app/src/test/java/com/whitep/client/network/SafeDiagnosticLogTest.kt`.
+- Cross-platform static log scan: `tests/test_network_payload_logging.py`.
+- Sensitive buffer ownership checks remain separate in `tests/test_sensitive_buffer_cleanup.py`.
 ## رضایت آگاهانه برای اعتماد و میزبانی همتا (T0186)
 
 کلاینت Android پیش از ذخیرهٔ اعتماد به یک PeerId کشف‌شده، یک هشدار مختص همان همتا نمایش می‌دهد. متن هشدار روشن می‌کند که میزبان پردازش پس از رمزگشایی کانال می‌تواند prompt و context capsule را بخواند؛ رمزگذاری انتقال محتوا را از مقصد پنهان نمی‌کند و میزبان ممکن است محتوای دریافتی را بررسی یا نگهداری کند. تأیید این پنجره فقط اعتماد همتا را ذخیره می‌کند و هیچ prompt یا capsuleای ارسال نمی‌کند؛ ارسال تنها پس از اقدام جداگانهٔ کاربر با دکمهٔ Send to trusted hosts انجام می‌شود. اعتماد همتا بعداً قابل لغو است.
