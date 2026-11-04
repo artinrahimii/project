@@ -33,3 +33,12 @@
 ## عدم ادعای تکمیل
 
 تغییر تست در commit جاری هنوز CI نشده است. برای تکمیل، Quality Gate باید همهٔ تست‌های Python و هر دو graph guard را پاس کند؛ Product Build نیز باید clean build، lint، APK، JVM tests، Android Keystore instrumentation، generated Protobuf و artifact uploads را روی همان commit به پایان موفق برساند.
+
+
+## checkpoint CI روی commit V 3.0.947
+
+- Quality Gate run `41926077752`: موفق؛ اصلاح regex تست قرارداد در commit جاری پذیرفته شد.
+- Rendezvous run `41926077686`: موفق.
+- Product Build run `41926077657`: Windows job `126910709342` موفق؛ HostLifecycle job `126910709152` موفق.
+- Android job `126910709306`: clean fixture build، Gradle clean، KtLint، APK build، permission policy و JVM tests همگی موفق؛ Keystore instrumentation در زمان ثبت checkpoint در حال اجرا بود و generated Protobuf check و artifact uploads هنوز انجام نشده بودند.
+- گراف پس از ثبت این checkpoint همچنان T0207 را `in_progress` نگه می‌دارد؛ هیچ ادعای تکمیل زودهنگام ثبت نشده است.

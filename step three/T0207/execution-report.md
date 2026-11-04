@@ -51,3 +51,15 @@ Product Build run `41922371821`: ویندوز و HostLifecycle موفق؛ Androi
 - `T0207-A004`: assertion تست Python برای زنجیرهٔ چندخطی اصلاح شد؛ CI هنوز اجرا نشده است.
 
 تا موفقیت Quality Gate و هر سه job Product Build روی commit جدید، T0207 در وضعیت `in_progress` می‌ماند.
+
+
+## checkpoint واقعی CI روی commit 947
+
+در بازبینی مستقیم workflow runهای commit `3930ed7017ded5dea7786655590648920cb4ce1f`:
+
+- [Step Three quality gate run 41926077752](https://github.com/artinrahimii/project/actions/runs/41926077752): موفق؛ آزمون‌های Python و بررسی ساختار/خروجی گراف سبز.
+- [Rendezvous run 41926077686](https://github.com/artinrahimii/project/actions/runs/41926077686): موفق.
+- [Product Build run 41926077657](https://github.com/artinrahimii/project/actions/runs/41926077657): Windows job `126910709342` و HostLifecycle job `126910709152` کامل و موفق.
+- Android job `126910709306`: ساخت fixture، Gradle clean، KtLint، ساخت APK پاک، کنترل حداقل مجوزها و آزمون‌های JVM موفق شدند. در زمان checkpoint، Android Keystore instrumentation هنوز در حال اجرا بود و بررسی نهایی Protobuf و بارگذاری گزارش‌ها/APK در انتظار بودند.
+
+**وضعیت پذیرش:** این checkpoint، موفقیت کامل T0207 را ثابت نمی‌کند. وظیفه تا پایان موفق Android instrumentation و همهٔ artifactها در وضعیت `in_progress` باقی می‌ماند.
