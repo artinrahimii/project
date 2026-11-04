@@ -54,3 +54,9 @@ A future attempt must run an Android application/emulator endpoint and the Windo
 - Follow-up: register the labelled Windows runner, connect one dedicated physical Android device to the same private LAN, run `.github/workflows/android-windows-lan-acceptance.yml` on `main`, inspect the artifact, and only then reconsider the task status.
 
 The T0202-A002 graph history entry is included in this commit. Its own commit SHA cannot be embedded in the same commit; resolve it from the online `main` history after this commit is created.
+
+## T0202-A002 — script integrity correction
+
+A read-back review of the first PowerShell runner Blob found duplicated trailing code sections. The script was rebuilt as one 293-line file and the new Blob was fetched again; the returned content exactly matched the submitted content. Structural preflight now confirms one command entry point, one temporary firewall-rule creation, one Windows fixture launch and the expected two cleanup/finally blocks.
+
+This is a source-integrity correction only. It does not change the LAN test result: the .NET/Android builds and physical-device request/response remain unexecuted, and T0202 remains blocked.

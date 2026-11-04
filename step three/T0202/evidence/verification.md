@@ -35,3 +35,10 @@ The evidence establishes the gap, not successful T0202 acceptance. The task rema
 - End-to-end authenticated Android-to-Windows request/response on the LAN — not run. No LAN pass or workflow artifact is claimed.
 
 **Status remains blocked.** A passing manual workflow run on a physical device and independent Windows host is required before T0202 can be marked done.
+
+## PowerShell runner Blob correction
+
+- The previous runner file was found to contain duplicated trailing code when read back from the committed Blob.
+- Replaced it with a fresh, independently created Blob and fetched that Blob again.
+- Verified exact character-for-character round trip, 293 lines, one script entry point, one firewall-rule creation, one Windows fixture process launch and expected cleanup structure.
+- This source correction is not an end-to-end LAN test and does not change T0202's blocked status.
