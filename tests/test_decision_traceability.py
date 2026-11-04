@@ -709,7 +709,7 @@ class DecisionTraceabilityTests(unittest.TestCase):
 
         self.assertIn("new PeerAnnouncementHostLifecycle(", window)
         self.assertIn("await service.StartAsync(cancellationToken);", window)
-                self.assertIn("var peerService = _peerParticipationService;", window)
+        self.assertIn("var peerService = _peerParticipationService;", window)
         self.assertIn("await peerService.DisposeAsync();", window)
         self.assertIn("if (ReferenceEquals(_peerParticipationService, peerService))", window)
         self.assertIn("PeerReachabilityConfirmed.IsChecked != true", window)

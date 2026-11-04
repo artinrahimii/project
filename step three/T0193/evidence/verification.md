@@ -87,3 +87,10 @@ Exact-head GitHub Actions has not yet run for the T0193 implementation commit. N
 - Updated `tests/test_decision_traceability.py` to assert the local peer-service variable, async disposal call, and identity-checked clearing of the shared service reference.
 - The source guard has been statically compared with the WPF implementation. It has **not** been run yet; no pass is claimed.
 - T0193 remains `in_progress` pending a passing Quality run and completion of all relevant product CI.
+
+
+## T0193-A009 — correction verification boundary
+
+- Corrected `tests/test_decision_traceability.py` line 712 from 16 leading spaces to 8, matching the neighboring class-method assertions.
+- The V 3.0.905 Quality run `41869697038` failed during test module import, before the test body could run; this is recorded as an A008 attempt failure.
+- No new test pass is claimed. Exact-head V 3.0.906 Quality and product CI are required.

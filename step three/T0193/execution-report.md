@@ -94,3 +94,11 @@
 - Replaced the obsolete direct-field disposal expectation with checks for the actual close-path ownership sequence: copy `_peerParticipationService` to `peerService`, await `peerService.DisposeAsync()`, and clear the shared reference only when it still refers to the same service.
 - This preserves the existing production lifecycle behavior; this attempt changes only the source-contract test and execution evidence.
 - **Verification status:** the new assertion has been checked against the WPF source from the exact V 3.0.904 head. It has not yet been executed. A fresh exact-head Quality run is required, and T0193 remains `in_progress`.
+
+
+## T0193-A009 — repair Python module indentation after A008
+
+- **Failure found on exact head:** Quality run [41869697038](https://github.com/artinrahimii/project/actions/runs/41869697038), job `126713109741`, could not import `test_decision_traceability`. The first new peer-service assertion in A008 had 16 leading spaces at class-method scope, causing an indentation error.
+- **Correction:** changed that assertion to the same 8-space class-method indentation as adjacent assertions. The other A008 lines already had the correct indentation.
+- **Impact:** test source only; no production code or dependency contracts changed.
+- **Verification:** statically inspected the corrected lines. The corrected Python module has not yet been executed; no pass is claimed. T0193 remains `in_progress` pending fresh exact-head CI.
