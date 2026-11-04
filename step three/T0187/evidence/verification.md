@@ -64,3 +64,21 @@
 
 - در `V 3.0.880` دو خطا از نوع `Unexpected indentation` در پارامترهای فراخوانی `ConversationContextCapsule` و `checkNotNull` مشاهده شد: expected indentation به‌ترتیب 20/16 و 24/20 ستون.
 - A005 فقط indentation پارامترها و پرانتز بسته را مطابق همین مقادیر اصلاح می‌کند. هیچ test assertion یا production behavior تغییر نکرد.
+
+
+## پذیرش نهایی exact-head — V 3.0.881
+
+- Commit: `bf790e4c6aeb962bee27007fdbb4527d7ac05cd4`، پیام `V 3.0.881`، شاخه `main`.
+- Quality gate: [workflow 41821419666](https://github.com/artinrahimii/project/actions/runs/41821419666) — موفق؛ 381 آزمون Python، خروجی `Ran 381 tests in 0.235s` و `OK`.
+- Product workflow: [workflow 41821419520](https://github.com/artinrahimii/project/actions/runs/41821419520) — موفق؛ Android job `126545230910`، Windows WPF job `126545231223`، HostLifecycle job `126545231339`.
+- Android: KtLint، APK build، permission policy، JVM tests و Android Keystore instrumentation همگی موفق. تمام 26 stepهای job با conclusion=success خاتمه یافتند؛ artifact گزارش instrumentation با Artifact ID `13318300037` بارگذاری شد.
+- Windows WPF: build و smoke/startup و policy/DPAPI checks موفق؛ artifact میزبان با Artifact ID `13317485661` بارگذاری شد.
+- HostLifecycle: job کامل و موفق؛ آزمون‌های Windows temporary history/DPAPI و EventSource canary پاس شدند.
+- Rendezvous: [workflow 41821419570](https://github.com/artinrahimii/project/actions/runs/41821419570) — build و smoke test موفق.
+- GitHub Actions دقیقاً روی SHA `bf790e4c6aeb962bee27007fdbb4527d7ac05cd4` اجرا شدند؛ commit نهایی metadata/status برای بستن وظیفه، در نسخهٔ بعدی ثبت می‌شود.
+
+## محدودیت‌های پوشش
+
+- آزمون‌ها مسیرهای log، فایل‌های موقت و artifacts تحت کنترل خود برنامه را بررسی می‌کنند؛ این شواهد تضمین حذف داده از pagefile، crash dump، logهای ابزارهای خارجی یا snapshotهای سیستم‌عامل نیست.
+- فایل staging دانلود مدل برای محتوای مدل است، نه request/capsule/secret و این تفاوت در آزمون منبعی ثبت شده است.
+- آزمون‌های محلی در محیط اجرا انجام نشدند؛ .NET SDK نصب نبود و clone شبکه‌ای به GitHub به‌دلیل DNS ممکن نبود. پذیرش عملی با CI آنلاین exact-head انجام شد.
