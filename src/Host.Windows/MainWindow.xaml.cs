@@ -355,19 +355,19 @@ public partial class MainWindow : Window
             cancellation.Dispose();
             if (!_windowClosing)
             {
-            CancelModelUpdateButton.IsEnabled = false;
-            CancelModelUpdateButton.Visibility = Visibility.Collapsed;
-            UpdateSelectedModelButton.IsEnabled = true;
-            RemoveActiveModelButton.IsEnabled = true;
-            LoadCatalogButton.IsEnabled = true;
-            BrowseCatalogButton.IsEnabled = true;
-            ConnectButton.IsEnabled = true;
-            StartLocalEngineButton.IsEnabled = true;
-            CatalogItems.IsEnabled = true;
-            GenerateButton.IsEnabled = _session.IsConnected && _capacityReady;
+                CancelModelUpdateButton.IsEnabled = false;
+                CancelModelUpdateButton.Visibility = Visibility.Collapsed;
+                UpdateSelectedModelButton.IsEnabled = true;
+                RemoveActiveModelButton.IsEnabled = true;
+                LoadCatalogButton.IsEnabled = true;
+                BrowseCatalogButton.IsEnabled = true;
+                ConnectButton.IsEnabled = true;
+                StartLocalEngineButton.IsEnabled = true;
+                CatalogItems.IsEnabled = true;
+                GenerateButton.IsEnabled = _session.IsConnected && _capacityReady;
             }
         }
-    
+
     }
 
     private void CancelModelUpdateButton_Click(object sender, RoutedEventArgs e)
@@ -601,15 +601,15 @@ public partial class MainWindow : Window
         {
             if (!_windowClosing)
             {
-            if (ChatMessages.Items.Count > 0)
-            {
-                ChatMessages.ScrollIntoView(ChatMessages.Items[ChatMessages.Items.Count - 1]);
-            }
-            CancelGenerationButton.IsEnabled = false;
-            _clearSessionRequested = false;
-            RenderHostHardwareSummary();
-            ConnectButton.IsEnabled = true;
-            GenerateButton.IsEnabled = _session.IsConnected && _capacityReady;
+                if (ChatMessages.Items.Count > 0)
+                {
+                    ChatMessages.ScrollIntoView(ChatMessages.Items[ChatMessages.Items.Count - 1]);
+                }
+                CancelGenerationButton.IsEnabled = false;
+                _clearSessionRequested = false;
+                RenderHostHardwareSummary();
+                ConnectButton.IsEnabled = true;
+                GenerateButton.IsEnabled = _session.IsConnected && _capacityReady;
             }
         }
     }

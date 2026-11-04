@@ -708,7 +708,7 @@ class DecisionTraceabilityTests(unittest.TestCase):
         peer_acceptance = (ROOT / "tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs").read_text(encoding="utf-8")
 
         self.assertIn("new PeerAnnouncementHostLifecycle(", window)
-        self.assertIn("await service.StartAsync();", window)
+        self.assertIn("await service.StartAsync(cancellationToken);", window)
         self.assertIn("await _peerParticipationService.DisposeAsync();", window)
         self.assertIn("PeerReachabilityConfirmed.IsChecked != true", window)
         self.assertIn("advertisedAddressVerified: true", window)

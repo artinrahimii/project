@@ -52,3 +52,27 @@
 
 
 - A004 source-guard correction commit: `bbb744beb126d4f38c50dfa00014a92992b0d119` (`V 3.0.902`), verified on `main`.
+
+
+## T0193-A005 — exact-head CI verification (V 3.0.903)
+
+- **Baseline:** `main` commit `dad30f9594175c36635a60c4f5cd872ce0852332` (`V 3.0.903`); graph Blob `cd54b7b97fe1eb31b0278c8dd391f81d0c1f2631` was retrieved and its complete Git Blob SHA-1 verified.
+- **Quality workflow:** run [41865536479](https://github.com/artinrahimii/project/actions/runs/41865536479), job `126698664591`, failed during the Python unit-test step. Four source-contract tests failed:
+  - `test_participation_listener_lifecycle_decision_maps_to_fail_closed_wpf_shutdown` expected the old parameterless `StartAsync()`, while WPF now passes its tracked cancellation token.
+  - `test_session_logic_depends_on_the_interface` expected the caller token, while the session correctly passes its linked `operationToken`.
+  - `test_clear_session_suppresses_late_generation_errors` expected the older condition and omitted the additional `_windowClosing` guard.
+  - `test_host_session_async_disposal_cancels_and_drains_before_backend_release` expected a nonexistent `previousBackend.Dispose()` call instead of the actual `IDisposable backend` pattern.
+- **Windows workflow:** product run [41865536757](https://github.com/artinrahimii/project/actions/runs/41865536757), job `126698664507`, failed at `dotnet format whitespace WhiteP.sln --verify-no-changes`. The log identified 20 whitespace/indentation diagnostics in two `finally` blocks in `MainWindow.xaml.cs`; the Windows build and later checks were skipped.
+- **Runtime evidence:** the separate HostLifecycle job `126698665014` in the same product run passed. Its log explicitly reports: `PASS: async host shutdown cancels active inference, rejects late results, drains work before backend disposal, and closes admission.` The Android build/test job `126698665117` also passed. These results do not make the failed quality/Windows gates pass.
+- **Decision:** T0193 remains `in_progress`. No failed source-contract test or formatter run is re-labelled as successful. The implementation's dedicated shutdown runtime acceptance test did pass on this exact head; remaining source-contract/formatting gates need correction and a fresh exact-head run.
+
+
+## T0193-A006 — correct stale source guards and WPF formatting
+
+- Updated the decision-traceability assertion to require the cancellable `service.StartAsync(cancellationToken)` call used by the tracked peer-participation transition.
+- Updated the backend abstraction assertion to require the linked `operationToken` passed to the backend, preserving the session-shutdown cancellation contract.
+- Updated the clear-session assertion to require both `_clearSessionRequested` and `_windowClosing` to suppress late UI updates.
+- Updated the disposal assertion to match the actual safe pattern: detach `previousBackend`, pattern-match it as `IDisposable backend`, then call `backend.Dispose()` after the operation gate has drained.
+- Corrected the two WPF `finally` blocks' indentation and removed the whitespace-only line reported by the Windows formatter. No lifecycle behavior was intentionally changed by this formatting correction.
+- **Verification status:** these edits were statically checked against the source and the four failed CI assertions. No local Python suite or .NET formatter/build was run in this environment. Fresh exact-head CI for the resulting commit is required; T0193 remains `in_progress`.
+- **Changed files:** `src/Host.Windows/MainWindow.xaml.cs`, `tests/test_decision_traceability.py`, `tests/test_inference_backend_abstraction.py`, `tests/test_wpf_entrypoint.py`.

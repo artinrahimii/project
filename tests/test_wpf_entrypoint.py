@@ -48,7 +48,9 @@ class WpfEntryPointTests(unittest.TestCase):
         self.assertIn("_shutdownCancellation.Cancel();", SESSION_CODE)
         self.assertIn("await _operationGate.WaitAsync().ConfigureAwait(false);", SESSION_CODE)
         self.assertIn("operationToken.ThrowIfCancellationRequested();", SESSION_CODE)
-        self.assertIn("previousBackend.Dispose();", SESSION_CODE)
+        self.assertIn("var previousBackend = _backend;", SESSION_CODE)
+        self.assertIn("if (previousBackend is IDisposable backend)", SESSION_CODE)
+        self.assertIn("backend.Dispose();", SESSION_CODE)
         self.assertIn("HostState.Stopped", SESSION_CODE)
 
     def test_smoke_mode_waits_for_loaded_visible_main_window_then_exits(self):
@@ -160,7 +162,7 @@ class WpfEntryPointTests(unittest.TestCase):
         self.assertIn("_operationCancellation?.Cancel();", clear_method)
         self.assertIn("catch (Exception exception)", generate_method)
         catch_block = generate_method.split("catch (Exception exception)", 1)[1].split("finally", 1)[0]
-        self.assertIn("if (!_clearSessionRequested)", catch_block)
+        self.assertIn("if (!_clearSessionRequested && !_windowClosing)", catch_block)
         self.assertIn(
             "AppendConversationMessage(ConversationMessageRole.System, HostErrorPresentation.ToUserMessage(exception));",
             catch_block,

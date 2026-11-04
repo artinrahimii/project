@@ -55,3 +55,20 @@ Exact-head GitHub Actions has not yet run for the T0193 implementation commit. N
 
 
 - A004 commit attribution: `tests/test_network_listener_exposure.py` and the corresponding report/evidence/graph updates are committed in `bbb744beb126d4f38c50dfa00014a92992b0d119` (`V 3.0.902`).
+
+
+## T0193-A005 — exact-head evidence (V 3.0.903)
+
+- Branch/head: `main` / `dad30f9594175c36635a60c4f5cd872ce0852332`; commit message `V 3.0.903`.
+- Graph source: `step three/project-graph.md`, Blob `cd54b7b97fe1eb31b0278c8dd391f81d0c1f2631`, 3,528,709 original UTF-8 bytes. SHA-1 computed over the complete Git object payload matched the Blob ID; full fenced JSON parsed as 230 nodes and 422 edges.
+- Quality run `41865536479`, job `126698664591`: failed; four Python source-contract tests listed in the execution report failed.
+- Windows product run `41865536757`, job `126698664507`: failed at C# whitespace verification, with 20 diagnostics in the two WPF `finally` blocks. The Windows build did not start.
+- HostLifecycle job `126698665014`: passed. Its log contains the explicit PASS line for `DisposeAsyncCancelsAndDrainsActiveGenerationAsync`, verifying cancellation, rejection of late results, operation draining, backend disposal ordering and closed admission on this head.
+- Android product job `126698665117`: passed. It is additional product CI coverage, not a substitute for the failed Windows/quality gates.
+- Rendezvous run `41865537064` was still in progress when its jobs were inspected; no conclusion is claimed here.
+
+## T0193-A006 — correction verification boundary
+
+- Source-contract updates: `tests/test_decision_traceability.py`, `tests/test_inference_backend_abstraction.py`, and `tests/test_wpf_entrypoint.py`.
+- Formatting correction: `src/Host.Windows/MainWindow.xaml.cs`; fixed the exact two indentation regions and whitespace-only line identified by Windows CI.
+- The corrected tests/formatting have **not yet been executed**. No pass is claimed. T0193 remains `in_progress` until the new commit's quality workflow, Windows WPF workflow and HostLifecycle runtime workflow are inspected.

@@ -26,7 +26,7 @@ class InferenceBackendAbstractionTests(unittest.TestCase):
         contract = CONTRACT.read_text(encoding="utf-8")
         self.assertIn("private IInferenceBackend _backend", session)
         self.assertIn("Func<Uri, string, IInferenceBackend>? _backendFactory", session)
-        self.assertIn("_backend.GenerateAsync(prompt, maxOutputTokens, cancellationToken)", session)
+        self.assertIn("_backend.GenerateAsync(prompt, maxOutputTokens, operationToken)", session)
         self.assertIn("public interface IInferenceBackend", contract)
         self.assertNotIn("LlamaCppServerBackend", session)
 
