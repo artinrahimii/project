@@ -56,7 +56,7 @@ class SensitiveArtifactScanningTests(unittest.TestCase):
         self.assertIn("record.Payload", HOST_LOG_TEST)
         self.assertIn("record.Message", HOST_LOG_TEST)
         self.assertIn("record.EventId != 1", HOST_LOG_TEST)
-        self.assertIn("payload is not { Count: 3 }", HOST_LOG_TEST)
+        self.assertIn("record.Payload is not { Count: 3 } payload", HOST_LOG_TEST)
 
     def test_android_sqlcipher_migration_scans_database_and_temporary_sidecars(self):
         for marker in MARKERS:

@@ -31,3 +31,12 @@
 ## نتیجهٔ آزمون
 - در زمان ایجاد snapshot، هیچ آزمون CI exact-head اجرا نشده بود؛ همهٔ نتیجه‌های وابسته به commit جدید pending هستند.
 - اسکن‌ها فقط markerهای ساختگی را در artifactهای test-owned بررسی می‌کنند؛ ادعای اسکن کل filesystem یا دادهٔ خارج از کنترل برنامه مطرح نمی‌شود.
+
+
+## A001 — نتیجهٔ شکست و شواهد اصلاح
+- Commit: `876288a825eec50e8b23906a520ee21332fe7fae` (`V 3.0.877`).
+- Quality workflow `41818883061`, job `126536652274`: ۳۷۷ آزمون اجرا شد و تنها شکست، انتظار متنی نادرست در `tests/test_sensitive_artifact_scanning.py` بود. عبارت واقعی منبع `record.Payload is not { Count: 3 } payload` است.
+- Product workflow `41818883046`, HostLifecycle job `126536651616`: موفق؛ تست runtime canary برای Windows temp/DPAPI و EventSource اجرا و پاس شد.
+- Rendezvous container workflow `41818882949`: موفق.
+- WPF job `126536652244` و Android job `126536652473` در زمان ثبت شکست هنوز در حال اجرا بودند؛ موفقیت برای آن‌ها ادعا نشده است.
+- اصلاح A002 فقط assertion source-contract را با عبارت واقعی هم‌تراز می‌کند؛ کنترل runtime و منطق امنیتی بدون تغییر می‌ماند.

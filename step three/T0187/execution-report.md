@@ -15,3 +15,12 @@
 - **محدودیت:** اسکن فقط روی فایل‌های برنامه و پوشه‌های آزمون کنترل‌شده است. pagefile/swap، crash dump، backup، screenshot، Event Viewer خارج از EventSource تعریف‌شده و logهای نرم‌افزار ثالث خارج از این تست‌اند.
 - **CI:** هیچ نتیجهٔ pass برای commit جدید ادعا نمی‌شود؛ Windows HostLifecycle، Android KtLint/JVM/instrumentation و Python quality/graph guard باید روی exact-head اجرا شوند.
 - **گام بعدی:** بر اساس نتیجهٔ واقعی CI اصلاح کن؛ تنها پس از پاس‌شدن همهٔ گیت‌های مرتبط، T0187 را done کن.
+
+
+## A001 — نتیجهٔ CI نسخهٔ V 3.0.877 و اصلاح آزمون
+
+- Quality run `41818883061`، job `126536652274`: از ۳۷۷ آزمون Python، یک شکست داشت. آزمون `test_windows_eventsource_runtime_check_covers_sensitive_canaries` عبارت کوتاه `payload is not { Count: 3 }` را جست‌وجو می‌کرد؛ متن واقعی C# برابر `record.Payload is not { Count: 3 } payload` است. این شکست mismatch در assertion منبع بود و نه افشای canary در اجرای EventSource.
+- HostLifecycle job `126536651616` در product run `41818883046` موفق شد؛ بنابراین آزمون runtime مربوط به Windows temp/DPAPI و EventSource اجرا و پاس شده است.
+- Rendezvous container run `41818882949` موفق شد. WPF و Android jobهای product run هنگام ثبت شکست هنوز در حال اجرا بودند؛ نتیجهٔ آن‌ها را موفق فرض نمی‌کنیم.
+- A002 فقط متن مورد انتظار source-contract را با expression دقیق C# هم‌راستا می‌کند؛ هیچ کنترل runtime یا معیار امنیتی حذف/تضعیف نمی‌شود. کیفیت exact-head نسخهٔ بعد باید دوباره پاس شود.
+- وضعیت T0187: `in_progress`؛ یک تلاش failed و یک تلاش اصلاحی partial ثبت شده است.
