@@ -27,3 +27,13 @@
 
 ## Test status
 Exact-head GitHub Actions has not yet run for the T0193 implementation commit. No tests are marked passed here. Local .NET execution was unavailable because the runtime environment has no .NET SDK.
+
+
+## T0193-A002 — follow-up source and dependency review
+
+- Follow-up baseline: `main` `0ba42632794058dd478b96427f08857e1b75479b` (`V 3.0.899`).
+- Graph path: `step three/project-graph.md`; tree-selected Blob: `b52dbd1453a0f312c37cd2fb21670ebb42f7d9b8`.
+- Original fenced UTF-8 payload: **3,524,924 bytes**; text length: **3,397,446 Unicode code points**.
+- Recomputed Git SHA-1 over `blob 3524924\\0<payload>`: exact match with the tree Blob ID. Full JSON parse: 230 task nodes / 422 edges, no duplicate task IDs and no unresolved edge endpoints.
+- Re-reviewed `T0192 → T0193` and `T0188 → T0193`: both remain `sequencing_only / validated`; the original `type=blocks` edges and conservative execution order are preserved.
+- Follow-up found an untracked async network-participation transition during WPF Closing. A002 tracks, cancels and awaits that operation; the Python guard covers ordering. The runtime and exact-head build result remains pending; no pass is claimed.

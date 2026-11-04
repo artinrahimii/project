@@ -19,3 +19,13 @@
 - `tests/HostLifecycle.Tests/Program.cs`
 - `tests/test_network_listener_exposure.py`
 - `tests/test_wpf_entrypoint.py`
+
+
+## T0193-A002 — peer participation transition drain
+
+- **Result:** partial; an additional WPF lifecycle race was found during review of the A001 implementation.
+- **Finding:** `NetworkParticipationToggle_Changed` was an untracked async-void event. Closing the window while activation/deactivation awaited service startup/disposal could let that operation outlive the close handler's snapshot of `_peerParticipationService`.
+- **Correction:** the handler now delegates to a tracked `Task`, uses an operation-specific cancellation source for startup, prevents overlapping transitions, and clears/disposes its tracking fields in `finally`. `MainWindow_Closing` cancels and awaits this transition before disposing any remaining peer service. Deactivation still drains `DisposeAsync`; activation receives the cancellation token and disposes any partially started service on cancellation.
+- **Regression guard:** `tests/test_network_listener_exposure.py` now verifies that close cancels and awaits the transition before the final peer-service disposal, and that service startup observes the transition token.
+- **Exact-head CI:** the previous A001 head `0ba42632794058dd478b96427f08857e1b75479b` had quality, product, Rendezvous and real-inference workflows queued when this correction was made. No CI success is claimed for A002; the new commit must pass its own exact-head checks.
+- **Local execution:** no local .NET/WPF runtime is available in this environment. The new Python source guard is pending the exact-head quality workflow.

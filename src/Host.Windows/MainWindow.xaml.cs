@@ -45,6 +45,8 @@ public partial class MainWindow : Window
     private CancellationTokenSource? _modelUpdateCancellation;
     private Task? _generationTask;
     private Task? _modelUpdateTask;
+    private Task? _peerParticipationTask;
+    private CancellationTokenSource? _peerParticipationCancellation;
     private volatile bool _capacityReady;
     private bool _clearSessionRequested;
     private bool _suppressParticipationToggleChanged;
@@ -979,6 +981,40 @@ public partial class MainWindow : Window
 
     private async void NetworkParticipationToggle_Changed(object sender, RoutedEventArgs e)
     {
+        if (_suppressParticipationToggleChanged || _windowClosing || _peerParticipationTask is not null)
+        {
+            return;
+        }
+
+        var cancellation = new CancellationTokenSource();
+        _peerParticipationCancellation = cancellation;
+        var operationTask = ChangeNetworkParticipationAsync(sender, e, cancellation.Token);
+        _peerParticipationTask = operationTask;
+        try
+        {
+            await operationTask;
+        }
+        finally
+        {
+            if (ReferenceEquals(_peerParticipationTask, operationTask))
+            {
+                _peerParticipationTask = null;
+            }
+
+            if (ReferenceEquals(_peerParticipationCancellation, cancellation))
+            {
+                _peerParticipationCancellation = null;
+            }
+
+            cancellation.Dispose();
+        }
+    }
+
+    private async Task ChangeNetworkParticipationAsync(
+        object sender,
+        RoutedEventArgs e,
+        CancellationToken cancellationToken)
+    {
         if (_suppressParticipationToggleChanged || _windowClosing)
         {
             return;
@@ -1078,7 +1114,8 @@ public partial class MainWindow : Window
                 replayGuard: _peerRequestReplayGuard,
                 statusProvider: GetPeerRuntimeStatusAsync);
             _peerParticipationService = service;
-            await service.StartAsync();
+            await service.StartAsync(cancellationToken);
+            cancellationToken.ThrowIfCancellationRequested();
 
             ParticipationNetworkStatus.Text =
                 $"Authenticated peer host active. Local PeerId: {service.LocalPeerIdentity}. " +
@@ -1259,10 +1296,23 @@ public partial class MainWindow : Window
 
         // Stop new local UI work immediately; the peer lifecycle below independently
         // closes its listener, cancels peer requests, and awaits its handlers.
+        _peerParticipationCancellation?.Cancel();
         _operationCancellation?.Cancel();
         _modelUpdateCancellation?.Cancel();
 
         Exception? cleanupFailure = null;
+        if (_peerParticipationTask is not null)
+        {
+            try
+            {
+                await _peerParticipationTask;
+            }
+            catch (Exception exception)
+            {
+                cleanupFailure ??= exception;
+            }
+        }
+
         var peerService = _peerParticipationService;
         if (peerService is not null)
         {

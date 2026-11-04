@@ -112,5 +112,24 @@ class NetworkListenerExposureTests(unittest.TestCase):
         self.assertIn("_localInferenceProcessLauncher.Dispose();", closed)
 
 
+    def test_window_closing_cancels_and_drains_peer_participation_transition(self):
+        self.assertIn("_peerParticipationTask", WINDOW)
+        self.assertIn("_peerParticipationCancellation?.Cancel();", WINDOW)
+        closing = WINDOW.split("private async void MainWindow_Closing", 1)[1].split(
+            "private void MainWindow_Closed", 1
+        )[0]
+        cancel_transition = closing.index("_peerParticipationCancellation?.Cancel();")
+        wait_transition = closing.index("await _peerParticipationTask;")
+        dispose_service = closing.index("await peerService.DisposeAsync();")
+        self.assertLess(cancel_transition, wait_transition)
+        self.assertLess(wait_transition, dispose_service)
+
+        transition = WINDOW.split("private async Task ChangeNetworkParticipationAsync", 1)[1].split(
+            "private async Task<WhiteP.Shared.Contracts.V1.HostStatus> GetPeerRuntimeStatusAsync", 1
+        )[0]
+        self.assertIn("await service.StartAsync(cancellationToken);", transition)
+        self.assertIn("await previous.DisposeAsync();", transition)
+        self.assertIn("cancellationToken.ThrowIfCancellationRequested();", transition)
+
 if __name__ == "__main__":
     unittest.main()
