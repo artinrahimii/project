@@ -76,3 +76,21 @@
 - Corrected the two WPF `finally` blocks' indentation and removed the whitespace-only line reported by the Windows formatter. No lifecycle behavior was intentionally changed by this formatting correction.
 - **Verification status:** these edits were statically checked against the source and the four failed CI assertions. No local Python suite or .NET formatter/build was run in this environment. Fresh exact-head CI for the resulting commit is required; T0193 remains `in_progress`.
 - **Changed files:** `src/Host.Windows/MainWindow.xaml.cs`, `tests/test_decision_traceability.py`, `tests/test_inference_backend_abstraction.py`, `tests/test_wpf_entrypoint.py`.
+
+
+## T0193-A007 — exact-head CI verification (V 3.0.904)
+
+- **Quality workflow:** run [41868807190](https://github.com/artinrahimii/project/actions/runs/41868807190), job `126709921133`, failed one Python source-contract test: `test_participation_listener_lifecycle_decision_maps_to_fail_closed_wpf_shutdown` expected `await _peerParticipationService.DisposeAsync();`, while the WPF shutdown path retains the service in local variable `peerService`, awaits `peerService.DisposeAsync()`, then clears the shared field only if it still references that service.
+- The three other source-contract tests corrected in A006 no longer appear among the failures.
+- **Windows WPF job:** product run [41868807248](https://github.com/artinrahimii/project/actions/runs/41868807248), job `126709919875`, passed formatting, Release build, Protobuf generation, WPF startup smoke test, and all Windows agent-tool / host identity checks.
+- **HostLifecycle job:** product job `126709920653` passed; the runtime shutdown acceptance remains verified.
+- **Rendezvous:** run [41868807217](https://github.com/artinrahimii/project/actions/runs/41868807217), job `126709919477`, passed.
+- **Android:** job `126709920356` was still running its JVM test step when inspected; no final result is claimed.
+- **Decision:** T0193 remains `in_progress` because the Quality gate still fails one source-contract assertion and Android CI was not yet complete.
+
+
+## T0193-A008 — peer-service ownership assertion correction
+
+- Replaced the obsolete direct-field disposal expectation with checks for the actual close-path ownership sequence: copy `_peerParticipationService` to `peerService`, await `peerService.DisposeAsync()`, and clear the shared reference only when it still refers to the same service.
+- This preserves the existing production lifecycle behavior; this attempt changes only the source-contract test and execution evidence.
+- **Verification status:** the new assertion has been checked against the WPF source from the exact V 3.0.904 head. It has not yet been executed. A fresh exact-head Quality run is required, and T0193 remains `in_progress`.

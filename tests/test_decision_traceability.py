@@ -709,7 +709,9 @@ class DecisionTraceabilityTests(unittest.TestCase):
 
         self.assertIn("new PeerAnnouncementHostLifecycle(", window)
         self.assertIn("await service.StartAsync(cancellationToken);", window)
-        self.assertIn("await _peerParticipationService.DisposeAsync();", window)
+                self.assertIn("var peerService = _peerParticipationService;", window)
+        self.assertIn("await peerService.DisposeAsync();", window)
+        self.assertIn("if (ReferenceEquals(_peerParticipationService, peerService))", window)
         self.assertIn("PeerReachabilityConfirmed.IsChecked != true", window)
         self.assertIn("advertisedAddressVerified: true", window)
         self.assertIn("this app does not independently verify public internet reachability", window.lower())

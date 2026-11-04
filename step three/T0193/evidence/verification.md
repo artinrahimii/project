@@ -72,3 +72,18 @@ Exact-head GitHub Actions has not yet run for the T0193 implementation commit. N
 - Source-contract updates: `tests/test_decision_traceability.py`, `tests/test_inference_backend_abstraction.py`, and `tests/test_wpf_entrypoint.py`.
 - Formatting correction: `src/Host.Windows/MainWindow.xaml.cs`; fixed the exact two indentation regions and whitespace-only line identified by Windows CI.
 - The corrected tests/formatting have **not yet been executed**. No pass is claimed. T0193 remains `in_progress` until the new commit's quality workflow, Windows WPF workflow and HostLifecycle runtime workflow are inspected.
+
+
+## T0193-A007 — exact-head evidence (V 3.0.904)
+
+- Quality run `41868807190`, job `126709921133`: failed exactly one source-contract test. The failing expectation is the old direct-field `DisposeAsync` call; the current implementation uses the local `peerService` reference and conditional shared-field cleanup.
+- Product run `41868807248`, Windows WPF job `126709919875`: passed all steps, including `dotnet format whitespace`, Release build, generated Protobuf check, WPF startup smoke test, and Windows agent-tool/identity tests.
+- Product run `41868807248`, HostLifecycle job `126709920653`: passed, including the executable session shutdown lifecycle tests.
+- Rendezvous run `41868807217`, job `126709919477`: passed.
+- Android job `126709920356`: JVM test step was still in progress at inspection; no final conclusion is recorded.
+
+## T0193-A008 — verification boundary
+
+- Updated `tests/test_decision_traceability.py` to assert the local peer-service variable, async disposal call, and identity-checked clearing of the shared service reference.
+- The source guard has been statically compared with the WPF implementation. It has **not** been run yet; no pass is claimed.
+- T0193 remains `in_progress` pending a passing Quality run and completion of all relevant product CI.
