@@ -84,3 +84,15 @@
 - A006 corrects all seven reported locations. It does not change lifecycle behavior, Room schema, SQLCipher handling, network contracts, or user-data privacy.
 - Targeted source-level checks confirmed the changed chain patterns and no line over 120 columns. This is not a substitute for KtLint itself.
 - **Verification remains pending:** no APK/JVM/Instrumentation pass is claimed for A006.
+
+## T0194-A006 commit and A007 indentation review
+
+- A006's seven reported test-source formatting corrections are included in [`V 3.0.916`](https://github.com/artinrahimii/project/commit/85dc1ae10028b144b794f413ea5b0c299c644d42).
+- Product, Quality and Rendezvous workflows for that commit:
+  - Product Build `41881677064` — queued when inspected.
+  - Quality Gate `41881677125` — in progress when inspected.
+  - Rendezvous `41881677074` — in progress when inspected.
+- A follow-up source review compared the two Room builder chains in `ClientDatabaseTest.kt` with the production `EncryptedClientDatabaseFactory.kt` chain. It found that A006 had moved the method dots but left the builder arguments/closing chain one indentation level too far left.
+- A007 aligns both builder argument lists and the closing `addMigrations` calls with the existing production pattern. This changes formatting only.
+- No KtLint result for A006/A007 is claimed here. The new exact-head Product Build must confirm the formatting and then continue through APK, JVM and Keystore instrumentation before T0194 can be accepted.
+

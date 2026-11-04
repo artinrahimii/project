@@ -100,3 +100,11 @@ A004 is formatting-only. CI has not yet verified these changes; APK/JVM/instrume
 - A006 corrects all seven diagnostics while leaving request lifecycle behavior, database schema and security boundaries unchanged. Targeted source and 120-column checks pass; KtLint itself is not claimed as passed.
 - T0194 remains in_progress pending exact-head validation.
 
+## A006 commit and A007 formatting follow-up
+
+- A006 was committed in `V 3.0.916` (`85dc1ae10028b144b794f413ea5b0c299c644d42`).
+- Its exact-head workflows were created: Product Build `41881677064` (queued), Quality Gate `41881677125` (in progress), Rendezvous `41881677074` (in progress).
+- Review against the existing SQLCipher production builder in `EncryptedClientDatabaseFactory.kt` found the newly wrapped Room builder calls in `ClientDatabaseTest.kt` did not yet have the same continuation indentation for the method arguments and closing `addMigrations` call.
+- A007 aligns both test builders to the existing production chain layout. The change is formatting-only; no schema or behavior change is intended.
+- Exact-head KtLint and all Android build/test steps remain pending.
+

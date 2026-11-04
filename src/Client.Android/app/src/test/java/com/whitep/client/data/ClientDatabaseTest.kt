@@ -297,15 +297,15 @@ class ClientDatabaseTest {
                 val firstDatabase =
                     Room
                         .databaseBuilder(
-                        application,
-                        ClientDatabase::class.java,
-                        databaseName,
-                    ).addMigrations(
-                        ClientDatabase.MIGRATION_1_2,
-                        ClientDatabase.MIGRATION_2_3,
-                        ClientDatabase.MIGRATION_3_4,
-                        ClientDatabase.MIGRATION_4_5,
-                    ).allowMainThreadQueries()
+                            application,
+                            ClientDatabase::class.java,
+                            databaseName,
+                        ).addMigrations(
+                            ClientDatabase.MIGRATION_1_2,
+                            ClientDatabase.MIGRATION_2_3,
+                            ClientDatabase.MIGRATION_3_4,
+                            ClientDatabase.MIGRATION_4_5,
+                        ).allowMainThreadQueries()
                         .build()
                 firstDatabase.inferenceRequestStateDao().upsert(
                     InferenceRequestStateEntity(
@@ -321,15 +321,15 @@ class ClientDatabaseTest {
                 val reopenedDatabase =
                     Room
                         .databaseBuilder(
-                        application,
-                        ClientDatabase::class.java,
-                        databaseName,
-                    ).addMigrations(
-                        ClientDatabase.MIGRATION_1_2,
-                        ClientDatabase.MIGRATION_2_3,
-                        ClientDatabase.MIGRATION_3_4,
-                        ClientDatabase.MIGRATION_4_5,
-                    ).allowMainThreadQueries()
+                            application,
+                            ClientDatabase::class.java,
+                            databaseName,
+                        ).addMigrations(
+                            ClientDatabase.MIGRATION_1_2,
+                            ClientDatabase.MIGRATION_2_3,
+                            ClientDatabase.MIGRATION_3_4,
+                            ClientDatabase.MIGRATION_4_5,
+                        ).allowMainThreadQueries()
                         .build()
                 try {
                     val repository =
