@@ -15,10 +15,12 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 10.0.x
+      - name: Clean Windows solution outputs
+        run: dotnet clean WhiteP.sln --configuration Release
       - name: Verify C# formatting
         run: dotnet format whitespace WhiteP.sln --verify-no-changes
-      - name: Build host
-        run: dotnet build WhiteP.sln --configuration Release
+      - name: Build host from clean outputs
+        run: dotnet build WhiteP.sln --configuration Release --no-incremental
       - name: Verify generated Protobuf C# sources
         shell: pwsh
         run: |
@@ -107,14 +109,19 @@ jobs:
           rm /tmp/packages-microsoft-prod.deb
           sudo apt-get update
           sudo apt-get install --yes libmsquic
+      - name: Clean .NET peer interoperability fixture outputs
+        run: dotnet clean tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj --configuration Release
       - name: Build Windows .NET peer interoperability fixture
-        run: dotnet build tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj --configuration Release
+        run: dotnet build tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj --configuration Release --no-incremental
+      - name: Clean Android outputs
+        working-directory: src/Client.Android
+        run: gradle --no-daemon clean
       - name: Verify Kotlin formatting and lint
         working-directory: src/Client.Android
         run: gradle --no-daemon ktlintCheck
-      - name: Build debug APK
+      - name: Build debug APK from clean outputs
         working-directory: src/Client.Android
-        run: gradle --no-daemon assembleDebug
+        run: gradle --no-daemon assembleDebug --no-build-cache
       - name: Verify minimum permissions in merged Android APK
         shell: bash
         run: |
@@ -207,5 +214,7 @@ jobs:
           rm /tmp/packages-microsoft-prod.deb
           sudo apt-get update
           sudo apt-get install --yes libmsquic
-      - name: Run lifecycle tests
-        run: dotnet run --project tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj --configuration Release
+      - name: Clean HostLifecycle test outputs
+        run: dotnet clean tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj --configuration Release
+      - name: Run lifecycle tests from clean outputs
+        run: dotnet run --project tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj --configuration Release --no-launch-profile
