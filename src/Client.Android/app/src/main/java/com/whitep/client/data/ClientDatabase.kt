@@ -29,9 +29,10 @@ class ClientDatabaseConverters {
         ConversationContextCapsuleChangeEntity::class,
         MessageEntity::class,
         RequestStateEntity::class,
+        InferenceRequestStateEntity::class,
         ClientRequestDraftEntity::class,
     ],
-    version = 4,
+    version = 5,
     exportSchema = true,
 )
 @TypeConverters(ClientDatabaseConverters::class)
@@ -43,6 +44,8 @@ abstract class ClientDatabase : RoomDatabase() {
     abstract fun messageDao(): MessageDao
 
     abstract fun requestStateDao(): RequestStateDao
+
+    abstract fun inferenceRequestStateDao(): InferenceRequestStateDao
 
     abstract fun clientRequestDraftDao(): ClientRequestDraftDao
 
@@ -95,6 +98,27 @@ abstract class ClientDatabase : RoomDatabase() {
                         "CREATE INDEX IF NOT EXISTS " +
                             "`index_conversation_context_capsule_changes_conversationId_changedAtEpochMillis` " +
                             "ON `conversation_context_capsule_changes` (`conversationId`, `changedAtEpochMillis`)",
+                    )
+                }
+            }
+
+        val MIGRATION_4_5: Migration =
+            object : Migration(4, 5) {
+                override fun migrate(db: SupportSQLiteDatabase) {
+                    db.execSQL(
+                        "CREATE TABLE IF NOT EXISTS `client_inference_request_states` (" +
+                            "`requestId` TEXT NOT NULL, " +
+                            "`status` TEXT NOT NULL, " +
+                            "`createdAtEpochMillis` INTEGER NOT NULL, " +
+                            "`updatedAtEpochMillis` INTEGER NOT NULL, " +
+                            "`attemptNumber` INTEGER NOT NULL, " +
+                            "`errorCode` TEXT, " +
+                            "PRIMARY KEY(`requestId`))",
+                    )
+                    db.execSQL(
+                        "CREATE INDEX IF NOT EXISTS " +
+                            "`index_client_inference_request_states_updatedAtEpochMillis` " +
+                            "ON `client_inference_request_states` (`updatedAtEpochMillis`)",
                     )
                 }
             }

@@ -92,10 +92,11 @@ class ClientDatabaseMigrationTest {
                         ClientDatabase.MIGRATION_1_2,
                         ClientDatabase.MIGRATION_2_3,
                         ClientDatabase.MIGRATION_3_4,
+                        ClientDatabase.MIGRATION_4_5,
                     ).build()
                     .also { database = it }
 
-            assertEquals(4, migratedDatabase.openHelper.readableDatabase.version)
+            assertEquals(5, migratedDatabase.openHelper.readableDatabase.version)
             assertEquals(
                 "Legacy conversation",
                 migratedDatabase.conversationDao().findById("conversation-legacy")?.title,
@@ -123,6 +124,7 @@ class ClientDatabaseMigrationTest {
             val request = migratedDatabase.requestStateDao().findById("request-legacy")
             assertEquals(PersistedRequestStatus.WAITING, request?.status)
             assertEquals("NETWORK_UNAVAILABLE", request?.errorCode)
+            assertEquals(null, migratedDatabase.inferenceRequestStateDao().findLatest())
             val draft = migratedDatabase.clientRequestDraftDao().findById("current")
             assertEquals("local draft", draft?.prompt)
             assertEquals(RequestDraftStatus.NOT_SENT, draft?.status)

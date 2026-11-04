@@ -2,10 +2,15 @@ package com.whitep.client.ui.request
 
 import android.content.Context
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.whitep.client.context.ConversationContextCapsule
 import com.whitep.client.data.ClientRequestRepository
 import com.whitep.client.data.InMemoryClientRequestRepository
+import com.whitep.client.data.InferenceRequestLifecycleRepository
+import com.whitep.client.data.InferenceRequestLifecycleState
+import com.whitep.client.data.InMemoryInferenceRequestLifecycleRepository
+import com.whitep.client.data.PersistedRequestStatus
 import com.whitep.client.data.RequestDraftStatus
 import com.whitep.client.errors.RequestErrorCode
 import com.whitep.client.errors.toRequestErrorCode
@@ -25,6 +30,7 @@ import com.whitep.client.requests.InferenceRoundResponseFailureReason
 import com.whitep.client.requests.RequestExecutionGateway
 import com.whitep.client.requests.RequestExecutionGatewayFactory
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -54,6 +60,7 @@ enum class RequestRunStatus {
     PARTIAL,
     FAILED,
     CANCELLED,
+    EXPIRED,
 }
 
 /** One independently renderable, in-memory result for a single host attempt. */
@@ -124,6 +131,7 @@ private data class RetryableRequestContext(
     val modelId: String,
     val maxOutputTokens: Int,
     val capsule: ConversationContextCapsule,
+    val createdAtEpochMillis: Long,
     val progress: DistributedRequestProgress = DistributedRequestProgress(),
     val attempts: List<InferenceHostAttempt> = emptyList(),
 )
@@ -138,6 +146,7 @@ class RequestViewModel(
     private val operationScope: CoroutineScope? = null,
     private val clockMillis: () -> Long = System::currentTimeMillis,
     private val runtimeFactory: RequestExecutionGatewayFactory = AndroidRequestExecutionGatewayFactory,
+    private val lifecycleRepository: InferenceRequestLifecycleRepository = InMemoryInferenceRequestLifecycleRepository(),
 ) : ViewModel() {
     private val commandsScope: CoroutineScope
         get() = operationScope ?: viewModelScope
@@ -146,11 +155,61 @@ class RequestViewModel(
     val hostResponses: StateFlow<List<HostResponseCardState>> = mutableHostResponses.asStateFlow()
     private val mutableHostAvailabilityMessage = MutableStateFlow<String?>(null)
     private val mutableNetworkState = MutableStateFlow(RequestNetworkState())
+    private val lifecycleRecovery = CompletableDeferred<Boolean>()
+    private var lifecyclePersistenceAvailable = false
     private val responseLock = Any()
     private var requestRuntime: RequestExecutionGateway? = null
     private var requestRuntimeUri: URI? = null
     private var activeRequestCancellation: ActiveRequestCancellation? = null
     private var retryableRequest: RetryableRequestContext? = null
+
+    init {
+        commandsScope.launch {
+            try {
+                val restored = lifecycleRepository.recoverLatest(clockMillis())
+                lifecyclePersistenceAvailable = true
+                if (restored != null) {
+                    val restoredStatus =
+                        when (restored.status) {
+                            PersistedRequestStatus.QUEUED,
+                            PersistedRequestStatus.CONTACTING,
+                            PersistedRequestStatus.WAITING,
+                            PersistedRequestStatus.EXPIRED -> RequestRunStatus.EXPIRED
+                            PersistedRequestStatus.PARTIAL -> RequestRunStatus.PARTIAL
+                            PersistedRequestStatus.COMPLETED -> RequestRunStatus.SUCCEEDED
+                            PersistedRequestStatus.FAILED -> RequestRunStatus.FAILED
+                            PersistedRequestStatus.CANCELLED -> RequestRunStatus.CANCELLED
+                        }
+                    mutableNetworkState.value =
+                        mutableNetworkState.value.copy(
+                            runStatus = restoredStatus,
+                            message =
+                                when (restoredStatus) {
+                                    RequestRunStatus.IDLE -> "No request has been sent."
+                                    RequestRunStatus.RUNNING -> "A request is running."
+                                    RequestRunStatus.SUCCEEDED -> "The last local request completed."
+                                    RequestRunStatus.PARTIAL -> "The last local request has partial results."
+                                    RequestRunStatus.FAILED -> "The last local request failed."
+                                    RequestRunStatus.CANCELLED -> "The last local request was cancelled."
+                                    RequestRunStatus.EXPIRED ->
+                                        "The app closed before a result was saved; the remote host may have completed."
+                                },
+                        )
+                }
+            } catch (cancellation: CancellationException) {
+                throw cancellation
+            } catch (_: Exception) {
+                lifecyclePersistenceAvailable = false
+                mutableNetworkState.value =
+                    mutableNetworkState.value.copy(
+                        runStatus = RequestRunStatus.FAILED,
+                        message = "The local request state could not be recovered. No new request will be sent.",
+                    )
+            } finally {
+                lifecycleRecovery.complete(lifecyclePersistenceAvailable)
+            }
+        }
+    }
 
     val uiState: StateFlow<RequestUiState> =
         combine(
@@ -369,6 +428,7 @@ class RequestViewModel(
                     ConversationContextCapsule(
                         goal = "Single-turn request without additional conversation context.",
                     ),
+                createdAtEpochMillis = clockMillis(),
             )
         retryableRequest = context
         mutableHostResponses.value = emptyList()
@@ -415,6 +475,15 @@ class RequestViewModel(
         commandsScope.launch {
             var context = currentContext
             try {
+                if (!lifecycleRecovery.await()) {
+                    mutableNetworkState.value =
+                        mutableNetworkState.value.copy(
+                            runStatus = RequestRunStatus.FAILED,
+                            canRetryRequest = false,
+                            message = "The local request state could not be recovered. No request was sent.",
+                        )
+                    return@launch
+                }
                 val gateway = requireRuntime()
                 if (manualRetry) {
                     context =
@@ -505,6 +574,25 @@ class RequestViewModel(
                     return@launch
                 }
 
+                if (!persistLifecycleState(context, PersistedRequestStatus.QUEUED)) {
+                    mutableNetworkState.value =
+                        mutableNetworkState.value.copy(
+                            runStatus = RequestRunStatus.FAILED,
+                            canRetryRequest = false,
+                            message = "The request could not be saved locally, so no host request was sent.",
+                        )
+                    return@launch
+                }
+                if (!persistLifecycleState(context, PersistedRequestStatus.CONTACTING)) {
+                    mutableNetworkState.value =
+                        mutableNetworkState.value.copy(
+                            runStatus = RequestRunStatus.FAILED,
+                            canRetryRequest = false,
+                            message = "The request status could not be saved locally, so no host request was sent.",
+                        )
+                    return@launch
+                }
+
                 val dispatch =
                     gateway.dispatchRound(
                         distributedRequest = context.request,
@@ -527,6 +615,7 @@ class RequestViewModel(
                                     canRetryRequest = false,
                                     message = message,
                                 )
+                            persistLifecycleState(context, PersistedRequestStatus.FAILED, "DISPATCH_REJECTED")
                         } else {
                             updateAggregatedRequestStatus(context, message)
                         }
@@ -556,6 +645,7 @@ class RequestViewModel(
                             }
                         mutableNetworkState.value =
                             mutableNetworkState.value.copy(canCancelRequest = hasQueuedAttempts)
+                        persistLifecycleState(nextContext, PersistedRequestStatus.WAITING)
                         val collection =
                             gateway.awaitRoundResponses(
                                 requestId = context.request.requestId,
@@ -599,6 +689,7 @@ class RequestViewModel(
                             canRetryRequest = false,
                             message = message,
                         )
+                    persistLifecycleState(context, PersistedRequestStatus.FAILED, "REQUEST_EXECUTION_FAILED")
                 }
             } finally {
                 activeRequestCancellation = null
@@ -638,7 +729,7 @@ class RequestViewModel(
                     outcome == HostResponseOutcome.CANCELLED
             }.keys
 
-    private fun updateAggregatedRequestStatus(
+    private suspend fun updateAggregatedRequestStatus(
         context: RetryableRequestContext,
         message: String? = null,
     ) {
@@ -686,6 +777,8 @@ class RequestViewModel(
                     }
                 RequestRunStatus.CANCELLED ->
                     "The request was cancelled. Cancelled attempts cannot be retried."
+                RequestRunStatus.EXPIRED ->
+                    "The app closed before a result was saved; the remote host may have completed."
             }
         mutableNetworkState.value =
             mutableNetworkState.value.copy(
@@ -694,6 +787,53 @@ class RequestViewModel(
                 isRetryingRequest = false,
                 message = message?.let { "$it $statusMessage" } ?: statusMessage,
             )
+        val persistedStatus =
+            when (status) {
+                RequestRunStatus.IDLE, RequestRunStatus.FAILED -> PersistedRequestStatus.FAILED
+                RequestRunStatus.RUNNING -> PersistedRequestStatus.WAITING
+                RequestRunStatus.SUCCEEDED -> PersistedRequestStatus.COMPLETED
+                RequestRunStatus.PARTIAL -> PersistedRequestStatus.PARTIAL
+                RequestRunStatus.CANCELLED -> PersistedRequestStatus.CANCELLED
+                RequestRunStatus.EXPIRED -> PersistedRequestStatus.EXPIRED
+            }
+        val errorCode =
+            when (status) {
+                RequestRunStatus.FAILED -> "HOST_ATTEMPTS_FAILED"
+                RequestRunStatus.CANCELLED -> "USER_CANCELLED"
+                RequestRunStatus.EXPIRED -> "APP_CLOSED_BEFORE_RESULT"
+                else -> null
+            }
+        persistLifecycleState(context, persistedStatus, errorCode)
+    }
+
+    private suspend fun persistLifecycleState(
+        context: RetryableRequestContext,
+        status: PersistedRequestStatus,
+        errorCode: String? = null,
+    ): Boolean {
+        if (!lifecyclePersistenceAvailable) return false
+        return try {
+            lifecycleRepository.save(
+                InferenceRequestLifecycleState(
+                    requestId = context.request.requestId,
+                    status = status,
+                    createdAtEpochMillis = context.createdAtEpochMillis,
+                    updatedAtEpochMillis = clockMillis(),
+                    attemptNumber = context.progress.hostsAttempted,
+                    errorCode = errorCode,
+                ),
+            )
+            true
+        } catch (cancellation: CancellationException) {
+            throw cancellation
+        } catch (_: Exception) {
+            lifecyclePersistenceAvailable = false
+            mutableNetworkState.value =
+                mutableNetworkState.value.copy(
+                    message = "The local request status could not be saved; it may not be recoverable after app closure.",
+                )
+            false
+        }
     }
 
     /** Sends cancellation to every queued attempt from the exact active dispatch result. */
@@ -890,5 +1030,19 @@ class RequestViewModel(
     private companion object {
         const val CURRENT_PROTOCOL_VERSION = "1.0.0"
         const val REQUEST_DEADLINE_MILLIS = 90_000L
+    }
+}
+
+
+/** Creates the production request ViewModel with the encrypted Room lifecycle store. */
+class RequestViewModelFactory(
+    private val lifecycleRepository: InferenceRequestLifecycleRepository,
+) : ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if (!modelClass.isAssignableFrom(RequestViewModel::class.java)) {
+            throw IllegalArgumentException("Unsupported ViewModel type: ${modelClass.name}")
+        }
+        @Suppress("UNCHECKED_CAST")
+        return RequestViewModel(lifecycleRepository = lifecycleRepository) as T
     }
 }

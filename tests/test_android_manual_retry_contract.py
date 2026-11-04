@@ -20,7 +20,7 @@ JVM_TEST = (
 class AndroidManualRetryContractTests(unittest.TestCase):
     def test_aggregate_request_states_and_manual_retry_flags_are_exposed(self):
         self.assertIn("enum class RequestRunStatus", VIEW_MODEL)
-        for status in ("IDLE", "RUNNING", "SUCCEEDED", "PARTIAL", "FAILED", "CANCELLED"):
+        for status in ("IDLE", "RUNNING", "SUCCEEDED", "PARTIAL", "FAILED", "CANCELLED", "EXPIRED"):
             with self.subTest(status=status):
                 self.assertIn(f"    {status},", VIEW_MODEL)
         self.assertIn("val canRetryRequest: Boolean = false", VIEW_MODEL)

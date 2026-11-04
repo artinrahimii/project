@@ -38,3 +38,12 @@ Room now opens through SQLCipher's `SupportOpenHelperFactory`. The per-database 
 For a legacy plaintext database, migration checkpoints the WAL, exports schema and records to a separately encrypted temporary database using `sqlcipher_export()`, preserves Room's `user_version` and the database `application_id`, checks integrity, and atomically renames the verified target over the original file. A missing or invalid key for an encrypted file fails closed.
 
 The code and instrumentation scenarios are present, but runtime acceptance is pending the exact-head Android CI run. The design does not claim forensic erasure of flash blocks, protection of plaintext while it is in process memory, or hardware-backed TEE/StrongBox on every device.
+
+
+## T0194 — App-level inference lifecycle metadata
+
+The Android request screen now uses a separate Room table, `client_inference_request_states`, because the request screen is not necessarily attached to a local conversation. It stores only an opaque request ID, lifecycle enum, timestamps, attempt count and a fixed error code. It has no prompt, context-capsule, peer identity, payload or response columns.
+
+The database is migrated from schema version 4 to 5 through the same SQLCipher-backed Room factory; no destructive migration fallback is used. On creation of a new request ViewModel, the repository transactionally marks stale `QUEUED`, `CONTACTING` and `WAITING` rows as `EXPIRED` and exposes the latest terminal state. `APP_CLOSED_BEFORE_RESULT` means the Android client did not record a response before the app/request screen lifecycle ended. It does **not** mean a remote host was cancelled or did not finish inference. Only the latest 20 app-level lifecycle records are retained.
+
+Conversation-linked `request_states` remain unchanged in purpose and keep their conversation foreign key/cascade behavior. The new app-level table is local to the encrypted Room database and is not synchronized to Rendezvous or a central service.

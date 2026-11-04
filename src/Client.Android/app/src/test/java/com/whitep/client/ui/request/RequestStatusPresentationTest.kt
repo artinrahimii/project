@@ -19,6 +19,7 @@ class RequestStatusPresentationTest {
                 PersistedRequestStatus.COMPLETED to "Completed",
                 PersistedRequestStatus.FAILED to "Failed",
                 PersistedRequestStatus.CANCELLED to "Cancelled",
+                PersistedRequestStatus.EXPIRED to "Expired",
             )
 
         assertEquals(PersistedRequestStatus.values().toSet(), expectedLabels.keys)
@@ -29,6 +30,14 @@ class RequestStatusPresentationTest {
         }
         assertEquals(expectedLabels.size, expectedLabels.values.toSet().size)
         assertTrue(expectedLabels.values.none { it.isBlank() })
+    }
+
+    @Test
+    fun expiredLifecycleIsShownWithoutClaimingThatRemoteHostWasCancelled() {
+        val state = RequestUiState(runStatus = RequestRunStatus.EXPIRED)
+        val presentation = state.toNetworkInferenceStatusPresentation()
+        assertEquals("Expired after the app closed before a result was saved.", presentation.inferenceStatus)
+        assertFalse(presentation.inferenceStatus.contains("cancelled", ignoreCase = true))
     }
 
     @Test

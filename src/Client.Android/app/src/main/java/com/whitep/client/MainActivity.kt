@@ -26,6 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -42,11 +43,14 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.whitep.client.ui.conversations.conversationDetailScreen
+import com.whitep.client.data.ClientDatabase
+import com.whitep.client.data.RoomInferenceRequestLifecycleRepository
 import com.whitep.client.ui.conversations.conversationListScreen
 import com.whitep.client.ui.navigation.ClientDestination
 import com.whitep.client.ui.navigation.ClientNavigation
 import com.whitep.client.ui.request.RequestRunStatus
 import com.whitep.client.ui.request.RequestViewModel
+import com.whitep.client.ui.request.RequestViewModelFactory
 import com.whitep.client.ui.request.hostResponseCards
 import com.whitep.client.ui.request.toNetworkInferenceStatusPresentation
 
@@ -215,11 +219,24 @@ private fun homeScreen(
 @Composable
 private fun requestScreen(
     onBack: () -> Unit,
-    requestViewModel: RequestViewModel = viewModel(),
 ) {
+    val context = LocalContext.current
+    val applicationContext = context.applicationContext
+    val lifecycleRepository =
+        remember(applicationContext) {
+            RoomInferenceRequestLifecycleRepository(
+                ClientDatabase.getInstance(applicationContext).inferenceRequestStateDao(),
+            )
+        }
+    val requestViewModel: RequestViewModel =
+        viewModel(
+            factory =
+                remember(lifecycleRepository) {
+                    RequestViewModelFactory(lifecycleRepository)
+                },
+        )
     val requestState by requestViewModel.uiState.collectAsState()
     val statusPresentation = requestState.toNetworkInferenceStatusPresentation()
-    val context = LocalContext.current
     var rendezvousUrl by rememberSaveable { mutableStateOf("") }
     var modelId by rememberSaveable { mutableStateOf("") }
     var maxOutputTokens by rememberSaveable { mutableStateOf("256") }

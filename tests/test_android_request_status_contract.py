@@ -13,6 +13,9 @@ PRESENTATION_TEST = (
 ).read_text(encoding="utf-8")
 DATABASE_TEST = (ANDROID_TESTS / "data/ClientDatabaseTest.kt").read_text(encoding="utf-8")
 ENTITY = (ANDROID / "data/RequestStateEntity.kt").read_text(encoding="utf-8")
+LIFECYCLE_ENTITY = (ANDROID / "data/InferenceRequestStateEntity.kt").read_text(encoding="utf-8")
+LIFECYCLE_REPOSITORY = (ANDROID / "data/InferenceRequestLifecycleRepository.kt").read_text(encoding="utf-8")
+REQUEST_VIEW_MODEL = (ANDROID / "ui/request/RequestViewModel.kt").read_text(encoding="utf-8")
 
 
 class AndroidRequestStatusContractTests(unittest.TestCase):
@@ -24,7 +27,7 @@ class AndroidRequestStatusContractTests(unittest.TestCase):
         self.assertIn("No request status has been recorded", SCREEN)
         self.assertIn("Requests are not sent to a host in this preview.", SCREEN)
 
-    def test_all_seven_persisted_states_have_explicit_display_labels(self):
+    def test_all_eight_persisted_states_have_explicit_display_labels(self):
         for status in (
             "QUEUED",
             "CONTACTING",
@@ -33,6 +36,7 @@ class AndroidRequestStatusContractTests(unittest.TestCase):
             "COMPLETED",
             "FAILED",
             "CANCELLED",
+            "EXPIRED",
         ):
             with self.subTest(status=status):
                 self.assertIn(f"    {status},", ENTITY)
@@ -43,6 +47,17 @@ class AndroidRequestStatusContractTests(unittest.TestCase):
         self.assertIn("fun observeForConversation(conversationId: String): Flow<List<RequestStateEntity>>", ENTITY)
         self.assertIn("allPersistedRequestStatusesCanBeReadFromRoomInCreationOrder", DATABASE_TEST)
         self.assertNotIn("PersistedRequestStatus.values()", SCREEN)
+
+    def test_app_restart_expires_in_flight_state_and_restores_it_in_the_request_view_model(self):
+        self.assertIn("recoverLatest(clockMillis())", REQUEST_VIEW_MODEL)
+        self.assertIn("persistLifecycleState(context, PersistedRequestStatus.QUEUED)", REQUEST_VIEW_MODEL)
+        self.assertIn("persistLifecycleState(nextContext, PersistedRequestStatus.WAITING)", REQUEST_VIEW_MODEL)
+        self.assertIn("APP_CLOSED_BEFORE_RESULT", LIFECYCLE_ENTITY + LIFECYCLE_REPOSITORY)
+        self.assertIn("RoomInferenceRequestLifecycleRepository", REQUEST_SCREEN)
+        self.assertIn("RequestViewModelFactory", REQUEST_SCREEN)
+        self.assertIn("status = 'EXPIRED'", LIFECYCLE_ENTITY)
+        for sensitive_field in ("val prompt:", "contextCapsule", "responseText", "val payload:", "ephemeralHostId"):
+            self.assertNotIn(sensitive_field, LIFECYCLE_ENTITY)
 
     def test_live_network_and_inference_status_displays_structured_state_not_free_form_messages(self):
         self.assertIn("toNetworkInferenceStatusPresentation()", REQUEST_SCREEN)

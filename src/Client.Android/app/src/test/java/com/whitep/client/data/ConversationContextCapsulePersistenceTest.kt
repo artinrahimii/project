@@ -358,7 +358,7 @@ class ConversationContextCapsulePersistenceTest {
     private fun openDatabase(name: String): ClientDatabase =
         Room
             .databaseBuilder(context, ClientDatabase::class.java, name)
-            .addMigrations(ClientDatabase.MIGRATION_1_2, ClientDatabase.MIGRATION_2_3, ClientDatabase.MIGRATION_3_4)
+            .addMigrations(ClientDatabase.MIGRATION_1_2, ClientDatabase.MIGRATION_2_3, ClientDatabase.MIGRATION_3_4, ClientDatabase.MIGRATION_4_5)
             .allowMainThreadQueries()
             .build()
             .also { activeDatabase = it }

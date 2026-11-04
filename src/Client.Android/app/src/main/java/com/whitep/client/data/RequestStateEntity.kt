@@ -17,6 +17,7 @@ enum class PersistedRequestStatus {
     COMPLETED,
     FAILED,
     CANCELLED,
+    EXPIRED,
 }
 
 @Entity(

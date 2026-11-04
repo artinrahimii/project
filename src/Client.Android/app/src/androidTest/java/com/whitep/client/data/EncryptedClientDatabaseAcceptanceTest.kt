@@ -76,6 +76,15 @@ class EncryptedClientDatabaseAcceptanceTest {
                         createdAtEpochMillis = 11L,
                     ),
                 )
+                database.inferenceRequestStateDao().upsert(
+                    InferenceRequestStateEntity(
+                        requestId = "opaque-encrypted-request",
+                        status = PersistedRequestStatus.WAITING,
+                        createdAtEpochMillis = 12L,
+                        updatedAtEpochMillis = 13L,
+                        attemptNumber = 1,
+                    ),
+                )
             } finally {
                 database.close()
             }
@@ -98,6 +107,13 @@ class EncryptedClientDatabaseAcceptanceTest {
                         .first()
                         .map { it.content },
                 )
+                val recoveredLifecycle =
+                    RoomInferenceRequestLifecycleRepository(
+                        reopened.inferenceRequestStateDao(),
+                    ).recoverLatest(20L)
+                assertEquals(PersistedRequestStatus.EXPIRED, recoveredLifecycle?.status)
+                assertEquals("APP_CLOSED_BEFORE_RESULT", recoveredLifecycle?.errorCode)
+                assertEquals("opaque-encrypted-request", recoveredLifecycle?.requestId)
             } finally {
                 reopened.close()
             }
@@ -121,6 +137,7 @@ class EncryptedClientDatabaseAcceptanceTest {
                         ClientDatabase.MIGRATION_1_2,
                         ClientDatabase.MIGRATION_2_3,
                         ClientDatabase.MIGRATION_3_4,
+                        ClientDatabase.MIGRATION_4_5,
                     ).build()
             try {
                 legacy.conversationDao().upsert(

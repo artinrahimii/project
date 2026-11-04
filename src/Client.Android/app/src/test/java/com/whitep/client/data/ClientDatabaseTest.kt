@@ -288,6 +288,66 @@ class ClientDatabaseTest {
         }
 
     @Test
+    fun appRequestLifecycleStateSurvivesReopenAndIsExpiredWithoutPersistingRequestContent() =
+        runBlocking {
+            val application = RuntimeEnvironment.getApplication()
+            val databaseName = "t0194-lifecycle-reopen-test.db"
+            application.deleteDatabase(databaseName)
+            try {
+                val firstDatabase =
+                    Room.databaseBuilder(
+                        application,
+                        ClientDatabase::class.java,
+                        databaseName,
+                    ).addMigrations(
+                        ClientDatabase.MIGRATION_1_2,
+                        ClientDatabase.MIGRATION_2_3,
+                        ClientDatabase.MIGRATION_3_4,
+                        ClientDatabase.MIGRATION_4_5,
+                    ).allowMainThreadQueries().build()
+                firstDatabase.inferenceRequestStateDao().upsert(
+                    InferenceRequestStateEntity(
+                        requestId = "opaque-request-lifecycle",
+                        status = PersistedRequestStatus.WAITING,
+                        createdAtEpochMillis = 100L,
+                        updatedAtEpochMillis = 110L,
+                        attemptNumber = 3,
+                    ),
+                )
+                firstDatabase.close()
+
+                val reopenedDatabase =
+                    Room.databaseBuilder(
+                        application,
+                        ClientDatabase::class.java,
+                        databaseName,
+                    ).addMigrations(
+                        ClientDatabase.MIGRATION_1_2,
+                        ClientDatabase.MIGRATION_2_3,
+                        ClientDatabase.MIGRATION_3_4,
+                        ClientDatabase.MIGRATION_4_5,
+                    ).allowMainThreadQueries().build()
+                try {
+                    val repository =
+                        RoomInferenceRequestLifecycleRepository(
+                            reopenedDatabase.inferenceRequestStateDao(),
+                        )
+                    val restored = repository.recoverLatest(200L)
+                    assertEquals("opaque-request-lifecycle", restored?.requestId)
+                    assertEquals(PersistedRequestStatus.EXPIRED, restored?.status)
+                    assertEquals("APP_CLOSED_BEFORE_RESULT", restored?.errorCode)
+                    assertEquals(3, restored?.attemptNumber)
+                    assertEquals(100L, restored?.createdAtEpochMillis)
+                    assertEquals(200L, restored?.updatedAtEpochMillis)
+                } finally {
+                    reopenedDatabase.close()
+                }
+            } finally {
+                application.deleteDatabase(databaseName)
+            }
+        }
+
+    @Test
     fun roomRepositoryRetainsDraftAndDoesNotClaimTransportSuccess() =
         runBlocking {
             val firstRepository = RoomClientRequestRepository(database.clientRequestDraftDao())

@@ -2,6 +2,9 @@ package com.whitep.client.ui.request
 
 import com.whitep.client.context.ConversationContextCapsule
 import com.whitep.client.data.InMemoryClientRequestRepository
+import com.whitep.client.data.InMemoryInferenceRequestLifecycleRepository
+import com.whitep.client.data.InferenceRequestLifecycleState
+import com.whitep.client.data.PersistedRequestStatus
 import com.whitep.client.data.RequestDraftStatus
 import com.whitep.client.network.RendezvousPeerEndpoint
 import com.whitep.client.requests.DistributedRequest
@@ -451,6 +454,41 @@ class RequestViewModelTest {
         assertEquals(listOf("peer-b", "peer-c"), gateway.dispatchedHostIdsByRound.last())
         assertEquals(RequestRunStatus.SUCCEEDED, activeViewModel.uiState.value.runStatus)
         assertFalse(activeViewModel.uiState.value.canRetryRequest)
+    }
+
+    @Test
+    fun processRestartExpiresPersistedInFlightRequestAndRestoresExplicitExpiredState() {
+        val lifecycleRepository =
+            InMemoryInferenceRequestLifecycleRepository(
+                InferenceRequestLifecycleState(
+                    requestId = "opaque-request-before-close",
+                    status = PersistedRequestStatus.WAITING,
+                    createdAtEpochMillis = 10_000L,
+                    updatedAtEpochMillis = 11_000L,
+                    attemptNumber = 2,
+                ),
+            )
+        val restoredViewModel =
+            RequestViewModel(
+                repository = InMemoryClientRequestRepository(),
+                operationScope = commandScope,
+                clockMillis = { 12_000L },
+                lifecycleRepository = lifecycleRepository,
+            )
+
+        assertEquals(RequestRunStatus.EXPIRED, restoredViewModel.uiState.value.runStatus)
+        assertEquals(
+            "Expired after the app closed before a result was saved.",
+            restoredViewModel.uiState.value.toNetworkInferenceStatusPresentation().inferenceStatus,
+        )
+        val persisted =
+            kotlinx.coroutines.runBlocking {
+                lifecycleRepository.recoverLatest(13_000L)
+            }
+        assertEquals(PersistedRequestStatus.EXPIRED, persisted?.status)
+        assertEquals("APP_CLOSED_BEFORE_RESULT", persisted?.errorCode)
+        assertEquals(2, persisted?.attemptNumber)
+        assertEquals(10_000L, persisted?.createdAtEpochMillis)
     }
 
     private fun response(

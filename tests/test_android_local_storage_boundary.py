@@ -10,15 +10,17 @@ class AndroidLocalStorageBoundaryTests(unittest.TestCase):
     def test_room_database_is_versioned_and_uses_app_private_context(self):
         source = (ANDROID / "ClientDatabase.kt").read_text(encoding="utf-8")
         self.assertIn("@Database(", source)
-        self.assertIn("version = 4", source)
+        self.assertIn("version = 5", source)
         self.assertIn("Migration(1, 2)", source)
         self.assertIn("Migration(2, 3)", source)
         self.assertIn("Migration(3, 4)", source)
+        self.assertIn("Migration(4, 5)", source)
         factory = (ANDROID / "EncryptedClientDatabaseFactory.kt").read_text(encoding="utf-8")
         self.assertIn("addMigrations(", factory)
         self.assertIn("ClientDatabase.MIGRATION_1_2", factory)
         self.assertIn("ClientDatabase.MIGRATION_2_3", factory)
         self.assertIn("ClientDatabase.MIGRATION_3_4", factory)
+        self.assertIn("ClientDatabase.MIGRATION_4_5", factory)
         self.assertIn("exportSchema = true", source)
         self.assertIn("context.applicationContext", source)
         self.assertIn('"whitep-client.db"', source)
@@ -46,6 +48,14 @@ class AndroidLocalStorageBoundaryTests(unittest.TestCase):
         self.assertIn("val attemptNumber: Int", source)
         self.assertIn("val errorCode: String?", source)
         for field in ("val prompt:", "contextCapsule", "val payload:", "responseText"):
+            self.assertNotIn(field, source)
+
+    def test_app_request_lifecycle_table_is_metadata_only_and_migrated_by_room(self):
+        source = (ANDROID / "InferenceRequestStateEntity.kt").read_text(encoding="utf-8")
+        self.assertIn('tableName = "client_inference_request_states"', source)
+        self.assertIn("fun expireInFlight", source)
+        self.assertIn("status IN ('QUEUED', 'CONTACTING', 'WAITING')", source)
+        for field in ("val prompt:", "contextCapsule", "responseText", "val payload:", "ephemeralHostId"):
             self.assertNotIn(field, source)
 
     def test_room_repository_keeps_transport_unavailable_as_an_explicit_result(self):

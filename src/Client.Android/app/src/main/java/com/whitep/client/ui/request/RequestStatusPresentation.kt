@@ -46,6 +46,11 @@ fun PersistedRequestStatus.toPresentation(): RequestStatusPresentation =
                 label = "Cancelled",
                 detail = "The request has been marked as cancelled.",
             )
+        PersistedRequestStatus.EXPIRED ->
+            RequestStatusPresentation(
+                label = "Expired",
+                detail = "The app closed before a result was saved; the remote host may have completed.",
+            )
     }
 
 data class NetworkInferenceStatusPresentation(
@@ -78,6 +83,7 @@ fun RequestUiState.toNetworkInferenceStatusPresentation(): NetworkInferenceStatu
                     RequestRunStatus.PARTIAL -> "Partial result."
                     RequestRunStatus.FAILED -> "Failed."
                     RequestRunStatus.CANCELLED -> "Cancelled."
+                    RequestRunStatus.EXPIRED -> "Expired after the app closed before a result was saved."
                 }
         }
     return NetworkInferenceStatusPresentation(
