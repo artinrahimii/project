@@ -1,39 +1,38 @@
 # T0207 verification evidence
 
-## Source and graph
-
-- Repository: `artinrahimii/project`
-- Branch: `main`
-- Implementation commit: `ccaddf87dac832c838c9c270d20fc16e6ccf9e28` (`V 3.0.943`)
-- Tracking checkpoint: `V 3.0.944`
-- Graph: `step three/project-graph.md`
-- Graph Blob: `4bc73b81303b726c51f136a33224d2fd1daeb098`
-- Source bytes (UTF-8): 3691491; text length: 3563046 characters.
-- Git Blob SHA-1 over the original bytes matched the tree Blob: `4bc73b81303b726c51f136a33224d2fd1daeb098`.
-- Full JSON parse: successful; 230 task nodes and 422 edges; no duplicate task IDs or dangling edge endpoints detected at the base graph validation.
-
 ## Incoming edges
 
-1. `T0206 → T0207`: `sequencing_only`, validated; original `blocks` type and order preserved.
-2. `T0195 → T0207`: `sequencing_only`, validated; original `blocks` type and order preserved.
+1. `T0206 → T0207`: `sequencing_only`, validated; original `blocks` type/order retained.
+2. `T0195 → T0207`: `sequencing_only`, validated; original `blocks` type/order retained.
 
-The two edge reviews are appended to `edge_change_log`.
+## Clean-build implementation evidence
 
-## Exact implementation-commit CI
+Workflow: `.github/workflows/product-build.yml`.
+- Windows: explicit solution clean then non-incremental Release build.
+- Android: .NET fixture clean/non-incremental build; Gradle clean; lint and APK assemble from clean outputs.
+- HostLifecycle: explicit project clean followed by full lifecycle suite.
 
-- [Product Build run 41921424399](https://github.com/artinrahimii/project/actions/runs/41921424399)
-  - Windows job `126894612727`: **success, 16/16 steps**. Clean Windows solution, non-incremental Release build, WPF startup smoke and Windows acceptance checks all passed.
-  - HostLifecycle job `126894612520`: **success, 9/9 steps**. `dotnet clean` passed, followed by the full HostLifecycle suite.
-  - Android job `126894611985`: clean fixture outputs, .NET fixture build, Gradle clean, clean APK build and permission verification passed. The JVM unit-test step was still in progress at the latest observation; emulator instrumentation and final artifact checks were pending.
-- [Step Three Quality Gate run 41921424419](https://github.com/artinrahimii/project/actions/runs/41921424419): **success**.
-- [Rendezvous container build and smoke test run 41921424425](https://github.com/artinrahimii/project/actions/runs/41921424425): **success**.
+## First exact implementation CI — pass
 
-## Not yet verified
+Run `41921424399`, commit `ccaddf87dac832c838c9c270d20fc16e6ccf9e28`:
+- Android job `126894611985`: **28/28 passed**, including JVM unit tests, Keystore emulator instrumentation, generated Java/Kotlin Protobuf source verification and APK upload.
+- Windows job `126894612727`: **16/16 passed**.
+- HostLifecycle job `126894612520`: **9/9 passed**.
+- Quality Gate `41921424419` and Rendezvous `41921424425`: passed.
 
-- Android `testDebugUnitTest` completion.
-- Android Keystore instrumentation tests.
-- Generated Protobuf Java/Kotlin source verification after the clean build.
-- Successful APK artifact upload.
-- Final Product Build job success.
+## Later exact-head rerun — external Maven throttling
 
-Do not mark T0207 done until the pending Android steps and entire Product Build run succeed on the exact implementation head.
+Run `41922371821`, commit `56c307679e79b72177eb48666b9f59ce0d541e47`:
+- Windows and HostLifecycle remained fully green (16/16 and 9/9).
+- The Android clean fixture, Gradle clean, lint, APK and permission steps passed.
+- `testDebugUnitTest`: 191 tests completed, 5 failed during Robolectric setup; 186 passed.
+- Downloaded JUnit report artifact `13368600158` shows all five failures caused by HTTP 429 from repo1.maven.org for `org.robolectric:android-all-instrumented:15-robolectric-13954326-i7`, not by assertion failures in the affected tests.
+
+## Correction under verification
+
+- `src/Client.Android/app/build.gradle.kts` now configures `robolectric.dependency.repo.url` and `robolectric.dependency.repo.id` for all Android JVM test tasks.
+- Default runtime repository: `https://maven-central.storage-download.googleapis.com/maven2/`.
+- Override: Gradle property `robolectricDependencyRepoUrl` or environment variable `ROBOLECTRIC_DEPENDENCY_REPO_URL`.
+- `tests/test_android_libp2p_transport_contract.py` asserts the mirror configuration remains attached to `unitTests.all`.
+
+No success is claimed for the mirror correction yet. T0207 remains `in_progress` pending a new exact-head CI pass.

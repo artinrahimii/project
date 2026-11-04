@@ -8,6 +8,12 @@ plugins {
     id("com.google.protobuf")
     id("org.jlleitschuh.gradle.ktlint")
 }
+
+val robolectricDependencyRepoUrl =
+    providers.gradleProperty("robolectricDependencyRepoUrl")
+        .orElse(providers.environmentVariable("ROBOLECTRIC_DEPENDENCY_REPO_URL"))
+        .orElse("https://maven-central.storage-download.googleapis.com/maven2/")
+
 android {
     sourceSets {
         getByName("main") {
@@ -43,6 +49,11 @@ android {
     testOptions {
         unitTests.isIncludeAndroidResources = true
         unitTests.all {
+            // Robolectric fetches large instrumented Android SDK jars at test runtime.
+            // Maven Central's repo1 endpoint can return HTTP 429 on shared CI runners.
+            // Keep the mirror configurable for local/CI environments.
+            it.systemProperty("robolectric.dependency.repo.url", robolectricDependencyRepoUrl.get())
+            it.systemProperty("robolectric.dependency.repo.id", "google-maven-central")
             it.jvmArgs(
                 "--add-opens=java.base/java.lang=ALL-UNNAMED",
                 "--add-opens=java.base/java.util=ALL-UNNAMED",

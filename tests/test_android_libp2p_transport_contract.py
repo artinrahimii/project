@@ -27,6 +27,29 @@ class AndroidLibp2pTransportContractTests(unittest.TestCase):
         self.assertIn('exclude(group = "io.netty", module = "netty-codec-native-quic")', build)
         self.assertIn('exclude(group = "io.netty", module = "netty-tcnative-boringssl-static")', build)
 
+    def test_robolectric_runtime_sdk_jars_use_configurable_maven_central_mirror(self):
+        build = APP_BUILD.read_text(encoding="utf-8")
+        self.assertIn(
+            'providers.gradleProperty("robolectricDependencyRepoUrl")',
+            build,
+        )
+        self.assertIn(
+            'providers.environmentVariable("ROBOLECTRIC_DEPENDENCY_REPO_URL")',
+            build,
+        )
+        self.assertIn(
+            '"https://maven-central.storage-download.googleapis.com/maven2/"',
+            build,
+        )
+        unit_tests = build.split("unitTests.all {", 1)[1].split(
+            "    }\n    packaging", 1
+        )[0]
+        self.assertIn('"robolectric.dependency.repo.url"', unit_tests)
+        self.assertIn("robolectricDependencyRepoUrl.get()", unit_tests)
+        self.assertIn('"robolectric.dependency.repo.id"', unit_tests)
+        self.assertIn('"google-maven-central"', unit_tests)
+        self.assertNotIn("repo1.maven.org", unit_tests)
+
     def test_android_identity_is_persistent_and_keystore_protected(self):
         source = IDENTITY.read_text(encoding="utf-8")
         protector = PROTECTOR.read_text(encoding="utf-8")

@@ -1,36 +1,46 @@
 # T0207 execution report
 
 - Status: **in_progress**
-- Attempt: `T0207-A001`
-- Implementation commit: `ccaddf87dac832c838c9c270d20fc16e6ccf9e28` (`V 3.0.943`)
-- Tracking checkpoint: `V 3.0.944`
-- Latest CI checkpoint: Android JVM unit tests still running; instrumentation not yet started
+- Attempts: 2 (one clean-build implementation attempt; one rate-limit resilience correction)
+- Implementation baseline: `ccaddf87dac832c838c9c270d20fc16e6ccf9e28` (`V 3.0.943`)
+- Current tracking revision: `56c307679e79b72177eb48666b9f59ce0d541e47` (`V 3.0.944`)
+- Current correction: `T0207-A002`, CI pending
 
 ## Incoming edge review
 
-- `T0206 → T0207`: **validated / sequencing_only**. T0207 rebuilds from a fresh checkout and consumes no API, schema, fixture, or generated output from the rendezvous privacy tests in T0206. Keep the original `blocks` edge and conservative order.
-- `T0195 → T0207`: **validated / sequencing_only**. T0207 builds the repository independently; it consumes no task-specific output from T0195. Keep the original `blocks` edge and conservative order.
+- `T0206 → T0207`: **validated / sequencing_only**. T0207 rebuilds from a fresh checkout and consumes no T0206-specific API, schema, fixture, or generated output. Original `blocks` edge and order retained.
+- `T0195 → T0207`: **validated / sequencing_only**. T0207 consumes no task-specific output from T0195. Original `blocks` edge and order retained.
 
-## Workflow changes
+## Clean-build workflow implementation
 
-Updated `.github/workflows/product-build.yml` to make clean outputs explicit on the fresh GitHub-hosted runners:
+The online workflow `.github/workflows/product-build.yml` now explicitly cleans outputs before compiling on fresh GitHub-hosted runners:
 
-- Windows runner: `dotnet clean WhiteP.sln --configuration Release`, then `dotnet build WhiteP.sln --configuration Release --no-incremental`.
-- Android runner: clean and rebuild the .NET interoperability fixture, run Gradle `clean`, and build the debug APK with the Gradle build cache disabled for that task.
-- HostLifecycle runner: run `dotnet clean` before the full lifecycle suite.
+- Windows: `dotnet clean WhiteP.sln`, then a non-incremental Release build; WPF startup and Windows acceptance checks follow.
+- Android: clean the .NET interop fixture and rebuild it non-incrementally, run Gradle `clean`, lint and build the debug APK with build cache disabled; execute JVM and emulator tests and verify generated sources.
+- HostLifecycle: `dotnet clean` followed by the full lifecycle suite.
 
-## Exact-commit CI checkpoint
+## Verified CI results
 
-All results below reference implementation commit `ccaddf87dac832c838c9c270d20fc16e6ccf9e28`.
+**Implementation commit V 3.0.943 — full success**
 
-- [Product Build run 41921424399](https://github.com/artinrahimii/project/actions/runs/41921424399)
-  - Windows job `126894612727`: **passed, 16/16 steps**. Clean Windows solution, non-incremental Release build, generated Protobuf verification, WPF startup smoke, agent-tool checks, DPAPI identity/trust checks, and artifact upload succeeded.
-  - HostLifecycle job `126894612520`: **passed, 9/9 steps**. Clean outputs followed by the full lifecycle suite succeeded.
-  - Android job `126894611985`: clean .NET fixture, .NET build, Gradle clean, clean debug APK assembly and minimum-permission check **passed**. At the latest inspection, `Run Android JVM unit tests` was still in progress; Keystore instrumentation, generated-source verification and APK artifact upload were pending. No failure had been reported.
-- [Step Three Quality Gate run 41921424419](https://github.com/artinrahimii/project/actions/runs/41921424419): **passed**.
-- [Rendezvous container build and smoke test run 41921424425](https://github.com/artinrahimii/project/actions/runs/41921424425): **passed**.
+Product Build run `41921424399` completed successfully:
+- Android job `126894611985`: **28/28 steps passed**, including clean fixture build, Gradle clean, APK build/permission checks, all JVM tests, Android Keystore instrumentation, generated Protobuf source checks and APK artifact upload.
+- Windows WPF job `126894612727`: **16/16 passed**.
+- HostLifecycle job `126894612520`: **9/9 passed**.
+- Step Three Quality Gate `41921424419`: passed.
+- Rendezvous container run `41921424425`: passed.
 
-## Current execution state
+**Follow-up exact-head verification V 3.0.944 — one external dependency failure**
 
-T0207 remains **in_progress**. The Android JVM and emulator/instrumentation checks have not yet been confirmed successful, so the task is not counted as complete.
+Product Build run `41922371821`:
+- Windows WPF: **16/16 passed**.
+- HostLifecycle: **9/9 passed**.
+- Android: clean .NET fixture build, Gradle clean, KtLint, clean APK assembly and permission validation passed; `testDebugUnitTest` then ran **191 tests, 5 failed**.
+- JUnit report artifact `13368600158` identifies the same cause for all five failures: Robolectric `MavenArtifactFetcher` received HTTP **429 Too Many Requests** from `https://repo1.maven.org/maven2` while fetching `org.robolectric:android-all-instrumented:15-robolectric-13954326-i7`. The failures occurred during Robolectric sandbox setup before the five affected test bodies; **186 other tests passed**.
+- Affected class setup reports: `ConversationContextCapsuleSummarizerTest`, `ConversationContextCapsuleTest`, `ClientDatabaseMigrationTest`, `ClientDatabaseTest`, and `ConversationContextCapsulePersistenceTest`.
 
+## Resilience correction T0207-A002
+
+Robolectric's documented runtime properties allow an independent Maven repository URL and ID. The Android test configuration now uses a Google-hosted Maven Central mirror by default and allows override through `-ProbolectricDependencyRepoUrl` or `ROBOLECTRIC_DEPENDENCY_REPO_URL`. A Python quality-gate contract test guards this configuration.
+
+This correction has not yet run on CI. **T0207 remains in_progress** until the next exact-head Quality Gate and full Product Build pass.
