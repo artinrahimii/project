@@ -17,10 +17,12 @@ internal static class VerifiedModelInstallerAcceptanceTests
         RejectsChecksumMismatchAndDeletesStagingFile();
         RejectsUnsupportedChecksumBeforeNetworkAccess();
         PreservesExistingDestinationWithoutDownloading();
+        RejectsInsufficientDiskSpaceBeforeNetworkAccess();
+        PreservesExistingModelWhenReplacementSpaceIsInsufficient();
         RejectsInvalidGgufMagicAfterChecksumMatch();
         RejectsUnsupportedGgufVersionAfterChecksumMatch();
         RejectsUnsupportedDeclaredFormatBeforeNetworkAccess();
-        Console.WriteLine("PASS: model installation stages downloads, verifies SHA-256, and preserves final-path integrity.");
+        Console.WriteLine("PASS: low-disk model install and update fail before network access.");
     }
 
     private static void InstallsOnlyAfterSha256Matches()
@@ -142,6 +144,100 @@ internal static class VerifiedModelInstallerAcceptanceTests
             }
 
             throw new InvalidOperationException("The installer must refuse to overwrite an existing model.");
+        }
+        finally
+        {
+            Directory.Delete(folder, recursive: true);
+        }
+    }
+
+    private static void RejectsInsufficientDiskSpaceBeforeNetworkAccess()
+    {
+        var bytes = CreateModelBytes();
+        var checksum = Convert.ToHexString(SHA256.HashData(bytes)).ToLowerInvariant();
+        var handler = CreateHandler(bytes);
+        using var client = new HttpClient(handler, disposeHandler: false);
+        using var downloader = new ModelStreamingDownloader(new[] { "models.example.test" }, client);
+        var folder = CreateTemporaryDirectory();
+        var destination = Path.Combine(folder, "low-space-model.gguf");
+        string? inspectedDirectory = null;
+        var installer = new VerifiedModelInstaller(
+            downloader,
+            directory =>
+            {
+                inspectedDirectory = Path.GetFullPath(directory);
+                return bytes.LongLength - 1;
+            });
+
+        try
+        {
+            var insufficientSpaceRejected = false;
+            try
+            {
+                _ = installer.DownloadAndInstallAsync(CreateModel(bytes, checksum), destination)
+                    .GetAwaiter()
+                    .GetResult();
+            }
+            catch (IOException exception) when (
+                exception.Message.Contains("Insufficient free disk space", StringComparison.Ordinal))
+            {
+                insufficientSpaceRejected = true;
+            }
+
+            Assert(insufficientSpaceRejected,
+                "Initial installation must fail when free space is smaller than the staging file.");
+            Assert(inspectedDirectory == Path.GetFullPath(folder),
+                "The disk-space check must inspect the actual destination directory.");
+            Assert(handler.RequestCount == 0,
+                "Insufficient free space must be rejected before a model network request.");
+            Assert(!File.Exists(destination),
+                "Insufficient free space must not publish a final model.");
+            Assert(Directory.GetFiles(folder).Length == 0,
+                "Insufficient free space must not leave a staging file.");
+        }
+        finally
+        {
+            Directory.Delete(folder, recursive: true);
+        }
+    }
+
+    private static void PreservesExistingModelWhenReplacementSpaceIsInsufficient()
+    {
+        var downloadedBytes = CreateModelBytes();
+        var checksum = Convert.ToHexString(SHA256.HashData(downloadedBytes)).ToLowerInvariant();
+        var originalBytes = CreateModelBytes();
+        originalBytes[16] ^= 0x37;
+        var handler = CreateHandler(downloadedBytes);
+        using var client = new HttpClient(handler, disposeHandler: false);
+        using var downloader = new ModelStreamingDownloader(new[] { "models.example.test" }, client);
+        var folder = CreateTemporaryDirectory();
+        var destination = Path.Combine(folder, "installed-model.gguf");
+        var installer = new VerifiedModelInstaller(downloader, _ => downloadedBytes.LongLength - 1);
+
+        try
+        {
+            File.WriteAllBytes(destination, originalBytes);
+            var insufficientSpaceRejected = false;
+            try
+            {
+                _ = installer.DownloadAndUpdateAsync(CreateModel(downloadedBytes, checksum), destination)
+                    .GetAwaiter()
+                    .GetResult();
+            }
+            catch (IOException exception) when (
+                exception.Message.Contains("Insufficient free disk space", StringComparison.Ordinal))
+            {
+                insufficientSpaceRejected = true;
+            }
+
+            Assert(insufficientSpaceRejected,
+                "An update must fail before download when replacement staging space is insufficient.");
+            Assert(File.ReadAllBytes(destination).SequenceEqual(originalBytes),
+                "Insufficient free space must preserve the installed model byte-for-byte.");
+            Assert(handler.RequestCount == 0,
+                "A low-space model update must not contact the model source.");
+            Assert(Directory.GetFiles(folder).SequenceEqual(new[] { destination }),
+                "A rejected low-space update must not leave staging or backup files.");
         }
         finally
         {
