@@ -116,3 +116,16 @@ A004 is formatting-only. CI has not yet verified these changes; APK/JVM/instrume
 - Windows WPF and Host Lifecycle jobs from .916 passed; Android job failed KtLint. This does not establish Android acceptance.
 - T0194 remains in_progress, and T0195 remains not_started.
 
+## Exact-head V 3.0.917 results (A007)
+
+- Quality Gate run 41882320819 — passed.
+- Rendezvous build and smoke run 41882320755 — passed.
+- Product build run 41882320680:
+  - Android KtLint step 11 — passed.
+  - APK assemble step 12 — passed.
+  - Merged APK permission check step 13 — passed.
+  - Android JVM unit tests step 14 — passed.
+  - Android Keystore instrumentation step 17 — in progress at the latest check.
+  - Windows WPF job 126757694989 — passed.
+  - Host Lifecycle job 126757695001 — passed.
+- Keystore instrumentation, generated Protobuf Java/Kotlin check and artifact upload have not completed. Do not treat Android acceptance as complete.

@@ -105,3 +105,20 @@
 - The previous V 3.0.916 Android Product job failed at KtLint on indentation; Windows WPF and Host Lifecycle jobs for that commit passed. A007 is retained as `partial`, not marked `done`.
 - **Next gate:** obtain a real exact-head Android product workflow and validate KtLint, APK, merged permissions, JVM tests and SQLCipher/Keystore instrumentation. T0194 stays `in_progress`.
 
+## T0194-A007 exact-head CI progress — V 3.0.917
+
+All results below are from exact commit `52b6ea75889914cdf4f17782baade2a9804948d9`:
+
+- Quality Gate [41882320819](https://github.com/artinrahimii/project/actions/runs/41882320819): **passed**.
+- Rendezvous build/smoke [41882320755](https://github.com/artinrahimii/project/actions/runs/41882320755): **passed**.
+- Product Build [41882320680](https://github.com/artinrahimii/project/actions/runs/41882320680):
+  - Android KtLint step 11 — **passed**.
+  - Debug APK build step 12 — **passed**.
+  - Merged APK minimum-permissions verification step 13 — **passed**.
+  - Android JVM unit tests step 14 — **passed**.
+  - Android Keystore instrumentation step 17 — **in progress** at `2026-11-04T18:04:48.599Z`.
+  - Windows WPF job `126757694989` — **passed**.
+  - Host Lifecycle job `126757695001` — **passed**.
+- Because the Android emulator/Keystore instrumentation step has not completed, there is no instrumentation result or generated-Protobuf verification result yet. A007 remains `partial`; T0194 remains `in_progress`.
+- The workflow also uploads Android instrumentation/JVM reports and the APK after preceding steps; these post-test steps remain pending.
+
