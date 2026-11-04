@@ -1,6 +1,6 @@
 # T0189 — کد خطای پایدار و قابل‌نمایش
 
-- **وضعیت:** در حال اجرا؛ پیاده‌سازی Windows و Android و آزمون‌های مرتبط اضافه شده‌اند. اصلاح تورفتگی KtLint در A005 انجام شده و CI دقیق آن هنوز در انتظار اجراست.
+- **وضعیت:** تکمیل‌شده؛ نگاشت پایدار خطا و پیام‌های امن در Windows و Android پیاده‌سازی شده و گیت‌های مرتبط در CI دقیق `V 3.0.889` موفق‌اند.
 - **مبنای بررسی:** `artinrahimii/project`، شاخهٔ `main`، commit `42c872b6620abcd81a553213fa957f6846c4fbdd`، نسخهٔ `V 3.0.884`.
 - **پیش‌نیاز:** T0188 در گراف همین commit `done` است و معیارهای مستندات/آزمون منبعی‌اش در CI دقیق نسخهٔ پیاده‌سازی تأیید شده‌اند.
 - **بازبینی یال `T0188 → T0189`:** نوع اصلی `blocks` حفظ شد؛ طبقه‌بندی به `sequencing_only` با وضعیت `validated` تغییر می‌کند. T0188 مدل تهدید و محدودیت‌های محرمانگی را مستند می‌کند، اما T0189 هیچ رابط اجرایی از آن مصرف نمی‌کند. دلیل و شواهد در `edge_change_log` ثبت شده‌اند و ترتیب محافظه‌کارانهٔ گراف عوض نشده است.
@@ -53,3 +53,18 @@
 - A005 فقط تورفتگی بدنهٔ lambda در `pendingAttempts.entries.filter` را اصلاح می‌کند؛ منطق correlation، peer authentication، model matching، پروتکل و آزمون‌ها تغییر نمی‌کنند.
 - workflow اختصاصی inference واقعی روی commit `V 3.0.888` در فهرست اجراهای main مشاهده نشد؛ شاهد موفق inference واقعی قبلی مربوط به commit `V 3.0.887` است و به‌عنوان اجرای دقیق 888 ادعا نمی‌شود.
 - نتیجهٔ KtLint، APK، permission verification، Android JVM و instrumentation برای A005 تا اجرای CI commit بعدی pending است؛ T0189 همچنان `in_progress` می‌ماند.
+
+
+## پذیرش نهایی T0189 — CI دقیق V 3.0.889
+
+- **Commit:** `b4477b678906bb17f0c37be4970adf5500e811e6` در شاخهٔ `main`.
+- **Step Three quality gate:** run `41834044390` موفق.
+- **Rendezvous container:** run `41834044297` موفق.
+- **Product build:** run `41834044374` با نتیجهٔ `success`؛ هر سه job موفق شدند.
+- **Windows HostLifecycle:** job `126588272463` موفق؛ log شامل دو assertion مربوط به T0189 است: نگاشت پایدار دسته‌های خطا/کدهای پروتکل بدون افشای exception details، و پیام امن با راهنمای اقدام‌پذیر بدون افشای جزئیات.
+- **Windows WPF:** job `126588272363` موفق؛ قالب‌بندی C#، build، Protobuf، smoke test راه‌اندازی WPF و آزمون‌های agent-tool/DPAPI/peer trust موفق.
+- **Android:** job `126588271859` موفق؛ KtLint، ساخت debug APK، بررسی مجوزهای manifest، JVM unit tests، Android Keystore instrumentation و بررسی generated Protobuf Java/Kotlin همگی موفق.
+- **Android Keystore instrumentation:** log صریحاً `9/9 completed, 0 skipped, 0 failed` را ثبت کرد.
+- **Artifact:** فایل APK و گزارش‌های instrumentation/JVM با موفقیت در GitHub Actions بارگذاری شدند.
+- **محدودیت مستقل:** workflow اختصاصی real local inference روی این commit trigger نشد؛ HostLifecycle log، تست real-model را به‌دلیل opt-in بودن `SKIP` اعلام کرد. این نتیجه به‌عنوان inference واقعی موفق یا ناموفق ثبت نمی‌شود و خارج از معیارهای اختصاصی T0189 است.
+- **نتیجه:** معیار پذیرش T0189 احراز شد؛ وضعیت وظیفه `done` است.

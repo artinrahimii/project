@@ -104,3 +104,18 @@
 - Request ID, authenticated peer, controller identity, ephemeral host ID and model ID predicates are unchanged.
 - No protocol schema, error mapping, redaction rule or test assertion changed.
 - Exact-head KtLint/build/JVM/instrumentation results are pending; T0189 remains `in_progress`.
+
+
+## Final exact-head acceptance — V 3.0.889
+
+- **Branch / commit:** `main` / `b4477b678906bb17f0c37be4970adf5500e811e6`.
+- **Step Three quality gate:** run `41834044390` — success.
+- **Rendezvous container:** run `41834044297` — success.
+- **Product build:** run `41834044374` — success.
+- **Windows HostLifecycle job `126588272463`:** success. Log assertions confirm stable Windows error categories and protocol-code mapping without exception details, plus safe actionable user guidance.
+- **Windows WPF job `126588272363`:** success, including build, generated Protobuf, startup smoke test, agent-tool policy/capability restrictions, DPAPI host identity and peer-trust persistence checks.
+- **Android job `126588271859`:** success. Kotlin lint, debug APK, merged-manifest permission policy, JVM unit tests, Android Keystore instrumentation, generated Java/Kotlin Protobuf sources and APK artifact upload all passed.
+- **Keystore instrumentation:** `9/9` tests completed; `0` skipped; `0` failed.
+- **Artifact evidence:** APK and instrumentation/JVM report artifacts were successfully uploaded by the product workflow.
+- **Scope caveat:** the dedicated real local inference workflow was not triggered for this commit. The HostLifecycle log marks the opt-in model integration test as `SKIP`; no real-inference claim is made for `V 3.0.889`. The T0189 acceptance gates are the error mapping, safe presentation, Android parsing/UI, and associated Windows/Android tests, all of which passed.
+- **Decision:** T0189 acceptance criteria are satisfied; mark `done`.
