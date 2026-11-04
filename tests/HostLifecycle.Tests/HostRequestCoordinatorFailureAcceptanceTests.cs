@@ -8,6 +8,7 @@ internal static class HostRequestCoordinatorFailureAcceptanceTests
         await DuplicateAdmissionIsNotInvokedTwiceAsync().ConfigureAwait(false);
         ExpiredDeadlineIsRejectedBeforeInference();
         await CancellationDuringExecutionWithholdsResultAsync().ConfigureAwait(false);
+        await RequestDeadlineCancelsActiveOperationAsync().ConfigureAwait(false);
         await InferenceFailureReleasesCoordinatorAsync().ConfigureAwait(false);
 
         Console.WriteLine(
@@ -110,6 +111,53 @@ internal static class HostRequestCoordinatorFailureAcceptanceTests
             "Coordinator must not return a successful result when inference returns after its request was cancelled.");
         Assert(!coordinator.IsBusy, "The inference gate must be released after cancellation.");
         Assert(!coordinator.CancelActiveRequest(), "The active cancellation reference must be cleared after completion.");
+    }
+
+    private static async Task RequestDeadlineCancelsActiveOperationAsync()
+    {
+        var coordinator = new HostRequestCoordinator();
+        var deadline = DateTimeOffset.UtcNow.AddMilliseconds(750);
+        var admission = ValidAdmission() with
+        {
+            DeadlineUnixMs = (ulong)deadline.ToUnixTimeMilliseconds()
+        };
+        var operationStarted = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var deadlineCancellationObserved = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        var active = coordinator.ExecuteAsync(admission, async cancellationToken =>
+        {
+            operationStarted.TrySetResult(true);
+            using var registration = cancellationToken.Register(
+                () => deadlineCancellationObserved.TrySetResult(true));
+            await Task.Delay(Timeout.InfiniteTimeSpan, cancellationToken).ConfigureAwait(false);
+            return "must-not-be-delivered";
+        });
+
+        await operationStarted.Task.WaitAsync(TimeSpan.FromSeconds(5)).ConfigureAwait(false);
+        await deadlineCancellationObserved.Task.WaitAsync(TimeSpan.FromSeconds(5)).ConfigureAwait(false);
+
+        var deadlineRejected = false;
+        try
+        {
+            _ = await active.WaitAsync(TimeSpan.FromSeconds(5)).ConfigureAwait(false);
+        }
+        catch (HostRequestAdmissionException exception) when (
+            exception.Failure == HostRequestAdmissionFailure.DeadlineExpired)
+        {
+            deadlineRejected = true;
+        }
+
+        Assert(deadlineRejected,
+            "An operation that reaches its absolute deadline must be cancelled and reported as DeadlineExpired.");
+        Assert(!coordinator.IsBusy, "The coordinator gate must be released after deadline cancellation.");
+        Assert(!coordinator.CancelActiveRequest(),
+            "The active cancellation reference must be cleared after deadline cancellation.");
+
+        var nextResult = await coordinator.ExecuteAsync(
+            ValidAdmission(),
+            _ => Task.FromResult("accepted-after-deadline")).WaitAsync(TimeSpan.FromSeconds(5)).ConfigureAwait(false);
+        Assert(nextResult == "accepted-after-deadline",
+            "A new request must be accepted after deadline cancellation cleanup.");
     }
 
     private static async Task InferenceFailureReleasesCoordinatorAsync()
