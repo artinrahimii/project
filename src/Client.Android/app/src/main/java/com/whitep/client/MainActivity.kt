@@ -281,7 +281,12 @@ private fun requestScreen(
             onValueChange = requestViewModel::updatePrompt,
             modifier = Modifier.fillMaxWidth(),
             label = { Text("Prompt") },
-            supportingText = { Text("The selected host can read your prompt and context capsule after transport decryption; encryption does not hide them from that host.") },
+            supportingText = {
+                Text(
+                    "The selected host can read your prompt and context capsule after transport decryption; " +
+                        "encryption does not hide them from that host.",
+                )
+            },
             minLines = 4,
             maxLines = 8,
         )

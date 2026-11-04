@@ -48,8 +48,8 @@ class PeerInferencePrivacyDisclosureTests(unittest.TestCase):
         self.assertIn("Peer hosting remains disabled because the privacy notice was not accepted.", handler)
 
     def test_shared_windows_notice_and_host_acceptance_test_cover_payload_visibility(self):
+        self.assertIn("HostParticipationTitle", SHARED_DISCLOSURE)
         for marker in (
-            "HostParticipationTitle",
             "BuildHostParticipationMessage",
             "context capsule",
             "after transport decryption",
@@ -63,7 +63,7 @@ class PeerInferencePrivacyDisclosureTests(unittest.TestCase):
         self.assertIn("## رضایت آگاهانه برای اعتماد و میزبانی همتا (T0186)", SECURITY_DOC)
         self.assertIn("prompt", SECURITY_DOC.lower())
         self.assertIn("context capsule", SECURITY_DOC.lower())
-        self.assertIn("transport encryption", SECURITY_DOC.lower())
+        self.assertIn("رمزگذاری انتقال", SECURITY_DOC)
         self.assertIn("T0185 — تکمیل‌شده", SECURITY_DOC)
 
 

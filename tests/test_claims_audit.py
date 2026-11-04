@@ -24,8 +24,9 @@ class ClaimsAuditTests(unittest.TestCase):
     def test_android_ui_discloses_explicit_trust_and_receiving_host_visibility(self):
         self.assertNotIn("P2P client preview (transport not implemented)", ANDROID_UI)
         self.assertIn("No server address is prefilled.", ANDROID_UI)
-        self.assertIn("Trust this processing host?", ANDROID_UI)
-        self.assertIn("After approval, this host may receive and read the prompts and context", ANDROID_UI)
+        self.assertIn("Before you trust this host", ANDROID_UI)
+        self.assertIn("this processing host receives your prompt and context capsule", ANDROID_UI)
+        self.assertIn("Saving trust does not send a prompt or context now.", ANDROID_UI)
         self.assertIn("Revoke trust", ANDROID_UI)
         self.assertIn("HTTPS Rendezvous URL", ANDROID_UI)
         self.assertIn("trustPeerAfterExplicitConfirmation", ANDROID_REQUEST_VIEW_MODEL)
