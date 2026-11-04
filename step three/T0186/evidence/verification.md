@@ -1,24 +1,21 @@
-# T0186 — شواهد اجرا و اصلاح CI
+# T0186 — شواهد اجرا، شکست CI و اصلاح دفتر گراف
 
-## دریافت/اعتبارسنجی گراف
-- commit مورد بررسی: `acb674d5fa46e269edf7c32dfd1828adfbfce79f`، شاخه main، پیام V 3.0.873.
-- مسیر: `step three/project-graph.md`.
-- Blob از Git tree همان commit: `7c7ce57648e646f0cb97fe04d2521e2b26cf7afd`.
-- دریافت Blob کامل بود؛ متن UTF-8 برابر ۳٬۳۰۱٬۷۱۲ نویسه و ۳٬۴۲۹٬۰۳۱ بایت بود. Git Blob SHA-1 محاسبه‌شده منطبق شد. JSON کامل parse شد: ۲۳۰ task، ۴۲۲ edge، بدون شناسهٔ تکراری و بدون edge endpoint نامعتبر.
-- شمار وضعیت‌ها در این snapshot: ۱۸۴ done، ۲ deferred_final، ۱ in_progress، ۴۳ not_started.
+## Snapshot معتبر
+- Commit: `ea0edc3db0addf1f46c38663119b5ab33d8c3fe5`، شاخه main، پیام V 3.0.874.
+- Git tree: `910a6c42f7edfed88a231dde7bd6676df3333de6`.
+- Graph blob از tree همان commit استخراج و کامل دریافت شد؛ JSON معتبر با ۲۳۰ task و ۴۲۲ edge.
+- وضعیت snapshot: ۱۸۴ done، ۲ deferred_final، ۱ in_progress، ۴۳ not_started.
 
-## نتایج CI برای V 3.0.873
-- Quality run: `41809659148`، job `126505436285` — شکست. ۳ assertion: یک تست claims audit با متن قدیمی trust dialog؛ تست جدید با انتظار عبارت انگلیسی در متن فارسی docs؛ و تستی که `HostParticipationTitle` را در harness می‌خواست، درحالی‌که این constant متعلق به کلاس Shared.Security است.
-- Product run: `41809659192`.
-  - Job `126505436341` Android: شکست در KtLint به‌دلیل supportingText یک‌خطی در MainActivity.kt:284 (newline/argument layout/max line length).
-  - Job `126505436649` Windows WPF: موفق.
-  - Job `126505436597` HostLifecycle: موفق.
-- Rendezvous run `41809659187`: موفق.
-- Real local inference run `41809659279`: موفق.
+## CI V 3.0.874
+- Workflow quality run `41816319735`, job `126527849431`.
+- ۳۷۱ آزمون Python: موفق.
+- `python -m compileall -q tools tests`: موفق.
+- `python tools/graph_guard.py "step three/project-graph.md"`: ناموفق با `FAILED_ATTEMPT_COUNT_MISMATCH: T0186: summary=1, history=0`.
+- علت: guard تعداد attemptهایی را می‌شمارد که `result == failed`؛ دو تلاش ثبت‌شدهٔ T0186 هر دو `partial` هستند. بنابراین مقدار صحیح `failed_attempt_count` صفر است.
+- Container run `41816319760`: موفق.
+- Android job `126527849590`، Windows job `126527967724` و HostLifecycle job `126527852877` هنگام ثبت این مدخل هنوز در حال اجرا بودند.
 
-## اصلاح ثبت‌شده در A002
-- `MainActivity.kt`: supportingText به بلوک چندخطی مطابق KtLint تبدیل شد؛ متن و منطق رضایت تغییر نکرد.
-- `tests/test_claims_audit.py`: assertionها با عنوان و متن جدید هشدار اعتماد و تصریح عدم ارسال خودکار هنگام ذخیرهٔ اعتماد هماهنگ شدند.
-- `tests/test_peer_inference_privacy_disclosure.py`: انتظار زبان فارسی برای عبارت `رمزگذاری انتقال` تنظیم شد؛ `HostParticipationTitle` در کلاس disclosure بررسی می‌شود و harness فقط متد/محتوای آن را بررسی می‌کند.
-
-نتیجهٔ CI اصلاح A002 هنوز ثبت نشده است؛ این وظیفه در این مرحله تکمیل‌شده محسوب نمی‌شود.
+## اصلاح A003
+- `execution_summary.failed_attempt_count` به صفر تغییر کرد تا با تعداد history entryهای دارای `result=failed` منطبق باشد.
+- شکست graph guard و اقدام اصلاحی در history ثبت شد؛ status وظیفه همچنان in_progress است.
+- بررسی مجدد validator باید روی commit بعدی main انجام شود.
