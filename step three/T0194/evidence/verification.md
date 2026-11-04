@@ -150,3 +150,8 @@ Exact commit: `52b6ea75889914cdf4f17782baade2a9804948d9` (V 3.0.917).
 
 T0194 is accepted; this does not mark downstream tasks or broader P2P/network acceptance complete.
 
+## V 3.0.920 graph-evidence guard correction
+
+- Quality run [41884676473](https://github.com/artinrahimii/project/actions/runs/41884676473) executed 403 Python tests successfully and parsed the graph, then failed only because `T0194.evidence` contained a stale historical Actions URL that the repository evidence guard interpreted as a file path.
+- The stale URL was removed from the task-level evidence path array; its historical test record and actual source/test evidence remain intact.
+- T0194 remains accepted (`done`); no source or test result was altered.

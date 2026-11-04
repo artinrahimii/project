@@ -138,3 +138,8 @@ All results below are from exact commit `52b6ea75889914cdf4f17782baade2a9804948d
 - The three earlier failed attempts remain in the immutable task history; the accepted implementation is recorded in A007. No failure record was removed or retroactively reclassified.
 - T0194's contract revalidation is passed. The task's app-local lifecycle table continues to store only opaque request identifiers/state/timestamps/attempt count/fixed error codes, not prompt/capsule/peer metadata/response content.
 
+## V 3.0.920 graph-evidence guard correction
+
+Quality Gate [41884676473](https://github.com/artinrahimii/project/actions/runs/41884676473) ran all 403 Python tests successfully and parsed the 230-node/422-edge graph, but its repository evidence guard rejected one stale historical Actions URL in the task-level `T0194.evidence` path list as `MISSING_EVIDENCE_FILE`. The code acceptance results themselves were not invalidated.
+
+The stale URL was removed from the task-level file-path list. The historical URL remains in the append-only execution history test record; exact successful CI URLs are also retained in this report and the verification evidence. No source code, test outcome, dependency edge or completed-task status was changed.
