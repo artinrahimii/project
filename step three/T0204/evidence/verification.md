@@ -24,3 +24,10 @@ The test code and fixture mode have been added. Exact-head CI has not yet execut
 ## First CI feedback and correction
 
 Quality Gate run `41910395010`, job `126856098151`: 407 Python source-contract tests ran; 406 passed and `test_dotnet_ready_record_uses_matching_tab_delimiters` failed because the new Kotlin peer-process reader had double-escaped tab literals. They are corrected in attempt `T0204-A002`. The correction still requires CI verification; no pass is claimed.
+
+## CI feedback and formatting correction
+
+- The first exact-head run found a tab-escape source-contract failure and the Android KtLint check reported style errors.
+- After the tab correction, Step Three Quality Gate run `41910751551` passed. Product Build Android job `126857342249` still stopped at `ktlintTestSourceSetCheck` before compiling or executing the new test.
+- Attempt `T0204-A003` sorts the imports, removes the extra blank line, fixes chained-call wrapping and moves the affected assertion arguments/projections onto compliant lines.
+- No Android JVM result is claimed yet; T0204 remains `in_progress`.

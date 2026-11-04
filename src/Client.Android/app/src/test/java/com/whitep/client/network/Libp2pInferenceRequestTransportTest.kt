@@ -5,9 +5,9 @@ import com.whitep.client.requests.AndroidInferenceRequestRuntime
 import com.whitep.client.requests.DistributedRequest
 import com.whitep.client.requests.DistributedRequestProgress
 import com.whitep.client.requests.HostCandidate
+import com.whitep.client.requests.HostCandidateSelector
 import com.whitep.client.requests.InferenceAttemptSubmissionStatus
 import com.whitep.client.requests.InferenceRoundDispatchResult
-import com.whitep.client.requests.HostCandidateSelector
 import com.whitep.client.requests.InferenceRoundResponseFailureReason
 import io.libp2p.core.Host
 import io.libp2p.core.PeerId
@@ -900,7 +900,6 @@ class Libp2pInferenceRequestTransportTest {
             }
         }
 
-
     @Test
     fun dispatchesSecondRoundToThreeNewPeersAfterFirstThreeRemainSilent() =
         runBlocking<Unit> {
@@ -1021,7 +1020,8 @@ class Libp2pInferenceRequestTransportTest {
                         maxTotalHosts = 6,
                     )
                 val selectorRequest =
-                    createRequest().toBuilder()
+                    createRequest()
+                        .toBuilder()
                         .setRequestId(requestId)
                         .setAttemptId("round-two-selector-attempt")
                         .setRoundId("round-two-selector-round")
@@ -1051,7 +1051,10 @@ class Libp2pInferenceRequestTransportTest {
                         maxOutputTokens = 8,
                         protocolVersion = PROTOCOL_VERSION,
                     )
-                assertTrue("The first round must dispatch: $firstDispatch", firstDispatch is InferenceRoundDispatchResult.Dispatched)
+                assertTrue(
+                    "The first round must dispatch: $firstDispatch",
+                    firstDispatch is InferenceRoundDispatchResult.Dispatched,
+                )
                 val firstAttempts = (firstDispatch as InferenceRoundDispatchResult.Dispatched).attempts
                 assertEquals(3, firstAttempts.size)
                 assertTrue(firstAttempts.all { it.submissionStatus == InferenceAttemptSubmissionStatus.QUEUED })
@@ -1063,7 +1066,10 @@ class Libp2pInferenceRequestTransportTest {
                         delay(25L)
                     }
                 }
-                assertTrue("The first three silent peer processes must still be running.", firstProcesses.all { it.isAlive })
+                assertTrue(
+                    "The first three silent peer processes must still be running.",
+                    firstProcesses.all { process -> process.isAlive },
+                )
 
                 val firstCollection = clientRuntime.awaitRoundResponses(requestId, firstAttempts)
                 assertTrue("No first-round peer may return a response.", firstCollection.responses.isEmpty())
@@ -1117,7 +1123,10 @@ class Libp2pInferenceRequestTransportTest {
                         maxOutputTokens = 8,
                         protocolVersion = PROTOCOL_VERSION,
                     )
-                assertTrue("The second round must dispatch: $secondDispatch", secondDispatch is InferenceRoundDispatchResult.Dispatched)
+                assertTrue(
+                    "The second round must dispatch: $secondDispatch",
+                    secondDispatch is InferenceRoundDispatchResult.Dispatched,
+                )
                 val secondAttempts = (secondDispatch as InferenceRoundDispatchResult.Dispatched).attempts
                 assertEquals(3, secondAttempts.size)
                 assertTrue(secondAttempts.all { it.submissionStatus == InferenceAttemptSubmissionStatus.QUEUED })
@@ -1126,7 +1135,15 @@ class Libp2pInferenceRequestTransportTest {
                 assertEquals(3, secondCollection.responses.size)
                 assertTrue(secondCollection.failures.isEmpty())
                 assertEquals(secondHostIds, secondCollection.responses.map { it.ephemeralHostId }.toSet())
-                assertEquals(secondAttempts.map { it.attemptId }.toSet(), secondCollection.responses.map { it.attemptId }.toSet())
+                val dispatchedAttemptIds =
+                    secondAttempts
+                        .map { attempt -> attempt.attemptId }
+                        .toSet()
+                val responseAttemptIds =
+                    secondCollection.responses
+                        .map { response -> response.attemptId }
+                        .toSet()
+                assertEquals(dispatchedAttemptIds, responseAttemptIds)
                 assertTrue(
                     secondCollection.responses.all { response ->
                         response.requestId == requestId &&
@@ -1146,7 +1163,10 @@ class Libp2pInferenceRequestTransportTest {
 
                 secondProcesses.forEach { process ->
                     val processExited = process.waitFor(15, TimeUnit.SECONDS)
-                    assertTrue("A responding .NET peer fixture must exit after its response is consumed.", processExited)
+                    assertTrue(
+                        "A responding .NET peer fixture must exit after its response is consumed.",
+                        processExited,
+                    )
                     assertEquals(0, process.exitValue())
                 }
             } finally {

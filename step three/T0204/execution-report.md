@@ -28,3 +28,10 @@
 - Root cause: the new Kotlin peer-process reader used double-escaped tab literals, violating the existing source contract. This is recorded as failed attempt `T0204-A001`.
 - Attempt `T0204-A002` corrects the READY marker, diagnostic marker and tab splitting to the single Kotlin tab escape.
 - The corrected source has not yet been built or run. T0204 remains **in_progress** until exact-head CI passes.
+
+## CI feedback and source formatting correction
+
+- Attempt `T0204-A001`: the first exact-head checks found both a Python source-contract failure for double-escaped tab literals and Android `ktlintCheck` violations. Both are recorded as failed checks.
+- Attempt `T0204-A002`: the tab escapes were corrected. Step Three Quality Gate run `41910751551`, job `126857341386`, passed all automated tests, Python syntax, graph-structure and evidence checks. Product Build Android job `126857342249` still failed `ktlintTestSourceSetCheck` due import order, blank lines, chain wrapping and multiline call formatting; JVM test execution was not reached.
+- Attempt `T0204-A003`: applied the exact KtLint corrections to the import order, blank line, builder chain, assertions and attempt-ID projection statements. This correction is awaiting a fresh exact-head Product Build.
+- T0204 remains **in_progress** until the corrected Android JVM interoperability test passes.
