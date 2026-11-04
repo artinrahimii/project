@@ -12,6 +12,8 @@ using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.Extensions.DependencyInjection;
 using Nethermind.Libp2p.Core;
+using WhiteP.Host.Application;
+using WhiteP.Host.Domain;
 using WhiteP.Host.Infrastructure;
 using WhiteP.Host.Windows.Networking;
 using WhiteP.Host.Windows.Requests;
@@ -187,7 +189,23 @@ internal static class PeerAnnouncementClientAcceptanceTests
             "The host must refuse to publish an advertised address unless its reachability has been independently confirmed.");
 
         var requestHandlerCalls = 0;
-        var cancellationRequestStarted = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var backendHttpHandler = new CancellationProbeHttpHandler();
+        using var backendHttpClient = new HttpClient(backendHttpHandler);
+        var backendBaseUri = new Uri("http://127.0.0.1:43127/");
+        var inferenceBackend = new LlamaCppServerBackend(
+            backendBaseUri,
+            "fixture-model",
+            backendHttpClient,
+            TimeSpan.FromSeconds(20));
+        await using var inferenceSession = new HostInferenceSession(
+            backendFactory: (_, _) => inferenceBackend,
+            readinessEvaluator: _ => Task.FromResult(
+                new HostReadinessResult(true, "The authenticated cancellation test backend is ready.")));
+        var connectedStatus = await inferenceSession.ConnectAsync(backendBaseUri, "fixture-model").ConfigureAwait(false);
+        Assert(connectedStatus.State == HostState.Ready,
+            "The production llama.cpp backend adapter must pass health and readiness checks before peer hosting.");
+        var requestCoordinator = new HostRequestCoordinator();
+
         await using var host = new PeerAnnouncementHostLifecycle(
             hostTrust.Store,
             hostIdentity,
@@ -205,11 +223,19 @@ internal static class PeerAnnouncementClientAcceptanceTests
 
                 Interlocked.Increment(ref requestHandlerCalls);
                 var requestMessage = parsed.Message;
-                if (requestMessage.Prompt == "wait-for-cancel")
-                {
-                    cancellationRequestStarted.TrySetResult(true);
-                    await Task.Delay(Timeout.InfiniteTimeSpan, cancellationToken).ConfigureAwait(false);
-                }
+                var admission = new HostRequestAdmissionContext(
+                    HasActiveParticipation: true,
+                    HostState: inferenceSession.Status.State,
+                    RequestedModelId: requestMessage.ModelId,
+                    ReadyModelId: "fixture-model",
+                    CapacityState: HostCapacityState.Ready,
+                    DeadlineUnixMs: requestMessage.DeadlineUnixMs);
+                var outcome = await requestCoordinator.TryExecuteAsync(
+                    admission,
+                    token => inferenceSession.GenerateAsync(requestMessage, token),
+                    cancellationToken).ConfigureAwait(false);
+                if (outcome.Status != HostRequestStatus.Completed || outcome.Result is null)
+                    throw new InvalidOperationException("Peer inference did not complete through the production request coordinator.");
 
                 var responseMessage = new InferenceResponse
                 {
@@ -218,7 +244,7 @@ internal static class PeerAnnouncementClientAcceptanceTests
                     RoundId = requestMessage.RoundId,
                     EphemeralHostId = hostPeerId,
                     Outcome = InferenceOutcome.Succeeded,
-                    OutputText = "loopback-inference-result",
+                    OutputText = outcome.Result,
                     CompletedAtUnixMs = (ulong)Math.Max(1L, DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()),
                     ModelId = requestMessage.ModelId,
                     ErrorMessage = string.Empty
@@ -352,7 +378,7 @@ internal static class PeerAnnouncementClientAcceptanceTests
         cancellableRequest.AttemptId = "attempt-cancel-loopback-001";
         cancellableRequest.Prompt = "wait-for-cancel";
         await client.SendMessageAsync(cancellableRequest.ToByteArray(), timeout.Token).ConfigureAwait(false);
-        await cancellationRequestStarted.Task.WaitAsync(TimeSpan.FromSeconds(5), timeout.Token).ConfigureAwait(false);
+        await backendHttpHandler.GenerationStarted.Task.WaitAsync(TimeSpan.FromSeconds(5), timeout.Token).ConfigureAwait(false);
 
         var cancelRequest = new CancelRequest
         {
@@ -363,6 +389,8 @@ internal static class PeerAnnouncementClientAcceptanceTests
         Assert(ProtocolMessageParser.ParseCancelRequest(cancelRequest.ToByteArray()).IsValid,
             "A bounded cancellation request with the exact active request/attempt identity must pass protocol validation.");
         await client.SendMessageAsync(cancelRequest.ToByteArray(), timeout.Token).ConfigureAwait(false);
+        await backendHttpHandler.CancellationObserved.Task.WaitAsync(TimeSpan.FromSeconds(5), timeout.Token).ConfigureAwait(false);
+        await backendHttpHandler.GenerationStopped.Task.WaitAsync(TimeSpan.FromSeconds(5), timeout.Token).ConfigureAwait(false);
 
         byte[] cancelledWire = await client.ReceiveMessageAsync(timeout.Token)
             .WaitAsync(TimeSpan.FromSeconds(10), timeout.Token).ConfigureAwait(false);
@@ -372,8 +400,11 @@ internal static class PeerAnnouncementClientAcceptanceTests
                cancelledResponse.RoundId == cancellableRequest.RoundId &&
                cancelledResponse.EphemeralHostId == hostPeerId &&
                cancelledResponse.Outcome == InferenceOutcome.Cancelled &&
+               cancelledResponse.OutputText.Length == 0 &&
                cancelledResponse.ErrorMessage == "The request was cancelled by the remote client.",
-            "A correlated CancelRequest must cancel the active host operation and return a CANCELLED response.");
+            "Remote cancellation must reach the llama.cpp HTTP request and return CANCELLED without a late success payload.");
+        Assert(!requestCoordinator.IsBusy,
+            "The host request coordinator must release its single-request gate after remote cancellation.");
         Assert(Volatile.Read(ref requestHandlerCalls) == 2,
             "The cancellation path must process the second request exactly once.");
 
@@ -501,6 +532,60 @@ internal static class PeerAnnouncementClientAcceptanceTests
     {
         var identity = new Identity();
         return new PeerId(identity.PublicKey).ToString();
+    }
+
+    private sealed class CancellationProbeHttpHandler : HttpMessageHandler
+    {
+        public TaskCompletionSource<bool> GenerationStarted { get; } =
+            new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        public TaskCompletionSource<bool> CancellationObserved { get; } =
+            new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        public TaskCompletionSource<bool> GenerationStopped { get; } =
+            new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        protected override async Task<HttpResponseMessage> SendAsync(
+            HttpRequestMessage request,
+            CancellationToken cancellationToken)
+        {
+            string path = request.RequestUri?.AbsolutePath ?? string.Empty;
+            if (request.Method == HttpMethod.Get && path.EndsWith("/health", StringComparison.Ordinal))
+                return new HttpResponseMessage(HttpStatusCode.OK);
+
+            if (request.Method != HttpMethod.Post || path != "/v1/chat/completions")
+                throw new InvalidOperationException("The test backend received an unexpected HTTP request.");
+
+            string requestBody = await request.Content!.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
+            using var payload = JsonDocument.Parse(requestBody);
+            string prompt = payload.RootElement
+                .GetProperty("messages")[0]
+                .GetProperty("content")
+                .GetString() ?? string.Empty;
+
+            if (prompt == "wait-for-cancel")
+            {
+                GenerationStarted.TrySetResult(true);
+                using var registration = cancellationToken.Register(
+                    () => CancellationObserved.TrySetResult(true));
+                try
+                {
+                    await Task.Delay(Timeout.InfiniteTimeSpan, cancellationToken).ConfigureAwait(false);
+                }
+                catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+                {
+                    GenerationStopped.TrySetResult(true);
+                    throw;
+                }
+            }
+
+            const string responseJson =
+                "{\"choices\":[{\"message\":{\"content\":\"loopback-inference-result\"}}]}";
+            return new HttpResponseMessage(HttpStatusCode.OK)
+            {
+                Content = new StringContent(responseJson, Encoding.UTF8, "application/json")
+            };
+        }
     }
 
     private static void Assert(bool condition, string message)

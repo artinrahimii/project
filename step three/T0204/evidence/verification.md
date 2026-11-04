@@ -32,3 +32,7 @@ The parent Product Build run `41911308402` was still in the separate Android Key
 ## Scope limitation
 
 This CI acceptance uses authenticated .NET peer processes over loopback on one CI runner. It does not establish physical Android-to-Windows LAN connectivity or real model inference.
+
+## Graph validation correction
+
+The graph guard's accepted successful history values are `succeeded` and `passed`. The V 3.0.938 record had `T0204-A003.result = "success"`, causing `DONE_WITHOUT_SUCCESSFUL_ATTEMPT` even though the exact-head Android JVM evidence was successful. The value is corrected to `succeeded`; no test result is being fabricated or changed.

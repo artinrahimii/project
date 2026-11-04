@@ -31,3 +31,7 @@ The Product Build parent run was still executing its separate Android Keystore i
 - `T0204-A001`: failed CI attempt — one Python source-contract test rejected double-escaped tab literals; Android KtLint also reported test formatting violations.
 - `T0204-A002`: failed CI attempt — tab-escape and quality-gate issues were corrected, but KtLint still failed.
 - `T0204-A003`: **passed** — Kotlin tab escapes and KtLint formatting corrected; the relevant Android JVM test step passed on the exact commit above.
+
+## Graph record correction (V 3.0.938)
+
+The Step Three Quality Gate on `V 3.0.938` found that `tools/graph_guard.py` accepts successful execution-history results only as `succeeded` or `passed`; the recorded `T0204-A003` value `success` was not in that contract. The actual Android/.NET test evidence on `V 3.0.937` is unchanged and successful. The graph record is corrected to `succeeded` in the next commit; this was a record-format correction, not a re-run or reversal of the T0204 implementation test.
