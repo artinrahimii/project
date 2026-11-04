@@ -6,7 +6,7 @@ using WhiteP.Shared.Contracts.V1;
 
 namespace WhiteP.Host.Application;
 
-public sealed class HostInferenceSession : IDisposable
+public sealed class HostInferenceSession : IDisposable, IAsyncDisposable
 {
     private readonly HostLifecycle _lifecycle;
     private IInferenceBackend _backend;
@@ -14,6 +14,11 @@ public sealed class HostInferenceSession : IDisposable
     private readonly Func<CancellationToken, Task<HostReadinessResult>>? _readinessEvaluator;
     // Serializes inference with connect/reconnect so a backend cannot be replaced mid-request.
     private readonly SemaphoreSlim _operationGate = new(1, 1);
+    private readonly CancellationTokenSource _shutdownCancellation = new();
+    private readonly CancellationToken _shutdownToken;
+    private readonly object _disposeSync = new();
+    private Task? _disposeTask;
+    private int _shutdownStarted;
     private bool _disposed;
 
     public HostInferenceSession(
@@ -26,11 +31,23 @@ public sealed class HostInferenceSession : IDisposable
         _backend = backend ?? new UnconfiguredInferenceBackend();
         _backendFactory = backendFactory;
         _readinessEvaluator = readinessEvaluator;
+        _shutdownToken = _shutdownCancellation.Token;
     }
 
     public HostStatus Status => _lifecycle.Status;
 
-    public bool IsConnected => !_disposed && _lifecycle.Status.State == HostState.Ready;
+    public bool IsConnected => !_disposed && Volatile.Read(ref _shutdownStarted) == 0 && _lifecycle.Status.State == HostState.Ready;
+
+    private void ThrowIfShutdownStarted()
+    {
+        ObjectDisposedException.ThrowIf(Volatile.Read(ref _shutdownStarted) != 0 || _disposed, this);
+    }
+
+    private CancellationTokenSource CreateOperationCancellationSource(CancellationToken callerToken)
+    {
+        ThrowIfShutdownStarted();
+        return CancellationTokenSource.CreateLinkedTokenSource(callerToken, _shutdownToken);
+    }
 
     /// <summary>
     /// Returns a freshly checked local backend/readiness state for an authenticated peer status
@@ -39,16 +56,20 @@ public sealed class HostInferenceSession : IDisposable
     /// </summary>
     public async Task<HostStatus> GetFreshStatusAsync(CancellationToken cancellationToken = default)
     {
-        ObjectDisposedException.ThrowIf(_disposed, this);
+        using var operationCancellation = CreateOperationCancellationSource(cancellationToken);
+        var operationToken = operationCancellation.Token;
+        ThrowIfShutdownStarted();
 
         HostStatus current = _lifecycle.Status;
         if (current.State == HostState.Busy)
         {
+            operationToken.ThrowIfCancellationRequested();
             return current;
         }
 
-        if (!await _operationGate.WaitAsync(0, cancellationToken).ConfigureAwait(false))
+        if (!await _operationGate.WaitAsync(0, operationToken).ConfigureAwait(false))
         {
+            operationToken.ThrowIfCancellationRequested();
             current = _lifecycle.Status;
             return current.State is HostState.Busy or HostState.Starting
                 ? current
@@ -57,13 +78,14 @@ public sealed class HostInferenceSession : IDisposable
 
         try
         {
-            ObjectDisposedException.ThrowIf(_disposed, this);
+            ThrowIfShutdownStarted();
             if (_lifecycle.Status.State == HostState.Busy)
             {
+                operationToken.ThrowIfCancellationRequested();
                 return _lifecycle.Status;
             }
 
-            return await CheckBackendCoreAsync(cancellationToken).ConfigureAwait(false);
+            return await CheckBackendCoreAsync(operationToken).ConfigureAwait(false);
         }
         finally
         {
@@ -79,16 +101,20 @@ public sealed class HostInferenceSession : IDisposable
     public async Task<HostPeerRuntimeSnapshot> GetFreshPeerRuntimeSnapshotAsync(
         CancellationToken cancellationToken = default)
     {
-        ObjectDisposedException.ThrowIf(_disposed, this);
+        using var operationCancellation = CreateOperationCancellationSource(cancellationToken);
+        var operationToken = operationCancellation.Token;
+        ThrowIfShutdownStarted();
 
         HostStatus current = _lifecycle.Status;
         if (current.State == HostState.Busy)
         {
+            operationToken.ThrowIfCancellationRequested();
             return new HostPeerRuntimeSnapshot(current, null);
         }
 
-        if (!await _operationGate.WaitAsync(0, cancellationToken).ConfigureAwait(false))
+        if (!await _operationGate.WaitAsync(0, operationToken).ConfigureAwait(false))
         {
+            operationToken.ThrowIfCancellationRequested();
             current = _lifecycle.Status;
             var transitional = current.State is HostState.Busy or HostState.Starting
                 ? current
@@ -98,13 +124,14 @@ public sealed class HostInferenceSession : IDisposable
 
         try
         {
-            ObjectDisposedException.ThrowIf(_disposed, this);
+            ThrowIfShutdownStarted();
             if (_lifecycle.Status.State == HostState.Busy)
             {
+                operationToken.ThrowIfCancellationRequested();
                 return new HostPeerRuntimeSnapshot(_lifecycle.Status, null);
             }
 
-            HostStatus status = await CheckBackendCoreAsync(cancellationToken).ConfigureAwait(false);
+            HostStatus status = await CheckBackendCoreAsync(operationToken).ConfigureAwait(false);
             if (status.State != HostState.Ready || _backend is not IInferenceModelCapabilityProvider provider)
             {
                 return new HostPeerRuntimeSnapshot(status, null);
@@ -113,7 +140,8 @@ public sealed class HostInferenceSession : IDisposable
             try
             {
                 InferenceModelCapabilitySnapshot? capability =
-                    await provider.GetModelCapabilityAsync(cancellationToken).ConfigureAwait(false);
+                    await provider.GetModelCapabilityAsync(operationToken).ConfigureAwait(false);
+                operationToken.ThrowIfCancellationRequested();
                 if (capability is null ||
                     string.IsNullOrWhiteSpace(capability.ModelId) ||
                     capability.MaxContextTokens == 0 ||
@@ -144,11 +172,13 @@ public sealed class HostInferenceSession : IDisposable
 
     public async Task<HostStatus> ConnectAsync(Uri serverBaseAddress, string model, CancellationToken cancellationToken = default)
     {
-        ObjectDisposedException.ThrowIf(_disposed, this);
-        await _operationGate.WaitAsync(cancellationToken).ConfigureAwait(false);
+        using var operationCancellation = CreateOperationCancellationSource(cancellationToken);
+        var operationToken = operationCancellation.Token;
+        ThrowIfShutdownStarted();
+        await _operationGate.WaitAsync(operationToken).ConfigureAwait(false);
         try
         {
-            ObjectDisposedException.ThrowIf(_disposed, this);
+            ThrowIfShutdownStarted();
             if (_lifecycle.Status.State == HostState.Busy)
             {
                 throw new InvalidOperationException("Cannot reconnect while inference is running.");
@@ -207,7 +237,7 @@ public sealed class HostInferenceSession : IDisposable
                 return _lifecycle.Transition(HostState.Error, "Local inference connection failed.");
             }
 
-            return await CheckBackendCoreAsync(cancellationToken).ConfigureAwait(false);
+            return await CheckBackendCoreAsync(operationToken).ConfigureAwait(false);
         }
         finally
         {
@@ -217,12 +247,14 @@ public sealed class HostInferenceSession : IDisposable
 
     public async Task<HostStatus> CheckBackendAsync(CancellationToken cancellationToken = default)
     {
-        ObjectDisposedException.ThrowIf(_disposed, this);
-        await _operationGate.WaitAsync(cancellationToken).ConfigureAwait(false);
+        using var operationCancellation = CreateOperationCancellationSource(cancellationToken);
+        var operationToken = operationCancellation.Token;
+        ThrowIfShutdownStarted();
+        await _operationGate.WaitAsync(operationToken).ConfigureAwait(false);
         try
         {
-            ObjectDisposedException.ThrowIf(_disposed, this);
-            return await CheckBackendCoreAsync(cancellationToken).ConfigureAwait(false);
+            ThrowIfShutdownStarted();
+            return await CheckBackendCoreAsync(operationToken).ConfigureAwait(false);
         }
         finally
         {
@@ -254,7 +286,9 @@ public sealed class HostInferenceSession : IDisposable
                 return _lifecycle.Transition(HostState.Error, _backend.UnavailableReason);
             }
 
+            cancellationToken.ThrowIfCancellationRequested();
             var readiness = await EvaluateReadinessAsync(cancellationToken).ConfigureAwait(false);
+            cancellationToken.ThrowIfCancellationRequested();
             if (!readiness.IsReady)
             {
                 return _lifecycle.Transition(HostState.Error, readiness.Message);
@@ -275,7 +309,7 @@ public sealed class HostInferenceSession : IDisposable
 
     public async Task<string> GenerateAsync(InferenceRequest request, CancellationToken cancellationToken = default)
     {
-        ObjectDisposedException.ThrowIf(_disposed, this);
+        ThrowIfShutdownStarted();
         ArgumentNullException.ThrowIfNull(request);
 
         var validation = ProtocolMessageValidator.ValidateInferenceRequest(
@@ -298,11 +332,13 @@ public sealed class HostInferenceSession : IDisposable
 
     public async Task<string> GenerateAsync(string prompt, uint maxOutputTokens, CancellationToken cancellationToken = default)
     {
-        ObjectDisposedException.ThrowIf(_disposed, this);
-        await _operationGate.WaitAsync(cancellationToken).ConfigureAwait(false);
+        using var operationCancellation = CreateOperationCancellationSource(cancellationToken);
+        var operationToken = operationCancellation.Token;
+        ThrowIfShutdownStarted();
+        await _operationGate.WaitAsync(operationToken).ConfigureAwait(false);
         try
         {
-            ObjectDisposedException.ThrowIf(_disposed, this);
+            ThrowIfShutdownStarted();
             if (!IsConnected)
             {
                 throw new InvalidOperationException("Connect to a healthy local inference backend first.");
@@ -317,7 +353,8 @@ public sealed class HostInferenceSession : IDisposable
             HostReadinessResult readiness;
             try
             {
-                readiness = await EvaluateReadinessAsync(cancellationToken).ConfigureAwait(false);
+                readiness = await EvaluateReadinessAsync(operationToken).ConfigureAwait(false);
+                operationToken.ThrowIfCancellationRequested();
             }
             catch (OperationCanceledException)
             {
@@ -339,7 +376,8 @@ public sealed class HostInferenceSession : IDisposable
             _lifecycle.Transition(HostState.Busy, "Generating locally; one request at a time.");
             try
             {
-                var output = await _backend.GenerateAsync(prompt, maxOutputTokens, cancellationToken).ConfigureAwait(false);
+                var output = await _backend.GenerateAsync(prompt, maxOutputTokens, operationToken).ConfigureAwait(false);
+                operationToken.ThrowIfCancellationRequested();
                 var responseValidation = ProtocolMessageLimits.ValidateResponseText(output);
                 if (!responseValidation.IsValid)
                 {
@@ -383,11 +421,13 @@ public sealed class HostInferenceSession : IDisposable
 
     public async Task<HostStatus> DisconnectAsync(CancellationToken cancellationToken = default)
     {
-        ObjectDisposedException.ThrowIf(_disposed, this);
-        await _operationGate.WaitAsync(cancellationToken).ConfigureAwait(false);
+        using var operationCancellation = CreateOperationCancellationSource(cancellationToken);
+        var operationToken = operationCancellation.Token;
+        ThrowIfShutdownStarted();
+        await _operationGate.WaitAsync(operationToken).ConfigureAwait(false);
         try
         {
-            ObjectDisposedException.ThrowIf(_disposed, this);
+            ThrowIfShutdownStarted();
             if (_lifecycle.Status.State != HostState.Stopped)
                 _lifecycle.Transition(HostState.Stopped, "Active model disconnected; backend client resources released.");
             if (_backend is IDisposable backend) backend.Dispose();
@@ -399,23 +439,91 @@ public sealed class HostInferenceSession : IDisposable
 
     public void Dispose()
     {
-        if (_disposed)
+        DisposeAsync().AsTask().GetAwaiter().GetResult();
+    }
+
+    public ValueTask DisposeAsync()
+    {
+        TaskCompletionSource? startDisposal = null;
+        Task disposalTask;
+        lock (_disposeSync)
         {
-            return;
+            if (_disposeTask is null)
+            {
+                startDisposal = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+                _disposeTask = startDisposal.Task;
+            }
+
+            disposalTask = _disposeTask;
         }
 
-        // A closed, idle session must not continue to advertise a healthy backend.
-        // An in-flight request remains Busy until its cancellation/error path settles.
-        if (_lifecycle.Status.State != HostState.Stopped &&
-            _lifecycle.Status.State != HostState.Busy)
+        // Start outside the lock after publishing the shared task. Cancellation callbacks
+        // may re-enter DisposeAsync; they must observe the same task instead of starting a
+        // second shutdown while the first cancellation is being dispatched.
+        if (startDisposal is not null)
         {
-            _lifecycle.Transition(HostState.Stopped, "Host session disposed.");
+            _ = CompleteDisposeAsync(startDisposal);
         }
 
-        _disposed = true;
-        if (_backend is IDisposable backend)
+        return new ValueTask(disposalTask);
+    }
+
+    private async Task CompleteDisposeAsync(TaskCompletionSource completion)
+    {
+        try
         {
-            backend.Dispose();
+            await DisposeCoreAsync().ConfigureAwait(false);
+            completion.TrySetResult();
+        }
+        catch (Exception exception)
+        {
+            completion.TrySetException(exception);
+        }
+    }
+
+    private async Task DisposeCoreAsync()
+    {
+        Interlocked.Exchange(ref _shutdownStarted, 1);
+        try
+        {
+            _shutdownCancellation.Cancel();
+        }
+        catch (AggregateException)
+        {
+            // Cancellation callbacks must not prevent the host from draining and disposing its backend.
+        }
+
+        var acquired = false;
+        try
+        {
+            await _operationGate.WaitAsync().ConfigureAwait(false);
+            acquired = true;
+            if (_disposed)
+            {
+                return;
+            }
+
+            if (_lifecycle.Status.State != HostState.Stopped)
+            {
+                _lifecycle.Transition(HostState.Stopped, "Host session shutdown completed.");
+            }
+
+            var previousBackend = _backend;
+            _backend = new UnconfiguredInferenceBackend();
+            _disposed = true;
+            if (previousBackend is IDisposable backend)
+            {
+                backend.Dispose();
+            }
+        }
+        finally
+        {
+            if (acquired)
+            {
+                _operationGate.Release();
+            }
+
+            _shutdownCancellation.Dispose();
         }
     }
 }

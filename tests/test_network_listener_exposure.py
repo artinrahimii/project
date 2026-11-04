@@ -70,21 +70,45 @@ class NetworkListenerExposureTests(unittest.TestCase):
 
         self.assertIn("if (_allowWindowClose)", closing)
         self.assertIn("e.Cancel = true;", closing)
-        dispose = closing.index("await _peerParticipationService.DisposeAsync();")
-        self.assertIn("_ = Dispatcher.BeginInvoke(", closing)
+        cancel_local = closing.index("_operationCancellation?.Cancel();")
+        cancel_update = closing.index("_modelUpdateCancellation?.Cancel();")
+        dispose = closing.index("await peerService.DisposeAsync();")
+        stop_owned_engine = closing.index("_localInferenceProcessLauncher.Stop();")
+        dispose_session = closing.index("await _session.DisposeAsync();")
+        wait_update = closing.index("await _modelUpdateTask;")
+        wait_generation = closing.index("await _generationTask;")
         retry_close = closing.index("_ = Dispatcher.BeginInvoke(")
-        self.assertLess(dispose, retry_close)
+        self.assertLess(cancel_local, dispose)
+        self.assertLess(cancel_update, dispose)
+        self.assertLess(dispose, stop_owned_engine)
+        self.assertLess(stop_owned_engine, dispose_session)
+        self.assertLess(dispose_session, wait_update)
+        self.assertLess(wait_update, wait_generation)
+        self.assertLess(wait_generation, retry_close)
         self.assertIn("_peerParticipationService = null;", closing)
         self.assertIn("_allowWindowClose = true;", closing)
         self.assertIn("Close();", closing)
 
+    def test_window_closing_cancels_and_awaits_local_work_before_async_session_disposal(self):
+        closing = WINDOW.split("private async void MainWindow_Closing", 1)[1].split(
+            "private void MainWindow_Closed", 1
+        )[0]
+        self.assertIn("_windowClosing = true;", closing)
+        self.assertIn("_operationCancellation?.Cancel();", closing)
+        self.assertIn("_modelUpdateCancellation?.Cancel();", closing)
+        self.assertIn("await _modelUpdateTask;", closing)
+        self.assertIn("await _generationTask;", closing)
+        self.assertIn("await _session.DisposeAsync();", closing)
+        self.assertNotIn("_session.Dispose();", closing)
+
     def test_window_closed_cancels_pending_work_and_releases_owned_resources(self):
         start = WINDOW.index("private void MainWindow_Closed")
         closed = WINDOW[start:]
-        self.assertIn("_operationCancellation?.Cancel();", closed)
-        self.assertIn("_modelUpdateCancellation?.Cancel();", closed)
+        self.assertNotIn("_operationCancellation?.Cancel();", closed)
+        self.assertNotIn("_modelUpdateCancellation?.Cancel();", closed)
         self.assertIn("_operationCancellation?.Dispose();", closed)
-        self.assertIn("_session.Dispose();", closed)
+        self.assertIn("_modelUpdateCancellation?.Dispose();", closed)
+        self.assertNotIn("_session.Dispose();", closed)
         self.assertIn("_localInferenceProcessLauncher.Dispose();", closed)
 
 

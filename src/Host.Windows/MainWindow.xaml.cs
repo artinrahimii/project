@@ -43,6 +43,8 @@ public partial class MainWindow : Window
     private string? _requestedMinimumFreeDiskRequirementText;
     private CancellationTokenSource? _operationCancellation;
     private CancellationTokenSource? _modelUpdateCancellation;
+    private Task? _generationTask;
+    private Task? _modelUpdateTask;
     private volatile bool _capacityReady;
     private bool _clearSessionRequested;
     private bool _suppressParticipationToggleChanged;
@@ -185,6 +187,25 @@ public partial class MainWindow : Window
 
     private async void UpdateSelectedModelButton_Click(object sender, RoutedEventArgs e)
     {
+        if (_windowClosing || _modelUpdateTask is not null) return;
+        var operationTask = UpdateSelectedModelAsync();
+        _modelUpdateTask = operationTask;
+        try
+        {
+            await operationTask;
+        }
+        finally
+        {
+            if (ReferenceEquals(_modelUpdateTask, operationTask))
+            {
+                _modelUpdateTask = null;
+            }
+        }
+    }
+
+    private async Task UpdateSelectedModelAsync()
+    {
+        if (_windowClosing) return;
         if (_session.Status.State is HostState.Busy or HostState.Starting)
         {
             CatalogStatus.Text = "Wait for the current host operation to finish before updating a model.";
@@ -267,7 +288,7 @@ public partial class MainWindow : Window
             var installer = new VerifiedModelInstaller(downloader);
             var progress = new Progress<ModelDownloadProgress>(value =>
             {
-                if (!ReferenceEquals(_modelUpdateCancellation, cancellation))
+                if (_windowClosing || !ReferenceEquals(_modelUpdateCancellation, cancellation))
                 {
                     return;
                 }
@@ -309,18 +330,18 @@ public partial class MainWindow : Window
         }
         catch (OperationCanceledException)
         {
-            CatalogStatus.Text = "Model update cancelled before atomic replacement. The previously installed model was preserved; reconnect/restart the host before using it again.";
-            RenderStatus(_session.Status);
+            if (!_windowClosing) CatalogStatus.Text = "Model update cancelled before atomic replacement. The previously installed model was preserved; reconnect/restart the host before using it again.";
+            if (!_windowClosing) RenderStatus(_session.Status);
         }
         catch (Exception exception) when (
             exception is IOException or InvalidDataException or UnauthorizedAccessException or ArgumentException or
             NotSupportedException or InvalidOperationException or TimeoutException or System.Net.Http.HttpRequestException)
         {
-            CatalogStatus.Text =
+            if (!_windowClosing) CatalogStatus.Text =
                 "Model update failed. Downloaded content is not promoted until size, SHA-256 and GGUF checks pass; " +
                 "the previous destination is preserved on validation or atomic-replacement failure. " +
                 HostErrorPresentation.ToUserMessage(exception);
-            RenderStatus(_session.Status);
+            if (!_windowClosing) RenderStatus(_session.Status);
         }
         finally
         {
@@ -330,6 +351,8 @@ public partial class MainWindow : Window
             }
 
             cancellation.Dispose();
+            if (!_windowClosing)
+            {
             CancelModelUpdateButton.IsEnabled = false;
             CancelModelUpdateButton.Visibility = Visibility.Collapsed;
             UpdateSelectedModelButton.IsEnabled = true;
@@ -340,7 +363,9 @@ public partial class MainWindow : Window
             StartLocalEngineButton.IsEnabled = true;
             CatalogItems.IsEnabled = true;
             GenerateButton.IsEnabled = _session.IsConnected && _capacityReady;
+            }
         }
+    
     }
 
     private void CancelModelUpdateButton_Click(object sender, RoutedEventArgs e)
@@ -494,6 +519,24 @@ public partial class MainWindow : Window
 
     private async void GenerateButton_Click(object sender, RoutedEventArgs e)
     {
+        if (_windowClosing || _generationTask is not null) return;
+        var operationTask = GeneratePromptAsync();
+        _generationTask = operationTask;
+        try
+        {
+            await operationTask;
+        }
+        finally
+        {
+            if (ReferenceEquals(_generationTask, operationTask))
+            {
+                _generationTask = null;
+            }
+        }
+    }
+
+    private async Task GeneratePromptAsync()
+    {
         var prompt = PromptInput.Text.Trim();
         if (string.IsNullOrWhiteSpace(prompt))
         {
@@ -522,35 +565,40 @@ public partial class MainWindow : Window
             var generationTask = _session.GenerateAsync(prompt, 1024, _operationCancellation.Token);
             RenderStatus(_session.Status);
             var response = await generationTask;
-            if (!_clearSessionRequested)
+            if (!_clearSessionRequested && !_windowClosing)
             {
                 AppendConversationMessage(ConversationMessageRole.Assistant, response);
             }
-            RenderStatus(_session.Status);
+            if (!_windowClosing) RenderStatus(_session.Status);
         }
         catch (OperationCanceledException)
         {
             if (_localInferenceProcessLauncher.IsRunning)
             {
                 _localInferenceProcessLauncher.Stop();
-                LocalProcessStatus.Text = "Local engine process stopped after inference cancellation; reconnect before generating again.";
+                if (!_windowClosing)
+                {
+                    LocalProcessStatus.Text = "Local engine process stopped after inference cancellation; reconnect before generating again.";
+                }
             }
-            RenderStatus(_session.Status);
-            if (!_clearSessionRequested)
+            if (!_windowClosing) RenderStatus(_session.Status);
+            if (!_clearSessionRequested && !_windowClosing)
             {
                 AppendConversationMessage(ConversationMessageRole.System, "Inference cancelled. Reconnect before the next request.");
             }
         }
         catch (Exception exception)
         {
-            RenderStatus(_session.Status);
-            if (!_clearSessionRequested)
+            if (!_windowClosing) RenderStatus(_session.Status);
+            if (!_clearSessionRequested && !_windowClosing)
             {
                 AppendConversationMessage(ConversationMessageRole.System, HostErrorPresentation.ToUserMessage(exception));
             }
         }
         finally
         {
+            if (!_windowClosing)
+            {
             if (ChatMessages.Items.Count > 0)
             {
                 ChatMessages.ScrollIntoView(ChatMessages.Items[ChatMessages.Items.Count - 1]);
@@ -560,6 +608,7 @@ public partial class MainWindow : Window
             RenderHostHardwareSummary();
             ConnectButton.IsEnabled = true;
             GenerateButton.IsEnabled = _session.IsConnected && _capacityReady;
+            }
         }
     }
 
@@ -1208,42 +1257,105 @@ public partial class MainWindow : Window
         IsEnabled = false;
         NetworkParticipationToggle.IsEnabled = false;
 
+        // Stop new local UI work immediately; the peer lifecycle below independently
+        // closes its listener, cancels peer requests, and awaits its handlers.
+        _operationCancellation?.Cancel();
+        _modelUpdateCancellation?.Cancel();
+
+        Exception? cleanupFailure = null;
+        var peerService = _peerParticipationService;
+        if (peerService is not null)
+        {
+            try
+            {
+                await peerService.DisposeAsync();
+            }
+            catch (Exception exception)
+            {
+                cleanupFailure ??= exception;
+            }
+            finally
+            {
+                if (ReferenceEquals(_peerParticipationService, peerService))
+                {
+                    _peerParticipationService = null;
+                }
+            }
+        }
+
+        // Stop only the engine process owned by this app. External backends are never killed.
+        if (_localInferenceProcessLauncher.IsRunning)
+        {
+            try
+            {
+                _localInferenceProcessLauncher.Stop();
+            }
+            catch (Exception exception)
+            {
+                cleanupFailure ??= exception;
+            }
+        }
+
         try
         {
-            if (_peerParticipationService is not null)
-            {
-                await _peerParticipationService.DisposeAsync();
-                _peerParticipationService = null;
-            }
+            // DisposeAsync closes session admission, cancels linked operation tokens, and waits
+            // for the shared operation gate before disposing the backend.
+            await _session.DisposeAsync();
         }
         catch (Exception exception)
         {
+            cleanupFailure ??= exception;
+        }
+
+        if (_modelUpdateTask is not null)
+        {
+            try
+            {
+                await _modelUpdateTask;
+            }
+            catch (Exception exception)
+            {
+                cleanupFailure ??= exception;
+            }
+        }
+
+        if (_generationTask is not null)
+        {
+            try
+            {
+                await _generationTask;
+            }
+            catch (Exception exception)
+            {
+                cleanupFailure ??= exception;
+            }
+        }
+
+        if (cleanupFailure is not null)
+        {
             MessageBox.Show(
                 this,
-                $"Network listener shutdown reported an error. The listener stop was requested. {HostErrorPresentation.ToUserMessage(exception)}",
-                "Network shutdown warning",
+                $"Host shutdown reported a cleanup error. Active work was cancelled and resource release was attempted. {HostErrorPresentation.ToUserMessage(cleanupFailure)}",
+                "Host shutdown warning",
                 MessageBoxButton.OK,
                 MessageBoxImage.Warning);
         }
-        finally
-        {
-            // Defer the second Close until the original Closing event has returned, even when cleanup completes synchronously.
-            _ = Dispatcher.BeginInvoke(
-                System.Windows.Threading.DispatcherPriority.Normal,
-                new Action(() =>
-                {
-                    _allowWindowClose = true;
-                    Close();
-                }));
-        }
+
+        // Defer the second Close until the original Closing event has returned and all
+        // owned session/network work has been drained.
+        _ = Dispatcher.BeginInvoke(
+            System.Windows.Threading.DispatcherPriority.Normal,
+            new Action(() =>
+            {
+                _allowWindowClose = true;
+                Close();
+            }));
     }
 
     private void MainWindow_Closed(object? sender, EventArgs e)
     {
-        _operationCancellation?.Cancel();
-        _modelUpdateCancellation?.Cancel();
         _operationCancellation?.Dispose();
-        _session.Dispose();
+        _modelUpdateCancellation?.Dispose();
         _localInferenceProcessLauncher.Dispose();
     }
 }

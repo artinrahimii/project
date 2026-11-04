@@ -132,6 +132,123 @@ internal static class HostInferenceSessionConcurrencyTests
         Console.WriteLine("PASS: model removal waits for in-flight inference before releasing backend resources.");
     }
 
+    public static async Task DisposeAsyncCancelsAndDrainsActiveGenerationAsync()
+    {
+        var backend = new ShutdownBlockingBackend();
+        var session = new HostInferenceSession(
+            backend: new ImmediateInferenceBackend(),
+            backendFactory: (_, _) => backend,
+            readinessEvaluator: _ => Task.FromResult(new HostReadinessResult(true, "Test readiness passed.")));
+        Task<string>? generationTask = null;
+        Task? disposeTask = null;
+
+        try
+        {
+            var connected = await session.ConnectAsync(new Uri("http://127.0.0.1:8080/"), "shutdown-model");
+            Assert(connected.State == HostState.Ready, "The shutdown test requires a connected backend.");
+
+            generationTask = session.GenerateAsync("active shutdown test", 32);
+            await backend.GenerationStarted.WaitAsync(TimeSpan.FromSeconds(5));
+            Assert(session.Status.State == HostState.Busy, "The host must stay Busy while inference is active.");
+
+            var firstDisposal = session.DisposeAsync();
+            var secondDisposal = session.DisposeAsync();
+            disposeTask = firstDisposal.AsTask();
+            Assert(ReferenceEquals(disposeTask, secondDisposal.AsTask()),
+                "Concurrent disposal callers must share one shutdown operation.");
+            await backend.CancellationObserved.WaitAsync(TimeSpan.FromSeconds(5));
+            Assert(!disposeTask.IsCompleted, "Shutdown must wait for an active backend call to leave the operation gate.");
+            Assert(!backend.Disposed, "Shutdown must not dispose a backend that is still executing inference.");
+
+            backend.ReleaseGeneration();
+            var cancellationObserved = false;
+            try
+            {
+                await generationTask.WaitAsync(TimeSpan.FromSeconds(5));
+            }
+            catch (OperationCanceledException)
+            {
+                cancellationObserved = true;
+            }
+
+            Assert(cancellationObserved, "A backend that returns after shutdown cancellation must not publish a late successful result.");
+            await disposeTask.WaitAsync(TimeSpan.FromSeconds(5));
+            Assert(backend.GenerationCompleted, "Shutdown must drain the active generation before disposing its backend.");
+            Assert(backend.Disposed, "Shutdown must dispose the backend after the active operation exits.");
+            Assert(session.Status.State == HostState.Stopped, "A fully drained session must end in Stopped.");
+            Assert(!session.IsConnected, "A shutting down session must not remain connected.");
+
+            var reuseRejected = false;
+            try
+            {
+                await session.CheckBackendAsync();
+            }
+            catch (ObjectDisposedException)
+            {
+                reuseRejected = true;
+            }
+
+            Assert(reuseRejected, "A disposed host session must reject new operations.");
+        }
+        finally
+        {
+            backend.ReleaseGeneration();
+            if (disposeTask is not null)
+            {
+                try { await disposeTask.WaitAsync(TimeSpan.FromSeconds(5)); }
+                catch (Exception) { }
+            }
+            else
+            {
+                try { await session.DisposeAsync().AsTask().WaitAsync(TimeSpan.FromSeconds(5)); }
+                catch (Exception) { }
+            }
+
+            if (generationTask is not null)
+            {
+                try { await generationTask.WaitAsync(TimeSpan.FromSeconds(5)); }
+                catch (Exception) { }
+            }
+        }
+
+        Console.WriteLine("PASS: async host shutdown cancels active inference, rejects late results, drains work before backend disposal, and closes admission.");
+    }
+
+    private sealed class ShutdownBlockingBackend : IInferenceBackend, IDisposable
+    {
+        private readonly TaskCompletionSource<bool> _generationStarted = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        private readonly TaskCompletionSource<bool> _releaseGeneration = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        private readonly TaskCompletionSource<bool> _cancellationObserved = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        public bool IsAvailable => true;
+        public string UnavailableReason => string.Empty;
+        public bool GenerationCompleted { get; private set; }
+        public bool Disposed { get; private set; }
+        public Task GenerationStarted => _generationStarted.Task;
+        public Task CancellationObserved => _cancellationObserved.Task;
+
+        public async Task<string> GenerateAsync(string prompt, uint maxOutputTokens, CancellationToken cancellationToken = default)
+        {
+            using var registration = cancellationToken.Register(() => _cancellationObserved.TrySetResult(true));
+            _generationStarted.TrySetResult(true);
+            // Deliberately ignore cancellation until the test releases this operation. This
+            // proves the session waits for an owned backend call before disposing its resources.
+            await _releaseGeneration.Task.ConfigureAwait(false);
+            GenerationCompleted = true;
+            return "late backend result";
+        }
+
+        public Task<bool> CheckHealthAsync(CancellationToken cancellationToken = default) => Task.FromResult(true);
+        public void ReleaseGeneration() => _releaseGeneration.TrySetResult(true);
+
+        public void Dispose()
+        {
+            if (!GenerationCompleted)
+                throw new InvalidOperationException("Backend disposal raced active generation.");
+            Disposed = true;
+        }
+    }
+
     private sealed class DisposableTrackingBackend : IInferenceBackend, IDisposable
     {
         public bool IsAvailable => true;

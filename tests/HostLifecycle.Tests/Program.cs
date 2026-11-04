@@ -154,6 +154,7 @@ await HostRequestAdmissionTests.RunAsync();
 await HostInferenceSessionConcurrencyTests.RunAsync();
 await HostInferenceSessionConcurrencyTests.DisconnectReleasesBackendAsync();
 await HostInferenceSessionConcurrencyTests.DisconnectWaitsForGenerationBeforeDisposalAsync();
+await HostInferenceSessionConcurrencyTests.DisposeAsyncCancelsAndDrainsActiveGenerationAsync();
 
 const ulong gibibyte = 1024UL * 1024UL * 1024UL;
 var sufficientHostReadiness = HostReadinessEvaluator.Evaluate(

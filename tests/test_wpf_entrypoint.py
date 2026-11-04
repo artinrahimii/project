@@ -7,6 +7,7 @@ APP_XAML = (ROOT / "src/Host.Windows/App.xaml").read_text(encoding="utf-8")
 APP_CODE = (ROOT / "src/Host.Windows/App.xaml.cs").read_text(encoding="utf-8")
 WINDOW_XAML = (ROOT / "src/Host.Windows/MainWindow.xaml").read_text(encoding="utf-8")
 WINDOW_CODE = (ROOT / "src/Host.Windows/MainWindow.xaml.cs").read_text(encoding="utf-8")
+SESSION_CODE = (ROOT / "src/Host.Application/HostInferenceSession.cs").read_text(encoding="utf-8")
 PROJECT = (ROOT / "src/Host.Windows/WhiteP.Host.Windows.csproj").read_text(encoding="utf-8")
 WORKFLOW = (ROOT / ".github/workflows/product-build.yml").read_text(encoding="utf-8")
 
@@ -26,7 +27,7 @@ class WpfEntryPointTests(unittest.TestCase):
                 self.assertIn(f'window.FindName("{name}")', APP_CODE)
         self.assertIn("InitializeComponent();", WINDOW_CODE)
         self.assertIn("RenderStatus(_session.Status);", WINDOW_CODE)
-        self.assertIn("_session.Dispose();", WINDOW_CODE)
+        self.assertIn("await _session.DisposeAsync();", WINDOW_CODE)
         self.assertIn('Content="Send message"', WINDOW_XAML)
         self.assertIn("AppendConversationMessage(ConversationMessageRole.User, prompt);", WINDOW_CODE)
         self.assertIn("AppendConversationMessage(ConversationMessageRole.Assistant, response);", WINDOW_CODE)
@@ -38,6 +39,17 @@ class WpfEntryPointTests(unittest.TestCase):
         self.assertIn('Unchecked="HostConversationRetentionToggle_Changed"', WINDOW_XAML)
         self.assertIn("EnableHostConversationRetention()", WINDOW_CODE)
         self.assertIn("DisableHostConversationRetention()", WINDOW_CODE)
+
+    def test_host_session_async_disposal_cancels_and_drains_before_backend_release(self):
+        self.assertIn("IAsyncDisposable", SESSION_CODE)
+        self.assertIn("CreateLinkedTokenSource(callerToken, _shutdownToken)", SESSION_CODE)
+        self.assertIn("public ValueTask DisposeAsync()", SESSION_CODE)
+        self.assertIn("lock (_disposeSync)", SESSION_CODE)
+        self.assertIn("_shutdownCancellation.Cancel();", SESSION_CODE)
+        self.assertIn("await _operationGate.WaitAsync().ConfigureAwait(false);", SESSION_CODE)
+        self.assertIn("operationToken.ThrowIfCancellationRequested();", SESSION_CODE)
+        self.assertIn("previousBackend.Dispose();", SESSION_CODE)
+        self.assertIn("HostState.Stopped", SESSION_CODE)
 
     def test_smoke_mode_waits_for_loaded_visible_main_window_then_exits(self):
         for marker in (
@@ -96,7 +108,7 @@ class WpfEntryPointTests(unittest.TestCase):
         self.assertIn("OperationCanceledException", presenter)
 
     def test_inference_failures_are_system_messages_not_assistant_responses(self):
-        generate_method = WINDOW_CODE.split("private async void GenerateButton_Click", 1)[1].split(
+        generate_method = WINDOW_CODE.split("private async Task GeneratePromptAsync", 1)[1].split(
             "private void AppendConversationMessage", 1
         )[0]
 
@@ -142,7 +154,7 @@ class WpfEntryPointTests(unittest.TestCase):
         clear_method = WINDOW_CODE.split("private void ClearSessionButton_Click", 1)[1].split(
             "private void CancelGenerationButton_Click", 1
         )[0]
-        generate_method = WINDOW_CODE.split("private async void GenerateButton_Click", 1)[1].split(
+        generate_method = WINDOW_CODE.split("private async Task GeneratePromptAsync", 1)[1].split(
             "private void AppendConversationMessage", 1
         )[0]
         self.assertIn("_operationCancellation?.Cancel();", clear_method)
