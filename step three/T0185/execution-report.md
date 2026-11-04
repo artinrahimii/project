@@ -1,7 +1,7 @@
 # T0185 — حداقل‌سازی مجوزهای Android
 
-- **وضعیت:** `in_progress`؛ manifest منبع فقط INTERNET را درخواست می‌کند. اجرای exact-head نسخهٔ V 3.0.868 نشان داد AndroidX Core یک مجوز app-scoped از نوع signature را نیز در manifest ادغام‌شده قرار می‌دهد؛ verifier قبلی آن را به‌اشتباه رد کرد. نسخهٔ A003 این مورد خاص را همراه با بررسی سطح signature می‌پذیرد؛ پذیرش CI نسخهٔ اصلاح‌شده هنوز در انتظار است.
-- **مبنای بررسی:** شاخهٔ `main`، commit `a2c5a33064c78744c1e8e7194ec9f9fa1d45ef19` — `V 3.0.867`.
+- **وضعیت فعلی:** `done`؛ معیار پذیرش در exact-head V 3.0.871 احراز شد. ممیزی AAPT2 روی APK واقعی، آزمون‌های Android و quality gate موفق‌اند؛ جزئیات در A006 و فایل شواهد ثبت شده‌اند.
+- **مبنای بررسی نهایی:** شاخهٔ `main`، commit `4f44de18e841bcf20e3096e80706e6f23b62206d` — `V 3.0.871`؛ product run `41735585097` و quality run `41735585127`.
 - **تلاش:** `T0185-A001`؛ بازبینی وابستگی‌ها و افزودن کنترل مجوزهای منبع و APK.
 - **تصمیم permission:** فقط `INTERNET` لازم است؛ کلاینت اتصال HTTPS به rendezvous و سوکت TCP/libp2p دارد. کد فعلی وضعیت شبکه را query نمی‌کند و API درخواست مجوز runtime ندارد. ذخیره‌سازی SQLCipher در فضای خصوصی اپ است و به مجوز storage خارجی نیاز ندارد.
 - **Manifest:** هیچ مجوز جدیدی اضافه یا مجوز موجودی حذف نشد؛ یک توضیح کنار تنها declaration اضافه شد تا نیاز واقعی و install-time بودن آن روشن باشد.
@@ -9,7 +9,7 @@
 - **آزمون‌های Python:** ۱۳ آزمون اختصاصی برای manifest منبع، applicationId، parsing مجوزهای AAPT2، سطح signature و رد مجوزهای اضافی/مفقود وجود دارد. همهٔ ۱۳ آزمون در Step Three quality gate دقیق V 3.0.869 با موفقیت اجرا شدند؛ در مجموع ۳۶۶ آزمون Python موفق بودند.
 - **وابستگی‌ها:** یال‌های `T0184 → T0185` و `T0177 → T0185` پس از بررسی شواهد به `sequencing_only` تغییر طبقه‌بندی یافتند؛ نوع `blocks` و ترتیب محافظه‌کارانه حفظ شده‌اند.
 - **فایل‌های خروجی:** manifest Android، workflow محصول، verifier Python، آزمون‌های Python، `docs/security.md`، این گزارش و فایل شواهد.
-- **مرز تکمیل:** تا اجرای موفق exact-head product workflow و مشاهدهٔ گزارش AAPT2، وظیفه `done` نمی‌شود.
+- **مرز تکمیل:** این معیار در A006 با مشاهدهٔ خروجی AAPT2 از APK واقعی، اجرای Android JVM و instrumentation، و quality gate exact-head احراز شد؛ وضعیت فعلی `done` است.
 
 
 ## A002 — شکست واقعی ممیزی Manifest ادغام‌شده در V 3.0.868
@@ -55,3 +55,15 @@
 - product run قبلی V 3.0.870 در زمان ثبت A005 هنوز در مرحله‌های مقدماتی بود؛ نتیجهٔ آن در این گزارش موفق یا ناموفق فرض نشده است.
 - **نتیجه:** parser اصلاح شده، T0185 همچنان in_progress است تا ممیزی APK واقعی و آزمون‌های Android در exact-head CI موفق شوند.
 
+
+
+## A006 — پذیرش نهایی exact-head در V 3.0.871
+
+- commit آزموده‌شده: `4f44de18e841bcf20e3096e80706e6f23b62206d`؛ product run `41735585097`؛ quality run `41735585127`.
+- Android KtLint و `assembleDebug` موفق شدند.
+- ممیزی واقعی AAPT2 روی APK ساخته‌شده موفق شد. خروجی permissionها دقیقاً `android.permission.INTERNET` و `com.whitep.client.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION` بود؛ تعریف مجوز دوم در Manifest باینری با `protectionLevel=signature (0x2)` تأیید شد.
+- آزمون Android JVM (`testDebugUnitTest`) و آزمون connected instrumentation (`connectedDebugAndroidTest`) موفق شدند.
+- artifact شمارهٔ `13279121914` شامل ۹ آزمون instrumentation با صفر شکست و صفر مورد skip است: ۴ آزمون `EncryptedClientDatabaseAcceptanceTest` و ۵ آزمون `AndroidKeyStorePersistenceTest`.
+- quality gate دقیق همان commit، ۳۶۷ آزمون Python را با موفقیت اجرا کرد؛ `compileall` و graph/output/evidence validation نیز موفق شدند. Graph guard تعداد ۲۳۰ وظیفه و ۴۲۲ یال را با صفر خطا و یک هشدار قدیمی و حفظ‌شده برای T0001 گزارش کرد.
+- Windows WPF، HostLifecycle و Rendezvous container build/smoke نیز موفق شدند.
+- **نتیجه:** اصلاح namespace کامل AAPT2 روی APK واقعی تأیید شد؛ `T0185` تکمیل‌شده است. دو تلاش ناموفق A002 و A004 در تاریخچه باقی می‌مانند و حذف نشده‌اند.

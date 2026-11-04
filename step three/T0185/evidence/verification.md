@@ -97,3 +97,17 @@
 - Local fixture validation passed for both namespace forms, extracting the app-scoped permission name and signature protection level 0x2.
 - The actual APK audit on V 3.0.871 has not run yet. Product run 41735036654 for V 3.0.870 was still active before this correction and is not counted as success.
 
+
+
+## A006 — شواهد exact-head V 3.0.871 و اعتبارسنجی فایل‌ها
+
+- شاخه: `main`؛ commit مورد آزمون `4f44de18e841bcf20e3096e80706e6f23b62206d`؛ tree همان commit: `678da0157659f3a14b02d5efca463c9e5283d9da`.
+- فایل گراف `step three/project-graph.md` از Blob API با SHA `7468c269cf7efcf00ac91215b55a436c995d4af2` دریافت شد. متن ۳٬۲۹۰٬۴۱۰ نویسه و ۳٬۴۱۷٬۵۴۷ بایت UTF-8 بود؛ اندازهٔ tree نیز ۳٬۴۱۷٬۵۴۷ بایت بود. Git Blob SHA-1 محاسبه‌شده روی `blob <size>\0<bytes>` دقیقاً با Blob ID برابر شد. حصار Markdown حفظ و JSON داخلی کامل parse شد: ۲۳۰ node و ۴۲۲ edge.
+- فایل Manifest منبع: `src/Client.Android/app/src/main/AndroidManifest.xml`؛ Blob `36db9e70d041f4c380557ec1212c100295bfce13`؛ تنها declaration منبع `android.permission.INTERNET` است.
+- verifier: `tools/verify_android_permissions.py`؛ Blob `411bbada506f2d39aafea167fdc51282766de2ba`. آزمون‌ها: `tests/test_android_minimum_permissions.py`؛ Blob `8103c265f6e6e16f57b54f43ee13d986217b5246`. Workflow: `.github/workflows/product-build.yml`؛ Blob `cadaeb0e2dbb848b9ef5b41ddff423783d8dd756`.
+- Product run `41735585097`, Android job `126263830821`: KtLint، `assembleDebug`، مرحلهٔ `Verify minimum permissions in merged Android APK`، `testDebugUnitTest` و `connectedDebugAndroidTest` همگی موفق شدند. لاگ AAPT2 خروجی دقیق دو permission و تأیید signature برای مجوز app-scoped را ثبت می‌کند.
+- Instrumentation artifact `13279121914`: گزارش HTML خلاصه ۹ آزمون، صفر failure، صفر skipped؛ تمام ۴ آزمون دیتابیس رمزگذاری‌شده و ۵ آزمون ماندگاری Android Keystore موفق.
+- Quality run `41735585127`, job `126263830327`: `Ran 367 tests ... OK`؛ compileall موفق؛ graph guard: ۲۳۰ task / ۴۲۲ edge، صفر error، یک هشدار قدیمی `UNMAPPED_DEPENDENCY` مربوط به T0001 که بدون تغییر حفظ شد.
+- Product workflow همچنین Windows WPF، HostLifecycle و Rendezvous container build/smoke را با موفقیت تکمیل کرد.
+- یال‌های `T0184 → T0185` و `T0177 → T0185` پیش‌تر با شواهد به `sequencing_only` / `validated` طبقه‌بندی شده بودند؛ نوع `blocks` و ترتیب اصلی حفظ شده است. یال `T0185 → T0186` همچنان `unreviewed` باقی مانده و برای شروع T0186 باید همراه با یال `T0177 → T0186` بازبینی شود.
+- **نتیجه:** شواهد واقعی exact-head معیار پذیرش T0185 را تأیید می‌کند؛ وضعیت `done` ثبت شد. Blob IDs بالا از tree همان commit استخراج شده‌اند؛ اعتبارسنجی Blob گراف در همین نوبت به‌طور مستقل با SHA-1 Git انجام شد.
