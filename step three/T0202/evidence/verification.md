@@ -17,3 +17,21 @@
 ## Status
 
 The evidence establishes the gap, not successful T0202 acceptance. The task remains blocked until a real Android-to-Windows local-network request/response test passes.
+
+## T0202-A002 — executable LAN harness review (not acceptance)
+
+- Base: 95eeb40ed96ff6ef1950beb0746e6a30f761f79d (`V 3.0.925`), branch `main`.
+- The Windows .NET fixture now has an opt-in non-loopback IPv4 listener mode while retaining its original loopback default for JVM/.NET tests.
+- Added `src/Client.Android/app/src/androidTest/java/com/whitep/client/network/AndroidWindowsLanIntegrationTest.kt`. It derives the Android PeerId from the Keystore-backed identity, explicitly trusts the Windows PeerId for the test, dials a private non-loopback IPv4 TCP multiaddress through the production Android transport, and validates request, attempt, round, model and peer correlation in the returned response.
+- Added `tests/HostLifecycle.Tests/Invoke-AndroidWindowsLanAcceptance.ps1` and `.github/workflows/android-windows-lan-acceptance.yml`. The workflow is manual-only and requires a Windows runner labelled `whitep-lan` with one physical Android device connected to the same LAN.
+- Added `step three/T0202/lan-test-runbook.md` with runner, device, SDK, firewall, invocation and evidence rules.
+- Static source preflight passed for the non-loopback/interface guard, production transport usage, explicit trust/revocation path, manual runner labels and temporary firewall cleanup.
+
+### Not executed
+
+- `dotnet build tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj --configuration Release` — not run; `dotnet` is unavailable in this Linux authoring runtime.
+- `gradle --no-daemon assembleDebug assembleDebugAndroidTest` — not run; Gradle is unavailable here.
+- `adb` installation and Android instrumentation — not run; ADB and a physical handset are unavailable here.
+- End-to-end authenticated Android-to-Windows request/response on the LAN — not run. No LAN pass or workflow artifact is claimed.
+
+**Status remains blocked.** A passing manual workflow run on a physical device and independent Windows host is required before T0202 can be marked done.

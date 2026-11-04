@@ -25,6 +25,18 @@ if (args.Length > 0 && args[0] == "--interop-peer-server")
     return;
 }
 
+if (args.Length > 0 && args[0] == "--interop-peer-server-lan")
+{
+    if (args.Length != 4)
+        throw new ArgumentException("The LAN interop server requires an Android PeerId, TCP port and explicit Windows bind IPv4 address.");
+    if (!int.TryParse(args[2], System.Globalization.NumberStyles.None, System.Globalization.CultureInfo.InvariantCulture, out var lanPort))
+        throw new ArgumentException("The LAN interop server TCP port is invalid.");
+    if (!IPAddress.TryParse(args[3], out var bindAddress))
+        throw new ArgumentException("The LAN interop server bind IPv4 address is invalid.");
+    await AndroidInteropPeerServer.RunAsync(args[1], lanPort, bindAddress: bindAddress);
+    return;
+}
+
 if (args.Contains("--test-host-identity-store", StringComparer.Ordinal))
 {
     WindowsHostIdentityStoreAcceptanceTests.Run();

@@ -3,6 +3,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -14,7 +15,7 @@ using WhiteP.Shared.Contracts.V1;
 
 internal static class AndroidInteropPeerServer
 {
-    public static async Task RunAsync(string expectedAndroidPeerId, int port, bool waitForCancellation = false)
+    public static async Task RunAsync(string expectedAndroidPeerId, int port, bool waitForCancellation = false, IPAddress? bindAddress = null)
     {
         if (string.IsNullOrWhiteSpace(expectedAndroidPeerId))
             throw new ArgumentException("The Android PeerId is required.", nameof(expectedAndroidPeerId));
@@ -34,7 +35,22 @@ internal static class AndroidInteropPeerServer
             diagnosticLoggerProvider: new InteropDiagnosticLoggerProvider());
 
         using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(60));
-        await server.StartListeningAsync(IPAddress.Loopback, port, timeout.Token).ConfigureAwait(false);
+        IPAddress listenerAddress = bindAddress ?? IPAddress.Loopback;
+        if (bindAddress is not null)
+        {
+            if (bindAddress.AddressFamily != System.Net.Sockets.AddressFamily.InterNetwork ||
+                IPAddress.IsLoopback(bindAddress) ||
+                IPAddress.Any.Equals(bindAddress))
+                throw new ArgumentException("LAN acceptance requires one explicit, non-loopback IPv4 interface address.", nameof(bindAddress));
+
+            bool isAssignedLocalAddress = NetworkInterface.GetAllNetworkInterfaces()
+                .SelectMany(networkInterface => networkInterface.GetIPProperties().UnicastAddresses)
+                .Any(unicastAddress => unicastAddress.Address.Equals(bindAddress));
+            if (!isAssignedLocalAddress)
+                throw new ArgumentException("The requested LAN bind address is not assigned to this Windows host.", nameof(bindAddress));
+        }
+
+        await server.StartListeningAsync(listenerAddress, port, timeout.Token).ConfigureAwait(false);
 
         string tcpAddress = server.ListenAddresses.Single(
             address => address.Contains("/tcp/", StringComparison.Ordinal));

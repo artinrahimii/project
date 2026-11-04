@@ -37,3 +37,20 @@ A future attempt must run an Android application/emulator endpoint and the Windo
 - Tested/inspected source revision: `ef66bdcae307fd2324fb33cb112bbdfdffb6d196` (`V 3.0.923`).
 - Attempt: `T0202-A001` at `2026-11-04T19:10:13Z`.
 - The accompanying commit also corrects the graph guard so standard Android unit/instrumentation source roots are accepted as test evidence.
+
+## T0202-A002 — executable LAN acceptance harness (partial)
+
+- Base revision: 95eeb40ed96ff6ef1950beb0746e6a30f761f79d (`V 3.0.925`) on branch `main`.
+- Extended `AndroidInteropPeerServer` with an explicit IPv4 bind option. LAN mode rejects loopback, wildcard, non-IPv4 and addresses not assigned to a local Windows interface. Existing loopback invocations remain the default.
+- Added `AndroidWindowsLanIntegrationTest` under Android instrumentation. It uses the app's Keystore-protected identity and trust stores plus the production `Libp2pInferenceRequestTransport` to send a fixed protocol request to the Windows .NET peer fixture and verify the correlated response.
+- Added a manual-only GitHub Actions workflow targeting a Windows self-hosted runner labelled `whitep-lan`, a physical Android handset attached through ADB, and a shared RFC1918 LAN.
+- Added a PowerShell runner script and operator runbook. The script checks the private interface address and device topology, creates a temporary TCP firewall rule and removes it in `finally`. It aborts when either app package already exists, and only removes packages installed by that same invocation.
+- Scope: this is a transport-level acceptance harness. The Windows fixture returns a deterministic response; it does not claim that local model inference or the complete WPF UI was exercised. T0201 remains the separate real-inference acceptance.
+
+### Execution limits
+
+- **Result: partial; T0202 remains blocked.** This authoring runtime is Linux and does not have `dotnet`, `gradle`, `adb`, PowerShell or an attached physical Android device. The .NET build, Android build, instrumentation test and actual LAN request/response were not run.
+- Static content preflight confirmed that the harness references the production Android transport, uses a non-loopback IPv4 target, preserves existing app packages, removes its own temporary firewall rule and targets a manual self-hosted runner. This is source inspection only, not a build or test pass.
+- Follow-up: register the labelled Windows runner, connect one dedicated physical Android device to the same private LAN, run `.github/workflows/android-windows-lan-acceptance.yml` on `main`, inspect the artifact, and only then reconsider the task status.
+
+The T0202-A002 graph history entry is included in this commit. Its own commit SHA cannot be embedded in the same commit; resolve it from the online `main` history after this commit is created.
