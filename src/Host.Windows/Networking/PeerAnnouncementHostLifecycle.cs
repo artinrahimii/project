@@ -43,6 +43,7 @@ public sealed class PeerAnnouncementHostLifecycle : IAsyncDisposable
     private readonly SemaphoreSlim _requestHandlerSlots = new(MaximumConcurrentRequestHandlers, MaximumConcurrentRequestHandlers);
     private readonly ConcurrentDictionary<RequestAttemptKey, CancellationTokenSource> _activeRequestCancellations = new();
     private readonly ConcurrentDictionary<RequestAttemptKey, Task> _requestHandlerTasks = new();
+    private readonly object _requestAdmissionSync = new();
 
     private readonly record struct RequestAttemptKey(string RequestId, string AttemptId);
 
@@ -233,7 +234,11 @@ public sealed class PeerAnnouncementHostLifecycle : IAsyncDisposable
         await _lifecycleLock.WaitAsync().ConfigureAwait(false);
         try
         {
-            Volatile.Write(ref _active, 0);
+            lock (_requestAdmissionSync)
+            {
+                Volatile.Write(ref _active, 0);
+            }
+
             PeerAnnouncementLeasePublisher? publisher = _publisher;
             Libp2pPeerTransport? transport = _transport;
             CancellationTokenSource? lifetime = _lifetime;
@@ -244,13 +249,15 @@ public sealed class PeerAnnouncementHostLifecycle : IAsyncDisposable
             _lifetime = null;
             _receiveLoop = null;
 
+            // Cancel the receive loop immediately after closing admission. Do not wait for
+            // publisher shutdown before preventing another inference handler from being admitted.
+            lifetime?.Cancel();
+
             if (publisher is not null)
             {
                 try { await publisher.StopAsync().ConfigureAwait(false); }
                 catch (Exception exception) { Volatile.Write(ref _lastFailureType, exception.GetType().Name); }
             }
-
-            lifetime?.Cancel();
             if (transport is not null)
             {
                 try { await transport.DisconnectAsync().ConfigureAwait(false); }
@@ -383,7 +390,62 @@ public sealed class PeerAnnouncementHostLifecycle : IAsyncDisposable
                         continue;
                     }
 
-                    if (!_requestHandlerSlots.Wait(0))
+                    bool stopAdmission = false;
+                    bool sendBusyResponse = false;
+                    bool sendReplayRejection = false;
+                    lock (_requestAdmissionSync)
+                    {
+                        // StopAsync flips IsActive under this same lock. A handler is therefore
+                        // either admitted before shutdown (and drained below) or rejected after it.
+                        if (!IsActive || cancellationToken.IsCancellationRequested)
+                        {
+                            stopAdmission = true;
+                        }
+                        else if (!_requestHandlerSlots.Wait(0))
+                        {
+                            sendBusyResponse = true;
+                        }
+                        else
+                        {
+                            var key = new RequestAttemptKey(request.RequestId, request.AttemptId);
+                            var requestCancellation = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+                            if (!_activeRequestCancellations.TryAdd(key, requestCancellation))
+                            {
+                                requestCancellation.Dispose();
+                                _requestHandlerSlots.Release();
+                                sendReplayRejection = true;
+                            }
+                            else
+                            {
+                                var startSignal = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+                                Task responseTask = ProcessRequestAndRespondAsync(
+                                    transport,
+                                    publisher,
+                                    request,
+                                    requestWire,
+                                    key,
+                                    requestCancellation,
+                                    cancellationToken,
+                                    startSignal.Task);
+                                if (!_requestHandlerTasks.TryAdd(key, responseTask))
+                                {
+                                    requestCancellation.Cancel();
+                                    _activeRequestCancellations.TryRemove(key, out _);
+                                    requestCancellation.Dispose();
+                                    _requestHandlerSlots.Release();
+                                    throw new InvalidOperationException("A peer request handler already exists for the same request/attempt pair.");
+                                }
+
+                                handedToHandler = true;
+                                startSignal.TrySetResult(true);
+                            }
+                        }
+                    }
+
+                    if (stopAdmission)
+                        break;
+
+                    if (sendBusyResponse)
                     {
                         InferenceResponse? busy = CreateBusyResponse(request);
                         if (busy is not null)
@@ -394,39 +456,13 @@ public sealed class PeerAnnouncementHostLifecycle : IAsyncDisposable
                         continue;
                     }
 
-                    var key = new RequestAttemptKey(request.RequestId, request.AttemptId);
-                    var requestCancellation = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-                    if (!_activeRequestCancellations.TryAdd(key, requestCancellation))
+                    if (sendReplayRejection)
                     {
-                        requestCancellation.Dispose();
-                        _requestHandlerSlots.Release();
                         InferenceResponse rejected = CreateReplayRejection(request);
                         PeerResponseCorrelationValidator.Validate(request, rejected, LocalPeerIdentity);
                         await SendAndClearMessageAsync(transport, rejected, cancellationToken).ConfigureAwait(false);
                         continue;
                     }
-
-                    var startSignal = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
-                    Task responseTask = ProcessRequestAndRespondAsync(
-                        transport,
-                        publisher,
-                        request,
-                        requestWire,
-                        key,
-                        requestCancellation,
-                        cancellationToken,
-                        startSignal.Task);
-                    if (!_requestHandlerTasks.TryAdd(key, responseTask))
-                    {
-                        requestCancellation.Cancel();
-                        _activeRequestCancellations.TryRemove(key, out _);
-                        requestCancellation.Dispose();
-                        _requestHandlerSlots.Release();
-                        throw new InvalidOperationException("A peer request handler already exists for the same request/attempt pair.");
-                    }
-
-                    handedToHandler = true;
-                    startSignal.TrySetResult(true);
                 }
                 finally
                 {

@@ -94,3 +94,13 @@ Exact-head GitHub Actions has not yet run for the T0193 implementation commit. N
 - Corrected `tests/test_decision_traceability.py` line 712 from 16 leading spaces to 8, matching the neighboring class-method assertions.
 - The V 3.0.905 Quality run `41869697038` failed during test module import, before the test body could run; this is recorded as an A008 attempt failure.
 - No new test pass is claimed. Exact-head V 3.0.906 Quality and product CI are required.
+
+
+## T0193-A010 — peer request admission shutdown race
+
+- Baseline: `main` `ed131c3456461f2bc215db8da2300a6d915f33cc` (`V 3.0.906`); the previous exact-head quality gate passed 399 Python tests, Windows WPF build/format/startup checks passed, HostLifecycle shutdown acceptance passed, and Rendezvous container smoke test passed. Android was still running at inspection; no Android result is claimed.
+- Source inspection found that `StopAsync` delayed lifetime cancellation until after `publisher.StopAsync`, while `ReceiveLoopAsync` never checked `IsActive` before registering a request handler.
+- The revised implementation places request slot acquisition and handler registration under `_requestAdmissionSync`, with an `IsActive`/cancellation guard. `StopAsync` sets inactive under the same lock and cancels the receive-loop lifetime before awaiting publisher shutdown.
+- The receive-loop finalizer continues to cancel active request tokens and await all registered handler tasks, preserving in-flight drain semantics.
+- Added `test_peer_shutdown_closes_request_admission_before_cancelling_and_draining` to `tests/test_network_listener_exposure.py`; it asserts the ordering and synchronization contract.
+- The new changes have not yet been exercised by CI. No success is claimed for A010 until exact-head workflow results are inspected.

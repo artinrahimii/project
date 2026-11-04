@@ -9,6 +9,7 @@ WINDOW_XAML = (ROOT / "src/Host.Windows/MainWindow.xaml").read_text(encoding="ut
 RECOVERY = (ROOT / "src/Host.Application/ParticipationActivationRecovery.cs").read_text(encoding="utf-8")
 RECOVERY_TESTS = (ROOT / "tests/HostLifecycle.Tests/ParticipationActivationRecoveryTests.cs").read_text(encoding="utf-8")
 TEST_ENTRYPOINT = (ROOT / "tests/HostLifecycle.Tests/Program.cs").read_text(encoding="utf-8")
+PEER_HOST_LIFECYCLE = (ROOT / "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs").read_text(encoding="utf-8")
 
 
 class NetworkListenerExposureTests(unittest.TestCase):
@@ -131,6 +132,31 @@ class NetworkListenerExposureTests(unittest.TestCase):
         self.assertIn("await service.StartAsync(cancellationToken);", transition)
         self.assertIn("await previous.DisposeAsync();", transition)
         self.assertIn("cancellationToken.ThrowIfCancellationRequested();", transition)
+
+    def test_peer_shutdown_closes_request_admission_before_cancelling_and_draining(self):
+        stop = PEER_HOST_LIFECYCLE.split("public async Task StopAsync()", 1)[1].split(
+            "private async Task ReceiveLoopAsync", 1
+        )[0]
+        self.assertIn("lock (_requestAdmissionSync)", stop)
+        self.assertIn("Volatile.Write(ref _active, 0);", stop)
+        close_admission = stop.index("Volatile.Write(ref _active, 0);")
+        cancel_receive = stop.index("lifetime?.Cancel();")
+        stop_publisher = stop.index("await publisher.StopAsync()")
+        self.assertLess(close_admission, cancel_receive)
+        self.assertLess(cancel_receive, stop_publisher)
+
+        receive = PEER_HOST_LIFECYCLE.split("private async Task ReceiveLoopAsync", 1)[1].split(
+            "private static async Task SendAndClearMessageAsync", 1
+        )[0]
+        admission_lock = receive.index("lock (_requestAdmissionSync)")
+        closed_guard = receive.index("if (!IsActive || cancellationToken.IsCancellationRequested)")
+        slot_check = receive.index("!_requestHandlerSlots.Wait(0)")
+        request_register = receive.index("_activeRequestCancellations.TryAdd(key, requestCancellation)")
+        handler_register = receive.index("_requestHandlerTasks.TryAdd(key, responseTask)")
+        self.assertLess(admission_lock, closed_guard)
+        self.assertLess(closed_guard, slot_check)
+        self.assertLess(slot_check, request_register)
+        self.assertLess(request_register, handler_register)
 
 if __name__ == "__main__":
     unittest.main()

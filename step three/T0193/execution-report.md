@@ -102,3 +102,13 @@
 - **Correction:** changed that assertion to the same 8-space class-method indentation as adjacent assertions. The other A008 lines already had the correct indentation.
 - **Impact:** test source only; no production code or dependency contracts changed.
 - **Verification:** statically inspected the corrected lines. The corrected Python module has not yet been executed; no pass is claimed. T0193 remains `in_progress` pending fresh exact-head CI.
+
+
+## T0193-A010 — close peer request admission before shutdown drain
+
+- **Baseline:** online `main` commit `ed131c3456461f2bc215db8da2300a6d915f33cc` (`V 3.0.906`). The previous exact-head quality, Windows WPF, HostLifecycle, and Rendezvous jobs passed; Android was still running when inspected. Those baseline results do not validate this new correction.
+- **Finding:** `PeerAnnouncementHostLifecycle.StopAsync()` set `_active = 0`, but awaited `publisher.StopAsync()` before cancelling the receive-loop lifetime. `ReceiveLoopAsync()` did not consult `IsActive` when registering an inference handler. A request arriving during publisher shutdown could therefore be admitted after shutdown had begun.
+- **Correction:** added `_requestAdmissionSync` to serialize the admission decision/handler registration with the `_active = 0` transition. The receive loop now rejects a request when admission is closed or the lifetime token is cancelled. `StopAsync()` closes admission under the same lock and cancels the receive loop immediately, before awaiting publisher shutdown; the existing receive-loop finalizer still cancels and awaits all already-registered handlers.
+- **Regression guard:** added a Python source-contract test asserting the lock/guard/registration order and that lifetime cancellation precedes the awaited publisher stop.
+- **Dependency review:** T0192 → T0193 and T0188 → T0193 remain `sequencing_only / validated`; original `blocks` edges and conservative execution order are unchanged. No edge was reclassified in this attempt.
+- **Verification boundary:** source changes and the guard were checked structurally before commit. No local C#/.NET runtime is available here; this new correction has not yet run in CI. T0193 remains `in_progress` pending exact-head Quality, Windows WPF, and HostLifecycle CI.
