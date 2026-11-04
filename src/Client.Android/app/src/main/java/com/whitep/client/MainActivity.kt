@@ -281,7 +281,7 @@ private fun requestScreen(
             onValueChange = requestViewModel::updatePrompt,
             modifier = Modifier.fillMaxWidth(),
             label = { Text("Prompt") },
-            supportingText = { Text("The selected processing host can read this prompt after transport decryption.") },
+            supportingText = { Text("The selected host can read your prompt and context capsule after transport decryption; encryption does not hide them from that host.") },
             minLines = 4,
             maxLines = 8,
         )
@@ -374,12 +374,18 @@ private fun requestScreen(
     pendingTrustPeerId?.let { peerId ->
         AlertDialog(
             onDismissRequest = { pendingTrustPeerId = null },
-            title = { Text("Trust this processing host?") },
+            title = { Text("Before you trust this host") },
             text = {
                 Text(
-                    "After approval, this host may receive and read the prompts and context " +
-                        "you choose to send to it. Trust is stored locally and can be revoked. " +
-                        "The peer directory itself does not receive your inference prompt.",
+                    "Peer ID: $peerId\n\n" +
+                        "When you send a request, this processing host receives your prompt and context capsule " +
+                        "and can read them after transport decryption.\n\n" +
+                        "Transport encryption protects data while it travels; it does not hide request content " +
+                        "from the selected host or its operator. The host may inspect or retain what it receives " +
+                        "outside this app's control.\n\n" +
+                        "Saving trust does not send a prompt or context now. It only makes this peer eligible " +
+                        "for a request. Your request is sent only when you explicitly press Send to trusted hosts. " +
+                        "You can revoke trust later.",
                 )
             },
             confirmButton = {
@@ -389,7 +395,7 @@ private fun requestScreen(
                         pendingTrustPeerId = null
                     },
                 ) {
-                    Text("Trust peer")
+                    Text("Trust this host")
                 }
             },
             dismissButton = {

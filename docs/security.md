@@ -103,7 +103,7 @@ Room اکنون از `EncryptedClientDatabaseFactory` و SQLCipher Community Edi
 این شواهد، سیاست ذخیره‌سازی تحت کنترل برنامه را توصیف می‌کنند؛ به‌تنهایی آزمون مستقل ترافیک شبکه، فایل‌های موقت، logها یا رفتار سیستم‌عامل نیستند.
 
 
-## حداقل مجوزهای کلاینت Android (T0185 — پذیرش CI در انتظار)
+## حداقل مجوزهای کلاینت Android (T0185 — تکمیل‌شده)
 
 در Manifest منبع برنامه فقط android.permission.INTERNET درخواست می‌شود. این مجوز برای بازکردن سوکت‌های شبکه در کشف HTTPS سرویس rendezvous و ارتباط مستقیم TCP/libp2p لازم است. سطح حفاظت آن normal و از نوع install-time است؛ پنجرهٔ درخواست runtime ندارد.
 
@@ -115,7 +115,22 @@ Room اکنون از `EncryptedClientDatabaseFactory` و SQLCipher Community Edi
 - Manifest منبع باید فقط INTERNET را درخواست کند.
 - AAPT2 روی APK نهایی باید دقیقاً INTERNET و مجوز app-scoped بالا را گزارش کند؛ سپس خروجی xmltree باید تعریف همان مجوز را دقیقاً یک بار با protectionLevel عددی 0x2 (signature) نشان دهد. parser هر دو قالب prefix کوتاه android: و URI کامل فضای نام Android را می‌خواند. هر مجوز اضافی، مجوز سفارشی دیگر، declaration مفقود/تکراری یا سطح حفاظتی متفاوت باعث شکست می‌شود.
 
-در V 3.0.868 verifier اولیه مجوز AndroidX را نشناخت؛ V 3.0.869 آن مجوز را در فهرست درخواست‌ها پذیرفت اما parser تعریف آن را از xmltree استخراج نکرد. این دو شکست در execution history ثبت شده‌اند. اصلاح A005 هر دو قالب namespace را می‌پذیرد و شواهد CI بعدی برای APK واقعی هنوز pending است. تا تأیید آن، T0185 تکمیل‌شده نیست.
+دو شکست واقعی نسخه‌های V 3.0.868 و V 3.0.869 در execution history حفظ شده‌اند. اصلاح A005 هر دو قالب namespace را می‌پذیرد. در product run دقیق V 3.0.871، ممیزی AAPT2 روی APK واقعی، آزمون‌های Android JVM و instrumentation موفق شدند؛ artifact 13279121914 شامل ۹ آزمون، صفر شکست و صفر skipped است. product build، quality gate و آزمون container نسخهٔ V 3.0.872 نیز روی commit 6b507bba948743fe7da5cf3d4d4f9925601f24a7 موفق شدند. وضعیت T0185 در گراف done است.
+
+## رضایت آگاهانه برای اعتماد و میزبانی همتا (T0186)
+
+کلاینت Android پیش از ذخیرهٔ اعتماد به یک PeerId کشف‌شده، یک هشدار مختص همان همتا نمایش می‌دهد. متن هشدار روشن می‌کند که میزبان پردازش پس از رمزگشایی کانال می‌تواند prompt و context capsule را بخواند؛ رمزگذاری انتقال محتوا را از مقصد پنهان نمی‌کند و میزبان ممکن است محتوای دریافتی را بررسی یا نگهداری کند. تأیید این پنجره فقط اعتماد همتا را ذخیره می‌کند و هیچ prompt یا capsuleای ارسال نمی‌کند؛ ارسال تنها پس از اقدام جداگانهٔ کاربر با دکمهٔ Send to trusted hosts انجام می‌شود. اعتماد همتا بعداً قابل لغو است.
+
+برنامهٔ میزبان Windows نیز هنگام فعال‌سازی میزبانی inference همتا، پیش از ساخت یا شروع PeerAnnouncementHostLifecycle، رضایت جداگانهٔ صاحب دستگاه را می‌گیرد. هشدار PeerId دقیق مقصد درخواست‌ها، امکان خواندن prompt و capsule در میزبان پس از رمزگشایی و محدودیت حفاظت رمزگذاری انتقال را توضیح می‌دهد. رد رضایت toggle را خاموش نگه می‌دارد و listener/lease ایجاد نمی‌شود. بعد از پذیرش حریم خصوصی، تأیید هویت PeerId از طریق کانال مورداعتماد همچنان مرحله‌ای جداگانه است.
+
+این پنجره‌ها رضایت آگاهانه در رابط را اعمال می‌کنند، نه تضمین حذف داده از سیستم‌عامل، ابزارهای خارجی یا دستگاه طرف مقابل. آن‌ها جایگزین آزمون مستقل ترافیک شبکه، بررسی logهای ثالث یا پذیرش عملیاتی end-to-end نیستند.
+
+شواهد و آزمون‌های قابل تکرار:
+- متن میزبان Windows: src/Shared.Security/PeerInferencePrivacyDisclosure.cs.
+- محل نمایش رضایت در Windows: src/Host.Windows/MainWindow.xaml.cs.
+- پنجرهٔ اعتماد Android: src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt.
+- آزمون Windows: assertions مربوط به disclosure در tests/HostLifecycle.Tests/Program.cs.
+- آزمون‌های قرارداد منبع/مستندات: tests/test_peer_inference_privacy_disclosure.py.
 
 منابع:
 - AndroidX Core merged manifest: https://android.googlesource.com/platform/prebuilts/sdk/+/dbc89592d1bcb88ed9718f2b8d4f117ebb74547f/current/androidx/manifests/androidx.core_core/AndroidManifest.xml

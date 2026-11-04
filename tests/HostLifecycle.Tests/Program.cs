@@ -132,6 +132,18 @@ await NetworkInferenceRequestResponseMapperAcceptanceTests.RunAsync();
 await PeerTransportContractAcceptanceTests.RunAsync().ConfigureAwait(false);
 PeerMessageSecurityAcceptanceTests.Run();
 PeerSecurityPolicyAcceptanceTests.Run();
+var disclosedPeerId = "12D3KooWExamplePeerIdentity";
+var peerPrivacyWarning = WhiteP.Shared.Security.PeerInferencePrivacyDisclosure.BuildHostParticipationMessage(disclosedPeerId);
+Assert(peerPrivacyWarning.Contains(disclosedPeerId, StringComparison.Ordinal), "The host privacy notice must identify the exact peer.");
+Assert(peerPrivacyWarning.Contains("prompt", StringComparison.OrdinalIgnoreCase), "The host privacy notice must disclose prompt visibility.");
+Assert(peerPrivacyWarning.Contains("context capsule", StringComparison.OrdinalIgnoreCase), "The host privacy notice must disclose capsule visibility.");
+Assert(peerPrivacyWarning.Contains("after transport decryption", StringComparison.OrdinalIgnoreCase), "The host privacy notice must explain the transport-decryption boundary.");
+Assert(peerPrivacyWarning.Contains("does not hide request content", StringComparison.OrdinalIgnoreCase), "The host privacy notice must not imply encryption hides content from the receiving host.");
+var blankPeerDisclosureRejected = false;
+try { WhiteP.Shared.Security.PeerInferencePrivacyDisclosure.BuildHostParticipationMessage(" "); }
+catch (ArgumentException) { blankPeerDisclosureRejected = true; }
+Assert(blankPeerDisclosureRejected, "The host privacy notice must require a nonblank peer identity.");
+Console.WriteLine("PASS: peer inference hosting disclosure identifies the peer and explains host-visible request content.");
 SafeDiagnosticLogAcceptanceTests.Run();
 PeerTrustStoreAcceptanceTests.Run();
 HostIdentityStoreAcceptanceTests.Run();

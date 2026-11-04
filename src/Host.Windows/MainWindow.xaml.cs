@@ -976,6 +976,22 @@ public partial class MainWindow : Window
             if (string.IsNullOrWhiteSpace(expectedPeerIdentity))
                 throw new ArgumentException("Enter the exact PeerId of the remote peer you explicitly trust.");
 
+            var privacyConsent = MessageBox.Show(
+                this,
+                WhiteP.Shared.Security.PeerInferencePrivacyDisclosure.BuildHostParticipationMessage(expectedPeerIdentity),
+                WhiteP.Shared.Security.PeerInferencePrivacyDisclosure.HostParticipationTitle,
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Warning,
+                MessageBoxResult.No);
+            if (privacyConsent != MessageBoxResult.Yes)
+            {
+                _suppressParticipationToggleChanged = true;
+                NetworkParticipationToggle.IsChecked = false;
+                _suppressParticipationToggleChanged = false;
+                ParticipationNetworkStatus.Text = "Peer hosting remains disabled because the privacy notice was not accepted.";
+                return;
+            }
+
             var localIdentity = new WindowsHostIdentityProvider().LoadOrCreate();
             var localData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
             if (string.IsNullOrWhiteSpace(localData))
