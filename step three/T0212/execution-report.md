@@ -66,3 +66,44 @@
 - ترتیب importهای Gradle اکنون به شکل `com.google.protobuf.gradle.*`، سپس `org.gradle.api.GradleException` و در پایان `java.io.File` است؛ فاصلهٔ خالی بین importها وجود ندارد.
 - Quality Gate نسخهٔ قبلی موفق است؛ Product Build تازه باید KtLint، build debug و `assembleRelease` با کلید موقت را تأیید کند.
 - هیچ secret یا keystore تولیدی ساخته یا استفاده نشده است. T0212 تا تأیید smoke و اجرای workflow محافظت‌شده در وضعیت `in_progress` می‌ماند.
+
+
+## A006 — پذیرش CI روی V 3.0.973
+
+**commit بررسی‌شده:** `5904eaac1629faba61483dc504a6c548de49b22c` روی `main`.
+
+### Quality Gate
+- Step Three Quality Gate run [42063282020](https://github.com/artinrahimii/project/actions/runs/42063282020) موفق شد.
+- ۴۲۹ آزمون Python اجرا و همگی موفق شدند؛ `compileall` نیز موفق بود.
+- Graph Guard تعداد ۲۳۰ وظیفه و ۴۲۲ یال را بررسی کرد: صفر خطا و یک هشدار تاریخی T0001 دربارهٔ metadata غیرشناسه‌ای. هشدار بدون تغییر حفظ شد.
+
+### Android
+- Android job [127370445148](https://github.com/artinrahimii/project/actions/runs/42063281545/job/127370445148) با موفقیت کامل شد.
+- `gradle --no-daemon ktlintCheck` موفق شد.
+- `gradle --no-daemon assembleDebug --no-build-cache` موفق شد.
+- `gradle --no-daemon assembleRelease --no-build-cache` با یک JKS تصادفی و موقت در مسیر خارج checkout موفق شد.
+- `apksigner verify --verbose --print-certs` امضا را معتبر تشخیص داد؛ APK با scheme v2 تأیید شد و digest گواهی SHA-256 با طول ۶۴ رقم hex گزارش شد. گواهی متعلق به smoke موقت CI است و fingerprint تولیدی محسوب نمی‌شود.
+- cleanup کلید موقت موفق شد؛ کلید smoke برای توزیع یا به‌روزرسانی محصول استفاده نمی‌شود.
+- بررسی حداقل مجوزهای APK موفق شد؛ مجوزهای بسته‌شده فقط INTERNET و permission خصوصی signature-protected مربوط به AndroidX بودند.
+- آزمون‌های JVM از ۳۴ فایل JUnit، ۲۲۴ مورد را ثبت کردند: ۲۲۳ موفق، یک skip، صفر failure و صفر error. دو گزارش HTML پوشش با اندازهٔ ۱۱٬۶۵۱ و ۱۱٬۴۶۹ بایت اعتبارسنجی شدند.
+- آزمون instrumentation با موفقیت اجرا شد؛ ۱۲ تست روی emulator خاتمه یافتند. آزمون `AndroidWindowsLanIntegrationTest.connectsToWindowsHostOverNonLoopbackLan` به‌علت نبود ورودی peer/IP/port در workflow عادی skip شد؛ بنابراین این اجرا اثبات اتصال LAN واقعی نیست.
+- APK دیباگ، گزارش instrumentation، گزارش JVM و artifact پوشش/نتایج بحرانی بارگذاری شدند.
+
+### Windows و HostLifecycle
+- Windows job [127370445471](https://github.com/artinrahimii/project/actions/runs/42063281545/job/127370445471) با ۲۲/۲۲ مرحله موفق شد؛ buildهای .NET بدون warning/error، smoke راه‌اندازی WPF، بررسی‌های سیاست/هویت، پذیرش installer و بارگذاری artifactها موفق بودند.
+- HostLifecycle job [127370445384](https://github.com/artinrahimii/project/actions/runs/42063281545/job/127370445384) با ۱۳/۱۳ مرحله موفق شد. Cobertura معتبر: ۸٬۸۴۹ از ۱۰٬۳۲۵ خط (۸۵٫۷۰٪)، ۶۷ نشانگر PASS و یک SKIP. مورد skipشده، آزمون real-model opt-in است و اجرای مدل واقعی ادعا نمی‌شود.
+- Product Build run [42063281545](https://github.com/artinrahimii/project/actions/runs/42063281545) نتیجهٔ نهایی `success` داشت؛ هر سه job ویندوز، اندروید و HostLifecycle موفق شدند.
+
+### Artifactهای واقعی همین run
+- Android instrumentation reports: `13434575334`، ۹۹٬۲۹۷ بایت.
+- Android unit-test reports: `13433990937`، ۹۰٬۹۷۵ بایت.
+- Android debug APK: `13433781042`، ۲۸٬۹۷۲٬۴۷۱ بایت.
+- Windows installer: `13432905703`، ۶۰٬۹۷۷٬۷۳۹ بایت.
+- Android coverage/critical results: `13432679732`، ۵٬۳۶۸ بایت.
+- HostLifecycle coverage/critical results: `13432588457`، ۱۱۰٬۹۳۹ بایت.
+- Windows host: `13431974161`، ۱۰۱٬۵۶۴٬۹۸۰ بایت.
+
+### مرز پذیرش و وضعیت
+این اجرا، مسیر **امضای موقت CI** را اثبات می‌کند، نه امضای تولیدی. workflow `.github/workflows/android-release.yml` در اجرای push مربوط به run `42063279308` هیچ job تولیدی اجرا نکرد؛ اجرای واقعی آن به trigger دستی یا tag اختصاصی نیاز دارد. از اتصال فعلی امکان مشاهده/تأیید secretهای GitHub Environment یا اجرای دستی workflow فراهم نبود. وجود یا نبود secretهای تولیدی را حدس نمی‌زنم و هیچ کلید خصوصی یا مقدار محرمانه‌ای دریافت یا ثبت نشده است.
+
+بنابراین `T0212` همچنان `in_progress` باقی می‌ماند تا maintainer، Environment محافظت‌شدهٔ `android-release` را با keystore تولیدی و fingerprint ثابت پیکربندی کند و workflow تولیدی، APK نهایی را با تطبیق fingerprint امضا و artifact آن را منتشر کند. پس از آن می‌توان معیار checksum وظیفهٔ T0213 را بر فایل نهایی اعمال کرد.

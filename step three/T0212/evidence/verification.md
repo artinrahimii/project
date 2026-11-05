@@ -54,3 +54,16 @@
 - لاگ Product Build قبلی: https://github.com/artinrahimii/project/actions/runs/42062004172 — KtLint اعلام کرد importهای java/javax/kotlin باید در انتهای لیست مرتب‌شده باشند.
 - importها در Gradle به ترتیب com، org، java بازچینی شدند؛ نتیجهٔ KtLint این اصلاح هنوز pending است.
 - build امضاشدهٔ موقت و apksigner باید در Product Build جدید تأیید شوند؛ امضای production هنوز اجرا نشده است.
+
+
+## A006 — شواهد نهایی CI روی V 3.0.973
+
+- Quality Gate [42063282020](https://github.com/artinrahimii/project/actions/runs/42063282020): ۴۲۹ آزمون موفق، compileall موفق، graph validation با ۲۳۰ وظیفه/۴۲۲ یال، صفر خطا و یک هشدار تاریخی T0001.
+- Product Build [42063281545](https://github.com/artinrahimii/project/actions/runs/42063281545): نتیجهٔ کلی success.
+- Android job [127370445148](https://github.com/artinrahimii/project/actions/runs/42063281545/job/127370445148): KtLint، assembleDebug، assembleRelease با keystore موقت، apksigner verify، cleanup و حداقل مجوزها موفق؛ JVM: ۲۲۴ تست، ۲۲۳ passed، یک skipped، صفر failure/error؛ instrumentation: ۱۲ تست خاتمه‌یافته، LAN integration به‌صورت صریح skipped.
+- Windows job [127370445471](https://github.com/artinrahimii/project/actions/runs/42063281545/job/127370445471): ۲۲/۲۲ مرحله موفق، installer و host artifacts بارگذاری شدند.
+- HostLifecycle job [127370445384](https://github.com/artinrahimii/project/actions/runs/42063281545/job/127370445384): ۱۳/۱۳ مرحله موفق؛ Cobertura با ۸۵٫۷۰٪ پوشش خطی، ۶۷ PASS و یک SKIP مربوط به real-model opt-in.
+- Artifactهای run: [instrumentation 13434575334](https://github.com/artinrahimii/project/actions/runs/42063281545/artifacts/13434575334)، [JVM 13433990937](https://github.com/artinrahimii/project/actions/runs/42063281545/artifacts/13433990937)، [debug APK 13433781042](https://github.com/artinrahimii/project/actions/runs/42063281545/artifacts/13433781042)، [Windows installer 13432905703](https://github.com/artinrahimii/project/actions/runs/42063281545/artifacts/13432905703)، [Android coverage 13432679732](https://github.com/artinrahimii/project/actions/runs/42063281545/artifacts/13432679732)، [HostLifecycle coverage 13432588457](https://github.com/artinrahimii/project/actions/runs/42063281545/artifacts/13432588457) و [Windows host 13431974161](https://github.com/artinrahimii/project/actions/runs/42063281545/artifacts/13431974161).
+
+### محدودیت باقی‌مانده
+artifact مربوط به release APK تولیدی در این run ساخته/بارگذاری نشد؛ APK امضاشدهٔ این run فقط smoke با کلید موقت بود. workflow تولیدی در push job نداشت و secret/fingerprint واقعی از طریق اتصال فعلی قابل تأیید یا dispatch نبود. T0212 به‌درستی in_progress باقی می‌ماند.
