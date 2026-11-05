@@ -152,3 +152,21 @@
 `T0212` از `in_progress` به `blocked` تغییر یافت؛ علت، نیاز به اقدام maintainer برای تأیید/پیکربندی Environment محافظت‌شدهٔ `android-release` و اجرای workflow تولیدی است. دو یال ورودی از `T0208` و `T0211` همچنان `sequencing_only / validated` و یال `T0212 → T0213` همچنان `hard_dependency / validated` باقی ماندند. هیچ یال یا قرارداد فنی تغییر نکرد.
 
 `T0213` آغاز نشد، چون بدون APK تولیدی با fingerprint تأییدشده، checksum خروجی انتشار قابل‌قبول نیست. اقدام لازم: maintainer باید secretهای لازم و متغیر `ANDROID_RELEASE_CERT_SHA256` را در Environment محافظت‌شده آماده کند، workflow را با `workflow_dispatch` اجرا کند و artifact `whitep-android-release-signed` را پس از تطبیق fingerprint تحویل دهد.
+
+## A008 — بازاعتبارسنجی V 3.0.977
+
+**commit مبنا:** `441a058c2461b049a74faba414dbc0ba7aa3eb49` روی شاخهٔ آنلاین `main`.
+
+### نتایج CI
+- [Step Three Quality Gate run 42071006532](https://github.com/artinrahimii/project/actions/runs/42071006532): یک job با نتیجهٔ success؛ آزمون‌های خودکار، بررسی نحوی Python، اعتبارسنجی گراف و بررسی خروجی‌ها/شواهد موفق شدند.
+- [White-P Product Build run 42071006454](https://github.com/artinrahimii/project/actions/runs/42071006454): هر سه job مربوط به Android، Windows WPF/installer و HostLifecycle با نتیجهٔ success پایان یافتند. امضای Release اندروید فقط با JKS موقت CI آزموده و بعد پاک‌سازی شد؛ این گواهی تولیدی نیست.
+- [Rendezvous container run 42071006474](https://github.com/artinrahimii/project/actions/runs/42071006474): build و smoke test کانتینر موفق شد.
+- [Android signed release run 42071003708](https://github.com/artinrahimii/project/actions/runs/42071003708): رویداد `push`، نتیجهٔ نهایی `failure` و تعداد jobها صفر بود. بنابراین هیچ step مربوط به دریافت Secretها، ساخت با keystore تولیدی، `apksigner`، تطبیق fingerprint یا بارگذاری APK تولیدی اجرا نشد.
+
+### علت و مرز تشخیص
+فایل `.github/workflows/android-release.yml` در commit مبنا triggerهای `workflow_dispatch` و push روی tagهای `android-v*` را اعلام می‌کند. run با event عادی push روی شاخهٔ main هیچ jobی اجرا نکرده است. این داده به‌تنهایی ثابت نمی‌کند که Secretهای Environment وجود ندارند یا وجود دارند و نیز اثبات شکست رمزنگاری امضا نیست. ابزارهای GitHub در این نشست امکان اجرای دستی workflow یا مدیریت Secretهای Environment محافظت‌شده را ارائه نمی‌کنند. هیچ keystore، رمز یا fingerprint خصوصی دریافت یا ثبت نشده است.
+
+### تصمیم
+`T0212` همچنان `blocked` باقی می‌ماند. یال‌های ورودی آن از `T0208` و `T0211` بدون تغییر `sequencing_only / validated` هستند و یال `T0212 → T0213` بدون تغییر `hard_dependency / validated` باقی ماند. `T0213` شروع نشد؛ checksum APK انتشار فقط پس از دریافت و تأیید artifact تولیدی `whitep-android-release-signed` قابل‌قبول است.
+
+اقدام لازم: maintainer باید Environment محافظت‌شدهٔ `android-release` را تأیید/پیکربندی کند و workflow را از طریق `workflow_dispatch` یا tag انتشار مجاز اجرا کند. پذیرش تنها با تطبیق fingerprint SHA-256 گواهی تولیدی و بارگذاری artifact نهایی ممکن است.

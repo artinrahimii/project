@@ -88,3 +88,13 @@ artifact مربوط به release APK تولیدی در این run ساخته/ب�
 - workflow تولیدی فقط با `workflow_dispatch` یا tagهای `android-v*` اجرا می‌شود. ابزار متصل فعلی نه قابلیت dispatch و نه مدیریت secretهای Environment را دارد؛ وضعیت وجود secretها نامعلوم باقی می‌ماند.
 - تصمیم: T0212 مسدود است تا maintainer Environment محافظت‌شده را پیکربندی/تأیید و workflow را اجرا کند. T0213 به‌دلیل hard dependency آغاز نشده است. هیچ کلید، رمز یا دادهٔ محرمانه‌ای وارد شواهد نشده است.
 - شواهد: [Quality Gate](https://github.com/artinrahimii/project/actions/runs/42068538634)، [Product Build](https://github.com/artinrahimii/project/actions/runs/42068534197)، [Android signed release workflow](https://github.com/artinrahimii/project/actions/runs/42068530991).
+
+## A008 — آزمون‌های V 3.0.977
+
+- commit مبنا: `441a058c2461b049a74faba414dbc0ba7aa3eb49` (`V 3.0.977`).
+- Quality Gate run `42071006532`: موفق.
+- Product Build run `42071006454`: هر سه job Android، Windows WPF/installer و HostLifecycle موفق؛ Android امضای Release فقط با کلید دورریختنی CI را آزمود.
+- Rendezvous container run `42071006474`: موفق.
+- Android signed release run `42071003708`: event از نوع push، نتیجهٔ failure و صفر job؛ هیچ بررسی یا امضای production انجام نشد.
+- workflow امضای تولیدی فقط `workflow_dispatch` و tagهای `android-v*` را تعریف می‌کند. ابزار متصل، dispatch یا مدیریت Environment Secret را پشتیبانی نمی‌کند و وضعیت وجود Secretها نامعلوم است.
+- تصمیم: T0212 مسدود باقی ماند؛ T0213 به‌دلیل hard dependency آغاز نشد. هیچ یال یا قرارداد تغییر نکرد و هیچ دادهٔ محرمانه‌ای ثبت نشد.
