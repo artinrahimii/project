@@ -114,3 +114,15 @@ T0213 در وضعیت `blocked` باقی می‌ماند؛ تعداد تلاش�
 - قاعدهٔ واقعی `tools/graph_guard.py`، تلاش ناموفق را با `execution_history[].result == "failed"` می‌شمارد. چهار رکورد T0213 به‌ترتیب `partial`, `partial`, `blocked`, `blocked` هستند؛ بنابراین مقدار صحیح `failed_attempt_count` برابر صفر است.
 - فقط شمارندهٔ خلاصه از 1 به 0 اصلاح شد. هیچ رکوردی از تاریخچه حذف یا بازنویسی نشد، تلاش تازه‌ای جعل نشد و وضعیت `blocked` وظیفه تغییر نکرد.
 - این تغییر صرفاً اصلاح یکپارچگی دفتر ثبت و رفع خطای Graph Guard است؛ تکمیل T0213، اجرای workflow انتشار یا پیشرفت قابلیت محصول محسوب نمی‌شود.
+
+
+## A006 — بازبینی اجرای CI روی V 3.0.989 و محدودیت اجرای انتشار (2026-11-06)
+
+- مبنای دقیق: شاخهٔ `main`، commit `80530a9c5c096c809f98df51688cdaf1a1a9e88c` با پیام `V 3.0.989`.
+- Quality Gate با run شمارهٔ `42126067192` موفق شد: 436 آزمون Python، بررسی syntax، اعتبارسنجی ساختار گراف و بررسی خروجی/شواهد همگی موفق شدند؛ یک هشدار تاریخی T0001 حفظ شد.
+- Rendezvous container run شمارهٔ `42126067045` با موفقیت build و smoke test شد.
+- Product Build شمارهٔ `42126067068` روی همین SHA در زمان آخرین بررسی هنوز `in_progress` بود. jobهای HostLifecycle و Windows WPF/installer موفق شدند؛ نصب‌کنندهٔ Windows با artifact ID `13460797526`، digest `sha256:2bd6a783bf1ce05569ed4e5a1730ee0df4fef8d5444cf5ee648fd457e6c0c302` بارگذاری شد. artifact میزبان Windows با شناسهٔ `13461581726` و گزارش coverage چرخهٔ عمر با شناسهٔ `13461565694` نیز موجود بودند.
+- در Android، lint، ساخت Debug APK، ساخت Release با کلید موقت CI، بررسی apksigner برای همان کلید موقت، کنترل مجوزها و JVM unit tests موفق شدند؛ اما Android Keystore instrumentation همچنان `in_progress` بود و مراحل upload و coverage نهایی هنوز تکمیل نشده بودند. بنابراین Product Build را موفق/کامل اعلام نمی‌کنم.
+- برای همین SHA هیچ اجرای Android signed release با نتیجهٔ موفق وجود نداشت. اجرای موفق قبلی `42114568183` متعلق به SHA قدیمی `179efa9fe07c3ba007885e9e3198eba620092617` است و جایگزین artifact تولیدی همان commit نمی‌شود.
+- endpoint جست‌وجوی tag refs و فهرست Releases در این بررسی آرایهٔ خالی برگرداند. ابزارهای متصل، عملیات `workflow_dispatch`، ایجاد Git tag یا ایجاد Release را ارائه نمی‌کنند. workflowها را با تغییر ناامن trigger به push خودکار روی main دور نزدم.
+- تلاش T0213-A005 با نتیجهٔ `blocked` ثبت شد؛ تعداد تلاش‌ها 5 و تعداد تلاش‌های ناموفق واقعی 0 است. وضعیت `blocked` باقی ماند و هیچ یالی تغییر نکرد.

@@ -86,3 +86,16 @@ Artifactهای واقعیِ بررسی‌شده برای SHA `179efa9fe07c3ba007
 - قاعدهٔ واقعی `tools/graph_guard.py`، تلاش ناموفق را با `execution_history[].result == "failed"` می‌شمارد. چهار رکورد T0213 به‌ترتیب `partial`, `partial`, `blocked`, `blocked` هستند؛ بنابراین مقدار صحیح `failed_attempt_count` برابر صفر است.
 - فقط شمارندهٔ خلاصه از 1 به 0 اصلاح شد. هیچ رکوردی از تاریخچه حذف یا بازنویسی نشد، تلاش تازه‌ای جعل نشد و وضعیت `blocked` وظیفه تغییر نکرد.
 - این تغییر صرفاً اصلاح یکپارچگی دفتر ثبت و رفع خطای Graph Guard است؛ تکمیل T0213، اجرای workflow انتشار یا پیشرفت قابلیت محصول محسوب نمی‌شود.
+
+
+## A006 — شواهد CI روی V 3.0.989 (2026-11-06)
+
+- commit و SHA دقیق: `80530a9c5c096c809f98df51688cdaf1a1a9e88c`.
+- Quality Gate: [42126067192](https://github.com/artinrahimii/project/actions/runs/42126067192) — success؛ 436 آزمون Python، syntax، graph structure و repository-backed output/evidence validation موفق.
+- Rendezvous: [42126067045](https://github.com/artinrahimii/project/actions/runs/42126067045) — success؛ image build و HTTP contract smoke موفق.
+- Product Build: [42126067068](https://github.com/artinrahimii/project/actions/runs/42126067068) — هنگام آخرین مشاهده `in_progress`؛ HostLifecycle و Windows موفق، Android instrumentation هنوز باز.
+- Windows installer artifact `13460797526`: digest `sha256:2bd6a783bf1ce05569ed4e5a1730ee0df4fef8d5444cf5ee648fd457e6c0c302`; Windows host artifact `13461581726`; HostLifecycle coverage artifact `13461565694`. هر سه برای همان SHA هستند.
+- Android مراحل lint، debug APK، disposable-key release smoke، permission validation و JVM tests پاس شده‌اند؛ این موارد امضای تولیدی را اثبات نمی‌کنند.
+- Android signed-release run برای SHA فوق وجود ندارد؛ run موفق `42114568183` برای SHA قدیمی‌تر است.
+- هیچ tag با prefix موردنظر و هیچ Release در پاسخ endpointهای بررسی‌شده برنگشت. ابزار متصل عملیات workflow dispatch، tag creation یا release creation ندارد.
+- نتیجهٔ این بررسی: T0213 blocked؛ نه checksum رسمی تولید شد، نه artifact نهایی whitep-release-assets و نه draft GitHub Release.
