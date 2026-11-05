@@ -40,3 +40,40 @@
   - Windows WPF job 126921549182: ۱۶/۱۶ گام موفق؛ artifact میزبان شماره 13370841360 با اندازهٔ ۱۴٬۲۸۱٬۶۲۷ بایت منتشر شد.
   - Android job 126921548656: در checkpoint آخر ۱۵/۲۹ گام موفق بود؛ SDK و ابزارها، پاک‌سازی Android، KtLint، ساخت APK پاک و بررسی حداقل مجوزها موفق شدند. آزمون JVM همراه تولید گزارش پوشش در حال اجرا بود؛ instrumentation، اعتبارسنجی JUnit/coverage و بارگذاری artifactهای Android هنوز تأیید نشده بودند.
 - **وضعیت وظیفه:** T0208 همچنان in_progress است. تا زمانی که Android coverage HTML، JUnit XML، گزارش خلاصه و artifactهای APK/Keystore/coverage با موفقیت اعتبارسنجی و بارگذاری نشوند، وظیفه بسته نمی‌شود.
+
+
+## A003 — پذیرش نهایی CI روی commit V 3.0.951
+
+**commit بررسی‌شده:** `34eaca4b3a0ba5055705241cca14894b896078d2` روی شاخهٔ `main`  
+**زمان اجراهای CI:** ۴ نوامبر ۲۰۲۶، ۲۳:۰۱:۲۰ تا ۲۳:۱۰:۲۸ UTC
+
+### اجرای کنترل کیفیت
+- Step Three Quality Gate run [41930272372](https://github.com/artinrahimii/project/actions/runs/41930272372) با موفقیت کامل شد.
+- در این اجرا ۴۱۴ آزمون Python اجرا و همگی موفق شدند.
+- `python -m compileall -q tools tests`، اعتبارسنجی ساختار گراف و اعتبارسنجی مسیرهای خروجی/شواهد نیز موفق شدند.
+
+### اجرای ساخت محصول
+- Product Build run [41930272240](https://github.com/artinrahimii/project/actions/runs/41930272240) با نتیجهٔ success تکمیل شد.
+- Windows WPF job `126925093390`: تمام گام‌ها موفق؛ build پاک، بررسی C#، Protobuf، smoke test راه‌اندازی و کنترل‌های سیاست اجرا شدند.
+- Android job `126925092909`: تمام گام‌ها موفق؛ KtLint، ساخت APK پاک، کنترل مجوزها، آزمون‌های JVM، instrumentation، تولید coverage، اعتبارسنجی گزارش و بارگذاری artifactها موفق شدند.
+- HostLifecycle job `126925093261`: تمام گام‌ها موفق؛ آزمون پذیرش، جمع‌آوری Cobertura، اعتبارسنجی log بحرانی و بارگذاری artifact موفق شدند.
+- Rendezvous container run [41930272348](https://github.com/artinrahimii/project/actions/runs/41930272348) نیز با موفقیت اجرا شد؛ کانتینر non-root و health/announcement/discovery/invalid-input smoke test پاس شدند.
+
+### نتایج واقعی گزارش‌ها
+- Android: دو گزارش HTML کامل با اندازه‌های ۱۱٬۶۵۱ و ۱۱٬۴۶۹ بایت اعتبارسنجی شدند. از ۳۴ فایل JUnit، مجموع ۲۲۴ مورد آزمون ثبت شد: ۲۲۳ موفق، ۱ مورد skip، صفر failure و صفر error.
+- مورد skipشدهٔ Android آزمون `AndroidWindowsLanIntegrationTest.connectsToWindowsHostOverNonLoopbackLan` است؛ اجرای آن به پارامترهای شبکهٔ واقعی workflow دستی نیاز دارد. این مورد را موفق محسوب نمی‌کنم و آزمون LAN واقعی همچنان در محدودهٔ پذیرش جداگانهٔ T0202 باقی می‌ماند.
+- HostLifecycle: گزارش Cobertura معتبر با ۸٬۸۴۹ خط پوشش‌یافته از ۱۰٬۳۲۵ خط (۸۵٫۷۰٪) تولید شد؛ log آزمون ۶۷ نشانگر PASS و ۱ نشانگر SKIP داشت. مورد skipشده، آزمون مدل واقعی opt-in است که به مدل و تنظیمات محلی نیاز دارد؛ اجرای آن در این CI ادعا نمی‌شود.
+
+### artifactهای تأییدشده
+تمام artifactهای زیر به run شمارهٔ 41930272240 تعلق دارند و در زمان بررسی منقضی نشده بودند:
+- Windows host: `13370524858`، اندازهٔ ۱۴٬۲۸۱٬۶۵۳ بایت.
+- Android debug APK: `13371462924`، اندازهٔ ۲۸٬۹۷۲٬۴۷۷ بایت.
+- Android instrumentation reports: `13371163313`، اندازهٔ ۸۲٬۲۱۵ بایت.
+- Android unit-test reports: `13370878545`، اندازهٔ ۹۱٬۰۸۶ بایت.
+- Android coverage و critical results: `13371418035`، اندازهٔ ۵٬۳۶۸ بایت.
+- HostLifecycle coverage و critical results: `13371976216`، اندازهٔ ۱۱۰٬۹۲۰ بایت.
+
+### نتیجهٔ پذیرش
+معیار T0208 با شواهد CI احراز شد: خروجی واقعی، parser/validator، آزمون‌های منبع، گزارش‌های پوشش و نتایج آزمون‌های بحرانی در artifactهای قابل دریافت منتشر شده‌اند. بنابراین وضعیت وظیفه از `in_progress` به `done` تغییر می‌کند. دو مورد skip بالا به‌صورت صریح حفظ می‌شوند و به‌عنوان موفقیت end-to-end یا اجرای مدل واقعی تفسیر نمی‌شوند.
+
+**محدودیت محیط این نوبت:** clone محلی به‌دلیل عدم resolve شدن `github.com` ممکن نشد؛ بنابراین آزمون محلی اجرا نشده است. پذیرش این نوبت بر اساس logها، jobها و artifactهای واقعی GitHub Actions روی commit دقیق بالا انجام شد.

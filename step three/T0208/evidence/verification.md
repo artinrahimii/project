@@ -29,3 +29,19 @@
 - Windows WPF job 126921549182 — ۱۶/۱۶ موفق؛ artifact 13370841360.
 - Android job 126921548656 در آخرین checkpoint ۱۵/۲۹ گام موفق داشت؛ clean APK build و حداقل مجوزها موفق بودند و JVM unit coverage در حال اجرا بود. Android coverage metrics در این checkpoint موجود نیست.
 - T0208 در وضعیت in_progress حفظ شده؛ هیچ پوشش یا قبولی Android پیش از دریافت artifact واقعی ادعا نمی‌شود.
+
+
+## A003 — راستی‌آزمایی روی commit V 3.0.951
+
+- Commit/branch: `34eaca4b3a0ba5055705241cca14894b896078d2` / `main`.
+- Quality Gate run [41930272372](https://github.com/artinrahimii/project/actions/runs/41930272372): success؛ ۴۱۴ آزمون Python، compileall، graph validation و recorded-output/evidence validation همگی موفق.
+- Product Build run [41930272240](https://github.com/artinrahimii/project/actions/runs/41930272240): success؛ هر سه job ویندوز، اندروید و HostLifecycle موفق.
+- Windows WPF job `126925093390`: build پاک و smoke test راه‌اندازی موفق؛ artifact `13370524858` با اندازهٔ ۱۴٬۲۸۱٬۶۵۳ بایت.
+- Android job `126925092909`: ۲۲۴ تست JUnit از ۳۴ فایل؛ ۲۲۳ passed، یک skipped، صفر failure/error. دو HTML coverage report به‌ترتیب ۱۱٬۶۵۱ و ۱۱٬۴۶۹ بایت توسط validator پذیرفته شدند. artifactهای APK، instrumentation، JUnit و coverage با شناسه‌های `13371462924`، `13371163313`، `13370878545` و `13371418035` منتشر شدند.
+- تست skipشدهٔ Android: `AndroidWindowsLanIntegrationTest.connectsToWindowsHostOverNonLoopbackLan`؛ پارامترهای peer/IP/port به workflow عادی داده نشده بود. این مورد اجرای LAN واقعی نیست و همچنان به T0202 مربوط است.
+- HostLifecycle job `126925093261`: Cobertura معتبر، ۸٬۸۴۹/۱۰٬۳۲۵ خط (۸۵٫۷۰٪)، ۶۷ PASS و یک SKIP؛ artifact `13371976216` با اندازهٔ ۱۱۰٬۹۲۰ بایت شامل Cobertura، JSON summary و log کامل.
+- مورد skipشدهٔ HostLifecycle مربوط به real-model integration opt-in است؛ اجرای مدل واقعی در این CI صورت نگرفته است.
+- Windows build artifact و گزارش‌های coverage/critical در GitHub Actions با retention هفت‌روزه موجود بودند؛ اندازه‌ها و IDها در گزارش اجرای T0208 ثبت شده‌اند.
+- Rendezvous run [41930272348](https://github.com/artinrahimii/project/actions/runs/41930272348): success؛ اجرای non-root container smoke test برای health، announcement، discovery و رد ورودی نامعتبر.
+
+**نتیجه:** معیار پذیرش خود T0208 پاس است. آزمون LAN مستقل و آزمون مدل واقعی همچنان انجام‌نشده/skip هستند و با این نتیجه تکمیل‌شده محسوب نمی‌شوند. clone و اجرای محلی در این محیط به‌علت خطای DNS ممکن نشد؛ CI روی commit دقیق بالا مبنای شواهد این پذیرش است.
