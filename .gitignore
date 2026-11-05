@@ -28,3 +28,6 @@ local.properties
 .idea/
 *.user
 *.suo
+
+# Generated installers and local publish outputs
+/artifacts/

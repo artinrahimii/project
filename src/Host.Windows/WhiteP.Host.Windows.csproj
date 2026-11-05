@@ -8,6 +8,13 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>WhiteP.Host.Windows</RootNamespace>
     <AssemblyName>WhiteP.Host.Windows</AssemblyName>
+    <Version>0.1.0</Version>
+    <AssemblyVersion>0.1.0.0</AssemblyVersion>
+    <FileVersion>0.1.0.0</FileVersion>
+    <InformationalVersion>0.1.0</InformationalVersion>
+    <Company>Artin Rahimi</Company>
+    <Authors>Artin Rahimi</Authors>
+    <Product>White-P</Product>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Nethermind.Libp2p" Version="1.1.0" />

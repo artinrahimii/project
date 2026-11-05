@@ -9,12 +9,29 @@ jobs:
   windows-host:
     name: Build Windows WPF host
     runs-on: windows-latest
-    timeout-minutes: 15
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 10.0.x
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Install Inno Setup 6 compiler
+        shell: pwsh
+        run: |
+          $programFiles = [Environment]::GetFolderPath("ProgramFilesX86")
+          $iscc = Join-Path $programFiles "Inno Setup 6\ISCC.exe"
+          if (-not (Test-Path -LiteralPath $iscc -PathType Leaf)) {
+            choco install innosetup --version=6.7.1 --yes --no-progress
+          }
+          if (-not (Test-Path -LiteralPath $iscc -PathType Leaf)) {
+            throw "Inno Setup 6 ISCC compiler was not installed."
+          }
+          "ISCC_PATH=$iscc" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+      - name: Test dependency license inventory
+        run: python -m unittest discover -s tests -p test_generate_dependency_licenses.py -v
       - name: Clean Windows solution outputs
         run: dotnet clean WhiteP.sln --configuration Release
       - name: Verify C# formatting
@@ -57,6 +74,18 @@ jobs:
         run: dotnet run --project tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj --configuration Release -- --test-agent-tool-capability
       - name: Verify user-scoped DPAPI host identity and peer trust storage on Windows
         run: dotnet run --project tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj --configuration Release -- --test-host-identity-store
+      - name: Build and acceptance-test Windows installer
+        shell: pwsh
+        run: ./tools/build_windows_installer.ps1 -Version 0.1.0 -Publisher "Artin Rahimi" -IsccPath "$env:ISCC_PATH"
+      - name: Upload Windows installer and dependency notices
+        uses: actions/upload-artifact@v4
+        with:
+          name: whitep-windows-installer
+          path: |
+            artifacts/releases/WhiteP-Setup-0.1.0-win-x64.exe
+            artifacts/windows-installer/licenses/
+          if-no-files-found: error
+          retention-days: 30
       - name: Upload Windows host build artifacts
         uses: actions/upload-artifact@v4
         with:

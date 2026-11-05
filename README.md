@@ -89,6 +89,19 @@ dotnet publish src/Host.Windows/WhiteP.Host.Windows.csproj --configuration Relea
 
 خروجی `publish` یک پوشهٔ برنامه برای سیستمی است که .NET Runtime سازگار دارد؛ این دستور به‌تنهایی نصب‌کنندهٔ MSI یا بستهٔ امضاشده تولید نمی‌کند. workflow فعلی میزبان را build و خروجی build را artifact می‌کند؛ اجرای دستور publish بالا فعلاً مرحله‌ای مستقل است و در workflow محصول اجرا نمی‌شود.
 
+### بستهٔ نصب ویندوز
+
+وظیفهٔ T0209 مسیر جداگانه‌ای برای ساخت installer واقعی ویندوز اضافه می‌کند. روی Windows x64 با .NET SDK 10.0.100، Python 3.13 و Inno Setup 6:
+
+    python -m unittest discover -s tests -p test_generate_dependency_licenses.py -v
+    .\tools\build_windows_installer.ps1
+
+اسکریپت از خروجی self-contained واقعی WPF برای win-x64 استفاده می‌کند، نسخهٔ 0.1.0 و metadata ناشر Artin Rahimi را درج می‌کند، مجوزهای تمام بسته‌های NuGet restore‌شده را از project.assets.json استخراج می‌کند، installer را می‌سازد و نصب بی‌صدا، اجرای smoke test و حذف آن را در مسیر موقت آزمایش می‌کند. خروجی CI با نام whitep-windows-installer به‌عنوان artifact نگهداری می‌شود.
+
+metadata ناشر به‌تنهایی امضای دیجیتال مورد اعتماد Windows نیست. تا زمان فراهم‌شدن گواهی Authenticode، installer بدون امضا تولید می‌شود. بارگذاری artifact در CI نیز به معنی انتشار GitHub Release نیست؛ انتشار عمومی در وظایف بعدی ارزیابی می‌شود.
+
+جزئیات و محدودیت‌ها در docs/windows-installer.md ثبت شده‌اند.
+
 ### Lint، build و package اندروید
 
 در ریشهٔ مخزن، ابتدا ابزارها و بسته‌های Android SDK بالا را نصب کن؛ سپس:
