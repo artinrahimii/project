@@ -44,3 +44,13 @@
 
 - تست مسیر repositoryRoot اکنون ترتیب resolve → canonicalFile → toPath را بررسی می‌کند و دیگر عبارت را به‌صورت یک خط ثابت طلب نمی‌کند.
 - اجرای دوبارهٔ Quality Gate و پایان Product Build لازم است؛ هیچ نتیجهٔ قبولی پیشاپیش ادعا نمی‌شود.
+## A004 — Quality Gate موفق در V 3.0.972
+
+- Quality Gate: https://github.com/artinrahimii/project/actions/runs/42062471023 — ۴۲۹ آزمون موفق؛ compileall و graph checks موفق؛ ۲۳۰ وظیفه/۴۲۲ یال، صفر خطای گراف، یک هشدار تاریخی T0001.
+- Product Build: https://github.com/artinrahimii/project/actions/runs/42062471014 — هنگام گزارش A005 هنوز در حال اجرا بود؛ HostLifecycle موفق شده بود.
+
+## A005 — اصلاح import order
+
+- لاگ Product Build قبلی: https://github.com/artinrahimii/project/actions/runs/42062004172 — KtLint اعلام کرد importهای java/javax/kotlin باید در انتهای لیست مرتب‌شده باشند.
+- importها در Gradle به ترتیب com، org، java بازچینی شدند؛ نتیجهٔ KtLint این اصلاح هنوز pending است.
+- build امضاشدهٔ موقت و apksigner باید در Product Build جدید تأیید شوند؛ امضای production هنوز اجرا نشده است.

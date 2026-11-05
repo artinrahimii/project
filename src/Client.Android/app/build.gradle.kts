@@ -1,6 +1,6 @@
-import java.io.File
 import com.google.protobuf.gradle.*
 import org.gradle.api.GradleException
+import java.io.File
 
 plugins {
     id("com.android.application")

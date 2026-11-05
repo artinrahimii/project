@@ -53,3 +53,16 @@
 - تست اکنون فقط وجود سه عملیات و ترتیب آن‌ها را در عبارت `repositoryRoot` بررسی می‌کند: ابتدا resolve مسیر ریشه، سپس canonicalFile و در آخر toPath. این تست به فرمت تک‌خطی وابسته نیست.
 - کنترل runtime همچنان فایل keystore را canonical می‌کند و با `Path.startsWith(repositoryRoot)` قرارگیری داخل checkout را رد می‌کند.
 - نتیجهٔ QG و Product Build commit اصلاحی هنوز pending است؛ T0212 در وضعیت `in_progress` باقی می‌ماند.
+## A004 — تأیید Quality Gate در V 3.0.972
+
+- Quality Gate run 42062471023 با موفقیت کامل شد: ۴۲۹ آزمون Python، compileall، graph guard و recorded-output/evidence validation پاس شدند.
+- Graph Guard تعداد ۲۳۰ وظیفه و ۴۲۲ یال را بررسی کرد؛ صفر خطا و یک هشدار تاریخی T0001 باقی ماند.
+- تست canonical path اکنون با بررسی ترتیب عملیات چندخطی موفق است.
+- Product Build run 42062471014 هنگام ثبت A005 هنوز در حال اجرا بود؛ HostLifecycle موفق شده بود، اما نتیجهٔ نهایی Android/Windows هنوز قطعی نبود.
+
+## A005 — اصلاح نهایی ترتیب importهای Gradle
+
+- KtLint در Product Build run 42062004172 صریحاً اعلام کرد importهای `java`، `javax` و `kotlin` باید در انتهای ترتیب lexicographic قرار بگیرند.
+- ترتیب importهای Gradle اکنون به شکل `com.google.protobuf.gradle.*`، سپس `org.gradle.api.GradleException` و در پایان `java.io.File` است؛ فاصلهٔ خالی بین importها وجود ندارد.
+- Quality Gate نسخهٔ قبلی موفق است؛ Product Build تازه باید KtLint، build debug و `assembleRelease` با کلید موقت را تأیید کند.
+- هیچ secret یا keystore تولیدی ساخته یا استفاده نشده است. T0212 تا تأیید smoke و اجرای workflow محافظت‌شده در وضعیت `in_progress` می‌ماند.
