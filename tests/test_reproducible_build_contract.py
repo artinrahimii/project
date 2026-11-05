@@ -98,11 +98,18 @@ class ReproducibleBuildContractTests(unittest.TestCase):
             instrumentation_step.index(reinstall),
             instrumentation_step.index("adb shell pm path com.whitep.client | grep -F 'package:'"),
         )
-        self.assertIn("cmd package resolve-activity --brief -a android.intent.action.MAIN", PRODUCT)
-        self.assertIn("-c android.intent.category.LAUNCHER com.whitep.client", PRODUCT)
-        self.assertIn('case "$launch_activity" in', PRODUCT)
-        self.assertIn("com.whitep.client/*MainActivity)", PRODUCT)
-        self.assertIn('adb shell am start -n "$launch_activity"', PRODUCT)
+        component_file = "/tmp/whitep-launcher-component.txt"
+        resolve_launcher = (
+            "adb shell cmd package resolve-activity --brief -a android.intent.action.MAIN "
+            "-c android.intent.category.LAUNCHER com.whitep.client | tr -d '\\r' | "
+            "grep -E '^com[.]whitep[.]client/.*MainActivity$' | tee " + component_file
+        )
+        self.assertIn(resolve_launcher, instrumentation_step)
+        self.assertIn(f"test -s {component_file}", instrumentation_step)
+        launch_resolved = f'adb shell am start -n "$(cat {component_file})"'
+        self.assertIn(launch_resolved, instrumentation_step)
+        self.assertNotIn("launch_activity=", instrumentation_step)
+        self.assertNotIn('case "$launch_activity" in', instrumentation_step)
         self.assertNotIn("adb shell am start -n com.whitep.client/.MainActivity", PRODUCT)
         self.assertNotIn("adb shell am start -W", PRODUCT)
         self.assertIn("adb shell pidof com.whitep.client | grep -E '[0-9]'", PRODUCT)

@@ -85,3 +85,13 @@ T0211 در حال اجراست؛ build و instrumentation شواهد موفق د
 - مرحلهٔ پس از instrumentation با `adb shell pm path com.whitep.client | grep -F 'package:'` و exit code 1 شکست خورد. در نتیجه Package Manager resolve، launch، PID و resumed Activity اجرا نشدند. این نتیجه ثابت نمی‌کند build APK شکست خورده است؛ فقط نصب‌بودن package در این نقطه اثبات نشد.
 - اصلاح A006: نصب مجدد APK واقعی تولیدشده با `adb install -r src/Client.Android/app/build/outputs/apk/debug/app-debug.apk` بلافاصله پس از instrumentation و پیش از `pm path` اضافه شد. regression contract نیز ترتیب اجرای Gradle instrumentation، نصب مجدد، و بررسی package را الزام می‌کند.
 - این اصلاح هنوز در CI اجرا نشده است؛ T0211 در وضعیت `in_progress` باقی می‌ماند و تا موفقیت package resolution، launch، PID و resumed Activity تکمیل نمی‌شود.
+
+
+## A007 — اصلاح وابستگی به متغیر shell در launcher smoke
+
+- Product Build run 42026088278: Android clean APK build، KtLint، merged permission check، JVM tests، `connectedDebugAndroidTest` و coverage موفق شدند؛ ۱۲ instrumentation test اجرا شدند و non-loopback LAN case مطابق T0202 deferred skip ماند.
+- نصب مجدد APK واقعی با `adb install -r src/Client.Android/app/build/outputs/apk/debug/app-debug.apk` موفق بود و `adb shell pm path com.whitep.client` مسیر `base.apk` را برگرداند.
+- شکست بعدی از shell isolation بود: emulator runner هر خط script را در `/usr/bin/sh -c` جداگانه اجرا می‌کند. متغیر `launch_activity` در خط بعدی در دسترس نبود؛ `printf` مقدار خالی چاپ کرد و خط مستقل `case` با `Syntax error: end of file unexpected (expecting ")")` شکست خورد. در نتیجه اجرای MainActivity، PID و resumed checks انجام نشدند.
+- اصلاح A007: خروجی `cmd package resolve-activity` با فیلتر package و `MainActivity` در `/tmp/whitep-launcher-component.txt` ذخیره می‌شود؛ خط بعدی فایل را با `test -s` اعتبارسنجی می‌کند و فرمان اجرای Activity مقدار component را از همان فایل می‌خواند. هیچ متغیر shell بین خطوط نیاز نیست.
+- regression contract ترتیب و محتوای این مراحل را بررسی می‌کند و استفاده از متغیر محلی و بلوک `case` چندخطی را رد می‌کند.
+- اصلاح A007 هنوز در CI اجرا نشده است؛ T0211 در وضعیت `in_progress` باقی می‌ماند تا resolve، launch، PID و resumed Activity همگی در Product Build موفق شوند.

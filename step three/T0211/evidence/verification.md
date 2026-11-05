@@ -77,3 +77,14 @@
 - `adb shell pm path com.whitep.client | grep -F 'package:'` پس از instrumentation exit code 1 داد؛ بنابراین resolve/launch/PID/resumed بررسی نشدند.
 - workflow اکنون همان APK ساخته‌شده را با `adb install -r` پس از instrumentation و پیش از package check نصب مجدد می‌کند. regression test ترتیب این سه مرحله را assert می‌کند.
 - نتیجهٔ CI برای اصلاح A006 هنوز pending است؛ وضعیت T0211 همچنان `in_progress` است.
+
+
+## A007 — Product Build و اصلاح shell isolation
+
+- Quality Gate: https://github.com/artinrahimii/project/actions/runs/42026088287 — موفق؛ ۴۲۳ آزمون Python و graph guard موفق، ۲۳۰ وظیفه و ۴۲۲ یال، صفر خطای گراف و یک هشدار قدیمی metadata.
+- Product Build: https://github.com/artinrahimii/project/actions/runs/42026088278
+- Android job: https://github.com/artinrahimii/project/actions/runs/42026088278/job/127240545370
+- Windows WPF و HostLifecycle موفق شدند. Android clean APK build، KtLint، merged permissions، JVM tests، connected instrumentation و coverage نیز موفق شدند.
+- ۱۲ instrumentation case اجرا شدند؛ non-loopback LAN test طبق T0202 deferred skip شد. نصب مجدد APK با `adb install -r` موفق بود و `pm path` مسیر base.apk را نشان داد.
+- launcher smoke به‌علت اجرای هر خط script در shell مستقل شکست خورد: متغیر `launch_activity` به خط بعدی منتقل نشد و `case` چندخطی parse نشد. اجرای Activity، PID و resumed بررسی نشد.
+- workflow اکنون component واقعی MAIN/LAUNCHER را به فایل موقت می‌نویسد، وجود آن را جداگانه کنترل می‌کند و با `cat` همان فایل Activity را اجرا می‌کند. این اصلاح هنوز باید در CI تأیید شود؛ T0211 همچنان `in_progress` است.
