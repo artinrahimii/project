@@ -35,3 +35,13 @@ T0211 در حال اجراست؛ build و instrumentation شواهد موفق د
 - این خطا شکست آزمون برنامه یا اجرای Android نبود؛ هیچ آزمون Python یا runtime task در QG شکست نخورد. اشکال فقط در ثبت مسیرهای واقعی گراف بود.
 - اصلاح V 3.0.960: actual_output_paths در T0209/T0210/T0211 به مسیرهای دقیق tracked files محدود شد. شناسه‌های Windows installer و Android APK و لینک‌های CI در evidence باقی ماندند.
 - T0211 همچنان in_progress است؛ explicit launcher activity check در CI جدید باید پاس شود.
+
+
+## A002 — تشخیص شکست wrapper و اصلاح shell
+
+- Product Build run 42011471555 روی commit `cca92b71ad138df5235e2546e4db8effd9a8caf8` در مرحلهٔ Android Keystore instrumentation شکست خورد.
+- لاگ دقیق نشان داد action دستور script را با `/usr/bin/sh -c` اجرا کرده است؛ `set -euo pipefail` در این shell معتبر نیست و با `set: Illegal option -o pipefail` و exit code 2 متوقف شد. این خطا پیش از اجرای Gradle instrumentation رخ داد.
+- clean APK assembly، KtLint، بررسی permissionهای merged APK و آزمون‌های JVM/coverage موفق بودند. cold boot ابتدا `adb: device offline` نشان داد، سپس ADB daemon بالا آمد؛ خطای خاتمه‌دهنده همان گزینهٔ نامعتبر shell بود.
+- اصلاح workflow: استفاده از `set -eu` سازگار با POSIX؛ فرمان‌های pipeline باقی‌مانده در این script از exit status آخرین فرمان بهره می‌برند.
+- regression contract در `tests/test_reproducible_build_contract.py` وجود `set -eu` و نبود `pipefail` را در script همین action بررسی می‌کند.
+- این اصلاح هنوز از CI جدید عبور نکرده است. T0211 در وضعیت `in_progress` باقی می‌ماند تا instrumentation، اجرای MainActivity، PID و resumed activity همگی در Product Build جدید موفق شوند.

@@ -27,3 +27,13 @@
 - V 3.0.960 این مقادیر را از actual_output_paths حذف کرد و مسیرهای tracked مربوط به workflow، source و گزارش را نگه داشت؛ artifact IDs و URLs همچنان در evidence حاضرند.
 - این خطا به معنی شکست APK build، instrumentation یا Windows installer acceptance نیست.
 - Explicit MainActivity emulator launch در Product Build جدید همچنان لازم است؛ T0211 هنوز done نیست.
+
+
+## A002 — شکست قبلی و اصلاح
+
+- Product Build run 42011471555: https://github.com/artinrahimii/project/actions/runs/42011471555
+- Android job: https://github.com/artinrahimii/project/actions/runs/42011471555/job/127191303809
+- نتیجه: APK clean build، lint، permission verification و JVM tests موفق؛ Android Keystore instrumentation به‌دلیل shell mismatch اجرا نشد.
+- لاگ job: action script را با `/usr/bin/sh -c` اجرا کرد و `set -euo pipefail` باعث `set: Illegal option -o pipefail` شد.
+- اصلاح ثبت‌شده در این تلاش: POSIX `set -eu` و regression test برای جلوگیری از برگشت `pipefail`.
+- اجرای مجدد CI و بررسی صریح MainActivity/PID/resumed هنوز pending است؛ بنابراین این شواهد به‌تنهایی معیار پذیرش T0211 را تکمیل نمی‌کنند.

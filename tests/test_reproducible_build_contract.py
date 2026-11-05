@@ -80,6 +80,12 @@ class ReproducibleBuildContractTests(unittest.TestCase):
         self.assertIn('applicationId = "com.whitep.client"', ANDROID_GRADLE)
         self.assertIn('android:name=".MainActivity"', ANDROID_MANIFEST)
         self.assertIn("connectedDebugAndroidTest createDebugAndroidTestCoverageReport", PRODUCT)
+        instrumentation_step = PRODUCT.split(
+            "- name: Run Android Keystore instrumentation tests", 1
+        )[1].split("- name: Upload Android Keystore instrumentation reports", 1)[0]
+        self.assertIn("script: |", instrumentation_step)
+        self.assertIn("set -eu", instrumentation_step)
+        self.assertNotIn("pipefail", instrumentation_step)
         self.assertIn("adb shell am force-stop com.whitep.client", PRODUCT)
         self.assertIn("adb shell am start -W -n com.whitep.client/.MainActivity", PRODUCT)
         self.assertIn('grep -Fq "Status: ok"', PRODUCT)

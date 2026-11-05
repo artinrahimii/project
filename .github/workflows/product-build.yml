@@ -187,7 +187,7 @@ jobs:
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
           script: |
-            set -euo pipefail
+            set -eu
             gradle --no-daemon --project-dir src/Client.Android connectedDebugAndroidTest createDebugAndroidTestCoverageReport
             adb shell am force-stop com.whitep.client
             launch_output="$(adb shell am start -W -n com.whitep.client/.MainActivity)"
