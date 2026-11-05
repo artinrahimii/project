@@ -135,3 +135,20 @@
 
 ### مرز پذیرش
 این بازاعتبارسنجی موفقیت build و امضای smoke با کلید دورریختنی CI را ثابت می‌کند؛ **امضای تولیدی هنوز اجرا و تأیید نشده است**. هیچ artifact امضاشده با گواهی production یا تطبیق fingerprint ثابت در این run تولید نشد. بنابراین T0212 همچنان `in_progress` است و T0213 به‌دلیل وابستگی سخت به T0212 نباید آغاز شود.
+
+## A007 — بررسی V 3.0.975 و مانع امضای تولیدی
+
+**commit مبنا:** `fa69ec6ee58998801e22e4811e331f4dc2ac6f7a` (`V 3.0.975`)، شاخهٔ آنلاین `main`.
+
+### آزمون‌های انجام‌شده
+- [Step Three Quality Gate run 42068538634](https://github.com/artinrahimii/project/actions/runs/42068538634): job کامل شد؛ آزمون‌های خودکار، بررسی نحوی Python، اعتبارسنجی ساختار گراف و بررسی خروجی‌ها/شواهد همگی موفق شدند.
+- [White-P Product Build run 42068534197](https://github.com/artinrahimii/project/actions/runs/42068534197): هر سه job مربوط به Android، Windows WPF و HostLifecycle با نتیجهٔ موفق پایان یافتند. در Android، `assembleDebug` و `assembleRelease` اجرا شدند؛ امضای Release فقط با JKS موقت CI انجام شد، `apksigner` آن را تأیید کرد و کلید موقت پاک شد. این آزمون، امضای تولیدی را اثبات نمی‌کند.
+- [Android signed release run 42068530991](https://github.com/artinrahimii/project/actions/runs/42068530991): رویداد ثبت‌شده `push` بود و نتیجهٔ workflow برابر failure با **صفر job** بود. بنابراین هیچ مرحله‌ای از اعتبارسنجی secretها، ساخت با keystore تولیدی، تطبیق fingerprint یا بارگذاری APK تولیدی اجرا نشد. این نتیجه، شکست آزمون رمزنگاری نیست؛ آزمون امضای تولیدی اصلاً اجرا نشده است.
+
+### کنترل trigger و دسترسی
+فایل `.github/workflows/android-release.yml` در commit مبنا فقط `workflow_dispatch` و push روی tagهای `android-v*` را تعریف می‌کند؛ push عادی شاخهٔ `main` مسیر امضای تولیدی را اجرا نمی‌کند. اتصال GitHub در این نشست ابزار provision کردن secretهای Environment یا اجرای `workflow_dispatch` ارائه نمی‌دهد. از این محدودیت نمی‌توان نتیجه گرفت که secretهای Environment وجود ندارند یا وجود دارند. هیچ keystore، رمز یا fingerprint خصوصی دریافت، چاپ یا در مخزن ذخیره نشده است.
+
+### تصمیم وضعیت
+`T0212` از `in_progress` به `blocked` تغییر یافت؛ علت، نیاز به اقدام maintainer برای تأیید/پیکربندی Environment محافظت‌شدهٔ `android-release` و اجرای workflow تولیدی است. دو یال ورودی از `T0208` و `T0211` همچنان `sequencing_only / validated` و یال `T0212 → T0213` همچنان `hard_dependency / validated` باقی ماندند. هیچ یال یا قرارداد فنی تغییر نکرد.
+
+`T0213` آغاز نشد، چون بدون APK تولیدی با fingerprint تأییدشده، checksum خروجی انتشار قابل‌قبول نیست. اقدام لازم: maintainer باید secretهای لازم و متغیر `ANDROID_RELEASE_CERT_SHA256` را در Environment محافظت‌شده آماده کند، workflow را با `workflow_dispatch` اجرا کند و artifact `whitep-android-release-signed` را پس از تطبیق fingerprint تحویل دهد.

@@ -78,3 +78,13 @@ artifact مربوط به release APK تولیدی در این run ساخته/ب�
 - HostLifecycle job [127379262455](https://github.com/artinrahimii/project/actions/runs/42065762818/job/127379262455): ۸٬۸۴۸/۱۰٬۳۲۵ خط (۸۵٫۶۹٪)، ۶۷ PASS و یک opt-in SKIP.
 - Artifactهای اندروید/ویندوز و گزارش‌های آزمون بارگذاری شدند؛ فهرست شناسه‌ها در execution-report.md ثبت شده است.
 - این اجرا، امضای تولیدی را انجام نداد و APK تولیدی fingerprint-matched منتشر نکرد. T0212 در `in_progress` باقی می‌ماند؛ T0213 هنوز به‌علت hard dependency شروع نشده است.
+
+## A007 — بازاعتبارسنجی سرخط V 3.0.975
+
+- Commit: `fa69ec6ee58998801e22e4811e331f4dc2ac6f7a`، پیام `V 3.0.975`.
+- Quality Gate: run `42068538634` با همهٔ مراحل موفق.
+- Product Build: run `42068534197` با هر سه job موفق؛ Android Release فقط با کلید موقت CI امضا و با `apksigner` بررسی شد. این گواهی برای توزیع یا به‌روزرسانی محصول نیست.
+- Production signing: run `42068530991` از نوع push با صفر job پایان یافت؛ بنابراین هیچ بررسی secret یا تطبیق fingerprint تولیدی انجام نشد.
+- workflow تولیدی فقط با `workflow_dispatch` یا tagهای `android-v*` اجرا می‌شود. ابزار متصل فعلی نه قابلیت dispatch و نه مدیریت secretهای Environment را دارد؛ وضعیت وجود secretها نامعلوم باقی می‌ماند.
+- تصمیم: T0212 مسدود است تا maintainer Environment محافظت‌شده را پیکربندی/تأیید و workflow را اجرا کند. T0213 به‌دلیل hard dependency آغاز نشده است. هیچ کلید، رمز یا دادهٔ محرمانه‌ای وارد شواهد نشده است.
+- شواهد: [Quality Gate](https://github.com/artinrahimii/project/actions/runs/42068538634)، [Product Build](https://github.com/artinrahimii/project/actions/runs/42068534197)، [Android signed release workflow](https://github.com/artinrahimii/project/actions/runs/42068530991).
