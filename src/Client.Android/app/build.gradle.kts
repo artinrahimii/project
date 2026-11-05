@@ -1,5 +1,5 @@
-import com.google.protobuf.gradle.*
 import java.io.File
+import com.google.protobuf.gradle.*
 import org.gradle.api.GradleException
 
 plugins {
@@ -19,40 +19,52 @@ val robolectricDependencyRepoUrl =
 
 // Release signing material is supplied only through the runner environment or a
 // protected GitHub Environment. Never put passwords or keystore files in the repository.
-val releaseSigningInputs = mapOf(
-    "WHITEP_ANDROID_RELEASE_STORE_FILE" to System.getenv("WHITEP_ANDROID_RELEASE_STORE_FILE"),
-    "WHITEP_ANDROID_RELEASE_STORE_PASSWORD" to System.getenv("WHITEP_ANDROID_RELEASE_STORE_PASSWORD"),
-    "WHITEP_ANDROID_RELEASE_KEY_ALIAS" to System.getenv("WHITEP_ANDROID_RELEASE_KEY_ALIAS"),
-    "WHITEP_ANDROID_RELEASE_KEY_PASSWORD" to System.getenv("WHITEP_ANDROID_RELEASE_KEY_PASSWORD"),
-)
+val releaseSigningInputs =
+    mapOf(
+        "WHITEP_ANDROID_RELEASE_STORE_FILE" to System.getenv("WHITEP_ANDROID_RELEASE_STORE_FILE"),
+        "WHITEP_ANDROID_RELEASE_STORE_PASSWORD" to System.getenv("WHITEP_ANDROID_RELEASE_STORE_PASSWORD"),
+        "WHITEP_ANDROID_RELEASE_KEY_ALIAS" to System.getenv("WHITEP_ANDROID_RELEASE_KEY_ALIAS"),
+        "WHITEP_ANDROID_RELEASE_KEY_PASSWORD" to System.getenv("WHITEP_ANDROID_RELEASE_KEY_PASSWORD"),
+    )
 val missingReleaseSigningInputs = releaseSigningInputs.filterValues { it.isNullOrBlank() }.keys
 val releaseSigningConfigured = missingReleaseSigningInputs.isEmpty()
 val requestedGradleTasks = gradle.startParameter.taskNames.map { it.substringAfterLast(':') }
-val releaseBuildRequested = requestedGradleTasks.any {
-    it.contains("release", ignoreCase = true) ||
-        it.equals("build", ignoreCase = true) ||
-        it.equals("assemble", ignoreCase = true) ||
-        it.equals("bundle", ignoreCase = true)
-}
+val releaseBuildRequested =
+    requestedGradleTasks.any {
+        it.contains("release", ignoreCase = true) ||
+            it.equals("build", ignoreCase = true) ||
+            it.equals("assemble", ignoreCase = true) ||
+            it.equals("bundle", ignoreCase = true)
+    }
 if (releaseBuildRequested && !releaseSigningConfigured) {
     throw GradleException(
         "Release tasks require all four WHITEP_ANDROID_RELEASE_* environment variables. Missing: " +
             missingReleaseSigningInputs.joinToString(", "),
     )
 }
-val releaseSigningStoreFile = releaseSigningInputs["WHITEP_ANDROID_RELEASE_STORE_FILE"]
-    ?.takeIf { it.isNotBlank() }
-    ?.let { File(it).canonicalFile }
+val releaseSigningStoreFile =
+    releaseSigningInputs["WHITEP_ANDROID_RELEASE_STORE_FILE"]
+        ?.takeIf { it.isNotBlank() }
+        ?.let { File(it).canonicalFile }
 if (releaseBuildRequested) {
-    val signingFile = releaseSigningStoreFile ?: throw GradleException(
-        "Release signing keystore path is missing.",
-    )
+    val signingFile =
+        releaseSigningStoreFile ?: throw GradleException(
+            "Release signing keystore path is missing.",
+        )
     if (!signingFile.isFile) {
-        throw GradleException("Release signing keystore does not exist or is not a file: " + signingFile.path)
+        throw GradleException(
+            "Release signing keystore does not exist or is not a file: " + signingFile.path,
+        )
     }
-    val repositoryRoot = rootProject.projectDir.resolve("../..").canonicalFile.toPath()
+    val repositoryRoot =
+        rootProject.projectDir
+            .resolve("../..")
+            .canonicalFile
+            .toPath()
     if (signingFile.toPath().startsWith(repositoryRoot)) {
-        throw GradleException("Release signing keystore must be stored outside the repository checkout.")
+        throw GradleException(
+            "Release signing keystore must be stored outside the repository checkout.",
+        )
     }
 }
 

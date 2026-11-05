@@ -20,3 +20,16 @@
 ## مرز پذیرش
 
 وجود signing smoke key در CI به معنی ایجاد یا تأیید کلید تولیدی نیست. هیچ مقدار secret در گزارش یا مخزن ثبت نشده است. وضعیت `T0212` تا اجرای workflow محافظت‌شده با certificate واقعی، `in_progress` باقی می‌ماند.
+## A002 — شواهد CI روی V 3.0.970
+
+- Quality Gate: https://github.com/artinrahimii/project/actions/runs/42053031648 — ۴۲۹ آزمون کشف شد؛ یک failure در تست عبارت مستندات `outside the repository`.
+- Product Build: https://github.com/artinrahimii/project/actions/runs/42053032390 — Windows WPF و HostLifecycle موفق؛ Android job به علت KtLint ناموفق شد.
+- Android job: https://github.com/artinrahimii/project/actions/runs/42053032390/job/127333902913 — `gradle clean` موفق؛ `ktlintKotlinScriptCheck` به علت import ordering و multiline formatting در خطوط ۱، ۲۲، ۳۱، ۴۳، ۴۷ و ۵۳ شکست خورد. امضای smoke اجرا نشد.
+- Production workflow run: https://github.com/artinrahimii/project/actions/runs/42053028222 — صفر job؛ push شاخه، workflow دستی/tag-only را وارد job تولیدی نکرد.
+
+## A003 — اصلاحات منتظر آزمون
+
+- Gradle با قالب گزارش‌شدهٔ KtLint بازآرایی شد؛ رفتار task gating، canonical path validation و secret inputs تغییر معنایی نکرد.
+- Product signing smoke به یک step واحد با متغیرهای local-to-step و `trap` پاک‌سازی تبدیل شد.
+- مستندات مرز خارج checkout را روشن می‌کنند و با تست قراردادی هم‌خوان شده‌اند.
+- نتیجهٔ CI اصلاحات در این commit هنوز pending است؛ production signing هنوز به Environment secrets و متغیر fingerprint نیاز دارد.

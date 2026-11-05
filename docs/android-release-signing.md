@@ -2,7 +2,7 @@
 
 ## Security boundary
 
-The Android release keystore and its passwords must never be committed, placed in the working tree, printed to CI logs, or stored in repository files. The Gradle release variant reads four environment variables and rejects release-related tasks when any input is missing. It also rejects a keystore path that resolves inside the repository checkout.
+The Android release keystore and its passwords must never be committed, placed in the working tree, printed to CI logs, or stored in repository files. The Gradle release variant reads four environment variables and rejects release-related tasks when any input is missing. It also rejects any keystore path that does not resolve outside the repository checkout.
 
 The normal Product Build creates a fresh disposable JKS key under the GitHub runner's temporary directory, builds `assembleRelease`, verifies the APK signature with `apksigner`, then deletes the temporary key. This proves the Gradle signing path works; the disposable certificate is **not** a production identity and must never be used to distribute the app or sign future updates.
 

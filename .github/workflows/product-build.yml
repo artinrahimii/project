@@ -151,13 +151,15 @@ jobs:
       - name: Build debug APK from clean outputs
         working-directory: src/Client.Android
         run: gradle --no-daemon assembleDebug --no-build-cache
-      - name: Create disposable release-signing key for Gradle smoke test
+      - name: Build and verify release variant using a disposable CI key
+        working-directory: src/Client.Android
         shell: bash
         run: |
           set -euo pipefail
           signing_dir="$RUNNER_TEMP/whitep-android-release-signing-smoke"
           mkdir -p "$signing_dir"
           chmod 700 "$signing_dir"
+          trap 'rm -rf "$signing_dir"' EXIT
           store_password="$(openssl rand -hex 24)"
           key_password="$(openssl rand -hex 24)"
           echo "::add-mask::$store_password"
@@ -169,27 +171,19 @@ jobs:
             -storetype JKS -keystore "$signing_dir/smoke.jks" \
             -storepass "$store_password" -keypass "$key_password" \
             -dname "CN=White-P Disposable CI Signing Smoke"
-          {
-            echo "WHITEP_ANDROID_RELEASE_STORE_FILE=$signing_dir/smoke.jks"
-            echo "WHITEP_ANDROID_RELEASE_STORE_PASSWORD=$store_password"
-            echo "WHITEP_ANDROID_RELEASE_KEY_ALIAS=whitep-release-smoke"
-            echo "WHITEP_ANDROID_RELEASE_KEY_PASSWORD=$key_password"
-          } >> "$GITHUB_ENV"
-      - name: Build the signed release variant using the disposable CI key
-        working-directory: src/Client.Android
-        run: gradle --no-daemon assembleRelease --no-build-cache
-      - name: Verify the release APK has a valid APK signature
-        shell: bash
-        run: |
-          set -euo pipefail
-          apk="src/Client.Android/app/build/outputs/apk/release/app-release.apk"
+          export WHITEP_ANDROID_RELEASE_STORE_FILE="$signing_dir/smoke.jks"
+          export WHITEP_ANDROID_RELEASE_STORE_PASSWORD="$store_password"
+          export WHITEP_ANDROID_RELEASE_KEY_ALIAS="whitep-release-smoke"
+          export WHITEP_ANDROID_RELEASE_KEY_PASSWORD="$key_password"
+          gradle --no-daemon assembleRelease --no-build-cache
+          apk="app/build/outputs/apk/release/app-release.apk"
           test -s "$apk"
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs "$apk" | tee "$RUNNER_TEMP/whitep-release-apksigner-smoke.txt"
           grep -Eq 'Signer #1 certificate SHA-256 digest: [0-9A-Fa-f]{64}' "$RUNNER_TEMP/whitep-release-apksigner-smoke.txt"
       - name: Remove disposable release-signing key
         if: always()
         shell: bash
-        run: rm -f "$RUNNER_TEMP/whitep-android-release-signing-smoke/smoke.jks"
+        run: rm -rf "$RUNNER_TEMP/whitep-android-release-signing-smoke"
       - name: Verify minimum permissions in merged Android APK
         shell: bash
         run: |

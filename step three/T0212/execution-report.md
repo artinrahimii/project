@@ -29,3 +29,16 @@
 ## وضعیت
 
 `T0212` در وضعیت `in_progress` می‌ماند. `done` فقط پس از اجرای موفق workflow محافظت‌شده با keystore تولیدی و تطبیق fingerprint ثبت می‌شود.
+## A002 — نتایج نخستین CI و شکست‌های مشخص
+
+- Quality Gate run 42053031648 (commit V 3.0.970) تعداد ۴۲۹ آزمون را کشف کرد و فقط یک آزمون شکست خورد: `test_documentation_separates_smoke_signing_from_real_release_signing` عبارت دقیق `outside the repository` را در مستندات پیدا نکرد. پس از شکست unittest، Graph Guard در همان اجرا انجام نشد.
+- Product Build run 42053032390: jobهای Windows WPF و HostLifecycle موفق شدند؛ job اندروید پس از `gradle clean` در `ktlintKotlinScriptCheck` متوقف شد.
+- گزارش دقیق KtLint: ترتیب importها و شکستن عبارت‌های چندخطی در `app/build.gradle.kts`، خطوط ۱، ۲۲، ۳۱، ۴۳، ۴۷ و ۵۳ نیاز به اصلاح داشتند. بنابراین `assembleRelease` با کلید موقت و `apksigner` در این اجرا اصلاً اجرا نشدند.
+- workflow تولیدی `android-release.yml` در push عادی main اجرا نشد و run مربوط به آن صفر job داشت؛ این workflow فقط با `workflow_dispatch` یا tagهای `android-v*` فعال می‌شود. این اجرا را نه موفق و نه آزمون شکست‌خوردهٔ امضای تولیدی حساب نمی‌کنیم.
+
+## A003 — اصلاح قالب کد و محدودسازی عمر کلید موقت
+
+- ترتیب import و ساختار multiline در Gradle Kotlin DSL مطابق گزارش واقعی KtLint اصلاح شد.
+- جملهٔ مستندات به‌گونه‌ای اصلاح شد که مرز امنیتی خارج‌بودن keystore از checkout را دقیقاً بیان کند و با قرارداد تست یکسان باشد.
+- ساخت کلید موقت، `assembleRelease`، بررسی `apksigner` و پاک‌سازی در یک shell step جمع شدند. متغیرهای signing فقط در همان step export می‌شوند و `trap ... EXIT` پوشهٔ کلید موقت را حتی در زمان failure حذف می‌کند؛ دیگر از GITHUB_ENV برای نگهداری رمزهای smoke در باقی job استفاده نمی‌شود.
+- Quality Gate و Product Build نسخهٔ اصلاحی هنوز اجرا نشده‌اند. T0212 همچنان `in_progress` است؛ هیچ ادعایی دربارهٔ امضای production یا fingerprint واقعی ثبت نمی‌شود.
