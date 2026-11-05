@@ -75,3 +75,13 @@ T0211 در حال اجراست؛ build و instrumentation شواهد موفق د
 - کامپوننت resolve‌شده باید متعلق به `com.whitep.client` و کلاس آن `MainActivity` باشد؛ سپس همان کامپوننت اجرا می‌شود و PID و resumed Activity به‌طور مستقل بررسی می‌شوند.
 - regression contract متناظر در `tests/test_reproducible_build_contract.py` به‌روزرسانی شد.
 - این اصلاح هنوز از Quality Gate و Product Build جدید عبور نکرده است؛ T0211 در `in_progress` باقی می‌ماند.
+
+## A006 — نصب مجدد APK پیش از اعتبارسنجی launcher
+
+- Quality Gate run 42023459980 روی commit `ca1aea857c4612d29ff1dd68e6941983ea699aa2` موفق شد؛ ۴۲۳ آزمون Python و کنترل‌های ساختار/شواهد گراف موفق بودند.
+- Rendezvous container run 42023460015 موفق شد.
+- Product Build run 42023460541: job ویندوز WPF و HostLifecycle موفق شدند؛ Android clean APK build، KtLint، بررسی permissionهای merged، آزمون‌های JVM، `connectedDebugAndroidTest` و تولید coverage موفق شدند.
+- در instrumentation، ۱۲ آزمون اجرا شدند؛ آزمون non-loopback LAN به‌دلیل نیاز به میزبان مستقل، مطابق تعویق T0202، skip ماند.
+- مرحلهٔ پس از instrumentation با `adb shell pm path com.whitep.client | grep -F 'package:'` و exit code 1 شکست خورد. در نتیجه Package Manager resolve، launch، PID و resumed Activity اجرا نشدند. این نتیجه ثابت نمی‌کند build APK شکست خورده است؛ فقط نصب‌بودن package در این نقطه اثبات نشد.
+- اصلاح A006: نصب مجدد APK واقعی تولیدشده با `adb install -r src/Client.Android/app/build/outputs/apk/debug/app-debug.apk` بلافاصله پس از instrumentation و پیش از `pm path` اضافه شد. regression contract نیز ترتیب اجرای Gradle instrumentation، نصب مجدد، و بررسی package را الزام می‌کند.
+- این اصلاح هنوز در CI اجرا نشده است؛ T0211 در وضعیت `in_progress` باقی می‌ماند و تا موفقیت package resolution، launch، PID و resumed Activity تکمیل نمی‌شود.

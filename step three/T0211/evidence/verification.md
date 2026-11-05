@@ -66,3 +66,14 @@
 - Activity واقعی MAIN/LAUNCHER با `cmd package resolve-activity --brief` استخراج و پس از کنترل package و suffix `MainActivity` اجرا می‌شود.
 - PID و Activity فعال پس از اجرا بررسی می‌شوند.
 - regression contract تغییر یافته است؛ هنوز نتیجهٔ اجرای آن در Quality Gate/Product Build جدید موجود نیست.
+
+## A006 — Product Build و اصلاح نصب مجدد
+
+- Quality Gate: https://github.com/artinrahimii/project/actions/runs/42023459980 — موفق، ۴۲۳ آزمون Python و بررسی‌های گراف.
+- Product Build: https://github.com/artinrahimii/project/actions/runs/42023460541
+- Android job: https://github.com/artinrahimii/project/actions/runs/42023460541/job/127231737078
+- Windows WPF و HostLifecycle jobs موفق شدند. Android APK build، KtLint، merged permission check، JVM tests، `connectedDebugAndroidTest` و coverage نیز موفق شدند.
+- ۱۲ instrumentation test اجرا شدند؛ آزمون non-loopback LAN مطابق T0202 deferred skip شد.
+- `adb shell pm path com.whitep.client | grep -F 'package:'` پس از instrumentation exit code 1 داد؛ بنابراین resolve/launch/PID/resumed بررسی نشدند.
+- workflow اکنون همان APK ساخته‌شده را با `adb install -r` پس از instrumentation و پیش از package check نصب مجدد می‌کند. regression test ترتیب این سه مرحله را assert می‌کند.
+- نتیجهٔ CI برای اصلاح A006 هنوز pending است؛ وضعیت T0211 همچنان `in_progress` است.

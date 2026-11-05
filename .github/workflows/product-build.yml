@@ -189,6 +189,7 @@ jobs:
           script: |
             set -eu
             gradle --no-daemon --project-dir src/Client.Android connectedDebugAndroidTest createDebugAndroidTestCoverageReport
+            adb install -r src/Client.Android/app/build/outputs/apk/debug/app-debug.apk
             adb shell pm path com.whitep.client | grep -F 'package:'
             launch_activity="$(adb shell cmd package resolve-activity --brief -a android.intent.action.MAIN -c android.intent.category.LAUNCHER com.whitep.client | tr -d '\r' | grep -E '^com[.]whitep[.]client/')"
             printf 'Resolved launcher: %s\n' "$launch_activity"

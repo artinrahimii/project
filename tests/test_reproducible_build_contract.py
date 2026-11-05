@@ -88,6 +88,16 @@ class ReproducibleBuildContractTests(unittest.TestCase):
         self.assertNotIn("pipefail", instrumentation_step)
         self.assertIn("adb shell am force-stop com.whitep.client", PRODUCT)
         self.assertIn("adb shell pm path com.whitep.client | grep -F 'package:'", PRODUCT)
+        reinstall = "adb install -r src/Client.Android/app/build/outputs/apk/debug/app-debug.apk"
+        self.assertIn(reinstall, instrumentation_step)
+        self.assertLess(
+            instrumentation_step.index("connectedDebugAndroidTest createDebugAndroidTestCoverageReport"),
+            instrumentation_step.index(reinstall),
+        )
+        self.assertLess(
+            instrumentation_step.index(reinstall),
+            instrumentation_step.index("adb shell pm path com.whitep.client | grep -F 'package:'"),
+        )
         self.assertIn("cmd package resolve-activity --brief -a android.intent.action.MAIN", PRODUCT)
         self.assertIn("-c android.intent.category.LAUNCHER com.whitep.client", PRODUCT)
         self.assertIn('case "$launch_activity" in', PRODUCT)
