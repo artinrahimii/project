@@ -65,3 +65,14 @@ Artifactهای واقعیِ بررسی‌شده برای SHA `179efa9fe07c3ba007
 در نسخهٔ قبلی این فایل، digest مربوط به Artifact `13453864758` به‌اشتباه با 68 نویسه ثبت شده بود. مقدار صحیح 64 نویسه‌ای که هم در metadata گیت‌هاب و هم در فایل دانلودشده با SHA-256 تأیید شد:
 
 `sha256:5f117cfb85ce902440ab6d906a0aa74a43cbd6d5b18857d0af27e63b0a36051b`
+
+
+## A004 — کنترل گراف و مانع ابزار انتشار (2026-11-06)
+
+- مبنا: `main`، commit `1e728bec371863f10b62a77354d0fd42459a57b1`، پیام `V 3.0.987`.
+- Blob گراف: `bf0897613e2efbdc4b4052cf4d87996c2269cb7f`؛ 3,732,443 نویسه؛ 3,861,954 بایت UTF-8؛ SHA-1 شیء Git محاسبه‌شده با Blob ID درخت برابر بود.
+- ساختار کامل: 230 task، 422 edge، 210 done، 3 deferred_final، 1 blocked، 16 not_started؛ 385 یال validated و 37 unreviewed؛ شناسهٔ تکراری و ارجاع مفقود صفر.
+- T0212 → T0213: `blocks / hard_dependency / validated`. T0208 → T0213: `blocks / sequencing_only / validated`. T0213 → T0214: `unreviewed`؛ تغییر نکرد.
+- `android-release.yml` و `release-assets.yml` برای شروع، `workflow_dispatch` یا تگ `android-v*` لازم دارند. ابزار متصل این نشست عملیات dispatch، ایجاد تگ یا Release ندارد. GET releases آرایهٔ خالی برگرداند؛ فهرست تگ‌ها از این اتصال قابل بررسی نبود.
+- هیچ build، آزمون نرم‌افزاری یا workflow انتشار در این نوبت اجرا نشد. وضعیت T0213 همچنان blocked است؛ این بررسی صرفاً checkpoint است و task completion محسوب نمی‌شود.
+- اقدام بعد: اجرای دستی Android signed release روی SHA دقیق main، تأیید Product Build همان SHA، ایجاد تگ `android-v0.1.0` و سپس بررسی draft Release و checksumهای تولیدشده.
