@@ -87,13 +87,19 @@ class ReproducibleBuildContractTests(unittest.TestCase):
         self.assertIn("set -eu", instrumentation_step)
         self.assertNotIn("pipefail", instrumentation_step)
         self.assertIn("adb shell am force-stop com.whitep.client", PRODUCT)
-        self.assertIn("adb shell am start -n com.whitep.client/.MainActivity", PRODUCT)
+        self.assertIn("adb shell pm path com.whitep.client | grep -F 'package:'", PRODUCT)
+        self.assertIn("cmd package resolve-activity --brief -a android.intent.action.MAIN", PRODUCT)
+        self.assertIn("-c android.intent.category.LAUNCHER com.whitep.client", PRODUCT)
+        self.assertIn('case "$launch_activity" in', PRODUCT)
+        self.assertIn("com.whitep.client/*MainActivity)", PRODUCT)
+        self.assertIn('adb shell am start -n "$launch_activity"', PRODUCT)
+        self.assertNotIn("adb shell am start -n com.whitep.client/.MainActivity", PRODUCT)
         self.assertNotIn("adb shell am start -W", PRODUCT)
         self.assertIn("adb shell pidof com.whitep.client | grep -E '[0-9]'", PRODUCT)
         self.assertIn(
             "adb shell dumpsys activity activities | grep -E "
             "'mResumedActivity|topResumedActivity' | grep -F "
-            "'com.whitep.client/.MainActivity'",
+            "'com.whitep.client' | grep -F 'MainActivity'",
             PRODUCT,
         )
 

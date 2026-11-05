@@ -55,3 +55,23 @@ T0211 در حال اجراست؛ build و instrumentation شواهد موفق د
 - اصلاح محدود: حذف `-W` و command substitution و اجرای مستقیم `adb shell am start -n ...` تا خروجی فرمان در لاگ wrapper قابل مشاهده باشد. کنترل PID و resumed Activity در دو فرمان مستقل و قابل مشاهدهٔ adb باقی مانده‌اند.
 - regression contract اکنون شکل مستقیم start، نبود `-W`، بررسی PID با grep و بررسی resumed MainActivity را الزام می‌کند.
 - وضعیت T0211 همچنان in_progress است؛ Product Build تازه باید start مستقیم، PID و resumed activity را تأیید کند.
+
+
+
+## A004 — تشخیص شکست launcher در Product Build نسخهٔ 3.0.962
+
+- Product Build run 42020058706 روی commit `8a5f575490dfd9aaf6c69a1a7e85a826d91321c8`: https://github.com/artinrahimii/project/actions/runs/42020058706
+- Android job: https://github.com/artinrahimii/project/actions/runs/42020058706/job/127220264790
+- Windows WPF و HostLifecycle jobs موفق شدند.
+- Android clean APK build، KtLint، merged permission verification، JVM tests و `connectedDebugAndroidTest createDebugAndroidTestCoverageReport` به `BUILD SUCCESSFUL` رسیدند؛ آزمون non-loopback LAN طبق T0202 skip ماند.
+- مرحلهٔ launcher با `adb shell am start -n com.whitep.client/.MainActivity` شکست خورد: `Error type 3` و `Activity class {com.whitep.client/com.whitep.client.MainActivity} does not exist.`
+- Manifest مخزن `.MainActivity` را به‌عنوان MAIN/LAUNCHER معرفی می‌کند و namespace/applicationId/Kotlin package برابر `com.whitep.client` هستند؛ با وجود این، خروجی CI ثابت کرد کامپوننت hard-coded در محیط emulator پیدا نشده است.
+- وضعیت T0211 تکمیل نیست؛ PID و resumed activity به مرحلهٔ تأیید نرسیدند.
+
+
+## A005 — اصلاح launcher smoke با resolve واقعی Package Manager
+
+- workflow اکنون ابتدا نصب بودن package را با `pm path` بررسی می‌کند، سپس کامپوننت MAIN/LAUNCHER نصب‌شده را با `cmd package resolve-activity` استخراج می‌کند.
+- کامپوننت resolve‌شده باید متعلق به `com.whitep.client` و کلاس آن `MainActivity` باشد؛ سپس همان کامپوننت اجرا می‌شود و PID و resumed Activity به‌طور مستقل بررسی می‌شوند.
+- regression contract متناظر در `tests/test_reproducible_build_contract.py` به‌روزرسانی شد.
+- این اصلاح هنوز از Quality Gate و Product Build جدید عبور نکرده است؛ T0211 در `in_progress` باقی می‌ماند.

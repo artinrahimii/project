@@ -189,11 +189,18 @@ jobs:
           script: |
             set -eu
             gradle --no-daemon --project-dir src/Client.Android connectedDebugAndroidTest createDebugAndroidTestCoverageReport
+            adb shell pm path com.whitep.client | grep -F 'package:'
+            launch_activity="$(adb shell cmd package resolve-activity --brief -a android.intent.action.MAIN -c android.intent.category.LAUNCHER com.whitep.client | tr -d '\r' | grep -E '^com[.]whitep[.]client/')"
+            printf 'Resolved launcher: %s\n' "$launch_activity"
+            case "$launch_activity" in
+              com.whitep.client/*MainActivity) ;;
+              *) echo "Expected the installed com.whitep.client MainActivity launcher, got: $launch_activity"; exit 1 ;;
+            esac
             adb shell am force-stop com.whitep.client
-            adb shell am start -n com.whitep.client/.MainActivity
+            adb shell am start -n "$launch_activity"
             adb shell pidof com.whitep.client | grep -E '[0-9]'
-            adb shell dumpsys activity activities | grep -E 'mResumedActivity|topResumedActivity' | grep -F 'com.whitep.client/.MainActivity'
-            echo "PASS: installed Android MainActivity launched on API 36 emulator with a live process and resumed activity."
+            adb shell dumpsys activity activities | grep -E 'mResumedActivity|topResumedActivity' | grep -F 'com.whitep.client' | grep -F 'MainActivity'
+            echo "PASS: installed Android MainActivity launcher was resolved, launched, and verified with a live process and resumed activity."
       - name: Upload Android Keystore instrumentation reports
         if: always()
         uses: actions/upload-artifact@v4

@@ -48,3 +48,21 @@
 - آزمون non-loopback LAN از `AndroidWindowsLanIntegrationTest` skip شد؛ این بخش هنوز به میزبان LAN مستقل نیاز دارد و در T0202 deferred است.
 - پس از موفقیت instrumentation، `adb shell am force-stop com.whitep.client` موفق بود؛ فرمان launch قبلی `adb shell am start -W -n com.whitep.client/.MainActivity` با exit code 1 برگشت و باعث شکست job شد. چون خروجی capture شده در لاگ wrapper ظاهر نشده، علت درونی adb نامشخص باقی می‌ماند.
 - اصلاح A003: اجرای مستقیم `adb shell am start -n com.whitep.client/.MainActivity` و بررسی مستقل PID و resumed MainActivity؛ این تغییر هنوز به CI نیاز دارد.
+
+
+## A004 — Product Build نسخهٔ 3.0.962
+
+- Run: https://github.com/artinrahimii/project/actions/runs/42020058706
+- Android job: https://github.com/artinrahimii/project/actions/runs/42020058706/job/127220264790
+- Quality Gate همان commit: https://github.com/artinrahimii/project/actions/runs/42020058599
+- Quality Gate: 423 Python tests passed؛ compileall و هر دو graph_guard checks موفق؛ خطای گراف صفر و یک هشدار قدیمی metadata در T0001.
+- Product Build: Windows WPF و HostLifecycle موفق؛ Android clean build، KtLint، permissions، JVM tests و connectedDebugAndroidTest/coverage موفق.
+- Launcher smoke ناموفق: `adb shell am start -n com.whitep.client/.MainActivity` با `Error type 3` و `Activity class ... does not exist` خاتمه یافت. بنابراین T0211 تکمیل نیست و PID/resumed checks انجام نشدند.
+
+
+## A005 — اصلاح مبتنی بر Package Manager (در انتظار CI)
+
+- package با `adb shell pm path com.whitep.client` بررسی می‌شود.
+- Activity واقعی MAIN/LAUNCHER با `cmd package resolve-activity --brief` استخراج و پس از کنترل package و suffix `MainActivity` اجرا می‌شود.
+- PID و Activity فعال پس از اجرا بررسی می‌شوند.
+- regression contract تغییر یافته است؛ هنوز نتیجهٔ اجرای آن در Quality Gate/Product Build جدید موجود نیست.
