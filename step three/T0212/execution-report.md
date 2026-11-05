@@ -192,3 +192,14 @@
 - Android signed-release run 42076990441: رویداد `push`، نتیجهٔ failure و صفر job؛ هیچ مرحلهٔ امضای تولیدی اجرا نشد.
 - درخواست فهرست Environmentها و Environment با نام `android-release` از طریق connector با خطای endpoint غیرمجاز رد شد. ابزار dispatch دستی و مدیریت secret نیز ارائه نشده است؛ در نتیجه وضعیت وجود Secretها و تنظیمات Environment قابل مشاهده نیست.
 - وضعیت: `T0212=blocked`. وابستگی سخت `T0212 → T0213` تغییر نکرد و T0213 شروع نشد.
+
+## A011 — امضای تولیدی و Artifact واقعی روی V 3.0.983
+
+- commit مبنای دقیق: `179efa9fe07c3ba007885e9e3198eba620092617` (`V 3.0.983`).
+- اجرای دستی GitHub Actions: [Android signed release run 42114568183](https://github.com/artinrahimii/project/actions/runs/42114568183)، رویداد `workflow_dispatch`، نتیجهٔ نهایی `success`.
+- job `127550657183` با نتیجهٔ `success` پایان یافت؛ تمام ۱۵ مرحله موفق شدند، از جمله اعتبارسنجی Environment محافظت‌شده و بازیابی امن keystore، ساخت APK امضاشدهٔ production، بررسی امضا و تطبیق fingerprint با مقدار pin‌شده، بارگذاری Artifact و پاک‌سازی keystore روی runner.
+- لاگ مرحلهٔ بررسی گواهی پیام `PASS: release APK signature matches the pinned production certificate fingerprint.` را ثبت کرده است. مقدار fingerprint یا اسرار امضا در گزارش ذخیره نمی‌شود.
+- Artifact واقعی `whitep-android-release-signed` با شناسهٔ `13455966209` و حجم ZIP برابر ۱۸٬۵۹۶٬۳۱۵ بایت بارگذاری شد. ZIP دریافت‌شده با `unzip -t` اعتبارسنجی شد و یک `app-release.apk` با اندازهٔ ۲۲٬۷۸۶٬۹۰۹ بایت داشت.
+- SHA-256 فایل APK استخراج‌شده: `7f845825e714c6b3b7b699b704238e2200fd941382a73c8375293fde06c04b7a`.
+- اجرای [White-P product build run 42113989702](https://github.com/artinrahimii/project/actions/runs/42113989702) روی همین commit نیز موفق شد: هر سه job اندروید، Windows WPF/installer و HostLifecycle موفق شدند.
+- نتیجه: پیش‌شرط اصلی T0212 با شواهد مستقیم CI و Artifact تأیید شد؛ وضعیت از `blocked` به `done` تغییر می‌کند. وابستگی سخت `T0212 → T0213` برقرار و اکنون برآورده است. T0208 نیز در وضعیت `done` قبلی باقی است.

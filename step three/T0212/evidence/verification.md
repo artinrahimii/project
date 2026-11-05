@@ -120,3 +120,15 @@ artifact مربوط به release APK تولیدی در این run ساخته/ب�
 - Production signed release 42076990441: `event=push`، `conclusion=failure`، `jobs=[]`. امضای production اجرا نشد.
 - خواندن Environment endpointها و dispatch از connector ممکن نبود. Secretها و اثرانگشت تولیدی قابل تأیید نیستند.
 - T0212 مسدود ماند؛ T0213 به دلیل hard dependency شروع نشد.
+
+## A011 — تأیید امضای واقعی تولیدی
+
+- source commit: `179efa9fe07c3ba007885e9e3198eba620092617` (`V 3.0.983`).
+- signed release run: https://github.com/artinrahimii/project/actions/runs/42114568183 — `workflow_dispatch`, completed/success.
+- signed release job: https://github.com/artinrahimii/project/actions/runs/42114568183/job/127550657183 — completed/success; all 15 steps succeeded.
+- Artifact: https://github.com/artinrahimii/project/actions/runs/42114568183/artifacts/13455966209 — `whitep-android-release-signed`, 18,596,315 bytes, not expired.
+- The job log confirms APK Signature Scheme v2 verification and the explicit PASS message for matching the protected pinned production certificate fingerprint. No key material, password or certificate fingerprint is copied into this evidence file.
+- Downloaded artifact ZIP passed `unzip -t`; it contained one non-empty `app-release.apk` of 22,786,909 bytes.
+- Extracted APK SHA-256: `7f845825e714c6b3b7b699b704238e2200fd941382a73c8375293fde06c04b7a`.
+- Same-commit product build: https://github.com/artinrahimii/project/actions/runs/42113989702 — all Android, Windows WPF/installer and HostLifecycle jobs passed.
+- Scope: this evidence completes T0212. It does not complete the release checksum/publication task T0213 or final product acceptance.
