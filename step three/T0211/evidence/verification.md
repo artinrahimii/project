@@ -132,3 +132,8 @@
   - tests/test_reproducible_build_contract.py
   - src/Client.Android/app/src/androidTest/java/com/whitep/client/network/AndroidKeyStorePersistenceTest.kt
 - نتیجهٔ Quality Gate نسخهٔ اصلاحی باید جداگانه بررسی شود؛ هنوز موفقیت آن ادعا نمی‌شود.
+## A010 — تطبیق تاریخچه و شمارنده‌ها
+
+- A009 در execution_history وجود داشت؛ شمارنده‌های summary به‌دلیل A010 برابر ۱۰ تلاش و ۷ شکست شده بودند، اما رکورد A010 در آرایه جا افتاده بود.
+- رکورد A010 با دو تست ناموفق واقعی، run 42048420336 و run 42049279091، پس از A009 درج شد.
+- مقدار مورد انتظار پس از اصلاح: ۱۰ رکورد، ۱۰ تلاش و ۷ تلاش ناموفق. تأیید نهایی با Quality Gate commit اصلاحی انجام می‌شود.
