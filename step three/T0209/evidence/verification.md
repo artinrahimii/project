@@ -48,3 +48,15 @@
 5. CI بعدی باید Quality Gate، unit tests، کامل بودن inventory، installer compilation، silent install، installed-app smoke، uninstall و artifact upload را اجرا و موفق کند.
 
 در checkpoint فعلی، موارد ۵ تا ۷ هنوز اجرا/تأیید نشده‌اند؛ T0209 تکمیل‌شده نیست. installer بدون Authenticode است و artifact workflow به‌تنهایی GitHub Release محسوب نمی‌شود.
+
+
+## A004 — CI failure
+
+- Step Three Quality Gate run 42003164528: ۴۲۰ آزمون؛ ۴۱۹ مورد موفق و یک error در test_override_does_not_apply_to_a_different_package_version.
+- Windows job در Product Build run 42003164759: ۵ آزمون از ۶ آزمون license inventory موفق؛ همان آزمون نسخهٔ متفاوت error داد. Build/publish و installer هنوز شروع نشده بودند.
+
+## A005 — اصلاح
+
+- ترتیب validation در tools/generate_dependency_licenses.py تغییر کرد: package missing-license errors قبل از unused override entries گزارش می‌شوند.
+- Version-specific overrides همچنان exact-match هستند. اگر نسخهٔ 1.0.83 بدون override باقی بماند، خطای missing license نمایش داده می‌شود؛ اگر registry override بلااستفاده باشد و missing package وجود نداشته باشد، همان override stale به‌صورت جداگانه fail می‌شود.
+- اجرای مجدد Quality Gate و Windows Product Build هنوز لازم است.

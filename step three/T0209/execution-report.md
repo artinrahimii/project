@@ -63,3 +63,18 @@ installer بدون امضای Authenticode است. artifact خروجی CI با �
 - آزمون‌های اختصاصی برای مجوزهای MIT و Apache، تطبیق نسخهٔ دقیق، کپی فایل، SHA-256 و تجمیع خطاها اضافه شده‌اند.
 - A004 هنوز در GitHub Actions اجرا نشده است؛ بنابراین تعداد آزمون‌های جدید و موفقیت دریافت مجوز Common.Logging را هنوز تأییدشده حساب نمی‌کنیم.
 - وضعیت T0209 همچنان in_progress است؛ installer compile، install، smoke، uninstall و upload واقعی artifact هنوز پاس نشده‌اند.
+
+
+## A004 — شکست آزمون نسخهٔ متفاوت override
+
+- Step Three Quality Gate run 42003164528 روی commit V 3.0.955: ۴۲۰ آزمون اجرا شد؛ فقط test_override_does_not_apply_to_a_different_package_version به خطا رسید و نتیجه FAILED (errors=1) شد.
+- Product Build run 42003164759: Windows قبل از build و publish، در آزمون اختصاصی inventory متوقف شد؛ از ۶ آزمون، ۵ آزمون موفق و همان آزمون نسخهٔ متفاوت دارای error بود.
+- علت دقیق: در generate، اعتبارسنجی overrideهای استفاده‌نشده قبل از گزارش MissingPackageLicenseError اجرا می‌شد؛ آزمون انتظار داشت بستهٔ 1.0.83 به دلیل نداشتن مجوز verified رد شود، اما ValueError مربوط به override بلااستفاده زودتر صادر می‌شد.
+- هیچ installer جدیدی در این run ساخته یا نصب نشد؛ مرحلهٔ packaging اصلاً شروع نشد.
+
+## A005 — اصلاح ترتیب اعتبارسنجی
+
+- ابتدا بسته‌های restoreشدهٔ بدون مجوز verified گزارش و fail می‌شوند.
+- تنها پس از نبود package missing، overrideهای بی‌مصرف/نسخه‌های منسوخ بررسی و رد می‌شوند.
+- بنابراین نسخهٔ جدید همان fail-closed behavior را حفظ می‌کند و خطای اصلی بستهٔ بدون مجوز را با نوع و پیام قابل‌آزمون گزارش می‌دهد.
+- A005 هنوز در CI اجرا نشده است.

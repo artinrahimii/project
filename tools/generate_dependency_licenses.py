@@ -200,14 +200,14 @@ def generate(assets_file: Path, output_dir: Path, overrides_file: Path | None = 
             "license_files": copied, **details
         })
 
-    unused = sorted(set(overrides) - seen)
-    if unused:
-        raise ValueError(f"License overrides do not match restored package identities: {unused}")
     if missing:
         raise MissingPackageLicenseError(
             f"{len(missing)} restored package(s) have no verified license metadata:\n" +
             "\n".join(f"- {entry}" for entry in missing)
         )
+    unused = sorted(set(overrides) - seen)
+    if unused:
+        raise ValueError(f"License overrides do not match restored package identities: {unused}")
 
     packages.sort(key=lambda item: (item["id"].casefold(), item["version"].casefold()))
     output_dir.mkdir(parents=True, exist_ok=True)
