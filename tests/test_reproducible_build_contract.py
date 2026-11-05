@@ -87,11 +87,15 @@ class ReproducibleBuildContractTests(unittest.TestCase):
         self.assertIn("set -eu", instrumentation_step)
         self.assertNotIn("pipefail", instrumentation_step)
         self.assertIn("adb shell am force-stop com.whitep.client", PRODUCT)
-        self.assertIn("adb shell am start -W -n com.whitep.client/.MainActivity", PRODUCT)
-        self.assertIn('grep -Fq "Status: ok"', PRODUCT)
-        self.assertIn('grep -Fq "Activity: com.whitep.client/.MainActivity"', PRODUCT)
-        self.assertIn("adb shell pidof com.whitep.client", PRODUCT)
-        self.assertIn("topResumedActivity", PRODUCT)
+        self.assertIn("adb shell am start -n com.whitep.client/.MainActivity", PRODUCT)
+        self.assertNotIn("adb shell am start -W", PRODUCT)
+        self.assertIn("adb shell pidof com.whitep.client | grep -E '[0-9]'", PRODUCT)
+        self.assertIn(
+            "adb shell dumpsys activity activities | grep -E "
+            "'mResumedActivity|topResumedActivity' | grep -F "
+            "'com.whitep.client/.MainActivity'",
+            PRODUCT,
+        )
 
     def test_python_quality_commands_are_documented_and_executed_in_ci(self):
         for command in (

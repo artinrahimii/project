@@ -190,16 +190,10 @@ jobs:
             set -eu
             gradle --no-daemon --project-dir src/Client.Android connectedDebugAndroidTest createDebugAndroidTestCoverageReport
             adb shell am force-stop com.whitep.client
-            launch_output="$(adb shell am start -W -n com.whitep.client/.MainActivity)"
-            printf '%s\n' "$launch_output"
-            printf '%s\n' "$launch_output" | grep -Fq "Status: ok"
-            printf '%s\n' "$launch_output" | grep -Fq "Activity: com.whitep.client/.MainActivity"
-            app_pid="$(adb shell pidof com.whitep.client | tr -d '\r')"
-            test -n "$app_pid"
-            resumed_activity="$(adb shell dumpsys activity activities | grep -E 'mResumedActivity|topResumedActivity' | grep -F 'com.whitep.client/.MainActivity')"
-            test -n "$resumed_activity"
-            echo "PASS: installed Android MainActivity launched on API 36 emulator (pid=$app_pid)."
-            printf '%s\n' "$resumed_activity"
+            adb shell am start -n com.whitep.client/.MainActivity
+            adb shell pidof com.whitep.client | grep -E '[0-9]'
+            adb shell dumpsys activity activities | grep -E 'mResumedActivity|topResumedActivity' | grep -F 'com.whitep.client/.MainActivity'
+            echo "PASS: installed Android MainActivity launched on API 36 emulator with a live process and resumed activity."
       - name: Upload Android Keystore instrumentation reports
         if: always()
         uses: actions/upload-artifact@v4

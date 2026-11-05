@@ -37,3 +37,14 @@
 - لاگ job: action script را با `/usr/bin/sh -c` اجرا کرد و `set -euo pipefail` باعث `set: Illegal option -o pipefail` شد.
 - اصلاح ثبت‌شده در این تلاش: POSIX `set -eu` و regression test برای جلوگیری از برگشت `pipefail`.
 - اجرای مجدد CI و بررسی صریح MainActivity/PID/resumed هنوز pending است؛ بنابراین این شواهد به‌تنهایی معیار پذیرش T0211 را تکمیل نمی‌کنند.
+
+
+## A003 — Product Build پس از اصلاح shell
+
+- Product Build: https://github.com/artinrahimii/project/actions/runs/42013760643
+- Android job: https://github.com/artinrahimii/project/actions/runs/42013760643/job/127199003648
+- Instrumentation artifact: https://github.com/artinrahimii/project/actions/runs/42013760643/artifacts/13408547431
+- شواهد لاگ: clean APK build، KtLint، merged permissions، JVM tests/coverage، اجرای `connectedDebugAndroidTest` و `createDebugAndroidTestCoverageReport` به `BUILD SUCCESSFUL` رسیدند.
+- آزمون non-loopback LAN از `AndroidWindowsLanIntegrationTest` skip شد؛ این بخش هنوز به میزبان LAN مستقل نیاز دارد و در T0202 deferred است.
+- پس از موفقیت instrumentation، `adb shell am force-stop com.whitep.client` موفق بود؛ فرمان launch قبلی `adb shell am start -W -n com.whitep.client/.MainActivity` با exit code 1 برگشت و باعث شکست job شد. چون خروجی capture شده در لاگ wrapper ظاهر نشده، علت درونی adb نامشخص باقی می‌ماند.
+- اصلاح A003: اجرای مستقیم `adb shell am start -n com.whitep.client/.MainActivity` و بررسی مستقل PID و resumed MainActivity؛ این تغییر هنوز به CI نیاز دارد.

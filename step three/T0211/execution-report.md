@@ -45,3 +45,13 @@ T0211 در حال اجراست؛ build و instrumentation شواهد موفق د
 - اصلاح workflow: استفاده از `set -eu` سازگار با POSIX؛ فرمان‌های pipeline باقی‌مانده در این script از exit status آخرین فرمان بهره می‌برند.
 - regression contract در `tests/test_reproducible_build_contract.py` وجود `set -eu` و نبود `pipefail` را در script همین action بررسی می‌کند.
 - این اصلاح هنوز از CI جدید عبور نکرده است. T0211 در وضعیت `in_progress` باقی می‌ماند تا instrumentation، اجرای MainActivity، PID و resumed activity همگی در Product Build جدید موفق شوند.
+
+
+## A003 — اصلاح smoke test پس از instrumentation موفق
+
+- Product Build run 42013760643 روی commit `bd0cbfc3843e2007acc3183b8f0840bfb87ca7e4` اصلاح POSIX shell را تأیید کرد: Gradle، clean debug APK، KtLint، بررسی permissionها، JVM tests و `connectedDebugAndroidTest createDebugAndroidTestCoverageReport` موفق شدند.
+- آزمون `AndroidWindowsLanIntegrationTest` در runner به‌دلیل نیاز به میزبان LAN واقعی skip شد و همچنان ذیل T0202 تعویق‌یافته است.
+- خطای باقی‌مانده بعد از BUILD SUCCESSFUL و پس از `adb shell am force-stop` رخ داد: فرمان `adb shell am start -W -n com.whitep.client/.MainActivity` که در command substitution اجرا می‌شد با exit code 1 برگشت. لاگ نشان می‌دهد action خطا را ثبت کرده، اما خروجی captureشدهٔ خود adb را نمایش نداده است؛ بنابراین علت داخلی آن بدون حدس ثبت می‌شود.
+- اصلاح محدود: حذف `-W` و command substitution و اجرای مستقیم `adb shell am start -n ...` تا خروجی فرمان در لاگ wrapper قابل مشاهده باشد. کنترل PID و resumed Activity در دو فرمان مستقل و قابل مشاهدهٔ adb باقی مانده‌اند.
+- regression contract اکنون شکل مستقیم start، نبود `-W`، بررسی PID با grep و بررسی resumed MainActivity را الزام می‌کند.
+- وضعیت T0211 همچنان in_progress است؛ Product Build تازه باید start مستقیم، PID و resumed activity را تأیید کند.
