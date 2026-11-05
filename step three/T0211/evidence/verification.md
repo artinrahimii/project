@@ -124,3 +124,11 @@
 - یک مورد skip همان `AndroidWindowsLanIntegrationTest.connectsToWindowsHostOverNonLoopbackLan` است که برای پذیرش شبکهٔ واقعی به ورودی‌های runner فیزیکی نیاز دارد و به‌سبب تعویق T0202 اجرا نشد. این موضوع خارج از معیار launcher این وظیفه است و LAN واقعی را تأیید نمی‌کند.
 
 **وضعیت T0211: done.** تولید، نصب و راه‌اندازی MainActivity روی emulator با شواهد CI واقعی تأیید شد. انتشار عمومی Release در این وظیفه ادعا نمی‌شود؛ signing و checksum در وظایف بعدی قرار دارند.
+## A010 — رفع خطای DONE_WITHOUT_TEST_FILE_EVIDENCE
+
+- Quality Gate run 42048420336: ۴۲۳ آزمون Python و compileall موفق؛ Graph Guard یک خطا گزارش کرد که T0211 فایل منبع آزمون را در evidence معرفی نکرده بود.
+- خطای دقیق: DONE_WITHOUT_TEST_FILE_EVIDENCE؛ این نقص فقط مربوط به پیوند شواهد گراف بود، نه اجرای APK.
+- فایل‌های آزمون موجود و بررسی‌شده به فهرست شواهد اضافه شدند:
+  - tests/test_reproducible_build_contract.py
+  - src/Client.Android/app/src/androidTest/java/com/whitep/client/network/AndroidKeyStorePersistenceTest.kt
+- نتیجهٔ Quality Gate نسخهٔ اصلاحی باید جداگانه بررسی شود؛ هنوز موفقیت آن ادعا نمی‌شود.

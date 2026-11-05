@@ -132,3 +132,12 @@ T0211 در حال اجراست؛ build و instrumentation شواهد موفق د
 - آزمون‌ها و coverage مرتبط: موفق؛ یک آزمون مستقل LAN مطابق T0202 عمداً skip شد.
 
 **نتیجه:** A008 با CI واقعی تأیید شد؛ T0211 اکنون `done` است. این نتیجه به معنی انتشار عمومی GitHub Release یا تأیید شبکهٔ واقعی Android↔Windows نیست. وظیفهٔ منطقی بعدی T0212 است؛ یال‌های ورودی آن، یعنی T0211→T0212 و T0208→T0212، هنوز `unreviewed` هستند و باید پیش از شروع T0212 بررسی شوند.
+## A010 — اصلاح پیوند شواهد آزمون در Graph Guard
+
+- پس از commit V 3.0.967، Quality Gate run https://github.com/artinrahimii/project/actions/runs/42048420336 تعداد ۴۲۳ آزمون Python و compileall را با موفقیت گذراند.
+- مرحلهٔ Graph Guard یک خطا ثبت کرد: DONE_WITHOUT_TEST_FILE_EVIDENCE. علت دقیق این بود که فهرست evidence برای T0211 به workflow، artifact و فایل‌های production اشاره می‌کرد، اما مسیر فایل منبع آزمون را شامل نمی‌شد.
+- این خطا شکست build، نصب یا اجرای Android نبود؛ شواهد واقعی A009 برای نصب APK، PID و resumed MainActivity در Product Build run 42045953382 همچنان معتبر است.
+- قرارداد tools/graph_guard.py منبع آزمون را از مسیرهای tests/، test/ یا source setهای Android با پسوند آزمون می‌شناسد. دو فایل موجود و واقعی به شواهد T0211 افزوده شدند: tests/test_reproducible_build_contract.py و src/Client.Android/app/src/androidTest/java/com/whitep/client/network/AndroidKeyStorePersistenceTest.kt.
+- تلاش A010 به‌عنوان شکست اعتبارسنجی metadata ثبت شد؛ تاریخچهٔ موفقیت A009 و شش failure قبلی حذف یا بازنویسی نشدند. باید Quality Gate commit اصلاحی را مجدداً بررسی کند.
+
+وضعیت قابلیت T0211: شواهد build/install/launcher موفق‌اند و وضعیت وظیفه done باقی است؛ کنترل گراف در A010 به علت نبود مسیر test source در metadata شکست خورد و اکنون این پیوند اصلاح شده است.
