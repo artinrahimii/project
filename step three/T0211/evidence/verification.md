@@ -102,3 +102,25 @@
 - PID و resumed Activity هرکدام با retry محدود تا ۳۰ ثانیه بررسی می‌شوند.
 - در هر timeout، `adb logcat -d -t 300` اجرا می‌شود تا علت واقعی failure در CI قابل تشخیص باشد.
 - این اصلاح هنوز با CI تأیید نشده و هیچ ادعای launch موفق نهایی ثبت نمی‌شود.
+
+## A009 — شواهد نهایی launcher و نصب APK در V 3.0.966
+
+- Quality Gate: https://github.com/artinrahimii/project/actions/runs/42045953315 — موفق؛ ۴۲۳ Python tests، compileall، graph validation (۲۳۰ task / ۴۲۲ edge) و recorded-output/evidence validation.
+- Product Build: https://github.com/artinrahimii/project/actions/runs/42045953382 — موفق؛ Android، Windows WPF/installer و HostLifecycle jobs.
+- Android job: https://github.com/artinrahimii/project/actions/runs/42045953382/job/127308807324 — همهٔ مراحل موفق.
+- APK artifact: https://github.com/artinrahimii/project/actions/runs/42045953382/artifacts/13423874796 — `whitep-android-debug-apk`, اندازهٔ artifact: ۲۸٬۹۷۲٬۴۷۵ بایت.
+
+### خروجی واقعی emulator
+- `adb install -r src/Client.Android/app/build/outputs/apk/debug/app-debug.apk` → `Success`.
+- `adb shell pm path com.whitep.client` → مسیر نصب‌شدهٔ `base.apk`.
+- Package Manager → `com.whitep.client/.MainActivity`.
+- `adb shell am start -n ...` → `Starting: Intent { cmp=com.whitep.client/.MainActivity }`.
+- `adb shell pidof com.whitep.client` → PID برابر `4521`.
+- ActivityManager → `topResumedActivity=ActivityRecord{... com.whitep.client/.MainActivity ...}`.
+- workflow → `PASS: installed Android MainActivity launcher was resolved, launched, and verified with a live process and resumed activity.`
+
+### نتایج آزمون
+- JUnit: ۲۲۴ آزمون در ۳۴ گزارش؛ ۲۲۳ passed، یک skipped، صفر errors و صفر failures.
+- یک مورد skip همان `AndroidWindowsLanIntegrationTest.connectsToWindowsHostOverNonLoopbackLan` است که برای پذیرش شبکهٔ واقعی به ورودی‌های runner فیزیکی نیاز دارد و به‌سبب تعویق T0202 اجرا نشد. این موضوع خارج از معیار launcher این وظیفه است و LAN واقعی را تأیید نمی‌کند.
+
+**وضعیت T0211: done.** تولید، نصب و راه‌اندازی MainActivity روی emulator با شواهد CI واقعی تأیید شد. انتشار عمومی Release در این وظیفه ادعا نمی‌شود؛ signing و checksum در وظایف بعدی قرار دارند.

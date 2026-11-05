@@ -111,3 +111,24 @@ T0211 در حال اجراست؛ build و instrumentation شواهد موفق د
 - Activity Manager نیز حداکثر ۳۰ ثانیه برای resumed شدن MainActivity بررسی می‌شود؛ در timeout، logcat ثبت می‌شود.
 - regression contract برای وجود هر دو حلقه، timeout diagnostics، تعداد logcat dumps و ترتیب launch → PID → resumed اضافه شد.
 - نتیجهٔ A008 هنوز pending CI است؛ T0211 همچنان `in_progress` است و T0212 شروع نمی‌شود.
+
+## T0211-A009 — تکمیل پذیرش launcher در V 3.0.966
+
+- commit آزموده‌شده: `16c7a5f9de7728e2614fb084a1c35a423b308854` با پیام `V 3.0.966`.
+- Quality Gate run [42045953315](https://github.com/artinrahimii/project/actions/runs/42045953315) موفق شد: ۴۲۳ آزمون Python، compileall، اعتبارسنجی ساختار گراف با ۲۳۰ وظیفه و ۴۲۲ یال، و کنترل خروجی‌ها/شواهد.
+- Product Build run [42045953382](https://github.com/artinrahimii/project/actions/runs/42045953382) با موفقیت کامل شد؛ jobهای Android، Windows WPF/installer و HostLifecycle همگی موفق بودند.
+- Android job: [127308807324](https://github.com/artinrahimii/project/actions/runs/42045953382/job/127308807324). ساخت clean APK با Gradle، KtLint، بررسی حداقل permissionهای APK ادغام‌شده، آزمون‌های JVM، instrumentation و اعتبارسنجی coverage موفق شدند.
+- خلاصهٔ JUnit: ۳۴ گزارش، ۲۲۴ آزمون، ۲۲۳ موفق، ۱ مورد skip، صفر error و صفر failure. مورد skip، آزمون شبکهٔ non-loopback است که طبق تصمیم مرحلهٔ پایانی T0202 به تعویق افتاده؛ این run اثبات‌کنندهٔ LAN واقعی نیست.
+- artifact واقعی APK با نام `whitep-android-debug-apk` بارگذاری شد: [artifact 13423874796](https://github.com/artinrahimii/project/actions/runs/42045953382/artifacts/13423874796)، اندازهٔ ثبت‌شدهٔ artifact برابر ۲۸٬۹۷۲٬۴۷۵ بایت.
+- نصب مجدد با `adb install -r` خروجی `Success` داد؛ `pm path` مسیر `base.apk` را برگرداند؛ Package Manager کامپوننت واقعی `com.whitep.client/.MainActivity` را resolve کرد؛ `am start` خروجی `Starting: Intent` داد.
+- PID واقعی برنامه `4521` مشاهده شد و ActivityManager مقدار `topResumedActivity=... com.whitep.client/.MainActivity` را ثبت کرد. workflow پیام صریح PASS برای resolve، launch، PID و resumed activity نوشت.
+
+### ارزیابی معیار پذیرش
+- تولید APK قابل نصب: موفق.
+- نصب APK روی emulator: موفق.
+- resolve شدن launcher واقعی: موفق.
+- اجرای MainActivity و مشاهدهٔ process زنده: موفق.
+- مشاهدهٔ resumed MainActivity: موفق.
+- آزمون‌ها و coverage مرتبط: موفق؛ یک آزمون مستقل LAN مطابق T0202 عمداً skip شد.
+
+**نتیجه:** A008 با CI واقعی تأیید شد؛ T0211 اکنون `done` است. این نتیجه به معنی انتشار عمومی GitHub Release یا تأیید شبکهٔ واقعی Android↔Windows نیست. وظیفهٔ منطقی بعدی T0212 است؛ یال‌های ورودی آن، یعنی T0211→T0212 و T0208→T0212، هنوز `unreviewed` هستند و باید پیش از شروع T0212 بررسی شوند.
