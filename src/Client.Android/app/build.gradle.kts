@@ -1,4 +1,6 @@
 import com.google.protobuf.gradle.*
+import java.io.File
+import org.gradle.api.GradleException
 
 plugins {
     id("com.android.application")
@@ -14,6 +16,45 @@ val robolectricDependencyRepoUrl =
         .gradleProperty("robolectricDependencyRepoUrl")
         .orElse(providers.environmentVariable("ROBOLECTRIC_DEPENDENCY_REPO_URL"))
         .orElse("https://maven-central.storage-download.googleapis.com/maven2/")
+
+// Release signing material is supplied only through the runner environment or a
+// protected GitHub Environment. Never put passwords or keystore files in the repository.
+val releaseSigningInputs = mapOf(
+    "WHITEP_ANDROID_RELEASE_STORE_FILE" to System.getenv("WHITEP_ANDROID_RELEASE_STORE_FILE"),
+    "WHITEP_ANDROID_RELEASE_STORE_PASSWORD" to System.getenv("WHITEP_ANDROID_RELEASE_STORE_PASSWORD"),
+    "WHITEP_ANDROID_RELEASE_KEY_ALIAS" to System.getenv("WHITEP_ANDROID_RELEASE_KEY_ALIAS"),
+    "WHITEP_ANDROID_RELEASE_KEY_PASSWORD" to System.getenv("WHITEP_ANDROID_RELEASE_KEY_PASSWORD"),
+)
+val missingReleaseSigningInputs = releaseSigningInputs.filterValues { it.isNullOrBlank() }.keys
+val releaseSigningConfigured = missingReleaseSigningInputs.isEmpty()
+val requestedGradleTasks = gradle.startParameter.taskNames.map { it.substringAfterLast(':') }
+val releaseBuildRequested = requestedGradleTasks.any {
+    it.contains("release", ignoreCase = true) ||
+        it.equals("build", ignoreCase = true) ||
+        it.equals("assemble", ignoreCase = true) ||
+        it.equals("bundle", ignoreCase = true)
+}
+if (releaseBuildRequested && !releaseSigningConfigured) {
+    throw GradleException(
+        "Release tasks require all four WHITEP_ANDROID_RELEASE_* environment variables. Missing: " +
+            missingReleaseSigningInputs.joinToString(", "),
+    )
+}
+val releaseSigningStoreFile = releaseSigningInputs["WHITEP_ANDROID_RELEASE_STORE_FILE"]
+    ?.takeIf { it.isNotBlank() }
+    ?.let { File(it).canonicalFile }
+if (releaseBuildRequested) {
+    val signingFile = releaseSigningStoreFile ?: throw GradleException(
+        "Release signing keystore path is missing.",
+    )
+    if (!signingFile.isFile) {
+        throw GradleException("Release signing keystore does not exist or is not a file: " + signingFile.path)
+    }
+    val repositoryRoot = rootProject.projectDir.resolve("../..").canonicalFile.toPath()
+    if (signingFile.toPath().startsWith(repositoryRoot)) {
+        throw GradleException("Release signing keystore must be stored outside the repository checkout.")
+    }
+}
 
 android {
     sourceSets {
@@ -41,10 +82,25 @@ android {
         versionName = "0.1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
+    signingConfigs {
+        if (releaseSigningConfigured) {
+            create("release") {
+                storeFile = releaseSigningStoreFile
+                storePassword = releaseSigningInputs["WHITEP_ANDROID_RELEASE_STORE_PASSWORD"]
+                keyAlias = releaseSigningInputs["WHITEP_ANDROID_RELEASE_KEY_ALIAS"]
+                keyPassword = releaseSigningInputs["WHITEP_ANDROID_RELEASE_KEY_PASSWORD"]
+            }
+        }
+    }
     buildTypes {
         getByName("debug") {
             enableUnitTestCoverage = true
             enableAndroidTestCoverage = true
+        }
+        getByName("release") {
+            if (releaseSigningConfigured) {
+                signingConfig = signingConfigs.getByName("release")
+            }
         }
     }
     buildFeatures { compose = true }

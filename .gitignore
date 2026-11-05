@@ -18,6 +18,8 @@ local.properties
 **/local.properties
 *.jks
 *.keystore
+*.p12
+*.pfx
 
 # Generated build output and local IDE state
 **/bin/
