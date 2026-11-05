@@ -44,3 +44,22 @@ installer بدون امضای Authenticode است. artifact خروجی CI با �
 - Product Build run 41997150911: نصب Inno Setup، آزمون‌های license inventory، build پاک WPF و startup smoke موفق شدند؛ سپس publish self-contained نیز موفق شد، اما جمع‌آوری مجوزها روی Collections.Pooled 1.0.82 به‌دلیل نداشتن metadata مجوز در nuspec/پوشهٔ بسته متوقف شد.
 - منبع رسمی upstream، مجوز MIT و فایل LICENSE.txt را مشخص می‌کند؛ override فقط برای Collections.Pooled/1.0.82 اضافه شده است. فایل مجوز در زمان build از commit مشخص upstream دریافت می‌شود و SHA-256 و revision در inventory ثبت خواهد شد.
 - اصلاح assertionهای artifact و آزمون‌های جدید override تا دریافت اجرای CI بعدی تأییدنشده‌اند.
+
+
+## A003 — نتایج اجرای CI و اصلاح دوم مجوز
+
+- Step Three Quality Gate run 42001661879 روی commit V 3.0.954 موفق شد: ۴۱۸ آزمون با نتیجهٔ OK؛ بررسی syntax، ساختار graph و شواهد اجرا نیز موفق بود.
+- Rendezvous run 42001661910 موفق شد: build image تولیدی و HTTP contract با کاربر غیرریشه پاس شدند.
+- HostLifecycle job در Product Build run 42001661942 موفق شد.
+- در Windows job، Inno Setup و چهار آزمون license inventory موفق شدند؛ build پاک WPF و publish self-contained برای win-x64 بدون warning/error موفق شدند؛ تولید Protobuf، startup smoke، تست‌های agent-tool و DPAPI نیز موفق شدند.
+- منبع upstream مجوز Collections.Pooled از revision 86cb27aa7ef64f52f169d0e2f7d512493ddc1b51 دریافت شد و markerهای MIT آن تأیید شدند. سپس inventory روی Common.Logging 3.4.1 به‌دلیل نبود metadata متوقف شد.
+
+## A004 — اصلاح چند منبع مجوز upstream
+
+- Generator برای هر override فایل revision مستقل می‌خواند؛ SHA کامل ۴۰ رقمی و markerهای محتوای منبع را کنترل می‌کند و SHA-256 فایل را ثبت می‌کند.
+- overrideها فقط برای نسخه‌های دقیق Collections.Pooled 1.0.82، Common.Logging 3.4.1 و Common.Logging.Core 3.4.1 تعریف شده‌اند.
+- دو بستهٔ Common.Logging به فایل license.txt پروژهٔ upstream و SPDX Apache-2.0 متصل شده‌اند؛ revision و digest منبع مشترک برای هر بسته در manifest درج می‌شود.
+- generator تمام بسته‌های فاقد license metadata را در یک خطا جمع می‌کند و همچنان fail-closed باقی می‌ماند.
+- آزمون‌های اختصاصی برای مجوزهای MIT و Apache، تطبیق نسخهٔ دقیق، کپی فایل، SHA-256 و تجمیع خطاها اضافه شده‌اند.
+- A004 هنوز در GitHub Actions اجرا نشده است؛ بنابراین تعداد آزمون‌های جدید و موفقیت دریافت مجوز Common.Logging را هنوز تأییدشده حساب نمی‌کنیم.
+- وضعیت T0209 همچنان in_progress است؛ installer compile، install، smoke، uninstall و upload واقعی artifact هنوز پاس نشده‌اند.

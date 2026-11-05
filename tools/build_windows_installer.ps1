@@ -47,26 +47,46 @@ $versionInfo = [Diagnostics.FileVersionInfo]::GetVersionInfo($exe)
 if (-not $versionInfo.ProductVersion.StartsWith($Version, [StringComparison]::Ordinal)) { throw "Published executable version mismatch." }
 if ($versionInfo.CompanyName -ne $Publisher) { throw "Published executable publisher mismatch." }
 
-# Resolve an immutable upstream source revision, then fetch that exact license file.
-$upstreamRepository = "https://github.com/jtmueller/Collections.Pooled.git"
-$revisionLine = & git ls-remote --refs $upstreamRepository "refs/heads/master"
-if ($LASTEXITCODE -ne 0 -or -not $revisionLine) { throw "Could not resolve upstream Collections.Pooled license source revision." }
-$revision = ($revisionLine -split "\s+")[0]
-if ($revision -notmatch "^[0-9a-f]{40}$") { throw "Upstream license source revision is not a full Git SHA-1." }
-$licenseUrl = "https://raw.githubusercontent.com/jtmueller/Collections.Pooled/$revision/LICENSE.txt"
-$licenseSource = Join-Path $licenseSources "Collections.Pooled-1.0.82-LICENSE.txt"
-Invoke-WebRequest -Uri $licenseUrl -OutFile $licenseSource -TimeoutSec 60
-$licenseInfo = Get-Item -LiteralPath $licenseSource
-if ($licenseInfo.Length -lt 500 -or $licenseInfo.Length -gt 16384) { throw "Upstream Collections.Pooled license file has an unexpected size." }
-$licenseText = [IO.File]::ReadAllText($licenseSource)
-if (-not $licenseText.Contains("The MIT License (MIT)") -or -not $licenseText.Contains("Copyright (c) Joel Mueller")) {
-    throw "Upstream Collections.Pooled license file did not match the expected MIT notice markers."
+function Get-VerifiedUpstreamLicense {
+    param(
+        [string]$Repository,
+        [string]$Branch,
+        [string]$RelativeLicensePath,
+        [string]$OutputFile,
+        [string]$RevisionFile,
+        [string[]]$RequiredMarkers
+    )
+    $revisionLine = & git ls-remote --refs $Repository "refs/heads/$Branch"
+    if ($LASTEXITCODE -ne 0 -or -not $revisionLine) {
+        throw "Could not resolve upstream license source revision from $Repository."
+    }
+    $revision = ($revisionLine -split "\s+")[0]
+    if ($revision -notmatch "^[0-9a-f]{40}$") {
+        throw "Upstream license source revision is not a full Git SHA-1: $Repository"
+    }
+    $repositoryPath = $Repository.Replace("https://github.com/", "").Replace(".git", "")
+    $url = "https://raw.githubusercontent.com/$repositoryPath/$revision/$RelativeLicensePath"
+    Invoke-WebRequest -Uri $url -OutFile $OutputFile -TimeoutSec 60
+    $file = Get-Item -LiteralPath $OutputFile
+    if ($file.Length -lt 500 -or $file.Length -gt 131072) {
+        throw "Upstream license file has an unexpected size: $url"
+    }
+    $contents = [IO.File]::ReadAllText($OutputFile)
+    foreach ($marker in $RequiredMarkers) {
+        if (-not $contents.Contains($marker)) {
+            throw "Upstream license file is missing a required marker '$marker': $url"
+        }
+    }
+    [IO.File]::WriteAllText($RevisionFile, $revision, [Text.Encoding]::ASCII)
+    Write-Host "Verified upstream license source revision: $repositoryPath $revision"
 }
-Write-Host "Verified Collections.Pooled license source revision: $revision"
+
+Get-VerifiedUpstreamLicense -Repository "https://github.com/jtmueller/Collections.Pooled.git" -Branch "master" -RelativeLicensePath "LICENSE.txt" -OutputFile (Join-Path $licenseSources "Collections.Pooled-1.0.82-LICENSE.txt") -RevisionFile (Join-Path $licenseSources "Collections.Pooled.source-revision.txt") -RequiredMarkers @("The MIT License (MIT)", "Copyright (c) Joel Mueller")
+Get-VerifiedUpstreamLicense -Repository "https://github.com/net-commons/common-logging.git" -Branch "master" -RelativeLicensePath "license.txt" -OutputFile (Join-Path $licenseSources "common-logging-license.txt") -RevisionFile (Join-Path $licenseSources "Common.Logging.source-revision.txt") -RequiredMarkers @("Apache License", "Version 2.0", "http://www.apache.org/licenses/LICENSE-2.0")
 
 $assets = Join-Path $root "src\Host.Windows\obj\project.assets.json"
 if (-not (Test-Path -LiteralPath $assets -PathType Leaf)) { throw "NuGet restore assets are missing." }
-& python (Join-Path $root "tools\generate_dependency_licenses.py") --assets $assets --output-dir $licenses --overrides $overrides --license-source-dir $licenseSources --license-source-revision $revision
+& python (Join-Path $root "tools\generate_dependency_licenses.py") --assets $assets --output-dir $licenses --overrides $overrides --license-source-dir $licenseSources
 if ($LASTEXITCODE -ne 0) { throw "Dependency license inventory failed: $LASTEXITCODE" }
 $notice = Join-Path $licenses "ThirdPartyNotices.md"
 $manifest = Join-Path $licenses "licenses.json"
@@ -106,4 +126,3 @@ finally {
 }
 Write-Host "PASS: installer compiled, installed, smoke-launched, included notices, and uninstalled."
 Write-Host "Installer: $installer ($($installerInfo.Length) bytes); NuGet packages: $($licenseData.package_count)"
-Write-Host "Collections.Pooled license SHA-256: $((Get-FileHash -LiteralPath (Join-Path $licenses 'files\Collections.Pooled-1.0.82-LICENSE.txt') -Algorithm SHA256).Hash)"

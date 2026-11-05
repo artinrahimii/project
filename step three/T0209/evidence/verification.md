@@ -30,3 +30,21 @@
 - Product Build run 41997150911: clean WPF build، smoke startup، Inno Setup installation و تست‌های unit مجوز موفق؛ publish self-contained هم موفق. مرحلهٔ inventory به‌دلیل نبود license metadata برای Collections.Pooled 1.0.82 متوقف شد.
 - منبع upstream: https://github.com/jtmueller/Collections.Pooled/blob/master/LICENSE.txt؛ GitHub repository آن را MIT معرفی می‌کند. CI اکنون revision کامل upstream را resolve می‌کند و فایل LICENSE را از همان revision دریافت می‌کند؛ markerهای MIT و صاحب حق‌نشر بررسی و SHA-256 در inventory ثبت می‌شود.
 - نتیجهٔ اصلاح و CI بعدی هنوز باید تأیید شود.
+
+
+## A003 — نتایج CI
+
+- Step Three Quality Gate run 42001661879: موفق؛ ۴۱۸ آزمون OK، syntax check، graph validation و evidence validation موفق.
+- Rendezvous run 42001661910: build image و non-root HTTP contract موفق.
+- HostLifecycle job در Product Build run 42001661942: موفق.
+- Windows در همان Product Build: Inno Setup، چهار آزمون مجوز، clean build، publish self-contained، Protobuf، startup smoke، agent-tool tests و DPAPI tests موفق؛ inventory ابتدا Collections.Pooled 1.0.82 را با منبع MIT تأیید کرد و سپس به Common.Logging 3.4.1 رسید و به‌دلیل metadata ناقص fail کرد.
+
+## A004 — تغییرات در انتظار CI
+
+1. برای هر upstream repo، SHA مستقل و کامل Git ذخیره می‌شود.
+2. Collections.Pooled 1.0.82 با MIT و Common.Logging/Core 3.4.1 با Apache-2.0 به‌صورت exact-version override ثبت شده‌اند.
+3. licenses.json و ThirdPartyNotices.md برای هر فایل upstream، revision و SHA-256 درج می‌کنند.
+4. missing-licenseهای باقی‌مانده یکجا نمایش داده می‌شوند؛ هیچ بسته‌ای silently skip نمی‌شود.
+5. CI بعدی باید Quality Gate، unit tests، کامل بودن inventory، installer compilation، silent install، installed-app smoke، uninstall و artifact upload را اجرا و موفق کند.
+
+در checkpoint فعلی، موارد ۵ تا ۷ هنوز اجرا/تأیید نشده‌اند؛ T0209 تکمیل‌شده نیست. installer بدون Authenticode است و artifact workflow به‌تنهایی GitHub Release محسوب نمی‌شود.

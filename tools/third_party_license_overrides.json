@@ -4,11 +4,36 @@
     "Collections.Pooled/1.0.82": {
       "spdx": "MIT",
       "source_file": "Collections.Pooled-1.0.82-LICENSE.txt",
+      "source_revision_file": "Collections.Pooled.source-revision.txt",
       "source_url_template": "https://raw.githubusercontent.com/jtmueller/Collections.Pooled/{revision}/LICENSE.txt",
       "license_url": "https://github.com/jtmueller/Collections.Pooled/blob/master/LICENSE.txt",
       "required_markers": [
         "The MIT License (MIT)",
         "Copyright (c) Joel Mueller"
+      ]
+    },
+    "Common.Logging/3.4.1": {
+      "spdx": "Apache-2.0",
+      "source_file": "common-logging-license.txt",
+      "source_revision_file": "Common.Logging.source-revision.txt",
+      "source_url_template": "https://raw.githubusercontent.com/net-commons/common-logging/{revision}/license.txt",
+      "license_url": "https://github.com/net-commons/common-logging/blob/master/license.txt",
+      "required_markers": [
+        "Apache License",
+        "Version 2.0",
+        "http://www.apache.org/licenses/LICENSE-2.0"
+      ]
+    },
+    "Common.Logging.Core/3.4.1": {
+      "spdx": "Apache-2.0",
+      "source_file": "common-logging-license.txt",
+      "source_revision_file": "Common.Logging.source-revision.txt",
+      "source_url_template": "https://raw.githubusercontent.com/net-commons/common-logging/{revision}/license.txt",
+      "license_url": "https://github.com/net-commons/common-logging/blob/master/license.txt",
+      "required_markers": [
+        "Apache License",
+        "Version 2.0",
+        "http://www.apache.org/licenses/LICENSE-2.0"
       ]
     }
   }

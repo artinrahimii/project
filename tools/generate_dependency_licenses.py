@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Create a fail-closed third-party license inventory from NuGet restore assets."""
 from __future__ import annotations
+
 import argparse
 import hashlib
 import json
@@ -10,8 +11,14 @@ import sys
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
+
+class MissingPackageLicenseError(ValueError):
+    """Raised when restored packages cannot be assigned verified license metadata."""
+
+
 def local_name(tag: str) -> str:
     return tag.rsplit("}", 1)[-1]
+
 
 def child_text(parent: ET.Element, name: str) -> str | None:
     for child in list(parent):
@@ -19,24 +26,36 @@ def child_text(parent: ET.Element, name: str) -> str | None:
             return child.text.strip()
     return None
 
+
 def safe_filename(value: str) -> str:
     return re.sub(r"[^A-Za-z0-9._-]+", "_", value).strip("._") or "license"
 
-def copy_verified_override(package_id: str, version: str, override: dict, source_dir: Path | None,
-                           source_revision: str | None, files_dir: Path) -> tuple[str, list[str], dict]:
-    if source_dir is None or not source_revision or not re.fullmatch(r"[0-9a-f]{40}", source_revision):
-        raise ValueError(f"A pinned upstream source revision is required for {package_id} {version}")
+
+def copy_verified_override(package_id: str, version: str, override: dict,
+                           source_dir: Path | None, files_dir: Path) -> tuple[str, list[str], dict]:
+    if source_dir is None:
+        raise ValueError(f"A license source directory is required for {package_id} {version}")
     spdx = override.get("spdx")
     source_name = override.get("source_file")
+    revision_name = override.get("source_revision_file")
     markers = override.get("required_markers")
     source_template = override.get("source_url_template")
     license_url = override.get("license_url")
-    if not all(isinstance(value, str) and value.strip() for value in (spdx, source_name, source_template, license_url)):
+    if not all(isinstance(x, str) and x.strip() for x in
+               (spdx, source_name, revision_name, source_template, license_url)):
         raise ValueError(f"Incomplete third-party license override for {package_id} {version}")
     if not isinstance(markers, list) or not markers or not all(isinstance(x, str) and x for x in markers):
         raise ValueError(f"Missing source verification markers for {package_id} {version}")
-    if Path(source_name).name != source_name or source_name in {".", ".."}:
-        raise ValueError(f"Unsafe upstream license filename for {package_id} {version}")
+    if Path(source_name).name != source_name or Path(revision_name).name != revision_name:
+        raise ValueError(f"Unsafe upstream license filenames for {package_id} {version}")
+
+    revision_path = source_dir / revision_name
+    if not revision_path.is_file():
+        raise ValueError(f"Pinned upstream revision file is missing for {package_id} {version}")
+    revision = revision_path.read_text(encoding="ascii").strip()
+    if not re.fullmatch(r"[0-9a-f]{40}", revision):
+        raise ValueError(f"Upstream source revision is not a full Git SHA-1 for {package_id} {version}")
+
     source = source_dir / source_name
     if not source.is_file():
         raise ValueError(f"Upstream license source file is missing for {package_id} {version}: {source_name}")
@@ -50,24 +69,25 @@ def copy_verified_override(package_id: str, version: str, override: dict, source
     missing = [marker for marker in markers if marker not in contents]
     if missing:
         raise ValueError(f"Upstream license source verification failed for {package_id} {version}: {missing}")
-    source_url = source_template.format(revision=source_revision)
-    if not source_url.startswith("https://raw.githubusercontent.com/"):
+
+    url = source_template.format(revision=revision)
+    if not url.startswith("https://raw.githubusercontent.com/"):
         raise ValueError(f"Untrusted upstream license URL template for {package_id} {version}")
     name = safe_filename(f"{package_id}-{version}-{source_name}")
     target = files_dir / name
     shutil.copyfile(source, target)
     relative = f"files/{name}"
     details = {
-        "license_source_url": source_url,
-        "license_source_revision": source_revision,
+        "license_source_url": url,
+        "license_source_revision": revision,
         "license_sha256": hashlib.sha256(raw).hexdigest(),
         "license_url": license_url,
     }
     return f"SPDX expression: {spdx}; upstream license file: {relative}", [relative], details
 
+
 def resolve_package_license(package_id: str, version: str, package_root: Path, files_dir: Path,
-                            override: dict | None, source_dir: Path | None,
-                            source_revision: str | None) -> tuple[str, list[str], dict]:
+                            override: dict | None, source_dir: Path | None) -> tuple[str, list[str], dict]:
     nuspecs = sorted(package_root.glob("*.nuspec"))
     if not nuspecs:
         raise ValueError(f"Missing nuspec for {package_id} {version}")
@@ -78,24 +98,27 @@ def resolve_package_license(package_id: str, version: str, package_root: Path, f
     license_node = next((x for x in list(metadata) if local_name(x.tag) == "license"), None)
     license_url = child_text(metadata, "licenseUrl")
     copied: list[str] = []
-    details: dict = {}
+
     if license_node is None or not (license_node.text and license_node.text.strip()):
         if license_url:
             return f"License URL: {license_url}", [], {"license_url": license_url}
         if override is not None:
-            return copy_verified_override(package_id, version, override, source_dir, source_revision, files_dir)
+            return copy_verified_override(package_id, version, override, source_dir, files_dir)
         candidates = []
         for pattern in ("LICENSE", "LICENSE.*", "COPYING", "COPYING.*", "NOTICE", "NOTICE.*"):
             candidates.extend(x for x in package_root.glob(pattern) if x.is_file())
         if not candidates:
-            raise ValueError(f"No license expression, URL, or packaged license file for {package_id} {version}")
+            raise MissingPackageLicenseError(
+                f"No license expression, URL, or packaged license file for {package_id} {version}"
+            )
         names = []
         for source in sorted(set(candidates)):
             name = safe_filename(f"{package_id}-{version}-{source.name}")
             shutil.copyfile(source, files_dir / name)
             copied.append(f"files/{name}")
             names.append(f"files/{name}")
-        return "Packaged license/notice files: " + ", ".join(names), sorted(copied), details
+        return "Packaged license/notice files: " + ", ".join(names), sorted(copied), {}
+
     value = license_node.text.strip()
     kind = license_node.attrib.get("type", "").lower()
     if kind == "expression":
@@ -114,6 +137,7 @@ def resolve_package_license(package_id: str, version: str, package_root: Path, f
         description = f"License file: files/{name}"
     else:
         description = f"Package license metadata: {value} (type: {kind or 'unspecified'})"
+
     if kind == "expression":
         for pattern in ("LICENSE", "LICENSE.*", "COPYING", "COPYING.*", "NOTICE", "NOTICE.*"):
             for source in sorted(package_root.glob(pattern)):
@@ -125,18 +149,20 @@ def resolve_package_license(package_id: str, version: str, package_root: Path, f
                     item = f"files/{name}"
                     if item not in copied:
                         copied.append(item)
-    return description, sorted(copied), details
+    return description, sorted(copied), {}
 
-def load_overrides(overrides_file: Path | None) -> dict:
-    if overrides_file is None:
+
+def load_overrides(path: Path | None) -> dict:
+    if path is None:
         return {}
-    data = json.loads(overrides_file.read_text(encoding="utf-8"))
+    data = json.loads(path.read_text(encoding="utf-8"))
     if data.get("schema_version") != 1 or not isinstance(data.get("packages"), dict):
         raise ValueError("Invalid third-party license override registry")
     return {key.casefold(): value for key, value in data["packages"].items()}
 
+
 def generate(assets_file: Path, output_dir: Path, overrides_file: Path | None = None,
-             license_source_dir: Path | None = None, license_source_revision: str | None = None) -> dict:
+             license_source_dir: Path | None = None) -> dict:
     assets = json.loads(assets_file.read_text(encoding="utf-8"))
     package_folders = [Path(x) for x in assets.get("packageFolders", {})]
     libraries = assets.get("libraries")
@@ -145,7 +171,8 @@ def generate(assets_file: Path, output_dir: Path, overrides_file: Path | None = 
     overrides = load_overrides(overrides_file)
     files_dir = output_dir / "files"
     files_dir.mkdir(parents=True, exist_ok=True)
-    packages, seen = [], set()
+    packages, seen, missing = [], set(), []
+
     for key, metadata in libraries.items():
         if not isinstance(metadata, dict) or metadata.get("type") != "package":
             continue
@@ -157,20 +184,31 @@ def generate(assets_file: Path, output_dir: Path, overrides_file: Path | None = 
             continue
         seen.add(identity)
         relative = metadata.get("path") or f"{package_id.lower()}/{version.lower()}"
-        package_root = next((folder / relative for folder in package_folders if (folder / relative).is_dir()), None)
+        package_root = next((folder / relative for folder in package_folders
+                             if (folder / relative).is_dir()), None)
         if package_root is None:
             raise ValueError(f"Restored package is missing: {package_id} {version}")
-        license_text, copied, details = resolve_package_license(
-            package_id, version, package_root, files_dir, overrides.get(identity),
-            license_source_dir, license_source_revision
-        )
+        try:
+            license_text, copied, details = resolve_package_license(
+                package_id, version, package_root, files_dir, overrides.get(identity), license_source_dir
+            )
+        except MissingPackageLicenseError as exc:
+            missing.append(str(exc))
+            continue
         packages.append({
             "id": package_id, "version": version, "license": license_text,
             "license_files": copied, **details
         })
+
     unused = sorted(set(overrides) - seen)
     if unused:
         raise ValueError(f"License overrides do not match restored package identities: {unused}")
+    if missing:
+        raise MissingPackageLicenseError(
+            f"{len(missing)} restored package(s) have no verified license metadata:\n" +
+            "\n".join(f"- {entry}" for entry in missing)
+        )
+
     packages.sort(key=lambda item: (item["id"].casefold(), item["version"].casefold()))
     output_dir.mkdir(parents=True, exist_ok=True)
     lines = [
@@ -191,11 +229,19 @@ def generate(assets_file: Path, output_dir: Path, overrides_file: Path | None = 
             lines.append(f"- SHA-256: {package['license_sha256']}")
         lines.append("")
     (output_dir / "ThirdPartyNotices.md").write_text("\n".join(lines), encoding="utf-8", newline="\n")
-    manifest = {"schema_version": 1, "source": assets_file.name, "package_count": len(packages), "packages": packages}
+    manifest = {
+        "schema_version": 1,
+        "source": assets_file.name,
+        "package_count": len(packages),
+        "packages": packages,
+    }
     (output_dir / "licenses.json").write_text(
-        json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n"
+        json.dumps(manifest, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+        newline="\n",
     )
     return manifest
+
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
@@ -203,16 +249,15 @@ def main() -> int:
     parser.add_argument("--output-dir", required=True, type=Path)
     parser.add_argument("--overrides", type=Path)
     parser.add_argument("--license-source-dir", type=Path)
-    parser.add_argument("--license-source-revision")
     args = parser.parse_args()
     try:
-        result = generate(args.assets, args.output_dir, args.overrides, args.license_source_dir,
-                          args.license_source_revision)
+        result = generate(args.assets, args.output_dir, args.overrides, args.license_source_dir)
     except (OSError, ValueError, ET.ParseError, json.JSONDecodeError) as exc:
         print(f"ERROR dependency-license-inventory: {exc}", file=sys.stderr)
         return 2
     print(f"Dependency license inventory: {result['package_count']} packages; output: {args.output_dir}")
     return 0
+
 
 if __name__ == "__main__":
     raise SystemExit(main())

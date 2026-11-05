@@ -18,9 +18,13 @@ On Windows x64 with .NET SDK 10.0.100, Python 3.13, and Inno Setup 6:
 
 The script publishes the actual WPF app self-contained, inventories each restored NuGet package, copies declared license files, compiles the installer, checks version/publisher metadata, then silently installs, smoke-launches, and uninstalls it in an isolated temporary directory. Third-party notices and the machine-readable license inventory ship under the installed licenses directory.
 
+## Exact-version third-party license sources
+
+Some restored NuGet versions do not include license metadata. The third_party_license_overrides.json file keeps narrowly scoped overrides by package ID and exact version. The build resolves each upstream repository's branch to a complete Git commit SHA, downloads the actual license file from that immutable revision, checks identifying license markers, and records the source revision and SHA-256 digest in the generated inventory.
+
+- Collections.Pooled 1.0.82: upstream MIT license file from jtmueller/Collections.Pooled.
+- Common.Logging 3.4.1 and Common.Logging.Core 3.4.1: upstream Apache-2.0 license file from net-commons/common-logging. The Core package is the core implementation of the same Common.Logging project.
+
+A missing or changed upstream file, an invalid revision, an unrecognized package version, or any remaining package without verified license metadata fails the build. Missing package entries are collected and reported together so maintainers can address them without weakening the fail-closed behavior.
+
 The CI artifact is a build output, not a GitHub Release publication. A public release should wait for the later release-preparation and acceptance tasks. This task does not claim a signed installer or end-to-end product readiness.
-
- 
-## Verified third-party license exception
-
-NuGet package Collections.Pooled 1.0.82 does not ship a license expression, license URL, or license text in its restored package directory. The upstream repository identifies its LICENSE.txt as MIT. The Windows packaging script resolves the upstream repository master commit, downloads LICENSE.txt from that immutable commit, checks the MIT and copyright markers, and records the commit SHA and SHA-256 in licenses.json. This exception is scoped only to package ID/version Collections.Pooled/1.0.82; an unrecognized version or missing source file remains a hard failure.
