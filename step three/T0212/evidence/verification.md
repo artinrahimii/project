@@ -33,3 +33,14 @@
 - Product signing smoke به یک step واحد با متغیرهای local-to-step و `trap` پاک‌سازی تبدیل شد.
 - مستندات مرز خارج checkout را روشن می‌کنند و با تست قراردادی هم‌خوان شده‌اند.
 - نتیجهٔ CI اصلاحات در این commit هنوز pending است؛ production signing هنوز به Environment secrets و متغیر fingerprint نیاز دارد.
+## A003 — Quality Gate run 42062003986
+
+- Quality Gate: https://github.com/artinrahimii/project/actions/runs/42062003986 — ۴۲۹ آزمون؛ یک failure در تست canonical-path source assertion.
+- پنج تست دیگر release signing، از جمله مستندات، fail-closed، disposable key cleanup marker، protected workflow/fingerprint و gitignore، موفق شدند.
+- Product Build: https://github.com/artinrahimii/project/actions/runs/42062004172 — HostLifecycle موفق؛ در زمان این گزارش Windows و Android همچنان in progress بودند.
+- Android job پس از اصلاحات از KtLint عبور کرده بود و وارد مراحل build APK و signing smoke شده بود؛ نتیجهٔ نهایی آن هنوز تأیید نشده است.
+
+## A004 — اصلاح assertion بدون وابستگی به قالب‌بندی
+
+- تست مسیر repositoryRoot اکنون ترتیب resolve → canonicalFile → toPath را بررسی می‌کند و دیگر عبارت را به‌صورت یک خط ثابت طلب نمی‌کند.
+- اجرای دوبارهٔ Quality Gate و پایان Product Build لازم است؛ هیچ نتیجهٔ قبولی پیشاپیش ادعا نمی‌شود.

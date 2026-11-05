@@ -42,3 +42,14 @@
 - جملهٔ مستندات به‌گونه‌ای اصلاح شد که مرز امنیتی خارج‌بودن keystore از checkout را دقیقاً بیان کند و با قرارداد تست یکسان باشد.
 - ساخت کلید موقت، `assembleRelease`، بررسی `apksigner` و پاک‌سازی در یک shell step جمع شدند. متغیرهای signing فقط در همان step export می‌شوند و `trap ... EXIT` پوشهٔ کلید موقت را حتی در زمان failure حذف می‌کند؛ دیگر از GITHUB_ENV برای نگهداری رمزهای smoke در باقی job استفاده نمی‌شود.
 - Quality Gate و Product Build نسخهٔ اصلاحی هنوز اجرا نشده‌اند. T0212 همچنان `in_progress` است؛ هیچ ادعایی دربارهٔ امضای production یا fingerprint واقعی ثبت نمی‌شود.
+## A003 — نتیجهٔ Quality Gate پس از اصلاح KtLint
+
+- Quality Gate run 42062003986 روی V 3.0.971، ۴۲۹ آزمون اجرا کرد. تست مستندات و پنج تست دیگر امضای release موفق شدند؛ یک تست مسیر canonical شکست خورد، چون عبارت `resolve("../..").canonicalFile.toPath()` را دقیقاً روی یک خط می‌خواست.
+- پیاده‌سازی برای رعایت KtLint زنجیرهٔ `resolve`، `canonicalFile` و `toPath` را چندخطی کرده بود؛ بنابراین شکست، محدودیت تست منبع بود نه اثبات ضعف کنترل مسیر.
+- Product Build run 42062004172: job HostLifecycle موفق شد؛ jobهای Windows و Android هنگام ثبت این گزارش هنوز در حال اجرا بودند. Android از مرحلهٔ KtLint عبور کرده و به buildهای debug/release رسیده بود.
+
+## A004 — اصلاح تست مسیر canonical
+
+- تست اکنون فقط وجود سه عملیات و ترتیب آن‌ها را در عبارت `repositoryRoot` بررسی می‌کند: ابتدا resolve مسیر ریشه، سپس canonicalFile و در آخر toPath. این تست به فرمت تک‌خطی وابسته نیست.
+- کنترل runtime همچنان فایل keystore را canonical می‌کند و با `Path.startsWith(repositoryRoot)` قرارگیری داخل checkout را رد می‌کند.
+- نتیجهٔ QG و Product Build commit اصلاحی هنوز pending است؛ T0212 در وضعیت `in_progress` باقی می‌ماند.

@@ -28,7 +28,18 @@ class AndroidReleaseSigningContractTests(unittest.TestCase):
 
     def test_release_keystore_must_be_an_existing_file_outside_the_repository(self):
         self.assertIn("signingFile.isFile", GRADLE)
-        self.assertIn('resolve("../..").canonicalFile.toPath()', GRADLE)
+        repository_root_expression = GRADLE.split("val repositoryRoot", 1)[1].split(
+            "if (signingFile.toPath()", 1
+        )[0]
+        self.assertIn('resolve("../..")', repository_root_expression)
+        self.assertLess(
+            repository_root_expression.index('resolve("../..")'),
+            repository_root_expression.index(".canonicalFile"),
+        )
+        self.assertLess(
+            repository_root_expression.index(".canonicalFile"),
+            repository_root_expression.index(".toPath()"),
+        )
         self.assertIn("signingFile.toPath().startsWith(repositoryRoot)", GRADLE)
         self.assertIn("must be stored outside the repository checkout", GRADLE)
 
