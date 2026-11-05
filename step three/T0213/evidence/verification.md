@@ -76,3 +76,13 @@ Artifactهای واقعیِ بررسی‌شده برای SHA `179efa9fe07c3ba007
 - `android-release.yml` و `release-assets.yml` برای شروع، `workflow_dispatch` یا تگ `android-v*` لازم دارند. ابزار متصل این نشست عملیات dispatch، ایجاد تگ یا Release ندارد. GET releases آرایهٔ خالی برگرداند؛ فهرست تگ‌ها از این اتصال قابل بررسی نبود.
 - هیچ build، آزمون نرم‌افزاری یا workflow انتشار در این نوبت اجرا نشد. وضعیت T0213 همچنان blocked است؛ این بررسی صرفاً checkpoint است و task completion محسوب نمی‌شود.
 - اقدام بعد: اجرای دستی Android signed release روی SHA دقیق main، تأیید Product Build همان SHA، ایجاد تگ `android-v0.1.0` و سپس بررسی draft Release و checksumهای تولیدشده.
+
+
+## A005 — اصلاح ناسازگاری شمارندهٔ Graph Guard (2026-11-06)
+
+- مبنا: شاخهٔ `main`، commit `c21328f0e0052d1bf47a613bc8ad48915bd8646f` با پیام `V 3.0.988`.
+- اجرای Quality Gate شمارهٔ `42125796616` پس از اجرای 436 آزمون Python موفق و بررسی syntax موفق، در مرحلهٔ Graph Guard شکست خورد.
+- خطای دقیق: `FAILED_ATTEMPT_COUNT_MISMATCH: T0213: summary=1, history=0`.
+- قاعدهٔ واقعی `tools/graph_guard.py`، تلاش ناموفق را با `execution_history[].result == "failed"` می‌شمارد. چهار رکورد T0213 به‌ترتیب `partial`, `partial`, `blocked`, `blocked` هستند؛ بنابراین مقدار صحیح `failed_attempt_count` برابر صفر است.
+- فقط شمارندهٔ خلاصه از 1 به 0 اصلاح شد. هیچ رکوردی از تاریخچه حذف یا بازنویسی نشد، تلاش تازه‌ای جعل نشد و وضعیت `blocked` وظیفه تغییر نکرد.
+- این تغییر صرفاً اصلاح یکپارچگی دفتر ثبت و رفع خطای Graph Guard است؛ تکمیل T0213، اجرای workflow انتشار یا پیشرفت قابلیت محصول محسوب نمی‌شود.
