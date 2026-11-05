@@ -67,3 +67,14 @@
 
 ### محدودیت باقی‌مانده
 artifact مربوط به release APK تولیدی در این run ساخته/بارگذاری نشد؛ APK امضاشدهٔ این run فقط smoke با کلید موقت بود. workflow تولیدی در push job نداشت و secret/fingerprint واقعی از طریق اتصال فعلی قابل تأیید یا dispatch نبود. T0212 به‌درستی in_progress باقی می‌ماند.
+
+
+## A006 — بازاعتبارسنجی تکمیلی روی V 3.0.974
+
+- Quality Gate [42065762873](https://github.com/artinrahimii/project/actions/runs/42065762873): موفق؛ ۴۲۹ آزمون Python، compileall و Graph Guard (۲۳۰ وظیفه/۴۲۲ یال) موفق.
+- Product Build [42065762818](https://github.com/artinrahimii/project/actions/runs/42065762818): هر سه job اندروید، ویندوز و HostLifecycle موفق شدند.
+- Android job [127379261869](https://github.com/artinrahimii/project/actions/runs/42065762818/job/127379261869): KtLint، assembleDebug، assembleRelease با JKS موقت و apksigner verification موفق؛ digest گواهی `b7fe6f8501d232d9550f194848c9ce1a32b337beada9e1f4fa72a4a6dedbbba2` فقط fingerprint کلید موقت smoke است. آزمون JVM: ۲۲۳ passed، یک skipped، صفر failure/error.
+- Windows job [127379262443](https://github.com/artinrahimii/project/actions/runs/42065762818/job/127379262443): startup smoke و installer acceptance موفق؛ هشدار غیرمانع metadata در PE گزارش شد.
+- HostLifecycle job [127379262455](https://github.com/artinrahimii/project/actions/runs/42065762818/job/127379262455): ۸٬۸۴۸/۱۰٬۳۲۵ خط (۸۵٫۶۹٪)، ۶۷ PASS و یک opt-in SKIP.
+- Artifactهای اندروید/ویندوز و گزارش‌های آزمون بارگذاری شدند؛ فهرست شناسه‌ها در execution-report.md ثبت شده است.
+- این اجرا، امضای تولیدی را انجام نداد و APK تولیدی fingerprint-matched منتشر نکرد. T0212 در `in_progress` باقی می‌ماند؛ T0213 هنوز به‌علت hard dependency شروع نشده است.

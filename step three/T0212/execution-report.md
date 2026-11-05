@@ -107,3 +107,31 @@
 این اجرا، مسیر **امضای موقت CI** را اثبات می‌کند، نه امضای تولیدی. workflow `.github/workflows/android-release.yml` در اجرای push مربوط به run `42063279308` هیچ job تولیدی اجرا نکرد؛ اجرای واقعی آن به trigger دستی یا tag اختصاصی نیاز دارد. از اتصال فعلی امکان مشاهده/تأیید secretهای GitHub Environment یا اجرای دستی workflow فراهم نبود. وجود یا نبود secretهای تولیدی را حدس نمی‌زنم و هیچ کلید خصوصی یا مقدار محرمانه‌ای دریافت یا ثبت نشده است.
 
 بنابراین `T0212` همچنان `in_progress` باقی می‌ماند تا maintainer، Environment محافظت‌شدهٔ `android-release` را با keystore تولیدی و fingerprint ثابت پیکربندی کند و workflow تولیدی، APK نهایی را با تطبیق fingerprint امضا و artifact آن را منتشر کند. پس از آن می‌توان معیار checksum وظیفهٔ T0213 را بر فایل نهایی اعمال کرد.
+
+
+## A006 — بازاعتبارسنجی تکمیلی پس از V 3.0.974
+
+**commit بررسی‌شده:** `219c3e44025ea0c25d6c254a5379209286ca2d93` روی شاخهٔ `main`.
+
+### Quality Gate
+- [Quality Gate run 42065762873](https://github.com/artinrahimii/project/actions/runs/42065762873) موفق شد.
+- ۴۲۹ آزمون Python موفق شدند؛ `compileall` موفق بود؛ Graph Guard تعداد ۲۳۰ وظیفه و ۴۲۲ یال را بررسی کرد.
+
+### Product Build
+- [Product Build run 42065762818](https://github.com/artinrahimii/project/actions/runs/42065762818) با نتیجهٔ نهایی `success` پایان یافت و هر سه job موفق شدند.
+- Android job [127379261869](https://github.com/artinrahimii/project/actions/runs/42065762818/job/127379261869): ‏KtLint، `assembleDebug` و `assembleRelease` موفق شدند. Release smoke با JKS موقت CI ساخته شد و اجرای `apksigner verify` موفق بود. digest گواهی smoke برابر `b7fe6f8501d232d9550f194848c9ce1a32b337beada9e1f4fa72a4a6dedbbba2` بود؛ این fingerprint فقط متعلق به گواهی موقت است و fingerprint تولیدی نیست.
+- آزمون JVM اندروید: ۲۲۴ تست از ۳۴ فایل؛ ۲۲۳ موفق، یک skip، صفر failure و صفر error.
+- Windows job [127379262443](https://github.com/artinrahimii/project/actions/runs/42065762818/job/127379262443): آزمون startup رابط WPF، کنترل‌های ابزار/DPAPI و پذیرش نصب/حذف installer موفق شدند. یک هشدار غیرمانع دربارهٔ فاصله‌های انتهایی metadata فیلد PE با نام CompanyName ثبت شد؛ ثبت Publisher در نصب واقعی جداگانه موفق بود.
+- HostLifecycle job [127379262455](https://github.com/artinrahimii/project/actions/runs/42065762818/job/127379262455): ‏۶۷ نشانگر PASS؛ پوشش Cobertura برابر ۸٬۸۴۸ از ۱۰٬۳۲۵ خط (۸۵٫۶۹٪)؛ یک آزمون real-model اختیاری به‌صراحت SKIP شد.
+
+### Artifactهای همین اجرا
+- [Android debug APK — 13435100872](https://github.com/artinrahimii/project/actions/runs/42065762818/artifacts/13435100872)، ۲۸٬۹۷۲٬۴۷۷ بایت.
+- [Windows installer — 13434616602](https://github.com/artinrahimii/project/actions/runs/42065762818/artifacts/13434616602)، ۶۰٬۹۷۸٬۴۰۲ بایت.
+- [Android coverage/critical results — 13434442890](https://github.com/artinrahimii/project/actions/runs/42065762818/artifacts/13434442890)، ۵٬۳۶۸ بایت.
+- [Android instrumentation reports — 13434152921](https://github.com/artinrahimii/project/actions/runs/42065762818/artifacts/13434152921)، ۱۱۰٬۸۰۸ بایت.
+- [HostLifecycle coverage/critical results — 13433522628](https://github.com/artinrahimii/project/actions/runs/42065762818/artifacts/13433522628)، ۱۱۰٬۹۱۸ بایت.
+- [Android JVM reports — 13433208534](https://github.com/artinrahimii/project/actions/runs/42065762818/artifacts/13433208534)، ۹۱٬۰۹۲ بایت.
+- [Windows host — 13432783766](https://github.com/artinrahimii/project/actions/runs/42065762818/artifacts/13432783766)، ۱۰۱٬۵۶۴٬۹۸۸ بایت.
+
+### مرز پذیرش
+این بازاعتبارسنجی موفقیت build و امضای smoke با کلید دورریختنی CI را ثابت می‌کند؛ **امضای تولیدی هنوز اجرا و تأیید نشده است**. هیچ artifact امضاشده با گواهی production یا تطبیق fingerprint ثابت در این run تولید نشد. بنابراین T0212 همچنان `in_progress` است و T0213 به‌دلیل وابستگی سخت به T0212 نباید آغاز شود.
