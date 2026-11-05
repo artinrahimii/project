@@ -112,13 +112,18 @@ class ReproducibleBuildContractTests(unittest.TestCase):
         self.assertNotIn('case "$launch_activity" in', instrumentation_step)
         self.assertNotIn("adb shell am start -n com.whitep.client/.MainActivity", PRODUCT)
         self.assertNotIn("adb shell am start -W", PRODUCT)
-        self.assertIn("adb shell pidof com.whitep.client | grep -E '[0-9]'", PRODUCT)
-        self.assertIn(
-            "adb shell dumpsys activity activities | grep -E "
-            "'mResumedActivity|topResumedActivity' | grep -F "
-            "'com.whitep.client' | grep -F 'MainActivity'",
-            PRODUCT,
-        )
+        self.assertEqual(instrumentation_step.count('while [ "$i" -lt 30 ]'), 2)
+        self.assertIn("app_pid=", instrumentation_step)
+        self.assertIn("adb shell pidof com.whitep.client", instrumentation_step)
+        self.assertIn("if [ -z", instrumentation_step)
+        self.assertIn("resumed_activity=", instrumentation_step)
+        self.assertIn("adb shell dumpsys activity activities", instrumentation_step)
+        self.assertEqual(instrumentation_step.count("adb logcat -d -t 300"), 2)
+        self.assertIn("MainActivity process did not appear within 30 seconds", instrumentation_step)
+        self.assertIn("MainActivity was not resumed within 30 seconds", instrumentation_step)
+        self.assertNotIn("adb shell pidof com.whitep.client | grep", PRODUCT)
+        self.assertLess(instrumentation_step.index(launch_resolved), instrumentation_step.index("app_pid="))
+        self.assertLess(instrumentation_step.index("app_pid="), instrumentation_step.index("resumed_activity="))
 
     def test_python_quality_commands_are_documented_and_executed_in_ci(self):
         for command in (

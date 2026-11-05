@@ -88,3 +88,17 @@
 - ۱۲ instrumentation case اجرا شدند؛ non-loopback LAN test طبق T0202 deferred skip شد. نصب مجدد APK با `adb install -r` موفق بود و `pm path` مسیر base.apk را نشان داد.
 - launcher smoke به‌علت اجرای هر خط script در shell مستقل شکست خورد: متغیر `launch_activity` به خط بعدی منتقل نشد و `case` چندخطی parse نشد. اجرای Activity، PID و resumed بررسی نشد.
 - workflow اکنون component واقعی MAIN/LAUNCHER را به فایل موقت می‌نویسد، وجود آن را جداگانه کنترل می‌کند و با `cat` همان فایل Activity را اجرا می‌کند. این اصلاح هنوز باید در CI تأیید شود؛ T0211 همچنان `in_progress` است.
+
+## A007 — نتیجهٔ CI در V 3.0.965
+
+- Quality Gate run 42027995142: موفق، ۴۲۳ آزمون Python و validation گراف.
+- Product Build run 42027993509: Windows WPF و HostLifecycle موفق. Android clean APK، KtLint، merged permissions، JVM tests و coverage موفق؛ Gradle instrumentation نیز `BUILD SUCCESSFUL` و ۱۲ test completed گزارش کرد.
+- APK با `adb install -r` نصب شد؛ `pm path` مسیر base.apk را نشان داد؛ Package Manager کامپوننت `com.whitep.client/.MainActivity` را resolve کرد و `am start` خروجی `Starting: Intent` داد.
+- بلافاصله پس از launch، `pidof` خروجی نداشت و exit code 1 داد؛ پس از آن job متوقف شد و resumed Activity بررسی نشد. از این لاگ به‌تنهایی crash یا startup delay قابل تشخیص نیست.
+- لاگ‌های اجرا: https://github.com/artinrahimii/project/actions/runs/42027993509 و Android job: https://github.com/artinrahimii/project/actions/runs/42027993509/job/127246936494
+
+## A008 — اصلاح تشخیص process و Activity
+
+- PID و resumed Activity هرکدام با retry محدود تا ۳۰ ثانیه بررسی می‌شوند.
+- در هر timeout، `adb logcat -d -t 300` اجرا می‌شود تا علت واقعی failure در CI قابل تشخیص باشد.
+- این اصلاح هنوز با CI تأیید نشده و هیچ ادعای launch موفق نهایی ثبت نمی‌شود.

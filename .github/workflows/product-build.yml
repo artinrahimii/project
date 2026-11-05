@@ -196,8 +196,9 @@ jobs:
             test -s /tmp/whitep-launcher-component.txt
             adb shell am force-stop com.whitep.client
             adb shell am start -n "$(cat /tmp/whitep-launcher-component.txt)"
-            adb shell pidof com.whitep.client | grep -E '[0-9]'
-            adb shell dumpsys activity activities | grep -E 'mResumedActivity|topResumedActivity' | grep -F 'com.whitep.client' | grep -F 'MainActivity'
+            # The emulator runner executes each script line in a separate shell; keep each bounded retry loop on one line.
+            i=0; app_pid=""; while [ "$i" -lt 30 ]; do app_pid="$(adb shell pidof com.whitep.client | tr -d '\r' || true)"; if [ -n "$app_pid" ]; then printf 'Android app PID: %s\n' "$app_pid"; break; fi; i=$((i+1)); sleep 1; done; if [ -z "$app_pid" ]; then echo "MainActivity process did not appear within 30 seconds; recent Android logcat follows."; adb logcat -d -t 300; exit 1; fi
+            i=0; resumed_activity=""; while [ "$i" -lt 30 ]; do resumed_activity="$(adb shell dumpsys activity activities | grep -E 'mResumedActivity|topResumedActivity' | grep -F 'com.whitep.client' | grep -F 'MainActivity' || true)"; if [ -n "$resumed_activity" ]; then printf '%s\n' "$resumed_activity"; break; fi; i=$((i+1)); sleep 1; done; if [ -z "$resumed_activity" ]; then echo "MainActivity was not resumed within 30 seconds; recent Android logcat follows."; adb logcat -d -t 300; exit 1; fi
             echo "PASS: installed Android MainActivity launcher was resolved, launched, and verified with a live process and resumed activity."
       - name: Upload Android Keystore instrumentation reports
         if: always()

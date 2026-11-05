@@ -95,3 +95,19 @@ T0211 در حال اجراست؛ build و instrumentation شواهد موفق د
 - اصلاح A007: خروجی `cmd package resolve-activity` با فیلتر package و `MainActivity` در `/tmp/whitep-launcher-component.txt` ذخیره می‌شود؛ خط بعدی فایل را با `test -s` اعتبارسنجی می‌کند و فرمان اجرای Activity مقدار component را از همان فایل می‌خواند. هیچ متغیر shell بین خطوط نیاز نیست.
 - regression contract ترتیب و محتوای این مراحل را بررسی می‌کند و استفاده از متغیر محلی و بلوک `case` چندخطی را رد می‌کند.
 - اصلاح A007 هنوز در CI اجرا نشده است؛ T0211 در وضعیت `in_progress` باقی می‌ماند تا resolve، launch، PID و resumed Activity همگی در Product Build موفق شوند.
+
+## A007 — نتیجهٔ واقعی Product Build نسخهٔ 3.0.965
+
+- Quality Gate run 42027995142 موفق شد: ۴۲۳ آزمون Python، کنترل ساختار و کنترل شواهد گراف با ۲۳۰ وظیفه و ۴۲۲ یال؛ صفر خطای گراف و یک هشدار تاریخی T0001.
+- Product Build run 42027993509: Windows WPF و HostLifecycle موفق شدند. در Android، clean APK build، KtLint، بررسی permissionهای merged، آزمون‌های JVM و coverage موفق شدند.
+- `connectedDebugAndroidTest createDebugAndroidTestCoverageReport` به `BUILD SUCCESSFUL` رسید و ۱۲ آزمون روی emulator خاتمه یافتند. نصب مجدد APK با `adb install -r` موفق بود؛ `pm path` مسیر `base.apk` را برگرداند؛ Package Manager مقدار `com.whitep.client/.MainActivity` را resolve کرد؛ `am start` نیز `Starting: Intent` گزارش کرد.
+- کنترل فوری `adb shell pidof com.whitep.client` خروجی نداشت و با exit code 1 شکست خورد. در نتیجه کنترل resumed Activity اجرا نشد. لاگ این اجرا logcat را در زمان شکست ثبت نکرد؛ بنابراین هنوز نمی‌توان نتیجه گرفت برنامه crash کرده یا صرفاً در نمونه‌برداری فوری آماده نبوده است.
+- T0211 تکمیل نیست. A007 از حالت partial به failed تغییر کرد؛ اصلاح A008 یک انتظار محدود ۳۰ثانیه‌ای برای PID و resumed Activity اضافه می‌کند و در صورت timeout، ۳۰۰ خط آخر logcat را ثبت می‌کند.
+
+## A008 — انتظار محدود و تشخیص timeout در emulator launcher
+
+- workflow برای هر بررسی، حلقهٔ retry مستقل و تک‌خطی دارد تا با اجرای جداگانهٔ هر خط توسط emulator-runner سازگار باشد.
+- process با `pidof` حداکثر ۳۰ ثانیه بررسی می‌شود. اگر PID ظاهر نشود، logcat ثبت و job شکست داده می‌شود.
+- Activity Manager نیز حداکثر ۳۰ ثانیه برای resumed شدن MainActivity بررسی می‌شود؛ در timeout، logcat ثبت می‌شود.
+- regression contract برای وجود هر دو حلقه، timeout diagnostics، تعداد logcat dumps و ترتیب launch → PID → resumed اضافه شد.
+- نتیجهٔ A008 هنوز pending CI است؛ T0211 همچنان `in_progress` است و T0212 شروع نمی‌شود.
