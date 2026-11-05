@@ -97,3 +97,23 @@ installer بدون امضای Authenticode است. artifact خروجی CI با �
 - برای هر package ID/version یک override مستقل و دقیق ایجاد شد. Windows build script با `git ls-remote` revision کامل master را resolve و فایل LICENSE همان revision را دانلود و markerها را بررسی می‌کند؛ revision و SHA-256 در inventory خروجی ثبت می‌شود.
 - آزمون اختصاصی fixture برای دو package، تطبیق exact-version، ثبت revision، کپی فایل و SHA-256 اضافه شد.
 - وضعیت A006 هنگام ثبت این commit: تغییرات پیاده‌سازی آماده‌اند؛ Quality Gate و Windows installer pipeline هنوز باید روی commit جدید اجرا شوند. هیچ موفقیت installer یا artifact انتشار ادعا نمی‌شود.
+
+
+## A006 — نتایج CI روی V 3.0.957
+
+- Step Three Quality Gate run 42004716462 موفق شد: ۴۲۱ آزمون Python، syntax check، graph validation و evidence validation همگی موفق شدند.
+- Product Build run 42004716384: هر ۷ آزمون dependency-license inventory موفق شدند. تمام چهار منبع upstream (Collections.Pooled، Common.Logging، net-dns و net-mdns) با revision کامل و markerهای موردانتظار تأیید شدند؛ inventory کامل ۸۳ بسته ایجاد شد.
+- Windows clean build، قالب‌بندی C#، Protobuf، WPF startup smoke، آزمون‌های agent-tool و DPAPI identity/trust موفق شدند.
+- Inno Setup فایل installer را تولید کرد؛ اندازه از حداقل تعیین‌شده بیشتر بود و ProductVersion برابر 0.1.0 تأیید شد.
+- شکست واقعی در کنترل `FileVersionInfo.CompanyName` رخ داد: مقدار خوانده‌شده با ناشر مورد انتظار «Artin Rahimi» برابر نبود. اسکریپت پیش از نصب بی‌صدا متوقف شد؛ بنابراین نصب، registry publisher check، smoke برنامهٔ نصب‌شده، uninstall و upload artifact اجرا نشدند.
+- job اندروید موفق شد و APK و گزارش‌های unit/instrumentation/coverage را بارگذاری کرد؛ job مربوط به HostLifecycle نیز موفق شد. شکست Product Build فقط در job ویندوز بود.
+- T0209 همچنان `in_progress` است. وجود فایل installer تولیدشده روی runner، بدون نصب و upload موفق، معیار پذیرش کامل محسوب نمی‌شود.
+
+## A007 — اصلاح اعتبارسنجی ناشر نصب‌کننده
+
+- مقدارهای `AppPublisher` و `VersionInfoCompany` در Inno Setup به‌صورت رشته‌های صریح نقل‌قول‌دار ثبت شدند.
+- تفاوت PE `FileVersionInfo.CompanyName` اکنون به‌عنوان diagnostic ثبت می‌شود و به‌تنهایی مانع اجرای پذیرش نصب نیست.
+- معیار عملی ناشر پس از نصب واقعی بررسی می‌شود: دقیقاً یک uninstall registration با `DisplayName=White-P` باید پیدا شود که `InstallLocation` آن با مسیر نصب موقت و یکتای همان اجرا برابر باشد؛ فیلد `Publisher` آن باید دقیقاً با ورودی ناشر برابر شود.
+- پس از uninstall، نبود همان registration نیز کنترل می‌شود.
+- آزمون قراردادی پایتون برای اتصال این کنترل‌ها به workflow و اسکریپت build اضافه شد.
+- CI مربوط به A007 هنوز اجرا نشده است؛ هیچ ادعایی دربارهٔ نصب، smoke، uninstall یا artifact ویندوز ثبت نمی‌شود.

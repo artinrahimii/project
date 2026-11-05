@@ -75,3 +75,20 @@
 - Git Blob فایل LICENSE در هر دو مخزن: `61d5419047d083bc1b1233241dfc4d097b76176b`، اندازه ۱٬۰۷۴ بایت؛ markerهای MIT و حق‌نشر Richard Schneider تطبیق دارند.
 - Overrideها برای نسخه‌های دقیق 2.0.1 و 0.27.0 ثبت شده‌اند؛ source revision runtime در build ویندوز resolve و به manifest ضمیمه می‌شود.
 - نتیجهٔ CI برای تغییرات A006 هنوز در انتظار است؛ وضعیت T0209 تا تأیید کامل installer و artifact همچنان in_progress می‌ماند.
+
+
+## A006 — نتایج Product Build و Quality Gate
+
+- Quality Gate run 42004716462: ۴۲۱ آزمون موفق؛ syntax، graph structure و evidence validation موفق.
+- Windows job در Product Build run 42004716384: ۷ آزمون مجوز، clean solution build (۰ warning/۰ error)، formatting، Protobuf، WPF startup smoke، agent-tool process/policy/capability و DPAPI identity/trust موفق.
+- چهار منبع بالادستی license با SHA کامل و markerهای لازم تأیید شدند؛ inventory واقعی ۸۳ بستهٔ NuGet را پوشش داد.
+- Inno Setup compilation و ProductVersion metadata موفق؛ check مربوط به PE CompanyName شکست خورد و اجرای نصب بی‌صدا/بررسی publisher ثبت‌شده/smoke/uninstall و upload artifact را متوقف کرد.
+- Android و HostLifecycle jobs موفق شدند؛ artifactهای اندروید و coverage در همان run بارگذاری شدند.
+
+## A007 — معیار دقیق بررسی Publisher
+
+- Inno Setup مقدارهای AppPublisher و VersionInfoCompany را به شکل رشتهٔ quote شده دریافت می‌کند.
+- PE CompanyName در log نگهداری می‌شود، اما کنترل publisher کاربرمحور با uninstall registration واقعی انجام می‌شود.
+- registration باید فقط یک مورد با DisplayName برابر White-P داشته باشد و InstallLocation آن همان مسیر موقت نصب باشد؛ Publisher باید برابر Artin Rahimi باشد.
+- پس از uninstall، registration متناظر نباید باقی بماند.
+- این اصلاح هنوز در GitHub Actions اجرا نشده و هیچ پذیرش نهایی installer ادعا نمی‌شود.

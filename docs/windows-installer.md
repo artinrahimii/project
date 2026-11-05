@@ -16,7 +16,7 @@ On Windows x64 with .NET SDK 10.0.100, Python 3.13, and Inno Setup 6:
     python -m unittest discover -s tests -p test_generate_dependency_licenses.py -v
     .\tools\build_windows_installer.ps1
 
-The script publishes the actual WPF app self-contained, inventories each restored NuGet package, copies declared license files, compiles the installer, checks version/publisher metadata, then silently installs, smoke-launches, and uninstalls it in an isolated temporary directory. Third-party notices and the machine-readable license inventory ship under the installed licenses directory.
+The script publishes the actual WPF app self-contained, inventories each restored NuGet package, copies declared license files, compiles the installer, checks its binary product version, then silently installs it in an isolated temporary directory. It validates the publisher using the actual per-user uninstall registration matched to that isolated install path, verifies the notices, smoke-launches the installed app, uninstalls it, and confirms the matching uninstall registration is removed. The setup executable's PE CompanyName field is logged as a separate diagnostic because it may differ from the AppPublisher registration. Third-party notices and the machine-readable license inventory ship under the installed licenses directory.
 
 ## Exact-version third-party license sources
 

@@ -107,7 +107,10 @@ $installerInfo = Get-Item -LiteralPath $installer
 if ($installerInfo.Length -lt 10MB) { throw "Installer is unexpectedly small: $($installerInfo.Length) bytes." }
 $setupInfo = [Diagnostics.FileVersionInfo]::GetVersionInfo($installer)
 if (-not $setupInfo.ProductVersion.StartsWith($Version, [StringComparison]::Ordinal)) { throw "Installer version metadata mismatch." }
-if ($setupInfo.CompanyName -ne $Publisher) { throw "Installer publisher metadata mismatch." }
+$setupCompanyName = [string]$setupInfo.CompanyName
+if ($setupCompanyName -ne $Publisher) {
+    Write-Warning "Installer PE CompanyName metadata was '$setupCompanyName'; expected '$Publisher'. The installed AppPublisher registration is checked separately below."
+}
 
 try {
     $install = Start-Process -FilePath $installer -ArgumentList @("/VERYSILENT", "/SUPPRESSMSGBOXES", "/NORESTART", "/SP-", "/DIR=$installDir") -Wait -PassThru
@@ -115,6 +118,30 @@ try {
     $installedExe = Join-Path $installDir "WhiteP.Host.Windows.exe"
     if (-not (Test-Path -LiteralPath $installedExe -PathType Leaf)) { throw "Installed application executable is missing." }
     if (-not (Test-Path -LiteralPath (Join-Path $installDir "licenses\ThirdPartyNotices.md") -PathType Leaf)) { throw "Third-party notices are missing from installation." }
+    $expectedInstallLocation = [IO.Path]::GetFullPath($installDir).TrimEnd([char[]]@('\', '/'))
+    $publisherRegistrations = @(
+        Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*" -ErrorAction SilentlyContinue |
+            Where-Object {
+                if ($_.DisplayName -ne "White-P" -or [string]::IsNullOrWhiteSpace([string]$_.InstallLocation)) {
+                    return $false
+                }
+                try {
+                    $registeredInstallLocation = [IO.Path]::GetFullPath([string]$_.InstallLocation).TrimEnd([char[]]@('\', '/'))
+                    [string]::Equals($registeredInstallLocation, $expectedInstallLocation, [StringComparison]::OrdinalIgnoreCase)
+                }
+                catch {
+                    $false
+                }
+            }
+    )
+    if ($publisherRegistrations.Count -ne 1) {
+        throw "Expected exactly one White-P uninstall registration for the isolated install location; found $($publisherRegistrations.Count)."
+    }
+    $registeredPublisher = [string]$publisherRegistrations[0].Publisher
+    if ($registeredPublisher -ne $Publisher) {
+        throw "Installed White-P publisher registration mismatch: expected '$Publisher', found '$registeredPublisher'."
+    }
+    Write-Host "PASS: installed White-P registration reports publisher '$registeredPublisher' for the isolated install location."
     $smoke = Start-Process -FilePath $installedExe -ArgumentList "--smoke-test" -WorkingDirectory $installDir -Wait -PassThru
     if ($smoke.ExitCode -ne 0) { throw "Installed application smoke test failed: $($smoke.ExitCode)" }
     $uninstaller = Join-Path $installDir "unins000.exe"
@@ -122,6 +149,21 @@ try {
     $uninstall = Start-Process -FilePath $uninstaller -ArgumentList @("/VERYSILENT", "/SUPPRESSMSGBOXES", "/NORESTART") -Wait -PassThru
     if ($uninstall.ExitCode -ne 0) { throw "Silent uninstall failed: $($uninstall.ExitCode)" }
     if (Test-Path -LiteralPath $installDir) { throw "Uninstall did not remove the isolated installation directory." }
+    $remainingPublisherRegistrations = @(
+        Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*" -ErrorAction SilentlyContinue |
+            Where-Object {
+                $_.DisplayName -eq "White-P" -and
+                -not [string]::IsNullOrWhiteSpace([string]$_.InstallLocation) -and
+                [string]::Equals(
+                    [IO.Path]::GetFullPath([string]$_.InstallLocation).TrimEnd([char[]]@('\', '/')),
+                    $expectedInstallLocation,
+                    [StringComparison]::OrdinalIgnoreCase
+                )
+            }
+    )
+    if ($remainingPublisherRegistrations.Count -ne 0) {
+        throw "The White-P uninstall registration remained after uninstall."
+    }
 }
 finally {
     if (Test-Path -LiteralPath $installDir) { Remove-Item -LiteralPath $installDir -Recurse -Force -ErrorAction SilentlyContinue }

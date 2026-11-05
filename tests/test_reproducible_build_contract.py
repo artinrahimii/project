@@ -60,6 +60,20 @@ class ReproducibleBuildContractTests(unittest.TestCase):
         self.assertIn("createDebugAndroidTestCoverageReport", PRODUCT)
         self.assertIn("dotnet-coverage collect", PRODUCT)
 
+    def test_windows_installer_verifies_publisher_from_isolated_uninstall_registration(self):
+        script = (ROOT / "tools/build_windows_installer.ps1").read_text(encoding="utf-8")
+        installer = (ROOT / "tools/installer/WhiteP.iss").read_text(encoding="utf-8")
+        self.assertIn('AppPublisher="{#Publisher}"', installer)
+        self.assertIn('VersionInfoCompany="{#Publisher}"', installer)
+        self.assertIn("Get-ItemProperty -Path", script)
+        self.assertIn("HKCU:", script)
+        self.assertIn('$_.DisplayName -ne "White-P"', script)
+        self.assertIn("$_.InstallLocation", script)
+        self.assertIn("$publisherRegistrations[0].Publisher", script)
+        self.assertIn("Installed White-P publisher registration mismatch", script)
+        self.assertIn("remainingPublisherRegistrations.Count -ne 0", script)
+        self.assertIn("Installer PE CompanyName metadata", script)
+
     def test_python_quality_commands_are_documented_and_executed_in_ci(self):
         for command in (
             "python -m unittest discover -s tests -v",
