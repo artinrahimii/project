@@ -83,6 +83,8 @@ function Get-VerifiedUpstreamLicense {
 
 Get-VerifiedUpstreamLicense -Repository "https://github.com/jtmueller/Collections.Pooled.git" -Branch "master" -RelativeLicensePath "LICENSE.txt" -OutputFile (Join-Path $licenseSources "Collections.Pooled-1.0.82-LICENSE.txt") -RevisionFile (Join-Path $licenseSources "Collections.Pooled.source-revision.txt") -RequiredMarkers @("The MIT License (MIT)", "Copyright (c) Joel Mueller")
 Get-VerifiedUpstreamLicense -Repository "https://github.com/net-commons/common-logging.git" -Branch "master" -RelativeLicensePath "license.txt" -OutputFile (Join-Path $licenseSources "common-logging-license.txt") -RevisionFile (Join-Path $licenseSources "Common.Logging.source-revision.txt") -RequiredMarkers @("Apache License", "Version 2.0", "http://www.apache.org/licenses/LICENSE-2.0")
+Get-VerifiedUpstreamLicense -Repository "https://github.com/richardschneider/net-dns.git" -Branch "master" -RelativeLicensePath "LICENSE" -OutputFile (Join-Path $licenseSources "Makaretu.Dns-2.0.1-LICENSE.txt") -RevisionFile (Join-Path $licenseSources "Makaretu.Dns.source-revision.txt") -RequiredMarkers @("MIT License", "Copyright (c) 2018 Richard Schneider")
+Get-VerifiedUpstreamLicense -Repository "https://github.com/richardschneider/net-mdns.git" -Branch "master" -RelativeLicensePath "LICENSE" -OutputFile (Join-Path $licenseSources "Makaretu.Dns.Multicast-0.27.0-LICENSE.txt") -RevisionFile (Join-Path $licenseSources "Makaretu.Dns.Multicast.source-revision.txt") -RequiredMarkers @("MIT License", "Copyright (c) 2018 Richard Schneider")
 
 $assets = Join-Path $root "src\Host.Windows\obj\project.assets.json"
 if (-not (Test-Path -LiteralPath $assets -PathType Leaf)) { throw "NuGet restore assets are missing." }

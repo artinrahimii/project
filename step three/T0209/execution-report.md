@@ -78,3 +78,22 @@ installer بدون امضای Authenticode است. artifact خروجی CI با �
 - تنها پس از نبود package missing، overrideهای بی‌مصرف/نسخه‌های منسوخ بررسی و رد می‌شوند.
 - بنابراین نسخهٔ جدید همان fail-closed behavior را حفظ می‌کند و خطای اصلی بستهٔ بدون مجوز را با نوع و پیام قابل‌آزمون گزارش می‌دهد.
 - A005 هنوز در CI اجرا نشده است.
+
+
+## A005 — نتیجهٔ اجرای مجدد CI و یافتهٔ جدید
+
+- commit مبنا: 14992e7050905d67e81f2cd5ee8c01f1703061e6 (V 3.0.956).
+- Step Three Quality Gate run 42003670142 موفق شد: ۴۲۰ آزمون Python اجرا و همگی پاس شدند؛ syntax، graph structure و recorded-output/evidence validation نیز موفق بود.
+- Windows job در Product Build run 42003670290 (job 127164933329): هر ۶ آزمون dependency-license inventory موفق شدند. Clean WPF build با صفر warning/error، formatting، تولید Protobuf، startup smoke، کنترل‌های agent-tool و DPAPI identity/peer-trust نیز موفق شدند.
+- مرحلهٔ inventory کامل همچنان fail-closed شد؛ دو بستهٔ واقعی restoreشده بدون license metadata یا فایل مجوز شناسایی شدند: Makaretu.Dns 2.0.1 و Makaretu.Dns.Multicast 0.27.0.
+- به‌دلیل این شکست، Inno Setup compilation، نصب بی‌صدا، smoke برنامهٔ نصب‌شده، uninstall و upload artifact اجرا نشدند. T0209 همچنان in_progress است.
+- نتیجهٔ مهم: تغییر A005 ترتیب تشخیص خطا را اصلاح کرد؛ خطاهای جدید، بسته‌های بدون مجوز بودند و نه خطای آزمون نسخهٔ دقیق.
+
+## A006 — اتصال دو بستهٔ Makaretu به مجوز upstream تأییدشده
+
+- منبع Makaretu.Dns 2.0.1: مخزن richardschneider/net-dns؛ README در commit `701463d2091e6d98d4cc4490abb0e0ead8ae2985` شناسهٔ بسته را تأیید و مجوز MIT را اعلام می‌کند.
+- منبع Makaretu.Dns.Multicast 0.27.0: مخزن richardschneider/net-mdns؛ README در commit `b9f2f8158052568a19d09536179ceaf5cae9b23e` شناسهٔ بسته را تأیید و مجوز MIT را اعلام می‌کند.
+- فایل LICENSE در هر دو commit، ۱٬۰۷۴ بایت و دارای markerهای `MIT License` و `Copyright (c) 2018 Richard Schneider` است؛ Blob هر دو فایل برابر `61d5419047d083bc1b1233241dfc4d097b76176b` گزارش شد.
+- برای هر package ID/version یک override مستقل و دقیق ایجاد شد. Windows build script با `git ls-remote` revision کامل master را resolve و فایل LICENSE همان revision را دانلود و markerها را بررسی می‌کند؛ revision و SHA-256 در inventory خروجی ثبت می‌شود.
+- آزمون اختصاصی fixture برای دو package، تطبیق exact-version، ثبت revision، کپی فایل و SHA-256 اضافه شد.
+- وضعیت A006 هنگام ثبت این commit: تغییرات پیاده‌سازی آماده‌اند؛ Quality Gate و Windows installer pipeline هنوز باید روی commit جدید اجرا شوند. هیچ موفقیت installer یا artifact انتشار ادعا نمی‌شود.

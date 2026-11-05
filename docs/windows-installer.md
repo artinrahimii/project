@@ -24,6 +24,10 @@ Some restored NuGet versions do not include license metadata. The third_party_li
 
 - Collections.Pooled 1.0.82: upstream MIT license file from jtmueller/Collections.Pooled.
 - Common.Logging 3.4.1 and Common.Logging.Core 3.4.1: upstream Apache-2.0 license file from net-commons/common-logging. The Core package is the core implementation of the same Common.Logging project.
+- Makaretu.Dns 2.0.1: upstream MIT license file from richardschneider/net-dns.
+- Makaretu.Dns.Multicast 0.27.0: upstream MIT license file from richardschneider/net-mdns.
+
+The Makaretu package READMEs identify their corresponding NuGet package IDs and explicitly declare the MIT license. The installer build resolves each repository's current master revision to a full Git SHA, downloads LICENSE from that immutable revision, verifies the MIT and copyright markers, and records the revision and SHA-256 in the generated notices.
 
 A missing or changed upstream file, an invalid revision, an unrecognized package version, or any remaining package without verified license metadata fails the build. Missing package entries are collected and reported together so maintainers can address them without weakening the fail-closed behavior.
 

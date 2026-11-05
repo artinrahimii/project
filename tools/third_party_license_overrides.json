@@ -35,6 +35,28 @@
         "Version 2.0",
         "http://www.apache.org/licenses/LICENSE-2.0"
       ]
+    },
+    "Makaretu.Dns/2.0.1": {
+      "spdx": "MIT",
+      "source_file": "Makaretu.Dns-2.0.1-LICENSE.txt",
+      "source_revision_file": "Makaretu.Dns.source-revision.txt",
+      "source_url_template": "https://raw.githubusercontent.com/richardschneider/net-dns/{revision}/LICENSE",
+      "license_url": "https://github.com/richardschneider/net-dns/blob/701463d2091e6d98d4cc4490abb0e0ead8ae2985/LICENSE",
+      "required_markers": [
+        "MIT License",
+        "Copyright (c) 2018 Richard Schneider"
+      ]
+    },
+    "Makaretu.Dns.Multicast/0.27.0": {
+      "spdx": "MIT",
+      "source_file": "Makaretu.Dns.Multicast-0.27.0-LICENSE.txt",
+      "source_revision_file": "Makaretu.Dns.Multicast.source-revision.txt",
+      "source_url_template": "https://raw.githubusercontent.com/richardschneider/net-mdns/{revision}/LICENSE",
+      "license_url": "https://github.com/richardschneider/net-mdns/blob/b9f2f8158052568a19d09536179ceaf5cae9b23e/LICENSE",
+      "required_markers": [
+        "MIT License",
+        "Copyright (c) 2018 Richard Schneider"
+      ]
     }
   }
 }

@@ -60,3 +60,18 @@
 - ترتیب validation در tools/generate_dependency_licenses.py تغییر کرد: package missing-license errors قبل از unused override entries گزارش می‌شوند.
 - Version-specific overrides همچنان exact-match هستند. اگر نسخهٔ 1.0.83 بدون override باقی بماند، خطای missing license نمایش داده می‌شود؛ اگر registry override بلااستفاده باشد و missing package وجود نداشته باشد، همان override stale به‌صورت جداگانه fail می‌شود.
 - اجرای مجدد Quality Gate و Windows Product Build هنوز لازم است.
+
+
+## A005 — نتایج CI روی V 3.0.956
+
+- Quality Gate run 42003670142: ۴۲۰ آزمون موفق؛ syntax، graph validation و evidence validation موفق.
+- Product Build run 42003670290 / Windows job 127164933329: ۶ آزمون license inventory، clean WPF build (۰ warning و ۰ error)، formatting، Protobuf، WPF startup smoke، agent-tool process/policy/capability و DPAPI host identity/peer trust موفق.
+- inventory واقعی در مرحلهٔ بعد با دو بستهٔ بدون license metadata متوقف شد: Makaretu.Dns 2.0.1 و Makaretu.Dns.Multicast 0.27.0. بنابراین installer compile/install/smoke/uninstall و upload artifact انجام نشدند.
+
+## A006 — شواهد منبع مجوز
+
+- Makaretu.Dns 2.0.1: `richardschneider/net-dns`، commit `701463d2091e6d98d4cc4490abb0e0ead8ae2985`، README نام NuGet package و مجوز MIT را صریحاً ذکر می‌کند.
+- Makaretu.Dns.Multicast 0.27.0: `richardschneider/net-mdns`، commit `b9f2f8158052568a19d09536179ceaf5cae9b23e`، README نام NuGet package و مجوز MIT را صریحاً ذکر می‌کند.
+- Git Blob فایل LICENSE در هر دو مخزن: `61d5419047d083bc1b1233241dfc4d097b76176b`، اندازه ۱٬۰۷۴ بایت؛ markerهای MIT و حق‌نشر Richard Schneider تطبیق دارند.
+- Overrideها برای نسخه‌های دقیق 2.0.1 و 0.27.0 ثبت شده‌اند؛ source revision runtime در build ویندوز resolve و به manifest ضمیمه می‌شود.
+- نتیجهٔ CI برای تغییرات A006 هنوز در انتظار است؛ وضعیت T0209 تا تأیید کامل installer و artifact همچنان in_progress می‌ماند.

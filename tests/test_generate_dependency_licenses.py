@@ -118,6 +118,65 @@ class LicenseInventoryTests(unittest.TestCase):
                 self.assertEqual(len(item["license_sha256"]), 64)
                 self.assertEqual((output / item["license_files"][0]).read_bytes(), source.read_bytes())
 
+    def test_makaretu_dns_packages_use_exact_version_pinned_mit_sources(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            assets = make_assets(root, {
+                "Makaretu.Dns": ("2.0.1", "<package><metadata><id>Makaretu.Dns</id></metadata></package>"),
+                "Makaretu.Dns.Multicast": (
+                    "0.27.0",
+                    "<package><metadata><id>Makaretu.Dns.Multicast</id></metadata></package>",
+                ),
+            })
+            source_dir = root / "sources"
+            source_dir.mkdir()
+            license_text = (
+                "MIT License\\n\\nCopyright (c) 2018 Richard Schneider\\n\\n"
+                "Permission is hereby granted, free of charge, to any person obtaining a copy\\n"
+            )
+            specs = {
+                "Makaretu.Dns/2.0.1": {
+                    "source_file": "Makaretu.Dns-2.0.1-LICENSE.txt",
+                    "revision_file": "Makaretu.Dns.source-revision.txt",
+                    "repo": "net-dns",
+                    "revision": "c" * 40,
+                    "url": "https://github.com/richardschneider/net-dns/blob/701463d2091e6d98d4cc4490abb0e0ead8ae2985/LICENSE",
+                },
+                "Makaretu.Dns.Multicast/0.27.0": {
+                    "source_file": "Makaretu.Dns.Multicast-0.27.0-LICENSE.txt",
+                    "revision_file": "Makaretu.Dns.Multicast.source-revision.txt",
+                    "repo": "net-mdns",
+                    "revision": "d" * 40,
+                    "url": "https://github.com/richardschneider/net-mdns/blob/b9f2f8158052568a19d09536179ceaf5cae9b23e/LICENSE",
+                },
+            }
+            overrides = {}
+            for identity, spec in specs.items():
+                (source_dir / spec["source_file"]).write_text(license_text, encoding="utf-8")
+                (source_dir / spec["revision_file"]).write_text(spec["revision"], encoding="ascii")
+                overrides[identity] = {
+                    "spdx": "MIT",
+                    "source_file": spec["source_file"],
+                    "source_revision_file": spec["revision_file"],
+                    "source_url_template": (
+                        f"https://raw.githubusercontent.com/richardschneider/{spec['repo']}/"
+                        "{{revision}}/LICENSE"
+                    ),
+                    "license_url": spec["url"],
+                    "required_markers": ["MIT License", "Copyright (c) 2018 Richard Schneider"],
+                }
+
+            output = root / "output"
+            result = generate(assets, output, write_override(root, overrides), source_dir)
+            self.assertEqual(result["package_count"], 2)
+            for item in result["packages"]:
+                identity = f"{item['id']}/{item['version']}"
+                spec = specs[identity]
+                self.assertIn("MIT", item["license"])
+                self.assertEqual(item["license_source_revision"], spec["revision"])
+                self.assertEqual(len(item["license_sha256"]), 64)
+                self.assertEqual((output / item["license_files"][0]).read_text(encoding="utf-8"), license_text)
+
     def test_override_does_not_apply_to_a_different_package_version(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
