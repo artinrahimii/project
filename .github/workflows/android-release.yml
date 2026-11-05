@@ -38,7 +38,8 @@ jobs:
           echo "SDKMANAGER=$SDKMANAGER" >> "$GITHUB_ENV"
       - name: Install Android build packages
         shell: bash
-        run: "$SDKMANAGER" --sdk_root="$ANDROID_HOME" --install "platforms;android-36" "build-tools;36.0.0" "platform-tools"
+        run: |
+          "$SDKMANAGER" --sdk_root="$ANDROID_HOME" --install "platforms;android-36" "build-tools;36.0.0" "platform-tools"
       - name: Validate protected secrets and restore the signing keystore
         shell: bash
         env:
@@ -79,8 +80,8 @@ jobs:
           apk="src/Client.Android/app/build/outputs/apk/release/app-release.apk"
           test -s "$apk"
           verify_output="$("$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs "$apk")"
-          printf '%s\\n' "$verify_output"
-          actual="$(printf '%s\\n' "$verify_output" | sed -n 's/^[[:space:]]*Signer #1 certificate SHA-256 digest: //p' | head -n 1 | tr -d '[:space:]:' | tr '[:upper:]' '[:lower:]')"
+          printf '%s\n' "$verify_output"
+          actual="$(printf '%s\n' "$verify_output" | sed -n 's/^[[:space:]]*Signer #1 certificate SHA-256 digest: //p' | head -n 1 | tr -d '[:space:]:' | tr '[:upper:]' '[:lower:]')"
           expected="$(printf '%s' "$ANDROID_RELEASE_CERT_SHA256" | tr -d '[:space:]:' | tr '[:upper:]' '[:lower:]')"
           [[ "$actual" =~ ^[0-9a-f]{64}$ ]] || { echo "Could not read a valid SHA-256 signer fingerprint from the APK."; exit 1; }
           [[ "$expected" =~ ^[0-9a-f]{64}$ ]] || { echo "ANDROID_RELEASE_CERT_SHA256 must be a 64-character SHA-256 fingerprint."; exit 1; }
