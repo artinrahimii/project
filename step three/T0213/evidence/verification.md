@@ -46,7 +46,7 @@
 - Android signing run: https://github.com/artinrahimii/project/actions/runs/42114568183 — success، SHA `179efa9fe07c3ba007885e9e3198eba620092617`.
 - Android signed artifact: https://github.com/artinrahimii/project/actions/runs/42114568183/artifacts/13455966209 — ID `13455966209`, digest `sha256:935a5d97b7ee32f4637867fceca00cb70809518b5494aeb43f0d8f35a5787825`.
 - Product Build run: https://github.com/artinrahimii/project/actions/runs/42113989702 — success، همان SHA قدیمی.
-- Windows installer artifact: https://github.com/artinrahimii/project/actions/runs/42113989702/artifacts/13453864758 — ID `13453864758`, digest `sha256:5f117cfb85ce902440ab6d906d906a0aa74a43cbd6d5b18857d0af27e63b0a36051b`.
+- Windows installer artifact: https://github.com/artinrahimii/project/actions/runs/42113989702/artifacts/13453864758 — ID `13453864758`, digest `sha256:5f117cfb85ce902440ab6d906a0aa74a43cbd6d5b18857d0af27e63b0a36051b`.
 - هر دو آرشیو ZIP از GitHub دریافت شدند؛ digest فایل دانلودشده با digest API برابر و `unzip -t` برای هر دو موفق بود.
 
 ### نتایج کنترل‌های همین نوبت
@@ -58,3 +58,10 @@
 ### مانع ادامه
 
 Artifactهای واقعیِ بررسی‌شده برای SHA `179efa9fe07c3ba007885e9e3198eba620092617` هستند، اما HEAD فعلی main برابر `4bad2fbf1458369097bcfb137d5daec729bc24a3` است. چون workflow انتشار فقط runهای موفق همان SHA را قبول می‌کند، این artifactها برای HEAD فعلی قابل استفاده نیستند. ابزار اتصال فعلی workflow_dispatch و ساخت تگ/Release را پشتیبانی نمی‌کند. `T0213` تکمیل نشده و در گراف blocked می‌ماند.
+
+
+## Erratum A003 — اصلاح digest آرشیو Windows (2026-11-06)
+
+در نسخهٔ قبلی این فایل، digest مربوط به Artifact `13453864758` به‌اشتباه با 68 نویسه ثبت شده بود. مقدار صحیح 64 نویسه‌ای که هم در metadata گیت‌هاب و هم در فایل دانلودشده با SHA-256 تأیید شد:
+
+`sha256:5f117cfb85ce902440ab6d906a0aa74a43cbd6d5b18857d0af27e63b0a36051b`
