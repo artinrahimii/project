@@ -22,3 +22,11 @@
 ## محدودیت/وضعیت
 
 در زمان این تلاش، GitHub Release هنوز ایجاد نشده است؛ API اتصال‌شده امکان create tag/release را ارائه نمی‌کند. پس از commit باید signing workflow روی commit جدید اجرا شود، سپس تگ android-v0.1.0 push شود. T0213 هنوز تکمیل‌شده محسوب نمی‌شود.
+
+## A002 — بازبینی و اصلاح expansion
+
+- commit بررسی‌شده: https://github.com/artinrahimii/project/commit/9464a17076b13088624d060f674d617230c09508.
+- Quality Gate اولیه: https://github.com/artinrahimii/project/actions/runs/42120944588 — success.
+- بازبینی فایل خام پس از commit یک backslash اضافی پیش از placeholderهای محیطی در release-assets.yml پیدا کرد. چون workflow هنوز اجرا نشده بود، از انتشار ناقص جلوگیری شد.
+- نسخهٔ اصلاحی placeholderهای Bash و GitHub Actions را بدون backslash نگه می‌دارد؛ تست قرارداد اکنون صریحاً این شرط را کنترل می‌کند.
+- این بازبینی اصلاحی، T0213 را تکمیل نمی‌کند؛ tag-based run و draft Release هنوز باید ایجاد و بررسی شوند.

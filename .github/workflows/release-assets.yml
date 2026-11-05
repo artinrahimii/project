@@ -20,10 +20,10 @@ jobs:
       - name: Locate successful builds for this exact commit
         shell: bash
         env:
-          GH_TOKEN: \${{ github.token }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          api="repos/\${GITHUB_REPOSITORY}/actions/runs?head_sha=\${GITHUB_SHA}&per_page=100"
+          api="repos/${GITHUB_REPOSITORY}/actions/runs?head_sha=${GITHUB_SHA}&per_page=100"
           signed_run_id="$(gh api "$api" --jq '[.workflow_runs[] | select(.name == "Android signed release" and .conclusion == "success")] | sort_by(.created_at) | last | .id // empty')"
           product_run_id="$(gh api "$api" --jq '[.workflow_runs[] | select(.name == "White-P product build" and .conclusion == "success")] | sort_by(.created_at) | last | .id // empty')"
           test -n "$signed_run_id" || { echo "No successful Android signed-release run exists for $GITHUB_SHA."; exit 1; }
@@ -34,7 +34,7 @@ jobs:
       - name: Download the production-signed APK and Windows installer
         shell: bash
         env:
-          GH_TOKEN: \${{ github.token }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           signed_dir="$RUNNER_TEMP/whitep-signed-apk"
@@ -74,7 +74,7 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/android-v')
         shell: bash
         env:
-          GH_TOKEN: \${{ github.token }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           tag="$GITHUB_REF_NAME"
@@ -85,7 +85,7 @@ jobs:
               exit 1
             fi
           else
-            version="\${tag#android-v}"
+            version="${tag#android-v}"
             gh release create "$tag" \
               --repo "$GITHUB_REPOSITORY" \
               --draft \
@@ -94,7 +94,7 @@ jobs:
               --notes-file docs/release-assets.md
           fi
           gh release upload "$tag" artifacts/releases/* --repo "$GITHUB_REPOSITORY" --clobber
-          release_json="$(gh api "repos/\${GITHUB_REPOSITORY}/releases/tags/\${tag}")"
+          release_json="$(gh api "repos/${GITHUB_REPOSITORY}/releases/tags/${tag}")"
           printf '%s' "$release_json" | jq -e --arg tag "$tag" '
             .draft == true and
             .tag_name == $tag and

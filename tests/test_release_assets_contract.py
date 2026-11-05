@@ -12,11 +12,16 @@ class ReleaseAssetsContractTests(unittest.TestCase):
         self.assertIn("permissions:\n      actions: read\n      contents: write", WORKFLOW)
 
     def test_only_successful_same_commit_builds_are_accepted(self):
-        self.assertIn("head_sha=\${GITHUB_SHA}", WORKFLOW)
+        self.assertIn("head_sha=${GITHUB_SHA}", WORKFLOW)
         self.assertIn('select(.name == "Android signed release" and .conclusion == "success")', WORKFLOW)
         self.assertIn('select(.name == "White-P product build" and .conclusion == "success")', WORKFLOW)
         self.assertIn("whitep-android-release-signed", WORKFLOW)
         self.assertIn("whitep-windows-installer", WORKFLOW)
+
+    def test_workflow_placeholders_are_not_backslash_escaped(self):
+        self.assertIn("${{ github.token }}", WORKFLOW)
+        self.assertNotIn(r"\${", WORKFLOW)
+        self.assertIn("${GITHUB_REPOSITORY}", WORKFLOW)
 
     def test_both_release_assets_and_license_inventory_are_required(self):
         for marker in ("WhiteP-Android-0.1.0.apk", "WhiteP-Setup-0.1.0-win-x64.exe",

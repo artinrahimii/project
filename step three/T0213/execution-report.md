@@ -37,3 +37,10 @@ T0213 در وضعیت in_progress می‌ماند. تولید manifest نامز�
 1. workflow امضای تولیدی را روی main جدید اجرا و موفقیت آن را بررسی کن.
 2. پس از موفقیت Product Build و Android signed release برای همان SHA، تگ android-v0.1.0 را روی همان commit push کن.
 3. اجرای White-P release assets را بررسی کن؛ باید APK، ZIP نصب‌کننده، SHA256SUMS.txt و BUILD-PROVENANCE.txt را در Release به‌صورت draft قرار دهد.
+
+## A002 — اصلاح placeholderهای Workflow پس از بازبینی V 3.0.984
+
+- اجرای Quality Gate برای commit 9464a17076b13088624d060f674d617230c09508 با موفقیت پایان یافت: https://github.com/artinrahimii/project/actions/runs/42120944588.
+- با وجود موفقیت تست‌های اولیه، بازبینی مستقیم فایل ثبت‌شده نشان داد backslashهای باقی‌مانده پیش از placeholderهای GitHub Actions و متغیرهای Bash می‌توانستند مانع expansion واقعی شوند. این ایراد پیش از dispatch کردن Workflow انتشار شناسایی شد؛ هیچ Release یا Artifact انتشار ناقصی منتشر نشد.
+- تمام escapeهای اضافی پیش از placeholderهای GitHub Actions و متغیرهای محیطی Bash از فایل Workflow حذف شدند. تست قرارداد نیز تقویت شد تا حضور backslash پیش از placeholderها را رد کند و وجود token expression و GITHUB_REPOSITORY را بررسی کند.
+- نتیجهٔ این اصلاح هنوز به commit جداگانه نیاز دارد؛ T0213 در وضعیت in_progress باقی می‌ماند. پس از commit، Quality Gate باید دوباره موفق شود و workflow فقط پس از signed-release موفق روی همان SHA و push تگ اجرا شود.
