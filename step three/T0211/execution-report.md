@@ -25,3 +25,13 @@
 
 ## وضعیت
 T0211 در حال اجراست؛ build و instrumentation شواهد موفق دارند، اما explicit launcher MainActivity smoke هنوز باید در CI جدید موفق شود. تا آن زمان done ثبت نمی‌شود.
+
+
+## A001 — خطای Quality Gate در V 3.0.959 و اصلاح metadata
+
+- Step Three Quality Gate run 42010812129 تعداد ۴۲۳ آزمون Python را اجرا کرد و همگی OK شدند.
+- بررسی ساختار اولیهٔ graph: ۲۳۰ وظیفه و ۴۲۲ یال، بدون خطا و با یک warning تاریخی برای dependency غیرشناسه‌ای T0001.
+- بررسی شواهد اجرای graph: ۷ خطای MISSING_OUTPUT_FILE صادر شد؛ علت، ثبت توضیحات و شناسه/مسیر artifactهای ephemeral به‌عنوان actual_output_paths بود، در حالی‌که graph_guard این فیلد را برای مسیر دقیق فایل موجود در checkout به‌کار می‌برد.
+- این خطا شکست آزمون برنامه یا اجرای Android نبود؛ هیچ آزمون Python یا runtime task در QG شکست نخورد. اشکال فقط در ثبت مسیرهای واقعی گراف بود.
+- اصلاح V 3.0.960: actual_output_paths در T0209/T0210/T0211 به مسیرهای دقیق tracked files محدود شد. شناسه‌های Windows installer و Android APK و لینک‌های CI در evidence باقی ماندند.
+- T0211 همچنان in_progress است؛ explicit launcher activity check در CI جدید باید پاس شود.
