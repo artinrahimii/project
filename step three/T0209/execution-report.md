@@ -117,3 +117,16 @@ installer بدون امضای Authenticode است. artifact خروجی CI با �
 - پس از uninstall، نبود همان registration نیز کنترل می‌شود.
 - آزمون قراردادی پایتون برای اتصال این کنترل‌ها به workflow و اسکریپت build اضافه شد.
 - CI مربوط به A007 هنوز اجرا نشده است؛ هیچ ادعایی دربارهٔ نصب، smoke، uninstall یا artifact ویندوز ثبت نمی‌شود.
+
+
+## A007 — پذیرش نهایی installer روی V 3.0.958
+
+- Step Three Quality Gate run 42007819784: ۴۲۲ آزمون Python موفق؛ syntax، ساختار گراف و اعتبارسنجی شواهد نیز موفق.
+- Product Build run 42007819870 و Windows job 127178931985: هر ۱۸ گام موفق شدند. build پاک WPF با صفر warning و error، formatting، Protobuf، startup smoke، کنترل‌های agent-tool و DPAPI موفق بودند.
+- inventory کامل ۸۳ بستهٔ NuGet موفق شد؛ چهار upstream license منبع با revision کامل و markerهای موردانتظار تأیید شدند.
+- Inno Setup installer واقعی را تولید کرد؛ ProductVersion برابر 0.1.0 تأیید شد. اندازهٔ EXE روی runner برابر ۶۱٬۴۶۰٬۳۳۰ بایت بود.
+- PE CompanyName دارای padding فاصله در انتهای فیلد بود؛ این مورد به‌عنوان warning تشخیصی باقی ماند. معیار ناشر از uninstall registration واقعی بررسی شد: Publisher دقیقاً Artin Rahimi و InstallLocation همان مسیر نصب آزمایشی بود.
+- نصب بی‌صدا، وجود executable و ThirdPartyNotices، اجرای smoke برنامهٔ نصب‌شده، حذف بی‌صدای برنامه، حذف مسیر نصب و حذف registry registration متناظر موفق شدند.
+- artifact whitep-windows-installer با ID 13404924326، اندازهٔ ZIP برابر ۶۰٬۹۷۷٬۶۰۱ بایت و SHA-256 برابر 9412269a0eac96f88d54a6090b9468ed790a00a1da29b52f53d9a37e22ea6713 بارگذاری شد. Windows host artifact نیز با ID 13405083340 بارگذاری شد.
+- Product Build run 42007819870 و container workflow 42007819671 هر دو موفق شدند. T0209 معیارهای خود را با شواهد واقعی تکمیل کرده است.
+- محدودیت انتشار: فایل به‌عنوان GitHub Actions artifact بارگذاری شده است؛ GitHub Release عمومی در این وظیفه ایجاد نشده و Authenticode signing نیز provision نشده است.

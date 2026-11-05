@@ -92,3 +92,24 @@
 - registration باید فقط یک مورد با DisplayName برابر White-P داشته باشد و InstallLocation آن همان مسیر موقت نصب باشد؛ Publisher باید برابر Artin Rahimi باشد.
 - پس از uninstall، registration متناظر نباید باقی بماند.
 - این اصلاح هنوز در GitHub Actions اجرا نشده و هیچ پذیرش نهایی installer ادعا نمی‌شود.
+
+
+## A007 — پذیرش واقعی Windows installer
+
+- Quality Gate: https://github.com/artinrahimii/project/actions/runs/42007819784
+- Product Build: https://github.com/artinrahimii/project/actions/runs/42007819870
+- Windows job: https://github.com/artinrahimii/project/actions/runs/42007819870/job/127178931985
+- Installer artifact: https://github.com/artinrahimii/project/actions/runs/42007819870/artifacts/13404924326
+- Windows host artifact: https://github.com/artinrahimii/project/actions/runs/42007819870/artifacts/13405083340
+
+### نتایج مستقیم
+- ۱۸/۱۸ گام Windows job موفق.
+- inventory مجوز برای ۸۳ بسته کامل؛ چهار منبع upstream با revision کامل تأیید شدند.
+- installer واقعی با ProductVersion 0.1.0 و اندازهٔ EXE برابر ۶۱٬۴۶۰٬۳۳۰ بایت ساخته شد.
+- silent install موفق؛ executable و ThirdPartyNotices در مسیر نصب موجود بودند.
+- Publisher واقعی در uninstall registration با مسیر نصب یکتا تطبیق کرد و مقدار آن Artin Rahimi بود.
+- اجرای WhiteP.Host.Windows.exe --smoke-test از محل نصب موفق شد؛ پنجرهٔ MainWindow واقعی load و visible شد.
+- silent uninstall موفق؛ مسیر نصب و registration متناظر باقی نماند.
+- artifact ZIP نصب‌کننده: ۶۰٬۹۷۷٬۶۰۱ بایت، SHA-256 9412269a0eac96f88d54a6090b9468ed790a00a1da29b52f53d9a37e22ea6713.
+- warning PE CompanyName ناشی از padding فاصلهٔ انتهایی بود؛ Publisher از registry واقعی با مقدار دقیق تأیید شد.
+- GitHub Release عمومی ایجاد نشده و Authenticode signing انجام نشده است.

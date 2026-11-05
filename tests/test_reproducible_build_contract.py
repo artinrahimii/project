@@ -12,6 +12,8 @@ README = (ROOT / "README.md").read_text(encoding="utf-8")
 PRODUCT = (ROOT / ".github/workflows/product-build.yml").read_text(encoding="utf-8")
 QUALITY = (ROOT / ".github/workflows/quality.yml").read_text(encoding="utf-8")
 GLOBAL = json.loads((ROOT / "global.json").read_text(encoding="utf-8"))
+ANDROID_GRADLE = (ROOT / "src/Client.Android/app/build.gradle.kts").read_text(encoding="utf-8")
+ANDROID_MANIFEST = (ROOT / "src/Client.Android/app/src/main/AndroidManifest.xml").read_text(encoding="utf-8")
 
 
 class ReproducibleBuildContractTests(unittest.TestCase):
@@ -73,6 +75,17 @@ class ReproducibleBuildContractTests(unittest.TestCase):
         self.assertIn("Installed White-P publisher registration mismatch", script)
         self.assertIn("remainingPublisherRegistrations.Count -ne 0", script)
         self.assertIn("Installer PE CompanyName metadata", script)
+
+    def test_android_emulator_builds_installs_and_launches_real_main_activity(self):
+        self.assertIn('applicationId = "com.whitep.client"', ANDROID_GRADLE)
+        self.assertIn('android:name=".MainActivity"', ANDROID_MANIFEST)
+        self.assertIn("connectedDebugAndroidTest createDebugAndroidTestCoverageReport", PRODUCT)
+        self.assertIn("adb shell am force-stop com.whitep.client", PRODUCT)
+        self.assertIn("adb shell am start -W -n com.whitep.client/.MainActivity", PRODUCT)
+        self.assertIn('grep -Fq "Status: ok"', PRODUCT)
+        self.assertIn('grep -Fq "Activity: com.whitep.client/.MainActivity"', PRODUCT)
+        self.assertIn("adb shell pidof com.whitep.client", PRODUCT)
+        self.assertIn("topResumedActivity", PRODUCT)
 
     def test_python_quality_commands_are_documented_and_executed_in_ci(self):
         for command in (
