@@ -19,3 +19,8 @@ On Windows x64 with .NET SDK 10.0.100, Python 3.13, and Inno Setup 6:
 The script publishes the actual WPF app self-contained, inventories each restored NuGet package, copies declared license files, compiles the installer, checks version/publisher metadata, then silently installs, smoke-launches, and uninstalls it in an isolated temporary directory. Third-party notices and the machine-readable license inventory ship under the installed licenses directory.
 
 The CI artifact is a build output, not a GitHub Release publication. A public release should wait for the later release-preparation and acceptance tasks. This task does not claim a signed installer or end-to-end product readiness.
+
+ 
+## Verified third-party license exception
+
+NuGet package Collections.Pooled 1.0.82 does not ship a license expression, license URL, or license text in its restored package directory. The upstream repository identifies its LICENSE.txt as MIT. The Windows packaging script resolves the upstream repository master commit, downloads LICENSE.txt from that immutable commit, checks the MIT and copyright markers, and records the commit SHA and SHA-256 in licenses.json. This exception is scoped only to package ID/version Collections.Pooled/1.0.82; an unrecognized version or missing source file remains a hard failure.

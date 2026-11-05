@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "packages": {
+    "Collections.Pooled/1.0.82": {
+      "spdx": "MIT",
+      "source_file": "Collections.Pooled-1.0.82-LICENSE.txt",
+      "source_url_template": "https://raw.githubusercontent.com/jtmueller/Collections.Pooled/{revision}/LICENSE.txt",
+      "license_url": "https://github.com/jtmueller/Collections.Pooled/blob/master/LICENSE.txt",
+      "required_markers": [
+        "The MIT License (MIT)",
+        "Copyright (c) Joel Mueller"
+      ]
+    }
+  }
+}

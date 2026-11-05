@@ -36,3 +36,11 @@
 
 ## محدودیت
 installer بدون امضای Authenticode است. artifact خروجی CI با انتشار GitHub Release متفاوت است و تا زمان وظایف بعدی آمادهٔ انتشار عمومی محسوب نمی‌شود.
+
+ 
+## A002 — شکست CI و بررسی منبع مجوز
+
+- Step Three Quality Gate run 41997150945 روی commit f09ddede93058b5a0789f177a00dbefb553448bf تعداد ۴۱۶ آزمون را اجرا کرد؛ ۴۱۵ مورد موفق و آزمون test_product_builds_publish_real_artifacts_and_fail_if_missing به‌دلیل انتظار ۶ artifact در برابر مقدار واقعی ۷ ناموفق شد.
+- Product Build run 41997150911: نصب Inno Setup، آزمون‌های license inventory، build پاک WPF و startup smoke موفق شدند؛ سپس publish self-contained نیز موفق شد، اما جمع‌آوری مجوزها روی Collections.Pooled 1.0.82 به‌دلیل نداشتن metadata مجوز در nuspec/پوشهٔ بسته متوقف شد.
+- منبع رسمی upstream، مجوز MIT و فایل LICENSE.txt را مشخص می‌کند؛ override فقط برای Collections.Pooled/1.0.82 اضافه شده است. فایل مجوز در زمان build از commit مشخص upstream دریافت می‌شود و SHA-256 و revision در inventory ثبت خواهد شد.
+- اصلاح assertionهای artifact و آزمون‌های جدید override تا دریافت اجرای CI بعدی تأییدنشده‌اند.

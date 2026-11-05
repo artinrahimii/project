@@ -22,3 +22,11 @@
 6. artifact با نام whitep-windows-installer در Product Build بارگذاری شود.
 
 در این checkpoint موارد فوق روی runner ویندوز اجرا نشده‌اند؛ وضعیت done یا انتشار Release ثبت نمی‌شود. installer فاقد امضای Authenticode است.
+
+ 
+## A002 — نتایج CI و ریشه‌یابی مجوز
+
+- Step Three Quality Gate run 41997150945: ۴۱۵ مورد از ۴۱۶ آزمون موفق؛ یک assertion قدیمی تعداد upload-artifactها را ۶ انتظار داشت درحالی‌که تعداد واقعی با artifact installer برابر ۷ بود.
+- Product Build run 41997150911: clean WPF build، smoke startup، Inno Setup installation و تست‌های unit مجوز موفق؛ publish self-contained هم موفق. مرحلهٔ inventory به‌دلیل نبود license metadata برای Collections.Pooled 1.0.82 متوقف شد.
+- منبع upstream: https://github.com/jtmueller/Collections.Pooled/blob/master/LICENSE.txt؛ GitHub repository آن را MIT معرفی می‌کند. CI اکنون revision کامل upstream را resolve می‌کند و فایل LICENSE را از همان revision دریافت می‌کند؛ markerهای MIT و صاحب حق‌نشر بررسی و SHA-256 در inventory ثبت می‌شود.
+- نتیجهٔ اصلاح و CI بعدی هنوز باید تأیید شود.
