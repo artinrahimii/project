@@ -170,3 +170,14 @@
 `T0212` همچنان `blocked` باقی می‌ماند. یال‌های ورودی آن از `T0208` و `T0211` بدون تغییر `sequencing_only / validated` هستند و یال `T0212 → T0213` بدون تغییر `hard_dependency / validated` باقی ماند. `T0213` شروع نشد؛ checksum APK انتشار فقط پس از دریافت و تأیید artifact تولیدی `whitep-android-release-signed` قابل‌قبول است.
 
 اقدام لازم: maintainer باید Environment محافظت‌شدهٔ `android-release` را تأیید/پیکربندی کند و workflow را از طریق `workflow_dispatch` یا tag انتشار مجاز اجرا کند. پذیرش تنها با تطبیق fingerprint SHA-256 گواهی تولیدی و بارگذاری artifact نهایی ممکن است.
+
+
+## A009 — بازبینی مجدد روی آخرین main (V 3.0.979)
+
+- مبنای دقیق: `2ae34d8b7d90b9becab3842074b9efc92c1ca2e0` با پیام `V 3.0.979`.
+- Quality Gate run 42074239731: موفق؛ یک job روی همین commit تکمیل شد و کنترل ساختار گراف و شواهد خروجی موفق بود.
+- Product Build run 42074239730: هر سه job موفق شدند؛ Android client (۳۲ مرحله)، Windows WPF/installer (۲۲ مرحله) و HostLifecycle (۱۳ مرحله). امضای release در این مسیر فقط با کلید موقت CI انجام می‌شود و هویت تولیدی نیست.
+- Rendezvous container smoke run 42074239854: موفق.
+- Android signed release run 42074236692: رویداد `push`، نتیجهٔ run برابر `failure` و تعداد job برابر صفر. فایل workflow فقط `workflow_dispatch` و tagهای `android-v*` را می‌پذیرد؛ بنابراین هیچ مرحلهٔ بررسی secret، امضای تولیدی، تطبیق fingerprint یا بارگذاری APK امضاشده اجرا نشد.
+- اتصال GitHub در این اجرا عملیاتی برای dispatch دستی یا مدیریت secretهای Environment ارائه نمی‌کند. از روی این run نمی‌توان نبود secretها را نتیجه گرفت؛ فقط می‌توان گفت امضای تولیدی هنوز اجرا و تأیید نشده است.
+- وضعیت جاری: `blocked`. یال سخت `T0212 → T0213` معتبر باقی می‌ماند و T0213 شروع نشده است. این بازبینی فقط شواهد CI و وضعیت مانع را به‌روز می‌کند و پیشرفت پیاده‌سازی محسوب نمی‌شود.
