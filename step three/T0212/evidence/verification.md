@@ -109,3 +109,14 @@ artifact مربوط به release APK تولیدی در این run ساخته/ب�
 - Production signed-release run 42074236692: `event=push`، `conclusion=failure`، `jobs=[]`. هیچ کد امضای تولیدی اجرا نشد، زیرا triggerهای workflow شامل dispatch دستی یا tag `android-v*` هستند.
 - ابزارهای متصل امکان dispatch یا دسترسی/مدیریت secretهای Environment را نداشتند؛ provisioning گواهی تولیدی از این اتصال قابل تأیید نبود.
 - نتیجه: T0212 مسدود باقی می‌ماند؛ هیچ checksum برای APK امضاشدهٔ تولیدی ساخته نمی‌شود و T0213 تا رفع وابستگی سخت آغاز نخواهد شد.
+
+
+## A010 — شواهد روی V 3.0.980
+
+- main commit: `d7feb491ff974214348909cd840265d28a174d23`.
+- Quality Gate 42076992391: passed.
+- Product Build 42076992372: Windows WPF/installer و HostLifecycle passed؛ مراحل اولیهٔ Android شامل KtLint، debug APK، disposable-key assembleRelease، apksigner و cleanup passed؛ مراحل JVM/emulator در آخرین مشاهده هنوز in progress بودند.
+- Rendezvous container 42076992419: passed.
+- Production signed release 42076990441: `event=push`، `conclusion=failure`، `jobs=[]`. امضای production اجرا نشد.
+- خواندن Environment endpointها و dispatch از connector ممکن نبود. Secretها و اثرانگشت تولیدی قابل تأیید نیستند.
+- T0212 مسدود ماند؛ T0213 به دلیل hard dependency شروع نشد.

@@ -181,3 +181,14 @@
 - Android signed release run 42074236692: رویداد `push`، نتیجهٔ run برابر `failure` و تعداد job برابر صفر. فایل workflow فقط `workflow_dispatch` و tagهای `android-v*` را می‌پذیرد؛ بنابراین هیچ مرحلهٔ بررسی secret، امضای تولیدی، تطبیق fingerprint یا بارگذاری APK امضاشده اجرا نشد.
 - اتصال GitHub در این اجرا عملیاتی برای dispatch دستی یا مدیریت secretهای Environment ارائه نمی‌کند. از روی این run نمی‌توان نبود secretها را نتیجه گرفت؛ فقط می‌توان گفت امضای تولیدی هنوز اجرا و تأیید نشده است.
 - وضعیت جاری: `blocked`. یال سخت `T0212 → T0213` معتبر باقی می‌ماند و T0213 شروع نشده است. این بازبینی فقط شواهد CI و وضعیت مانع را به‌روز می‌کند و پیشرفت پیاده‌سازی محسوب نمی‌شود.
+
+
+## A010 — بررسی CI روی main با نسخهٔ V 3.0.980
+
+- commit مبنا: `d7feb491ff974214348909cd840265d28a174d23`.
+- Quality Gate run 42076992391: موفق.
+- Product Build run 42076992372: jobهای Windows WPF/installer و HostLifecycle موفق شدند. در job اندروید، KtLint، ساخت clean APK دیباگ، ساخت `assembleRelease` با کلید موقت، بررسی `apksigner`، کنترل permission و پاک‌سازی کلید موقت موفق بودند. در آخرین مشاهده، آزمون JVM/coverage اندروید و مراحل emulator هنوز در حال اجرا بودند؛ بنابراین نتیجهٔ نهایی Product Build در این گزارش موفق اعلام نمی‌شود.
+- Rendezvous container run 42076992419: موفق.
+- Android signed-release run 42076990441: رویداد `push`، نتیجهٔ failure و صفر job؛ هیچ مرحلهٔ امضای تولیدی اجرا نشد.
+- درخواست فهرست Environmentها و Environment با نام `android-release` از طریق connector با خطای endpoint غیرمجاز رد شد. ابزار dispatch دستی و مدیریت secret نیز ارائه نشده است؛ در نتیجه وضعیت وجود Secretها و تنظیمات Environment قابل مشاهده نیست.
+- وضعیت: `T0212=blocked`. وابستگی سخت `T0212 → T0213` تغییر نکرد و T0213 شروع نشد.
