@@ -84,9 +84,10 @@ jobs:
           # The release-by-tag endpoint only returns published releases. Draft releases
           # must be discovered through the releases list endpoint (this job has contents:write).
           find_release() {
-            GH_RELEASE_TAG="$tag" gh api --paginate --slurp \
-              "repos/${GITHUB_REPOSITORY}/releases?per_page=100" \
-              --jq 'add | [.[] | select(.tag_name == env.GH_RELEASE_TAG)] | last // empty'
+            gh api --paginate \
+              "repos/${GITHUB_REPOSITORY}/releases?per_page=100" |
+              jq -s --arg release_tag "$tag" \
+                'add | [.[] | select(.tag_name == $release_tag)] | last // empty'
           }
 
           release_json="$(find_release)"

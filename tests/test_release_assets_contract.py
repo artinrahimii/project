@@ -44,11 +44,13 @@ class ReleaseAssetsContractTests(unittest.TestCase):
         self.assertIn(".draft == true", WORKFLOW)
 
     def test_draft_release_lookup_uses_list_endpoint(self):
-        # GitHub's get-release-by-tag endpoint is for published releases only.
         # Draft releases are visible through the releases list to writers.
-        self.assertIn("gh api --paginate --slurp", WORKFLOW)
+        # gh api emits each paginated response; jq -s combines those pages.
+        self.assertIn("gh api --paginate", WORKFLOW)
+        self.assertIn('jq -s --arg release_tag "$tag"', WORKFLOW)
         self.assertIn("releases?per_page=100", WORKFLOW)
-        self.assertIn("env.GH_RELEASE_TAG", WORKFLOW)
+        self.assertIn("select(.tag_name == $release_tag)", WORKFLOW)
+        self.assertNotIn("--slurp", WORKFLOW)
         self.assertNotIn("releases/tags/${tag}", WORKFLOW)
         self.assertNotIn('gh release view "$tag"', WORKFLOW)
 

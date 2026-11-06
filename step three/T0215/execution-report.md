@@ -85,3 +85,33 @@ T0215 در `in_progress` باقی می‌ماند. بستن وظیفه منوط 
 - در commit tagged، فایل `tools/generate_model_license_notice.py` موجود نیست و اسناد و اسکریپت installer/release نیز ادغام notice مجوز مدل را ندارند. پس assetهای آن Draft، خروجی انتشار پس از پیاده‌سازی T0215 نیستند. محتویات ZIP Draft مستقیماً دانلود نشد؛ این نتیجه بر پایهٔ commit دقیق source و workflowای است که روی همان tag اجرا می‌شود، نه ادعای بررسی مستقیم ZIP.
 - ابزارهای فعلی این نشست امکان ساخت tag یا اجرای `workflow_dispatch` در محیط محافظت‌شدهٔ امضای Android را ارائه نمی‌کنند. هیچ tag، Release یا artifact قدیمی تغییر نکرد.
 - **نتیجه:** T0215 همچنان `in_progress` است؛ وظیفهٔ بعدی T0216 شروع نمی‌شود. این A004 فقط راستی‌آزمایی و اصلاح ثبت شواهد بود و هیچ قابلیت نرم‌افزاری تازه‌ای را پیاده‌سازی نکرد.
+
+
+
+## T0215-A005 — اجرای واقعی tag و رفع خطای ایجاد Draft Release (2026-11-07)
+
+### مبنای اجرای این نوبت
+- شاخهٔ بررسی‌شده: `main`
+- commit مبنا: `97612f7e1b4eec759bf931563bffc1234e99782b` با پیام `V 3.0.1001`.
+- تگ `android-v0.1.0-build.2` به همین commit اشاره می‌کند و با force یا جابه‌جایی تغییر داده نشد.
+- پیش‌نیازهای گرافی T0215 یعنی T0214 و T0208 هر دو `done` هستند. یال‌های T0214 → T0215 و T0208 → T0215 معتبرسازی شده‌اند؛ یال T0215 → T0216 همچنان `unreviewed` باقی می‌ماند.
+
+### اجرای واقعی روی همان commit
+- Android signed release دستی، run [42295764549](https://github.com/artinrahimii/project/actions/runs/42295764549): `success` روی `97612f7e1b4eec759bf931563bffc1234e99782b` و شاخهٔ `main`. artifact امضاشدهٔ `whitep-android-release-signed` با ID `13541342893` موجود بود.
+- Product Build، run [42292631561](https://github.com/artinrahimii/project/actions/runs/42292631561): `success` روی همان commit.
+- پس از ارسال تگ `android-v0.1.0-build.2`، Android signed release خودکار نیز run [42297408066](https://github.com/artinrahimii/project/actions/runs/42297408066) را با نتیجهٔ `success` روی همان SHA گذراند؛ artifact امضاشده با ID `13542941760` بارگذاری شد.
+- Release assets run [42297408035](https://github.com/artinrahimii/project/actions/runs/42297408035) همان SHA را دریافت کرد. مراحل checkout، یافتن buildهای هم‌کامیت، دریافت APK و Windows installer، کنترل پنج فایل مجوز و notice و ساخت/تأیید سه SHA-256 موفق شدند.
+- artifact موقت `whitep-release-assets` با ID `13541643378` و اندازهٔ 79,556,087 بایت بارگذاری شد؛ این artifact شامل چهار فایل خروجی مورد انتظار است: APK، ZIP نصب ویندوز، checksum و provenance. لاگ مرحلهٔ checksum هر سه فایل را `OK` گزارش کرد.
+
+### علت شکست و اصلاح
+- تنها مرحلهٔ ناموفق Release assets، مرحلهٔ 7 با نام `Create or update the draft GitHub Release for an android-v tag` بود؛ job ID برابر `128166125176`.
+- لاگ run 42297408035 خطای دقیق زیر را ثبت کرد: `the --slurp option is not supported with --jq or --template`.
+- علت، ترکیب نامعتبر `gh api --paginate --slurp --jq` در تابع `find_release()` بود؛ بنابراین اجرای انتشار پیش از ایجاد Draft متوقف شد. این شکست مربوط به CLI lookup است، نه امضای APK، build ویندوز، فایل‌های مجوز یا checksum.
+- در این نوبت تابع lookup اصلاح شد تا `gh api --paginate` پاسخ صفحه‌ها را به `jq -s` pipe کند و صفحه‌ها را با هم ادغام و tag موردنظر را انتخاب کند. آزمون قرارداد `test_draft_release_lookup_uses_list_endpoint` نیز به‌روزرسانی شد تا استفادهٔ مجدد از `--slurp` ممنوع باشد.
+- این اصلاح و آزمون قرارداد هنوز در CI اجرا نشده‌اند؛ در نتیجه موفقیت fix را تا پایان Quality Gate و اجرای مجدد release workflow ادعا نمی‌کنم.
+
+### وضعیت انتشار و ادامه
+- تگ `android-v0.1.0-build.2` به commit پیش از اصلاح lookup اشاره می‌کند و نباید جابه‌جا یا بازنویسی شود.
+- در زمان بررسی، تگ `android-v0.1.0-build.3` وجود نداشت. Draft قدیمی `436740935` همچنان به تگ `android-v0.1.0` و commit قدیمی `V 3.0.990` وصل است؛ آن را تغییر ندادم.
+- پس از تأیید CI روی commit اصلاح‌شده، یک اجرای دستی Android signed release روی همان SHA جدید لازم است؛ سپس باید تگ تازهٔ `android-v0.1.0-build.3` روی همان SHA ساخته و push شود. push تگ هر دو workflow انتشار را فعال می‌کند. اتصال GitHub این نوبت امکان dispatch کردن workflow یا ساخت/push تگ را ندارد.
+- **نتیجه:** T0215 همچنان `in_progress` است. T0216 آغاز نمی‌شود؛ یال خروجی آن همچنان بررسی‌نشده است.

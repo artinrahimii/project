@@ -75,3 +75,32 @@
 - فایل‌های source در همان commit هدف tag بررسی شدند: `tools/generate_model_license_notice.py` وجود ندارد (404)، `docs/windows-installer.md` شامل توضیح `ModelLicenses.md` و `model-licenses.json` نیست، `tools/build_windows_installer.ps1` فاقد ادغام مولد مجوز مدل است و `.github/workflows/release-assets.yml` نیز کنترل‌های جدید الزامی فایل‌های مجوز مدل را در آن نسخه ندارد. بنابراین source مربوط به Draft قدیمی، تغییرهای T0215 را در بر نمی‌گیرد؛ وجود چهار asset به‌تنهایی معیار گنجاندن مجوز مدل در بستهٔ انتشار جاری را اثبات نمی‌کند.
 - فایل‌های اصلی روی main جدیدترند: مولد مجوز مدل و ادغام installer موجودند و CI/Artifactهای Product Build روی commitهای بعدی در A003 و راستی‌آزمایی V 3.0.999 گزارش شده‌اند. با این حال Draft به آن SHAها متصل نیست و این نشست ابزار ساخت tag جدید یا اجرای `workflow_dispatch` برای `android-release.yml` را ندارد.
 - **نتیجه:** A004 مانع قبلی را دقیق‌تر کرد و ادعای نادرست «Draft فاقد asset است» را اصلاح کرد؛ اما T0215 هنوز `in_progress` می‌ماند. این بررسی هیچ build، signed-release، آزمون جدید یا فایل اجرایی نرم‌افزار تولید نکرد؛ T0216 آغاز نمی‌شود.
+
+
+
+## T0215-A005 — Release candidate tag و خطای انتشار Draft (2026-11-07)
+
+### دریافت و اعتبارسنجی فایل گراف
+- commit مبنا: `97612f7e1b4eec759bf931563bffc1234e99782b`, tree `4fe1b940ac73f53d1591864a9060feb0db60e593`, مسیر `step three/project-graph.md`.
+- Blob ID از tree همان commit برابر `59d4be835e2a9f7edb171cb064e2592f2f5155f3` استخراج شد.
+- دریافت از Git Blob API کامل بود؛ اندازهٔ محتوای UTF-8 برابر 3,928,242 بایت و طول رشته 3,797,524 نویسه بود. Git Blob SHA-1 با سربرگ صحیح Git روی تمام بایت‌های فایل اصلی، شامل حصارهای Markdown، محاسبه شد و دقیقاً برابر `59d4be835e2a9f7edb171cb064e2592f2f5155f3` شد. JSON داخلی بدون تغییر فایل اصلی parse شد.
+- گراف شامل 230 task و 422 edge است. وضعیت‌ها: 212 `done`، 1 `in_progress`، 14 `not_started` و 3 `deferred_final`. تعداد یال‌های `validated` برابر 389 و `unreviewed` برابر 33 است؛ نوع خام تمام یال‌ها `blocks` است. یال‌های T0214 → T0215 و T0208 → T0215 از قبل با شواهد معتبرسازی شده‌اند؛ یال T0215 → T0216 بدون تغییر `unreviewed` باقی ماند.
+- Blob SHA فایل‌های کوچک مرتبط نیز مستقل محاسبه شد و با پاسخ fetch فایل در هر چهار مورد تطبیق داشت: release-assets workflow، آزمون قرارداد انتشار، execution-report و evidence.
+
+### ورودی‌های واقعی و نتیجهٔ workflowها
+- Android signed release دستی: [run 42295764549](https://github.com/artinrahimii/project/actions/runs/42295764549)، success روی `97612f7e1b4eec759bf931563bffc1234e99782b`/main؛ artifact `whitep-android-release-signed` ID `13541342893`.
+- Product Build: [run 42292631561](https://github.com/artinrahimii/project/actions/runs/42292631561)، success روی همان SHA.
+- Android signed release پس از push tag: [run 42297408066](https://github.com/artinrahimii/project/actions/runs/42297408066)، success؛ artifact `whitep-android-release-signed` ID `13542941760`.
+- Release assets: [run 42297408035](https://github.com/artinrahimii/project/actions/runs/42297408035)، conclusion برابر failure؛ job `128166125176`. مراحل 1 تا 6 موفق شدند و artifact `whitep-release-assets` ID `13541643378` (79,556,087 bytes) ساخته شد. سه checksum برای APK، ZIP و provenance با نتیجهٔ OK بررسی شدند.
+- مرحلهٔ نهایی ساخت/بارگذاری Draft پیش از اجرای `find_release()` شکست خورد؛ خروجی CLI: `the --slurp option is not supported with --jq or --template`. بنابراین برای تگ build.2 هیچ Draft Release تازه‌ای تأیید نشده است.
+
+### اصلاح اعمال‌شده در همین نوبت
+- در `.github/workflows/release-assets.yml`، تابع `find_release()` به الگوی `gh api --paginate ... | jq -s --arg release_tag "$tag" ...` تغییر یافت؛ این الگو صفحه‌های JSON را با jq تجمیع می‌کند و از گزینهٔ ناسازگار `--slurp` در GitHub CLI استفاده نمی‌کند.
+- آزمون `tests/test_release_assets_contract.py` اکنون وجود این pipe و نبود `--slurp` را کنترل می‌کند.
+- این تغییر کد تا قبل از ثبت commit بعدی هنوز CI نشده است. اجرای مجدد در یک tag جدید، آزمون نهایی ایجاد Draft خواهد بود.
+
+### Releaseهای موجود و گام بعدی
+- Draft قدیمی Release ID `436740935` و tag `android-v0.1.0` دست‌نخورده ماند؛ این tag به commit `cca243d28197df90900885a35a54a8ca8ae3751e` با پیام `V 3.0.990` اشاره می‌کند.
+- `android-v0.1.0-build.2` قبلاً به `97612f7e1b4eec759bf931563bffc1234e99782b` push شده و نباید move یا force شود. در زمان بررسی، `android-v0.1.0-build.3` هنوز وجود نداشت.
+- اقدام بیرونی لازم پس از CI اصلاحیه: اجرای دستی `android-release.yml` روی SHA جدید main، سپس ساخت/push تگ تازهٔ `android-v0.1.0-build.3` دقیقاً روی همان SHA. ابزار متصل این نوبت این دو عملیات را ارائه نمی‌کند.
+- T0215 در `in_progress` می‌ماند تا Release Draft جدید با هر چهار فایل لازم روی SHA واحد ساخته و بررسی شود. T0216 شروع نمی‌شود.
