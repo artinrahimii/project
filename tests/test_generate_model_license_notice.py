@@ -66,6 +66,27 @@ class ModelLicenseNoticeTests(unittest.TestCase):
             self.assertIn("2e8040ceae7815abe0dcb3540b9995eaa1fa0d2ca9e797d0a635ae4433c68c2d", notice)
             self.assertIn("model weights are not included", notice.lower())
 
+    def test_catalog_hash_is_stable_across_lf_and_crlf_checkouts(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            catalog, license_file = write_inputs(root)
+            raw = catalog.read_bytes()
+            lf_bytes = raw.replace(b"\r\n", b"\n")
+            catalog.write_bytes(lf_bytes)
+            lf_result = generate(catalog, license_file, root / "output-lf")
+            lf_manifest = json.loads((root / "output-lf/model-licenses.json").read_text(encoding="utf-8"))
+
+            catalog.write_bytes(lf_bytes.replace(b"\n", b"\r\n"))
+            crlf_result = generate(catalog, license_file, root / "output-crlf")
+            crlf_manifest = json.loads((root / "output-crlf/model-licenses.json").read_text(encoding="utf-8"))
+
+            self.assertEqual(lf_result["source_catalog_sha256"], crlf_result["source_catalog_sha256"])
+            self.assertEqual(lf_manifest["source_catalog_sha256"], crlf_manifest["source_catalog_sha256"])
+            self.assertEqual(
+                lf_manifest["source_catalog_hash_policy"],
+                crlf_manifest["source_catalog_hash_policy"],
+            )
+
     def test_unverified_or_missing_model_license_fails_closed(self):
         for license_data in (None, {"status": "review_required"}):
             with self.subTest(license_data=license_data), tempfile.TemporaryDirectory() as temporary:

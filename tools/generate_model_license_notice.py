@@ -27,8 +27,14 @@ def require_https(value: object, field: str) -> str:
 
 def load_catalog(path: Path) -> tuple[dict, bytes]:
     raw = path.read_bytes()
+    # Windows Git checkouts may convert committed LF bytes to CRLF. Normalize
+    # only CRLF pairs so the catalog digest identifies the same Git text on
+    # Windows and Linux, independent of core.autocrlf.
+    canonical_raw = raw.replace(b"\r\n", b"\n")
+    if b"\r" in canonical_raw:
+        raise ValueError("Model catalog contains unsupported bare CR line endings")
     try:
-        catalog = json.loads(raw.decode("utf-8"))
+        catalog = json.loads(canonical_raw.decode("utf-8"))
     except (UnicodeDecodeError, json.JSONDecodeError) as exc:
         raise ValueError(f"Model catalog is not valid UTF-8 JSON: {exc}") from exc
     if not isinstance(catalog, dict) or catalog.get("schemaVersion") != 1:
@@ -36,7 +42,7 @@ def load_catalog(path: Path) -> tuple[dict, bytes]:
     models = catalog.get("models")
     if not isinstance(models, list) or not models:
         raise ValueError("Model catalog must contain at least one model")
-    return catalog, raw
+    return catalog, canonical_raw
 
 
 def validate_apache_license(path: Path) -> bytes:
@@ -119,6 +125,7 @@ def generate(catalog_path: Path, apache_license_path: Path, output_dir: Path) ->
         "schema_version": 1,
         "source_catalog": catalog_path.name,
         "source_catalog_sha256": catalog_hash,
+        "source_catalog_hash_policy": "SHA-256 of UTF-8 bytes after CRLF-to-LF normalization; stable across Windows/Linux checkouts.",
         "license_text_source_url": APACHE_LICENSE_URL,
         "license_text_sha256": license_hash,
         "license_text_file": license_relative,
@@ -135,7 +142,7 @@ def generate(catalog_path: Path, apache_license_path: Path, output_dir: Path) ->
         "This notice is generated from the checked-in model catalog and the official Apache-2.0 license text.",
         "It records the model card's declared license metadata; it is not legal advice or an independent audit of every upstream right.",
         "**The model weights are not included** in this installer or release bundle. Downloading or redistributing model weights is a separate action.",
-        "", f"- Catalog: {catalog_path.name}", f"- Catalog SHA-256: {catalog_hash}",
+        "", f"- Catalog: {catalog_path.name}", f"- Catalog SHA-256 (UTF-8, CRLF normalized to LF): {catalog_hash}",
         f"- License text source: {APACHE_LICENSE_URL}", f"- Included license text: {license_relative}",
         f"- License text SHA-256: {license_hash}", "",
     ]
