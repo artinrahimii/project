@@ -38,6 +38,17 @@
 - نتیجهٔ CI و Artifact نسخهٔ اصلاح‌شده هنوز pending است.
 
 ## انتشار GitHub
-- Draft Release 436740935 / tag android-v0.1.0 به commit قدیمی‌تر ad90a80f98321602dc57a1d3c89113cefa86a0e1 متصل است و دارایی‌های آن مدل‌مجوز تازه را ندارند.
+- Draft Release 436740935 / tag android-v0.1.0 قدیمی است: شیء annotated tag با SHA برابر ad90a80f98321602dc57a1d3c89113cefa86a0e1 به commit مقصد cca243d28197df90900885a35a54a8ca8ae3751e (V 3.0.990) اشاره می‌کند؛ ad90... خودِ commit نیست.
 - Product Build روی commit 78924a6 موفق است، ولی workflow release-assets به tag جدید و Android signed-release موفق روی همان SHA نیاز دارد.
 - ابزارهای متصل GitHub در این نشست create-tag و workflow_dispatch را ارائه نمی‌کنند. بنابراین Release جدید ایجاد یا Release قدیمی اصلاح نشده است.
+
+
+## A003 — تأیید روی main / V 3.0.998
+
+- Quality Gate [42277720293](https://github.com/artinrahimii/project/actions/runs/42277720293): موفق؛ ۴۴۷ آزمون Python، compileall، graph validation و validation خروجی/شواهد همگی موفق؛ Graph Guard: ۲۳۰ وظیفه، ۴۲۲ یال، صفر خطا و یک هشدار محفوظ.
+- Product Build [42277720362](https://github.com/artinrahimii/project/actions/runs/42277720362): سه job ویندوز، اندروید و HostLifecycle موفق. آزمون مولد مدل مجوز ۸/۸ و آزمون inventory مجوز وابستگی ۷/۷ موفق؛ آزمون LF/CRLF نیز در همین اجرا موفق.
+- Artifact نصب‌کننده: ID `13534875582`، اندازهٔ ۶۰٬۹۸۵٬۵۲۷ بایت، ۲۸ ورودی؛ ZIP integrity موفق. پنج فایل notice/مجوز مورد انتظار در آن موجود بود.
+- کاتالوگ مدل در commit مبنا: ۷۱۱ بایت؛ Git Blob SHA-1 محاسبه‌شده از بایت‌ها با Blob tree برابر `f91c7cb68c151b216260fce14c2f30a8a027a06c` تطبیق کرد. SHA-256 برابر `faba6e09aefced04f8bed354af28e8b8f838ad4e80386030d29d73c4d17ca580` با manifest داخل Artifact یکسان بود.
+- متن کامل Apache-2.0 داخل ZIP: ۱۱٬۳۵۸ بایت؛ SHA-256 برابر `cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30` و مطابق manifest بود.
+- tag قدیمی `android-v0.1.0`: annotated tag object `ad90a80f98321602dc57a1d3c89113cefa86a0e1` → commit `cca243d28197df90900885a35a54a8ca8ae3751e` (`V 3.0.990`). Release draft قدیمی همچنان متصل به این نسخه است، نه V 3.0.998.
+- **نتیجه:** اصلاح A002 تأیید شده؛ انتشار GitHub Release تازه هنوز pending است. ابزار اتصال این نشست tag creation یا workflow_dispatch ندارد؛ بنابراین T0215 همچنان in_progress می‌ماند.
