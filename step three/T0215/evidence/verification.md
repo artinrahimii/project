@@ -65,3 +65,13 @@
 - Variant اندروید این Product Build با کلید موقت CI ساخته شده است، نه کلید تولیدی محافظت‌شده؛ artifact APK دیباگ است. Release تولیدی همچنان نیازمند اجرای workflow `android-release.yml` در محیط محافظت‌شده است.
 - Release draft `436740935` و tag `android-v0.1.0` هنوز به commit قدیمی `cca243d28197df90900885a35a54a8ca8ae3751e` (`V 3.0.990`) اشاره دارند. `android-release.yml` و `release-assets.yml` با push tag `android-v*` یا `workflow_dispatch` اجرا می‌شوند؛ این نشست ابزار ایجاد tag و dispatch ندارد. هیچ tag یا Releaseی تغییر نکرد.
 - **نتیجه:** خروجی Windows/CI روی V 3.0.999 معتبر است، اما معیار Release جاری تکمیل نشده و T0215 باز می‌ماند.
+
+
+## A004 — راستی‌آزمایی دوبارهٔ Draft Release و tag روی main / V 3.0.1000 (2026-11-07)
+
+- commit فعلی main هنگام بررسی: `8665c9bef63ac60f57250cca43ebadef2fb3ca44` با پیام `V 3.0.1000`؛ درخت commit: `e9f9a45b6c2dda93fabf6eec8f72d904c33060d0`.
+- GET صفحهٔ Releases در مخزن، Draft Release با شناسهٔ `436740935` و tag برابر `android-v0.1.0` را نشان داد. برخلاف عبارت «بدون artifact» در گزارش قبلی A003، این Draft اکنون چهار asset بارگذاری‌شده دارد: `BUILD-PROVENANCE.txt`، `SHA256SUMS.txt`، `WhiteP-Android-0.1.0.apk` و `WhiteP-Windows-Installer.zip`. این اصلاح فقط دربارهٔ وجود assetهاست و به معنای تأیید محتوای آن‌ها یا تازه‌بودن Release نیست.
+- GET مرجع tag و شیء annotated آن را تأیید کرد: `android-v0.1.0` → tag object `ad90a80f98321602dc57a1d3c89113cefa86a0e1` → commit `cca243d28197df90900885a35a54a8ca8ae3751e` با پیام `V 3.0.990`. این commit با main فعلی `V 3.0.1000` متفاوت است.
+- فایل‌های source در همان commit هدف tag بررسی شدند: `tools/generate_model_license_notice.py` وجود ندارد (404)، `docs/windows-installer.md` شامل توضیح `ModelLicenses.md` و `model-licenses.json` نیست، `tools/build_windows_installer.ps1` فاقد ادغام مولد مجوز مدل است و `.github/workflows/release-assets.yml` نیز کنترل‌های جدید الزامی فایل‌های مجوز مدل را در آن نسخه ندارد. بنابراین source مربوط به Draft قدیمی، تغییرهای T0215 را در بر نمی‌گیرد؛ وجود چهار asset به‌تنهایی معیار گنجاندن مجوز مدل در بستهٔ انتشار جاری را اثبات نمی‌کند.
+- فایل‌های اصلی روی main جدیدترند: مولد مجوز مدل و ادغام installer موجودند و CI/Artifactهای Product Build روی commitهای بعدی در A003 و راستی‌آزمایی V 3.0.999 گزارش شده‌اند. با این حال Draft به آن SHAها متصل نیست و این نشست ابزار ساخت tag جدید یا اجرای `workflow_dispatch` برای `android-release.yml` را ندارد.
+- **نتیجه:** A004 مانع قبلی را دقیق‌تر کرد و ادعای نادرست «Draft فاقد asset است» را اصلاح کرد؛ اما T0215 هنوز `in_progress` می‌ماند. این بررسی هیچ build، signed-release، آزمون جدید یا فایل اجرایی نرم‌افزار تولید نکرد؛ T0216 آغاز نمی‌شود.

@@ -75,3 +75,13 @@ T0215 در `in_progress` باقی می‌ماند. بستن وظیفه منوط 
 - این اجرا همچنان اثبات انتشار اندروید production-signed نیست. Product Build، APK دیباگ را artifact می‌کند و variant انتشار را با کلید موقت CI می‌سازد. workflow امضای تولیدی `android-release.yml` به secrets محیط محافظت‌شدهٔ `android-release` احتیاج دارد.
 - Draft Release `436740935` هنوز به tag `android-v0.1.0` وصل است؛ tag object `ad90a80f98321602dc57a1d3c89113cefa86a0e1` به commit `cca243d28197df90900885a35a54a8ca8ae3751e` (`V 3.0.990`) اشاره می‌کند، نه main فعلی. هر دو workflow انتشار فقط از طریق push یک tag با الگوی `android-v*` یا `workflow_dispatch` اجرا می‌شوند. ابزارهای در دسترس این نشست tag creation و `workflow_dispatch` را پشتیبانی نمی‌کنند و هیچ tag یا Release قدیمی تغییر داده نشد.
 - **نتیجه:** بسته‌بندی و CI ویندوز روی commit جاری تأیید شد، اما انتشار GitHub روی همان commit هنوز وجود ندارد؛ `T0215` همچنان `in_progress` است و `T0216` آغاز نمی‌شود.
+
+
+## A004 — راستی‌آزمایی مجدد Release موجود (2026-11-07)
+
+- آخرین commit main در شروع بررسی `8665c9bef63ac60f57250cca43ebadef2fb3ca44` با پیام `V 3.0.1000` بود.
+- Draft Release `436740935` واقعاً چهار asset بارگذاری‌شده دارد: provenance، checksum، APK و ZIP نصب ویندوز. این موضوع، یادداشت قدیمی A003 مبنی بر نبود asset را اصلاح می‌کند.
+- اما tag `android-v0.1.0` از طریق annotated tag object `ad90a80f98321602dc57a1d3c89113cefa86a0e1` به commit `cca243d28197df90900885a35a54a8ca8ae3751e` (`V 3.0.990`) اشاره دارد؛ نه main فعلی.
+- در commit tagged، فایل `tools/generate_model_license_notice.py` موجود نیست و اسناد و اسکریپت installer/release نیز ادغام notice مجوز مدل را ندارند. پس assetهای آن Draft، خروجی انتشار پس از پیاده‌سازی T0215 نیستند. محتویات ZIP Draft مستقیماً دانلود نشد؛ این نتیجه بر پایهٔ commit دقیق source و workflowای است که روی همان tag اجرا می‌شود، نه ادعای بررسی مستقیم ZIP.
+- ابزارهای فعلی این نشست امکان ساخت tag یا اجرای `workflow_dispatch` در محیط محافظت‌شدهٔ امضای Android را ارائه نمی‌کنند. هیچ tag، Release یا artifact قدیمی تغییر نکرد.
+- **نتیجه:** T0215 همچنان `in_progress` است؛ وظیفهٔ بعدی T0216 شروع نمی‌شود. این A004 فقط راستی‌آزمایی و اصلاح ثبت شواهد بود و هیچ قابلیت نرم‌افزاری تازه‌ای را پیاده‌سازی نکرد.
