@@ -52,3 +52,16 @@
 - متن کامل Apache-2.0 داخل ZIP: ۱۱٬۳۵۸ بایت؛ SHA-256 برابر `cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30` و مطابق manifest بود.
 - tag قدیمی `android-v0.1.0`: annotated tag object `ad90a80f98321602dc57a1d3c89113cefa86a0e1` → commit `cca243d28197df90900885a35a54a8ca8ae3751e` (`V 3.0.990`). Release draft قدیمی همچنان متصل به این نسخه است، نه V 3.0.998.
 - **نتیجه:** اصلاح A002 تأیید شده؛ انتشار GitHub Release تازه هنوز pending است. ابزار اتصال این نشست tag creation یا workflow_dispatch ندارد؛ بنابراین T0215 همچنان in_progress می‌ماند.
+
+
+## راستی‌آزمایی تکمیلی روی main / V 3.0.999
+
+- Quality Gate [42286282408](https://github.com/artinrahimii/project/actions/runs/42286282408): موفق.
+- Product Build [42286282513](https://github.com/artinrahimii/project/actions/runs/42286282513): موفق؛ Windows، Android و HostLifecycle همگی موفق.
+- Rendezvous [42286282640](https://github.com/artinrahimii/project/actions/runs/42286282640): موفق.
+- Windows installer artifact `13536989328`: 60,985,523 بایت، 28 ورودی ZIP، integrity check موفق. پنج فایل notice/license لازم حاضر بودند.
+- SHA-256 کل ZIP: `c21d1692402c5ea23a5a5f626e111744a5ee9dfc6d90ee6beba3c31946e2d5ab`.
+- `source_catalog_sha256`: `faba6e09aefced04f8bed354af28e8b8f838ad4e80386030d29d73c4d17ca580`؛ `license_text_sha256`: `cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30`؛ هر دو مطابق منبع/manifest بررسی‌شده‌اند.
+- Variant اندروید این Product Build با کلید موقت CI ساخته شده است، نه کلید تولیدی محافظت‌شده؛ artifact APK دیباگ است. Release تولیدی همچنان نیازمند اجرای workflow `android-release.yml` در محیط محافظت‌شده است.
+- Release draft `436740935` و tag `android-v0.1.0` هنوز به commit قدیمی `cca243d28197df90900885a35a54a8ca8ae3751e` (`V 3.0.990`) اشاره دارند. `android-release.yml` و `release-assets.yml` با push tag `android-v*` یا `workflow_dispatch` اجرا می‌شوند؛ این نشست ابزار ایجاد tag و dispatch ندارد. هیچ tag یا Releaseی تغییر نکرد.
+- **نتیجه:** خروجی Windows/CI روی V 3.0.999 معتبر است، اما معیار Release جاری تکمیل نشده و T0215 باز می‌ماند.

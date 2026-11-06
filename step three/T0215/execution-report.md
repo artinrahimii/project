@@ -64,3 +64,14 @@ T0215 در `in_progress` باقی می‌ماند. بستن وظیفه منوط 
 - A002: **موفق**؛ اصلاح هش LF/CRLF در commit `80cf6082e365ce5c581a95d4ebd4dae15441e45b` ثبت شده و CI و Artifact جدید آن را تأیید کردند.
 - A003: **partial**؛ راستی‌آزمایی CI و Artifact موفق است، اما GitHub Release تازهٔ signed روی commit فعلی هنوز وجود ندارد.
 - بنابراین T0215 هنوز `in_progress` است و تکمیل‌شده اعلام نمی‌شود. تا رفع مانع Release، T0216 شروع نمی‌شود.
+
+
+## راستی‌آزمایی تکمیلی پس از A003 — main / V 3.0.999
+
+- commit بررسی‌شده: `4f6adb09e592fc8a14e41ffc7fa9aa9407fd40a7`؛ این commit فقط گراف و شواهد اجرایی را به‌روزرسانی کرده و کد محصول T0215 را تغییر نداده است.
+- Quality Gate [42286282408](https://github.com/artinrahimii/project/actions/runs/42286282408)، Product Build [42286282513](https://github.com/artinrahimii/project/actions/runs/42286282513) و Rendezvous [42286282640](https://github.com/artinrahimii/project/actions/runs/42286282640) همگی روی همین commit با نتیجهٔ success پایان یافتند. در Product Build، jobهای Windows، Android و HostLifecycle و تمام گام‌های گزارش‌شده موفق بودند.
+- Artifact تازهٔ Windows installer با شناسهٔ `13536989328` و اندازهٔ `60,985,523` بایت دانلود شد. ZIP دارای ۲۸ ورودی بود و `testzip()` هیچ خرابی گزارش نکرد. پنج فایل `ModelLicenses.md`، `model-licenses.json`، متن کامل Apache-2.0، `ThirdPartyNotices.md` و `licenses.json` در بسته حاضر بودند.
+- SHA-256 کل ZIP برابر `c21d1692402c5ea23a5a5f626e111744a5ee9dfc6d90ee6beba3c31946e2d5ab` است. مقدار `source_catalog_sha256` در manifest برابر `faba6e09aefced04f8bed354af28e8b8f838ad4e80386030d29d73c4d17ca580` و مقدار `license_text_sha256` برابر `cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30` است؛ هر دو با شواهد منبع قبلی تطبیق دارند. وزن مدل در بسته وجود ندارد.
+- این اجرا همچنان اثبات انتشار اندروید production-signed نیست. Product Build، APK دیباگ را artifact می‌کند و variant انتشار را با کلید موقت CI می‌سازد. workflow امضای تولیدی `android-release.yml` به secrets محیط محافظت‌شدهٔ `android-release` احتیاج دارد.
+- Draft Release `436740935` هنوز به tag `android-v0.1.0` وصل است؛ tag object `ad90a80f98321602dc57a1d3c89113cefa86a0e1` به commit `cca243d28197df90900885a35a54a8ca8ae3751e` (`V 3.0.990`) اشاره می‌کند، نه main فعلی. هر دو workflow انتشار فقط از طریق push یک tag با الگوی `android-v*` یا `workflow_dispatch` اجرا می‌شوند. ابزارهای در دسترس این نشست tag creation و `workflow_dispatch` را پشتیبانی نمی‌کنند و هیچ tag یا Release قدیمی تغییر داده نشد.
+- **نتیجه:** بسته‌بندی و CI ویندوز روی commit جاری تأیید شد، اما انتشار GitHub روی همان commit هنوز وجود ندارد؛ `T0215` همچنان `in_progress` است و `T0216` آغاز نمی‌شود.
