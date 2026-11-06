@@ -34,3 +34,10 @@
 - آزمون‌های محلی در این محیط اجرا نشده‌اند.
 - نتیجهٔ قطعی آزمون‌های source-contract و build باید از GitHub Actions روی commit همین تغییر استخراج شود.
 - وضعیت acceptance تا بررسی Quality Gate، Product Build و محتوای Artifact برابر `pending` است.
+
+
+## A002 — اصلاح آزمون قرارداد مسیر PowerShell (2026-11-06)
+
+- آزمون اولیه مسیر نهایی را به‌صورت یک رشتهٔ واحد انتظار داشت؛ درحالی‌که Workflow مسیر را با دو `Join-Path` ترکیب می‌کند.
+- کنترل به دو assertion دقیق و منطبق با ساختار واقعی PowerShell تغییر کرد: یکی برای `artifacts/windows-host` و دیگری برای `WhiteP.Host.Windows.exe`.
+- این اصلاح، موفقیت اجرای runtime را ثابت نمی‌کند؛ نتیجهٔ Windows publish و Artifact باید از Product Build همان commit دریافت شود.

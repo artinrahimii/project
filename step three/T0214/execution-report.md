@@ -25,3 +25,11 @@ README دستور `dotnet publish ... --output artifacts/windows-host` را مس
 ## اقدام بعدی
 
 اجرای Quality Gate، اجرای کامل سه job در Product Build، بررسی Artifact `whitep-windows-publish` و تأیید وجود فایل اجرایی/فایل‌های منتشرشده. فقط پس از موفقیت همهٔ کنترل‌های مرتبط و بررسی Artifact، T0214 به `done` تغییر می‌کند.
+
+
+## A002 — اصلاح assertion مسیر publish (2026-11-06)
+
+- Quality Gate run `42260115157` از ۴۳۸ آزمون، ۴۳۷ مورد را با موفقیت اجرا کرد و یک assertion تازه در `test_clean_checkout_runs_documented_windows_restore_publish_and_lifecycle_commands` شکست خورد.
+- تست انتظار داشت رشتهٔ کامل `artifacts/windows-host/WhiteP.Host.Windows.exe` به‌صورت یک literal در YAML وجود داشته باشد؛ اما PowerShell همان مسیر را با دو عبارت معتبر `Join-Path` می‌سازد. این محدودیت در assertion تست بود، نه اثبات شکست publish.
+- تست اصلاح شد تا عبارت ساخت دایرکتوری و عبارت ساخت executable را جداگانه کنترل کند. هیچ تغییری در دستور publish یا رفتار بسته‌بندی انجام نشد.
+- Product Build run `42260115129` در آن زمان هنوز در حال اجرا بود و publish واقعی آن هنوز نتیجهٔ قطعی نداشت.

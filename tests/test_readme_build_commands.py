@@ -48,7 +48,8 @@ class ReadmeBuildCommandTests(unittest.TestCase):
                 self.assertIn(command, README)
                 self.assertIn(command, PRODUCT_WORKFLOW)
         self.assertIn("whitep-windows-publish", PRODUCT_WORKFLOW)
-        self.assertIn("artifacts/windows-host/WhiteP.Host.Windows.exe", PRODUCT_WORKFLOW)
+        self.assertIn('Join-Path $PWD "artifacts/windows-host"', PRODUCT_WORKFLOW)
+        self.assertIn('Join-Path $publishDirectory "WhiteP.Host.Windows.exe"', PRODUCT_WORKFLOW)
 
     def test_toolchain_prerequisites_match_checked_in_configuration(self):
         self.assertIn('"version": "10.0.100"', (ROOT / "global.json").read_text(encoding="utf-8"))
