@@ -112,3 +112,14 @@ Artifactهای واقعیِ بررسی‌شده برای SHA `179efa9fe07c3ba007
 - GitHub Releases list و Release ID `436740935`: `tag_name=android-v0.1.0`, `draft=true`; چهار دارایی مورد انتظار با state=uploaded وجود داشتند.
 - GET `/releases/tags/android-v0.1.0`، 404 داد؛ این endpoint مخصوص published release است. 404 به معنی حذف Draft نیست؛ فهرست Releaseها Draft را نشان می‌دهد. این تفاوت در workflow regression test شد و کنترل از endpoint list استفاده می‌کند.
 - وضعیت Draft عمداً حفظ شده است؛ انتشار عمومی Release انجام نشده است.
+
+## A008 — تأیید مستقل خروجی نهایی T0213 (2026-11-06)
+
+- Git Tag API تأیید کرد `android-v0.1.0` یک annotated tag است و به commit `cca243d28197df90900885a35a54a8ca8ae3751e` resolve می‌شود.
+- اجرای Android signed release روی tag، run `42253832986`، موفق بود. اجرای Product Build `42127185955` روی همان SHA موفق بود و سه Job اصلی Android، Windows و HostLifecycle همگی success شدند.
+- Artifact `13521278559` به‌طور مستقل از GitHub دانلود شد. اندازهٔ ZIP: 79,549,283 بایت؛ digest ثبت‌شدهٔ GitHub و SHA-256 محاسبه‌شدهٔ محلی هر دو `7758e32252dd83e1a1a31f253c0cbb919419ba8cf6f00ff66eedb82522154c53` هستند. آزمون `unzip -t` موفق شد.
+- هر چهار فایل مورد انتظار موجود بود. سه مقدار checksum در `SHA256SUMS-final.txt` با اجرای مستقل `sha256sum --check` برای APK، Windows ZIP و BUILD-PROVENANCE همگی `OK` شدند.
+- Draft Release شناسهٔ `436740935` با `tag_name=android-v0.1.0` و `draft=true` تأیید شد؛ هر چهار دارایی state برابر `uploaded` دارند.
+- run انتشار `42253832983` در مرحلهٔ نهایی اعتبارسنجی Draft به علت استفاده از endpoint مخصوص Release منتشرشده failure شد؛ تولید checksum و upload Artifact موفق بودند. lookup اصلاح‌شده در commit `98e808bb886ebd9586bee62f5f22ff73404d4d3d` ثبت شد و تست رگرسیون آن در Quality Gate موفق روی همان commit اجرا شد.
+- Quality Gate run `42255409787` روی V 3.0.991 با 437 آزمون موفق، syntax، graph و output/evidence validation موفق و 0 خطا پایان یافت. Product Build `42255409532` و Rendezvous `42255409556` نیز success شدند.
+- نتیجه: T0213 تکمیل‌شده است؛ Draft عمداً منتشرنشده می‌ماند. یال `T0213 → T0214` همچنان unreviewed است و پیش از اجرای T0214 باید اعتبارسنجی شود.

@@ -155,3 +155,35 @@ T0213 در وضعیت `blocked` باقی می‌ماند؛ تعداد تلاش�
 
 - خروجی مورد انتظار T0213 تولید و مستقل اعتبارسنجی شده است. هیچ artifact قدیمی از SHA دیگری استفاده نشد و هیچ تگی جابه‌جا یا حذف نشد.
 - وضعیت وظیفه موقتاً `in_progress` می‌ماند تا Quality Gate پس از اصلاح کنترل Draft در commit این نوبت نیز تأیید شود؛ پس از موفقیت آن، وضعیت نهایی به `done` تغییر می‌کند.
+
+## A008 — تأیید نهایی و تکمیل T0213 (2026-11-06)
+
+### مبنای دقیق انتشار
+
+- آخرین commit شاخهٔ `main` پیش از این ثبت: `98e808bb886ebd9586bee62f5f22ff73404d4d3d`، پیام `V 3.0.991`.
+- تگ annotated `android-v0.1.0` به commit `cca243d28197df90900885a35a54a8ca8ae3751e` (پیام `V 3.0.990`) اشاره می‌کند. تگ جابه‌جا یا بازنویسی نشده است؛ artifactهای تولیدی و Product Build هر دو متعلق به همین SHA هستند.
+- اجرای امضای دستی `42127523912` و اجرای امضای tag-triggered `42253832986` موفق شدند. اثرانگشت گواهی APK تولیدی `3d3875fbb136d7522221fe11bf4439783ebb299e50b3f0474ae26ea83970ccda` با fingerprint پین‌شدهٔ محیط محافظت‌شده تطبیق داده شد.
+- Product Build `42127185955` روی همان SHA موفق شد؛ Jobهای Android، Windows و HostLifecycle همگی success بودند.
+
+### Artifact نهایی و کنترل checksum مستقل
+
+- Artifact نهایی `whitep-release-assets` با شناسهٔ `13521278559` از GitHub دریافت شد؛ اندازهٔ ZIP برابر 79,549,283 بایت و digest آن `sha256:7758e32252dd83e1a1a31f253c0cbb919419ba8cf6f00ff66eedb82522154c53` بود. SHA-256 محاسبه‌شدهٔ فایل دانلودشده دقیقاً با digest ثبت‌شده در GitHub برابر شد.
+- آزمون `unzip -t` روی Artifact نهایی بدون خطا بود. چهار فایل مورد انتظار استخراج شدند:
+  - `WhiteP-Android-0.1.0.apk` — 22,786,909 بایت
+  - `WhiteP-Windows-Installer.zip` — 60,961,390 بایت
+  - `SHA256SUMS.txt` — 273 بایت
+  - `BUILD-PROVENANCE.txt` — 130 بایت
+- فایل manifest رسمی در `step three/T0213/evidence/SHA256SUMS-final.txt` نیز عیناً ثبت شده است. اجرای مستقل `sha256sum --check SHA256SUMS.txt` برای هر سه ورودی APK، بستهٔ Windows و provenance نتیجهٔ `OK` داد.
+- محتوای provenance دقیقاً این داده‌ها را ثبت می‌کند: `source_commit=cca243d28197df90900885a35a54a8ca8ae3751e`، `android_signed_release_run_id=42127523912` و `product_build_run_id=42127185955`.
+
+### Draft Release و اصلاح کنترل Workflow
+
+- GitHub Release با شناسهٔ `436740935`، مقدار `tag_name=android-v0.1.0` و `draft=true` در فهرست Releases تأیید شد. هر چهار دارایی مورد انتظار با state برابر `uploaded` وجود دارند.
+- اجرای tag-triggered Release Assets با شمارهٔ `42253832983` در مجموع conclusion برابر failure داشت؛ با این حال مراحل انتخاب buildهای همان SHA، دانلود Artifactها، تولید و بررسی سه checksum و بارگذاری Artifact موفق شدند. فقط assertion پایانی، Draft را از endpoint مخصوص Release منتشرشده جست‌وجو کرد و 404 گرفت. این خطا به معنی فقدان Draft نبود؛ Release از فهرست Releases و شناسهٔ مستقیم تأیید شد.
+- اصلاح این کنترل در `.github/workflows/release-assets.yml` و تست رگرسیون `test_draft_release_lookup_uses_list_endpoint` در commit `98e808bb886ebd9586bee62f5f22ff73404d4d3d` ثبت شدند.
+- پس از این اصلاح، Quality Gate run `42255409787` روی commit `V 3.0.991` موفق شد: 437 آزمون Python، compileall، graph structure و output/evidence validation موفق؛ 0 خطا و یک هشدار تاریخی T0001 حفظ شد. Product Build run `42255409532` و Rendezvous run `42255409556` نیز روی همان commit موفق شدند.
+- Draft عمداً منتشر عمومی نشده است؛ این وضعیت با سیاست نگه‌داشتن انتشار در حالت پیش‌نویس تا پذیرش نهایی بعدی سازگار است.
+
+### نتیجه
+
+معیارهای T0213 با artifact واقعی، manifest رسمی، کنترل checksum مستقل، provenance و Draft Release تأیید شدند. وضعیت وظیفه به `done` تغییر می‌کند. یال‌های ورودی T0212 و T0208 بدون تغییر باقی ماندند؛ یال خروجی `T0213 → T0214` همچنان `unreviewed` است و پیش از شروع T0214 باید جداگانه اعتبارسنجی شود.
