@@ -32,12 +32,29 @@ jobs:
           "ISCC_PATH=$iscc" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
       - name: Test dependency license inventory
         run: python -m unittest discover -s tests -p test_generate_dependency_licenses.py -v
+      - name: Restore Windows solution from clean checkout
+        run: dotnet restore WhiteP.sln
       - name: Clean Windows solution outputs
         run: dotnet clean WhiteP.sln --configuration Release
       - name: Verify C# formatting
         run: dotnet format whitespace WhiteP.sln --verify-no-changes
       - name: Build host from clean outputs
         run: dotnet build WhiteP.sln --configuration Release --no-incremental
+      - name: Publish Windows host from clean checkout
+        run: dotnet publish src/Host.Windows/WhiteP.Host.Windows.csproj --configuration Release --runtime win-x64 --self-contained false --output artifacts/windows-host
+      - name: Verify Windows publish output
+        shell: pwsh
+        run: |
+          $publishDirectory = Join-Path $PWD "artifacts/windows-host"
+          $publishExecutable = Join-Path $publishDirectory "WhiteP.Host.Windows.exe"
+          if (-not (Test-Path -LiteralPath $publishExecutable -PathType Leaf)) {
+            throw "Windows publish output is missing the host executable: $publishExecutable"
+          }
+          $publishedFiles = Get-ChildItem -LiteralPath $publishDirectory -File -Recurse
+          if (-not $publishedFiles) {
+            throw "Windows publish output contains no files."
+          }
+          Write-Host "PASS: published $($publishedFiles.Count) Windows host files from the clean checkout."
       - name: Verify generated Protobuf C# sources
         shell: pwsh
         run: |
@@ -93,6 +110,13 @@ jobs:
           path: src/Host.Windows/bin/Release/net10.0-windows/
           if-no-files-found: error
           retention-days: 7
+      - name: Upload Windows publish output
+        uses: actions/upload-artifact@v4
+        with:
+          name: whitep-windows-publish
+          path: artifacts/windows-host/
+          if-no-files-found: error
+          retention-days: 30
   android-client:
     name: Build Android client APK
     runs-on: ubuntu-latest
@@ -321,6 +345,8 @@ jobs:
         run: dotnet clean tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj --configuration Release
       - name: Build HostLifecycle harness from clean outputs
         run: dotnet build tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj --configuration Release --no-incremental
+      - name: Run documented HostLifecycle command from clean checkout
+        run: dotnet run --project tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj --configuration Release
       - name: Run HostLifecycle acceptance suite with code coverage
         shell: bash
         run: |

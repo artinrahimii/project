@@ -27,6 +27,10 @@ class ReproducibleBuildContractTests(unittest.TestCase):
         self.assertEqual(GLOBAL["sdk"]["version"], "10.0.100")
         self.assertEqual(GLOBAL["sdk"]["rollForward"], "latestFeature")
         self.assertIn("dotnet-version: 10.0.x", PRODUCT)
+        self.assertIn("dotnet restore WhiteP.sln", PRODUCT)
+        publish = "dotnet publish src/Host.Windows/WhiteP.Host.Windows.csproj --configuration Release --runtime win-x64 --self-contained false --output artifacts/windows-host"
+        self.assertIn(publish, README)
+        self.assertIn(publish, PRODUCT)
 
     def test_android_build_command_and_sdk_baseline_match(self):
         command = "gradle --no-daemon assembleDebug"
@@ -42,13 +46,15 @@ class ReproducibleBuildContractTests(unittest.TestCase):
         self.assertIn("minSdk = 26", gradle)
 
     def test_product_builds_publish_real_artifacts_and_fail_if_missing(self):
-        self.assertEqual(PRODUCT.count("uses: actions/upload-artifact@v4"), 7)
+        self.assertEqual(PRODUCT.count("uses: actions/upload-artifact@v4"), 8)
         self.assertIn("whitep-android-keystore-instrumentation-reports", PRODUCT)
         self.assertIn("path: src/Host.Windows/bin/Release/net10.0-windows/", PRODUCT)
         self.assertIn("path: src/Client.Android/app/build/outputs/apk/debug/app-debug.apk", PRODUCT)
-        self.assertEqual(PRODUCT.count("if-no-files-found: error"), 5)
+        self.assertEqual(PRODUCT.count("if-no-files-found: error"), 6)
         self.assertEqual(PRODUCT.count("retention-days: 7"), 6)
         self.assertIn("whitep-windows-installer", PRODUCT)
+        self.assertIn("whitep-windows-publish", PRODUCT)
+        self.assertIn("artifacts/windows-host/", PRODUCT)
         self.assertIn("artifacts/releases/WhiteP-Setup-0.1.0-win-x64.exe", PRODUCT)
         self.assertIn("retention-days: 30", PRODUCT)
         self.assertIn("tools/build_windows_installer.ps1", PRODUCT)

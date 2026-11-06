@@ -87,7 +87,7 @@ dotnet run --project tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj --conf
 dotnet publish src/Host.Windows/WhiteP.Host.Windows.csproj --configuration Release --runtime win-x64 --self-contained false --output artifacts/windows-host
 ```
 
-خروجی `publish` یک پوشهٔ برنامه برای سیستمی است که .NET Runtime سازگار دارد؛ این دستور به‌تنهایی نصب‌کنندهٔ MSI یا بستهٔ امضاشده تولید نمی‌کند. workflow فعلی میزبان را build و خروجی build را artifact می‌کند؛ اجرای دستور publish بالا فعلاً مرحله‌ای مستقل است و در workflow محصول اجرا نمی‌شود.
+خروجی `publish` یک پوشهٔ برنامه برای سیستمی است که .NET Runtime سازگار دارد؛ این دستور به‌تنهایی نصب‌کنندهٔ MSI یا بستهٔ امضاشده تولید نمی‌کند. job ویندوز در `.github/workflows/product-build.yml` این دستور را از checkout تمیز اجرا می‌کند، وجود `WhiteP.Host.Windows.exe` را بررسی می‌کند و پوشهٔ `artifacts/windows-host/` را با نام `whitep-windows-publish` به‌عنوان artifact بارگذاری می‌کند. دستور restore نیز پیش از clean/build اجرا می‌شود. آزمون چرخهٔ عمر در job مستقل HostLifecycle با همان فرمان مستندشده اجرا و سپس تحت پوشش کد نیز جمع‌آوری می‌شود.
 
 ### بستهٔ نصب ویندوز
 

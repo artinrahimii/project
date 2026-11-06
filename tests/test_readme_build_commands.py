@@ -38,6 +38,18 @@ class ReadmeBuildCommandTests(unittest.TestCase):
                 self.assertIn(command, README)
                 self.assertIn(command, QUALITY_WORKFLOW)
 
+    def test_clean_checkout_runs_documented_windows_restore_publish_and_lifecycle_commands(self):
+        for command in (
+            "dotnet restore WhiteP.sln",
+            "dotnet run --project tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj --configuration Release",
+            "dotnet publish src/Host.Windows/WhiteP.Host.Windows.csproj --configuration Release --runtime win-x64 --self-contained false --output artifacts/windows-host",
+        ):
+            with self.subTest(command=command):
+                self.assertIn(command, README)
+                self.assertIn(command, PRODUCT_WORKFLOW)
+        self.assertIn("whitep-windows-publish", PRODUCT_WORKFLOW)
+        self.assertIn("artifacts/windows-host/WhiteP.Host.Windows.exe", PRODUCT_WORKFLOW)
+
     def test_toolchain_prerequisites_match_checked_in_configuration(self):
         self.assertIn('"version": "10.0.100"', (ROOT / "global.json").read_text(encoding="utf-8"))
         android = (ROOT / "src/Client.Android/app/build.gradle.kts").read_text(encoding="utf-8")
