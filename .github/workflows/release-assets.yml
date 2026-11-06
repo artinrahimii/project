@@ -78,8 +78,17 @@ jobs:
         run: |
           set -euo pipefail
           tag="$GITHUB_REF_NAME"
-          if gh release view "$tag" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
-            is_draft="$(gh release view "$tag" --repo "$GITHUB_REPOSITORY" --json isDraft --jq '.isDraft')"
+          # The release-by-tag endpoint only returns published releases. Draft releases
+          # must be discovered through the releases list endpoint (this job has contents:write).
+          find_release() {
+            GH_RELEASE_TAG="$tag" gh api --paginate --slurp \
+              "repos/${GITHUB_REPOSITORY}/releases?per_page=100" \
+              --jq 'add | [.[] | select(.tag_name == env.GH_RELEASE_TAG)] | last // empty'
+          }
+
+          release_json="$(find_release)"
+          if [[ -n "$release_json" ]]; then
+            is_draft="$(printf '%s' "$release_json" | jq -r '.draft')"
             if [[ "$is_draft" != "true" ]]; then
               echo "Refusing to modify an already-published release: $tag"
               exit 1
@@ -93,8 +102,10 @@ jobs:
               --title "White-P $version" \
               --notes-file docs/release-assets.md
           fi
+
           gh release upload "$tag" artifacts/releases/* --repo "$GITHUB_REPOSITORY" --clobber
-          release_json="$(gh api "repos/${GITHUB_REPOSITORY}/releases/tags/${tag}")"
+          release_json="$(find_release)"
+          test -n "$release_json" || { echo "Draft release $tag was not found in the releases listing."; exit 1; }
           printf '%s' "$release_json" | jq -e --arg tag "$tag" '
             .draft == true and
             .tag_name == $tag and

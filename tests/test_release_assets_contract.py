@@ -42,6 +42,15 @@ class ReleaseAssetsContractTests(unittest.TestCase):
         self.assertIn("Refusing to modify an already-published release", WORKFLOW)
         self.assertIn(".draft == true", WORKFLOW)
 
+    def test_draft_release_lookup_uses_list_endpoint(self):
+        # GitHub's get-release-by-tag endpoint is for published releases only.
+        # Draft releases are visible through the releases list to writers.
+        self.assertIn("gh api --paginate --slurp", WORKFLOW)
+        self.assertIn("releases?per_page=100", WORKFLOW)
+        self.assertIn("env.GH_RELEASE_TAG", WORKFLOW)
+        self.assertNotIn("releases/tags/${tag}", WORKFLOW)
+        self.assertNotIn('gh release view "$tag"', WORKFLOW)
+
     def test_docs_explain_integrity_and_keep_release_draft_until_final_acceptance(self):
         for marker in ("sha256sum --check SHA256SUMS.txt", "BUILD-PROVENANCE.txt", "android-v0.1.0", "draft", "T0218"):
             with self.subTest(marker=marker):

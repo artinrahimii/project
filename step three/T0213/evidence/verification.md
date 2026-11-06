@@ -99,3 +99,16 @@ Artifactهای واقعیِ بررسی‌شده برای SHA `179efa9fe07c3ba007
 - Android signed-release run برای SHA فوق وجود ندارد؛ run موفق `42114568183` برای SHA قدیمی‌تر است.
 - هیچ tag با prefix موردنظر و هیچ Release در پاسخ endpointهای بررسی‌شده برنگشت. ابزار متصل عملیات workflow dispatch، tag creation یا release creation ندارد.
 - نتیجهٔ این بررسی: T0213 blocked؛ نه checksum رسمی تولید شد، نه artifact نهایی whitep-release-assets و نه draft GitHub Release.
+
+
+## A007 — شواهد تگ، بستهٔ رسمی و Draft Release (2026-11-06)
+
+- Git tag API: `refs/tags/android-v0.1.0` → annotated tag object `ad90a80f98321602dc57a1d3c89113cefa86a0e1` → commit `cca243d28197df90900885a35a54a8ca8ae3751e`.
+- Android production signing run `42253832986` (tag push) و run دستی `42127523912`، هر دو روی همان SHA؛ نتیجه هر دو success. امضای APK با گواهی production و fingerprint پین‌شده در Environment تطبیق داده شد.
+- Product Build run `42127185955` روی همان SHA، conclusion=success؛ هر سه Job Android، Windows WPF/installer و HostLifecycle موفق.
+- Release Assets run `42253832983`: مرحله‌های انتخاب buildهای همان SHA، دانلود APK و Windows installer، تولید و بررسی manifest، و upload Artifact موفق؛ فقط assertion پایانی API failure داشت.
+- Artifact `whitep-release-assets`, ID `13521278559`, size `79,549,283` bytes, GitHub ZIP digest `sha256:7758e32252dd83e1a1a31f253c0cbb919419ba8cf6f00ff66eedb82522154c53`.
+- محتوای Artifact مستقل استخراج شد: `WhiteP-Android-0.1.0.apk` (22,786,909 bytes)، `WhiteP-Windows-Installer.zip` (60,961,390 bytes)، `SHA256SUMS.txt` (273 bytes)، `BUILD-PROVENANCE.txt` (130 bytes). `sha256sum --check SHA256SUMS.txt` هر سه ورودی را OK گزارش کرد.
+- GitHub Releases list و Release ID `436740935`: `tag_name=android-v0.1.0`, `draft=true`; چهار دارایی مورد انتظار با state=uploaded وجود داشتند.
+- GET `/releases/tags/android-v0.1.0`، 404 داد؛ این endpoint مخصوص published release است. 404 به معنی حذف Draft نیست؛ فهرست Releaseها Draft را نشان می‌دهد. این تفاوت در workflow regression test شد و کنترل از endpoint list استفاده می‌کند.
+- وضعیت Draft عمداً حفظ شده است؛ انتشار عمومی Release انجام نشده است.

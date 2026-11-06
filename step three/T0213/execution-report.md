@@ -126,3 +126,32 @@ T0213 در وضعیت `blocked` باقی می‌ماند؛ تعداد تلاش�
 - برای همین SHA هیچ اجرای Android signed release با نتیجهٔ موفق وجود نداشت. اجرای موفق قبلی `42114568183` متعلق به SHA قدیمی `179efa9fe07c3ba007885e9e3198eba620092617` است و جایگزین artifact تولیدی همان commit نمی‌شود.
 - endpoint جست‌وجوی tag refs و فهرست Releases در این بررسی آرایهٔ خالی برگرداند. ابزارهای متصل، عملیات `workflow_dispatch`، ایجاد Git tag یا ایجاد Release را ارائه نمی‌کنند. workflowها را با تغییر ناامن trigger به push خودکار روی main دور نزدم.
 - تلاش T0213-A005 با نتیجهٔ `blocked` ثبت شد؛ تعداد تلاش‌ها 5 و تعداد تلاش‌های ناموفق واقعی 0 است. وضعیت `blocked` باقی ماند و هیچ یالی تغییر نکرد.
+
+
+## A007 — تکمیل بستهٔ انتشار و اصلاح کنترل Draft Release (2026-11-06)
+
+### نتیجهٔ اجرای tag
+
+- تگ `android-v0.1.0` در GitHub ثبت شد و به کامیت دقیق `cca243d28197df90900885a35a54a8ca8ae3751e` (پیام `V 3.0.990`) اشاره می‌کند؛ خود GitHub Git Tag API نیز annotated tag object را به همین commit resolve کرد.
+- Android signed release دستی روی همان SHA با run شمارهٔ `42127523912` موفق شد؛ اثرانگشت SHA-256 گواهی تولیدی `3d3875fbb136d7522221fe11bf4439783ebb299e50b3f0474ae26ea83970ccda` با fingerprint محافظت‌شده تطبیق داده شد. Artifact امضاشده: `13460878301`.
+- Android signed release تگ‌محور با run شمارهٔ `42253832986` نیز روی همان SHA موفق شد.
+- Product Build run شمارهٔ `42127185955` روی همان SHA موفق شد؛ سه Job مربوط به Android، Windows و HostLifecycle همگی موفق بودند.
+
+### بستهٔ انتشار و checksumها
+
+- Release Assets run شمارهٔ `42253832983` APK امضاشده و Windows installer را از runهای موفق همان SHA دانلود کرد؛ ZIP نصب‌کننده همراه با license inventory بسته‌بندی شد.
+- گام تولید checksum در همان run موفق شد: هر سه ورودی `WhiteP-Android-0.1.0.apk`، `WhiteP-Windows-Installer.zip` و `BUILD-PROVENANCE.txt` در `sha256sum --check SHA256SUMS.txt` برابر `OK` بودند.
+- Artifact نهایی `whitep-release-assets` با شناسهٔ `13521278559` بارگذاری شد. ZIP آن مستقل دریافت و استخراج شد؛ هر چهار فایل مورد انتظار وجود داشتند و بررسی مجدد محلی SHA-256 برای هر سه ورودی موفق شد.
+- provenance بسته: `source_commit=cca243d28197df90900885a35a54a8ca8ae3751e`, `android_signed_release_run_id=42127523912`, `product_build_run_id=42127185955`.
+- GitHub Draft Release با شناسهٔ `436740935`، `tag_name=android-v0.1.0`، `draft=true` ایجاد شد و هر چهار دارایی APK، Windows ZIP، SHA256SUMS و BUILD-PROVENANCE در آن با state=uploaded قرار گرفتند.
+
+### علت conclusion=Failure و اصلاح
+
+- conclusion کلی Release Assets run برابر `failure` بود، اما فقط آخرین assertion شکست خورد. Workflow از `GET /releases/tags/{tag}` برای خواندن Draft استفاده کرده بود؛ طبق مستندات GitHub این endpoint فقط Releaseهای منتشرشده را برمی‌گرداند و برای Draft انتظار 404 دارد. GET فهرست Releaseها، Draft را با tag و چهار دارایی برگرداند؛ بنابراین خروجی انتشار و checksum سالم‌اند و خطا، نقص کنترل وضعیت Draft بود.
+- URL مرورگر Draft با پیشوند `untagged-` مطابق رفتار GitHub برای Draft است و به‌تنهایی نشانهٔ جداشدن تگ نیست؛ Git Tag API و فیلد `tag_name` تطبیق صحیح را تأیید کردند.
+- برای جلوگیری از تکرار مشکل، `.github/workflows/release-assets.yml` اصلاح شد تا شناسایی و تأیید Draft را از endpoint فهرست Releaseها با صفحه‌بندی انجام دهد؛ Draft موجود را پیدا کند، فقط Draft را به‌روزرسانی کند و همچنان از تغییر Release منتشرشده خودداری کند. تست رگرسیون در `tests/test_release_assets_contract.py` افزوده و یادداشت مستندات به‌روز شد.
+
+### وضعیت در این commit
+
+- خروجی مورد انتظار T0213 تولید و مستقل اعتبارسنجی شده است. هیچ artifact قدیمی از SHA دیگری استفاده نشد و هیچ تگی جابه‌جا یا حذف نشد.
+- وضعیت وظیفه موقتاً `in_progress` می‌ماند تا Quality Gate پس از اصلاح کنترل Draft در commit این نوبت نیز تأیید شود؛ پس از موفقیت آن، وضعیت نهایی به `done` تغییر می‌کند.

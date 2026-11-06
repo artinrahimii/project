@@ -43,3 +43,8 @@ Do not move the tag to a different commit to work around a failed or missing bui
 ## Release status
 
 A draft release is a candidate distribution bundle, not a declaration that the complete product has passed final acceptance. Keep it as a draft until the remaining end-to-end and release-readiness tasks, including T0218, have passed. The workflow does not publish a public release automatically.
+
+
+## Draft-release verification note
+
+GitHub's `GET /releases/tags/{tag}` endpoint returns published releases. The release workflow therefore discovers and verifies draft releases through the paginated `GET /releases` listing, which includes drafts for a caller with repository write access. A draft's browser URL may temporarily use an `untagged-...` slug; verify its `tag_name` field and assets in the release object rather than inferring tag state from that URL.
