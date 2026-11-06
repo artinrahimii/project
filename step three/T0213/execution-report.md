@@ -187,3 +187,11 @@ T0213 در وضعیت `blocked` باقی می‌ماند؛ تعداد تلاش�
 ### نتیجه
 
 معیارهای T0213 با artifact واقعی، manifest رسمی، کنترل checksum مستقل، provenance و Draft Release تأیید شدند. وضعیت وظیفه به `done` تغییر می‌کند. یال‌های ورودی T0212 و T0208 بدون تغییر باقی ماندند؛ یال خروجی `T0213 → T0214` همچنان `unreviewed` است و پیش از شروع T0214 باید جداگانه اعتبارسنجی شود.
+
+## A009 — اصلاح مسیرهای خروجی برای Graph Guard (2026-11-06)
+
+- Quality Gate run `42257992342` روی commit `05ef56da28cb7fc532c9e90dcac78cf92a1818ea` (V 3.0.992) در آزمون‌ها، syntax و graph structure موفق بود؛ فقط مرحلهٔ `Validate recorded outputs and evidence` شکست خورد.
+- علت دقیق دو خطای `MISSING_OUTPUT_FILE` این بود که شناسه‌های GitHub Draft Release و Artifact نهایی در `actual_output_paths` به‌عنوان مسیر فایل محلی قرار گرفته بودند. این دو منبع آنلاین هستند، نه فایل‌های داخل repository.
+- فقط دو مقدار `GitHub Draft Release ID 436740935` و `GitHub workflow artifact whitep-release-assets ID 13521278559` از `actual_output_paths` برداشته شدند. نشانی‌ها و شناسه‌های آن‌ها در `evidence` حفظ شدند و فایل واقعی `step three/T0213/evidence/SHA256SUMS-final.txt` همچنان در مسیر خروجی محلی باقی است.
+- هیچ تگ، Release، Artifact، checksum، فایل محصول یا یال وابستگی تغییر نکرد. این اصلاح فقط تمایز بین فایل‌های محلی و شواهد آنلاین را با قرارداد Graph Guard هماهنگ می‌کند.
+- پس از ثبت این اصلاح، Quality Gate جدید باید مرحلهٔ `Validate recorded outputs and evidence` را نیز با موفقیت بگذراند.

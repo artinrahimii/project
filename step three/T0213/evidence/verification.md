@@ -123,3 +123,9 @@ Artifactهای واقعیِ بررسی‌شده برای SHA `179efa9fe07c3ba007
 - run انتشار `42253832983` در مرحلهٔ نهایی اعتبارسنجی Draft به علت استفاده از endpoint مخصوص Release منتشرشده failure شد؛ تولید checksum و upload Artifact موفق بودند. lookup اصلاح‌شده در commit `98e808bb886ebd9586bee62f5f22ff73404d4d3d` ثبت شد و تست رگرسیون آن در Quality Gate موفق روی همان commit اجرا شد.
 - Quality Gate run `42255409787` روی V 3.0.991 با 437 آزمون موفق، syntax، graph و output/evidence validation موفق و 0 خطا پایان یافت. Product Build `42255409532` و Rendezvous `42255409556` نیز success شدند.
 - نتیجه: T0213 تکمیل‌شده است؛ Draft عمداً منتشرنشده می‌ماند. یال `T0213 → T0214` همچنان unreviewed است و پیش از اجرای T0214 باید اعتبارسنجی شود.
+
+## A009 — اصلاح خطای مسیر شواهد آنلاین (2026-11-06)
+
+- Quality Gate `42257992342` دو خطای `MISSING_OUTPUT_FILE` برای توضیحات Draft Release و Artifact آنلاین گزارش کرد؛ این دو رشته در فیلد actual_output_paths قرار گرفته بودند و Guard آن‌ها را مسیر فایل محلی فرض کرده بود.
+- آن دو مقدار فقط از `actual_output_paths` حذف شدند. شواهد آنلاین، لینک‌ها، فایل manifest محلی، Draft Release و Artifact واقعی حفظ شدند.
+- این اصلاح هیچ تغییری در خروجی انتشار یا طبقه‌بندی یال‌ها ایجاد نکرد؛ فقط فیلد مسیرهای خروجی را به فایل‌های واقعاً موجود در repository محدود کرد.
