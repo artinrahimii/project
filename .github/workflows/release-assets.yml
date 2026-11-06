@@ -46,6 +46,9 @@ jobs:
           test -s "$windows_dir/releases/WhiteP-Setup-0.1.0-win-x64.exe" || { echo "Windows installer executable is missing or empty."; exit 1; }
           test -s "$windows_dir/windows-installer/licenses/ThirdPartyNotices.md" || { echo "Windows third-party notices are missing."; exit 1; }
           test -s "$windows_dir/windows-installer/licenses/licenses.json" || { echo "Windows license inventory is missing."; exit 1; }
+          test -s "$windows_dir/windows-installer/licenses/ModelLicenses.md" || { echo "Sample model license notice is missing."; exit 1; }
+          test -s "$windows_dir/windows-installer/licenses/model-licenses.json" || { echo "Sample model license manifest is missing."; exit 1; }
+          test -s "$windows_dir/windows-installer/licenses/files/WhiteP-Sample-Model-Apache-2.0.txt" || { echo "Sample model Apache-2.0 license text is missing."; exit 1; }
           mkdir -p "$GITHUB_WORKSPACE/artifacts/releases"
           cp "$signed_dir/app-release.apk" "$GITHUB_WORKSPACE/artifacts/releases/WhiteP-Android-0.1.0.apk"
           (cd "$windows_dir" && zip -qr "$GITHUB_WORKSPACE/artifacts/releases/WhiteP-Windows-Installer.zip" releases windows-installer)

@@ -142,6 +142,21 @@ class ReproducibleBuildContractTests(unittest.TestCase):
                 self.assertIn(command, QUALITY)
         self.assertIn("python-version: '3.13'", QUALITY)
 
+    def test_sample_model_license_notice_and_full_license_text_are_in_installer(self):
+        script = (ROOT / "tools/build_windows_installer.ps1").read_text(encoding="utf-8")
+        generator = (ROOT / "tools/generate_model_license_notice.py").read_text(encoding="utf-8")
+        installer = (ROOT / "tools/installer/WhiteP.iss").read_text(encoding="utf-8")
+        self.assertIn("Test sample model license notice", PRODUCT)
+        self.assertIn("test_generate_model_license_notice.py", PRODUCT)
+        self.assertIn("sample-model-catalog.json", script)
+        self.assertIn("generate_model_license_notice.py", script)
+        self.assertIn("https://www.apache.org/licenses/LICENSE-2.0.txt", script)
+        self.assertIn("ModelLicenses.md", script)
+        self.assertIn("WhiteP-Sample-Model-Apache-2.0.txt", script)
+        self.assertIn("WhiteP-Sample-Model-Apache-2.0.txt", generator)
+        self.assertIn("LicensesDir", installer)
+        self.assertIn("licenses", installer)
+
 
 if __name__ == "__main__":
     unittest.main()

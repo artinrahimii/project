@@ -32,3 +32,10 @@ The Makaretu package READMEs identify their corresponding NuGet package IDs and 
 A missing or changed upstream file, an invalid revision, an unrecognized package version, or any remaining package without verified license metadata fails the build. Missing package entries are collected and reported together so maintainers can address them without weakening the fail-closed behavior.
 
 The CI artifact is a build output, not a GitHub Release publication. A public release should wait for the later release-preparation and acceptance tasks. This task does not claim a signed installer or end-to-end product readiness.
+
+
+## Sample model license notice
+
+The Windows installer also includes licenses/ModelLicenses.md and a machine-readable licenses/model-licenses.json. These are generated from src/Host.Windows/Models/Catalog/sample-model-catalog.json and include the declared model identifier, model-card URL, expected model-file SHA-256, the full official Apache-2.0 license text under licenses/files/WhiteP-Sample-Model-Apache-2.0.txt, and the SHA-256 digest of that text. The build downloads the license from https://www.apache.org/licenses/LICENSE-2.0.txt and rejects an unexpectedly short, oversized, non-UTF-8, or marker-incomplete response.
+
+The checked-in sample model card declares Apache-2.0; the catalog omits classification, so the notice records it as unknown instead of inferring a category. The model weights themselves are not included in the installer. This notice records upstream metadata and the referenced license text; it is not legal advice or an independent audit of all rights in the quantized and base models. Review the upstream model card and original base-model terms before any separate redistribution of model weights.

@@ -1,35 +1,15 @@
 # گزارش اجرای T0214
 
-## هدف
+## A003 — تأیید اجرای clone تمیز روی main
 
-اجرای دستورهای build، test، run و package مستندشده در README از checkout تمیز و ثبت خروجی‌های واقعی قابل دریافت.
+- commit مبنا: 143e743f179f7c6dee8a9a85cb3dca4c0a9a7ea6 (V 3.0.995).
+- Product Build run 42260616427 روی همان commit با نتیجه success تمام شد؛ هر سه job ویندوز، اندروید و HostLifecycle موفق بودند.
+- Windows: restore صریح، clean، format verification، build، publish و بررسی خروجی موفق شدند. مرحلهٔ بررسی، وجود WhiteP.Host.Windows.exe و غیرخالی بودن publish را کنترل کرد و 66 فایل منتشرشده را گزارش کرد. Artifact با نام whitep-windows-publish با شناسهٔ 13524323518 و اندازهٔ 10019202 بایت بارگذاری شد. ZIP به‌صورت جداگانه download/extract نشد؛ شواهد مستقیم، کنترل پوشهٔ publish پیش از upload و موفقیت بارگذاری است.
+- Android: lint، ساخت APK، آزمون‌های JVM، آزمون‌های instrumentation روی emulator، بررسی مجوزها و launch واقعی MainActivity موفق شدند. APK با شناسهٔ Artifact برابر 13525267634 بارگذاری شد.
+- HostLifecycle: فرمان مستندشدهٔ dotnet run از checkout تمیز اجرا شد و موفق بود. اجرای آزمون پوشش‌دار 67 نشانگر PASS داشت، یک مورد skip ثبت کرد و پوشش خط 85.7% (8849 از 10325 خط) را گزارش کرد.
+- Quality Gate run 42260616384 روی همین commit موفق شد: 438 آزمون، compileall، بررسی ساختار گراف و بررسی خروجی‌ها/شواهد همگی موفق بودند.
+- شکست قبلی run 42260115157 در A001 حفظ شده است؛ assertion مسیر PowerShell در A002 اصلاح شد و اجرای جدید 438/438 آن را تأیید کرد.
 
-## بررسی وابستگی‌ها
+## نتیجه
 
-- یال `T0213 → T0214` از `blocks / unreviewed` به `blocks / sequencing_only / validated` تغییر طبقه‌بندی داده شد. T0214 فایل‌های APK، نصب‌کننده، manifest، provenance یا GitHub Release تولیدشده در T0213 را به‌عنوان ورودی build مصرف نمی‌کند؛ اجرای آن از clone تمیز و بر اساس سورس/دستورهای README انجام می‌شود. ترتیب محافظه‌کارانه و نوع اصلی `blocks` حفظ شدند.
-- یال `T0208 → T0214` از `blocks / unreviewed` به `blocks / sequencing_only / validated` تغییر طبقه‌بندی داده شد. T0214 گزارش‌های Cobertura/HTML/JUnit/critical log منتشرشده در T0208 را به‌عنوان ورودی مصرف نمی‌کند؛ تست‌ها و خروجی‌های خودش را از checkout تازه تولید می‌کند. ترتیب و نوع اصلی یال حفظ شدند.
-- هر دو تغییر همراه با دلیل و شواهد در `edge_change_log` ثبت شدند.
-
-## شکاف پیش از اجرا
-
-README دستور `dotnet publish ... --output artifacts/windows-host` را مستند کرده بود، اما Product Build آن را در CI اجرا نمی‌کرد. همچنین `dotnet restore WhiteP.sln` در job ویندوز به‌صورت صریح اجرا نمی‌شد. برای اینکه پذیرش بر مبنای دستور مستندشده باشد، این دو مرحله به job ویندوز اضافه شدند.
-- خروجی publish با وجود `artifacts/windows-host/WhiteP.Host.Windows.exe` و غیرخالی بودن پوشه بررسی می‌شود.
-- خروجی با نام `whitep-windows-publish` به‌عنوان Artifact مستقل نگهداری می‌شود.
-- فرمان دقیق `dotnet run --project tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj --configuration Release` در job مستقل HostLifecycle از checkout تمیز اجرا می‌شود و سپس اجرای پوشش کد نیز حفظ می‌شود.
-- قراردادهای آزمون README و reproducible build برای اجرای restore/publish و Artifact جدید به‌روز شدند.
-
-## وضعیت تلاش A001
-
-پیاده‌سازی و اصلاح مستندات/آزمون انجام شد و به مخزن ثبت می‌شود. در لحظهٔ ثبت، نتیجهٔ Quality Gate و Product Build مربوط به این commit هنوز دریافت نشده است؛ بنابراین هیچ فرمان یا artifact این commit را موفق اعلام نمی‌کنم و وضعیت T0214 در `in_progress` باقی می‌ماند.
-
-## اقدام بعدی
-
-اجرای Quality Gate، اجرای کامل سه job در Product Build، بررسی Artifact `whitep-windows-publish` و تأیید وجود فایل اجرایی/فایل‌های منتشرشده. فقط پس از موفقیت همهٔ کنترل‌های مرتبط و بررسی Artifact، T0214 به `done` تغییر می‌کند.
-
-
-## A002 — اصلاح assertion مسیر publish (2026-11-06)
-
-- Quality Gate run `42260115157` از ۴۳۸ آزمون، ۴۳۷ مورد را با موفقیت اجرا کرد و یک assertion تازه در `test_clean_checkout_runs_documented_windows_restore_publish_and_lifecycle_commands` شکست خورد.
-- تست انتظار داشت رشتهٔ کامل `artifacts/windows-host/WhiteP.Host.Windows.exe` به‌صورت یک literal در YAML وجود داشته باشد؛ اما PowerShell همان مسیر را با دو عبارت معتبر `Join-Path` می‌سازد. این محدودیت در assertion تست بود، نه اثبات شکست publish.
-- تست اصلاح شد تا عبارت ساخت دایرکتوری و عبارت ساخت executable را جداگانه کنترل کند. هیچ تغییری در دستور publish یا رفتار بسته‌بندی انجام نشد.
-- Product Build run `42260115129` در آن زمان هنوز در حال اجرا بود و publish واقعی آن هنوز نتیجهٔ قطعی نداشت.
+معیار اجرای فرمان‌های build، test، run و package از checkout تازه با شواهد Product Build و Quality Gate احراز شد. وضعیت T0214 به done تغییر یافت. این نتیجه به‌معنای پذیرش end-to-end شبکهٔ مستقل، اجرای مدل زنده یا آماده‌بودن انتشار عمومی نیست.

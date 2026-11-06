@@ -5,7 +5,7 @@
 The release workflow publishes these files from successful build artifacts associated with the exact same Git commit:
 
 - WhiteP-Android-0.1.0.apk: production-signed Android package. The signed-release workflow must have verified its certificate fingerprint against the protected android-release Environment variable before uploading it.
-- WhiteP-Windows-Installer.zip: Windows x64 installer executable plus the generated third-party license inventory and notices.
+- WhiteP-Windows-Installer.zip: Windows x64 installer executable plus the generated third-party dependency notices, machine-readable package inventory, sample-model license notice, and the included Apache-2.0 license text for the sample model. Model weights are not included.
 - SHA256SUMS.txt: SHA-256 checksums for both platform assets and the provenance file.
 - BUILD-PROVENANCE.txt: source commit and the two successful GitHub Actions run IDs used to create this release bundle.
 
@@ -48,3 +48,6 @@ A draft release is a candidate distribution bundle, not a declaration that the c
 ## Draft-release verification note
 
 GitHub's `GET /releases/tags/{tag}` endpoint returns published releases. The release workflow therefore discovers and verifies draft releases through the paginated `GET /releases` listing, which includes drafts for a caller with repository write access. A draft's browser URL may temporarily use an `untagged-...` slug; verify its `tag_name` field and assets in the release object rather than inferring tag state from that URL.
+
+
+The Windows installer ZIP is rejected unless the extracted license directory contains ModelLicenses.md, model-licenses.json, and files/WhiteP-Sample-Model-Apache-2.0.txt. The notice preserves the sample catalog's declared license, upstream model-card URL and expected model checksum; it does not bundle model weights or establish additional redistribution rights.

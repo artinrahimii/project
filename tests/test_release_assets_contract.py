@@ -25,7 +25,8 @@ class ReleaseAssetsContractTests(unittest.TestCase):
 
     def test_both_release_assets_and_license_inventory_are_required(self):
         for marker in ("WhiteP-Android-0.1.0.apk", "WhiteP-Setup-0.1.0-win-x64.exe",
-                       "ThirdPartyNotices.md", "licenses.json", "WhiteP-Windows-Installer.zip"):
+                       "ThirdPartyNotices.md", "licenses.json", "ModelLicenses.md",
+                       "model-licenses.json", "WhiteP-Sample-Model-Apache-2.0.txt", "WhiteP-Windows-Installer.zip"):
             with self.subTest(marker=marker):
                 self.assertIn(marker, WORKFLOW)
 

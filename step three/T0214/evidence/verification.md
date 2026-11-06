@@ -1,43 +1,17 @@
 # شواهد و راستی‌آزمایی T0214
 
-## مبنای بررسی
+## مبنا
+- شاخه: main
+- commit بررسی‌شده: 143e743f179f7c6dee8a9a85cb3dca4c0a9a7ea6 (V 3.0.995)
+- گراف از Git Blob همان commit با شناسه c5ae6d9dbd3ebe958dcf9a20bfefc9b3d16f77ce دریافت شد. اندازهٔ tree: 3894366 بایت؛ طول متن دریافت‌شده: 3764410 نویسه؛ محتوای JSON کامل parse شد. محاسبهٔ مجدد SHA-1 در محیط ابزار ممکن نبود؛ ادعای hash محاسبه‌شدهٔ مستقل ثبت نمی‌شود.
 
-- شاخه: `main`
-- commit پیش از این تلاش: `2d38b503ce9b894d35e9286c78e77b481f27ef15` (`V 3.0.993`)
-- README و Product Build workflow همان commit از GitHub Blob API دریافت و بررسی شدند.
+## اجرای واقعی در GitHub Actions
+- Quality Gate: https://github.com/artinrahimii/project/actions/runs/42260616384 — موفق؛ 438 آزمون و همهٔ مراحل کنترل کیفیت موفق.
+- Product Build: https://github.com/artinrahimii/project/actions/runs/42260616427 — موفق؛ هر سه job موفق.
+- Windows publish: بررسی اجرایی وجود فایل WhiteP.Host.Windows.exe و 66 فایل در پوشه را گزارش کرد. Artifact whitep-windows-publish، ID 13524323518، اندازهٔ ZIP برابر 10019202 بایت.
+- Windows installer build/install/smoke/uninstall نیز در همان Product Build موفق بود؛ این بخش شواهد جانبی بسته‌بندی است.
+- Android debug APK: Artifact ID 13525267634، اندازهٔ 28972476 بایت؛ instrumentation روی emulator و launch واقعی MainActivity موفق.
+- HostLifecycle: فرمان دقیق مستندشده از clean checkout موفق؛ 85.7% line coverage، 8849/10325 lines و 67 PASS markers در log پوشش‌دار.
 
-## اعتبارسنجی یال‌ها
-
-### T0213 → T0214
-
-- طبقه‌بندی: `sequencing_only`
-- نوع اصلی: `blocks` حفظ شد.
-- دلیل: دستورهای T0214 از checkout و toolchain مشخص‌شده در README اجرا می‌شوند؛ هیچ خروجی خاص T0213، از جمله APK امضاشده، Windows release ZIP، checksum، provenance یا Draft Release، ورودی این فرمان‌ها نیست.
-- شواهد: `README.md`، `.github/workflows/product-build.yml`، `.github/workflows/release-assets.yml` و شواهد T0213.
-
-### T0208 → T0214
-
-- طبقه‌بندی: `sequencing_only`
-- نوع اصلی: `blocks` حفظ شد.
-- دلیل: T0208 گزارش‌های coverage/critical-test را به‌عنوان Artifact منتشر می‌کند؛ T0214 آزمون‌ها و buildهای خودش را از checkout جدید اجرا می‌کند و Artifactهای قبلی را مصرف نمی‌کند.
-- شواهد: گزارش و verification مربوط به T0208، README و Product Build workflow.
-
-## تغییرات اجرایی برای clone تمیز
-
-- Windows job: اجرای صریح restore، clean، formatting، build، publish و بررسی وجود executable واقعی در `artifacts/windows-host/`.
-- Windows publish output: بارگذاری Artifact مستقل `whitep-windows-publish`.
-- HostLifecycle job: اجرای عین دستور مستندشدهٔ `dotnet run` پس از build پاک؛ جمع‌آوری coverage همچنان حفظ می‌شود.
-- Android job و Quality Gate موجود همچنان فرمان‌های Gradle، Python، compileall و Graph Guard را از checkout تازه اجرا می‌کنند.
-
-## آزمون‌ها
-
-- آزمون‌های محلی در این محیط اجرا نشده‌اند.
-- نتیجهٔ قطعی آزمون‌های source-contract و build باید از GitHub Actions روی commit همین تغییر استخراج شود.
-- وضعیت acceptance تا بررسی Quality Gate، Product Build و محتوای Artifact برابر `pending` است.
-
-
-## A002 — اصلاح آزمون قرارداد مسیر PowerShell (2026-11-06)
-
-- آزمون اولیه مسیر نهایی را به‌صورت یک رشتهٔ واحد انتظار داشت؛ درحالی‌که Workflow مسیر را با دو `Join-Path` ترکیب می‌کند.
-- کنترل به دو assertion دقیق و منطبق با ساختار واقعی PowerShell تغییر کرد: یکی برای `artifacts/windows-host` و دیگری برای `WhiteP.Host.Windows.exe`.
-- این اصلاح، موفقیت اجرای runtime را ثابت نمی‌کند؛ نتیجهٔ Windows publish و Artifact باید از Product Build همان commit دریافت شود.
+## حدود شواهد
+این اجرای CI ساخت و آزمون platformها را ثابت می‌کند؛ ZIP مربوط به whitep-windows-publish در این بررسی جداگانه download/extract نشده است. همچنین اجرای واقعی روی دو رایانهٔ مستقل، اتصال اینترنت عمومی، Rendezvous عمومی و استنتاج با مدل دریافت‌شده را ثابت نمی‌کند.

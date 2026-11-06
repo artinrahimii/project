@@ -96,6 +96,27 @@ if (-not (Test-Path -LiteralPath $notice -PathType Leaf) -or -not (Test-Path -Li
 $licenseData = Get-Content -LiteralPath $manifest -Raw | ConvertFrom-Json
 if ($licenseData.package_count -lt 1) { throw "No NuGet packages were inventoried." }
 
+$sampleModelCatalog = Join-Path $root "src\Host.Windows\Models\Catalog\sample-model-catalog.json"
+$apacheLicensePath = Join-Path $licenseSources "Apache-2.0.txt"
+if (-not (Test-Path -LiteralPath $sampleModelCatalog -PathType Leaf)) {
+    throw "Sample model catalog is missing: $sampleModelCatalog"
+}
+Invoke-WebRequest -Uri "https://www.apache.org/licenses/LICENSE-2.0.txt" -OutFile $apacheLicensePath -TimeoutSec 60
+$apacheLicenseInfo = Get-Item -LiteralPath $apacheLicensePath
+if ($apacheLicenseInfo.Length -lt 1024 -or $apacheLicenseInfo.Length -gt 131072) {
+    throw "Official Apache-2.0 license text has an unexpected size: $($apacheLicenseInfo.Length) bytes."
+}
+& python (Join-Path $root "tools\generate_model_license_notice.py") --catalog $sampleModelCatalog --apache-license-file $apacheLicensePath --output-dir $licenses
+if ($LASTEXITCODE -ne 0) { throw "Sample model license notice generation failed: $LASTEXITCODE" }
+$modelNotice = Join-Path $licenses "ModelLicenses.md"
+$modelManifest = Join-Path $licenses "model-licenses.json"
+$modelLicenseText = Join-Path $licenses "files\WhiteP-Sample-Model-Apache-2.0.txt"
+foreach ($path in @($modelNotice, $modelManifest, $modelLicenseText)) {
+    if (-not (Test-Path -LiteralPath $path -PathType Leaf)) { throw "Sample model license output is missing: $path" }
+}
+$modelLicenseData = Get-Content -LiteralPath $modelManifest -Raw | ConvertFrom-Json
+if ($modelLicenseData.model_count -lt 1) { throw "No sample model license was inventoried." }
+
 $compileArgs = @(
     "/Q", "/DAppVersion=$Version", "/DPublisher=$Publisher",
     "/DPublishDir=$publish", "/DLicensesDir=$licenses", "/DOutputDir=$output", $script
@@ -118,6 +139,8 @@ try {
     $installedExe = Join-Path $installDir "WhiteP.Host.Windows.exe"
     if (-not (Test-Path -LiteralPath $installedExe -PathType Leaf)) { throw "Installed application executable is missing." }
     if (-not (Test-Path -LiteralPath (Join-Path $installDir "licenses\ThirdPartyNotices.md") -PathType Leaf)) { throw "Third-party notices are missing from installation." }
+    if (-not (Test-Path -LiteralPath (Join-Path $installDir "licenses\ModelLicenses.md") -PathType Leaf)) { throw "Sample model license notice is missing from installation." }
+    if (-not (Test-Path -LiteralPath (Join-Path $installDir "licenses\files\WhiteP-Sample-Model-Apache-2.0.txt") -PathType Leaf)) { throw "Sample model Apache-2.0 license text is missing from installation." }
     $expectedInstallLocation = [IO.Path]::GetFullPath($installDir).TrimEnd([char[]]@('\', '/'))
     $publisherRegistrations = @(
         Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*" -ErrorAction SilentlyContinue |
