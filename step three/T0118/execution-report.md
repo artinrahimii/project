@@ -1,0 +1,15 @@
+# T0118 execution report — accepted
+
+- **Task:** implement an alternate peer-connection path without forwarding inference text through a rendezvous server.
+- **Final tested commit:** `V 3.0.357` — [`2ed9620edf1b1035ba17ae5b5f4d4e3414717cdb`](https://github.com/artinrahimii/project/commit/2ed9620edf1b1035ba17ae5b5f4d4e3414717cdb).
+- **Implementation:** `src/Host.Windows/Networking/Libp2pPeerTransport.cs` registers libp2p QUIC in addition to the existing TCP stream path and advertises TCP and QUIC/UDP multiaddresses for the same PeerId. `PeerTransportFallbackConnector.cs` tries an ordered list of endpoints for one pinned PeerId, skips duplicate addresses, disposes failed transports, returns the successful authenticated connection and records only address plus exception type on failed attempts.
+- **Privacy boundary:** the connector consumes endpoint/identity metadata only. It has no prompt/response parameters and does not call a rendezvous service. Application bytes travel over the returned direct peer connection, not through a central service.
+- **Initial failed attempt retained:** V 3.0.356 failed because libp2p wrapped `SocketException(Connection refused)` in `PeerConnectionException`, so the initial fallback stopped before trying QUIC. V 3.0.357 recursively classifies nested transport exceptions and correctly advances to the next candidate. The failed attempt remains recorded in graph history.
+- **Exact-head acceptance on V 3.0.357:** HostLifecycle passed the direct TCP and TCP-refused→QUIC fallback scenario, with peer identity checks, bidirectional binary bytes, mixed-identity rejection and disconnect. Windows WPF product checks, Android APK/Protobuf checks, and Step Three graph/output/evidence quality gate also passed.
+  - HostLifecycle: https://github.com/artinrahimii/project/actions/runs/40448655571/job/122005897811
+  - Windows WPF: https://github.com/artinrahimii/project/actions/runs/40448655571/job/122005898090
+  - Android APK/Protobuf: https://github.com/artinrahimii/project/actions/runs/40448655571/job/122005898087
+  - Step Three quality gate: https://github.com/artinrahimii/project/actions/runs/40448655603
+- **Dependency review:** `T0117 → T0118` remains `contract_or_interface_dependency`, validated. `T0115 → T0118` remains `sequencing_only`, validated. `T0118 → T0119` and `T0115 → T0119` remain validated as `sequencing_only`; original `blocks` edges were preserved, not removed.
+- **Scope limitation:** the fallback succeeds when TCP is unavailable but the peer's direct QUIC/UDP path is reachable. It does not establish hole punching, symmetric-NAT traversal, relay availability, or connection across networks that block both candidate transports. Those limitations remain explicit; encrypted relay is a separate concern for T0119.
+- **Result:** generic code-and-test acceptance is verified on the exact V 3.0.357 commit. `T0118` is marked `done` for the tested TCP-to-QUIC direct fallback; this does not claim universal NAT traversal or completion of the whole product.

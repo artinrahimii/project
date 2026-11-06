@@ -1,0 +1,268 @@
+# T0180 — پاک‌سازی payloadها و بافرهای موقت
+
+**وضعیت:** `in_progress`؛ پیاده‌سازی A001 آمادهٔ اعتبارسنجی CI است.  
+**مخزن/شاخه:** `artinrahimii/project` / `main`  
+**نسخهٔ مبنا:** `1c329bd92f403ee380962dc7a237a3fce19bf84e` — `V 3.0.821`  
+**تلاش:** `T0180-A001`  
+**زمان شروع:** 2026-11-02T17:03:47+03:30
+
+## بررسی پیش‌نیاز و یال‌ها
+
+- `T0177` و `T0179` در گراف مبنا `done` بودند و خروجی/شواهد ثبت‌شدهٔ آن‌ها بررسی شد.
+- یال‌های ورودی این وظیفه به `sequencing_only` اعتبارسنجی شدند؛ `type=blocks` و ترتیب اجرایی حفظ شدند.
+- یال `T0180 → T0181` هنوز `unreviewed` است.
+
+## تغییرات واقعی
+
+- Windows: صفرکردن frame ارسالی، پیام ورودی در صورت شکست انتقال مالکیت به صف، پیام‌های باقی‌مانده در صف هنگام disposal، و بافرهای request/response در میزبان پس از پایان مصرف.
+- Windows: افزودن helper برای پاک‌سازی آرایه‌های موقت پیام Protobuf مربوط به status/rejection/busy.
+- Android: صفرکردن بافر قبلی، بافر ترکیبی و frameهای کامل decoder؛ پاک‌سازی وضعیت ناقص در پایان/بسته‌شدن stream و پاک‌سازی تمام frameها حتی اگر callback یکی را با خطا متوقف کند.
+- افزودن آزمون JVM برای مشاهدهٔ واقعی backing array و آزمون‌های قراردادی Python.
+- ثبت مرز تضمین و محدودیت‌ها در `docs/security.md`.
+
+## فایل‌های تغییر‌یافته
+
+- `src/Host.Windows/Networking/Libp2pPeerMessageProtocol.cs`
+- `src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs`
+- `src/Client.Android/app/src/main/java/com/whitep/client/network/PeerMessageFrameCodec.kt`
+- `src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt`
+- `src/Client.Android/app/src/test/java/com/whitep/client/network/PeerMessageFrameCodecTest.kt`
+- `docs/security.md`
+- `tests/test_sensitive_buffer_cleanup.py`
+- `step three/project-graph.md`
+
+## آزمون و پذیرش
+
+آزمون‌های جدید اضافه شده‌اند، اما CI دقیق commit هنوز اجرا/بررسی نشده است. به همین دلیل T0180 در وضعیت `in_progress` می‌ماند و هیچ نتیجهٔ موفق آزمون ادعا نمی‌شود. معیار پذیرش نهایی، موفقیت Step Three quality gate، Android lint/compile/APK/JVM، Windows WPF/HostLifecycle و container checks روی همان commit است.
+
+## محدودیت
+
+صفرشدن کپی‌های بایتی تحت مالکیت مستقیم برنامه ادعا می‌شود؛ صفرشدن objectهای immutable، کپی‌های runtime، بافرهای داخلی کتابخانه/سیستم‌عامل، pagefile/swap یا crash dump اثبات نمی‌شود. frame خروجی Android تا تکمیل/شکست عملیات نوشتن حفظ می‌شود تا دادهٔ درحال‌ارسال تغییر نکند.
+
+
+## تلاش T0180-A002 — اصلاح قالب آزمون و بازبینی اجرا
+
+**بازهٔ اجرا:** 2026-11-02T17:23:00+03:30 تا 2026-11-02T17:29:27+03:30  
+**وضعیت:** `partial`؛ `T0180` همچنان `in_progress` است.
+
+- یک خط خالی تکراری پیش از آزمون `zeroesThePreviousPendingBuffer` در فایل آزمون Android حذف شد تا قالب با سبک رسمی KtLint مخزن هماهنگ بماند.
+- فایل‌های منبع و آزمون در commit مبنای `b14a8c311cd98422c5b15ddb9089d24f3170edc8` بازبینی شدند؛ هیچ تغییر رفتاری در این تلاش ادعا نمی‌شود.
+- آزمون Python، KtLint، Android build/JVM، Windows build/HostLifecycle یا CI دقیق این commit در این محیط اجرا نشد. clone مخزن به‌علت خطای DNS انجام نشد؛ .NET SDK و Gradle/Android SDK نیز در محیط محلی موجود نیستند.
+- GitHub برای SHA مبنا status check برنگرداند؛ ابزار موجود برای فهرست workflow runها فقط اجراهای PR را برمی‌گرداند و نتیجه‌ای نشان نداد. بنابراین هیچ آزمونی موفق یا ناموفق اعلام نمی‌شود.
+
+**اقدام بعدی:** اجرای quality gate و workflowهای واقعی Windows/Android/HostLifecycle روی commit جدید؛ تنها پس از موفقیت شواهد، وضعیت به `done` تغییر کند.
+
+## تلاش T0180-A003 — بستن stream در timeout/cancellation نوشتن Android
+
+**زمان ثبت:** 2026-11-02T18:14:10+03:30  
+**وضعیت:** partial؛ وظیفه همچنان in_progress است.
+
+### یافته و اصلاح واقعی
+
+- بازبینی دقیق نشان داد CompletableFuture.get(timeout) در cancelAttempts صرفاً انتظار فراخوان را timeout می‌کند و لزوماً Promise نوشتن Netty را لغو نمی‌کند. مسیر قبلی در TimeoutException یا interruption فقط false برمی‌گرداند؛ در نتیجه callback پاک‌سازی frame ممکن بود تا پایان نامعلوم Promise اجرا نشود.
+- مسیر Android اکنون در CancellationException، TimeoutException و InterruptedException، stream مربوط را می‌بندد تا نوشتن معلق شکست بخورد و callback موجود sendRequest(...).whenComplete پاک‌سازی frame را اجرا کند. در interruption، وضعیت interrupt thread نیز برگردانده می‌شود.
+- مستند تابع به‌روزرسانی شد: پاسخ CANCELLED/پاسخ مسابقه‌ای فقط بعد از write موفق مرجع می‌ماند؛ اگر خود write پیش از تکمیل لغو یا timeout شود، بسته‌شدن stream مسیر شکست را قطعی می‌کند.
+- آزمون قراردادی Python برای حفاظت از سه شاخهٔ timeout/cancel/interruption و ارتباط آن‌ها با closeStream و whenComplete اضافه شد.
+
+### آزمون‌های اجراشده
+
+- کامپایل مستقل فایل تولیدی PeerMessageFrameCodec.kt با Kotlin/JVM 1.9.0 و JDK 21: موفق.
+- harness اجرایی decoder: ۸ از ۸ سناریو موفق؛ شامل مرز طول‌های varint، frame تکه‌تکه، چند frame، پیام خالی، طول بیش‌ازحد، prefix غیر canonical/بیش‌ازحد بلند، EOF ناقص و صفرشدن بافر قبلی/ناقص.
+- ممیزی predicateهای منبع روی فایل‌های دقیق commit مبنا: ۱۱ از ۱۱ شرط موجود.
+- آزمون Gradle/JUnit برنامهٔ Android، کل Python unittest suite، build ویندوز و CI دقیق این commit در این محیط اجرا نشده‌اند. نتیجهٔ harness مستقل، جایگزین آن‌ها نیست.
+
+### محدودیت باقی‌مانده
+
+تأیید end-to-end بسته‌شدن stream و تکمیل Promise واقعی Netty در timeout هنوز به آزمون Android integration/CI نیاز دارد. آزمون‌های Windows، کل برنامه و workflowهای CI نیز هنوز لازم‌اند؛ بنابراین T0180 تکمیل‌شده اعلام نمی‌شود.
+
+## تلاش T0180-A004 — رفع شکست واقعی CI و هشدار nullable در صف Windows
+
+**زمان ثبت:** 2026-11-02T18:27:13+03:30  
+**وضعیت:** partial؛ T0180 همچنان in_progress است.
+
+### یافته‌های CI روی V 3.0.824
+
+- Step Three quality gate، اجرا 41465625302: موفق؛ 338 آزمون Python، compileall و graph_guard با 230 وظیفه/422 یال، صفر خطا و یک هشدار metadata قدیمی T0001.
+- Rendezvous container، اجرا 41465625258: build و smoke test موفق.
+- White-P product build، اجرا 41465625430: شکست فقط در گام KtLint Android؛ Windows WPF build و smoke، fixture بین‌عملیاتی .NET و HostLifecycle tests موفق بودند. Android APK، JVM unit tests و generated Protobuf verification به‌دلیل توقف KtLint اجرا نشدند.
+- خطای دقیق KtLint: Libp2pInferenceRequestTransport.kt:521:5 — Expected a blank line for this declaration. log کامل job 125345607621 این محل را مشخص کرد.
+- build ویندوز یک هشدار CS8600 در حلقهٔ Dispose فایل Libp2pPeerMessageProtocol.cs، خط 197 گزارش کرد؛ build شکست نخورده بود.
+
+### اصلاحات واقعی این تلاش
+
+- خط خالی موردنیاز KtLint پیش از ensureHostStarted اضافه شد.
+- فاصلهٔ خالی استاندارد پیش از guard اصلی فایل تست Python افزوده شد.
+- حلقهٔ تخلیهٔ صف Windows اکنون nullable بودن خروجی TryRead را صریح اعلام می‌کند و فقط وقتی pendingMessage دارای Length مثبت است ZeroMemory را اجرا می‌کند؛ این اصلاح هشدار CS8600 را هدف می‌گیرد.
+- آزمون قراردادی Python برای قرارداد nullable و guard صف به‌روز شد.
+
+### اعتبارسنجی
+
+- نتایج CI بالا روی commit مبنای V 3.0.824 هستند، نه روی اصلاحات A004. هیچ نتیجهٔ KtLint یا build برای این اصلاحات هنوز ادعا نمی‌شود.
+- اجرای بعدی CI باید KtLint، Android assembleDebug، testDebugUnitTest، Protobuf verification، Windows build بدون هشدار nullable و HostLifecycle را روی SHA دقیق جدید تأیید کند.
+
+## تلاش T0180-A005 — اعتبارسنجی دقیق V 3.0.825
+
+- Step Three quality gate run 41467491212: 338 آزمون Python و compileall موفق؛ graph_guard ناموفق با `FAILED_ATTEMPT_COUNT_MISMATCH: T0180: summary=1, history=0`.
+- Product workflow run 41467491153 در تلاش نهایی سوم موفق شد. Android KtLint، ساخت APK، JVM unit tests، بررسی generated Protobuf و upload artefactها در تلاش دوم موفق شدند. Windows WPF build، startup smoke، DPAPI/trust و upload artefactها نیز موفق شدند.
+- HostLifecycle در تلاش اول و دوم با بسته‌شدن peer stream هنگام انتظار برای HostStatus/InferenceResponse شکست خورد؛ تلاش سوم همان job موفق شد و نتیجهٔ نهایی product workflow success بود.
+- Rendezvous container run 41467491150: build و non-root HTTP smoke موفق.
+- هیچ‌یک از این نتایج، شکست graph_guard را برطرف نمی‌کرد؛ A005 آن را در تاریخچهٔ افزایشی به‌عنوان یک تلاش ناموفق ثبت می‌کند.
+
+## تلاش T0180-A006 — اصلاح سازگاری شمارنده و تاریخچه
+
+- علت دقیق guard failure: execution_summary.failed_attempt_count برابر ۱ بود، در حالی که هیچ رکورد execution_history با result=failed وجود نداشت.
+- رکورد A005 نتیجهٔ واقعی validation شکست‌خوردهٔ V 3.0.825 را ثبت می‌کند؛ A006 این مغایرت metadata را با حفظ سوابق قبلی اصلاح می‌کند.
+- تعداد تلاش‌ها اکنون ۶ و تعداد تلاش‌های ناموفق ۱ است؛ فقط A005 نتیجهٔ failed دارد. وضعیت T0180 همچنان in_progress است.
+- commit بعدی باید quality gate را روی SHA دقیق اجرا کند؛ این اصلاح به‌تنهایی اثبات قبولی graph_guard نیست.
+
+## تلاش T0180-A007 — شکست‌های دقیق CI در V 3.0.826
+
+- Step Three quality gate run 41469076873 موفق: 338 آزمون Python، compileall و graph_guard؛ 230 وظیفه/422 یال، صفر خطا و یک هشدار metadata قدیمی T0001.
+- Rendezvous container run 41469076680 موفق.
+- Windows WPF job 125357569545 موفق.
+- Android KtLint و assembleDebug موفق؛ در `testDebugUnitTest` تعداد 196 آزمون اجرا شد و فقط یک آزمون شکست خورد: `sendsCancellationToThreeNativeDotNetLibp2pHostsAndReceivesCancelledResponses`. گزارش JUnit artifact 13153164724 نشان می‌دهد هر سه fixture میزبان مراحل CANCEL_RECEIVED، VALIDATED، SENT و PASS را ثبت کردند، ولی Android قبل از دریافت پاسخ با بسته‌شدن stream مواجه شد. fixture .NET بلافاصله پس از ارسال پاسخ خارج می‌شد.
+- HostLifecycle job 125357569172 شکست خورد؛ پاسخ دریافت‌شده در assertion خط 293 با قرارداد request/attempt/round/peer/outcome/output تطبیق نداشت. پیام قبلی فیلد ناسازگار را مشخص نمی‌کرد.
+- این تلاش به‌عنوان failed در تاریخچه افزوده شده؛ T0180 تکمیل‌شده نیست.
+
+## تلاش T0180-A008 — اصلاح چرخهٔ عمر fixture و تشخیص فیلد پاسخ
+
+- fixture سه‌میزبانهٔ .NET پس از ارسال پاسخ دیگر بلافاصله خارج نمی‌شود؛ تا بسته‌شدن stream از سوی Android منتظر می‌ماند. Android در `awaitResponse` پس از دریافت/پردازش پاسخ stream را می‌بندد؛ این handshake تست از race میان ارسال پاسخ و disposal میزبان جلوگیری می‌کند.
+- assertion تست Windows HostLifecycle اکنون فقط booleanهای تطبیق request/attempt/round/peer/model/output و وضعیت outcome/deadline را گزارش می‌کند؛ شناسه‌ها یا متن واقعی prompt ثبت نمی‌شوند.
+- این تغییرات فقط test fixture و diagnostics را اصلاح می‌کنند؛ هنوز هیچ موفقیت CI برای commit جدید ادعا نمی‌شود.
+
+
+## تلاش T0180-A008 — نتیجهٔ CI دقیق V 3.0.827
+
+- آزمون Android شامل KtLint، ساخت APK، JVM unit tests و بررسی Protobuf با موفقیت گذشت.
+- ساخت Windows WPF و آزمون‌های startup/security/DPAPI موفق شدند.
+- Quality Gate مرحلهٔ سوم: ۳۳۸ آزمون Python، compileall و graph guard موفق؛ ۲۳۰ وظیفه و ۴۲۲ یال، صفر خطا و یک هشدار metadata قدیمی T0001.
+- ساخت و smoke test سرویس Rendezvous موفق بود.
+- آزمون HostLifecycle شکست خورد؛ خطا اکنون در دریافت پاسخ HostStatus و خط ۲۶۶ آزمون loopback رخ می‌دهد: IOException با inner ChannelClosedException. پیش از ارسال InferenceRequest اتصال بسته می‌شود.
+- workflow اجرای مدل محلی نیز به‌دلیل شکست همین مجموعهٔ مشترک HostLifecycle متوقف شد؛ بخش اجرای llama.cpp و GGUF فراخوانی نشد و نتیجهٔ آزمون inference واقعی هنوز نامشخص است.
+- اصلاح A008 مشکل قبلی Android cancellation را رفع کرده، اما T0180 همچنان in_progress است.
+
+## تلاش T0180-A009 — تشخیص ایمن شکست HostStatus
+
+- آزمون loopback اکنون در شکست دریافت HostStatus، مقادیر غیرحساس hostActive، hostFailureType، clientConnected و failureType را گزارش می‌کند.
+- این تغییر صرفاً ابزار تشخیص در آزمون است؛ هیچ رفتار production تغییر نکرده و علت ریشه‌ای بسته‌شدن اتصال هنوز اثبات نشده است.
+- آزمون‌های محلی این تلاش اجرا نشدند؛ پذیرش دقیق commit جدید باید از طریق CI بررسی شود. T0180 همچنان in_progress است.
+
+
+## تلاش T0180-A010 — تشخیص مرحله‌ای Windows و دریافت پاسخ Android
+
+- گزارش CI مربوط به V 3.0.828 نشان داد HostLifecycle با `hostActive=False` و `hostFailureType=InvalidDataException` متوقف شده است. چون این نوع استثنا می‌تواند از چند کنترل متفاوت در ReceiveLoopAsync ایجاد شود، یک LastFailureStage با مقادیر ثابت و غیرحساس اضافه شد؛ مراحل شامل parse پیام، احراز هویت peer، تطبیق شناسهٔ مقصد، ساخت و ارسال HostStatus و رد پیام نامعتبر هستند.
+- گزارش JUnit همان commit نشان داد آزمون Android از ۱۹۶ آزمون، ۱۹۵ موفق و یک ناموفق داشته است. هر سه fixture ویندوزی CANCEL_RECEIVED، VALIDATED و SENT را ثبت کرده‌اند، اما کلاینت در awaitResponse به timeout رسیده و diagnostics سمت کلاینت پیش‌تر در دسترس نبوده است.
+- شمارنده‌های عددی Android اکنون تعداد chunkها و frameهای ورودی، frameهای HostStatus و InferenceResponse، parse ناموفق، پاسخ بدون pending، رد تطبیق، پاسخ پذیرفته‌شده، بسته‌شدن peer و خطای callback را بدون ثبت payload یا شناسه نگه می‌دارند.
+- دو آزمون پذیرش در صورت شکست، فقط کد مرحله/شمارنده‌های allowlist‌شده را چاپ می‌کنند. هیچ تغییر در قالب پیام Protobuf، framing یا قواعد اعتماد peer اعمال نشده است.
+- این تغییر تشخیصی است و هنوز علت ریشه‌ای دو شکست را برطرف نکرده است. آزمون‌های محلی این نشست اجرا نشده‌اند؛ CI دقیق commit بعدی برای تعیین علت لازم است. T0180 همچنان in_progress است.
+
+
+## تلاش T0180-A011 — بازبینی شکست CI نسخهٔ V 3.0.829
+
+- Quality Gate قبل از compileall و graph_guard در تست‌های Python متوقف شد: از ۳۳۸ تست، ۳۳۷ موفق و یک تست منبع شکست خورد؛ guard قدیمی هنوز شکل دقیق `val pending = pendingAttempts[key] ?: return` را می‌خواست و ساختار معادل شمارنده‌دار را نمی‌پذیرفت.
+- آزمون HostLifecycle به علت خطای نحوی در رشتهٔ تشخیصی C# کامپایل نشد: CS1039 و CS1003 در خط ۲۷۹. بنابراین LastFailureStage در این اجرا هنوز آزمایش نشد.
+- job اندروید نیز هنگام ساخت fixture بین‌اجرایی .NET به همان خطای C# برخورد کرد و به KtLint/JVM acceptance نرسید.
+- خطاهای بالا مربوط به ابزار تشخیص و guard خودکار هستند، نه اثبات عیب تازه در framing یا منطق پاسخ. هر دو اصلاح در A012 اعمال شده‌اند؛ CI دقیق بعدی هنوز لازم است.
+
+
+## تلاش T0180-A013 — نتایج CI دقیق V 3.0.830
+
+- Step Three quality gate run 41479259509 با موفقیت گذشت و graph guard ساختار ۲۳۰ وظیفه و ۴۲۲ یال را تأیید کرد.
+- Rendezvous container run 41479259270 با موفقیت build و non-root HTTP smoke را اجرا کرد.
+- Windows WPF job 125392910104 موفق شد.
+- HostLifecycle job 125392910293 پس از کامپایل موفق، در رفت‌وبرگشت HostStatus شکست خورد. تشخیص نشان داد `hostFailureStage=reject_malformed_application_message`؛ یعنی parserهای HostStatusRequest، InferenceRequest و CancelRequest هیچ‌کدام پیام ورودی را نپذیرفتند. در این commit طول frame و دسته‌بندی parserها هنوز چاپ نمی‌شد.
+- Android job 125392910595 پیش از ساخت APK و اجرای JVM tests در KtLint متوقف شد: `Libp2pInferenceRequestTransport.kt:115:5 Expected a blank line for this declaration`.
+- Real local inference workflow run 41479259306 در همان مجموعهٔ مشترک HostLifecycle، در خط ۳۴۰ آزمون loopback با TimeoutException شکست خورد؛ اجرای واقعی generation از llama.cpp/GGUF تأیید نشد.
+- A014 فاصلهٔ خالی KtLint را اصلاح کرد و تشخیص میزبان را با طول بایت، اولین tag و دسته‌بندی ثابت سه parser گسترش داد. نتیجهٔ CI دقیق A014 هنوز وجود ندارد.
+
+
+## تلاش T0180-A014 — نتایج CI دقیق V 3.0.831
+
+- Step Three quality gate run 41481768427 موفق بود.
+- Rendezvous container build/smoke run 41481768488 موفق بود.
+- Windows WPF job 125401644497 موفق بود.
+- HostLifecycle job 125401643696 شکست خورد. تشخیص دقیق: `hostFailureType=InvalidDataException`، مرحلهٔ `reject_malformed_application_message`، طول پیام دریافتی صفر بایت و اولین tag برابر `-1`. هر سه parser مربوط به HostStatusRequest، InferenceRequest و CancelRequest پیام را رد کردند.
+- Android job 125401644795 در کامپایل Kotlin شکست خورد؛ ارجاع‌های `inboundChunks`، `decodedFrames` و `callbackFailures` در کلاس مستقل `InferencePeerMessageController` unresolved بودند.
+- Real local inference job 125401638934 در loopback مشترک HostLifecycle با قطع peer stream شکست خورد؛ بخش اجرای مدل واقعی llama.cpp/GGUF به مرحلهٔ generation نرسید.
+- این نتایج در تاریخچهٔ افزایشی گراف به‌عنوان A014 ثبت شدند؛ وضعیت T0180 همچنان `in_progress` است.
+
+## تلاش T0180-A015 — اصلاح مالکیت شمارنده‌های Android و تشخیص خروجی Windows
+
+- سه شمارندهٔ `AtomicLong` که در transport بیرونی تعریف شده‌اند، اکنون صریحاً به constructor کلاس مستقل `InferencePeerMessageController` تزریق می‌شوند. این اصلاح خطای unresolved reference در کامپایل V 3.0.831 را هدف می‌گیرد.
+- یک آزمون قرارداد Python برای اتصال شمارنده‌های transport به controller اضافه شد.
+- آزمون Windows پیش از ارسال HostStatusRequest طول بایت پیام سریال‌شده و اولین tag پروتوباف را ثبت می‌کند؛ هیچ payload، شناسهٔ peer یا کلید ثبت نمی‌شود. بافر موقت پس از پایان ارسال پاک می‌شود.
+- علت اصلی دریافت frame خالی در Windows هنوز قطعی نیست. تا وقتی اندازهٔ پیام خروجی با اندازهٔ دریافتی مقایسه نشود، کد production framing تغییر نمی‌کند.
+- در این نوبت ابزار محلی .NET، Gradle/Android و Python اجرا نشد؛ پذیرش دقیق commit جدید به CI وابسته است. T0180 همچنان `in_progress` است.
+
+
+## T0180-A015 — exact-head CI on V 3.0.832
+
+- Android KtLint/formatting, Kotlin compilation and debug APK build passed (job 125817204860).
+- Android JVM suite: 196 tests completed, 1 failed. The cross-runtime three-peer cancellation test timed out. Full JUnit report: artifact 13216862899 (workflow run 41606404519).
+- The JUnit failure details showed all three .NET peers reached `CANCEL_RECEIVED`, `VALIDATED` and `SENT`. Android transport diagnostics reported 3 inbound chunks, 261 decoded/parsed response frames, 259 unmatched responses, 2 accepted responses, 1 peer-close callback and zero callback failures.
+- Windows WPF build/startup and process/security checks passed (job 125817205085).
+- Windows HostLifecycle still failed (job 125817205025): the sender recorded a 54-byte HostStatusRequest with first Protobuf tag 10, but the listener reported a zero-byte message and no first tag.
+- The real local inference workflow failed at the shared HostStatus loopback before model generation (job 125817205365). No real model generation success is claimed.
+- Step Three quality gate run 41606404540 and Rendezvous container run 41606404559 passed.
+- T0180 remains `in_progress`; the transport framing/root cause is not yet established.
+
+## T0180-A016 — payload-free cross-runtime frame metadata
+
+- Android transport diagnostic snapshots now capture the byte length and first Protobuf tag of the latest inbound frame and latest unmatched response, plus a count of empty inbound frames.
+- The .NET cancellation interop fixture emits only response byte length and first Protobuf tag before sending, then clears the temporary response buffer. It does not emit message contents, request identifiers, peer identifiers or credentials.
+- The Android test captures the metadata line and appends it to the existing payload-free diagnostic summary if the three-peer correlation test fails.
+- This is a diagnostic implementation, not a transport fix. No post-change build/test result is claimed; exact-head CI must validate the changes and provide the next framing evidence.
+
+
+## T0180-A016 — exact-head CI on V 3.0.833
+
+- Step Three quality gate run 41610464154 passed.
+- Rendezvous container build/smoke run 41610464102 passed.
+- Windows WPF job 125830768358 passed: C# formatting, host build, WPF startup and process/policy/DPAPI trust-store checks succeeded.
+- Windows HostLifecycle job 125830768736 failed with the same mismatch: sender serialized a 54-byte HostStatusRequest with first Protobuf tag 10, but the listener received an empty frame (0 bytes, first tag -1).
+- Real local inference job 125830768050 verified the pinned llama.cpp b11443 executable and GGUF model and observed the active model runtime status, but failed at QUIC fallback binary-response delivery in `PeerTransportContractAcceptanceTests.VerifyQuicFallbackAfterUnreachableTcpAddressAsync` (line 372). The assertion was: `Binary response bytes must return directly over the selected peer connection.` No successful model generation result was established.
+- Android KtLint/formatting and debug APK build passed (job 125830768838). Its JVM suite was still running when this update was written, so no JVM result is recorded yet.
+- T0180 remains `in_progress`.
+
+
+## T0180-A016 — completed Android CI result (V 3.0.833)
+
+- Android job 125830768838 completed successfully.
+- KtLint/formatting, Kotlin compilation, debug APK build and generated Protobuf checks passed.
+- The Android JVM suite passed. The `Libp2pInferenceRequestTransportTest` class completed 7 tests with 0 failures (100%); in particular, `sendsCancellationToThreeNativeDotNetLibp2pHostsAndReceivesCancelledResponses` passed against three native .NET peer fixtures.
+- JUnit report artifact: 13218328799.
+- This demonstrates successful Android cross-runtime cancellation in this exact CI run. It does not prove the previous timeout's root cause has been permanently eliminated.
+- Windows HostLifecycle still receives an empty application frame after the sender serializes a 54-byte HostStatusRequest. Real local inference integration still fails the QUIC fallback binary-response acceptance before a successful model-generation result. T0180 remains `in_progress`.
+
+
+## T0180-A016 — V 3.0.833 exact-head CI
+
+- Step Three quality gate run 41610464154 passed.
+- Rendezvous container build/smoke run 41610464102 passed.
+- Windows WPF job 125830768358 passed: build/startup, process restrictions, policy and DPAPI trust checks succeeded.
+- Android job 125830768838 passed: format/lint, Kotlin compile, debug APK, Protobuf and JVM tests all passed. `Libp2pInferenceRequestTransportTest` completed 7 tests with 0 failures, including the three-.NET-host cancellation exchange.
+- HostLifecycle job 125830768736 failed: sender serialized a 54-byte HostStatusRequest with first tag 10; the listener observed a zero-byte frame (first tag -1), and VarInt.Decode then saw an aborted channel.
+- Real local inference job 125830768050 verified pinned llama.cpp b11443 and the GGUF model and passed runtime status, but failed the QUIC fallback binary-response assertion at `PeerTransportContractAcceptanceTests.cs:372`. No live generation success is claimed.
+- T0180 remains `in_progress`.
+
+## T0180-A017 — Windows .NET outbound frame-lifetime fix
+
+- The lower libp2p channel write can complete when the multiplexer consumes the chunk, before Yamux has finished asynchronously forwarding the same memory to the remote application stream.
+- The Windows peer-message protocol now retains each successful outbound frame until the next ordered peer message acknowledges consumption or the stream is closed/disposed.
+- Retention is bounded by the configured inbound queue capacity and an aggregate byte budget of two maximum-sized frames. Failed writes remove and zero their frame immediately; acknowledged/closed frames are zeroized.
+- Added `tests/test_libp2p_peer_message_buffer_lifetime.py` to guard bounded retention, immediate failure cleanup and acknowledgement/teardown cleanup.
+- No local .NET/Python toolchain ran. Exact-head CI must verify HostLifecycle and QUIC binary response before the task can be marked complete.
+
+
+
+## تلاش T0180-A018 — تأیید نهایی و تکمیل وظیفه در V 3.0.836
+
+- شاخهٔ `main` روی commit `be44ff01649a6e36f631e8a286f1bfc9b4fb8820` با پیام `V 3.0.836` بررسی شد.
+- گیت کیفیت مرحلهٔ سوم، run `41612366597`، با موفقیت تمام شد: ۳۴۱ آزمون Python، صفر شکست؛ بررسی syntax و شواهد موفق؛ graph guard برای ۲۳۰ وظیفه و ۴۲۲ یال، صفر خطا و یک هشدار metadata موجود.
+- دو آزمون جدید چرخهٔ عمر frame خروجی Windows در `tests/test_libp2p_peer_message_buffer_lifetime.py` و هر چهار آزمون `tests/test_sensitive_buffer_cleanup.py` موفق شدند.
+- محصول Windows: job `125837178133`، قالب‌بندی C#، build برنامهٔ WPF، Protobuf، smoke شروع برنامه و کنترل‌های process/policy/DPAPI موفق شدند. آزمون‌های HostLifecycle در job `125837178370` موفق شدند؛ suite اجرایی شامل HostStatus، inference، replay rejection، cancellation و قرارداد TCP/QUIC است.
+- محصول Android: job `125837178286`، KtLint، Kotlin compile، ساخت APK، تولید Protobuf و تمام JVM tests موفق شدند. JUnit artifact `13219812228` را نیز بازبینی کردم: ۱۹۶ آزمون، صفر شکست. `PeerMessageFrameCodecTest` برابر ۱۰/۱۰ و `Libp2pInferenceRequestTransportTest` برابر ۷/۷ موفق بودند؛ آزمون پاک‌سازی pending/partial frame و cancellation با سه peer بومی .NET نیز موفق بود.
+- Rendezvous run `41612366582`، ساخت image تولیدی و smoke آزمون HTTP با کاربر غیرریشه‌ای را با موفقیت گذراند.
+- اصلاح A017 از نظر عمر buffer با CI تأیید شد: frame خروجی موفق Windows به‌علت رفتار غیرهم‌زمان multiplexer، داخل بودجهٔ محدود per-stream نگه داشته می‌شود تا پیام مرتب بعدی مصرف آن را تأیید کند یا stream بسته/dispose شود؛ سپس zeroize می‌شود. ارسال ناموفق فوراً frame را آزاد و zeroize می‌کند. بافرهای decoder/temporary/decoded و request در Android هم در مسیرهای تکمیل، خطا، قطع ناقص، clear صریح، لغو و بستن stream پاک‌سازی می‌شوند.
+- قرارداد Protobuf یا اعتماد peer تغییر نکرد. آزمون local جداگانه‌ای در محیط این نشست اجرا نشد؛ نتیجهٔ پذیرش بر اساس CI دقیق همان commit و JUnit artifact ثبت شده است.
+- با احراز معیار پذیرش و موفقیت آزمون‌های مرتبط، وضعیت `T0180` از `in_progress` به `done` تغییر کرد. این تأیید به معنای تکمیل وظایف دیگر یا کل محصول نیست.

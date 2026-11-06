@@ -1,0 +1,31 @@
+name: Step Three quality gate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  graph-and-tests:
+    name: Task graph and Python quality checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.13'
+      - name: Run automated tests
+        run: python -m unittest discover -s tests -v
+      - name: Check Python syntax
+        run: python -m compileall -q tools tests
+      - name: Validate graph structure
+        run: python tools/graph_guard.py "step three/project-graph.md"
+      - name: Validate recorded outputs and evidence
+        run: python tools/graph_guard.py "step three/project-graph.md" --repo-root .

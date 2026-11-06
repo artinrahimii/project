@@ -1,0 +1,219 @@
+# T0174 — verification evidence
+
+## Base revision and graph integrity
+
+- Branch: `main`
+- Base commit: `b7d47212a6f52f2c24a7bba591ba957e7072dbe6` (`V 3.0.731`)
+- Base tree: `677fbf853ee71b2f2d7205e21d5f22cb0b852b20`
+- Graph path: `step three/project-graph.md`
+- Tree Blob ID: `b482a2e5a338ea9bcf7e7583bb64e72074fb048c`
+- Git Blob SHA-1 recomputed from the complete original UTF-8 content: `b482a2e5a338ea9bcf7e7583bb64e72074fb048c` — matched.
+- Content length: 3,495,851 bytes; 3,372,239 Unicode characters.
+- Parsed structure: 229 tasks and 417 edges; T0160 and T0173 were both `done`.
+
+## Protocol and source evidence
+
+- Existing shared contract: `protocol/whitep/v1/messages.proto` defines `CancelRequest { request_id, attempt_id, reason }` and `InferenceOutcome.INFERENCE_OUTCOME_CANCELLED`. No schema change was made.
+- `src/Host.Infrastructure/ProtocolMessageParser.cs`: new bounded `ParseCancelRequest` parser.
+- `src/Shared.Contracts/ProtocolMessageValidator.cs`: new exact request/attempt/reason semantic checks; reason allowlist is `user_cancelled`.
+- `src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt`: sends cancellation on the original authenticated peer stream and preserves the pending response until a correlated terminal response arrives.
+- `src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt`: cancellation API consumes exact dispatch attempts and returns per-attempt sent/not-sent results.
+- `src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs`: concurrent bounded request handlers keep the receive loop free to read CancelRequest; cancellation lookup uses exact `(requestId, attemptId)`; only the matching token is signalled; CANCELLED response remains correlated and deadline-bounded.
+- Existing `HostRequestCoordinator` already passes a linked CancellationToken to local inference, so no duplicate cancellation subsystem was added there.
+
+## Tests authored; CI pending
+
+- `tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs`: real trusted loopback peer test sends a second active request, then sends CancelRequest while inference is awaiting its token, and checks the correlated CANCELLED response.
+- `tests/HostLifecycle.Tests/PeerMessageSecurityAcceptanceTests.cs`: parser tests valid request, malformed bytes, absent attempt, and unsupported reason.
+- `src/Client.Android/app/src/test/java/com/whitep/client/network/Libp2pInferenceRequestTransportTest.kt`: two independent authenticated libp2p peers receive and confirm separate CancelRequest messages, then each returns a distinct correlated CANCELLED result.
+- These new tests have not yet run on an exact commit; pending CI is not a pass.
+
+## Incoming dependency-edge validation
+
+1. `T0173 → T0174`: `contract_or_interface_dependency`, `validated`.
+   Reason: response cards and terminal results are identified/de-duplicated by exact request/attempt identity. Cancellation must preserve that identity so one host's terminal state cannot affect another host's attempt.
+   Evidence: `src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt`, `src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt`, `src/Client.Android/app/src/main/java/com/whitep/client/network/InferenceResponseCorrelationValidator.kt`, `protocol/whitep/v1/messages.proto`, `step three/T0173/execution-report.md`.
+
+2. `T0160 → T0174`: `contract_or_interface_dependency`, `validated`.
+   Reason: cancellation targets the canonical request ID and per-host attempt IDs generated for a dispatch round; those fields are the identity contract shared by InferenceRequest, InferenceHostAttempt and CancelRequest.
+   Evidence: `src/Client.Android/app/src/main/java/com/whitep/client/protocol/InferenceRequestPayloadBuilder.kt`, `src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceAttemptDispatcher.kt`, `src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt`, `protocol/whitep/v1/messages.proto`, `step three/T0160/execution-report.md`.
+
+The original `type=blocks` values are preserved. The outgoing `T0174 → T0175` edge remains unreviewed.
+
+## UI integration limitation
+
+The current `MainActivity.requestScreen` is a preparation-only preview and explicitly states it does not send requests to hosts. It has no real dispatch result or active request lifecycle. The current Connections screen reports discovery unavailable. Therefore no user-facing Cancel button was wired in this attempt; an inert button or mock list of peers would be misleading. T0174 remains `in_progress` until real dispatch UI integration is possible and tested.
+
+## Attempt result
+
+`T0174-A001` is `partial`: real transport/runtime/host cancellation paths and integration tests were added; exact-head CI and user-facing control integration remain outstanding.
+
+
+## Android KtLint failure and formatting correction (append-only)
+
+- Exact V 3.0.732 Android product job: [41271523252](https://github.com/artinrahimii/project/actions/runs/41271523252), job [124745099617](https://github.com/artinrahimii/project/actions/runs/41271523252/job/124745099617).
+- KtLint findings: imports were not in lexicographic order (generated CancelRequest import / java imports); two chained calls needed the newline before the dot at the request builder and CANCELLED response builder.
+- The APK build, JVM tests and generated Protobuf validation were skipped because lint failed first.
+- T0174-A005 reorders the full import list and adjusts both call-chain continuation layouts. No runtime behavior changed. The exact V 3.0.733 Android workflow will verify the correction.
+- Independent checks on V 3.0.732 succeeded: Windows WPF [job 124745099788](https://github.com/artinrahimii/project/actions/runs/41271523252/job/124745099788), HostLifecycle [job 124745100081](https://github.com/artinrahimii/project/actions/runs/41271523252/job/124745100081), real local inference [run 41271523283](https://github.com/artinrahimii/project/actions/runs/41271523283).
+
+
+## Android production-source KtLint correction (append-only)
+
+- Exact V 3.0.733 Android product job: [124746076534](https://github.com/artinrahimii/project/actions/runs/41271856082/job/124746076534).
+- Findings: `Libp2pInferenceRequestTransport.kt:317` required the CancelRequest builder expression and leading-dot chain on continuation lines. `AndroidInferenceRequestRuntime.kt:271, 274, 284` required multiline expression formatting for the queued-attempt filter, transport cancellation invocation and per-attempt boolean.
+- Android APK/JVM/Protobuf validation was skipped because main-source-set KtLint failed first.
+- T0174-A007 adjusts exactly these expression layouts without changing cancellation behavior. The new exact-head Android workflow must still confirm formatting, build, JVM regressions and generated-source checks.
+- On exact V 3.0.733, Step Three quality, Windows WPF build/startup/security and HostLifecycle integration passed: [quality](https://github.com/artinrahimii/project/actions/runs/41271856045), [Windows](https://github.com/artinrahimii/project/actions/runs/41271856082/job/124746076851), [HostLifecycle](https://github.com/artinrahimii/project/actions/runs/41271856082/job/124746076793).
+
+
+## Final import-order correction (append-only)
+
+- Exact V 3.0.734 Android job: [124746942803](https://github.com/artinrahimii/project/actions/runs/41272151054/job/124746942803).
+- Production Kotlin KtLint passed. Test-source-set KtLint failed one import-order check because the `java.*` block was placed before `org.whitep.shared.contracts.v1.hostAnnouncement/hostCapabilities/hostStatus/modelCapability`.
+- T0174-A009 moves `java.*` after all `org.whitep` imports, keeps imports contiguous and leaves the cancellation generated import alphabetically placed.
+- No runtime changes were made by this formatting correction.
+- Step Three, Windows WPF, and HostLifecycle checks succeeded on exact V 3.0.734; Android APK/JVM was skipped at KtLint and remains unverified.
+
+
+## Exact V 3.0.735 CI and A010 failure
+
+- Step Three quality gate passed on exact head `0391c10da301d876b549d6d23eb753e0b00c5dc4`: [run 41272466910](https://github.com/artinrahimii/project/actions/runs/41272466910).
+- Windows WPF build/startup/security passed: [job 124747874779](https://github.com/artinrahimii/project/actions/runs/41272466918/job/124747874779).
+- HostLifecycle unit/integration passed, including the trusted loopback CancelRequest-to-CANCELLED response case: [job 124747874652](https://github.com/artinrahimii/project/actions/runs/41272466918/job/124747874652).
+- Android KtLint passed and `assembleDebug` passed. The JVM test source did not compile:
+  `Libp2pInferenceRequestTransportTest.kt:72:61`: `ProtocolBinding<LoopbackCancellationResponder>` was not assignable to the test helper's `ProtocolBinding<LoopbackInferenceResponder>`.
+- Therefore the Android JVM test method was not executed, and no Android cancellation-test pass is claimed for V 3.0.735.
+
+## A011 source correction
+
+- Changed test helper `createHost` to accept `ProtocolBinding<T>` for `T : SimpleClientHandler`.
+- This removes the responder-type mismatch while preserving the common test-host builder and protocol binding cast.
+- No production code or protocol behavior changed.
+- Exact-head Android test-source compilation, the cancellation JVM regression and generated Protobuf validation remain pending.
+- T0174 remains `in_progress`: the Android request UI is still a prepare-only preview without real dispatch/selected-attempt state, so there is no genuine click path to attach a Cancel button to.
+
+
+## Exact V 3.0.736 CI evidence — T0174-A012
+
+- Exact commit `339b1efb54449fe0a3d5d4dad3d26c096ad3d36d` (`V 3.0.736`).
+- Step Three quality gate: PASS — [run 41274355328](https://github.com/artinrahimii/project/actions/runs/41274355328).
+- Product workflow: SUCCESS — [run 41274355277](https://github.com/artinrahimii/project/actions/runs/41274355277).
+- Android job [124753390180](https://github.com/artinrahimii/project/actions/runs/41274355277/job/124753390180): KtLint, `assembleDebug`, `testDebugUnitTest`, generated Protobuf Java/Kotlin all succeeded.
+- Windows WPF [job 124753390376](https://github.com/artinrahimii/project/actions/runs/41274355277/job/124753390376): PASS.
+- HostLifecycle [job 124753390338](https://github.com/artinrahimii/project/actions/runs/41274355277/job/124753390338): PASS, including the Windows loopback CancelRequest/CANCELLED integration acceptance.
+- Android test report artifact `13070711776`: 150 tests, zero failures, zero ignored. All 4 `Libp2pInferenceRequestTransportTest` tests passed; `cancelAttemptsSendsCorrelatedCancelRequestsToEverySelectedAuthenticatedHost` passed in 6.055 seconds.
+- Android-JVM test results cover two authenticated JVM peers, not native .NET peers. Do not describe this as cross-runtime cancellation acceptance.
+
+## T0174-A013 — native Android/.NET cancellation interop test (pending)
+
+- The .NET test fixture can now run in `cancel` mode, validate the exact CancelRequest pair/reason and send a correlated CANCELLED response.
+- The new Android JVM test starts three separate native .NET peer processes, submits the shared request to each, waits for all three requests to arrive, sends cancellation for the selected attempts and validates the three returned CANCELLED outcomes.
+- Test source is committed as part of the next execution step, but has not yet run in CI. No pass is claimed for this new test until exact-head product CI succeeds.
+
+## Outstanding production UI integration
+
+The existing Android request screen is a prepare-only preview. It creates neither a live dispatch nor a retained list of selected `InferenceHostAttempt` values. No production call site invokes `cancelSelectedHosts`. A real Cancel button is therefore not yet implemented. T0174 remains `in_progress` despite the passing backend/JVM/Windows acceptance tests.
+
+
+## V 3.0.737 — exact-head result
+
+- Quality gate: PASS — [run 41275179422](https://github.com/artinrahimii/project/actions/runs/41275179422).
+- Windows WPF build/startup/security: PASS — [job 124755825167](https://github.com/artinrahimii/project/actions/runs/41275179435/job/124755825167).
+- HostLifecycle integration: PASS — [job 124755825154](https://github.com/artinrahimii/project/actions/runs/41275179435/job/124755825154).
+- Real local inference integration: PASS — [run 41275179495](https://github.com/artinrahimii/project/actions/runs/41275179495).
+- Android KtLint failed one import-order check at `Libp2pInferenceRequestTransportTest.kt:3:1`. The new `kotlinx.coroutines.delay` import was placed before `Dispatchers`; the sorted order is `CompletableDeferred`, `Dispatchers`, `delay`, `runBlocking`, etc.
+- Android APK, JVM and Protobuf steps were skipped, so the A013 Android-to-.NET cancellation test did not execute.
+
+## A015 source correction
+
+- Moved `import kotlinx.coroutines.delay` after `import kotlinx.coroutines.Dispatchers`.
+- Only the test-source import order changed. Production code, C# fixture and protocol behavior are unchanged.
+- Exact-head CI for A015 remains pending. T0174 stays `in_progress`.
+
+
+## T0174-A016 — exact V 3.0.738 acceptance evidence
+
+- Exact tested `main` commit: `34db50f1e11de7ee034fb1082b7f901ffc1134d9` (`V 3.0.738`).
+- Product workflow SUCCESS: [41275610857](https://github.com/artinrahimii/project/actions/runs/41275610857).
+- Step Three graph/Python quality workflow SUCCESS: [41275610846](https://github.com/artinrahimii/project/actions/runs/41275610846).
+- Android CI job SUCCESS: [124757067197](https://github.com/artinrahimii/project/actions/runs/41275610857/job/124757067197); KtLint, `assembleDebug`, `testDebugUnitTest` and generated Protobuf Java/Kotlin verification passed.
+- Android test report artifact: [whitep-android-unit-test-reports]( https://github.com/artinrahimii/project/actions/runs/41275610857/artifacts/13071167147 ). The extracted Gradle report shows 151 tests, 0 failures, 0 ignored. The transport test class contains 5 tests, all passing:
+  - `cancelAttemptsSendsCorrelatedCancelRequestsToEverySelectedAuthenticatedHost` — PASS, 6.053 seconds.
+  - `sendsCancellationToThreeNativeDotNetLibp2pHostsAndReceivesCancelledResponses` — PASS, 3.808 seconds.
+  - The existing Android request/response, three-host dispatch and response-correlation tests also passed.
+- Windows HostLifecycle job SUCCESS: [124757066927](https://github.com/artinrahimii/project/actions/runs/41275610857/job/124757066927).
+- Windows WPF Release build/startup/security job SUCCESS: [124757067131](https://github.com/artinrahimii/project/actions/runs/41275610857/job/124757067131).
+- Product CI proves the Android cancellation message interoperates with three independent native .NET peer processes and yields three correctly correlated `CANCELLED` responses.
+- Graph Blob from the exact V 3.0.738 tree: `e2a9429213736a69786d886739f92e2700049128`; full UTF-8 source content was 3,538,870 bytes and the locally recomputed Git Blob SHA-1 matched. The original graph structure parsed as 229 tasks and 417 edges.
+
+## User-facing UI still not accepted
+
+- `MainActivity.requestScreen` is still a preparation-only preview: no live host discovery, no real dispatch call, and no active selected-attempt state.
+- `MainActivity.connectionsScreen` explicitly reports discovery unavailable and performs no connection attempt.
+- `AndroidInferenceRequestRuntime` requires caller-provided `HostCandidate` snapshots from a separately validated discovery/status source; it deliberately does not invent readiness from metadata-only rendezvous announcements.
+- No production Android call site invokes `dispatchRound` or `cancelSelectedHosts`.
+- Therefore the visible Cancel button acceptance criterion is still unmet; T0174 remains `in_progress`, despite passing Android↔native-.NET cancellation interoperability.
+
+
+## T0174-A017 — missing live discovery/readiness prerequisite
+
+Exact base inspected: `main` commit `211eae4cc7f33ae956e3d505ad2b5ba58104e9bf` (`V 3.0.739`).
+
+Source-backed findings:
+- `MainActivity.requestScreen` only invokes `prepareRequest`; its own copy says no request is sent. The Connections screen states peer discovery is unavailable.
+- `AndroidInferenceRequestRuntime` has real `dispatchRound` and `cancelSelectedHosts` APIs, but callers must supply `HostCandidate` values from a separately validated discovery/status source.
+- `HostCandidateSelector` validates supplied announcement/status snapshots, including READY state, freshness, capacity and model support; it expressly does not implement discovery or network I/O.
+- `RendezvousPeerDirectoryClient` fetches expiring announcement metadata and peer addresses only. The current rendezvous directory stores metadata; it does not provide a live HostStatus/heartbeat stream to the Android UI. `HostStatusRequest`/`HostStatus` being present in `messages.proto` and wire fixtures is not evidence of a production status-discovery call site.
+
+Dependency decision: added validated `T0124 → T0174` (`type: blocks`, classification `contract_or_interface_dependency`). The edge records that the live Cancel control consumes actual queued attempts from a real dispatch, and that dispatch requires candidates selected from independently validated reachability/readiness/capacity/model data. No existing edge was removed or reclassified. T0174 now has T0124 in `depends_on` and is `blocked` until this input contract exists.
+
+Upstream blocker: T0124 is not_started behind T0123 and T0115; T0123 is not_started behind T0122; T0122 is not_started behind T0121; T0121 is blocked because there is no deployed production HTTPS rendezvous endpoint and no independent-network peer to validate advertised reachability. These facts prevent safely presenting a live Cancel action tied to real selected attempts.
+
+Validation scope: this attempt was a source/graph audit only. No product implementation changed and no new test command was run. The existing V 3.0.739 product build and Step Three quality gate completed successfully on the exact base commit: [product](https://github.com/artinrahimii/project/actions/runs/41278700922), [quality](https://github.com/artinrahimii/project/actions/runs/41278700976). Those runs validate the base source/build and graph guard, not an Android UI cancellation click path.
+
+
+## T0174-A018 — current-main dependency verification (V 3.0.777)
+
+- Base: `6aa52c73e59b8508be75c6c454bc16c28ae16ca1`; graph Blob: `867eb8c83df840ee25ae660caece2b9841d90a69` (full file retrieved and SHA-1 verified against the base commit tree).
+- Confirmed T0121-T0125, including T0124, are now done. The previous A017 upstream blocker is stale.
+- Current Android request screen is still prepare-only; the Connections screen performs no discovery or network request.
+- Rendezvous exposes metadata-only endpoint resolution; `inference.v1` is not a model-capability snapshot. HostCandidateSelector requires typed HostAnnouncement capability data and fresh authenticated HostStatus. AndroidInferenceRequestRuntime has the real dispatch/cancel APIs, but the production screen does not call them or retain dispatch attempts.
+- Existing Android identity and trust stores were verified in source, but are not wired to the request UI flow.
+- Added a validated `T0126 → T0174` contract/interface dependency. T0126 must provide the real discovery/status/selection/dispatch path before T0174 can cancel actual queued attempts.
+- No product source change and no test execution in A018. T0174 remains blocked; no task was marked complete.
+
+## T0174-A019 — production Cancel action (exact-head CI pending)
+
+- Base: `45e9c2941393e0e86e116c214335956289921c12` (`V 3.0.797`).
+- The previous blocker is cleared by T0126's live Compose request/dispatch flow.
+- New gateway contract: `RequestExecutionGateway.cancelSelectedHosts`; concrete runtime delegates to its existing authenticated transport cancellation routine.
+- `RequestViewModel` keeps the original request ID and attempt list returned by dispatch, offers cancellation only while at least one selected attempt is queued, then reports sent-frame count.
+- Compose `MainActivity.requestScreen` now renders and wires `Cancel request on selected hosts`.
+- Added a three-peer ViewModel regression that asserts all exact queued attempts are sent to the gateway and that later correlated CANCELLED responses populate the UI response cards.
+- Existing V 3.0.738 native .NET three-peer transport interoperability evidence remains applicable to the unchanged underlying transport; the new production UI/ViewModel layer still requires exact-head CI execution.
+- **No test result is claimed for A019 yet.** The task remains `in_progress` until the next exact-head CI results are reconciled.
+
+
+## V 3.0.798 exact CI failure
+
+- Android KtLint failed at `RequestViewModelTest.kt:266:63` (chain continuation) and `MainActivity.kt:322:121` (120-character line limit). APK/JVM/Protobuf tasks did not run.
+- Step Three Python suite: 317/317 passed; compileall passed; graph syntax validation passed.
+- Repository-wide graph guard found one missing current T0126 output/evidence path. The path was removed from current T0126 arrays after full-tree inspection; see T0126-A017.
+- Fixes: put each Kotlin chained member on a new line and make the Compose conditional button text a multiline expression. Exact-head rerun is required.
+
+## T0174-A021 — exact V 3.0.799 cancellation acceptance evidence
+
+- Exact `main` head tested: `be653d0f29f3eb5c991ccb94ab1069cfdf16609e` (`V 3.0.799`); tree: `80ada1c0b2475432529c0aa6508feb17ab67934b`.
+- Exact graph source at that base: `step three/project-graph.md`, Blob `aa2e2644062ae3ee91410546413b37ffe951f9d5`; complete original UTF-8 content was 3,840,120 bytes / 3,713,584 Unicode characters. The calculated Git Blob SHA-1 matched the tree Blob before parsing; the fenced JSON parsed as 230 nodes and 422 edges.
+- Production click path inspected in the exact tree: `MainActivity.requestScreen` → `RequestViewModel.cancelCurrentRequest` → `RequestExecutionGateway.cancelSelectedHosts` → `AndroidInferenceRequestRuntime.cancelSelectedHosts` → authenticated `Libp2pInferenceRequestTransport.cancelAttempts`. The selected request ID and attempt list are copied from the real dispatch result; the operation does not rediscover or substitute peers. Only queued submissions receive cancellation frames; correlated host responses remain the authoritative terminal result.
+- **UI/ViewModel test — PASS:** `RequestViewModelTest.cancelActionSendsCorrelatedCancellationForEveryQueuedAttemptFromTheLiveDispatch`. It verifies all three queued attempts and their peer IDs are passed with the original request ID and that three CANCELLED cards arrive after the response window is released.
+- **Android/.NET transport test — PASS:** `sendsCancellationToThreeNativeDotNetLibp2pHostsAndReceivesCancelledResponses` (4.162 seconds). Three separate native .NET peer processes return a matching correlated CANCELLED response for each selected attempt.
+- **Authenticated peer transport test — PASS:** `cancelAttemptsSendsCorrelatedCancelRequestsToEverySelectedAuthenticatedHost` (6.068 seconds).
+- **Android product job — PASS:** [job 125166827040](https://github.com/artinrahimii/project/actions/runs/41411972355/job/125166827040): KtLint, `assembleDebug`, `testDebugUnitTest`, generated Protobuf Java/Kotlin checks and artifact uploads. Gradle report artifact [13126540335](https://github.com/artinrahimii/project/actions/runs/41411972355/artifacts/13126540335) shows 181 tests, 0 failures, 0 ignored.
+- **Windows WPF — PASS:** [job 125166827068](https://github.com/artinrahimii/project/actions/runs/41411972355/job/125166827068), including Release build, startup and security/DPAPI checks.
+- **Windows HostLifecycle — PASS:** [job 125166826748](https://github.com/artinrahimii/project/actions/runs/41411972355/job/125166826748).
+- **Step Three quality gate — PASS:** [run 41411972354](https://github.com/artinrahimii/project/actions/runs/41411972354), including automated tests, syntax, graph structure, and recorded output/evidence validation.
+- **Rendezvous container — PASS:** [run 41411972411](https://github.com/artinrahimii/project/actions/runs/41411972411), limited to image build and non-root HTTP contract smoke.
+- **Historical failure retained:** V 3.0.798 Android KtLint and Step Three stale-path validation failures are recorded as T0174-A020; neither has been removed. The corrected exact-head V 3.0.799 verification passed.
+- **Scope:** T0174 is accepted and marked `done`. Physical two-device/independent-public-network acceptance is not claimed; T0128 and T0230 remain deferred_final.

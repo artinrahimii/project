@@ -1,0 +1,123 @@
+name: White-P release assets
+on:
+  push:
+    tags:
+      - 'android-v*'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  package-and-publish:
+    name: Package checksums and draft release assets
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      actions: read
+      contents: write
+    steps:
+      - name: Check out the exact tagged source
+        uses: actions/checkout@v4
+      - name: Locate successful builds for this exact commit
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          api="repos/${GITHUB_REPOSITORY}/actions/runs?head_sha=${GITHUB_SHA}&per_page=100"
+          signed_run_id="$(gh api "$api" --jq '[.workflow_runs[] | select(.name == "Android signed release" and .conclusion == "success")] | sort_by(.created_at) | last | .id // empty')"
+          product_run_id="$(gh api "$api" --jq '[.workflow_runs[] | select(.name == "White-P product build" and .conclusion == "success")] | sort_by(.created_at) | last | .id // empty')"
+          test -n "$signed_run_id" || { echo "No successful Android signed-release run exists for $GITHUB_SHA."; exit 1; }
+          test -n "$product_run_id" || { echo "No successful product-build run exists for $GITHUB_SHA."; exit 1; }
+          echo "ANDROID_SIGNED_RUN_ID=$signed_run_id" >> "$GITHUB_ENV"
+          echo "PRODUCT_BUILD_RUN_ID=$product_run_id" >> "$GITHUB_ENV"
+          echo "Using Android signed-release run $signed_run_id and product-build run $product_run_id for $GITHUB_SHA."
+      - name: Download the production-signed APK and Windows installer
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          signed_dir="$RUNNER_TEMP/whitep-signed-apk"
+          windows_dir="$RUNNER_TEMP/whitep-windows-installer"
+          mkdir -p "$signed_dir" "$windows_dir"
+          gh run download "$ANDROID_SIGNED_RUN_ID" --repo "$GITHUB_REPOSITORY" --name whitep-android-release-signed --dir "$signed_dir"
+          gh run download "$PRODUCT_BUILD_RUN_ID" --repo "$GITHUB_REPOSITORY" --name whitep-windows-installer --dir "$windows_dir"
+          test -s "$signed_dir/app-release.apk" || { echo "Production-signed APK artifact is missing or empty."; exit 1; }
+          test -s "$windows_dir/releases/WhiteP-Setup-0.1.0-win-x64.exe" || { echo "Windows installer executable is missing or empty."; exit 1; }
+          test -s "$windows_dir/windows-installer/licenses/ThirdPartyNotices.md" || { echo "Windows third-party notices are missing."; exit 1; }
+          test -s "$windows_dir/windows-installer/licenses/licenses.json" || { echo "Windows license inventory is missing."; exit 1; }
+          test -s "$windows_dir/windows-installer/licenses/ModelLicenses.md" || { echo "Sample model license notice is missing."; exit 1; }
+          test -s "$windows_dir/windows-installer/licenses/model-licenses.json" || { echo "Sample model license manifest is missing."; exit 1; }
+          test -s "$windows_dir/windows-installer/licenses/files/WhiteP-Sample-Model-Apache-2.0.txt" || { echo "Sample model Apache-2.0 license text is missing."; exit 1; }
+          mkdir -p "$GITHUB_WORKSPACE/artifacts/releases"
+          cp "$signed_dir/app-release.apk" "$GITHUB_WORKSPACE/artifacts/releases/WhiteP-Android-0.1.0.apk"
+          (cd "$windows_dir" && zip -qr "$GITHUB_WORKSPACE/artifacts/releases/WhiteP-Windows-Installer.zip" releases windows-installer)
+      - name: Generate and verify SHA-256 checksums
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$GITHUB_WORKSPACE/artifacts/releases"
+          {
+            printf 'source_commit=%s\n' "$GITHUB_SHA"
+            printf 'android_signed_release_run_id=%s\n' "$ANDROID_SIGNED_RUN_ID"
+            printf 'product_build_run_id=%s\n' "$PRODUCT_BUILD_RUN_ID"
+          } > BUILD-PROVENANCE.txt
+          sha256sum WhiteP-Android-0.1.0.apk WhiteP-Windows-Installer.zip BUILD-PROVENANCE.txt > SHA256SUMS.txt
+          sha256sum --check SHA256SUMS.txt
+          test "$(wc -l < SHA256SUMS.txt)" -eq 3
+          echo "PASS: three SHA-256 entries were generated and verified."
+      - name: Upload checksums and release assets as a workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: whitep-release-assets
+          path: artifacts/releases/
+          if-no-files-found: error
+          retention-days: 30
+      - name: Create or update the draft GitHub Release for an android-v tag
+        if: startsWith(github.ref, 'refs/tags/android-v')
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          tag="$GITHUB_REF_NAME"
+          # The release-by-tag endpoint only returns published releases. Draft releases
+          # must be discovered through the releases list endpoint (this job has contents:write).
+          find_release() {
+            GH_RELEASE_TAG="$tag" gh api --paginate --slurp \
+              "repos/${GITHUB_REPOSITORY}/releases?per_page=100" \
+              --jq 'add | [.[] | select(.tag_name == env.GH_RELEASE_TAG)] | last // empty'
+          }
+
+          release_json="$(find_release)"
+          if [[ -n "$release_json" ]]; then
+            is_draft="$(printf '%s' "$release_json" | jq -r '.draft')"
+            if [[ "$is_draft" != "true" ]]; then
+              echo "Refusing to modify an already-published release: $tag"
+              exit 1
+            fi
+          else
+            version="${tag#android-v}"
+            gh release create "$tag" \
+              --repo "$GITHUB_REPOSITORY" \
+              --draft \
+              --verify-tag \
+              --title "White-P $version" \
+              --notes-file docs/release-assets.md
+          fi
+
+          gh release upload "$tag" artifacts/releases/* --repo "$GITHUB_REPOSITORY" --clobber
+          release_json="$(find_release)"
+          test -n "$release_json" || { echo "Draft release $tag was not found in the releases listing."; exit 1; }
+          printf '%s' "$release_json" | jq -e --arg tag "$tag" '
+            .draft == true and
+            .tag_name == $tag and
+            ([.assets[].name] | index("WhiteP-Android-0.1.0.apk") != null) and
+            ([.assets[].name] | index("WhiteP-Windows-Installer.zip") != null) and
+            ([.assets[].name] | index("SHA256SUMS.txt") != null) and
+            ([.assets[].name] | index("BUILD-PROVENANCE.txt") != null)
+          ' >/dev/null
+          echo "PASS: draft release $tag contains both platform assets, SHA256SUMS.txt and BUILD-PROVENANCE.txt."
+      - name: Explain manual dispatch behavior
+        if: github.event_name == 'workflow_dispatch'
+        run: echo "Checksums and the whitep-release-assets artifact were generated. A GitHub Release is created only by pushing an android-v* tag."

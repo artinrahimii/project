@@ -1,0 +1,127 @@
+"""Source-contract guards for prompt/capsule/secret canary scans in logs and temporary artifacts."""
+import unittest
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+HOST_STORE = (ROOT / "src/Host.Windows/Chat/WindowsHostConversationStore.cs").read_text(encoding="utf-8")
+HOST_IDENTITY = (ROOT / "src/Shared.Security/HostIdentityStore.cs").read_text(encoding="utf-8")
+PEER_TRUST = (ROOT / "src/Shared.Security/PeerTrustStore.cs").read_text(encoding="utf-8")
+HOST_SETTINGS = (ROOT / "src/Host.Infrastructure/LocalHostSettingsStore.cs").read_text(encoding="utf-8")
+MODEL_INSTALLER = (ROOT / "src/Host.Windows/Models/VerifiedModelInstaller.cs").read_text(encoding="utf-8")
+HOST_RUNTIME_TEST = (ROOT / "tests/HostLifecycle.Tests/ChatConversationAcceptanceTests.cs").read_text(encoding="utf-8")
+HOST_LOG_TEST = (ROOT / "tests/HostLifecycle.Tests/SafeDiagnosticLogAcceptanceTests.cs").read_text(encoding="utf-8")
+ANDROID_DB_FACTORY = (
+    ROOT / "src/Client.Android/app/src/main/java/com/whitep/client/data/EncryptedClientDatabaseFactory.kt"
+).read_text(encoding="utf-8")
+ANDROID_DB_TEST = (
+    ROOT / "src/Client.Android/app/src/androidTest/java/com/whitep/client/data/EncryptedClientDatabaseAcceptanceTest.kt"
+).read_text(encoding="utf-8")
+ANDROID_LOG = (
+    ROOT / "src/Client.Android/app/src/main/java/com/whitep/client/network/SafeDiagnosticLog.kt"
+).read_text(encoding="utf-8")
+ANDROID_LOG_TEST = (
+    ROOT / "src/Client.Android/app/src/test/java/com/whitep/client/network/SafeDiagnosticLogTest.kt"
+).read_text(encoding="utf-8")
+STATIC_LOG_TEST = (ROOT / "tests/test_network_payload_logging.py").read_text(encoding="utf-8")
+SECURITY_DOC = (ROOT / "docs/security.md").read_text(encoding="utf-8")
+
+MARKERS = (
+    "T0187_PROMPT_CANARY_7F2A",
+    "T0187_CONTEXT_CAPSULE_CANARY_91C4",
+    "T0187_SECRET_CANARY_3BD8",
+)
+
+
+class SensitiveArtifactScanningTests(unittest.TestCase):
+    def test_windows_temporary_file_scan_detects_and_then_rejects_all_canaries(self):
+        for marker in MARKERS:
+            with self.subTest(marker=marker):
+                self.assertIn(marker, HOST_RUNTIME_TEST)
+        self.assertIn("ContainsSensitiveCanariesInFiles(directory)", HOST_RUNTIME_TEST)
+        self.assertIn("AssertNoSensitiveCanariesInFiles(directory", HOST_RUNTIME_TEST)
+        self.assertIn("Directory.EnumerateFiles(directory", HOST_RUNTIME_TEST)
+        self.assertIn("File.ReadAllBytes(candidate)", HOST_RUNTIME_TEST)
+        self.assertIn("CryptographicOperations.ZeroMemory(contents)", HOST_RUNTIME_TEST)
+        self.assertIn("A synthetic prompt, context capsule or secret marker remained", HOST_RUNTIME_TEST)
+
+    def test_windows_store_protects_plaintext_before_writing_temporary_file(self):
+        protect = HOST_STORE.index("_protector.Protect(plaintext)")
+        temp_create = HOST_STORE.index("new FileStream(", HOST_STORE.index("temporaryPath = Path.Combine"))
+        encrypted_write = HOST_STORE.index("stream.Write(protectedPayload)", temp_create)
+        self.assertLess(protect, temp_create)
+        self.assertLess(temp_create, encrypted_write)
+        self.assertIn("CryptographicOperations.ZeroMemory(plaintext)", HOST_STORE)
+        self.assertIn("CryptographicOperations.ZeroMemory(protectedPayload)", HOST_STORE)
+
+    def test_windows_eventsource_runtime_check_covers_sensitive_canaries(self):
+        for marker in MARKERS:
+            with self.subTest(marker=marker):
+                self.assertIn(marker, HOST_LOG_TEST)
+        self.assertIn("record.Payload", HOST_LOG_TEST)
+        self.assertIn("record.Message", HOST_LOG_TEST)
+        self.assertIn("record.EventId != 1", HOST_LOG_TEST)
+        self.assertIn("record.Payload is not { Count: 3 } payload", HOST_LOG_TEST)
+
+    def test_android_sqlcipher_migration_scans_database_and_temporary_sidecars(self):
+        for marker in MARKERS:
+            with self.subTest(marker=marker):
+                self.assertIn(marker, ANDROID_DB_TEST)
+        self.assertIn("assertNoSensitiveCanariesInDatabaseArtifacts(databaseFile)", ANDROID_DB_TEST)
+        self.assertIn(".sqlcipher-migrating", ANDROID_DB_TEST)
+        self.assertIn('File(databaseFile.absolutePath + "-wal")', ANDROID_DB_TEST)
+        self.assertIn('File(databaseFile.absolutePath + "-shm")', ANDROID_DB_TEST)
+        self.assertIn("sqlcipher_export", ANDROID_DB_FACTORY)
+        self.assertIn("Os.rename(temporaryFile.absolutePath, databaseFile.absolutePath)", ANDROID_DB_FACTORY)
+        self.assertIn("deleteIfPresent(temporaryFile)", ANDROID_DB_FACTORY)
+
+    def test_android_diagnostic_formatter_runtime_test_covers_sensitive_canaries(self):
+        for marker in MARKERS:
+            with self.subTest(marker=marker):
+                self.assertIn(marker, ANDROID_LOG_TEST)
+        self.assertIn("Log.i(TAG, formatRecord(eventCode, outcomeCode, durationMilliseconds))", ANDROID_LOG)
+        self.assertIn("durationMilliseconds: Long", ANDROID_LOG)
+
+    def test_static_network_log_scan_remains_enabled_and_scope_is_documented(self):
+        self.assertIn("LOG_SINK", STATIC_LOG_TEST)
+        self.assertIn("SENSITIVE_REFERENCE", STATIC_LOG_TEST)
+        self.assertIn("## آزمون اسکن log و فایل‌های موقت برای prompt، capsule و اسرار (T0187)", SECURITY_DOC)
+        self.assertIn("pagefile/swap", SECURITY_DOC)
+        self.assertIn("crash dump", SECURITY_DOC)
+
+
+
+    def test_identity_and_peer_trust_temporary_files_write_only_protected_envelopes(self):
+        self.assertIn("_protector.Protect(serializedPrivateKey)", HOST_IDENTITY)
+        self.assertIn("envelope = BuildEnvelope(protectedPayload)", HOST_IDENTITY)
+        self.assertIn("stream.Write(envelope)", HOST_IDENTITY)
+        self.assertIn("CryptographicOperations.ZeroMemory(serializedPrivateKey)", HOST_IDENTITY)
+        self.assertIn("_protector.Protect(plaintext)", PEER_TRUST)
+        self.assertIn("protectedPayload.CopyTo(envelope, FileMagic.Length + 1)", PEER_TRUST)
+        self.assertIn("stream.Write(envelope)", PEER_TRUST)
+        self.assertIn("CryptographicOperations.ZeroMemory(plaintext)", PEER_TRUST)
+
+    def test_settings_temp_file_contains_no_request_capsule_or_secret_fields(self):
+        self.assertIn('".tmp"', HOST_SETTINGS)
+        self.assertIn("JsonSerializer.Serialize(stream, document, JsonOptions)", HOST_SETTINGS)
+        settings_document = HOST_SETTINGS.split("private sealed class SettingsDocument", 1)[1]
+        for field in ("Prompt", "ContextCapsule", "SerializedCapsule", "PrivateKey", "Secret", "AccessToken", "Password"):
+            with self.subTest(field=field):
+                self.assertNotIn(field.lower(), settings_document.lower())
+
+    def test_model_staging_temp_file_is_verified_model_content_not_request_content(self):
+        self.assertIn('.whitep-download-{Guid.NewGuid():N}.tmp', MODEL_INSTALLER)
+        self.assertIn("_downloader.DownloadAsync(model, temporaryPath", MODEL_INSTALLER)
+        self.assertIn("SHA256.HashDataAsync(input, cancellationToken)", MODEL_INSTALLER)
+        self.assertIn("ValidateModelFileFormatAsync(model.Format, temporaryPath", MODEL_INSTALLER)
+        self.assertIn("TryDelete(temporaryPath)", MODEL_INSTALLER)
+
+    def test_android_context_capsule_canary_is_stored_in_the_actual_capsule_blob(self):
+        self.assertIn("ConversationContextCapsule(", ANDROID_DB_TEST)
+        self.assertIn("ConversationContextCapsuleEntity(", ANDROID_DB_TEST)
+        self.assertIn("serializedCapsule = capsuleBytes", ANDROID_DB_TEST)
+        self.assertIn("ConversationContextCapsule.decode", ANDROID_DB_TEST)
+        self.assertIn("keyFacts = listOf(capsuleMarker)", ANDROID_DB_TEST)
+
+
+if __name__ == "__main__":
+    unittest.main()

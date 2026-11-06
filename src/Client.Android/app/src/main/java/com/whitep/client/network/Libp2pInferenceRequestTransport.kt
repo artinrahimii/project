@@ -1,0 +1,807 @@
+package com.whitep.client.network
+
+import com.whitep.client.errors.RequestExecutionException
+import com.whitep.client.requests.InferenceRequestTransport
+import com.whitep.client.requests.InferenceTransportSubmission
+import io.libp2p.core.Host
+import io.libp2p.core.PeerId
+import io.libp2p.core.crypto.PrivKey
+import io.libp2p.core.dsl.host
+import io.libp2p.core.multiformats.Multiaddr
+import io.libp2p.core.multistream.ProtocolBinding
+import io.libp2p.core.mux.StreamMuxerProtocol
+import io.libp2p.etc.SimpleClientHandler
+import io.libp2p.etc.createSimpleBinding
+import io.libp2p.protocol.Identify
+import io.netty.buffer.ByteBuf
+import io.netty.buffer.Unpooled
+import io.netty.channel.ChannelHandlerContext
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeout
+import org.whitep.shared.contracts.v1.CancelRequest
+import org.whitep.shared.contracts.v1.HostStatus
+import org.whitep.shared.contracts.v1.HostStatusRequest
+import org.whitep.shared.contracts.v1.InferenceRequest
+import org.whitep.shared.contracts.v1.InferenceResponse
+import java.io.Closeable
+import java.io.IOException
+import java.time.Clock
+import java.time.Duration
+import java.util.Arrays
+import java.util.concurrent.CompletableFuture
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicLong
+
+/**
+ * Android outbound libp2p adapter for the Windows /white-p/peer-message/1.0.0 protocol.
+ * The Standard libp2p host builder configures direct TCP, NoiseXX and Mplex. The selected
+ * PeerId must be explicitly trusted and must match the metadata-only HTTPS directory entry.
+ *
+ * QUEUED means the local stream write completed. Use awaitResponse to confirm that the
+ * authenticated remote peer returned a correlated InferenceResponse.
+ */
+class Libp2pInferenceRequestTransport(
+    private val localIdentity: PrivKey,
+    private val resolveEndpoint: suspend (String) -> RendezvousPeerEndpoint?,
+    private val trustVerifier: PeerTrustVerifier,
+    private val clock: Clock = Clock.systemUTC(),
+    private val connectionTimeout: Duration = DEFAULT_CONNECTION_TIMEOUT,
+) : InferenceRequestTransport,
+    Closeable {
+    private data class AttemptKey(
+        val requestId: String,
+        val attemptId: String,
+    )
+
+    private class PendingAttempt(
+        val peerId: String,
+        val modelId: String,
+        val roundId: String,
+        val deadlineUnixMs: Long,
+    ) {
+        val response = CompletableDeferred<InferenceResponse>()
+
+        @Volatile
+        var controller: InferencePeerMessageController? = null
+    }
+
+    private class PendingHostStatusRequest(
+        val peerId: String,
+    ) {
+        val response = CompletableDeferred<HostStatus>()
+
+        @Volatile
+        var controller: InferencePeerMessageController? = null
+    }
+
+    private val closed = AtomicBoolean(false)
+    private val startMutex = Mutex()
+    private val pendingAttempts = ConcurrentHashMap<AttemptKey, PendingAttempt>()
+    private val pendingHostStatusRequests = ConcurrentHashMap<String, PendingHostStatusRequest>()
+    private val inboundChunks = AtomicLong()
+    private val decodedFrames = AtomicLong()
+    private val hostStatusFrames = AtomicLong()
+    private val responseFrames = AtomicLong()
+    private val malformedResponseFrames = AtomicLong()
+    private val unmatchedResponseFrames = AtomicLong()
+    private val correlationRejectedFrames = AtomicLong()
+    private val acceptedResponseFrames = AtomicLong()
+    private val peerClosedCallbacks = AtomicLong()
+    private val callbackFailures = AtomicLong()
+    private val emptyInboundFrames = AtomicLong()
+    private val lastInboundPayloadBytes = AtomicLong(-1)
+    private val lastInboundFirstTag = AtomicLong(-1)
+    private val lastUnmatchedPayloadBytes = AtomicLong(-1)
+    private val lastUnmatchedFirstTag = AtomicLong(-1)
+    private var hostStarted = false
+
+    @Volatile
+    internal var lastSubmissionFailure: String? = null
+        private set
+
+    /** Payload-free counters for diagnosing cross-runtime response delivery. */
+    internal fun diagnosticSnapshot(): String =
+        "inboundChunks=${inboundChunks.get()};" +
+            "decodedFrames=${decodedFrames.get()};" +
+            "hostStatusFrames=${hostStatusFrames.get()};" +
+            "responseFrames=${responseFrames.get()};" +
+            "malformedResponseFrames=${malformedResponseFrames.get()};" +
+            "unmatchedResponseFrames=${unmatchedResponseFrames.get()};" +
+            "correlationRejectedFrames=${correlationRejectedFrames.get()};" +
+            "acceptedResponseFrames=${acceptedResponseFrames.get()};" +
+            "peerClosedCallbacks=${peerClosedCallbacks.get()};" +
+            "callbackFailures=${callbackFailures.get()};" +
+            "emptyInboundFrames=${emptyInboundFrames.get()};" +
+            "lastInboundPayloadBytes=${lastInboundPayloadBytes.get()};" +
+            "lastInboundFirstTag=${lastInboundFirstTag.get()};" +
+            "lastUnmatchedPayloadBytes=${lastUnmatchedPayloadBytes.get()};" +
+            "lastUnmatchedFirstTag=${lastUnmatchedFirstTag.get()}"
+
+    private val protocolBinding =
+        createSimpleBinding(PROTOCOL_ID) {
+            InferencePeerMessageController(
+                ::onIncomingFrame,
+                ::onPeerClosed,
+                inboundChunks,
+                decodedFrames,
+                callbackFailures,
+            )
+        }
+
+    private val libp2pHost: Host =
+        host {
+            identity {
+                factory = { localIdentity }
+            }
+            muxers {
+                // The Windows .NET host offers Yamux; retain Mplex for existing JVM peers.
+                +StreamMuxerProtocol.getYamux()
+                +StreamMuxerProtocol.Mplex
+            }
+            protocols {
+                // The .NET peer completes Identify before reporting its authenticated session as connected.
+                add(Identify())
+                add(protocolBindingForHost())
+            }
+        }
+
+    init {
+        require(!connectionTimeout.isNegative && !connectionTimeout.isZero) {
+            "The libp2p connection timeout must be positive."
+        }
+    }
+
+    /** Stable local PeerId to display during explicit pairing with the Windows host operator. */
+    val localPeerId: String
+        get() = libp2pHost.peerId.toBase58()
+
+    override suspend fun submit(
+        ephemeralHostId: String,
+        request: InferenceRequest,
+    ): InferenceTransportSubmission {
+        val diagnosticStartedAtMs = clock.millis()
+        SafeDiagnosticLog.write(
+            SafeDiagnosticEventCode.INFERENCE_SUBMISSION,
+            SafeDiagnosticOutcomeCode.STARTED,
+        )
+
+        fun reject(reason: String): InferenceTransportSubmission {
+            lastSubmissionFailure = reason
+            SafeDiagnosticLog.write(
+                SafeDiagnosticEventCode.INFERENCE_SUBMISSION,
+                SafeDiagnosticOutcomeCode.REJECTED,
+                (clock.millis() - diagnosticStartedAtMs).coerceAtLeast(0L),
+            )
+            return InferenceTransportSubmission.REJECTED
+        }
+
+        lastSubmissionFailure = null
+        if (closed.get() ||
+            ephemeralHostId.isBlank() ||
+            request.requestId.isBlank() ||
+            request.attemptId.isBlank() ||
+            request.roundId.isBlank() ||
+            request.modelId.isBlank() ||
+            request.deadlineUnixMs <= clock.millis()
+        ) {
+            return reject("invalid_request_or_closed_transport")
+        }
+
+        val explicitlyTrusted =
+            try {
+                trustVerifier.isTrusted(ephemeralHostId)
+            } catch (_: Exception) {
+                lastSubmissionFailure = "peer_trust_lookup_failed"
+                false
+            }
+        if (!explicitlyTrusted) {
+            return reject(lastSubmissionFailure ?: "peer_not_explicitly_trusted")
+        }
+
+        val endpoint = resolveEndpoint(ephemeralHostId)
+        if (endpoint == null) {
+            return reject("directory_peer_not_found")
+        }
+        if (endpoint.peerId != ephemeralHostId || !endpoint.expiresAtUtc.isAfter(clock.instant())) {
+            return reject("directory_peer_identity_or_expiry_mismatch")
+        }
+
+        val remotePeerId =
+            try {
+                PeerId.fromBase58(endpoint.peerId)
+            } catch (_: IllegalArgumentException) {
+                return reject("directory_peer_id_is_not_canonical")
+            }
+        if (remotePeerId.toBase58() != endpoint.peerId) {
+            return reject("directory_peer_id_is_not_canonical")
+        }
+
+        val addresses =
+            try {
+                endpoint.tcpMultiaddresses.map { address ->
+                    require(address.endsWith("/p2p/${endpoint.peerId}")) {
+                        "The direct multiaddress must end with the announced PeerId."
+                    }
+                    require(address.contains("/tcp/") && !address.contains("/p2p-circuit")) {
+                        "Only direct TCP multiaddresses are supported by this Android transport."
+                    }
+                    Multiaddr.fromString(address)
+                }
+            } catch (exception: Exception) {
+                return reject("directory_address_rejected:${exception.javaClass.simpleName}")
+            }
+        if (addresses.isEmpty()) {
+            return reject("directory_has_no_direct_tcp_address")
+        }
+
+        val requestWire = request.toByteArray()
+        try {
+            if (requestWire.size > PeerMessageFrameCodec.DEFAULT_MAXIMUM_MESSAGE_BYTES) {
+                return reject("request_frame_exceeds_transport_limit")
+            }
+
+            val key = AttemptKey(request.requestId, request.attemptId)
+            val pending =
+                PendingAttempt(
+                    endpoint.peerId,
+                    request.modelId,
+                    request.roundId,
+                    request.deadlineUnixMs,
+                )
+            if (pendingAttempts.putIfAbsent(key, pending) != null) {
+                return reject("duplicate_pending_request_and_attempt_id")
+            }
+
+            var failureStage = "start_local_libp2p_host"
+            try {
+                ensureHostStarted()
+                failureStage = "open_authenticated_peer_stream"
+                val promise =
+                    libp2pHost.newStream<InferencePeerMessageController>(
+                        listOf(PROTOCOL_ID),
+                        remotePeerId,
+                        *addresses.toTypedArray(),
+                    )
+                val timeoutSeconds = connectionTimeout.toSeconds().coerceAtLeast(1L)
+                failureStage = "await_peer_stream"
+                val stream =
+                    withContext(Dispatchers.IO) {
+                        promise.stream.get(timeoutSeconds, TimeUnit.SECONDS)
+                    }
+                failureStage = "await_peer_protocol_controller"
+                val controller =
+                    withContext(Dispatchers.IO) {
+                        promise.controller.get(timeoutSeconds, TimeUnit.SECONDS)
+                    }
+
+                failureStage = "verify_authenticated_remote_peer_id"
+                val authenticatedPeerId = stream.remotePeerId().toBase58()
+                if (authenticatedPeerId != endpoint.peerId) {
+                    throw SecurityException(
+                        "The authenticated libp2p PeerId did not match the trusted directory identity.",
+                    )
+                }
+
+                pending.controller = controller
+                failureStage = "write_request_frame"
+                withContext(Dispatchers.IO) {
+                    controller.sendRequest(requestWire).get(timeoutSeconds, TimeUnit.SECONDS)
+                }
+                SafeDiagnosticLog.write(
+                    SafeDiagnosticEventCode.INFERENCE_SUBMISSION,
+                    SafeDiagnosticOutcomeCode.SUCCEEDED,
+                    (clock.millis() - diagnosticStartedAtMs).coerceAtLeast(0L),
+                )
+                return InferenceTransportSubmission.QUEUED
+            } catch (cancellation: CancellationException) {
+                SafeDiagnosticLog.write(
+                    SafeDiagnosticEventCode.INFERENCE_SUBMISSION,
+                    SafeDiagnosticOutcomeCode.CANCELLED,
+                    (clock.millis() - diagnosticStartedAtMs).coerceAtLeast(0L),
+                )
+                pending.response.cancel(cancellation)
+                pendingAttempts.remove(key, pending)
+                pending.controller?.closeStream()
+                throw cancellation
+            } catch (exception: Exception) {
+                val failureReason = "$failureStage:${exception.javaClass.simpleName}"
+                pending.response.completeExceptionally(
+                    IOException("The authenticated peer request could not be submitted."),
+                )
+                pendingAttempts.remove(key, pending)
+                pending.controller?.closeStream()
+                return reject(failureReason)
+            }
+        } finally {
+            Arrays.fill(requestWire, 0)
+        }
+    }
+
+    /**
+     * Performs a fresh authenticated HostStatusRequest round-trip. Directory announcements are
+     * used only to resolve the route; their timestamps are never treated as runtime status.
+     */
+    suspend fun probeHostStatus(
+        ephemeralHostId: String,
+        timeout: Duration = DEFAULT_STATUS_TIMEOUT,
+        maximumStatusAge: Duration = DEFAULT_MAXIMUM_STATUS_AGE,
+    ): HostStatus {
+        require(ephemeralHostId.isNotBlank()) { "A peer identity is required." }
+        require(!timeout.isNegative && !timeout.isZero && timeout <= MAXIMUM_STATUS_TIMEOUT) {
+            "The status-probe timeout must be positive and no longer than one minute."
+        }
+        require(
+            !maximumStatusAge.isNegative &&
+                !maximumStatusAge.isZero &&
+                maximumStatusAge <= MAXIMUM_STATUS_AGE_LIMIT,
+        ) {
+            "The maximum status age must be positive and no longer than one minute."
+        }
+        if (closed.get()) throw IllegalStateException("The Android libp2p host is closed.")
+        if (!trustVerifier.isTrusted(ephemeralHostId)) {
+            throw SecurityException("The peer must be explicitly trusted before status probing.")
+        }
+
+        val endpoint =
+            resolveEndpoint(ephemeralHostId)
+                ?: throw IOException("The rendezvous directory did not return this peer.")
+        if (endpoint.peerId != ephemeralHostId || !endpoint.expiresAtUtc.isAfter(clock.instant())) {
+            throw SecurityException("The rendezvous peer identity or lease expiry did not match the requested peer.")
+        }
+        val remotePeerId =
+            try {
+                PeerId.fromBase58(endpoint.peerId)
+            } catch (exception: IllegalArgumentException) {
+                throw SecurityException("The rendezvous PeerId is not canonical.", exception)
+            }
+        if (remotePeerId.toBase58() != endpoint.peerId) {
+            throw SecurityException("The rendezvous PeerId is not canonical.")
+        }
+
+        val addresses =
+            endpoint.tcpMultiaddresses.map { address ->
+                require(address.endsWith("/p2p/${endpoint.peerId}")) {
+                    "The direct multiaddress must end with the announced PeerId."
+                }
+                require(address.contains("/tcp/") && !address.contains("/p2p-circuit")) {
+                    "Only direct TCP multiaddresses are supported by this Android status probe."
+                }
+                Multiaddr.fromString(address)
+            }
+        if (addresses.isEmpty()) throw IOException("The rendezvous entry has no direct TCP route.")
+
+        val pending = PendingHostStatusRequest(endpoint.peerId)
+        if (pendingHostStatusRequests.putIfAbsent(endpoint.peerId, pending) != null) {
+            throw IllegalStateException("A status probe is already pending for this peer.")
+        }
+        val requestWire =
+            HostStatusRequest
+                .newBuilder()
+                .setEphemeralHostId(ephemeralHostId)
+                .build()
+                .toByteArray()
+        try {
+            ensureHostStarted()
+            val promise =
+                libp2pHost
+                    .newStream<InferencePeerMessageController>(
+                        listOf(PROTOCOL_ID),
+                        remotePeerId,
+                        *addresses.toTypedArray(),
+                    )
+            val timeoutSeconds = connectionTimeout.toSeconds().coerceAtLeast(1L)
+            val stream =
+                withContext(Dispatchers.IO) {
+                    promise.stream.get(timeoutSeconds, TimeUnit.SECONDS)
+                }
+            val controller =
+                withContext(Dispatchers.IO) {
+                    promise.controller.get(timeoutSeconds, TimeUnit.SECONDS)
+                }
+            pending.controller = controller
+            if (stream.remotePeerId().toBase58() != endpoint.peerId) {
+                throw SecurityException("The authenticated peer did not match the trusted directory identity.")
+            }
+            withContext(Dispatchers.IO) {
+                controller.sendRequest(requestWire).get(timeoutSeconds, TimeUnit.SECONDS)
+            }
+            val status =
+                withTimeout(timeout.toMillis().coerceAtLeast(1L)) {
+                    pending.response.await()
+                }
+
+            if (status.ephemeralHostId != ephemeralHostId) {
+                throw SecurityException("The HostStatus identity did not match the authenticated peer.")
+            }
+            if (
+                status.state.number !in 1..5 ||
+                status.observedAtUnixMs <= 0L ||
+                status.activeRequests !in 0..MAXIMUM_HOST_STATUS_ACTIVE_REQUESTS
+            ) {
+                throw IOException("The peer returned an invalid HostStatus snapshot.")
+            }
+            val now = clock.millis()
+            val observedAt = status.observedAtUnixMs
+            if (observedAt > now + MAXIMUM_STATUS_CLOCK_SKEW_MILLIS ||
+                now - observedAt > maximumStatusAge.toMillis()
+            ) {
+                throw IOException("The peer HostStatus snapshot is stale or has an invalid clock timestamp.")
+            }
+            if (!endpoint.expiresAtUtc.isAfter(clock.instant())) {
+                throw IOException("The rendezvous peer lease expired during the status probe.")
+            }
+            return status
+        } catch (cancellation: CancellationException) {
+            pending.response.cancel(cancellation)
+            throw cancellation
+        } finally {
+            pendingHostStatusRequests.remove(endpoint.peerId, pending)
+            pending.controller?.closeStream()
+            Arrays.fill(requestWire, 0)
+        }
+    }
+
+    /**
+     * Waits for one response. A response must arrive on the same authenticated PeerId and
+     * match requestId, attemptId, modelId and the remote host identity in the payload.
+     */
+    suspend fun awaitResponse(
+        requestId: String,
+        attemptId: String,
+        timeout: Duration = DEFAULT_RESPONSE_TIMEOUT,
+    ): InferenceResponse {
+        require(requestId.isNotBlank() && attemptId.isNotBlank()) {
+            "Both requestId and attemptId are required."
+        }
+        require(!timeout.isNegative && !timeout.isZero) { "The response timeout must be positive." }
+        val key = AttemptKey(requestId, attemptId)
+        val pending =
+            pendingAttempts[key]
+                ?: throw IllegalStateException(
+                    "No submitted attempt matches these identifiers.",
+                )
+        try {
+            return withTimeout(timeout.toMillis().coerceAtLeast(1L)) {
+                pending.response.await()
+            }
+        } finally {
+            pendingAttempts.remove(key, pending)
+            if (!pending.response.isCompleted) {
+                pending.response.cancel()
+            }
+            pending.controller?.closeStream()
+        }
+    }
+
+    /**
+     * Sends a correlated CancelRequest over the already authenticated stream for each
+     * still-pending selected attempt. A false result means the attempt was not pending,
+     * its response had already arrived, or the cancellation frame could not be written.
+     * After a successful write, the host's CANCELLED response (or a race-winning completed
+     * response) remains authoritative. If the write wait is cancelled, interrupted or times
+     * out before its Netty promise completes, the stream is closed to finish the pending write
+     * and trigger the frame-zeroization callback.
+     */
+    suspend fun cancelAttempts(
+        requestId: String,
+        attemptIds: Collection<String>,
+    ): Map<String, Boolean> {
+        require(requestId.isNotBlank()) { "requestId must not be blank." }
+        val ids = attemptIds.toList()
+        require(ids.all(String::isNotBlank) && ids.size == ids.toSet().size) {
+            "Cancellation attempt IDs must be non-blank and unique."
+        }
+
+        val results = linkedMapOf<String, Boolean>()
+        for (attemptId in ids) {
+            val key = AttemptKey(requestId, attemptId)
+            val pending = pendingAttempts[key]
+            val controller = pending?.controller
+            if (pending == null || controller == null || pending.response.isCompleted) {
+                results[attemptId] = false
+                continue
+            }
+
+            val cancelWire =
+                CancelRequest
+                    .newBuilder()
+                    .setRequestId(requestId)
+                    .setAttemptId(attemptId)
+                    .setReason(USER_CANCELLATION_REASON)
+                    .build()
+                    .toByteArray()
+            results[attemptId] =
+                try {
+                    if (cancelWire.size > PeerMessageFrameCodec.DEFAULT_MAXIMUM_MESSAGE_BYTES) {
+                        false
+                    } else {
+                        withContext(Dispatchers.IO) {
+                            controller.sendRequest(cancelWire).get(
+                                connectionTimeout.toSeconds().coerceAtLeast(1L),
+                                TimeUnit.SECONDS,
+                            )
+                        }
+                        true
+                    }
+                } catch (cancellation: CancellationException) {
+                    closeStreamAfterPendingWriteFailure(controller)
+                    throw cancellation
+                } catch (_: java.util.concurrent.TimeoutException) {
+                    closeStreamAfterPendingWriteFailure(controller)
+                    false
+                } catch (_: InterruptedException) {
+                    closeStreamAfterPendingWriteFailure(controller)
+                    Thread.currentThread().interrupt()
+                    false
+                } catch (_: Exception) {
+                    false
+                } finally {
+                    Arrays.fill(cancelWire, 0)
+                }
+        }
+        return results
+    }
+
+    /**
+     * Future.get(timeout) does not cancel the underlying Netty write. Closing this stream
+     * makes an unfinished write fail, which runs sendRequest's whenComplete zeroization.
+     */
+    private fun closeStreamAfterPendingWriteFailure(controller: InferencePeerMessageController) {
+        try {
+            controller.closeStream()
+        } catch (_: Exception) {
+            // Preserve the caller's cancellation/timeout result if teardown also fails.
+        }
+    }
+
+    private suspend fun ensureHostStarted() {
+        startMutex.withLock {
+            if (closed.get()) {
+                throw IllegalStateException("The Android libp2p host is closed.")
+            }
+            if (!hostStarted) {
+                withContext(Dispatchers.IO) {
+                    libp2pHost.start().get(connectionTimeout.toSeconds().coerceAtLeast(1L), TimeUnit.SECONDS)
+                }
+                hostStarted = true
+            }
+        }
+    }
+
+    private fun onIncomingFrame(
+        authenticatedPeerId: String,
+        payload: ByteArray,
+        controller: InferencePeerMessageController,
+    ) {
+        lastInboundPayloadBytes.set(payload.size.toLong())
+        lastInboundFirstTag.set(payload.firstOrNull()?.toUByte()?.toLong() ?: -1L)
+        if (payload.isEmpty()) {
+            emptyInboundFrames.incrementAndGet()
+        }
+        val pendingStatus = pendingHostStatusRequests[authenticatedPeerId]
+        if (pendingStatus?.controller === controller) {
+            hostStatusFrames.incrementAndGet()
+            val status =
+                try {
+                    HostStatus.parseFrom(payload)
+                } catch (exception: Exception) {
+                    pendingStatus.response.completeExceptionally(
+                        IOException("The authenticated peer returned a malformed HostStatus message.", exception),
+                    )
+                    return
+                }
+            if (status.ephemeralHostId != pendingStatus.peerId) {
+                pendingStatus.response.completeExceptionally(
+                    SecurityException("The HostStatus identity did not match the authenticated peer."),
+                )
+            } else {
+                pendingStatus.response.complete(status)
+            }
+            return
+        }
+
+        val remoteError = RemoteRequestErrorParser.parse(payload)
+        if (remoteError != null) {
+            val matchingAttempts =
+                pendingAttempts.entries.filter { entry ->
+                    val key = entry.key
+                    val pending = entry.value
+                    key.requestId == remoteError.requestId &&
+                        pending.peerId == authenticatedPeerId &&
+                        pending.controller === controller &&
+                        (remoteError.ephemeralHostId == null || remoteError.ephemeralHostId == authenticatedPeerId) &&
+                        (remoteError.modelId == null || remoteError.modelId == pending.modelId)
+                }
+            if (matchingAttempts.isEmpty()) {
+                unmatchedResponseFrames.incrementAndGet()
+                lastUnmatchedPayloadBytes.set(payload.size.toLong())
+                lastUnmatchedFirstTag.set(payload.firstOrNull()?.toUByte()?.toLong() ?: -1L)
+            } else {
+                matchingAttempts.forEach { entry ->
+                    entry.value.response.completeExceptionally(
+                        RequestExecutionException(remoteError.errorCode),
+                    )
+                }
+            }
+            return
+        }
+
+        val response =
+            try {
+                InferenceResponse.parseFrom(payload)
+            } catch (_: Exception) {
+                malformedResponseFrames.incrementAndGet()
+                failPendingAttemptsForPeer(authenticatedPeerId, controller)
+                return
+            }
+
+        responseFrames.incrementAndGet()
+        val key = AttemptKey(response.requestId, response.attemptId)
+        val pending = pendingAttempts[key]
+        if (pending == null) {
+            unmatchedResponseFrames.incrementAndGet()
+            lastUnmatchedPayloadBytes.set(payload.size.toLong())
+            lastUnmatchedFirstTag.set(payload.firstOrNull()?.toUByte()?.toLong() ?: -1L)
+            return
+        }
+        if (authenticatedPeerId != pending.peerId ||
+            !InferenceResponseCorrelationValidator.matches(
+                response = response,
+                expectedRequestId = key.requestId,
+                expectedAttemptId = key.attemptId,
+                expectedRoundId = pending.roundId,
+                expectedHostId = pending.peerId,
+                expectedModelId = pending.modelId,
+                requestDeadlineUnixMs = pending.deadlineUnixMs,
+                receivedAtUnixMs = clock.millis(),
+            )
+        ) {
+            correlationRejectedFrames.incrementAndGet()
+            pending.response.completeExceptionally(
+                SecurityException("The response did not match its authenticated peer or request correlation."),
+            )
+            return
+        }
+        acceptedResponseFrames.incrementAndGet()
+        pending.response.complete(response)
+    }
+
+    private fun onPeerClosed(
+        authenticatedPeerId: String,
+        controller: InferencePeerMessageController,
+    ) {
+        peerClosedCallbacks.incrementAndGet()
+        pendingHostStatusRequests[authenticatedPeerId]
+            ?.takeIf { pending -> pending.controller === controller }
+            ?.response
+            ?.completeExceptionally(IOException("The authenticated peer stream closed before HostStatus arrived."))
+        failPendingAttemptsForPeer(authenticatedPeerId, controller)
+    }
+
+    private fun failPendingAttemptsForPeer(
+        authenticatedPeerId: String,
+        controller: InferencePeerMessageController,
+    ) {
+        pendingAttempts.values
+            .filter { attempt -> attempt.peerId == authenticatedPeerId && attempt.controller === controller }
+            .forEach { attempt ->
+                attempt.response.completeExceptionally(
+                    IOException("The authenticated peer stream closed before a correlated response arrived."),
+                )
+            }
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun protocolBindingForHost(): ProtocolBinding<Any> = protocolBinding as ProtocolBinding<Any>
+
+    override fun close() {
+        if (!closed.compareAndSet(false, true)) {
+            return
+        }
+        pendingHostStatusRequests.values.forEach { pending ->
+            pending.response.completeExceptionally(IOException("The Android libp2p transport was closed."))
+            pending.controller?.closeStream()
+        }
+        pendingAttempts.values.forEach { pending ->
+            pending.response.completeExceptionally(IOException("The Android libp2p transport was closed."))
+            pending.controller?.closeStream()
+        }
+        pendingAttempts.clear()
+        if (hostStarted) {
+            try {
+                libp2pHost.stop().get(SHUTDOWN_TIMEOUT_SECONDS, TimeUnit.SECONDS)
+            } catch (_: Exception) {
+                // Shutdown is best effort; no request or response payload is logged.
+            }
+        }
+    }
+
+    private companion object {
+        const val PROTOCOL_ID = "/white-p/peer-message/1.0.0"
+        const val USER_CANCELLATION_REASON = "user_cancelled"
+        const val SHUTDOWN_TIMEOUT_SECONDS = 5L
+        val DEFAULT_CONNECTION_TIMEOUT: Duration = Duration.ofSeconds(15)
+        val DEFAULT_RESPONSE_TIMEOUT: Duration = Duration.ofSeconds(60)
+        val DEFAULT_STATUS_TIMEOUT: Duration = Duration.ofSeconds(10)
+        val DEFAULT_MAXIMUM_STATUS_AGE: Duration = Duration.ofSeconds(15)
+        val MAXIMUM_STATUS_AGE_LIMIT: Duration = Duration.ofMinutes(1)
+        val MAXIMUM_STATUS_TIMEOUT: Duration = Duration.ofMinutes(1)
+        const val MAXIMUM_STATUS_CLOCK_SKEW_MILLIS = 5_000L
+        const val MAXIMUM_HOST_STATUS_ACTIVE_REQUESTS = 8
+    }
+}
+
+internal class InferencePeerMessageController(
+    private val onFrame: (String, ByteArray, InferencePeerMessageController) -> Unit,
+    private val onClosed: (String, InferencePeerMessageController) -> Unit,
+    private val inboundChunks: AtomicLong,
+    private val decodedFrames: AtomicLong,
+    private val callbackFailures: AtomicLong,
+) : SimpleClientHandler() {
+    private val decoder = PeerMessageFrameDecoder()
+    private var authenticatedPeerId: String? = null
+
+    override fun handlerCreated() {
+        authenticatedPeerId = stream.remotePeerId().toBase58()
+    }
+
+    override fun streamActive(ctx: ChannelHandlerContext) {
+        this.ctx = ctx
+    }
+
+    override fun messageReceived(
+        ctx: ChannelHandlerContext,
+        msg: ByteBuf,
+    ) {
+        val peerId = authenticatedPeerId ?: return
+        val bytes = ByteArray(msg.readableBytes())
+        msg.readBytes(bytes)
+        inboundChunks.incrementAndGet()
+        try {
+            val frames = decoder.feed(bytes)
+            decodedFrames.addAndGet(frames.size.toLong())
+            try {
+                frames.forEach { frame -> onFrame(peerId, frame, this) }
+            } finally {
+                frames.forEach { frame -> Arrays.fill(frame, 0) }
+            }
+        } catch (_: Exception) {
+            callbackFailures.incrementAndGet()
+            decoder.clear()
+            onClosed(peerId, this)
+            stream.reset()
+        } finally {
+            Arrays.fill(bytes, 0)
+        }
+    }
+
+    override fun streamClosed(ctx: ChannelHandlerContext) {
+        decoder.clear()
+        authenticatedPeerId?.let { peerId -> onClosed(peerId, this) }
+    }
+
+    fun sendRequest(payload: ByteArray): CompletableFuture<Unit> {
+        val frame = PeerMessageFrameCodec.encode(payload)
+        try {
+            return writeAndFlush(Unpooled.wrappedBuffer(frame)).whenComplete { _, _ ->
+                Arrays.fill(frame, 0)
+            }
+        } catch (exception: Exception) {
+            Arrays.fill(frame, 0)
+            throw exception
+        }
+    }
+
+    fun closeStream() {
+        if (authenticatedPeerId != null) {
+            stream.close()
+        }
+    }
+}

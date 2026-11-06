@@ -1,0 +1,12 @@
+.git
+.github
+**/bin/
+**/obj/
+**/.gradle/
+**/build/
+src/Client.Android/
+tests/
+step one/
+step two/
+step three/
+artifacts/

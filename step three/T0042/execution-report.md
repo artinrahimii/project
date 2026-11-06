@@ -1,0 +1,44 @@
+# T0042 — execution report
+
+## Dependency review
+- `T0041 → T0042`: `hard_dependency`, validated. This refactor preserves the real WPF entry point and loaded-window smoke path verified on the baseline commit. Evidence: `src/Host.Windows/App.xaml`, `App.xaml.cs`, `MainWindow.xaml`, `MainWindow.xaml.cs`, and [product build run 39862296386](https://github.com/artinrahimii/project/actions/runs/39862296386).
+- `T0040 → T0042`: `contract_or_interface_dependency`, validated. The parser and typed-request validation cross assembly boundaries, while Protobuf generation is consolidated in Shared.Contracts. Evidence: `ProtocolMessageLimits.cs`, `ProtocolMessageValidator.cs`, `step three/T0040/evidence/verification.md`, and the C# harness.
+- `T0042 → T0043` remains `unreviewed`; it was not changed to enable premature parallel work.
+
+## Attempt T0042-A001 — project layer separation
+- Added buildable .NET 10 projects for Domain, Application and Infrastructure; the WPF project remains the UI layer.
+- Moved lifecycle state/transitions into Domain; moved the backend interface, session coordination, startup and unconfigured backend into Application; moved the llama.cpp HTTP adapter and Protobuf wire parser into Infrastructure.
+- Application no longer constructs a concrete Infrastructure backend. The UI passes a backend factory.
+- Shared.Contracts now owns canonical C# generation from `protocol/whitep/v1/messages.proto`. The WPF app and C# test harness reference this one shared generated contract assembly instead of generating duplicate contracts.
+- Added structural regression coverage and updated static tests for the new source boundaries. The old mixed source file was removed to avoid duplicate definitions.
+- T0042 remains `in_progress` until exact-commit CI passes. No build, test, or formatting success is claimed here before that evidence is available.
+
+
+## Attempt T0042-A001 — failed build observed and cause isolated
+- Product workflow run [39907451227](https://github.com/artinrahimii/project/actions/runs/39907451227), C# lifecycle/unit job, failed while compiling `HostInferenceSession.cs`.
+- Exact compiler errors CS0104 at lines 25, 29 and 66: `HostStatus` was ambiguous between `WhiteP.Host.Domain.HostStatus` and generated `WhiteP.Shared.Contracts.V1.HostStatus`.
+- This is a real compile failure; the task remains in progress. No acceptance or product-build success is claimed for this commit.
+
+## Attempt T0042-A002 — explicit domain type alias
+- Added `using HostStatus = WhiteP.Host.Domain.HostStatus;` so session return types resolve to the domain lifecycle status while Protobuf request types remain available.
+- Rebuild and all exact-commit workflows are pending.
+
+
+## Attempt T0042-A002 — partial result from exact-commit product workflow
+- The C# lifecycle/integration job passed on commit `eae94f3f93ad437f94994c180f5c715a5ee6b083`.
+- The Windows WPF build failed in [product build run 39907571806](https://github.com/artinrahimii/project/actions/runs/39907571806) with two compilation errors: `App.xaml.cs` resolved `Application` to the new namespace rather than `System.Windows.Application`; stale copies of `LlamaCppServerBackend.cs` and `ProtocolMessageParser.cs` still remained in the WPF project after those classes moved to Infrastructure.
+- The partial result and both errors are retained. They do not qualify T0042 as done.
+
+## Attempt T0042-A003 — remove stale copies and qualify WPF base class
+- Qualified the WPF base class as `System.Windows.Application`.
+- Removed the stale WPF-project copies of the backend and parser, so the source of truth is now the Infrastructure project.
+- Exact-commit CI is pending.
+
+
+## Attempt T0042-A003 — succeeded
+- Exact-commit Step Three quality gate: [run 39907751870](https://github.com/artinrahimii/project/actions/runs/39907751870), conclusion **success**.
+- Exact-commit product build: [run 39907751958](https://github.com/artinrahimii/project/actions/runs/39907751958), conclusion **success**.
+- Windows WPF project and generated C# Protobuf checks passed; the real WPF executable passed the bounded `--smoke-test` and its artifact was uploaded.
+- C# host lifecycle/integration harness passed.
+- Android Kotlin lint/format, debug APK build, Protobuf round-trip tests, generated Java/Kotlin source verification and APK artifact upload passed.
+- T0042 is now accepted. The failed and partial earlier attempts remain in the execution history.

@@ -1,0 +1,57 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WhiteP.Host.Windows", "src\Host.Windows\WhiteP.Host.Windows.csproj", "{B85D58F5-D4C8-4C4B-AB28-0C9BF7154001}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WhiteP.Shared.Contracts", "src\Shared.Contracts\WhiteP.Shared.Contracts.csproj", "{B3D3A4F1-029F-4D3E-AC9D-1827B7C7E002}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WhiteP.Host.Domain", "src\Host.Domain\WhiteP.Host.Domain.csproj", "{D0A10001-1001-4001-8001-000000000001}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WhiteP.Host.Application", "src\Host.Application\WhiteP.Host.Application.csproj", "{D0A10002-1002-4002-8002-000000000002}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WhiteP.Host.Infrastructure", "src\Host.Infrastructure\WhiteP.Host.Infrastructure.csproj", "{D0A10003-1003-4003-8003-000000000003}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WhiteP.Rendezvous.Service", "src\Rendezvous.Service\WhiteP.Rendezvous.Service.csproj", "{A9420CE9-8079-4FF9-8F9C-9DAA0024E860}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WhiteP.Shared.Security", "src\Shared.Security\WhiteP.Shared.Security.csproj", "{A0160129-42B0-4E29-9C71-0129A0160001}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A9420CE9-8079-4FF9-8F9C-9DAA0024E860}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A9420CE9-8079-4FF9-8F9C-9DAA0024E860}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A9420CE9-8079-4FF9-8F9C-9DAA0024E860}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A9420CE9-8079-4FF9-8F9C-9DAA0024E860}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B85D58F5-D4C8-4C4B-AB28-0C9BF7154001}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B85D58F5-D4C8-4C4B-AB28-0C9BF7154001}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B85D58F5-D4C8-4C4B-AB28-0C9BF7154001}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B85D58F5-D4C8-4C4B-AB28-0C9BF7154001}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B3D3A4F1-029F-4D3E-AC9D-1827B7C7E002}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B3D3A4F1-029F-4D3E-AC9D-1827B7C7E002}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B3D3A4F1-029F-4D3E-AC9D-1827B7C7E002}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B3D3A4F1-029F-4D3E-AC9D-1827B7C7E002}.Release|Any CPU.Build.0 = Release|Any CPU
+    {D0A10001-1001-4001-8001-000000000001}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+    {D0A10001-1001-4001-8001-000000000001}.Debug|Any CPU.Build.0 = Debug|Any CPU
+    {D0A10001-1001-4001-8001-000000000001}.Release|Any CPU.ActiveCfg = Release|Any CPU
+    {D0A10001-1001-4001-8001-000000000001}.Release|Any CPU.Build.0 = Release|Any CPU
+    {D0A10002-1002-4002-8002-000000000002}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+    {D0A10002-1002-4002-8002-000000000002}.Debug|Any CPU.Build.0 = Debug|Any CPU
+    {D0A10002-1002-4002-8002-000000000002}.Release|Any CPU.ActiveCfg = Release|Any CPU
+    {D0A10002-1002-4002-8002-000000000002}.Release|Any CPU.Build.0 = Release|Any CPU
+    {D0A10003-1003-4003-8003-000000000003}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+    {D0A10003-1003-4003-8003-000000000003}.Debug|Any CPU.Build.0 = Debug|Any CPU
+    {D0A10003-1003-4003-8003-000000000003}.Release|Any CPU.ActiveCfg = Release|Any CPU
+    {D0A10003-1003-4003-8003-000000000003}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A0160129-42B0-4E29-9C71-0129A0160001}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A0160129-42B0-4E29-9C71-0129A0160001}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A0160129-42B0-4E29-9C71-0129A0160001}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A0160129-42B0-4E29-9C71-0129A0160001}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
