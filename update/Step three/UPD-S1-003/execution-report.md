@@ -94,3 +94,13 @@
 - شواهد: `update/Step three/UPD-S1-003/evidence/decision-matrix.md` و `ci-baseline.md`.
 - وضعیت: در انتظار CI commit اصلاحی؛ تا سبزشدن build و آزمون‌ها، گره `in_progress` باقی می‌ماند.
 - آزمون دستگاه واقعی و Android-to-Windows با مدل محلی در این محیط اجرا نشده‌اند و به UPD-S1-020/021 تعلق دارند.
+
+
+## تلاش سوم — اصلاح پنج خطای باقی‌ماندهٔ CI نسخهٔ V 3.1.29
+
+- مبنای آنلاین: `89042d5feba3c3859d63a7527aac0c7b2669cb88` — `V 3.1.29`.
+- Quality run `42417360215`: پنج شکست قراردادی، شامل selector compatibility، نام آزمون‌های ViewModel، markerهای retry/cancel و قالب ردیف ADR-0022.
+- اصلاح: آزمون selector اکنون ثابت generic compatibility را بررسی می‌کند؛ guardهای UI/ retry/cancel با نام‌های واقعی آزمون تک‌میزبانه هم‌راستا شدند؛ ADR-0022 با پنج ستون و مسیرهای کامل مخزن ثبت شد.
+- Rendezvous container build: موفق؛ HostLifecycle tests: موفق.
+- Windows WPF build و Android APK هنگام آخرین بررسی هنوز در حال اجرا بودند.
+- وضعیت: partial تا اجرای مجدد CI روی commit اصلاحی.

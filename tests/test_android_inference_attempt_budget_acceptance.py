@@ -20,7 +20,7 @@ class AndroidInferenceAttemptBudgetAcceptanceTests(unittest.TestCase):
 
     def test_selector_caps_each_round_and_remaining_request_budget(self):
         source = SELECTOR.read_text(encoding="utf-8")
-        self.assertIn("const val MAX_HOSTS_PER_ROUND = FirstReleaseInferenceLimits.MAX_HOSTS_PER_ROUND", source)
+        self.assertIn("const val MAX_HOSTS_PER_ROUND = MultiHostCompatibilityLimits.MAX_HOSTS_PER_ROUND", source)
         self.assertIn(".take(maxHosts)", source)
         self.assertIn("distributedRequest.maxTotalHosts - progress.hostsAttempted", source)
         self.assertIn("previouslyAttemptedHostIds.toSet()", source)

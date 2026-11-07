@@ -53,8 +53,8 @@ class AndroidManualRetryContractTests(unittest.TestCase):
     def test_android_jvm_acceptance_covers_manual_retry_and_cancel_regression(self):
         expected = (
             "showsFailedAndRetriesOnlyAfterTheUserRequestsItWithSameRequestAndFreshAttemptIds",
-            "manualRetryExcludesHostsWhoseLatestAttemptAlreadySucceeded",
-            "cancelActionSendsCorrelatedCancellationForEveryQueuedAttemptFromTheLiveDispatch",
+            "successfulSingleHostRequestDoesNotOfferOrDispatchAnotherAttempt",
+            "cancelActionSendsCorrelatedCancellationForTheSingleQueuedAttempt",
         )
         for name in expected:
             with self.subTest(test=name):

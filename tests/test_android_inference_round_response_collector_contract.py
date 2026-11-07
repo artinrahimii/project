@@ -48,9 +48,9 @@ class AndroidInferenceRoundResponseCollectorContractTests(unittest.TestCase):
     def test_view_model_covers_aggregate_cardinality_duplicates_and_cancellation(self):
         view_model = ROOT / "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt"
         source = view_model.read_text(encoding="utf-8")
-        self.assertIn("aggregatesZeroOneTwoAndThreeResponsesWithoutInventingMissingResults", source)
+        self.assertIn("aggregatesSingleHostSuccessAndFailureWithoutInventingMissingResults", source)
         self.assertIn("rejectsDuplicateResponseForTheSameRequestAndAttemptWithoutReplacingTheFirstCard", source)
-        self.assertIn("cancelActionSendsCorrelatedCancellationForEveryQueuedAttemptFromTheLiveDispatch", source)
+        self.assertIn("cancelActionSendsCorrelatedCancellationForTheSingleQueuedAttempt", source)
 
 
 if __name__ == "__main__":

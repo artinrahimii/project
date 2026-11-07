@@ -999,11 +999,11 @@
         "tests/test_android_manual_retry_contract.py",
         "tests/test_request_retry_budget_boundary.py"
       ],
-      "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0125, T0126, T0161, T0162, T0163, T0164, T0165, T0166, T0167, T0168, T0169, T0170, T0171, T0172, T0173, T0174, T0175, T0176, T0177, T0203, T0204, T0224, T0225. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است. New decision ADR-0022 records the first-release one-host/sequential-retry policy. The generic three-host selector and dispatcher remain compatibility primitives and do not change the production runtime's one-host admission boundary. The implementation attempt is partial pending exact-commit CI.",
+      "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0125, T0126, T0161, T0162, T0163, T0164, T0165, T0166, T0167, T0168, T0169, T0170, T0171, T0172, T0173, T0174, T0175, T0176, T0177, T0203, T0204, T0224, T0225. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است. New decision ADR-0022 records the first-release one-host/sequential-retry policy. The generic three-host selector and dispatcher remain compatibility primitives and do not change the production runtime's one-host admission boundary. The implementation attempt is partial pending exact-commit CI. V 3.1.29 quality gate found five residual contract/documentation assertions; the exact tests and register row were corrected in the next partial attempt. Do not mark done until CI passes.",
       "execution_summary": {
-        "attempt_count": 2,
+        "attempt_count": 3,
         "failed_attempt_count": 0,
-        "last_attempt_id": "UPD-S1-003-20261107214517",
+        "last_attempt_id": "UPD-S1-003-20261107214742",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/requests/DistributedRequest.kt",
@@ -1019,11 +1019,19 @@
           "docs/decisions/ADR-0022-single-host-sequential-retry.md",
           "update/Step three/UPD-S1-003/evidence/decision-matrix.md",
           "update/Step three/UPD-S1-003/evidence/ci-baseline.md",
-          "update/Step three/UPD-S1-003/execution-report.md"
+          "update/Step three/UPD-S1-003/execution-report.md",
+          "tests/test_android_inference_round_response_collector_contract.py"
         ],
-        "related_commits": [],
-        "tests_passed": [],
-        "tests_failed": [],
+        "related_commits": [
+          "89042d5feba3c3859d63a7527aac0c7b2669cb88"
+        ],
+        "tests_passed": [
+          "Rendezvous container build and smoke",
+          "Host lifecycle unit and integration tests"
+        ],
+        "tests_failed": [
+          "Step Three quality gate"
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -1087,9 +1095,44 @@
             "update/Step three/UPD-S1-003/evidence/ci-baseline.md",
             "update/Step three/UPD-S1-003/execution-report.md"
           ],
-          "commit_sha": null,
-          "tests": [],
-          "failure_details": "Baseline CI on V 3.1.28 failed with 8 stale Python contract expectations and 2 ktlint formatting violations. The corresponding source/test updates are part of this attempt; exact-commit CI verification is pending.",
+          "commit_sha": "89042d5feba3c3859d63a7527aac0c7b2669cb88",
+          "tests": [
+            {
+              "name": "Step Three quality gate",
+              "command": "python -m unittest discover -s tests -v; python -m compileall -q tools tests; graph_guard and graph output validation",
+              "result": "failed",
+              "run_id": 42417360215,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42417360215",
+              "summary": "464 tests; five residual source-contract failures: generic selector compatibility constant, two outdated ViewModel test-name references, two outdated retry/cancel marker references, and ADR-0022 table formatting."
+            },
+            {
+              "name": "Rendezvous container build and smoke",
+              "command": "workflow rendezvous-container.yml",
+              "result": "passed",
+              "run_id": 42417360202,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42417360202"
+            },
+            {
+              "name": "Windows WPF build",
+              "command": "workflow product-build.yml / Build Windows WPF host",
+              "result": "pending",
+              "run_id": 42417360194
+            },
+            {
+              "name": "Android client APK",
+              "command": "workflow product-build.yml / Build Android client APK",
+              "result": "pending",
+              "run_id": 42417360194
+            },
+            {
+              "name": "Host lifecycle unit and integration tests",
+              "command": "workflow product-build.yml / Host lifecycle unit and integration tests",
+              "result": "passed",
+              "run_id": 42417360194,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42417360194"
+            }
+          ],
+          "failure_details": "V 3.1.29 quality CI failed with five residual Python source-contract errors. The tests still expected the selector's deprecated first-release constant rather than MultiHostCompatibilityLimits; the ViewModel collector contract expected old multi-host test names; the manual retry contract expected removed multi-host test names; and the ADR-0022 decision register row had escaped literal newlines and short source paths. Rendezvous workflow and HostLifecycle suite passed; Android APK and Windows WPF build were still in progress at the last status check.",
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [
@@ -1098,10 +1141,37 @@
             "Production Android runtime remains capped at one selected host.",
             "Generic MultiHostCompatibilityLimits remains three hosts per batch for compatibility-only selector/dispatcher usage."
           ],
-          "follow_up": "Verify the commit on online main, then inspect its quality and product-build workflow results. Correct any remaining real failure and rerun affected consumers before changing UPD-S1-003 to done. UPD-S1-008's 168 legacy reviews and physical-device product gates remain separate.",
+          "follow_up": "V 3.1.30 corrects the five source-contract/register issues while retaining the generic multi-host selector/dispatcher tests. Re-run exact commit quality and product build workflows before considering UPD-S1-003 complete.",
           "device_and_host_details_redacted": "Source, test and CI-log inspection only. No physical Android device or external Windows host was attached to this execution.",
           "model_revision_and_sha256": "Not applicable; local model inference not run.",
           "pre_upgrade_post_upgrade_snapshot": "Not applicable; install/upgrade acceptance not run."
+        },
+        {
+          "attempt_id": "UPD-S1-003-20261107214742",
+          "started_at": "2026-11-07T21:47:42.902Z",
+          "ended_at": "2026-11-07T21:47:42.902Z",
+          "result": "partial",
+          "summary": "Corrected the five residual V 3.1.29 quality-gate contract failures: selector budget tests now distinguish generic MultiHostCompatibilityLimits; collector/ViewModel contract tests target the actual one-host success/failure and single-attempt cancellation test names; manual-retry guards expect the implemented single-host sequential test names; and ADR-0022 is now a valid five-column register row with full repository-relative source/test paths.",
+          "changed_files": [
+            "tests/test_android_inference_attempt_budget_acceptance.py",
+            "tests/test_android_inference_round_response_collector_contract.py",
+            "tests/test_android_manual_retry_contract.py",
+            "docs/decisions/README.md"
+          ],
+          "commit_sha": null,
+          "tests": [],
+          "failure_details": "This repair is committed pending exact-commit CI. The prior commit V 3.1.29 had five Python quality failures; the Android APK and Windows WPF jobs were still in progress, although HostLifecycle tests and Rendezvous container build had passed.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "Generic selector's MAX_HOSTS_PER_ROUND is tested against MultiHostCompatibilityLimits, not the first-release domain constant.",
+            "ViewModel UI contract markers now match the one-host product flow; generic multi-host collector tests remain unchanged.",
+            "ADR-0022 register row uses exactly five columns and full existing repository-relative source/test paths."
+          ],
+          "follow_up": "Run quality, Android APK, Windows WPF and HostLifecycle workflows for this commit. Only after all exact-commit checks pass and acceptance evidence is verified can UPD-S1-003 be considered for done.",
+          "device_and_host_details_redacted": "GitHub CI only; no physical Android handset or independent Windows host was available for a real-device product test.",
+          "model_revision_and_sha256": "Not applicable; no real local model inference executed.",
+          "pre_upgrade_post_upgrade_snapshot": "Not applicable; clean install and in-place upgrade were not executed."
         }
       ]
     },
@@ -4374,7 +4444,7 @@
     }
   ],
   "progress_snapshot": {
-    "as_of": "2026-11-07T21:45:17.833Z",
+    "as_of": "2026-11-07T21:47:42.902Z",
     "total_tasks": 24,
     "not_started": 21,
     "in_progress": 1,
@@ -4495,7 +4565,7 @@
     },
     "rule": "Do not renumber or silently drop tasks. Any change to task scope, prerequisite or affected legacy IDs must cite the updated source version and preserve previous execution records."
   },
-  "updated_at": "2026-11-07T21:45:17.833Z",
+  "updated_at": "2026-11-07T21:47:42.902Z",
   "legacy_task_sync": {
     "state": "review_pending",
     "reason_code": "LEGACY_TASK_REVIEW_NOT_YET_PERFORMED",
