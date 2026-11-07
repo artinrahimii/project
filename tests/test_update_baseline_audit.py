@@ -41,7 +41,8 @@ class UpdateBaselineAuditTests(unittest.TestCase):
         self.assertIn("V 3.1.17", evidence)
         self.assertIn("4٬014٬945", evidence)
         self.assertIn("UPD-S1-001", report)
-        self.assertIn("در حال اجرا", report)
+        self.assertIn("in_progress", report)
+        self.assertIn("نتیجهٔ نهایی", report)
         self.assertNotIn("6f70586b4b7ff69c463f7e5b02293090c63e78ec", evidence + report)
 
     def test_android_chat_send_is_local_and_network_request_is_separate(self) -> None:
