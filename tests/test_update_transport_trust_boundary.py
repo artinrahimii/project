@@ -35,7 +35,7 @@ class UpdateTransportTrustBoundaryTests(unittest.TestCase):
         self.assertIn("ExpiresAtUtc <= now", directory)
         self.assertIn("DefaultTimeToLive = TimeSpan.FromMinutes(5)", publisher)
         self.assertIn("DefaultRenewalInterval = TimeSpan.FromMinutes(1)", publisher)
-        self.assertIn("Stop renewal", publisher)
+        self.assertIn("Stops renewal.", publisher)
 
     def test_rendezvous_clients_use_https_and_bounded_non_stale_metadata_cache(self) -> None:
         windows_client = read("src/Host.Windows/Networking/PeerAnnouncementClient.cs")
@@ -60,7 +60,7 @@ class UpdateTransportTrustBoundaryTests(unittest.TestCase):
         fallback = read("src/Host.Windows/Networking/PeerTransportFallbackConnector.cs")
         relay_adr = read("docs/decisions/ADR-0004-encrypted-relay-boundary.md")
         self.assertIn("tcpMultiaddresses", android)
-        self.assertIn("expectedPeerIdentity", android)
+        self.assertIn("remotePeerId.toBase58() != endpoint.peerId", android)
         self.assertIn("remotePeerId", android)
         self.assertIn(".WithQuic()", windows)
         self.assertIn("ConnectSecureAsync", fallback)
@@ -78,14 +78,14 @@ class UpdateTransportTrustBoundaryTests(unittest.TestCase):
         self.assertIn("messageDao.upsert(", chat)
         decision = read("docs/decisions/ADR-0002-direct-p2p-data-path.md")
         self.assertIn("ordinary Room conversation ViewModel remains local-message-only", decision)
-        self.assertIn("AC-P2P-01 remains **NOT RUN**", decision)
+        self.assertIn("remains **NOT RUN**", decision)
 
     def test_data_boundary_decision_discloses_infrastructure_retention_uncertainty(self) -> None:
         decision = read("docs/decisions/ADR-0002-direct-p2p-data-path.md")
         self.assertIn("No durable application database or conversation-history store", decision)
         self.assertIn("not verified", decision.lower())
         self.assertIn("source IP", decision)
-        self.assertIn("end-to-end encryption would not hide", read(
+        self.assertIn("it does not hide this connection metadata or provide anonymity", read(
             "docs/decisions/ADR-0004-encrypted-relay-boundary.md"
         ).lower())
 

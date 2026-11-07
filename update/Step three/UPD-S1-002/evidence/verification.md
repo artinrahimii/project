@@ -45,3 +45,11 @@
 - Rendezvous container V3.1.21: PASS, run 42409560957.
 - Product build V3.1.21: in_progress at the last observation (run 42409560949).
 - No local shell/clone was available in this tool session; no claim of local unit-test execution is made.
+
+
+## بررسی CI پس از commit V 3.1.22
+
+- Quality Gate run 42409868004: **FAIL**؛ 464 tests، 9 assertion failures، 455 passed.
+- Rendezvous container run 42409867998: **PASS**؛ image build و HTTP smoke روی commit دقیق.
+- Product build run 42409868020: Windows WPF job 128515459519 و HostLifecycle job 128515459678 هر دو **PASS**؛ Android job 128515459792 در آخرین مشاهده **IN PROGRESS** بود و نتیجهٔ نهایی workflow هنوز معلوم نبود.
+- نتیجهٔ آزمون‌های commit اصلاحی باید از runهای دقیق همان commit گرفته شود؛ در این مرحله pending است.

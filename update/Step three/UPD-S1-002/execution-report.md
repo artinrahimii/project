@@ -87,3 +87,16 @@
 4. T0009، T0019، T0118–T0120، T0206 و T0227 تطبیق داده شدند؛ وضعیت‌های legacy تغییر داده نشدند.
 
 **وضعیت وظیفه:** `in_progress` تا موفقیت CI روی commit این تغییر و ثبت SHA/runهای واقعی. این تصمیم، AC-P2P-01 یا تکمیل محصول را نمی‌بندد.
+
+
+## تلاش تکمیلی — شکست آزمون کیفیت V 3.1.22 و اصلاح
+
+- Commit دقیق آزموده‌شده: `c5542cdc74072b135fb3d7af88a856e65faf421e` (`V 3.1.22`).
+- Step Three quality gate: **FAIL**، run [42409868004](https://github.com/artinrahimii/project/actions/runs/42409868004): تعداد ۴۶۴ آزمون؛ ۴۵۵ موفق و ۹ ناموفق.
+- علت‌ها: ADR-0002 هنگام بازنویسی چند عبارت قراردادی مورد استفادهٔ آزمون‌های قبلی را از دست داده بود؛ چند assertion تازه نیز با شناسه‌ها/متن واقعی source و ADR-0004 منطبق نبودند. این شکست‌ها، شکست اثبات‌شدهٔ transport محصول نیستند، اما CI را نامعتبر می‌کنند و باید اصلاح می‌شدند.
+- Rendezvous container build و smoke: **PASS**، run [42409867998](https://github.com/artinrahimii/project/actions/runs/42409867998).
+- Windows WPF و HostLifecycle در product workflow: **PASS**؛ Android APK job در آخرین مشاهده هنوز در حال اجرا بود؛ کل workflow در آن زمان تکمیل نشده بود.
+- هیچ آزمون قدیمی حذف یا تضعیف نشد. عبارات قراردادی direct P2P، منع relay inference، connection-unavailable و no-silent-fallback به ADR بازگردانده شدند.
+- assertionهای جدید با شناسهٔ واقعی `remotePeerId.toBase58() != endpoint.peerId`، کامنت `Stops renewal.`، متن واقعی metadata visibility در ADR-0004 و قالب Markdown شناسهٔ AC-P2P-01 تطبیق داده شدند.
+- Attempt ناموفق CI: `UPD-S1-002-20261107201143`. تلاش اصلاحی: `UPD-S1-002-20261107201850`.
+- وضعیت UPD-S1-002 همچنان `in_progress` است؛ CI اصلاحیه هنوز اجرا/تأیید نشده است.
