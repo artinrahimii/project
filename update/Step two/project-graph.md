@@ -535,8 +535,8 @@
         "فرادادهٔ قابل مشاهده برای هر جزء و محدودیت نگهداری آن ثبت شده باشد.",
         "تصمیم با T0009، T0019، T0118 تا T0120، T0206 و T0227 تطبیق داده شده باشد."
       ],
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "تکمیل‌شده",
       "expected_output_paths": [
         "docs/decisions/",
         "update/Step three/UPD-S1-002/execution-report.md"
@@ -546,27 +546,35 @@
         "docs/decisions/README.md",
         "tests/test_update_transport_trust_boundary.py",
         "update/Step three/UPD-S1-002/execution-report.md",
-        "update/Step three/UPD-S1-002/evidence/verification.md"
+        "update/Step three/UPD-S1-002/evidence/verification.md",
+        "docs/decisions/ADR-0004-encrypted-relay-boundary.md"
       ],
       "evidence": [
         "update/Step three/UPD-S1-002/execution-report.md",
         "update/Step three/UPD-S1-002/evidence/verification.md",
         "tests/test_update_transport_trust_boundary.py",
         "tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs",
-        "docs/decisions/ADR-0004-encrypted-relay-boundary.md"
+        "docs/decisions/ADR-0004-encrypted-relay-boundary.md",
+        "docs/decisions/ADR-0002-direct-p2p-data-path.md",
+        "docs/decisions/README.md",
+        "https://github.com/artinrahimii/project/actions/runs/42410600411",
+        "https://github.com/artinrahimii/project/actions/runs/42410600404",
+        "https://github.com/artinrahimii/project/actions/runs/42410600403"
       ],
       "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0019, T0118, T0119, T0120, T0129, T0130, T0131, T0132, T0133, T0134, T0206, T0226, T0227. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است.",
       "execution_summary": {
-        "attempt_count": 5,
+        "attempt_count": 6,
         "failed_attempt_count": 2,
-        "last_attempt_id": "UPD-S1-002-20261107202026",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "UPD-S1-002-20261107203120",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "update/Step two/project-graph.md",
           "update/Step three/UPD-S1-002/execution-report.md",
           "update/Step three/UPD-S1-002/evidence/verification.md"
         ],
-        "related_commits": [],
+        "related_commits": [
+          "47a597c7e0e5df14234e717dd10685d6816c6e40"
+        ],
         "tests_passed": [
           {
             "name": "V3.1.22 Rendezvous container",
@@ -577,6 +585,30 @@
             "name": "V3.1.23 Rendezvous container build and smoke",
             "run_id": 42410464340,
             "result": "passed"
+          },
+          {
+            "name": "Step Three quality gate",
+            "command": ".github/workflows/quality.yml on exact commit V 3.1.24",
+            "result": "passed",
+            "run_id": 42410600411,
+            "url": "https://github.com/artinrahimii/project/actions/runs/42410600411",
+            "summary": "All steps passed: Python unittest suite, compileall, legacy graph structure and output/evidence guards, update graph structure and output/evidence guards."
+          },
+          {
+            "name": "Windows and Android product build",
+            "command": ".github/workflows/product-build.yml on exact commit V 3.1.24",
+            "result": "passed",
+            "run_id": 42410600404,
+            "url": "https://github.com/artinrahimii/project/actions/runs/42410600404",
+            "summary": "Windows WPF restore/build/publish/startup smoke, trust-storage acceptance and installer acceptance passed; Android clean debug/release build, lint, JVM tests, Keystore instrumentation tests, protocol generation and coverage checks passed; HostLifecycle build/tests/coverage passed."
+          },
+          {
+            "name": "Rendezvous container build and smoke",
+            "command": ".github/workflows/rendezvous-container.yml on exact commit V 3.1.24",
+            "result": "passed",
+            "run_id": 42410600403,
+            "url": "https://github.com/artinrahimii/project/actions/runs/42410600403",
+            "summary": "Container build and service smoke workflow completed successfully."
           }
         ],
         "tests_failed": [
@@ -836,6 +868,53 @@
           "device_and_host_details_redacted": "No physical Android or external Windows device involved.",
           "model_revision_and_sha256": "Not applicable.",
           "pre_upgrade_post_upgrade_snapshot": "Not applicable."
+        },
+        {
+          "attempt_id": "UPD-S1-002-20261107203120",
+          "started_at": "2026-11-07T20:31:20.309Z",
+          "ended_at": "2026-11-07T20:31:20.309Z",
+          "result": "succeeded",
+          "summary": "Final exact-head review confirmed the approved direct authenticated P2P data path, metadata-only rendezvous boundary, fail-closed behavior with relay disabled, explicit metadata visibility/retention limits, and required legacy-task cross-reference. Exact V 3.1.24 quality, product-build and rendezvous workflows all passed. No physical Android/Windows device test or external provider-log audit is claimed; those are separate product acceptance gates.",
+          "changed_files": [
+            "update/Step two/project-graph.md",
+            "update/Step three/UPD-S1-002/execution-report.md",
+            "update/Step three/UPD-S1-002/evidence/verification.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Step Three quality gate",
+              "command": ".github/workflows/quality.yml on exact commit V 3.1.24",
+              "result": "passed",
+              "run_id": 42410600411,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42410600411",
+              "summary": "All steps passed: Python unittest suite, compileall, legacy graph structure and output/evidence guards, update graph structure and output/evidence guards."
+            },
+            {
+              "name": "Windows and Android product build",
+              "command": ".github/workflows/product-build.yml on exact commit V 3.1.24",
+              "result": "passed",
+              "run_id": 42410600404,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42410600404",
+              "summary": "Windows WPF restore/build/publish/startup smoke, trust-storage acceptance and installer acceptance passed; Android clean debug/release build, lint, JVM tests, Keystore instrumentation tests, protocol generation and coverage checks passed; HostLifecycle build/tests/coverage passed."
+            },
+            {
+              "name": "Rendezvous container build and smoke",
+              "command": ".github/workflows/rendezvous-container.yml on exact commit V 3.1.24",
+              "result": "passed",
+              "run_id": 42410600403,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42410600403",
+              "summary": "Container build and service smoke workflow completed successfully."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "The SHA of this completion-record commit will be added in the next graph update after GitHub creates it. Physical Android-to-Windows acceptance remains UPD-S1-020, not part of this architecture-decision task.",
+          "device_and_host_details_redacted": "No physical Android handset or separate Windows host was accessed in this attempt; CI used hosted Windows and Android emulator/instrumentation environments.",
+          "model_revision_and_sha256": "Not applicable to UPD-S1-002.",
+          "pre_upgrade_post_upgrade_snapshot": "Not applicable to UPD-S1-002."
         }
       ]
     },
@@ -4194,13 +4273,13 @@
     }
   ],
   "progress_snapshot": {
-    "as_of": "2026-11-07T20:20:26.226Z",
+    "as_of": "2026-11-07T20:31:20.309Z",
     "total_tasks": 24,
     "not_started": 22,
-    "in_progress": 1,
-    "done": 1,
+    "in_progress": 0,
+    "done": 2,
     "blocked": 0,
-    "verified_completion_percentage": 4.17,
+    "verified_completion_percentage": 8.33,
     "calculation": "done nodes with real output and verified acceptance evidence / 24 * 100"
   },
   "visual_identity": {

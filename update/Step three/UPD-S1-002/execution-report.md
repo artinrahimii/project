@@ -111,3 +111,28 @@
 - Product build run [42410464270] در آخرین مشاهده هنوز در حال اجرا بود.
 - فایل گراف اکنون از اولین JSON کامل بازسازی می‌شود و یک حصار پایانی دقیق دریافت می‌کند. وضعیت UPD-S1-002 همچنان `in_progress` است تا quality gate و graph_guard روی commit اصلاحی موفق شوند.
 - Attempt خطای حصار: `UPD-S1-002-20261107201905`. Attempt بازیابی و اصلاح: `UPD-S1-002-20261107202026`.
+
+
+## نتیجهٔ نهایی پس از اعتبارسنجی دقیق commit V 3.1.24
+
+- commit دقیق بررسی‌شده: `47a597c7e0e5df14234e717dd10685d6816c6e40` — `V 3.1.24`، شاخهٔ آنلاین `main`.
+- تصمیم نهایی: مسیر اصلی انتقال، P2P مستقیم و احرازشده بین Android و میزبان انتخاب‌شدهٔ Windows است. سرویس Rendezvous فقط control-plane برای اعلان و کشف metadata است؛ prompt، context capsule، response، model output یا history به آن ارسال نمی‌شود.
+- مسیر جایگزین فقط آدرس مستقیم دیگری برای همان PeerId مورد اعتماد است. با شکست مسیرهای مستقیم، درخواست باید با خطای آشکار متوقف شود؛ relay محتوایی یا API مرکزی inference fallback خاموش نیست.
+- مرز داده و محدودیت نگهداری در ADR-0002 و ADR-0004 ثبت شده است. زیرساخت خارج از مخزن ممکن است metadata اتصال مانند IP، زمان و الگوی ترافیک را ببیند؛ عدم نگهداری این metadata توسط provider/proxy در این وظیفه ادعا نشده است. چون prompt/response از control-plane عبور نمی‌کند، این محدودیت به معنی دریافت متن روشن توسط rendezvous نیست.
+
+### CI دقیق همین commit
+
+- Quality gate: **PASS** — run [42410600411](https://github.com/artinrahimii/project/actions/runs/42410600411)، job `128517685912`. آزمون‌های Python، compileall و هر دو graph_guard برای ساختار و شواهد هر دو گراف موفق شدند.
+- Product build: **PASS** — run [42410600404](https://github.com/artinrahimii/project/actions/runs/42410600404). Windows WPF build/publish، startup smoke، DPAPI host identity/trust checks و installer acceptance موفق شدند. Android clean build، lint، JVM tests، Android Keystore instrumentation، protobuf generation و coverage checks موفق شدند. HostLifecycle build، integration/acceptance tests و coverage نیز موفق شدند.
+- Rendezvous container: **PASS** — run [42410600403](https://github.com/artinrahimii/project/actions/runs/42410600403)؛ build و smoke موفق.
+
+### نتیجهٔ معیارهای پذیرش
+
+1. مسیر اصلی و fallback مستقیمِ همان PeerId مشخص و با ADR-0005 هماهنگ است.
+2. metadata-only بودن سرویس واسط و ممنوعیت payloadهای inference در DTO/HTTP contract و آزمون‌های rejection بررسی شدند؛ relay محتوایی غیرفعال و fallback خاموش ممنوع است.
+3. metadata قابل‌مشاهده و retention application-level هر جزء مستند شده و محدودیت provider/proxy logs صریح باقی مانده است.
+4. وظایف قدیمی T0009، T0019، T0118 تا T0120، T0206، T0226 و T0227 از نظر ارتباط و وضعیت فعلی مرور شدند؛ وضعیت‌های گراف قدیمی در این وظیفه تغییر نکردند.
+
+**نتیجه:** همهٔ معیارهای پذیرش خود UPD-S1-002 با شواهد مخزن و CI دقیق commit احراز شدند؛ وضعیت این وظیفه به `done` تغییر کرد. آزمون فیزیکی Android-to-Windows، packet capture در deployment واقعی و ممیزی logهای provider خارج از دامنهٔ این تصمیم‌اند و در سایر وظایف محصول همچنان باز می‌مانند.
+
+**Attempt نهایی:** `UPD-S1-002-20261107203120` — `succeeded`. SHA این commit پس از ساخت Git object در به‌روزرسانی بعدی گراف ثبت خواهد شد.

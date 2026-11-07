@@ -61,3 +61,15 @@
 - Rendezvous container run 42410464340: **PASS**.
 - Product build run 42410464270: Windows/HostLifecycle/Android jobها هنگام آخرین مشاهده هنوز در حال اجرا بودند؛ نتیجهٔ نهایی ثبت نشده.
 - اولین JSON object متوازن و کامل بازیابی‌شده: 206,406 کاراکتر؛ شامل 24 node و 80 edge. بدنهٔ دوم تکراری حذف و یک closing fence افزوده شد.
+
+
+## شواهد نهایی روی commit V 3.1.24
+
+- Commit: `47a597c7e0e5df14234e717dd10685d6816c6e40`, message `V 3.1.24`, branch `main`.
+- Update graph Blob SHA: `f245ac476b26e5146dbd5d1e84a0265fa9872e84`; requirements JSON Blob SHA: `5cea3ec095d0c00e32ed3e067796ff698aedd982`.
+- Legacy graph Blob SHA: `1b51b7452762c85d18b0e2f5acbba6f1624e1f83`; Git tree size and recovered UTF-8 byte count: `4,014,945`; JSON parsed successfully from Git Blob API. Standard file fetch returned empty content for this large blob, so it was recovered from the exact tree blob instead.
+- Quality workflow run [42410600411](https://github.com/artinrahimii/project/actions/runs/42410600411): success. Exact job steps: automated tests, Python syntax check, legacy graph guard (structure + repo-root evidence), update graph guard (structure + repo-root evidence) all passed.
+- Product workflow run [42410600404](https://github.com/artinrahimii/project/actions/runs/42410600404): success. Windows job `128517685709`, Android job `128517685813`, HostLifecycle job `128517685856` all passed. The workflow built Windows publish/installer and Android APK; JVM, Android Keystore instrumentation and HostLifecycle acceptance checks passed.
+- Rendezvous workflow run [42410600403](https://github.com/artinrahimii/project/actions/runs/42410600403): success.
+- Source review: ADR-0002, ADR-0004, ADR-0005, ADR-0006, PeerAnnouncement DTO/service/directory, Windows announcement client and lease publisher, Android metadata directory client and direct transport, and the legacy execution reports listed above.
+- Explicit limitations: hosted CI/Android emulator and instrumentation do not prove a physical Android handset talking to an installed Windows host. External provider/proxy retention of connection metadata is not independently audited. No prompt/response payload is routed through the rendezvous control-plane contract.
