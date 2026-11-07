@@ -1,4 +1,4 @@
-# گراف وابستگی و دفتر اجرای به‌روزرسانی White-P — v1.1
+# گراف وابستگی و دفتر اجرای به‌روزرسانی White-P — v1.2
 
 ## هدف
 
@@ -58,6 +58,12 @@
 
 این اصلاحات معیارها و کنترل‌ها را تقویت می‌کنند و به معنی اجرای وظایف V1.10 یا انجام آزمون‌های فیزیکی نیستند.
 
+## اصلاح reconciliation وظایف قدیمی در نسخهٔ ۱.۲
+
+گراف Step Three در checkpoint مورد بررسی دارای ۲۳۰ وظیفه بود و هر ۱۶۸ شناسهٔ یکتای متأثر از V1.10 در آن پیدا شد. در V 3.1.14 هر گرهٔ متأثر با شناسه‌های UPD-S1 مرتبط و وضعیت «بازبینی مجدد در انتظار» علامت‌گذاری می‌شود. وضعیت اصلی هیچ وظیفه‌ای صرفاً به دلیل وجود در فهرست اثر تغییر نمی‌کند. فایل `update/Step two/legacy-task-reconciliation.json` فهرست کامل این ارتباط را نگه می‌دارد.
+
+این مرحله نگاشت و علامت‌گذاری را انجام می‌دهد، نه بازبینی محتوایی همهٔ ۱۶۸ وظیفه؛ تا ثبت شواهد برای هر مورد، UPD-S1-008 کامل نیست. همچنین regex آزمون قراردادی در CI اصلاح شده است.
+
 ## قالب ویرایش
 
 دادهٔ کامل در بلوک JSON زیر، قابل پردازش ماشینی و سازگار با `tools/graph_guard.py` است. هنگام به‌روزرسانی، ساختار JSON را حفظ کن و فقط وضعیت‌ها/تلاش‌ها/یال‌های دارای شاهد را به‌روزرسانی کن.
@@ -67,8 +73,8 @@
 ```json
 {
   "schema_version": "1.0",
-  "document": "update-step-two-v1.1",
-  "title": "گراف وابستگی و دفتر اجرای به‌روزرسانی White-P بر پایهٔ V1.10 — v1.1",
+  "document": "update-step-two-v1.2",
+  "title": "گراف وابستگی و دفتر اجرای به‌روزرسانی White-P بر پایهٔ V1.10 — v1.2",
   "created_at": "2026-11-07",
   "source": {
     "path": "update/Step one/Output/V1.10.json",
@@ -90,7 +96,7 @@
     "product_code_baseline_message": "V 3.1.11",
     "baseline_delta_summary": "The verified comparison from V 3.1.11 to V 3.1.12 contains exactly one added file, update/Step two/project-graph.md. No Android, Windows, shared runtime or test source was changed. The product-code baseline therefore remains V 3.1.11 while the graph-creation main checkpoint is V 3.1.12."
   },
-  "commit_intent": "V 3.1.13",
+  "commit_intent": "V 3.1.14",
   "status_legend": {
     "not_started": "انجام‌نشده؛ هیچ تلاش اجرایی ثبت نشده است.",
     "in_progress": "در حال اجرا؛ دست‌کم یک تلاش آغاز شده اما معیارهای پذیرش کامل نشده‌اند.",
@@ -109,8 +115,8 @@
     "preserve_existing_work": "Audit and reuse existing Room storage, Android conversation UI, host/backend, protocol, libp2p, trust and test infrastructure. Do not recreate a component merely because it is mentioned in an update task; only close verified gaps.",
     "security_and_privacy": "Do not expose prompt/response/history to rendezvous or normal logs. The destination inference host can read the prompt and context it processes; the Android user must be shown the trust/privacy consent required by V1.10.",
     "no_mock_completion": "Mocks may support isolated tests only. A mocked response, hard-coded response, sample-only code or stub cannot satisfy a real product acceptance gate.",
-    "base_commit_policy": "base_repository.base_commit_sha is the main-branch checkpoint used to prepare this graph revision. At task execution, resolve and record the real current main HEAD; audit all commits after the checkpoint. product_code_baseline_sha identifies the last product-code revision when the checkpoint commit changed only graph metadata.",
-    "legacy_task_sync_policy": "affected_task_ids provide traceability only. They never cause automatic status changes. UPD-S1-008 must reconcile each unique legacy ID against a valid authoritative Step Three graph with individual rationale and evidence. An empty/missing/unparseable graph is a hard blocker.",
+    "base_commit_policy": "base_repository.base_commit_sha is the main-branch checkpoint used to prepare this graph revision. At task execution, resolve and record the real current main HEAD; audit all commits after the checkpoint. product_code_baseline_sha identifies the last product-code revision when the checkpoint commit changed only graph metadata. The original v1.1 checkpoint remains historical; this v1.2 correction does not rewrite the product-code baseline.",
+    "legacy_task_sync_policy": "affected_task_ids are mapped to real Step Three nodes. Every impacted legacy node must carry update_impact with the corresponding UPD-S1 IDs and remain pending re-review until behavior and evidence are inspected. Traceability metadata alone never changes legacy status.",
     "real_e2e_policy": "The real product E2E gate must traverse the Android chat UI, Android runtime, approved direct P2P transport, installed Windows host, loaded local inference model and the same Android Room conversation. Transport fixtures and standalone model tests are supplemental only.",
     "upgrade_policy": "Release acceptance requires in-place upgrade tests on both platforms in addition to clean installation. Preserve or explicitly migrate Room history, settings, local model integrity/paths, host identity and peer trust. Never use uninstall/clear-data as an upgrade test."
   },
@@ -816,7 +822,7 @@
         "T0199",
         "T0214"
       ],
-      "description": "تغییرهای تصویب‌شده را برای تک‌تک شناسه‌های Txxxx متأثر به وظایف و وابستگی‌های Step Two و Step Three نگاشت کن و وضعیت بازبینی آن‌ها را با شواهد واقعی تعیین کن. ثبت affected_task_ids به‌تنهایی همگام‌سازی نیست. اگر گراف اصلی خالی، ناقص یا غیرقابل‌پردازش است، وضعیت همگام‌سازی را blocked ثبت کن و آن را done اعلام نکن.",
+      "description": "تغییرهای تصویب‌شده را برای تک‌تک شناسه‌های Txxxx متأثر به وظایف و وابستگی‌های Step Two و Step Three نگاشت کن، نشان بازبینی را در هر گرهٔ واقعی Step Three ثبت کن و سپس رفتار و شواهد هر وظیفه را جداگانه بازبینی کن. ثبت affected_task_ids به‌تنهایی همگام‌سازی یا تأیید سازگاری نیست.",
       "depends_on": [
         "UPD-S1-006",
         "UPD-S1-007"
@@ -831,21 +837,21 @@
       ],
       "outputs": [
         "ماتریس تصمیم به وظیفهٔ متأثر با رکورد مستقل برای هر Txxxx",
+        "نگاشت ماشینی update/Step two/legacy-task-reconciliation.json",
+        "نشان update_impact با شناسه‌های UPD-S1 متناظر در هر گرهٔ متأثر Step Three",
         "فهرست وابستگی‌های تغییرکرده و ترتیب اجرای نیازمند بازنگری همراه دلیل و شاهد",
-        "گزارش ارجاع برای صاحبان Step Two و Step Three",
-        "فایل ماشینی update/Step two/legacy-task-reconciliation.json با پوشش کامل شناسه‌ها",
-        "گزارش update/Step two/legacy-task-reconciliation.md شامل وضعیت منبع، موانع و اقدام لازم"
+        "گزارش تصمیم و شواهد بازبینی برای تک‌تک وظایف متأثر"
       ],
-      "implementation_focus": "برای هر شناسهٔ متأثر، وظیفهٔ مرجع در step one/V1.0.md، وضعیت پیاده‌سازی و وابستگی‌های گراف معتبر را بررسی کن. فقط بر اساس شواهد یکی از re_review، blocked، unchanged یا new_task_required را انتخاب کن. وضعیت‌های done قدیمی را صرفاً به دلیل وجود در affected_task_ids خودکار تغییر نده. فایل step three/project-graph.md در checkpoint فعلی خالی است؛ تا بازیابی/تولید مجدد و اعتبارسنجی آن، همگام‌سازی وضعیت‌های Txxxx مسدود می‌ماند.",
-      "start_condition": "همهٔ پیش‌نیازهای UPD-S1-006, UPD-S1-007 باید در همین گراف status=done داشته باشند و actual_output_paths و evidence و آزمون موفق آن‌ها تأیید شده باشد؛ خروجی قدیمی یا صرفاً مستنداتی کافی نیست. وضعیت و محتوای step three/project-graph.md باید پیش از ادعای تکمیل بررسی شود. در checkpoint V 3.1.12 این فایل صفر بایت است؛ نگاشت می‌تواند آغاز شود، اما تکمیل reconciliation تا وجود یک گراف معتبر و قابل‌اعتبارسنجی ممنوع است.",
-      "acceptance": "1. هر شناسهٔ یکتای Txxxx در فهرست اثر گراف Update دقیقاً یک رکورد reconciliation داشته باشد؛ هیچ شناسه‌ای حذف یا با حدس ساخته نشود.\n2. هر رکورد، وظیفهٔ مرجع، دلیل اثر، وضعیت فعلی مبتنی بر شواهد، تصمیم re_review/blocked/unchanged/new_task_required و فایل/آزمون/کامیت پشتیبان را مشخص کند.\n3. وابستگی‌های مستقیم و مصرف‌کنندگان متأثر تغییر قراردادها بررسی و تغییرهای لازم با دلیل ثبت شوند.\n4. هیچ وضعیت قدیمی صرفاً از روی affected_task_ids به‌طور خودکار تغییر نکند؛ هر تصمیم باید برای همان شناسه مستند باشد.\n5. اگر گراف اصلی Step Three خالی، ناقص یا غیرقابل‌پردازش باشد، reconciliation صریحاً blocked بماند و UPD-S1-008 done نشود.\n6. پس از بازیابی گراف معتبر، فقط گره‌های متأثر با استدلال و شواهد به re-review/blocked منتقل شوند و تاریخچهٔ قبلی حفظ شود.",
+      "implementation_focus": "تمام 168 شناسهٔ متأثر باید در Step Three پیدا شوند، با update_impact به UPD-S1های مرتبط پیوند بخورند و به حالت pending re-review بروند. سپس هر رفتار و آزمون واقعی بازبینی شود؛ وضعیت‌های فعلی legacy فقط پس از بررسی شواهد تغییر کنند. نقشهٔ شناسه‌ها به‌تنهایی تکمیل UPD-S1-008 نیست.",
+      "start_condition": "UPD-S1-006 و UPD-S1-007 باید done و دارای شواهد باشند. گراف معتبر Step Three و فایل V1.0 باید خوانده شوند؛ همهٔ شناسه‌های affected_task_ids باید در nodes گراف پیدا شوند. شناسهٔ مفقود یا گراف غیرقابل‌پردازش، reconciliation را مسدود می‌کند.",
+      "acceptance": "1. هر شناسهٔ یکتای Txxxx در فهرست اثر گراف Update دقیقاً یک رکورد reconciliation داشته باشد؛ هیچ شناسه‌ای حذف یا با حدس ساخته نشود.\n2. تمام 168 شناسهٔ متأثر در گراف Step Three موجود و هر کدام دارای update_impact با تمام شناسه‌های UPD-S1 مرتبط باشند.\n3. برای هر شناسه، baseline status حفظ شده و review_status تا بررسی واقعی pending باقی بماند؛ هیچ وضعیت قدیمی صرفاً از روی traceability تغییر نکند.\n4. برای هر وظیفه، رفتار/قرارداد متأثر، کد و آزمون فعلی، تصمیم re_review یا unchanged و شواهد و کامیت بازبینی ثبت شود.\n5. وابستگی‌های مستقیم و مصرف‌کنندگان متأثر تغییر قراردادها بررسی و تغییرهای لازم با دلیل ثبت شوند.\n6. UPD-S1-008 فقط وقتی done شود که همهٔ 168 رکورد بازبینی شده، تصمیم و شواهد دارند و هیچ رکورد اجباری pending نیست.",
       "acceptance_criteria": [
         "هر شناسهٔ یکتای Txxxx در فهرست اثر گراف Update دقیقاً یک رکورد reconciliation داشته باشد؛ هیچ شناسه‌ای حذف یا با حدس ساخته نشود.",
-        "هر رکورد، وظیفهٔ مرجع، دلیل اثر، وضعیت فعلی مبتنی بر شواهد، تصمیم re_review/blocked/unchanged/new_task_required و فایل/آزمون/کامیت پشتیبان را مشخص کند.",
+        "تمام 168 شناسهٔ متأثر در گراف Step Three موجود و هر کدام دارای update_impact با تمام شناسه‌های UPD-S1 مرتبط باشند.",
+        "برای هر شناسه، baseline status حفظ شده و review_status تا بررسی واقعی pending باقی بماند؛ هیچ وضعیت قدیمی صرفاً از روی traceability تغییر نکند.",
+        "برای هر وظیفه، رفتار/قرارداد متأثر، کد و آزمون فعلی، تصمیم re_review یا unchanged و شواهد و کامیت بازبینی ثبت شود.",
         "وابستگی‌های مستقیم و مصرف‌کنندگان متأثر تغییر قراردادها بررسی و تغییرهای لازم با دلیل ثبت شوند.",
-        "هیچ وضعیت قدیمی صرفاً از روی affected_task_ids به‌طور خودکار تغییر نکند؛ هر تصمیم باید برای همان شناسه مستند باشد.",
-        "اگر گراف اصلی Step Three خالی، ناقص یا غیرقابل‌پردازش باشد، reconciliation صریحاً blocked بماند و UPD-S1-008 done نشود.",
-        "پس از بازیابی گراف معتبر، فقط گره‌های متأثر با استدلال و شواهد به re-review/blocked منتقل شوند و تاریخچهٔ قبلی حفظ شود."
+        "UPD-S1-008 فقط وقتی done شود که همهٔ 168 رکورد بازبینی شده، تصمیم و شواهد دارند و هیچ رکورد اجباری pending نیست."
       ],
       "status": "not_started",
       "status_fa": "انجام‌نشده",
@@ -853,11 +859,12 @@
         "update/Step two/decision-impact-map.md",
         "update/Step two/legacy-task-reconciliation.json",
         "update/Step two/legacy-task-reconciliation.md",
+        "step three/project-graph.md",
         "update/Step three/UPD-S1-008/execution-report.md"
       ],
       "actual_output_paths": [],
       "evidence": [],
-      "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0012, T0020, T0199, T0214. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است.",
+      "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0012, T0020, T0199, T0214. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است. در V 3.1.14 همهٔ شناسه‌های متأثر در گراف واقعی Step Three پیدا و علامت pending re-review گرفتند؛ وضعیت‌های قدیمی فعلاً حفظ شده‌اند و بازبینی شواهد هنوز انجام نشده است.",
       "execution_summary": {
         "attempt_count": 0,
         "failed_attempt_count": 0,
@@ -1050,15 +1057,16 @@
           "T0229"
         ],
         "require_one_record_per_id": true,
+        "require_marker_in_authoritative_step_three_graph": true,
         "allowed_decisions": [
           "re_review",
-          "blocked",
           "unchanged",
+          "blocked",
           "new_task_required"
         ],
         "forbid_automatic_status_transition_from_traceability_only": true,
-        "completion_requires_valid_step_three_graph": true,
-        "completion_requires_evidence_per_decision": true
+        "completion_requires_evidence_for_each_record": true,
+        "completion_requires_zero_pending_reviews": true
       }
     },
     {
@@ -3602,7 +3610,8 @@
       "Update the graph in the same commit as implementation when practical, otherwise immediately after; reconcile status to repository state and test results.",
       "For UPD-S1-008, create one evidence-backed reconciliation record for every unique affected Txxxx ID. Do not automatically change legacy statuses from traceability metadata; an empty or invalid Step Three graph blocks completion.",
       "For UPD-S1-020, LAN interop fixtures and standalone real-inference are supplemental only. Acceptance requires one physical Android-to-installed-Windows-product request through the real local model and persistence in the same Room conversation.",
-      "For UPD-S1-021, both clean installation and in-place upgrade must pass on Android and Windows. Compare pre/post state and model checksums; do not uninstall, clear data or reset identities."
+      "For UPD-S1-021, both clean installation and in-place upgrade must pass on Android and Windows. Compare pre/post state and model checksums; do not uninstall, clear data or reset identities.",
+      "Before marking UPD-S1-008 done, reconcile every affected Txxxx ID against Step Three, inspect actual code/tests for the changed behavior and record evidence-backed decisions. The initial pending markers do not mean the review is complete."
     ],
     "required_attempt_fields": [
       "attempt_id",
@@ -3636,7 +3645,7 @@
       "passed",
       "failed"
     ],
-    "completion_test_rule": "Every done node must list at least one passing test or explicit acceptance verification, and evidence must include a test source file or CI/device run appropriate to its scope. UPD-S1-020 requires full physical-device product E2E, not a transport fixture or isolated inference test. UPD-S1-021 requires clean-install and in-place-upgrade evidence on each platform."
+    "completion_test_rule": "Every done node must list at least one passing test or explicit acceptance verification, and evidence must include a test source file or CI/device run appropriate to its scope. UPD-S1-020 requires full physical-device product E2E, not a transport fixture or isolated inference test. UPD-S1-021 requires clean-install and in-place-upgrade evidence on each platform. UPD-S1-008 requires zero pending legacy review records and evidence-backed per-task decisions in both graphs."
   },
   "product_acceptance_gates": [
     {
@@ -3848,12 +3857,13 @@
   },
   "updated_at": "2026-11-07",
   "legacy_task_sync": {
-    "state": "blocked",
-    "reason_code": "SOURCE_STEP_THREE_GRAPH_EMPTY",
-    "checkpoint_commit_sha": "827d1586e367d8495ef052ac71a8cc83db0f4680",
+    "state": "review_pending",
+    "reason_code": "LEGACY_TASK_REVIEW_NOT_YET_PERFORMED",
+    "checkpoint_commit_sha": "142640d24c97b8b65b1f4eb24559b0184e4bb4d0",
     "source_graph_path": "step three/project-graph.md",
-    "source_graph_blob_sha": "07f32dcd3ce9476b36f910aed0cadf1d95285301",
-    "source_graph_state_at_checkpoint": "empty_file_zero_bytes",
+    "source_graph_revision": "v2.1",
+    "source_graph_node_count": 230,
+    "source_graph_state_at_checkpoint": "valid_parseable_graph",
     "affected_legacy_task_ids": [
       "T0012",
       "T0013",
@@ -4025,13 +4035,21 @@
       "T0229"
     ],
     "affected_task_id_count": 168,
-    "current_scope": "Affected IDs are inventoried from all 24 V1.10 nodes; this does not mean legacy statuses have been reconciled.",
-    "completion_blocker": "The authoritative Step Three graph is empty at the recorded checkpoint. Restore/regenerate and validate it from canonical Step One/Step Two sources under the Step Three workflow before reconciling legacy task states.",
+    "matched_legacy_task_id_count": 168,
+    "missing_legacy_task_ids": [],
+    "review_status_summary": {
+      "pending": 168,
+      "reviewed": 0
+    },
+    "reconciliation_artifact_path": "update/Step two/legacy-task-reconciliation.json",
+    "status_change_policy": "All 168 legacy nodes are tagged as re-review pending in the authoritative Step Three graph. Their existing statuses remain unchanged until per-task implementation and acceptance evidence is reviewed.",
+    "completion_blocker": "The impact-to-task mapping now exists, but all 168 task-level reviews and evidence records remain pending. UPD-S1-008 cannot be marked done until each review is completed or an evidence-backed unchanged decision is recorded.",
     "rules": [
-      "UPD-S1-008 must create exactly one evidence-backed reconciliation decision per affected Txxxx ID.",
+      "Every unique affected Txxxx ID has exactly one record in the reconciliation artifact and an update_impact marker on its Step Three node.",
+      "Every marker lists all corresponding UPD-S1 task IDs and records the legacy status at the start of review.",
       "Do not automatically change a legacy task status based only on affected_task_ids.",
-      "Do not claim synchronization or mark UPD-S1-008 done while the authoritative Step Three graph is empty, missing or unparsable.",
-      "After a valid graph exists, update only impacted nodes supported by current code/test evidence and preserve append-only history."
+      "Review each impacted behavior and its current implementation/tests; append decision, evidence, and review commit.",
+      "UPD-S1-008 remains incomplete while any required review is pending."
     ]
   }
 }

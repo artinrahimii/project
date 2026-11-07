@@ -1,0 +1,2421 @@
+{
+  "schema_version": "1.0",
+  "document": "whitep-v1-10-legacy-task-reconciliation",
+  "source_update_revision": "V1.10",
+  "source_update_graph_revision": "v1.1",
+  "source_update_graph_commit": "142640d24c97b8b65b1f4eb24559b0184e4bb4d0",
+  "source_legacy_graph_revision": "v2.1",
+  "source_legacy_graph_commit": "main at checkpoint V 3.1.13",
+  "legacy_task_count": 230,
+  "affected_legacy_task_count": 168,
+  "mapped_legacy_task_count": 168,
+  "missing_legacy_task_ids": [],
+  "review_state": "pending",
+  "status_transition_policy": "Existing task status is preserved until each affected implementation and its acceptance evidence are reviewed. Traceability alone is not a status transition.",
+  "records": [
+    {
+      "legacy_task_id": "T0012",
+      "title": "فایل `docs/requirements.md` را با نیازمندی‌های قابل‌آزمون و شناسهٔ یکتا برای هر الزام ایجاد کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-006",
+        "UPD-S1-008"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0013",
+      "title": "فایل `docs/acceptance.md` را با آزمون‌های قبولی نهایی میزبان ویندوز، اندروید و تبادل P2P ایجاد کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-006"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0015",
+      "title": "پشتهٔ میزبان را به C# و .NET LTS با رابط کاربری WPF انتخاب و پروژهٔ اجرایی آن را بساز.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-001",
+        "UPD-S1-024"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0016",
+      "title": "پشتهٔ اندروید را به Kotlin، Jetpack Compose و Gradle انتخاب و پروژهٔ اجرایی آن را بساز.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-001",
+        "UPD-S1-024"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0019",
+      "title": "مشخص کن اتصال مستقیم P2P مسیر پیش‌فرض داده است و سرویس کمکی احتمالی فقط برای معرفی/هماهنگی اتصال استفاده می‌شود.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-002"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0020",
+      "title": "تصمیم‌های انتخاب فناوری را در `docs/decisions/` ثبت کن و هر تصمیم را به کد و آزمون متناظر پیوند بده.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-006",
+        "UPD-S1-008"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0027",
+      "title": "دستورهای restore، build، test و package را در `README.md` دقیق و قابل‌تکرار ثبت کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-021"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0032",
+      "title": "پیام `InferenceResponse` را با شناسهٔ درخواست، وضعیت، متن پاسخ، خطای قابل‌نمایش و زمان تولید تعریف کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-004",
+        "UPD-S1-017"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0033",
+      "title": "پیام‌های `HostAnnouncement` و `HostCapabilities` را بدون متن درخواست یا شناسهٔ دائمی کاربر تعریف کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-017"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0034",
+      "title": "پیام‌های `CancelRequest`، `HostBusy`، `UnsupportedModel` و `ProtocolError` را تعریف کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-017"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0035",
+      "title": "شمارهٔ نسخهٔ پروتکل و سیاست رد نسخه‌های ناسازگار را در قراردادها پیاده‌سازی کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-017"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0036",
+      "title": "کد تولید قراردادهای C# و Kotlin را در build تولید کن، نه با ویرایش دستی.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-017"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0041",
+      "title": "نقطهٔ ورود واقعی برنامهٔ WPF را بساز و پنجرهٔ اصلی را بدون خطا اجرا کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-001",
+        "UPD-S1-012",
+        "UPD-S1-024"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0042",
+      "title": "لایه‌های UI، Application، Domain و Infrastructure را به پروژه‌های buildable جدا کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-001",
+        "UPD-S1-012",
+        "UPD-S1-024"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0043",
+      "title": "مدل دامنهٔ `HostState` را با وضعیت‌های Stopped، Starting، Ready، Busy و Error پیاده‌سازی کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-012"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0044",
+      "title": "تغییر وضعیت میزبان را با state machine محدود و آزمون واحد پیاده‌سازی کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-012"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0045",
+      "title": "سرویس تنظیمات محلی را با ذخیره‌سازی نسخه‌دار و اعتبارسنجی ایجاد کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-012"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0046",
+      "title": "رابط وضعیت اصلی را به وضعیت واقعی backend و شبکه وصل کن؛ مقدار نمایشی ثابت ممنوع است.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-012",
+        "UPD-S1-024"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0047",
+      "title": "پیام‌های خطا را به خطای قابل‌فهم کاربر نگاشت کن، بدون افشای مسیرهای محرمانه یا اسرار.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-012"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0048",
+      "title": "آزمون راه‌اندازی، خاموش‌کردن و بازیابی از خطای راه‌اندازی میزبان را اضافه کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-012"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0049",
+      "title": "سرویس تشخیص سیستم‌عامل، RAM و فضای دیسک را با API واقعی ویندوز پیاده‌سازی کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-005",
+        "UPD-S1-013"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0050",
+      "title": "تشخیص GPU و backendهای موجود را با قابلیت‌های واقعی قابل‌دسترسی پیاده‌سازی کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-005",
+        "UPD-S1-013"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0051",
+      "title": "سرویس تخمین سازگاری مدل را با نیاز حافظهٔ اعلام‌شدهٔ مدل و منابع میزبان پیاده‌سازی کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-005",
+        "UPD-S1-013"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0052",
+      "title": "وضعیت ظرفیت را به مدل دامنهٔ `HostCapabilities` تبدیل کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-005",
+        "UPD-S1-013"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0053",
+      "title": "آزمون کمبود RAM، فضای دیسک ناکافی و backend پشتیبانی‌نشده را بنویس.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-005",
+        "UPD-S1-013"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0054",
+      "title": "میزبان را هنگام آماده‌نبودن مدل یا ناکافی‌بودن منابع از حالت Ready خارج کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-005",
+        "UPD-S1-013"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0055",
+      "title": "اطلاعات CPU، GPU و حافظه را در رابط میزبان نمایش بده و مقادیر را از سیستم واقعی بخوان.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-005",
+        "UPD-S1-013",
+        "UPD-S1-024"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0056",
+      "title": "در صورت نامشخص‌بودن ظرفیت، آن را Unknown نشان بده و به‌اشتباه Ready اعلام نکن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-005",
+        "UPD-S1-013"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0057",
+      "title": "رابط `IInferenceEngine` برای کشف backend، بارگذاری مدل، تولید پاسخ، لغو و آزادسازی منابع ایجاد کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-023"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0058",
+      "title": "پیاده‌سازی واقعی `LlamaCppInferenceEngine` را برای اتصال به موتور محلی نصب‌شده ایجاد کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-023"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0059",
+      "title": "فرایند موتور محلی را با آرگومان‌های امن و بدون shell interpolation اجرا کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-023"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0060",
+      "title": "health check واقعی backend را پیش از اعلام آمادگی مدل اجرا کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-023"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0061",
+      "title": "درخواست inference را به API محلی backend نگاشت و پاسخ واقعی مدل را دریافت کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-023"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0062",
+      "title": "timeout، خطای فرایند، قطع ارتباط و پاسخ ناقص backend را مدیریت کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-023"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0063",
+      "title": "لغو inference را به backend منتقل کن و در صورت عدم پشتیبانی، فرایند اختصاصی را به‌صورت کنترل‌شده متوقف کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-023"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0064",
+      "title": "آزمون یکپارچه با مدل کوچک دارای مجوز قابل‌قبول را به‌صورت opt-in بساز.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-023"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0065",
+      "title": "آزمون اثبات کند در مسیر inference هیچ اتصال API به ارائه‌دهندهٔ ابری برقرار نمی‌شود.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-023"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0066",
+      "title": "نسخه و checksum باینری موتور را پیش از اجرا بررسی کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-023"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0067",
+      "title": "backend را پشت رابط نگه دار تا افزودن موتور جایگزین نیازمند تغییر منطق گفت‌وگو یا شبکه نباشد.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-023"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0068",
+      "title": "schema نسخه‌دار کاتالوگ مدل شامل شناسه، نام، فرمت، اندازه، checksum، backend و مجوز ایجاد کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-023"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0069",
+      "title": "parser کاتالوگ را با رد ورودی نامعتبر و URL غیرمجاز پیاده‌سازی کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-023"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0070",
+      "title": "صفحهٔ کاتالوگ را از دادهٔ واقعی کاتالوگ بخوان، نه از فهرست هاردکدشدهٔ UI.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-023",
+        "UPD-S1-024"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0071",
+      "title": "برای هر مدل، صفحهٔ اطلاعات شامل مجوز، منبع، اندازه و محدودیت استفاده بساز.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-023",
+        "UPD-S1-024"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0072",
+      "title": "مدل فاقد اطلاعات مجوز معتبر را به‌عنوان «نیازمند بررسی» علامت بزن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-023"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0073",
+      "title": "آزمون کاتالوگ شامل مدل مجاز، مدل فاقد مجوز، checksum نامعتبر و URL ناامن را بنویس.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-023"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0074",
+      "title": "یک کاتالوگ نمونهٔ واقعی با مدل‌های دارای منابع و مجوزهای بررسی‌شده اضافه کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-023"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0075",
+      "title": "نبود دسترسی اینترنت را در کاتالوگ مدیریت کن و آخرین دادهٔ معتبر را فقط در صورت وجود نمایش بده.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-023"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0088",
+      "title": "صفحهٔ گفت‌وگوی محلی با فهرست پیام‌ها، ورودی متن و دکمهٔ ارسال بساز.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-010",
+        "UPD-S1-024"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0090",
+      "title": "پیام‌های کاربر و مدل را با ترتیب قطعی در حافظهٔ نشست نمایش بده.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-010"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0092",
+      "title": "خطاهای مدل را در UI نمایش بده و آن‌ها را به متن پاسخ موفق تبدیل نکن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-010"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0098",
+      "title": "`HostRequestCoordinator` را با semaphore تک‌ظرفیتی پیاده‌سازی کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-005",
+        "UPD-S1-013",
+        "UPD-S1-023"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0099",
+      "title": "درخواست دوم را هنگام مشغول‌بودن با وضعیت Busy رد کن و آن را در صف نامحدود پنهان نکن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-005",
+        "UPD-S1-013",
+        "UPD-S1-023"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0100",
+      "title": "پیش از پذیرش درخواست، مشارکت فعال، مدل آماده، ظرفیت و deadline را بررسی کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-005",
+        "UPD-S1-013",
+        "UPD-S1-023"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0101",
+      "title": "برای هر درخواست شناسهٔ تصادفی رمزنگارانه با مولد امن ایجاد کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-005",
+        "UPD-S1-013",
+        "UPD-S1-023"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0102",
+      "title": "deadline را هنگام دریافت ثبت و پیش از inference و هنگام ارسال پاسخ دوباره بررسی کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-005",
+        "UPD-S1-013",
+        "UPD-S1-023"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0103",
+      "title": "لغو درخواست را به coordinator، موتور inference و ارتباط شبکه منتقل کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-005",
+        "UPD-S1-013",
+        "UPD-S1-023"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0104",
+      "title": "نتیجهٔ هر درخواست را حداکثر یک‌بار به مسیر پاسخ‌دهی تحویل بده.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-005",
+        "UPD-S1-013",
+        "UPD-S1-023"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0105",
+      "title": "اطلاعات موقت درخواست را در finally پاک کن، حتی اگر inference با exception تمام شود.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-005",
+        "UPD-S1-013",
+        "UPD-S1-018",
+        "UPD-S1-023"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0106",
+      "title": "آزمون هم‌زمانی اثبات کند هیچ دو inference ورودی هم‌زمان روی یک میزبان اجرا نمی‌شوند.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-005",
+        "UPD-S1-013",
+        "UPD-S1-023"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0107",
+      "title": "آزمون درخواست تکراری، deadline منقضی، لغو حین اجرا و خطای موتور را اضافه کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-004",
+        "UPD-S1-005",
+        "UPD-S1-013",
+        "UPD-S1-017",
+        "UPD-S1-023"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0108",
+      "title": "listener شبکه را فقط وقتی مشارکت فعال است راه‌اندازی کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-012",
+        "UPD-S1-017"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0109",
+      "title": "listener را هنگام غیرفعال‌کردن مشارکت یا خروج برنامه به‌صورت کامل متوقف کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-012",
+        "UPD-S1-017"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0110",
+      "title": "parser ورودی شبکه را به قرارداد Protobuf مشترک وصل کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-004",
+        "UPD-S1-012",
+        "UPD-S1-017"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0111",
+      "title": "اندازهٔ پیام، نسخهٔ پروتکل، شناسه، deadline و مجوز ارسال درخواست را اعتبارسنجی کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-004",
+        "UPD-S1-012",
+        "UPD-S1-017"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0112",
+      "title": "پاسخ‌های Busy، UnsupportedModel، InvalidRequest و InternalError را به وضعیت‌های قرارداد نگاشت کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-004",
+        "UPD-S1-012",
+        "UPD-S1-017"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0113",
+      "title": "متن درخواست و پاسخ را در log عادی ثبت نکن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-012"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0114",
+      "title": "listener را از دسترسی عمومی غیرضروری شبکه محدود و پورت/وضعیت اتصال را به کاربر نمایش بده.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-012"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0115",
+      "title": "آزمون listener با اتصال قطع‌شده، پیام مخرب، اتصال تکراری و shutdown را اضافه کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-012"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0116",
+      "title": "رابط `IPeerTransport` برای اتصال امن، ارسال پیام، دریافت پیام و قطع ارتباط ایجاد کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-014",
+        "UPD-S1-016"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0117",
+      "title": "پیاده‌سازی انتقال P2P را با کتابخانهٔ متن‌باز انتخاب‌شده و مجوز سازگار به کد واقعی وصل کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-014",
+        "UPD-S1-016"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0118",
+      "title": "برای شبکه‌هایی که اتصال مستقیم در آن‌ها ممکن نیست، روش اتصال جایگزین را بدون عبور متن درخواست از سرور معرفی‌کننده پیاده‌سازی کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-002",
+        "UPD-S1-014",
+        "UPD-S1-016"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0119",
+      "title": "اگر relay انتقال رمزگذاری‌شده لازم است، آن را به‌عنوان مسیر عبور بایت‌ها طراحی کن و صریحاً ثبت کن که relay می‌تواند فرادادهٔ اتصال را ببیند.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-002",
+        "UPD-S1-014",
+        "UPD-S1-016"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0120",
+      "title": "سرویس معرفی گره را به پیام‌های announcement و capability محدود کن و ارسال محتوای درخواست به آن را در کد ممنوع کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-002",
+        "UPD-S1-014",
+        "UPD-S1-016"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0121",
+      "title": "اعلام حضور میزبان را با TTL و تمدید دوره‌ای پیاده‌سازی کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-014"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0122",
+      "title": "میزبان منقضی یا قطع‌شده را از فهرست قابل‌انتخاب حذف کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-014"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0123",
+      "title": "وضعیت آنلاین را از heartbeat واقعی تعیین کن، نه از زمان آخرین دادهٔ کش‌شده بدون اعتبارسنجی.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-014"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0124",
+      "title": "انتخاب گره‌ها را بر اساس reachability، readiness، ظرفیت و سازگاری مدل پیاده‌سازی کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-014",
+        "UPD-S1-023"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0125",
+      "title": "انتخاب سه میزبان را با سه هویت گرهٔ متمایز تضمین کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-003",
+        "UPD-S1-014",
+        "UPD-S1-015"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0126",
+      "title": "وقتی کمتر از سه میزبان معتبر وجود دارد، رفتار تعریف‌شده را اجرا و کمبود را به کاربر اعلام کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-003",
+        "UPD-S1-014",
+        "UPD-S1-015"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0127",
+      "title": "آزمون قطع شبکه، انقضای announcement، میزبان تکراری و نبود میزبان را اضافه کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-014"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0128",
+      "title": "آزمون end-to-end را روی دو رایانهٔ واقعی یا دو گرهٔ مستقل شبکه اجرا و نتیجه را ثبت کن.",
+      "baseline_status": "deferred_final",
+      "update_task_ids": [
+        "UPD-S1-014"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0129",
+      "title": "از کتابخانهٔ رمزنگاری معتبر و نگهداری‌شده استفاده کن؛ الگوریتم رمزنگاری اختصاصی نساز.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-002",
+        "UPD-S1-007",
+        "UPD-S1-016"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0130",
+      "title": "هویت کلید میزبان را بساز و کلید خصوصی را در ذخیره‌سازی امن سیستم نگه دار.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-002",
+        "UPD-S1-007",
+        "UPD-S1-016",
+        "UPD-S1-022"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0131",
+      "title": "روش اعتماد اولیه و تأیید هویت همتا را پیاده‌سازی کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-002",
+        "UPD-S1-007",
+        "UPD-S1-016",
+        "UPD-S1-022"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0132",
+      "title": "محرمانگی، تمامیت و احراز هویت ارتباط را با TLS یا پروتکل امن معتبر برقرار کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-002",
+        "UPD-S1-007",
+        "UPD-S1-016",
+        "UPD-S1-022"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0133",
+      "title": "در صورت استفاده از اتصال P2P با رمزنگاری سرتاسری، کلیدهای نشست و اعتبارسنجی همتا را با کتابخانهٔ استاندارد مدیریت کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-002",
+        "UPD-S1-007",
+        "UPD-S1-016",
+        "UPD-S1-022"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0134",
+      "title": "گواهی یا کلید نامعتبر، همتای ناشناخته و نسخهٔ رمزنگاری ناسازگار را رد کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-002",
+        "UPD-S1-007",
+        "UPD-S1-016",
+        "UPD-S1-022"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0135",
+      "title": "شناسهٔ درخواست را از شناسهٔ کاربر و شناسهٔ دائمی گفت‌وگو مستقل نگه دار.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-007",
+        "UPD-S1-016",
+        "UPD-S1-022"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0136",
+      "title": "برای درخواست‌های مختلف شناسه‌های تصادفی مستقل تولید کن؛ هش ساده را جایگزین شناسهٔ امن نکن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-007",
+        "UPD-S1-016",
+        "UPD-S1-022"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0137",
+      "title": "آزمون دستکاری پیام، جعل پاسخ، replay و اتصال به همتای نامعتبر را بنویس.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-007",
+        "UPD-S1-016",
+        "UPD-S1-022"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0138",
+      "title": "اسناد حریم خصوصی را صریحاً به‌گونه‌ای بنویس که میزبان پردازشگر می‌تواند متن درخواست و capsule را بخواند.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-007",
+        "UPD-S1-016"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0139",
+      "title": "برنامهٔ اندروید را با صفحهٔ اصلی قابل‌اجرا و ناوبری Compose بساز.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-001",
+        "UPD-S1-010",
+        "UPD-S1-011",
+        "UPD-S1-024"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0141",
+      "title": "پایگاه دادهٔ محلی Room برای گفت‌وگوها، پیام‌ها و وضعیت درخواست‌ها ایجاد کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-009"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0142",
+      "title": "مهاجرت نسخهٔ پایگاه داده و آزمون migration را اضافه کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-009"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0143",
+      "title": "صفحهٔ فهرست گفت‌وگوها را به دادهٔ واقعی Room متصل کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-009",
+        "UPD-S1-022",
+        "UPD-S1-024"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0144",
+      "title": "ایجاد، تغییر عنوان، حذف و بازکردن گفت‌وگو را پیاده‌سازی کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-009"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0145",
+      "title": "صفحهٔ گفت‌وگو با پیام‌های مرتب‌شده، ورودی متن و ارسال را بساز.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-009",
+        "UPD-S1-010",
+        "UPD-S1-022",
+        "UPD-S1-024"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0146",
+      "title": "ارسال پیام خالی یا بیش از سقف طول را در UI و لایهٔ دامنه رد کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-009",
+        "UPD-S1-010"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0147",
+      "title": "وضعیت‌های queued، contacting، waiting، partial، completed، failed و cancelled را نمایش بده.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-004",
+        "UPD-S1-009",
+        "UPD-S1-010"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0148",
+      "title": "بازسازی UI پس از چرخش صفحه و فرایند recreation را با ViewModel و ذخیره‌سازی درست کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-009",
+        "UPD-S1-010"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0149",
+      "title": "پیام‌ها و وضعیت‌های درخواست را پس از بستن و بازکردن اپ بازیابی کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-009",
+        "UPD-S1-010"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0150",
+      "title": "آزمون رابط و repository برای ایجاد گفت‌وگو، ارسال پیام و بازیابی تاریخچه اضافه کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-009",
+        "UPD-S1-010",
+        "UPD-S1-019"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0161",
+      "title": "مدل دامنهٔ `DistributedRequest` با deadline، حداکثر دور، شناسهٔ موقت و وضعیت ایجاد کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-003",
+        "UPD-S1-004",
+        "UPD-S1-015",
+        "UPD-S1-017"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0162",
+      "title": "الگوریتم انتخاب میزبان را به سه گرهٔ آماده، متفاوت و سازگار با قابلیت درخواست محدود کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-003",
+        "UPD-S1-004",
+        "UPD-S1-015",
+        "UPD-S1-017"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0163",
+      "title": "درخواست هر دور را با شناسهٔ تلاش و شناسهٔ موقت قابل‌تطبیق ارسال کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-003",
+        "UPD-S1-004",
+        "UPD-S1-015",
+        "UPD-S1-017"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0164",
+      "title": "timer هر دور را با clock قابل‌آزمایش و timeout پیکربندی‌شده پیاده‌سازی کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-003",
+        "UPD-S1-004",
+        "UPD-S1-015",
+        "UPD-S1-017"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0165",
+      "title": "هر پاسخ را با شناسهٔ درخواست، دور، میزبان و deadline اعتبارسنجی کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-003",
+        "UPD-S1-004",
+        "UPD-S1-015",
+        "UPD-S1-017"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0166",
+      "title": "پاسخ معتبر هر میزبان را جداگانه ذخیره و در UI به‌صورت کارت مستقل نمایش بده.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-003",
+        "UPD-S1-004",
+        "UPD-S1-015",
+        "UPD-S1-017"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0167",
+      "title": "پاسخ‌های چند میزبان را بدون ادغام خودکار نمایش بده.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-003",
+        "UPD-S1-004",
+        "UPD-S1-015",
+        "UPD-S1-017"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0168",
+      "title": "اگر حداقل یک پاسخ معتبر در دور رسید، دریافت سایر پاسخ‌ها را تا پایان پنجرهٔ پاسخ تعریف‌شده ادامه بده.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-003",
+        "UPD-S1-004",
+        "UPD-S1-015",
+        "UPD-S1-017"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0169",
+      "title": "اگر هیچ پاسخ معتبری در پنجرهٔ دور نرسید، سه میزبان متفاوت بعدی را انتخاب کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-003",
+        "UPD-S1-004",
+        "UPD-S1-015",
+        "UPD-S1-017"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0170",
+      "title": "سقف دورها و سقف کل میزبان‌های امتحان‌شده را به تنظیمات نسخهٔ نخست محدود کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-003",
+        "UPD-S1-004",
+        "UPD-S1-015",
+        "UPD-S1-017"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0171",
+      "title": "گره‌ای را که در دور قبلی امتحان شده، در دور بعد دوباره انتخاب نکن مگر آنکه سیاست صریح retry همان گره تعریف شده باشد.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-003",
+        "UPD-S1-004",
+        "UPD-S1-015",
+        "UPD-S1-017"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0172",
+      "title": "پاسخ دیرهنگام پس از deadline را رد کن و آن را به درخواست جدید نسبت نده.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-003",
+        "UPD-S1-004",
+        "UPD-S1-015",
+        "UPD-S1-017"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0173",
+      "title": "درخواست پایان‌یافته را idempotent کن تا پاسخ تکراری دوباره نمایش داده نشود.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-003",
+        "UPD-S1-004",
+        "UPD-S1-015",
+        "UPD-S1-017"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0174",
+      "title": "دکمهٔ لغو را به پیام CancelRequest برای تمام میزبان‌های انتخاب‌شده وصل کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-003",
+        "UPD-S1-004",
+        "UPD-S1-015",
+        "UPD-S1-017"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0175",
+      "title": "در پایان تلاش‌ها، وضعیت failed و امکان retry دستی را نشان بده.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-003",
+        "UPD-S1-004",
+        "UPD-S1-015",
+        "UPD-S1-017"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0176",
+      "title": "آزمون‌های قطعی برای صفر، یک، دو و سه پاسخ، پاسخ دیرهنگام، پاسخ تکراری، timeout و لغو بنویس.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-003",
+        "UPD-S1-004",
+        "UPD-S1-015",
+        "UPD-S1-017",
+        "UPD-S1-019"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0177",
+      "title": "آزمون الگوریتم تضمین کند هر دور حداکثر سه میزبان متفاوت و هر درخواست حداکثر سقف مجاز تلاش دارد.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-003",
+        "UPD-S1-004",
+        "UPD-S1-015",
+        "UPD-S1-017"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0178",
+      "title": "سیاست پیش‌فرض نگهداری میزبان را به عدم ذخیرهٔ پایدار متن درخواست و پاسخ تبدیل کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-007",
+        "UPD-S1-018"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0179",
+      "title": "log ساختاریافته را با allowlist فیلدهای مجاز پیاده‌سازی کن و متن درخواست، capsule، کلیدها و شناسه‌های حساس را حذف کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-007",
+        "UPD-S1-018"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0180",
+      "title": "پاک‌سازی payloadها و بافرهای موقت را در پایان موفق، خطا، لغو و timeout اجرا کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-007",
+        "UPD-S1-018"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0181",
+      "title": "تنظیم نگهداری اختیاری میزبان را با رضایت روشن صاحب رایانه پیاده‌سازی کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-007",
+        "UPD-S1-018"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0182",
+      "title": "پاک‌سازی دادهٔ موقت را پس از راه‌اندازی مجدد نیز بررسی کن و فایل موقت یتیم را حذف کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-007",
+        "UPD-S1-018"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0183",
+      "title": "از Android Keystore برای اسرار و کلیدهای محلی استفاده کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-007",
+        "UPD-S1-018"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0184",
+      "title": "از رمزگذاری ذخیره‌سازی حساس در اندروید استفاده کن و کلید را در کد منبع قرار نده.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-007",
+        "UPD-S1-018"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0185",
+      "title": "درخواست مجوزهای Android را به حداقل لازم محدود کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-007",
+        "UPD-S1-018"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0186",
+      "title": "متن رضایت و هشدار حریم خصوصی را در رابط پیش از اتصال به میزبان نمایش بده.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-007",
+        "UPD-S1-011",
+        "UPD-S1-018",
+        "UPD-S1-022"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0187",
+      "title": "آزمون جست‌وجوی log و فایل‌های موقت را برای نبود متن درخواست، capsule و اسرار اضافه کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-007",
+        "UPD-S1-018"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0188",
+      "title": "threat model و محدودیت ناشناس‌بودن را در `docs/security.md` با پیوند به کنترل‌های اجرایی ثبت کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-007",
+        "UPD-S1-018"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0189",
+      "title": "کد خطای پایدار و قابل‌نمایش برای خطاهای شبکه، مدل، منابع و اعتبارسنجی تعریف کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-017"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0190",
+      "title": "گزارش وضعیت شبکه و inference را بدون محتوای پیام به کاربر نمایش بده.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-010",
+        "UPD-S1-017"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0191",
+      "title": "مدیریت لغو، timeout و exception را در همهٔ مرزهای async پیاده‌سازی کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-017"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0192",
+      "title": "retryهای داخلی را محدود کن و با retry توزیع‌شدهٔ درخواست تداخل نده.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-017"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0193",
+      "title": "هنگام خاموش‌شدن میزبان، پذیرش درخواست جدید را متوقف و کار جاری را امن خاتمه بده.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-012"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0196",
+      "title": "آزمون واحد برای state machine میزبان، اعتبارسنجی درخواست و ظرفیت تک‌درخواستی بنویس.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-005",
+        "UPD-S1-013",
+        "UPD-S1-019",
+        "UPD-S1-023"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0197",
+      "title": "آزمون واحد برای capsule، اندازهٔ payload و تعارض پاسخ‌ها بنویس.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-019"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0198",
+      "title": "آزمون واحد برای انتخاب میزبان، دورها، timeout، deadline و idempotency بنویس.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-019"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0199",
+      "title": "آزمون قرارداد مشترک را در CI برای کد C# و Kotlin اجرا کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-008",
+        "UPD-S1-019"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0200",
+      "title": "آزمون یکپارچهٔ اندروید را با transport آزمایشی و میزبان محلی اجرا کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-004",
+        "UPD-S1-010",
+        "UPD-S1-019",
+        "UPD-S1-020"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0201",
+      "title": "آزمون یکپارچهٔ موتور inference را با backend واقعی و مدل کوچک opt-in اجرا کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-019",
+        "UPD-S1-020"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0202",
+      "title": "تست شبکهٔ واقعی میان کلاینت اندروید و میزبان ویندوز را روی شبکهٔ محلی اجرا کن.",
+      "baseline_status": "deferred_final",
+      "update_task_ids": [
+        "UPD-S1-004",
+        "UPD-S1-010",
+        "UPD-S1-019",
+        "UPD-S1-020"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0203",
+      "title": "سناریوی سه میزبان مستقل را با سه فرایند/دستگاه مجزا آزمایش کن و مستقل‌بودن پاسخ‌ها را بررسی کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-003",
+        "UPD-S1-015",
+        "UPD-S1-019",
+        "UPD-S1-020"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0204",
+      "title": "سناریوی دور دوم را با خاموش‌کردن یا بی‌پاسخ‌گذاشتن سه میزبان نخست آزمایش کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-003",
+        "UPD-S1-015",
+        "UPD-S1-019",
+        "UPD-S1-020"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0205",
+      "title": "آزمون لغو ثابت کند میزبان لغوشده پس از دریافت cancellation کار را ادامه نمی‌دهد، جز محدودیت مستند backend.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-019",
+        "UPD-S1-020"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0206",
+      "title": "آزمون privacy ثابت کند معرفی‌کنندهٔ گره متن درخواست و capsule دریافت نمی‌کند.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-002",
+        "UPD-S1-007",
+        "UPD-S1-016",
+        "UPD-S1-018",
+        "UPD-S1-019",
+        "UPD-S1-020"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0207",
+      "title": "آزمون build پاک را روی runner تازهٔ CI اجرا کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-019",
+        "UPD-S1-021"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0208",
+      "title": "گزارش پوشش آزمون و نتایج آزمون‌های بحرانی را در artifactهای CI منتشر کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-019",
+        "UPD-S1-021"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0209",
+      "title": "بستهٔ نصب ویندوز را از build واقعی تولید کن و نسخه، ناشر و مجوزهای وابستگی‌ها را مشخص کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-021"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0210",
+      "title": "اجرای برنامهٔ نصب‌شده را روی Windows پشتیبانی‌شده از محیط تمیز بررسی کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-021",
+        "UPD-S1-024"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0211",
+      "title": "APK قابل‌نصب اندروید را از Gradle تولید کن و نصب و launch آن را روی emulator بررسی کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-021",
+        "UPD-S1-024"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0212",
+      "title": "امضای release اندروید را با راهکار امن خارج از مخزن مدیریت کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-021"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0213",
+      "title": "checksum فایل‌های انتشار را تولید کن و در release قرار بده.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-021"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0214",
+      "title": "دستورهای build، test، run و package را از clone تمیز طبق README اجرا کن.",
+      "baseline_status": "done",
+      "update_task_ids": [
+        "UPD-S1-008",
+        "UPD-S1-021"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0215",
+      "title": "فهرست وابستگی‌ها، مجوز نرم‌افزارها و مجوز مدل نمونه را در خروجی انتشار همراه کن.",
+      "baseline_status": "in_progress",
+      "update_task_ids": [
+        "UPD-S1-021"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0216",
+      "title": "راهنمای نصب و عیب‌یابی میزبان ویندوز را بر اساس UI واقعی بنویس.",
+      "baseline_status": "not_started",
+      "update_task_ids": [
+        "UPD-S1-001",
+        "UPD-S1-021",
+        "UPD-S1-024"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0217",
+      "title": "راهنمای نصب، اتصال به میزبان و استفاده از گفت‌وگو را برای اندروید بر اساس اپ واقعی بنویس.",
+      "baseline_status": "not_started",
+      "update_task_ids": [
+        "UPD-S1-001",
+        "UPD-S1-021",
+        "UPD-S1-024"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0218",
+      "title": "release را فقط زمانی آماده اعلام کن که هر دو اپ build شوند، آزمون‌های بحرانی پاس شوند و سناریوی end-to-end مستندشده موفق باشد.",
+      "baseline_status": "not_started",
+      "update_task_ids": [
+        "UPD-S1-021"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0219",
+      "title": "همهٔ قابلیت‌های رابط کاربری را به سرویس اجرایی واقعی وصل کن و کنترل‌های بدون عملکرد را حذف یا غیرفعال کن.",
+      "baseline_status": "not_started",
+      "update_task_ids": [
+        "UPD-S1-024"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0221",
+      "title": "ثابت کن انتخاب مدل، دانلود، نصب، اجرا و حذف مدل روی فایل‌های واقعی کار می‌کنند.",
+      "baseline_status": "not_started",
+      "update_task_ids": [
+        "UPD-S1-023"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0222",
+      "title": "ثابت کن گفت‌وگوها و capsule بعد از راه‌اندازی مجدد اندروید حفظ می‌شوند و capsule قابل‌ویرایش/حذف است.",
+      "baseline_status": "not_started",
+      "update_task_ids": [
+        "UPD-S1-009"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0223",
+      "title": "ثابت کن درخواست از اندروید به میزبان ویندوز می‌رسد و متن پاسخ را از مدل محلی واقعی برمی‌گرداند.",
+      "baseline_status": "not_started",
+      "update_task_ids": [
+        "UPD-S1-004",
+        "UPD-S1-010",
+        "UPD-S1-020"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0224",
+      "title": "ثابت کن سه میزبان مستقل می‌توانند برای یک درخواست پاسخ جداگانه بدهند و پاسخ‌ها در اپ جدا نمایش داده می‌شوند.",
+      "baseline_status": "not_started",
+      "update_task_ids": [
+        "UPD-S1-003",
+        "UPD-S1-015",
+        "UPD-S1-020"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0225",
+      "title": "ثابت کن دور بعد فقط پس از شرایط retry تعریف‌شده آغاز می‌شود و سقف تلاش رعایت می‌شود.",
+      "baseline_status": "not_started",
+      "update_task_ids": [
+        "UPD-S1-003",
+        "UPD-S1-015",
+        "UPD-S1-020"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0226",
+      "title": "ثابت کن ارتباط با میزبان دارای احراز هویت و رمزگذاری است و همتای نامعتبر رد می‌شود.",
+      "baseline_status": "not_started",
+      "update_task_ids": [
+        "UPD-S1-002",
+        "UPD-S1-007",
+        "UPD-S1-016",
+        "UPD-S1-020",
+        "UPD-S1-022"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0227",
+      "title": "ثابت کن هیچ سرویس مرکزی متن درخواست، پاسخ یا تاریخچهٔ مکالمه را دریافت یا ذخیره نمی‌کند.",
+      "baseline_status": "not_started",
+      "update_task_ids": [
+        "UPD-S1-002",
+        "UPD-S1-007",
+        "UPD-S1-016",
+        "UPD-S1-018",
+        "UPD-S1-020"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0228",
+      "title": "محدودیت‌های باقی‌مانده، قابلیت‌های پیاده‌سازی‌نشده و آزمایش‌های انجام‌نشده را به‌روشنی در `docs/release-limitations.md` ثبت کن.",
+      "baseline_status": "not_started",
+      "update_task_ids": [
+        "UPD-S1-021"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    },
+    {
+      "legacy_task_id": "T0229",
+      "title": "نسخهٔ نهایی را از clone تمیز بساز، نصب کن و تمام معیارهای `docs/acceptance.md` را با شواهد اجرا تأیید کن.",
+      "baseline_status": "not_started",
+      "update_task_ids": [
+        "UPD-S1-019",
+        "UPD-S1-020",
+        "UPD-S1-021",
+        "UPD-S1-024"
+      ],
+      "decision": "re_review_required",
+      "review_status": "pending",
+      "status_changed": false,
+      "evidence": [],
+      "review_commit_sha": null
+    }
+  ]
+}
