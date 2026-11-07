@@ -1,7 +1,7 @@
 {
   "stage": "step_one",
   "status": "in_progress",
-  "latest_version": "V1.3",
+  "latest_version": "V1.4",
   "final_version": null,
   "versions": [
     {
@@ -33,6 +33,16 @@
       "status": "registered",
       "change_classification": "material",
       "content_changed": true
+    },
+    {
+      "version": "V1.4",
+      "agent_label": "ChatGPT-GPT-6-Review-04",
+      "parent_version": "V1.3",
+      "path": "update/Step one/Output/V1.4.json",
+      "outcome": "revise",
+      "status": "registered",
+      "change_classification": "minor",
+      "content_changed": true
     }
   ],
   "closure": {
@@ -42,7 +52,7 @@
     "policy_path": "closure-policy.json",
     "policy_status": "present"
   },
-  "minor_edit_streak": 0,
+  "minor_edit_streak": 1,
   "notes": [
     "این root در نخستین اجرای Task Decomposition ایجاد شده، زیرا در main وجود نداشت.",
     "final_version تا اجرای دو بررسی closure متوالی و معتبر null باقی می‌ماند.",
@@ -50,7 +60,8 @@
     "V1.2 نسخهٔ V1.1 را به‌صورت مادی بازبینی کرده و با حفظ ۲۱ شناسهٔ قبلی، UPD-S1-022 را برای trust اولیه و ماندگار افزوده است.",
     "دو closure check متوالی هنوز اجرا نشده‌اند؛ final_version همچنان null است.",
     "V1.3 به‌صورت مادی UPD-S1-023 را برای انتخاب خودکار مدل و سقف خروجی اضافه کرد و وضعیت‌های UI/عدم افشای شناسه‌ها را در معیارهای چت کامل کرد.",
-    "سیاست مشترک closure از قواعد ارائه‌شده در دستور مرحله در update/Step one/closure-policy.json ثبت شد؛ شمارنده‌های closure به علت تغییر مادی صفر هستند."
+    "سیاست مشترک closure از قواعد ارائه‌شده در دستور مرحله در update/Step one/closure-policy.json ثبت شد؛ شمارنده‌های closure به علت تغییر مادی صفر هستند.",
+    "V1.4 یک اصلاح متنی/ردیابی محدود انجام داد: ارجاع نادرست T003 در reasoning_summary وظیفهٔ UPD-S1-015 به UPD-S1-003 تغییر یافت. این اصلاح ماهیت وظایف را تغییر نداد و minor_edit_streak برابر ۱ شد؛ closure check انجام نشده است."
   ],
   "last_updated": "2026-11-07"
 }
