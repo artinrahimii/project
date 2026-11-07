@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import json
-import re
 import unittest
 from pathlib import Path
 
@@ -9,15 +8,20 @@ ROOT = Path(__file__).resolve().parents[1]
 UPDATE_GRAPH_PATH = ROOT / "update" / "Step two" / "project-graph.md"
 LEGACY_GRAPH_PATH = ROOT / "step three" / "project-graph.md"
 QUALITY_PATH = ROOT / ".github" / "workflows" / "quality.yml"
-JSON_FENCE = re.compile(r"\\x60{3}json\\s*([\\s\\S]*?)\\x60{3}", re.IGNORECASE)
 
 
 def load_graph(path: Path) -> dict:
     markdown = path.read_text(encoding="utf-8")
-    match = JSON_FENCE.search(markdown)
-    if not match:
+    fence = chr(96) * 3
+    opening = fence + "json"
+    start = markdown.find(opening)
+    if start < 0:
         raise AssertionError(f"No fenced JSON graph found in {path}.")
-    graph = json.loads(match.group(1))
+    start += len(opening)
+    end = markdown.find(fence, start)
+    if end < 0:
+        raise AssertionError(f"JSON graph fence is not closed in {path}.")
+    graph = json.loads(markdown[start:end].strip())
     if not isinstance(graph, dict) or not isinstance(graph.get("nodes"), list) or not isinstance(graph.get("edges"), list):
         raise AssertionError(f"Invalid graph structure in {path}.")
     return graph
@@ -34,7 +38,7 @@ class UpdateGraphContractTests(unittest.TestCase):
     def test_graph_size_and_commit_references_are_consistent(self) -> None:
         self.assertEqual(24, len(self.graph["nodes"]))
         self.assertEqual(80, len(self.graph["edges"]))
-        self.assertEqual("V 3.1.14", self.graph["commit_intent"])
+        self.assertEqual("V 3.1.15", self.graph["commit_intent"])
         base = self.graph["base_repository"]
         self.assertEqual("827d1586e367d8495ef052ac71a8cc83db0f4680", base["base_commit_sha"])
         self.assertEqual("8fa9aa812aeb49086a6d55e92ba17586534135a4", base["product_code_baseline_sha"])
@@ -53,12 +57,12 @@ class UpdateGraphContractTests(unittest.TestCase):
         self.assertEqual(168, sync["matched_legacy_task_id_count"])
         self.assertEqual([], sync["missing_legacy_task_ids"])
         impacted = {
-            tid
+            task_id
             for task in self.graph["nodes"]
-            for tid in task.get("affected_task_ids", [])
+            for task_id in task.get("affected_task_ids", [])
         }
         self.assertEqual(set(impacted), set(sync["affected_legacy_task_ids"]))
-        self.assertEqual(len(impacted), 168)
+        self.assertEqual(168, len(impacted))
         for task_id in impacted:
             node = self.legacy_nodes[task_id]
             marker = node["update_impact"]
