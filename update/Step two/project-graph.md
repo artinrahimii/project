@@ -977,8 +977,8 @@
         "تکلیف تمام وظایف سه‌میزبانه و چندپاسخی مرتبط با شناسهٔ مشخص ثبت شده باشد.",
         "رفتار انتخاب هم‌زمان چند میزبان با retry ترتیبی اشتباه گرفته نشده باشد."
       ],
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
       "expected_output_paths": [
         "docs/decisions/",
         "update/Step three/UPD-S1-003/execution-report.md"
@@ -987,10 +987,10 @@
       "evidence": [],
       "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0125, T0126, T0161, T0162, T0163, T0164, T0165, T0166, T0167, T0168, T0169, T0170, T0171, T0172, T0173, T0174, T0175, T0176, T0177, T0203, T0204, T0224, T0225. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
+        "last_attempt_id": "UPD-S1-003-20261107203548",
+        "last_attempt_result": "partial",
         "changed_files": [],
         "related_commits": [],
         "tests_passed": [],
@@ -1004,7 +1004,26 @@
           "review_evidence": []
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "UPD-S1-003-20261107203548",
+          "started_at": "2026-11-07T20:35:48.198Z",
+          "ended_at": "2026-11-07T20:35:48.198Z",
+          "result": "partial",
+          "summary": "Baseline and design audit started. Reviewed V1.10 task UPD-S1-003, the 8.2 routing proposal, Android selector/dispatcher/response collector/timer/ViewModel, direct transport cancellation, Windows request lifecycle, and all 23 affected legacy task records. Existing implementation dispatches up to three hosts concurrently per round with up to nine attempts per request; manual retries are user-triggered. No production changes have been made in this attempt.",
+          "changed_files": [],
+          "commit_sha": null,
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Approve a precise first-release cardinality and sequential retry policy, map each affected legacy task to preserve/rework/future scope, then change the live Android request path and tests. Retain generic multi-host primitives only where compatibility/future-scope is explicit.",
+          "device_and_host_details_redacted": "Source and CI audit only; no physical Android handset or external Windows host was available.",
+          "model_revision_and_sha256": "Not applicable to design audit start.",
+          "pre_upgrade_post_upgrade_snapshot": "Not applicable."
+        }
+      ]
     },
     {
       "id": "UPD-S1-004",
@@ -3112,11 +3131,12 @@
       "from": "UPD-S1-001",
       "to": "UPD-S1-003",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-003 در V1.10، UPD-S1-001 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "sequencing_only",
+      "validation_status": "validated",
+      "rationale": "UPD-S1-003 uses the completed baseline audit to determine which three-host behaviors are implemented and which request lifecycle guarantees already exist. It does not consume a new protocol/interface artifact from UPD-S1-001, so the technical dependency is sequencing_only. The graph's existing blocks edge and conservative execution order are retained.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "update/Step three/UPD-S1-001/execution-report.md",
+        "update/Step three/UPD-S1-001/evidence/baseline-audit.md"
       ]
     },
     {
@@ -4274,10 +4294,10 @@
     }
   ],
   "progress_snapshot": {
-    "as_of": "2026-11-07T20:31:20.309Z",
+    "as_of": "2026-11-07T20:35:48.198Z",
     "total_tasks": 24,
-    "not_started": 22,
-    "in_progress": 0,
+    "not_started": 21,
+    "in_progress": 1,
     "done": 2,
     "blocked": 0,
     "verified_completion_percentage": 8.33,
@@ -4395,7 +4415,7 @@
     },
     "rule": "Do not renumber or silently drop tasks. Any change to task scope, prerequisite or affected legacy IDs must cite the updated source version and preserve previous execution records."
   },
-  "updated_at": "2026-11-07T20:32:01.654Z",
+  "updated_at": "2026-11-07T20:35:48.198Z",
   "legacy_task_sync": {
     "state": "review_pending",
     "reason_code": "LEGACY_TASK_REVIEW_NOT_YET_PERFORMED",
