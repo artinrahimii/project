@@ -53,6 +53,7 @@ class UpdateGraphContractTests(unittest.TestCase):
     def test_all_legacy_impact_ids_are_mapped_for_re_review(self) -> None:
         sync = self.graph["legacy_task_sync"]
         self.assertEqual("review_pending", sync["state"])
+        self.assertEqual("valid_parseable_graph", sync["source_graph_state_at_checkpoint"])
         self.assertEqual(168, sync["affected_task_id_count"])
         self.assertEqual(168, sync["matched_legacy_task_id_count"])
         self.assertEqual([], sync["missing_legacy_task_ids"])
@@ -71,6 +72,8 @@ class UpdateGraphContractTests(unittest.TestCase):
             self.assertEqual(node["status"], marker["legacy_status_at_review_start"])
             self.assertFalse(marker["legacy_status_changed"])
         self.assertEqual(168, self.legacy["update_reconciliation"]["review_status_summary"]["pending"])
+        update_markdown = UPDATE_GRAPH_PATH.read_text(encoding="utf-8")
+        self.assertNotIn("خالی بوده، همگام‌سازی وضعیت‌ها", update_markdown)
 
     def test_real_product_e2e_rejects_transport_and_model_fixtures(self) -> None:
         contract = self.nodes["UPD-S1-020"]["verification_contract"]

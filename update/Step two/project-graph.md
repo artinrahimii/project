@@ -53,7 +53,7 @@
 - مرجع main هنگام تهیهٔ این نسخه 827d1586e367d8495ef052ac71a8cc83db0f4680 است؛ مقایسهٔ commitها نشان داده V 3.1.12 فقط گراف Update را اضافه کرده و آخرین تغییر کد محصول 8fa9aa812aeb49086a6d55e92ba17586534135a4 باقی مانده است. SHA قدیمی داخل UPD-S1-001 حذف و قاعدهٔ خواندن HEAD واقعی هنگام اجرا اضافه شد.
 - گراف Update با دو اجرای graph_guard در workflow کنترل کیفیت اعتبارسنجی می‌شود.
 - آزمون LAN با پاسخ ثابت صرفاً آزمون کمکی transport است؛ UPD-S1-020 به آزمون فیزیکی UI Android تا مدل واقعی Windows و ذخیره در همان گفت‌وگو نیاز دارد.
-- برای تمام Txxxxهای متأثر، reconciliation مستقل و دارای شاهد الزامی است. چون step three/project-graph.md در checkpoint 827d1586e367d8495ef052ac71a8cc83db0f4680 خالی بوده، همگام‌سازی وضعیت‌ها فعلاً blocked است.
+- تمام ۱۶۸ شناسهٔ یکتای Txxxx متأثر در گراف معتبر Step Three با ۲۳۰ وظیفه پیدا و به UPD-S1های مربوط متصل شده‌اند. وضعیت هر ۱۶۸ وظیفه «بازبینی مجدد در انتظار» است؛ وضعیت‌های قبلی تا بررسی شواهد حفظ شده‌اند و UPD-S1-008 هنوز تکمیل‌شده نیست.
 - UPD-S1-021 اکنون آزمون ارتقای درجا در Android و Windows و حفظ تاریخچه، تنظیمات، مدل محلی، هویت میزبان و trust را نیز الزامی می‌کند.
 
 این اصلاحات معیارها و کنترل‌ها را تقویت می‌کنند و به معنی اجرای وظایف V1.10 یا انجام آزمون‌های فیزیکی نیستند.
@@ -96,7 +96,7 @@
     "product_code_baseline_message": "V 3.1.11",
     "baseline_delta_summary": "The verified comparison from V 3.1.11 to V 3.1.12 contains exactly one added file, update/Step two/project-graph.md. No Android, Windows, shared runtime or test source was changed. The product-code baseline therefore remains V 3.1.11 while the graph-creation main checkpoint is V 3.1.12."
   },
-  "commit_intent": "V 3.1.15",
+  "commit_intent": "V 3.1.16",
   "status_legend": {
     "not_started": "انجام‌نشده؛ هیچ تلاش اجرایی ثبت نشده است.",
     "in_progress": "در حال اجرا؛ دست‌کم یک تلاش آغاز شده اما معیارهای پذیرش کامل نشده‌اند.",
