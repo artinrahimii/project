@@ -1,4 +1,4 @@
-# گراف وابستگی و دفتر اجرای به‌روزرسانی White-P — v1.0
+# گراف وابستگی و دفتر اجرای به‌روزرسانی White-P — v1.1
 
 ## هدف
 
@@ -48,6 +48,16 @@
 4. آیکون سکهٔ P و پنج توکن رنگی در هر دو برنامه واقعاً اعمال شوند و کنتراست و تصاویر در اندازه‌های هدف بررسی شود.
 5. build، آزمون‌های خودکار، آزمون دستگاه واقعی و بسته‌های نصب‌پذیر هر دو پلتفرم با شواهد ثبت شوند. سند، mock، stub یا CI سبز به‌تنهایی کافی نیست.
 
+## اصلاحات کنترلی نسخهٔ ۱.۱
+
+- مرجع main هنگام تهیهٔ این نسخه 827d1586e367d8495ef052ac71a8cc83db0f4680 است؛ مقایسهٔ commitها نشان داده V 3.1.12 فقط گراف Update را اضافه کرده و آخرین تغییر کد محصول 8fa9aa812aeb49086a6d55e92ba17586534135a4 باقی مانده است. SHA قدیمی داخل UPD-S1-001 حذف و قاعدهٔ خواندن HEAD واقعی هنگام اجرا اضافه شد.
+- گراف Update با دو اجرای graph_guard در workflow کنترل کیفیت اعتبارسنجی می‌شود.
+- آزمون LAN با پاسخ ثابت صرفاً آزمون کمکی transport است؛ UPD-S1-020 به آزمون فیزیکی UI Android تا مدل واقعی Windows و ذخیره در همان گفت‌وگو نیاز دارد.
+- برای تمام Txxxxهای متأثر، reconciliation مستقل و دارای شاهد الزامی است. چون step three/project-graph.md در checkpoint 827d1586e367d8495ef052ac71a8cc83db0f4680 خالی بوده، همگام‌سازی وضعیت‌ها فعلاً blocked است.
+- UPD-S1-021 اکنون آزمون ارتقای درجا در Android و Windows و حفظ تاریخچه، تنظیمات، مدل محلی، هویت میزبان و trust را نیز الزامی می‌کند.
+
+این اصلاحات معیارها و کنترل‌ها را تقویت می‌کنند و به معنی اجرای وظایف V1.10 یا انجام آزمون‌های فیزیکی نیستند.
+
 ## قالب ویرایش
 
 دادهٔ کامل در بلوک JSON زیر، قابل پردازش ماشینی و سازگار با `tools/graph_guard.py` است. هنگام به‌روزرسانی، ساختار JSON را حفظ کن و فقط وضعیت‌ها/تلاش‌ها/یال‌های دارای شاهد را به‌روزرسانی کن.
@@ -57,8 +67,8 @@
 ```json
 {
   "schema_version": "1.0",
-  "document": "update-step-two-v1.0",
-  "title": "گراف وابستگی و دفتر اجرای به‌روزرسانی White-P بر پایهٔ V1.10",
+  "document": "update-step-two-v1.1",
+  "title": "گراف وابستگی و دفتر اجرای به‌روزرسانی White-P بر پایهٔ V1.10 — v1.1",
   "created_at": "2026-11-07",
   "source": {
     "path": "update/Step one/Output/V1.10.json",
@@ -72,11 +82,15 @@
   "base_repository": {
     "repository": "artinrahimii/project",
     "branch": "main",
-    "base_commit_sha": "8fa9aa812aeb49086a6d55e92ba17586534135a4",
-    "base_commit_message": "V 3.1.11",
-    "purpose": "Update graph for the current integrated Windows host, Android client and shared components; not a plan to recreate the initial product."
+    "base_commit_sha": "827d1586e367d8495ef052ac71a8cc83db0f4680",
+    "base_commit_message": "V 3.1.12",
+    "purpose": "Update graph for the current integrated Windows host, Android client and shared components; not a plan to recreate the initial product.",
+    "base_commit_role": "Latest main checkpoint when v1.1 was prepared; V 3.1.12 added only the update graph.",
+    "product_code_baseline_sha": "8fa9aa812aeb49086a6d55e92ba17586534135a4",
+    "product_code_baseline_message": "V 3.1.11",
+    "baseline_delta_summary": "The verified comparison from V 3.1.11 to V 3.1.12 contains exactly one added file, update/Step two/project-graph.md. No Android, Windows, shared runtime or test source was changed. The product-code baseline therefore remains V 3.1.11 while the graph-creation main checkpoint is V 3.1.12."
   },
-  "commit_intent": "V 3.1.12",
+  "commit_intent": "V 3.1.13",
   "status_legend": {
     "not_started": "انجام‌نشده؛ هیچ تلاش اجرایی ثبت نشده است.",
     "in_progress": "در حال اجرا؛ دست‌کم یک تلاش آغاز شده اما معیارهای پذیرش کامل نشده‌اند.",
@@ -94,7 +108,11 @@
     "source_traceability": "Each node preserves source_task_id, change_operation and affected_task_ids from V1.10. References to legacy Txxxx IDs are traceability metadata, not nodes in this update graph.",
     "preserve_existing_work": "Audit and reuse existing Room storage, Android conversation UI, host/backend, protocol, libp2p, trust and test infrastructure. Do not recreate a component merely because it is mentioned in an update task; only close verified gaps.",
     "security_and_privacy": "Do not expose prompt/response/history to rendezvous or normal logs. The destination inference host can read the prompt and context it processes; the Android user must be shown the trust/privacy consent required by V1.10.",
-    "no_mock_completion": "Mocks may support isolated tests only. A mocked response, hard-coded response, sample-only code or stub cannot satisfy a real product acceptance gate."
+    "no_mock_completion": "Mocks may support isolated tests only. A mocked response, hard-coded response, sample-only code or stub cannot satisfy a real product acceptance gate.",
+    "base_commit_policy": "base_repository.base_commit_sha is the main-branch checkpoint used to prepare this graph revision. At task execution, resolve and record the real current main HEAD; audit all commits after the checkpoint. product_code_baseline_sha identifies the last product-code revision when the checkpoint commit changed only graph metadata.",
+    "legacy_task_sync_policy": "affected_task_ids provide traceability only. They never cause automatic status changes. UPD-S1-008 must reconcile each unique legacy ID against a valid authoritative Step Three graph with individual rationale and evidence. An empty/missing/unparseable graph is a hard blocker.",
+    "real_e2e_policy": "The real product E2E gate must traverse the Android chat UI, Android runtime, approved direct P2P transport, installed Windows host, loaded local inference model and the same Android Room conversation. Transport fixtures and standalone model tests are supplemental only.",
+    "upgrade_policy": "Release acceptance requires in-place upgrade tests on both platforms in addition to clean installation. Preserve or explicitly migrate Room history, settings, local model integrity/paths, host identity and peer trust. Never use uninstall/clear-data as an upgrade test."
   },
   "sections": [
     {
@@ -226,10 +244,11 @@
       "depends_on": [],
       "inputs": [
         "منبع نیازمندی: update/Step one/Output/V1.10.json — UPD-S1-001",
-        "کامیت مبنای main با SHA برابر 6f70586b4b7ff69c463f7e5b02293090c63e78ec",
+        "کامیت main هنگام ایجاد گراف v1.1: 827d1586e367d8495ef052ac71a8cc83db0f4680 — V 3.1.12؛ این کامیت فقط گراف Update را اضافه کرد.",
         "کد و فایل‌های build پروژه",
         "step one/V1.0.md",
-        "گزارش update/Step one/2026-11-07-automatic-chat-and-host-routing.md"
+        "گزارش update/Step one/2026-11-07-automatic-chat-and-host-routing.md",
+        "آخرین کامیت تغییر‌دهندهٔ کد محصول در checkpoint گراف: 8fa9aa812aeb49086a6d55e92ba17586534135a4 — V 3.1.11؛ V 3.1.12 فقط فایل گراف را اضافه کرد."
       ],
       "outputs": [
         "گزارش موجودی قابلیت‌های واقعی در Android و Windows",
@@ -238,13 +257,15 @@
         "فهرست فاصله‌های کد با نیازمندی پیشنهادی"
       ],
       "implementation_focus": "ممیزی واقعی و بدون فرض وضعیت فعلی؛ خروجی این گره نقشهٔ مسیر و شواهد خط مبناست.",
-      "start_condition": "نسخهٔ مبنای main و فایل V1.10 باید با SHA ثبت‌شده یکسان باشند؛ ممیزی باید با کد و فایل‌های واقعی مخزن انجام شود.",
-      "acceptance": "1. مسیر واقعی پروژه‌های Android، Windows و Shared از روی مخزن مشخص شده باشد.\n2. جریان فعلی درخواست از UI تا میزبان و بازگشت پاسخ با ارجاع به فایل‌ها ثبت شده باشد.\n3. هر build یا test فقط در صورت اجرای واقعی دارای فرمان و نتیجه باشد.\n4. موارد ناموجود یا اثبات‌نشده صریحاً از قابلیت‌های پیاده‌سازی‌شده جدا شده باشند.",
+      "start_condition": "در زمان اجرا ابتدا آخرین SHA واقعی شاخهٔ main را دریافت و در گزارش ممیزی ثبت کن. SHA داخل base_repository نقطهٔ ثبت نسخهٔ ۱.۱ گراف است، نه فرضی دربارهٔ HEAD آینده. تغییرات main پس از این checkpoint را بررسی کن؛ اگر کد محصول تغییر کرده، ممیزی را روی HEAD واقعی انجام بده و SHA/tree دقیق را ثبت کن. SHA تاریخی 6f70586b4b7ff69c463f7e5b02293090c63e78ec ورودی منسوخ است و نباید مبنای ممیزی باشد. محتوای V1.10 را نیز با blob SHA ثبت‌شده در بخش source تطبیق بده.",
+      "acceptance": "1. مسیر واقعی پروژه‌های Android، Windows و Shared از روی مخزن مشخص شده باشد.\n2. جریان فعلی درخواست از UI تا میزبان و بازگشت پاسخ با ارجاع به فایل‌ها ثبت شده باشد.\n3. هر build یا test فقط در صورت اجرای واقعی دارای فرمان و نتیجه باشد.\n4. موارد ناموجود یا اثبات‌نشده صریحاً از قابلیت‌های پیاده‌سازی‌شده جدا شده باشند.\n5. SHA واقعی main در لحظهٔ ممیزی ثبت شده و با checkpoint ایجاد گراف و آخرین تغییر کد محصول اشتباه گرفته نشده باشد.\n6. هیچ ورودی ممیزی از SHA تاریخی منسوخ 6f70586b4b7ff69c463f7e5b02293090c63e78ec استفاده نکند.",
       "acceptance_criteria": [
         "مسیر واقعی پروژه‌های Android، Windows و Shared از روی مخزن مشخص شده باشد.",
         "جریان فعلی درخواست از UI تا میزبان و بازگشت پاسخ با ارجاع به فایل‌ها ثبت شده باشد.",
         "هر build یا test فقط در صورت اجرای واقعی دارای فرمان و نتیجه باشد.",
-        "موارد ناموجود یا اثبات‌نشده صریحاً از قابلیت‌های پیاده‌سازی‌شده جدا شده باشند."
+        "موارد ناموجود یا اثبات‌نشده صریحاً از قابلیت‌های پیاده‌سازی‌شده جدا شده باشند.",
+        "SHA واقعی main در لحظهٔ ممیزی ثبت شده و با checkpoint ایجاد گراف و آخرین تغییر کد محصول اشتباه گرفته نشده باشد.",
+        "هیچ ورودی ممیزی از SHA تاریخی منسوخ 6f70586b4b7ff69c463f7e5b02293090c63e78ec استفاده نکند."
       ],
       "status": "not_started",
       "status_fa": "انجام‌نشده",
@@ -795,7 +816,7 @@
         "T0199",
         "T0214"
       ],
-      "description": "تغییرهای تصویب‌شده در نیازمندی‌ها را به وظایف و وابستگی‌های متأثر در Step Two و Step Three نگاشت کن و بستهٔ ارجاعی تهیه کن. مالکیت فایل‌های مراحل دیگر را رعایت کن و گراف آن مراحل را بدون فرایند مربوطه بی‌صدا تغییر نده.",
+      "description": "تغییرهای تصویب‌شده را برای تک‌تک شناسه‌های Txxxx متأثر به وظایف و وابستگی‌های Step Two و Step Three نگاشت کن و وضعیت بازبینی آن‌ها را با شواهد واقعی تعیین کن. ثبت affected_task_ids به‌تنهایی همگام‌سازی نیست. اگر گراف اصلی خالی، ناقص یا غیرقابل‌پردازش است، وضعیت همگام‌سازی را blocked ثبت کن و آن را done اعلام نکن.",
       "depends_on": [
         "UPD-S1-006",
         "UPD-S1-007"
@@ -809,22 +830,29 @@
         "خروجی‌های تأییدشدهٔ پیش‌نیازها: UPD-S1-006, UPD-S1-007"
       ],
       "outputs": [
-        "ماتریس تصمیم به وظیفهٔ متأثر",
-        "فهرست وابستگی‌ها و ترتیب اجرای نیازمند بازنگری",
-        "گزارش ارجاع برای صاحبان Step Two و Step Three"
+        "ماتریس تصمیم به وظیفهٔ متأثر با رکورد مستقل برای هر Txxxx",
+        "فهرست وابستگی‌های تغییرکرده و ترتیب اجرای نیازمند بازنگری همراه دلیل و شاهد",
+        "گزارش ارجاع برای صاحبان Step Two و Step Three",
+        "فایل ماشینی update/Step two/legacy-task-reconciliation.json با پوشش کامل شناسه‌ها",
+        "گزارش update/Step two/legacy-task-reconciliation.md شامل وضعیت منبع، موانع و اقدام لازم"
       ],
-      "implementation_focus": "تهیهٔ ماتریس اثر و حفظ مالکیت گراف‌های Step Two/Three؛ هر تغییر گراف باید با دلیل ثبت شود.",
-      "start_condition": "همهٔ پیش‌نیازهای UPD-S1-006, UPD-S1-007 باید در همین گراف status=done داشته باشند و actual_output_paths و evidence و آزمون موفق آن‌ها تأیید شده باشد؛ خروجی قدیمی یا صرفاً مستنداتی کافی نیست.",
-      "acceptance": "1. هر تصمیم تصویب‌شده به وظایف موجود مرتبط یا وظیفهٔ جدید پیشنهادی نگاشت شده باشد.\n2. وابستگی‌های جدید و حذف‌شده همراه دلیل مشخص باشند.\n3. موارد نیازمند تصمیم Step Two/Three جدا از موارد تأییدشده علامت‌گذاری شده باشند.",
+      "implementation_focus": "برای هر شناسهٔ متأثر، وظیفهٔ مرجع در step one/V1.0.md، وضعیت پیاده‌سازی و وابستگی‌های گراف معتبر را بررسی کن. فقط بر اساس شواهد یکی از re_review، blocked، unchanged یا new_task_required را انتخاب کن. وضعیت‌های done قدیمی را صرفاً به دلیل وجود در affected_task_ids خودکار تغییر نده. فایل step three/project-graph.md در checkpoint فعلی خالی است؛ تا بازیابی/تولید مجدد و اعتبارسنجی آن، همگام‌سازی وضعیت‌های Txxxx مسدود می‌ماند.",
+      "start_condition": "همهٔ پیش‌نیازهای UPD-S1-006, UPD-S1-007 باید در همین گراف status=done داشته باشند و actual_output_paths و evidence و آزمون موفق آن‌ها تأیید شده باشد؛ خروجی قدیمی یا صرفاً مستنداتی کافی نیست. وضعیت و محتوای step three/project-graph.md باید پیش از ادعای تکمیل بررسی شود. در checkpoint V 3.1.12 این فایل صفر بایت است؛ نگاشت می‌تواند آغاز شود، اما تکمیل reconciliation تا وجود یک گراف معتبر و قابل‌اعتبارسنجی ممنوع است.",
+      "acceptance": "1. هر شناسهٔ یکتای Txxxx در فهرست اثر گراف Update دقیقاً یک رکورد reconciliation داشته باشد؛ هیچ شناسه‌ای حذف یا با حدس ساخته نشود.\n2. هر رکورد، وظیفهٔ مرجع، دلیل اثر، وضعیت فعلی مبتنی بر شواهد، تصمیم re_review/blocked/unchanged/new_task_required و فایل/آزمون/کامیت پشتیبان را مشخص کند.\n3. وابستگی‌های مستقیم و مصرف‌کنندگان متأثر تغییر قراردادها بررسی و تغییرهای لازم با دلیل ثبت شوند.\n4. هیچ وضعیت قدیمی صرفاً از روی affected_task_ids به‌طور خودکار تغییر نکند؛ هر تصمیم باید برای همان شناسه مستند باشد.\n5. اگر گراف اصلی Step Three خالی، ناقص یا غیرقابل‌پردازش باشد، reconciliation صریحاً blocked بماند و UPD-S1-008 done نشود.\n6. پس از بازیابی گراف معتبر، فقط گره‌های متأثر با استدلال و شواهد به re-review/blocked منتقل شوند و تاریخچهٔ قبلی حفظ شود.",
       "acceptance_criteria": [
-        "هر تصمیم تصویب‌شده به وظایف موجود مرتبط یا وظیفهٔ جدید پیشنهادی نگاشت شده باشد.",
-        "وابستگی‌های جدید و حذف‌شده همراه دلیل مشخص باشند.",
-        "موارد نیازمند تصمیم Step Two/Three جدا از موارد تأییدشده علامت‌گذاری شده باشند."
+        "هر شناسهٔ یکتای Txxxx در فهرست اثر گراف Update دقیقاً یک رکورد reconciliation داشته باشد؛ هیچ شناسه‌ای حذف یا با حدس ساخته نشود.",
+        "هر رکورد، وظیفهٔ مرجع، دلیل اثر، وضعیت فعلی مبتنی بر شواهد، تصمیم re_review/blocked/unchanged/new_task_required و فایل/آزمون/کامیت پشتیبان را مشخص کند.",
+        "وابستگی‌های مستقیم و مصرف‌کنندگان متأثر تغییر قراردادها بررسی و تغییرهای لازم با دلیل ثبت شوند.",
+        "هیچ وضعیت قدیمی صرفاً از روی affected_task_ids به‌طور خودکار تغییر نکند؛ هر تصمیم باید برای همان شناسه مستند باشد.",
+        "اگر گراف اصلی Step Three خالی، ناقص یا غیرقابل‌پردازش باشد، reconciliation صریحاً blocked بماند و UPD-S1-008 done نشود.",
+        "پس از بازیابی گراف معتبر، فقط گره‌های متأثر با استدلال و شواهد به re-review/blocked منتقل شوند و تاریخچهٔ قبلی حفظ شود."
       ],
       "status": "not_started",
       "status_fa": "انجام‌نشده",
       "expected_output_paths": [
         "update/Step two/decision-impact-map.md",
+        "update/Step two/legacy-task-reconciliation.json",
+        "update/Step two/legacy-task-reconciliation.md",
         "update/Step three/UPD-S1-008/execution-report.md"
       ],
       "actual_output_paths": [],
@@ -848,7 +876,190 @@
           "review_evidence": []
         }
       },
-      "execution_history": []
+      "execution_history": [],
+      "legacy_task_reconciliation": {
+        "required": true,
+        "affected_legacy_task_ids": [
+          "T0012",
+          "T0013",
+          "T0015",
+          "T0016",
+          "T0019",
+          "T0020",
+          "T0027",
+          "T0032",
+          "T0033",
+          "T0034",
+          "T0035",
+          "T0036",
+          "T0041",
+          "T0042",
+          "T0043",
+          "T0044",
+          "T0045",
+          "T0046",
+          "T0047",
+          "T0048",
+          "T0049",
+          "T0050",
+          "T0051",
+          "T0052",
+          "T0053",
+          "T0054",
+          "T0055",
+          "T0056",
+          "T0057",
+          "T0058",
+          "T0059",
+          "T0060",
+          "T0061",
+          "T0062",
+          "T0063",
+          "T0064",
+          "T0065",
+          "T0066",
+          "T0067",
+          "T0068",
+          "T0069",
+          "T0070",
+          "T0071",
+          "T0072",
+          "T0073",
+          "T0074",
+          "T0075",
+          "T0088",
+          "T0090",
+          "T0092",
+          "T0098",
+          "T0099",
+          "T0100",
+          "T0101",
+          "T0102",
+          "T0103",
+          "T0104",
+          "T0105",
+          "T0106",
+          "T0107",
+          "T0108",
+          "T0109",
+          "T0110",
+          "T0111",
+          "T0112",
+          "T0113",
+          "T0114",
+          "T0115",
+          "T0116",
+          "T0117",
+          "T0118",
+          "T0119",
+          "T0120",
+          "T0121",
+          "T0122",
+          "T0123",
+          "T0124",
+          "T0125",
+          "T0126",
+          "T0127",
+          "T0128",
+          "T0129",
+          "T0130",
+          "T0131",
+          "T0132",
+          "T0133",
+          "T0134",
+          "T0135",
+          "T0136",
+          "T0137",
+          "T0138",
+          "T0139",
+          "T0141",
+          "T0142",
+          "T0143",
+          "T0144",
+          "T0145",
+          "T0146",
+          "T0147",
+          "T0148",
+          "T0149",
+          "T0150",
+          "T0161",
+          "T0162",
+          "T0163",
+          "T0164",
+          "T0165",
+          "T0166",
+          "T0167",
+          "T0168",
+          "T0169",
+          "T0170",
+          "T0171",
+          "T0172",
+          "T0173",
+          "T0174",
+          "T0175",
+          "T0176",
+          "T0177",
+          "T0178",
+          "T0179",
+          "T0180",
+          "T0181",
+          "T0182",
+          "T0183",
+          "T0184",
+          "T0185",
+          "T0186",
+          "T0187",
+          "T0188",
+          "T0189",
+          "T0190",
+          "T0191",
+          "T0192",
+          "T0193",
+          "T0196",
+          "T0197",
+          "T0198",
+          "T0199",
+          "T0200",
+          "T0201",
+          "T0202",
+          "T0203",
+          "T0204",
+          "T0205",
+          "T0206",
+          "T0207",
+          "T0208",
+          "T0209",
+          "T0210",
+          "T0211",
+          "T0212",
+          "T0213",
+          "T0214",
+          "T0215",
+          "T0216",
+          "T0217",
+          "T0218",
+          "T0219",
+          "T0221",
+          "T0222",
+          "T0223",
+          "T0224",
+          "T0225",
+          "T0226",
+          "T0227",
+          "T0228",
+          "T0229"
+        ],
+        "require_one_record_per_id": true,
+        "allowed_decisions": [
+          "re_review",
+          "blocked",
+          "unchanged",
+          "new_task_required"
+        ],
+        "forbid_automatic_status_transition_from_traceability_only": true,
+        "completion_requires_valid_step_three_graph": true,
+        "completion_requires_evidence_per_decision": true
+      }
     },
     {
       "id": "UPD-S1-009",
@@ -1847,7 +2058,7 @@
         "T0227",
         "T0229"
       ],
-      "description": "یک سناریوی عملیاتی کامل را از اپ اندروید تا مدل محلی واقعی روی میزبان ویندوز اجرا کن و پاسخ را به همان گفت‌وگو بازگردان. مسیر اصلی و fallback مصوب و شرایط شکست را با شواهد ثبت کن.",
+      "description": "آزمون پذیرش واقعی محصول را از رابط کاربری عادی Android تا برنامهٔ نصب‌شدهٔ Windows، مسیر مستقیم P2P مصوب، backend و مدل محلی واقعی اجرا کن؛ پاسخ تولیدشده توسط همان مدل باید به همان گفت‌وگوی Room برگردد و ذخیره شود. آزمون باید روی دستگاه فیزیکی Android و میزبان واقعی Windows باشد، نه همتای تست یا پاسخ از پیش تعیین‌شده.",
       "depends_on": [
         "UPD-S1-019"
       ],
@@ -1860,26 +2071,32 @@
         "خروجی‌های تأییدشدهٔ پیش‌نیازها: UPD-S1-019"
       ],
       "outputs": [
-        "گزارش end-to-end با دستگاه/نسخه/فرمان/نتیجه",
-        "شواهد درخواست و پاسخ واقعی بدون افشای متن حساس",
-        "نتایج قطع اتصال، میزبان مشغول، لغو و retry"
+        "گزارش E2E با SHA کد، نسخهٔ APK/Windows، مدل و SHA-256، دستگاه/OS، شبکه، فرمان‌ها و نتیجه",
+        "شواهد correlation درخواست/پاسخ و تولید واقعی خروجی مدل بدون ثبت متن حساس",
+        "نتایج قطع اتصال، میزبان مشغول، لغو، timeout، revoke و retry",
+        "آزمون instrumentation آغازشونده از چت عادی Android که ذخیرهٔ پاسخ در همان Room conversation را تأیید کند",
+        "آزمون Windows که برنامهٔ واقعی و backend مدل را اجرا کند، نه AndroidInteropPeerServer fixture",
+        "گزارش CI/device acceptance مستقل از تست LAN fixture"
       ],
-      "implementation_focus": "آزمون روی دستگاه فیزیکی Android و میزبان فیزیکی/واقعی Windows؛ fake transport فقط برای unit/integration جداگانه مجاز است.",
-      "start_condition": "همهٔ پیش‌نیازهای UPD-S1-019 باید در همین گراف status=done داشته باشند و actual_output_paths و evidence و آزمون موفق آن‌ها تأیید شده باشد؛ خروجی قدیمی یا صرفاً مستنداتی کافی نیست.",
-      "acceptance": "1. پیام از اندروید به میزبان ویندوز برسد و پاسخ مدل محلی واقعی به همان گفت‌وگو بازگردد.\n2. مسیر ارتباطی و هویت میزبان طبق تصمیم مصوب اعتبارسنجی شوند.\n3. سناریوهای قطع، لغو و retry نتیجهٔ پیش‌بینی‌پذیر داشته باشند.\n4. شواهد قابل بازبینی ثبت شوند و متن حساس در گزارش عمومی قرار نگیرد.",
+      "implementation_focus": "آزمون باید از UI واقعی اپ Android شروع شود، به Windows host product واقعی برسد، مدل GGUF واقعاً load شده را از backend اصلی اجرا کند و پاسخ همان inference را در همان گفتگو ذخیره کند. AndroidWindowsLanIntegrationTest و AndroidInteropPeerServer فقط برای آزمون تکمیلی transport/authentication مجازند و هرگز به‌تنهایی یا همراه real-inference.yml مستقل، معیار پذیرش E2E نیستند.",
+      "start_condition": "UPD-S1-019 باید done و دارای شواهد باشد؛ buildهای release-like هر دو برنامه، دستگاه فیزیکی Android، میزبان واقعی Windows، مدل محلی با مجوز/نسخه/SHA ثبت‌شده و مسیر P2P مصوب آماده باشند. اگر محیط فیزیکی یا مدل واقعی در دسترس نیست، این وظیفه blocked می‌ماند؛ اجرای fixture یا emulator جایگزین پذیرش واقعی نمی‌شود.",
+      "acceptance": "1. کاربر از UI گفت‌وگوی عادی Android پیام ارسال کند؛ در مسیر عادی نیاز به واردکردن model ID، IP، port یا PeerId نداشته باشد.\n2. درخواست از runtime واقعی Android و transport مستقیم P2P مصوب به برنامهٔ نصب‌شدهٔ Windows برسد؛ rendezvous فقط metadata ببیند و payload درخواست/پاسخ را دریافت یا relay نکند.\n3. میزبان Windows با رضایت opt-in فعال باشد، backend واقعی را آماده تشخیص دهد و مدل محلی مشخص‌شده با SHA-256 را واقعاً load و اجرا کند.\n4. خروجی از inference همان مدل تولید شود، به درخواست/attempt صحیح correlate شود، در UI نشان داده شود و در همان conversation و Room database باقی بماند.\n5. تست دست‌کم identity mismatch/revoke، unavailable/busy host، قطع اتصال، timeout، cancel و retry را با نتیجهٔ قابل‌انتظار پوشش دهد.\n6. گزارش دستگاه/سیستم‌عامل/نسخهٔ اپ/مدل و checksum/کامیت/نتیجه را ثبت کند، اما متن prompt/response، کلید، توکن یا شناسهٔ حساس را افشا نکند.\n7. آزمون مستقل از AndroidWindowsLanIntegrationTest و آزمون مستقل llama.cpp اجرا شده باشد؛ پاسخ ثابت، mock، fixture، test peer یا emulator مدرک تکمیل نیست.",
       "acceptance_criteria": [
-        "پیام از اندروید به میزبان ویندوز برسد و پاسخ مدل محلی واقعی به همان گفت‌وگو بازگردد.",
-        "مسیر ارتباطی و هویت میزبان طبق تصمیم مصوب اعتبارسنجی شوند.",
-        "سناریوهای قطع، لغو و retry نتیجهٔ پیش‌بینی‌پذیر داشته باشند.",
-        "شواهد قابل بازبینی ثبت شوند و متن حساس در گزارش عمومی قرار نگیرد."
+        "کاربر از UI گفت‌وگوی عادی Android پیام ارسال کند؛ در مسیر عادی نیاز به واردکردن model ID، IP، port یا PeerId نداشته باشد.",
+        "درخواست از runtime واقعی Android و transport مستقیم P2P مصوب به برنامهٔ نصب‌شدهٔ Windows برسد؛ rendezvous فقط metadata ببیند و payload درخواست/پاسخ را دریافت یا relay نکند.",
+        "میزبان Windows با رضایت opt-in فعال باشد، backend واقعی را آماده تشخیص دهد و مدل محلی مشخص‌شده با SHA-256 را واقعاً load و اجرا کند.",
+        "خروجی از inference همان مدل تولید شود، به درخواست/attempt صحیح correlate شود، در UI نشان داده شود و در همان conversation و Room database باقی بماند.",
+        "تست دست‌کم identity mismatch/revoke، unavailable/busy host، قطع اتصال، timeout، cancel و retry را با نتیجهٔ قابل‌انتظار پوشش دهد.",
+        "گزارش دستگاه/سیستم‌عامل/نسخهٔ اپ/مدل و checksum/کامیت/نتیجه را ثبت کند، اما متن prompt/response، کلید، توکن یا شناسهٔ حساس را افشا نکند.",
+        "آزمون مستقل از AndroidWindowsLanIntegrationTest و آزمون مستقل llama.cpp اجرا شده باشد؛ پاسخ ثابت، mock، fixture، test peer یا emulator مدرک تکمیل نیست."
       ],
       "status": "not_started",
       "status_fa": "انجام‌نشده",
       "expected_output_paths": [
-        "src/Client.Android/app/src/androidTest/java/com/whitep/client/network/AndroidWindowsLanIntegrationTest.kt",
-        "tests/HostLifecycle.Tests/AndroidInteropPeerServer.cs",
-        "tests/HostLifecycle.Tests/Invoke-AndroidWindowsLanAcceptance.ps1",
-        ".github/workflows/android-windows-lan-acceptance.yml",
+        "src/Client.Android/app/src/androidTest/java/com/whitep/client/product/RealAndroidWindowsInferenceAcceptanceTest.kt",
+        "tests/HostLifecycle.Tests/RealProductInferenceAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/Invoke-RealAndroidWindowsProductAcceptance.ps1",
+        ".github/workflows/android-windows-real-product-acceptance.yml",
         "update/Step three/UPD-S1-020/execution-report.md"
       ],
       "actual_output_paths": [],
@@ -1903,7 +2120,24 @@
           "review_evidence": []
         }
       },
-      "execution_history": []
+      "execution_history": [],
+      "verification_contract": {
+        "must_start_from_android_chat_ui": true,
+        "must_use_physical_android_device": true,
+        "must_use_installed_windows_product_host": true,
+        "must_use_direct_p2p_inference_data_path": true,
+        "must_execute_loaded_local_model": true,
+        "must_verify_model_revision_and_sha256": true,
+        "must_persist_response_in_same_room_conversation": true,
+        "must_exercise_failure_and_trust_paths": true,
+        "prohibited_as_primary_acceptance_evidence": [
+          "dotnet-host-response deterministic response from AndroidInteropPeerServer",
+          "AndroidWindowsLanIntegrationTest.kt transport-only LAN fixture",
+          "real-inference.yml executed independently from the Android client",
+          "emulator-only, mock-only, fake transport, protocol fixture or canned response"
+        ],
+        "existing_lan_test_role": "Supplemental authenticated-transport verification only; not product E2E."
+      }
     },
     {
       "id": "UPD-S1-021",
@@ -1928,7 +2162,7 @@
         "T0228",
         "T0229"
       ],
-      "description": "راهنمای استفادهٔ ساده برای Android و Windows، راهنمای عیب‌یابی فنی، محدودیت‌های انتشار و بسته‌های قابل نصب را بر اساس رفتار واقعی نسخه تهیه کن. انتشار را تا عبور از معیارهای پذیرش باز نکن.",
+      "description": "اسناد و بسته‌های قابل نصب Android و Windows را آماده کن و علاوه بر نصب پاک، ارتقای درجا از نسخهٔ قبلی نصب‌شده را بدون ازدست‌رفتن داده‌ها و هویت کاربر/میزبان آزمون کن. انتشار را تا عبور از هر دو مسیر clean-install و in-place-upgrade باز نکن.",
       "depends_on": [
         "UPD-S1-020",
         "UPD-S1-024"
@@ -1942,28 +2176,38 @@
         "خروجی‌های تأییدشدهٔ پیش‌نیازها: UPD-S1-020, UPD-S1-024"
       ],
       "outputs": [
-        "راهنمای نصب و استفادهٔ دو برنامه",
+        "راهنمای نصب، استفاده و ارتقای دو برنامه",
         "راهنمای عیب‌یابی و محدودیت‌های شناخته‌شده",
-        "بسته‌های قابل نصب و checksum",
+        "بسته‌های قابل نصب و checksum و منشأ build",
+        "گزارش clean install و in-place upgrade برای Android و Windows",
+        "snapshot مقایسه‌ای پیش/پس از ارتقا با داده‌های مصنوعی آزمون و بدون افشای secrets",
         "گزارش آمادگی انتشار"
       ],
-      "implementation_focus": "بسته‌های installable واقعی با checksum و نصب/اجرای تمیز؛ وجود فایل build یا artifact به‌تنهایی release-ready نیست.",
-      "start_condition": "همهٔ پیش‌نیازهای UPD-S1-020, UPD-S1-024 باید در همین گراف status=done داشته باشند و actual_output_paths و evidence و آزمون موفق آن‌ها تأیید شده باشد؛ خروجی قدیمی یا صرفاً مستنداتی کافی نیست.",
-      "acceptance": "1. بسته‌های Windows و Android از کد جاری تولید و روی محیط تمیز نصب/اجرا شده باشند.\n2. راهنماها با رابط واقعی و بدون دستورهای منسوخ سازگار باشند.\n3. checksum و مجوزهای وابستگی‌ها و مدل نمونه ثبت شده باشند.\n4. انتشار فقط پس از موفقیت معیارهای پذیرش و ثبت محدودیت‌های باقی‌مانده اعلام شود.",
+      "implementation_focus": "بسته‌های installable واقعی با checksum و نصب پاک؛ همچنین نصب نسخهٔ قبلی و ارتقای همان نصب با حفظ داده‌ها. آزمون upgrade نباید با uninstall/clear-data یا پاک‌سازی پوشه‌های داده اجرا شود. از دادهٔ آزمایشی مصنوعی استفاده کن و فایل مدل واقعی یا secret را در گزارش قرار نده.",
+      "start_condition": "UPD-S1-020 و UPD-S1-024 باید done و دارای شواهد باشند. برای آزمون upgrade باید بستهٔ قبلی و جدید با هویت امضای سازگار، محیط آزمایشی مجزا و داده‌های seed شده در دسترس باشند. اگر signing identity یا روش upgrade واقعی فراهم نیست، معیار upgrade blocked است و clean install به‌تنهایی برای done کافی نیست.",
+      "acceptance": "1. بسته‌های Windows و Android از کد جاری تولید و روی محیط تمیز نصب/اجرا شده باشند.\n2. راهنماها با رابط واقعی و بدون دستورهای منسوخ سازگار باشند.\n3. checksum و مجوزهای وابستگی‌ها و مدل نمونه ثبت شده باشند.\n4. Android از نسخهٔ قبلی با همان package/signing identity و روش نصب upgrade شود؛ Room conversation/message IDs، ترتیب و شمار پیام‌ها، schema/migrations، تنظیمات کاربر، Android Keystore identity و trust state حفظ یا طبق migration مصوب بازاعتبارسنجی شوند.\n5. Windows از نسخهٔ قبلی با installer واقعی upgrade شود؛ تنظیمات، مسیر و SHA-256 مدل‌های محلی، host identity، اسرار محافظت‌شدهٔ سیستم‌عامل، peer trust و وضعیت opt-in با سیاست نسخهٔ جدید حفظ یا به‌صورت مستند مهاجرت داده شوند.\n6. پیش و پس از upgrade snapshot قابل‌مقایسه از شناسه‌ها، شمارها، نسخهٔ schema، مسیر/checksum مدل و fingerprintهای غیرقابل‌بازگشت تهیه شود؛ prompt، secret یا کلید خصوصی در گزارش ثبت نشود.\n7. هیچ uninstall، clear-data، reset identity یا حذف فایل مدل در مسیر upgrade رخ ندهد؛ شکست migration آشکار و قابل‌بازیابی باشد.\n8. انتشار فقط پس از موفقیت clean install و in-place upgrade در هر دو پلتفرم و ثبت محدودیت‌های باقی‌مانده اعلام شود.",
       "acceptance_criteria": [
         "بسته‌های Windows و Android از کد جاری تولید و روی محیط تمیز نصب/اجرا شده باشند.",
         "راهنماها با رابط واقعی و بدون دستورهای منسوخ سازگار باشند.",
         "checksum و مجوزهای وابستگی‌ها و مدل نمونه ثبت شده باشند.",
-        "انتشار فقط پس از موفقیت معیارهای پذیرش و ثبت محدودیت‌های باقی‌مانده اعلام شود."
+        "Android از نسخهٔ قبلی با همان package/signing identity و روش نصب upgrade شود؛ Room conversation/message IDs، ترتیب و شمار پیام‌ها، schema/migrations، تنظیمات کاربر، Android Keystore identity و trust state حفظ یا طبق migration مصوب بازاعتبارسنجی شوند.",
+        "Windows از نسخهٔ قبلی با installer واقعی upgrade شود؛ تنظیمات، مسیر و SHA-256 مدل‌های محلی، host identity، اسرار محافظت‌شدهٔ سیستم‌عامل، peer trust و وضعیت opt-in با سیاست نسخهٔ جدید حفظ یا به‌صورت مستند مهاجرت داده شوند.",
+        "پیش و پس از upgrade snapshot قابل‌مقایسه از شناسه‌ها، شمارها، نسخهٔ schema، مسیر/checksum مدل و fingerprintهای غیرقابل‌بازگشت تهیه شود؛ prompt، secret یا کلید خصوصی در گزارش ثبت نشود.",
+        "هیچ uninstall، clear-data، reset identity یا حذف فایل مدل در مسیر upgrade رخ ندهد؛ شکست migration آشکار و قابل‌بازیابی باشد.",
+        "انتشار فقط پس از موفقیت clean install و in-place upgrade در هر دو پلتفرم و ثبت محدودیت‌های باقی‌مانده اعلام شود."
       ],
       "status": "not_started",
       "status_fa": "انجام‌نشده",
       "expected_output_paths": [
         ".github/workflows/android-release.yml",
         ".github/workflows/release-assets.yml",
+        ".github/workflows/product-upgrade-acceptance.yml",
         "tools/build_windows_installer.ps1",
+        "tools/Invoke-WhitePInPlaceUpgradeAcceptance.ps1",
+        "src/Client.Android/app/src/androidTest/java/com/whitep/client/upgrade/AndroidInPlaceUpgradeAcceptanceTest.kt",
+        "tests/HostLifecycle.Tests/WindowsInPlaceUpgradeAcceptanceTests.cs",
+        "docs/release/upgrade-acceptance.md",
         "README.md",
-        "docs/",
         "update/Step three/UPD-S1-021/execution-report.md"
       ],
       "actual_output_paths": [],
@@ -1987,7 +2231,28 @@
           "review_evidence": []
         }
       },
-      "execution_history": []
+      "execution_history": [],
+      "upgrade_contract": {
+        "required": true,
+        "test_type": "in_place_upgrade_from_previous_installed_version",
+        "platforms": [
+          "Android",
+          "Windows"
+        ],
+        "data_domains_must_survive_or_be_migrated": [
+          "Android Room conversations and messages, identifiers, order and schema",
+          "Android user preferences and non-secret app settings",
+          "Android Keystore identity and peer trust state",
+          "Windows host settings and explicit participation/consent state",
+          "Windows host identity and OS-protected secrets",
+          "Windows peer trust and revocation state",
+          "local model files, configured paths and SHA-256 integrity"
+        ],
+        "pre_upgrade_post_upgrade_snapshot_required": true,
+        "uninstall_or_clear_data_prohibited": true,
+        "signing_or_identity_mismatch_behavior": "Fail closed and report blocked; never silently reset identity or trust.",
+        "completion_requires_both_clean_install_and_upgrade": true
+      }
     },
     {
       "id": "UPD-S1-022",
@@ -3334,7 +3599,10 @@
       "For UPD-S1-020, run on a physical Android device and a real Windows host on a supported network; record device/OS/build/model/commands/results and redact sensitive payloads.",
       "For UPD-S1-021, install and launch generated packages on clean supported environments; record checksums and package provenance.",
       "Use actual_output_paths only for files confirmed in the repository at the referenced commit; keep expected paths separate.",
-      "Update the graph in the same commit as implementation when practical, otherwise immediately after; reconcile status to repository state and test results."
+      "Update the graph in the same commit as implementation when practical, otherwise immediately after; reconcile status to repository state and test results.",
+      "For UPD-S1-008, create one evidence-backed reconciliation record for every unique affected Txxxx ID. Do not automatically change legacy statuses from traceability metadata; an empty or invalid Step Three graph blocks completion.",
+      "For UPD-S1-020, LAN interop fixtures and standalone real-inference are supplemental only. Acceptance requires one physical Android-to-installed-Windows-product request through the real local model and persistence in the same Room conversation.",
+      "For UPD-S1-021, both clean installation and in-place upgrade must pass on Android and Windows. Compare pre/post state and model checksums; do not uninstall, clear data or reset identities."
     ],
     "required_attempt_fields": [
       "attempt_id",
@@ -3349,7 +3617,10 @@
       "blocked_reason",
       "reopened_reason",
       "contract_changes",
-      "follow_up"
+      "follow_up",
+      "device_and_host_details_redacted",
+      "model_revision_and_sha256",
+      "pre_upgrade_post_upgrade_snapshot"
     ],
     "allowed_attempt_results": [
       "succeeded",
@@ -3365,7 +3636,7 @@
       "passed",
       "failed"
     ],
-    "completion_test_rule": "Every done node must list at least one passing test or explicit acceptance verification, and evidence must include a test source file or CI/device run appropriate to its scope."
+    "completion_test_rule": "Every done node must list at least one passing test or explicit acceptance verification, and evidence must include a test source file or CI/device run appropriate to its scope. UPD-S1-020 requires full physical-device product E2E, not a transport fixture or isolated inference test. UPD-S1-021 requires clean-install and in-place-upgrade evidence on each platform."
   },
   "product_acceptance_gates": [
     {
@@ -3409,7 +3680,9 @@
         "Trust, identity mismatch/revoke, cancellation, timeout, unavailable/busy host and retry paths are verified.",
         "No prompt/response/history is exposed in ordinary logs or rendezvous metadata.",
         "Both apps use the same P coin icon source, five semantic color tokens and verified contrast pairings.",
-        "Unit/integration tests, physical-device acceptance and clean package installation have evidence; no source-only or document-only completion."
+        "Unit/integration tests, physical-device acceptance and clean package installation have evidence; no source-only or document-only completion.",
+        "End-to-end evidence must start in the normal Android chat UI, execute a loaded local model in the installed Windows product host, and persist the response in the same Room conversation.",
+        "AndroidWindowsLanIntegrationTest / AndroidInteropPeerServer deterministic fixture and standalone real-inference.yml are supplemental only; neither satisfies product E2E."
       ],
       "owners": [
         "UPD-S1-014",
@@ -3423,6 +3696,31 @@
         "UPD-S1-022",
         "UPD-S1-023",
         "UPD-S1-024"
+      ]
+    },
+    {
+      "id": "GATE-UPGRADE-01",
+      "target": "Installed-version upgrade and data continuity",
+      "requirements": [
+        "Android upgrades in place from a previous signed installation without losing Room conversations/messages, settings, Keystore identity or peer trust.",
+        "Windows upgrades in place without losing host settings, local model paths/files/checksums, host identity, protected secrets or peer trust.",
+        "Pre/post snapshots show continuity or an explicitly approved migration; uninstall/clear-data is not used.",
+        "Clean-install and in-place-upgrade acceptance both pass on both platforms."
+      ],
+      "owners": [
+        "UPD-S1-021"
+      ]
+    },
+    {
+      "id": "GATE-LEGACY-RECONCILIATION-01",
+      "target": "Legacy task graph reconciliation",
+      "requirements": [
+        "Every unique Txxxx ID affected by V1.10 has an individual evidence-backed reconciliation decision.",
+        "The authoritative Step Three graph is valid and parseable before legacy status synchronization is claimed.",
+        "No legacy status is changed solely because its ID appears in affected_task_ids."
+      ],
+      "owners": [
+        "UPD-S1-008"
       ]
     }
   ],
@@ -3547,6 +3845,194 @@
       "affected_task_ids": "Exact legacy Txxxx IDs in step one/V1.0.md; traceability only, not additional graph nodes."
     },
     "rule": "Do not renumber or silently drop tasks. Any change to task scope, prerequisite or affected legacy IDs must cite the updated source version and preserve previous execution records."
+  },
+  "updated_at": "2026-11-07",
+  "legacy_task_sync": {
+    "state": "blocked",
+    "reason_code": "SOURCE_STEP_THREE_GRAPH_EMPTY",
+    "checkpoint_commit_sha": "827d1586e367d8495ef052ac71a8cc83db0f4680",
+    "source_graph_path": "step three/project-graph.md",
+    "source_graph_blob_sha": "07f32dcd3ce9476b36f910aed0cadf1d95285301",
+    "source_graph_state_at_checkpoint": "empty_file_zero_bytes",
+    "affected_legacy_task_ids": [
+      "T0012",
+      "T0013",
+      "T0015",
+      "T0016",
+      "T0019",
+      "T0020",
+      "T0027",
+      "T0032",
+      "T0033",
+      "T0034",
+      "T0035",
+      "T0036",
+      "T0041",
+      "T0042",
+      "T0043",
+      "T0044",
+      "T0045",
+      "T0046",
+      "T0047",
+      "T0048",
+      "T0049",
+      "T0050",
+      "T0051",
+      "T0052",
+      "T0053",
+      "T0054",
+      "T0055",
+      "T0056",
+      "T0057",
+      "T0058",
+      "T0059",
+      "T0060",
+      "T0061",
+      "T0062",
+      "T0063",
+      "T0064",
+      "T0065",
+      "T0066",
+      "T0067",
+      "T0068",
+      "T0069",
+      "T0070",
+      "T0071",
+      "T0072",
+      "T0073",
+      "T0074",
+      "T0075",
+      "T0088",
+      "T0090",
+      "T0092",
+      "T0098",
+      "T0099",
+      "T0100",
+      "T0101",
+      "T0102",
+      "T0103",
+      "T0104",
+      "T0105",
+      "T0106",
+      "T0107",
+      "T0108",
+      "T0109",
+      "T0110",
+      "T0111",
+      "T0112",
+      "T0113",
+      "T0114",
+      "T0115",
+      "T0116",
+      "T0117",
+      "T0118",
+      "T0119",
+      "T0120",
+      "T0121",
+      "T0122",
+      "T0123",
+      "T0124",
+      "T0125",
+      "T0126",
+      "T0127",
+      "T0128",
+      "T0129",
+      "T0130",
+      "T0131",
+      "T0132",
+      "T0133",
+      "T0134",
+      "T0135",
+      "T0136",
+      "T0137",
+      "T0138",
+      "T0139",
+      "T0141",
+      "T0142",
+      "T0143",
+      "T0144",
+      "T0145",
+      "T0146",
+      "T0147",
+      "T0148",
+      "T0149",
+      "T0150",
+      "T0161",
+      "T0162",
+      "T0163",
+      "T0164",
+      "T0165",
+      "T0166",
+      "T0167",
+      "T0168",
+      "T0169",
+      "T0170",
+      "T0171",
+      "T0172",
+      "T0173",
+      "T0174",
+      "T0175",
+      "T0176",
+      "T0177",
+      "T0178",
+      "T0179",
+      "T0180",
+      "T0181",
+      "T0182",
+      "T0183",
+      "T0184",
+      "T0185",
+      "T0186",
+      "T0187",
+      "T0188",
+      "T0189",
+      "T0190",
+      "T0191",
+      "T0192",
+      "T0193",
+      "T0196",
+      "T0197",
+      "T0198",
+      "T0199",
+      "T0200",
+      "T0201",
+      "T0202",
+      "T0203",
+      "T0204",
+      "T0205",
+      "T0206",
+      "T0207",
+      "T0208",
+      "T0209",
+      "T0210",
+      "T0211",
+      "T0212",
+      "T0213",
+      "T0214",
+      "T0215",
+      "T0216",
+      "T0217",
+      "T0218",
+      "T0219",
+      "T0221",
+      "T0222",
+      "T0223",
+      "T0224",
+      "T0225",
+      "T0226",
+      "T0227",
+      "T0228",
+      "T0229"
+    ],
+    "affected_task_id_count": 168,
+    "current_scope": "Affected IDs are inventoried from all 24 V1.10 nodes; this does not mean legacy statuses have been reconciled.",
+    "completion_blocker": "The authoritative Step Three graph is empty at the recorded checkpoint. Restore/regenerate and validate it from canonical Step One/Step Two sources under the Step Three workflow before reconciling legacy task states.",
+    "rules": [
+      "UPD-S1-008 must create exactly one evidence-backed reconciliation decision per affected Txxxx ID.",
+      "Do not automatically change a legacy task status based only on affected_task_ids.",
+      "Do not claim synchronization or mark UPD-S1-008 done while the authoritative Step Three graph is empty, missing or unparsable.",
+      "After a valid graph exists, update only impacted nodes supported by current code/test evidence and preserve append-only history."
+    ]
   }
 }
 ```

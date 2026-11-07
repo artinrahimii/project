@@ -25,7 +25,11 @@ jobs:
         run: python -m unittest discover -s tests -v
       - name: Check Python syntax
         run: python -m compileall -q tools tests
-      - name: Validate graph structure
+      - name: Validate Step Three graph structure
         run: python tools/graph_guard.py "step three/project-graph.md"
-      - name: Validate recorded outputs and evidence
+      - name: Validate Step Three outputs and evidence
         run: python tools/graph_guard.py "step three/project-graph.md" --repo-root .
+      - name: Validate Update graph structure
+        run: python tools/graph_guard.py "update/Step two/project-graph.md"
+      - name: Validate Update outputs and evidence
+        run: python tools/graph_guard.py "update/Step two/project-graph.md" --repo-root .
