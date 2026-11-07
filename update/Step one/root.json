@@ -1,8 +1,8 @@
 {
   "stage": "step_one",
-  "status": "completed",
-  "latest_version": "V1.6",
-  "final_version": "V1.6",
+  "status": "in_progress",
+  "latest_version": "V1.7",
+  "final_version": null,
   "versions": [
     {
       "version": "V1.1",
@@ -63,10 +63,20 @@
       "status": "registered",
       "change_classification": "none",
       "content_changed": false
+    },
+    {
+      "version": "V1.7",
+      "agent_label": "ChatGPT-GPT-6-Revision-07",
+      "parent_version": "V1.6",
+      "path": "update/Step one/Output/V1.7.json",
+      "outcome": "revise",
+      "status": "registered",
+      "change_classification": "material",
+      "content_changed": true
     }
   ],
   "closure": {
-    "consecutive_no_change_closure_checks": 2,
+    "consecutive_no_change_closure_checks": 0,
     "closure_checks": [
       {
         "version": "V1.5",
@@ -96,7 +106,8 @@
     "سیاست مشترک closure از قواعد ارائه‌شده در دستور مرحله در update/Step one/closure-policy.json ثبت شد؛ شمارنده‌های closure به علت تغییر مادی صفر هستند.",
     "V1.4 یک اصلاح متنی/ردیابی محدود انجام داد: ارجاع نادرست T003 در reasoning_summary وظیفهٔ UPD-S1-015 به UPD-S1-003 تغییر یافت. این اصلاح ماهیت وظایف را تغییر نداد و minor_edit_streak برابر ۱ شد؛ closure check انجام نشده است.",
     "V1.5 نخستین بررسی مستقل اختتام را بدون تغییر محتوایی گذراند؛ شمارندهٔ متوالی بررسی‌های بدون تغییر ضروری برابر ۱ است. مرحله تا بررسی مستقل دوم همچنان in_progress و final_version برابر null باقی می‌ماند.",
-    "V1.6 دومین بررسی مستقل و متوالی اختتام را با عامل متفاوت تأیید کرد؛ طبق closure-policy.json وضعیت مرحله completed و final_version برابر V1.6 ثبت شد."
+    "V1.6 دومین بررسی مستقل و متوالی اختتام را با عامل متفاوت تأیید کرد؛ طبق closure-policy.json وضعیت مرحله completed و final_version برابر V1.6 ثبت شد.",
+    "V1.7 پس از بسته‌شدن V1.6، به‌دلیل نیازمندی مادی جدید برای آیکون سکهٔ سفید با P و تم مشترک پنج‌رنگ Windows/Android ثبت شد. V1.6 و دو بررسی closure قبلی به‌عنوان تاریخچه حفظ شدند؛ مرحله برای اجرای دامنهٔ جدید به in_progress بازگشت و شمارندهٔ closure صفر شد."
   ],
   "last_updated": "2026-11-07"
 }
